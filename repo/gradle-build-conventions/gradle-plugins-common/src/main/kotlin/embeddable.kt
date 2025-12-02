@@ -90,7 +90,6 @@ fun Project.rewriteDefaultJarDepsToShadedCompiler(
     }
 
     return tasks.register<ShadowJar>(EMBEDDABLE_COMPILER_TASK_NAME) {
-        dependsOn(jarTask)
         from(jarTask)
 
         archiveClassifier.unset()
