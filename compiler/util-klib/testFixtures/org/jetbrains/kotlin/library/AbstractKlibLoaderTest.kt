@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.library
 
 import org.jetbrains.kotlin.konan.file.zipDirAs
+import org.jetbrains.kotlin.library.loader.DefaultKlibLibraryProvider
 import org.jetbrains.kotlin.library.loader.KlibLoader
 import org.jetbrains.kotlin.library.loader.KlibLoaderResult
 import org.jetbrains.kotlin.library.loader.KlibLoaderResult.ProblemCase
@@ -515,6 +516,52 @@ abstract class AbstractKlibLoaderTest {
                 .assertNoLoadedLibraries()
                 .assertProblematicLibraries(platformCheckMismatchPaths = listOf(a, b, c))
         }
+    }
+
+    @Test
+    fun testMultipleLibraryProviders() {
+        val a = generateNewKlib(asFile = false, fileExtension = "")
+        val b = generateNewKlib(asFile = true, fileExtension = "klib")
+
+        val allPaths = buildList {
+            add(a)
+            addAll(corruptedLibraryPaths)
+            add(stdlib)
+            addAll(invalidPaths)
+            add(b)
+        }
+
+        // Load libraries through `libraryPaths`.
+        KlibLoader {
+            libraryPaths(allPaths)
+        }.load()
+            .assertLoadedLibraries(stdlib, a, b)
+            .assertProblematicLibraries(
+                notFoundPaths = invalidPaths,
+                invalidFormatPaths = corruptedLibraryPaths
+            )
+
+        // Load libraries through a single provider.
+        KlibLoader {
+            libraryProviders(DefaultKlibLibraryProvider(allPaths))
+        }.load()
+            .assertLoadedLibraries(stdlib, a, b)
+            .assertProblematicLibraries(
+                notFoundPaths = invalidPaths,
+                invalidFormatPaths = corruptedLibraryPaths
+            )
+
+        // Load libraries through a mix of `libraryPaths` and multiple providers.
+        KlibLoader {
+            libraryProviders(DefaultKlibLibraryProvider(allPaths.shuffled())) // paths are shuffled
+            libraryPaths(allPaths) // paths provided through `libraryPaths` are loaded first
+            libraryProviders(DefaultKlibLibraryProvider(allPaths.shuffled())) // paths are shuffled
+        }.load()
+            .assertLoadedLibraries(stdlib, a, b)
+            .assertProblematicLibraries(
+                notFoundPaths = invalidPaths,
+                invalidFormatPaths = corruptedLibraryPaths
+            )
     }
 
     protected abstract val ownPlatformCheckers: List<KlibPlatformChecker>
