@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.analysis.api.base.KaConstantValue
 import org.jetbrains.kotlin.analysis.api.components.*
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaNamedSymbol
+import org.jetbrains.kotlin.ir.backend.js.tsexport.ExportedVisibility
 import org.jetbrains.kotlin.js.config.ModuleKind
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -212,3 +213,13 @@ private val KaNamedFunctionSymbol.isMethodOfAny: Boolean
 context(_: KaSession)
 private val KaCallableSymbol.isOverride: Boolean
     get() = directlyOverriddenSymbols.firstOrNull() != null
+
+
+internal fun KaDeclarationSymbol.exportedVisibility(parent: KaDeclarationSymbol?): ExportedVisibility =
+    when (visibility) {
+        KaSymbolVisibility.PROTECTED if (parent?.modality == KaSymbolModality.SEALED || parent?.modality == KaSymbolModality.FINAL) ->
+            ExportedVisibility.PRIVATE
+        KaSymbolVisibility.PROTECTED -> ExportedVisibility.PROTECTED
+        else -> ExportedVisibility.DEFAULT
+    }
+

@@ -81,7 +81,7 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
 
     context(_: KaSession)
     private fun exportFunction(function: KaNamedFunctionSymbol, parent: KaDeclarationSymbol?): ExportedDeclaration? =
-        when (val exportability = functionExportability(function)) {
+        when (val exportability = functionExportability(function, parent)) {
             is Exportability.NotNeeded, is Exportability.Implicit -> null
             is Exportability.Prohibited -> ErrorDeclaration(exportability.reason)
             is Exportability.Allowed -> {
@@ -142,6 +142,11 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
         if (property.receiverType != null) {
             return null
         }
+
+        if (property.exportedVisibility(parent) == ExportedVisibility.PRIVATE) {
+            return null
+        }
+
         val parentClass = parent as? KaClassSymbol
         val isMember = parentClass != null
         val isStatic = property.isStatic
@@ -230,11 +235,15 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
     }
 
     context(_: KaSession)
-    private fun functionExportability(function: KaNamedFunctionSymbol): Exportability {
+    private fun functionExportability(function: KaNamedFunctionSymbol, parent: KaDeclarationSymbol?): Exportability {
         if (function.isInline && function.typeParameters.any { it.isReified })
             return Exportability.Prohibited("Inline reified function")
 
-        val parentClass = function.containingDeclaration as? KaClassSymbol
+        if (function.exportedVisibility(parent) == ExportedVisibility.PRIVATE) {
+            return Exportability.NotNeeded
+        }
+
+        val parentClass = parent as? KaClassSymbol
 
         // TODO: Use [] syntax instead of prohibiting
         val name = function.getExportedIdentifier()
