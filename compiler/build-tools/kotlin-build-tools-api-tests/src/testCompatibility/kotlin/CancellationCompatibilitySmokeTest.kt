@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.buildtools.api.tests
 
+import org.jetbrains.kotlin.buildtools.api.DelicateBuildToolsApi
 import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.OperationCancelledException
@@ -76,6 +77,7 @@ class CancellationCompatibilitySmokeTest : BaseCompilationTest() {
         daemonPolicy[ExecutionPolicy.WithDaemon.JVM_ARGUMENTS] = listOf(
             "Dkotlin.daemon.wait.before.compilation.for.tests=true"
         )
+        @OptIn(DelicateBuildToolsApi::class)
         daemonPolicy[ExecutionPolicy.WithDaemon.DAEMON_RUN_DIR_PATH] = daemonRunPath
         daemonPolicy[ExecutionPolicy.WithDaemon.SHUTDOWN_DELAY_MILLIS] = 0
 
@@ -110,6 +112,13 @@ class CancellationCompatibilitySmokeTest : BaseCompilationTest() {
         attemptCleanupDaemon(daemonRunPath)
     }
 
+    /**
+     * It's essential that we wait for the daemon to shut down before attempting to delete the test directory, otherwise (on Windows)
+     * an Exception will be thrown saying that the directory is in use and cannot be deleted.
+     *
+     * One way for telling a daemon to shut down is to delete its ".run" file, then wait for it to notice that the file is gone, in which
+     * case the daemon will eventually finish its process.
+     */
     private fun attemptCleanupDaemon(daemonRunPath: Path) {
         daemonRunPath.resolve("daemon-test-start").deleteIfExists()
         var tries = 10
@@ -117,11 +126,11 @@ class CancellationCompatibilitySmokeTest : BaseCompilationTest() {
             val deleted = try {
                 daemonRunPath.listDirectoryEntries("*.run").forEach { it.deleteIfExists() }
                 daemonRunPath.deleteExisting()
-                true
+                true // run file AND daemon directory deletion was successful, which means daemon is gone now
             } catch (_: NoSuchFileException) {
-                true
+                true // the daemon directory was already deleted, which means daemon is gone now
             } catch (_: Exception) {
-                false
+                false // we weren't able to delete the daemon directory, so the daemon might still be running
             }
             if (deleted) {
                 break
