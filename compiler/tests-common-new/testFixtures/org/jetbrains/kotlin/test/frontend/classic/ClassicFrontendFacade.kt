@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.ir.backend.js.JsFactories
 import org.jetbrains.kotlin.config.zipFileSystemAccessor
 import org.jetbrains.kotlin.library.isAnyPlatformStdlib
+import org.jetbrains.kotlin.library.loader.KlibLibraryProvider
 import org.jetbrains.kotlin.library.loader.KlibLoader
 import org.jetbrains.kotlin.library.loader.KlibPlatformChecker
 import org.jetbrains.kotlin.library.metadata.CurrentKlibModuleOrigin
@@ -76,7 +77,6 @@ import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
-import org.jetbrains.kotlin.test.services.configuration.NativeEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.getDependencies
 import org.jetbrains.kotlin.test.services.configuration.nativeEnvironmentConfigurator
@@ -269,12 +269,14 @@ class ClassicFrontendFacade(
     }
 
     private fun createModuleDescriptorsForKlibs(
+        runtimeLibraryProviders: List<KlibLibraryProvider> = emptyList(),
         libraryPaths: List<String>,
         klibPlatformChecker: KlibPlatformChecker,
         factories: KlibMetadataFactories,
         configuration: CompilerConfiguration,
     ): List<ModuleDescriptorImpl> {
         val result = KlibLoader {
+            libraryProviders(runtimeLibraryProviders)
             libraryPaths(libraryPaths)
             platformChecker(klibPlatformChecker)
             configuration.zipFileSystemAccessor?.let { zipFileSystemAccessor(it) }
@@ -399,11 +401,11 @@ class ClassicFrontendFacade(
         dependsOnDescriptors: List<ModuleDescriptorImpl>,
     ): AnalysisResult {
         val moduleTrace = NoScopeRecordCliBindingTrace(project)
-        val runtimeKlibsNames = NativeEnvironmentConfigurator.getRuntimePathsForModule(module, testServices)
         val nativeFactories = KlibMetadataFactories(::KonanBuiltIns, NullFlexibleTypeDeserializer)
 
         val runtimeModuleDescriptors = createModuleDescriptorsForKlibs(
-            libraryPaths = runtimeKlibsNames,
+            runtimeLibraryProviders = testServices.nativeEnvironmentConfigurator.getRuntimeLibraryProviders(module),
+            libraryPaths = emptyList(),
             klibPlatformChecker = KlibPlatformChecker.Native(testServices.nativeEnvironmentConfigurator.getNativeTarget(module).name),
             factories = nativeFactories,
             configuration = configuration,

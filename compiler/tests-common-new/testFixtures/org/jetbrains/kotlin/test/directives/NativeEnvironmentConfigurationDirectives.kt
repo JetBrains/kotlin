@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.test.directives
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 
 object NativeEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
-    /** See also [org.jetbrains.kotlin.test.services.configuration.NativeEnvironmentConfigurator.getRuntimePathsForModule] */
+    /** See also [org.jetbrains.kotlin.test.services.configuration.NativeEnvironmentConfigurator.getRuntimeLibraryProviders] */
     val WITH_PLATFORM_LIBS by directive(
         """
             Add all available Kotlin/Native platform libs for the Kotlin/Native target in effect to the classpath.

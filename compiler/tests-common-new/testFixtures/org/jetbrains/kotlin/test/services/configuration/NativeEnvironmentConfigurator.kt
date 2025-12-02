@@ -6,16 +6,20 @@
 package org.jetbrains.kotlin.test.services.configuration
 
 import org.jetbrains.kotlin.konan.library.KlibNativeDistributionLibraryProvider
+import org.jetbrains.kotlin.konan.library.isFromKotlinNativeDistribution
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.library.Klib
+import org.jetbrains.kotlin.library.loader.DefaultKlibLibraryProvider
+import org.jetbrains.kotlin.library.loader.KlibLibraryProvider
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.KlibBasedCompilerTestDirectives
 import org.jetbrains.kotlin.test.directives.NativeEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
-import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import java.io.File
 
 class NativeEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {
@@ -23,8 +27,17 @@ class NativeEnvironmentConfigurator(testServices: TestServices) : EnvironmentCon
         private const val TEST_PROPERTY_NATIVE_HOME = "kotlin.internal.native.test.nativeHome"
         private const val TEST_PROPERTY_TEST_TARGET = "kotlin.internal.native.test.target"
 
+        /**
+         * WARNING: Please consider using [NativeEnvironmentConfigurator.getRuntimeLibraryProviders] instead.
+         *
+         * Unlike [NativeEnvironmentConfigurator.getRuntimeLibraryProviders], which returns the list of library providers,
+         * that are capable of locating and properly loading libraries, this function returns just the list of raw library paths.
+         *
+         * That could be not enough in certain cases. For example, in the case of loading the libraries from the Kotlin/Native distribution,
+         * which all need to be marked with [Klib.isFromKotlinNativeDistribution] flag that is checked by the Kotlin/Native backend later.
+         */
         fun getRuntimePathsForModule(module: TestModule, testServices: TestServices): List<String> {
-            return testServices.nativeEnvironmentConfigurator.getRuntimePathsForModule(module)
+            return testServices.nativeEnvironmentConfigurator.getRuntimeLibraryProviders(module).flatMap { it.getLibraryPaths() }
         }
     }
 
@@ -55,25 +68,26 @@ class NativeEnvironmentConfigurator(testServices: TestServices) : EnvironmentCon
         }
     }
 
-    fun distributionKlibPath(): File = nativeHome.resolve("klib")
-
-    fun getRuntimePathsForModule(module: TestModule): List<String> {
-        val result = mutableListOf<String>()
-
-        result += KlibNativeDistributionLibraryProvider(nativeHome)
-            .applyIf(ConfigurationDirectives.WITH_STDLIB in module.directives) {
+    fun getRuntimeLibraryProviders(module: TestModule): List<KlibLibraryProvider> {
+        val nativeDistributionProvider = KlibNativeDistributionLibraryProvider(nativeHome) {
+            runIf(ConfigurationDirectives.WITH_STDLIB in module.directives) {
                 withStdlib()
             }
-            .applyIf(NativeEnvironmentConfigurationDirectives.WITH_PLATFORM_LIBS in module.directives) {
+
+            runIf(NativeEnvironmentConfigurationDirectives.WITH_PLATFORM_LIBS in module.directives) {
                 withPlatformLibs(getNativeTarget(module))
             }
-            .getPaths()
+        }
 
-        testServices.runtimeClasspathProviders
+        val additionalLibrariesProvider: KlibLibraryProvider? = testServices.runtimeClasspathProviders
+            .asSequence()
             .flatMap { it.runtimeClassPaths(module) }
-            .mapTo(result) { it.absolutePath }
+            .map { it.absolutePath }
+            .toList()
+            .takeIf { it.isNotEmpty() }
+            ?.let { additionalPaths -> DefaultKlibLibraryProvider(additionalPaths) }
 
-        return result
+        return listOfNotNull(nativeDistributionProvider, additionalLibrariesProvider)
     }
 
     override val directiveContainers: List<DirectivesContainer>

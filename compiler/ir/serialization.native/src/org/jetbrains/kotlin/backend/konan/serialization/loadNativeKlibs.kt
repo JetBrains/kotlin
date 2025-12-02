@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.config.zipFileSystemAccessor
 import org.jetbrains.kotlin.konan.library.KlibNativeManifestTransformer
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.KotlinAbiVersion
+import org.jetbrains.kotlin.library.loader.KlibLibraryProvider
 import org.jetbrains.kotlin.library.loader.KlibLoader
 import org.jetbrains.kotlin.library.loader.KlibPlatformChecker
 
@@ -26,6 +27,9 @@ import org.jetbrains.kotlin.library.loader.KlibPlatformChecker
  *   Note: It is assumed that [friendPaths] are already included in [libraryPaths].
  * @param includedPath Path of the library to process as the included module.
  *   Note: It is assumed that [includedPath] is already included in [libraryPaths].
+ * @param runtimeLibraryProviders List of library providers to load runtime libraries.
+ *   Note: It is essential to load libraries from the Kotlin/Native distribution through a special provider
+ *   that marks such libraries with [Klib.isFromKotlinNativeDistribution] flag.
  * @param nativeTarget The Kotlin/Native specific target (it's used with [KlibPlatformChecker.Native] to avoid
  *  loading KLIBs for the wrong platform and the wrong Kotlin/Native target).
  */
@@ -34,9 +38,11 @@ fun loadNativeKlibsInTestPipeline(
     libraryPaths: List<String>,
     friendPaths: List<String> = emptyList(),
     includedPath: String? = null,
+    runtimeLibraryProviders: List<KlibLibraryProvider> = emptyList(),
     nativeTarget: KonanTarget
 ): LoadedKlibs {
     val result = KlibLoader {
+        libraryProviders(runtimeLibraryProviders)
         libraryPaths(libraryPaths)
         platformChecker(KlibPlatformChecker.Native(nativeTarget.name))
         maxPermittedAbiVersion(KotlinAbiVersion.CURRENT)
