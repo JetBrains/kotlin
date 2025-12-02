@@ -31,7 +31,7 @@
 /compiler/android-tests/ @JetBrains/kotlin-jvm
 /compiler/backend/ @JetBrains/kotlin-jvm
 /compiler/backend.common.jvm/ @JetBrains/kotlin-jvm
-/compiler/build-tools/ @JetBrains/kotlin-build-tools
+/compiler/build-tools/ @JetBrains/kotlin-build-tools @JetBrains/build-tools-api
 /compiler/build-tools/kotlin-build-tools-api/gen/ @JetBrains/kotlin
 /compiler/build-tools/kotlin-build-tools-impl/gen/ @JetBrains/kotlin
 /compiler/build-tools/kotlin-build-tools-compat/gen/ @JetBrains/kotlin
@@ -51,7 +51,7 @@
 /compiler/config/ @JetBrains/kotlin-frontend
 /compiler/config.jvm/ @JetBrains/kotlin-jvm
 /compiler/container/ @JetBrains/kotlin-frontend
-/compiler/daemon/ @JetBrains/kotlin-build-tools
+/compiler/daemon/ @JetBrains/kotlin-build-tools @JetBrains/build-tools-api
 /compiler/fir/ @JetBrains/kotlin-frontend
 /compiler/fir/checkers/src/org/jetbrains/kotlin/fir/analysis/diagnostics/FirErrorsDefaultMessages.kt alejandro.serrano.mena@jetbrains.com brian.norman@jetbrains.com ilya.chernikov@jetbrains.com kirill.rakhman@jetbrains.com
 /compiler/fir/checkers/checkers.jvm/src/org/jetbrains/kotlin/fir/analysis/diagnostics/jvm/FirJvmErrorsDefaultMessages.kt alejandro.serrano.mena@jetbrains.com brian.norman@jetbrains.com ilya.chernikov@jetbrains.com kirill.rakhman@jetbrains.com
@@ -63,7 +63,7 @@
 /compiler/frontend.common.jvm/ @JetBrains/kotlin-frontend
 /compiler/frontend.common-psi/ @JetBrains/kotlin-frontend
 /compiler/frontend.java/ @JetBrains/kotlin-frontend
-/compiler/incremental-compilation-impl/ @JetBrains/kotlin-build-tools
+/compiler/incremental-compilation-impl/ @JetBrains/kotlin-build-tools @JetBrains/build-tools-api
 /compiler/ir/ReadMe.md @JetBrains/kotlin-common-backend
 /compiler/ir/backend.common/ @JetBrains/kotlin-jvm @JetBrains/kotlin-native @JetBrains/kotlin-wasm @JetBrains/kotlin-common-backend @JetBrains/kotlin-js
 /compiler/ir/backend.js/ @JetBrains/kotlin-js
@@ -330,8 +330,8 @@
 /libraries/tools/kotlin-maven-allopen/ @JetBrains/kotlin-build-tools
 /libraries/tools/kotlin-maven-lombok/ @JetBrains/kotlin-build-tools
 /libraries/tools/kotlin-maven-noarg/ @JetBrains/kotlin-build-tools
-/libraries/tools/kotlin-maven-plugin/ @JetBrains/kotlin-build-tools
-/libraries/tools/kotlin-maven-plugin-test/ @JetBrains/kotlin-build-tools
+/libraries/tools/kotlin-maven-plugin/ @JetBrains/kotlin-build-tools @JetBrains/build-tools-api
+/libraries/tools/kotlin-maven-plugin-test/ @JetBrains/kotlin-build-tools @JetBrains/build-tools-api
 /libraries/tools/kotlin-maven-power-assert/ @JetBrains/kotlin-build-tools
 /libraries/tools/kotlin-maven-sam-with-receiver/ @JetBrains/kotlin-build-tools
 /libraries/tools/kotlin-maven-serialization/ @JetBrains/kotlin-build-tools
