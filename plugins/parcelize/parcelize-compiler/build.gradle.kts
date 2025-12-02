@@ -44,7 +44,7 @@ dependencies {
     testRuntimeOnly(toolsJar())
     testFixturesApi(libs.junit4)
 
-    robolectricDependency("org.robolectric:android-all:5.0.2_r3-robolectric-r0")
+    robolectricDependency("org.robolectric:android-all:9-robolectric-4799589")
 
     robolectricClasspath(commonDependency("org.robolectric", "robolectric"))
     robolectricClasspath(project(":plugins:parcelize:parcelize-runtime")) { isTransitive = false }
