@@ -132,6 +132,7 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
     override val regularClassCheckers: Set<FirRegularClassChecker> = setOf(
         FirAnnotationClassDeclarationChecker,
         FirOptInAnnotationClassChecker,
+        FirOperatorOfChecker,
         FirCommonConstructorDelegationIssuesChecker,
         FirDelegationSuperCallInEnumConstructorChecker,
         FirDelegationInExpectClassSyntaxChecker,

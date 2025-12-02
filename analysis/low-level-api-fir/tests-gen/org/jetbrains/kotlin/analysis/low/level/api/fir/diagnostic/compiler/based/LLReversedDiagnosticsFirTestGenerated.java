@@ -2341,6 +2341,12 @@ public class LLReversedDiagnosticsFirTestGenerated extends AbstractLLReversedDia
         }
 
         @Test
+        @TestMetadata("classWithTheSameNameAsReturn.kt")
+        public void testClassWithTheSameNameAsReturn() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/operatorOfChecks/classWithTheSameNameAsReturn.kt");
+        }
+
+        @Test
         @TestMetadata("contexts.kt")
         public void testContexts() {
           runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/operatorOfChecks/contexts.kt");
@@ -2359,15 +2365,51 @@ public class LLReversedDiagnosticsFirTestGenerated extends AbstractLLReversedDia
         }
 
         @Test
+        @TestMetadata("flexibleReturnType.kt")
+        public void testFlexibleReturnType() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/operatorOfChecks/flexibleReturnType.kt");
+        }
+
+        @Test
+        @TestMetadata("intersectionReturnType.kt")
+        public void testIntersectionReturnType() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/operatorOfChecks/intersectionReturnType.kt");
+        }
+
+        @Test
+        @TestMetadata("irrelevantReturnType.kt")
+        public void testIrrelevantReturnType() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/operatorOfChecks/irrelevantReturnType.kt");
+        }
+
+        @Test
+        @TestMetadata("localTypeApproximation.kt")
+        public void testLocalTypeApproximation() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/operatorOfChecks/localTypeApproximation.kt");
+        }
+
+        @Test
         @TestMetadata("nonCompanionMember.kt")
         public void testNonCompanionMember() {
           runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/operatorOfChecks/nonCompanionMember.kt");
         }
 
         @Test
+        @TestMetadata("nullableReturnType.kt")
+        public void testNullableReturnType() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/operatorOfChecks/nullableReturnType.kt");
+        }
+
+        @Test
         @TestMetadata("topLevel.kt")
         public void testTopLevel() {
           runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/operatorOfChecks/topLevel.kt");
+        }
+
+        @Test
+        @TestMetadata("typealiasInReturnType.kt")
+        public void testTypealiasInReturnType() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/operatorOfChecks/typealiasInReturnType.kt");
         }
       }
 
