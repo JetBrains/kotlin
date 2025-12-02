@@ -68,36 +68,6 @@ class WasmFileCodegenContextWithExport(
         return super.referenceRttiGlobal(irClass)
     }
 
-    override fun referenceGcType(irClass: IrClassSymbol): WasmImmediate.TypeIdx.GcTypeIdx {
-        addSignatureToCollector(irClass.owner)
-        return super.referenceGcType(irClass)
-    }
-
-    override fun referenceHeapType(irClass: IrClassSymbol): WasmHeapType.Type.GcType {
-        addSignatureToCollector(irClass.owner)
-        return super.referenceHeapType(irClass)
-    }
-
-    override fun referenceVTableGcType(irClass: IrClassSymbol): WasmImmediate.TypeIdx.VTableTypeIdx {
-        addSignatureToCollector(irClass.owner)
-        return super.referenceVTableGcType(irClass)
-    }
-
-    override fun referenceVTableHeapType(irClass: IrClassSymbol): WasmHeapType.Type.VTableType {
-        addSignatureToCollector(irClass.owner)
-        return super.referenceVTableHeapType(irClass)
-    }
-
-    override fun referenceFunctionType(irClass: IrFunctionSymbol): WasmImmediate.TypeIdx.FunctionTypeIdx {
-        addSignatureToCollector(irClass.owner)
-        return super.referenceFunctionType(irClass)
-    }
-
-    override fun referenceFunctionHeapType(irClass: IrFunctionSymbol): WasmHeapType.Type.FunctionType {
-        addSignatureToCollector(irClass.owner)
-        return super.referenceFunctionHeapType(irClass)
-    }
-
     override fun defineGlobalVTable(irClass: IrClassSymbol, wasmGlobal: WasmGlobal) {
         super.defineGlobalVTable(irClass, wasmGlobal)
         exportDeclarationGlobal(irClass.owner, WasmServiceImportExportKind.VTABLE, wasmGlobal)

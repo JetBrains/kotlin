@@ -119,22 +119,22 @@ open class WasmFileCodegenContext(
     open fun referenceRttiGlobal(irClass: IrClassSymbol): WasmImmediate.GlobalIdx.RttiIdx =
         WasmImmediate.GlobalIdx.RttiIdx(irClass.getReferenceKey())
 
-    open fun referenceGcType(irClass: IrClassSymbol): WasmImmediate.TypeIdx.GcTypeIdx =
+    fun referenceGcType(irClass: IrClassSymbol): WasmImmediate.TypeIdx.GcTypeIdx =
         WasmImmediate.TypeIdx.GcTypeIdx(irClass.getReferenceKey())
 
-    open fun referenceHeapType(irClass: IrClassSymbol): WasmHeapType.Type.GcType =
+    fun referenceHeapType(irClass: IrClassSymbol): WasmHeapType.Type.GcType =
         WasmHeapType.Type.GcType(irClass.getReferenceKey())
 
-    open fun referenceVTableGcType(irClass: IrClassSymbol): WasmImmediate.TypeIdx.VTableTypeIdx =
+    fun referenceVTableGcType(irClass: IrClassSymbol): WasmImmediate.TypeIdx.VTableTypeIdx =
         WasmImmediate.TypeIdx.VTableTypeIdx(irClass.getReferenceKey())
 
-    open fun referenceVTableHeapType(irClass: IrClassSymbol): WasmHeapType.Type.VTableType =
+    fun referenceVTableHeapType(irClass: IrClassSymbol): WasmHeapType.Type.VTableType =
         WasmHeapType.Type.VTableType(irClass.getReferenceKey())
 
-    open fun referenceFunctionType(irClass: IrFunctionSymbol): WasmImmediate.TypeIdx.FunctionTypeIdx =
+    fun referenceFunctionType(irClass: IrFunctionSymbol): WasmImmediate.TypeIdx.FunctionTypeIdx =
         WasmImmediate.TypeIdx.FunctionTypeIdx(irClass.getReferenceKey())
 
-    open fun referenceFunctionHeapType(irClass: IrFunctionSymbol): WasmHeapType.Type.FunctionType =
+    fun referenceFunctionHeapType(irClass: IrFunctionSymbol): WasmHeapType.Type.FunctionType =
         WasmHeapType.Type.FunctionType(irClass.getReferenceKey())
 
     fun referenceTypeId(irClass: IrClassSymbol): Long =
