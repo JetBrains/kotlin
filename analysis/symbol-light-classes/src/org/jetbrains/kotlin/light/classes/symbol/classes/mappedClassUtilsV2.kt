@@ -133,11 +133,9 @@ internal fun KaSession.processPossiblyMappedMethodV2(
     result: MutableList<PsiMethod>,
     originKind: JvmDeclarationOriginKind,
 ): Boolean {
-    val javaFunctionSymbol = tryToMapKotlinCollectionMethodToJavaMethodSymbol(kotlinCollectionFunction, allSupertypes)
-        ?: return true
-
-    val collectionSupertype = allSupertypes.find { it.classId == kotlinCollectionFunction.callableId?.classId }
-        ?: return true
+    val javaFunctionSymbol = tryToMapKotlinCollectionMethodToJavaMethodSymbol(kotlinCollectionFunction, allSupertypes) ?: return true
+    val javaClassSymbol = javaFunctionSymbol.containingSymbol as? KaClassSymbol ?: return true
+    val kotlinCollectionType = allSupertypes.find { it.classId == kotlinCollectionFunction.callableId?.classId } ?: return true
 
     val isErasedSignature = javaFunctionSymbol.name.asString() in ERASED_COLLECTION_METHOD_NAMES ||
             ownFunction.valueParameters.any { it.returnType is KaTypeParameterType }
@@ -146,12 +144,7 @@ internal fun KaSession.processPossiblyMappedMethodV2(
         LightMemberOriginForDeclaration(originalElement, originKind)
     }
 
-    val javaClassSymbol = javaFunctionSymbol.containingSymbol as? KaClassSymbol
-    val substitutionMap = if (javaClassSymbol != null) {
-        buildSubstitutionMap(javaClassSymbol, collectionSupertype)
-    } else {
-        emptyMap()
-    }
+    val substitutionMap = buildSubstitutionMap(javaClassSymbol, kotlinCollectionType)
 
     val wrappedMethod = javaFunctionSymbol.wrapAsSymbolMethod(
         containingClass = containingClass,
@@ -318,9 +311,8 @@ private fun KaSession.createMethodsWithSpecialSignatureV2(
         }
     }
 
-    // For methods with a single concrete type parameter
-    // TODO fix
-    if (substitutionMap.isEmpty()) {
+    val typePointer = substitutionMap.values.singleOrNull() ?: return emptyList()
+    if (typePointer.restore() is KaTypeParameterType) {
         return emptyList()
     }
 

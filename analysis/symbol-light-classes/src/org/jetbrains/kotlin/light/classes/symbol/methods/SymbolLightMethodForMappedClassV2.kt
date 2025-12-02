@@ -203,7 +203,7 @@ internal class SymbolLightMethodForMappedClassV2 private constructor(
             substitutedType.asPsiType(
                 useSitePosition = this@SymbolLightMethodForMappedClassV2,
                 allowErrorTypes = true,
-                mode = KaTypeMappingMode.RETURN_TYPE,
+                mode = KaTypeMappingMode.FUNCTION_RETURN_TYPE,
                 isAnnotationMethod = false,
                 suppressWildcards = null,
             )
