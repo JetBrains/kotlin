@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.idea.references.KotlinReferenceProviderContributor
 import org.jetbrains.kotlin.psi.KotlinReferenceProvidersService
 import org.jetbrains.kotlin.utils.SmartList
 
-internal class HLApiReferenceProviderService(val project: Project) : KotlinReferenceProvidersService() {
+internal class KotlinReferenceProvidersServiceImpl(val project: Project) : KotlinReferenceProvidersService() {
     private val originalProvidersBinding: MultiMap<Class<out PsiElement>, KotlinPsiReferenceProvider>
     private val providersBindingCache: Map<Class<out PsiElement>, List<KotlinPsiReferenceProvider>>
 

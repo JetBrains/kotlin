@@ -52,7 +52,7 @@
 
     <projectService
         serviceInterface="org.jetbrains.kotlin.psi.KotlinReferenceProvidersService"
-        serviceImplementation="org.jetbrains.kotlin.analysis.api.impl.base.references.HLApiReferenceProviderService"
+        serviceImplementation="org.jetbrains.kotlin.analysis.api.impl.base.references.KotlinReferenceProvidersServiceImpl"
     />
 
     <projectService
