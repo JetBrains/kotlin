@@ -32,9 +32,9 @@ class FE1FullPipelineModularizedTest : AbstractModularizedJUnit5Test<FE1FullPipe
 @Isolated
 @Execution(ExecutionMode.SAME_THREAD)
 class FirResolveModularizedTotalKotlinTest : AbstractModularizedJUnit5Test<FirResolveModularizedTotalKotlinTestPure>(
-    @Test
     FirResolveModularizedTotalKotlinTestPure(modularizedTestConfigFromSystemProperties())
 ) {
+    @Test
     fun testTotalKotlin() = test.testTotalKotlinIfConfigured()
 }
 
