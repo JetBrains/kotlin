@@ -34,6 +34,6 @@ object KonanFakeOverrideClassFilter : FakeOverrideClassFilter {
         .any { it.isInterop() }
 
     override fun needToConstructFakeOverrides(clazz: IrClass): Boolean {
-        return !clazz.hasInteropSuperClass() && (clazz as? IrLazyClassBase)?.isK2 != false
+        return !clazz.hasInteropSuperClass()
     }
 }
