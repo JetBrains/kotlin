@@ -683,6 +683,12 @@ public class SymbolLightClassesEqualityByPsiForSourceTestGenerated extends Abstr
       }
 
       @Test
+      @TestMetadata("collectionAbstractClassOfInt.kt")
+      public void testCollectionAbstractClassOfInt() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/readOnly/collectionAbstractClassOfInt.kt");
+      }
+
+      @Test
       @TestMetadata("collectionAbstractClassOfString.kt")
       public void testCollectionAbstractClassOfString() {
         runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/collections/readOnly/collectionAbstractClassOfString.kt");
