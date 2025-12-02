@@ -13,12 +13,12 @@ import org.jetbrains.kotlin.sir.providers.SirTypeNamer
  * for Swift & Kotlin generated code representation
  */
 internal sealed class MixedAST {
-    class Direct(val expression: String) : MixedAST() {
+    class Ref(val expression: String) : MixedAST() {
         override fun toString(): String = expression
     }
 
-    class ExternalRcRef(val argument: MixedAST) : MixedAST() {
-        override fun toString(): String = "$argument.__externalRCRef()"
+    class RefWithTypeArguments(val ref: Ref, val typeArguments: Arguments) : MixedAST() {
+        override fun toString(): String = "$ref<$typeArguments>"
     }
 
     class BinaryOp(val left: MixedAST, val operator: Operator, val right: MixedAST) : MixedAST() {
@@ -59,8 +59,8 @@ internal sealed class MixedAST {
         }
     }
 
-    class Invoke(val callee: MixedAST, val argument: MixedAST? = null) : MixedAST() {
-        override fun toString(): String = if (argument == null) "$callee()" else "$callee($argument)"
+    class Invoke(val callee: MixedAST, val arguments: Arguments) : MixedAST() {
+        override fun toString(): String = "$callee($arguments)"
     }
 
     class InvokeLambda(val callee: MixedAST, val argument: Block) : MixedAST() {
@@ -81,6 +81,10 @@ internal sealed class MixedAST {
 
     class LambdaParameters(val parameters: List<MixedAST>, val isSwift: Boolean) : MixedAST() {
         override fun toString(): String = parameters.joinToString() + if (isSwift) " in" else " ->"
+    }
+
+    class Arguments(val arguments: List<MixedAST>) : MixedAST() {
+        override fun toString(): String = arguments.joinToString()
     }
 
     object Unit : MixedAST() {
@@ -107,6 +111,10 @@ internal sealed class MixedAST {
         override fun toString(): String = ".none"
     }
 
+    object NsObjectNullable : MixedAST() {
+        override fun toString(): String = "NSObject?"
+    }
+
     object KotlinAny : MixedAST() {
         override fun toString(): String = "kotlin.Any"
     }
@@ -131,11 +139,11 @@ internal sealed class MixedAST {
     }
 }
 
-internal fun String.ast() = MixedAST.Direct(this)
+internal fun String.ast(): MixedAST.Ref = MixedAST.Ref(this)
 
-internal fun MixedAST.parameterX(index: Int): MixedAST.Direct {
-    assert(this is MixedAST.Direct)
-    return MixedAST.Direct("${this}_$index")
+internal fun MixedAST.parameterX(index: Int): MixedAST {
+    assert(this is MixedAST.Ref)
+    return MixedAST.Ref("${this}_$index")
 }
 
 internal fun MixedAST.access(name: String) = MixedAST.BinaryOp(this, MixedAST.Operator.ACCESS, name.ast())
@@ -154,16 +162,19 @@ internal fun MixedAST.interpretObjCPointer(type: SirType, namer: SirTypeNamer) =
     interpretObjCPointer(type.kotlinTypeName(namer).toString())
 
 internal fun MixedAST.interpretObjCPointer(typeName: String) =
-    "interpretObjCPointer<$typeName>".ast().invoke(this)
+    MixedAST.RefWithTypeArguments(
+        "interpretObjCPointer".ast(),
+        MixedAST.Arguments(listOf(typeName.ast()))
+    ).invoke(this)
 
-internal fun MixedAST.invoke(vararg arguments: MixedAST): MixedAST.Invoke {
-    if (arguments.isEmpty()) return MixedAST.Invoke(this)
-    var argument: MixedAST = arguments.first()
-    for (i in 1 until arguments.size) {
-        argument = argument.op(MixedAST.Operator.COMMA, arguments[i])
-    }
-    return MixedAST.Invoke(this, argument)
-}
+internal fun MixedAST.convertBlockPtrToKotlinFunction(typeName: String) =
+    MixedAST.RefWithTypeArguments(
+        "convertBlockPtrToKotlinFunction".ast(),
+        MixedAST.Arguments(listOf(typeName.ast()))
+    ).invoke(this)
+
+internal fun MixedAST.invoke(vararg arguments: MixedAST): MixedAST.Invoke =
+    MixedAST.Invoke(this, MixedAST.Arguments(arguments.toList()))
 
 internal fun brackets(vararg arguments: MixedAST): MixedAST =
     "".ast().invoke(*arguments)
@@ -177,12 +188,23 @@ internal fun MixedAST.named(name: String): MixedAST = name.ast().op(MixedAST.Ope
 
 internal fun asBestFittingWrapper() = ".asBestFittingWrapper".ast().named("options")
 
-internal fun MixedAST.ret() = MixedAST.Return(this)
+internal fun ret(ast: MixedAST) = MixedAST.Return(ast)
+
+internal fun ret(s: String) = ret(s.ast())
 
 internal fun MixedAST.exclExcl() = MixedAST.ExclExcl(this)
 
-internal fun MixedAST.asExcl(namer: SirTypeNamer, type: SirType) =
-    op(MixedAST.Operator.AS_EXCL, type.swiftTypeName(namer))
+internal fun MixedAST.asKotlin(namer: SirTypeNamer, type: SirType) =
+    asKotlin(type.kotlinTypeName(namer))
+
+internal fun MixedAST.asKotlin(typeAST: MixedAST) =
+    op(MixedAST.Operator.AS, typeAST)
+
+internal fun MixedAST.asSwift(namer: SirTypeNamer, type: SirType) =
+    asSwift(type.swiftTypeName(namer))
+
+internal fun MixedAST.asSwift(typeAST: MixedAST) =
+    op(MixedAST.Operator.AS_EXCL, typeAST)
 
 internal fun MixedAST.addr() = MixedAST.Addr(this)
 
@@ -211,8 +233,8 @@ internal fun block(lambdaParameters: MixedAST.LambdaParameters? = null, f: Block
     return BlockBuilder(lambdaParameters).apply { f() }.block
 }
 
-internal fun MixedAST.switch(f: SwitchBuilder.() -> Unit): MixedAST.Switch {
-    return SwitchBuilder(this).apply { f() }.switch
+internal fun switch(ast: MixedAST, f: SwitchBuilder.() -> Unit): MixedAST.Switch {
+    return SwitchBuilder(ast).apply { f() }.switch
 }
 
 internal class BlockBuilder(val lambdaParameters: MixedAST.LambdaParameters?) {
