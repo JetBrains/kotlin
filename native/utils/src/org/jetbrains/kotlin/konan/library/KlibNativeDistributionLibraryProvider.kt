@@ -6,29 +6,55 @@
 package org.jetbrains.kotlin.konan.library
 
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.library.Klib
+import org.jetbrains.kotlin.library.loader.KlibLibraryProvider
 import java.io.File
 
 /**
  * A component that helps to load libraries from the Kotlin/Native distribution.
  */
-class KlibNativeDistributionLibraryProvider(private val nativeHome: File) {
-    private val libraries = ArrayList<File>()
+class KlibNativeDistributionLibraryProvider(
+    private val nativeHome: File,
+    init: KlibNativeDistributionLibraryProviderSpec.() -> Unit
+) : KlibLibraryProvider {
+    private var withStdlib = false
+    private var withPlatformLibsForTarget: KonanTarget? = null
 
-    fun withStdlib(): KlibNativeDistributionLibraryProvider {
-        libraries += nativeHome.resolve(KONAN_DISTRIBUTION_KLIB_DIR)
-            .resolve(KONAN_DISTRIBUTION_COMMON_LIBS_DIR)
-            .resolve(KONAN_STDLIB_NAME)
-        return this
+    init {
+        object : KlibNativeDistributionLibraryProviderSpec {
+            override fun withStdlib() {
+                withStdlib = true
+            }
+
+            override fun withPlatformLibs(target: KonanTarget) {
+                withPlatformLibsForTarget = target
+            }
+        }.init()
     }
 
-    fun withPlatformLibs(target: KonanTarget): KlibNativeDistributionLibraryProvider {
-        nativeHome.resolve(KONAN_DISTRIBUTION_KLIB_DIR)
-            .resolve(KONAN_DISTRIBUTION_PLATFORM_LIBS_DIR)
-            .resolve(target.visibleName)
-            .listFiles()
-            ?.forEach { if (it.isDirectory) libraries += it }
-        return this
+    override fun getLibraryPaths(): List<String> = buildList {
+        if (withStdlib) {
+            this += nativeHome.resolve(KONAN_DISTRIBUTION_KLIB_DIR)
+                .resolve(KONAN_DISTRIBUTION_COMMON_LIBS_DIR)
+                .resolve(KONAN_STDLIB_NAME)
+                .path
+        }
+
+        withPlatformLibsForTarget?.let { target ->
+            nativeHome.resolve(KONAN_DISTRIBUTION_KLIB_DIR)
+                .resolve(KONAN_DISTRIBUTION_PLATFORM_LIBS_DIR)
+                .resolve(target.visibleName)
+                .listFiles()
+                ?.mapNotNullTo(this) { if (it.isDirectory) it.path else null }
+        }
     }
 
-    fun getPaths(): List<String> = libraries.map { it.path }
+    override fun postProcessLoadedLibrary(klib: Klib) {
+        klib.isFromKotlinNativeDistribution = true
+    }
+}
+
+interface KlibNativeDistributionLibraryProviderSpec {
+    fun withStdlib()
+    fun withPlatformLibs(target: KonanTarget)
 }
