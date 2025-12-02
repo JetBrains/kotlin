@@ -414,4 +414,4 @@ fun ProjectTestsExtension.nativeTestTask(
     environment("LIBCLANG_DISABLE_CRASH_RECOVERY" to "1")
 
     body()
-} as TaskProvider<Test>
+}

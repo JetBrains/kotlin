@@ -1,4 +1,5 @@
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import javax.inject.Inject
 
@@ -9,4 +10,5 @@ import javax.inject.Inject
 
 abstract class TestInputsCheckExtension @Inject constructor(objects: ObjectFactory){
     val isNative: Property<Boolean> = objects.property(Boolean::class.java).convention(false)
+    val extraPermissions: ListProperty<String> = objects.listProperty(String::class.java)
 }

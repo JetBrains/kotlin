@@ -216,7 +216,7 @@ abstract class ProjectTestsExtension(val project: Project) {
             defineJDKEnvVariables,
             skipInLocalBuild = false,
             body
-        ) as TaskProvider<Test>
+        )
     }
 
     fun testTask(
@@ -230,9 +230,9 @@ abstract class ProjectTestsExtension(val project: Project) {
         defineJDKEnvVariables: List<JdkMajorVersion> = emptyList(),
         skipInLocalBuild: Boolean,
         body: Test.() -> Unit = {},
-    ): TaskProvider<out Task> {
+    ): TaskProvider<Test> {
         if (skipInLocalBuild && !project.kotlinBuildProperties.isTeamcityBuild) {
-            return project.tasks.register(taskName)
+            return project.tasks.register<Test>(taskName)
         }
         if (jUnitMode == JUnitMode.JUnit5 && parallel != null) {
             throw GradleException("JUnit5 tests are parallel by default and its configured with `junit-platform.properties`, please remove `parallel=$parallel` argument")
