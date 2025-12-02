@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.test.klib.CustomKlibCompilerTestDirectives.IGNORE_KL
 import org.jetbrains.kotlin.test.klib.CustomKlibCompilerTestDirectives.IGNORE_KLIB_RUNTIME_ERRORS_WITH_CUSTOM_SECOND_STAGE
 import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
 import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.moduleStructure
 import org.junit.jupiter.api.Assumptions
 
 /**
@@ -34,13 +33,9 @@ class CustomKlibCompilerSecondStageTestSuppressor(
     override fun suppressIfNeeded(failedAssertions: List<WrappedException>): List<WrappedException> {
         if (failedAssertions.isEmpty()) {
             return buildList {
-                with(testServices.moduleStructure.modules.first().directives) {
-                    with(defaultLanguageVersion) {
-                        addAll(createUnmutingErrorIfNeeded(IGNORE_KLIB_FRONTEND_ERRORS_WITH_CUSTOM_SECOND_STAGE))
-                        addAll(createUnmutingErrorIfNeeded(IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_SECOND_STAGE))
-                        addAll(createUnmutingErrorIfNeeded(IGNORE_KLIB_RUNTIME_ERRORS_WITH_CUSTOM_SECOND_STAGE))
-                    }
-                }
+                addAll(testServices.createUnmutingErrorIfNeeded(IGNORE_KLIB_FRONTEND_ERRORS_WITH_CUSTOM_SECOND_STAGE, defaultLanguageVersion))
+                addAll(testServices.createUnmutingErrorIfNeeded(IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_SECOND_STAGE, defaultLanguageVersion))
+                addAll(testServices.createUnmutingErrorIfNeeded(IGNORE_KLIB_RUNTIME_ERRORS_WITH_CUSTOM_SECOND_STAGE, defaultLanguageVersion))
             }.map { it.wrap() }
         }
 
@@ -79,8 +74,7 @@ class CustomKlibCompilerSecondStageTestSuppressor(
     }
 
     private fun processException(wrappedException: WrappedException, ignoreDirective: StringDirective): List<WrappedException> {
-        val directives = testServices.moduleStructure.modules.first().directives
-        if (directives[ignoreDirective].any { it.startsWith(defaultLanguageVersion.versionString) })
+        if (testServices.versionAndTargetAreIgnored(ignoreDirective, defaultLanguageVersion))
             return emptyList()
 
         return listOf(wrappedException)
