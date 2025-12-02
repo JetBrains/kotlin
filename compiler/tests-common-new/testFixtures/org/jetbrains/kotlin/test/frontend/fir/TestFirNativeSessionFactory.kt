@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.session.FirNativeSessionFactory
+import org.jetbrains.kotlin.konan.library.isFromKotlinNativeDistribution
+import org.jetbrains.kotlin.library.Klib
 import org.jetbrains.kotlin.test.services.configuration.NativeEnvironmentConfigurator
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.test.model.TestModule
@@ -28,7 +30,8 @@ object TestFirNativeSessionFactory {
     ): FirSession {
         val libraries = loadNativeKlibsInTestPipeline(
             configuration = configuration,
-            libraryPaths = getAllNativeDependenciesPaths(module, testServices),
+            libraryPaths = getTransitivesAndFriendsPaths(module, testServices),
+            runtimeLibraryProviders = testServices.nativeEnvironmentConfigurator.getRuntimeLibraryProviders(module),
             nativeTarget = testServices.nativeEnvironmentConfigurator.getNativeTarget(module),
         ).all
 
@@ -48,5 +51,15 @@ object TestFirNativeSessionFactory {
     }
 }
 
+/**
+ * WARNING: Please consider using [NativeEnvironmentConfigurator.getRuntimeLibraryProviders] for loading the runtime dependencies
+ * and [getTransitivesAndFriendsPaths] for loading transitive and friend dependencies.
+ *
+ * Unlike [NativeEnvironmentConfigurator.getRuntimeLibraryProviders], which returns the list of library providers,
+ * that are capable of locating and properly loading libraries, this function returns just the list of raw library paths.
+ *
+ * That could be not enough in certain cases. For example, in the case of loading the libraries from the Kotlin/Native distribution,
+ * which all need to be marked with [Klib.isFromKotlinNativeDistribution] flag that is checked by the Kotlin/Native backend later.
+ */
 fun getAllNativeDependenciesPaths(module: TestModule, testServices: TestServices) =
     NativeEnvironmentConfigurator.getRuntimePathsForModule(module, testServices) + getTransitivesAndFriendsPaths(module, testServices)

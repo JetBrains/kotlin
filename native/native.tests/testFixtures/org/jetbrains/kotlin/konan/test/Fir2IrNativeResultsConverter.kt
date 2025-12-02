@@ -9,8 +9,8 @@ import org.jetbrains.kotlin.backend.common.IrSpecialAnnotationsProvider
 import org.jetbrains.kotlin.backend.common.actualizer.IrExtraActualDeclarationExtractor
 import org.jetbrains.kotlin.backend.common.serialization.metadata.DynamicTypeDeserializer
 import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerIr
+import org.jetbrains.kotlin.backend.konan.serialization.loadNativeKlibsInTestPipeline
 import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
-import org.jetbrains.kotlin.cli.common.messages.getLogger
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.descriptors.isEmpty
@@ -27,14 +27,10 @@ import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
 import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.ir.util.getPackageFragment
-import org.jetbrains.kotlin.konan.library.KonanLibraryProperResolver
 import org.jetbrains.kotlin.konan.library.isFromKotlinNativeDistribution
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.metadata.KlibMetadataFactories
 import org.jetbrains.kotlin.library.metadata.kotlinLibrary
-import org.jetbrains.kotlin.library.metadata.resolver.KotlinResolvedLibrary
-import org.jetbrains.kotlin.library.metadata.resolver.TopologicalLibraryOrder
-import org.jetbrains.kotlin.library.metadata.resolver.impl.libraryResolver
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.NativeForwardDeclarationKind
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
@@ -42,9 +38,7 @@ import org.jetbrains.kotlin.test.frontend.fir.AbstractFir2IrResultsConverter
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
 import org.jetbrains.kotlin.test.frontend.fir.getTransitivesAndFriendsPaths
 import org.jetbrains.kotlin.test.model.TestModule
-import org.jetbrains.kotlin.test.services.CompilationStage
 import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
 import org.jetbrains.kotlin.test.services.configuration.nativeEnvironmentConfigurator
 
 class Fir2IrNativeResultsConverter(testServices: TestServices) : AbstractFir2IrResultsConverter(testServices) {
@@ -58,7 +52,14 @@ class Fir2IrNativeResultsConverter(testServices: TestServices) : AbstractFir2IrR
         { emptyList() }
 
     override fun resolveLibraries(module: TestModule, compilerConfiguration: CompilerConfiguration): List<KotlinLibrary> {
-        return resolveKotlinLibrariesWithProperDefaults(module, testServices)
+        val nativeEnvironmentConfigurator = testServices.nativeEnvironmentConfigurator
+
+        return loadNativeKlibsInTestPipeline(
+            configuration = compilerConfiguration,
+            runtimeLibraryProviders = nativeEnvironmentConfigurator.getRuntimeLibraryProviders(module),
+            libraryPaths = getTransitivesAndFriendsPaths(module, testServices),
+            nativeTarget = nativeEnvironmentConfigurator.getNativeTarget(module)
+        ).all
     }
 
     override val klibFactories: KlibMetadataFactories = KlibMetadataFactories(::KonanBuiltIns, DynamicTypeDeserializer)
@@ -105,47 +106,6 @@ class Fir2IrNativeResultsConverter(testServices: TestServices) : AbstractFir2IrR
     }
 
     companion object {
-        /**
-         * Note: This function distinguishes "default" from "non-default" libraries:
-         * - "default" libraries is anything implicitly added by the Kotlin/Native compiler. For example, stdlib & platform libraries.
-         * - "non-default" libraries are the libraries that are explicitly passed to the compiler via compiler CLI arguments.
-         *   In tests, these are the libraries that were explicitly specified by `// MODULE` test directives in test data.
-         *
-         * This distinction is necessary to treat "default" and "non-default" libraries in a different way to compute the
-         * list of dependencies to be written in manifest's `depends=` property:
-         * - Any "default" library is written to manifest only if it was actually used during the compilation.
-         * - Any "non-default" library is written always unconditionally.
-         */
-        private fun resolveKotlinLibrariesWithProperDefaults(module: TestModule, testServices: TestServices): List<KotlinLibrary> {
-            val directDependencies = getTransitivesAndFriendsPaths(module, testServices)
-
-            val nativeEnvironmentConfigurator = testServices.nativeEnvironmentConfigurator
-
-            val nativeTarget = nativeEnvironmentConfigurator.getNativeTarget(module)
-            val nativeDistributionKlibPath = nativeEnvironmentConfigurator.distributionKlibPath().absolutePath
-            val logger = testServices.compilerConfigurationProvider.getCompilerConfiguration(module, CompilationStage.FIRST)
-                .getLogger(treatWarningsAsErrors = true)
-
-            val libraryResolver = KonanLibraryProperResolver(
-                directLibs = directDependencies, // Load all direct dependencies as non-default libraries.
-                target = nativeTarget,
-                distributionKlib = nativeDistributionKlibPath,
-                skipCurrentDir = true,
-                logger = logger
-            ).libraryResolver()
-
-            val resolveResult = libraryResolver.resolveWithDependencies(
-                unresolvedLibraries = emptyList(),
-                noStdLib = false, // Load stdlib as a default library.
-                noDefaultLibs = false, // Load platform libraries for the `nativeTarget` as default libraries.
-                noEndorsedLibs = true
-            )
-
-            val topologicallyOrderedLibraries = resolveResult.getFullResolvedList(TopologicalLibraryOrder)
-
-            return topologicallyOrderedLibraries.map(KotlinResolvedLibrary::library)
-        }
-
         /**
          * Collects [FqName]s of all used packages from [Fir2IrComponents].
          *
