@@ -15,9 +15,9 @@ public fun flattened_testSuspendFunction(continuation: kotlin.native.internal.Na
         }
     }
     val __exception = run {
-        val kotlinFun = convertBlockPtrToKotlinFunction<()->Unit>(exception);
-        {
-            val _result = kotlinFun()
+        val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->Unit>(exception);
+        { arg0: kotlin.Any? ->
+            val _result = kotlinFun(if (arg0 == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(arg0))
             _result
         }
     }
@@ -26,10 +26,12 @@ public fun flattened_testSuspendFunction(continuation: kotlin.native.internal.Na
         try {
             val _result = flattened.testSuspendFunction()
             __continuation(_result)
-        } catch (error: Throwable) {
+        } catch (error: CancellationException) {
             __cancellation.cancel()
-            __exception()
+            __exception(null)
             throw error
+        } catch (error: Throwable) {
+            __exception(error)
         }
     }.alsoCancel(__cancellation)
 }

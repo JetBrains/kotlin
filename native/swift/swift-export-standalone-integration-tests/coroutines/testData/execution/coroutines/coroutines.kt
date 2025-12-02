@@ -47,3 +47,18 @@ suspend fun cancelSilentlyAfter(delay: Long, callback: () -> Int): Int {
     currentCoroutineContext().cancel()
     return callback()
 }
+
+suspend fun cancelImmediately(): Int {
+    val reason = CancellationException("Cancelled")
+    currentCoroutineContext().cancel(reason)
+    throw reason
+}
+
+suspend fun throwAfter(delay: Long, message: String): Int {
+    delay(delay)
+    error(message)
+}
+
+suspend fun throwImmediately(message: String): Int {
+    error(message)
+}

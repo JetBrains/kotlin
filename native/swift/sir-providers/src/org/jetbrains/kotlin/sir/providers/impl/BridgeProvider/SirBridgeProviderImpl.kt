@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.providers.*
 import org.jetbrains.kotlin.sir.providers.source.kaSymbolOrNull
 import org.jetbrains.kotlin.sir.providers.utils.KotlinCoroutineSupportModule
+import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeModule
 import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeSupportModule
 import org.jetbrains.kotlin.sir.util.isNever
 import org.jetbrains.kotlin.sir.util.isVoid
@@ -71,10 +72,22 @@ public class SirBridgeProviderImpl(private val session: SirSession, private val 
             kotlinFqName = kotlinFqName,
             selfParameter = selfParameter?.let { bridgeParameter(it, 0) },
             extensionReceiverParameter = extensionReceiverParameter?.let { bridgeParameter(it, 0) },
-            errorParameter = errorParameter?.takeIf { !isAsync }?.let {
+            errorParameter = run {
+                isAsync.ifTrue {
+                    Bridge.AsOptionalWrapper(
+                        Bridge.AsObject(
+                            swiftType = KotlinRuntimeModule.kotlinBase.nominalType(),
+                            kotlinType = KotlinType.KotlinObject,
+                            cType = CType.Object
+                        )
+                    )
+                } ?: errorParameter?.let {
+                    Bridge.AsOutError
+                }
+            }?.let {
                 BridgedParameter.InOut(
-                    name = it.name!!.let(::createBridgeParameterName),
-                    bridge = Bridge.AsOutError
+                    name = (errorParameter?.name ?: "error").let(::createBridgeParameterName),
+                    bridge = it
                 )
             },
             isAsync = isAsync,
@@ -137,7 +150,7 @@ private class BridgeFunctionDescriptor(
     val cBridgeName = kotlinBridgeName
 
     val allParameters
-        get() = listOfNotNull(selfParameter) + parameters + listOfNotNull(errorParameter) +
+        get() = listOfNotNull(selfParameter) + parameters + listOfNotNull(errorParameter.takeIf { !isAsync }) +
                 (asyncParameters?.toList() ?: emptyList())
 
     val asyncParameters: Triple<BridgedParameter.In, BridgedParameter.In, BridgedParameter.In>? by lazy {
@@ -149,7 +162,7 @@ private class BridgeFunctionDescriptor(
                 ),
                 BridgedParameter.In(
                     name = "exception",
-                    bridge = Bridge.AsBlock(parameters = emptyList(), returnType = Bridge.AsOutVoid)
+                    bridge = Bridge.AsBlock(parameters = listOfNotNull(errorParameter?.bridge), returnType = Bridge.AsOutVoid)
                 ),
                 BridgedParameter.In(
                     name = "cancellation",
@@ -302,16 +315,19 @@ private fun BridgeFunctionDescriptor.createKotlinBridge(
 
     if (isAsync) {
         val (continuation, exception, cancellation) = asyncParameters ?: error("Async function must have a continuation & cancellation")
+        val errorParameter = errorParameter ?: error("Async function must have an error parameter")
         add(
             """
             CoroutineScope(__${cancellation.name.kotlinIdentifier} + Dispatchers.Default).launch(start = CoroutineStart.UNDISPATCHED) {
                 try {
                     val $resultName = $callSite
                     __${continuation.name}(${resultName})
-                } catch (error: Throwable) {
+                } catch (error: CancellationException) {
                     __${cancellation.name.kotlinIdentifier}.cancel()
-                    __${exception.name}()
+                    __${exception.name}(null)
                     throw error
+                } catch (error: Throwable) {
+                    __${exception.name}(error)
                 }
             }.alsoCancel(__${cancellation.name.kotlinIdentifier})
             """.trimIndent().prependIndent(indent)
@@ -362,6 +378,7 @@ private fun BridgeFunctionDescriptor.swiftLinesForCBridgeCallAndTransformation(t
 
 private fun BridgeFunctionDescriptor.swiftAsyncCall(typeNamer: SirTypeNamer): String {
     val (continuation, exception, cancellation) = asyncParameters ?: error("Async function must have a continuation & cancellation")
+    val errorParameter = errorParameter ?: error("Async function must have an error parameter")
     val indent = "                        "
 
     return """
@@ -372,7 +389,9 @@ private fun BridgeFunctionDescriptor.swiftAsyncCall(typeNamer: SirTypeNamer): St
                 try await withUnsafeThrowingContinuation { nativeContinuation in
                     withUnsafeCurrentTask { currentTask in
                         let ${continuation.name.swiftIdentifier}: ${continuation.bridge.swiftType.swiftName} = { nativeContinuation.resume(returning: $0) }
-                        let ${exception.name.swiftIdentifier}: ${exception.bridge.swiftType.swiftName} = { nativeContinuation.resume(throwing: CancellationError()) }
+                        let ${exception.name.swiftIdentifier}: ${exception.bridge.swiftType.swiftName} = { error in
+                            nativeContinuation.resume(throwing: error.map { KotlinError(wrapped: $0) } ?? CancellationError())
+                        }
                         ${cancellation.name.swiftIdentifier} = ${cancellation.bridge.swiftType.swiftName}(currentTask!)
                         
                         let _: () = ${swiftInvocationLineForCBridge(typeNamer).prependIndentToTrailingLines(indent)}

@@ -1,11 +1,16 @@
 @_implementationOnly import KotlinRuntimeSupportBridge
 import KotlinRuntime
 
-public struct KotlinError: Error {
+public struct KotlinError: Error & CustomStringConvertible {
     public var wrapped: KotlinRuntime.KotlinBase
 
     public init(wrapped: KotlinRuntime.KotlinBase) {
         self.wrapped = wrapped
+    }
+
+    public var description: String {
+        return __root____getExceptionMessage__TypesOfArguments__ExportedKotlinPackages_kotlin_Exception__(self.wrapped.__externalRCRef())
+            ?? "KotlinException(\(self.wrapped.description))"
     }
 }
 

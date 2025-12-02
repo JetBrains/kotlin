@@ -28,6 +28,18 @@ func testNoCancellation() async {
 }
 
 @Test
+func testImmediateCancellation() async {
+    let task = Task<Int32, any Error>.detached {
+        return try await cancelImmediately()
+    }
+
+    let result = await task.result
+
+    #expect(task.isCancelled)
+    #expect(result == .failure(CancellationError()), "function should fail with cancellation error")
+}
+
+@Test
 func testPrecedingCancellation() async {
     let task = Task<Int32, any Error>.detached {
         try await Task.sleep(nanoseconds: 1_000_000)
@@ -90,6 +102,36 @@ func testSilentOutwardCancellation() async {
 
     #expect(task.isCancelled)
     #expect(result == .success(42), "function should complete successfully with result of 42")
+}
+
+@Test
+func testThrowing() async {
+    let task = Task<Int32, any Error>.detached {
+        return try await throwAfter(delay: 1000, message: "Foo")
+    }
+
+    let result = await task.result
+
+    if case let .failure(e) = result {
+        #expect(String(describing: e).contains("Foo"), "function should fail with specific exception")
+    } else {
+        Issue.record("function should fail with non-cancellation error")
+    }
+}
+
+@Test
+func testImmediateThrowing() async {
+    let task = Task<Int32, any Error>.detached {
+        return try await throwImmediately(message: "Foo")
+    }
+
+    let result = await task.result
+
+    if case let .failure(e) = result {
+        #expect(String(describing: e).contains("Foo"), "function should fail with specific exception")
+    } else {
+        Issue.record("function should fail with non-cancellation error")
+    }
 }
 
 func ==<T>(_ lhs: Result<T, any Error>, _ rhs: Result<T, any Error>) -> Bool where T: Equatable {

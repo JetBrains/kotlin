@@ -16,7 +16,9 @@ extension ExportedKotlinPackages.flattened {
                 try await withUnsafeThrowingContinuation { nativeContinuation in
                     withUnsafeCurrentTask { currentTask in
                         let continuation: (Swift.Int32) -> Swift.Void = { nativeContinuation.resume(returning: $0) }
-                        let exception: () -> Swift.Void = { nativeContinuation.resume(throwing: CancellationError()) }
+                        let exception: (Swift.Optional<KotlinRuntime.KotlinBase>) -> Swift.Void = { error in
+                            nativeContinuation.resume(throwing: error.map { KotlinError(wrapped: $0) } ?? CancellationError())
+                        }
                         cancellation = KotlinCoroutineSupport.KotlinTask(currentTask!)
 
                         let _: () = flattened_testSuspendFunction({
@@ -24,7 +26,7 @@ extension ExportedKotlinPackages.flattened {
                             return { arg0 in return { originalBlock(arg0); return 0 }() }
                         }(), {
                             let originalBlock = exception
-                            return { return { originalBlock(); return 0 }() }
+                            return { arg0 in return { originalBlock({ switch arg0 { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res); } }()); return 0 }() }
                         }(), cancellation.__externalRCRef())
                     }
                 }
