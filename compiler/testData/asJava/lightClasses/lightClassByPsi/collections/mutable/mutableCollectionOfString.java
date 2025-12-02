@@ -1,6 +1,6 @@
 public abstract class SMutableCollection /* test.SMutableCollection*/ implements java.util.Collection<@org.jetbrains.annotations.NotNull() java.lang.String>, kotlin.jvm.internal.markers.KMutableCollection {
   @java.lang.Override()
-  public <T> T[] toArray(T[]);// <T>  toArray(T[])
+  public <T extends java.lang.Object> T[] toArray(T[]);// <T extends java.lang.Object>  toArray(T[])
 
   @java.lang.Override()
   public abstract boolean contains(@org.jetbrains.annotations.NotNull() java.lang.String);//  contains(@org.jetbrains.annotations.NotNull() java.lang.String)
@@ -40,10 +40,10 @@ public abstract class SMutableCollection2 /* test.SMutableCollection2*/ implemen
   public @org.jetbrains.annotations.NotNull() java.util.Iterator<@org.jetbrains.annotations.NotNull() java.lang.String> iterator();//  iterator()
 
   @java.lang.Override()
-  public <T> T[] toArray(T[]);// <T>  toArray(T[])
+  public <T extends java.lang.Object> T[] toArray(T[]);// <T extends java.lang.Object>  toArray(T[])
 
   @java.lang.Override()
-  public boolean addAll(java.util.Collection<? extends @org.jetbrains.annotations.NotNull() java.lang.String>);//  addAll(java.util.Collection<? extends @org.jetbrains.annotations.NotNull() java.lang.String>)
+  public boolean addAll(java.util.Collection<java.lang.String>);//  addAll(java.util.Collection<java.lang.String>)
 
   @java.lang.Override()
   public boolean contains(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  contains(@org.jetbrains.annotations.NotNull() java.lang.String)
@@ -87,13 +87,13 @@ public class SMutableCollection3 /* test.SMutableCollection3*/ implements java.u
   public @org.jetbrains.annotations.NotNull() java.util.Iterator<@org.jetbrains.annotations.NotNull() java.lang.String> iterator();//  iterator()
 
   @java.lang.Override()
-  public <T> T[] toArray(T[]);// <T>  toArray(T[])
+  public <T extends java.lang.Object> T[] toArray(T[]);// <T extends java.lang.Object>  toArray(T[])
 
   @java.lang.Override()
   public boolean add(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  add(@org.jetbrains.annotations.NotNull() java.lang.String)
 
   @java.lang.Override()
-  public boolean addAll(java.util.Collection<? extends @org.jetbrains.annotations.NotNull() java.lang.String>);//  addAll(java.util.Collection<? extends @org.jetbrains.annotations.NotNull() java.lang.String>)
+  public boolean addAll(java.util.Collection<java.lang.String>);//  addAll(java.util.Collection<java.lang.String>)
 
   @java.lang.Override()
   public boolean contains(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  contains(@org.jetbrains.annotations.NotNull() java.lang.String)

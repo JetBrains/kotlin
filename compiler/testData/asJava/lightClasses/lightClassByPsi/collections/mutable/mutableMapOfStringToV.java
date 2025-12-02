@@ -15,10 +15,10 @@ public abstract class SMutableMap /* test.SMutableMap*/<VElem>  implements java.
   public abstract java.util.Collection<VElem> getValues();//  getValues()
 
   @java.lang.Override()
-  public abstract java.util.Set<@org.jetbrains.annotations.NotNull() java.lang.String> getKeys();//  getKeys()
+  public abstract java.util.Set<java.lang.String> getKeys();//  getKeys()
 
   @java.lang.Override()
-  public abstract java.util.Set<java.util.Map.Entry<@org.jetbrains.annotations.NotNull() java.lang.String, VElem>> getEntries();//  getEntries()
+  public abstract java.util.Set<java.util.Map.Entry<java.lang.String, VElem>> getEntries();//  getEntries()
 
   @java.lang.Override()
   public final VElem get(java.lang.Object);//  get(java.lang.Object)
@@ -36,10 +36,10 @@ public abstract class SMutableMap /* test.SMutableMap*/<VElem>  implements java.
   public final java.util.Collection<VElem> values();//  values()
 
   @java.lang.Override()
-  public final java.util.Set<@org.jetbrains.annotations.NotNull() java.lang.String> keySet();//  keySet()
+  public final java.util.Set<java.lang.String> keySet();//  keySet()
 
   @java.lang.Override()
-  public final java.util.Set<java.util.Map.Entry<@org.jetbrains.annotations.NotNull() java.lang.String, VElem>> entrySet();//  entrySet()
+  public final java.util.Set<java.util.Map.Entry<java.lang.String, VElem>> entrySet();//  entrySet()
 
   public  SMutableMap();//  .ctor()
 }
@@ -96,10 +96,10 @@ public abstract class SMutableMap2 /* test.SMutableMap2*/<VElem>  implements jav
   public final java.util.Collection<VElem> values();//  values()
 
   @java.lang.Override()
-  public final java.util.Set<@org.jetbrains.annotations.NotNull() java.lang.String> keySet();//  keySet()
+  public final java.util.Set<java.lang.String> keySet();//  keySet()
 
   @java.lang.Override()
-  public final java.util.Set<java.util.Map.Entry<@org.jetbrains.annotations.NotNull() java.lang.String, VElem>> entrySet();//  entrySet()
+  public final java.util.Set<java.util.Map.Entry<java.lang.String, VElem>> entrySet();//  entrySet()
 
   @java.lang.Override()
   public int getSize();//  getSize()
@@ -108,7 +108,7 @@ public abstract class SMutableMap2 /* test.SMutableMap2*/<VElem>  implements jav
   public void clear();//  clear()
 
   @java.lang.Override()
-  public void putAll(java.util.Map<? extends @org.jetbrains.annotations.NotNull() java.lang.String, ? extends VElem>);//  putAll(java.util.Map<? extends @org.jetbrains.annotations.NotNull() java.lang.String, ? extends VElem>)
+  public void putAll(java.util.Map<? extends java.lang.String, ? extends VElem>);//  putAll(java.util.Map<? extends java.lang.String, ? extends VElem>)
 
   public  SMutableMap2();//  .ctor()
 }
@@ -163,10 +163,10 @@ public class SMutableMap3 /* test.SMutableMap3*/<VElem>  implements java.util.Ma
   public final java.util.Collection<VElem> values();//  values()
 
   @java.lang.Override()
-  public final java.util.Set<@org.jetbrains.annotations.NotNull() java.lang.String> keySet();//  keySet()
+  public final java.util.Set<java.lang.String> keySet();//  keySet()
 
   @java.lang.Override()
-  public final java.util.Set<java.util.Map.Entry<@org.jetbrains.annotations.NotNull() java.lang.String, VElem>> entrySet();//  entrySet()
+  public final java.util.Set<java.util.Map.Entry<java.lang.String, VElem>> entrySet();//  entrySet()
 
   @java.lang.Override()
   public int getSize();//  getSize()
@@ -175,7 +175,7 @@ public class SMutableMap3 /* test.SMutableMap3*/<VElem>  implements java.util.Ma
   public void clear();//  clear()
 
   @java.lang.Override()
-  public void putAll(java.util.Map<? extends @org.jetbrains.annotations.NotNull() java.lang.String, ? extends VElem>);//  putAll(java.util.Map<? extends @org.jetbrains.annotations.NotNull() java.lang.String, ? extends VElem>)
+  public void putAll(java.util.Map<? extends java.lang.String, ? extends VElem>);//  putAll(java.util.Map<? extends java.lang.String, ? extends VElem>)
 
   public  SMutableMap3();//  .ctor()
 }

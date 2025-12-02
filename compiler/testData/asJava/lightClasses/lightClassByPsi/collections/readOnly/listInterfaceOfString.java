@@ -1,18 +1,9 @@
 public abstract class CList /* test.CList*/ implements test.IList {
   @java.lang.Override()
-  public <T> T[] toArray(T[]);// <T>  toArray(T[])
+  public <T extends java.lang.Object> T[] toArray(T[]);// <T extends java.lang.Object>  toArray(T[])
 
   @java.lang.Override()
-  public @org.jetbrains.annotations.NotNull() java.lang.String remove(int);//  remove(int)
-
-  @java.lang.Override()
-  public @org.jetbrains.annotations.NotNull() java.lang.String set(int, @org.jetbrains.annotations.NotNull() java.lang.String);//  set(int, @org.jetbrains.annotations.NotNull() java.lang.String)
-
-  @java.lang.Override()
-  public abstract @org.jetbrains.annotations.NotNull() java.lang.String get(int);//  get(int)
-
-  @java.lang.Override()
-  public abstract boolean contains(@org.jetbrains.annotations.NotNull() java.lang.String);//  contains(@org.jetbrains.annotations.NotNull() java.lang.String)
+  public abstract boolean contains(java.lang.String);//  contains(java.lang.String)
 
   @java.lang.Override()
   public abstract int getSize();//  getSize()
@@ -24,28 +15,28 @@ public abstract class CList /* test.CList*/ implements test.IList {
   public abstract int lastIndexOf(@org.jetbrains.annotations.NotNull() java.lang.String);//  lastIndexOf(@org.jetbrains.annotations.NotNull() java.lang.String)
 
   @java.lang.Override()
-  public boolean add(@org.jetbrains.annotations.NotNull() java.lang.String);//  add(@org.jetbrains.annotations.NotNull() java.lang.String)
+  public abstract java.lang.String get(int);//  get(int)
 
   @java.lang.Override()
-  public boolean addAll(int, java.util.Collection<? extends @org.jetbrains.annotations.NotNull() java.lang.String>);//  addAll(int, java.util.Collection<? extends @org.jetbrains.annotations.NotNull() java.lang.String>)
+  public boolean add(java.lang.String);//  add(java.lang.String)
 
   @java.lang.Override()
-  public boolean addAll(java.util.Collection<? extends @org.jetbrains.annotations.NotNull() java.lang.String>);//  addAll(java.util.Collection<? extends @org.jetbrains.annotations.NotNull() java.lang.String>)
+  public boolean addAll(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.Collection<java.lang.String>);//  addAll(@org.jetbrains.annotations.NotNull() java.util.Collection<java.lang.String>)
 
   @java.lang.Override()
-  public boolean remove(java.lang.Object);//  remove(java.lang.Object)
+  public boolean addAll(int, java.util.Collection<java.lang.String>);//  addAll(int, java.util.Collection<java.lang.String>)
 
   @java.lang.Override()
-  public boolean removeAll(java.util.Collection<?>);//  removeAll(java.util.Collection<?>)
+  public boolean remove(java.lang.String);//  remove(java.lang.String)
 
   @java.lang.Override()
-  public boolean retainAll(java.util.Collection<?>);//  retainAll(java.util.Collection<?>)
+  public boolean removeAll(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.Collection<java.lang.String>);//  removeAll(@org.jetbrains.annotations.NotNull() java.util.Collection<java.lang.String>)
 
   @java.lang.Override()
-  public final @org.jetbrains.annotations.NotNull() java.lang.String get(int);//  get(int)
+  public boolean retainAll(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.Collection<java.lang.String>);//  retainAll(@org.jetbrains.annotations.NotNull() java.util.Collection<java.lang.String>)
 
   @java.lang.Override()
-  public final boolean contains(java.lang.Object);//  contains(java.lang.Object)
+  public final boolean contains(java.lang.String);//  contains(java.lang.String)
 
   @java.lang.Override()
   public final int indexOf(java.lang.Object);//  indexOf(java.lang.Object)
@@ -57,10 +48,19 @@ public abstract class CList /* test.CList*/ implements test.IList {
   public final int size();//  size()
 
   @java.lang.Override()
+  public final java.lang.String get(int);//  get(int)
+
+  @java.lang.Override()
   public java.lang.Object[] toArray();//  toArray()
 
   @java.lang.Override()
-  public void add(int, @org.jetbrains.annotations.NotNull() java.lang.String);//  add(int, @org.jetbrains.annotations.NotNull() java.lang.String)
+  public java.lang.String remove(int);//  remove(int)
+
+  @java.lang.Override()
+  public java.lang.String set(int, java.lang.String);//  set(int, java.lang.String)
+
+  @java.lang.Override()
+  public void add(int, java.lang.String);//  add(int, java.lang.String)
 
   @java.lang.Override()
   public void clear();//  clear()
@@ -90,22 +90,16 @@ public abstract class CList2 /* test.CList2*/ implements test.IList {
   public @org.jetbrains.annotations.NotNull() java.util.ListIterator<@org.jetbrains.annotations.NotNull() java.lang.String> listIterator(int);//  listIterator(int)
 
   @java.lang.Override()
-  public <T> T[] toArray(T[]);// <T>  toArray(T[])
+  public <T extends java.lang.Object> T[] toArray(T[]);// <T extends java.lang.Object>  toArray(T[])
 
   @java.lang.Override()
-  public @org.jetbrains.annotations.NotNull() java.lang.String remove(int);//  remove(int)
+  public boolean add(java.lang.String);//  add(java.lang.String)
 
   @java.lang.Override()
-  public @org.jetbrains.annotations.NotNull() java.lang.String set(int, @org.jetbrains.annotations.NotNull() java.lang.String);//  set(int, @org.jetbrains.annotations.NotNull() java.lang.String)
+  public boolean addAll(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.Collection<java.lang.String>);//  addAll(@org.jetbrains.annotations.NotNull() java.util.Collection<java.lang.String>)
 
   @java.lang.Override()
-  public boolean add(@org.jetbrains.annotations.NotNull() java.lang.String);//  add(@org.jetbrains.annotations.NotNull() java.lang.String)
-
-  @java.lang.Override()
-  public boolean addAll(int, java.util.Collection<? extends @org.jetbrains.annotations.NotNull() java.lang.String>);//  addAll(int, java.util.Collection<? extends @org.jetbrains.annotations.NotNull() java.lang.String>)
-
-  @java.lang.Override()
-  public boolean addAll(java.util.Collection<? extends @org.jetbrains.annotations.NotNull() java.lang.String>);//  addAll(java.util.Collection<? extends @org.jetbrains.annotations.NotNull() java.lang.String>)
+  public boolean addAll(int, java.util.Collection<java.lang.String>);//  addAll(int, java.util.Collection<java.lang.String>)
 
   @java.lang.Override()
   public boolean contains(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  contains(@org.jetbrains.annotations.NotNull() java.lang.String)
@@ -117,13 +111,13 @@ public abstract class CList2 /* test.CList2*/ implements test.IList {
   public boolean isEmpty();//  isEmpty()
 
   @java.lang.Override()
-  public boolean remove(java.lang.Object);//  remove(java.lang.Object)
+  public boolean remove(java.lang.String);//  remove(java.lang.String)
 
   @java.lang.Override()
-  public boolean removeAll(java.util.Collection<?>);//  removeAll(java.util.Collection<?>)
+  public boolean removeAll(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.Collection<java.lang.String>);//  removeAll(@org.jetbrains.annotations.NotNull() java.util.Collection<java.lang.String>)
 
   @java.lang.Override()
-  public boolean retainAll(java.util.Collection<?>);//  retainAll(java.util.Collection<?>)
+  public boolean retainAll(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.Collection<java.lang.String>);//  retainAll(@org.jetbrains.annotations.NotNull() java.util.Collection<java.lang.String>)
 
   @java.lang.Override()
   public final boolean contains(java.lang.Object);//  contains(java.lang.Object)
@@ -150,7 +144,13 @@ public abstract class CList2 /* test.CList2*/ implements test.IList {
   public java.lang.Object[] toArray();//  toArray()
 
   @java.lang.Override()
-  public void add(int, @org.jetbrains.annotations.NotNull() java.lang.String);//  add(int, @org.jetbrains.annotations.NotNull() java.lang.String)
+  public java.lang.String remove(int);//  remove(int)
+
+  @java.lang.Override()
+  public java.lang.String set(int, java.lang.String);//  set(int, java.lang.String)
+
+  @java.lang.Override()
+  public void add(int, java.lang.String);//  add(int, java.lang.String)
 
   @java.lang.Override()
   public void clear();//  clear()
@@ -180,22 +180,16 @@ public class CList3 /* test.CList3*/ implements test.IList {
   public @org.jetbrains.annotations.NotNull() java.util.ListIterator<@org.jetbrains.annotations.NotNull() java.lang.String> listIterator(int);//  listIterator(int)
 
   @java.lang.Override()
-  public <T> T[] toArray(T[]);// <T>  toArray(T[])
+  public <T extends java.lang.Object> T[] toArray(T[]);// <T extends java.lang.Object>  toArray(T[])
 
   @java.lang.Override()
-  public @org.jetbrains.annotations.NotNull() java.lang.String remove(int);//  remove(int)
+  public boolean add(java.lang.String);//  add(java.lang.String)
 
   @java.lang.Override()
-  public @org.jetbrains.annotations.NotNull() java.lang.String set(int, @org.jetbrains.annotations.NotNull() java.lang.String);//  set(int, @org.jetbrains.annotations.NotNull() java.lang.String)
+  public boolean addAll(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.Collection<java.lang.String>);//  addAll(@org.jetbrains.annotations.NotNull() java.util.Collection<java.lang.String>)
 
   @java.lang.Override()
-  public boolean add(@org.jetbrains.annotations.NotNull() java.lang.String);//  add(@org.jetbrains.annotations.NotNull() java.lang.String)
-
-  @java.lang.Override()
-  public boolean addAll(int, java.util.Collection<? extends @org.jetbrains.annotations.NotNull() java.lang.String>);//  addAll(int, java.util.Collection<? extends @org.jetbrains.annotations.NotNull() java.lang.String>)
-
-  @java.lang.Override()
-  public boolean addAll(java.util.Collection<? extends @org.jetbrains.annotations.NotNull() java.lang.String>);//  addAll(java.util.Collection<? extends @org.jetbrains.annotations.NotNull() java.lang.String>)
+  public boolean addAll(int, java.util.Collection<java.lang.String>);//  addAll(int, java.util.Collection<java.lang.String>)
 
   @java.lang.Override()
   public boolean contains(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  contains(@org.jetbrains.annotations.NotNull() java.lang.String)
@@ -207,13 +201,13 @@ public class CList3 /* test.CList3*/ implements test.IList {
   public boolean isEmpty();//  isEmpty()
 
   @java.lang.Override()
-  public boolean remove(java.lang.Object);//  remove(java.lang.Object)
+  public boolean remove(java.lang.String);//  remove(java.lang.String)
 
   @java.lang.Override()
-  public boolean removeAll(java.util.Collection<?>);//  removeAll(java.util.Collection<?>)
+  public boolean removeAll(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.Collection<java.lang.String>);//  removeAll(@org.jetbrains.annotations.NotNull() java.util.Collection<java.lang.String>)
 
   @java.lang.Override()
-  public boolean retainAll(java.util.Collection<?>);//  retainAll(java.util.Collection<?>)
+  public boolean retainAll(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.Collection<java.lang.String>);//  retainAll(@org.jetbrains.annotations.NotNull() java.util.Collection<java.lang.String>)
 
   @java.lang.Override()
   public final boolean contains(java.lang.Object);//  contains(java.lang.Object)
@@ -240,7 +234,13 @@ public class CList3 /* test.CList3*/ implements test.IList {
   public java.lang.Object[] toArray();//  toArray()
 
   @java.lang.Override()
-  public void add(int, @org.jetbrains.annotations.NotNull() java.lang.String);//  add(int, @org.jetbrains.annotations.NotNull() java.lang.String)
+  public java.lang.String remove(int);//  remove(int)
+
+  @java.lang.Override()
+  public java.lang.String set(int, java.lang.String);//  set(int, java.lang.String)
+
+  @java.lang.Override()
+  public void add(int, java.lang.String);//  add(int, java.lang.String)
 
   @java.lang.Override()
   public void clear();//  clear()

@@ -1,6 +1,6 @@
 public abstract class CCollection /* test.CCollection*/<Elem>  implements java.util.Collection<Elem>, kotlin.jvm.internal.markers.KMappedMarker {
   @java.lang.Override()
-  public <T> T[] toArray(T[]);// <T>  toArray(T[])
+  public <T extends java.lang.Object> T[] toArray(T[]);// <T extends java.lang.Object>  toArray(T[])
 
   @java.lang.Override()
   public abstract int getSize();//  getSize()
@@ -38,7 +38,7 @@ public abstract class CCollection2 /* test.CCollection2*/<Elem>  implements java
   public @org.jetbrains.annotations.NotNull() java.util.Iterator<Elem> iterator();//  iterator()
 
   @java.lang.Override()
-  public <T> T[] toArray(T[]);// <T>  toArray(T[])
+  public <T extends java.lang.Object> T[] toArray(T[]);// <T extends java.lang.Object>  toArray(T[])
 
   @java.lang.Override()
   public boolean add(Elem);//  add(Elem)
@@ -85,7 +85,7 @@ public class CCollection3 /* test.CCollection3*/<Elem>  implements java.util.Col
   public @org.jetbrains.annotations.NotNull() java.util.Iterator<Elem> iterator();//  iterator()
 
   @java.lang.Override()
-  public <T> T[] toArray(T[]);// <T>  toArray(T[])
+  public <T extends java.lang.Object> T[] toArray(T[]);// <T extends java.lang.Object>  toArray(T[])
 
   @java.lang.Override()
   public boolean add(Elem);//  add(Elem)

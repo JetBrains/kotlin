@@ -1,6 +1,6 @@
 public abstract class CCollection /* test.CCollection*/<Elem>  implements test.ICollection<Elem> {
   @java.lang.Override()
-  public <T> T[] toArray(T[]);// <T>  toArray(T[])
+  public <T extends java.lang.Object> T[] toArray(T[]);// <T extends java.lang.Object>  toArray(T[])
 
   @java.lang.Override()
   public abstract int getSize();//  getSize()

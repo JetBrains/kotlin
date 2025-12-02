@@ -4,7 +4,7 @@ public final class A /* test.A*/ {
 
 public abstract class ABMapEntry /* test.ABMapEntry*/ implements java.util.Map.Entry<@org.jetbrains.annotations.NotNull() test.A, @org.jetbrains.annotations.NotNull() test.B>, kotlin.jvm.internal.markers.KMappedMarker {
   @java.lang.Override()
-  public @org.jetbrains.annotations.NotNull() test.B setValue(@org.jetbrains.annotations.NotNull() test.B);//  setValue(@org.jetbrains.annotations.NotNull() test.B)
+  public test.B setValue(test.B);//  setValue(test.B)
 
   public  ABMapEntry();//  .ctor()
 }
@@ -19,7 +19,7 @@ public abstract class ABMapEntry2 /* test.ABMapEntry2*/ implements java.util.Map
   public @org.jetbrains.annotations.NotNull() test.B getValue();//  getValue()
 
   @java.lang.Override()
-  public @org.jetbrains.annotations.NotNull() test.B setValue(@org.jetbrains.annotations.NotNull() test.B);//  setValue(@org.jetbrains.annotations.NotNull() test.B)
+  public test.B setValue(test.B);//  setValue(test.B)
 
   public  ABMapEntry2();//  .ctor()
 }
@@ -34,7 +34,7 @@ public class ABMapEntry3 /* test.ABMapEntry3*/ implements java.util.Map.Entry<@o
   public @org.jetbrains.annotations.NotNull() test.B getValue();//  getValue()
 
   @java.lang.Override()
-  public @org.jetbrains.annotations.NotNull() test.B setValue(@org.jetbrains.annotations.NotNull() test.B);//  setValue(@org.jetbrains.annotations.NotNull() test.B)
+  public test.B setValue(test.B);//  setValue(test.B)
 
   public  ABMapEntry3();//  .ctor()
 }

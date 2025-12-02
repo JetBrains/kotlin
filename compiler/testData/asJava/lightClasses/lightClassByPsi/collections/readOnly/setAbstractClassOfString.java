@@ -1,30 +1,30 @@
 public abstract class SSet /* test.SSet*/ implements java.util.Set<@org.jetbrains.annotations.NotNull() java.lang.String>, kotlin.jvm.internal.markers.KMappedMarker {
   @java.lang.Override()
-  public <T> T[] toArray(T[]);// <T>  toArray(T[])
+  public <T extends java.lang.Object> T[] toArray(T[]);// <T extends java.lang.Object>  toArray(T[])
 
   @java.lang.Override()
-  public abstract boolean contains(@org.jetbrains.annotations.NotNull() java.lang.String);//  contains(@org.jetbrains.annotations.NotNull() java.lang.String)
+  public abstract boolean contains(java.lang.String);//  contains(java.lang.String)
 
   @java.lang.Override()
   public abstract int getSize();//  getSize()
 
   @java.lang.Override()
-  public boolean add(@org.jetbrains.annotations.NotNull() java.lang.String);//  add(@org.jetbrains.annotations.NotNull() java.lang.String)
+  public boolean add(java.lang.String);//  add(java.lang.String)
 
   @java.lang.Override()
-  public boolean addAll(java.util.Collection<? extends @org.jetbrains.annotations.NotNull() java.lang.String>);//  addAll(java.util.Collection<? extends @org.jetbrains.annotations.NotNull() java.lang.String>)
+  public boolean addAll(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.Collection<java.lang.String>);//  addAll(@org.jetbrains.annotations.NotNull() java.util.Collection<java.lang.String>)
 
   @java.lang.Override()
-  public boolean remove(java.lang.Object);//  remove(java.lang.Object)
+  public boolean remove(java.lang.String);//  remove(java.lang.String)
 
   @java.lang.Override()
-  public boolean removeAll(java.util.Collection<?>);//  removeAll(java.util.Collection<?>)
+  public boolean removeAll(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.Collection<java.lang.String>);//  removeAll(@org.jetbrains.annotations.NotNull() java.util.Collection<java.lang.String>)
 
   @java.lang.Override()
-  public boolean retainAll(java.util.Collection<?>);//  retainAll(java.util.Collection<?>)
+  public boolean retainAll(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.Collection<java.lang.String>);//  retainAll(@org.jetbrains.annotations.NotNull() java.util.Collection<java.lang.String>)
 
   @java.lang.Override()
-  public final boolean contains(java.lang.Object);//  contains(java.lang.Object)
+  public final boolean contains(java.lang.String);//  contains(java.lang.String)
 
   @java.lang.Override()
   public final int size();//  size()
@@ -44,13 +44,13 @@ public abstract class SSet2 /* test.SSet2*/ implements java.util.Set<@org.jetbra
   public @org.jetbrains.annotations.NotNull() java.util.Iterator<@org.jetbrains.annotations.NotNull() java.lang.String> iterator();//  iterator()
 
   @java.lang.Override()
-  public <T> T[] toArray(T[]);// <T>  toArray(T[])
+  public <T extends java.lang.Object> T[] toArray(T[]);// <T extends java.lang.Object>  toArray(T[])
 
   @java.lang.Override()
-  public boolean add(@org.jetbrains.annotations.NotNull() java.lang.String);//  add(@org.jetbrains.annotations.NotNull() java.lang.String)
+  public boolean add(java.lang.String);//  add(java.lang.String)
 
   @java.lang.Override()
-  public boolean addAll(java.util.Collection<? extends @org.jetbrains.annotations.NotNull() java.lang.String>);//  addAll(java.util.Collection<? extends @org.jetbrains.annotations.NotNull() java.lang.String>)
+  public boolean addAll(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.Collection<java.lang.String>);//  addAll(@org.jetbrains.annotations.NotNull() java.util.Collection<java.lang.String>)
 
   @java.lang.Override()
   public boolean contains(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  contains(@org.jetbrains.annotations.NotNull() java.lang.String)
@@ -62,13 +62,13 @@ public abstract class SSet2 /* test.SSet2*/ implements java.util.Set<@org.jetbra
   public boolean isEmpty();//  isEmpty()
 
   @java.lang.Override()
-  public boolean remove(java.lang.Object);//  remove(java.lang.Object)
+  public boolean remove(java.lang.String);//  remove(java.lang.String)
 
   @java.lang.Override()
-  public boolean removeAll(java.util.Collection<?>);//  removeAll(java.util.Collection<?>)
+  public boolean removeAll(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.Collection<java.lang.String>);//  removeAll(@org.jetbrains.annotations.NotNull() java.util.Collection<java.lang.String>)
 
   @java.lang.Override()
-  public boolean retainAll(java.util.Collection<?>);//  retainAll(java.util.Collection<?>)
+  public boolean retainAll(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.Collection<java.lang.String>);//  retainAll(@org.jetbrains.annotations.NotNull() java.util.Collection<java.lang.String>)
 
   @java.lang.Override()
   public final boolean contains(java.lang.Object);//  contains(java.lang.Object)
@@ -94,13 +94,13 @@ public class SSet3 /* test.SSet3*/ implements java.util.Set<@org.jetbrains.annot
   public @org.jetbrains.annotations.NotNull() java.util.Iterator<@org.jetbrains.annotations.NotNull() java.lang.String> iterator();//  iterator()
 
   @java.lang.Override()
-  public <T> T[] toArray(T[]);// <T>  toArray(T[])
+  public <T extends java.lang.Object> T[] toArray(T[]);// <T extends java.lang.Object>  toArray(T[])
 
   @java.lang.Override()
-  public boolean add(@org.jetbrains.annotations.NotNull() java.lang.String);//  add(@org.jetbrains.annotations.NotNull() java.lang.String)
+  public boolean add(java.lang.String);//  add(java.lang.String)
 
   @java.lang.Override()
-  public boolean addAll(java.util.Collection<? extends @org.jetbrains.annotations.NotNull() java.lang.String>);//  addAll(java.util.Collection<? extends @org.jetbrains.annotations.NotNull() java.lang.String>)
+  public boolean addAll(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.Collection<java.lang.String>);//  addAll(@org.jetbrains.annotations.NotNull() java.util.Collection<java.lang.String>)
 
   @java.lang.Override()
   public boolean contains(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  contains(@org.jetbrains.annotations.NotNull() java.lang.String)
@@ -112,13 +112,13 @@ public class SSet3 /* test.SSet3*/ implements java.util.Set<@org.jetbrains.annot
   public boolean isEmpty();//  isEmpty()
 
   @java.lang.Override()
-  public boolean remove(java.lang.Object);//  remove(java.lang.Object)
+  public boolean remove(java.lang.String);//  remove(java.lang.String)
 
   @java.lang.Override()
-  public boolean removeAll(java.util.Collection<?>);//  removeAll(java.util.Collection<?>)
+  public boolean removeAll(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.Collection<java.lang.String>);//  removeAll(@org.jetbrains.annotations.NotNull() java.util.Collection<java.lang.String>)
 
   @java.lang.Override()
-  public boolean retainAll(java.util.Collection<?>);//  retainAll(java.util.Collection<?>)
+  public boolean retainAll(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.Collection<java.lang.String>);//  retainAll(@org.jetbrains.annotations.NotNull() java.util.Collection<java.lang.String>)
 
   @java.lang.Override()
   public final boolean contains(java.lang.Object);//  contains(java.lang.Object)

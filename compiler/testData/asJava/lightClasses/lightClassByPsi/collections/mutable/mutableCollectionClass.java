@@ -1,6 +1,6 @@
 public abstract class CMutableCollection /* test.CMutableCollection*/<Elem>  implements java.util.Collection<Elem>, kotlin.jvm.internal.markers.KMutableCollection {
   @java.lang.Override()
-  public <T> T[] toArray(T[]);// <T>  toArray(T[])
+  public <T extends java.lang.Object> T[] toArray(T[]);// <T extends java.lang.Object>  toArray(T[])
 
   @java.lang.Override()
   public abstract int getSize();//  getSize()
@@ -24,7 +24,7 @@ public abstract class CMutableCollection2 /* test.CMutableCollection2*/<Elem>  i
   public @org.jetbrains.annotations.NotNull() java.util.Iterator<Elem> iterator();//  iterator()
 
   @java.lang.Override()
-  public <T> T[] toArray(T[]);// <T>  toArray(T[])
+  public <T extends java.lang.Object> T[] toArray(T[]);// <T extends java.lang.Object>  toArray(T[])
 
   @java.lang.Override()
   public boolean addAll(java.util.Collection<? extends Elem>);//  addAll(java.util.Collection<? extends Elem>)
@@ -68,7 +68,7 @@ public class CMutableCollection3 /* test.CMutableCollection3*/<Elem>  implements
   public @org.jetbrains.annotations.NotNull() java.util.Iterator<Elem> iterator();//  iterator()
 
   @java.lang.Override()
-  public <T> T[] toArray(T[]);// <T>  toArray(T[])
+  public <T extends java.lang.Object> T[] toArray(T[]);// <T extends java.lang.Object>  toArray(T[])
 
   @java.lang.Override()
   public boolean add(Elem);//  add(Elem)

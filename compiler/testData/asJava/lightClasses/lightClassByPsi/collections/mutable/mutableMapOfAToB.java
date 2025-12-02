@@ -19,19 +19,13 @@ public abstract class ABMutableMap /* test.ABMutableMap*/ implements java.util.M
   public abstract int getSize();//  getSize()
 
   @java.lang.Override()
-  public abstract java.util.Collection<@org.jetbrains.annotations.NotNull() test.B> getValues();//  getValues()
+  public abstract java.util.Collection<test.B> getValues();//  getValues()
 
   @java.lang.Override()
-  public abstract java.util.Set<@org.jetbrains.annotations.NotNull() test.A> getKeys();//  getKeys()
+  public abstract java.util.Set<java.util.Map.Entry<test.A, test.B>> getEntries();//  getEntries()
 
   @java.lang.Override()
-  public abstract java.util.Set<java.util.Map.Entry<@org.jetbrains.annotations.NotNull() test.A, @org.jetbrains.annotations.NotNull() test.B>> getEntries();//  getEntries()
-
-  @java.lang.Override()
-  public final @org.jetbrains.annotations.NotNull() test.B get(java.lang.Object);//  get(java.lang.Object)
-
-  @java.lang.Override()
-  public final @org.jetbrains.annotations.NotNull() test.B remove(java.lang.Object);//  remove(java.lang.Object)
+  public abstract java.util.Set<test.A> getKeys();//  getKeys()
 
   @java.lang.Override()
   public final boolean containsKey(java.lang.Object);//  containsKey(java.lang.Object)
@@ -43,13 +37,19 @@ public abstract class ABMutableMap /* test.ABMutableMap*/ implements java.util.M
   public final int size();//  size()
 
   @java.lang.Override()
-  public final java.util.Collection<@org.jetbrains.annotations.NotNull() test.B> values();//  values()
+  public final java.util.Collection<test.B> values();//  values()
 
   @java.lang.Override()
-  public final java.util.Set<@org.jetbrains.annotations.NotNull() test.A> keySet();//  keySet()
+  public final java.util.Set<java.util.Map.Entry<test.A, test.B>> entrySet();//  entrySet()
 
   @java.lang.Override()
-  public final java.util.Set<java.util.Map.Entry<@org.jetbrains.annotations.NotNull() test.A, @org.jetbrains.annotations.NotNull() test.B>> entrySet();//  entrySet()
+  public final java.util.Set<test.A> keySet();//  keySet()
+
+  @java.lang.Override()
+  public final test.B get(java.lang.Object);//  get(java.lang.Object)
+
+  @java.lang.Override()
+  public final test.B remove(java.lang.Object);//  remove(java.lang.Object)
 
   public  ABMutableMap();//  .ctor()
 }
@@ -91,12 +91,6 @@ public abstract class ABMutableMap2 /* test.ABMutableMap2*/ implements java.util
   public boolean isEmpty();//  isEmpty()
 
   @java.lang.Override()
-  public final @org.jetbrains.annotations.NotNull() test.B get(java.lang.Object);//  get(java.lang.Object)
-
-  @java.lang.Override()
-  public final @org.jetbrains.annotations.NotNull() test.B remove(java.lang.Object);//  remove(java.lang.Object)
-
-  @java.lang.Override()
   public final boolean containsKey(java.lang.Object);//  containsKey(java.lang.Object)
 
   @java.lang.Override()
@@ -106,13 +100,19 @@ public abstract class ABMutableMap2 /* test.ABMutableMap2*/ implements java.util
   public final int size();//  size()
 
   @java.lang.Override()
-  public final java.util.Collection<@org.jetbrains.annotations.NotNull() test.B> values();//  values()
+  public final java.util.Collection<test.B> values();//  values()
 
   @java.lang.Override()
-  public final java.util.Set<@org.jetbrains.annotations.NotNull() test.A> keySet();//  keySet()
+  public final java.util.Set<java.util.Map.Entry<test.A, test.B>> entrySet();//  entrySet()
 
   @java.lang.Override()
-  public final java.util.Set<java.util.Map.Entry<@org.jetbrains.annotations.NotNull() test.A, @org.jetbrains.annotations.NotNull() test.B>> entrySet();//  entrySet()
+  public final java.util.Set<test.A> keySet();//  keySet()
+
+  @java.lang.Override()
+  public final test.B get(java.lang.Object);//  get(java.lang.Object)
+
+  @java.lang.Override()
+  public final test.B remove(java.lang.Object);//  remove(java.lang.Object)
 
   @java.lang.Override()
   public int getSize();//  getSize()
@@ -121,7 +121,7 @@ public abstract class ABMutableMap2 /* test.ABMutableMap2*/ implements java.util
   public void clear();//  clear()
 
   @java.lang.Override()
-  public void putAll(java.util.Map<? extends @org.jetbrains.annotations.NotNull() test.A, ? extends @org.jetbrains.annotations.NotNull() test.B>);//  putAll(java.util.Map<? extends @org.jetbrains.annotations.NotNull() test.A, ? extends @org.jetbrains.annotations.NotNull() test.B>)
+  public void putAll(java.util.Map<? extends test.A, test.B>);//  putAll(java.util.Map<? extends test.A, test.B>)
 
   public  ABMutableMap2();//  .ctor()
 }
@@ -161,12 +161,6 @@ public class ABMutableMap3 /* test.ABMutableMap3*/ implements java.util.Map<@org
   public boolean isEmpty();//  isEmpty()
 
   @java.lang.Override()
-  public final @org.jetbrains.annotations.NotNull() test.B get(java.lang.Object);//  get(java.lang.Object)
-
-  @java.lang.Override()
-  public final @org.jetbrains.annotations.NotNull() test.B remove(java.lang.Object);//  remove(java.lang.Object)
-
-  @java.lang.Override()
   public final boolean containsKey(java.lang.Object);//  containsKey(java.lang.Object)
 
   @java.lang.Override()
@@ -176,13 +170,19 @@ public class ABMutableMap3 /* test.ABMutableMap3*/ implements java.util.Map<@org
   public final int size();//  size()
 
   @java.lang.Override()
-  public final java.util.Collection<@org.jetbrains.annotations.NotNull() test.B> values();//  values()
+  public final java.util.Collection<test.B> values();//  values()
 
   @java.lang.Override()
-  public final java.util.Set<@org.jetbrains.annotations.NotNull() test.A> keySet();//  keySet()
+  public final java.util.Set<java.util.Map.Entry<test.A, test.B>> entrySet();//  entrySet()
 
   @java.lang.Override()
-  public final java.util.Set<java.util.Map.Entry<@org.jetbrains.annotations.NotNull() test.A, @org.jetbrains.annotations.NotNull() test.B>> entrySet();//  entrySet()
+  public final java.util.Set<test.A> keySet();//  keySet()
+
+  @java.lang.Override()
+  public final test.B get(java.lang.Object);//  get(java.lang.Object)
+
+  @java.lang.Override()
+  public final test.B remove(java.lang.Object);//  remove(java.lang.Object)
 
   @java.lang.Override()
   public int getSize();//  getSize()
@@ -191,7 +191,7 @@ public class ABMutableMap3 /* test.ABMutableMap3*/ implements java.util.Map<@org
   public void clear();//  clear()
 
   @java.lang.Override()
-  public void putAll(java.util.Map<? extends @org.jetbrains.annotations.NotNull() test.A, ? extends @org.jetbrains.annotations.NotNull() test.B>);//  putAll(java.util.Map<? extends @org.jetbrains.annotations.NotNull() test.A, ? extends @org.jetbrains.annotations.NotNull() test.B>)
+  public void putAll(java.util.Map<? extends test.A, test.B>);//  putAll(java.util.Map<? extends test.A, test.B>)
 
   public  ABMutableMap3();//  .ctor()
 }

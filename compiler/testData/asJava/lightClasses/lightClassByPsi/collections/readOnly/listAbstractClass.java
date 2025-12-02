@@ -1,6 +1,6 @@
 public abstract class CList /* test.CList*/<Elem>  implements java.util.List<Elem>, kotlin.jvm.internal.markers.KMappedMarker {
   @java.lang.Override()
-  public <T> T[] toArray(T[]);// <T>  toArray(T[])
+  public <T extends java.lang.Object> T[] toArray(T[]);// <T extends java.lang.Object>  toArray(T[])
 
   @java.lang.Override()
   public Elem remove(int);//  remove(int)
@@ -15,19 +15,19 @@ public abstract class CList /* test.CList*/<Elem>  implements java.util.List<Ele
   public boolean add(Elem);//  add(Elem)
 
   @java.lang.Override()
+  public boolean addAll(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.Collection<? extends Elem>);//  addAll(@org.jetbrains.annotations.NotNull() java.util.Collection<? extends Elem>)
+
+  @java.lang.Override()
   public boolean addAll(int, java.util.Collection<? extends Elem>);//  addAll(int, java.util.Collection<? extends Elem>)
 
   @java.lang.Override()
-  public boolean addAll(java.util.Collection<? extends Elem>);//  addAll(java.util.Collection<? extends Elem>)
+  public boolean remove(Elem);//  remove(Elem)
 
   @java.lang.Override()
-  public boolean remove(java.lang.Object);//  remove(java.lang.Object)
+  public boolean removeAll(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.Collection<? extends Elem>);//  removeAll(@org.jetbrains.annotations.NotNull() java.util.Collection<? extends Elem>)
 
   @java.lang.Override()
-  public boolean removeAll(java.util.Collection<?>);//  removeAll(java.util.Collection<?>)
-
-  @java.lang.Override()
-  public boolean retainAll(java.util.Collection<?>);//  retainAll(java.util.Collection<?>)
+  public boolean retainAll(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.Collection<? extends Elem>);//  retainAll(@org.jetbrains.annotations.NotNull() java.util.Collection<? extends Elem>)
 
   @java.lang.Override()
   public final int size();//  size()
@@ -62,7 +62,7 @@ public abstract class CList2 /* test.CList2*/<Elem>  implements java.util.List<E
   public @org.jetbrains.annotations.NotNull() java.util.ListIterator<Elem> listIterator(int);//  listIterator(int)
 
   @java.lang.Override()
-  public <T> T[] toArray(T[]);// <T>  toArray(T[])
+  public <T extends java.lang.Object> T[] toArray(T[]);// <T extends java.lang.Object>  toArray(T[])
 
   @java.lang.Override()
   public Elem get(int);//  get(int)
@@ -77,10 +77,10 @@ public abstract class CList2 /* test.CList2*/<Elem>  implements java.util.List<E
   public boolean add(Elem);//  add(Elem)
 
   @java.lang.Override()
-  public boolean addAll(int, java.util.Collection<? extends Elem>);//  addAll(int, java.util.Collection<? extends Elem>)
+  public boolean addAll(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.Collection<? extends Elem>);//  addAll(@org.jetbrains.annotations.NotNull() java.util.Collection<? extends Elem>)
 
   @java.lang.Override()
-  public boolean addAll(java.util.Collection<? extends Elem>);//  addAll(java.util.Collection<? extends Elem>)
+  public boolean addAll(int, java.util.Collection<? extends Elem>);//  addAll(int, java.util.Collection<? extends Elem>)
 
   @java.lang.Override()
   public boolean contains(java.lang.Object);//  contains(java.lang.Object)
@@ -92,13 +92,13 @@ public abstract class CList2 /* test.CList2*/<Elem>  implements java.util.List<E
   public boolean isEmpty();//  isEmpty()
 
   @java.lang.Override()
-  public boolean remove(java.lang.Object);//  remove(java.lang.Object)
+  public boolean remove(Elem);//  remove(Elem)
 
   @java.lang.Override()
-  public boolean removeAll(java.util.Collection<?>);//  removeAll(java.util.Collection<?>)
+  public boolean removeAll(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.Collection<? extends Elem>);//  removeAll(@org.jetbrains.annotations.NotNull() java.util.Collection<? extends Elem>)
 
   @java.lang.Override()
-  public boolean retainAll(java.util.Collection<?>);//  retainAll(java.util.Collection<?>)
+  public boolean retainAll(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.Collection<? extends Elem>);//  retainAll(@org.jetbrains.annotations.NotNull() java.util.Collection<? extends Elem>)
 
   @java.lang.Override()
   public final int size();//  size()
@@ -142,7 +142,7 @@ public class CList3 /* test.CList3*/<Elem>  implements java.util.List<Elem>, kot
   public @org.jetbrains.annotations.NotNull() java.util.ListIterator<Elem> listIterator(int);//  listIterator(int)
 
   @java.lang.Override()
-  public <T> T[] toArray(T[]);// <T>  toArray(T[])
+  public <T extends java.lang.Object> T[] toArray(T[]);// <T extends java.lang.Object>  toArray(T[])
 
   @java.lang.Override()
   public Elem get(int);//  get(int)
@@ -157,10 +157,10 @@ public class CList3 /* test.CList3*/<Elem>  implements java.util.List<Elem>, kot
   public boolean add(Elem);//  add(Elem)
 
   @java.lang.Override()
-  public boolean addAll(int, java.util.Collection<? extends Elem>);//  addAll(int, java.util.Collection<? extends Elem>)
+  public boolean addAll(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.Collection<? extends Elem>);//  addAll(@org.jetbrains.annotations.NotNull() java.util.Collection<? extends Elem>)
 
   @java.lang.Override()
-  public boolean addAll(java.util.Collection<? extends Elem>);//  addAll(java.util.Collection<? extends Elem>)
+  public boolean addAll(int, java.util.Collection<? extends Elem>);//  addAll(int, java.util.Collection<? extends Elem>)
 
   @java.lang.Override()
   public boolean contains(java.lang.Object);//  contains(java.lang.Object)
@@ -172,13 +172,13 @@ public class CList3 /* test.CList3*/<Elem>  implements java.util.List<Elem>, kot
   public boolean isEmpty();//  isEmpty()
 
   @java.lang.Override()
-  public boolean remove(java.lang.Object);//  remove(java.lang.Object)
+  public boolean remove(Elem);//  remove(Elem)
 
   @java.lang.Override()
-  public boolean removeAll(java.util.Collection<?>);//  removeAll(java.util.Collection<?>)
+  public boolean removeAll(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.Collection<? extends Elem>);//  removeAll(@org.jetbrains.annotations.NotNull() java.util.Collection<? extends Elem>)
 
   @java.lang.Override()
-  public boolean retainAll(java.util.Collection<?>);//  retainAll(java.util.Collection<?>)
+  public boolean retainAll(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.Collection<? extends Elem>);//  retainAll(@org.jetbrains.annotations.NotNull() java.util.Collection<? extends Elem>)
 
   @java.lang.Override()
   public final int size();//  size()

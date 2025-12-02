@@ -1,18 +1,12 @@
 public abstract class CMutableList /* test.CMutableList*/ implements test.IMutableList {
   @java.lang.Override()
-  public <T> T[] toArray(T[]);// <T>  toArray(T[])
+  public <T extends java.lang.Object> T[] toArray(T[]);// <T extends java.lang.Object>  toArray(T[])
 
   @java.lang.Override()
-  public abstract @org.jetbrains.annotations.NotNull() java.lang.String get(int);//  get(int)
+  public abstract boolean contains(java.lang.String);//  contains(java.lang.String)
 
   @java.lang.Override()
-  public abstract @org.jetbrains.annotations.NotNull() java.lang.String removeAt(int);//  removeAt(int)
-
-  @java.lang.Override()
-  public abstract boolean contains(@org.jetbrains.annotations.NotNull() java.lang.String);//  contains(@org.jetbrains.annotations.NotNull() java.lang.String)
-
-  @java.lang.Override()
-  public abstract boolean remove(@org.jetbrains.annotations.NotNull() java.lang.String);//  remove(@org.jetbrains.annotations.NotNull() java.lang.String)
+  public abstract boolean remove(java.lang.String);//  remove(java.lang.String)
 
   @java.lang.Override()
   public abstract int getSize();//  getSize()
@@ -24,16 +18,16 @@ public abstract class CMutableList /* test.CMutableList*/ implements test.IMutab
   public abstract int lastIndexOf(@org.jetbrains.annotations.NotNull() java.lang.String);//  lastIndexOf(@org.jetbrains.annotations.NotNull() java.lang.String)
 
   @java.lang.Override()
-  public final @org.jetbrains.annotations.NotNull() java.lang.String get(int);//  get(int)
+  public abstract java.lang.String get(int);//  get(int)
 
   @java.lang.Override()
-  public final @org.jetbrains.annotations.NotNull() java.lang.String remove(int);//  remove(int)
+  public abstract java.lang.String removeAt(int);//  removeAt(int)
 
   @java.lang.Override()
-  public final boolean contains(java.lang.Object);//  contains(java.lang.Object)
+  public final boolean contains(java.lang.String);//  contains(java.lang.String)
 
   @java.lang.Override()
-  public final boolean remove(java.lang.Object);//  remove(java.lang.Object)
+  public final boolean remove(java.lang.String);//  remove(java.lang.String)
 
   @java.lang.Override()
   public final int indexOf(java.lang.Object);//  indexOf(java.lang.Object)
@@ -43,6 +37,12 @@ public abstract class CMutableList /* test.CMutableList*/ implements test.IMutab
 
   @java.lang.Override()
   public final int size();//  size()
+
+  @java.lang.Override()
+  public final java.lang.String get(int);//  get(int)
+
+  @java.lang.Override()
+  public final java.lang.String remove(int);//  remove(int)
 
   @java.lang.Override()
   public java.lang.Object[] toArray();//  toArray()
@@ -90,13 +90,13 @@ public abstract class CMutableList2 /* test.CMutableList2*/ implements test.IMut
   public @org.jetbrains.annotations.NotNull() java.util.ListIterator<@org.jetbrains.annotations.NotNull() java.lang.String> listIterator(int);//  listIterator(int)
 
   @java.lang.Override()
-  public <T> T[] toArray(T[]);// <T>  toArray(T[])
+  public <T extends java.lang.Object> T[] toArray(T[]);// <T extends java.lang.Object>  toArray(T[])
 
   @java.lang.Override()
-  public boolean addAll(int, java.util.Collection<? extends @org.jetbrains.annotations.NotNull() java.lang.String>);//  addAll(int, java.util.Collection<? extends @org.jetbrains.annotations.NotNull() java.lang.String>)
+  public boolean addAll(int, java.util.Collection<java.lang.String>);//  addAll(int, java.util.Collection<java.lang.String>)
 
   @java.lang.Override()
-  public boolean addAll(java.util.Collection<? extends @org.jetbrains.annotations.NotNull() java.lang.String>);//  addAll(java.util.Collection<? extends @org.jetbrains.annotations.NotNull() java.lang.String>)
+  public boolean addAll(java.util.Collection<java.lang.String>);//  addAll(java.util.Collection<java.lang.String>)
 
   @java.lang.Override()
   public boolean contains(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  contains(@org.jetbrains.annotations.NotNull() java.lang.String)
@@ -114,9 +114,6 @@ public abstract class CMutableList2 /* test.CMutableList2*/ implements test.IMut
   public boolean retainAll(java.util.Collection<?>);//  retainAll(java.util.Collection<?>)
 
   @java.lang.Override()
-  public final @org.jetbrains.annotations.NotNull() java.lang.String remove(int);//  remove(int)
-
-  @java.lang.Override()
   public final boolean contains(java.lang.Object);//  contains(java.lang.Object)
 
   @java.lang.Override()
@@ -130,6 +127,9 @@ public abstract class CMutableList2 /* test.CMutableList2*/ implements test.IMut
 
   @java.lang.Override()
   public final int size();//  size()
+
+  @java.lang.Override()
+  public final java.lang.String remove(int);//  remove(int)
 
   @java.lang.Override()
   public int getSize();//  getSize()
@@ -182,16 +182,16 @@ public class CMutableList3 /* test.CMutableList3*/ implements test.IMutableList 
   public @org.jetbrains.annotations.NotNull() java.util.ListIterator<@org.jetbrains.annotations.NotNull() java.lang.String> listIterator(int);//  listIterator(int)
 
   @java.lang.Override()
-  public <T> T[] toArray(T[]);// <T>  toArray(T[])
+  public <T extends java.lang.Object> T[] toArray(T[]);// <T extends java.lang.Object>  toArray(T[])
 
   @java.lang.Override()
   public boolean add(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  add(@org.jetbrains.annotations.NotNull() java.lang.String)
 
   @java.lang.Override()
-  public boolean addAll(int, java.util.Collection<? extends @org.jetbrains.annotations.NotNull() java.lang.String>);//  addAll(int, java.util.Collection<? extends @org.jetbrains.annotations.NotNull() java.lang.String>)
+  public boolean addAll(int, java.util.Collection<java.lang.String>);//  addAll(int, java.util.Collection<java.lang.String>)
 
   @java.lang.Override()
-  public boolean addAll(java.util.Collection<? extends @org.jetbrains.annotations.NotNull() java.lang.String>);//  addAll(java.util.Collection<? extends @org.jetbrains.annotations.NotNull() java.lang.String>)
+  public boolean addAll(java.util.Collection<java.lang.String>);//  addAll(java.util.Collection<java.lang.String>)
 
   @java.lang.Override()
   public boolean contains(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  contains(@org.jetbrains.annotations.NotNull() java.lang.String)
@@ -212,9 +212,6 @@ public class CMutableList3 /* test.CMutableList3*/ implements test.IMutableList 
   public boolean retainAll(java.util.Collection<?>);//  retainAll(java.util.Collection<?>)
 
   @java.lang.Override()
-  public final @org.jetbrains.annotations.NotNull() java.lang.String remove(int);//  remove(int)
-
-  @java.lang.Override()
   public final boolean contains(java.lang.Object);//  contains(java.lang.Object)
 
   @java.lang.Override()
@@ -228,6 +225,9 @@ public class CMutableList3 /* test.CMutableList3*/ implements test.IMutableList 
 
   @java.lang.Override()
   public final int size();//  size()
+
+  @java.lang.Override()
+  public final java.lang.String remove(int);//  remove(int)
 
   @java.lang.Override()
   public int getSize();//  getSize()

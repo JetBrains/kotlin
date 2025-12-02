@@ -1,6 +1,6 @@
 public abstract class CMutableList /* test.CMutableList*/<Elem>  implements test.IMutableList<Elem> {
   @java.lang.Override()
-  public <T> T[] toArray(T[]);// <T>  toArray(T[])
+  public <T extends java.lang.Object> T[] toArray(T[]);// <T extends java.lang.Object>  toArray(T[])
 
   @java.lang.Override()
   public abstract Elem removeAt(int);//  removeAt(int)
@@ -50,7 +50,7 @@ public abstract class CMutableList2 /* test.CMutableList2*/<Elem>  implements te
   public @org.jetbrains.annotations.NotNull() java.util.ListIterator<Elem> listIterator(int);//  listIterator(int)
 
   @java.lang.Override()
-  public <T> T[] toArray(T[]);// <T>  toArray(T[])
+  public <T extends java.lang.Object> T[] toArray(T[]);// <T extends java.lang.Object>  toArray(T[])
 
   @java.lang.Override()
   public Elem get(int);//  get(int)
@@ -124,7 +124,7 @@ public class CMutableList3 /* test.CMutableList3*/<Elem>  implements test.IMutab
   public @org.jetbrains.annotations.NotNull() java.util.ListIterator<Elem> listIterator(int);//  listIterator(int)
 
   @java.lang.Override()
-  public <T> T[] toArray(T[]);// <T>  toArray(T[])
+  public <T extends java.lang.Object> T[] toArray(T[]);// <T extends java.lang.Object>  toArray(T[])
 
   @java.lang.Override()
   public Elem get(int);//  get(int)
