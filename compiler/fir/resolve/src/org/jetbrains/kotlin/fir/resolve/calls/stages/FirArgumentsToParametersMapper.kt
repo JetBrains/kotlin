@@ -363,7 +363,8 @@ private class FirCallArgumentsProcessor(
                 nameToParameter = LinkedHashMap<Name, FirValueParameter>().apply {
                     for (parameter in valueAndContextParametersIfRequired) {
                         val name = parameter.returnTypeRef.coneTypeOrNull?.valueParameterName(useSiteSession) ?: parameter.name
-                        // Exclude special names like `_` from unnamed context parameters.
+                        // Exclude special names (like `_` from unnamed context parameters or `<no name provided>` in case of syntax error
+                        // in declaration).
                         // Technically, this check is unnecessary because the names on the call-site will never be parsed as special names.
                         // But we do it anyway to be safe.
                         if (name.isSpecial) continue
