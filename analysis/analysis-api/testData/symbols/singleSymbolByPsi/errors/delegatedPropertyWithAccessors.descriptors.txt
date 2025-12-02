@@ -15,9 +15,15 @@ KaKotlinPropertySymbol:
     origin: PROPERTY_BACKING_FIELD
     owningProperty: KaKotlinPropertySymbol(/lazyProp)
     receiverParameter: null
-    returnType: KaErrorType:
+    returnType: KaUsualClassType:
       annotations: []
-      type: ERROR_TYPE
+      typeArguments: [
+        KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: kotlin/String
+      ]
+      type: kotlin/collections/Set<kotlin/String>
     visibility: PRIVATE
     getContainingFileSymbol: KaFileSymbol(delegatedPropertyWithAccessors.kt)
     getContainingJvmClassName: DelegatedPropertyWithAccessorsKt
@@ -44,9 +50,15 @@ KaKotlinPropertySymbol:
     modality: FINAL
     origin: SOURCE
     receiverParameter: null
-    returnType: KaErrorType:
+    returnType: KaUsualClassType:
       annotations: []
-      type: ERROR_TYPE
+      typeArguments: [
+        KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: kotlin/String
+      ]
+      type: kotlin/collections/Set<kotlin/String>
     valueParameters: []
     visibility: PRIVATE
     getContainingFileSymbol: KaFileSymbol(delegatedPropertyWithAccessors.kt)
@@ -74,9 +86,15 @@ KaKotlinPropertySymbol:
   name: lazyProp
   origin: SOURCE
   receiverParameter: null
-  returnType: KaErrorType:
+  returnType: KaUsualClassType:
     annotations: []
-    type: ERROR_TYPE
+    typeArguments: [
+      KaUsualClassType:
+        annotations: []
+        typeArguments: []
+        type: kotlin/String
+    ]
+    type: kotlin/collections/Set<kotlin/String>
   setter: KaPropertySetterSymbol:
     annotations: []
     callableId: null
@@ -113,9 +131,15 @@ KaKotlinPropertySymbol:
       name: <set-?>
       origin: SOURCE_MEMBER_GENERATED
       receiverParameter: null
-      returnType: KaErrorType:
+      returnType: KaUsualClassType:
         annotations: []
-        type: ERROR_TYPE
+        typeArguments: [
+          KaUsualClassType:
+            annotations: []
+            typeArguments: []
+            type: kotlin/String
+        ]
+        type: kotlin/collections/Set<kotlin/String>
       visibility: INTERNAL
       getContainingFileSymbol: KaFileSymbol(delegatedPropertyWithAccessors.kt)
       getContainingJvmClassName: null
@@ -149,9 +173,15 @@ KaKotlinPropertySymbol:
         name: <set-?>
         origin: SOURCE_MEMBER_GENERATED
         receiverParameter: null
-        returnType: KaErrorType:
+        returnType: KaUsualClassType:
           annotations: []
-          type: ERROR_TYPE
+          typeArguments: [
+            KaUsualClassType:
+              annotations: []
+              typeArguments: []
+              type: kotlin/String
+          ]
+          type: kotlin/collections/Set<kotlin/String>
         visibility: INTERNAL
         getContainingFileSymbol: KaFileSymbol(delegatedPropertyWithAccessors.kt)
         getContainingJvmClassName: null

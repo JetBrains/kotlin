@@ -19,10 +19,7 @@ import org.jetbrains.kotlin.analysis.test.framework.AnalysisApiTestDirectives
 import org.jetbrains.kotlin.analysis.test.framework.TestWithDisposable
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.ktTestModuleStructure
-import org.jetbrains.kotlin.analysis.test.framework.services.ExpressionMarkerProvider
-import org.jetbrains.kotlin.analysis.test.framework.services.ExpressionMarkersSourceFilePreprocessor
-import org.jetbrains.kotlin.analysis.test.framework.services.environmentManager
-import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
+import org.jetbrains.kotlin.analysis.test.framework.services.*
 import org.jetbrains.kotlin.analysis.test.framework.services.libraries.TestModuleCompiler
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
@@ -293,7 +290,12 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
      * If no prefixes are specified, or if no prefixed files exist, the function compares [actual] against the non-prefixed (default)
      * test output file.
      *
-     * If none of the test output files exist, the function creates an output file, writes the content of [actual] to it, and throws
+     * If [AnalysisApiTestOutputPrefixProvider] is specified in the configuration, uses the list of test prefixes
+     * returned by this prefix provider.
+     *
+     * Before comparing [actual] against the content of test files, applies [sanitizer] to [actual] and the text of the files.
+     *
+     * If none of the test output files exist, the function creates an output file, writes the sanitized content of [actual] to it, and throws
      * an exception.
      *
      * If a [subdirectoryName] is specified, the test output file will be resolved in the given subdirectory, instead of as a sibling of the
@@ -307,19 +309,23 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
         extension: String = ".txt",
         subdirectoryName: String? = null,
         testPrefixes: List<String> = configurator.testPrefixes,
+        sanitizer: (String) -> String = testServices.testOutputSanitizerOrDefault
     ) {
+        val modifiedPrefixes =
+            testServices.testOutputPrefixProvider?.getPrefixes(testPrefixes) ?: testPrefixes
+
         val expectedFiles = buildList {
-            testPrefixes.mapNotNullTo(this) { findPrefixedTestOutputFile(extension, subdirectoryName, testPrefix = it) }
+            modifiedPrefixes.mapNotNullTo(this) { findPrefixedTestOutputFile(extension, subdirectoryName, testPrefix = it) }
             add(getDefaultTestOutputFile(extension, subdirectoryName))
         }
 
         val mainExpectedFile = expectedFiles.first()
         val otherExpectedFiles = expectedFiles.drop(1)
 
-        assertEqualsToFile(mainExpectedFile, actual)
+        assertEqualsToFile(mainExpectedFile, actual, sanitizer)
 
         for (otherExpectedFile in otherExpectedFiles) {
-            if (doesEqualToFile(otherExpectedFile.toFile(), actual)) {
+            if (doesEqualToFile(otherExpectedFile.toFile(), actual, sanitizer)) {
                 throw AssertionError("\"$mainExpectedFile\" has the same content as \"$otherExpectedFile\". Delete the prefixed file.")
             }
         }
@@ -327,6 +333,9 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
 
     /**
      * Returns the test output file with any of the [testPrefixes] if it exists, of the non-prefixed (default) test output file.
+     *
+     * If [AnalysisApiTestOutputPrefixProvider] is specified in the configuration, uses the list of test prefixes
+     * returned by this prefix provider.
      *
      * If a [subdirectoryName] is specified, the test output file will be resolved in the given subdirectory, instead of as a sibling of the
      * test data.
@@ -338,7 +347,9 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
         subdirectoryName: String? = null,
         testPrefixes: List<String> = configurator.testPrefixes,
     ): Path {
-        for (testPrefix in testPrefixes) {
+        val modifiedPrefixes =
+            testServices.testOutputPrefixProvider?.getPrefixes(testPrefixes) ?: testPrefixes
+        for (testPrefix in modifiedPrefixes) {
             findPrefixedTestOutputFile(extension, subdirectoryName, testPrefix)?.let { return it }
         }
         return getDefaultTestOutputFile(extension, subdirectoryName)

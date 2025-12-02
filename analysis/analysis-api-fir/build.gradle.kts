@@ -84,6 +84,7 @@ projectTests {
     }.also { confugureFirPluginAnnotationsDependency(it) }
 
     withJvmStdlibAndReflect()
+    withWasmRuntime()
 }
 
 testsJar()
