@@ -18,6 +18,16 @@ class CustomJsCompilerSecondStageSanity : AbstractCustomJsCompilerSecondStageTes
     }
 
     @Test
+    fun checkGreenNeedsUnmuting() {
+        val exception = assertThrows<AssertionError> {
+            runTest(testDataRoot + "greenNeedsUnmuting.kt")
+        }
+        val expected = "Looks like this test can be unmuted. " +
+                "Remove ${customJsCompilerSettings.defaultLanguageVersion} from the IGNORE_KLIB_FRONTEND_ERRORS_WITH_CUSTOM_SECOND_STAGE directive"
+        assertEquals(expected, exception.message)
+    }
+
+    @Test
     fun checkIncorrectBoxResult() {
         val exception = assertThrows<ComparisonFailure> {
             runTest(testDataRoot + "incorrectBoxResult.kt")
