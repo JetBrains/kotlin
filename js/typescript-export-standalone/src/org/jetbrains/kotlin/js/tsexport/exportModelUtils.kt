@@ -146,10 +146,11 @@ internal val TypeScriptExportConfig.generateNamespacesForPackages: Boolean
 
 // TODO: Add memoization?
 context(_: KaSession)
-internal fun KaNamedSymbol.getExportedFqName(shouldIncludePackage: Boolean, isEsModules: Boolean): FqName {
+internal fun KaNamedSymbol.getExportedFqName(shouldIncludePackage: Boolean, config: TypeScriptExportConfig): FqName {
     val name = Name.identifier(getExportedIdentifier())
+    val isEsModules = config.artifactConfiguration.moduleKind == ModuleKind.ES
     return when (val parent = containingDeclaration) {
-        is KaNamedSymbol -> parent.getExportedFqName(shouldIncludePackage, isEsModules).child(name)
+        is KaNamedSymbol -> parent.getExportedFqName(shouldIncludePackage, config).child(name)
         null ->
             getTopLevelQualifier(shouldIncludePackage).child(name)
                 .butIf(isEsModules && this is KaNamedClassSymbol && classKind == KaClassKind.OBJECT && !isExternal) {
