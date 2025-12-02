@@ -91,7 +91,7 @@ open class KotlinNativeCompilation @Inject internal constructor(
      * or if none of the target's compilations involve C interop dependencies.
      */
     val crossCompilationSupported: Provider<Boolean> = project.provider {
-        target.crossCompilationOnCurrentHostSupported.getOrThrow()
+        crossCompilationOnCurrentHostSupported && crossCompilationSharedData.dataForAllDependencies.all { it.crossCompilationSupported }
     }
 }
 
