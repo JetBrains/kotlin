@@ -265,6 +265,10 @@ tasks.withType<Test>().configureEach {
                                 }
                             }
                         )
+                        .replace(
+                            "{{extra_permissions}}",
+                            testInputsCheck.extraPermissions.get().joinToString("\n")
+                        )
 
                 )
             } catch (e: IOException) {

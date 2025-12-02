@@ -58,6 +58,8 @@ grant {
     // org.jetbrains.kotlin.cli.klib.ZipTest
     permission java.nio.file.LinkPermission "symbolic";
 
+    {{extra_permissions}}
+
     {{native}}
 
     {{js}}
