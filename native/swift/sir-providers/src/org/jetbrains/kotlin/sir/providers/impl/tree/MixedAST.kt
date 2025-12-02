@@ -196,8 +196,11 @@ internal fun MixedAST.invoke(vararg arguments: MixedAST): MixedAST.Invoke =
 internal fun brackets(vararg arguments: MixedAST): MixedAST =
     "".ast().invoke(*arguments)
 
-internal fun MixedAST.invokeLambda(separateLines: Boolean = false, f: BlockBuilder.() -> Unit) =
-    MixedAST.InvokeLambda(this, block(null, separateLines = separateLines, f))
+internal fun MixedAST.invokeLambda(
+    parameters: MixedAST.LambdaParameters? = null,
+    separateLines: Boolean = false,
+    f: BlockBuilder.() -> Unit,
+) = MixedAST.InvokeLambda(this, lambda(parameters, separateLines = separateLines, f))
 
 internal fun String.variable(isSwift: Boolean): MixedAST.Variable = MixedAST.Variable(ast(), isSwift)
 
@@ -247,7 +250,14 @@ internal fun SirType.create(namer: SirTypeNamer, expression: MixedAST): MixedAST
     swiftTypeName(namer).invoke(expression.named("__externalRCRefUnsafe"), asBestFittingWrapper())
 
 internal fun block(
-    lambdaParameters: MixedAST.LambdaParameters? = null,
+    separateLines: Boolean = false,
+    f: BlockBuilder.() -> Unit,
+): MixedAST.Block {
+    return BlockBuilder(null, separateLines).apply { f() }.block
+}
+
+internal fun lambda(
+    lambdaParameters: MixedAST.LambdaParameters?,
     separateLines: Boolean = false,
     f: BlockBuilder.() -> Unit,
 ): MixedAST.Block {

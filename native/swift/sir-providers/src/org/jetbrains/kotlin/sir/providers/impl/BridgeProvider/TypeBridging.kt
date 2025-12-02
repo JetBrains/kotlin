@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.sir.providers.impl.tree.interpretObjCPointer
 import org.jetbrains.kotlin.sir.providers.impl.tree.invoke
 import org.jetbrains.kotlin.sir.providers.impl.tree.invokeLambda
 import org.jetbrains.kotlin.sir.providers.impl.tree.kotlinTypeName
+import org.jetbrains.kotlin.sir.providers.impl.tree.lambda
 import org.jetbrains.kotlin.sir.providers.impl.tree.named
 import org.jetbrains.kotlin.sir.providers.impl.tree.objcPtr
 import org.jetbrains.kotlin.sir.providers.impl.tree.op
@@ -606,15 +607,13 @@ internal sealed class Bridge(
                 return if (keyAdapter.toString() == "key" && valueAdapter.toString() == "value") {
                     valueExpression
                 } else {
-                    val argument = valueExpression.access("map").invokeLambda {
-                        +key.op(MixedAST.Operator.COMMA, value)
-                            .op(
-                                MixedAST.Operator.IN,
-                                brackets(
-                                    keyBridge.inSwiftSources.swiftToKotlin(typeNamer, key),
-                                    valueBridge.inSwiftSources.swiftToKotlin(typeNamer, value)
-                                )
-                            )
+                    val argument = valueExpression.access("map").invokeLambda(
+                        MixedAST.LambdaParameters(listOf(key, value), isSwift = true)
+                    ) {
+                        +brackets(
+                            keyBridge.inSwiftSources.swiftToKotlin(typeNamer, key),
+                            valueBridge.inSwiftSources.swiftToKotlin(typeNamer, value)
+                        )
                     }
                     "Dictionary".ast().invoke(argument.named("uniqueKeysWithValues"))
                 }
@@ -764,7 +763,7 @@ internal sealed class Bridge(
                             MixedAST.Operator.ASSIGN,
                             valueExpression.convertBlockPtrToKotlinFunction(kotlinFunctionTypeRendered)
                         )
-                        +block(defineArgs?.let { MixedAST.LambdaParameters(it, isSwift = false) }) {
+                        +lambda(defineArgs?.let { MixedAST.LambdaParameters(it, isSwift = false) }) {
                             val kotlinFunCall = "kotlinFun".ast().invoke(*callArgs.toTypedArray())
                             val resultVariable = "_result".variable(isSwift = false)
                             val resultVariableAssignment = resultVariable.op(MixedAST.Operator.ASSIGN, kotlinFunCall)
@@ -792,13 +791,15 @@ internal sealed class Bridge(
                 }.orEmpty()
                 return block(separateLines = true) {
                     +"originalBlock".variable(isSwift = true).op(MixedAST.Operator.ASSIGN, valueExpression)
-                    +ret(block(defineArgs?.let { MixedAST.LambdaParameters(it, isSwift = true) }) {
-                        +ret(
-                            returnType.inSwiftSources.swiftToKotlin(
-                                typeNamer, "originalBlock".ast().invoke(*callArgs.toTypedArray())
+                    +ret(
+                        lambda(defineArgs?.let { MixedAST.LambdaParameters(it, isSwift = true) }) {
+                            +ret(
+                                returnType.inSwiftSources.swiftToKotlin(
+                                    typeNamer, "originalBlock".ast().invoke(*callArgs.toTypedArray())
+                                )
                             )
-                        )
-                    })
+                        }
+                    )
                 }.invoke()
             }
         }
