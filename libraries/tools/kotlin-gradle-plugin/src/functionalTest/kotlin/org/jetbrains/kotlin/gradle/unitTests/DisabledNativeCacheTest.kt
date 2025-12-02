@@ -164,6 +164,27 @@ class DisabledNativeCacheTest {
         }
     }
 
+    @Test
+    fun `test native cache diagnostic not emitted for unsupported native targets`() {
+        with(buildProjectWithMPP()) {
+            kotlin {
+                createNonCacheableTargets().forEach { target ->
+                    target.binaries.staticLib {
+                        disableNativeCache(
+                            currentVersionForDisableCache,
+                            "Disabled for tests",
+                            URI("https://kotlinlang.org")
+                        )
+                    }
+                }
+            }
+
+            evaluate()
+
+            assertNoDiagnostics(KotlinToolingDiagnostics.NativeCacheDisabledDiagnostic)
+        }
+    }
+
     companion object {
         private const val MAC_ARM64_LINK_TASK_NAME = "linkDebugStaticMacosArm64"
         private const val MAC_X64_LINK_TASK_NAME = "linkDebugStaticMacosX64"
