@@ -45098,6 +45098,18 @@ public class LLReversedDiagnosticsFe10TestGenerated extends AbstractLLReversedDi
       public void testSuspendFunctionExpectedTypeAndWhen() {
         runTest("compiler/testData/diagnostics/tests/suspendConversion/suspendFunctionExpectedTypeAndWhen.kt");
       }
+
+      @Test
+      @TestMetadata("suspendVsNonSuspendGeneric.kt")
+      public void testSuspendVsNonSuspendGeneric() {
+        runTest("compiler/testData/diagnostics/tests/suspendConversion/suspendVsNonSuspendGeneric.kt");
+      }
+
+      @Test
+      @TestMetadata("suspendVsNonSuspendSam.kt")
+      public void testSuspendVsNonSuspendSam() {
+        runTest("compiler/testData/diagnostics/tests/suspendConversion/suspendVsNonSuspendSam.kt");
+      }
     }
 
     @Nested
