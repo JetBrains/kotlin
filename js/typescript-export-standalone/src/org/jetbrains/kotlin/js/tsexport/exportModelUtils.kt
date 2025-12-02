@@ -8,12 +8,12 @@
 package org.jetbrains.kotlin.js.tsexport
 
 import org.jetbrains.kotlin.analysis.api.KaContextParameterApi
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotated
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationValue
 import org.jetbrains.kotlin.analysis.api.base.KaConstantValue
-import org.jetbrains.kotlin.analysis.api.components.allOverriddenSymbols
-import org.jetbrains.kotlin.analysis.api.components.containingDeclaration
+import org.jetbrains.kotlin.analysis.api.components.*
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaNamedSymbol
 import org.jetbrains.kotlin.js.config.ModuleKind
@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.name.JsStandardClassIds.Annotations.JsExportDefault
 import org.jetbrains.kotlin.name.JsStandardClassIds.Annotations.JsExportIgnore
 import org.jetbrains.kotlin.name.JsStandardClassIds.Annotations.JsImplicitExport
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.butIf
 
 private val reservedWords = setOf(
@@ -114,14 +115,30 @@ internal fun KaNamedSymbol.getExportedIdentifier(): String {
 }
 
 context(_: KaSession)
-internal fun shouldDeclarationBeExportedImplicitlyOrExplicitly(
-    declaration: KaDeclarationSymbol,
-): Boolean = declaration.isJsImplicitExport() || shouldDeclarationBeExported(declaration)
+internal fun shouldDeclarationBeExportedImplicitlyOrExplicitly(declaration: KaDeclarationSymbol): Boolean =
+    declaration.isJsImplicitExport() || shouldDeclarationBeExported(declaration)
 
-// TODO: Add memoization?
 context(_: KaSession)
-private fun shouldDeclarationBeExported(declaration: KaDeclarationSymbol): Boolean = shouldDeclarationBeExported(declaration) {
-    declaration.containingDeclaration?.let { shouldDeclarationBeExported(it) } ?: false
+internal fun shouldDeclarationBeExported(declaration: KaDeclarationSymbol): Boolean {
+    if (declaration.isExpect || declaration.isJsExportIgnore() || !declaration.visibility.isPublicApi) {
+        return false
+    }
+    if (declaration.isExplicitlyExported()) {
+        return true
+    }
+
+    if (declaration is KaCallableSymbol && declaration.isOverride) {
+        return (declaration is KaNamedFunctionSymbol && declaration.isMethodOfAny)
+                || declaration.allOverriddenSymbols.any { shouldDeclarationBeExported(it) }
+    }
+
+    val parent = declaration.containingDeclaration
+    if (parent != null) {
+        return shouldDeclarationBeExported(parent)
+    }
+
+    // FIXME(KT-82224): `containingFile` is always null for declarations deserialized from KLIBs
+    return declaration.containingFile?.isJsExport() ?: false
 }
 
 internal val TypeScriptExportConfig.generateNamespacesForPackages: Boolean
@@ -177,21 +194,20 @@ private fun KaAnnotated.isExplicitlyExported(): Boolean =
 private val KaSymbolVisibility.isPublicApi: Boolean
     get() = this == KaSymbolVisibility.PUBLIC || this == KaSymbolVisibility.PROTECTED
 
-internal fun shouldDeclarationBeExportedImplicitlyOrExplicitly(
-    declaration: KaDeclarationSymbol,
-    parentIsExported: () -> Boolean,
-): Boolean = declaration.isJsImplicitExport() || shouldDeclarationBeExported(declaration, parentIsExported)
-
-private fun shouldDeclarationBeExported(
-    declaration: KaDeclarationSymbol,
-    parentIsExported: () -> Boolean,
-): Boolean {
-    if (declaration.isExpect || declaration.isJsExportIgnore() || !declaration.visibility.isPublicApi) {
-        return false
-    }
-    if (declaration.isExplicitlyExported()) {
-        return true
+@OptIn(KaExperimentalApi::class)
+context(_: KaSession)
+private val KaNamedFunctionSymbol.isMethodOfAny: Boolean
+    get() {
+        if (receiverParameter != null || contextParameters.isNotEmpty()) return false
+        return when (name) {
+            OperatorNameConventions.HASH_CODE, OperatorNameConventions.TO_STRING ->
+                valueParameters.isEmpty()
+            OperatorNameConventions.EQUALS ->
+                valueParameters.singleOrNull()?.returnType?.fullyExpandedType?.let { it.isAnyType && it.isNullable } == true
+            else -> false
+        }
     }
 
-    return parentIsExported()
-}
+context(_: KaSession)
+private val KaCallableSymbol.isOverride: Boolean
+    get() = directlyOverriddenSymbols.firstOrNull() != null
