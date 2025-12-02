@@ -147,7 +147,7 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
                 .filter { it.classId != StandardClassIds.Any }
                 .toList()
 
-            val filteredDeclarations = processOwnDeclarationsMappedSpecialSignaturesAware(
+            val filteredDeclarations = processOwnDeclarationsMappedSpecialSignaturesAwareV2(
                 containingClass = this@SymbolLightClassForClassOrObject,
                 callableDeclarations = visibleDeclarations,
                 allSupertypes,
@@ -164,7 +164,7 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
             generateMethodsFromAny(classSymbol, result)
 
             addDelegatesToInterfaceMethods(result, classSymbol, allSupertypes)
-            generateJavaCollectionMethodStubsIfNeeded(
+            generateJavaCollectionMethodStubsIfNeededV2(
                 containingClass = this@SymbolLightClassForClassOrObject,
                 classSymbol,
                 allSupertypes,
@@ -261,7 +261,7 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
                         createDelegateMethod(functionSymbol = callableSymbol)
                         return@forEach
                     }
-                    val shouldCreateRegularDelegate = processPossiblyMappedMethod(
+                    val shouldCreateRegularDelegate = processPossiblyMappedMethodV2(
                         containingClass = this@SymbolLightClassForClassOrObject,
                         ownFunction = callableSymbol,
                         kotlinCollectionFunction = kotlinCollectionFunction,
