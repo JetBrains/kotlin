@@ -11,8 +11,39 @@ import kotlin.collections.builders.MapBuilder
 import kotlin.test.assertEquals
 import kotlin.test.assertFails
 import kotlin.test.Test
+import kotlin.test.assertTrue
 
 class MapBuilderTest {
+
+    // Reproducer from KT-82783
+    @Test
+    fun buildMapDuplicatesReproducer() {
+        buildMap {
+            val map = this
+
+            map[148961824] = 1
+            map[148962400] = 1
+            map[148963552] = 1
+            map[148964704] = 1
+            map[148965856] = 1
+            map[148967008] = 1
+            map[148968160] = 1
+            map[148969312] = 1
+            map[148970464] = 1
+            map[148971616] = 1
+            map[148972768] = 1
+            map[148973920] = 1
+            map[148975072] = 1
+            map[148976224] = 1
+            map[148977376] = 1
+            map[148978528] = 1
+            map.remove(148961824)
+            map[148978528] = 1
+
+            val duplicates = map.keys.groupingBy { it }.eachCount().filterValues { it > 1 }
+            assertTrue(duplicates.isEmpty(), "Found duplicates: $duplicates")
+        }
+    }
 
     @Test
     fun capacityOverflow() {
