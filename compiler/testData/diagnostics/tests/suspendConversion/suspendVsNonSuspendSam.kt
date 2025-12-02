@@ -1,4 +1,5 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// FIR_IDENTICAL
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-82869
 fun interface MySupplier<T> {
     fun get(): T
