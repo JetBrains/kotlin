@@ -220,7 +220,7 @@ public class SirCustomTypeTranslatorImpl(
         val pairedParameterCType: CType
             get() = typeList.first().cType
 
-        override val inKotlinSources = object : ValueConversion {
+        override val inKotlinSources = object : ValueConversionInKotlin {
             override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: MixedAST): MixedAST {
                 val operator = if (inclusive) MixedAST.Operator.RANGE_KOTLIN else MixedAST.Operator.RANGE_UNTIL
                 return valueExpression.parameterX(1).op(operator, valueExpression.parameterX(2))
@@ -230,7 +230,7 @@ public class SirCustomTypeTranslatorImpl(
                 valueExpression.createRetainedExternalRCRef()
         }
 
-        override val inSwiftSources = object : ValueConversion {
+        override val inSwiftSources = object : ValueConversionInSwift {
             override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: MixedAST): MixedAST =
                 valueExpression.access("lowerBound").op(MixedAST.Operator.COMMA, valueExpression.access("upperBound"))
 

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.sir.providers.impl.tree
 
 import org.jetbrains.kotlin.sir.SirType
 import org.jetbrains.kotlin.sir.providers.SirTypeNamer
+import org.jetbrains.kotlin.sir.providers.impl.BridgeProvider.InSourcesConversion
 
 /**
  * This class represents simple AST, that is used in TypeBridging.kt
@@ -202,7 +203,16 @@ internal fun MixedAST.invokeLambda(
     f: BlockBuilder.() -> Unit,
 ) = MixedAST.InvokeLambda(this, lambda(parameters, separateLines = separateLines, f))
 
-internal fun String.variable(isSwift: Boolean): MixedAST.Variable = MixedAST.Variable(ast(), isSwift)
+context(c: InSourcesConversion)
+internal fun lambdaParameters(vararg parameters: MixedAST): MixedAST.LambdaParameters =
+    MixedAST.LambdaParameters(parameters.toList(), isSwift = c.isSwift)
+
+context(c: InSourcesConversion)
+internal fun lambdaParameters(parameters: List<MixedAST>): MixedAST.LambdaParameters =
+    MixedAST.LambdaParameters(parameters, isSwift = c.isSwift)
+
+context(c: InSourcesConversion)
+internal fun String.variable(): MixedAST.Variable = MixedAST.Variable(ast(), isSwift = c.isSwift)
 
 internal fun MixedAST.named(name: String): MixedAST = name.ast().op(MixedAST.Operator.COLON, this)
 
@@ -214,17 +224,13 @@ internal fun ret(s: String) = ret(s.ast())
 
 internal fun MixedAST.exclExcl() = MixedAST.ExclExcl(this)
 
-internal fun MixedAST.asKotlin(namer: SirTypeNamer, type: SirType) =
-    asKotlin(type.kotlinTypeName(namer))
+context(c: InSourcesConversion)
+internal fun MixedAST.asUnsafe(namer: SirTypeNamer, type: SirType) =
+    asUnsafe(if (c.isSwift) type.swiftTypeName(namer) else type.kotlinTypeName(namer))
 
-internal fun MixedAST.asKotlin(typeAST: MixedAST) =
-    op(MixedAST.Operator.AS, typeAST)
-
-internal fun MixedAST.asSwift(namer: SirTypeNamer, type: SirType) =
-    asSwift(type.swiftTypeName(namer))
-
-internal fun MixedAST.asSwift(typeAST: MixedAST) =
-    op(MixedAST.Operator.AS_EXCL, typeAST)
+context(c: InSourcesConversion)
+internal fun MixedAST.asUnsafe(typeAST: MixedAST) =
+    op(if (c.isSwift) MixedAST.Operator.AS_EXCL else MixedAST.Operator.AS, typeAST)
 
 internal fun MixedAST.addr() = MixedAST.Addr(this)
 
