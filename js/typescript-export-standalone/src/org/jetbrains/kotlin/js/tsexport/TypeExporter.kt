@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.ir.backend.js.tsexport.ExportedType.*
 import org.jetbrains.kotlin.ir.backend.js.tsexport.ExportedType.Array
 import org.jetbrains.kotlin.ir.backend.js.tsexport.ExportedType.Function
 import org.jetbrains.kotlin.ir.backend.js.tsexport.ExportedTypeParameter
-import org.jetbrains.kotlin.js.config.ModuleKind
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.Variance
@@ -141,10 +140,7 @@ internal class TypeExporter(private val config: TypeScriptExportConfig) {
                     val isImplicitlyExported = !isExported && !symbol.isExternal
                     val isNonExportedExternal = symbol.isExternal && !isExported
                     val name = symbol
-                        .getExportedFqName(
-                            shouldIncludePackage = !isNonExportedExternal && config.generateNamespacesForPackages,
-                            isEsModules = config.artifactConfiguration.moduleKind == ModuleKind.ES,
-                        )
+                        .getExportedFqName(shouldIncludePackage = !isNonExportedExternal && config.generateNamespacesForPackages, config)
                         .asString()
 
                     // TODO(KT-82340): Approximate to actual supertype
