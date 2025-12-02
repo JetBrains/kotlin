@@ -6,7 +6,9 @@
 package org.jetbrains.kotlin.buildtools.internal
 
 import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
+import org.jetbrains.kotlin.daemon.common.DaemonOptions
 import java.nio.file.Path
+import kotlin.io.path.Path
 
 internal object InProcessExecutionPolicyImpl : ExecutionPolicy.InProcess
 
@@ -51,6 +53,6 @@ internal class DaemonExecutionPolicyImpl : ExecutionPolicy.WithDaemon {
          * This is mainly useful for tests,
          * so that the invoker can make sure that a specific daemon is spun up for a test and no stale daemons are used.
          */
-        val DAEMON_RUN_DIR_PATH: Option<Path?> = Option("DAEMON_RUN_DIR_PATH", null)
+        val DAEMON_RUN_DIR_PATH: Option<Path> = Option("DAEMON_RUN_DIR_PATH", Path(DaemonOptions().runFilesPath))
     }
 }

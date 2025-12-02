@@ -68,9 +68,12 @@ public sealed interface ExecutionPolicy {
              *
              * This is mainly useful for tests,
              * so that the invoker can make sure that a specific daemon is spun up for a test and no stale daemons are used.
+             *
+             * @since 2.3.20
              */
             @JvmField
-            public val DAEMON_RUN_DIR_PATH: Option<Path?> = Option("DAEMON_RUN_DIR_PATH")
+            @DelicateBuildToolsApi
+            public val DAEMON_RUN_DIR_PATH: Option<Path> = Option("DAEMON_RUN_DIR_PATH")
         }
     }
 }

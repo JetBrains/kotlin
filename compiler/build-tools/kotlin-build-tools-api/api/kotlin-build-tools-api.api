@@ -52,6 +52,9 @@ public abstract interface class org/jetbrains/kotlin/buildtools/api/CompilerExec
 	public abstract fun useInProcessStrategy ()Lorg/jetbrains/kotlin/buildtools/api/CompilerExecutionStrategyConfiguration;
 }
 
+public abstract interface annotation class org/jetbrains/kotlin/buildtools/api/DelicateBuildToolsApi : java/lang/annotation/Annotation {
+}
+
 public abstract interface annotation class org/jetbrains/kotlin/buildtools/api/DeprecatedCompilerArgument : java/lang/annotation/Annotation {
 }
 

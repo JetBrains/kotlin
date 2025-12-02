@@ -187,7 +187,7 @@ internal class JvmCompilationOperationImpl(
                 executionPolicy[SHUTDOWN_DELAY_MILLIS]?.let { shutdownDelay ->
                     shutdownDelayMilliseconds = shutdownDelay
                 }
-                executionPolicy[DAEMON_RUN_DIR_PATH]?.let { runDirPath ->
+                executionPolicy[DAEMON_RUN_DIR_PATH].let { runDirPath ->
                     runFilesPath = runDirPath.absolutePathString()
                     executionPolicy[JVM_ARGUMENTS] = (executionPolicy[JVM_ARGUMENTS] ?: emptyList()) +
                             "D${CompilerSystemProperties.COMPILE_DAEMON_CUSTOM_RUN_FILES_PATH_FOR_TESTS.property}=$runFilesPath"
