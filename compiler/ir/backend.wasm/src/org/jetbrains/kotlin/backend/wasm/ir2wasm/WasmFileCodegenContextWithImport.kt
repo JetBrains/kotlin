@@ -16,11 +16,11 @@ class WasmFileCodegenContextWithImport(
     wasmFileFragment: WasmCompiledFileFragment,
     idSignatureRetriever: IdSignatureRetriever,
     private val moduleName: String,
-    private val importDeclarations: Set<IdSignature>,
+    private val moduleReferencedDeclarations: ModuleReferencedDeclarations,
 ) : WasmFileCodegenContext(wasmFileFragment, idSignatureRetriever) {
     override fun handleFunctionWithImport(declaration: IrFunctionSymbol): Boolean {
         val signature = idSignatureRetriever.declarationSignature(declaration.owner)
-        if (signature !in importDeclarations) return true
+        if (signature !in moduleReferencedDeclarations.referencedFunction) return true
         val functionTypeSymbol = referenceFunctionHeapType(declaration)
         defineFunction(
             declaration,
@@ -35,7 +35,7 @@ class WasmFileCodegenContextWithImport(
 
     override fun handleVTableWithImport(declaration: IrClassSymbol): Boolean {
         val signature = idSignatureRetriever.declarationSignature(declaration.owner)
-        if (signature !in importDeclarations) return true
+        if (signature !in moduleReferencedDeclarations.referencedGlobalVTable) return true
         val global = WasmGlobal(
             name = "<classVTable>",
             type = WasmRefType(WasmHeapType.Type.VTableType(declaration.getReferenceKey())),
@@ -49,7 +49,7 @@ class WasmFileCodegenContextWithImport(
 
     override fun handleClassITableWithImport(declaration: IrClassSymbol): Boolean {
         val signature = idSignatureRetriever.declarationSignature(declaration.owner)
-        if (signature !in importDeclarations) return true
+        if (signature !in moduleReferencedDeclarations.referencedGlobalClassITable) return true
         val global = WasmGlobal(
             name = "<classITable>",
             type = WasmRefType(Synthetics.HeapTypes.wasmAnyArrayType),
@@ -63,7 +63,7 @@ class WasmFileCodegenContextWithImport(
 
     override fun handleRTTIWithImport(declaration: IrClassSymbol, superType: IrClassSymbol?): Boolean {
         val signature = idSignatureRetriever.declarationSignature(declaration.owner)
-        if (signature !in importDeclarations) return true
+        if (signature !in moduleReferencedDeclarations.referencedRttiGlobal) return true
         val rttiGlobal = WasmGlobal(
             name = "${declaration.owner.fqNameWhenAvailable}_rtti",
             type = WasmRefType(Synthetics.HeapTypes.rttiType),
