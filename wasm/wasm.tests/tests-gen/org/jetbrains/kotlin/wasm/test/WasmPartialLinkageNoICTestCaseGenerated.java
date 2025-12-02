@@ -378,6 +378,12 @@ public class WasmPartialLinkageNoICTestCaseGenerated extends AbstractWasmPartial
   }
 
   @Test
+  @TestMetadata("interop-removedFunctionReference")
+  public void testInterop_removedFunctionReference() {
+    runTest("compiler/testData/klib/partial-linkage/interop-removedFunctionReference/");
+  }
+
+  @Test
   @TestMetadata("intraModuleInlining")
   public void testIntraModuleInlining() {
     runTest("compiler/testData/klib/partial-linkage/intraModuleInlining/");
