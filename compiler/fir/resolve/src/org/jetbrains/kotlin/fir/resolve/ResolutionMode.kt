@@ -137,10 +137,7 @@ sealed class ResolutionMode(
 }
 
 val ResolutionMode.expectedType: ConeKotlinType?
-    get() = when (this) {
-        is ResolutionMode.WithExpectedType -> expectedType.takeIf { !this.fromCast }
-        else -> null
-    }
+    get() = expectedTypeUnlessFromEquality
 
 val ResolutionMode.expectedTypeUnlessFromEquality: ConeKotlinType?
     get() = when (this) {
