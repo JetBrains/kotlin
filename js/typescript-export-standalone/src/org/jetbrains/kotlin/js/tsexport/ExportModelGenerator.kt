@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.containingDeclaration
-import org.jetbrains.kotlin.analysis.api.components.containingFile
 import org.jetbrains.kotlin.analysis.api.components.isNullable
 import org.jetbrains.kotlin.analysis.api.components.klibSourceFileName
 import org.jetbrains.kotlin.analysis.api.klib.reader.getAllDeclarations
@@ -69,11 +68,7 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
 
     context(_: KaSession)
     private fun exportTopLevelDeclaration(declaration: KaDeclarationSymbol): ExportedDeclaration? {
-        val isWholeFileExported = {
-            // FIXME(KT-82224): `containingFile` is always null for declarations deserialized from KLIBs
-            declaration.containingFile?.isJsExport() ?: false
-        }
-        if (!shouldDeclarationBeExportedImplicitlyOrExplicitly(declaration, isWholeFileExported)) return null
+        if (!shouldDeclarationBeExportedImplicitlyOrExplicitly(declaration)) return null
 
         return when (declaration) {
             is KaNamedFunctionSymbol -> exportFunction(declaration, parent = null)
