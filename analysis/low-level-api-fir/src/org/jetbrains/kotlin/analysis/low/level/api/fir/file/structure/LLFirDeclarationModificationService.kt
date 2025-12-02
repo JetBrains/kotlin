@@ -69,45 +69,45 @@ class LLFirDeclarationModificationService(val project: Project) : Disposable {
 
         project.messageBus.connect(this).subscribe(
             KtCodeFragment.IMPORT_MODIFICATION,
-            KotlinCodeFragmentImportModificationListener { codeFragment -> outOfBlockModification(codeFragment) }
+            KotlinCodeFragmentImportModificationListener { codeFragment -> handleOutOfBlockModification(codeFragment) }
         )
     }
 
-    private var inBlockModificationQueue: MutableSet<ChangeType.InBlock>? = null
+    private var modificationQueue: MutableSet<ChangeType.Deferrable>? = null
 
-    private fun addModificationToQueue(modification: ChangeType.InBlock) {
-        // There is no sense to add into the queue elements with unresolved body
-        if (!modification.blockOwner.hasFirBody) return
+    private fun addModificationToQueue(modification: ChangeType.Deferrable) {
+        // There is no sense to add elements into the queue with an unresolved body.
+        if (modification is ChangeType.InBlock && !modification.affectedElement.hasFirBody) return
 
-        val queue = inBlockModificationQueue ?: HashSet<ChangeType.InBlock>().also { inBlockModificationQueue = it }
+        val queue = modificationQueue ?: HashSet<ChangeType.Deferrable>().also { modificationQueue = it }
         queue += modification
     }
 
     /**
-     * We can avoid processing of in-block modification with the same [KaModule] because they
-     * will be invalidated anyway by OOBM
+     * We can avoid processing of deferred modifications with the same [KaModule] because the OOBM will invalidate the associated caches
+     * anyway.
      */
     private fun dropOutdatedModifications(ktModuleWithOutOfBlockModification: KaModule) {
         processQueue { value, iterator ->
-            if (value.ktModule == ktModuleWithOutOfBlockModification) iterator.remove()
+            if (value.module == ktModuleWithOutOfBlockModification) iterator.remove()
         }
     }
 
     /**
-     * Process valid elements in the current queue.
+     * Process valid elements in the current modification queue.
      * Non-valid elements will be dropped from the queue during this iteration.
      *
      * @param action will be executed for each valid element in the queue;
      * **value** is a current element;
      * **iterator** is the corresponding iterator for this element.
      */
-    private inline fun processQueue(action: (value: ChangeType.InBlock, iterator: MutableIterator<ChangeType.InBlock>) -> Unit) {
-        val queue = inBlockModificationQueue ?: return
+    private inline fun processQueue(action: (value: ChangeType.Deferrable, iterator: MutableIterator<ChangeType.Deferrable>) -> Unit) {
+        val queue = modificationQueue ?: return
         val iterator = queue.iterator()
         while (iterator.hasNext()) {
             val element = iterator.next()
-            val owner = element.blockOwner
-            if (!owner.isValid || (owner.containingFile as? KtCodeFragment)?.context?.isValid == false) {
+            val ktElement = element.affectedElement
+            if (!ktElement.isValid || (ktElement.containingFile as? KtCodeFragment)?.context?.isValid == false) {
                 iterator.remove()
                 continue
             }
@@ -117,17 +117,17 @@ class LLFirDeclarationModificationService(val project: Project) : Disposable {
     }
 
     /**
-     * Force the service to publish delayed modifications.
+     * Force the service to publish deferred modifications.
      * This action is required to fix inconsistencies in [FirFile][org.jetbrains.kotlin.fir.declarations.FirFile] tree.
      */
     fun flushModifications() {
         ApplicationManager.getApplication().assertWriteIntentLockAcquired()
 
         processQueue { value, _ ->
-            inBlockModification(value.blockOwner, value.ktModule)
+            handleDeferredModification(value)
         }
 
-        inBlockModificationQueue = null
+        modificationQueue = null
     }
 
     /**
@@ -137,9 +137,9 @@ class LLFirDeclarationModificationService(val project: Project) : Disposable {
         ApplicationManager.getApplication().assertWriteIntentLockAcquired()
 
         when (val changeType = calculateChangeType(element, modificationType)) {
-            is ChangeType.Whitespace -> handleWhitespaceModification(element)
-            is ChangeType.InBlock -> addModificationToQueue(changeType)
-            is ChangeType.OutOfBlock -> outOfBlockModification(element)
+            is ChangeType.Invisible -> {}
+            is ChangeType.Deferrable -> addModificationToQueue(changeType)
+            is ChangeType.OutOfBlock -> handleOutOfBlockModification(element)
         }
     }
 
@@ -150,7 +150,13 @@ class LLFirDeclarationModificationService(val project: Project) : Disposable {
         }
 
         if (element is PsiWhiteSpace || element is PsiComment) {
-            return ChangeType.Whitespace
+            // `PsiWhiteSpace` is not a `KtElement`, so we cannot invalidate it directly. This also ensures that we get a somewhat stable
+            // element instead of the (possibly deleted) whitespace.
+            //
+            // If there is no `KtElement` ancestor, we have a non-Kotlin file. Whitespace changes in such files are invisible to Kotlin.
+            val affectedElement = element.parentOfType<KtElement>() ?: return ChangeType.Invisible
+
+            return ChangeType.Whitespace(affectedElement, project)
         }
 
         if (element.language !is KotlinLanguage) {
@@ -212,24 +218,28 @@ class LLFirDeclarationModificationService(val project: Project) : Disposable {
                 this is KaElementModificationType.ElementRemoved &&
                 removedElement.potentiallyAffectsPropertyBackingFieldResolution()
 
+    private fun handleDeferredModification(changeType: ChangeType.Deferrable) {
+        when (changeType) {
+            is ChangeType.Whitespace -> handleWhitespaceModification(changeType.affectedElement, changeType.module)
+            is ChangeType.InBlock -> handleInBlockModification(changeType.affectedElement, changeType.module)
+        }
+    }
+
     /**
      * @see ChangeType.Whitespace
      */
-    private fun handleWhitespaceModification(element: PsiElement) {
-        val file = element.containingFile as? KtFile ?: return
-        val module = KotlinProjectStructureProvider.getModule(project, element, useSiteModule = null)
+    private fun handleWhitespaceModification(element: KtElement, module: KaModule) {
         val resolvableSession = module.getResolutionFacade(project).sessionProvider.getResolvableSession(module)
 
-        val fileStructure = resolvableSession.moduleComponents.fileStructureCache.getCachedFileStructure(file) ?: return
-
-        // `PsiWhiteSpace` is not a `KtElement`, so we cannot invalidate it directly.
-        val ktElement = element.parentOfType<KtElement>() ?: file
+        val fileStructure = resolvableSession.moduleComponents.fileStructureCache
+            .getCachedFileStructure(element.containingKtFile)
+            ?: return
 
         // To reset diagnostics, we have to invalidate the file structure cache for the affected element.
-        fileStructure.invalidateElement(ktElement)
+        fileStructure.invalidateElement(element)
     }
 
-    private fun inBlockModification(declaration: KtAnnotated, module: KaModule) {
+    private fun handleInBlockModification(declaration: KtAnnotated, module: KaModule) {
         val resolutionFacade = module.getResolutionFacade(project)
         val firDeclaration = when (declaration) {
             is KtCodeFragment -> declaration.getOrBuildFirFile(resolutionFacade).codeFragment
@@ -264,7 +274,7 @@ class LLFirDeclarationModificationService(val project: Project) : Disposable {
             .afterModification(declaration, module)
     }
 
-    private fun outOfBlockModification(element: PsiElement) {
+    private fun handleOutOfBlockModification(element: PsiElement) {
         val module = KotlinProjectStructureProvider.getModule(project, element, useSiteModule = null)
 
         // We should check outdated modifications before to avoid cache dropping (e.g., KaModule cache)
@@ -336,8 +346,34 @@ private fun nonLocalDeclarationForLocalChange(psi: PsiElement): KtAnnotated? {
     return psi.getNonLocalReanalyzableContainingDeclaration() ?: psi.containingFile as? KtCodeFragment
 }
 
-private sealed class ChangeType {
-    object OutOfBlock : ChangeType()
+private sealed interface ChangeType {
+    /**
+     * A change that can be deferred to the next flush point (usually the end of a write action) to avoid excessive processing.
+     */
+    sealed class Deferrable : ChangeType {
+        abstract val affectedElement: KtElement
+        abstract val project: Project
+
+        val module: KaModule by lazy(LazyThreadSafetyMode.NONE) {
+            KotlinProjectStructureProvider.getModule(project, affectedElement, useSiteModule = null)
+        }
+
+        override fun equals(other: Any?): Boolean {
+            if (other === this) return true
+            if (other !is Deferrable) return false
+
+            return other::class == this::class && other.affectedElement == affectedElement
+        }
+
+        override fun hashCode(): Int = affectedElement.hashCode()
+    }
+
+    /**
+     * A change that has no effect on cached information.
+     */
+    object Invisible : ChangeType
+
+    object OutOfBlock : ChangeType
 
     /**
      * Whitespace modification covers changes in whitespace and comments.
@@ -353,7 +389,10 @@ private sealed class ChangeType {
      * Whitespace modification can occur in any location. Even if it occurs outside a declaration, whitespace modification only affects its
      * containing declaration or the file itself, not the whole module.
      */
-    object Whitespace : ChangeType()
+    class Whitespace(
+        override val affectedElement: KtElement,
+        override val project: Project,
+    ) : Deferrable()
 
     /**
      * In-block modification is a source code modification that doesn't affect the state of other non-local declarations.
@@ -378,15 +417,13 @@ private sealed class ChangeType {
      * the return type of `x` will become `String` instead of the initial `Int`.
      * This will change the return type of `z` as it does not have an explicit type.
      * So, it is an **out-of-block modification**.
+     *
+     * @property affectedElement The non-local declaration where the in-block modification occurs.
      */
-    class InBlock(val blockOwner: KtAnnotated, val project: Project) : ChangeType() {
-        val ktModule: KaModule by lazy(LazyThreadSafetyMode.NONE) {
-            KotlinProjectStructureProvider.getModule(project, blockOwner, useSiteModule = null)
-        }
-
-        override fun equals(other: Any?): Boolean = other === this || other is InBlock && other.blockOwner == blockOwner
-        override fun hashCode(): Int = blockOwner.hashCode()
-    }
+    class InBlock(
+        override val affectedElement: KtAnnotated,
+        override val project: Project,
+    ) : Deferrable()
 }
 
 /**
