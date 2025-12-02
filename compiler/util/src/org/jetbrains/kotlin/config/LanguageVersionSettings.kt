@@ -440,7 +440,6 @@ enum class LanguageFeature(
     InferenceEnhancementsIn23(KOTLIN_2_3, "KT-76826"),
     AllowReturnInExpressionBodyWithExplicitType(KOTLIN_2_3, "KT-76926"),
     ParseLambdaWithSuspendModifier(KOTLIN_2_3, "KT-22765"),
-    DiscriminateSuspendInOverloadResolution(KOTLIN_2_3, "KT-23610"),
     JsAllowLongInExportedDeclarations(sinceVersion = KOTLIN_2_3, "KT-79222"),
     JsStaticInInterface(KOTLIN_2_3, "KT-80168"),
 
@@ -524,6 +523,7 @@ enum class LanguageFeature(
 
     DontMakeExplicitJavaTypeArgumentsFlexible(sinceVersion = null, "KTLC-284"),
     PreciseSimplificationToFlexibleLowerConstraint(sinceVersion = null, "KT-78621"),
+    DiscriminateSuspendInOverloadResolution(sinceVersion = null, "KT-23610"), // Postponed because of KT-82869
 
     // Experimental features
 
