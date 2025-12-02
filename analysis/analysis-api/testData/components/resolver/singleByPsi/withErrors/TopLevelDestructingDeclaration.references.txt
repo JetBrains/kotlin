@@ -2,6 +2,5 @@ KtDestructuringDeclarationEntry(120,124): 'val1'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    resolvesByNamesViolations: '<error property>' !in []
     symbols:
-      val `<error property>`: ERROR(Destructuring declarations are only allowed for local variables/values)
+      Nothing (Unresolved reference)

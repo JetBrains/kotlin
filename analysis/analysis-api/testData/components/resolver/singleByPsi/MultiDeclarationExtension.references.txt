@@ -3,5 +3,4 @@ KtDestructuringDeclarationEntry(135,136): 'b'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      0: (in <local>: main) val b: kotlin.Int
-      1: (in a) operator fun a.A.component2(): kotlin.Int
+      (in a) operator fun a.A.component2(): kotlin.Int

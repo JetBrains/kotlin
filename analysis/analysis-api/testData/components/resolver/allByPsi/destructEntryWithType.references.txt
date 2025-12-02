@@ -52,8 +52,7 @@ KtDestructuringDeclarationEntry(153,234): 'left: @Anno(0 + constant) List<@Anno(
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      0: (in util) val left: @util.Anno(str = 0) kotlin.collections.List<@util.Anno(str = 1) kotlin.collections.List<@util.Anno(str = 2) kotlin.Int>>
-      1: (in util.MyPair) operator fun component1(): kotlin.collections.List<kotlin.collections.List<kotlin.Int>>
+      (in util.MyPair) operator fun component1(): kotlin.collections.List<kotlin.collections.List<kotlin.Int>>
 
 KtNameReferenceExpression(160,164): 'Anno'
   KtSimpleNameReference:
@@ -165,8 +164,7 @@ KtDestructuringDeclarationEntry(236,241): 'right'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      0: (in util) val right: kotlin.Int
-      1: (in util.MyPair) operator fun component2(): kotlin.Int
+      (in util.MyPair) operator fun component2(): kotlin.Int
 
 KtNameReferenceExpression(245,249): 'pair'
   KtSimpleNameReference:

@@ -5,10 +5,11 @@
 
 package org.jetbrains.kotlin.references.fe10
 
-import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.references.KtDestructuringDeclarationReference
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.KtDestructuringDeclaration
 import org.jetbrains.kotlin.psi.KtDestructuringDeclarationEntry
 import org.jetbrains.kotlin.psi.KtImportAlias
 import org.jetbrains.kotlin.references.fe10.base.KtFe10Reference
@@ -20,13 +21,9 @@ internal class KtFe10DestructuringDeclarationEntry(
 ) : KtDestructuringDeclarationReference(element), KtFe10Reference {
     override fun getTargetDescriptors(context: BindingContext): Collection<DeclarationDescriptor> {
         return listOfNotNull(
-            // TODO(KT-82708): Only the componentN result is expected
-            context[BindingContext.VARIABLE, element],
             context[BindingContext.COMPONENT_RESOLVED_CALL, element]?.candidateDescriptor
         )
     }
-
-    override fun getRangeInElement() = TextRange(0, element.textLength)
 
     override fun isReferenceToImportAlias(alias: KtImportAlias): Boolean {
         return super<KtFe10Reference>.isReferenceToImportAlias(alias)
@@ -38,4 +35,14 @@ internal class KtFe10DestructuringDeclarationEntry(
             it is CallableMemberDescriptor && it.kind == CallableMemberDescriptor.Kind.SYNTHESIZED
         }
     }
+
+    /**
+     * K1 doesn't support name-based destructuring
+     */
+    override val resolvesByNames: Collection<Name>
+        get() {
+            val destructuringParent = element.parent as? KtDestructuringDeclaration ?: return emptyList()
+            val componentNIndex = destructuringParent.entries.indexOf(element) + 1
+            return listOf(Name.identifier("component$componentNIndex"))
+        }
 }

@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.idea.references
 
 import com.intellij.openapi.util.TextRange
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtDestructuringDeclaration
 import org.jetbrains.kotlin.psi.KtDestructuringDeclarationEntry
@@ -17,17 +16,27 @@ abstract class KtDestructuringDeclarationReference(
 
     override fun getRangeInElement() = TextRange(0, element.textLength)
 
-    // TODO(KT-82708): Should be dropped
-    override fun resolve(): PsiElement? = element
-
     override val resolvesByNames: Collection<Name>
         get() {
             val destructuringParent = element.parent as? KtDestructuringDeclaration ?: return emptyList()
-            val componentIndex = destructuringParent.entries.indexOf(element) + 1
-            return listOfNotNull(
-                element.nameAsName,
-                element.initializer?.getReferencedNameAsName(),
-                Name.identifier("component$componentIndex"),
-            )
+
+            // In the future, `hasSquareBrackets()` will suffice, but during the migration phase,
+            // distinguishing between positional and named destructuring solely through syntax is not possible for the short form
+            val isPositionalBased = destructuringParent.hasSquareBrackets() || !destructuringParent.isFullForm
+            val isNameBased = !destructuringParent.hasSquareBrackets()
+            val propertyUsage = if (isNameBased) {
+                element.initializer?.getReferencedNameAsName() ?: element.nameAsName
+            } else {
+                null
+            }
+
+            val componentNUsage = if (isPositionalBased) {
+                val componentNIndex = destructuringParent.entries.indexOf(element) + 1
+                Name.identifier("component$componentNIndex")
+            } else {
+                null
+            }
+
+            return listOfNotNull(propertyUsage, componentNUsage)
         }
 }

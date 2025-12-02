@@ -24,16 +24,14 @@ KtDestructuringDeclarationEntry(136,145): 'val first'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      0: (in <local>: declaration) val first: kotlin.String
-      1: (in Tuple) operator fun component1(): kotlin.String
+      (in Tuple) operator fun component1(): kotlin.String
 
 KtDestructuringDeclarationEntry(147,157): 'var second'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      0: (in <local>: declaration) var second: kotlin.Int
-      1: (in Tuple) operator fun component2(): kotlin.Int
+      (in Tuple) operator fun component2(): kotlin.Int
 
 KtNameReferenceExpression(162,163): 'x'
   KtSimpleNameReference:
@@ -53,8 +51,7 @@ KtDestructuringDeclarationEntry(183,192): 'var first'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      0: (in <local>: declaration) var first: kotlin.String
-      1: (in Tuple) operator fun component1(): kotlin.String
+      (in Tuple) operator fun component1(): kotlin.String
 
 KtNameReferenceExpression(196,197): 'x'
   KtSimpleNameReference:
@@ -74,8 +71,7 @@ KtDestructuringDeclarationEntry(217,234): 'val first: String'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      0: (in <local>: declaration) val first: kotlin.String
-      1: (in Tuple) operator fun component1(): kotlin.String
+      (in Tuple) operator fun component1(): kotlin.String
 
 KtNameReferenceExpression(228,234): 'String'
   KtSimpleNameReference:
@@ -125,16 +121,14 @@ KtDestructuringDeclarationEntry(282,291): 'val first'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      0: (in <local>: loop) val first: kotlin.String
-      1: (in Tuple) operator fun component1(): kotlin.String
+      (in Tuple) operator fun component1(): kotlin.String
 
 KtDestructuringDeclarationEntry(293,303): 'val second'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      0: (in <local>: loop) val second: kotlin.Int
-      1: (in Tuple) operator fun component2(): kotlin.Int
+      (in Tuple) operator fun component2(): kotlin.Int
 
 KtNameReferenceExpression(309,310): 'x'
   KtSimpleNameReference:
@@ -163,8 +157,7 @@ KtDestructuringDeclarationEntry(325,334): 'val first'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      0: (in <local>: loop) val first: kotlin.String
-      1: (in Tuple) operator fun component1(): kotlin.String
+      (in Tuple) operator fun component1(): kotlin.String
 
 KtNameReferenceExpression(339,340): 'x'
   KtSimpleNameReference:
@@ -193,8 +186,7 @@ KtDestructuringDeclarationEntry(355,372): 'val first: String'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      0: (in <local>: loop) val first: kotlin.String
-      1: (in Tuple) operator fun component1(): kotlin.String
+      (in Tuple) operator fun component1(): kotlin.String
 
 KtNameReferenceExpression(366,372): 'String'
   KtSimpleNameReference:
@@ -255,16 +247,14 @@ KtDestructuringDeclarationEntry(448,457): 'val first'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      0: (in <local>: lambda.<no name>) val first: kotlin.String
-      1: (in Tuple) operator fun component1(): kotlin.String
+      (in Tuple) operator fun component1(): kotlin.String
 
 KtDestructuringDeclarationEntry(459,469): 'val second'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      0: (in <local>: lambda.<no name>) val second: kotlin.Int
-      1: (in Tuple) operator fun component2(): kotlin.Int
+      (in Tuple) operator fun component2(): kotlin.Int
 
 KtCallExpression(481,503): 'foo { [val first] -> }'
   KtInvokeFunctionReference:
@@ -291,8 +281,7 @@ KtDestructuringDeclarationEntry(488,497): 'val first'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      0: (in <local>: lambda.<no name>) val first: kotlin.String
-      1: (in Tuple) operator fun component1(): kotlin.String
+      (in Tuple) operator fun component1(): kotlin.String
 
 KtCallExpression(508,538): 'foo { [val first: String] -> }'
   KtInvokeFunctionReference:
@@ -319,8 +308,7 @@ KtDestructuringDeclarationEntry(515,532): 'val first: String'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      0: (in <local>: lambda.<no name>) val first: kotlin.String
-      1: (in Tuple) operator fun component1(): kotlin.String
+      (in Tuple) operator fun component1(): kotlin.String
 
 KtNameReferenceExpression(526,532): 'String'
   KtSimpleNameReference:
