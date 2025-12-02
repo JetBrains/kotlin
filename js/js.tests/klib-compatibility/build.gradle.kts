@@ -122,7 +122,7 @@ fun Project.customFirstStageTest(rawVersion: String, addWritePermissionsForAllPr
                 extensions.configure<TestInputsCheckExtension> {
                     // compiler version 2.1.20 and earlier needs `write` permissions to all system properties. This was fixed in commit 7473dc76
                     // So to invoke older compilers, more permissions are given.
-                    extraPermissions.add("permission java.util.PropertyPermission \"*\", \"write\";")
+                    extraPermissions.add("""permission java.util.PropertyPermission "*", "write";""")
                 }
             }
     }
@@ -159,7 +159,7 @@ projectTests {
     testGenerator("org.jetbrains.kotlin.generators.tests.GenerateJsKlibCompatibilityTestsKt", generateTestsInBuildDirectory = true)
     testData(project(":compiler").isolated, "testData/codegen/box")
     testData(project(":compiler").isolated, "testData/codegen/boxInline")
-    testData(project(":js:js.translator").isolated, "testData")
+    testData(project(":js:js.translator").isolated, "testData/_commonFiles")
 
     withJsRuntime()
     withStdlibCommon()
