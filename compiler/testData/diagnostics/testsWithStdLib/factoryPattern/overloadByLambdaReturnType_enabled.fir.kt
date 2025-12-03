@@ -58,7 +58,7 @@ fun foo(f: () -> A): Int = 1
 fun foo(f: () -> B): String = ""
 
 fun test_6(c: C) {
-    val x = <!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!> { c }
+    val x = foo { c }
     takeString(x)
 }
 

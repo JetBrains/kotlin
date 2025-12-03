@@ -8,20 +8,16 @@ package org.jetbrains.kotlin.fir.resolve.calls.overloads
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.modality
-import org.jetbrains.kotlin.fir.disableCompatibilityModeForNewInference
 import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
 import org.jetbrains.kotlin.fir.expressions.FirNamedArgumentExpression
 import org.jetbrains.kotlin.fir.expressions.FirSpreadArgumentExpression
 import org.jetbrains.kotlin.fir.expressions.unwrapArgument
-import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
-import org.jetbrains.kotlin.fir.resolve.calls.ConeResolutionAtom
-import org.jetbrains.kotlin.fir.resolve.calls.ConeResolvedCallableReferenceAtom
-import org.jetbrains.kotlin.fir.resolve.calls.TypeVariableReplacement
+import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.FirNamedReferenceWithCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.removeTypeVariableTypes
@@ -39,7 +35,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.unwrapSubstitutionOverrides
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -57,6 +52,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemM
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImpl
 import org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystemConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.results.*
+import org.jetbrains.kotlin.resolve.descriptorUtil.OVERLOAD_RESOLUTION_BY_LAMBDA_ANNOTATION_CLASS_ID
 import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
@@ -122,9 +118,31 @@ class ConeOverloadConflictResolver(
                 discriminationFlags
             )
 
-            if (next.size <= 1 || current.size == next.size) return next
+            if (next.size <= 1 || current.size == next.size) {
+                return leaveDefaultForORBLRTAnnotated(next) ?: next
+            }
             current = next
         }
+    }
+
+    private fun leaveDefaultForORBLRTAnnotated(candidates: Set<Candidate>): Set<Candidate>? {
+        if (candidates.size <= 1) return candidates
+
+        val candidatesWithAnnotation = candidates.filterTo(mutableSetOf()) { candidate ->
+            (candidate.symbol.fir as FirAnnotationContainer).annotations.any {
+                it.annotationTypeRef.coneType.classId == OVERLOAD_RESOLUTION_BY_LAMBDA_ANNOTATION_CLASS_ID
+            }
+        }
+        if (candidatesWithAnnotation.isEmpty()) return null
+
+        val candidatesWithoutAnnotation = candidates - candidatesWithAnnotation
+
+        if (candidatesWithoutAnnotation.size == 1) {
+            candidatesWithoutAnnotation.single().addDiagnostic(CandidateChosenUsingOverloadResolutionByLambdaAnnotation)
+            return candidatesWithoutAnnotation
+        }
+
+        return null
     }
 
     /**

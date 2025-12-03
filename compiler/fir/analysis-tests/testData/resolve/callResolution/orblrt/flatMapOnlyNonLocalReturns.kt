@@ -1,16 +1,16 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // WITH_STDLIB
 
 fun foo(l: List<String>, mm: MutableMap<String, String>): Iterable<String> {
-    return l.<!OVERLOAD_RESOLUTION_AMBIGUITY!>flatMap<!> { entry ->
+    return l.flatMap { entry ->
         val childIndex = entry.hashCode()
         if (childIndex == -1) {
             // NB: Return of `foo`
-            <!RETURN_NOT_ALLOWED!>return<!> emptyList()
+            return emptyList()
         }
 
         // NB: Return of `foo`
-        <!RETURN_NOT_ALLOWED!>return<!> listOf("")
+        return listOf("")
     }
 }
 
