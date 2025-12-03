@@ -54,6 +54,9 @@ public interface KaSourceModificationService : KaEngineService {
      *
      * The function must be called from a write action.
      *
+     * @param modificationLocality The modification locality detected by [detectLocality]. It *must* have been provided by this service. No
+     *  other [KaSourceModificationLocality] should be passed to the function.
+     *
      * @see detectLocality
      */
     public fun handleInvalidation(element: PsiElement, modificationLocality: KaSourceModificationLocality)

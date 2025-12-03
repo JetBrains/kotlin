@@ -10,11 +10,23 @@ package org.jetbrains.kotlin.analysis.api.platform.modification
  */
 public sealed interface KaSourceModificationLocality {
     /**
-     * Whitespace modifications are usually harmless and have no effect.
+     * A change that has no effect on cached information.
+     */
+    public interface Invisible : KaSourceModificationLocality
+
+    /**
+     * Whitespace modification covers changes in whitespace and comments.
      *
-     * However, there are certain cases where whitespace can be significant and affect diagnostics. For example, when we have
-     * `if (x) "a"else "b"`, it is an error "literals must be surrounded by whitespace" (see KT-82629). Changing it to `if (x) "a" else "b"`
-     * fixes the issue, but we need to invalidate cached diagnostics.
+     * It *usually* has no effect, but it can affect compiler diagnostics. For example, when we have `if (x) "a"else "b"`, the compiler
+     * produces the error "literals must be surrounded by whitespace" (see KT-82629). Changing it to `if (x) "a" else "b"` fixes the
+     * problem, but for the cached error to disappear, caches that can be affected by PSI-only changes need to be invalidated.
+     *
+     * Whitespace modification is distinct from [in-block modification][InBlock]. Its scope of effect is smaller than that of in-block
+     * modification because the underlying FIR is not affected by whitespace modification. Hence, this is a special case that only affects
+     * the PSI and thereby only PSI-based compiler checkers.
+     *
+     * Whitespace modification can occur in any location. Even if it occurs outside a declaration, whitespace modification only affects its
+     * containing declaration or the file itself, not the whole module.
      */
     public interface Whitespace : KaSourceModificationLocality
 
