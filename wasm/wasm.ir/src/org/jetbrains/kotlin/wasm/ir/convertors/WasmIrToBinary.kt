@@ -282,14 +282,23 @@ class WasmIrToBinary(
             b.writeByte(opcode.toByte())
         }
 
-        if (opcode == WasmOp.RESUME.opcode) {
-            require(instr.immediates.size == 2)
-            appendImmediate(instr.immediates[0])
-            b.writeByte(1.toByte())
-            appendImmediate(instr.immediates[1])
-        } else {
-            instr.immediates.forEach {
-                appendImmediate(it)
+        when (opcode) {
+            WasmOp.RESUME.opcode -> {
+                require(instr.immediates.size == 2)
+                appendImmediate(instr.immediates[0])
+                b.writeByte(1.toByte())
+                appendImmediate(instr.immediates[1])
+            }
+            WasmOp.RESUME_THROW.opcode -> {
+                require(instr.immediates.size == 2)
+                appendImmediate(instr.immediates[0])
+                appendImmediate(instr.immediates[1])
+                b.writeByte(0.toByte())
+            }
+            else -> {
+                instr.immediates.forEach {
+                    appendImmediate(it)
+                }
             }
         }
     }

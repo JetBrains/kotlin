@@ -54,9 +54,12 @@ internal class WasmContinuation<in T>(
 
     override fun resumeWith(result: Result<T>) {
         if (isResumed) error("Continuation is already resumed")
-        result.exceptionOrNull()?.let { isResumed = true; throw it }
         wasmContBox?.let { contBox ->
             isResumed = true
+            result.exceptionOrNull()?.let {
+                resumeThrowIntrinsic(it, contBox.cont)
+                return
+            }
             val (newCont, wasmContBox) = resumeWithImpl(contBox.cont, result) ?: return
             newCont.wasmContBox = wasmContBox
         } ?: error("Continuation is not set")
@@ -94,12 +97,19 @@ internal suspend fun <T> suspendCoroutineUninterceptedOrReturnImpl(block: (Conti
     } else result as T
 }
 
-//@UsedFromCompilerGeneratedCode
-//@PublishedApi
+@UsedFromCompilerGeneratedCode
+@PublishedApi
 @Suppress("UNUSED_PARAMETER")
-// Can't link symbol ic#57:ic#53:kotlin.wasm.internal/suspendCoroutineUninterceptedOrReturnImpl when both @ExcludedFromCodegen and suspend modifier are added
 @ExcludedFromCodegen
 internal fun suspendIntrinsic(cont: Continuation<*>): Any? {
+    implementedAsIntrinsic
+}
+
+@UsedFromCompilerGeneratedCode
+@PublishedApi
+@Suppress("UNUSED_PARAMETER")
+@ExcludedFromCodegen
+internal fun resumeThrowIntrinsic(objectToThrow: Throwable, cont: contref1) {
     implementedAsIntrinsic
 }
 

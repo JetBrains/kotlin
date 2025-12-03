@@ -1182,6 +1182,11 @@ class BodyGenerator(
                 body.buildSuspend(contTagId, location)
             }
 
+            wasmSymbols.resumeThrowIntrinsic -> {
+                val zeroArgContType = WasmHeapType.Type(wasmFileCodegenContext.referenceContType(1))
+                body.buildResumeThrow(zeroArgContType, exceptionTagId, location)
+            }
+
             wasmSymbols.resumeWithIntrinsic -> {
                 val wasmContinuation = functionContext.referenceLocal(0)
 

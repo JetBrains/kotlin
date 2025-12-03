@@ -256,6 +256,7 @@ class WasmSymbols(
         (0..2).map { getInternalWasmFunction("startCoroutineUninterceptedOrReturnIntrinsic${it}Stub") }
 
     val suspendIntrinsic = getInternalWasmFunction("suspendIntrinsic")
+    val resumeThrowIntrinsic = getInternalWasmFunction("resumeThrowIntrinsic")
     val resumeWithIntrinsic = getInternalWasmFunction("resumeWithIntrinsic")
     val buildPair = getInternalWasmFunction("buildPair")
     val setWasmContinuation = getInternalWasmFunction("setWasmContinuation")
