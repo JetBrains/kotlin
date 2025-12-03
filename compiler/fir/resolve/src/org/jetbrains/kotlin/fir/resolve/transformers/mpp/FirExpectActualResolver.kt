@@ -22,9 +22,11 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.utils.exceptions.withFirSymbolEntry
 import org.jetbrains.kotlin.mpp.CallableSymbolMarker
 import org.jetbrains.kotlin.resolve.calls.mpp.AbstractExpectActualMatcher
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMatchingCompatibility
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 object FirExpectActualResolver {
     fun findExpectForActual(
@@ -35,8 +37,10 @@ object FirExpectActualResolver {
         with(context) {
             val result: Map<ExpectActualMatchingCompatibility, List<FirBasedSymbol<*>>> = when (actualSymbol) {
                 is FirCallableSymbol<*> -> {
-                    val callableId = actualSymbol.callableId
-                    val classId = callableId!!.classId
+                    val callableId = actualSymbol.callableId ?: errorWithAttachment("Symbol without callableId passed to expect/actual resolver") {
+                            withFirSymbolEntry("symbol", actualSymbol)
+                        }
+                    val classId = callableId.classId
                     var actualContainingClass: FirRegularClassSymbol? = null
                     var expectContainingClass: FirRegularClassSymbol? = null
                     val candidates = when {
