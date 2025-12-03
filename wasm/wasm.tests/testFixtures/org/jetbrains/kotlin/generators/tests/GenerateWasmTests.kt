@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.wasm.test.*
 import org.jetbrains.kotlin.wasm.test.diagnostics.*
 
 fun main(args: Array<String>) {
+    val testsRoot = args[0]
     System.setProperty("java.awt.headless", "true")
 
     // Common configuration shared between K1 and K2 tests:
@@ -33,7 +34,7 @@ fun main(args: Array<String>) {
 
 
     generateTestGroupSuiteWithJUnit5(args) {
-        testGroup("wasm/wasm.tests/tests-gen", "compiler/testData/klib/partial-linkage") {
+        testGroup(testsRoot, "compiler/testData/klib/partial-linkage") {
             testClass<AbstractWasmPartialLinkageNoICTestCase> {
                 model(pattern = "^([^_](.+))$", recursive = false)
             }
@@ -42,7 +43,7 @@ fun main(args: Array<String>) {
             }
         }
 
-        testGroup("wasm/wasm.tests/tests-gen", "js/js.translator/testData/incremental") {
+        testGroup(testsRoot, "js/js.translator/testData/incremental") {
             testClass<AbstractFirWasmInvalidationTest> {
                 model(
                     "invalidation/",
@@ -61,7 +62,7 @@ fun main(args: Array<String>) {
     }
 
     generateTestGroupSuiteWithJUnit5(args) {
-        testGroup("wasm/wasm.tests/tests-gen", "compiler/testData/diagnostics") {
+        testGroup(testsRoot, "compiler/testData/diagnostics") {
             testClass<AbstractDiagnosticsFirWasmTest> {
                 model("wasmTests", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
             }
@@ -86,7 +87,7 @@ fun main(args: Array<String>) {
             }
         }
 
-        testGroup("wasm/wasm.tests/tests-gen", "js/js.translator/testData/box", testRunnerMethodName = "runTest0") {
+        testGroup(testsRoot, "js/js.translator/testData/box", testRunnerMethodName = "runTest0") {
             testClass<AbstractFirWasmJsTranslatorTest> {
                 model("main", pattern = jsTranslatorTestPattern)
                 model("native/", pattern = jsTranslatorTestPattern)
@@ -97,7 +98,7 @@ fun main(args: Array<String>) {
             }
         }
 
-        testGroup("wasm/wasm.tests/tests-gen", "compiler/testData", testRunnerMethodName = "runTest0") {
+        testGroup(testsRoot, "compiler/testData", testRunnerMethodName = "runTest0") {
             testClass<AbstractFirWasmJsCodegenSingleModuleBoxTest> {
                 model("codegen/box", pattern = jsTranslatorTestPattern, excludeDirs = jvmOnlyBoxTests + k1BoxTestDir)
             }
@@ -156,18 +157,18 @@ fun main(args: Array<String>) {
                 model("debug/stepping")
             }
         }
-        testGroup("wasm/wasm.tests/tests-gen", "js/js.translator/testData", testRunnerMethodName = "runTest0") {
+        testGroup(testsRoot, "js/js.translator/testData", testRunnerMethodName = "runTest0") {
             testClass<AbstractFirWasmTypeScriptExportTest> {
                 model("typescript-export/wasm/")
             }
         }
-        testGroup("wasm/wasm.tests/tests-gen", "js/js.translator/testData", testRunnerMethodName = "runTest0") {
+        testGroup(testsRoot, "js/js.translator/testData", testRunnerMethodName = "runTest0") {
             testClass<AbstractFirWasmTypeScriptExportSingleModuleTest> {
                 model("typescript-export/wasm/")
             }
         }
 
-        testGroup("wasm/wasm.tests/tests-gen", "compiler/testData/klib/syntheticAccessors", testRunnerMethodName = "runTest0") {
+        testGroup(testsRoot, "compiler/testData/klib/syntheticAccessors", testRunnerMethodName = "runTest0") {
             testClass<AbstractFirWasmJsSyntheticAccessorsTest>(
                 suiteTestClassName = "WasmJsSynthAccBoxTestGenerated"
             ) {
@@ -179,14 +180,14 @@ fun main(args: Array<String>) {
                 model()
             }
         }
-        testGroup("wasm/wasm.tests/tests-gen", "compiler/testData/ir/irText", testRunnerMethodName = "runTest0") {
+        testGroup(testsRoot, "compiler/testData/ir/irText", testRunnerMethodName = "runTest0") {
             testClass<AbstractWasmJsIrTextTest> {
                 model(
                     excludeDirs = listOf("declarations/multiplatform/k1")
                 )
             }
         }
-        testGroup("wasm/wasm.tests/tests-gen", "compiler/testData/loadJava", testRunnerMethodName = "runTest0") {
+        testGroup(testsRoot, "compiler/testData/loadJava", testRunnerMethodName = "runTest0") {
             testClass<AbstractWasmJsLoadCompiledKotlinTest> {
                 model("compiledKotlin", extension = "kt")
                 model("compiledKotlinWithStdlib", extension = "kt")

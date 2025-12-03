@@ -2,7 +2,6 @@ import com.github.gradle.node.npm.task.NpmTask
 import org.gradle.internal.os.OperatingSystem
 import org.tukaani.xz.XZInputStream
 import java.net.URI
-import java.nio.file.Files
 import java.util.*
 
 buildscript {
@@ -222,6 +221,16 @@ val wasmtime by configurations.creating {
     isCanBeConsumed = false
 }
 
+val installedTSDependencies by configurations.dependencyScope("installedTSDependencies")
+
+val installedTSDependenciesResolvable by configurations.resolvable("installedTSDependenciesResolvable") {
+    attributes {
+        attribute(Usage.USAGE_ATTRIBUTE, objects.named("npmrc"))
+    }
+
+    extendsFrom(installedTSDependencies)
+}
+
 dependencies {
     testFixturesApi(testFixtures(project(":compiler:tests-common")))
     testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
@@ -260,6 +269,8 @@ dependencies {
     implicitDependencies("dev.wasmtime:wasmtime:${wasmtimeVersion.get()}:x86_64-windows@zip")
     implicitDependencies("dev.wasmtime:wasmtime:${wasmtimeVersion.get()}:x86_64-linux@tar.xz")
     implicitDependencies("dev.wasmtime:wasmtime:${wasmtimeVersion.get()}:aarch64-macos@tar.xz")
+
+    installedTSDependencies(project(":js:js.tests"))
 }
 
 optInToExperimentalCompilerApi()
@@ -268,7 +279,6 @@ sourceSets {
     "main" { }
     "test" {
         projectDefault()
-        generatedTestDir()
     }
     "testFixtures" { projectDefault() }
 }
@@ -302,25 +312,20 @@ fun generateTypeScriptTestFor(dir: String): TaskProvider<NpmTask> = tasks.regist
     workingDir.set(testDataDir)
 
     inputs.file(mainTsFile)
+        .withPathSensitivity(PathSensitivity.RELATIVE)
+        .withPropertyName("mainTsFileToCompile")
+
+    inputs.files(installedTSDependenciesResolvable)
+        .withPathSensitivity(PathSensitivity.RELATIVE)
+        .withPropertyName("installedTcDependencies")
+
     outputs.file(mainJsFile)
     outputs.upToDateWhen { mainJsFile.exists() }
 
     args.set(listOf("run", "generateTypeScriptTests", "--", "./typescript-export/wasm/$dir/tsconfig.json"))
 }
 
-val installTsDependencies by task<NpmTask> {
-    val packageLockFile = testDataDir.resolve("package-lock.json")
-    val nodeModules = testDataDir.resolve("node_modules")
-    inputs.file(testDataDir.resolve("package.json"))
-    inputs.file(packageLockFile)
-    outputs.upToDateWhen { nodeModules.exists() }
-
-    workingDir.set(testDataDir)
-    npmCommand.set(listOf("ci"))
-}
-
 val generateTypeScriptTests = parallel(
-    beforeAll = installTsDependencies,
     tasksToRun = wasmTestDir
         .listFiles { it: File -> it.isDirectory }
         .map { generateTypeScriptTestFor(it.name) }
@@ -461,7 +466,15 @@ fun Test.setupWasmtime() {
 testsJar {}
 
 projectTests {
-    testGenerator("org.jetbrains.kotlin.generators.tests.GenerateWasmTestsKt")
+    testGenerator(
+        "org.jetbrains.kotlin.generators.tests.GenerateWasmTestsKt",
+        generateTestsInBuildDirectory = true,
+        configureTestDataCollection = {
+            inputs.files(generateTypeScriptTests)
+                .withPathSensitivity(PathSensitivity.RELATIVE)
+                .withPropertyName("compiledTypeScriptTestFiles")
+        }
+    )
 
     fun wasmProjectTest(taskName: String, skipInLocalBuild: Boolean = false, body: Test.() -> Unit = {}) {
         testTask(
