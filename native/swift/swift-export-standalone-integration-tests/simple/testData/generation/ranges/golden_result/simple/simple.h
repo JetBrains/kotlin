@@ -3,17 +3,17 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-void * generation_ranges_ranges_accept__TypesOfArguments__Swift_ClosedRange_Swift_Int32___(int32_t range_1, int32_t range_2);
+void * __root___accept__TypesOfArguments__Swift_ClosedRange_Swift_Int32___(int32_t range_1, int32_t range_2);
 
-void * generation_ranges_ranges_acceptClosed__TypesOfArguments__Swift_ClosedRange_Swift_Int32___(int32_t range_1, int32_t range_2);
+void * __root___acceptClosed__TypesOfArguments__Swift_ClosedRange_Swift_Int32___(int32_t range_1, int32_t range_2);
 
-void * generation_ranges_ranges_bar();
+void * __root___bar();
 
-void * generation_ranges_ranges_baz();
+void * __root___baz();
 
-void * generation_ranges_ranges_foo();
+void * __root___foo();
 
-void * generation_ranges_ranges_unsupported();
+void * __root___unsupported();
 
 int32_t kotlin_ranges_closedRange_getEndInclusive_int(void * nativePtr);
 

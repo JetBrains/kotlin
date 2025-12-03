@@ -4,41 +4,41 @@ import kotlin.native.internal.ExportedBridge
 import kotlinx.cinterop.*
 import kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction
 
-@ExportedBridge("generation_ranges_ranges_accept__TypesOfArguments__Swift_ClosedRange_Swift_Int32___")
-public fun generation_ranges_ranges_accept__TypesOfArguments__Swift_ClosedRange_Swift_Int32___(range_1: Int, range_2: Int): kotlin.native.internal.NativePtr {
+@ExportedBridge("__root___accept__TypesOfArguments__Swift_ClosedRange_Swift_Int32___")
+public fun __root___accept__TypesOfArguments__Swift_ClosedRange_Swift_Int32___(range_1: Int, range_2: Int): kotlin.native.internal.NativePtr {
     val __range = range_1 .. range_2
-    val _result = generation.ranges.ranges.accept(__range)
+    val _result = accept(__range)
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
-@ExportedBridge("generation_ranges_ranges_acceptClosed__TypesOfArguments__Swift_ClosedRange_Swift_Int32___")
-public fun generation_ranges_ranges_acceptClosed__TypesOfArguments__Swift_ClosedRange_Swift_Int32___(range_1: Int, range_2: Int): kotlin.native.internal.NativePtr {
+@ExportedBridge("__root___acceptClosed__TypesOfArguments__Swift_ClosedRange_Swift_Int32___")
+public fun __root___acceptClosed__TypesOfArguments__Swift_ClosedRange_Swift_Int32___(range_1: Int, range_2: Int): kotlin.native.internal.NativePtr {
     val __range = range_1 .. range_2
-    val _result = generation.ranges.ranges.acceptClosed(__range)
+    val _result = acceptClosed(__range)
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
-@ExportedBridge("generation_ranges_ranges_bar")
-public fun generation_ranges_ranges_bar(): kotlin.native.internal.NativePtr {
-    val _result = generation.ranges.ranges.bar()
+@ExportedBridge("__root___bar")
+public fun __root___bar(): kotlin.native.internal.NativePtr {
+    val _result = bar()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
-@ExportedBridge("generation_ranges_ranges_baz")
-public fun generation_ranges_ranges_baz(): kotlin.native.internal.NativePtr {
-    val _result = generation.ranges.ranges.baz()
+@ExportedBridge("__root___baz")
+public fun __root___baz(): kotlin.native.internal.NativePtr {
+    val _result = baz()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
-@ExportedBridge("generation_ranges_ranges_foo")
-public fun generation_ranges_ranges_foo(): kotlin.native.internal.NativePtr {
-    val _result = generation.ranges.ranges.foo()
+@ExportedBridge("__root___foo")
+public fun __root___foo(): kotlin.native.internal.NativePtr {
+    val _result = foo()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
-@ExportedBridge("generation_ranges_ranges_unsupported")
-public fun generation_ranges_ranges_unsupported(): kotlin.native.internal.NativePtr {
-    val _result = generation.ranges.ranges.unsupported()
+@ExportedBridge("__root___unsupported")
+public fun __root___unsupported(): kotlin.native.internal.NativePtr {
+    val _result = unsupported()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
