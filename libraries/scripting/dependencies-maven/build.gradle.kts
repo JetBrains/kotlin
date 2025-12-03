@@ -29,6 +29,19 @@ dependencies {
     }
 }
 
+configurations.all {
+    resolutionStrategy.eachDependency {
+        if (requested.group == "com.google.guava" && requested.name == "guava") {
+            useVersion("32.0.1-android")
+            because("CVE-2023-2976")
+        }
+        if (requested.group == "commons-codec" && requested.name == "commons-codec") {
+            useVersion("1.19.0")
+            because("WS-2019-0379")
+        }
+    }
+}
+
 sourceSets {
     "main" { projectDefault() }
     "test" { projectDefault() }
