@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers
 
+import org.jetbrains.kotlin.gradle.dsl.NativeCacheKind
 import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.await
@@ -13,7 +14,9 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinGradleProjectChecker
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnosticsCollector
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+import org.jetbrains.kotlin.gradle.targets.native.konanPropertiesBuildService
 import org.jetbrains.kotlin.gradle.utils.withType
+import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import org.jetbrains.kotlin.tooling.core.toKotlinVersion
 
@@ -26,19 +29,28 @@ internal object DisabledNativeCacheChecker : KotlinGradleProjectChecker {
         val nativeVersion = project.nativeProperties.kotlinNativeVersion.map {
             KotlinToolingVersion(it).toKotlinVersion()
         }.orNull
+        val konanPropertiesService = project.konanPropertiesBuildService.orNull
 
         targets.configureEach { target ->
             target.binaries.matching { it.disableCacheSettings.isNotEmpty() }.configureEach { binary ->
-                binary.disableCacheSettings.forEach { disableCache ->
-                    collector.report(
-                        project,
+                val diagnostics = binary.disableCacheSettings.map { disableCache ->
+                    if (konanPropertiesService.defaultCacheKindForTarget(binary.konanTarget) == NativeCacheKind.NONE) {
+                        KotlinToolingDiagnostics.NativeCacheRedundantDiagnostic(
+                            binary.konanTarget,
+                            HostManager.platformName()
+                        )
+                    } else {
                         KotlinToolingDiagnostics.NativeCacheDisabledDiagnostic(
                             nativeVersion,
                             binary.konanTarget,
                             disableCache.reason,
                             disableCache.issueUrl
                         )
-                    )
+                    }
+                }
+
+                diagnostics.forEach { diagnostic ->
+                    collector.report(project, diagnostic)
                 }
             }
         }

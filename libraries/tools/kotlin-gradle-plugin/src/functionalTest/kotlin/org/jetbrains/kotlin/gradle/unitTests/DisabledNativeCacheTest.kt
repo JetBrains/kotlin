@@ -56,6 +56,8 @@ class DisabledNativeCacheTest {
             evaluate()
 
             assertContainsDiagnostic(KotlinToolingDiagnostics.DeprecatedWarningGradleProperties)
+            assertNoDiagnostics(KotlinToolingDiagnostics.NativeCacheDisabledDiagnostic)
+            assertNoDiagnostics(KotlinToolingDiagnostics.NativeCacheRedundantDiagnostic)
         }
     }
 
@@ -75,6 +77,8 @@ class DisabledNativeCacheTest {
             evaluate()
 
             assertContainsDiagnostic(KotlinToolingDiagnostics.DeprecatedWarningGradleProperties)
+            assertNoDiagnostics(KotlinToolingDiagnostics.NativeCacheDisabledDiagnostic)
+            assertNoDiagnostics(KotlinToolingDiagnostics.NativeCacheRedundantDiagnostic)
         }
     }
 
@@ -91,6 +95,7 @@ class DisabledNativeCacheTest {
             evaluate()
 
             assertNoDiagnostics(KotlinToolingDiagnostics.NativeCacheDisabledDiagnostic)
+            assertNoDiagnostics(KotlinToolingDiagnostics.NativeCacheRedundantDiagnostic)
 
             if (HostManager.hostIsMac) {
                 assertEquals(
@@ -137,6 +142,7 @@ class DisabledNativeCacheTest {
             evaluate()
 
             assertContainsDiagnostic(KotlinToolingDiagnostics.NativeCacheDisabledDiagnostic)
+            assertNoDiagnostics(KotlinToolingDiagnostics.NativeCacheRedundantDiagnostic)
 
             if (HostManager.hostIsMac) {
                 assertEquals(
@@ -182,6 +188,7 @@ class DisabledNativeCacheTest {
             evaluate()
 
             assertNoDiagnostics(KotlinToolingDiagnostics.NativeCacheDisabledDiagnostic)
+            assertContainsDiagnostic(KotlinToolingDiagnostics.NativeCacheRedundantDiagnostic)
         }
     }
 
