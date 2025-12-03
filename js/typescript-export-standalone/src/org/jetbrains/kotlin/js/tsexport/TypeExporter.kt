@@ -21,13 +21,12 @@ import org.jetbrains.kotlin.ir.backend.js.tsexport.ExportedType
 import org.jetbrains.kotlin.ir.backend.js.tsexport.ExportedType.*
 import org.jetbrains.kotlin.ir.backend.js.tsexport.ExportedType.Array
 import org.jetbrains.kotlin.ir.backend.js.tsexport.ExportedType.Function
-import org.jetbrains.kotlin.ir.backend.js.tsexport.ExportedTypeParameter
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
 
-internal class TypeExporter(private val config: TypeScriptExportConfig) {
+internal class TypeExporter(private val config: TypeScriptExportConfig, private val scope: TypeParameterScope) {
     /**
      * Memoize already processed types during recursive traversal of a type to avoid stack overflow on self-referential types,
      * like type parameters whose upper bound references the type parameter itself.
@@ -130,7 +129,8 @@ internal class TypeExporter(private val config: TypeScriptExportConfig) {
             }
         }
         if (type is KaTypeParameterType) {
-            return TypeParameterRef(ExportedTypeParameter(type.name.identifier))
+            return scope[type.symbol]?.let(ExportedType::TypeParameterRef)
+                ?: error("Type parameter ${type.symbol.render()} is not in scope")
         }
         if (type is KaClassType) {
             val symbol = type.symbol
