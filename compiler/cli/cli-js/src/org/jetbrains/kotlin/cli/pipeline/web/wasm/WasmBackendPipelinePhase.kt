@@ -361,6 +361,11 @@ fun compileWasmLoweredFragmentsForSingleModule(
             signatureRetriever.declarationSignature(backendContext.wasmSymbols.tryGetAssociatedObject.owner)!!,
             backendContext.wasmSymbols.runRootSuites?.owner?.let { runRootSuites ->
                 signatureRetriever.declarationSignature(runRootSuites)!!
+            },
+            if (backendContext.isWasmJsTarget) {
+                signatureRetriever.declarationSignature(backendContext.wasmSymbols.jsRelatedSymbols.jsInteropAdapters.jsToKotlinStringAdapter.owner)!!
+            } else {
+                null
             }
         )
 

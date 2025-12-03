@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.expressions.IrTry
-import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.isFunction
 import org.jetbrains.kotlin.ir.util.isFunctionMarker
@@ -53,3 +52,9 @@ internal fun WasmExpressionBuilder.buildUnreachableAfterNothingType() {
         )
     )
 }
+
+internal val String.hasUnpairedSurrogates: Boolean
+    get() = this.withIndex().any { (i, c) ->
+        (c.isLowSurrogate() && (i == 0 || !this[i - 1].isHighSurrogate())) ||
+        (c.isHighSurrogate() && (i == this.lastIndex || !this[i + 1].isLowSurrogate()))
+    }

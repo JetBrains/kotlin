@@ -213,7 +213,7 @@ fun linkAndCompileWasmIrToBinary(moduleConfiguration: WasmIrModuleConfiguration)
 
     val multimoduleParameters = moduleConfiguration.multimoduleOptions
 
-    val wasmCompiledModuleFragment = WasmCompiledModuleFragment(wasmCompiledFileFragments)
+    val wasmCompiledModuleFragment = WasmCompiledModuleFragment(wasmCompiledFileFragments, isWasmJsTarget)
 
     val linkedModule = wasmCompiledModuleFragment.linkWasmCompiledFragments(
         multimoduleOptions = multimoduleParameters,
@@ -477,6 +477,10 @@ const js_code = {
 $jsCodeBodyIndented
 }
 
+const StringConstantsProxy = new Proxy({}, {
+  get(_, prop) { return prop; }
+});
+
 ${if (stdlibModuleOrWholeProgramMode) "export { wasmTag as __TAG };" else ""}
 
 $importObject
@@ -573,6 +577,7 @@ export const importObject = {
     intrinsics: {
         tag: wasmTag
     },
+    "'": StringConstantsProxy,
 $imports};
     """.trimIndent()
 }
@@ -618,7 +623,7 @@ if (!isNodeJs && !isDeno && !isStandaloneJsVM && !isBrowser) {
 }
 
 const wasmFilePath = $pathJsStringLiteral;
-const wasmOptions = { builtins: ['${builtinsList.joinToString(", ")}'] }
+const wasmOptions = { builtins: ['${builtinsList.joinToString(", ")}'], importedStringConstants: "'" }
 
 try {
   if (isNodeJs) {
