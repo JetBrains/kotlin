@@ -9,7 +9,8 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.getJsCode
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.getSourceLocation
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
+import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.IrLoop
 import org.jetbrains.kotlin.ir.expressions.IrReturnableBlock
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
@@ -73,7 +74,7 @@ class JsGenerationContext(
             if (useBareParameterNames) {
                 JsName(makeValidES5Identifier(declaration.name.asString()), true)
             } else {
-                val name = localNames!!.variableNames.names[declaration]
+                val name = localNames!!.variableNames[declaration]
                     ?: irError("Variable name is not found") {
                         withIrEntry("declaration", declaration)
                     }
@@ -84,14 +85,14 @@ class JsGenerationContext(
 
     fun getNameForLoop(loop: IrLoop): JsName? {
         return nameCache.getOrPut(loop) {
-            val name = localNames!!.localLoopNames.names[loop] ?: return null
+            val name = localNames!!.localLoopNames[loop] ?: return null
             JsName(name, true)
         }
     }
 
     fun getNameForReturnableBlock(block: IrReturnableBlock): JsName? {
         return nameCache.getOrPut(block) {
-            val name = localNames!!.localReturnableBlockNames.names[block] ?: return null
+            val name = localNames!!.localReturnableBlockNames[block] ?: return null
             JsName(name, true)
         }
     }
