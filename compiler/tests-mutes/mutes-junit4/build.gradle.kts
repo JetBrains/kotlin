@@ -15,6 +15,15 @@ dependencies {
     }
 }
 
+configurations.all {
+    resolutionStrategy.eachDependency {
+        if (requested.group == "ch.qos.logback" && requested.name == "logback-core") {
+            useVersion("1.5.19")
+            because("CVE-2025-11226")
+        }
+    }
+}
+
 sourceSets {
     "main" { projectDefault() }
 }
