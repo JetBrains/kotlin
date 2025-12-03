@@ -41024,6 +41024,12 @@ public class LLReversedDiagnosticsFe10TestGenerated extends AbstractLLReversedDi
       }
 
       @Test
+      @TestMetadata("nonExhaustiveByNegation.kt")
+      public void testNonExhaustiveByNegation() {
+        runTest("compiler/testData/diagnostics/tests/sealed/nonExhaustiveByNegation.kt");
+      }
+
+      @Test
       @TestMetadata("NonExhaustiveWhen.kt")
       public void testNonExhaustiveWhen() {
         runTest("compiler/testData/diagnostics/tests/sealed/NonExhaustiveWhen.kt");
