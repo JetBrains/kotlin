@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.fir.resolve.lambdaWithExplicitEmptyReturns
 import org.jetbrains.kotlin.fir.resolve.runContextSensitiveResolutionForPropertyAccess
 import org.jetbrains.kotlin.fir.resolve.substitution.asCone
 import org.jetbrains.kotlin.fir.resolve.runCollectionLiteralResolution
-import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
+import org.jetbrains.kotlin.fir.resolve.runResolutionForDanglingCollectionLiteral
 import org.jetbrains.kotlin.fir.resolvedTypeFromPrototype
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.resolve.calls.components.PostponedArgumentsAnalyzerContext
@@ -218,19 +218,23 @@ class PostponedArgumentsAnalyzer(
             substitutor.safeSubstitute(topLevelCandidate.csBuilder, it).asCone()
         }
 
-        if (substitutedExpectedType != null) {
-            runCollectionLiteralResolution(atom, topLevelCandidate, substitutedExpectedType)
-        }
+        runCollectionLiteralResolution(atom, topLevelCandidate, substitutedExpectedType)
     }
 
     private fun runCollectionLiteralResolution(
         atom: ConeCollectionLiteralAtom,
         topLevelCandidate: Candidate,
-        substitutedExpectedType: ConeKotlinType,
+        substitutedExpectedType: ConeKotlinType?,
     ) {
         val originalExpression = atom.expression
 
-        val companion = with(resolutionContext) { substitutedExpectedType.companionObjectIfDefinedOperatorOf } ?: return
+        val companion = with(resolutionContext) { substitutedExpectedType?.companionObjectIfDefinedOperatorOf }
+        if (companion == null) {
+            // There may be callable references/lambdas inside collection literal. We need to resolve them somehow.
+            // When fallback is implemented, this part likely will become obsolete.
+            resolutionContext.runResolutionForDanglingCollectionLiteral(originalExpression)
+            return
+        }
         val newExpression =
             resolutionContext.runCollectionLiteralResolution(
                 atom,

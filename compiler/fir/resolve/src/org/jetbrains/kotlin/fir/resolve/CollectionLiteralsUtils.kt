@@ -10,8 +10,12 @@ import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.processAllDeclaredCallables
 import org.jetbrains.kotlin.fir.declarations.utils.isOperator
+import org.jetbrains.kotlin.fir.expressions.FirCollectionLiteral
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCallOrigin
+import org.jetbrains.kotlin.fir.expressions.FirVarargArgumentsExpression
+import org.jetbrains.kotlin.fir.expressions.arguments
+import org.jetbrains.kotlin.fir.expressions.builder.buildArgumentList
 import org.jetbrains.kotlin.fir.expressions.builder.buildFunctionCall
 import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
 import org.jetbrains.kotlin.fir.resolve.calls.ConeAtomWithCandidate
@@ -110,6 +114,22 @@ fun ResolutionContext.runCollectionLiteralResolution(
         }
         else -> completedCall
     }
+}
+
+fun ResolutionContext.runResolutionForDanglingCollectionLiteral(collectionLiteral: FirCollectionLiteral) {
+    // If there are any diagnostics on the call that we miss, even better: we report `UNSUPPORTED_COLLECTION_LITERAL_TYPE` anyway.
+    val fakeCall = bodyResolveComponents.syntheticCallGenerator
+        .generateFakeCallForDanglingCollectionLiteral(collectionLiteral, this)
+    val completedCall = bodyResolveComponents.callCompleter.completeCall(fakeCall, ResolutionMode.ContextIndependent)
+
+    val newArgumentList = buildArgumentList {
+        for (argument in completedCall.arguments) {
+            check(argument is FirVarargArgumentsExpression) { "Arguments should me mapped to vararg" }
+            arguments += argument.arguments
+        }
+    }
+
+    collectionLiteral.replaceArgumentList(newArgumentList)
 }
 
 
