@@ -86,6 +86,7 @@ fun Project.customCompilerTest(
     version: CustomCompilerVersion,
     taskName: String,
     tag: String,
+    body: Test.() -> Unit = {},
 ): TaskProvider<out Task> {
     val customCompiler: Configuration = getOrCreateConfiguration("customCompiler_$version") {
         project.dependencies.add(name, "org.jetbrains.kotlin:kotlin-compiler-embeddable:${version.rawVersion}")
@@ -106,6 +107,7 @@ fun Project.customCompilerTest(
         addClasspathProperty(runtimeDependencies, "kotlin.internal.js.test.compat.runtimeDependencies")
         systemProperty("kotlin.internal.js.test.compat.customCompilerVersion", version.rawVersion)
         systemProperty("kotlin.js.stdlib.klib.path", "libraries/stdlib/build/libs/kotlin-stdlib-js-$version.klib")
+        body()
     }
 }
 
@@ -116,14 +118,12 @@ fun Project.customFirstStageTest(rawVersion: String, addWritePermissionsForAllPr
         version = version,
         taskName = "testCustomFirstStage_$version",
         tag = "custom-first-stage"
-    ).apply {
+    ) {
         if (addWritePermissionsForAllProperties)
-            configure {
-                extensions.configure<TestInputsCheckExtension> {
-                    // compiler version 2.1.20 and earlier needs `write` permissions to all system properties. This was fixed in commit 7473dc76
-                    // So to invoke older compilers, more permissions are given.
-                    extraPermissions.add("""permission java.util.PropertyPermission "*", "write";""")
-                }
+            extensions.configure<TestInputsCheckExtension> {
+                // compiler version 2.1.20 and earlier needs `write` permissions to all system properties. This was fixed in commit 7473dc76
+                // So to invoke older compilers, more permissions are given.
+                extraPermissions.add("""permission java.util.PropertyPermission "*", "write";""")
             }
     }
 }

@@ -232,7 +232,10 @@ abstract class ProjectTestsExtension(val project: Project) {
         body: Test.() -> Unit = {},
     ): TaskProvider<Test> {
         if (skipInLocalBuild && !project.kotlinBuildProperties.isTeamcityBuild) {
-            return project.tasks.register<Test>(taskName)
+            return project.tasks.register<Test>(taskName) {
+                enabled = false
+                println("Task `$taskName` disabled in local build")
+            }
         }
         if (jUnitMode == JUnitMode.JUnit5 && parallel != null) {
             throw GradleException("JUnit5 tests are parallel by default and its configured with `junit-platform.properties`, please remove `parallel=$parallel` argument")
