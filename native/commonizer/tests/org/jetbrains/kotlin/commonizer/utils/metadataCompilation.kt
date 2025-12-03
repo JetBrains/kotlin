@@ -10,13 +10,9 @@ import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.backend.common.eliminateLibrariesWithDuplicatedUniqueNames
 import org.jetbrains.kotlin.backend.common.phaser.then
 import org.jetbrains.kotlin.backend.common.reportLoadingProblemsIfAny
-import org.jetbrains.kotlin.cli.common.allowKotlinPackage
+import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.config.ContentRoot
 import org.jetbrains.kotlin.cli.common.config.KotlinSourceRoot
-import org.jetbrains.kotlin.cli.common.contentRoots
-import org.jetbrains.kotlin.cli.common.createPerformanceManagerFor
-import org.jetbrains.kotlin.cli.common.metadataDestinationDirectory
-import org.jetbrains.kotlin.cli.common.renderDiagnosticInternalName
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.config.K2MetadataConfigurationKeys
 import org.jetbrains.kotlin.cli.pipeline.ConfigurationPipelineArtifact
@@ -179,7 +175,7 @@ fun serializeModuleToMetadata(
         .map { KotlinSourceRoot(it.path, isCommon, hmppModuleName = null) }
         .toList()
 
-    val diagnosticCollector = DiagnosticReporterFactory.createReporter(configuration.messageCollector)
+    val diagnosticCollector = DiagnosticReporterFactory.createReporter()
     val performanceManager = createPerformanceManagerFor(JvmPlatforms.unspecifiedJvmPlatform)
 
     val phaseConfig = PhaseConfig()

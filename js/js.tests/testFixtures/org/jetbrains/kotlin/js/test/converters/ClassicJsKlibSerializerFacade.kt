@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.js.test.converters
 
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
-import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.diagnostics.impl.deduplicating
 import org.jetbrains.kotlin.incremental.components.LookupTracker
@@ -52,7 +51,7 @@ class ClassicJsKlibSerializerFacade(
         }
 
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
-        val diagnosticReporter = DiagnosticReporterFactory.createReporter(configuration.messageCollector)
+        val diagnosticReporter = DiagnosticReporterFactory.createReporter()
         val irDiagnosticReporter =
             KtDiagnosticReporterWithImplicitIrBasedContext(diagnosticReporter.deduplicating(), configuration.languageVersionSettings)
         val outputFile = JsEnvironmentConfigurator.getKlibArtifactFile(testServices, module.name)

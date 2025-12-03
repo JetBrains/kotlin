@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.konan.test
 
 import org.jetbrains.kotlin.config.languageVersionSettings
-import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.diagnostics.impl.deduplicating
 import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
@@ -22,7 +21,7 @@ class FirNativeKlibAbiDumpBeforeInliningSavingHandler(
 ) : AbstractKlibAbiDumpBeforeInliningSavingHandler(testServices) {
     override fun serializeModule(module: TestModule, inputArtifact: IrBackendInput): BinaryArtifacts.KLib {
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
-        val diagnosticReporter = DiagnosticReporterFactory.createReporter(configuration.messageCollector)
+        val diagnosticReporter = DiagnosticReporterFactory.createReporter()
         val irDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(
             diagnosticReporter.deduplicating(),
             configuration.languageVersionSettings

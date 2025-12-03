@@ -10,12 +10,17 @@ import org.jetbrains.kotlin.backend.common.actualizer.IrExtraActualDeclarationEx
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
-import org.jetbrains.kotlin.fir.backend.*
+import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
+import org.jetbrains.kotlin.fir.backend.Fir2IrConfiguration
+import org.jetbrains.kotlin.fir.backend.Fir2IrExtensions
+import org.jetbrains.kotlin.fir.backend.Fir2IrVisibilityConverter
 import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
 import org.jetbrains.kotlin.fir.pipeline.*
 import org.jetbrains.kotlin.incremental.components.LookupTracker
@@ -78,10 +83,9 @@ abstract class AbstractFir2IrResultsConverter(
         inputArtifact: FirOutputArtifact
     ): IrBackendInput {
         val compilerConfiguration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
-        val messageCollector = compilerConfiguration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
 
         val irMangler = createIrMangler()
-        val diagnosticReporter = DiagnosticReporterFactory.createReporter(messageCollector)
+        val diagnosticReporter = DiagnosticReporterFactory.createReporter()
 
         val fir2IrExtensions = createFir2IrExtensions(compilerConfiguration)
 

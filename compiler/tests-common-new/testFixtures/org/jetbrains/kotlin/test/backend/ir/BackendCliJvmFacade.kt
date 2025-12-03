@@ -26,9 +26,7 @@ class BackendCliJvmFacade(testServices: TestServices) : AbstractJvmIrBackendFaca
         }
         val messageCollector = inputArtifact.cliArtifact.configuration.messageCollector
         val input = inputArtifact.cliArtifact.copy(
-            diagnosticCollector = DiagnosticReporterFactory.createPendingReporter(
-                messageCollector
-            )
+            diagnosticCollector = DiagnosticReporterFactory.createPendingReporter()
         )
         val output = JvmBackendPipelinePhase.executePhase(input)?.let(JvmWriteOutputsPhase::executePhase)
             ?: return processErrorFromCliPhase(messageCollector, testServices)

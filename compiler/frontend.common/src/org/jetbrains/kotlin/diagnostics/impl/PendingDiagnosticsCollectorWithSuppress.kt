@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.diagnostics.KtDiagnostic
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticWithSource
 import org.jetbrains.kotlin.diagnostics.Severity
 
-class PendingDiagnosticsCollectorWithSuppress(override val rawReporter: RawReporter) : BaseDiagnosticsCollector() {
+class PendingDiagnosticsCollectorWithSuppress : BaseDiagnosticsCollector() {
     private val pendingDiagnosticsByFilePath: MutableMap<String, MutableList<KtDiagnostic>> = mutableMapOf()
     private val _diagnosticsByFilePath: MutableMap<String?, MutableList<KtDiagnostic>> = mutableMapOf()
     override val diagnostics: List<KtDiagnostic>

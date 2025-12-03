@@ -191,7 +191,7 @@ open class IncrementalFirJvmCompilerRunner(
                 }
             }
 
-            val diagnosticsReporter = DiagnosticReporterFactory.createPendingReporter(messageCollector)
+            val diagnosticsReporter = DiagnosticReporterFactory.createPendingReporter()
             val performanceManager = configuration.perfManager
             val compilerEnvironment = ModuleCompilerEnvironment(projectEnvironment, diagnosticsReporter)
 

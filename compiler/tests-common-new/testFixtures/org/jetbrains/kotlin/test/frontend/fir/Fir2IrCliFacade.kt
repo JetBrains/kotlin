@@ -44,7 +44,7 @@ abstract class Fir2IrCliFacade<Phase, InputPipelineArtifact, OutputPipelineArtif
 
         val messageCollector = cliArtifact.configuration.messageCollector
         val input = cliArtifact.withNewDiagnosticCollector(
-            DiagnosticReporterFactory.createPendingReporter(messageCollector)
+            DiagnosticReporterFactory.createPendingReporter()
         )
         val output = phase.executePhase(input)
             ?: return processErrorFromCliPhase(messageCollector, testServices)

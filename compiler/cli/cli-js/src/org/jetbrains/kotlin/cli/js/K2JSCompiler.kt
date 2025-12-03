@@ -25,11 +25,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.plugins.PluginCliParser
 import org.jetbrains.kotlin.cli.pipeline.web.CommonWebConfigurationUpdater
 import org.jetbrains.kotlin.cli.pipeline.web.WebCliPipeline
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.Services
-import org.jetbrains.kotlin.config.languageVersionSettings
-import org.jetbrains.kotlin.config.perfManager
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.diagnostics.impl.deduplicating
 import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
@@ -37,7 +33,10 @@ import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.backend.js.ic.IncrementalCacheGuard
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.js.analyzer.JsAnalysisResult
-import org.jetbrains.kotlin.js.config.*
+import org.jetbrains.kotlin.js.config.JSConfigurationKeys
+import org.jetbrains.kotlin.js.config.RuntimeDiagnostic
+import org.jetbrains.kotlin.js.config.includes
+import org.jetbrains.kotlin.js.config.incrementalDataProvider
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
@@ -274,7 +273,7 @@ class K2JSCompiler : CLICompiler<K2JSCompilerArguments>() {
             }
 
             val messageCollector = environmentForJS.configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
-            val diagnosticsReporter = DiagnosticReporterFactory.createPendingReporter(messageCollector)
+            val diagnosticsReporter = DiagnosticReporterFactory.createPendingReporter()
             val irDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(
                 diagnosticsReporter.deduplicating(),
                 environmentForJS.configuration.languageVersionSettings

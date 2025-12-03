@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.cli.pipeline.metadata.MetadataFrontendPipelinePhase
 import org.jetbrains.kotlin.cli.pipeline.metadata.MetadataKlibFileWriterPhase
 import org.jetbrains.kotlin.cli.pipeline.metadata.MetadataKlibInMemorySerializerPhase
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.diagnostics.impl.SimpleDiagnosticsCollector
 import org.jetbrains.kotlin.fir.pipeline.SingleModuleFrontendOutput
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.METADATA_ONLY_COMPILATION
@@ -67,7 +66,7 @@ class FirCliMetadataSerializerFacade(val testServices: TestServices) : AbstractT
         val output = MetadataKlibInMemorySerializerPhase.executePhase(input).let(MetadataKlibFileWriterPhase::executePhase)
         return BinaryArtifacts.KLib(
             File(output.destination),
-            SimpleDiagnosticsCollector(BaseDiagnosticsCollector.RawReporter.DO_NOTHING)
+            SimpleDiagnosticsCollector()
         )
     }
 }

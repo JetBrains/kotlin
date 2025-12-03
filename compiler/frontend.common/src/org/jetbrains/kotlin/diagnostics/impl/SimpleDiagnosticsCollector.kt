@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticContext
 import org.jetbrains.kotlin.diagnostics.KtDiagnostic
 import org.jetbrains.kotlin.diagnostics.Severity
 
-class SimpleDiagnosticsCollector(override val rawReporter: RawReporter) : BaseDiagnosticsCollector() {
+class SimpleDiagnosticsCollector : BaseDiagnosticsCollector() {
     private val _diagnosticsByFilePath: MutableMap<String?, MutableList<KtDiagnostic>> = mutableMapOf()
     override val diagnostics: List<KtDiagnostic>
         get() = _diagnosticsByFilePath.flatMap { it.value }

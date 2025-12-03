@@ -10,7 +10,6 @@ package org.jetbrains.kotlin.test.backend.handlers
 import org.jetbrains.kotlin.cli.pipeline.web.JsFir2IrPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.web.WebKlibSerializationPipelinePhase
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.js.config.outputDir
 import org.jetbrains.kotlin.js.config.outputName
@@ -107,8 +106,7 @@ class FirJsKlibAbiDumpBeforeInliningSavingHandler(testServices: TestServices) :
 
         val tmpConfiguration = cliArtifact.configuration.copy()
 
-        val messageCollector = tmpConfiguration.messageCollector
-        val diagnosticReporter = DiagnosticReporterFactory.createPendingReporter(messageCollector)
+        val diagnosticReporter = DiagnosticReporterFactory.createPendingReporter()
         val outputFile = getAbiCheckKlibArtifactFile(module.name)
 
         tmpConfiguration.produceKlibFile = true

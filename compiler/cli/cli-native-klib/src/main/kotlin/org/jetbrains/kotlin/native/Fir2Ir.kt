@@ -73,7 +73,7 @@ fun PhaseContext.fir2Ir(
         moduleDescriptor.setDependencies(ArrayList(librariesDescriptors))
     }
     val messageCollector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
-    val diagnosticsReporter = DiagnosticReporterFactory.createPendingReporter(messageCollector)
+    val diagnosticsReporter = DiagnosticReporterFactory.createPendingReporter()
 
     val fir2IrConfiguration = Fir2IrConfiguration.forKlibCompilation(configuration, diagnosticsReporter)
     val actualizedResult = input.firResult.convertToIrAndActualize(

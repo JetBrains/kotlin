@@ -43,7 +43,10 @@ import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.codegen.state.CompiledCodeProvider
 import org.jetbrains.kotlin.codegen.state.GenerationState
-import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.config.CommonConfigurationKeys
+import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.JvmTarget
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
@@ -341,7 +344,7 @@ internal class KaFirCompilerFacility(
     }
 
     private fun detectNonLocalReturnsInEvaluatingLambdas(inlineStackData: InlineStackData): List<KaDiagnostic> {
-        val reporter = SimpleDiagnosticsCollector(BaseDiagnosticsCollector.RawReporter.DO_NOTHING)
+        val reporter = SimpleDiagnosticsCollector()
         inlineStackData.inlineLambdaParameterMapping.values.forEach {
 
             val lambda = it.expr as? FirAnonymousFunctionExpression ?: return@forEach
@@ -993,7 +996,7 @@ internal class KaFirCompilerFacility(
             else -> baseFir2IrExtensions
         }
 
-        val diagnosticReporter = DiagnosticReporterFactory.createPendingReporter(configuration.messageCollector)
+        val diagnosticReporter = DiagnosticReporterFactory.createPendingReporter()
 
         val commonMemberStorage = contextDeclarationCache?.customCommonMemberStorage ?: Fir2IrCommonMemberStorage()
 

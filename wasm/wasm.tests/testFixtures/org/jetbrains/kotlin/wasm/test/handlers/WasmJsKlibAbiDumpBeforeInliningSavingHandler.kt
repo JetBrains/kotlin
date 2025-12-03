@@ -5,9 +5,8 @@
 
 package org.jetbrains.kotlin.wasm.test.handlers
 
-import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
-import org.jetbrains.kotlin.config.messageCollector
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.diagnostics.impl.deduplicating
 import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
@@ -33,7 +32,7 @@ class FirWasmJsKlibAbiDumpBeforeInliningSavingHandler(testServices: TestServices
             "FirWasmJsKlibAbiDumpBeforeInliningSavingHandler expects WasmAfterFrontendBackendInput as input, but it's ${inputArtifact::class}"
         }
         val compilerConfiguration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
-        val diagnosticReporter = DiagnosticReporterFactory.createReporter(compilerConfiguration.messageCollector)
+        val diagnosticReporter = DiagnosticReporterFactory.createReporter()
         val irDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(
             diagnosticReporter.deduplicating(),
             compilerConfiguration.languageVersionSettings

@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.js.test.converters
 import org.jetbrains.kotlin.cli.pipeline.web.JsFir2IrPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.web.JsSerializedKlibPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.web.WebKlibSerializationPipelinePhase
-import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.js.test.utils.JsIrIncrementalDataProvider
 import org.jetbrains.kotlin.js.test.utils.jsIrIncrementalDataProvider
@@ -45,8 +44,7 @@ class FirKlibSerializerCliWebFacade(
         require(cliArtifact is JsFir2IrPipelineArtifact) {
             "FirKlibSerializerCliWebFacade expects JsFir2IrPipelineArtifact as input"
         }
-        val messageCollector = cliArtifact.configuration.messageCollector
-        val diagnosticReporter = DiagnosticReporterFactory.createPendingReporter(messageCollector)
+        val diagnosticReporter = DiagnosticReporterFactory.createPendingReporter()
         val input = cliArtifact.copy(diagnosticCollector = diagnosticReporter)
 
         val output = if (firstTimeCompilation) {

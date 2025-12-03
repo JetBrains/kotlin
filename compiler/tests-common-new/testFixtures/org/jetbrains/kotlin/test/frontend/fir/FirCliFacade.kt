@@ -10,11 +10,8 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.pipeline.ConfigurationPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.FrontendFilesForPluginsGenerationPipelinePhase
 import org.jetbrains.kotlin.cli.pipeline.FrontendPipelineArtifact
-import org.jetbrains.kotlin.cli.pipeline.PipelineContext
 import org.jetbrains.kotlin.cli.pipeline.PipelinePhase
-import org.jetbrains.kotlin.cli.pipeline.web.WebFrontendPipelineArtifact
 import org.jetbrains.kotlin.config.messageCollector
-import org.jetbrains.kotlin.config.phaser.CompilerPhase
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.moduleData
@@ -44,7 +41,7 @@ abstract class FirCliFacade<Phase, OutputPipelineArtifact>(
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
         val input = ConfigurationPipelineArtifact(
             configuration = configuration,
-            diagnosticCollector = DiagnosticReporterFactory.createPendingReporter(configuration.messageCollector),
+            diagnosticCollector = DiagnosticReporterFactory.createPendingReporter(),
             rootDisposable = testServices.compilerConfigurationProvider.testRootDisposable,
         )
 

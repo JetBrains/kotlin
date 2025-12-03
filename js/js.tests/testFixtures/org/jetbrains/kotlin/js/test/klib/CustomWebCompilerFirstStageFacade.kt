@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.config.LanguageVersion
-import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.diagnostics.impl.SimpleDiagnosticsCollector
 import org.jetbrains.kotlin.test.klib.CustomKlibCompilerException
 import org.jetbrains.kotlin.test.klib.CustomKlibCompilerFirstStageFacade
@@ -74,7 +73,7 @@ class CustomWebCompilerFirstStageFacade(testServices: TestServices) : CustomKlib
 
         if (exitCode == ExitCode.OK) {
             // Successfully compiled. Return the artifact.
-            return BinaryArtifacts.KLib(outputKlibFile, SimpleDiagnosticsCollector(BaseDiagnosticsCollector.RawReporter.DO_NOTHING))
+            return BinaryArtifacts.KLib(outputKlibFile, SimpleDiagnosticsCollector())
         } else {
             // Throw an exception to abort further test execution.
             throw CustomKlibCompilerException(exitCode, compilerXmlOutput.toString(Charsets.UTF_8.name()))

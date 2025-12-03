@@ -131,9 +131,7 @@ open class KJvmReplCompilerBase<AnalyzerT : ReplCodeAnalyzerBase>(
                     else -> throw AssertionError("Unexpected result ${analysisResult::class.java}")
                 }
 
-                val codegenDiagnosticsCollector = SimpleDiagnosticsCollector { message, severity ->
-                    messageCollector.report(severity, message)
-                }
+                val codegenDiagnosticsCollector = SimpleDiagnosticsCollector()
 
                 val generationState = GenerationState(
                     snippetKtFile.project,

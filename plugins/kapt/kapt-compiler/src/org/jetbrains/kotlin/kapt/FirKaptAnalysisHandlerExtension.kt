@@ -181,7 +181,7 @@ open class FirKaptAnalysisHandlerExtension(
         configuration.moduleChunk = ModuleChunk(configuration.modules)
 
         val frontendInput = ConfigurationPipelineArtifact(
-            configuration, DiagnosticReporterFactory.createPendingReporter(configuration.messageCollector), disposable,
+            configuration, DiagnosticReporterFactory.createPendingReporter(), disposable,
         )
         val frontendOutput = JvmFrontendPipelinePhase.executePhase(frontendInput) ?: return null
 
@@ -192,7 +192,7 @@ open class FirKaptAnalysisHandlerExtension(
         val fir2IrOutput = JvmFir2IrPipelinePhase.executePhase(
             frontendOutput.copy(
                 // Ignore all other FE errors
-                diagnosticCollector = DiagnosticReporterFactory.createPendingReporter(configuration.messageCollector),
+                diagnosticCollector = DiagnosticReporterFactory.createPendingReporter(),
             ),
             emptyList(),
         ) ?: return null

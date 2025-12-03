@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.codegen.optimization.OptimizationClassBuilderFactory
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.incrementalCompilationComponents
-import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.config.moduleName
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -53,7 +52,7 @@ class GenerationState(
     compiledCodeProvider: CompiledCodeProvider = CompiledCodeProvider.Empty
 ) {
     val diagnosticReporter: DiagnosticReporter =
-        diagnosticReporter ?: DiagnosticReporterFactory.createReporter(configuration.messageCollector)
+        diagnosticReporter ?: DiagnosticReporterFactory.createReporter()
 
     abstract class GenerateClassFilter {
         abstract fun shouldGenerateClass(processingClassOrObject: KtClassOrObject): Boolean

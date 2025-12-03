@@ -60,7 +60,7 @@ class NativeKlibSerializerFacade(
         }
 
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
-        val diagnosticReporter = DiagnosticReporterFactory.createReporter(configuration.messageCollector)
+        val diagnosticReporter = DiagnosticReporterFactory.createReporter()
         val irDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(
             diagnosticReporter.deduplicating(),
             configuration.languageVersionSettings

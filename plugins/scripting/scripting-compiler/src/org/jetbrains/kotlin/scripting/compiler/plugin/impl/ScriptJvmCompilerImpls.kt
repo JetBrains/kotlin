@@ -17,11 +17,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.*
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.config.JvmModulePathRoot
 import org.jetbrains.kotlin.codegen.state.GenerationState
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.languageVersionSettings
-import org.jetbrains.kotlin.config.messageCollector
-import org.jetbrains.kotlin.config.scriptingHostConfiguration
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.declarations.FirFile
@@ -240,7 +236,7 @@ private fun doCompile(
         messageCollector
     )
 
-    val diagnosticsReporter = DiagnosticReporterFactory.createReporter(messageCollector)
+    val diagnosticsReporter = DiagnosticReporterFactory.createReporter()
     val generationState = GenerationState(
         sourceFiles.first().project,
         analysisResult.moduleDescriptor,
@@ -326,7 +322,7 @@ private fun doCompileWithK2(
     )
 
     val renderDiagnosticName = configuration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
-    val diagnosticsReporter = DiagnosticReporterFactory.createPendingReporter(messageCollector)
+    val diagnosticsReporter = DiagnosticReporterFactory.createPendingReporter()
 
     val projectEnvironment = context.environment.toVfsBasedProjectEnvironment()
     val compilerEnvironment = ModuleCompilerEnvironment(projectEnvironment, diagnosticsReporter)

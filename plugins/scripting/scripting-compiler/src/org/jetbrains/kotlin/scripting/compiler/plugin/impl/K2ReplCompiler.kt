@@ -248,7 +248,7 @@ private fun compileImpl(
     val compilerConfiguration = state.compilerContext.environment.configuration.copy().apply {
         jvmTarget = selectJvmTarget(scriptCompilationConfiguration, messageCollector)
     }
-    val diagnosticsReporter = DiagnosticReporterFactory.createPendingReporter(messageCollector)
+    val diagnosticsReporter = DiagnosticReporterFactory.createPendingReporter()
     val renderDiagnosticName = compilerConfiguration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
     val compilerEnvironment = ModuleCompilerEnvironment(state.projectEnvironment, diagnosticsReporter)
     val targetId = TargetId(snippet.name!!, "java-production")

@@ -416,7 +416,7 @@ abstract class AbstractInvalidationTest(
     ) {
         val outputStream = ByteArrayOutputStream()
         val messageCollector = PrintingMessageCollector(PrintStream(outputStream), MessageRenderer.PLAIN_FULL_PATHS, true)
-        val diagnosticCollector = DiagnosticReporterFactory.createPendingReporter(messageCollector)
+        val diagnosticCollector = DiagnosticReporterFactory.createPendingReporter()
         val performanceManager = createPerformanceManagerFor(configuration.targetPlatform ?: error("Expected a target platform"))
         val phaseConfig = createPhaseConfig(stepId, buildDir)
 
