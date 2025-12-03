@@ -50,7 +50,7 @@ class Fe10HeaderGeneratorExtension : ParameterResolver, AfterEachCallback {
     }
 }
 
-private class Fe10HeaderGeneratorImpl(private val disposable: Disposable) : HeaderGenerator {
+class Fe10HeaderGeneratorImpl(private val disposable: Disposable) : HeaderGenerator {
     override fun generateHeaders(root: File, configuration: HeaderGenerator.Configuration): ObjCHeader {
         val headerGenerator = createObjCExportHeaderGenerator(disposable, root, configuration)
 
