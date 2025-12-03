@@ -2,6 +2,8 @@
  * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+@file:Suppress("TYPEALIAS_EXPANSION_DEPRECATION")
+
 package org.jetbrains.kotlin.gradle.mpp
 
 import org.gradle.api.logging.configuration.WarningMode
@@ -10,7 +12,7 @@ import org.gradle.kotlin.dsl.kotlin
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.internals.parseKotlinSourceSetMetadataFromJson
 import org.jetbrains.kotlin.gradle.plugin.mpp.GenerateProjectStructureMetadata
-import org.jetbrains.kotlin.gradle.plugin.mpp.KmpIsolatedProjectsSupport
+import org.jetbrains.kotlin.gradle.plugin.mpp.KmpIsolatedProjectsSupportDeprecated as KmpIsolatedProjectsSupport
 import org.jetbrains.kotlin.gradle.plugin.sources.METADATA_CONFIGURATION_NAME_SUFFIX
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
@@ -145,10 +147,10 @@ class MppMetadataResolutionIT : KGPBaseTest() {
         gradleVersion: GradleVersion,
         kmpIsolatedProjectsSupport: String,
     ) {
-        val kmpIsolatedProjectsSupport = KmpIsolatedProjectsSupport.valueOf(kmpIsolatedProjectsSupport)
+        val kmpIsolatedProjectsSupport = @Suppress("DEPRECATION") KmpIsolatedProjectsSupport.valueOf(kmpIsolatedProjectsSupport)
         var buildOptions = defaultBuildOptions.copy(kmpIsolatedProjectsSupport = kmpIsolatedProjectsSupport)
 
-        if (kmpIsolatedProjectsSupport == KmpIsolatedProjectsSupport.DISABLE) {
+        if (kmpIsolatedProjectsSupport == @Suppress("DEPRECATION") KmpIsolatedProjectsSupport.DISABLE) {
             // See: KT-72394 (Dependency.getProjectDependency is deprecated)
             if (gradleVersion >= GradleVersion.version(TestVersions.Gradle.G_8_11) &&
                 gradleVersion < GradleVersion.version(TestVersions.Gradle.G_9_0)
@@ -260,7 +262,7 @@ class MppMetadataResolutionIT : KGPBaseTest() {
                 defaultBuildOptions.copy(
                     configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED,
                     isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED,
-                    kmpIsolatedProjectsSupport = KmpIsolatedProjectsSupport.DISABLE,
+                    kmpIsolatedProjectsSupport = @Suppress("DEPRECATION") KmpIsolatedProjectsSupport.DISABLE,
                 )
             },
         )

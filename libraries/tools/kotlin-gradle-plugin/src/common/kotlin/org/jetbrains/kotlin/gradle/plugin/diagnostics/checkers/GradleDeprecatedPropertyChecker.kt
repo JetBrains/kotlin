@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.internal.properties.PropertiesBuildService
 import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_KMP_ISOLATED_PROJECT_SUPPORT
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_ENABLE_PLATFORM_INTEGER_COMMONIZATION
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_ENABLE_OPTIMISTIC_NUMBER_COMMONIZATION
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.*
@@ -74,6 +75,11 @@ internal object GradleDeprecatedPropertyChecker : KotlinGradleProjectChecker {
             propertyName = "kotlin.mpp.import.enableKgpDependencyResolution",
             details = "Legacy mode of KMP IDE import has been removed: https://kotl.in/KT-61127",
         ),
+        DeprecatedProperty(
+            propertyName = KOTLIN_KMP_ISOLATED_PROJECT_SUPPORT,
+            details = "Since Kotlin 2.2, the KMP Isolated Projects support is enabled by default. This property will be removed in 2.4 release." +
+                    " Leave your questions here https://youtrack.jetbrains.com/issue/KT-79257",
+        ), // Since 2.3.20
     )
 
     private val errorDeprecatedProperties: List<DeprecatedProperty> = listOf(

@@ -27,8 +27,12 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
  *
  * @since 2.1
  */
+@Deprecated("Always [ENABLE]. Scheduled for removal in Kotlin 2.4.", level = DeprecationLevel.WARNING)
 enum class KmpIsolatedProjectsSupport {
     ENABLE,
     DISABLE,
     AUTO;
 }
+
+@Suppress("DEPRECATION")
+internal typealias KmpIsolatedProjectsSupportDeprecated = KmpIsolatedProjectsSupport

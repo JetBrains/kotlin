@@ -3,13 +3,15 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("TYPEALIAS_EXPANSION_DEPRECATION")
+
 package org.jetbrains.kotlin.gradle.testbase
 
 import org.gradle.api.logging.LogLevel
 import org.gradle.api.tasks.testing.AbstractTestTask
 import org.gradle.api.tasks.testing.logging.TestLogEvent
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.gradle.plugin.mpp.KmpIsolatedProjectsSupport
+import org.jetbrains.kotlin.gradle.plugin.mpp.KmpIsolatedProjectsSupportDeprecated as KmpIsolatedProjectsSupport
 import org.jetbrains.kotlin.gradle.util.isTeamCityRun
 import java.io.PrintWriter
 import java.nio.file.attribute.PosixFilePermission
@@ -266,6 +268,7 @@ internal fun TestProject.enablePassedTestLogging(level: LogLevel = DEFAULT_LOG_L
 internal val TestProject.kmpIsolatedProjectsSupportEnabled: Boolean
     get() {
         val mode = buildOptions.kmpIsolatedProjectsSupport
+        @Suppress("DEPRECATION")
         return when (mode) {
             KmpIsolatedProjectsSupport.ENABLE -> true
             KmpIsolatedProjectsSupport.DISABLE -> false

@@ -1,0 +1,4 @@
+[DeprecatedWarningGradleProperties | WARNING] Deprecated Gradle Property 'kotlin.kmp.isolated-projects.support' Used
+The `kotlin.kmp.isolated-projects.support` deprecated property is used in your build.
+It is unsupported, please stop using it.
+Since Kotlin 2.2, the KMP Isolated Projects support is enabled by default. This property will be removed in 2.4 release. Leave your questions here https://youtrack.jetbrains.com/issue/KT-79257
