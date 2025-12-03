@@ -21,7 +21,7 @@ fun main() {
         <!CANNOT_INFER_PARAMETER_TYPE, CANNOT_INFER_PARAMETER_TYPE!>myCombine<!>(y.<!CANNOT_INFER_PARAMETER_TYPE, CANNOT_INFER_PARAMETER_TYPE!>myMap<!> { <!CANNOT_INFER_PARAMETER_TYPE!>z<!> -> z.<!UNRESOLVED_REFERENCE!>items<!> }) { w /*: Array<U> */ ->
             // U <: T
             // F <: T
-            w.flatMap { <!UNRESOLVED_REFERENCE!>u<!> }
+            w.<!CANNOT_INFER_PARAMETER_TYPE, CANNOT_INFER_PARAMETER_TYPE!>flatMap<!> <!CANNOT_INFER_PARAMETER_TYPE!>{ <!UNRESOLVED_REFERENCE!>u<!> }<!>
         }
     }
 }
