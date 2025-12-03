@@ -26360,6 +26360,12 @@ public class LLBlackBoxTestGenerated extends AbstractLLBlackBoxTest {
     }
 
     @Test
+    @TestMetadata("elvisAndLongIlt.kt")
+    public void testElvisAndLongIlt() {
+      runTest("compiler/testData/codegen/box/inference/elvisAndLongIlt.kt");
+    }
+
+    @Test
     @TestMetadata("ifWithAssignmentAndNothingBranch.kt")
     public void testIfWithAssignmentAndNothingBranch() {
       runTest("compiler/testData/codegen/box/inference/ifWithAssignmentAndNothingBranch.kt");

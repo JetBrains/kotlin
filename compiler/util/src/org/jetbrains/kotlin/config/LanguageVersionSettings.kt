@@ -488,6 +488,7 @@ enum class LanguageFeature(
     ReportOptInUsageOnCompanionObjectAccesses(KOTLIN_2_4, enabledInProgressiveMode = true, issue = "KT-82524"),
     ChangedIntersectionWithRecursiveCapturedType(KOTLIN_2_4, issue = "KT-65059"),
     SkipHiddenObjectsInResolution(KOTLIN_2_4, issue = "KT-82555"),
+    DontUseConstraintFromEqualityOperatorInElvis(KOTLIN_2_4, issue = "KT-81763"),
 
     // 2.5
 

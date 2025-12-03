@@ -6402,6 +6402,12 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
       }
 
       @Test
+      @TestMetadata("elvisAndLongIltLegacy.kt")
+      public void testElvisAndLongIltLegacy() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/inference/elvisAndLongIltLegacy.kt");
+      }
+
+      @Test
       @TestMetadata("elvisAndUnit.kt")
       public void testElvisAndUnit() {
         runTest("compiler/fir/analysis-tests/testData/resolve/inference/elvisAndUnit.kt");
