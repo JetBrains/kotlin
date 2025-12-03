@@ -774,10 +774,30 @@ internal class GlobalStubBuilder(
         val cCallMode = context.configuration.cCallMode
 
         if (cCallMode != CCallMode.INDIRECT) {
-            global.binaryName?.let {
-                add(AnnotationStub.CGlobalAccess.Symbol(it))
-                if (isPointer) {
-                    add(AnnotationStub.CGlobalAccess.Pointer)
+            when (val it = global.directAccess) {
+                is DirectAccess.Symbol -> {
+                    add(AnnotationStub.CGlobalAccess.Symbol(it.name))
+                    if (isPointer) {
+                        add(AnnotationStub.CGlobalAccess.Pointer)
+                    }
+                }
+                is DirectAccess.Unavailable -> {
+                    if (cCallMode == CCallMode.DIRECT) {
+                        // The declaration is not supported in the requested direct mode.
+                        // Mark it accordingly.
+                        //
+                        // The trick here is that we generate a symbol name that can't be resolved into anything.
+                        // So, if such a declaration is used, the linkage will fail with this string as a message.
+                        // This serves two purposes:
+                        // 1. Such problems are reported not during compilation but during linkage,
+                        //    along with other linkage failures caused by `-Xccall-mode direct`
+                        //    (e.g. usages of header-defined functions), allowing a user to collect more problems at once.
+                        // 2. If such a declaration is used in unreachable code, it doesn't make the compilation fail.
+                        add(AnnotationStub.CCall.Direct("${global.name} unsupported: ${it.reason}"))
+                        // Note: the link leads to the issue about non-constant macros (that are also handled with this code).
+                        // That's fine, because it is the only case that reaches this code for now.
+                    }
+                    // TODO: KT-79757 add @LimitedCompatibility(it.reason)
                 }
             }
         }
@@ -786,21 +806,7 @@ internal class GlobalStubBuilder(
             add(indirect())
         }
 
-        if (isEmpty()) {
-            // The declaration is not supported in the requested direct mode.
-            // Mark it accordingly.
-            //
-            // The trick here is that we generate a symbol name that can't be resolved into anything.
-            // So, if such a declaration is used, the linkage will fail with this string as a message.
-            // This serves two purposes:
-            // 1. Such problems are reported not during compilation but during linkage,
-            //    along with other linkage failures caused by `-Xccall-mode direct`
-            //    (e.g. usages of header-defined functions), allowing a user to collect more problems at once.
-            // 2. If such a declaration is used in unreachable code, it doesn't make the compilation fail.
-            add(AnnotationStub.CCall.Direct("${global.name} unsupported: https://youtrack.jetbrains.com/issue/KT-82031"))
-            // Note: the link leads to the issue about non-constant macros (that are also handled with this code).
-            // That's fine, because it is the only case that reaches this code for now.
-        }
+        check(this.isNotEmpty()) { "The generated annotation list is empty for ${global.name}" }
     }
 
     private fun addWrapperGenerationInfo(

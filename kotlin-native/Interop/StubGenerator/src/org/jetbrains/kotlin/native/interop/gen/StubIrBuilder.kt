@@ -413,7 +413,12 @@ class StubIrBuilder(private val context: StubIrContext) {
 
     private fun generateStubsForWrappedMacro(macro: WrappedMacroDef) {
         try {
-            generateStubsForGlobal(GlobalDecl(macro.name, macro.type, isConst = true, binaryName = null))
+            generateStubsForGlobal(GlobalDecl(
+                    macro.name,
+                    macro.type,
+                    isConst = true,
+                    directAccess = DirectAccess.Unavailable("https://youtrack.jetbrains.com/issue/KT-82031")
+            ))
         } catch (e: Throwable) {
             context.log("Warning: cannot generate stubs for macro ${macro.name}")
         }

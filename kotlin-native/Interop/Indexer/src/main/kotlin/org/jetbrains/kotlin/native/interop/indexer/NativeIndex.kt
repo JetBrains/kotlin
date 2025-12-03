@@ -328,6 +328,29 @@ abstract class ObjCCategory(val name: String, val clazz: ObjCClass) : ObjCContai
 data class Parameter(val name: String?, val type: Type, val nsConsumed: Boolean)
 
 /**
+ * Describes how a declaration is accessible directly (in the `-Xccall-mode direct` mode), or why it is not.
+ */
+sealed class DirectAccess {
+    /**
+     * The declaration is accessible directly using the specified symbol name.
+     *
+     * @property name
+     * The name of the declaration in the binary code (i.e. the symbol name as seen by the linker).
+     * It usually equals to `"_$name"` on Apple platforms and `name` on other platforms,
+     * but can be different if some modifiers like `__asm("foo")` are at play.
+     */
+    class Symbol(val name: String) : DirectAccess()
+
+    /**
+     * The declaration is not accessible directly or not supported in the `-Xccall-mode direct` mode.
+     *
+     * @property reason
+     * Briefly describes why the declaration is not accessible.
+     */
+    class Unavailable(val reason: String) : DirectAccess()
+}
+
+/**
  * C function declaration.
  */
 class FunctionDecl(
@@ -371,7 +394,7 @@ class StringConstantDef(name: String, type: Type, val value: String) : ConstantD
 
 class WrappedMacroDef(name: String, val type: Type) : MacroDef(name)
 
-class GlobalDecl(val name: String, val type: Type, val isConst: Boolean, val binaryName: String?, val parentName: String? = null) {
+class GlobalDecl(val name: String, val type: Type, val isConst: Boolean, val directAccess: DirectAccess, val parentName: String? = null) {
     val fullName: String get() = parentName?.let { "$it::$name" } ?: name
 }
 

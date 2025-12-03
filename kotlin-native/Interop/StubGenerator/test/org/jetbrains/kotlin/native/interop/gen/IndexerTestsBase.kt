@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.native.interop.gen
 
 import org.jetbrains.kotlin.native.interop.indexer.EnumDef
 import org.jetbrains.kotlin.native.interop.indexer.FunctionDecl
+import org.jetbrains.kotlin.native.interop.indexer.GlobalDecl
 import org.jetbrains.kotlin.native.interop.indexer.IndexerResult
 import org.jetbrains.kotlin.native.interop.indexer.Language
 import org.jetbrains.kotlin.native.interop.indexer.ObjCProtocol
@@ -14,7 +15,7 @@ import org.jetbrains.kotlin.native.interop.indexer.StructDecl
 import org.jetbrains.kotlin.utils.atMostOne
 
 open class IndexerTestsBase : InteropTestsBase() {
-    fun index(headerContents: String, language: Language = Language.C): IndexerResult {
+    fun index(headerContents: String, language: Language = Language.C, appendDefFile: String? = null): IndexerResult {
         val files = testFiles()
         files.file("header.h", headerContents)
         val defFileLanguage = when (language) {
@@ -26,12 +27,15 @@ open class IndexerTestsBase : InteropTestsBase() {
             headers = header.h
             headerFilter = header.h
             language = $defFileLanguage
-            """.trimIndent()
+            """.trimIndent() + if (appendDefFile != null) "\n$appendDefFile" else ""
         )
 
         val library = buildNativeLibraryFrom(defFile, files.directory)
         return org.jetbrains.kotlin.native.interop.indexer.buildNativeIndex(library, verbose = false)
     }
+
+    val IndexerResult.global: GlobalDecl
+        get() = index.globals.atMostOne()!!
 
     fun indexFunctionOrNull(headerContents: String): FunctionDecl? =
             index(headerContents).index.functions.atMostOne()
