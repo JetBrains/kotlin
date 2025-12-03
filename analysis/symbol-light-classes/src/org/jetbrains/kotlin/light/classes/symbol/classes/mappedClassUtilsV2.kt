@@ -316,10 +316,11 @@ private fun KaSession.createMethodsWithSpecialSignatureV2(
         return emptyList()
     }
 
-    val finalBridgeWithObject = method.finalBridge(containingClass, emptyMap()) // Use Object
+    val finalBridgeWithObject = method.finalBridge(containingClass, substitutionMap)
     val abstractKotlinVariantWithGeneric = method.wrapAsSymbolMethod(
         containingClass = containingClass,
-        substitutionMap = substitutionMap
+        substitutionMap = substitutionMap,
+        substituteObjectWith = typePointer
     )
     return listOf(finalBridgeWithObject, abstractKotlinVariantWithGeneric)
 }
@@ -490,6 +491,7 @@ private fun KaNamedFunctionSymbol.wrapAsSymbolMethod(
     lightMemberOrigin: LightMemberOrigin? = null,
     name: String = this.name.asString(),
     substitutionMap: Map<KaSymbolPointer<KaTypeParameterSymbol>, KaTypePointer<KaType>> = emptyMap(),
+    substituteObjectWith: KaTypePointer<KaType>? = null,
     providedSignature: KaMethodSignature? = null,
     makeFinal: Boolean = false,
     hasImplementation: Boolean = false,
@@ -502,6 +504,7 @@ private fun KaNamedFunctionSymbol.wrapAsSymbolMethod(
         isFinal = makeFinal,
         hasImplementation = hasImplementation,
         substitutionMap = substitutionMap,
+        substituteObjectWith = substituteObjectWith,
         providedSignature = providedSignature
     )
 }

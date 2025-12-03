@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.psiSafe
 import org.jetbrains.kotlin.analysis.api.symbols.sourcePsiSafe
+import org.jetbrains.kotlin.analysis.api.types.KaFlexibleType
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.api.types.KaTypeMappingMode
 import org.jetbrains.kotlin.analysis.api.types.KaTypePointer
@@ -72,6 +73,11 @@ internal class SymbolLightMethodForMappedClassV2 private constructor(
      * need custom handling.
      */
     private val providedSignature: KaMethodSignature?,
+    /**
+     * Type to substitute for java.lang.Object in the signature.
+     * Used when mapping Java methods that use Object to Kotlin types with more specific bounds.
+     */
+    private val substituteObjectWith: KaTypePointer<KaType>?,
 ) : SymbolLightMethodBase(
     lightMemberOrigin = lightMemberOrigin,
     containingClass = containingClass,
@@ -88,6 +94,7 @@ internal class SymbolLightMethodForMappedClassV2 private constructor(
         hasImplementation: Boolean,
         substitutionMap: Map<KaSymbolPointer<KaTypeParameterSymbol>, KaTypePointer<KaType>> = emptyMap(),
         providedSignature: KaMethodSignature? = null,
+        substituteObjectWith: KaTypePointer<KaType>? = null,
     ) : this(
         functionSymbolPointer = functionSymbol.createPointer(),
         lightMemberOrigin = lightMemberOrigin,
@@ -99,6 +106,7 @@ internal class SymbolLightMethodForMappedClassV2 private constructor(
         hasImplementation = hasImplementation,
         substitutionMap = substitutionMap,
         providedSignature = providedSignature,
+        substituteObjectWith = substituteObjectWith,
     )
 
     init {
@@ -186,7 +194,14 @@ internal class SymbolLightMethodForMappedClassV2 private constructor(
             }
         }
 
-        return substitutor.substitute(type)
+        val substituted = substitutor.substitute(type)
+        val isAnyType = substituted.isAnyType || (substituted as? KaFlexibleType)?.lowerBound?.isAnyType == true
+
+        return if (isAnyType && substituteObjectWith != null) {
+            substituteObjectWith.restore() ?: substituted
+        } else {
+            substituted
+        }
     }
 
     override fun getName(): String = methodName
