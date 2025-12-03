@@ -1,0 +1,7 @@
+language=Objective-C
+---
+@interface Bar
+-(instancetype) init;
+-(int) oldFun;
+-(int) newFun;
+@end
