@@ -18,7 +18,13 @@ public class Flags {
     public static final BooleanFlagField DEFINITELY_NOT_NULL_TYPE = FlagField.booleanAfter(SUSPEND_TYPE);
 
     // Common for declarations
-
+    /**
+     * Indicates that the corresponding declaration has at least one annotation.
+     * <p>
+     * This flag is useful for reading Kotlin metadata on JVM efficiently. On JVM, most of the annotations are written not to the Kotlin
+     * metadata, but directly to the corresponding declarations in the class file. This flag can be used as an optimization to avoid
+     * reading annotations from the class file (which can be slow) in case when a class has no annotations.
+     */
     public static final BooleanFlagField HAS_ANNOTATIONS = FlagField.booleanFirst();
     public static final FlagField<ProtoBuf.Visibility> VISIBILITY = FlagField.after(HAS_ANNOTATIONS, ProtoBuf.Visibility.values());
     public static final FlagField<ProtoBuf.Modality> MODALITY = FlagField.after(VISIBILITY, ProtoBuf.Modality.values());
