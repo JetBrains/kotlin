@@ -252,7 +252,7 @@ class TagsGeneratorChecker(testServices: TestServices) : FirAnalysisHandler(test
         const val CONTRACT_HOLDSIN_EFFECT = "contractHoldsInEffect"
         const val CONTRACT_IMPLIES_RETURN_EFFECT = "contractImpliesReturnEffect"
         const val EXPLICIT_BACKING_FIELD = "explicitBackingField"
-        const val test = "testTest"
+        const val test = "testTesttest"
     }
 }
 
