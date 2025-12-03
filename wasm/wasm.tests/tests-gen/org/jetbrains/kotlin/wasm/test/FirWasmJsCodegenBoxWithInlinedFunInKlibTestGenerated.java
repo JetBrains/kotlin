@@ -65106,6 +65106,12 @@ public class FirWasmJsCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         runTest("compiler/testData/codegen/box/when/whenSafeCallSubjectEvaluatedOnce.kt");
       }
 
+      @Test
+      @TestMetadata("whenWithoutBranches.kt")
+      public void testWhenWithoutBranches() {
+        runTest("compiler/testData/codegen/box/when/whenWithoutBranches.kt");
+      }
+
       @Nested
       @TestMetadata("compiler/testData/codegen/box/when/enumOptimization")
       @TestDataPath("$PROJECT_ROOT")
