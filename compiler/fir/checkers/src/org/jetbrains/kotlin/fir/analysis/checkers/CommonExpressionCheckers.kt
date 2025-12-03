@@ -139,6 +139,7 @@ object CommonExpressionCheckers : ExpressionCheckers() {
 
     override val checkNotNullCallCheckers: Set<FirCheckNotNullCallChecker> = setOf(
         FirNotNullAssertionChecker,
+        IECheckerBB,
     )
 
     override val elvisExpressionCheckers: Set<FirElvisExpressionChecker> = setOf(
@@ -151,6 +152,7 @@ object CommonExpressionCheckers : ExpressionCheckers() {
 
     override val safeCallExpressionCheckers: Set<FirSafeCallExpressionChecker> = setOf(
         FirUnnecessarySafeCallChecker,
+        IECheckerSC,
     )
 
     override val smartCastExpressionCheckers: Set<FirSmartCastExpressionChecker> = setOf(
