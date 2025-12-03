@@ -166,6 +166,8 @@ fun lowerPreservingTags(
 
 data class WasmModuleDependencyImport(val name: String, val fileName: String)
 
+internal const val jsBuiltinsModulePrefix = "wasm:"
+
 private fun String.normalizeEmptyLines(): String {
     return this.replace(Regex("\n\\s*\n+"), "\n\n")
 }
@@ -520,7 +522,7 @@ fun generateJsImports(
             append("import * as ")
             append(it.second)
             append(" from ")
-            append(if (it.first.contains("wasm:")) "\'./${baseFileName}.js-builtins.mjs\'" else it.first)
+            append(if (it.first.contains(jsBuiltinsModulePrefix)) "\'./${baseFileName}.js-builtins.mjs\'" else it.first)
             append(";")
         }
     }
@@ -592,8 +594,7 @@ ${if (useDebuggerCustomFormatters) "import \"./custom-formatters.js\"" else ""}
 import { importObject, setWasmExports$commonStdlibExports } from './${baseFileName}.import-object.mjs'
     """.trimIndent()
 
-    val builtinsList = jsModuleImports.filter { it.startsWith("wasm:") }.map { "${it.removePrefix("wasm:")}" }
-    val options = "{ builtins: ['${builtinsList.joinToString(", ")}'] }"
+    val builtinsList = jsModuleImports.filter { it.startsWith(jsBuiltinsModulePrefix) }.map { it.removePrefix(jsBuiltinsModulePrefix) }
 
     val pathJsStringLiteral = wasmFilePath.toJsStringLiteral()
 
@@ -617,6 +618,7 @@ if (!isNodeJs && !isDeno && !isStandaloneJsVM && !isBrowser) {
 }
 
 const wasmFilePath = $pathJsStringLiteral;
+const wasmOptions = { builtins: ['${builtinsList.joinToString(", ")}'] }
 
 try {
   if (isNodeJs) {
@@ -627,27 +629,27 @@ try {
     const url = require('url');
     const filepath = import.meta.resolve(wasmFilePath);
     const wasmBuffer = fs.readFileSync(url.fileURLToPath(filepath));
-    const wasmModule = new WebAssembly.Module(wasmBuffer);
-    wasmInstance = new WebAssembly.Instance(wasmModule, importObject, $options);
+    const wasmModule = new WebAssembly.Module(wasmBuffer, wasmOptions);
+    wasmInstance = new WebAssembly.Instance(wasmModule, importObject);
   }
 
   if (isDeno) {
     const path = await import(/* webpackIgnore: true */'https://deno.land/std/path/mod.ts');
     const binary = Deno.readFileSync(path.fromFileUrl(import.meta.resolve(wasmFilePath)));
-    const module = await WebAssembly.compile(binary);
-    wasmInstance = await WebAssembly.instantiate(module, importObject, $options);
+    const module = await WebAssembly.compile(binary, wasmOptions);
+    wasmInstance = await WebAssembly.instantiate(module, importObject);
   }
 
   if (isStandaloneJsVM) {
     const importMeta = import.meta;
     const filepath = importMeta.url.replace(/\.mjs$/, '.wasm');
     const wasmBuffer = read(filepath, 'binary');
-    const wasmModule = new WebAssembly.Module(wasmBuffer);
-    wasmInstance = new WebAssembly.Instance(wasmModule, importObject, $options);
+    const wasmModule = new WebAssembly.Module(wasmBuffer, wasmOptions);
+    wasmInstance = new WebAssembly.Instance(wasmModule, importObject);
   }
 
   if (isBrowser) {
-    wasmInstance = (await WebAssembly.instantiateStreaming(fetch(new URL($pathJsStringLiteral,import.meta.url).href), importObject, $options)).instance;
+    wasmInstance = (await WebAssembly.instantiateStreaming(fetch(new URL($pathJsStringLiteral,import.meta.url).href), importObject, wasmOptions)).instance;
   }
 } catch (e) {
   if (e instanceof WebAssembly.CompileError) {

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.wasm.utils
 
+import org.jetbrains.kotlin.backend.wasm.jsBuiltinsModulePrefix
 import org.jetbrains.kotlin.ir.backend.js.utils.getSingleConstStringArgument
 import org.jetbrains.kotlin.ir.declarations.IrAnnotationContainer
 import org.jetbrains.kotlin.ir.declarations.IrClass
@@ -55,7 +56,7 @@ fun IrFunction.getJsBuiltinDescriptor(): JsBuiltinDescriptor? {
     val declarationName = (annotation.arguments[1] as? IrConst)?.value as? String
     val polyfillImpl = (annotation.arguments[2] as? IrConst)?.value as String
     return JsBuiltinDescriptor(
-        "wasm:$moduleName",
+        "$jsBuiltinsModulePrefix$moduleName",
         declarationName ?: this.name.asString(),
         polyfillImpl
     )
