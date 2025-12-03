@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.konan.library
 import org.jetbrains.kotlin.konan.library.AbstractNativeKlibWriterTest.NativeParameters
 import org.jetbrains.kotlin.konan.library.AbstractNativeKlibWriterTest.NativeParameters.BinaryFile
 import org.jetbrains.kotlin.konan.library.components.KlibBitcodeConstants.KLIB_BITCODE_FOLDER_NAME
-import org.jetbrains.kotlin.konan.library.components.KlibNativeConstants.KLIB_TARGETS_FOLDER_NAME
+import org.jetbrains.kotlin.library.components.KlibNativeConstants.KLIB_TARGETS_FOLDER_NAME
 import org.jetbrains.kotlin.konan.library.components.KlibNativeIncludedBinariesConstants.KLIB_NATIVE_INCLUDED_BINARIES_FOLDER_NAME
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.AbstractKlibWriterTest

@@ -3,13 +3,10 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.cli.klib
+package org.jetbrains.kotlin.library
 
 import org.jetbrains.kotlin.konan.file.file
 import org.jetbrains.kotlin.konan.file.withZipFileSystem
-import org.jetbrains.kotlin.konan.library.components.KlibNativeConstants.KLIB_TARGETS_FOLDER_NAME
-import org.jetbrains.kotlin.library.KLIB_MANIFEST_FILE_NAME
-import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.components.KlibIrConstants.KLIB_IR_BODIES_FILE_NAME
 import org.jetbrains.kotlin.library.components.KlibIrConstants.KLIB_IR_DEBUG_INFO_FILE_NAME
 import org.jetbrains.kotlin.library.components.KlibIrConstants.KLIB_IR_DECLARATIONS_FILE_NAME
@@ -21,18 +18,21 @@ import org.jetbrains.kotlin.library.components.KlibIrConstants.KLIB_IR_SIGNATURE
 import org.jetbrains.kotlin.library.components.KlibIrConstants.KLIB_IR_STRINGS_FILE_NAME
 import org.jetbrains.kotlin.library.components.KlibIrConstants.KLIB_IR_TYPES_FILE_NAME
 import org.jetbrains.kotlin.library.components.KlibMetadataConstants.KLIB_METADATA_FOLDER_NAME
+import org.jetbrains.kotlin.library.components.KlibNativeConstants.KLIB_TARGETS_FOLDER_NAME
 import org.jetbrains.kotlin.konan.file.File as KFile
 
 /**
  * [size] is always in bytes.
  */
-internal class KlibElementWithSize private constructor(val name: String, val size: Long, val children: List<KlibElementWithSize>) {
+class KlibElementWithSize private constructor(val name: String, val size: Long, val children: List<KlibElementWithSize>) {
     constructor(name: String, size: Long) : this(name, size, emptyList())
     constructor(name: String, children: List<KlibElementWithSize>) : this(name, children.sumOf { it.size }, children)
 }
 
-internal fun KotlinLibrary.loadSizeInfo(): KlibElementWithSize? {
-    val libraryFile = libraryFile.absoluteFile
+fun KotlinLibrary.loadSizeInfo(): KlibElementWithSize? = libraryFile.absoluteFile.loadSizeInfo()
+
+fun KFile.loadSizeInfo(): KlibElementWithSize? {
+    val libraryFile = absoluteFile
 
     return when {
         libraryFile.isFile -> KlibElementWithSize(
