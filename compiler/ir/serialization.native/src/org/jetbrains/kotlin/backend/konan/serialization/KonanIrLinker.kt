@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.konan.serialization
 
 import org.jetbrains.kotlin.backend.common.linkage.issues.UserVisibleIrModulesSupport
 import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageSupportForLinker
+import org.jetbrains.kotlin.backend.common.overrides.DefaultFakeOverrideClassFilter
 import org.jetbrains.kotlin.backend.common.overrides.IrLinkerFakeOverrideProvider
 import org.jetbrains.kotlin.backend.common.serialization.DeserializationStrategy
 import org.jetbrains.kotlin.backend.common.serialization.KotlinIrLinker
@@ -54,7 +55,7 @@ class KonanIrLinker(
         typeSystem = IrTypeSystemContextImpl(builtIns),
         friendModules = friendModules,
         partialLinkageSupport = partialLinkageSupport,
-        platformSpecificClassFilter = KonanFakeOverrideClassFilter,
+        platformSpecificClassFilter = DefaultFakeOverrideClassFilter,
         externalOverridabilityConditions = externalOverridabilityConditions,
     )
 
