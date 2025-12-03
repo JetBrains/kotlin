@@ -71,6 +71,9 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
     }
 
     val GENERAL_SYNTAX by object : DiagnosticGroup("General syntax") {
+        val IE_DIAGNOSTIC by warning<KtElement> {
+            parameter<String>("info")
+        }
         val ILLEGAL_CONST_EXPRESSION by error<PsiElement>()
         val ILLEGAL_UNDERSCORE by error<PsiElement>()
         val EXPRESSION_EXPECTED by error<PsiElement>(PositioningStrategy.SELECTOR_BY_QUALIFIED)
@@ -2309,20 +2312,20 @@ private val exposedVisibilityDiagnosticInit: DiagnosticBuilder.() -> Unit = {
 }
 
 private inline fun <reified P : PsiElement> AbstractDiagnosticGroup.exposedVisibilityError(
-    positioningStrategy: PositioningStrategy = PositioningStrategy.DEFAULT
+    positioningStrategy: PositioningStrategy = PositioningStrategy.DEFAULT,
 ): PropertyDelegateProvider<Any?, ReadOnlyProperty<AbstractDiagnosticGroup, RegularDiagnosticData>> {
     return error<P>(positioningStrategy, exposedVisibilityDiagnosticInit)
 }
 
 private inline fun <reified P : PsiElement> AbstractDiagnosticGroup.exposedVisibilityWarning(
-    positioningStrategy: PositioningStrategy = PositioningStrategy.DEFAULT
+    positioningStrategy: PositioningStrategy = PositioningStrategy.DEFAULT,
 ): PropertyDelegateProvider<Any?, ReadOnlyProperty<AbstractDiagnosticGroup, RegularDiagnosticData>> {
     return warning<P>(positioningStrategy, exposedVisibilityDiagnosticInit)
 }
 
 private inline fun <reified P : PsiElement> AbstractDiagnosticGroup.exposedVisibilityDeprecationError(
     languageFeature: LanguageFeature,
-    positioningStrategy: PositioningStrategy = PositioningStrategy.DEFAULT
+    positioningStrategy: PositioningStrategy = PositioningStrategy.DEFAULT,
 ): PropertyDelegateProvider<Any?, ReadOnlyProperty<AbstractDiagnosticGroup, DeprecationDiagnosticData>> {
     return deprecationError<P>(languageFeature, positioningStrategy, exposedVisibilityDiagnosticInit)
 }

@@ -3741,5 +3741,6 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             VERSION_OVERLOADS_TOO_COMPLEX_EXPRESSION,
             "Not supported in combination with '@IntroducedAt'."
         )
+        map.put(FirErrors.IE_DIAGNOSTIC, "''{0}''", STRING)
     }
 }

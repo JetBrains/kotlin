@@ -164,6 +164,7 @@ object FirErrors : KtDiagnosticsContainer() {
     val OTHER_ERROR_WITH_REASON: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("OTHER_ERROR_WITH_REASON", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
 
     // General syntax
+    val IE_DIAGNOSTIC: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("IE_DIAGNOSTIC", WARNING, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
     val ILLEGAL_CONST_EXPRESSION: KtDiagnosticFactory0 = KtDiagnosticFactory0("ILLEGAL_CONST_EXPRESSION", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
     val ILLEGAL_UNDERSCORE: KtDiagnosticFactory0 = KtDiagnosticFactory0("ILLEGAL_UNDERSCORE", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
     val EXPRESSION_EXPECTED: KtDiagnosticFactory0 = KtDiagnosticFactory0("EXPRESSION_EXPECTED", ERROR, SourceElementPositioningStrategies.SELECTOR_BY_QUALIFIED, PsiElement::class, getRendererFactory())
