@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.fir.FirTargetElement
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
 import org.jetbrains.kotlin.fir.expressions.impl.FirEmptyExpressionBlock
-import org.jetbrains.kotlin.fir.isDisabled
 import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.*
@@ -236,8 +235,7 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyRes
         dataFlowAnalyzer.exitElvisLhs(elvisExpression)
 
         val resolutionModeForRhs = withExpectedType(
-            if (LanguageFeature.DontUseConstraintFromEqualityOperatorInElvis.isDisabled()) data.expectedType
-            else data.expectedTypeUnlessFromEquality,
+            data.expectedType,
             lastStatementInBlock = (data as? ResolutionMode.WithExpectedType)?.lastStatementInBlock == true
         )
         elvisExpression.transformRhs(
@@ -304,10 +302,7 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyRes
     private fun computeResolutionModeForElvisLHS(
         data: ResolutionMode,
     ): ResolutionMode {
-        val expectedType =
-            if (LanguageFeature.DontUseConstraintFromEqualityOperatorInElvis.isDisabled()) data.expectedType
-            else data.expectedTypeUnlessFromEquality
-
+        val expectedType = data.expectedType
         val lastStatementInBlock = (data as? ResolutionMode.WithExpectedType)?.lastStatementInBlock == true
 
         val isObsoleteCompilerMode =

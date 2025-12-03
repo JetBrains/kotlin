@@ -5,8 +5,11 @@
 
 package org.jetbrains.kotlin.fir.resolve
 
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.fir.SessionHolder
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
+import org.jetbrains.kotlin.fir.isDisabled
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode.ArrayLiteralPosition
 import org.jetbrains.kotlin.fir.types.*
@@ -136,15 +139,12 @@ sealed class ResolutionMode(
     }
 }
 
+context(c: SessionHolder)
 val ResolutionMode.expectedType: ConeKotlinType?
     get() = when (this) {
-        is ResolutionMode.WithExpectedType -> expectedType.takeIf { !this.fromCast }
-        else -> null
-    }
-
-val ResolutionMode.expectedTypeUnlessFromEquality: ConeKotlinType?
-    get() = when (this) {
-        is ResolutionMode.WithExpectedType -> expectedType.takeIf { !this.fromCast && !this.fromEqualityOperator }
+        is ResolutionMode.WithExpectedType -> expectedType.takeIf {
+            !this.fromCast && (!this.fromEqualityOperator || LanguageFeature.DontUseConstraintFromEqualityOperatorInElvis.isDisabled())
+        }
         else -> null
     }
 
