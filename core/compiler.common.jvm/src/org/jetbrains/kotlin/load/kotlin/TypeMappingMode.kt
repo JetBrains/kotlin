@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.types.Variance
 annotation class TypeMappingModeInternals
 
 @OptIn(TypeMappingModeInternals::class)
-class TypeMappingMode @TypeMappingModeInternals constructor(
+data class TypeMappingMode @TypeMappingModeInternals constructor(
     val needPrimitiveBoxing: Boolean = true,
     val needInlineClassWrapping: Boolean = true,
     val isForAnnotationParameter: Boolean = false,

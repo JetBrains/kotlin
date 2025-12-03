@@ -129,7 +129,7 @@ internal class KaFirJavaInteroperabilityComponent(
             return PsiTypes.voidType()
         }
 
-        val mappingMode = mode.toTypeMappingMode(this, isAnnotationMethod, suppressWildcards)
+        val mappingMode = mode.toTypeMappingMode(this, isAnnotationMethod, suppressWildcards).copy(skipDeclarationSiteWildcardsIfPossible = false)
         val typeElement = coneType.simplifyType(rootModuleSession, useSitePosition).asPsiTypeElement(
             mode = mappingMode,
             useSitePosition = useSitePosition,
@@ -464,12 +464,12 @@ private fun ConeKotlinType.simplifyType(
 
         val needLocalTypeApproximation = needLocalTypeApproximation(visibilityForApproximation, isInlineFunction, session, useSitePosition)
         // TODO: can we approximate local types in type arguments *selectively* ?
-        currentType = PublicTypeApproximator.approximateToDenotableSupertype(
-            currentType,
-            session,
-            needLocalTypeApproximation,
-            shouldApproximateLocalType = { _, _ -> true }
-        ) ?: currentType
+//        currentType = PublicTypeApproximator.approximateToDenotableSupertype(
+//            currentType,
+//            session,
+//            needLocalTypeApproximation,
+//            shouldApproximateLocalType = { _, _ -> true }
+//        ) ?: currentType
 
     } while (oldType !== currentType)
     if (typeArguments.isNotEmpty()) {
