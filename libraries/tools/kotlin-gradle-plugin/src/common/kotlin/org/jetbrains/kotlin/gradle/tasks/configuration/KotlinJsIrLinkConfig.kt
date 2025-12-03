@@ -127,6 +127,60 @@ internal open class KotlinJsIrLinkConfig(
                         }
                     }
                 }
+
+                task.project.dependencies.registerTransform(
+                    WasmBinaryTransform::class.java,
+                ) {
+                    it.from.attributes.attribute(WasmBinaryAttribute.attribute, WasmBinaryAttribute.KLIB)
+                    it.to.attributes.attribute(
+                        WasmBinaryAttribute.attribute,
+                        WasmBinaryAttribute.WASM_BINARY_PRODUCTION
+                    )
+
+                    it.parameters {
+                        it.currentJvmJdkToolsJar.set(
+                            task.defaultKotlinJavaToolchain
+                                .flatMap { it.currentJvmJdkToolsJar }
+                        )
+                        it.defaultCompilerClasspath.setFrom(task.defaultCompilerClasspath)
+                        it.kotlinPluginVersion.set(
+                            getKotlinPluginVersion(task.logger)
+                        )
+                        it.pathProvider.set(
+                            task.path
+                        )
+                        it.projectRootFile.set(
+                            project.projectDir
+                        )
+                        val projectName = project.name
+                        it.clientIsAliveFlagFile.set(
+                            GradleCompilerRunner.getOrCreateClientFlagFile(task.logger, projectName)
+
+                        )
+                        val projectSessionsDir = project.kotlinSessionsDir
+                        it.sessionFlagFile.set(
+                            GradleCompilerRunner.getOrCreateSessionFlagFile(task.logger, projectSessionsDir)
+
+                        )
+                        it.buildDir.set(project.layout.buildDirectory.asFile)
+
+                        it.libraryFilterCacheService.set(task.libraryFilterCacheService)
+
+                        val compilerOptions = task.compilerOptions
+                        it.compilerOptions.set(
+                            project.provider {
+                                val args = K2JSCompilerArguments()
+                                KotlinCommonCompilerOptionsHelper.fillCompilerArguments(compilerOptions, args)
+                                args
+                            }
+                        )
+                        it.enhancedFreeCompilerArgs.set(task.enhancedFreeCompilerArgs)
+                        it.classpath.from(task.libraries)
+                        project.kotlinPropertiesProvider.wasmPerModuleInvalidate?.let { invalidate ->
+                            it.invalidate.set(invalidate)
+                        }
+                    }
+                }
             }
         }
     }
