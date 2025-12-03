@@ -24,13 +24,10 @@ import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import java.util.*
 import kotlin.math.abs
 
-fun NameTable<IrDeclaration>.dump(): String =
-    "Names: \n" + names.toList().joinToString("\n") { (declaration, name) ->
-        val decl: FqName? = (declaration as IrDeclarationWithName).fqNameWhenAvailable
-        val declRef = decl ?: declaration
-        "---  $declRef => $name"
-    }
-
+fun NameTable<IrDeclaration>.dump(): String = dump { declaration ->
+    val decl: FqName? = (declaration as IrDeclarationWithName).fqNameWhenAvailable
+    (decl ?: declaration).toString()
+}
 
 private const val RESERVED_MEMBER_NAME_SUFFIX = "_k$"
 
