@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.psi.KtImportAlias
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtPropertyDelegate
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.references.KotlinPsiReferenceProviderContributor
 import org.jetbrains.kotlin.references.fe10.base.KtFe10Reference
 import org.jetbrains.kotlin.resolve.BindingContext
 
@@ -33,5 +34,13 @@ internal class KtFe10PropertyDelegationMethodsReference(
 
     override fun isReferenceToImportAlias(alias: KtImportAlias): Boolean {
         return super<KtFe10Reference>.isReferenceToImportAlias(alias)
+    }
+
+    class Provider : KotlinPsiReferenceProviderContributor<KtPropertyDelegate> {
+        override val elementClass: Class<KtPropertyDelegate>
+            get() = KtPropertyDelegate::class.java
+
+        override val referenceProvider: KotlinPsiReferenceProviderContributor.ReferenceProvider<KtPropertyDelegate>
+            get() = { listOf(KtFe10PropertyDelegationMethodsReference(it)) }
     }
 }

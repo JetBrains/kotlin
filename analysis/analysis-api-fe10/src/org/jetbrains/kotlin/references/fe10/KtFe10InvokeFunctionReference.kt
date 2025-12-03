@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.psi.Call
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.KtImportAlias
+import org.jetbrains.kotlin.references.KotlinPsiReferenceProviderContributor
 import org.jetbrains.kotlin.references.fe10.base.KtFe10Reference
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
@@ -35,5 +36,13 @@ internal class KtFe10InvokeFunctionReference(expression: KtCallExpression) : KtI
 
     override fun isReferenceToImportAlias(alias: KtImportAlias): Boolean {
         return super<KtFe10Reference>.isReferenceToImportAlias(alias)
+    }
+
+    class Provider : KotlinPsiReferenceProviderContributor<KtCallExpression> {
+        override val elementClass: Class<KtCallExpression>
+            get() = KtCallExpression::class.java
+
+        override val referenceProvider: KotlinPsiReferenceProviderContributor.ReferenceProvider<KtCallExpression>
+            get() = { listOf(KtFe10InvokeFunctionReference(it)) }
     }
 }

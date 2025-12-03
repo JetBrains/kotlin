@@ -29,14 +29,23 @@
         serviceImplementation="org.jetbrains.kotlin.analysis.api.descriptors.modification.KaFe10SourceModificationService"
     />
 
-    <projectService
-        serviceInterface="org.jetbrains.kotlin.idea.references.KotlinReferenceProviderContributor"
-        serviceImplementation="org.jetbrains.kotlin.references.fe10.base.KtFe10KotlinReferenceProviderContributor"
-    />
 
     <projectService
         serviceInterface="org.jetbrains.kotlin.idea.references.ReadWriteAccessChecker"
         serviceImplementation="org.jetbrains.kotlin.analysis.api.descriptors.references.ReadWriteAccessCheckerDescriptorsImpl"
     />
+  </extensions>
+
+  <extensions defaultExtensionNs="org.jetbrains.kotlin">
+    <psiReferenceProvider implementation="org.jetbrains.kotlin.references.fe10.KtFe10ForLoopInReference$Provider"/>
+    <psiReferenceProvider implementation="org.jetbrains.kotlin.references.fe10.KtFe10InvokeFunctionReference$Provider"/>
+    <psiReferenceProvider implementation="org.jetbrains.kotlin.references.fe10.KtFe10PropertyDelegationMethodsReference$Provider"/>
+    <psiReferenceProvider implementation="org.jetbrains.kotlin.references.fe10.KtFe10DestructuringDeclarationEntry$Provider"/>
+    <psiReferenceProvider implementation="org.jetbrains.kotlin.references.fe10.KtFe10ArrayAccessReference$Provider"/>
+    <psiReferenceProvider implementation="org.jetbrains.kotlin.references.fe10.KtFe10ConstructorDelegationReference$Provider"/>
+    <psiReferenceProvider implementation="org.jetbrains.kotlin.references.fe10.KtFe10CollectionLiteralReference$Provider"/>
+    <psiReferenceProvider implementation="org.jetbrains.kotlin.references.fe10.Fe10KDocReference$Provider"/>
+    <psiReferenceProvider implementation="org.jetbrains.kotlin.references.fe10.KtFe10SimpleNameReference$Provider"/>
+    <psiReferenceProvider implementation="org.jetbrains.kotlin.references.fe10.Fe10SyntheticPropertyAccessorReference$Provider"/>
   </extensions>
 </idea-plugin>

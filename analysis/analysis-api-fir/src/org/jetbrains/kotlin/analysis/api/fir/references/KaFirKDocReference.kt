@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.idea.references.KDocReference
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocName
 import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.KtImportAlias
+import org.jetbrains.kotlin.references.KotlinPsiReferenceProviderContributor
 
 @OptIn(KtImplementationDetail::class)
 internal class KaFirKDocReference(element: KDocName) : KDocReference(element), KaFirReference {
@@ -50,4 +51,11 @@ internal class KaFirKDocReference(element: KDocName) : KDocReference(element), K
         return super<KaFirReference>.isReferenceToImportAlias(alias)
     }
 
+    class Provider : KotlinPsiReferenceProviderContributor<KDocName> {
+        override val elementClass: Class<KDocName>
+            get() = KDocName::class.java
+
+        override val referenceProvider: KotlinPsiReferenceProviderContributor.ReferenceProvider<KDocName>
+            get() = { listOf(KaFirKDocReference(it)) }
+    }
 }

@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.idea.references.KtConstructorDelegationReference
 import org.jetbrains.kotlin.psi.KtConstructorDelegationReferenceExpression
 import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.KtImportAlias
+import org.jetbrains.kotlin.references.KotlinPsiReferenceProviderContributor
 import org.jetbrains.kotlin.references.fe10.base.KtFe10Reference
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getReferenceTargets
@@ -21,5 +22,13 @@ internal class KtFe10ConstructorDelegationReference(
 
     override fun isReferenceToImportAlias(alias: KtImportAlias): Boolean {
         return super<KtFe10Reference>.isReferenceToImportAlias(alias)
+    }
+
+    class Provider : KotlinPsiReferenceProviderContributor<KtConstructorDelegationReferenceExpression> {
+        override val elementClass: Class<KtConstructorDelegationReferenceExpression>
+            get() = KtConstructorDelegationReferenceExpression::class.java
+
+        override val referenceProvider: KotlinPsiReferenceProviderContributor.ReferenceProvider<KtConstructorDelegationReferenceExpression>
+            get() = { listOf(KtFe10ConstructorDelegationReference(it)) }
     }
 }

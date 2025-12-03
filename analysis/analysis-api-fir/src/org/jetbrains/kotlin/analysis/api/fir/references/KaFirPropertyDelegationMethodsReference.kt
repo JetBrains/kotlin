@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.KtImportAlias
 import org.jetbrains.kotlin.psi.KtPropertyDelegate
+import org.jetbrains.kotlin.references.KotlinPsiReferenceProviderContributor
 
 @OptIn(KtImplementationDetail::class)
 internal class KaFirPropertyDelegationMethodsReference(
@@ -49,4 +50,11 @@ internal class KaFirPropertyDelegationMethodsReference(
         return super<KaFirReference>.isReferenceToImportAlias(alias)
     }
 
+    class Provider : KotlinPsiReferenceProviderContributor<KtPropertyDelegate> {
+        override val elementClass: Class<KtPropertyDelegate>
+            get() = KtPropertyDelegate::class.java
+
+        override val referenceProvider: KotlinPsiReferenceProviderContributor.ReferenceProvider<KtPropertyDelegate>
+            get() = { listOf(KaFirPropertyDelegationMethodsReference(it)) }
+    }
 }

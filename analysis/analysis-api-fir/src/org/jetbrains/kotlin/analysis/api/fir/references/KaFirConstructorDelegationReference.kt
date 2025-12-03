@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.idea.references.KtConstructorDelegationReference
 import org.jetbrains.kotlin.psi.KtConstructorDelegationReferenceExpression
 import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.KtImportAlias
+import org.jetbrains.kotlin.references.KotlinPsiReferenceProviderContributor
 
 @OptIn(KtImplementationDetail::class)
 internal class KaFirConstructorDelegationReference(
@@ -27,5 +28,13 @@ internal class KaFirConstructorDelegationReference(
 
     override fun isReferenceToImportAlias(alias: KtImportAlias): Boolean {
         return super<KaFirReference>.isReferenceToImportAlias(alias)
+    }
+
+    class Provider : KotlinPsiReferenceProviderContributor<KtConstructorDelegationReferenceExpression> {
+        override val elementClass: Class<KtConstructorDelegationReferenceExpression>
+            get() = KtConstructorDelegationReferenceExpression::class.java
+
+        override val referenceProvider: KotlinPsiReferenceProviderContributor.ReferenceProvider<KtConstructorDelegationReferenceExpression>
+            get() = { listOf(KaFirConstructorDelegationReference(it)) }
     }
 }

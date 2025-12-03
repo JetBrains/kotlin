@@ -132,6 +132,7 @@ object PluginStructureProvider {
     private val allowedExtensionPointNames = listOf(
         "org.jetbrains.kotlin.kotlinContentScopeRefiner",
         "org.jetbrains.kotlin.kotlinGlobalSearchScopeMergeStrategy",
+        "org.jetbrains.kotlin.psiReferenceProvider",
     )
 
     private val MockComponentManager.classLoader

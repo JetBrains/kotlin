@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.idea.references.readWriteAccess
 import org.jetbrains.kotlin.load.java.descriptors.JavaPropertyDescriptor
 import org.jetbrains.kotlin.plugin.references.SimpleNameReferenceExtension
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.references.KotlinPsiReferenceProviderContributor
 import org.jetbrains.kotlin.references.fe10.base.KtFe10Reference
 import org.jetbrains.kotlin.references.fe10.base.KtFe10ReferenceResolutionHelper
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -95,5 +96,13 @@ internal class KtFe10SimpleNameReference(expression: KtSimpleNameExpression) : K
             return importDirective.alias
         }
         return null
+    }
+
+    class Provider : KotlinPsiReferenceProviderContributor<KtSimpleNameExpression> {
+        override val elementClass: Class<KtSimpleNameExpression>
+            get() = KtSimpleNameExpression::class.java
+
+        override val referenceProvider: KotlinPsiReferenceProviderContributor.ReferenceProvider<KtSimpleNameExpression>
+            get() = { listOf(KtFe10SimpleNameReference(it)) }
     }
 }

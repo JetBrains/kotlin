@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.idea.references.KtForLoopInReference
 import org.jetbrains.kotlin.psi.KtForExpression
 import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.KtImportAlias
+import org.jetbrains.kotlin.references.KotlinPsiReferenceProviderContributor
 
 @OptIn(KtImplementationDetail::class)
 internal class KaFirForLoopInReference(expression: KtForExpression) : KtForLoopInReference(expression), KaFirReference {
@@ -44,4 +45,11 @@ internal class KaFirForLoopInReference(expression: KtForExpression) : KtForLoopI
         return super<KaFirReference>.isReferenceToImportAlias(alias)
     }
 
+    class Provider : KotlinPsiReferenceProviderContributor<KtForExpression> {
+        override val elementClass: Class<KtForExpression>
+            get() = KtForExpression::class.java
+
+        override val referenceProvider: KotlinPsiReferenceProviderContributor.ReferenceProvider<KtForExpression>
+            get() = { listOf(KaFirForLoopInReference(it)) }
+    }
 }

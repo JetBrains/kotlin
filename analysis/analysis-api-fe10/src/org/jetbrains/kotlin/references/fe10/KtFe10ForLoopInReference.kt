@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.idea.references.KtForLoopInReference
 import org.jetbrains.kotlin.psi.KtForExpression
 import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.KtImportAlias
+import org.jetbrains.kotlin.references.KotlinPsiReferenceProviderContributor
 import org.jetbrains.kotlin.references.fe10.base.KtFe10Reference
 import org.jetbrains.kotlin.resolve.BindingContext
 
@@ -31,5 +32,13 @@ internal class KtFe10ForLoopInReference(expression: KtForExpression) : KtForLoop
 
     override fun isReferenceToImportAlias(alias: KtImportAlias): Boolean {
         return super<KtFe10Reference>.isReferenceToImportAlias(alias)
+    }
+
+    class Provider : KotlinPsiReferenceProviderContributor<KtForExpression> {
+        override val elementClass: Class<KtForExpression>
+            get() = KtForExpression::class.java
+
+        override val referenceProvider: KotlinPsiReferenceProviderContributor.ReferenceProvider<KtForExpression>
+            get() = { listOf(KtFe10ForLoopInReference(it)) }
     }
 }

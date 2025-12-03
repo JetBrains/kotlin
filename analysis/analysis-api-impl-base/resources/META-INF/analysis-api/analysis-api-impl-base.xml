@@ -9,6 +9,13 @@
         area="IDEA_PROJECT"
         dynamic="true"
     />
+
+    <extensionPoint
+        qualifiedName="org.jetbrains.kotlin.psiReferenceProvider"
+        interface="org.jetbrains.kotlin.references.KotlinPsiReferenceProviderContributor"
+        area="IDEA_PROJECT"
+        dynamic="true"
+    />
   </extensionPoints>
 
   <extensions defaultExtensionNs="com.intellij">
@@ -118,5 +125,7 @@
   <extensions defaultExtensionNs="org.jetbrains.kotlin">
     <kotlinContentScopeRefiner implementation="org.jetbrains.kotlin.analysis.api.impl.base.projectStructure.KaResolveExtensionToContentScopeRefinerBridge"/>
     <kotlinGlobalSearchScopeMergeStrategy implementation="org.jetbrains.kotlin.analysis.api.impl.base.projectStructure.KotlinResolveExtensionGeneratedFileScopeMergeStrategy"/>
+
+    <psiReferenceProvider implementation="org.jetbrains.kotlin.idea.references.KtDefaultAnnotationArgumentReference$Provider"/>
   </extensions>
 </idea-plugin>

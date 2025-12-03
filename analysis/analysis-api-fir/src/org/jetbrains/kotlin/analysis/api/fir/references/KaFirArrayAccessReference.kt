@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.idea.references.KtArrayAccessReference
 import org.jetbrains.kotlin.psi.KtArrayAccessExpression
 import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.KtImportAlias
+import org.jetbrains.kotlin.references.KotlinPsiReferenceProviderContributor
 
 @OptIn(KtImplementationDetail::class)
 internal class KaFirArrayAccessReference(
@@ -34,4 +35,11 @@ internal class KaFirArrayAccessReference(
         return super<KaFirReference>.isReferenceToImportAlias(alias)
     }
 
+    class Provider : KotlinPsiReferenceProviderContributor<KtArrayAccessExpression> {
+        override val elementClass: Class<KtArrayAccessExpression>
+            get() = KtArrayAccessExpression::class.java
+
+        override val referenceProvider: KotlinPsiReferenceProviderContributor.ReferenceProvider<KtArrayAccessExpression>
+            get() = { listOf(KaFirArrayAccessReference(it)) }
+    }
 }

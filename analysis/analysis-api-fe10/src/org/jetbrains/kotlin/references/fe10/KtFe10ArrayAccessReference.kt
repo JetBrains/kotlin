@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.idea.references.KtArrayAccessReference
 import org.jetbrains.kotlin.psi.KtArrayAccessExpression
 import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.KtImportAlias
+import org.jetbrains.kotlin.references.KotlinPsiReferenceProviderContributor
 import org.jetbrains.kotlin.references.fe10.base.KtFe10Reference
 import org.jetbrains.kotlin.resolve.BindingContext
 
@@ -23,5 +24,13 @@ internal class KtFe10ArrayAccessReference(expression: KtArrayAccessExpression) :
         val getFunctionDescriptor = context[BindingContext.INDEXED_LVALUE_GET, expression]?.candidateDescriptor
         val setFunctionDescriptor = context[BindingContext.INDEXED_LVALUE_SET, expression]?.candidateDescriptor
         return listOfNotNull(getFunctionDescriptor, setFunctionDescriptor)
+    }
+
+    class Provider : KotlinPsiReferenceProviderContributor<KtArrayAccessExpression> {
+        override val elementClass: Class<KtArrayAccessExpression>
+            get() = KtArrayAccessExpression::class.java
+
+        override val referenceProvider: KotlinPsiReferenceProviderContributor.ReferenceProvider<KtArrayAccessExpression>
+            get() = { listOf(KtFe10ArrayAccessReference(it)) }
     }
 }

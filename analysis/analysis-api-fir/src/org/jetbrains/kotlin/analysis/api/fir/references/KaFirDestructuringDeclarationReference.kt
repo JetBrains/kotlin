@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.idea.references.KtDestructuringDeclarationReference
 import org.jetbrains.kotlin.psi.KtDestructuringDeclarationEntry
 import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.KtImportAlias
+import org.jetbrains.kotlin.references.KotlinPsiReferenceProviderContributor
 
 @OptIn(KtImplementationDetail::class)
 internal class KaFirDestructuringDeclarationReference(
@@ -49,5 +50,13 @@ internal class KaFirDestructuringDeclarationReference(
 
     override fun isReferenceToImportAlias(alias: KtImportAlias): Boolean {
         return super<KaFirReference>.isReferenceToImportAlias(alias)
+    }
+
+    class Provider : KotlinPsiReferenceProviderContributor<KtDestructuringDeclarationEntry> {
+        override val elementClass: Class<KtDestructuringDeclarationEntry>
+            get() = KtDestructuringDeclarationEntry::class.java
+
+        override val referenceProvider: KotlinPsiReferenceProviderContributor.ReferenceProvider<KtDestructuringDeclarationEntry>
+            get() = { listOf(KaFirDestructuringDeclarationReference(it)) }
     }
 }

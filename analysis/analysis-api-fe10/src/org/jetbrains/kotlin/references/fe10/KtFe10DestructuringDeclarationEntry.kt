@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.idea.references.KtDestructuringDeclarationReference
 import org.jetbrains.kotlin.psi.KtDestructuringDeclarationEntry
 import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.KtImportAlias
+import org.jetbrains.kotlin.references.KotlinPsiReferenceProviderContributor
 import org.jetbrains.kotlin.references.fe10.base.KtFe10Reference
 import org.jetbrains.kotlin.references.fe10.base.KtFe10ReferenceResolutionHelper
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -39,5 +40,13 @@ internal class KtFe10DestructuringDeclarationEntry(
         return resolveToDescriptors(bindingContext).all {
             it is CallableMemberDescriptor && it.kind == CallableMemberDescriptor.Kind.SYNTHESIZED
         }
+    }
+
+    class Provider : KotlinPsiReferenceProviderContributor<KtDestructuringDeclarationEntry> {
+        override val elementClass: Class<KtDestructuringDeclarationEntry>
+            get() = KtDestructuringDeclarationEntry::class.java
+
+        override val referenceProvider: KotlinPsiReferenceProviderContributor.ReferenceProvider<KtDestructuringDeclarationEntry>
+            get() = { listOf(KtFe10DestructuringDeclarationEntry(it)) }
     }
 }
