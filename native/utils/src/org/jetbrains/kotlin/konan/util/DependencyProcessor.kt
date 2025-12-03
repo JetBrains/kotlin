@@ -181,6 +181,11 @@ class DependencyProcessor(
         val depDir = File(dependenciesDirectory, dependency)
         val depName = depDir.name
 
+        val archiveType = when (dependency) {
+            "msvc-x64-v1-alpha2", "windows-kit-x64-v1-alpha2" -> ArchiveType.ZIP
+            else -> archiveType
+        }
+
         val fileName = "$depName.${archiveType.fileExtension}"
         val archive = cacheDirectory.resolve(fileName)
         val url = URL("$baseUrl/$fileName")

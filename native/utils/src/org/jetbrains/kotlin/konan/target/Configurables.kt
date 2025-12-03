@@ -110,8 +110,8 @@ interface MingwConfigurables : Configurables, ClangFlags {
     val windowsKit: WindowsKit
     val msvc: Msvc
 
-    val windowsKitParts get() = hostString("windowsKitParts")!!
-    val msvcParts get() = hostString("msvcParts")!!
+    val windowsKitParts get() = targetString("windowsKitParts")!!
+    val msvcParts get() = targetString("msvcParts")!!
 }
 
 interface GccConfigurables : Configurables, ClangFlags {

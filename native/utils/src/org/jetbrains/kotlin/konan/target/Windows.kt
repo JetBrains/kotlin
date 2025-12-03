@@ -48,11 +48,7 @@ class MingwConfigurablesImpl(target: KonanTarget, properties: Properties, depend
     }
 
     override val dependencies
-        get() = super.dependencies + if (HostManager.hostIsMingw) {
-            windowsHostDependencies
-        } else {
-            emptyList()
-        }
+        get() = super.dependencies + windowsHostDependencies
 }
 
 sealed class Msvc {
