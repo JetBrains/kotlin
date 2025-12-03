@@ -43,11 +43,7 @@ object FirOperatorOfChecker : FirRegularClassChecker(MppCheckerKind.Common) {
         val outerClass: FirRegularClass,
         val companion: FirRegularClass,
     ) {
-        inner class OfOverload(val function: FirNamedFunction) {
-            val mainParameter: FirValueParameter? = function.valueParameters.singleOrNull()?.takeIf { it.isVararg }
-
-            val isMain: Boolean get() = mainParameter != null
-
+        open inner class OfOverload(val function: FirNamedFunction) {
             context(context: CheckerContext, reporter: DiagnosticReporter)
             fun checkReturnType() {
                 fun report(dueToNullability: Boolean) {
@@ -75,20 +71,58 @@ object FirOperatorOfChecker : FirRegularClassChecker(MppCheckerKind.Common) {
             }
         }
 
+        inner class MainOfOverload(function: FirNamedFunction, val mainParameter: FirValueParameter) : OfOverload(function)
+
+        /**
+         * @return true if exactly one main overload
+         */
+        context(context: CheckerContext, reporter: DiagnosticReporter)
+        private fun checkNumberOfMainOverloads(overloads: List<OfOverload>): Boolean {
+            return when (overloads.count { it is MainOfOverload }) {
+                1 -> true
+                0 -> {
+                    overloads.forEach { overload ->
+                        reporter.reportOn(overload.function.source, FirErrors.NO_VARARG_OVERLOAD_OF_OPERATOR_OF)
+                    }
+                    false
+                }
+                else -> {
+                    overloads.filterIsInstance<MainOfOverload>().forEach { overload ->
+                        reporter.reportOn(overload.function.source, FirErrors.MULTIPLE_VARARG_OVERLOADS_OF_OPERATOR_OF)
+                    }
+                    false
+                }
+            }
+        }
+
         context(context: CheckerContext, reporter: DiagnosticReporter)
         fun check() {
             val allOverloads = buildList {
-                companion.processAllDeclarations(context.session) { function ->
-                    if (function !is FirNamedFunctionSymbol) return@processAllDeclarations
-                    if (!function.isOperator || function.name != OperatorNameConventions.OF) return@processAllDeclarations
+                companion.processAllDeclarations(context.session) { functionSymbol ->
+                    if (functionSymbol !is FirNamedFunctionSymbol) return@processAllDeclarations
+                    if (!functionSymbol.isOperator || functionSymbol.name != OperatorNameConventions.OF) return@processAllDeclarations
 
-                    add(OfOverload(function.fir))
+                    val function = functionSymbol.fir
+
+                    val mainParameter: FirValueParameter? = function.valueParameters.firstOrNull { it.isVararg }
+
+                    if (mainParameter != null) {
+                        add(MainOfOverload(function, mainParameter))
+                    } else {
+                        add(OfOverload(function))
+                    }
                 }
             }
+
+            if (allOverloads.isEmpty()) return
 
             allOverloads.forEach {
                 it.checkReturnType()
             }
+
+            if (!checkNumberOfMainOverloads(allOverloads)) return
+
+            val mainOverload = allOverloads.filterIsInstance<MainOfOverload>().single()
         }
     }
 }

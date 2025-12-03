@@ -2365,6 +2365,12 @@ public class LLReversedDiagnosticsFirTestGenerated extends AbstractLLReversedDia
         }
 
         @Test
+        @TestMetadata("extraParametersInVarargOverload.kt")
+        public void testExtraParametersInVarargOverload() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/operatorOfChecks/extraParametersInVarargOverload.kt");
+        }
+
+        @Test
         @TestMetadata("flexibleReturnType.kt")
         public void testFlexibleReturnType() {
           runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/operatorOfChecks/flexibleReturnType.kt");
@@ -2410,6 +2416,12 @@ public class LLReversedDiagnosticsFirTestGenerated extends AbstractLLReversedDia
         @TestMetadata("typealiasInReturnType.kt")
         public void testTypealiasInReturnType() {
           runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/operatorOfChecks/typealiasInReturnType.kt");
+        }
+
+        @Test
+        @TestMetadata("wrongNumberOfVarargOverloads.kt")
+        public void testWrongNumberOfVarargOverloads() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/operatorOfChecks/wrongNumberOfVarargOverloads.kt");
         }
       }
 

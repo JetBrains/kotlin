@@ -2067,6 +2067,18 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.NO_VARARG_OVERLOAD_OF_OPERATOR_OF) { firDiagnostic ->
+        NoVarargOverloadOfOperatorOfImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.MULTIPLE_VARARG_OVERLOADS_OF_OPERATOR_OF) { firDiagnostic ->
+        MultipleVarargOverloadsOfOperatorOfImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.REDUNDANT_OPEN_IN_INTERFACE) { firDiagnostic ->
         RedundantOpenInInterfaceImpl(
             firDiagnostic as KtPsiDiagnostic,

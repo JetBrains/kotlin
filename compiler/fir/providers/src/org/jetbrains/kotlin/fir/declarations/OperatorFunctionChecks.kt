@@ -161,7 +161,7 @@ object OperatorFunctionChecks {
         checkFor(
             OperatorNameConventions.OF,
             Checks.companionMember, Checks.notExtension,
-            Checks.noContextParameters, Checks.noDefaults,
+            Checks.noContextParameters, Checks.noDefaults, Checks.onlyLastVararg,
             Checks.simple("${LanguageFeature.CollectionLiterals.name} feature must be enabled") { _, session ->
                 session.languageVersionSettings.supportsFeature(LanguageFeature.CollectionLiterals)
             },
@@ -337,6 +337,14 @@ private object Checks {
             requiredResolvePhase = { _ -> FirResolvePhase.BODY_RESOLVE }
         ) { it, _ ->
             it.valueParameters.all { param -> param.defaultValue == null }
+        }
+
+    val onlyLastVararg =
+        simple(
+            "should not have vararg parameters other than the last one", feature = null,
+            requiredResolvePhase = { _ -> FirResolvePhase.BODY_RESOLVE }
+        ) { it, _ ->
+            it.valueParameters.dropLast(1).all { param -> !param.isVararg }
         }
 
     val noDefaultAndVarargs = noDefaults and noVarargs

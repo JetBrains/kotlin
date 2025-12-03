@@ -1484,6 +1484,14 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val outerClass: KaClassLikeSymbol
     }
 
+    interface NoVarargOverloadOfOperatorOf : KaFirDiagnostic<KtNamedFunction> {
+        override val diagnosticClass get() = NoVarargOverloadOfOperatorOf::class
+    }
+
+    interface MultipleVarargOverloadsOfOperatorOf : KaFirDiagnostic<KtNamedFunction> {
+        override val diagnosticClass get() = MultipleVarargOverloadsOfOperatorOf::class
+    }
+
     interface RedundantOpenInInterface : KaFirDiagnostic<KtModifierListOwner> {
         override val diagnosticClass get() = RedundantOpenInInterface::class
     }
