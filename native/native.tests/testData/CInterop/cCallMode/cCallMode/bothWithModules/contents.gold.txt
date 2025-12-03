@@ -40,11 +40,9 @@ library {
       @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod13_functionDeclaredInDefFile")
       public final external fun functionDeclaredInDefFile(): kotlin/Unit
 
-      @kotlinx/cinterop/internal/CCall.Direct(name = "functionDefinedInDefFile")
       @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod14_functionDefinedInDefFile")
       public final external fun functionDefinedInDefFile(): kotlin/Unit
 
-      @kotlinx/cinterop/internal/CCall.Direct(name = "functionDefinedInHeader")
       @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod12_functionDefinedInHeader")
       public final external fun functionDefinedInHeader(): kotlin/Unit
 
@@ -53,7 +51,6 @@ library {
       public final external /* non-stable parameter names */ fun functionWithAsm(arg0: kotlin/Int): kotlin/Int
 
       public final val constGlobalDefinedInHeader: kotlin/Byte
-        @kotlinx/cinterop/internal/CGlobalAccess(name = "constGlobalDefinedInHeader")
         @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod15_constGlobalDefinedInHeader_getter")
         public final /* non-default */ external get
 
@@ -86,18 +83,14 @@ library {
         public final /* non-default */ external set(value: kotlin/Int)
 
       public final var globalDefinedInDefFile: kotlin/Int
-        @kotlinx/cinterop/internal/CGlobalAccess(name = "globalDefinedInDefFile")
         @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod112_globalDefinedInDefFile_getter")
         public final /* non-default */ external get
-        @kotlinx/cinterop/internal/CGlobalAccess(name = "globalDefinedInDefFile")
         @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod113_globalDefinedInDefFile_setter")
         public final /* non-default */ external set(value: kotlin/Int)
 
       public final var globalDefinedInHeader: kotlin/Byte
-        @kotlinx/cinterop/internal/CGlobalAccess(name = "globalDefinedInHeader")
         @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod114_globalDefinedInHeader_getter")
         public final /* non-default */ external get
-        @kotlinx/cinterop/internal/CGlobalAccess(name = "globalDefinedInHeader")
         @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod115_globalDefinedInHeader_setter")
         public final /* non-default */ external set(value: kotlin/Byte)
 

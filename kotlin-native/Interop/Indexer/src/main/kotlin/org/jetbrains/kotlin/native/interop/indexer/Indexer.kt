@@ -476,7 +476,7 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
                     val categoryFile = getContainingFile(childCursor)
                     val isCategoryInTheSameFileAsClass = categoryFile == classFile
                     val isCategoryFromDefFile = library.allowIncludingObjCCategoriesFromDefFile
-                            && clang_Location_isFromMainFile(clang_getCursorLocation(childCursor)) != 0
+                            && isLocatedInDefFile(childCursor)
                     if (isCategoryInTheSameFileAsClass || isCategoryFromDefFile) {
                         result += childCursor
                     }
@@ -486,6 +486,9 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
         }
         return result
     }
+
+    private fun isLocatedInDefFile(cursor: CValue<CXCursor>): Boolean =
+            clang_Location_isFromMainFile(clang_getCursorLocation(cursor)) != 0
 
     private fun getObjCProtocolAt(cursor: CValue<CXCursor>): ObjCProtocolImpl {
         assert(cursor.kind == CXCursorKind.CXCursor_ObjCProtocolDecl) { cursor.kind }
@@ -988,11 +991,19 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
                 if (parentKind == CXCursorKind.CXCursor_TranslationUnit || parentKind == CXCursorKind.CXCursor_Namespace) {
                     // Top-level or namespace member. Skip class static members - they are loaded by visitClass
                     globalById.getOrPut(getDeclarationId(cursor)) {
+                        val definitionCursor = findDefinition(cursor)
+                        val directAccess = when {
+                            definitionCursor != null -> {
+                                val location = if (isLocatedInDefFile(definitionCursor)) "the .def file" else "a header file"
+                                DirectAccess.Unavailable("global is defined in $location")
+                            }
+                            else -> DirectAccess.Symbol(clang_Cursor_getMangling(cursor).convertAndDispose())
+                        }
                         GlobalDecl(
                                 name = entityName!!,
                                 type = convertCursorType(cursor),
                                 isConst = clang_isConstQualifiedType(clang_getCursorType(cursor)) != 0,
-                                directAccess = DirectAccess.Symbol(clang_Cursor_getMangling(cursor).convertAndDispose()),
+                                directAccess = directAccess,
                                 parentName = null
                         )
                     }
@@ -1097,10 +1108,14 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
         val parameters = mutableListOf<Parameter>()
         parameters += getFunctionParameters(cursor) ?: return null
 
-        val directAccess = DirectAccess.Symbol(clang_Cursor_getMangling(cursor).convertAndDispose())
-
-        val definitionCursor = clang_getCursorDefinition(cursor)
-        val isDefined = (clang_Cursor_isNull(definitionCursor) == 0)
+        val definitionCursor = findDefinition(cursor)
+        val directAccess = when {
+            definitionCursor != null -> {
+                val location = if (isLocatedInDefFile(definitionCursor)) "the .def file" else "a header file"
+                DirectAccess.Unavailable("function is defined in $location")
+            }
+            else -> DirectAccess.Symbol(clang_Cursor_getMangling(cursor).convertAndDispose())
+        }
 
         val isVararg = clang_Cursor_isVariadic(cursor) != 0
 

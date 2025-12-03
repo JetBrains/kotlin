@@ -26,6 +26,12 @@ class DirectAccessComputationTests : IndexerTestsBase() {
             return symbol.removePrefix(prefix)
         }
 
+    private val DirectAccess.unavailableReason: String?
+        get() = when (this) {
+            is DirectAccess.Symbol -> null
+            is DirectAccess.Unavailable -> this.reason
+        }
+
     @Test
     fun `default function symbol name`() {
         val decl = index("""
@@ -68,8 +74,7 @@ class DirectAccessComputationTests : IndexerTestsBase() {
             static void foo(void) {}
         """.trimIndent()).function
 
-        // TODO KT-83039: should be unavailable.
-        assertEquals("foo", decl.directAccess.unmangledSymbol)
+        assertEquals("function is defined in a header file", decl.directAccess.unavailableReason)
     }
 
     @Test
@@ -78,8 +83,7 @@ class DirectAccessComputationTests : IndexerTestsBase() {
             static int foo = 42;
         """.trimIndent()).global
 
-        // TODO KT-83039: should be unavailable.
-        assertEquals("foo", decl.directAccess.unmangledSymbol)
+        assertEquals("global is defined in a header file", decl.directAccess.unavailableReason)
     }
 
     @Test
@@ -89,8 +93,7 @@ class DirectAccessComputationTests : IndexerTestsBase() {
             static void foo(void) {}
         """.trimIndent()).function
 
-        // TODO KT-83039: should be unavailable.
-        assertEquals("foo", decl.directAccess.unmangledSymbol)
+        assertEquals("function is defined in a header file", decl.directAccess.unavailableReason)
     }
 
     @Test
@@ -100,8 +103,7 @@ class DirectAccessComputationTests : IndexerTestsBase() {
             static int foo = 42;
         """.trimIndent()).global
 
-        // TODO KT-83039: should be unavailable.
-        assertEquals("foo", decl.directAccess.unmangledSymbol)
+        assertEquals("global is defined in a header file", decl.directAccess.unavailableReason)
     }
 
     @Test
@@ -111,8 +113,7 @@ class DirectAccessComputationTests : IndexerTestsBase() {
             static void foo(void);
         """.trimIndent()).function
 
-        // TODO KT-83039: should be unavailable.
-        assertEquals("foo", decl.directAccess.unmangledSymbol)
+        assertEquals("function is defined in a header file", decl.directAccess.unavailableReason)
     }
 
     @Test
@@ -122,8 +123,7 @@ class DirectAccessComputationTests : IndexerTestsBase() {
             static int foo;
         """.trimIndent()).global
 
-        // TODO KT-83039: should be unavailable.
-        assertEquals("foo", decl.directAccess.unmangledSymbol)
+        assertEquals("global is defined in a header file", decl.directAccess.unavailableReason)
     }
 
     @Test
@@ -136,8 +136,7 @@ class DirectAccessComputationTests : IndexerTestsBase() {
                 """.trimIndent()
         ).function
 
-        // TODO KT-83039: should be unavailable.
-        assertEquals("foo", decl.directAccess.unmangledSymbol)
+        assertEquals("function is defined in the .def file", decl.directAccess.unavailableReason)
     }
 
     @Test
@@ -150,8 +149,7 @@ class DirectAccessComputationTests : IndexerTestsBase() {
                 """.trimIndent()
         ).global
 
-        // TODO KT-83039: should be unavailable.
-        assertEquals("foo", decl.directAccess.unmangledSymbol)
+        assertEquals("global is defined in the .def file", decl.directAccess.unavailableReason)
     }
 
     @Test
@@ -166,8 +164,7 @@ class DirectAccessComputationTests : IndexerTestsBase() {
                 """.trimIndent()
         ).function
 
-        // TODO KT-83039: should be unavailable.
-        assertEquals("foo", decl.directAccess.unmangledSymbol)
+        assertEquals("function is defined in the .def file", decl.directAccess.unavailableReason)
     }
 
     @Test
@@ -182,8 +179,7 @@ class DirectAccessComputationTests : IndexerTestsBase() {
                 """.trimIndent()
         ).global
 
-        // TODO KT-83039: should be unavailable.
-        assertEquals("foo", decl.directAccess.unmangledSymbol)
+        assertEquals("global is defined in the .def file", decl.directAccess.unavailableReason)
     }
 
     @Test
@@ -198,8 +194,7 @@ class DirectAccessComputationTests : IndexerTestsBase() {
                 """.trimIndent()
         ).function
 
-        // TODO KT-83039: should be unavailable.
-        assertEquals("foo", decl.directAccess.unmangledSymbol)
+        assertEquals("function is defined in a header file", decl.directAccess.unavailableReason)
     }
 
     @Test
@@ -214,8 +209,7 @@ class DirectAccessComputationTests : IndexerTestsBase() {
                 """.trimIndent()
         ).global
 
-        // TODO KT-83039: should be unavailable.
-        assertEquals("foo", decl.directAccess.unmangledSymbol)
+        assertEquals("global is defined in a header file", decl.directAccess.unavailableReason)
     }
 
     @Test
@@ -224,7 +218,7 @@ class DirectAccessComputationTests : IndexerTestsBase() {
             static const int foo = 42;
         """.trimIndent()).global
 
-        // TODO KT-83039: should be unavailable.
-        assertEquals("foo", decl.directAccess.unmangledSymbol)
+        // TODO KT-80149: should be available.
+        assertEquals("global is defined in a header file", decl.directAccess.unavailableReason)
     }
 }

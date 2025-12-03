@@ -959,6 +959,9 @@ internal fun getContainingFile(cursor: CValue<CXCursor>): ClangFile? {
     return clang_getCursorLocation(cursor).getContainingFile()
 }
 
+internal fun findDefinition(cursor: CValue<CXCursor>): CValue<CXCursor>? =
+        clang_getCursorDefinition(cursor).takeIf { clang_Cursor_isNull(it) == 0 }
+
 internal val CXModule.name: String get() = clang_Module_getName(this).convertAndDispose()
 
 // TODO: this map doesn't get cleaned up but adds quite significant performance improvement.

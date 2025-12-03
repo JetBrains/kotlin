@@ -38,17 +38,17 @@ library {
       @kotlinx/cinterop/internal/CCall.Direct(name = "functionDeclaredInDefFile")
       public final external fun functionDeclaredInDefFile(): kotlin/Unit
 
-      @kotlinx/cinterop/internal/CCall.Direct(name = "functionDefinedInDefFile")
+      @kotlinx/cinterop/internal/CCall.Direct(name = "functionDefinedInDefFile unsupported: function is defined in the .def file")
       public final external fun functionDefinedInDefFile(): kotlin/Unit
 
-      @kotlinx/cinterop/internal/CCall.Direct(name = "functionDefinedInHeader")
+      @kotlinx/cinterop/internal/CCall.Direct(name = "functionDefinedInHeader unsupported: function is defined in a header file")
       public final external fun functionDefinedInHeader(): kotlin/Unit
 
       @kotlinx/cinterop/internal/CCall.Direct(name = "funWithAsm")
       public final external /* non-stable parameter names */ fun functionWithAsm(arg0: kotlin/Int): kotlin/Int
 
       public final val constGlobalDefinedInHeader: kotlin/Byte
-        @kotlinx/cinterop/internal/CGlobalAccess(name = "constGlobalDefinedInHeader")
+        @kotlinx/cinterop/internal/CCall.Direct(name = "constGlobalDefinedInHeader unsupported: global is defined in a header file")
         public final /* non-default */ external get
 
       public final var global: kotlin/Int
@@ -74,15 +74,15 @@ library {
         public final /* non-default */ external set(value: kotlin/Int)
 
       public final var globalDefinedInDefFile: kotlin/Int
-        @kotlinx/cinterop/internal/CGlobalAccess(name = "globalDefinedInDefFile")
+        @kotlinx/cinterop/internal/CCall.Direct(name = "globalDefinedInDefFile unsupported: global is defined in the .def file")
         public final /* non-default */ external get
-        @kotlinx/cinterop/internal/CGlobalAccess(name = "globalDefinedInDefFile")
+        @kotlinx/cinterop/internal/CCall.Direct(name = "globalDefinedInDefFile unsupported: global is defined in the .def file")
         public final /* non-default */ external set(value: kotlin/Int)
 
       public final var globalDefinedInHeader: kotlin/Byte
-        @kotlinx/cinterop/internal/CGlobalAccess(name = "globalDefinedInHeader")
+        @kotlinx/cinterop/internal/CCall.Direct(name = "globalDefinedInHeader unsupported: global is defined in a header file")
         public final /* non-default */ external get
-        @kotlinx/cinterop/internal/CGlobalAccess(name = "globalDefinedInHeader")
+        @kotlinx/cinterop/internal/CCall.Direct(name = "globalDefinedInHeader unsupported: global is defined in a header file")
         public final /* non-default */ external set(value: kotlin/Byte)
 
       public final val globalStruct: pod1/S
