@@ -77,10 +77,10 @@ internal class StringConcatenationTypeNarrowing(val context: Context) : FileLowe
                 appendAnyFunction.symbol -> // StringBuilder.append(Any?)
                     buildConcatenationCall(appendNullableStringFunction, arguments[0]!!, buildArgForAppend(arguments[1]!!))
 
-                context.irBuiltIns.memberStringPlus ->
+                context.symbols.memberStringPlus ->
                     buildConcatenationCall(plusImplFunction, arguments[0]!!, buildNullableArgToString(arguments[1]!!))
 
-                context.irBuiltIns.extensionStringPlus ->
+                context.symbols.extensionStringPlus ->
                     buildConcatenationCall(plusImplFunction, buildNullableArgToString(arguments[0]!!), buildNullableArgToString(arguments[1]!!))
 
                 else -> expression
@@ -151,7 +151,7 @@ internal class StringConcatenationTypeNarrowing(val context: Context) : FileLowe
             val calleeOrNull = argument.type.classOrNull?.owner?.functions?.singleOrNull {
                 it.name == OperatorNameConventions.TO_STRING && it.nonDispatchParameters.isEmpty()
             }?.symbol
-            val callee = calleeOrNull ?: context.irBuiltIns.memberToString  // defaults to `Any.toString()`
+            val callee = calleeOrNull ?: context.symbols.memberToString  // defaults to `Any.toString()`
             builder
                     .irCall(callee, callee.owner.returnType, typeArgumentsCount = 0)
                     .apply { arguments[0] = argument }

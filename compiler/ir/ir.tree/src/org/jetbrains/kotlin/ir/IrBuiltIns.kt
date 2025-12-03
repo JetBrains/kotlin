@@ -173,12 +173,6 @@ abstract class IrBuiltIns {
     abstract val intXorSymbol: IrSimpleFunctionSymbol
     abstract val intAndSymbol: IrSimpleFunctionSymbol
 
-    abstract val extensionToString: IrSimpleFunctionSymbol
-    abstract val memberToString: IrSimpleFunctionSymbol
-
-    abstract val extensionStringPlus: IrSimpleFunctionSymbol
-    abstract val memberStringPlus: IrSimpleFunctionSymbol
-
     abstract val arrayOf: IrSimpleFunctionSymbol
     abstract val arrayOfNulls: IrSimpleFunctionSymbol
 

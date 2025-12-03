@@ -57,11 +57,11 @@ private class JsStringConcatenationTransformer(val context: CommonBackendContext
         assert(type.shouldExplicitlyConvertToString)
 
         return if (type.isNullable()) {
-            JsIrBuilder.buildCall(context.irBuiltIns.extensionToString).apply {
+            JsIrBuilder.buildCall(context.symbols.extensionToString).apply {
                 arguments[0] = this@explicitlyConvertedToString
             }
         } else {
-            val anyToStringMethodSymbol = context.irBuiltIns.memberToString
+            val anyToStringMethodSymbol = context.symbols.memberToString
             val toStringMethodSymbol = type.classOrNull?.let {
                 val toStringMethods = it.owner.declarations.filterIsInstanceAnd<IrSimpleFunction> { f ->
                     f.overrides(anyToStringMethodSymbol.owner)

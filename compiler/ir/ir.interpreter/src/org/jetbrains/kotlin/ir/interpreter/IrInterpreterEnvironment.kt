@@ -16,12 +16,16 @@ import org.jetbrains.kotlin.ir.interpreter.stack.CallStack
 import org.jetbrains.kotlin.ir.interpreter.state.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.defaultType
+import org.jetbrains.kotlin.ir.util.functions
+import org.jetbrains.kotlin.ir.util.hasShape
 import org.jetbrains.kotlin.ir.util.properties
 import org.jetbrains.kotlin.ir.util.toIrConst
 import org.jetbrains.kotlin.platform.isJs
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
 class IrInterpreterEnvironment(
     val irBuiltIns: IrBuiltIns,
@@ -38,6 +42,10 @@ class IrInterpreterEnvironment(
     internal val kParameterClass by lazy { irBuiltIns.kFunctionClass.getIrClassOfReflectionFromList("parameters")!! }
     internal val kTypeProjectionClass by lazy { kTypeClass.getIrClassOfReflectionFromList("arguments")!! }
     internal val kTypeClass: IrClassSymbol by lazy { irBuiltIns.kTypeClass }
+
+    internal val toStringSymbol: IrSimpleFunctionSymbol by lazy {
+        irBuiltIns.anyClass.owner.functions.first { it.name == OperatorNameConventions.TO_STRING && it.hasShape(dispatchReceiver = true) }.symbol
+    }
 
     init {
         mapOfObjects[irBuiltIns.unitClass] = Common(irBuiltIns.unitClass.owner)
