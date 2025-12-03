@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("TYPEALIAS_EXPANSION_DEPRECATION")
+
 package org.jetbrains.kotlin.gradle.util
 
 import com.android.build.api.dsl.ApplicationExtension
@@ -19,7 +21,7 @@ import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_KMP_ISOLATED_PROJECT_SUPPORT
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.CocoapodsExtension
-import org.jetbrains.kotlin.gradle.plugin.mpp.KmpIsolatedProjectsSupport
+import org.jetbrains.kotlin.gradle.plugin.mpp.KmpIsolatedProjectsSupportDeprecated
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.SwiftExportExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.KmpResolutionStrategy
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.publication.KmpPublicationStrategy
@@ -216,10 +218,11 @@ fun Project.enableSecondaryJvmClassesVariant(enabled: Boolean = true) {
 }
 
 fun Project.enableKmpProjectIsolationSupport(enabled: Boolean = true) {
+    @Suppress("DEPRECATION")
     if (enabled) {
-        project.propertiesExtension.set(KOTLIN_KMP_ISOLATED_PROJECT_SUPPORT, KmpIsolatedProjectsSupport.ENABLE)
+        project.propertiesExtension.set(KOTLIN_KMP_ISOLATED_PROJECT_SUPPORT, KmpIsolatedProjectsSupportDeprecated.ENABLE)
     } else {
-        project.propertiesExtension.set(KOTLIN_KMP_ISOLATED_PROJECT_SUPPORT, KmpIsolatedProjectsSupport.DISABLE)
+        project.propertiesExtension.set(KOTLIN_KMP_ISOLATED_PROJECT_SUPPORT, KmpIsolatedProjectsSupportDeprecated.DISABLE)
     }
 }
 

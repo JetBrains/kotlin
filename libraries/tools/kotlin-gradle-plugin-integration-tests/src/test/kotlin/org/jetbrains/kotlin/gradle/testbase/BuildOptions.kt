@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("TYPEALIAS_EXPANSION_DEPRECATION")
+
 package org.jetbrains.kotlin.gradle.testbase
 
 import org.gradle.api.logging.LogLevel
@@ -10,7 +12,7 @@ import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.internal.logging.LoggingConfigurationBuildOptions.StacktraceOption
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
-import org.jetbrains.kotlin.gradle.plugin.mpp.KmpIsolatedProjectsSupport
+import org.jetbrains.kotlin.gradle.plugin.mpp.KmpIsolatedProjectsSupportDeprecated as KmpIsolatedProjectsSupport
 import org.jetbrains.kotlin.gradle.report.BuildReportType
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.kotlin.gradle.testbase.BuildOptions.IsolatedProjectsMode
@@ -67,7 +69,7 @@ data class BuildOptions(
     val konanDataDir: Path? = konanDir, // null can be used only if you are using custom 'kotlin.native.home' or 'org.jetbrains.kotlin.native.home' property instead of konanDir
     val kotlinUserHome: Path? = testKitDir.resolve(".kotlin"),
     val compilerArgumentsLogLevel: String? = "info",
-    val kmpIsolatedProjectsSupport: KmpIsolatedProjectsSupport? = null,
+    val kmpIsolatedProjectsSupport: @Suppress("DEPRECATION") KmpIsolatedProjectsSupport? = null,
     val fileLeaksReportFile: File? = null,
     val continueAfterFailure: Boolean = false,
     /**
@@ -432,7 +434,7 @@ fun BuildOptions.disableKlibsCrossCompilation() = copy(
     nativeOptions = nativeOptions.copy(enableKlibsCrossCompilation = false)
 )
 
-fun BuildOptions.disableKmpIsolatedProjectSupport() = copy(kmpIsolatedProjectsSupport = KmpIsolatedProjectsSupport.DISABLE)
+fun BuildOptions.disableKmpIsolatedProjectSupport() = copy(kmpIsolatedProjectsSupport = @Suppress("DEPRECATION") KmpIsolatedProjectsSupport.DISABLE)
 
 fun BuildOptions.enableIsolatedProjects() = copy(isolatedProjects = IsolatedProjectsMode.ENABLED)
 fun BuildOptions.disableIsolatedProjects() = copy(isolatedProjects = IsolatedProjectsMode.DISABLED)

@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("TYPEALIAS_EXPANSION_DEPRECATION")
+
 package org.jetbrains.kotlin.gradle.plugin
 
 import org.gradle.api.Project
@@ -54,7 +56,7 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLI
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnosticOncePerBuild
 import org.jetbrains.kotlin.gradle.plugin.internal.isProjectIsolationEnabled
-import org.jetbrains.kotlin.gradle.plugin.mpp.KmpIsolatedProjectsSupport
+import org.jetbrains.kotlin.gradle.plugin.mpp.KmpIsolatedProjectsSupportDeprecated
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.publication.KmpPublicationStrategy
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinIrJsGeneratedTSValidationStrategy
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrOutputGranularity
@@ -524,6 +526,18 @@ internal class PropertiesProvider private constructor(private val project: Proje
         reportDiagnostic: () -> Unit,
     ): Provider<Boolean> = propertyWithValueReporting(propertyName, valuesToReportOn, { it?.toBoolean() }, reportDiagnostic)
 
+    internal fun <T> withValueReporting(
+        valuesToReportOn: Set<T>,
+        reportDiagnostic: () -> Unit,
+        block: () -> T,
+    ): T {
+        val value = block()
+        if (value in valuesToReportOn) {
+            reportDiagnostic()
+        }
+        return value
+    }
+
     internal fun get(propertyName: String): String? = propertiesBuildService.get(propertyName, project)
 
     internal fun getProvider(propertyName: String): Provider<String> = propertiesBuildService.property(propertyName, project)
@@ -574,17 +588,18 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val enableKlibsCrossCompilation: Boolean
         get() = booleanProperty(PropertyNames.KOTLIN_NATIVE_ENABLE_KLIBS_CROSSCOMPILATION) ?: true
 
+    @Suppress("DEPRECATION")
     val kotlinKmpProjectIsolationEnabled: Boolean
         get() {
-            val mode = enumProperty<KmpIsolatedProjectsSupport>(
+            val mode = enumProperty<KmpIsolatedProjectsSupportDeprecated>(
                 PropertyNames.KOTLIN_KMP_ISOLATED_PROJECT_SUPPORT,
-                KmpIsolatedProjectsSupport.ENABLE
+                KmpIsolatedProjectsSupportDeprecated.ENABLE
             )
 
             return when (mode) {
-                KmpIsolatedProjectsSupport.ENABLE -> true
-                KmpIsolatedProjectsSupport.DISABLE -> false
-                KmpIsolatedProjectsSupport.AUTO -> project.isProjectIsolationEnabled
+                KmpIsolatedProjectsSupportDeprecated.ENABLE -> true
+                KmpIsolatedProjectsSupportDeprecated.DISABLE -> false
+                KmpIsolatedProjectsSupportDeprecated.AUTO -> project.isProjectIsolationEnabled
             }
         }
 
