@@ -511,9 +511,9 @@ private object WhenOnSealedClassExhaustivenessChecker : WhenExhaustivenessChecke
         }
 
         private fun processBranchUsingSubtyping(symbolToCheck: FirClassSymbol<*>, isNegated: Boolean, data: Info) {
-            val predicate: (FirClassSymbol<*>) -> Boolean = {
-                it.isSubclassOf(
-                    symbolToCheck.toLookupTag(),
+            fun FirClassSymbol<*>.isSubclassOf(other: FirClassSymbol<*>): Boolean {
+                return this.isSubclassOf(
+                    other.toLookupTag(),
                     data.session,
                     isStrict = false,
                     lookupInterfaces = true
@@ -522,10 +522,14 @@ private object WhenOnSealedClassExhaustivenessChecker : WhenExhaustivenessChecke
 
             val subclassesCheckedByTheBranch = when (isNegated) {
                 // `<subj> is Type`, `<subj> == Type` branches
-                false -> data.allSubclasses.filter(predicate)
+                false -> data.allSubclasses.filter { subclass ->
+                    subclass.isSubclassOf(symbolToCheck)
+                }
 
                 // `<subj> !is Type`, `<subj> != Type` branches
-                true -> data.allSubclasses.filterNot(predicate)
+                true -> data.allSubclasses.filter { subclass ->
+                    !subclass.isSubclassOf(symbolToCheck) && !symbolToCheck.isSubclassOf(subclass)
+                }
             }
 
             // subclassesCheckedByTheBranch
