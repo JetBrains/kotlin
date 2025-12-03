@@ -86,8 +86,8 @@ class StringConcatenationLowering(context: CommonBackendContext) : FileLoweringP
             arguments.size == 1 -> {
                 val argument = arguments[0]
                 val functionSymbol =
-                    if (argument.type.isNullable()) irBuiltIns.extensionToString
-                    else irBuiltIns.memberToString
+                    if (argument.type.isNullable()) symbols.extensionToString
+                    else symbols.memberToString
                 builder.irCall(functionSymbol).apply {
                     this.arguments[0] = argument
                 }
@@ -95,8 +95,8 @@ class StringConcatenationLowering(context: CommonBackendContext) : FileLoweringP
 
             arguments.size == 2 && arguments[0].type.isStringClassType() -> {
                 val functionSymbol =
-                    if (arguments[0].type.isNullable()) irBuiltIns.extensionStringPlus
-                    else irBuiltIns.memberStringPlus
+                    if (arguments[0].type.isNullable()) symbols.extensionStringPlus
+                    else symbols.memberStringPlus
                 builder.irCall(functionSymbol).apply {
                     this.arguments[0] = arguments[0]
                     this.arguments[1] = arguments[1]
@@ -112,7 +112,7 @@ class StringConcatenationLowering(context: CommonBackendContext) : FileLoweringP
                         this.arguments[1] = arg
                     }
                 }
-                +irCall(irBuiltIns.memberToString).apply {
+                +irCall(symbols.memberToString).apply {
                     this.arguments[0] = irGet(stringBuilderImpl)
                 }
             }

@@ -547,42 +547,6 @@ class IrBuiltInsOverDescriptors(
 
     override val enumClass = builtIns.enum.toIrSymbol()
 
-    override val extensionToString: IrSimpleFunctionSymbol = symbolFinder
-        .findFunctions(CallableId(StandardClassIds.BASE_KOTLIN_PACKAGE, OperatorNameConventions.TO_STRING))
-        .first {
-            val descriptor = it.descriptor
-            descriptor is SimpleFunctionDescriptor && descriptor.dispatchReceiverParameter == null &&
-                    descriptor.extensionReceiverParameter != null &&
-                    KotlinBuiltIns.isNullableAny(descriptor.extensionReceiverParameter!!.type) && descriptor.valueParameters.isEmpty()
-        }
-
-    override val memberToString: IrSimpleFunctionSymbol = symbolFinder
-        .findFunctions(CallableId(builtIns.any.classId!!, OperatorNameConventions.TO_STRING))
-        .single {
-            val descriptor = it.descriptor
-            descriptor is SimpleFunctionDescriptor && descriptor.valueParameters.isEmpty()
-        }
-
-    override val extensionStringPlus: IrSimpleFunctionSymbol = symbolFinder
-        .findFunctions(CallableId(StandardClassIds.BASE_KOTLIN_PACKAGE, OperatorNameConventions.PLUS))
-        .first {
-            val descriptor = it.descriptor
-            descriptor is SimpleFunctionDescriptor && descriptor.dispatchReceiverParameter == null &&
-                    descriptor.extensionReceiverParameter != null &&
-                    KotlinBuiltIns.isStringOrNullableString(descriptor.extensionReceiverParameter!!.type) &&
-                    descriptor.valueParameters.size == 1 &&
-                    KotlinBuiltIns.isNullableAny(descriptor.valueParameters.first().type)
-        }
-
-    override val memberStringPlus: IrSimpleFunctionSymbol = symbolFinder
-        .findFunctions(CallableId(builtIns.string.classId!!, OperatorNameConventions.PLUS))
-        .single {
-            val descriptor = it.descriptor
-            descriptor is SimpleFunctionDescriptor &&
-                    descriptor.valueParameters.size == 1 &&
-                    KotlinBuiltIns.isNullableAny(descriptor.valueParameters.first().type)
-        }
-
     override fun functionN(arity: Int): IrClass = functionFactory.functionN(arity)
     override fun kFunctionN(arity: Int): IrClass = functionFactory.kFunctionN(arity)
     override fun suspendFunctionN(arity: Int): IrClass = functionFactory.suspendFunctionN(arity)

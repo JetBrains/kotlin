@@ -3464,14 +3464,6 @@ private object TestIrBuiltins : IrBuiltIns() {
         get() = missingBuiltIn()
     override val intAndSymbol: IrSimpleFunctionSymbol
         get() = missingBuiltIn()
-    override val extensionToString: IrSimpleFunctionSymbol
-        get() = missingBuiltIn()
-    override val memberToString: IrSimpleFunctionSymbol
-        get() = missingBuiltIn()
-    override val extensionStringPlus: IrSimpleFunctionSymbol
-        get() = missingBuiltIn()
-    override val memberStringPlus: IrSimpleFunctionSymbol
-        get() = missingBuiltIn()
     override val arrayOf: IrSimpleFunctionSymbol
         get() = missingBuiltIn()
     override val arrayOfNulls: IrSimpleFunctionSymbol

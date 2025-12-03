@@ -282,35 +282,6 @@ class IrBuiltInsOverFir(
             it.owner.name == OperatorNameConventions.AND && it.owner.parameters[1].type == intType
         }
 
-    override val extensionToString: IrSimpleFunctionSymbol by lazy {
-        val firFunctionSymbol = symbolProvider.getTopLevelFunctionSymbols(kotlinPackage, OperatorNameConventions.TO_STRING).single {
-            it.resolvedReceiverType?.isNullableAny == true
-        }
-        fir2irBuiltins.findFunction(firFunctionSymbol)
-    }
-
-    override val memberToString: IrSimpleFunctionSymbol by lazy {
-        val firFunction = fir2irBuiltins.findFirMemberFunctions(StandardClassIds.Any, OperatorNameConventions.TO_STRING).single {
-            it.valueParameterSymbols.isEmpty()
-        }
-        fir2irBuiltins.findFunction(firFunction)
-    }
-
-    override val extensionStringPlus: IrSimpleFunctionSymbol by lazy {
-        val firFunction = symbolProvider.getTopLevelFunctionSymbols(kotlinPackage, OperatorNameConventions.PLUS).single { symbol ->
-            val isStringExtension = symbol.resolvedReceiverType?.isNullableString == true
-            isStringExtension && symbol.valueParameterSymbols.singleOrNull { it.resolvedReturnType.isNullableAny } != null
-        }
-        fir2irBuiltins.findFunction(firFunction)
-    }
-
-    override val memberStringPlus: IrSimpleFunctionSymbol by lazy {
-        val firFunction = fir2irBuiltins.findFirMemberFunctions(StandardClassIds.String, OperatorNameConventions.PLUS).single {
-            it.valueParameterSymbols.singleOrNull()?.resolvedReturnType?.isNullableAny == true
-        }
-        fir2irBuiltins.findFunction(firFunction)
-    }
-
     override val arrayOf: IrSimpleFunctionSymbol by lazy {
         // distinct() is needed because we can get two Fir symbols for arrayOf function (from builtins and from stdlib)
         //   with the same IR symbol for them

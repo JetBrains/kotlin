@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.util.OperatorNameConventions
 import kotlin.getValue
 
 @OptIn(InternalSymbolFinderAPI::class)
@@ -145,6 +146,19 @@ abstract class Symbols(irBuiltIns: IrBuiltIns) : PreSerializationSymbols.Impl(ir
     open fun functionN(n: Int): IrClassSymbol = irBuiltIns.functionN(n).symbol
     open fun suspendFunctionN(n: Int): IrClassSymbol = irBuiltIns.suspendFunctionN(n).symbol
 
+    val extensionToString: IrSimpleFunctionSymbol by CallableIds.extensionToString.functionSymbol {
+        it.hasShape(extensionReceiver = true, parameterTypes = listOf(irBuiltIns.anyNType))
+    }
+    val memberToString: IrSimpleFunctionSymbol = CallableIds.memberToString.functionSymbol()
+    val extensionStringPlus: IrSimpleFunctionSymbol by CallableIds.extensionStringPlus.functionSymbol {
+        it.hasShape(
+            extensionReceiver = true,
+            regularParameters = 1,
+            parameterTypes = listOf(irBuiltIns.stringType.makeNullable(), irBuiltIns.anyNType)
+        )
+    }
+    val memberStringPlus: IrSimpleFunctionSymbol = CallableIds.memberPlus.functionSymbol()
+
     fun isStringPlus(functionSymbol: IrFunctionSymbol): Boolean {
         val plusSymbol = when {
             functionSymbol.owner.hasShape(
@@ -252,4 +266,9 @@ private object CallableIds {
     private val String.baseCallableId get() = CallableId(StandardNames.BUILT_INS_PACKAGE_FQ_NAME, Name.identifier(this))
     val toUIntExtension = "toUInt".baseCallableId
     val toULongExtension = "toULong".baseCallableId
+
+    val extensionToString = OperatorNameConventions.TO_STRING.toString().baseCallableId
+    val extensionStringPlus = OperatorNameConventions.PLUS.toString().baseCallableId
+    val memberToString = CallableId(StandardClassIds.Any, Name.identifier(OperatorNameConventions.TO_STRING.toString()))
+    val memberPlus = CallableId(StandardClassIds.String, Name.identifier(OperatorNameConventions.PLUS.toString()))
 }
