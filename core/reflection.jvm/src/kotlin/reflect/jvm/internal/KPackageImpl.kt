@@ -51,9 +51,9 @@ internal class KPackageImpl(
                     // 2. Multi-file class part.
                     is KotlinClassMetadata.MultiFileClassPart -> listOf(metadata.kmPackage)
                     // 3. Multi-file class facade.
-                    is KotlinClassMetadata.MultiFileClassFacade -> metadata.partClassNames.mapNotNull { partName ->
+                    is KotlinClassMetadata.MultiFileClassFacade -> metadata.partClassNames.flatMap { partName ->
                         val part = getOrCreateKotlinPackage(jClass.classLoader.loadClass(partName.replace('/', '.'))) as KPackageImpl
-                        part.data.value.kmPackages.singleOrNull()
+                        part.data.value.kmPackages
                     }
                     // 4. Non-Kotlin class, or a Kotlin class with an incompatible metadata version.
                     else -> emptyList()
