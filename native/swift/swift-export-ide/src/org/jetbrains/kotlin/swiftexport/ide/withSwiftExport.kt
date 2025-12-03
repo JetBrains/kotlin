@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.swiftexport.ide
 
 import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.sir.builder.buildModule
 import org.jetbrains.kotlin.sir.providers.SirSession
 import org.jetbrains.kotlin.sir.providers.utils.SilentUnsupportedDeclarationReporter
@@ -17,9 +18,11 @@ public class SwiftExportConfiguration(
 
 public inline fun <T> KaSession.withSirSession(
     configuration: SwiftExportConfiguration = SwiftExportConfiguration(),
+    moduleToTranslate: KaModule = useSiteModule,
     block: SirSession.() -> T,
 ): T = IdeSirSession(
     kaModule = useSiteModule,
+    moduleToTranslate = moduleToTranslate,
     moduleForPackageEnums = buildModule { name = configuration.moduleForPackagesName },
     unsupportedDeclarationReporter = SilentUnsupportedDeclarationReporter,
     targetPackageFqName = null,

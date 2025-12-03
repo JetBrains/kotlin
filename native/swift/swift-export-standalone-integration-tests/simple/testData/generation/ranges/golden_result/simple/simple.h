@@ -15,24 +15,24 @@ void * __root___foo();
 
 void * __root___unsupported();
 
-int32_t kotlin_ranges_closedRange_getEndInclusive_int(void * nativePtr);
+int32_t kotlin_ranges_closedRange_getEndInclusive_int_simple(void * nativePtr);
 
-int32_t kotlin_ranges_closedRange_getStart_int(void * nativePtr);
+int32_t kotlin_ranges_closedRange_getStart_int_simple(void * nativePtr);
 
-int32_t kotlin_ranges_intRange_getEndInclusive_int(void * nativePtr);
+int32_t kotlin_ranges_intRange_getEndInclusive_int_simple(void * nativePtr);
 
-int32_t kotlin_ranges_intRange_getStart_int(void * nativePtr);
+int32_t kotlin_ranges_intRange_getStart_int_simple(void * nativePtr);
 
-int64_t kotlin_ranges_longRange_getEndInclusive_long(void * nativePtr);
+int64_t kotlin_ranges_longRange_getEndInclusive_long_simple(void * nativePtr);
 
-int64_t kotlin_ranges_longRange_getStart_long(void * nativePtr);
+int64_t kotlin_ranges_longRange_getStart_long_simple(void * nativePtr);
 
-int32_t kotlin_ranges_openEndRange_getEndExclusive_int(void * nativePtr);
+int32_t kotlin_ranges_openEndRange_getEndExclusive_int_simple(void * nativePtr);
 
-int64_t kotlin_ranges_openEndRange_getEndExclusive_long(void * nativePtr);
+int64_t kotlin_ranges_openEndRange_getEndExclusive_long_simple(void * nativePtr);
 
-int32_t kotlin_ranges_openEndRange_getStart_int(void * nativePtr);
+int32_t kotlin_ranges_openEndRange_getStart_int_simple(void * nativePtr);
 
-int64_t kotlin_ranges_openEndRange_getStart_long(void * nativePtr);
+int64_t kotlin_ranges_openEndRange_getStart_long_simple(void * nativePtr);
 
 NS_ASSUME_NONNULL_END

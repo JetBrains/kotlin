@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.sir.providers.impl.BridgeProvider
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.DefaultTypeClassIds.BYTE
 import org.jetbrains.kotlin.analysis.api.components.DefaultTypeClassIds.INT
@@ -110,6 +111,7 @@ public class SirCustomTypeTranslatorImpl(
                     )
                     RangeBridge(
                         swiftType,
+                        session,
                         kotlinRangeClassId = classId,
                         kotlinRangeElementClassId = (argumentType.type as KaClassType).classId,
                         inclusive
@@ -124,6 +126,7 @@ public class SirCustomTypeTranslatorImpl(
                     )
                     RangeBridge(
                         swiftType,
+                        session,
                         kotlinRangeClassId = StandardClassIds.IntRange,
                         kotlinRangeElementClassId = StandardClassIds.Int,
                         inclusive = true
@@ -138,6 +141,7 @@ public class SirCustomTypeTranslatorImpl(
                     )
                     RangeBridge(
                         swiftType,
+                        session,
                         kotlinRangeClassId = StandardClassIds.LongRange,
                         kotlinRangeElementClassId = StandardClassIds.Long,
                         inclusive = true
@@ -200,6 +204,7 @@ public class SirCustomTypeTranslatorImpl(
 
     internal class RangeBridge(
         swiftType: SirNominalType,
+        val session: SirSession,
         val kotlinRangeClassId: ClassId,
         val kotlinRangeElementClassId: ClassId,
         val inclusive: Boolean,
@@ -244,7 +249,7 @@ public class SirCustomTypeTranslatorImpl(
                     val kotlinRangeNameDecapitalized = kotlinRangeTypeName.replaceFirstChar(Char::lowercase)
                     val kotlinRangeElementNameDecapitalized = pairedParameterKotlinType.repr.replaceFirstChar(Char::lowercase)
                     val cRangeElementName = pairedParameterCType.render("")
-                    val name = "kotlin_ranges_${kotlinRangeNameDecapitalized}_get${propertyNameCapitalized}_$kotlinRangeElementNameDecapitalized"
+                    val name = "kotlin_ranges_${kotlinRangeNameDecapitalized}_get${propertyNameCapitalized}_${kotlinRangeElementNameDecapitalized}_$uniqueModuleName"
                     val kotlinRangeTypeDescription = when (kotlinRangeClassId) {
                         StandardClassIds.IntRange, StandardClassIds.LongRange -> kotlinRangeTypeName
                         else -> "$kotlinRangeTypeName<${pairedParameterKotlinType.repr}>"
@@ -272,6 +277,9 @@ public class SirCustomTypeTranslatorImpl(
                 else -> throw NoSuchElementException()
             }
         }
+
+        private val uniqueModuleName: String
+            get() = with(session.moduleProvider) { session.moduleToTranslate.sirModule().name }
     }
 
     public companion object {

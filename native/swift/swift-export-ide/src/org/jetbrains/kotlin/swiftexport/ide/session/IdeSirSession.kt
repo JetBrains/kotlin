@@ -19,6 +19,7 @@ import org.jetbrains.sir.lightclasses.StubbingSirDeclarationProvider
 
 public class IdeSirSession(
     kaModule: KaModule,
+    override val moduleToTranslate: KaModule,
     moduleForPackageEnums: SirModule,
     platformLibs: Collection<KaLibraryModule>,
     unsupportedDeclarationReporter: UnsupportedDeclarationReporter,

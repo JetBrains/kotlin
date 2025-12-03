@@ -24,7 +24,7 @@ import org.jetbrains.sir.lightclasses.StubbingSirDeclarationProvider
 
 internal class StandaloneSirSession(
     override val useSiteModule: KaModule,
-    moduleToTranslate: KaModule,
+    override val moduleToTranslate: KaModule,
     override val errorTypeStrategy: SirTypeProvider.ErrorTypeStrategy,
     override val unsupportedTypeStrategy: SirTypeProvider.ErrorTypeStrategy,
     moduleForPackageEnums: SirModule,

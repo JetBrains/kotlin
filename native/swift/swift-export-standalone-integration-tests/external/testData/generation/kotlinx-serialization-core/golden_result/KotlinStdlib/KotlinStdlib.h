@@ -653,12 +653,12 @@ uint16_t kotlin_ranges_CharRange_start_get(void * self);
 
 NSString * kotlin_ranges_CharRange_toString(void * self);
 
-int32_t kotlin_ranges_intRange_getEndInclusive_int(void * nativePtr);
+int32_t kotlin_ranges_intRange_getEndInclusive_int_KotlinStdlib(void * nativePtr);
 
-int32_t kotlin_ranges_intRange_getStart_int(void * nativePtr);
+int32_t kotlin_ranges_intRange_getStart_int_KotlinStdlib(void * nativePtr);
 
-int64_t kotlin_ranges_longRange_getEndInclusive_long(void * nativePtr);
+int64_t kotlin_ranges_longRange_getEndInclusive_long_KotlinStdlib(void * nativePtr);
 
-int64_t kotlin_ranges_longRange_getStart_long(void * nativePtr);
+int64_t kotlin_ranges_longRange_getStart_long_KotlinStdlib(void * nativePtr);
 
 NS_ASSUME_NONNULL_END

@@ -23,7 +23,7 @@ abstract class AbstractSymbolToSirTest : AbstractAnalysisApiBasedTest() {
         copyAwareAnalyzeForTest(mainFile) { contextFile ->
             val kaDeclaration = testServices
                 .expressionMarkerProvider.getBottommostElementOfTypeAtCaret<KtDeclaration>(contextFile).symbol
-            val actual: String = withSirSession {
+            val actual: String = withSirSession(moduleToTranslate = kaDeclaration.containingModule) {
                 kaDeclaration
                     .toSir()
                     .allDeclarations

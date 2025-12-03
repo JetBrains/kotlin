@@ -45,6 +45,7 @@ public interface SirSession :
         get() = this
 
     public val useSiteModule: KaModule
+    public val moduleToTranslate: KaModule
 
     public val enumGenerator: SirEnumGenerator
 

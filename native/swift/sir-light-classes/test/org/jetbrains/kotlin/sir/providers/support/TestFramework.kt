@@ -35,6 +35,8 @@ class TestSirSession(
     referencedTypeHandler: SirKaClassReferenceHandler? = null,
 ) : SirSession {
     override val useSiteModule: KaModule = kaModule
+    override val moduleToTranslate: KaModule
+        get() = useSiteModule
     override val declarationNamer: SirDeclarationNamer = SirDeclarationNamerImpl()
     override val moduleProvider: SirModuleProvider = SirOneToOneModuleProvider(emptyList())
     override val declarationProvider: SirDeclarationProvider = CachingSirDeclarationProvider(

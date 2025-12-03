@@ -42,62 +42,62 @@ public fun __root___unsupported(): kotlin.native.internal.NativePtr {
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
-@ExportedBridge("kotlin_ranges_closedRange_getEndInclusive_int")
-fun kotlin_ranges_closedRange_getEndInclusive_int(nativePtr: kotlin.native.internal.NativePtr): Int {
+@ExportedBridge("kotlin_ranges_closedRange_getEndInclusive_int_simple")
+fun kotlin_ranges_closedRange_getEndInclusive_int_simple(nativePtr: kotlin.native.internal.NativePtr): Int {
     val closedRange = kotlin.native.internal.ref.dereferenceExternalRCRef(nativePtr) as ClosedRange<Int>
     return closedRange.endInclusive
 }
 
-@ExportedBridge("kotlin_ranges_closedRange_getStart_int")
-fun kotlin_ranges_closedRange_getStart_int(nativePtr: kotlin.native.internal.NativePtr): Int {
+@ExportedBridge("kotlin_ranges_closedRange_getStart_int_simple")
+fun kotlin_ranges_closedRange_getStart_int_simple(nativePtr: kotlin.native.internal.NativePtr): Int {
     val closedRange = kotlin.native.internal.ref.dereferenceExternalRCRef(nativePtr) as ClosedRange<Int>
     return closedRange.start
 }
 
-@ExportedBridge("kotlin_ranges_intRange_getEndInclusive_int")
-fun kotlin_ranges_intRange_getEndInclusive_int(nativePtr: kotlin.native.internal.NativePtr): Int {
+@ExportedBridge("kotlin_ranges_intRange_getEndInclusive_int_simple")
+fun kotlin_ranges_intRange_getEndInclusive_int_simple(nativePtr: kotlin.native.internal.NativePtr): Int {
     val intRange = kotlin.native.internal.ref.dereferenceExternalRCRef(nativePtr) as IntRange
     return intRange.endInclusive
 }
 
-@ExportedBridge("kotlin_ranges_intRange_getStart_int")
-fun kotlin_ranges_intRange_getStart_int(nativePtr: kotlin.native.internal.NativePtr): Int {
+@ExportedBridge("kotlin_ranges_intRange_getStart_int_simple")
+fun kotlin_ranges_intRange_getStart_int_simple(nativePtr: kotlin.native.internal.NativePtr): Int {
     val intRange = kotlin.native.internal.ref.dereferenceExternalRCRef(nativePtr) as IntRange
     return intRange.start
 }
 
-@ExportedBridge("kotlin_ranges_longRange_getEndInclusive_long")
-fun kotlin_ranges_longRange_getEndInclusive_long(nativePtr: kotlin.native.internal.NativePtr): Long {
+@ExportedBridge("kotlin_ranges_longRange_getEndInclusive_long_simple")
+fun kotlin_ranges_longRange_getEndInclusive_long_simple(nativePtr: kotlin.native.internal.NativePtr): Long {
     val longRange = kotlin.native.internal.ref.dereferenceExternalRCRef(nativePtr) as LongRange
     return longRange.endInclusive
 }
 
-@ExportedBridge("kotlin_ranges_longRange_getStart_long")
-fun kotlin_ranges_longRange_getStart_long(nativePtr: kotlin.native.internal.NativePtr): Long {
+@ExportedBridge("kotlin_ranges_longRange_getStart_long_simple")
+fun kotlin_ranges_longRange_getStart_long_simple(nativePtr: kotlin.native.internal.NativePtr): Long {
     val longRange = kotlin.native.internal.ref.dereferenceExternalRCRef(nativePtr) as LongRange
     return longRange.start
 }
 
-@ExportedBridge("kotlin_ranges_openEndRange_getEndExclusive_int")
-fun kotlin_ranges_openEndRange_getEndExclusive_int(nativePtr: kotlin.native.internal.NativePtr): Int {
+@ExportedBridge("kotlin_ranges_openEndRange_getEndExclusive_int_simple")
+fun kotlin_ranges_openEndRange_getEndExclusive_int_simple(nativePtr: kotlin.native.internal.NativePtr): Int {
     val openEndRange = kotlin.native.internal.ref.dereferenceExternalRCRef(nativePtr) as OpenEndRange<Int>
     return openEndRange.endExclusive
 }
 
-@ExportedBridge("kotlin_ranges_openEndRange_getEndExclusive_long")
-fun kotlin_ranges_openEndRange_getEndExclusive_long(nativePtr: kotlin.native.internal.NativePtr): Long {
+@ExportedBridge("kotlin_ranges_openEndRange_getEndExclusive_long_simple")
+fun kotlin_ranges_openEndRange_getEndExclusive_long_simple(nativePtr: kotlin.native.internal.NativePtr): Long {
     val openEndRange = kotlin.native.internal.ref.dereferenceExternalRCRef(nativePtr) as OpenEndRange<Long>
     return openEndRange.endExclusive
 }
 
-@ExportedBridge("kotlin_ranges_openEndRange_getStart_int")
-fun kotlin_ranges_openEndRange_getStart_int(nativePtr: kotlin.native.internal.NativePtr): Int {
+@ExportedBridge("kotlin_ranges_openEndRange_getStart_int_simple")
+fun kotlin_ranges_openEndRange_getStart_int_simple(nativePtr: kotlin.native.internal.NativePtr): Int {
     val openEndRange = kotlin.native.internal.ref.dereferenceExternalRCRef(nativePtr) as OpenEndRange<Int>
     return openEndRange.start
 }
 
-@ExportedBridge("kotlin_ranges_openEndRange_getStart_long")
-fun kotlin_ranges_openEndRange_getStart_long(nativePtr: kotlin.native.internal.NativePtr): Long {
+@ExportedBridge("kotlin_ranges_openEndRange_getStart_long_simple")
+fun kotlin_ranges_openEndRange_getStart_long_simple(nativePtr: kotlin.native.internal.NativePtr): Long {
     val openEndRange = kotlin.native.internal.ref.dereferenceExternalRCRef(nativePtr) as OpenEndRange<Long>
     return openEndRange.start
 }
