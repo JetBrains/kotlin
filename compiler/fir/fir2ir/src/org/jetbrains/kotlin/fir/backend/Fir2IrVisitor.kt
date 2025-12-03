@@ -1344,7 +1344,10 @@ class Fir2IrVisitor(
         return conversionScope.withWhenSubject(subjectVariable) {
             whenExpression.convertWithOffsets { startOffset, endOffset ->
                 if (whenExpression.branches.isEmpty()) {
-                    return@convertWithOffsets IrBlockImpl(startOffset, endOffset, builtins.unitType, origin)
+                    return@convertWithOffsets IrBlockImpl(
+                        startOffset, endOffset, builtins.unitType, origin,
+                        statements = listOfNotNull(subjectVariable)
+                    )
                 }
                 val isProperlyExhaustive = whenExpression.isDeeplyProperlyExhaustive()
                 val whenExpressionType =
