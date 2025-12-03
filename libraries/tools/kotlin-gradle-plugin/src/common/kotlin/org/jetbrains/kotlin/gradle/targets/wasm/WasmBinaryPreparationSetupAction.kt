@@ -7,11 +7,12 @@ package org.jetbrains.kotlin.gradle.targets.wasm
 
 import org.gradle.api.attributes.Category
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.categoryByName
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
-import org.jetbrains.kotlin.gradle.plugin.mpp.internal
 import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
+import org.jetbrains.kotlin.gradle.plugin.mpp.isTest
 import org.jetbrains.kotlin.gradle.plugin.usesPlatformOf
 import org.jetbrains.kotlin.gradle.targets.KotlinTargetSideEffect
 import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
@@ -29,48 +30,57 @@ internal val WasmBinaryPreparationSetupAction = KotlinTargetSideEffect { target 
     val project = target.project
     if (!project.kotlinPropertiesProvider.wasmPerModule) return@KotlinTargetSideEffect
 
+    val main = target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
+
     target.compilations.all { compilation ->
 
-        val runtime = project.configurations.getByName(target.runtimeElementsConfigurationName)
-        val runtimeConfiguration = compilation.internal.configurations.deprecatedRuntimeConfiguration
+        val runtimeDependencyConfiguration = compilation.configurations.runtimeDependencyConfiguration
 
-        if (compilation.isMain()) {
-            compilation.binaries.configureEach { binary ->
-                if (binary !is WasmBinary) return@configureEach
-                val conf = compilation.project.configurations.maybeCreateResolvable(binary.wasmBinaryConfigurationName) {
+        compilation.binaries.configureEach { binary ->
+            if (binary !is WasmBinary) return@configureEach
+
+            val attributeValue = when (binary.mode) {
+                KotlinJsBinaryMode.PRODUCTION -> WasmBinaryAttribute.WASM_BINARY_PRODUCTION
+                KotlinJsBinaryMode.DEVELOPMENT -> WasmBinaryAttribute.WASM_BINARY_DEVELOPMENT
+            }
+            val wasmBinaryConfiguration = compilation.project.configurations.maybeCreateResolvable(binary.wasmBinaryConfigurationName) {
+                description = "Elements of runtime for main."
+                @Suppress("DEPRECATION")
+                isVisible = false
+                KotlinUsages.configureProducerRuntimeUsage(this, target)
+                attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
+                attributes.attribute(WasmBinaryAttribute.attribute, attributeValue)
+
+                usesPlatformOf(target)
+            }
+
+            wasmBinaryConfiguration.extendsFrom(runtimeDependencyConfiguration)
+            if (compilation.isMain()) {
+
+                val wasmBinaryOutputConfiguration = project.configurations.maybeCreateConsumable(binary.wasmBinaryOutputConfigurationName) {
                     description = "Elements of runtime for main."
                     @Suppress("DEPRECATION")
                     isVisible = false
                     KotlinUsages.configureProducerRuntimeUsage(this, target)
                     attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
-                    attributes.attribute(WasmBinaryAttribute.attribute, WasmBinaryAttribute.WASM_BINARY_DEVELOPMENT)
-
+                    attributes.attribute(WasmBinaryAttribute.attribute, attributeValue)
                     usesPlatformOf(target)
+
+                    project.artifacts.add(binary.wasmBinaryOutputConfigurationName, binary.linkTask.map { it.destinationDirectory })
                 }
 
-                conf.extendsFrom(runtime)
-                runtimeConfiguration?.let { conf.extendsFrom(it) }
-
-                if (binary.mode == KotlinJsBinaryMode.DEVELOPMENT) {
-                    val conf2 = project.configurations.maybeCreateConsumable(binary.wasmBinaryOutputConfigurationName) {
-                        description = "Elements of runtime for main."
-                        @Suppress("DEPRECATION")
-                        isVisible = false
-                        KotlinUsages.configureProducerRuntimeUsage(this, target)
-                        attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
-                        attributes.attribute(WasmBinaryAttribute.attribute, WasmBinaryAttribute.WASM_BINARY_DEVELOPMENT)
-                        usesPlatformOf(target)
-
-                        project.artifacts.add(binary.wasmBinaryOutputConfigurationName, binary.linkTask.map { it.destinationDirectory })
-                    }
-
-                    conf2.extendsFrom(runtime)
-                    runtimeConfiguration?.let { conf2.extendsFrom(it) }
-                }
+                wasmBinaryOutputConfiguration.extendsFrom(runtimeDependencyConfiguration)
 
             }
 
-            compilation.binaries.executableIrInternal(compilation)
+            if (compilation.isTest()) {
+                binary.linkSyncTask.configure {
+                    val mainBinary = main.binaries.getIrBinaries(binary.mode).single()
+                    it.from.from(mainBinary.linkTask.map { it.destinationDirectory })
+                }
+            }
         }
+
+        compilation.binaries.executableIrInternal(compilation)
     }
 }
