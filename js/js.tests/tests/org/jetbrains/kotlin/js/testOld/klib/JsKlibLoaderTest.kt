@@ -31,6 +31,7 @@ class JsKlibLoaderTest : AbstractKlibLoaderTest() {
             KlibPlatformChecker.Wasm(WasmTarget.WASI.alias),
             KlibPlatformChecker.Native(),
             KlibPlatformChecker.Native(KonanTarget.IOS_ARM64.name),
+            KlibPlatformChecker.NativeMetadata(KonanTarget.IOS_ARM64.name),
         )
 
     override fun compileKlib(

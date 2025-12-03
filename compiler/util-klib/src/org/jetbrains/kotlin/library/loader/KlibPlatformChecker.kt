@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.library.loader
 
 import org.jetbrains.kotlin.library.BaseKotlinLibrary
 import org.jetbrains.kotlin.library.builtInsPlatform
+import org.jetbrains.kotlin.library.commonizerNativeTargets
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
 import org.jetbrains.kotlin.library.loader.KlibLoaderResult.ProblemCase.PlatformCheckMismatch
 import org.jetbrains.kotlin.library.nativeTargets
@@ -29,6 +30,46 @@ interface KlibPlatformChecker {
 
             val expectedTarget: String = target ?: return null
             return checkTarget(BuiltInsPlatform.NATIVE, expectedTarget, actualTargets = library.nativeTargets)
+        }
+    }
+
+    /**
+     * Checks if a library is a Kotlin/Native metadata-compilation suitable library:
+     * - Either a natural Kotlin/Native library
+     * - Or a commonized Kotlin/Native library
+     * - Or a metadata-aware Kotlin/Native library
+     */
+    class NativeMetadata(private val target: String) : KlibPlatformChecker {
+        override fun check(library: BaseKotlinLibrary): PlatformCheckMismatch? {
+            /**
+             * Common (platform-agnostic) libraries use [BuiltInsPlatform.COMMON] built-ins platform.
+             * But [BuiltInsPlatform.COMMON] is a special value that is not written to the manifest,
+             * effectively leaving such libraries without the `builtins_platform` property.
+             * So, to make this check work properly, we should skip validation of the platform when
+             * the `builtins_platform` property is missing in the manifest assuming this is a "common" platform.
+             */
+            val actualBuiltInsPlatform = library.builtInsPlatform
+            if (actualBuiltInsPlatform != null) {
+                val platformMismatch: PlatformCheckMismatch? = checkPlatform(
+                    expectedPlatform = BuiltInsPlatform.NATIVE,
+                    actualPlatform = actualBuiltInsPlatform
+                )
+                if (platformMismatch != null) return platformMismatch
+            }
+
+            val commonizerNativeTargets = library.commonizerNativeTargets
+            if (!commonizerNativeTargets.isNullOrEmpty()) {
+                // This is a commonized Kotlin/Native library. We need to check that the given target is supported in the commonized library.
+                return checkTarget(BuiltInsPlatform.NATIVE, expectedTarget = target, actualTargets = commonizerNativeTargets)
+            }
+
+            val nativeTargets = library.nativeTargets
+            if (nativeTargets.isEmpty()) {
+                // This is a metadata-aware Kotlin/Native library that might not have any targets written in the manifest.
+                return null
+            }
+
+            return checkTarget(BuiltInsPlatform.NATIVE, expectedTarget = target, actualTargets = nativeTargets)
         }
     }
 
