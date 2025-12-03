@@ -1,4 +1,3 @@
-
 /*
  * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
@@ -12,7 +11,6 @@ import org.jetbrains.kotlin.analysis.api.KaContextParameterApi
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.components.containingDeclaration
 import org.jetbrains.kotlin.analysis.api.components.isNullable
 import org.jetbrains.kotlin.analysis.api.components.klibSourceFileName
 import org.jetbrains.kotlin.analysis.api.klib.reader.getAllDeclarations
@@ -20,7 +18,6 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.ir.backend.js.tsexport.*
-import org.jetbrains.kotlin.ir.backend.js.tsexport.ExportedType.Primitive
 import org.jetbrains.kotlin.js.common.makeValidES5Identifier
 import org.jetbrains.kotlin.js.common.safeModuleName
 import org.jetbrains.kotlin.name.Name
@@ -71,8 +68,8 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
         if (!shouldDeclarationBeExportedImplicitlyOrExplicitly(declaration)) return null
 
         return when (declaration) {
-            is KaNamedFunctionSymbol -> exportFunction(declaration, parent = null)
-            is KaPropertySymbol -> exportProperty(declaration, parent = null)
+            is KaNamedFunctionSymbol -> exportFunction(declaration, parent = null, classTypeParameterScope = emptyMap())
+            is KaPropertySymbol -> exportProperty(declaration, parent = null, classTypeParameterScope = emptyMap())
             is KaClassSymbol -> ErrorDeclaration("Class declarations are not implemented yet")
             is KaTypeAliasSymbol -> ErrorDeclaration("Type alias declarations are not implemented yet")
             else -> null
@@ -80,27 +77,32 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
     }
 
     context(_: KaSession)
-    private fun exportFunction(function: KaNamedFunctionSymbol, parent: KaDeclarationSymbol?): ExportedDeclaration? =
+    private fun exportFunction(
+        function: KaNamedFunctionSymbol,
+        parent: KaDeclarationSymbol?,
+        classTypeParameterScope: TypeParameterScope,
+        isFactoryPropertyForInnerClass: Boolean = false,
+    ): ExportedDeclaration? =
         when (val exportability = functionExportability(function, parent)) {
             is Exportability.NotNeeded, is Exportability.Implicit -> null
             is Exportability.Prohibited -> ErrorDeclaration(exportability.reason)
             is Exportability.Allowed -> {
-                val returnType = if (function.isSuspend) {
-                    ExportedType.ClassType(
-                        name = "Promise",
-                        arguments = listOf(exportType(function.returnType))
-                    )
-                } else {
-                    exportType(function.returnType)
-                }
+                val isStatic = function.isStatic
+                val outerScope = if (!isStatic || isFactoryPropertyForInnerClass) classTypeParameterScope else emptyMap()
+                val functionTypeParameterScope = TypeParameterScope(function, config, outerScope)
+                val returnType = exportType(function.returnType, functionTypeParameterScope)
                 ExportedFunction(
                     name = function.getJsSymbolForOverriddenDeclaration()?.let(ExportedMemberName::WellKnownSymbol)
                         ?: ExportedMemberName.Identifier(function.getExportedIdentifier()),
-                    returnType = returnType,
-                    parameters = exportFunctionParameters(function),
-                    typeParameters = function.typeParameters.memoryOptimizedMap { exportTypeParameter(it) },
+                    returnType = if (function.isSuspend) {
+                        ExportedType.ClassType(name = "Promise", arguments = listOf(returnType))
+                    } else {
+                        returnType
+                    },
+                    parameters = exportFunctionParameters(function, functionTypeParameterScope),
+                    typeParameters = function.typeParameters.memoryOptimizedMap { functionTypeParameterScope[it]!! },
                     isMember = parent is KaClassSymbol,
-                    isStatic = false, // TODO: isEs6ConstructorReplacement || isStaticMethodOfClass
+                    isStatic = isStatic,
                     isAbstract = parent is KaClassSymbol && parent.classKind != KaClassKind.INTERFACE && function.modality == KaSymbolModality.ABSTRACT,
                     isProtected = function.visibility == KaSymbolVisibility.PROTECTED,
                 )
@@ -116,19 +118,22 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
     }
 
     context(_: KaSession)
-    private fun exportFunctionParameters(function: KaFunctionSymbol): List<ExportedParameter> {
+    private fun exportFunctionParameters(
+        function: KaFunctionSymbol,
+        functionTypeParameterScope: TypeParameterScope,
+    ): List<ExportedParameter> {
         return buildList {
             for (parameter in function.contextParameters) {
-                add(ExportedParameter(sanitizeName(parameter.name), exportType(parameter.returnType)))
+                add(ExportedParameter(sanitizeName(parameter.name), exportType(parameter.returnType, functionTypeParameterScope)))
             }
             function.receiverParameter?.let {
-                add(ExportedParameter(sanitizeName(SpecialNames.THIS), exportType(it.returnType)))
+                add(ExportedParameter(sanitizeName(SpecialNames.THIS), exportType(it.returnType, functionTypeParameterScope)))
             }
             for (parameter in function.valueParameters) {
                 val type = if (parameter.isVararg) {
-                    TypeExporter(config).exportSpecializedArrayWithElementType(parameter.returnType)
+                    TypeExporter(config, functionTypeParameterScope).exportSpecializedArrayWithElementType(parameter.returnType)
                 } else {
-                    exportType(parameter.returnType)
+                    exportType(parameter.returnType, functionTypeParameterScope)
                 }
                 add(ExportedParameter(sanitizeName(parameter.name), type, parameter.hasDefaultValue))
             }
@@ -136,7 +141,11 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
     }
 
     context(_: KaSession)
-    private fun exportProperty(property: KaPropertySymbol, parent: KaDeclarationSymbol?): ExportedDeclaration? {
+    private fun exportProperty(
+        property: KaPropertySymbol,
+        parent: KaDeclarationSymbol?,
+        classTypeParameterScope: TypeParameterScope,
+    ): ExportedDeclaration? {
         // Frontend will report an error on an attempt to export an extension property.
         // Just to be safe, filter out such properties here as well.
         if (property.receiverType != null) {
@@ -155,7 +164,7 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
         val shouldBeExportedAsObjectWithAccessorsInside = !config.generateNamespacesForPackages && !isMember && !isStatic
 
         val propertyType = when {
-            !shouldBeExportedAsObjectWithAccessorsInside -> exportType(property.returnType)
+            !shouldBeExportedAsObjectWithAccessorsInside -> exportType(property.returnType, classTypeParameterScope)
             isObjectGetter -> ExportedType.InlineInterfaceType(
                 listOf(
                     ExportedFunction(
@@ -209,30 +218,10 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
     }
 
     context(_: KaSession)
-    private fun exportType(type: KaType): ExportedType = TypeExporter(config).exportType(type)
-
-    context(_: KaSession)
-    private fun exportTypeParameter(typeParameter: KaTypeParameterSymbol): ExportedTypeParameter {
-        val constraints = typeParameter.upperBounds
-            .mapNotNull {
-                val exportedType = exportType(it)
-                if (exportedType is ExportedType.ErrorType) return@mapNotNull null
-                if (exportedType is ExportedType.ImplicitlyExportedType && exportedType.exportedSupertype == Primitive.Any) {
-                    exportedType.copy(exportedSupertype = Primitive.Unknown)
-                } else {
-                    exportedType
-                }
-            }
-
-        return ExportedTypeParameter(
-            name = typeParameter.name.identifier,
-            constraint = when (constraints.size) {
-                0 -> null
-                1 -> constraints[0]
-                else -> constraints.reduce(ExportedType::IntersectionType)
-            }
-        )
-    }
+    private fun exportType(
+        type: KaType,
+        scope: TypeParameterScope,
+    ): ExportedType = TypeExporter(config, scope).exportType(type)
 
     context(_: KaSession)
     private fun functionExportability(function: KaNamedFunctionSymbol, parent: KaDeclarationSymbol?): Exportability {
