@@ -53,6 +53,7 @@ fun createConfigurationToBeConsumedInTests(name: String, dependencyProject: Stri
 }
 
 createConfigurationToBeConsumedInTests("applePrivacyManifestPlugin", ":kotlin-privacy-manifests-plugin")
+createConfigurationToBeConsumedInTests("sandboxPlugin", ":plugins:plugin-sandbox")
 
 dependencies {
     testImplementation(testFixtures(project(":kotlin-gradle-plugin"))) {
