@@ -32,7 +32,7 @@ check.kt:
     partSimpleName: "CheckKt"
     PACKAGE_DIRECTIVE
     IMPORT_LIST
-      IMPORT_DIRECTIVE[importedFqName=kotlin.contracts, isAllUnder=true, isValid=true]
+      IMPORT_DIRECTIVE[importedFqName=kotlin.contracts, isAllUnder=true, isPackage=false, isValid=true]
         DOT_QUALIFIED_EXPRESSION
           REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=contracts]

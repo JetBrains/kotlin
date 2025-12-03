@@ -1,7 +1,7 @@
 FILE[kind=File[packageFqName=<root>]]
   PACKAGE_DIRECTIVE
   IMPORT_LIST
-    IMPORT_DIRECTIVE[importedFqName=import.import.import.import, isAllUnder=false, isValid=true]
+    IMPORT_DIRECTIVE[importedFqName=import.import.import.import, isAllUnder=false, isPackage=false, isValid=true]
       DOT_QUALIFIED_EXPRESSION
         DOT_QUALIFIED_EXPRESSION
           DOT_QUALIFIED_EXPRESSION

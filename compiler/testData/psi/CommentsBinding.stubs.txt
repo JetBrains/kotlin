@@ -6,17 +6,17 @@ FILE[kind=Facade[packageFqName=foo.bar, facadeFqName=foo.bar.CommentsBindingKt]]
       REFERENCE_EXPRESSION[referencedName=foo]
       REFERENCE_EXPRESSION[referencedName=bar]
   IMPORT_LIST
-    IMPORT_DIRECTIVE[importedFqName=java.util, isAllUnder=true, isValid=true]
+    IMPORT_DIRECTIVE[importedFqName=java.util, isAllUnder=true, isPackage=false, isValid=true]
       DOT_QUALIFIED_EXPRESSION
         REFERENCE_EXPRESSION[referencedName=java]
         REFERENCE_EXPRESSION[referencedName=util]
-    IMPORT_DIRECTIVE[importedFqName=javax, isAllUnder=true, isValid=true]
+    IMPORT_DIRECTIVE[importedFqName=javax, isAllUnder=true, isPackage=false, isValid=true]
       REFERENCE_EXPRESSION[referencedName=javax]
-    IMPORT_DIRECTIVE[importedFqName=a.b, isAllUnder=false, isValid=true]
+    IMPORT_DIRECTIVE[importedFqName=a.b, isAllUnder=false, isPackage=false, isValid=true]
       DOT_QUALIFIED_EXPRESSION
         REFERENCE_EXPRESSION[referencedName=a]
         REFERENCE_EXPRESSION[referencedName=b]
-    IMPORT_DIRECTIVE[importedFqName=c.d, isAllUnder=false, isValid=true]
+    IMPORT_DIRECTIVE[importedFqName=c.d, isAllUnder=false, isPackage=false, isValid=true]
       DOT_QUALIFIED_EXPRESSION
         REFERENCE_EXPRESSION[referencedName=c]
         REFERENCE_EXPRESSION[referencedName=d]

@@ -6,7 +6,7 @@ FILE[kind=File[packageFqName=foo.bar.goo]]
         REFERENCE_EXPRESSION[referencedName=bar]
       REFERENCE_EXPRESSION[referencedName=goo]
   IMPORT_LIST
-    IMPORT_DIRECTIVE[importedFqName=foo, isAllUnder=false, isValid=true]
+    IMPORT_DIRECTIVE[importedFqName=foo, isAllUnder=false, isPackage=false, isValid=true]
       REFERENCE_EXPRESSION[referencedName=foo]
   CLASS[classId=foo/bar/goo/Bar, fqName=foo.bar.goo.Bar, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Bar, superNames=[A]]
     MODIFIER_LIST[public protected private internal open abstract override suspend annotation out in]

@@ -2,7 +2,7 @@ FILE[kind=File[packageFqName=test]]
   PACKAGE_DIRECTIVE
     REFERENCE_EXPRESSION[referencedName=test]
   IMPORT_LIST
-    IMPORT_DIRECTIVE[importedFqName=java.io.Serializable, isAllUnder=false, isValid=true]
+    IMPORT_DIRECTIVE[importedFqName=java.io.Serializable, isAllUnder=false, isPackage=false, isValid=true]
       DOT_QUALIFIED_EXPRESSION
         DOT_QUALIFIED_EXPRESSION
           REFERENCE_EXPRESSION[referencedName=java]

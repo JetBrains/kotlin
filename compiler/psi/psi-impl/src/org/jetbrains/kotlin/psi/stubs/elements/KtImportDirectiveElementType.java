@@ -34,6 +34,7 @@ public class KtImportDirectiveElementType extends KtStubElementType<KotlinImport
     @Override
     public void serialize(@NotNull KotlinImportDirectiveStubImpl stub, @NotNull StubOutputStream dataStream) throws IOException {
         dataStream.writeBoolean(stub.isAllUnder());
+        dataStream.writeBoolean(stub.isPackage());
         FqName importedFqName = stub.getImportedFqName();
         dataStream.writeName(importedFqName != null ? importedFqName.asString() : null);
         dataStream.writeBoolean(stub.isValid());

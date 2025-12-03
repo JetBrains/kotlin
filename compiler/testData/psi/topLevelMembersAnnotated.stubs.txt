@@ -26,7 +26,7 @@ topLevelMembersAnnotated.kt:
           REFERENCE_EXPRESSION[referencedName=c]
         REFERENCE_EXPRESSION[referencedName=topLevelMembersAnnotated]
     IMPORT_LIST
-      IMPORT_DIRECTIVE[importedFqName=d.e.f, isAllUnder=true, isValid=true]
+      IMPORT_DIRECTIVE[importedFqName=d.e.f, isAllUnder=true, isPackage=false, isValid=true]
         DOT_QUALIFIED_EXPRESSION
           DOT_QUALIFIED_EXPRESSION
             REFERENCE_EXPRESSION[referencedName=d]

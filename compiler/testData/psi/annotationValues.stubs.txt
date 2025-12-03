@@ -4,13 +4,13 @@ FILE[kind=Facade[packageFqName=test, facadeFqName=test.AnnotationValuesKt]]
   PACKAGE_DIRECTIVE
     REFERENCE_EXPRESSION[referencedName=test]
   IMPORT_LIST
-    IMPORT_DIRECTIVE[importedFqName=test.E.E1, isAllUnder=false, isValid=true]
+    IMPORT_DIRECTIVE[importedFqName=test.E.E1, isAllUnder=false, isPackage=false, isValid=true]
       DOT_QUALIFIED_EXPRESSION
         DOT_QUALIFIED_EXPRESSION
           REFERENCE_EXPRESSION[referencedName=test]
           REFERENCE_EXPRESSION[referencedName=E]
         REFERENCE_EXPRESSION[referencedName=E1]
-    IMPORT_DIRECTIVE[importedFqName=kotlin.reflect.KClass, isAllUnder=false, isValid=true]
+    IMPORT_DIRECTIVE[importedFqName=kotlin.reflect.KClass, isAllUnder=false, isPackage=false, isValid=true]
       DOT_QUALIFIED_EXPRESSION
         DOT_QUALIFIED_EXPRESSION
           REFERENCE_EXPRESSION[referencedName=kotlin]

@@ -4,19 +4,19 @@ FILE[kind=Facade[packageFqName=a, facadeFqName=a.ImportsWithConflictKt]]
   PACKAGE_DIRECTIVE
     REFERENCE_EXPRESSION[referencedName=a]
   IMPORT_LIST
-    IMPORT_DIRECTIVE[importedFqName=a1, isAllUnder=false, isValid=true]
+    IMPORT_DIRECTIVE[importedFqName=a1, isAllUnder=false, isPackage=false, isValid=true]
       REFERENCE_EXPRESSION[referencedName=a1]
   IMPORT_LIST
-    IMPORT_DIRECTIVE[importedFqName=a2, isAllUnder=false, isValid=true]
+    IMPORT_DIRECTIVE[importedFqName=a2, isAllUnder=false, isPackage=false, isValid=true]
       REFERENCE_EXPRESSION[referencedName=a2]
-    IMPORT_DIRECTIVE[importedFqName=a3, isAllUnder=false, isValid=true]
+    IMPORT_DIRECTIVE[importedFqName=a3, isAllUnder=false, isPackage=false, isValid=true]
       REFERENCE_EXPRESSION[referencedName=a3]
   FUN[fqName=a.bar, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=bar]
     VALUE_PARAMETER_LIST
   IMPORT_LIST
-    IMPORT_DIRECTIVE[importedFqName=a2, isAllUnder=false, isValid=true]
+    IMPORT_DIRECTIVE[importedFqName=a2, isAllUnder=false, isPackage=false, isValid=true]
       REFERENCE_EXPRESSION[referencedName=a2]
-    IMPORT_DIRECTIVE[importedFqName=a4.df, isAllUnder=false, isValid=true]
+    IMPORT_DIRECTIVE[importedFqName=a4.df, isAllUnder=false, isPackage=false, isValid=true]
       DOT_QUALIFIED_EXPRESSION
         REFERENCE_EXPRESSION[referencedName=a4]
         REFERENCE_EXPRESSION[referencedName=df]

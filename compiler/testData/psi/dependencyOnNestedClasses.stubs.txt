@@ -3,7 +3,7 @@ DependencyOnNestedClasses.kt:
     PACKAGE_DIRECTIVE
       REFERENCE_EXPRESSION[referencedName=test]
     IMPORT_LIST
-      IMPORT_DIRECTIVE[importedFqName=dependency, isAllUnder=true, isValid=true]
+      IMPORT_DIRECTIVE[importedFqName=dependency, isAllUnder=true, isPackage=false, isValid=true]
         REFERENCE_EXPRESSION[referencedName=dependency]
     CLASS[classId=test/DependencyOnNestedClasses, fqName=test.DependencyOnNestedClasses, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=DependencyOnNestedClasses, superNames=[Nested]]
       MODIFIER_LIST[public]

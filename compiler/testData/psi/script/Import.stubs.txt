@@ -1,13 +1,13 @@
 FILE[kind=Script[packageFqName=<root>]]
   PACKAGE_DIRECTIVE
   IMPORT_LIST
-    IMPORT_DIRECTIVE[importedFqName=aaa.bbb.Ccc, isAllUnder=false, isValid=true]
+    IMPORT_DIRECTIVE[importedFqName=aaa.bbb.Ccc, isAllUnder=false, isPackage=false, isValid=true]
       DOT_QUALIFIED_EXPRESSION
         DOT_QUALIFIED_EXPRESSION
           REFERENCE_EXPRESSION[referencedName=aaa]
           REFERENCE_EXPRESSION[referencedName=bbb]
         REFERENCE_EXPRESSION[referencedName=Ccc]
-    IMPORT_DIRECTIVE[importedFqName=ddd, isAllUnder=true, isValid=true]
+    IMPORT_DIRECTIVE[importedFqName=ddd, isAllUnder=true, isPackage=false, isValid=true]
       REFERENCE_EXPRESSION[referencedName=ddd]
   SCRIPT[fqName=Import, fqName=Import, name=Import]
     FUN[fqName=Import.foo, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]

@@ -38,7 +38,7 @@ WithEnumLiteral.kt:
     PACKAGE_DIRECTIVE
       REFERENCE_EXPRESSION[referencedName=test]
     IMPORT_LIST
-      IMPORT_DIRECTIVE[importedFqName=test.E.E1, isAllUnder=false, isValid=true]
+      IMPORT_DIRECTIVE[importedFqName=test.E.E1, isAllUnder=false, isPackage=false, isValid=true]
         DOT_QUALIFIED_EXPRESSION
           DOT_QUALIFIED_EXPRESSION
             REFERENCE_EXPRESSION[referencedName=test]

@@ -41,7 +41,7 @@ WithNested.kt:
   FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
-      IMPORT_DIRECTIVE[importedFqName=foo.Nested, isAllUnder=false, isValid=true]
+      IMPORT_DIRECTIVE[importedFqName=foo.Nested, isAllUnder=false, isPackage=false, isValid=true]
         DOT_QUALIFIED_EXPRESSION
           REFERENCE_EXPRESSION[referencedName=foo]
           REFERENCE_EXPRESSION[referencedName=Nested]

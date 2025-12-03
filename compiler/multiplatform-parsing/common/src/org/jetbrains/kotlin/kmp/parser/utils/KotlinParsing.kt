@@ -524,6 +524,12 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
             return
         }
 
+        var isPackage = false
+        if (atWithRemap(KtTokens.PACKAGE_KEYWORD)) {
+            isPackage = true
+            advance() // PACKAGE_KEYWORD
+        }
+
         if (!atWithRemap(KtTokens.IDENTIFIER)) {
             val error = mark()
             skipUntil(syntaxElementTypeSetOf(KtTokens.EOL_OR_SEMICOLON))
@@ -562,7 +568,11 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
         if (at(KtTokens.DOT)) {
             advance() // DOT
             require(at(KtTokens.MUL))
-            advance() // MUL
+            if (!isPackage) {
+                advance(); // MUL
+            } else {
+                errorAndAdvance("Package imports cannot use star");
+            }
             if (at(KtTokens.AS_KEYWORD)) {
                 val asMark = mark()
                 advance() // AS_KEYWORD
