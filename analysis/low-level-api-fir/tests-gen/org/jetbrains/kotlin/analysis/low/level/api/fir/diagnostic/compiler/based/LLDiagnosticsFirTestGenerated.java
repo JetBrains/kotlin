@@ -1585,6 +1585,12 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
         }
 
         @Test
+        @TestMetadata("morePreciseSamVsLessPreciseFunctionType.kt")
+        public void testMorePreciseSamVsLessPreciseFunctionType() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/orblrt/morePreciseSamVsLessPreciseFunctionType.kt");
+        }
+
+        @Test
         @TestMetadata("specifityAfterLambdaAnalysis.kt")
         public void testSpecifityAfterLambdaAnalysis() {
           runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/orblrt/specifityAfterLambdaAnalysis.kt");
@@ -1600,6 +1606,12 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
         @TestMetadata("sumOfCase.kt")
         public void testSumOfCase() {
           runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/orblrt/sumOfCase.kt");
+        }
+
+        @Test
+        @TestMetadata("suspendFunctionTypeVsRunnable.kt")
+        public void testSuspendFunctionTypeVsRunnable() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/orblrt/suspendFunctionTypeVsRunnable.kt");
         }
 
         @Test
