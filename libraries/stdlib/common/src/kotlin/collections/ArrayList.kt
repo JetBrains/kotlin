@@ -28,6 +28,9 @@ package kotlin.collections
  * - **Search operations** ([contains], [indexOf], [lastIndexOf]): O(n) linear time
  * - **Iteration**: O(n) linear time
  *
+ * Note: On the JS target, these time-complexity guarantees may not hold due to the underlying
+ * JavaScript engine implementation.
+ *
  * ## Usage guidelines
  *
  * To optimize performance and memory usage:
