@@ -6,13 +6,11 @@
 package org.jetbrains.kotlin.analysis.api.impl.base.projectStructure
 
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinContentScopeRefiner
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.resolve.extensions.KaResolveExtensionProvider
 
-@KaImplementationDetail
-class KaResolveExtensionToContentScopeRefinerBridge : KotlinContentScopeRefiner {
+internal class KaResolveExtensionToContentScopeRefinerBridge : KotlinContentScopeRefiner {
     override fun getEnlargementScopes(module: KaModule): List<GlobalSearchScope> =
         buildList {
             if (KaResolveExtensionProvider.provideExtensionsFor(module).isNotEmpty()) {

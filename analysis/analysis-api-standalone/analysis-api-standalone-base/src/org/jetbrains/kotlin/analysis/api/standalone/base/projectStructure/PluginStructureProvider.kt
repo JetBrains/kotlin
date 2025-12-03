@@ -1,16 +1,12 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure
 
 import com.intellij.core.CoreApplicationEnvironment
-import com.intellij.ide.plugins.ContainerDescriptor
-import com.intellij.ide.plugins.DataLoader
-import com.intellij.ide.plugins.PluginXmlPathResolver
-import com.intellij.ide.plugins.RawPluginDescriptor
-import com.intellij.ide.plugins.ReadModuleContext
+import com.intellij.ide.plugins.*
 import com.intellij.mock.MockApplication
 import com.intellij.mock.MockComponentManager
 import com.intellij.mock.MockProject
@@ -119,6 +115,24 @@ object PluginStructureProvider {
 
         (project.analysisMessageBus as MessageBusEx).setLazyListeners(listenersMap)
     }
+
+    fun registerProjectExtensionPointImplementations(project: MockProject, pluginRelativePath: String) {
+        val pluginDescriptor = getOrCalculatePluginDescriptor(PluginDesignation(pluginRelativePath, project))
+        val extensionPointImplementations = pluginDescriptor.epNameToExtensions.orEmpty()
+        for (allowedExtensionPointName in allowedExtensionPointNames) {
+            val point = project.extensionArea.getExtensionPointIfRegistered<Any>(allowedExtensionPointName) ?: continue
+            val descriptors = extensionPointImplementations[allowedExtensionPointName] ?: continue
+            point.registerExtensions(descriptors, fakePluginDescriptor, null)
+        }
+    }
+
+    /**
+     * The list of extension points that are safe to be registered automatically
+     */
+    private val allowedExtensionPointNames = listOf(
+        "org.jetbrains.kotlin.kotlinContentScopeRefiner",
+        "org.jetbrains.kotlin.kotlinGlobalSearchScopeMergeStrategy",
+    )
 
     private val MockComponentManager.classLoader
         get() = loadClass<Any>(PluginDesignation::class.java.name, fakePluginDescriptor).classLoader

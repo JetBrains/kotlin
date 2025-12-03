@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -12,10 +12,6 @@ import com.intellij.psi.PsiElementFinder
 import com.intellij.psi.impl.PsiElementFinderImpl
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
-import org.jetbrains.kotlin.analysis.api.impl.base.projectStructure.KaResolveExtensionToContentScopeRefinerBridge
-import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinContentScopeRefiner
-import org.jetbrains.kotlin.analysis.api.impl.base.projectStructure.KotlinResolveExtensionGeneratedFileScopeMergeStrategy
-import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinGlobalSearchScopeMergeStrategy
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 
 @OptIn(KaImplementationDetail::class)
@@ -43,12 +39,6 @@ object FirStandaloneServiceRegistrar : AnalysisApiSimpleServiceRegistrar() {
             registerExtension(PsiElementFinderImpl(project), disposable)
         }
 
-        with(project.extensionArea.getExtensionPoint(KotlinContentScopeRefiner.EP_NAME)) {
-            registerExtension(KaResolveExtensionToContentScopeRefinerBridge(), disposable)
-        }
-
-        with(project.extensionArea.getExtensionPoint(KotlinGlobalSearchScopeMergeStrategy.EP_NAME)) {
-            registerExtension(KotlinResolveExtensionGeneratedFileScopeMergeStrategy(), disposable)
-        }
+        PluginStructureProvider.registerProjectExtensionPointImplementations(project, PLUGIN_RELATIVE_PATH)
     }
 }
