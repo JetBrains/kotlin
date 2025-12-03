@@ -78,9 +78,6 @@ projectTests {
             JdkMajorVersion.JDK_21_0,
         )
     ) {
-        extensions.configure<TestInputsCheckExtension> {
-            isNative.set(true)
-        }
         options {
             // See [org.jetbrains.kotlin.konan.test.KlibCrossCompilationIdentityTest.FULL_CROSS_DIST_ENABLED_PROPERTY]
             // See also kotlin-native/build-tools/src/main/kotlin/org/jetbrains/kotlin/nativeFullCrossDist.kt

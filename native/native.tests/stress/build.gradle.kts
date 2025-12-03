@@ -30,9 +30,6 @@ projectTests {
         requirePlatformLibs = true,
         allowParallelExecution = false, // Stress tests are resource-intensive tests and they must be run in isolation.
     ) {
-        extensions.configure<TestInputsCheckExtension> {
-            isNative.set(true)
-        }
         // nativeTest sets workingDir to rootDir so here we need to override it
         workingDir = projectDir
     }

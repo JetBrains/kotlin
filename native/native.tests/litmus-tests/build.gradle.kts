@@ -82,11 +82,7 @@ projectTests {
         requirePlatformLibs = true,
         customTestDependencies = listOf(litmusKt),
         allowParallelExecution = false,
-    ) {
-        extensions.configure<TestInputsCheckExtension> {
-            isNative.set(true)
-        }
-    }
+    )
 
     testGenerator("org.jetbrains.kotlin.generators.tests.GenerateLitmusTestsKt", generateTestsInBuildDirectory = true) {
         javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_11_0))

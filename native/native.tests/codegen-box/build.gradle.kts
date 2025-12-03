@@ -24,9 +24,6 @@ projectTests {
     testData(project(":compiler").isolated, "testData/codegen")
 
     nativeTestTask("test") {
-        extensions.configure<TestInputsCheckExtension> {
-            isNative.set(true)
-        }
         // nativeTest sets workingDir to rootDir so here we need to override it
         workingDir = projectDir
     }
