@@ -1603,6 +1603,12 @@ public class LLPartialDiagnosticsFirTestGenerated extends AbstractLLPartialDiagn
         }
 
         @Test
+        @TestMetadata("flatMapOnlyNonLocalReturns.kt")
+        public void testFlatMapOnlyNonLocalReturns() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/orblrt/flatMapOnlyNonLocalReturns.kt");
+        }
+
+        @Test
         @TestMetadata("genericVsInapplicableNonGeneric.kt")
         public void testGenericVsInapplicableNonGeneric() {
           runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/orblrt/genericVsInapplicableNonGeneric.kt");
