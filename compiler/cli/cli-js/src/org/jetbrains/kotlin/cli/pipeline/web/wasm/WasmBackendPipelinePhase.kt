@@ -355,10 +355,13 @@ fun compileWasmLoweredFragmentsForSingleModule(
     // This signature needed to dynamically load module services
     @OptIn(UnsafeDuringIrConstructionAPI::class)
     val additionalSignatureToImport =
-        if (stdlibIsMainModule) emptySet() else setOf(
+        if (stdlibIsMainModule) emptySet() else setOfNotNull(
             signatureRetriever.declarationSignature(backendContext.wasmSymbols.registerModuleDescriptor.owner)!!,
             signatureRetriever.declarationSignature(backendContext.wasmSymbols.createString.owner)!!,
             signatureRetriever.declarationSignature(backendContext.wasmSymbols.tryGetAssociatedObject.owner)!!,
+            backendContext.wasmSymbols.runRootSuites?.owner?.let { runRootSuites ->
+                signatureRetriever.declarationSignature(runRootSuites)!!
+            }
         )
 
     val importedDeclarations = getAllReferencedDeclarations(mainModuleFileFragment, additionalSignatureToImport)

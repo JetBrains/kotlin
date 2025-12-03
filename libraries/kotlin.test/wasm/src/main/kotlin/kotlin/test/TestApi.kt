@@ -49,4 +49,5 @@ internal fun runRootSuites() {
             block.forEach { it() }
         }
     }
+    rootSuiteBlocks.clear()
 }
