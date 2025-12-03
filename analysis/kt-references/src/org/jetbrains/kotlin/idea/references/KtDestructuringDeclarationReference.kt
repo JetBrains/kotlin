@@ -10,7 +10,9 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtDestructuringDeclaration
 import org.jetbrains.kotlin.psi.KtDestructuringDeclarationEntry
+import org.jetbrains.kotlin.psi.KtImplementationDetail
 
+@SubclassOptInRequired(KtImplementationDetail::class)
 abstract class KtDestructuringDeclarationReference(
     element: KtDestructuringDeclarationEntry
 ) : KtMultiReference<KtDestructuringDeclarationEntry>(element) {

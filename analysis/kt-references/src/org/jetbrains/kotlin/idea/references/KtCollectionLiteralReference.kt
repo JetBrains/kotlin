@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,9 +9,11 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.MultiRangeReference
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.KtCollectionLiteralExpression
+import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.resolve.ArrayFqNames
 
+@SubclassOptInRequired(KtImplementationDetail::class)
 abstract class KtCollectionLiteralReference(expression: KtCollectionLiteralExpression) :
     KtSimpleReference<KtCollectionLiteralExpression>(expression), MultiRangeReference {
     companion object {

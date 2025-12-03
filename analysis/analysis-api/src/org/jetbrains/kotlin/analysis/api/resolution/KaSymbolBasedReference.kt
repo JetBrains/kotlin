@@ -9,8 +9,10 @@ import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.idea.references.KtReference
+import org.jetbrains.kotlin.psi.KtImplementationDetail
 
 @KaImplementationDetail
+@OptIn(KtImplementationDetail::class)
 @SubclassOptInRequired(KaImplementationDetail::class)
 public interface KaSymbolBasedReference : KtReference {
     public fun KaSession.resolveToSymbols(): Collection<KaSymbol>

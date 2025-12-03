@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.isInImportDirective
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
+@SubclassOptInRequired(KtImplementationDetail::class)
 interface KtReference : PsiPolyVariantReference {
     val resolver: ResolveCache.PolyVariantResolver<KtReference>
 
@@ -61,6 +62,7 @@ interface KtReference : PsiPolyVariantReference {
     val resolvesByNames: Collection<Name>
 }
 
+@SubclassOptInRequired(KtImplementationDetail::class)
 abstract class AbstractKtReference<T : KtElement>(element: T) : PsiPolyVariantReferenceBase<T>(element), KtReference {
     val expression: T
         get() = element
@@ -177,6 +179,8 @@ abstract class AbstractKtReference<T : KtElement>(element: T) : PsiPolyVariantRe
     }
 }
 
+@SubclassOptInRequired(KtImplementationDetail::class)
 abstract class KtSimpleReference<T : KtReferenceExpression>(expression: T) : AbstractKtReference<T>(expression)
 
+@SubclassOptInRequired(KtImplementationDetail::class)
 abstract class KtMultiReference<T : KtElement>(expression: T) : AbstractKtReference<T>(expression)

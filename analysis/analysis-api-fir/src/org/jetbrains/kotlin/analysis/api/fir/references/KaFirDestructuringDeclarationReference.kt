@@ -16,8 +16,10 @@ import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
 import org.jetbrains.kotlin.fir.references.symbol
 import org.jetbrains.kotlin.idea.references.KtDestructuringDeclarationReference
 import org.jetbrains.kotlin.psi.KtDestructuringDeclarationEntry
+import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.KtImportAlias
 
+@OptIn(KtImplementationDetail::class)
 internal class KaFirDestructuringDeclarationReference(
     element: KtDestructuringDeclarationEntry,
 ) : KtDestructuringDeclarationReference(element), KaFirReference {

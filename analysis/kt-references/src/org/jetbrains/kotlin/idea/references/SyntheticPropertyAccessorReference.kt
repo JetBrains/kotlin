@@ -12,9 +12,11 @@ import org.jetbrains.kotlin.asJava.canHaveSyntheticGetter
 import org.jetbrains.kotlin.asJava.canHaveSyntheticSetter
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.KtNameReferenceExpression
 import org.jetbrains.kotlin.resolve.references.ReferenceAccess
 
+@SubclassOptInRequired(KtImplementationDetail::class)
 abstract class SyntheticPropertyAccessorReference(
     expression: KtNameReferenceExpression,
     val getter: Boolean

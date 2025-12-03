@@ -11,10 +11,7 @@ import com.intellij.psi.impl.source.resolve.ResolveCache
 import com.intellij.psi.util.MethodSignatureUtil
 import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.KtAnnotationEntry
-import org.jetbrains.kotlin.psi.KtParameter
-import org.jetbrains.kotlin.psi.KtPrimaryConstructor
-import org.jetbrains.kotlin.psi.KtValueArgument
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 
 /**
@@ -31,6 +28,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
  * @Foo(name = "bar") // no reference, named argument is used
  * ```
  */
+@OptIn(KtImplementationDetail::class)
 class KtDefaultAnnotationArgumentReference(element: KtValueArgument) : AbstractKtReference<KtValueArgument>(element) {
     override val resolver: ResolveCache.PolyVariantResolver<KtReference>
         get() = Resolver

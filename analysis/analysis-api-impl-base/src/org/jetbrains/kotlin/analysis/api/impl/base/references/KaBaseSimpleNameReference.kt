@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 @KaImplementationDetail
+@OptIn(KtImplementationDetail::class)
 abstract class KaBaseSimpleNameReference(expression: KtSimpleNameExpression) : KtSimpleNameReference(expression) {
     override val resolvesByNames: Collection<Name>
         get() {

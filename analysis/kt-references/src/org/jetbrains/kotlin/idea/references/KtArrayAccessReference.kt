@@ -1,18 +1,19 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.references
 
 import com.intellij.psi.MultiRangeReference
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.lexer.KtToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtArrayAccessExpression
+import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
+@SubclassOptInRequired(KtImplementationDetail::class)
 abstract class KtArrayAccessReference(
     expression: KtArrayAccessExpression
 ) : KtSimpleReference<KtArrayAccessExpression>(expression), MultiRangeReference {
