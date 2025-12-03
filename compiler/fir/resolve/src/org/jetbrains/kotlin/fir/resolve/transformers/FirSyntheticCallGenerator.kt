@@ -72,9 +72,12 @@ class FirSyntheticCallGenerator(
 
     private val whenSelectFunction: FirNamedFunction = generateSyntheticSelectFunction(SyntheticCallableId.WHEN)
     private val trySelectFunction: FirNamedFunction = generateSyntheticSelectFunction(SyntheticCallableId.TRY)
+    private val danglingCollectionLiteralFunction: FirNamedFunction =
+        generateSyntheticSelectFunction(SyntheticCallableId.DANGLING_COLLECTION_LITERAL)
     private val checkNotNullFunction: FirNamedFunction = generateSyntheticCheckNotNullFunction()
     private val elvisFunction: FirNamedFunction = generateSyntheticElvisFunction()
-    private val arrayOfSymbolCache: FirCache<Name, FirNamedFunctionSymbol?, Nothing?> = session.firCachesFactory.createCache(::getArrayOfSymbol)
+    private val arrayOfSymbolCache: FirCache<Name, FirNamedFunctionSymbol?, Nothing?> =
+        session.firCachesFactory.createCache(::getArrayOfSymbol)
 
     private fun assertSyntheticResolvableReferenceIsNotResolved(resolvable: FirResolvable) {
         // All synthetic calls (FirWhenExpression, FirTryExpression, FirElvisExpression, FirCheckNotNullCall)
@@ -132,6 +135,29 @@ class FirSyntheticCallGenerator(
         )
 
         return tryExpression.transformCalleeReference(UpdateReference, reference)
+    }
+
+    fun generateFakeCallForDanglingCollectionLiteral(
+        collectionLiteral: FirCollectionLiteral,
+        context: ResolutionContext,
+    ): FirFunctionCall {
+        val argumentList = collectionLiteral.argumentList
+
+        val reference = generateCalleeReferenceWithCandidate(
+            collectionLiteral,
+            danglingCollectionLiteralFunction,
+            argumentList,
+            SyntheticCallableId.DANGLING_COLLECTION_LITERAL.callableName,
+            context = context,
+            resolutionMode = ResolutionMode.ContextIndependent,
+        )
+
+        return buildFunctionCall {
+            calleeReference = reference
+            this.argumentList = argumentList
+            this.annotations += collectionLiteral.annotations
+            source = collectionLiteral.source
+        }
     }
 
     fun generateCalleeForCheckNotNullCall(

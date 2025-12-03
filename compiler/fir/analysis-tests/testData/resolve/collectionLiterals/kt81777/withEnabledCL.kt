@@ -6,29 +6,29 @@
 // e.g. when standard library is missing.
 
 fun testWithLambdas() {
-    val lam: Array<() -> Unit> = [{}]
-    val withParam: Array<(Int) -> Unit> = [{ it -> }]
-    val withParamOfSpecifiedType: Array<(Int) -> Unit> = [{ it: Any -> }]
-    val withReturn: Array<() -> Int> = [{ 42 }]
-    val withReturnAndParam: Array<(Int) -> Int> = [{ x -> x }]
+    val lam: Array<() -> Unit> = <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[{}]<!>
+    val withParam: Array<(Int) -> Unit> = <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[{ <!CANNOT_INFER_VALUE_PARAMETER_TYPE!>it<!> -> }]<!>
+    val withParamOfSpecifiedType: Array<(Int) -> Unit> = <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[{ it: Any -> }]<!>
+    val withReturn: Array<() -> Int> = <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[{ 42 }]<!>
+    val withReturnAndParam: Array<(Int) -> Int> = <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[{ <!CANNOT_INFER_VALUE_PARAMETER_TYPE!>x<!> -> x }]<!>
 
-    [{}]
-    [{ it -> }]
-    [{ it: Any -> }]
-    [{ 42 }]
-    [{ x -> x }]
+    <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[{}]<!>
+    <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[{ <!CANNOT_INFER_VALUE_PARAMETER_TYPE!>it<!> -> }]<!>
+    <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[{ it: Any -> }]<!>
+    <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[{ 42 }]<!>
+    <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[{ <!CANNOT_INFER_VALUE_PARAMETER_TYPE!>x<!> -> x }]<!>
 }
 
 fun testWithAnons() {
-    val anon: Array<() -> Unit> = [fun() {}]
-    val withParam: Array<(Int) -> Unit> = [fun(x: Int) {}]
-    val withReturn: Array<() -> Int> = [fun() = 42]
-    val withReturnAndParam: Array<(Int) -> Int> = [fun(x: Int) = x]
+    val anon: Array<() -> Unit> = <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[fun() {}]<!>
+    val withParam: Array<(Int) -> Unit> = <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[fun(x: Int) {}]<!>
+    val withReturn: Array<() -> Int> = <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[fun() = 42]<!>
+    val withReturnAndParam: Array<(Int) -> Int> = <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[fun(x: Int) = x]<!>
 
-    [fun() {}]
-    [fun(x: Int) {}]
-    [fun() = 42]
-    [fun(x: Int) = x]
+    <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[fun() {}]<!>
+    <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[fun(x: Int) {}]<!>
+    <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[fun() = 42]<!>
+    <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[fun(x: Int) = x]<!>
 }
 
 fun skip() {}
@@ -37,8 +37,11 @@ fun const42() = 42
 fun <T> consume(it: T) {}
 
 fun testWithCallables() {
-    val callable: Array<() -> Unit> = [::skip]
-    val withParam: Array<(Int) -> Unit> = [::consume]
-    val withReturn: Array<() -> Int> = [::const42]
-    val withReturnAndParam: Array<(Int) -> Int> = [::id]
+    val callable: Array<() -> Unit> = <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[::skip]<!>
+    val withParam: Array<(Int) -> Unit> = <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[::<!CANNOT_INFER_PARAMETER_TYPE!>consume<!>]<!>
+    val withReturn: Array<() -> Int> = <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[::const42]<!>
+    val withReturnAndParam: Array<(Int) -> Int> = <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[::<!CANNOT_INFER_PARAMETER_TYPE!>id<!>]<!>
 }
+
+/* GENERATED_FIR_TAGS: anonymousFunction, callableReference, collectionLiteral, functionDeclaration, integerLiteral,
+lambdaLiteral, localProperty, nullableType, propertyDeclaration, typeParameter */

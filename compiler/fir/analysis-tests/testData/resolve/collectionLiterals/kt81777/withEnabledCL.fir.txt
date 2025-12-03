@@ -1,0 +1,89 @@
+FILE: withEnabledCL.kt
+    public final fun testWithLambdas(): R|kotlin/Unit| {
+        lval lam: R|kotlin/Array<() -> kotlin/Unit>| = <collectionLiteralCall>(fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+            ^ Unit
+        }
+        )
+        lval withParam: R|kotlin/Array<(kotlin/Int) -> kotlin/Unit>| = <collectionLiteralCall>(fun <anonymous>(it: <ERROR TYPE REF: Cannot infer lambda parameter type>): <ERROR TYPE REF: Cannot infer type variable TypeVariable(_R)> <inline=Unknown>  {
+            ^ Unit
+        }
+        )
+        lval withParamOfSpecifiedType: R|kotlin/Array<(kotlin/Int) -> kotlin/Unit>| = <collectionLiteralCall>(fun <anonymous>(it: R|kotlin/Any|): R|kotlin/Unit| <inline=Unknown>  {
+            ^ Unit
+        }
+        )
+        lval withReturn: R|kotlin/Array<() -> kotlin/Int>| = <collectionLiteralCall>(fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
+            ^ Int(42)
+        }
+        )
+        lval withReturnAndParam: R|kotlin/Array<(kotlin/Int) -> kotlin/Int>| = <collectionLiteralCall>(fun <anonymous>(x: <ERROR TYPE REF: Cannot infer lambda parameter type>): <ERROR TYPE REF: Cannot infer lambda parameter type> <inline=Unknown>  {
+            ^ R|<local>/x|
+        }
+        )
+        <collectionLiteralCall>(fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+            ^ Unit
+        }
+        )
+        <collectionLiteralCall>(fun <anonymous>(it: <ERROR TYPE REF: Cannot infer lambda parameter type>): <ERROR TYPE REF: Cannot infer type variable TypeVariable(_R)> <inline=Unknown>  {
+            ^ Unit
+        }
+        )
+        <collectionLiteralCall>(fun <anonymous>(it: R|kotlin/Any|): R|kotlin/Unit| <inline=Unknown>  {
+            ^ Unit
+        }
+        )
+        <collectionLiteralCall>(fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
+            ^ Int(42)
+        }
+        )
+        <collectionLiteralCall>(fun <anonymous>(x: <ERROR TYPE REF: Cannot infer lambda parameter type>): <ERROR TYPE REF: Cannot infer lambda parameter type> <inline=Unknown>  {
+            ^ R|<local>/x|
+        }
+        )
+    }
+    public final fun testWithAnons(): R|kotlin/Unit| {
+        lval anon: R|kotlin/Array<() -> kotlin/Unit>| = <collectionLiteralCall>(fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+        }
+        )
+        lval withParam: R|kotlin/Array<(kotlin/Int) -> kotlin/Unit>| = <collectionLiteralCall>(fun <anonymous>(x: R|kotlin/Int|): R|kotlin/Unit| <inline=Unknown>  {
+        }
+        )
+        lval withReturn: R|kotlin/Array<() -> kotlin/Int>| = <collectionLiteralCall>(fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
+            ^ Int(42)
+        }
+        )
+        lval withReturnAndParam: R|kotlin/Array<(kotlin/Int) -> kotlin/Int>| = <collectionLiteralCall>(fun <anonymous>(x: R|kotlin/Int|): R|kotlin/Int| <inline=Unknown>  {
+            ^ R|<local>/x|
+        }
+        )
+        <collectionLiteralCall>(fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+        }
+        )
+        <collectionLiteralCall>(fun <anonymous>(x: R|kotlin/Int|): R|kotlin/Unit| <inline=Unknown>  {
+        }
+        )
+        <collectionLiteralCall>(fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
+            ^ Int(42)
+        }
+        )
+        <collectionLiteralCall>(fun <anonymous>(x: R|kotlin/Int|): R|kotlin/Int| <inline=Unknown>  {
+            ^ R|<local>/x|
+        }
+        )
+    }
+    public final fun skip(): R|kotlin/Unit| {
+    }
+    public final fun <T> id(it: R|T|): R|T| {
+        ^id R|<local>/it|
+    }
+    public final fun const42(): R|kotlin/Int| {
+        ^const42 Int(42)
+    }
+    public final fun <T> consume(it: R|T|): R|kotlin/Unit| {
+    }
+    public final fun testWithCallables(): R|kotlin/Unit| {
+        lval callable: R|kotlin/Array<() -> kotlin/Unit>| = <collectionLiteralCall>(::R|/skip|)
+        lval withParam: R|kotlin/Array<(kotlin/Int) -> kotlin/Unit>| = <collectionLiteralCall>(::R|/consume<ERROR CLASS: Cannot infer argument for type parameter T>|)
+        lval withReturn: R|kotlin/Array<() -> kotlin/Int>| = <collectionLiteralCall>(::R|/const42|)
+        lval withReturnAndParam: R|kotlin/Array<(kotlin/Int) -> kotlin/Int>| = <collectionLiteralCall>(::R|/id<ERROR CLASS: Cannot infer argument for type parameter T>|)
+    }

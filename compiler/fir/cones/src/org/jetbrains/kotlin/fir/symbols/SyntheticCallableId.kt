@@ -19,4 +19,5 @@ object SyntheticCallableId {
     val CHECK_NOT_NULL = syntheticCallableId("CHECK_NOT_NULL_CALL")
     val ELVIS_NOT_NULL = syntheticCallableId("ELVIS_NOT_NULL_CALL")
     val ACCEPT_SPECIFIC_TYPE = syntheticCallableId("ACCEPT_SPECIFIC_TYPE_CALL")
+    val DANGLING_COLLECTION_LITERAL = syntheticCallableId("DANGLING_COLLECTION_LITERAL_CALL")
 }
