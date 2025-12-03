@@ -22,7 +22,7 @@ abstract class KtDestructuringDeclarationReference(
 
             // In the future, `hasSquareBrackets()` will suffice, but during the migration phase,
             // distinguishing between positional and named destructuring solely through syntax is not possible for the short form
-            val isPositionalBased = destructuringParent.hasSquareBrackets() || !destructuringParent.isFullForm
+            val isPositionBased = destructuringParent.hasSquareBrackets() || !destructuringParent.isFullForm
             val isNameBased = !destructuringParent.hasSquareBrackets()
             val propertyUsage = if (isNameBased) {
                 element.initializer?.getReferencedNameAsName() ?: element.nameAsName
@@ -30,7 +30,7 @@ abstract class KtDestructuringDeclarationReference(
                 null
             }
 
-            val componentNUsage = if (isPositionalBased) {
+            val componentNUsage = if (isPositionBased) {
                 val componentNIndex = destructuringParent.entries.indexOf(element) + 1
                 Name.identifier("component$componentNIndex")
             } else {
