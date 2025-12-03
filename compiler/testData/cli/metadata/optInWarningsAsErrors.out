@@ -1,4 +1,4 @@
-error: opt-in requirement marker 'Unresolved' is unresolved. Make sure it's present in the module dependencies.
 error: class 'NotAnAnnotation' is not an opt-in requirement marker.
 error: opt-in requirement marker 'Warning' is deprecated (Warning).
+error: opt-in requirement marker 'Unresolved' is unresolved. Make sure it's present in the module dependencies.
 COMPILATION_ERROR

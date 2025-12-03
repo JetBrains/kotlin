@@ -11,10 +11,10 @@ import org.jetbrains.kotlin.AbstractKtSourceElement
 
 // #### KtSourcelessFactory ####
 
+context(context: DiagnosticContext)
 fun DiagnosticReporter.report(
     factory: KtSourcelessDiagnosticFactory,
     message: String,
-    context: DiagnosticContext,
 ) {
     report(factory.create(message, context), context)
 }

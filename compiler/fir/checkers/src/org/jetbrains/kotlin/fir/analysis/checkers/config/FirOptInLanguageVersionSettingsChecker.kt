@@ -6,7 +6,8 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.config
 
 import org.jetbrains.kotlin.config.AnalysisFlags
-import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.report
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.CliDiagnostics
 import org.jetbrains.kotlin.fir.declarations.hasAnnotationWithClassId
@@ -19,7 +20,7 @@ import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
 
 object FirOptInLanguageVersionSettingsChecker : FirLanguageVersionSettingsChecker() {
     context(context: CheckerContext)
-    override fun check(reporter: BaseDiagnosticsCollector.RawReporter) {
+    override fun check(reporter: DiagnosticReporter) {
         context.languageVersionSettings.getFlag(AnalysisFlags.optIn).forEach { fqNameAsString ->
             if (fqNameAsString != OptInNames.REQUIRES_OPT_IN_FQ_NAME.asString()) {
                 checkOptInMarkerArgument(fqNameAsString, reporter)
@@ -30,25 +31,23 @@ object FirOptInLanguageVersionSettingsChecker : FirLanguageVersionSettingsChecke
     context(context: CheckerContext)
     private fun checkOptInMarkerArgument(
         fqNameAsString: String,
-        reporter: BaseDiagnosticsCollector.RawReporter
+        reporter: DiagnosticReporter
     ) {
         val packageOrClass = resolveToPackageOrClass(context.session.symbolProvider, FqName(fqNameAsString))
         val symbol = (packageOrClass as? PackageResolutionResult.PackageOrClass)?.classSymbol
 
         if (symbol == null) {
-            reporter.reportIfNeeded(
+            reporter.report(
                 CliDiagnostics.OPT_IN_REQUIREMENT_MARKER_IS_UNRESOLVED,
                 "Opt-in requirement marker '$fqNameAsString' is unresolved. Make sure it's present in the module dependencies.",
-                context,
             )
             return
         }
 
         if (!symbol.hasAnnotationWithClassId(OptInNames.REQUIRES_OPT_IN_CLASS_ID, context.session)) {
-            reporter.reportIfNeeded(
+            reporter.report(
                 CliDiagnostics.NOT_AN_OPT_IN_REQUIREMENT_MARKER,
                 "Class '$fqNameAsString' is not an opt-in requirement marker.",
-                context,
             )
             return
         }
@@ -57,11 +56,10 @@ object FirOptInLanguageVersionSettingsChecker : FirLanguageVersionSettingsChecke
             DeprecationLevelValue.WARNING -> CliDiagnostics.OPT_IN_REQUIREMENT_MARKER_IS_DEPRECATED
             else -> CliDiagnostics.OPT_IN_REQUIREMENT_MARKER_IS_DEPRECATED_ERROR
         }
-        reporter.reportIfNeeded(
+        reporter.report(
             diagnosticFactory,
             "Opt-in requirement marker '$fqNameAsString' is deprecated" +
                     deprecationInfo.getMessage(context.session)?.let { " ($it)" }.orEmpty() + ".",
-            context,
         )
     }
 }
