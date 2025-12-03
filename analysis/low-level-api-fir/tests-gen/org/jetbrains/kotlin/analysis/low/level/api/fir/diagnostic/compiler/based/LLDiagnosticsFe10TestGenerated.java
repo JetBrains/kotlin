@@ -40474,6 +40474,12 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
       }
 
       @Test
+      @TestMetadata("nonExhaustiveByNegation.kt")
+      public void testNonExhaustiveByNegation() {
+        runTest("compiler/testData/diagnostics/tests/sealed/nonExhaustiveByNegation.kt");
+      }
+
+      @Test
       @TestMetadata("NonExhaustiveWhen.kt")
       public void testNonExhaustiveWhen() {
         runTest("compiler/testData/diagnostics/tests/sealed/NonExhaustiveWhen.kt");
