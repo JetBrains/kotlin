@@ -455,7 +455,10 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
                 invokeFunction = invokeFunction,
                 reflectionTargetSymbol = null,
                 origin = origin,
-            ).apply { indyCallData = IndyCallData(lambdaMetafactoryArguments.shouldBeSerializable) }
+            ).apply {
+                indyCallData = IndyCallData(lambdaMetafactoryArguments.shouldBeSerializable)
+                boundValues.addAll(lambdaMetafactoryArguments.implMethodReference.arguments.filterNotNull())
+            }
 //            irCall(jvmIndyLambdaMetafactoryIntrinsic, notNullSamType).apply {
 //                typeArguments[0] = notNullSamType
 //                arguments[0] = irRawFunctionRef(lambdaMetafactoryArguments.samMethod)
