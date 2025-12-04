@@ -6,8 +6,7 @@
 
 package kotlin.script.experimental.api
 
-import kotlin.script.experimental.api.ast.Element
-import kotlin.script.experimental.api.ast.ParseNode
+import kotlin.script.experimental.api.ast.SyntaxElement
 import kotlin.script.experimental.api.impl.simpleRefineImpl
 import kotlin.script.experimental.util.PropertiesCollection
 
@@ -29,7 +28,7 @@ fun RefineConfigurationBuilder.onAst(handler: RefineScriptCompilationConfigurati
 /**
  * The helper function for chaining refinement calls on the compilation
  */
-fun ScriptCompilationConfiguration.refineOnAst(
+fun ScriptCompilationConfiguration.refineOnSyntaxTree(
     script: SourceCode,
     collectedData: ScriptCollectedData?
 ): ResultWithDiagnostics<ScriptCompilationConfiguration> =
@@ -43,5 +42,5 @@ fun ScriptCompilationConfiguration.refineOnAst(
  * Note that this AST representation could be specifically prepared for the refinement and could be different from the regular
  * representation used for the compilation itself.
  */
-val ScriptCollectedDataKeys.ast by PropertiesCollection.key<ParseNode<out Element>>()
+val ScriptCollectedDataKeys.syntaxTree by PropertiesCollection.key<SyntaxElement>()
 

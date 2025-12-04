@@ -106,8 +106,8 @@ class ScriptJvmK2Compiler(
                 }
                 hasAstRefine -> {
                     val ast = parseToAst(script)
-                    val collectedData = ScriptCollectedData(mapOf(ScriptCollectedData.ast to ast))
-                    it.refineOnAst(script, collectedData)
+                    val collectedData = ScriptCollectedData(mapOf(ScriptCollectedData.syntaxTree to ast))
+                    it.refineOnSyntaxTree(script, collectedData)
                 }
                 hasFirRefine -> {
                     val collectedData =
