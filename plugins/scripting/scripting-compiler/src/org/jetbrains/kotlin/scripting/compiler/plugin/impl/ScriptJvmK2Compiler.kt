@@ -22,10 +22,13 @@ import org.jetbrains.kotlin.config.jvmTarget
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
+import org.jetbrains.kotlin.diagnostics.impl.PendingDiagnosticsCollectorWithSuppress
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirScript
+import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.extensions.FirExtensionService
 import org.jetbrains.kotlin.fir.java.FirCliSession
@@ -46,6 +49,9 @@ import org.jetbrains.kotlin.fir.session.*
 import org.jetbrains.kotlin.fir.session.FirJvmSessionFactory.flattenAndFilterOwnProviders
 import org.jetbrains.kotlin.fir.session.FirJvmSessionFactory.registerLibrarySessionComponents
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
+import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.FirUserTypeRef
+import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.NameUtils
@@ -54,9 +60,14 @@ import org.jetbrains.kotlin.scripting.compiler.plugin.ScriptCompilerProxy
 import org.jetbrains.kotlin.scripting.compiler.plugin.services.scriptDefinitionProviderService
 import org.jetbrains.kotlin.toSourceLinesMapping
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
+import org.jetbrains.kotlin.utils.tryCreateCallableMapping
 import java.io.File
+import kotlin.reflect.KClass
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.api.ast.parseToAst
+import kotlin.script.experimental.host.ScriptingHostConfiguration
+import kotlin.script.experimental.host.getScriptingClass
+import kotlin.script.experimental.jvm.GetScriptingClassByClassLoader
 import kotlin.script.experimental.jvm.JvmDependency
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 
@@ -95,36 +106,21 @@ class ScriptJvmK2Compiler(
         return scriptCompilationConfiguration.refineBeforeParsing(script).onSuccess {
             @Suppress("DEPRECATION")
             val hasK1refine = it.getNoDefault(ScriptCompilationConfiguration.refineConfigurationOnAnnotations) != null
-            val hasFirRefine = it.getNoDefault(ScriptCompilationConfiguration.refineConfigurationOnFir) != null
+//            val hasFirRefine = it.getNoDefault(ScriptCompilationConfiguration.refineConfigurationOnFir) != null
             val hasAstRefine = it.getNoDefault(ScriptCompilationConfiguration.refineConfigurationOnAst) != null
             when {
-                hasK1refine && !(hasFirRefine || hasAstRefine) -> {
-                    failure(
-                        diagnosticsCollector,
-                        "The definition is not designed to be compiled with Kotlin v2+, set the language-version to 1.9 or below".asErrorDiagnostics()
-                    )
-                }
                 hasAstRefine -> {
                     val ast = parseToAst(script)
                     val collectedData = ScriptCollectedData(mapOf(ScriptCollectedData.syntaxTree to ast))
                     it.refineOnSyntaxTree(script, collectedData)
                 }
-                hasFirRefine -> {
+                hasK1refine -> {
                     val collectedData =
-                        ScriptCollectedData(
-                            mapOf(
-                                ScriptCollectedData.fir to listOf(
-                                    script.convertToFir(
-                                        createDummySessionForScriptRefinement(script),
-                                        diagnosticsCollector
-                                    )
-                                )
-                            )
-                        )
+                        getCollectedData(script, scriptCompilationConfiguration, diagnosticsCollector, null)
                     if (diagnosticsCollector.hasErrors) {
                         failure(diagnosticsCollector)
                     } else {
-                        it.refineOnFir(script, collectedData)
+                        it.refineOnAnnotations(script, collectedData!!)
                     }
                 }
                 else -> it.asSuccess()
@@ -198,6 +194,53 @@ class ScriptJvmK2Compiler(
                 ResultWithDiagnostics.Success(compiledScript, messageCollector.diagnostics)
             }
         }
+    }
+
+    private fun getCollectedData(
+        script: SourceCode,
+        compilationConfiguration: ScriptCompilationConfiguration,
+        diagnosticsCollector: PendingDiagnosticsCollectorWithSuppress,
+        contextClassLoader: ClassLoader?,
+    ): ScriptCollectedData? {
+        val hostConfiguration =
+            compilationConfiguration[ScriptCompilationConfiguration.hostConfiguration] ?: defaultJvmScriptingHostConfiguration
+        val getScriptingClass = hostConfiguration[ScriptingHostConfiguration.getScriptingClass]
+        val jvmGetScriptingClass = (getScriptingClass as? GetScriptingClassByClassLoader)
+            ?: throw IllegalArgumentException("Expecting class implementing GetScriptingClassByClassLoader in the hostConfiguration[getScriptingClass], got $getScriptingClass")
+        val acceptedAnnotations =
+            compilationConfiguration[ScriptCompilationConfiguration.refineConfigurationOnAnnotations]?.flatMap {
+                it.annotations.mapNotNull { ann ->
+                    @Suppress("UNCHECKED_CAST")
+                    jvmGetScriptingClass(ann, contextClassLoader, hostConfiguration) as? KClass<Annotation> // TODO errors
+                }
+            }?.takeIf { it.isNotEmpty() } ?: return null
+        val firFile = script.convertToFir(
+            createDummySessionForScriptRefinement(script),
+            diagnosticsCollector
+        )
+        val annotations =
+            firFile.annotations.mapNotNull { firAnnotation ->
+                (firAnnotation as? FirAnnotationCall)?.toAnnotationObjectIfMatches(acceptedAnnotations)?.let {
+                    val location = script.locationId
+                    val startOffset = firAnnotation.source?.startOffset
+                    val endOffset = firAnnotation.source?.endOffset
+                    ScriptSourceAnnotation(
+                        it.valueOrThrow(), // TODO: error propagation
+                        if (location != null && startOffset != null && endOffset != null)
+                            SourceCode.LocationWithId(
+                                location, SourceCode.Location(SourceCode.Position(startOffset, endOffset))
+                            )
+                        else null
+                    )
+                }
+            }.takeIf { it.isNotEmpty() }
+                ?: return null
+        return ScriptCollectedData(
+            mapOf(
+                ScriptCollectedData.collectedAnnotations to annotations,
+                ScriptCollectedData.foundAnnotations to annotations.map { it.annotation }
+            )
+        )
     }
 }
 
@@ -315,4 +358,35 @@ private fun createScriptDependenciesSession(
         register(FirSymbolProvider::class, symbolProvider)
         register(FirProvider::class, FirLibrarySessionProvider(symbolProvider))
     }
+}
+
+
+
+private fun FirAnnotationCall.toAnnotationObjectIfMatches(expectedAnnClasses: List<KClass<out Annotation>>): ResultWithDiagnostics<Annotation>? {
+    val shortName = when(val typeRef = annotationTypeRef) {
+        is FirResolvedTypeRef -> typeRef.coneType.classId?.shortClassName ?: return null
+        is FirUserTypeRef -> typeRef.qualifier.last().name
+        else -> return null
+    }.asString()
+    val expectedAnnClass = expectedAnnClasses.firstOrNull { it.simpleName == shortName } ?: return null
+    val ctor = expectedAnnClass.constructors.firstOrNull() ?: return null
+    val mapping =
+        tryCreateCallableMapping(
+            ctor,
+            argumentList.arguments.map {
+                when (it) {
+                    // TODO: classrefs?
+                    is FirLiteralExpression -> it.value
+                    else -> null
+                }
+            }
+        )
+    if (mapping != null) {
+        try {
+            return ctor.callBy(mapping).asSuccess()
+        } catch (e: Exception) { // TODO: find the exact exception type thrown then callBy fails
+            return makeFailureResult(e.asDiagnostics())
+        }
+    }
+    return null
 }

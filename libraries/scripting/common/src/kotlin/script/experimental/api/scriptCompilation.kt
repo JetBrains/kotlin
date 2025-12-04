@@ -160,7 +160,6 @@ val ScriptCompilationConfigurationKeys.refineConfigurationBeforeParsing by Prope
 /**
  * The callback that will be called on the script compilation after parsing script file annotations
  */
-@Deprecated("Will be obsolete soon, rewrite using refineConfigurationOnAST instead", level = DeprecationLevel.WARNING)
 val ScriptCompilationConfigurationKeys.refineConfigurationOnAnnotations by PropertiesCollection.key<List<RefineConfigurationOnAnnotationsData>>(isTransient = true)
 
 /**
