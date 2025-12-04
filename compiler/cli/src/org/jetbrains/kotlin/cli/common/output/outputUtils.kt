@@ -58,14 +58,12 @@ fun OutputFileCollection.writeAll(
         if (!reportOutputFiles && fileMappingTracker == null) writeAllTo(outputDir)
         else writeAll(outputDir) { outputInfo, output ->
             fileMappingTracker?.let { tracker ->
-                when (outputInfo.generatedForCompilerPlugin) {
-                    false -> tracker.recordSourceFilesToOutputFileMapping(outputInfo.sourceFiles, output)
-                    true -> {
-                        check(outputInfo.sourceFiles.any { !it.exists() }) {
-                            "Output file affected by plugin-generated files should be based on at least one synthetic source file, but got ${outputInfo.sourceFiles.joinToString { it.path }}"
-                        }
-                        tracker.recordSourceFilesToOutputFileMapping(outputInfo.sourceFiles, output)
+                tracker.recordSourceFilesToOutputFileMapping(outputInfo.sourceFiles, output)
+                if (outputInfo.generatedForCompilerPlugin) {
+                    check(outputInfo.sourceFiles.any { !it.exists() }) {
+                        "Output file affected by plugin-generated files should be based on at least one synthetic source file, but got ${outputInfo.sourceFiles.joinToString { it.path }}"
                     }
+                    tracker.recordOutputFileGeneratedForPlugin(output)
                 }
             }
             if (reportOutputFiles) {

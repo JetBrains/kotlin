@@ -154,7 +154,7 @@ open class IncrementalJvmCache(
         when (kotlinClassInfo.classKind) {
             KotlinClassHeader.Kind.FILE_FACADE -> {
                 if (sourceFiles != null) {
-                    assert(sourceFiles.size == 1) { "Package part from several source files: $sourceFiles" }
+                    assert(sourceFiles.size <= 1) { "Package part from several source files: $sourceFiles" }
                 }
                 packagePartMap.addPackagePart(className)
 
@@ -199,7 +199,7 @@ open class IncrementalJvmCache(
             }
             KotlinClassHeader.Kind.MULTIFILE_CLASS_PART -> {
                 if (sourceFiles != null) {
-                    assert(sourceFiles.size == 1) { "Multifile class part from several source files: $sourceFiles" }
+                    assert(sourceFiles.size <= 1) { "Multifile class part from several source files: $sourceFiles" }
                 }
                 packagePartMap.addPackagePart(className)
                 partToMultifileFacade[className] = kotlinClassInfo.multifileClassName!!
@@ -210,7 +210,7 @@ open class IncrementalJvmCache(
                 }
             }
             KotlinClassHeader.Kind.CLASS -> {
-                addToClassStorage(kotlinClassInfo.protoData as ClassProtoData, sourceFiles?.let { sourceFiles.single() }, icContext.useCompilerMapsOnly)
+                addToClassStorage(kotlinClassInfo.protoData as ClassProtoData, sourceFiles?.singleOrNull(), icContext.useCompilerMapsOnly)
 
                 protoMap.process(kotlinClassInfo, changesCollector)
 

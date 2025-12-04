@@ -9,7 +9,6 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.appendText
-import kotlin.test.Ignore
 
 @DisplayName("Sandbox plugin tests")
 @OtherGradlePluginTests
@@ -19,7 +18,6 @@ class SandboxPluginIT : KGPBaseTest() {
 
     @DisplayName("Plugin generates top-level function")
     @GradleTest
-    @Ignore
     fun testTopLevelFunctionGeneration(gradleVersion: GradleVersion) {
         project("sandboxPluginGeneratingTopLevelFunction", gradleVersion) {
             buildGradleKts.appendText(

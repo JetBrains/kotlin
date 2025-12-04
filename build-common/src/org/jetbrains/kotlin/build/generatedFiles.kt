@@ -26,7 +26,7 @@ open class GeneratedFile(
     sourceFiles: Collection<File>,
     val outputFile: File
 ) {
-    val sourceFiles = sourceFiles.sortedBy { it.path }
+    val sourceFiles = sourceFiles.filter { it.exists() }.sortedBy { it.path }
 
     override fun toString(): String = "${this::class.java.simpleName}: $outputFile"
 }
