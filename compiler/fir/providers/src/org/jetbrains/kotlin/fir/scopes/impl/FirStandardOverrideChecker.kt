@@ -142,7 +142,7 @@ class FirStandardOverrideChecker(private val session: FirSession) : FirAbstractO
         return commonCallableChecks(overrideCandidate, baseDeclaration, substitutor, ignoreVisibility)
     }
 
-    private fun FirStandardOverrideChecker.commonCallableChecks(
+    private fun commonCallableChecks(
         overrideCandidate: FirCallableDeclaration,
         baseDeclaration: FirCallableDeclaration,
         substitutor: ConeSubstitutor,
