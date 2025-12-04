@@ -136,6 +136,16 @@ class OrderingTest {
     }
 
     @Test
+    fun sortUsingFunctionalDescendingComparator() {
+        val comparator = compareByDescending<Item>({ it.name }, { it.rating })
+        val diff = comparator.compare(v1, v2)
+        assertTrue(diff < 0)
+        val items = arrayListOf(v1, v2).sortedWith(comparator)
+        assertEquals(v2, items[1])
+        assertEquals(v1, items[0])
+    }
+
+    @Test
     fun sortUsingCustomComparator() {
         val comparator = object : Comparator<Item> {
             override fun compare(a: Item, b: Item): Int {
