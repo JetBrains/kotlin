@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.js.test.converters
 
-import org.jetbrains.kotlin.backend.common.reportLoadingProblemsIfAny
 import org.jetbrains.kotlin.config.moduleName
 import org.jetbrains.kotlin.ir.backend.js.jsOutputName
 import org.jetbrains.kotlin.js.config.*
@@ -13,6 +12,7 @@ import org.jetbrains.kotlin.js.tsexport.TypeScriptExportConfig
 import org.jetbrains.kotlin.js.tsexport.TypeScriptModuleConfig
 import org.jetbrains.kotlin.js.tsexport.runTypeScriptExport
 import org.jetbrains.kotlin.library.loader.KlibLoader
+import org.jetbrains.kotlin.library.loader.reportLoadingProblemsIfAny
 import org.jetbrains.kotlin.library.metadata.KlibInputModule
 import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives

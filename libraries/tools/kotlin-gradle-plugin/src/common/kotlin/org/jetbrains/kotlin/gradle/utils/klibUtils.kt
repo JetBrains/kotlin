@@ -8,10 +8,10 @@ package org.jetbrains.kotlin.gradle.utils
 import org.gradle.api.Project
 import org.gradle.api.logging.LogLevel
 import org.gradle.api.provider.Provider
-import org.jetbrains.kotlin.backend.common.reportLoadingProblemsIfAny
 import org.jetbrains.kotlin.gradle.plugin.mpp.baseModuleName
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.loader.KlibLoader
+import org.jetbrains.kotlin.library.loader.reportLoadingProblemsIfAny
 import org.slf4j.Logger
 import java.io.File
 

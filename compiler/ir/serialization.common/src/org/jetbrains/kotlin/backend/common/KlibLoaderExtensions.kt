@@ -11,16 +11,10 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.DuplicatedUniqueNameStrategy
 import org.jetbrains.kotlin.config.duplicatedUniqueNameStrategy
 import org.jetbrains.kotlin.config.messageCollector
-import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.loader.KlibLoader
 import org.jetbrains.kotlin.library.loader.KlibLoaderResult
-import org.jetbrains.kotlin.library.loader.KlibLoaderResult.ProblemCase
-import org.jetbrains.kotlin.library.loader.KlibLoaderResult.ProblemCase.IncompatibleAbiVersion
-import org.jetbrains.kotlin.library.loader.KlibLoaderResult.ProblemCase.InvalidLibraryFormat
-import org.jetbrains.kotlin.library.loader.KlibLoaderResult.ProblemCase.LibraryNotFound
-import org.jetbrains.kotlin.library.loader.KlibLoaderResult.ProblemCase.PlatformCheckMismatch
-import org.jetbrains.kotlin.library.loader.KlibLoaderResult.ProblematicLibrary
+import org.jetbrains.kotlin.library.loader.reportLoadingProblemsIfAny
 import org.jetbrains.kotlin.library.uniqueName
 import java.nio.file.InvalidPathException
 import java.nio.file.Paths
@@ -81,80 +75,15 @@ fun KlibLoaderResult.reportLoadingProblemsIfAny(
     allAsErrors: Boolean = false
 ) {
     val messageCollector = configuration.messageCollector
-    reportLoadingProblemsIfAny { severity, message ->
-        messageCollector.report(if (allAsErrors) CompilerMessageSeverity.ERROR else severity, message)
-    }
-}
-
-/**
- * Report any problems with loading KLIBs stored in [KlibLoaderResult] to the supplied [reporter] lambda.
- * Returns `true` if there were any problems reported.
- */
-fun KlibLoaderResult.reportLoadingProblemsIfAny(reporter: (severity: CompilerMessageSeverity, message: String) -> Unit): Boolean {
-    if (problematicLibraries.isEmpty()) return false
-
-    problematicLibraries.forEach { problematicLibrary ->
-        reporter(
-            problematicLibrary.problemCase.computeSeverity(),
-            problematicLibrary.computeMessageText()
-        )
-    }
-
-    return true
-}
-
-private fun ProblemCase.computeSeverity(): CompilerMessageSeverity = when (this) {
-    LibraryNotFound, InvalidLibraryFormat -> CompilerMessageSeverity.INFO
-    is PlatformCheckMismatch, is IncompatibleAbiVersion -> CompilerMessageSeverity.STRONG_WARNING
-}
-
-private fun ProblematicLibrary.computeMessageText(): String {
-    val messageText = when (val problemCase = problemCase) {
-        LibraryNotFound -> "Library not found: $libraryPath"
-        InvalidLibraryFormat -> "Not a Kotlin library, or a library with invalid format: $libraryPath"
-
-        is PlatformCheckMismatch -> with(problemCase) {
-            "Library failed platform-specific check: $libraryPath\n" +
-                    "Expected $property is $expected while found $actual."
+    reportLoadingProblemsIfAny { defaultSeverity, message ->
+        val compilerMessageSeverity = if (allAsErrors) CompilerMessageSeverity.ERROR else when (defaultSeverity) {
+            KlibLoaderResult.ProblemSeverity.INFO -> CompilerMessageSeverity.INFO
+            KlibLoaderResult.ProblemSeverity.WARNING -> CompilerMessageSeverity.STRONG_WARNING
+            KlibLoaderResult.ProblemSeverity.ERROR -> CompilerMessageSeverity.ERROR
         }
 
-        is IncompatibleAbiVersion -> with(problemCase) {
-            val libraryCompilerLine: String? = libraryVersions.compilerVersion?.let { "The library was produced by $it compiler." }
-
-            val abiVersionCheckExplanation: String = when {
-                minPermittedAbiVersion != null && maxPermittedAbiVersion != null ->
-                    "ABI version in the range [$minPermittedAbiVersion, $maxPermittedAbiVersion]"
-
-                maxPermittedAbiVersion != null ->
-                    "ABI version <= $maxPermittedAbiVersion"
-
-                else /*if (minPermittedAbiVersion != null)*/ ->
-                    "ABI version >= $minPermittedAbiVersion"
-            }
-
-            val libraryAbiVersion: KotlinAbiVersion? = libraryVersions.abiVersion
-            val lines: List<String> = if (libraryAbiVersion != null) {
-                listOfNotNull(
-                    "Incompatible ABI version $libraryAbiVersion in library: $libraryPath",
-                    libraryCompilerLine,
-                    "The current Kotlin compiler can consume libraries having $abiVersionCheckExplanation",
-                    "Please upgrade your Kotlin compiler version to consume this library."
-                )
-            } else {
-                // This message is not very actionable. However, we shouldn't have to worry about it because
-                // there are no modern libraries without the ABI version in the wild.
-                listOfNotNull(
-                    "Library with unknown ABI version: $libraryPath",
-                    libraryCompilerLine,
-                    "The current Kotlin compiler can consume libraries having $abiVersionCheckExplanation, but it's not possible to determine the exact ABI version."
-                )
-            }
-
-            lines.joinToString("\n")
-        }
+        messageCollector.report(compilerMessageSeverity, message)
     }
-
-    return "KLIB loader: $messageText"
 }
 
 /**
