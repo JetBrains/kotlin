@@ -15,8 +15,11 @@ import com.google.gson.JsonSerializationContext
 import com.google.gson.JsonSerializer
 import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
 import org.jetbrains.kotlin.build.report.metrics.BuildTimeMetric
+import org.jetbrains.kotlin.build.report.metrics.CustomBuildPerformanceMetric
 import org.jetbrains.kotlin.build.report.metrics.CustomBuildTimeMetric
+import org.jetbrains.kotlin.build.report.metrics.ValueType
 import org.jetbrains.kotlin.build.report.metrics.allBuildTimeMetrics
+import org.jetbrains.kotlin.build.report.metrics.allBuildPerformanceMetrics
 import org.jetbrains.kotlin.build.report.metrics.getAllMetrics
 import java.io.File
 import java.lang.reflect.Type
@@ -41,14 +44,29 @@ val buildExecutionDataGson = GsonBuilder()
             context: JsonDeserializationContext?,
         ): BuildPerformanceMetric? {
             val metricName = json?.asJsonObject["name"]?.let { context?.deserialize<String>(it, String::class.java) } ?: return null
+            // Try to find an existing performance metric by name first
             val metric = getAllMetrics().firstOrNull { it.name == metricName }
             if (metric != null) return metric
 
+            // Resolve parent as a BuildPerformanceMetric (not BuildTimeMetric)
             val parentMetricName =
-                json.asJsonObject["parent"]?.asJsonObject["name"]?.let { context?.deserialize<String>(it, String::class.java) }
-            val parentMetric = allBuildTimeMetrics.firstOrNull { it.name == parentMetricName }
+                json.asJsonObject["parent"]?.asJsonObject?.get("name")?.let { context?.deserialize<String>(it, String::class.java) }
+            val parentMetric = allBuildPerformanceMetrics.firstOrNull { it.name == parentMetricName }
 
-            return CustomBuildTimeMetric.createIfDoesNotExistAndReturn(name = metricName, parentMetric)
+            // Resolve ValueType for BuildPerformanceMetric
+            val typeJson = json.asJsonObject["type"]
+            val valueType: ValueType = if (typeJson != null) {
+                context?.deserialize(typeJson, ValueType::class.java) ?: ValueType.NUMBER
+            } else {
+                ValueType.NUMBER
+            }
+
+            // Create or return a CustomBuildPerformanceMetric
+            return CustomBuildPerformanceMetric.createIfDoesNotExistAndReturn(
+                name = metricName,
+                type = valueType,
+                parent = parentMetric
+            )
         }
 
     }).registerTypeAdapter(BuildTimeMetric::class.java, object : JsonDeserializer<BuildTimeMetric> {

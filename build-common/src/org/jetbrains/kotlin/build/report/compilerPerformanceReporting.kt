@@ -52,6 +52,10 @@ fun BuildReporter<BuildTimeMetric, BuildPerformanceMetric>.reportPerformanceData
         }
     }
 
+    moduleStats.klibElementStats?.forEach { (path, size) ->
+        addMetric(CustomBuildPerformanceMetric.createIfDoesNotExistAndReturn(path, ValueType.NUMBER), size)
+    }
+
     if (codegenTime != Time.ZERO) {
         addTimeMetricNs(CODE_GENERATION, codegenTime.nanos)
         reportLps(CODE_GENERATION_LPS, codegenTime)
