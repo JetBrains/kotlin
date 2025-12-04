@@ -93,7 +93,7 @@ import org.jetbrains.kotlin.utils.memoryOptimizedPlus
  *
  *   @JsExport.Ignore
  *   // This function is used on the call side
- *   open suspend fun foo$suspendBridge(a: Int, b: String): String =
+ *   private suspend fun foo$suspendBridge(a: Int, b: String): String =
  *     if (this.foo === SomeClass.prototype.foo) {
  *       this.foo(a, b)
  *     } else {
@@ -167,6 +167,7 @@ internal class PrepareSuspendFunctionsForExportLowering(private val context: JsI
             origin = EXPORTED_SUSPEND_FUNCTION_BRIDGE
             startOffset = UNDEFINED_OFFSET
             endOffset = UNDEFINED_OFFSET
+            visibility = DescriptorVisibilities.PRIVATE
         }.also { bridgeFunc ->
             bridgeFunc.copyFunctionSignatureFrom(originalFunc)
 

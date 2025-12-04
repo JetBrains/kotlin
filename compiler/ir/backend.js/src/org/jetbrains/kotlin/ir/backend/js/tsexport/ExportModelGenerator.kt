@@ -483,7 +483,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val isEsModules: Boo
     }
 
     private fun IrClass.shouldNotBeImplemented(): Boolean {
-        return isInterface && !isExternal || isJsImplicitExport()
+        return isJsImplicitExport()
     }
 
     private fun IrValueParameter.shouldBeExported(): Boolean {
@@ -532,7 +532,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val isEsModules: Boo
     private fun IrClass.isOwnMagicPropertyAdded(): Boolean {
         if (isJsImplicitExport()) return true
         if (!isExported(context)) return false
-        return isInterface && !isExternal || superTypes.any {
+        return superTypes.any {
             it.classOrNull?.owner?.isOwnMagicPropertyAdded() == true
         }
     }
