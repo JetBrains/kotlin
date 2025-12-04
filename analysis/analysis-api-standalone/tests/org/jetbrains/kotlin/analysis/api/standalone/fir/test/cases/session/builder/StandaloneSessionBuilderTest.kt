@@ -113,6 +113,25 @@ class StandaloneSessionBuilderTest : AbstractStandaloneTest() {
     }
 
     @Test
+    fun testFollowingSymbolicLinks() {
+        lateinit var sourceModule: KaSourceModule
+        val session = buildStandaloneAnalysisAPISession(disposable) {
+            buildKtModuleProvider {
+                platform = JvmPlatforms.defaultJvmPlatform
+                sourceModule = addModule(
+                    buildKtSourceModule {
+                        addSourceRoot(testDataPath("symLinks").resolve("src"))
+                        platform = JvmPlatforms.defaultJvmPlatform
+                        moduleName = "source"
+                    }
+                )
+            }
+        }
+        val ktFiles = session.modulesWithFiles.getValue(sourceModule)
+        Assertions.assertEquals(listOf("source0.kt"), ktFiles.map { it.name })
+    }
+
+    @Test
     fun testJvmInlineOnCommon() {
         // Example from https://youtrack.jetbrains.com/issue/KT-55085
         val root = "jvmInlineOnCommon"
