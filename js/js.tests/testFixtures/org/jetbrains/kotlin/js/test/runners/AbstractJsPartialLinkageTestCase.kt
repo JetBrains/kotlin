@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.js.test.ir
+package org.jetbrains.kotlin.js.test.runners
 
 import com.intellij.testFramework.TestDataFile
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime

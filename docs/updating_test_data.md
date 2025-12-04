@@ -15,8 +15,7 @@ It was tested on updating IR dump files (`*.ir.txt` and `*.kt.txt`), it may not 
 ./gradlew :compiler:fir:fir2ir:test --tests "org.jetbrains.kotlin.test.runners.codegen.FirLightTreeBlackBoxCodegenTestGenerated" --continue -Pkotlin.test.update.test.data=true
 ./gradlew :compiler:fir:fir2ir:test --tests "org.jetbrains.kotlin.test.runners.codegen.FirLightTreeBlackBoxModernJdkCodegenTestGenerated" --continue -Pkotlin.test.update.test.data=true
 ./gradlew :compiler:fir:fir2ir:test --tests "org.jetbrains.kotlin.test.runners.codegen.FirLightTreeBytecodeListingTestGenerated" --continue -Pkotlin.test.update.test.data=true
-./gradlew :js:js.tests:test --tests "org.jetbrains.kotlin.js.test.ir.ClassicJsIrTextTestGenerated" --continue -Pkotlin.test.update.test.data=true
-./gradlew :js:js.tests:test --tests "org.jetbrains.kotlin.js.test.fir.FirLightTreeJsIrTextTestGenerated" --continue -Pkotlin.test.update.test.data=true
+./gradlew :js:js.tests:test --tests "org.jetbrains.kotlin.js.test.runners.LightTreeJsIrTextTestGenerated" --continue -Pkotlin.test.update.test.data=true
 ./gradlew :native:native.tests:test --tests "org.jetbrains.kotlin.konan.test.irtext.ClassicNativeIrTextTestGenerated" --continue -Pkotlin.test.update.test.data=true
 ./gradlew :native:native.tests:test --tests "org.jetbrains.kotlin.konan.test.irtext.FirLightTreeNativeIrTextTestGenerated" --continue -Pkotlin.test.update.test.data=true
 ./gradlew :native:native.tests:klibTest --tests "org.jetbrains.kotlin.konan.test.klib.FirKlibCrossCompilationIdentityTestGenerated" --continue -Pkotlin.test.update.test.data=true

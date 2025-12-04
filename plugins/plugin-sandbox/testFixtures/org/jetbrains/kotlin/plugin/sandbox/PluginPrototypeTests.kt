@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.plugin.sandbox
 
-import org.jetbrains.kotlin.js.test.fir.AbstractJsTest
-import org.jetbrains.kotlin.js.test.fir.AbstractLoadCompiledJsKotlinTest
-import org.jetbrains.kotlin.js.test.ir.AbstractJsBlackBoxCodegenWithSeparateKmpCompilationTestBase
+import org.jetbrains.kotlin.js.test.runners.AbstractJsBlackBoxCodegenWithSeparateKmpCompilationTestBase
+import org.jetbrains.kotlin.js.test.runners.AbstractJsTest
+import org.jetbrains.kotlin.js.test.runners.AbstractLoadCompiledJsKotlinTest
 import org.jetbrains.kotlin.kotlinp.jvm.test.CompareMetadataHandler
 import org.jetbrains.kotlin.plugin.sandbox.PluginSandboxDirectives.DONT_LOAD_IN_SYNTHETIC_MODULES
 import org.jetbrains.kotlin.test.FirParser
