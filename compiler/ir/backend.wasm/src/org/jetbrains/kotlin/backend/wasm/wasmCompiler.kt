@@ -166,6 +166,8 @@ fun lowerPreservingTags(
 
 data class WasmModuleDependencyImport(val name: String, val fileName: String)
 
+internal const val wasmInitializeExportName = "_initialize"
+internal const val wasmStartExportName = "_start"
 internal const val jsBuiltinsModulePrefix = "wasm:"
 internal const val importedStringConstants = "'"
 
@@ -216,10 +218,16 @@ fun linkAndCompileWasmIrToBinary(moduleConfiguration: WasmIrModuleConfiguration)
 
     val wasmCompiledModuleFragment = WasmCompiledModuleFragment(wasmCompiledFileFragments, isWasmJsTarget)
 
+    val wasmCommandModuleInitialization = configuration.get(WasmConfigurationKeys.WASM_COMMAND_MODULE) ?: false
+
     val linkedModule = wasmCompiledModuleFragment.linkWasmCompiledFragments(
         multimoduleOptions = multimoduleParameters,
-        exceptionTagType = exceptionTagType
+        exceptionTagType = exceptionTagType,
+        wasmCommandModuleInitialization = wasmCommandModuleInitialization,
     )
+
+    val wasmStartFunctionDefined = linkedModule.exports.any { it.name == wasmStartExportName }
+    val wasmInitializeFunctionDefined = linkedModule.exports.any { it.name == wasmInitializeExportName }
 
     val debuggerParameters = moduleConfiguration.debuggerOptions
     val dwarfGeneratorForBinary = runIf(debuggerParameters.generateDwarf) {
@@ -328,6 +336,8 @@ fun linkAndCompileWasmIrToBinary(moduleConfiguration: WasmIrModuleConfiguration)
             baseFileName = baseFileName,
             isStdlibModule = isStdlibModule,
             wholeProgramMode = wholeProgramMode,
+            wasmStartFunctionDefined = wasmStartFunctionDefined,
+            wasmInitializeFunctionDefined = wasmInitializeFunctionDefined
         )
 
     } else {
@@ -335,7 +345,9 @@ fun linkAndCompileWasmIrToBinary(moduleConfiguration: WasmIrModuleConfiguration)
             wasmCompiledModuleFragment.generateAsyncWasiWrapper(
                 wasmFilePath = "./$baseFileName.wasm",
                 exports = linkedModule.exports,
-                useDebuggerCustomFormatters = debuggerParameters.useDebuggerCustomFormatters
+                useDebuggerCustomFormatters = debuggerParameters.useDebuggerCustomFormatters,
+                wasmStartFunctionDefined = wasmStartFunctionDefined,
+                wasmInitializeFunctionDefined = wasmInitializeFunctionDefined
             )
     }
 
@@ -358,8 +370,18 @@ fun linkAndCompileWasmIrToBinary(moduleConfiguration: WasmIrModuleConfiguration)
 fun WasmCompiledModuleFragment.generateAsyncWasiWrapper(
     wasmFilePath: String,
     exports: List<WasmExport<*>>,
-    useDebuggerCustomFormatters: Boolean
-): String = """
+    useDebuggerCustomFormatters: Boolean,
+    wasmStartFunctionDefined: Boolean,
+    wasmInitializeFunctionDefined: Boolean
+): String {
+    val mainFunctionCall = if (wasmInitializeFunctionDefined)
+        "wasi.initialize(wasmInstance);"
+    else if (wasmStartFunctionDefined)
+        "wasi.start(wasmInstance);"
+    else
+        "wasi.finalizeBindings(wasmInstance);"
+
+    return """
 import { WASI } from 'wasi';
 import { argv, env } from 'node:process';
 ${if (useDebuggerCustomFormatters) "import \"./custom-formatters.js\"" else ""}
@@ -372,11 +394,12 @@ const wasmBuffer = fs.readFileSync(url.fileURLToPath(import.meta.resolve('$wasmF
 const wasmModule = new WebAssembly.Module(wasmBuffer);
 const wasmInstance = new WebAssembly.Instance(wasmModule, wasi.getImportObject());
 
-wasi.initialize(wasmInstance);
+$mainFunctionCall
 
 const exports = wasmInstance.exports
 ${generateExports(exports, wholeProgramMode = false, isStdlibModule = false)}
 """
+}
 
 fun generateImportObject(
     jsModuleImports: Set<String>,
@@ -591,9 +614,18 @@ fun generateWebAssemblyJsInstanceInitializer(
     baseFileName: String,
     isStdlibModule: Boolean,
     wholeProgramMode: Boolean,
+    wasmStartFunctionDefined: Boolean,
+    wasmInitializeFunctionDefined: Boolean
 ): String {
 
     val commonStdlibExports = if (isStdlibModule) ", getCachedJsObject, __TAG as wasmTag" else ""
+
+    val mainFunctionCall = if (wasmStartFunctionDefined)
+        "exports.$wasmStartExportName();"
+    else if (wasmInitializeFunctionDefined)
+        "exports.$wasmInitializeExportName();"
+    else
+        ""
 
     val staticImports = """
 ${if (useDebuggerCustomFormatters) "import \"./custom-formatters.js\"" else ""}
@@ -677,7 +709,7 @@ For more information, see https://kotl.in/wasm-help
 
 const exports = wasmInstance.exports
 setWasmExports(exports);
-exports._initialize();
+$mainFunctionCall
 
 ${generateExports(exports, wholeProgramMode, isStdlibModule)}
 """

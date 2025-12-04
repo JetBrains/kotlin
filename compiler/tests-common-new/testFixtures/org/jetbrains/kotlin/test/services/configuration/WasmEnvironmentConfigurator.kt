@@ -73,6 +73,7 @@ abstract class WasmEnvironmentConfigurator(
         configuration.moduleName = module.name
 
         configuration.put(WasmConfigurationKeys.WASM_TARGET, wasmTarget)
+        configuration.put(WasmConfigurationKeys.WASM_COMMAND_MODULE, wasmTarget == WasmTarget.WASI)
     }
 }
 

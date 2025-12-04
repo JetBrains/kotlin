@@ -222,8 +222,11 @@ internal fun getLinkedModule(moduleConfiguration: WasmIrModuleConfiguration, was
         else -> ExceptionTagType.WASM_TAG
     }
 
+    val wasmCommandModuleInitialization = configuration.get(WasmConfigurationKeys.WASM_COMMAND_MODULE) ?: false
+
     return wasmCompiledModuleFragment.linkWasmCompiledFragments(
         multimoduleOptions = multimoduleParameters,
-        exceptionTagType = exceptionTagType
+        exceptionTagType = exceptionTagType,
+        wasmCommandModuleInitialization = wasmCommandModuleInitialization
     )
 }

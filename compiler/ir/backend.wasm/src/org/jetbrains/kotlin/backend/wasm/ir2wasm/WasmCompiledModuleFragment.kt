@@ -12,7 +12,9 @@ import org.jetbrains.kotlin.backend.wasm.MultimoduleCompileOptions
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.backend.wasm.importedStringConstants
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmCompiledModuleFragment.*
+import org.jetbrains.kotlin.backend.wasm.wasmStartExportName
 import org.jetbrains.kotlin.backend.wasm.utils.fitsLatin1
+import org.jetbrains.kotlin.backend.wasm.wasmInitializeExportName
 import org.jetbrains.kotlin.ir.backend.js.ic.IrICProgramFragment
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.wasm.ir.*
@@ -115,10 +117,10 @@ class WasmCompiledModuleFragment(
         definedDeclarations: DefinedDeclarationsResolver,
         stringEntities: StringLiteralWasmEntities,
         stringPoolSize: Int,
-        initializeUnit: Boolean,
         stringPoolSizeWithGlobals: Int,
         wasmElements: MutableList<WasmElement>,
         exports: MutableList<WasmExport<*>>,
+        wasmCommandModuleInitialization: Boolean,
     ) {
         stringAddressesAndLengthsField(
             definedDeclarations = definedDeclarations,
@@ -126,18 +128,21 @@ class WasmCompiledModuleFragment(
 
         createFieldInitializerFunction(definedDeclarations = definedDeclarations, stringPoolSize = stringPoolSize)
 
-        val registerAssociatedObjectGetter =
-            createAssociatedObjectGetter(
-                definedDeclarations = definedDeclarations,
-                wasmElements = wasmElements,
-            )
+        createAssociatedObjectGetter(definedDeclarations = definedDeclarations, wasmElements = wasmElements)
 
-        createAndExportMasterInitFunction(
-            definedDeclarations = definedDeclarations,
-            exports = exports,
-            registerAssociatedObjectGetter = registerAssociatedObjectGetter,
-            initializeUnit = initializeUnit
-        )
+        val mainFunctionSymbols = wasmCompiledFileFragments.flatMap { fragment ->
+            fragment.mainFunctionWrappers.map { signature ->
+                fragment.definedFunctions[signature]
+                    ?: compilationException("Cannot find symbol for main wrapper", type = null)
+            }
+        }
+
+        val mainFunctionsExportName = if (wasmCommandModuleInitialization)
+            wasmInitializeExportName
+        else
+            wasmStartExportName
+
+        exports.addAll(mainFunctionSymbols.map { WasmExport.Function(mainFunctionsExportName, it) })
 
         createStringPoolField(definedDeclarations, stringPoolSizeWithGlobals)
 
@@ -178,9 +183,9 @@ class WasmCompiledModuleFragment(
         definedDeclarations: DefinedDeclarationsResolver,
     ): StringLiteralWasmEntities {
         val createStringSignature = tryFindBuiltInFunction { it.createString }
-            ?: compilationException("kotlin.createString is not file in fragments", null)
+            ?: compilationException("kotlin.createString is not found in fragments", null)
         val createStringFunction = definedDeclarations.functions[createStringSignature]
-            ?: compilationException("kotlin.createString is not file in fragments", null)
+            ?: compilationException("kotlin.createString is not found in fragments", null)
 
         val createStringFunctionTypeSignature = (createStringFunction.type as FunctionHeapTypeSymbol).type
         val createStringFunctionType = definedDeclarations.functionTypes.getValue(createStringFunctionTypeSignature)
@@ -207,7 +212,8 @@ class WasmCompiledModuleFragment(
 
     fun linkWasmCompiledFragments(
         multimoduleOptions: MultimoduleCompileOptions?,
-        exceptionTagType: ExceptionTagType
+        exceptionTagType: ExceptionTagType,
+        wasmCommandModuleInitialization: Boolean
     ): WasmModule {
         val definedDeclarations = getDefinedDeclarationsFromFragments()
 
@@ -236,10 +242,15 @@ class WasmCompiledModuleFragment(
             definedDeclarations = definedDeclarations,
             stringEntities = stringEntities,
             stringPoolSize = stringPoolSize,
-            initializeUnit = multimoduleOptions?.initializeUnit ?: true,
             stringPoolSizeWithGlobals = stringPoolSizeWithGlobals,
             wasmElements = elements,
             exports = exports,
+            wasmCommandModuleInitialization = wasmCommandModuleInitialization,
+        )
+
+        val masterInitFunction = createMasterInitFunction(
+            definedDeclarations = definedDeclarations,
+            initializeUnit = multimoduleOptions?.initializeUnit ?: true
         )
 
         val globals = getGlobals(definedDeclarations)
@@ -274,7 +285,7 @@ class WasmCompiledModuleFragment(
             globals = definedGlobals,
             importedGlobals = importedGlobals,
             exports = exports,
-            startFunction = null,  // Module is initialized via export call
+            startFunction = masterInitFunction,
             elements = elements,
             data = data,
             dataCount = true,
@@ -466,50 +477,42 @@ class WasmCompiledModuleFragment(
         return listOf(memory)
     }
 
-    private fun createAndExportMasterInitFunction(
+    private fun createMasterInitFunction(
         definedDeclarations: DefinedDeclarationsResolver,
-        exports: MutableList<WasmExport<*>>,
-        registerAssociatedObjectGetter: Boolean,
         initializeUnit: Boolean,
-    ) {
-        val masterInitFunction = WasmFunction.Defined("_initialize", Synthetics.FunctionHeapTypes.parameterlessNoReturnFunctionType)
+    ): WasmFunction.Defined {
+        val masterInitFunction = WasmFunction.Defined("_initializeModule", Synthetics.FunctionHeapTypes.parameterlessNoReturnFunctionType)
         with(WasmExpressionBuilder(masterInitFunction.instructions)) {
             if (initializeUnit) {
                 val unitGetInstance = tryFindBuiltInFunction { it.unitGetInstance }
-                    ?: compilationException("kotlin.Unit_getInstance is not file in fragments", null)
+                    ?: compilationException("kotlin.Unit_getInstance is not found in fragments", null)
                 buildCall(unitGetInstance, serviceCodeLocation)
             }
 
             buildCall(Synthetics.Functions.fieldInitializerFunction, serviceCodeLocation)
 
-            if (registerAssociatedObjectGetter) {
+            if (definedDeclarations.functions.containsKey(Synthetics.Functions.associatedObjectGetter.value)) {
                 // we do not register descriptor while no need in it
                 val registerModuleDescriptor = tryFindBuiltInFunction { it.registerModuleDescriptor }
-                    ?: compilationException("kotlin.registerModuleDescriptor is not file in fragments", null)
+                    ?: compilationException("kotlin.registerModuleDescriptor is not found in fragments", null)
 
                 buildInstr(WasmOp.REF_FUNC, serviceCodeLocation, Synthetics.Functions.associatedObjectGetter)
                 buildInstr(WasmOp.STRUCT_NEW, serviceCodeLocation, Synthetics.GcTypes.associatedObjectGetterWrapper)
                 buildCall(registerModuleDescriptor, serviceCodeLocation)
             }
 
-            wasmCompiledFileFragments.forEach { fragment ->
-                fragment.mainFunctionWrappers.forEach { signature ->
-                    buildCall(signature, serviceCodeLocation)
-                }
-            }
             buildInstr(WasmOp.RETURN, serviceCodeLocation)
         }
-
-        exports.add(WasmExport.Function("_initialize", masterInitFunction))
         definedDeclarations.functions[Synthetics.Functions.masterInitFunction.value] = masterInitFunction
+        return masterInitFunction
     }
 
     private fun createAssociatedObjectGetter(
         definedDeclarations: DefinedDeclarationsResolver,
         wasmElements: MutableList<WasmElement>,
-    ): Boolean {
+    ) {
         // If AO accessor removed by DCE - we do not need it then
-        if (tryFindBuiltInFunction { it.tryGetAssociatedObject } == null) return false
+        if (tryFindBuiltInFunction { it.tryGetAssociatedObject } == null) return
 
         val kotlinAny = tryFindBuiltInType { it.kotlinAny }
             ?: compilationException("kotlin.Any is not found in fragments", null)
@@ -581,8 +584,6 @@ class WasmCompiledModuleFragment(
         )
 
         definedDeclarations.gcTypes[Synthetics.GcTypes.associatedObjectGetterWrapper.value] = associatedObjectGetterWrapper
-
-        return true
     }
 
     private fun createStartUnitTestsFunction(definedDeclarations: DefinedDeclarationsResolver, exports: MutableList<WasmExport<*>>) {
