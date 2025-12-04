@@ -146,7 +146,7 @@ private class SyntheticAccessorTransformer(
         val generateSpecialAccessWithoutSyntheticAccessor =
             shouldGenerateSpecialAccessWithoutSyntheticAccessor(expression, withSuper, thisSymbol)
 
-        if (expression is IrCall && callee.symbol == context.symbols.indyLambdaMetafactoryIntrinsic) {
+        if (expression is IrCall && callee.symbol == context.symbols.indyLambdaMetafactoryIntrinsic) { // todo
             return super.visitExpression(handleLambdaMetafactoryIntrinsic(expression, thisSymbol))
         }
 

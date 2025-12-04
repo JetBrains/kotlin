@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.config.JvmClosureGenerationScheme
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
@@ -26,11 +27,15 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
+import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_SERIALIZABLE_LAMBDA_ANNOTATION_FQ_NAME
@@ -43,6 +48,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
  */
 internal class FunctionReferenceLowering(private val context: JvmBackendContext) : FileLoweringPass, IrElementTransformerVoidWithContext() {
     private val crossinlineLambdas = HashSet<IrSimpleFunction>()
+    private val functionsToDelete = HashSet<IrFunction>()
 
     private val IrFunctionReference.isIgnored: Boolean
         get() = (!type.isFunctionOrKFunction() && !isSuspendFunctionReference()) || origin == IrStatementOrigin.INLINE_LAMBDA
@@ -64,6 +70,35 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
             irFile.transformChildrenVoid(this)
         }
         crossinlineLambdas.clear()
+
+        irFile.acceptVoid(object : IrVisitorVoid() {
+            override fun visitElement(element: IrElement) {
+                element.acceptChildrenVoid(this)
+            }
+
+            override fun visitRichFunctionReference(expression: IrRichFunctionReference) {
+                expression.invokeFunction.acceptChildrenVoid(this)
+                expression.boundValues.forEach { it.acceptChildrenVoid(this) }
+            }
+
+            override fun visitClass(declaration: IrClass) {
+                val declarationsToDelete = declaration.declarations.filter { it in functionsToDelete }
+                declaration.declarations.removeAll(declarationsToDelete)
+                super.visitClass(declaration)
+            }
+
+            override fun visitContainerExpression(expression: IrContainerExpression) {
+                val declarationsToDelete = expression.statements.filter { it in functionsToDelete }
+                expression.statements.removeAll(declarationsToDelete)
+                super.visitContainerExpression(expression)
+            }
+
+            override fun visitBlockBody(body: IrBlockBody) {
+                val declarationsToDelete = body.statements.filter { it in functionsToDelete }
+                body.statements.removeAll(declarationsToDelete)
+                super.visitBlockBody(body)
+            }
+        })
     }
 
     private val shouldGenerateIndySamConversions =
@@ -114,7 +149,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
         reference: IrFunctionReference,
         lambdaMetafactoryArguments: LambdaMetafactoryArguments,
     ): IrBlock {
-        val indySamConversion = wrapWithIndySamConversion(reference.type, lambdaMetafactoryArguments)
+        val indySamConversion = wrapWithIndySamConversion(reference.type, lambdaMetafactoryArguments, origin = reference.origin)
         expression.statements[expression.statements.size - 1] = indySamConversion
         expression.type = indySamConversion.type
         return expression
@@ -194,7 +229,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
                     .getLambdaMetafactoryArguments(reference, samSuperType, plainLambda = false, forceSerializability = false)
             if (lambdaMetafactoryArguments is LambdaMetafactoryArguments) {
                 return wrapSamConversionArgumentWithIndySamConversion(expression) { samType ->
-                    wrapWithIndySamConversion(samType, lambdaMetafactoryArguments, expression.startOffset, expression.endOffset)
+                    wrapWithIndySamConversion(samType, lambdaMetafactoryArguments, expression.startOffset, expression.endOffset, reference.origin)
                 }
             } else if (lambdaMetafactoryArguments is MetafactoryArgumentsResult.Failure.FunctionHazard) {
                 // Try wrapping function with a proxy local function and see if that helps.
@@ -205,7 +240,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
                 if (proxyLambdaMetafactoryArguments is LambdaMetafactoryArguments) {
                     return wrapSamConversionArgumentWithIndySamConversion(expression) { samType ->
                         proxyLocalFunBlock.statements[proxyLocalFunBlock.statements.size - 1] =
-                            wrapWithIndySamConversion(samType, proxyLambdaMetafactoryArguments)
+                            wrapWithIndySamConversion(samType, proxyLambdaMetafactoryArguments, origin = proxyLocalFunRef.origin)
                         proxyLocalFunBlock.type = samType
                         proxyLocalFunBlock
                     }
@@ -362,7 +397,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
         lambdaBlock: SamDelegatingLambdaBlock,
         lambdaMetafactoryArguments: LambdaMetafactoryArguments,
     ): IrExpression {
-        val indySamConversion = wrapWithIndySamConversion(samSuperType, lambdaMetafactoryArguments)
+        val indySamConversion = wrapWithIndySamConversion(samSuperType, lambdaMetafactoryArguments, origin = lambdaBlock.ref.origin)
         lambdaBlock.replaceRefWith(indySamConversion)
         return lambdaBlock.block
     }
@@ -392,7 +427,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
         return block
     }
 
-    private val jvmIndyLambdaMetafactoryIntrinsic = context.symbols.indyLambdaMetafactoryIntrinsic
+    private val jvmIndyLambdaMetafactoryIntrinsic = context.symbols.indyLambdaMetafactoryIntrinsic // delete
 
     private val specialNullabilityAnnotationsFqNames =
         setOf(
@@ -405,19 +440,30 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
         lambdaMetafactoryArguments: LambdaMetafactoryArguments,
         startOffset: Int = UNDEFINED_OFFSET,
         endOffset: Int = UNDEFINED_OFFSET,
-    ): IrCall {
+        origin: IrStatementOrigin?,
+    ): IrExpression {
         val notNullSamType = samType.makeNotNull()
             .removeAnnotations { it.type.classFqName in specialNullabilityAnnotationsFqNames }
         return context.createJvmIrBuilder(currentScope!!, startOffset, endOffset).run {
             // See [org.jetbrains.kotlin.backend.jvm.JvmSymbols::indyLambdaMetafactoryIntrinsic].
-            irCall(jvmIndyLambdaMetafactoryIntrinsic, notNullSamType).apply {
-                typeArguments[0] = notNullSamType
-                arguments[0] = irRawFunctionRef(lambdaMetafactoryArguments.samMethod)
-                arguments[1] = lambdaMetafactoryArguments.implMethodReference
-                arguments[2] = irRawFunctionRef(lambdaMetafactoryArguments.fakeInstanceMethod)
-                arguments[3] = irVarargOfRawFunctionRefs(lambdaMetafactoryArguments.extraOverriddenMethods)
-                arguments[4] = irBoolean(lambdaMetafactoryArguments.shouldBeSerializable)
-            }
+            val invokeFunction = lambdaMetafactoryArguments.implMethodReference.symbol.owner as IrSimpleFunction
+            functionsToDelete.add(invokeFunction)
+            IrRichFunctionReferenceImpl(
+                startOffset = UNDEFINED_OFFSET, endOffset = UNDEFINED_OFFSET,
+                type = notNullSamType,
+                overriddenFunctionSymbol = lambdaMetafactoryArguments.samMethod.symbol,
+                invokeFunction = invokeFunction,
+                reflectionTargetSymbol = null,
+                origin = origin,
+            ).apply { indyCallData = IndyCallData(lambdaMetafactoryArguments.shouldBeSerializable) }
+//            irCall(jvmIndyLambdaMetafactoryIntrinsic, notNullSamType).apply {
+//                typeArguments[0] = notNullSamType
+//                arguments[0] = irRawFunctionRef(lambdaMetafactoryArguments.samMethod)
+//                arguments[1] = lambdaMetafactoryArguments.implMethodReference
+//                arguments[2] = irRawFunctionRef(lambdaMetafactoryArguments.fakeInstanceMethod)
+//                arguments[3] = irVarargOfRawFunctionRefs(lambdaMetafactoryArguments.extraOverriddenMethods)
+//                arguments[4] = irBoolean(lambdaMetafactoryArguments.shouldBeSerializable)
+//            }
         }
     }
 
@@ -921,3 +967,8 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
             }
     }
 }
+
+data class IndyCallData(val shouldBeSerializable: Boolean)
+
+var IrRichFunctionReference.indyCallData by irAttribute<_, IndyCallData>(copyByDefault = true)
+    private set

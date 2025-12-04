@@ -34,7 +34,7 @@ internal class JvmUpgradeCallableReferences(context: JvmBackendContext) : Upgrad
     // TODO change after KT-78719
     override fun IrTransformer<IrDeclarationParent>.processCallExpression(expression: IrCall, data: IrDeclarationParent): IrElement {
         val function = expression.symbol.owner
-        if (function.symbol == jvmSymbols.indyLambdaMetafactoryIntrinsic) {
+        if (function.symbol == jvmSymbols.indyLambdaMetafactoryIntrinsic) { // delete
             for ((i, element) in expression.arguments.withIndex()) {
                 expression.arguments[i] = if (i == 1) {
                     element?.transformChildren(this, data)
