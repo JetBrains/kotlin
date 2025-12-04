@@ -35,6 +35,8 @@ object ToolingSingleFileKlibResolveStrategy : SingleFileKlibResolveStrategy {
     }
 
     private fun fakeLibrary(libraryFile: File): KotlinLibrary = object : KotlinLibrary {
+        override fun toString() = "[non-existent library] $location"
+
         override val location = libraryFile
         override val attributes = KlibAttributes()
         override val versions = KotlinLibraryVersioning(null, null, null)
