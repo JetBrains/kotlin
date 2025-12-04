@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -14,7 +14,7 @@ public expect class LinkedHashMap<K, V> : MutableMap<K, V> {
     /**
      * Creates a new empty [LinkedHashMap] with the specified initial capacity.
      *
-     * Capacity is the maximum number of entries the map is able to store in current internal data structure.
+     * Capacity is the maximum number of entries the map is able to store in the current internal data structure.
      * When the map gets full by a certain default load factor, its capacity is expanded,
      * which usually leads to rebuild of the internal data structure.
      *
@@ -28,7 +28,7 @@ public expect class LinkedHashMap<K, V> : MutableMap<K, V> {
     /**
      * Creates a new empty [LinkedHashMap] with the specified initial capacity and load factor.
      *
-     * Capacity is the maximum number of entries the map is able to store in current internal data structure.
+     * Capacity is the maximum number of entries the map is able to store in the current internal data structure.
      * Load factor is the measure of how full the map is allowed to get in relation to
      * its capacity before the capacity is expanded, which usually leads to rebuild of the internal data structure.
      *
@@ -60,6 +60,7 @@ public expect class LinkedHashMap<K, V> : MutableMap<K, V> {
 
     @IgnorableReturnValue
     override fun put(key: K, value: V): V?
+
     @IgnorableReturnValue
     override fun remove(key: K): V?
     override fun putAll(from: Map<out K, V>)
