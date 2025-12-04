@@ -6484,6 +6484,12 @@ public class LLPartialDiagnosticsFirTestGenerated extends AbstractLLPartialDiagn
       }
 
       @Test
+      @TestMetadata("elvisWithMaterialize.kt")
+      public void testElvisWithMaterialize() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/inference/elvisWithMaterialize.kt");
+      }
+
+      @Test
       @TestMetadata("equals.kt")
       public void testEquals() {
         runTest("compiler/fir/analysis-tests/testData/resolve/inference/equals.kt");
