@@ -25,7 +25,16 @@ internal open class DescriptorKPropertyN<out V> : DescriptorKProperty<V> {
 
     override val getter: Getter<V> by lazy(PUBLICATION) { Getter(this) }
 
-    class Getter<out V>(override val property: DescriptorKPropertyN<V>) : DescriptorKProperty.Getter<V>()
+    override fun shallowCopy(container: KDeclarationContainerImpl): DescriptorKPropertyN<V> =
+        DescriptorKPropertyN<V>(container, descriptor).also { new ->
+            new.forceModality = forceModality
+        }
+
+    class Getter<out V>(override val property: DescriptorKPropertyN<V>) : DescriptorKProperty.Getter<V>() {
+        // override fun shallowCopy(descriptor: CallableMemberDescriptor): Getter<V> = Getter(property).also { new ->
+        //     new.forceModality = forceModality
+        // }
+    }
 }
 
 internal class DescriptorKMutablePropertyN<V> : DescriptorKPropertyN<V>, KMutableProperty<V> {
@@ -33,5 +42,14 @@ internal class DescriptorKMutablePropertyN<V> : DescriptorKPropertyN<V>, KMutabl
 
     override val setter: Setter<V> by lazy(PUBLICATION) { Setter(this) }
 
-    class Setter<V>(override val property: DescriptorKMutablePropertyN<V>) : DescriptorKProperty.Setter<V>()
+    override fun shallowCopy(container: KDeclarationContainerImpl): DescriptorKMutablePropertyN<V> =
+        DescriptorKMutablePropertyN<V>(container, descriptor).also { new ->
+            new.forceModality = forceModality
+        }
+
+    class Setter<V>(override val property: DescriptorKMutablePropertyN<V>) : DescriptorKProperty.Setter<V>() {
+        // override fun shallowCopy(descriptor: CallableMemberDescriptor): Setter<V> = Setter(property).also { new ->
+        //     new.forceModality = forceModality
+        // }
+    }
 }

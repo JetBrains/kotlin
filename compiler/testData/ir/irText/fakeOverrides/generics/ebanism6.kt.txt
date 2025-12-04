@@ -1,0 +1,27 @@
+class D : A, B, C {
+  constructor() /* primary */ {
+    super/*A*/()
+    /* <init>() */
+
+  }
+
+}
+
+class E : A, B, C {
+  constructor() /* primary */ {
+    super/*A*/()
+    /* <init>() */
+
+  }
+
+}
+
+interface B {
+  abstract fun foo(a: String)
+
+}
+
+interface C {
+  abstract fun foo(a: String?)
+
+}

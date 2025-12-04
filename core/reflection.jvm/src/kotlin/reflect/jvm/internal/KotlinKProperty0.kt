@@ -5,10 +5,12 @@
 
 package kotlin.reflect.jvm.internal
 
+import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import kotlin.LazyThreadSafetyMode.PUBLICATION
 import kotlin.metadata.KmProperty
 import kotlin.reflect.KMutableProperty0
 import kotlin.reflect.KProperty0
+import kotlin.reflect.KVisibility
 
 internal open class KotlinKProperty0<out V>(
     container: KDeclarationContainerImpl, signature: String, rawBoundReceiver: Any?, kmProperty: KmProperty,

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.overrides
 
+// suka
 interface IrExternalOverridabilityCondition {
     enum class Result {
         OVERRIDABLE,

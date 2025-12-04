@@ -8,6 +8,7 @@ package kotlin.reflect.jvm.internal
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
+import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
@@ -21,11 +22,19 @@ import org.jetbrains.kotlin.types.TypeUtils
 import kotlin.reflect.*
 import kotlin.reflect.jvm.internal.calls.getInlineClassUnboxMethod
 import kotlin.reflect.jvm.internal.types.DescriptorKType
+import kotlin.reflect.jvm.internal.types.KTypeSubstitutor
 
 internal abstract class DescriptorKCallable<out R> : ReflectKCallable<R> {
     abstract val descriptor: CallableMemberDescriptor
 
     protected abstract fun computeReturnType(): DescriptorKType
+
+    // todo make immutable propagating parameters
+    internal var forceInstanceReceiverParameter: ReceiverParameterDescriptor? = null
+    internal var kTypeSubstitutor: KTypeSubstitutor = KTypeSubstitutor.EMPTY
+    internal var isFakeOverride: Boolean = false
+
+    abstract fun shallowCopy(container: KDeclarationContainerImpl): DescriptorKCallable<R>
 
     private val _annotations = ReflectProperties.lazySoft { descriptor.computeAnnotations() }
 
@@ -45,7 +54,7 @@ internal abstract class DescriptorKCallable<out R> : ReflectKCallable<R> {
         val descriptor = descriptor
         val result = ArrayList<KParameter>()
         if (includeReceivers) {
-            val instanceReceiver = descriptor.instanceReceiverParameter
+            val instanceReceiver = instanceReceiverParameter
             if (instanceReceiver != null) {
                 result.add(DescriptorKParameter(this, result.size, KParameter.Kind.INSTANCE) { instanceReceiver })
             }
@@ -101,13 +110,16 @@ internal abstract class DescriptorKCallable<out R> : ReflectKCallable<R> {
         }
     }
 
-    private val _returnType = ReflectProperties.lazySoft { computeReturnType() }
+    private val _returnType = ReflectProperties.lazySoft {
+        val type = computeReturnType()
+        kTypeSubstitutor.substitute(type).type ?: error("fuck you Nikita")
+    }
 
     override val returnType: KType
         get() = _returnType()
 
     private val _typeParameters = ReflectProperties.lazySoft {
-        descriptor.typeParameters.map { descriptor -> KTypeParameterImpl(this, descriptor) }
+        descriptor.typeParameters.map { descriptor -> KTypeParameterImpl(this, descriptor, kTypeSubstitutor) }
     }
 
     override val typeParameters: List<KTypeParameter>
@@ -116,14 +128,21 @@ internal abstract class DescriptorKCallable<out R> : ReflectKCallable<R> {
     override val visibility: KVisibility?
         get() = descriptor.visibility.toKVisibility()
 
-    override val isFinal: Boolean
-        get() = descriptor.modality == Modality.FINAL
+    override val isPackagePrivate: Boolean
+        get() = descriptor.visibility == JavaDescriptorVisibilities.PACKAGE_VISIBILITY
 
-    override val isOpen: Boolean
-        get() = descriptor.modality == Modality.OPEN
+    internal var forceModality: Modality? = null
+    internal val modality: Modality
+        get() = forceModality ?: descriptor.modality
 
-    override val isAbstract: Boolean
-        get() = descriptor.modality == Modality.ABSTRACT
+    final override val isFinal: Boolean
+        get() = modality == Modality.FINAL
+
+    final override val isOpen: Boolean
+        get() = modality == Modality.OPEN
+
+    final override val isAbstract: Boolean
+        get() = modality == Modality.ABSTRACT
 
     private val _absentArguments = ReflectProperties.lazySoft(::computeAbsentArguments)
 

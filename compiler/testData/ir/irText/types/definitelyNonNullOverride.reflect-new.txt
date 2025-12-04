@@ -1,0 +1,25 @@
+KClass: B
+  members:
+    fun B<T>.bar(T): kotlin.Unit
+    fun B<T>.equals(kotlin.Any?): kotlin.Boolean
+    fun B<T>.foo(T): kotlin.Unit
+    fun B<T>.hashCode(): kotlin.Int
+    fun B<T>.qux(B<T>): kotlin.Unit
+    fun B<T>.six(T, F): kotlin.Unit
+    fun B<T>.toString(): kotlin.String
+  declaredMembers:
+    fun B<T>.bar(T): kotlin.Unit
+    fun B<T>.foo(T): kotlin.Unit
+    fun B<T>.qux(B<T>): kotlin.Unit
+    fun B<T>.six(T, F): kotlin.Unit
+KClass: D
+  members:
+    fun D<T>.bar(T & Any): kotlin.Unit
+    fun D<T>.equals(kotlin.Any?): kotlin.Boolean
+    fun D<T>.foo(T & Any): kotlin.Unit
+    fun D<T>.hashCode(): kotlin.Int
+    fun D<T>.qux(B<T & Any>): kotlin.Unit
+    fun D<T>.six(T & Any, F): kotlin.Unit
+    fun D<T>.toString(): kotlin.String
+  declaredMembers:
+    fun D<T>.foo(T & Any): kotlin.Unit

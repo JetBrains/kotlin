@@ -1,0 +1,22 @@
+KClass: B
+  members:
+    fun B<T>.equals(kotlin.Any?): kotlin.Boolean
+    fun B<T>.hashCode(): kotlin.Int
+    fun B<T>.toString(): kotlin.String
+  declaredMembers:
+KClass: A
+  members:
+    fun A.equals(kotlin.Any?): kotlin.Boolean
+    fun A.hashCode(): kotlin.Int
+    fun A.m(B<out kotlin.collections.List<kotlin.Number>>): kotlin.Int
+    fun A.toString(): kotlin.String
+  declaredMembers:
+    fun A.m(B<out kotlin.collections.List<kotlin.Number>>): kotlin.Int
+KClass: C
+  members:
+    fun C.equals(kotlin.Any?): kotlin.Boolean
+    fun C.hashCode(): kotlin.Int
+    fun C.m(B<out kotlin.collections.List<kotlin.Number>>): kotlin.Int
+    fun C.toString(): kotlin.String
+  declaredMembers:
+    fun C.m(B<out kotlin.collections.List<kotlin.Number>>): kotlin.Int

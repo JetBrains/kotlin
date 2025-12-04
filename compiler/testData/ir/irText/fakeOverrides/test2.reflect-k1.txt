@@ -1,0 +1,22 @@
+KClass: class Foo : Any
+  members:
+    open PUBLIC operator fun Foo.equals(kotlin.Any?): kotlin.Boolean
+    final PUBLIC fun Foo.foo1(A): kotlin.Unit
+    final PUBLIC fun Foo.foo1(kotlin.Number): kotlin.Unit
+    final PUBLIC fun Foo.foo2(A): kotlin.Unit
+    final PUBLIC fun Foo.foo2(A): kotlin.Unit
+    final PUBLIC fun Foo.foo3(A): kotlin.Unit
+    final PUBLIC fun Foo.foo3(B): kotlin.Unit
+    final PUBLIC fun Foo.foo4(A): kotlin.Unit
+    final PUBLIC fun Foo.foo4(B): kotlin.Unit
+    open PUBLIC fun Foo.hashCode(): kotlin.Int
+    open PUBLIC fun Foo.toString(): kotlin.String
+  declaredMembers:
+    final PUBLIC fun Foo.foo1(A): kotlin.Unit
+    final PUBLIC fun Foo.foo1(kotlin.Number): kotlin.Unit
+    final PUBLIC fun Foo.foo2(A): kotlin.Unit
+    final PUBLIC fun Foo.foo2(A): kotlin.Unit
+    final PUBLIC fun Foo.foo3(A): kotlin.Unit
+    final PUBLIC fun Foo.foo3(B): kotlin.Unit
+    final PUBLIC fun Foo.foo4(A): kotlin.Unit
+    final PUBLIC fun Foo.foo4(B): kotlin.Unit

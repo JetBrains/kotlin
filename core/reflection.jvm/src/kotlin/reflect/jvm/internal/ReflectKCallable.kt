@@ -53,6 +53,8 @@ internal interface ReflectKCallable<out R> : KCallable<R>, KTypeParameterOwnerIm
         return caller.call(args) as R
     }
 
+    val isPackagePrivate: Boolean
+
     override fun callBy(args: Map<KParameter, Any?>): R {
         return if (isAnnotationConstructor) callAnnotationConstructor(args) else callDefaultMethod(args, null)
     }

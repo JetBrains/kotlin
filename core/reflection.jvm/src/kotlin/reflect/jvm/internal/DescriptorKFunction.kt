@@ -163,6 +163,15 @@ internal class DescriptorKFunction private constructor(
             DescriptorKFunction(containerClass.kotlin as KClassImpl<*>, it)
         }
 
+    override fun shallowCopy(container: KDeclarationContainerImpl): DescriptorKFunction =
+        DescriptorKFunction(container, name, signature, descriptor, rawBoundReceiver).also { new ->
+            new.forceIsExternal = forceIsExternal
+            new.forceIsOperator = forceIsOperator
+            new.forceIsInfix = forceIsInfix
+            new.forceIsInline = forceIsInline
+            new.forceModality = forceModality
+        }
+
     private fun getFunctionWithDefaultParametersForValueClassOverride(function: ReflectKFunction): ReflectKFunction? {
         if (
             function.valueParameters.none { (it as? ReflectKParameter)?.declaresDefaultValue == true } &&
@@ -237,17 +246,21 @@ internal class DescriptorKFunction private constructor(
 
     override val arity: Int get() = caller.arity
 
+    internal var forceIsInline: Boolean = false
     override val isInline: Boolean
-        get() = descriptor.isInline
+        get() = forceIsInline || descriptor.isInline
 
+    internal var forceIsExternal: Boolean = false
     override val isExternal: Boolean
-        get() = descriptor.isExternal
+        get() = forceIsExternal || descriptor.isExternal
 
+    internal var forceIsOperator: Boolean = false
     override val isOperator: Boolean
-        get() = descriptor.isOperator
+        get() = forceIsOperator || descriptor.isOperator
 
+    internal var forceIsInfix: Boolean = false
     override val isInfix: Boolean
-        get() = descriptor.isInfix
+        get() = forceIsInfix || descriptor.isInfix
 
     override val isSuspend: Boolean
         get() = descriptor.isSuspend

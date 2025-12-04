@@ -1,6 +1,7 @@
 // SKIP_KT_DUMP
 // ISSUE: KT-65448
 // TARGET_BACKEND: JVM
+
 // FILE: Java1.java
 import java.util.ArrayList;
 

@@ -208,11 +208,11 @@ object CodegenTestDirectives : SimpleDirectivesContainer() {
             This directive can be used to attach debugger to instance of JVM which
               is used to run `box` test in case it runs in separate JVM instance
               (e.g. when this case should be ran on some modern JDK like JDK 17)
-              
+
             After running test run remote debugger on port 5005 (test will wait until
               debugger won't be attached)
-              
-            Please don't forget to remove this directive after debug session is over 
+
+            Please don't forget to remove this directive after debug session is over
         """.trimIndent()
     )
 

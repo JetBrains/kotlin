@@ -20,6 +20,10 @@ internal val useK1Implementation = runCatching {
     System.getProperty("kotlin.reflect.jvm.useK1Implementation")
 }.getOrNull()?.toBoolean() == true
 
+internal val newFakeOverridesImplementation = runCatching {
+    System.getProperty("kotlin.reflect.jvm.newFakeOverridesImplementation")
+}.getOrNull()?.toBoolean() == true
+
 /**
  * True if the system property `kotlin.reflect.jvm.loadMetadataDirectly` is set to true.
  *

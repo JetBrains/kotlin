@@ -1,6 +1,10 @@
 // FIR_IDENTICAL
 // ISSUE: KT-70395
 
+
+// Caused by: kotlin.reflect.jvm.internal.KotlinReflectionInternalError: This method should not be called on kotlin.reflect.jvm.internal.types.ReflectTypeSystemContext@3842dabd with a new kotlin-reflect implementation. Please file an issue at https://kotl.in/issue
+// SKIP_NEW_KOTLIN_REFLECT_COMPATIBILITY_CHECK
+
 interface A {
     fun m(x: B<out List<Number>>): Int
 }

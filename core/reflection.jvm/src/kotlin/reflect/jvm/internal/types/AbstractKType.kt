@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.types.model.TypeArgumentListMarker
 import java.lang.reflect.Type
 import kotlin.jvm.internal.KTypeBase
 import kotlin.reflect.KClass
+import kotlin.reflect.KClassifier
 import kotlin.reflect.KType
 import kotlin.reflect.jvm.internal.ReflectProperties
 import kotlin.reflect.jvm.internal.ReflectionObjectRenderer
@@ -41,6 +42,12 @@ internal abstract class AbstractKType(
     abstract val mutableCollectionClass: KClass<*>?
     abstract fun lowerBoundIfFlexible(): AbstractKType?
     abstract fun upperBoundIfFlexible(): AbstractKType?
+
+    // The existing classifier property should have this implementation,
+    // but we can't do that yet because it would be a breaking change
+    // KT-11754
+    val correctClassifier: KClassifier? // todo try to drop this property
+        get() = mutableCollectionClass ?: classifier
 
     override fun equals(other: Any?): Boolean =
         other is AbstractKType && AbstractStrictEqualityTypeChecker.strictEqualTypes(ReflectTypeSystemContext, this, other)

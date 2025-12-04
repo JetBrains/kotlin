@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.utils.isSuspend
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
@@ -49,33 +48,6 @@ class FirStandardOverrideChecker(private val session: FirSession) : FirAbstractO
         return delegated1.qualifier.zip(delegated2.qualifier).all { (l, r) -> l.name == r.name }
     }
 
-
-    /**
-     * Good case complexity is O(1)
-     * Worst case complexity is O(N), where N is number of type-parameter bound's
-     */
-    private fun isEqualBound(
-        overrideBound: FirTypeRef,
-        baseBound: FirTypeRef,
-        overrideTypeParameter: FirTypeParameter,
-        baseTypeParameter: FirTypeParameter,
-        substitutor: ConeSubstitutor
-    ): Boolean {
-        val substitutedOverrideType = substitutor.substituteOrSelf(overrideBound.coneType)
-        val substitutedBaseType = substitutor.substituteOrSelf(baseBound.coneType)
-
-        if (AbstractTypeChecker.equalTypes(context, substitutedOverrideType, substitutedBaseType)) return true
-
-        return overrideTypeParameter.symbol.resolvedBounds.any { bound ->
-            isEqualTypes(
-                bound.coneType,
-                substitutedBaseType,
-                substitutor
-            )
-        } &&
-                baseTypeParameter.symbol.resolvedBounds.any { bound -> isEqualTypes(bound.coneType, substitutedOverrideType, substitutor) }
-    }
-
     private fun isCompatibleTypeParameters(
         overrideCandidate: FirTypeParameterRef,
         baseDeclaration: FirTypeParameterRef,
@@ -84,11 +56,17 @@ class FirStandardOverrideChecker(private val session: FirSession) : FirAbstractO
         if (overrideCandidate.symbol == baseDeclaration.symbol) return true
         if (overrideCandidate !is FirTypeParameter || baseDeclaration !is FirTypeParameter) return false
         if (overrideCandidate.bounds.size != baseDeclaration.bounds.size) return false
-        return overrideCandidate.symbol.resolvedBounds.zip(baseDeclaration.symbol.resolvedBounds)
-            .all { (aBound, bBound) -> isEqualBound(aBound, bBound, overrideCandidate, baseDeclaration, substitutor) }
+        return overrideCandidate.symbol.resolvedBounds
+            .substitutedAndSortedUpperBounds(substitutor)
+            .zip(baseDeclaration.symbol.resolvedBounds.substitutedAndSortedUpperBounds(substitutor))
+            .all { (aBound, bBound) -> AbstractTypeChecker.equalTypes(context, aBound, bBound) }
     }
 
-    override fun buildTypeParametersSubstitutorIfCompatible(
+    private fun List<FirResolvedTypeRef>.substitutedAndSortedUpperBounds(substitutor: ConeSubstitutor): List<ConeKotlinType> =
+        map { substitutor.substituteOrSelf(it.coneType) }
+            .sortedBy { it.classId?.asString() ?: error("Must be denotable") }
+
+    override fun buildTypeParametersSubstitutorIfCompatible( // cool
         overrideCandidate: FirCallableDeclaration,
         baseDeclaration: FirCallableDeclaration
     ): ConeSubstitutor? {

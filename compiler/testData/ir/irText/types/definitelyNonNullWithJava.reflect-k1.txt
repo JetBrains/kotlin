@@ -1,0 +1,21 @@
+KClass: B
+  members:
+    fun B<T1>.bar(T1 & Any): T1 & Any
+    fun B<T1>.bar(T1!): T1!
+    fun B<T1>.equals(kotlin.Any?): kotlin.Boolean
+    fun B<T1>.foo(T1): T1
+    fun B<T1>.hashCode(): kotlin.Int
+    fun B<T1>.toString(): kotlin.String
+  declaredMembers:
+    fun B<T1>.bar(T1 & Any): T1 & Any
+    fun B<T1>.foo(T1): T1
+KClass: A
+  members:
+    fun A<T>.bar(T!): T!
+    fun A<T>.equals(kotlin.Any?): kotlin.Boolean
+    fun A<T>.foo(T!): T!
+    fun A<T>.hashCode(): kotlin.Int
+    fun A<T>.toString(): kotlin.String
+  declaredMembers:
+    fun A<T>.bar(T!): T!
+    fun A<T>.foo(T!): T!

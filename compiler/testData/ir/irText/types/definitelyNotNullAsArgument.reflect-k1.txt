@@ -1,0 +1,27 @@
+KClass: I
+  members:
+    fun I<T>.equals(kotlin.Any?): kotlin.Boolean
+    fun I<T>.hashCode(): kotlin.Int
+    fun I<T>.input(T): kotlin.Unit
+    fun I<T>.output(): T
+    fun I<T>.toString(): kotlin.String
+  declaredMembers:
+    fun I<T>.input(T): kotlin.Unit
+    fun I<T>.output(): T
+KPackage: DefinitelyNotNullAsArgumentKt
+  fun bar(I<out T & Any>): T & Any
+  fun foo(I<T & Any>): kotlin.Unit
+  fun foo2(T1, T2): kotlin.Unit
+  fun qux(T, I<in T & Any>): kotlin.Unit
+KClass: C
+  members:
+    fun C<TT>.equals(kotlin.Any?): kotlin.Boolean
+    fun C<TT>.hashCode(): kotlin.Int
+    fun C<TT>.input(TT & Any): kotlin.Unit
+    fun C<TT>.output(): TT & Any
+    fun C<TT>.toString(): kotlin.String
+    val C<TT>.t: TT
+  declaredMembers:
+    fun C<TT>.input(TT & Any): kotlin.Unit
+    fun C<TT>.output(): TT & Any
+    val C<TT>.t: TT

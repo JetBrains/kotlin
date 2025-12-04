@@ -37,9 +37,18 @@ internal open class DescriptorKProperty0<out V> : KProperty0<V>, DescriptorKProp
     override fun getDelegate(): Any? = delegateValue.value
 
     override fun invoke(): V = get()
+    override fun shallowCopy(container: KDeclarationContainerImpl): DescriptorKProperty0<V> =
+        DescriptorKProperty0<V>(container, descriptor).also { new ->
+            new.forceModality = forceModality
+        }
 
     class Getter<out R>(override val property: DescriptorKProperty0<R>) : DescriptorKProperty.Getter<R>(), KProperty0.Getter<R> {
         override fun invoke(): R = property.get()
+
+        // override fun shallowCopy(descriptor: CallableMemberDescriptor): Getter<R> =
+        //     Getter(property).also { new ->
+        //         new.forceModality = forceModality
+        //     }
     }
 }
 
@@ -54,7 +63,17 @@ internal class DescriptorKMutableProperty0<V> : DescriptorKProperty0<V>, KMutabl
 
     override fun set(value: V) = setter.call(value)
 
+    override fun shallowCopy(container: KDeclarationContainerImpl): DescriptorKMutableProperty0<V> =
+        DescriptorKMutableProperty0<V>(container, descriptor).also { new ->
+            new.forceModality = forceModality
+        }
+
     class Setter<R>(override val property: DescriptorKMutableProperty0<R>) : DescriptorKProperty.Setter<R>(), KMutableProperty0.Setter<R> {
         override fun invoke(value: R): Unit = property.set(value)
+
+        // override fun shallowCopy(descriptor: CallableMemberDescriptor): Setter<R> =
+        //     Setter(property.shallowCopy(descriptor)).also { new ->
+        //         new.forceModality = forceModality
+        //     }
     }
 }

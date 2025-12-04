@@ -2900,6 +2900,24 @@ public class WasmJsIrTextTestGenerated extends AbstractWasmJsIrTextTest {
       runTest("compiler/testData/ir/irText/fakeOverrides/setterVisibliityWithJava.kt");
     }
 
+    @Test
+    @TestMetadata("test1.kt")
+    public void testTest1() {
+      runTest("compiler/testData/ir/irText/fakeOverrides/test1.kt");
+    }
+
+    @Test
+    @TestMetadata("test2.kt")
+    public void testTest2() {
+      runTest("compiler/testData/ir/irText/fakeOverrides/test2.kt");
+    }
+
+    @Test
+    @TestMetadata("test3.kt")
+    public void testTest3() {
+      runTest("compiler/testData/ir/irText/fakeOverrides/test3.kt");
+    }
+
     @Nested
     @TestMetadata("compiler/testData/ir/irText/fakeOverrides/annotations")
     @TestDataPath("$PROJECT_ROOT")
@@ -3300,6 +3318,78 @@ public class WasmJsIrTextTestGenerated extends AbstractWasmJsIrTextTest {
       }
 
       @Test
+      @TestMetadata("ebanism.kt")
+      public void testEbanism() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/generics/ebanism.kt");
+      }
+
+      @Test
+      @TestMetadata("ebanism10.kt")
+      public void testEbanism10() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/generics/ebanism10.kt");
+      }
+
+      @Test
+      @TestMetadata("ebanism11.kt")
+      public void testEbanism11() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/generics/ebanism11.kt");
+      }
+
+      @Test
+      @TestMetadata("ebanism12.kt")
+      public void testEbanism12() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/generics/ebanism12.kt");
+      }
+
+      @Test
+      @TestMetadata("ebanism2.kt")
+      public void testEbanism2() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/generics/ebanism2.kt");
+      }
+
+      @Test
+      @TestMetadata("ebanism3.kt")
+      public void testEbanism3() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/generics/ebanism3.kt");
+      }
+
+      @Test
+      @TestMetadata("ebanism4.kt")
+      public void testEbanism4() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/generics/ebanism4.kt");
+      }
+
+      @Test
+      @TestMetadata("ebanism5.kt")
+      public void testEbanism5() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/generics/ebanism5.kt");
+      }
+
+      @Test
+      @TestMetadata("ebanism6.kt")
+      public void testEbanism6() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/generics/ebanism6.kt");
+      }
+
+      @Test
+      @TestMetadata("ebanism7.kt")
+      public void testEbanism7() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/generics/ebanism7.kt");
+      }
+
+      @Test
+      @TestMetadata("ebanism8.kt")
+      public void testEbanism8() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/generics/ebanism8.kt");
+      }
+
+      @Test
+      @TestMetadata("ebanism9.kt")
+      public void testEbanism9() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/generics/ebanism9.kt");
+      }
+
+      @Test
       @TestMetadata("genericMethodOverrideOnComplexHierarchy.kt")
       public void testGenericMethodOverrideOnComplexHierarchy() {
         runTest("compiler/testData/ir/irText/fakeOverrides/generics/genericMethodOverrideOnComplexHierarchy.kt");
@@ -3669,6 +3759,12 @@ public class WasmJsIrTextTestGenerated extends AbstractWasmJsIrTextTest {
       @TestMetadata("intersectionKotlinDefaultParametersOverride.kt")
       public void testIntersectionKotlinDefaultParametersOverride() {
         runTest("compiler/testData/ir/irText/fakeOverrides/methodparameters/intersectionKotlinDefaultParametersOverride.kt");
+      }
+
+      @Test
+      @TestMetadata("platformTypesFakeOverrides.kt")
+      public void testPlatformTypesFakeOverrides() {
+        runTest("compiler/testData/ir/irText/fakeOverrides/methodparameters/platformTypesFakeOverrides.kt");
       }
     }
 

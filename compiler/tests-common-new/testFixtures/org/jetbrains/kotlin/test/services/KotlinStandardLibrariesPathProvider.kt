@@ -39,6 +39,9 @@ interface KotlinStandardLibrariesPathProvider : TestService {
         private var reflectJarClassLoader: SoftReference<ClassLoader?> = SoftReference(null)
 
         @Volatile
+        private var reflectWithNewFakeOverridesJarClassLoader: SoftReference<ClassLoader?> = SoftReference(null)
+
+        @Volatile
         private var k1ReflectJarClassLoader: SoftReference<ClassLoader?> = SoftReference(null)
 
         private fun createClassLoader(vararg files: File): ClassLoader {
@@ -166,6 +169,30 @@ interface KotlinStandardLibrariesPathProvider : TestService {
                         .getMethod("getUseK1Implementation")
                         .invoke(null)
                     check(useK1 == true)
+                }
+            }
+        }
+    }
+
+    fun getRuntimeAndReflectWithNewFakeOverrridesJarClassLoader(): ClassLoader {
+        reflectWithNewFakeOverridesJarClassLoader.get()?.let { return it }
+        synchronized(this) {
+            reflectWithNewFakeOverridesJarClassLoader.get()?.let { return it }
+            withSystemProperty("kotlin.reflect.jvm.newFakeOverridesImplementation", "true") {
+                return createClassLoader(
+                    runtimeJarForTests(),
+                    reflectJarForTests(),
+                    scriptRuntimeJarForTests(),
+                    kotlinTestJarForTests()
+                ).also { loader ->
+                    reflectWithNewFakeOverridesJarClassLoader = SoftReference(loader)
+                    // Calling getNewFakeOverridesImplementation has the intentional side effect of caching
+                    // 'kotlin.reflect.jvm.newFakeOverridesImplementation' value
+                    val newFakeOverridesImplementation = loader
+                        .loadClass("kotlin.reflect.jvm.internal.SystemPropertiesKt")
+                        .getMethod("getNewFakeOverridesImplementation")
+                        .invoke(null)
+                    check(newFakeOverridesImplementation == true)
                 }
             }
         }

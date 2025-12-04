@@ -77,7 +77,7 @@ class FirTypeIntersectionScopeContext(
         }
     }
 
-    fun processClassifiersByNameWithSubstitution(
+    public fun processClassifiersByNameWithSubstitution(
         name: Name,
         processor: (FirClassifierSymbol<*>, ConeSubstitutor) -> Unit
     ) {
@@ -103,11 +103,11 @@ class FirTypeIntersectionScopeContext(
         return result
     }
 
-    fun collectFunctions(name: Name): List<ResultOfIntersection<FirNamedFunctionSymbol>> {
+    public fun collectFunctions(name: Name): List<ResultOfIntersection<FirNamedFunctionSymbol>> {
         return collectIntersectionResultsForCallables(name, FirScope::processFunctionsByName)
     }
 
-    inline fun <D : FirCallableSymbol<*>> collectMembersGroupedByScope(
+    public inline fun <D : FirCallableSymbol<*>> collectMembersGroupedByScope(
         name: Name,
         processCallables: FirScope.(Name, (D) -> Unit) -> Unit
     ): MembersByScope<D> {
@@ -125,14 +125,14 @@ class FirTypeIntersectionScopeContext(
         }
     }
 
-    inline fun <D : FirCallableSymbol<*>> collectIntersectionResultsForCallables(
+    public inline fun <D : FirCallableSymbol<*>> collectIntersectionResultsForCallables(
         name: Name,
         processCallables: FirScope.(Name, (D) -> Unit) -> Unit
     ): List<ResultOfIntersection<D>> {
         return convertGroupedCallablesToIntersectionResults(collectMembersGroupedByScope(name, processCallables))
     }
 
-    fun <D : FirCallableSymbol<*>> convertGroupedCallablesToIntersectionResults(
+    public fun <D : FirCallableSymbol<*>> convertGroupedCallablesToIntersectionResults(
         membersByScope: List<Pair<FirTypeScope, List<D>>>
     ): List<ResultOfIntersection<D>> {
         if (membersByScope.isEmpty()) {
@@ -206,7 +206,7 @@ class FirTypeIntersectionScopeContext(
         )
     }
 
-    fun <D : FirCallableSymbol<*>> createIntersectionOverride(
+    public fun <D : FirCallableSymbol<*>> createIntersectionOverride(
         mostSpecific: List<MemberWithBaseScope<D>>,
         extractedOverrides: List<MemberWithBaseScope<D>>,
         containsMultipleNonSubsumed: Boolean,

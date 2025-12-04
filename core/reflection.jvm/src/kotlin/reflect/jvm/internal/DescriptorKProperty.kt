@@ -144,6 +144,8 @@ internal abstract class DescriptorKProperty<out V> private constructor(
     abstract class Getter<out V> : Accessor<V, V>(), KProperty.Getter<V> {
         override val name: String get() = "<get-${property.name}>"
 
+        final override fun shallowCopy(container: KDeclarationContainerImpl): DescriptorKCallable<V> = error("")
+
         override val descriptor: PropertyGetterDescriptor by ReflectProperties.lazySoft {
             property.descriptor.getter ?: DescriptorFactory.createDefaultGetter(property.descriptor, Annotations.EMPTY).apply {
                 initialize(property.descriptor.type)
@@ -172,6 +174,8 @@ internal abstract class DescriptorKProperty<out V> private constructor(
         override val descriptor: PropertySetterDescriptor by ReflectProperties.lazySoft {
             property.descriptor.setter ?: DescriptorFactory.createDefaultSetter(property.descriptor, Annotations.EMPTY, Annotations.EMPTY)
         }
+
+        final override fun shallowCopy(container: KDeclarationContainerImpl): DescriptorKCallable<Unit> = error("")
 
         override val caller: Caller<*> by lazy(PUBLICATION) {
             computeCallerForAccessor(isGetter = false)
