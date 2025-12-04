@@ -9,15 +9,14 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.config.JvmAnalysisFlags
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.toKotlinVersion
+import org.jetbrains.kotlin.diagnostics.KtRegisteredDiagnosticFactoriesStorage
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.CheckersComponent
 import org.jetbrains.kotlin.fir.analysis.checkers.FirInlineCheckerPlatformSpecificComponent
 import org.jetbrains.kotlin.fir.analysis.checkers.FirPrimaryConstructorSuperTypeCheckerPlatformComponent
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirNameConflictsTrackerImpl
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirGenericArrayClassLiteralSupport
-import org.jetbrains.kotlin.fir.analysis.diagnostics.CliDiagnostics
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirComposedDiagnosticRendererFactory
-import org.jetbrains.kotlin.fir.analysis.diagnostics.diagnosticRendererFactory
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirRegisteredDiagnosticFactoriesStorage
 import org.jetbrains.kotlin.fir.analysis.jvm.FirJvmOverridesBackwardCompatibilityHelper
 import org.jetbrains.kotlin.fir.analysis.jvm.checkers.FirJavaNullabilityWarningUpperBoundsProvider
 import org.jetbrains.kotlin.fir.analysis.jvm.checkers.FirJvmAnnotationsPlatformSpecificSupportComponent
@@ -96,7 +95,6 @@ fun FirSession.registerCommonComponents(languageVersionSettings: LanguageVersion
     register(FirGenericArrayClassLiteralSupport::class, FirGenericArrayClassLiteralSupport.Disabled)
     register(FirMissingDependencyStorage::class, FirMissingDependencyStorage(this))
     register(FirPlatformSpecificCastChecker::class, FirPlatformSpecificCastChecker.Default)
-    register(FirComposedDiagnosticRendererFactory::class, FirComposedDiagnosticRendererFactory())
     register(FirMustUseReturnValueStatusComponent::class, FirMustUseReturnValueStatusComponent.create(languageVersionSettings))
     register(FirInlineCheckerPlatformSpecificComponent::class, FirInlineCheckerPlatformSpecificComponent.NonJvmDefault)
     register(FirExpectActualMappingStorage::class, FirExpectActualMappingStorage(this))
@@ -116,8 +114,6 @@ fun FirSession.registerCliCompilerAndCommonComponents(languageVersionSettings: L
     register(FirCachesFactory::class, firCachesFactoryForCliMode)
 
     registerCommonComponents(languageVersionSettings, isMetadataCompilation)
-
-    diagnosticRendererFactory.registerFactories(listOf(CliDiagnostics.getRendererFactory()))
 
     register(SealedClassInheritorsProvider::class, SealedClassInheritorsProviderImpl)
     register(FirLazyDeclarationResolver::class, FirDummyCompilerLazyDeclarationResolver)
@@ -196,6 +192,7 @@ fun FirSession.registerJavaComponents(
  */
 @OptIn(SessionConfiguration::class)
 fun FirSession.registerResolveComponents(
+    diagnosticFactoriesStorage: KtRegisteredDiagnosticFactoriesStorage,
     lookupTracker: LookupTracker? = null,
     enumWhenTracker: EnumWhenTracker? = null,
     importTracker: ImportTracker? = null,
@@ -227,6 +224,7 @@ fun FirSession.registerResolveComponents(
         )
     }
     register(FirExpectActualMatchingContextFactory::class, FirExpectActualMatchingContextImpl.Factory)
+    register(FirRegisteredDiagnosticFactoriesStorage::class, FirRegisteredDiagnosticFactoriesStorage(diagnosticFactoriesStorage))
 }
 
 @OptIn(SessionConfiguration::class)

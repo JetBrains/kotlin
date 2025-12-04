@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.session
 
+import org.jetbrains.kotlin.cli.diagnosticFactoriesStorage
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.checkers.registerCommonCheckers
@@ -238,6 +239,7 @@ abstract class FirAbstractSessionFactory<CONTEXT> {
             if (configuration.dumpInferenceLogs) register(FirInferenceLogger::class, FirInferenceLogger())
             registerCliCompilerAndCommonComponents(languageVersionSettings, isFactoryForMetadataCompilation)
             registerResolveComponents(
+                configuration.diagnosticFactoriesStorage ?: error("diagnosticFactoriesStorage is not registered in the configuration"),
                 configuration.lookupTracker,
                 configuration.enumWhenTracker,
                 configuration.importTracker,
