@@ -82,6 +82,7 @@ public abstract interface class org/jetbrains/kotlin/buildtools/api/ExecutionPol
 public abstract interface class org/jetbrains/kotlin/buildtools/api/ExecutionPolicy$WithDaemon$Builder {
 	public abstract fun build ()Lorg/jetbrains/kotlin/buildtools/api/ExecutionPolicy$WithDaemon;
 	public abstract fun get (Lorg/jetbrains/kotlin/buildtools/api/ExecutionPolicy$WithDaemon$Option;)Ljava/lang/Object;
+	public fun invoke (Lorg/jetbrains/kotlin/buildtools/api/ExecutionPolicy$WithDaemon$Option;Ljava/lang/Object;)V
 	public abstract fun set (Lorg/jetbrains/kotlin/buildtools/api/ExecutionPolicy$WithDaemon$Option;Ljava/lang/Object;)V
 }
 
@@ -144,6 +145,10 @@ public final class org/jetbrains/kotlin/buildtools/api/KotlinToolchains$Companio
 }
 
 public abstract interface class org/jetbrains/kotlin/buildtools/api/KotlinToolchains$Toolchain {
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/KotlinToolchainsKt {
+	public static final fun daemonExecutionPolicy (Lorg/jetbrains/kotlin/buildtools/api/KotlinToolchains;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/buildtools/api/ExecutionPolicy$WithDaemon;
 }
 
 public final class org/jetbrains/kotlin/buildtools/api/OperationCancelledException : java/lang/RuntimeException {

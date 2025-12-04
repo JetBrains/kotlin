@@ -13,6 +13,7 @@ import org.gradle.workers.WorkAction
 import org.gradle.workers.WorkParameters
 import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.buildtools.api.*
+import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy.WithDaemon.Companion.JVM_ARGUMENTS
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain.Companion.jvm
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration.Companion.ASSURED_NO_CLASSPATH_SNAPSHOT_CHANGES
@@ -155,13 +156,13 @@ internal abstract class BuildToolsApiCompilationWork @Inject constructor(
                 }
             }.build()
             val executionConfig = when (executionStrategy) {
-                KotlinCompilerExecutionStrategy.DAEMON -> kotlinToolchains.daemonExecutionPolicyBuilder().apply {
+                KotlinCompilerExecutionStrategy.DAEMON -> kotlinToolchains.daemonExecutionPolicy {
                     val arguments = workArguments.compilerExecutionSettings.daemonJvmArgs ?: emptyList()
-                    this[ExecutionPolicy.WithDaemon.JVM_ARGUMENTS] = arguments
+                    JVM_ARGUMENTS(arguments)
                     if (log.isDebugEnabled) {
                         log.debug("Kotlin compile daemon JVM options: ${arguments.joinToString(" ")}")
                     }
-                }.build()
+                }
                 KotlinCompilerExecutionStrategy.IN_PROCESS -> kotlinToolchains.createInProcessExecutionPolicy()
                 else -> error("The \"$executionStrategy\" execution strategy is not supported by the Build Tools API")
             }
