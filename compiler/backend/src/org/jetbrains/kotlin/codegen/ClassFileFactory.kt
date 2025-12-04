@@ -32,7 +32,7 @@ class ClassFileFactory(
     private val finalizers: List<ClassFileFactoryFinalizerExtension>
 ) : OutputFileCollection {
     private val generators: MutableMap<String, OutAndSourceFileList> = Collections.synchronizedMap(LinkedHashMap())
-    private val generatedForCompilerPluginOutputs: MutableSet<String> = LinkedHashSet()
+    private val generatedForCompilerPluginSources: MutableSet<File> = LinkedHashSet()
 
     private var isDone = false
 
@@ -47,7 +47,7 @@ class ClassFileFactory(
             ClassBuilderAndSourceFileList(answer, sourceFiles)
         )
         if (origin.generatedForCompilerPlugin) {
-            generatedForCompilerPluginOutputs.add(classFileName)
+            generatedForCompilerPluginSources.addAll(sourceFiles)
         }
         return answer
     }
@@ -123,11 +123,11 @@ class ClassFileFactory(
     }
 
     val currentOutput: List<OutputFile>
-        get() = generators.keys.map { OutputClassFile(relativePath = it, generatedForCompilerPlugin = it in generatedForCompilerPluginOutputs) }
+        get() = generators.keys.map { OutputClassFile(relativePath = it) }
 
     override fun get(relativePath: String): OutputFile? {
         return runIf(generators.containsKey(relativePath)) {
-            OutputClassFile(relativePath, generatedForCompilerPlugin = relativePath in generatedForCompilerPluginOutputs)
+            OutputClassFile(relativePath)
         }
     }
 
@@ -191,10 +191,7 @@ class ClassFileFactory(
         }
     }
 
-    private inner class OutputClassFile(
-        override val relativePath: String,
-        override val generatedForCompilerPlugin: Boolean,
-    ) : OutputFile {
+    private inner class OutputClassFile(override val relativePath: String) : OutputFile {
         override val sourceFiles: List<File>
             get() {
                 val pair: OutAndSourceFileList = generators[this.relativePath]!!
@@ -202,6 +199,9 @@ class ClassFileFactory(
 
                 return pair.sourceFiles
             }
+
+        override val generatedForCompilerPlugin: Boolean
+            get() = sourceFiles.any { it in generatedForCompilerPluginSources }
 
         override fun asByteArray(): ByteArray {
             try {

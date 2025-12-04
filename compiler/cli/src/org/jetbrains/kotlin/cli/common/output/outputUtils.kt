@@ -61,8 +61,8 @@ fun OutputFileCollection.writeAll(
                 when (outputInfo.generatedForCompilerPlugin) {
                     false -> tracker.recordSourceFilesToOutputFileMapping(outputInfo.sourceFiles, output)
                     true -> {
-                        check(outputInfo.sourceFiles.none { it.exists() }) {
-                            "Plugin generated file shouldn't have sources, but got ${outputInfo.sourceFiles.joinToString { it.path }}"
+                        check(outputInfo.sourceFiles.any { !it.exists() }) {
+                            "Output file affected by plugin-generated files should be based on at least one synthetic source file, but got ${outputInfo.sourceFiles.joinToString { it.path }}"
                         }
                         tracker.recordSourceFilesToOutputFileMapping(outputInfo.sourceFiles, output)
                     }
