@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.symbols
 import org.jetbrains.kotlin.analysis.api.resolution.calls
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.psi.*
@@ -47,6 +49,16 @@ abstract class AbstractKDocProviderTest : AbstractAnalysisApiBasedTest() {
                         override fun visitDeclaration(declaration: KtDeclaration, indent: Int): Void? {
                             val symbol = declaration.symbol
                             appendLine(symbol.renderKDoc())
+                            if (symbol is KaValueParameterSymbol) {
+                                symbol.generatedPrimaryConstructorProperty?.let { property ->
+                                    property.getter?.let { appendLine(it.renderKDoc()) }
+                                    property.setter?.let { appendLine(it.renderKDoc()) }
+                                }
+                            } else if (symbol is KaPropertySymbol) {
+                                symbol.getter?.let { appendLine(it.renderKDoc()) }
+                                symbol.setter?.let { appendLine(it.renderKDoc()) }
+                            }
+
                             appendLine()
 
                             return super.visitDeclaration(declaration, indent + 2)

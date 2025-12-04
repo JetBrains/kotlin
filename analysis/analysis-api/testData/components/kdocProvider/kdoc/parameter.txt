@@ -25,6 +25,8 @@ Foo KDoc
 ----------a: T------------------------------------------------------------------
 <primary tag="param" subject="a">
 value of type [T]
+----------<getter>(<dispatch receiver>: Foo<T>): T------------------------------
+null
 
 ----------/foo(a: kotlin.String): kotlin.Unit-----------------------------------
 <primary tag="null" subject="null">
@@ -39,4 +41,3 @@ Function KDoc
 ----------a: kotlin.String------------------------------------------------------
 <primary tag="param" subject="a">
 parameter
-

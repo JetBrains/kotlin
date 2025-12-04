@@ -31,11 +31,15 @@ my property
 ----------a: kotlin.String------------------------------------------------------
 <primary tag="property" subject="a">
 my property
+----------<getter>(<dispatch receiver>: Foo): kotlin.String---------------------
+null
 
 ----------b: kotlin.Int---------------------------------------------------------
 <primary tag="property" subject="b">
 my property
 
+----------<getter>(<dispatch receiver>: Foo): kotlin.Int------------------------
+null
 
 ----------<constructor>(a: kotlin.String): Foo----------------------------------
 <primary tag="null" subject="null">
@@ -56,6 +60,8 @@ parameter
 Property KDoc
 <section="null" subject="null">
 Property KDoc
+----------<getter>(<dispatch receiver>: Foo): kotlin.String---------------------
+null
 
 ----------/Foo.foo(<dispatch receiver>: Foo, a: kotlin.String): kotlin.Int------
 <primary tag="null" subject="null">
@@ -70,4 +76,3 @@ Fun KDoc
 ----------a: kotlin.String------------------------------------------------------
 <primary tag="param" subject="a">
 param
-

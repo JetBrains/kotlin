@@ -18,6 +18,6 @@ class Foo(val a: String) {
  * @param a property
  * @param b property
  */
-class Bar(val a: String) {
-    val b: String
+class Bar(var a: String) {
+    var b: String
 }
