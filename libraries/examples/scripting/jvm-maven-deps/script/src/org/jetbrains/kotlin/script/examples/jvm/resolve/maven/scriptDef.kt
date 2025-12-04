@@ -33,8 +33,8 @@ object ScriptWithMavenDepsConfiguration : ScriptCompilationConfiguration(
         refineConfiguration {
             @Suppress("DEPRECATION")
             onAnnotations(DependsOn::class, Repository::class, handler = ::configureMavenDepsOnAnnotations)
-            onAst(handler = ::configureMavenDepsOnAst)
-            onFir(handler = ::configureMavenDepsOnFir)
+//            onAst(handler = ::configureMavenDepsOnAst)
+//            onFir(handler = ::configureMavenDepsOnFir)
         }
     }
 ) {

@@ -37,6 +37,7 @@ dependencies {
     compileOnly(intellijCore())
 
     implementation(project(":kotlin-power-assert-compiler-plugin")) // TODO: KT-74787
+    implementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
 
     testImplementation(project(":compiler:frontend"))
     testImplementation(project(":compiler:plugin-api"))
