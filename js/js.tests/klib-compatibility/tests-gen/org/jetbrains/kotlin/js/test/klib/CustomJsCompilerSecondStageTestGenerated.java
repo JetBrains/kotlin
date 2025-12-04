@@ -17281,6 +17281,12 @@ public class CustomJsCompilerSecondStageTestGenerated extends AbstractCustomJsCo
       }
 
       @Test
+      @TestMetadata("suspendLambdaInTailrecDefault.kt")
+      public void testSuspendLambdaInTailrecDefault() {
+        runTest("compiler/testData/codegen/box/defaultArguments/suspendLambdaInTailrecDefault.kt");
+      }
+
+      @Test
       @TestMetadata("useNextParamInLambda.kt")
       public void testUseNextParamInLambda() {
         runTest("compiler/testData/codegen/box/defaultArguments/useNextParamInLambda.kt");

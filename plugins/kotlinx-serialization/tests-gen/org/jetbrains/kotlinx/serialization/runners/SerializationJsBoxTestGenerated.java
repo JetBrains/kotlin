@@ -396,6 +396,12 @@ public class SerializationJsBoxTestGenerated extends AbstractSerializationJsBoxT
   }
 
   @Test
+  @TestMetadata("suspendLambdaInDefault.kt")
+  public void testSuspendLambdaInDefault() {
+    runTest("plugins/kotlinx-serialization/testData/boxIr/suspendLambdaInDefault.kt");
+  }
+
+  @Test
   @TestMetadata("typealiasesInContextualTest.kt")
   public void testTypealiasesInContextualTest() {
     runTest("plugins/kotlinx-serialization/testData/boxIr/typealiasesInContextualTest.kt");
