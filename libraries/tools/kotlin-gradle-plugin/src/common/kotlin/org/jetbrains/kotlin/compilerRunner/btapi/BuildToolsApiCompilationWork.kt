@@ -158,7 +158,7 @@ internal abstract class BuildToolsApiCompilationWork @Inject constructor(
             val executionConfig = when (executionStrategy) {
                 KotlinCompilerExecutionStrategy.DAEMON -> kotlinToolchains.daemonExecutionPolicy {
                     val arguments = workArguments.compilerExecutionSettings.daemonJvmArgs ?: emptyList()
-                    this[ExecutionPolicy.WithDaemon.JVM_ARGUMENTS] = arguments
+                    JVM_ARGUMENTS(arguments)
                     if (log.isDebugEnabled) {
                         log.debug("Kotlin compile daemon JVM options: ${arguments.joinToString(" ")}")
                     }
