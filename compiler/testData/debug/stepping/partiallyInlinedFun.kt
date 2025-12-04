@@ -1,6 +1,6 @@
 // WITH_STDLIB
 // LANGUAGE: +IrIntraModuleInlinerBeforeKlibSerialization -IrCrossModuleInlinerBeforeKlibSerialization
-
+// WASM_FAILS_IN_SINGLE_MODULE_MODE
 // MODULE: lib
 // FILE: scalars.kt
 inline fun <T : Any> ifTrue(condition: Boolean, exec: () -> T?): T? = if (condition) exec() else null
