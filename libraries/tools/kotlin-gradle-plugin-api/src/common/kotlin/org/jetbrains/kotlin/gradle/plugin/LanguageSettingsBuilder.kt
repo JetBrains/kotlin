@@ -25,11 +25,13 @@ interface LanguageSettingsBuilder : LanguageSettings {
     /**
      * @suppress
      */
+    @Deprecated("Configures internal Kotlin compiler argument and should not be used in the projects")
     fun enableLanguageFeature(name: String)
 
     /**
      * @suppress
      */
+    @Deprecated("Configures internal Kotlin compiler argument and should not be used in the projects")
     override val enabledLanguageFeatures: Set<String>
 
     /**

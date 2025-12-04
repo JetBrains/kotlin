@@ -70,6 +70,7 @@ internal open class DefaultLanguageSettingsBuilder @Inject constructor(
 
     private val enabledLanguageFeaturesField = mutableSetOf<String>()
 
+    @Deprecated("Configures internal Kotlin compiler argument and should not be used in the projects")
     override val enabledLanguageFeatures: Set<String>
         get() = if (compilationCompilerOptions.isCompleted) {
             compilationCompilerOptions.getOrThrow()
@@ -82,6 +83,7 @@ internal open class DefaultLanguageSettingsBuilder @Inject constructor(
             enabledLanguageFeaturesField.toSet()
         }
 
+    @Deprecated("Configures internal Kotlin compiler argument and should not be used in the projects")
     override fun enableLanguageFeature(name: String) {
         enabledLanguageFeaturesField.add(name)
         project.launch {
