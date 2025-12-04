@@ -16,6 +16,11 @@ import org.jetbrains.kotlin.analysis.api.base.KaConstantValue
 import org.jetbrains.kotlin.analysis.api.components.*
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaNamedSymbol
+import org.jetbrains.kotlin.analysis.api.types.KaType
+import org.jetbrains.kotlin.ir.backend.js.tsexport.ExportedDeclaration
+import org.jetbrains.kotlin.ir.backend.js.tsexport.ExportedMemberName
+import org.jetbrains.kotlin.ir.backend.js.tsexport.ExportedProperty
+import org.jetbrains.kotlin.ir.backend.js.tsexport.ExportedType
 import org.jetbrains.kotlin.ir.backend.js.tsexport.ExportedVisibility
 import org.jetbrains.kotlin.js.config.ModuleKind
 import org.jetbrains.kotlin.name.ClassId
@@ -25,6 +30,7 @@ import org.jetbrains.kotlin.name.JsStandardClassIds.Annotations.JsExport
 import org.jetbrains.kotlin.name.JsStandardClassIds.Annotations.JsExportDefault
 import org.jetbrains.kotlin.name.JsStandardClassIds.Annotations.JsExportIgnore
 import org.jetbrains.kotlin.name.JsStandardClassIds.Annotations.JsImplicitExport
+import org.jetbrains.kotlin.name.JsStandardClassIds.Annotations.JsStatic
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.butIf
@@ -92,7 +98,7 @@ private fun KaAnnotated.getJsQualifier(): String? =
     getSingleAnnotationArgumentString(JsStandardClassIds.Annotations.JsQualifier)
 
 context(_: KaSession)
-private fun KaNamedSymbol.getSingleAnnotationArgumentStringForOverriddenDeclaration(annotationClassId: ClassId): String? {
+private fun KaSymbol.getSingleAnnotationArgumentStringForOverriddenDeclaration(annotationClassId: ClassId): String? {
     val argument = (this as? KaAnnotated)?.getSingleAnnotationArgumentString(annotationClassId)
     return when {
         argument != null -> argument
@@ -102,7 +108,7 @@ private fun KaNamedSymbol.getSingleAnnotationArgumentStringForOverriddenDeclarat
 }
 
 context(_: KaSession)
-private fun KaNamedSymbol.getJsNameForOverriddenDeclaration(): String? =
+private fun KaSymbol.getJsNameForOverriddenDeclaration(): String? =
     getSingleAnnotationArgumentStringForOverriddenDeclaration(JsStandardClassIds.Annotations.JsName)
 
 context(_: KaSession)
@@ -134,6 +140,19 @@ internal fun shouldDeclarationBeExported(declaration: KaDeclarationSymbol): Bool
     }
 
     val parent = declaration.containingDeclaration
+    val parentModality = parent?.modality
+    if (!(declaration is KaConstructorSymbol && declaration.isPrimary)
+        && declaration.visibility == KaSymbolVisibility.PROTECTED
+        && (parentModality == KaSymbolModality.FINAL || parentModality == KaSymbolModality.SEALED)
+    ) {
+        // Protected members inside final classes are effectively private.
+        // Protected members inside sealed classes are effectively module-private.
+        // The only exception is the primary constructor: we will set its visibility to private during
+        // TypeScript export model generation, otherwise, if no (private) primary constructor is exported, there will be
+        // a default constructor, which we don't want.
+        return false
+    }
+
     if (parent != null) {
         return shouldDeclarationBeExported(parent)
     }
@@ -141,6 +160,9 @@ internal fun shouldDeclarationBeExported(declaration: KaDeclarationSymbol): Bool
     // FIXME(KT-82224): `containingFile` is always null for declarations deserialized from KLIBs
     return declaration.containingFile?.isJsExport() ?: false
 }
+
+internal fun KaAnnotated.getJsName(): String? =
+    getSingleAnnotationArgumentString(JsStandardClassIds.Annotations.JsName)
 
 internal val TypeScriptExportConfig.generateNamespacesForPackages: Boolean
     get() = artifactConfiguration.moduleKind != ModuleKind.ES
@@ -181,7 +203,7 @@ private fun KaNamedSymbol.getTopLevelQualifier(shouldIncludePackage: Boolean): F
     } ?: FqName.ROOT
 }
 
-private fun KaAnnotated.isJsImplicitExport(): Boolean =
+internal fun KaAnnotated.isJsImplicitExport(): Boolean =
     annotations.contains(JsImplicitExport)
 
 private fun KaAnnotated.isJsExportIgnore(): Boolean =
@@ -189,6 +211,9 @@ private fun KaAnnotated.isJsExportIgnore(): Boolean =
 
 internal fun KaAnnotated.isJsExport(): Boolean =
     annotations.contains(JsExport)
+
+internal fun KaAnnotated.isJsStatic(): Boolean =
+    annotations.contains(JsStatic)
 
 private fun KaAnnotated.isExplicitlyExported(): Boolean =
     annotations.contains(JsExport) || annotations.contains(JsExportDefault)
@@ -214,6 +239,91 @@ context(_: KaSession)
 private val KaCallableSymbol.isOverride: Boolean
     get() = directlyOverriddenSymbols.firstOrNull() != null
 
+internal val KaNamedClassSymbol.shouldNotBeImplemented: Boolean
+    get() = classKind == KaClassKind.INTERFACE && !isExternal || isJsImplicitExport()
+
+context(_: KaSession)
+internal fun KaNamedClassSymbol.shouldContainImplementationOfMagicProperty(superTypes: List<KaType>): Boolean {
+    return !isExternal && superTypes.any {
+        val superClass = it.expandedSymbol ?: return@any false
+        superClass.classKind == KaClassKind.INTERFACE && it.shouldAddMagicPropertyOfSuper || superClass.isJsImplicitExport()
+    }
+}
+
+private const val magicPropertyName = "__doNotUseOrImplementIt"
+
+context(_: KaSession)
+internal fun MutableList<ExportedDeclaration>.addMagicInterfaceProperty(klass: KaNamedClassSymbol, config: TypeScriptExportConfig) {
+    add(
+        ExportedProperty(
+            name = ExportedMemberName.Identifier(magicPropertyName),
+            type = klass.generateTagType(config),
+            mutable = false,
+            isMember = true,
+            isField = true
+        )
+    )
+}
+
+context(_: KaSession)
+internal fun MutableList<ExportedDeclaration>.addMagicPropertyForInterfaceImplementation(
+    klass: KaNamedClassSymbol,
+    superTypes: List<KaType>,
+    typeParameterScope: TypeParameterScope,
+    config: TypeScriptExportConfig,
+) {
+    val allSuperTypesWithMagicProperty = superTypes.filter { it.shouldAddMagicPropertyOfSuper }
+    if (allSuperTypesWithMagicProperty.isEmpty()) return
+
+    var intersectionOfTypes = allSuperTypesWithMagicProperty
+        .map {
+            ExportedType.PropertyType(
+                container = TypeExporter(config, typeParameterScope).exportType(it),
+                propertyName = ExportedType.LiteralType.StringLiteralType(magicPropertyName),
+            )
+        }
+        .reduce(ExportedType::IntersectionType)
+
+    if (klass.shouldNotBeImplemented) {
+        intersectionOfTypes = ExportedType.IntersectionType(klass.generateTagType(config), intersectionOfTypes)
+    }
+
+    add(
+        ExportedProperty(
+            name = ExportedMemberName.Identifier(magicPropertyName),
+            type = intersectionOfTypes,
+            mutable = false,
+            isMember = true,
+            isField = true
+        )
+    )
+}
+
+context(_: KaSession)
+private val KaType.shouldAddMagicPropertyOfSuper: Boolean
+    get() {
+        val klass = this.expandedSymbol ?: return false
+        if (klass.isJsImplicitExport()) return true
+        if (!shouldDeclarationBeExported(klass)) return false
+        return klass.classKind == KaClassKind.INTERFACE && !(klass is KaNamedClassSymbol && klass.isExternal) || klass.superTypes.any {
+            it.shouldAddMagicPropertyOfSuper
+        }
+    }
+
+context(_: KaSession)
+private fun KaNamedClassSymbol.generateTagType(config: TypeScriptExportConfig): ExportedType {
+    return ExportedType.InlineInterfaceType(
+        listOf(
+            ExportedProperty(
+                name = ExportedMemberName.Identifier(getExportedFqName(shouldIncludePackage = true, config).asString()),
+                type = ExportedType.Primitive.UniqueSymbol,
+                mutable = false,
+                isMember = true,
+                isField = true,
+            )
+        )
+    )
+}
 
 internal fun KaDeclarationSymbol.exportedVisibility(parent: KaDeclarationSymbol?): ExportedVisibility =
     when (visibility) {
@@ -222,4 +332,3 @@ internal fun KaDeclarationSymbol.exportedVisibility(parent: KaDeclarationSymbol?
         KaSymbolVisibility.PROTECTED -> ExportedVisibility.PROTECTED
         else -> ExportedVisibility.DEFAULT
     }
-

@@ -1,10 +1,7 @@
 declare namespace JS_TESTS {
     type Nullable<T> = T | null | undefined
     function KtSingleton<T>(): T & (abstract new() => any);
-    namespace kotlin {
-        /* ErrorDeclaration: Class declarations are not implemented yet */
-        /* ErrorDeclaration: Class declarations are not implemented yet */
-    }
+
 
     namespace foo {
         function sum(x: number, y: number): number;
@@ -37,8 +34,29 @@ declare namespace JS_TESTS {
         function concatWithExtensionAndContextParameter(scope1: foo.Scope1, _this_: foo.Scope2): string;
         function getWithExtension(_this_: foo.Scope1): string;
         function allParameters<A, B, C, D, R>(a: A, b: B, c: C, d: D, block: (p0: A, p1: B, _this_: C, d: D) => R): R;
-        /* ErrorDeclaration: Class declarations are not implemented yet */
-        /* ErrorDeclaration: Class declarations are not implemented yet */
-        /* ErrorDeclaration: Class declarations are not implemented yet */
+        interface SomeExternalInterface {
+        }
+        class Scope1 {
+            constructor(a: string);
+            getA(): string;
+            get a(): string;
+        }
+        namespace Scope1 {
+            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+            namespace $metadata$ {
+                const constructor: abstract new () => Scope1;
+            }
+        }
+        class Scope2 {
+            constructor(a: string);
+            getA(): string;
+            get a(): string;
+        }
+        namespace Scope2 {
+            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+            namespace $metadata$ {
+                const constructor: abstract new () => Scope2;
+            }
+        }
     }
 }

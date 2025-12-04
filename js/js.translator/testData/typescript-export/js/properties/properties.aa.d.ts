@@ -11,6 +11,15 @@ declare namespace JS_TESTS {
         let _varCustom: number;
         let _varCustomWithField: number;
         const valWithExplicitBackingField: any;
-        /* ErrorDeclaration: Class declarations are not implemented yet */
+        class A {
+            constructor();
+            get valWithExplicitBackingField(): any;
+        }
+        namespace A {
+            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+            namespace $metadata$ {
+                const constructor: abstract new () => A;
+            }
+        }
     }
 }
