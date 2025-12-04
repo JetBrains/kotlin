@@ -22,15 +22,15 @@ NS_ASSUME_NONNULL_BEGIN
 
 @protocol FooBase
 @required
-- (void)descendantHiddenLevel __attribute__((swift_name("descendantHiddenLevel()")));
+- (void)descendantHiddenLevel;
 @end
 
 __attribute__((objc_subclassing_restricted))
 @interface FooImpl : Base <FooBase>
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
+- (instancetype)init __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
-- (void)descendantHiddenLevel __attribute__((swift_name("descendantHiddenLevel()"))) __attribute__((unavailable("message: descendantHidden")));
-- (void)hiddenLevel __attribute__((swift_name("hiddenLevel()")));
+- (void)descendantHiddenLevel __attribute__((unavailable("message: descendantHidden")));
+- (void)hiddenLevel;
 @end
 
 #pragma pop_macro("_Nullable_result")

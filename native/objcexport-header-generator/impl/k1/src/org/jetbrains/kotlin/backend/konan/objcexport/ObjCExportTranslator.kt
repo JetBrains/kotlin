@@ -254,7 +254,7 @@ class ObjCExportTranslatorImpl(
                         mapReferenceType(descriptor.companionObjectDescriptor!!.defaultType, genericExportScope),
                         listOf("class", "readonly"),
                         getterName = namer.getCompanionObjectPropertySelector(descriptor),
-                        declarationAttributes = listOf(swiftNameAttribute(ObjCExportNamer.companionObjectPropertyName))
+                        declarationAttributes = emptyList()
                     )
                 }
             }
@@ -277,7 +277,7 @@ class ObjCExportTranslatorImpl(
                             ObjCExportNamer.objectPropertyName, null,
                             mapReferenceType(descriptor.defaultType, genericExportScope), listOf("class", "readonly"),
                             getterName = namer.getObjectPropertySelector(descriptor),
-                            declarationAttributes = listOf(swiftNameAttribute(ObjCExportNamer.objectPropertyName))
+                            declarationAttributes = emptyList()
                         )
                     }
                 }
@@ -285,22 +285,27 @@ class ObjCExportTranslatorImpl(
                     val type = mapType(descriptor.defaultType, ReferenceBridge, ObjCRootExportScope)
 
                     descriptor.enumEntries.forEach {
-                        val entryName = namer.getEnumEntrySelector(it)
-                        val swiftName = namer.getEnumEntrySwiftName(it)
+                        val enumEntryName = namer.getEnumEntryName(it)
+                        val declarationAttrs = if (enumEntryName.needsSwiftNameAttribute()) {
+                            listOf(swiftNameAttribute(enumEntryName.swiftName))
+                        } else {
+                             emptyList() 
+                        }
+                        val objCName = enumEntryName.objCName
                         add {
                             ObjCProperty(
-                                entryName, it, type, listOf("class", "readonly"),
-                                declarationAttributes = listOf(swiftNameAttribute(swiftName))
+                                objCName, it, type, listOf("class", "readonly"),
+                                declarationAttributes = declarationAttrs
                             )
                         }
-                        if (namer.needsExplicitMethodFamily(entryName)) {
+                        if (namer.needsExplicitMethodFamily(objCName)) {
                             add {
                                 ObjCMethod(
                                     null,
                                     null,
                                     false,
                                     type,
-                                    listOf(entryName),
+                                    listOf(objCName),
                                     emptyList<ObjCParameter>(),
                                     listOf(OBJC_METHOD_FAMILY_NONE),
                                 )
@@ -364,7 +369,7 @@ class ObjCExportTranslatorImpl(
             returnType = ObjCClassType("NSError"),
             selectors = listOf(asError),
             parameters = emptyList(),
-            attributes = listOf(swiftNameAttribute("$asError()"))
+            attributes = emptyList()
         )
     }
 
@@ -388,7 +393,7 @@ class ObjCExportTranslatorImpl(
             returnType = mapReferenceType(enumValues.returnType!!, genericExportScope),
             selectors = splitSelector(selector),
             parameters = emptyList(),
-            attributes = listOf(swiftNameAttribute("$selector()"))
+            attributes = emptyList()
         )
     }
 
@@ -402,7 +407,7 @@ class ObjCExportTranslatorImpl(
             enumEntries,
             type = mapReferenceType(enumEntries.type, genericExportScope),
             propertyAttributes = listOf("class", "readonly"),
-            declarationAttributes = listOf(swiftNameAttribute(selector))
+            declarationAttributes = emptyList()
         )
     }
 
@@ -459,7 +464,7 @@ class ObjCExportTranslatorImpl(
             mapper.getBaseMethods(method)
                 .makeMethodsOrderStable()
                 .asSequence()
-                .distinctBy { namer.getSelector(it) }
+                .distinctBy { namer.getFunctionName(it).objCName }
                 .forEach { base -> add { buildMethod(method, base, objCExportScope) } }
         }
 
@@ -534,7 +539,7 @@ class ObjCExportTranslatorImpl(
     // TODO: consider checking that signatures for bases with same selector/name are equal.
 
     private fun getSelector(method: FunctionDescriptor): String {
-        return namer.getSelector(method)
+        return namer.getFunctionName(method).objCName
     }
 
     private fun buildProperty(
@@ -560,7 +565,9 @@ class ObjCExportTranslatorImpl(
         val propertySetter = property.setter
         // Note: the condition below is similar to "toObjCMethods" logic in [ObjCExportedInterface.createCodeSpec].
         if (propertySetter != null && mapper.shouldBeExposed(propertySetter)) {
-            val setterSelector = mapper.getBaseMethods(propertySetter).map { namer.getSelector(it) }.distinct().single()
+            val setterSelector = mapper.getBaseMethods(propertySetter).map {
+                namer.getFunctionName(it).objCName
+            }.distinct().single()
             setterName = if (setterSelector != "set" + name.replaceFirstChar(Char::uppercaseChar) + ":") setterSelector else null
         } else {
             attributes += "readonly"
@@ -570,7 +577,13 @@ class ObjCExportTranslatorImpl(
         val getterSelector = getSelector(baseProperty.getter!!)
         val getterName: String? = if (getterSelector != name) getterSelector else null
 
-        val declarationAttributes = mutableListOf(property.getSwiftPrivateAttribute() ?: swiftNameAttribute(propertyName.swiftName))
+        val declarationAttributes = mutableListOf<String>()
+        val privateAttribute: String? = property.getSwiftPrivateAttribute()
+        if (privateAttribute != null) {
+          declarationAttributes.add(privateAttribute)
+        } else if (propertyName.needsSwiftNameAttribute()) {
+          declarationAttributes.add(swiftNameAttribute(propertyName.swiftName))
+        }
         declarationAttributes.addIfNotNull(mapper.getDeprecation(property)?.toDeprecationAttribute())
 
         val visibilityComments = visibilityComments(property.visibility, "property")
@@ -657,10 +670,14 @@ class ObjCExportTranslatorImpl(
         val parameters = collectParameters(baseMethodBridge, method)
         val selector = getSelector(baseMethod)
         val selectorParts: List<String> = splitSelector(selector)
-        val swiftName = namer.getSwiftName(baseMethod)
+        val functionName = namer.getFunctionName(baseMethod)
         val attributes = mutableListOf<String>()
-
-        attributes += method.getSwiftPrivateAttribute() ?: swiftNameAttribute(swiftName)
+        val privateAttribute: String? = method.getSwiftPrivateAttribute()
+        if (privateAttribute != null) {
+            attributes.add(privateAttribute)
+        } else if (functionName.needsSwiftNameAttribute()) {
+            attributes.add(swiftNameAttribute(functionName.swiftName))
+        }
         val returnBridge = baseMethodBridge.returnBridge
         if (returnBridge is MethodBridge.ReturnValue.WithError.ZeroForError && returnBridge.successMayBeZero) {
 
@@ -680,7 +697,7 @@ class ObjCExportTranslatorImpl(
             attributes.addIfNotNull(getDeprecationAttribute(method))
         }
 
-        if (namer.needsExplicitMethodFamily(namer.getSelector(baseMethod)) && baseMethod !is ConstructorDescriptor) {
+        if (namer.needsExplicitMethodFamily(namer.getFunctionName(baseMethod).objCName) && baseMethod !is ConstructorDescriptor) {
             attributes += OBJC_METHOD_FAMILY_NONE
         }
 
@@ -1138,8 +1155,9 @@ fun ClassDescriptor.needCompanionObjectProperty(namer: ObjCExportNamer, mapper: 
     if (companionObject == null || !mapper.shouldBeExposed(companionObject)) return false
 
     if (kind == ClassKind.ENUM_CLASS && enumEntries.any {
-            namer.getEnumEntrySelector(it) == ObjCExportNamer.companionObjectPropertyName ||
-                namer.getEnumEntrySwiftName(it) == ObjCExportNamer.companionObjectPropertyName
+            val enumEntryName = namer.getEnumEntryName(it)
+            enumEntryName.objCName == ObjCExportNamer.companionObjectPropertyName ||
+                enumEntryName.swiftName == ObjCExportNamer.companionObjectPropertyName
         }
     ) return false // 'companion' property would clash with enum entry, don't generate it.
 

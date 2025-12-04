@@ -22,18 +22,18 @@ NS_ASSUME_NONNULL_BEGIN
 
 @protocol Foo
 @required
-- (id)someMethod __attribute__((swift_name("someMethod()")));
-- (id)someMethodWithCovariantOverwrite __attribute__((swift_name("someMethodWithCovariantOverwrite()")));
-@property (readonly) int32_t someProperty __attribute__((swift_name("someProperty")));
+- (id)someMethod;
+- (id)someMethodWithCovariantOverwrite;
+@property (readonly) int32_t someProperty;
 @end
 
 __attribute__((objc_subclassing_restricted))
 @interface Bar : Base <Foo>
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
+- (instancetype)init __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
-- (id)someMethod __attribute__((swift_name("someMethod()")));
-- (NSString *)someMethodWithCovariantOverwrite __attribute__((swift_name("someMethodWithCovariantOverwrite()")));
-@property (readonly) int32_t someProperty __attribute__((swift_name("someProperty")));
+- (id)someMethod;
+- (NSString *)someMethodWithCovariantOverwrite;
+@property (readonly) int32_t someProperty;
 @end
 
 #pragma pop_macro("_Nullable_result")

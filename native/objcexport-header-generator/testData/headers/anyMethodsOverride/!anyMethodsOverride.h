@@ -20,36 +20,36 @@ NS_ASSUME_NONNULL_BEGIN
 
 __attribute__((objc_subclassing_restricted))
 @interface Mix : Base
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
+- (instancetype)init __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
-- (void)equals __attribute__((swift_name("equals()")));
+- (void)equals;
 - (BOOL)isEqual:(id _Nullable)other __attribute__((swift_name("isEqual(_:)")));
 - (void)equalsParam:(int32_t)param __attribute__((swift_name("equals(param:)")));
-- (NSUInteger)hash __attribute__((swift_name("hash()")));
+- (NSUInteger)hash;
 - (int32_t)hashCodeParam:(int32_t)param __attribute__((swift_name("hashCode(param:)")));
-- (NSString *)description __attribute__((swift_name("description()")));
+- (NSString *)description;
 - (NSString *)toStringParam:(int32_t)param __attribute__((swift_name("toString(param:)")));
 @end
 
 __attribute__((objc_subclassing_restricted))
 @interface NoParams : Base
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
+- (instancetype)init __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
-- (void)equals __attribute__((swift_name("equals()")));
+- (void)equals;
 @end
 
 __attribute__((objc_subclassing_restricted))
 @interface Override : Base
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
+- (instancetype)init __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 - (BOOL)isEqual:(id _Nullable)other __attribute__((swift_name("isEqual(_:)")));
-- (NSUInteger)hash __attribute__((swift_name("hash()")));
-- (NSString *)description __attribute__((swift_name("description()")));
+- (NSUInteger)hash;
+- (NSString *)description;
 @end
 
 __attribute__((objc_subclassing_restricted))
 @interface WithParams : Base
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
+- (instancetype)init __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 - (void)equalsParam:(int32_t)param __attribute__((swift_name("equals(param:)")));
 - (int32_t)hashCodeParam:(int32_t)param __attribute__((swift_name("hashCode(param:)")));

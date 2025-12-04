@@ -21,7 +21,7 @@ NS_ASSUME_NONNULL_BEGIN
 #endif
 
 @interface Foo<T> : Base
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
+- (instancetype)init __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 - (void)withParameterT:(id<UpperBound>)t __attribute__((swift_name("withParameter(t:)")));
 - (void)withoutParameterT:(T)t __attribute__((swift_name("withoutParameter(t:)")));

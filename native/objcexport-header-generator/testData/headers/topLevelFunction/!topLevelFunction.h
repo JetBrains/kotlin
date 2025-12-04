@@ -20,7 +20,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 __attribute__((objc_subclassing_restricted))
 @interface FooKt : Base
-+ (NSString *)myTopLevelFunction __attribute__((swift_name("myTopLevelFunction()")));
++ (NSString *)myTopLevelFunction;
 @end
 
 #pragma pop_macro("_Nullable_result")

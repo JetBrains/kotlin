@@ -20,16 +20,16 @@ NS_ASSUME_NONNULL_BEGIN
 
 __attribute__((objc_subclassing_restricted))
 @interface Bar<__contravariant T> : Base
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
+- (instancetype)init __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 - (void)fooT:(T)t __attribute__((swift_name("foo(t:)")));
 @end
 
 __attribute__((objc_subclassing_restricted))
 @interface Foo<__covariant T> : Base
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
+- (instancetype)init __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
-- (T)bar __attribute__((swift_name("bar()")));
+- (T)bar;
 @end
 
 @protocol UpperBound

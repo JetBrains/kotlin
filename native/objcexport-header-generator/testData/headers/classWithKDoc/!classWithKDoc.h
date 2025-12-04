@@ -28,7 +28,7 @@ __attribute__((objc_subclassing_restricted))
 /**
  * This class [Foo] is documented.
  */
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
+- (instancetype)init __attribute__((objc_designated_initializer));
 
 /**
  * This class [Foo] is documented.
@@ -38,13 +38,13 @@ __attribute__((objc_subclassing_restricted))
 /**
  * This member function is documented
  */
-- (void)someMemberFunction __attribute__((swift_name("someMemberFunction()")));
+- (void)someMemberFunction;
 
 /**
  * This member property is documented.
  * It will return the 'The Answer to the Ultimate Question of Life, The Universe, and Everything'
  */
-@property (readonly) int32_t someMemberProperty __attribute__((swift_name("someMemberProperty")));
+@property (readonly) int32_t someMemberProperty;
 @end
 
 #pragma pop_macro("_Nullable_result")
