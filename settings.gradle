@@ -354,6 +354,7 @@ include ":kotlin-script-runtime",
         ":kotlin-annotations-jvm",
         ":kotlin-scripting-common",
         ":kotlin-scripting-common-fir",
+        ":kotlin-scripting-common-ast",
         ":kotlin-scripting-jvm",
         ":kotlin-scripting-jvm-host-unshaded",
         ":kotlin-scripting-jvm-host-test",
@@ -966,6 +967,7 @@ project(':kotlin-annotation-processing').projectDir = "$rootDir/plugins/kapt/kap
 project(':kotlin-annotations-jvm').projectDir = "$rootDir/libraries/tools/kotlin-annotations-jvm" as File
 project(':kotlin-scripting-common').projectDir = "$rootDir/libraries/scripting/common" as File
 project(':kotlin-scripting-common-fir').projectDir = "$rootDir/libraries/scripting/common-fir" as File
+project(':kotlin-scripting-common-ast').projectDir = "$rootDir/libraries/scripting/common-ast" as File
 project(':kotlin-scripting-jvm').projectDir = "$rootDir/libraries/scripting/jvm" as File
 project(':kotlin-scripting-jvm-host-unshaded').projectDir = "$rootDir/libraries/scripting/jvm-host" as File
 project(':kotlin-scripting-jvm-host-test').projectDir = "$rootDir/libraries/scripting/jvm-host-test" as File

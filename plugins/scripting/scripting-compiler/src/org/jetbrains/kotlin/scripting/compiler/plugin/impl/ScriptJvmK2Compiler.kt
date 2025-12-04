@@ -56,6 +56,7 @@ import org.jetbrains.kotlin.toSourceLinesMapping
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.io.File
 import kotlin.script.experimental.api.*
+import kotlin.script.experimental.api.ast.parseToAst
 import kotlin.script.experimental.jvm.JvmDependency
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 
@@ -94,15 +95,21 @@ class ScriptJvmK2Compiler(
         return scriptCompilationConfiguration.refineBeforeParsing(script).onSuccess {
             @Suppress("DEPRECATION")
             val hasK1refine = it.getNoDefault(ScriptCompilationConfiguration.refineConfigurationOnAnnotations) != null
-            val hasK2refine = it.getNoDefault(ScriptCompilationConfiguration.refineConfigurationOnFir) != null
+            val hasFirRefine = it.getNoDefault(ScriptCompilationConfiguration.refineConfigurationOnFir) != null
+            val hasAstRefine = it.getNoDefault(ScriptCompilationConfiguration.refineConfigurationOnAst) != null
             when {
-                hasK1refine && !hasK2refine -> {
+                hasK1refine && !(hasFirRefine || hasAstRefine) -> {
                     failure(
                         diagnosticsCollector,
                         "The definition is not designed to be compiled with Kotlin v2+, set the language-version to 1.9 or below".asErrorDiagnostics()
                     )
                 }
-                hasK2refine -> {
+                hasAstRefine -> {
+                    val ast = parseToAst(script)
+                    val collectedData = ScriptCollectedData(mapOf(ScriptCollectedData.ast to ast))
+                    it.refineOnAst(script, collectedData)
+                }
+                hasFirRefine -> {
                     val collectedData =
                         ScriptCollectedData(
                             mapOf(
