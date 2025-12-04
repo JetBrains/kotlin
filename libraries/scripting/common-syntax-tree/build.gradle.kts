@@ -10,8 +10,6 @@ dependencies {
     api(kotlinStdlib())
     api(project(":kotlin-scripting-common"))
     api(project(":compiler:multiplatform-parsing"))
-    compileOnly(project(":compiler:cli-common"))
-    implementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
 }
 
 sourceSets {

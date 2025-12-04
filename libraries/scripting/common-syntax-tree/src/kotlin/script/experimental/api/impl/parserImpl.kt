@@ -19,22 +19,17 @@ import org.jetbrains.kotlin.kmp.parser.KDocLinkParser
 import org.jetbrains.kotlin.kmp.parser.KDocParser
 import org.jetbrains.kotlin.kmp.parser.KotlinParser
 import org.jetbrains.kotlin.kmp.utils.Stack
-import kotlin.script.experimental.api.ast.Element
-import kotlin.script.experimental.api.ast.ElementNode
-import kotlin.script.experimental.api.ast.ElementToken
-import kotlin.script.experimental.api.ast.ParseNode
-import kotlin.script.experimental.api.ast.ParsingOptions
+import kotlin.script.experimental.api.ast.SyntaxElement
 
-fun parseImpl(isScript: Boolean, text: String, parsingOptions: ParsingOptions = ParsingOptions()): ParseNode<out Element> =
-    parseToScriptParseElement(text, 0, KotlinLexer(), KotlinParser(isScript, false), parsingOptions)
+fun parseImpl(isScript: Boolean, text: String): SyntaxElement =
+    parseToScriptParseElement(text, 0, KotlinLexer(), KotlinParser(isScript, false))
 
 private fun parseToScriptParseElement(
     charSequence: CharSequence,
     start: Int,
     lexer: LexerBase,
     parser: AbstractParser,
-    parsingOptions: ParsingOptions,
-): ParseNode<out Element> {
+): SyntaxElement {
     val syntaxTreeBuilder = SyntaxTreeBuilderFactory.builder(
         charSequence,
         performLexing(charSequence, lexer, cancellationProvider = null, logger = null),
@@ -46,20 +41,20 @@ private fun parseToScriptParseElement(
 
     parser.parse(syntaxTreeBuilder)
 
-    return convertToScriptParseElement(syntaxTreeBuilder, start, parsingOptions)
+    return convertToScriptParseElement(syntaxTreeBuilder, start)
 }
 
-private fun convertToScriptParseElement(builder: SyntaxTreeBuilder, start: Int, parsingOptions: ParsingOptions): ParseNode<out Element> {
+private fun convertToScriptParseElement(builder: SyntaxTreeBuilder, start: Int): SyntaxElement {
     val productions = prepareProduction(builder).productionMarkers
     val tokens = builder.tokens
 
-    val childrenStack = Stack<MutableList<ParseNode<out Element>>>().apply {
+    val childrenStack = Stack<MutableList<SyntaxElement>>().apply {
         push(mutableListOf())
     }
     var prevTokenIndex = 0
     var lastErrorTokenIndex = -1
 
-    fun MutableList<ParseNode<out Element>>.appendLeafElements(lastTokenIndex: Int) {
+    fun MutableList<SyntaxElement>.appendLeafElements(lastTokenIndex: Int) {
         for (leafTokenIndex in prevTokenIndex until lastTokenIndex) {
             val tokenType = tokens.getTokenType(leafTokenIndex)!!
             val tokenStart = tokens.getTokenStart(leafTokenIndex) + start
@@ -78,7 +73,6 @@ private fun convertToScriptParseElement(builder: SyntaxTreeBuilder, start: Int, 
                         tokenStart,
                         KotlinLexer(),
                         KDocLinkParser,
-                        parsingOptions,
                     )
                 }
                 KtTokens.DOC_COMMENT -> {
@@ -87,16 +81,13 @@ private fun convertToScriptParseElement(builder: SyntaxTreeBuilder, start: Int, 
                         tokenStart,
                         KDocLexer(),
                         KDocParser,
-                        parsingOptions,
                     )
                 }
                 else -> {
-                    ParseNode(
-                        tokenType.toString(),
-                        tokenStart,
-                        tokenEnd,
-                        ElementToken(tokenType),
-                        emptyList()
+                    SyntaxElement.Term(
+                        tokenType,
+                        tokenStart, tokenEnd,
+                        tokens.getTokenText(leafTokenIndex)!!,
                     )
                 }
             }.let {
@@ -127,11 +118,8 @@ private fun convertToScriptParseElement(builder: SyntaxTreeBuilder, start: Int, 
                 // In addition, here we can skip whitespace or comment tokens that could improve performance a bit.
 
                 childrenStack.peek().add(
-                    ParseNode(
-                        production.getNodeType().toString(),
-                        production.getStartOffset(),
-                        production.getEndOffset(),
-                        ElementNode(production),
+                    SyntaxElement.Node(
+                        production,
                         children,
                     )
                 )
@@ -148,11 +136,8 @@ private fun convertToScriptParseElement(builder: SyntaxTreeBuilder, start: Int, 
                 childrenStack.peek().let {
                     it.appendLeafElements(errorTokenIndex)
                     it.add(
-                        ParseNode(
-                            production.getNodeType().toString(),
-                            production.getStartOffset(),
-                            production.getEndOffset(),
-                            ElementNode(production),
+                        SyntaxElement.Node(
+                            production,
                             emptyList(), // No children `isErrorMarker` is true only on leaf elements
                         )
                     )

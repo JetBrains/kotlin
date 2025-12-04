@@ -76,6 +76,6 @@ private fun configureMavenDepsOnFir(context: ScriptConfigurationRefinementContex
 }
 
 private fun configureMavenDepsOnAst(context: ScriptConfigurationRefinementContext): ResultWithDiagnostics<ScriptCompilationConfiguration> {
-    @Suppress("UnusedVariable") val ast = context.collectedData?.get(ScriptCollectedData.ast)
+    @Suppress("UnusedVariable") val ast = context.collectedData?.get(ScriptCollectedData.syntaxTree)
     return context.compilationConfiguration.asSuccess()
 }
