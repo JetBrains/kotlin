@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.api.types.KaTypeParameterType
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.builder.LightMemberOriginForDeclaration
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.light.classes.symbol.methods.MappedMethodSignature
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightMethodForMappedClassV2
@@ -168,7 +169,10 @@ internal fun KaSession.generateJavaCollectionMethodStubsIfNeededV2(
     result: MutableList<PsiMethod>,
 ) {
     if (classSymbol.classKind != KaClassKind.CLASS) return
-    if (allSupertypes.any { (it.symbol as? KaClassSymbol)?.classKind != KaClassKind.INTERFACE }) return
+
+    // Only generate stubs if this is the first non-interface class in the collection hierarchy.
+    // Check if any direct supertype is a non-interface class that has a collection supertype.
+    if (hasNonInterfaceClassSupertypeWithCollections(classSymbol)) return
 
     val closestMappedSupertype = allSupertypes.find { mapKotlinClassToJava(it.classId) != null } ?: return
     val javaClassId = mapKotlinClassToJava(closestMappedSupertype.classId) ?: return
@@ -182,6 +186,31 @@ internal fun KaSession.generateJavaCollectionMethodStubsIfNeededV2(
         closestMappedSupertype,
         result
     )
+}
+
+/**
+ * Recursively checks if any direct supertype is a non-interface class that has collection supertypes.
+ * This determines if the current class is the first non-interface class in the collection hierarchy.
+ */
+private fun KaSession.hasNonInterfaceClassSupertypeWithCollections(classSymbol: KaNamedClassSymbol): Boolean {
+    return classSymbol.superTypes.filterIsInstance<KaClassType>().any { supertype ->
+        val supertypeSymbol = supertype.symbol as? KaClassSymbol ?: return@any false
+        if (supertypeSymbol.classKind != KaClassKind.INTERFACE) {
+            // This is a non-interface class supertype. Check if it or its ancestors have collection supertypes.
+            hasCollectionSupertype(supertypeSymbol) ||
+                (supertypeSymbol as? KaNamedClassSymbol)?.let { hasNonInterfaceClassSupertypeWithCollections(it) } == true
+        } else {
+            false
+        }
+    }
+}
+
+/**
+ * Checks if the given class has any collection supertype in its hierarchy.
+ */
+private fun KaSession.hasCollectionSupertype(classSymbol: KaClassSymbol): Boolean {
+    return classSymbol.superTypes.filterIsInstance<KaClassType>()
+        .any { it.classId.packageFqName.startsWith(StandardNames.COLLECTIONS_PACKAGE_FQ_NAME) }
 }
 
 @OptIn(KaExperimentalApi::class)
