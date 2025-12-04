@@ -33,6 +33,7 @@ object ScriptWithMavenDepsConfiguration : ScriptCompilationConfiguration(
         refineConfiguration {
             @Suppress("DEPRECATION")
             onAnnotations(DependsOn::class, Repository::class, handler = ::configureMavenDepsOnAnnotations)
+            onAst(handler = ::configureMavenDepsOnAst)
             onFir(handler = ::configureMavenDepsOnFir)
         }
     }
@@ -74,3 +75,7 @@ private fun configureMavenDepsOnFir(context: ScriptConfigurationRefinementContex
     }
 }
 
+private fun configureMavenDepsOnAst(context: ScriptConfigurationRefinementContext): ResultWithDiagnostics<ScriptCompilationConfiguration> {
+    @Suppress("UnusedVariable") val ast = context.collectedData?.get(ScriptCollectedData.ast)
+    return context.compilationConfiguration.asSuccess()
+}

@@ -1,0 +1,30 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
+
+plugins {
+    kotlin("jvm")
+}
+
+project.updateJvmTarget("1.8")
+
+dependencies {
+    api(kotlinStdlib())
+    api(project(":kotlin-scripting-common"))
+    api(project(":compiler:multiplatform-parsing"))
+    compileOnly(project(":compiler:cli-common"))
+    implementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
+}
+
+sourceSets {
+    "main" { projectDefault() }
+    "test" {}
+}
+
+tasks.withType<KotlinJvmCompile>().configureEach {
+    compilerOptions.freeCompilerArgs.add("-Xallow-kotlin-package")
+}
+
+publish()
+
+runtimeJar()
+sourcesJar()
+javadocJar()

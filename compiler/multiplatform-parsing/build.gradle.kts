@@ -23,7 +23,7 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 api(kotlinStdlib())
-                implementation(libs.org.jetbrains.syntax.api)
+                api(libs.org.jetbrains.syntax.api)
                 implementation(libs.org.jetbrains.annotations)
             }
             kotlin {
