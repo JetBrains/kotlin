@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.sir.providers.impl.BridgeProvider
 
-import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.DefaultTypeClassIds.BYTE
 import org.jetbrains.kotlin.analysis.api.components.DefaultTypeClassIds.INT
@@ -53,6 +52,7 @@ import org.jetbrains.kotlin.sir.providers.impl.BridgeProvider.Bridge.AsNSDiction
 import org.jetbrains.kotlin.sir.providers.impl.BridgeProvider.Bridge.AsNSSet
 import org.jetbrains.kotlin.sir.providers.impl.BridgeProvider.Bridge.AsObjCBridged
 import org.jetbrains.kotlin.sir.providers.impl.SirTypeProviderImpl.TypeTranslationCtx
+import org.jetbrains.kotlin.sir.providers.sirModule
 import org.jetbrains.kotlin.sir.util.SirSwiftModule
 
 public class SirCustomTypeTranslatorImpl(
@@ -111,7 +111,6 @@ public class SirCustomTypeTranslatorImpl(
                     )
                     RangeBridge(
                         swiftType,
-                        session,
                         kotlinRangeClassId = classId,
                         kotlinRangeElementClassId = (argumentType.type as KaClassType).classId,
                         inclusive
@@ -126,7 +125,6 @@ public class SirCustomTypeTranslatorImpl(
                     )
                     RangeBridge(
                         swiftType,
-                        session,
                         kotlinRangeClassId = StandardClassIds.IntRange,
                         kotlinRangeElementClassId = StandardClassIds.Int,
                         inclusive = true
@@ -141,7 +139,6 @@ public class SirCustomTypeTranslatorImpl(
                     )
                     RangeBridge(
                         swiftType,
-                        session,
                         kotlinRangeClassId = StandardClassIds.LongRange,
                         kotlinRangeElementClassId = StandardClassIds.Long,
                         inclusive = true
@@ -202,9 +199,9 @@ public class SirCustomTypeTranslatorImpl(
         return typeToWrapperMap[this]
     }
 
-    internal class RangeBridge(
+    internal class RangeBridge private constructor(
         swiftType: SirNominalType,
-        val session: SirSession,
+        val uniqueModuleName: String,
         val kotlinRangeClassId: ClassId,
         val kotlinRangeElementClassId: ClassId,
         val inclusive: Boolean,
@@ -212,6 +209,23 @@ public class SirCustomTypeTranslatorImpl(
         swiftType,
         typeList = List(2) { classIdToWrapperMap[kotlinRangeElementClassId]!! },
     ) {
+
+        companion object {
+            context(session: SirSession)
+            operator fun invoke(
+                swiftType: SirNominalType,
+                kotlinRangeClassId: ClassId,
+                kotlinRangeElementClassId: ClassId,
+                inclusive: Boolean,
+            ): RangeBridge = RangeBridge(
+                swiftType = swiftType,
+                uniqueModuleName = session.moduleToTranslate.sirModule().name,
+                kotlinRangeClassId = kotlinRangeClassId,
+                kotlinRangeElementClassId = kotlinRangeElementClassId,
+                inclusive = inclusive,
+            )
+        }
+
         val pairedParameterKotlinType: KotlinType
             get() = typeList.first().kotlinType
 
@@ -277,9 +291,6 @@ public class SirCustomTypeTranslatorImpl(
                 else -> throw NoSuchElementException()
             }
         }
-
-        private val uniqueModuleName: String
-            get() = with(session.moduleProvider) { session.moduleToTranslate.sirModule().name }
     }
 
     public companion object {

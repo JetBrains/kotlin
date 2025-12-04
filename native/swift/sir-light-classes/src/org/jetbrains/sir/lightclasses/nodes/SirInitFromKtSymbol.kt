@@ -123,7 +123,7 @@ internal class SirRegularInitFromKtSymbol(
     override val isFailable: Boolean
         get() = false
 
-    override val bridges: List<SirBridge> by lazy {
+    override val bridges: List<SirBridge> by lazyWithSessions {
         val producingType: SirType = SirNominalType(
             parent as? SirScopeDefiningDeclaration ?: error("Encountered an Init that produces non-named type: $parent")
         )

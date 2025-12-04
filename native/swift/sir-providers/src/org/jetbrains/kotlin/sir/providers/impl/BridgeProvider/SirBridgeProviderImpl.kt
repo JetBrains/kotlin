@@ -131,8 +131,10 @@ public interface BridgeFunctionBuilder {
 }
 
 public interface BridgeFunctionProxy {
+    context(sir: SirSession)
     public fun createSirBridges(kotlinCall: BridgeFunctionBuilder.() -> String): List<SirBridge>
     public fun createSwiftInvocation(resultTransformer: ((String) -> String)?): List<String>
+    public fun argumentsForInvocation(): List<String>
 }
 
 private class BridgeFunctionDescriptor(
@@ -158,11 +160,11 @@ private class BridgeFunctionDescriptor(
             Triple(
                 BridgedParameter.In(
                     name = "continuation",
-                    bridge = Bridge.AsBlock(parameters = listOf(returnType), returnType = Bridge.AsOutVoid)
+                    bridge = Bridge.AsContravariantBlock(parameters = listOf(returnType), returnType = Bridge.AsOutVoid)
                 ),
                 BridgedParameter.In(
                     name = "exception",
-                    bridge = Bridge.AsBlock(parameters = listOfNotNull(errorParameter?.bridge), returnType = Bridge.AsOutVoid)
+                    bridge = Bridge.AsContravariantBlock(parameters = listOfNotNull(errorParameter?.bridge), returnType = Bridge.AsOutVoid)
                 ),
                 BridgedParameter.In(
                     name = "cancellation",
@@ -213,6 +215,7 @@ private class BridgeFunctionDescriptor(
         }
     }
 
+    context(sir: SirSession)
     override fun createSirBridges(kotlinCall: BridgeFunctionBuilder.() -> String): List<SirBridge> {
         return buildList {
             add(
@@ -235,6 +238,11 @@ private class BridgeFunctionDescriptor(
                     add(it.nativePointerToMultipleObjCBridge(i))
                 }
             }
+
+            // todo: KT-82908 Swift Export: bridges for FT should be recursive
+            allBridges
+                .flatMap { it.helperBridges(typeNamer) }
+                .forEach { add(it) }
         }.distinct()
     }
 
@@ -255,6 +263,10 @@ private class BridgeFunctionDescriptor(
             addAll(swiftCallAndTransformationLines.dropLast(1))
             add((resultTransformer ?: { it })(swiftCallAndTransformationLines.last()))
         }
+    }
+
+    override fun argumentsForInvocation(): List<String> = allParameters.filter { it.isRenderable }.map {
+        it.name.takeIf { it == "self" } ?: it.name.swiftIdentifier
     }
 }
 

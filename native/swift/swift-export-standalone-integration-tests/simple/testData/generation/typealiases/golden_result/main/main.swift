@@ -381,12 +381,18 @@ open class SEALED: KotlinRuntime.KotlinBase {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
     }
 }
-public var block: Swift.Never {
+public var block: main.closure {
     get {
-        fatalError()
+        return {
+            let pointerToBlock = __root___block_get()
+            return { return main_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer__(pointerToBlock) }
+        }()
     }
     set {
-        fatalError()
+        return __root___block_set__TypesOfArguments__U2829202D_U20Swift_Void__({
+            let originalBlock = newValue
+            return { return originalBlock() }
+        }())
     }
 }
 public func consume_closure(
@@ -399,16 +405,25 @@ public func consume_closure(
 }
 public func deeper_closure_typealiase(
     block: @escaping main.deeper_closure_typealias
-) -> Swift.Never {
-    fatalError()
+) -> main.deeper_closure_typealias {
+    return {
+        let pointerToBlock = __root___deeper_closure_typealiase__TypesOfArguments__U2829202D_U20Swift_Void__({
+        let originalBlock = block
+        return { return originalBlock() }
+    }())
+        return { return main_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer__(pointerToBlock) }
+    }()
 }
 public func increment(
     integer: main.DefaultInteger
 ) -> main.RegularInteger {
     return __root___increment__TypesOfArguments__Swift_Int32__(integer)
 }
-public func produce_closure() -> Swift.Never {
-    fatalError()
+public func produce_closure() -> main.closure {
+    return {
+        let pointerToBlock = __root___produce_closure()
+        return { return main_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer__(pointerToBlock) }
+    }()
 }
 extension main.OUTSIDE_PROTO where Self : KotlinRuntimeSupport._KotlinBridgeable {
 }

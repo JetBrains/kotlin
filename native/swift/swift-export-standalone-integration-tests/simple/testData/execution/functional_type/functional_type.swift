@@ -21,6 +21,24 @@ func testCallingClosureSentToKotlin() throws {
 }
 
 @Test
+func testSimpleProduceBlock() throws {
+    let block = foo_produce_simple()
+    try #require(foo_produce_simple_counter == 0)
+    block()
+    try #require(foo_produce_simple_counter == 1)
+    block()
+    try #require(foo_produce_simple_counter == 2)
+}
+
+@Test
+func testSimpleProduceBlockReturningInt() throws {
+    let block = foo_produce_simple_int()
+    try #require(block() == 1)
+    try #require(block() == 2)
+    try #require(block() == 3)
+}
+
+@Test
 func testFunctionalTypeTypealias() throws {
     var i: Int = 0
     save_typealiased_callback {
@@ -61,6 +79,20 @@ func testBlockWithOptRefType() throws {
     receivedB = callOptRefBlock(with: nil)
     try #require(receivedB == nil)
     try #require(lastB == nil)
+}
+
+@Test
+func testProduceBlockWithOptRefType() throws {
+    let block = produceOptionalId()
+    var receivedB: Bar? = nil
+
+    receivedB = block(Bar(i: 0))
+    try #require(receivedB!.i == 1)
+    try #require(last_seen_bar_by_produceOptionalId!.i == 0)
+
+    receivedB = block(nil)
+    try #require(receivedB == nil)
+    try #require(last_seen_bar_by_produceOptionalId == nil)
 }
 
 @Test
@@ -109,6 +141,16 @@ func testBlockWithListType() throws {
 }
 
 @Test
+func testProduceBlockWithListType() throws {
+    let block = produceListId()
+    var received: [Int32] = []
+
+    received = block([1, 2, 3])
+    try #require(received == [3, 2, 1])
+    try #require(last_seen_bar_by_produceListId == [1, 2, 3])
+}
+
+@Test
 func testFunctionWithIntReceiver() throws {
     var received: Int32? = nil
     fooReceiverInt { it in
@@ -143,4 +185,14 @@ func testFunctionWithListReceiver() throws {
     }
     try #require(received!.count == 3)
     try #require(received == [1, 2, 3])
+}
+
+@Test
+func testProduceBlockWithStringReceiver() throws {
+    let block = produceWithStringReceiver()
+    var received: String = ""
+
+    received = block("hello")
+    try #require(received == "hellohello")
+    try #require(last_seen_bar_by_produceWithStringReceiver == "hello")
 }

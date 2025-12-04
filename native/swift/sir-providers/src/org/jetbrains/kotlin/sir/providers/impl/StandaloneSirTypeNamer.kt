@@ -62,7 +62,9 @@ internal object StandaloneSirTypeNamer : SirTypeNamer {
     private fun kotlinFqName(type: SirType): String = when (type) {
         is SirNominalType -> kotlinFqName(type)
         is SirExistentialType -> kotlinFqName(type)
-        is SirErrorType, is SirFunctionalType, is SirUnsupportedType -> error("Type $type can not be named")
+        is SirFunctionalType -> "Function${type.parameterTypes.count()}<${(type.parameterTypes + type.returnType).joinToString { kotlinFqName(it) }}>"
+        is SirErrorType, is SirUnsupportedType ->
+            error("Type $type can not be named")
     }
 
     private fun kotlinParametrizedName(type: SirType): String = when (type) {

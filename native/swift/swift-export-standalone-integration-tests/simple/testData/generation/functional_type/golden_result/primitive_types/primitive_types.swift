@@ -18,3 +18,9 @@ public func consume_block_with_uint_id(
         return { arg0 in return originalBlock(arg0) }
     }())
 }
+public func produce_block_with_byte_byte() -> (Swift.Int8, Swift.Int8, Swift.Int8) -> Swift.Int8 {
+    return {
+        let pointerToBlock = __root___produce_block_with_byte_byte()
+        return { _1, _2, _3 in return primitive_types_internal_functional_type_caller_SwiftU2EInt8__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int8_Swift_Int8_Swift_Int8__(pointerToBlock, _1, _2, _3) }
+    }()
+}
