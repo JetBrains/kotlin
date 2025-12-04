@@ -16,7 +16,7 @@ internal object WasmJsEnvironmentChecker : JsLikeEnvironmentChecker(
     listOf(
         "browser()",
         "nodejs()",
-        "d8"
+        "d8()"
     ),
     listOf(
         { it.browserNotConfigured() },
