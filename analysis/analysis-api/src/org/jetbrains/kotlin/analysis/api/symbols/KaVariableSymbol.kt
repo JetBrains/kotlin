@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.symbols
 
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaInitializerValue
@@ -56,6 +55,26 @@ public abstract class KaBackingFieldSymbol : KaVariableSymbol() {
      * The property which is backed by the backing field.
      */
     public abstract val owningProperty: KaKotlinPropertySymbol
+
+    /**
+     * Whether the backing field [is not default](https://github.com/Kotlin/KEEP/blob/main/proposals/KEEP-0430-explicit-backing-fields.md#declaration-site).
+     *
+     * #### Example
+     *
+     * The following property has an implicitly defined, default backing field:
+     *
+     * ```kotlin
+     * var names: Int = 10
+     * ```
+     *
+     * This property has an explicit, non-default backing field:
+     *
+     * ```kotlin
+     * val names: List<String>
+     *     field: MutableList<String> = mutableListOf()
+     * ```
+     */
+    public abstract val isNotDefault: Boolean
 
     final override val name: Name get() = withValidityAssertion { StandardNames.BACKING_FIELD }
 

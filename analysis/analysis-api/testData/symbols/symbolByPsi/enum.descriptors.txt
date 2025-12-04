@@ -80,6 +80,7 @@ KaKotlinPropertySymbol:
     isExpect: false
     isExtension: false
     isExternal: false
+    isNotDefault: false
     isVal: false
     location: PROPERTY
     modality: FINAL
@@ -370,6 +371,7 @@ KaKotlinPropertySymbol:
     isExpect: false
     isExtension: false
     isExternal: false
+    isNotDefault: false
     isVal: false
     location: PROPERTY
     modality: FINAL
@@ -572,6 +574,7 @@ KaKotlinPropertySymbol:
     isExpect: false
     isExtension: false
     isExternal: false
+    isNotDefault: false
     isVal: false
     location: PROPERTY
     modality: FINAL
@@ -965,6 +968,7 @@ KaKotlinPropertySymbol:
     isExpect: false
     isExtension: false
     isExternal: false
+    isNotDefault: false
     isVal: false
     location: PROPERTY
     modality: FINAL
@@ -1167,6 +1171,7 @@ KaKotlinPropertySymbol:
     isExpect: false
     isExtension: false
     isExternal: false
+    isNotDefault: false
     isVal: false
     location: PROPERTY
     modality: FINAL
@@ -1369,6 +1374,7 @@ KaKotlinPropertySymbol:
     isExpect: false
     isExtension: false
     isExternal: false
+    isNotDefault: false
     isVal: false
     location: PROPERTY
     modality: FINAL
@@ -1817,6 +1823,7 @@ KaConstructorSymbol:
           isExpect: false
           isExtension: false
           isExternal: false
+          isNotDefault: false
           isVal: true
           location: PROPERTY
           modality: FINAL

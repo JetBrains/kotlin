@@ -883,6 +883,7 @@ public abstract class org/jetbrains/kotlin/analysis/api/symbols/KaBackingFieldSy
 	public final fun isExpect ()Z
 	public final fun isExtension ()Z
 	public final fun isExternal ()Z
+	public abstract fun isNotDefault ()Z
 }
 
 public abstract class org/jetbrains/kotlin/analysis/api/symbols/KaCallableSymbol : org/jetbrains/kotlin/analysis/api/base/KaContextReceiversOwner, org/jetbrains/kotlin/analysis/api/symbols/KaDeclarationSymbol {

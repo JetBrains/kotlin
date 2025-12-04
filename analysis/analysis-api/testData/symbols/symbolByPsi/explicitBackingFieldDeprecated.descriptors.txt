@@ -8,6 +8,8 @@ KaKotlinPropertySymbol:
     isActual: false
     isExpect: false
     isExtension: false
+    isExternal: false
+    isNotDefault: true
     isVal: true
     location: PROPERTY
     modality: FINAL
@@ -42,6 +44,7 @@ KaKotlinPropertySymbol:
     isActual: false
     isExpect: false
     isExtension: false
+    isExternal: false
     isInline: false
     isNotDefault: false
     isOverride: false
@@ -99,10 +102,8 @@ KaKotlinPropertySymbol:
   getContainingJvmClassName: Foo
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
-  getterDeprecationStatus: null
   javaGetterName: getValue
   javaSetterName: null
-  setterDeprecationStatus: null
   isInline: false
   importableFqName: null
 

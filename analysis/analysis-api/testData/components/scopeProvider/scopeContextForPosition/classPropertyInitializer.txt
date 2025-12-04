@@ -59,6 +59,7 @@ scopes:
           isExpect: false
           isExtension: false
           isExternal: false
+          isNotDefault: false
           isVal: true
           location: PROPERTY
           modality: FINAL
@@ -168,6 +169,7 @@ scopes:
           isExpect: false
           isExtension: false
           isExternal: false
+          isNotDefault: false
           isVal: true
           location: PROPERTY
           modality: FINAL
@@ -245,6 +247,7 @@ scopes:
           isExpect: false
           isExtension: false
           isExternal: false
+          isNotDefault: false
           isVal: true
           location: PROPERTY
           modality: FINAL
@@ -354,6 +357,7 @@ scopes:
           isExpect: false
           isExtension: false
           isExternal: false
+          isNotDefault: false
           isVal: true
           location: PROPERTY
           modality: FINAL
@@ -584,6 +588,7 @@ scopes:
                 isExpect: false
                 isExtension: false
                 isExternal: false
+                isNotDefault: false
                 isVal: true
                 location: PROPERTY
                 modality: FINAL

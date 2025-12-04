@@ -41,6 +41,9 @@ internal class KaFe10DescSyntheticFieldSymbol(
             KaFe10DescKotlinPropertySymbol(kotlinProperty, analysisContext)
         }
 
+    override val isNotDefault: Boolean
+        get() = withValidityAssertion { false }
+
     override val annotationsObject: Annotations
         get() = withValidityAssertion { descriptor.annotations }
 
