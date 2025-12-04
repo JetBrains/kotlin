@@ -11,6 +11,9 @@ import org.jetbrains.kotlin.buildtools.api.cri.CriToolchain
 import org.jetbrains.kotlin.buildtools.api.internal.KotlinCompilerVersion
 import org.jetbrains.kotlin.buildtools.api.internal.wrappers.Kotlin230AndBelowWrapper
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 
 /**
  * The main entry point to the Build Tools API.
@@ -181,4 +184,19 @@ public interface KotlinToolchains {
 @ExperimentalBuildToolsApi
 public inline fun <reified T : Toolchain> KotlinToolchains.getToolchain(): T {
     return getToolchain(T::class.java)
+}
+
+/**
+ * Convenience function for creating an [ExecutionPolicy.WithDaemon] with options configured by [builderAction].
+ *
+ * @return an immutable `ExecutionPolicy.WithDaemon`.
+ * @see KotlinToolchains.daemonExecutionPolicyBuilder
+ */
+@OptIn(ExperimentalContracts::class)
+@ExperimentalBuildToolsApi
+public inline fun KotlinToolchains.daemonExecutionPolicy(builderAction: ExecutionPolicy.WithDaemon.Builder.() -> Unit): ExecutionPolicy.WithDaemon {
+    contract {
+        callsInPlace(builderAction, InvocationKind.EXACTLY_ONCE)
+    }
+    return daemonExecutionPolicyBuilder().apply(builderAction).build()
 }
