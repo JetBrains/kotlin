@@ -9,15 +9,13 @@ import com.intellij.psi.*
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaClassType
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.api.types.KaTypeParameterType
-import org.jetbrains.kotlin.analysis.api.types.KaTypePointer
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.builder.LightMemberOriginForDeclaration
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
-import org.jetbrains.kotlin.light.classes.symbol.methods.KaMethodSignature
+import org.jetbrains.kotlin.light.classes.symbol.methods.MappedMethodSignature
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightMethodForMappedClassV2
 import org.jetbrains.kotlin.load.java.BuiltinSpecialProperties
 import org.jetbrains.kotlin.load.java.JvmAbi
@@ -212,7 +210,6 @@ private fun KaSession.generateJavaCollectionMethodStubsV2(
             containingClass,
             method,
             javaCollectionSymbol,
-            kotlinCollectionSymbol,
             kotlinNames,
             substitutionMap
         )
@@ -229,7 +226,6 @@ private fun KaSession.createWrappersForJavaCollectionMethodV2(
     containingClass: SymbolLightClassForClassOrObject,
     method: KaNamedFunctionSymbol,
     javaCollectionSymbol: KaClassSymbol,
-    kotlinCollectionSymbol: KaClassSymbol,
     kotlinNames: Set<String>,
     substitutionMap: Map<KaTypeParameterSymbol, KaType>,
 ): List<PsiMethod> {
@@ -261,7 +257,6 @@ private fun KaSession.createWrappersForJavaCollectionMethodV2(
                     containingClass,
                     method,
                     javaCollectionSymbol,
-                    kotlinCollectionSymbol,
                     substitutionMap
                 )
             } else {
@@ -280,7 +275,6 @@ private fun KaSession.createMethodsWithSpecialSignatureV2(
     containingClass: SymbolLightClassForClassOrObject,
     method: KaNamedFunctionSymbol,
     javaCollectionSymbol: KaClassSymbol,
-    kotlinCollectionSymbol: KaClassSymbol,
     substitutionMap: Map<KaTypeParameterSymbol, KaType>,
 ): List<PsiMethod> {
     val methodName = method.name.asString()
@@ -290,7 +284,6 @@ private fun KaSession.createMethodsWithSpecialSignatureV2(
         val abstractKotlinVariantWithGeneric = createJavaUtilMapMethodWithSpecialSignatureV2(
             containingClass,
             method,
-            kotlinCollectionSymbol,
             substitutionMap
         ) ?: return emptyList()
         val finalBridgeWithObject = method.finalBridge(containingClass, substitutionMap)
@@ -329,54 +322,43 @@ private fun KaSession.createMethodsWithSpecialSignatureV2(
 private fun KaSession.createJavaUtilMapMethodWithSpecialSignatureV2(
     containingClass: SymbolLightClassForClassOrObject,
     method: KaNamedFunctionSymbol,
-    kotlinCollectionSymbol: KaClassSymbol,
     substitutionMap: Map<KaTypeParameterSymbol, KaType>,
 ): SymbolLightMethodForMappedClassV2? {
-    return null
+    val typeParameters = substitutionMap.keys
+    val k = typeParameters.find { it.name.asString() == "K" }?.let { substitutionMap[it] } ?: return null
+    val v = typeParameters.find { it.name.asString() == "V" }?.let { substitutionMap[it] } ?: return null
 
-    // Extract K and V from the collection type
-//    val collectionType = kotlinCollectionSymbol.buildSelfClassType()
-//    if (collectionType.typeArguments.size != 2) return null
-//
-//    val kType = collectionType.typeArguments[0].type ?: return null
-//    val vType = collectionType.typeArguments[1].type ?: return null
-//
-//    if (kType is KaTypeParameterType || vType is KaTypeParameterType) return null
-//
-//    val methodName = method.name.asString()
-//    val signature = when (methodName) {
-//        "get" -> {
-//            val paramType = kType.asPsiType(containingClass, allowErrorTypes = true) ?: return null
-//            val returnType = vType.asPsiType(containingClass, allowErrorTypes = true) ?: return null
-//            KaMethodSignature(parameterTypes = listOf(paramType), returnType = returnType)
-//        }
-//
-//        "containsKey" -> {
-//            val paramType = kType.asPsiType(containingClass, allowErrorTypes = true) ?: return null
-//            KaMethodSignature(parameterTypes = listOf(paramType), returnType = PsiTypes.booleanType())
-//        }
-//
-//        "containsValue" -> {
-//            val paramType = vType.asPsiType(containingClass, allowErrorTypes = true) ?: return null
-//            KaMethodSignature(parameterTypes = listOf(paramType), returnType = PsiTypes.booleanType())
-//        }
-//
-//        "remove" -> {
-//            // only `remove(Object)` pair (i.e. `remove(K)`) is needed
-//            if (method.valueParameters.size != 1) return null
-//            val paramType = kType.asPsiType(containingClass, allowErrorTypes = true) ?: return null
-//            val returnType = vType.asPsiType(containingClass, allowErrorTypes = true) ?: return null
-//            KaMethodSignature(parameterTypes = listOf(paramType), returnType = returnType)
-//        }
-//
-//        else -> null
-//    } ?: return null
-//
-//    return method.wrapAsSymbolMethod(
-//        containingClass = containingClass,
-//        objectSubstitution = null,
-//        providedSignature = signature
-//    )
+    val methodName = method.name.asString()
+    val signature = when (methodName) {
+        "get" -> {
+            if (k is KaTypeParameterType) return null
+            MappedMethodSignature(parameterTypes = listOf(k.createPointer()), returnType = v.createPointer())
+        }
+
+        "containsKey" -> {
+            if (k is KaTypeParameterType) return null
+            MappedMethodSignature(parameterTypes = listOf(k.createPointer()), returnType = builtinTypes.boolean.createPointer())
+        }
+
+        "containsValue" -> {
+            if (v is KaTypeParameterType) return null
+            MappedMethodSignature(parameterTypes = listOf(v.createPointer()), returnType = builtinTypes.boolean.createPointer())
+        }
+
+        "remove" -> {
+            // only `remove(Object)` pair (i.e. `remove(K)`) is needed
+            if (method.valueParameters.size != 1) return null
+            if (k is KaTypeParameterType) return null
+            MappedMethodSignature(parameterTypes = listOf(k.createPointer()), returnType = v.createPointer())
+        }
+
+        else -> null
+    } ?: return null
+
+    return method.wrapAsSymbolMethod(
+        containingClass = containingClass,
+        providedSignature = signature
+    )
 }
 
 /**
@@ -494,7 +476,7 @@ private fun KaNamedFunctionSymbol.wrapAsSymbolMethod(
     name: String = this.name.asString(),
     substitutionMap: Map<KaTypeParameterSymbol, KaType> = emptyMap(),
     substituteObjectWith: KaType? = null,
-    providedSignature: KaMethodSignature? = null,
+    providedSignature: MappedMethodSignature? = null,
     makeFinal: Boolean = false,
     hasImplementation: Boolean = false,
 ): SymbolLightMethodForMappedClassV2 {

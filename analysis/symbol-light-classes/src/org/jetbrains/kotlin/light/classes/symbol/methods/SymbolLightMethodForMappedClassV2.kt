@@ -72,7 +72,7 @@ internal class SymbolLightMethodForMappedClassV2 private constructor(
      * Used for special cases like Map methods (get(K), remove(K)) where parameter and return types
      * need custom handling.
      */
-    private val providedSignature: KaMethodSignature?,
+    private val providedSignature: MappedMethodSignature?,
     /**
      * Type to substitute for java.lang.Object in the signature.
      * Used when mapping Java methods that use Object to Kotlin types with more specific bounds.
@@ -93,7 +93,7 @@ internal class SymbolLightMethodForMappedClassV2 private constructor(
         isFinal: Boolean,
         hasImplementation: Boolean,
         substitutionMap: Map<KaSymbolPointer<KaTypeParameterSymbol>, KaTypePointer<KaType>> = emptyMap(),
-        providedSignature: KaMethodSignature? = null,
+        providedSignature: MappedMethodSignature? = null,
         substituteObjectWith: KaTypePointer<KaType>? = null,
     ) : this(
         functionSymbolPointer = functionSymbol.createPointer(),
@@ -166,13 +166,9 @@ internal class SymbolLightMethodForMappedClassV2 private constructor(
 
     @OptIn(KaExperimentalApi::class)
     private fun KaSession.computeParameterType(parameter: KaValueParameterSymbol, index: Int): PsiType {
-        // If a custom signature is provided, use its parameter type
-        providedSignature?.parameterTypes?.getOrNull(index)?.let { return it }
-
-        val kaType = parameter.returnType
-        val substitutedType = applySubstitution(kaType)
-
-        return substitutedType.asPsiType(
+        val providedType = providedSignature?.parameterTypes?.getOrNull(index)?.restore()
+        val type = providedType ?: applySubstitution(parameter.returnType)
+        return type.asPsiType(
             useSitePosition = this@SymbolLightMethodForMappedClassV2,
             allowErrorTypes = true,
             mode = KaTypeMappingMode.VALUE_PARAMETER,
@@ -209,18 +205,12 @@ internal class SymbolLightMethodForMappedClassV2 private constructor(
     @OptIn(KaExperimentalApi::class)
     override fun getReturnType(): PsiType? = cachedValue {
         withFunctionSymbol { functionSymbol ->
-            // If a custom signature is provided, use its return type
-            providedSignature?.returnType?.let { return@withFunctionSymbol it }
-
-            val kaType = functionSymbol.returnType
-            val substitutedType = applySubstitution(kaType)
-
-            substitutedType.asPsiType(
+            val providedType = providedSignature?.returnType?.restore()
+            val type = providedType ?: applySubstitution(functionSymbol.returnType)
+            type.asPsiType(
                 useSitePosition = this@SymbolLightMethodForMappedClassV2,
                 allowErrorTypes = true,
                 mode = KaTypeMappingMode.FUNCTION_RETURN_TYPE,
-                isAnnotationMethod = false,
-                suppressWildcards = null,
             )
         }
     }
@@ -322,12 +312,13 @@ internal class SymbolLightMethodForMappedClassV2 private constructor(
 }
 
 /**
- * Method signature that uses KaType instead of PsiType for parameter and return types.
+ * Method signature that uses pointers to KaType instead of PsiType for parameter and return types.
  * PsiTypes are computed lazily from KaTypes using the provided context.
+ * Pointers will be unwrapped on the use-site.
  */
-internal data class KaMethodSignature(
-    val parameterTypes: List<PsiType>,
-    val returnType: PsiType,
+internal data class MappedMethodSignature(
+    val parameterTypes: List<KaTypePointer<KaType>>,
+    val returnType: KaTypePointer<KaType>,
 )
 
 /**
