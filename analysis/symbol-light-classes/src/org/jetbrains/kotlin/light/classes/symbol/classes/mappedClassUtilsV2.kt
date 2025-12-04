@@ -231,7 +231,7 @@ private fun KaSession.createWrappersForJavaCollectionMethodV2(
     javaCollectionSymbol: KaClassSymbol,
     kotlinCollectionSymbol: KaClassSymbol,
     kotlinNames: Set<String>,
-    substitutionMap: Map<KaSymbolPointer<KaTypeParameterSymbol>, KaTypePointer<KaType>>,
+    substitutionMap: Map<KaTypeParameterSymbol, KaType>,
 ): List<PsiMethod> {
     val methodName = method.name.asString()
 
@@ -281,7 +281,7 @@ private fun KaSession.createMethodsWithSpecialSignatureV2(
     method: KaNamedFunctionSymbol,
     javaCollectionSymbol: KaClassSymbol,
     kotlinCollectionSymbol: KaClassSymbol,
-    substitutionMap: Map<KaSymbolPointer<KaTypeParameterSymbol>, KaTypePointer<KaType>>,
+    substitutionMap: Map<KaTypeParameterSymbol, KaType>,
 ): List<PsiMethod> {
     val methodName = method.name.asString()
 
@@ -290,7 +290,8 @@ private fun KaSession.createMethodsWithSpecialSignatureV2(
         val abstractKotlinVariantWithGeneric = createJavaUtilMapMethodWithSpecialSignatureV2(
             containingClass,
             method,
-            kotlinCollectionSymbol
+            kotlinCollectionSymbol,
+            substitutionMap
         ) ?: return emptyList()
         val finalBridgeWithObject = method.finalBridge(containingClass, substitutionMap)
         return listOf(finalBridgeWithObject, abstractKotlinVariantWithGeneric)
@@ -311,8 +312,8 @@ private fun KaSession.createMethodsWithSpecialSignatureV2(
         }
     }
 
-    val typePointer = substitutionMap.values.singleOrNull() ?: return emptyList()
-    if (typePointer.restore() is KaTypeParameterType) {
+    val kaType = substitutionMap.values.singleOrNull() ?: return emptyList()
+    if (kaType is KaTypeParameterType) {
         return emptyList()
     }
 
@@ -320,7 +321,7 @@ private fun KaSession.createMethodsWithSpecialSignatureV2(
     val abstractKotlinVariantWithGeneric = method.wrapAsSymbolMethod(
         containingClass = containingClass,
         substitutionMap = substitutionMap,
-        substituteObjectWith = typePointer
+        substituteObjectWith = kaType
     )
     return listOf(finalBridgeWithObject, abstractKotlinVariantWithGeneric)
 }
@@ -329,6 +330,7 @@ private fun KaSession.createJavaUtilMapMethodWithSpecialSignatureV2(
     containingClass: SymbolLightClassForClassOrObject,
     method: KaNamedFunctionSymbol,
     kotlinCollectionSymbol: KaClassSymbol,
+    substitutionMap: Map<KaTypeParameterSymbol, KaType>,
 ): SymbolLightMethodForMappedClassV2? {
     return null
 
@@ -388,12 +390,12 @@ private fun KaSession.createJavaUtilMapMethodWithSpecialSignatureV2(
  *
  * @param javaClassSymbol The Java collection class (e.g., java.util.Collection)
  * @param kotlinCollectionType The Kotlin collection supertype with concrete type arguments (e.g., Collection<String>)
- * @return A map from Java type parameter symbol pointers to Kotlin type pointers
+ * @return A map from Java type parameter symbols to Kotlin types
  */
 private fun buildSubstitutionMap(
     javaClassSymbol: KaClassSymbol,
     kotlinCollectionType: KaClassType,
-): Map<KaSymbolPointer<KaTypeParameterSymbol>, KaTypePointer<KaType>> {
+): Map<KaTypeParameterSymbol, KaType> {
     val javaTypeParameters = javaClassSymbol.typeParameters
     val kotlinTypeArguments = kotlinCollectionType.typeArguments.mapNotNull { it.type }
 
@@ -403,7 +405,7 @@ private fun buildSubstitutionMap(
 
     return buildMap {
         javaTypeParameters.zip(kotlinTypeArguments).forEach { (typeParameter, typeArgument) ->
-            put(typeParameter.createPointer(), typeArgument.createPointer())
+            put(typeParameter, typeArgument)
         }
     }
 }
@@ -468,7 +470,7 @@ private fun mapKotlinClassToJava(classId: ClassId): ClassId? {
 
 private fun KaNamedFunctionSymbol.finalBridge(
     containingClass: SymbolLightClassForClassOrObject,
-    substitutionMap: Map<KaSymbolPointer<KaTypeParameterSymbol>, KaTypePointer<KaType>>,
+    substitutionMap: Map<KaTypeParameterSymbol, KaType>,
 ): SymbolLightMethodForMappedClassV2 = wrapAsSymbolMethod(
     containingClass = containingClass,
     substitutionMap = substitutionMap,
@@ -478,7 +480,7 @@ private fun KaNamedFunctionSymbol.finalBridge(
 
 private fun KaNamedFunctionSymbol.openBridge(
     containingClass: SymbolLightClassForClassOrObject,
-    substitutionMap: Map<KaSymbolPointer<KaTypeParameterSymbol>, KaTypePointer<KaType>>,
+    substitutionMap: Map<KaTypeParameterSymbol, KaType>,
 ): SymbolLightMethodForMappedClassV2 = wrapAsSymbolMethod(
     containingClass = containingClass,
     substitutionMap = substitutionMap,
@@ -490,8 +492,8 @@ private fun KaNamedFunctionSymbol.wrapAsSymbolMethod(
     containingClass: SymbolLightClassForClassOrObject,
     lightMemberOrigin: LightMemberOrigin? = null,
     name: String = this.name.asString(),
-    substitutionMap: Map<KaSymbolPointer<KaTypeParameterSymbol>, KaTypePointer<KaType>> = emptyMap(),
-    substituteObjectWith: KaTypePointer<KaType>? = null,
+    substitutionMap: Map<KaTypeParameterSymbol, KaType> = emptyMap(),
+    substituteObjectWith: KaType? = null,
     providedSignature: KaMethodSignature? = null,
     makeFinal: Boolean = false,
     hasImplementation: Boolean = false,
@@ -503,8 +505,8 @@ private fun KaNamedFunctionSymbol.wrapAsSymbolMethod(
         name = name,
         isFinal = makeFinal,
         hasImplementation = hasImplementation,
-        substitutionMap = substitutionMap,
-        substituteObjectWith = substituteObjectWith,
+        substitutionMap = substitutionMap.mapKeys { it.key.createPointer() }.mapValues { it.value.createPointer() },
+        substituteObjectWith = substituteObjectWith?.createPointer(),
         providedSignature = providedSignature
     )
 }
