@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.analysis.diagnostics
 
 import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
-import org.jetbrains.kotlin.diagnostics.rendering.BaseSourcelessDiagnosticFactory
+import org.jetbrains.kotlin.diagnostics.rendering.BaseSourcelessDiagnosticRendererFactory
 import org.jetbrains.kotlin.fir.analysis.diagnostics.CliDiagnostics.COMPILER_PLUGIN_ARG_IS_EXPERIMENTAL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.CliDiagnostics.CONTEXT_PARAMETERS_ARE_DEPRECATED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.CliDiagnostics.ERROR_SEVERITY_CHANGED
@@ -32,7 +32,7 @@ object CliDiagnostics : KtDiagnosticsContainer() {
     override fun getRendererFactory(): BaseDiagnosticRendererFactory = KtDiagnosticMessagesCli
 }
 
-object KtDiagnosticMessagesCli : BaseSourcelessDiagnosticFactory() {
+object KtDiagnosticMessagesCli : BaseSourcelessDiagnosticRendererFactory() {
     override val MAP: KtDiagnosticFactoryToRendererMap by KtDiagnosticFactoryToRendererMap("CLI") { map ->
         map.put(COMPILER_PLUGIN_ARG_IS_EXPERIMENTAL, MESSAGE_PLACEHOLDER)
         map.put(OPT_IN_REQUIREMENT_MARKER_IS_UNRESOLVED, MESSAGE_PLACEHOLDER)
