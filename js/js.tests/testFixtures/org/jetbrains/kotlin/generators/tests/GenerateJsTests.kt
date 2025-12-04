@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.generators.model.annotation
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.js.test.runners.*
+import org.jetbrains.kotlin.js.test.runners.tsexport.*
 import org.jetbrains.kotlin.test.utils.CUSTOM_TEST_DATA_EXTENSION_PATTERN
 import org.junit.jupiter.api.Tag
 

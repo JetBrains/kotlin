@@ -3,10 +3,12 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.js.test.runners
+package org.jetbrains.kotlin.js.test.runners.tsexport
 
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.js.test.converters.AnalysisApiBasedDtsGeneratorFacade
+import org.jetbrains.kotlin.js.test.runners.commonConfigurationForJsBackendFirstStageTest
+import org.jetbrains.kotlin.js.test.runners.setUpDefaultDirectivesForJsBoxTest
 import org.jetbrains.kotlin.js.test.utils.configureJsTypeScriptExportTest
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TargetBackend
