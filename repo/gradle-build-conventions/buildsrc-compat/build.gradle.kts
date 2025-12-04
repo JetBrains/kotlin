@@ -54,6 +54,7 @@ kotlin {
     compilerOptions {
         allWarningsAsErrors.set(true)
         optIn.add("kotlin.ExperimentalStdlibApi")
+        optIn.add("org.jetbrains.kotlin.gradle.swiftexport.ExperimentalSwiftExportDsl")
     }
 }
 
@@ -76,7 +77,7 @@ java {
 
 dependencies {
     api(project(":gradle-plugins-common"))
-    
+
     implementation(kotlin("stdlib", embeddedKotlinVersion))
     implementation("org.jetbrains.kotlin:kotlin-build-gradle-plugin:${kotlinBuildProperties.buildGradlePluginVersion.get()}")
     implementation(libs.gradle.pluginPublish.gradlePlugin)
@@ -100,9 +101,9 @@ dependencies {
     compileOnly(gradleApi())
     compileOnly(project(":android-sdk-provisioner"))
 
-    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:${project.bootstrapKotlinVersion}")
+    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:$embeddedKotlinVersion")
     //implementation("org.jetbrains.kotlin:kotlin-metadata-jvm:${libs.versions.kotlin.`for`.gradle.plugins.compilation.get()}")
-    implementation("org.jetbrains.kotlin:kotlin-metadata-jvm:${project.bootstrapKotlinVersion}") {
+    implementation("org.jetbrains.kotlin:kotlin-metadata-jvm:$embeddedKotlinVersion") {
         isTransitive = false
     }
     implementation(libs.gson)
