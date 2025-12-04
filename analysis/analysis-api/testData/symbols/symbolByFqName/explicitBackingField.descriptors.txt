@@ -6,6 +6,7 @@ KaBackingFieldSymbol:
   isActual: false
   isExpect: false
   isExtension: false
+  isNotDefault: true
   isVal: true
   location: PROPERTY
   modality: FINAL

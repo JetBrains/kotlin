@@ -41,6 +41,9 @@ internal class KaFe10PsiDefaultBackingFieldSymbol(
     override val psi: PsiElement?
         get() = withValidityAssertion { null }
 
+    override val isNotDefault: Boolean
+        get() = withValidityAssertion { false }
+
     override fun createPointer(): KaSymbolPointer<KaBackingFieldSymbol> = withValidityAssertion {
         KaBasePsiSymbolPointer.createForSymbolFromPsi<KaPropertySymbol>(propertyPsi)
             ?.let {

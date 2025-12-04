@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaKotlinPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaType
+import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyBackingField
 import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
 import org.jetbrains.kotlin.psi.KtBackingField
 
@@ -44,6 +45,15 @@ internal class KaFirBackingFieldSymbol private constructor(
 
     override val owningProperty: KaKotlinPropertySymbol
         get() = withValidityAssertion { backingOwningProperty }
+
+    override val isNotDefault: Boolean
+        get() = withValidityAssertion {
+            if (backingPsi != null && !backingPsi.cameFromKotlinLibrary) {
+                return true
+            }
+
+            return firSymbol.fir !is FirDefaultPropertyBackingField
+        }
 
     override val origin: KaSymbolOrigin
         get() = withValidityAssertion { super<KaBackingFieldSymbol>.origin }

@@ -85,6 +85,7 @@ scopes:
           isActual: false
           isExpect: false
           isExtension: false
+          isNotDefault: false
           isVal: true
           location: PROPERTY
           modality: FINAL

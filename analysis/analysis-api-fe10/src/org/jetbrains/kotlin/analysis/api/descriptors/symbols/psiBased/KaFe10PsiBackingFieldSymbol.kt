@@ -29,6 +29,9 @@ internal class KaFe10PsiBackingFieldSymbol(
     override val analysisContext: Fe10AnalysisContext,
     private val backingOwningProperty: KaKotlinPropertySymbol,
 ) : KaBackingFieldSymbol(), KaFe10PsiSymbol<KtBackingField, PropertyDescriptor> {
+    override val isNotDefault: Boolean
+        get() = withValidityAssertion { true }
+
     override val descriptor: PropertyDescriptor? by cached {
         when (backingOwningProperty) {
             is KaFe10PsiKotlinPropertySymbol -> backingOwningProperty.descriptor
