@@ -2,6 +2,7 @@
 // JVM_DEFAULT_MODE: no-compatibility
 // JVM_TARGET: 1.8
 // RENDER_ANNOTATIONS
+// LANGUAGE: +JvmEnhancedBridges
 
 @Target(AnnotationTarget.PROPERTY)
 annotation class PropertyAnno

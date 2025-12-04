@@ -3,6 +3,7 @@
 // JVM_TARGET: 1.8
 // RENDER_ANNOTATIONS
 // WITH_STDLIB
+// LANGUAGE: +JvmEnhancedBridges
 
 // MODULE: lib
 // FILE: lib.kt

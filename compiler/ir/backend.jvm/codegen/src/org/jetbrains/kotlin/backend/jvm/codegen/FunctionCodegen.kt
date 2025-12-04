@@ -79,7 +79,8 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
             generateParameterNames(irFunction, methodVisitor, context.config)
         }
 
-        if (irFunction.isWithAnnotations) {
+        val useEnhancedBridges = context.config.languageVersionSettings.supportsFeature(LanguageFeature.JvmEnhancedBridges)
+        if (irFunction.isWithAnnotations(useEnhancedBridges)) {
             val annotationCodegen = object : AnnotationCodegen(classCodegen) {
                 override fun visitAnnotation(descr: String, visible: Boolean): AnnotationVisitor {
                     return methodVisitor.visitAnnotation(descr, visible)
@@ -356,9 +357,10 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
                 IrDeclarationOrigin.PROPERTY_DELEGATE,
             )
 
-        private val IrFunction.isWithAnnotations: Boolean
-            get() = when (origin) {
+        private fun IrFunction.isWithAnnotations(useEnhancedBridges: Boolean): Boolean =
+            when (origin) {
                 in methodOriginsWithoutAnnotations -> false
+                IrDeclarationOrigin.BRIDGE, IrDeclarationOrigin.BRIDGE_SPECIAL -> useEnhancedBridges
                 IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER -> name.asString() == "<get-entries>"
                 else -> true
             }

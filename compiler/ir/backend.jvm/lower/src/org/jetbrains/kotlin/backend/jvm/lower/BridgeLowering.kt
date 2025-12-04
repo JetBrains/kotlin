@@ -635,6 +635,8 @@ internal class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPas
     // - some special `kotlin.jvm` annotations (such as @Synchronized) are ignored
     // - some type annotations actually extend the type system, so they are not copied from the target
     private fun IrSimpleFunction.copyBridgeAnnotationsIfNeeded(overridden: IrSimpleFunction, target: IrSimpleFunction, isSpecialOrErroneous: Boolean) {
+        if (!useEnhancedBridges) return
+
         if (isSpecialOrErroneous && (target.origin == IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB || target.isFakeOverride)) {
             // copying of Kotlin-defined annotations for special bridges seems unnecessary and would result in a lot of changes in
             // the expected test data
