@@ -6,29 +6,38 @@
 package org.jetbrains.kotlin.test.backend.handlers
 
 import org.jetbrains.kotlin.test.TestJdkKind
+import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.KOTLIN_REFLECT_DUMP_MISMATCH
+import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.DISABLE_JAVA_FACADE
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.model.singleOrZeroValue
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.services.standardLibrariesPathProvider
+import org.jetbrains.kotlin.test.utils.withExtension
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.io.File
 import java.lang.ref.SoftReference
 import java.net.URL
 import java.net.URLClassLoader
 import kotlin.jvm.internal.Reflection
-import kotlin.reflect.KCallable
-import kotlin.reflect.KClass
-import kotlin.reflect.KDeclarationContainer
+import kotlin.reflect.*
 import kotlin.reflect.full.declaredMembers
+import kotlin.reflect.full.superclasses
+import kotlin.reflect.jvm.javaMethod
 import kotlin.reflect.jvm.jvmName
 
 /**
  * Dump testData declarations by using K1 kotlin-reflect, new kotlin-reflect implementation; and compare the dumps
  */
 class JvmNewKotlinReflectCompatibilityCheck(testServices: TestServices) : JvmBinaryArtifactHandler(testServices) {
+    private val k1ReflectStringBuilder = StringBuilder()
+    private val newReflectStringBuilder = StringBuilder()
+
     override fun processModule(module: TestModule, info: BinaryArtifacts.Jvm) {
+        // Running the test is impossible if there are errors in Java code
+        if (DISABLE_JAVA_FACADE in module.directives) return
         when (module.directives.singleOrZeroValue(JvmEnvironmentConfigurationDirectives.JDK_KIND)) {
             TestJdkKind.MOCK_JDK, TestJdkKind.MODIFIED_MOCK_JDK, TestJdkKind.FULL_JDK, null -> {}
             // Classes for newer JDK can't be loaded into the current old Java runtime (Java 8)
@@ -47,22 +56,52 @@ class JvmNewKotlinReflectCompatibilityCheck(testServices: TestServices) : JvmBin
             root.walk()
                 .filter { it.isFile && it.extension == "class" }
                 .map { it.relativeTo(root).path.replace(File.separator, ".").removeSuffix(".class") }
-        }
+        }.sorted()
         val k1ReflectDumpResult = runCatching { k1ReflectDumper.dumpKClasses(k1ReflectClassLoader, fqNames) }
         val newReflectDumpResult = runCatching { newReflectDumper.dumpKClasses(newReflectClassLoader, fqNames) }
         val exceptionK1Reflect = k1ReflectDumpResult.exceptionOrNull()
             ?.let { RuntimeException("Exception during K1 kotlin-reflect dumping", it) }
         val exceptionNewReflect = newReflectDumpResult.exceptionOrNull()
             ?.let { RuntimeException("Exception during New kotlin-reflect dumping", it) }
-        if (exceptionK1Reflect != null || exceptionNewReflect != null) {
-            val msg = when (exceptionK1Reflect != null && exceptionNewReflect != null) {
-                true -> "Exception during kotlin-reflect dumping in both implementations (K1 and New)"
-                else -> "One of the kotlin-reflects (K1 or New) failed, and another didn't"
+        when {
+            exceptionK1Reflect == null && exceptionNewReflect == null -> {
+                val k1ReflectDump = k1ReflectDumpResult.getOrNull()!!
+                val newReflectDump = newReflectDumpResult.getOrNull()!!
+                k1ReflectStringBuilder.append(k1ReflectDump)
+                newReflectStringBuilder.append(newReflectDump)
             }
-            assertions.failAll(listOfNotNull(exceptionK1Reflect, exceptionNewReflect), msg)
+
+            else -> {
+                val msg = when (exceptionK1Reflect != null && exceptionNewReflect != null) {
+                    true -> "Exception during kotlin-reflect dumping in both implementations (K1 and New)"
+                    else -> "One of the kotlin-reflects (K1 or New) failed, and another didn't"
+                }
+                assertions.failAll(listOfNotNull(exceptionK1Reflect, exceptionNewReflect), msg)
+            }
+        }
+    }
+
+    override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
+        val k1ReflectDump = k1ReflectStringBuilder.toString()
+        val newReflectDump = newReflectStringBuilder.toString()
+        val kotlinReflectDumpMismatch =
+            KOTLIN_REFLECT_DUMP_MISMATCH in testServices.moduleStructure.allDirectives
+        val k1ReflectFile =
+            testServices.moduleStructure.originalTestDataFiles.first().withExtension(".reflect-k1.txt")
+        val newReflectFile =
+            testServices.moduleStructure.originalTestDataFiles.first().withExtension(".reflect-new.txt")
+        if (kotlinReflectDumpMismatch) {
+            val a = runCatching { assertions.assertEqualsToFile(k1ReflectFile, k1ReflectDump) }
+            val b = runCatching { assertions.assertEqualsToFile(newReflectFile, newReflectDump) }
+            a.getOrThrow()
+            b.getOrThrow()
+
+            assertions.assertTrue(k1ReflectDump != newReflectDump) {
+                "K1 and new kotlin-reflect dumps are the same. Please drop KOTLIN_REFLECT_DUMP_MISMATCH directive"
+            }
         } else {
-            val k1ReflectDump = k1ReflectDumpResult.getOrNull()!!
-            val newReflectDump = newReflectDumpResult.getOrNull()!!
+            k1ReflectFile.delete()
+            newReflectFile.delete()
             if (k1ReflectDump != newReflectDump) {
                 val k1ReflectHeader = "// K1 kotlin-reflect dump\n"
                 val newReflectHeader = "// New kotlin-reflect dump\n"
@@ -70,8 +109,6 @@ class JvmNewKotlinReflectCompatibilityCheck(testServices: TestServices) : JvmBin
             }
         }
     }
-
-    override fun processAfterAllModules(someAssertionWasFailed: Boolean) {}
 
     companion object {
         // Use SoftReference because it's the way classloaders in KotlinStandardLibrariesPathProvider are implemented.
@@ -103,9 +140,10 @@ private fun Class<*>.newInstanceInNewClassloader(parentClassLoader: ClassLoader?
 
 class AlienInstance(private val alien: Any) {
     val classLoader: ClassLoader get() = alien.javaClass.classLoader
+    private val method = alien::class.java.getMethod(dumpKClasses, *::dumpKClasses.javaMethod!!.parameterTypes)
+
     fun dumpKClasses(classLoader: ClassLoader, fqNames: List<String>): String =
-        alien::class.java.getMethod(dumpKClasses, ClassLoader::class.java, List::class.java)
-            .invoke(alien, classLoader, fqNames) as String
+        method.invoke(alien, classLoader, fqNames) as String
 }
 
 private const val dumpKClasses = "dumpKClasses"
@@ -137,9 +175,17 @@ class RunInAlienClassLoader {
     }
 
     private fun IndentedStringBuilder.dumpKClass(kClass: KClass<*>) {
-        indented("KClass: ${kClass.qualifiedName ?: kClass.jvmName}") {
+        // Listing some class statuses and superclasses makes it easier to read dumps
+        val superclasses = kClass.superclasses.joinToString { it.simpleName.orEmpty() }
+        val statuses = listOfNotNull(
+            "abstract".takeIf { kClass.isAbstract },
+            "sealed".takeIf { kClass.isSealed },
+            if (kClass.java.isInterface) "interface" else "class",
+        ).joinToString(separator = " ")
+        indented("KClass: $statuses ${kClass.qualifiedName ?: kClass.jvmName} : $superclasses") {
             indented("members:") {
-                dumpKCallables(kClass.members)
+                val kCallables = kClass.members
+                dumpKCallables(kCallables)
             }
             indented("declaredMembers:") {
                 dumpKCallables(kClass.declaredMembers)
@@ -155,7 +201,24 @@ class RunInAlienClassLoader {
     }
 
     private fun IndentedStringBuilder.dumpKCallables(kCallables: Iterable<KCallable<*>>) {
-        kCallables.map { it.toString() }.sorted().forEach { dump(it) }
+        kCallables.map { kCallable ->
+            val str = kCallable.toString()
+            str to buildString {
+                if (kCallable.isOpen) append("open ")
+                if (kCallable.isAbstract) append("abstract ")
+                if (kCallable.isFinal) append("final ")
+                if (kCallable.isSuspend) append("suspend ")
+                kCallable.visibility?.let { append("$it ") }
+                if (kCallable is KFunction) {
+                    if (kCallable.isOperator) append("operator ")
+                    if (kCallable.isInfix) append("infix ")
+                    if (kCallable.isInline) append("inline ")
+                    if (kCallable.isExternal) append("external ")
+                }
+
+                append(str)
+            }
+        }.sortedWith(compareBy({ it.first }, { it.second })).forEach { dump(it.second) }
     }
 
     private class IndentedStringBuilder {
