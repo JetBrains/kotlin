@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.light.classes.symbol.parameters.SymbolLightValuePara
 import org.jetbrains.kotlin.light.classes.symbol.withSymbol
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtDeclaration
+import javax.swing.Icon
 
 /**
  * Alternative implementation of SymbolLightMethodForMappedClass that uses KaSymbol abstractions
@@ -119,13 +120,13 @@ internal class SymbolLightMethodForMappedClassV2 private constructor(
         functionSymbolPointer.withSymbol(ktModule, action)
 
     override fun getPresentation(): ItemPresentation? =
-        kotlinOrigin?.presentation
+        kotlinOrigin?.presentation ?: withFunctionSymbol { (it.psi as? PsiMethod)?.presentation }
 
     override fun getNavigationElement(): PsiElement =
-        kotlinOrigin?.navigationElement ?: super.getNavigationElement()
+        kotlinOrigin?.navigationElement ?: withFunctionSymbol { (it.psi as? PsiMethod)?.navigationElement } ?: this
 
-    override fun getIcon(flags: Int) =
-        kotlinOrigin?.getIcon(flags)
+    override fun getIcon(flags: Int): Icon? =
+        kotlinOrigin?.getIcon(flags) ?: withFunctionSymbol { (it.psi as? PsiMethod)?.getIcon(flags) }
 
     override fun hasModifierProperty(name: String): Boolean = when (name) {
         PsiModifier.ABSTRACT -> !hasImplementation
