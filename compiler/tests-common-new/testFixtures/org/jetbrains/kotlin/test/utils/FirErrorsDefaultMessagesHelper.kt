@@ -12,11 +12,11 @@ import org.junit.Assert
 import kotlin.reflect.KProperty
 import kotlin.reflect.full.memberProperties
 
-fun verifyDiagnostics(vararg rendererToContainerMap: Pair<KtDiagnosticFactoryToRendererMap, KtDiagnosticsContainer>) {
+fun verifyDiagnostics(vararg diagnosticContainers: KtDiagnosticsContainer) {
     val errors = mutableListOf<String>()
     val existingDiagnosticFactories = mutableMapOf<String, AbstractKtDiagnosticFactory>()
-    for ((renderer, container) in rendererToContainerMap) {
-        renderer.verifyMessages(container, errors, existingDiagnosticFactories)
+    for (container in diagnosticContainers) {
+        container.getRendererFactory().MAP.verifyMessages(container, errors, existingDiagnosticFactories)
     }
     if (errors.isNotEmpty()) {
         Assert.fail(
