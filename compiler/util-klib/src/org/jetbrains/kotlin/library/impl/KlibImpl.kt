@@ -50,7 +50,6 @@ internal class KlibImpl(
 
     override val libraryName get() = location.path
     override val libraryFile get() = location
-    override val componentList get() = listOf(KLIB_DEFAULT_COMPONENT_NAME)
 }
 
 private class KlibManifestComponentLayout(root: KlibFile) : KlibComponentLayout(root) {
