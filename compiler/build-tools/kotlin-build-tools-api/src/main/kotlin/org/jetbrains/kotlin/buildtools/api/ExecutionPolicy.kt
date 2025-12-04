@@ -57,6 +57,10 @@ public sealed interface ExecutionPolicy {
              * @since 2.3.20
              */
             public fun build(): WithDaemon
+
+            public operator fun <T> Option<T>.invoke(value: T) {
+                set(this, value)
+            }
         }
 
         /**
