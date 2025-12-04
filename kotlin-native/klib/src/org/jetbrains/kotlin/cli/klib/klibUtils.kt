@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.cli.klib
 
-import org.jetbrains.kotlin.backend.common.reportLoadingProblemsIfAny
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.loader.KlibLoader
+import org.jetbrains.kotlin.library.loader.reportLoadingProblemsIfAny
 
 /**
  * Note that [libraryPath] can be either absolute, or relative to the current working directory.

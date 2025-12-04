@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.library
 
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.library.loader.KlibLoader
+import org.jetbrains.kotlin.library.loader.reportLoadingProblemsIfAny
 import org.jetbrains.kotlin.util.DummyLogger
 import org.jetbrains.kotlin.util.Logger
 
@@ -23,9 +24,11 @@ fun resolveSingleFileKlib(
     logger: Logger = DummyLogger,
     strategy: SingleFileKlibResolveStrategy = SingleFileKlibResolveStrategy { _, _ ->
         val klibLoadingResult = KlibLoader { libraryPaths(libraryFile.path) }.load()
-        klibLoadingResult.librariesStdlibFirst.singleOrNull()
+        klibLoadingResult.reportLoadingProblemsIfAny { _, message ->
             // N.B. A call to the @Deprecated Logger.fatal() function is intentional here.
-            // It's needed to replicate the behavior that existed before.
-            ?: @Suppress("DEPRECATION") logger.fatal("No KLIB found in $libraryFile")
+            // It's necessary to replicate the behavior that existed before.
+            @Suppress("DEPRECATION") logger.fatal(message)
+        }
+        klibLoadingResult.librariesStdlibFirst.single()
     }
 ): KotlinLibrary = strategy.resolve(libraryFile, logger)
