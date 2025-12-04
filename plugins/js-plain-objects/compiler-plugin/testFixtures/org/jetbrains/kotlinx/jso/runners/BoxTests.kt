@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlinx.jspo.runners
 
-import org.jetbrains.kotlin.js.test.fir.AbstractJsTest
+import org.jetbrains.kotlin.js.test.runners.AbstractJsTest
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 
 open class AbstractJsPlainObjectsBoxTest : AbstractJsTest(

@@ -1,4 +1,4 @@
-package org.jetbrains.kotlin.js.test.fir
+package org.jetbrains.kotlin.js.test.runners
 
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder

@@ -5,12 +5,11 @@
 
 package org.jetbrains.kotlin.js.test.klib
 
-import java.io.File
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.LanguageVersion
-import org.jetbrains.kotlin.js.test.fir.setUpDefaultDirectivesForJsBoxTest
-import org.jetbrains.kotlin.js.test.ir.commonConfigurationForJsTest
-import org.jetbrains.kotlin.js.test.ir.configureJsBoxHandlers
+import org.jetbrains.kotlin.js.test.runners.commonConfigurationForJsTest
+import org.jetbrains.kotlin.js.test.runners.configureJsBoxHandlers
+import org.jetbrains.kotlin.js.test.runners.setUpDefaultDirectivesForJsBoxTest
 import org.jetbrains.kotlin.js.test.services.configuration.UnsupportedFeaturesTestConfigurator
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TargetBackend
@@ -34,6 +33,7 @@ import org.jetbrains.kotlin.test.services.StandardLibrariesPathProviderForKotlin
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.utils.bind
 import org.junit.jupiter.api.Tag
+import java.io.File
 
 @Tag("custom-second-stage")
 open class AbstractCustomJsCompilerSecondStageTest : AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.JS_IR) {

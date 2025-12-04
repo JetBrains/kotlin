@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.js.test.klib
 
-import org.jetbrains.kotlin.js.test.fir.setUpDefaultDirectivesForJsBoxTest
-import org.jetbrains.kotlin.js.test.ir.AbstractJsBlackBoxCodegenTestBase.JsBackendFacades
-import org.jetbrains.kotlin.js.test.ir.commonConfigurationForJsBackendSecondStageTest
-import org.jetbrains.kotlin.js.test.ir.configureJsBoxHandlers
+import org.jetbrains.kotlin.js.test.runners.AbstractJsBlackBoxCodegenTestBase.JsBackendFacades
+import org.jetbrains.kotlin.js.test.runners.commonConfigurationForJsBackendSecondStageTest
+import org.jetbrains.kotlin.js.test.runners.configureJsBoxHandlers
+import org.jetbrains.kotlin.js.test.runners.setUpDefaultDirectivesForJsBoxTest
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TargetBackend
