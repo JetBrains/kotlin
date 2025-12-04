@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.native
 
 import org.gradle.kotlin.dsl.kotlin
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.SWIFT_EXPORT_COROUTINES_SUPPORT_TURNED_ON
 import org.jetbrains.kotlin.gradle.swiftexport.ExperimentalSwiftExportDsl
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.*
@@ -378,6 +379,66 @@ class SwiftExportDslIT : KGPBaseTest() {
                 assertDirectoryExists(sharedSwiftModule.toPath(), "Shared.swiftmodule doesn't exist")
                 assertDirectoryExists(subprojectSwiftModule.toPath(), "Subproject.swiftmodule doesn't exist")
                 assertDirectoryExists(notGoodLookingProjectSwiftModule.toPath(), "NotGoodLookingProjectName.swiftmodule doesn't exist")
+            }
+        }
+    }
+
+    @DisplayName("embedSwiftExport executes normally when kotlinx.coroutines enabled")
+    @GradleTest
+    fun testSwiftExportCoroutines(
+        gradleVersion: GradleVersion,
+        @TempDir testBuildDir: Path,
+    ) {
+        project(
+            "empty",
+            gradleVersion
+        ) {
+            plugins {
+                kotlin("multiplatform")
+            }
+            settingsBuildScriptInjection {
+                settings.rootProject.name = "shared"
+            }
+            buildScriptInjection {
+                with(project) {
+                    applyMultiplatform {
+                        iosArm64()
+                        with(swiftExport) {
+                            configure {
+                                settings.put(SWIFT_EXPORT_COROUTINES_SUPPORT_TURNED_ON, "true")
+                            }
+                        }
+
+                        sourceSets.commonMain {
+                            compileSource(
+                                """
+                                package org.foo
+                                import kotlinx.coroutines.*
+                                suspend fun iosSuspendFunction(): Int = 5
+                                """.trimIndent()
+                            )
+                            dependencies {
+                                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
+                            }
+                        }
+                    }
+                }
+            }
+
+            build(
+                ":embedSwiftExportForXcode",
+                environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir)
+            ) {
+                val buildProductsDir = this@project.gradleRunner.environment?.get("BUILT_PRODUCTS_DIR")?.let { File(it) }
+                assertNotNull(buildProductsDir)
+
+                assertOutputDoesNotContain("Coroutine support is enabled, but no `kotlinx-coroutines-core` module was found in path. Please add kotlinx-coroutines as a dependency to your project, or disable coroutines support to silence this warning.")
+
+                val sharedSwiftPath = projectPath.resolve("build/SwiftExport/iosArm64/Debug/files/Shared/Shared.swift")
+                assertContains(
+                    sharedSwiftPath.readText(),
+                    "public static func iosSuspendFunction() async throws -> Swift.Int32"
+                )
             }
         }
     }
