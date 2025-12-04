@@ -22,13 +22,15 @@ Primary constructor
 <primary tag="property" subject="a">
 my property
 ----------<getter>(<dispatch receiver>: Foo): kotlin.String---------------------
-null
+<primary tag="property" subject="a">
+my property
 
 ----------b: kotlin.Int---------------------------------------------------------
 <primary tag="property" subject="b">
 my property
 ----------<getter>(<dispatch receiver>: Foo): kotlin.Int------------------------
-null
+<primary tag="property" subject="b">
+my property
 
 ----------/Bar------------------------------------------------------------------
 <primary tag="null" subject="null">
@@ -58,10 +60,12 @@ Primary constructor
 <primary tag="param" subject="a">
 my property
 ----------<getter>(<dispatch receiver>: Bar): kotlin.String---------------------
-null
+<primary tag="param" subject="a">
+my property
 
 ----------b: kotlin.Int---------------------------------------------------------
 <primary tag="param" subject="b">
 my property
 ----------<getter>(<dispatch receiver>: Bar): kotlin.Int------------------------
-null
+<primary tag="param" subject="b">
+my property

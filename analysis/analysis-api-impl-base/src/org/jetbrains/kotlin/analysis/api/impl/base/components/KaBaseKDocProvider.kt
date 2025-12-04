@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.analysis.api.components.KaKDocProvider
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaPropertyAccessorSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
 import org.jetbrains.kotlin.kdoc.parser.KDocKnownTag
 import org.jetbrains.kotlin.kdoc.psi.api.KDoc
@@ -52,6 +54,11 @@ abstract class KaBaseKDocProvider<T : KaSession> : KaBaseSessionComponent<T>(), 
                         expectFunction.valueParameters[idx].findKDoc()
                     }?.let { return it }
             }
+        }
+
+        if (this@findKDoc is KaPropertyAccessorSymbol) {
+            val containingProperty = containingDeclaration as? KaPropertySymbol
+            containingProperty?.findKDoc()?.let { return it }
         }
 
         getExpectsForActual().firstNotNullOfOrNull { expectSymbol ->

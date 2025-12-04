@@ -32,14 +32,17 @@ my property
 <primary tag="property" subject="a">
 my property
 ----------<getter>(<dispatch receiver>: Foo): kotlin.String---------------------
-null
+<primary tag="property" subject="a">
+my property
 
 ----------b: kotlin.Int---------------------------------------------------------
 <primary tag="property" subject="b">
 my property
 
 ----------<getter>(<dispatch receiver>: Foo): kotlin.Int------------------------
-null
+<primary tag="property" subject="b">
+my property
+
 
 ----------<constructor>(a: kotlin.String): Foo----------------------------------
 <primary tag="null" subject="null">
@@ -61,7 +64,10 @@ Property KDoc
 <section="null" subject="null">
 Property KDoc
 ----------<getter>(<dispatch receiver>: Foo): kotlin.String---------------------
-null
+<primary tag="null" subject="null">
+Property KDoc
+<section="null" subject="null">
+Property KDoc
 
 ----------/Foo.foo(<dispatch receiver>: Foo, a: kotlin.String): kotlin.Int------
 <primary tag="null" subject="null">
