@@ -325,6 +325,7 @@ fun linkAndCompileWasmIrToBinary(moduleConfiguration: WasmIrModuleConfiguration)
             baseFileName = baseFileName,
             isStdlibModule = isStdlibModule,
             wholeProgramMode = wholeProgramMode,
+            mainFunctionDefined = linkedModule.exports.any { it.name == "_main" }
         )
 
     } else {
@@ -583,6 +584,7 @@ fun generateWebAssemblyJsInstanceInitializer(
     baseFileName: String,
     isStdlibModule: Boolean,
     wholeProgramMode: Boolean,
+    mainFunctionDefined: Boolean,
 ): String {
 
     val commonStdlibExports = if (isStdlibModule) ", getCachedJsObject, __TAG as wasmTag" else ""
@@ -669,7 +671,7 @@ For more information, see https://kotl.in/wasm-help
 
 const exports = wasmInstance.exports
 setWasmExports(exports);
-exports._initialize();
+${if (mainFunctionDefined) "exports._main();" else ""}
 
 ${generateExports(exports, wholeProgramMode, isStdlibModule)}
 """

@@ -171,7 +171,7 @@ class WasmCompiledModuleFragment(private val wasmCompiledFileFragments: List<Was
         wasmElements: MutableList<WasmElement>,
         exports: MutableList<WasmExport<*>>,
         globals: MutableList<WasmGlobal>,
-    ) {
+    ): WasmFunction.Defined {
         val (stringAddressesAndLengthsGlobal, wasmLongArrayDeclaration) = stringAddressesAndLengthsField(additionalTypes)
         globals.add(stringAddressesAndLengthsGlobal)
 
@@ -185,13 +185,14 @@ class WasmCompiledModuleFragment(private val wasmCompiledFileFragments: List<Was
             additionalTypes.add(associatedObjectGetterAndWrapper.second)
         }
 
-        val masterInitFunction = createAndExportMasterInitFunction(
+        val masterInitFunction = createMasterInitFunction(
             fieldInitializerFunction = fieldInitializerFunction,
             tryGetAssociatedObjectAndWrapper = associatedObjectGetterAndWrapper,
             initializeUnit = initializeUnit
         )
-        exports.add(WasmExport.Function("_initialize", masterInitFunction))
         definedFunctions.add(masterInitFunction)
+
+        exportMainFunction(exports)
 
         val stringPoolField = createStringPoolField(stringPoolSize, stringEntities)
         globals.add(stringPoolField)
@@ -225,6 +226,7 @@ class WasmCompiledModuleFragment(private val wasmCompiledFileFragments: List<Was
             exports.add(WasmExport.Function("startUnitTests", startUnitTestsFunction))
             definedFunctions.add(startUnitTestsFunction)
         }
+        return masterInitFunction
     }
 
     class StringLiteralWasmEntities(
@@ -299,7 +301,7 @@ class WasmCompiledModuleFragment(private val wasmCompiledFileFragments: List<Was
         val globals = getGlobals()
 
         val elements = mutableListOf<WasmElement>()
-        createAndExportServiceFunctions(
+        val masterInitFunction = createAndExportServiceFunctions(
             definedFunctions = definedFunctions,
             stringEntities = stringEntities,
             additionalTypes = additionalTypes,
@@ -338,7 +340,7 @@ class WasmCompiledModuleFragment(private val wasmCompiledFileFragments: List<Was
             globals = definedGlobals,
             importedGlobals = importedGlobals,
             exports = exports,
-            startFunction = null,  // Module is initialized via export call
+            startFunction = masterInitFunction,
             elements = elements,
             data = data,
             dataCount = true,
@@ -529,12 +531,22 @@ class WasmCompiledModuleFragment(private val wasmCompiledFileFragments: List<Was
         return listOf(memory)
     }
 
-    private fun createAndExportMasterInitFunction(
+    private fun exportMainFunction(exports: MutableList<WasmExport<*>>) {
+        wasmCompiledFileFragments.forEach { fragment ->
+            fragment.mainFunctionWrappers.forEach { signature ->
+                val wrapperFunction = fragment.functions.defined[signature]
+                    ?: compilationException("Cannot find symbol for main wrapper", type = null)
+                exports.add(WasmExport.Function("_main", wrapperFunction))
+            }
+        }
+    }
+
+    private fun createMasterInitFunction(
         fieldInitializerFunction: WasmFunction,
         tryGetAssociatedObjectAndWrapper: Pair<WasmFunction.Defined, WasmStructDeclaration>?,
         initializeUnit: Boolean,
     ): WasmFunction.Defined {
-        val masterInitFunction = WasmFunction.Defined("_initialize", WasmSymbol(parameterlessNoReturnFunctionType))
+        val masterInitFunction = WasmFunction.Defined("_initializeModule", WasmSymbol(parameterlessNoReturnFunctionType))
         with(WasmExpressionBuilder(masterInitFunction.instructions)) {
             if (initializeUnit) {
                 val unitGetInstance = tryFindBuiltInFunction { it.unitGetInstance }
@@ -553,13 +565,6 @@ class WasmCompiledModuleFragment(private val wasmCompiledFileFragments: List<Was
                 buildInstr(WasmOp.CALL, serviceCodeLocation, WasmImmediate.FuncIdx(WasmSymbol(registerModuleDescriptor)))
             }
 
-            wasmCompiledFileFragments.forEach { fragment ->
-                fragment.mainFunctionWrappers.forEach { signature ->
-                    val wrapperFunction = fragment.functions.defined[signature]
-                        ?: compilationException("Cannot find symbol for main wrapper", type = null)
-                    buildCall(WasmSymbol(wrapperFunction), serviceCodeLocation)
-                }
-            }
             buildInstr(WasmOp.RETURN, serviceCodeLocation)
         }
         return masterInitFunction
@@ -579,7 +584,15 @@ class WasmCompiledModuleFragment(private val wasmCompiledFileFragments: List<Was
         val associatedObjectGetterType = WasmFunctionType(listOf(WasmI64, WasmI64), listOf(nullableAnyWasmType))
         additionalTypes.add(associatedObjectGetterType)
 
-        val associatedObjectGetter = WasmFunction.Defined("_associatedObjectGetter", WasmSymbol(associatedObjectGetterType))
+//        val associatedObjectGetter = WasmFunction.Defined("_associatedObjectGetter", WasmSymbol(associatedObjectGetterType))
+        val classIdLocal = WasmLocal(0, "classId", WasmI64, true)
+        val keyIdLocal = WasmLocal(1, "keyId", WasmI64, true)
+        val associatedObjectGetter = WasmFunction.Defined(
+            name = "_associatedObjectGetter",
+            type = WasmSymbol(associatedObjectGetterType),
+            locals = mutableListOf(classIdLocal, keyIdLocal)
+        )
+
         // Make this function possible to func.ref
         wasmElements.add(
             WasmElement(
@@ -601,14 +614,14 @@ class WasmCompiledModuleFragment(private val wasmCompiledFileFragments: List<Was
         with(WasmExpressionBuilder(associatedObjectGetter.instructions)) {
             wasmCompiledFileFragments.forEach { fragment ->
                 for ((klassId, associatedObjectsInstanceGetters) in fragment.classAssociatedObjectsInstanceGetters) {
-                    buildGetLocal(WasmLocal(0, "classId", WasmI64, true), serviceCodeLocation)
+                    buildGetLocal(classIdLocal, serviceCodeLocation)
                     buildConstI64(klassId, serviceCodeLocation)
                     buildInstr(WasmOp.I64_EQ, serviceCodeLocation)
                     buildIf("Class matches")
                     associatedObjectsInstanceGetters.forEach { (keyId, getter, isExternal) ->
                         val getterFunction = allDefinedFunctions[getter]
                         if (getterFunction != null) { //Could be deleted with DCE
-                            buildGetLocal(WasmLocal(1, "keyId", WasmI64, true), serviceCodeLocation)
+                            buildGetLocal(keyIdLocal, serviceCodeLocation)
                             buildConstI64(keyId, serviceCodeLocation)
                             buildInstr(WasmOp.I64_EQ, serviceCodeLocation)
                             buildIf("Object matches")
