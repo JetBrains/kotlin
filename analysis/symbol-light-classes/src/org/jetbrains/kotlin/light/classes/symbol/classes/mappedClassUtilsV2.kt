@@ -198,10 +198,15 @@ private fun KaSession.generateJavaCollectionMethodStubsV2(
         .mapNotNull { it.name?.asString() }
         .toSet()
 
-    val javaMethods = javaCollectionSymbol.memberScope.callables
-        .filterIsInstance<KaNamedFunctionSymbol>()
-//        .filter { !it.hasModifier(KaSymbolModifier.DEFAULT) }
-        .toList()
+    val javaMethods = buildList {
+        javaCollectionSymbol.memberScope.callables.forEach { callable ->
+            when (callable) {
+                is KaNamedFunctionSymbol -> add(callable)
+                is KaSyntheticJavaPropertySymbol -> add(callable.javaGetterSymbol)
+                else -> {}
+            }
+        }
+    }
 
     val substitutionMap = buildSubstitutionMap(javaCollectionSymbol, kotlinCollectionType)
 
