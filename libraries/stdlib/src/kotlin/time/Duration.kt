@@ -977,7 +977,12 @@ public fun Long.toDuration(unit: DurationUnit): Duration {
     val maxNsInUnit = convertDurationUnitOverflow(MAX_NANOS, DurationUnit.NANOSECONDS, unit)
     return when {
         this in -maxNsInUnit..maxNsInUnit -> durationOfNanos(convertDurationUnitOverflow(this, unit, DurationUnit.NANOSECONDS))
-        unit >= DurationUnit.MILLISECONDS -> durationOfMillis(this.sign * convertDurationUnitToMilliseconds(abs(this), unit))
+        unit >= DurationUnit.MILLISECONDS -> durationOfMillis(
+            this.sign * convertDurationUnitToMilliseconds(
+                abs(this.coerceAtLeast(Long.MIN_VALUE + 1)),
+                unit
+            )
+        )
         else -> durationOfMillis(convertDurationUnit(this, unit, DurationUnit.MILLISECONDS).coerceIn(-MAX_MILLIS, MAX_MILLIS))
     }
 }

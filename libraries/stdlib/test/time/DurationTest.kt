@@ -76,6 +76,30 @@ class DurationTest {
     }
 
     @Test
+    fun longBoundaryValuesDurationConversion() {
+        val testCases = listOf(
+            Long.MIN_VALUE to Duration.NEG_INFINITE,
+            Long.MAX_VALUE to Duration.INFINITE
+        )
+
+        for ((value, expectedInfinite) in testCases) {
+            assertEquals(expectedInfinite, value.days)
+            assertEquals(expectedInfinite, value.hours)
+            assertEquals(expectedInfinite, value.minutes)
+            assertEquals(expectedInfinite, value.seconds)
+            assertEquals(expectedInfinite, value.milliseconds)
+        }
+
+        val usDuration = 106751991.days + 4.hours + 54.seconds + 775.milliseconds
+        assertEquals(-usDuration, Long.MIN_VALUE.microseconds)
+        assertEquals(usDuration, Long.MAX_VALUE.microseconds)
+
+        val nsDuration = 106751.days + 23.hours + 47.minutes + 16.seconds + 854.milliseconds
+        assertEquals(-nsDuration, Long.MIN_VALUE.nanoseconds)
+        assertEquals(nsDuration, Long.MAX_VALUE.nanoseconds)
+    }
+
+    @Test
     fun equality() {
         val data = listOf<Pair<Double, DurationUnit>>(
             Pair(2.0, DurationUnit.DAYS),
