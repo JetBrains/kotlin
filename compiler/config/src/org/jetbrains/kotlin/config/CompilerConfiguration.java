@@ -21,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.function.Supplier;
 
 @SuppressWarnings("unchecked")
 public class CompilerConfiguration {
@@ -43,6 +44,12 @@ public class CompilerConfiguration {
     public <T> T get(@NotNull CompilerConfigurationKey<T> key, @NotNull T defaultValue) {
         T data = get(key);
         return data == null ? defaultValue : data;
+    }
+
+    @NotNull
+    public <T> T getWithLazyDefault(@NotNull CompilerConfigurationKey<T> key, @NotNull Supplier<T> defaultValue) {
+        T data = get(key);
+        return data == null ? defaultValue.get() : data;
     }
 
     @NotNull

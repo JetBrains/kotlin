@@ -13,6 +13,7 @@ package org.jetbrains.kotlin.cli.common
  */
 
 import java.io.File
+import org.jetbrains.kotlin.cli.CliDiagnosticReporter
 import org.jetbrains.kotlin.cli.common.config.ContentRoot
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.modules.ModuleChunk
@@ -88,6 +89,9 @@ object CLIConfigurationKeys {
     @JvmField
     val TEST_ENVIRONMENT = CompilerConfigurationKey.create<Boolean>("test environment")
 
+    @JvmField
+    val DIAGNOSTIC_REPORTER_KEY = CompilerConfigurationKey.create<CliDiagnosticReporter>("diagnostic reporter for CLI messages")
+
 }
 
 var CompilerConfiguration.contentRoots: List<ContentRoot>
@@ -157,4 +161,8 @@ var CompilerConfiguration.defaultExtensionForScripts: String?
 var CompilerConfiguration.testEnvironment: Boolean
     get() = getBoolean(CLIConfigurationKeys.TEST_ENVIRONMENT)
     set(value) { put(CLIConfigurationKeys.TEST_ENVIRONMENT, value) }
+
+var CompilerConfiguration.diagnosticReporter: CliDiagnosticReporter
+    get() = getWithLazyDefault(CLIConfigurationKeys.DIAGNOSTIC_REPORTER_KEY) { error("diagnostic reporter is not initialized") }
+    set(value) { put(CLIConfigurationKeys.DIAGNOSTIC_REPORTER_KEY, value) }
 

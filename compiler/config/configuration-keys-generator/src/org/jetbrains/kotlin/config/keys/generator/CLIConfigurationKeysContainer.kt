@@ -5,11 +5,12 @@
 
 package org.jetbrains.kotlin.config.keys.generator
 
+import org.jetbrains.kotlin.cli.CliDiagnosticReporter
 import org.jetbrains.kotlin.cli.common.config.ContentRoot
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.modules.ModuleChunk
 import org.jetbrains.kotlin.config.keys.generator.model.KeysContainer
-import org.jetbrains.kotlin.util.PerformanceManager
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.utils.KotlinPaths
 import java.io.File
 
@@ -58,4 +59,10 @@ object CLIConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.cli.c
     val DEFAULT_EXTENSION_FOR_SCRIPTS by key<String>("Default extension for scripts", throwOnNull = false)
 
     val TEST_ENVIRONMENT by key<Boolean>("test environment", comment = "Defines what kind of application environment should be created. Should be set to `true` only in tests")
+
+    val DIAGNOSTIC_REPORTER_KEY by key<CliDiagnosticReporter>(
+        "diagnostic reporter for CLI messages",
+        lazyDefaultValue = """error("diagnostic reporter is not initialized")""",
+        accessorName = "diagnosticReporter",
+    )
 }

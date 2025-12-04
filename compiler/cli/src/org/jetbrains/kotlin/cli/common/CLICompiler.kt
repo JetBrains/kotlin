@@ -21,10 +21,12 @@ package org.jetbrains.kotlin.cli.common
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.analyzer.CompilationErrorException
+import org.jetbrains.kotlin.cli.CliDiagnosticReporter
 import org.jetbrains.kotlin.cli.CliDiagnostics
 import org.jetbrains.kotlin.cli.common.ExitCode.*
 import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.cli.common.environment.setIdeaIoUseFallback
+import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
 import org.jetbrains.kotlin.cli.common.messages.*
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
 import org.jetbrains.kotlin.cli.initializeDiagnosticFactoriesStorageForCli
@@ -37,6 +39,7 @@ import org.jetbrains.kotlin.compiler.plugin.CommandLineProcessor
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
 import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.progress.CompilationCanceledException
@@ -105,13 +108,23 @@ abstract class CLICompiler<A : CommonCompilerArguments> {
         val collector = GroupingMessageCollector(messageCollector, arguments.allWarningsAsErrors, arguments.reportAllWarnings).also {
             configuration.messageCollector = it
         }
+        val diagnosticCollector = DiagnosticReporterFactory.createReporter()
+        configuration.diagnosticReporter = CliDiagnosticReporter(diagnosticCollector, configuration)
+
+        fun reportDiagnosticsToMessageCollector() {
+            FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(
+                diagnosticCollector, messageCollector,
+                configuration.renderDiagnosticInternalName
+            )
+        }
 
         configuration.perfManager = performanceManager
         try {
             setupCommonArguments(configuration, arguments)
             setupPlatformSpecificArgumentsAndServices(configuration, arguments, services)
             val paths = computeKotlinPaths(collector, arguments)
-            if (collector.hasErrors()) {
+            if (diagnosticCollector.hasErrors || collector.hasErrors()) {
+                reportDiagnosticsToMessageCollector()
                 return COMPILATION_ERROR
             }
 
@@ -136,7 +149,7 @@ abstract class CLICompiler<A : CommonCompilerArguments> {
                     performanceManager.dumpPerformanceReport(arguments.dumpPerf!!)
                 }
 
-                return if (collector.hasErrors()) COMPILATION_ERROR else code
+                return if (diagnosticCollector.hasErrors || collector.hasErrors()) COMPILATION_ERROR else code
             } catch (e: CompilationCanceledException) {
                 collector.reportCompilationCancelled(e)
                 return OK
@@ -157,6 +170,7 @@ abstract class CLICompiler<A : CommonCompilerArguments> {
             MessageCollectorUtil.reportException(collector, t)
             return if (t is OutOfMemoryError || t.hasOOMCause()) OOM_ERROR else INTERNAL_ERROR
         } finally {
+            reportDiagnosticsToMessageCollector()
             collector.flush()
         }
     }

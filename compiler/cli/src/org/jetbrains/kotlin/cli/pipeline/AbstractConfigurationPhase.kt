@@ -7,6 +7,7 @@
 
 package org.jetbrains.kotlin.cli.pipeline
 
+import org.jetbrains.kotlin.cli.CliDiagnosticReporter
 import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.CLICompiler.Companion.SCRIPT_PLUGIN_COMMANDLINE_PROCESSOR_NAME
 import org.jetbrains.kotlin.cli.common.CLICompiler.Companion.SCRIPT_PLUGIN_K2_REGISTRAR_NAME
@@ -60,6 +61,10 @@ abstract class AbstractConfigurationPhase<A : CommonCompilerArguments>(
     private fun CompilerConfiguration.setupCommonConfiguration(input: ArgumentsPipelineArtifact<A>) {
         val (arguments, _, _, messageCollector, performanceManager) = input
         this.messageCollector = messageCollector
+        this.diagnosticReporter = CliDiagnosticReporter(
+            input.diagnosticCollector,
+            this,
+        )
         initializeDiagnosticFactoriesStorageForCli()
         perfManager = performanceManager
         printVersion = arguments.version
