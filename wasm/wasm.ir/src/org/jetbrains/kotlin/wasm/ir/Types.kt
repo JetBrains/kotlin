@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.wasm.ir
 
-import org.jetbrains.kotlin.ir.util.IdSignature
-
 sealed class WasmType(
     val name: String,
     val code: Byte
@@ -42,23 +40,10 @@ object WasmArrayRef : WasmType("arrayref", -0x16)
 
 sealed class WasmHeapType {
 
-    sealed class Type(val type: IdSignature) : WasmHeapType() {
-        override fun toString(): String = "Type:$type"
-
-        class GcType(type: IdSignature) : Type(type) {
-            override fun hashCode(): Int = type.hashCode()
-            override fun equals(other: Any?): Boolean = other is GcType && type == other.type
-        }
-
-        class VTableType(type: IdSignature) : Type(type) {
-            override fun hashCode(): Int = type.hashCode()
-            override fun equals(other: Any?): Boolean = other is VTableType && type == other.type
-        }
-
-        class FunctionType(type: IdSignature) : Type(type) {
-            override fun hashCode(): Int = type.hashCode()
-            override fun equals(other: Any?): Boolean = other is FunctionType && type == other.type
-        }
+    sealed class Type : WasmHeapType() {
+        abstract class GcType : Type()
+        abstract class VTableType : Type()
+        abstract class FunctionType : Type()
     }
 
     sealed class Simple(val name: String, val code: Byte) : WasmHeapType() {

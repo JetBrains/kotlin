@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.wasm.ir
 
-import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocation
 
 abstract class DeclarationResolver {
@@ -13,40 +12,6 @@ abstract class DeclarationResolver {
     abstract fun resolve(type: WasmImmediate.TypeIdx): WasmTypeDeclaration
     abstract fun resolve(global: WasmImmediate.GlobalIdx): WasmGlobal
     abstract fun resolve(function: WasmImmediate.FuncIdx): WasmFunction
-}
-
-class DefinedDeclarations(
-    val functions: MutableMap<IdSignature, WasmFunction> = mutableMapOf(),
-    val globalFields: MutableMap<IdSignature, WasmGlobal> = mutableMapOf(),
-    val globalVTables: MutableMap<IdSignature, WasmGlobal> = mutableMapOf(),
-    val globalClassITables: MutableMap<IdSignature, WasmGlobal> = mutableMapOf(),
-    val globalRTTI: MutableMap<IdSignature, WasmGlobal> = mutableMapOf(),
-
-    val gcTypes: MutableMap<IdSignature, WasmTypeDeclaration> = mutableMapOf(),
-    val vTableGcTypes: MutableMap<IdSignature, WasmStructDeclaration> = mutableMapOf(),
-    val functionTypes: MutableMap<IdSignature, WasmFunctionType> = mutableMapOf(),
-) : DeclarationResolver() {
-    override fun resolve(type: WasmHeapType.Type): WasmTypeDeclaration = when (type) {
-        is WasmHeapType.Type.GcType -> gcTypes.getValue(type.type)
-        is WasmHeapType.Type.VTableType -> vTableGcTypes.getValue(type.type)
-        is WasmHeapType.Type.FunctionType -> functionTypes.getValue(type.type)
-    }
-
-    override fun resolve(type: WasmImmediate.TypeIdx): WasmTypeDeclaration = when (type) {
-        is WasmImmediate.TypeIdx.GcTypeIdx -> gcTypes.getValue(type.value)
-        is WasmImmediate.TypeIdx.VTableTypeIdx -> vTableGcTypes.getValue(type.value)
-        is WasmImmediate.TypeIdx.FunctionTypeIdx -> functionTypes.getValue(type.value)
-    }
-
-    override fun resolve(global: WasmImmediate.GlobalIdx): WasmGlobal = when (global) {
-        is WasmImmediate.GlobalIdx.FieldIdx -> globalFields.getValue(global.value)
-        is WasmImmediate.GlobalIdx.VTableIdx -> globalVTables.getValue(global.value)
-        is WasmImmediate.GlobalIdx.ClassITableIdx -> globalClassITables.getValue(global.value)
-        is WasmImmediate.GlobalIdx.RttiIdx -> globalRTTI.getValue(global.value)
-    }
-
-    override fun resolve(function: WasmImmediate.FuncIdx): WasmFunction =
-        functions.getValue(function.value)
 }
 
 class WasmModule(

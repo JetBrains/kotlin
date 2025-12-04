@@ -68,7 +68,7 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
 
     private fun deserializeFunction() =
         deserializeNamedModuleField { name ->
-            val type = WasmHeapType.Type.FunctionType(deserializeIdSignature())
+            val type = FunctionHeapTypeSymbol(deserializeIdSignature())
             withTag { tag ->
                 when (tag) {
                     FunctionTags.DEFINED -> {
@@ -159,7 +159,7 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
 
     private fun deserializeTag(): WasmTag =
         deserializeNamedModuleField { _, flags ->
-            val type = WasmHeapType.Type.FunctionType(deserializeIdSignature())
+            val type = FunctionHeapTypeSymbol(deserializeIdSignature())
             val importPair = if (flags.consume()) null else deserializeImportDescriptor()
             WasmTag(type, importPair)
         }
@@ -210,9 +210,9 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
                 HeapTypeTags.NONE -> WasmHeapType.Simple.None
                 HeapTypeTags.NO_FUNC -> WasmHeapType.Simple.NoFunc
                 HeapTypeTags.STRUCT -> WasmHeapType.Simple.Struct
-                HeapTypeTags.HEAP_GC_TYPE -> WasmHeapType.Type.GcType(deserializeIdSignature())
-                HeapTypeTags.HEAP_VT_TYPE -> WasmHeapType.Type.VTableType(deserializeIdSignature())
-                HeapTypeTags.HEAP_FUNC_TYPE -> WasmHeapType.Type.FunctionType(deserializeIdSignature())
+                HeapTypeTags.HEAP_GC_TYPE -> GcHeapTypeSymbol(deserializeIdSignature())
+                HeapTypeTags.HEAP_VT_TYPE -> VTableHeapTypeSymbol(deserializeIdSignature())
+                HeapTypeTags.HEAP_FUNC_TYPE -> FunctionHeapTypeSymbol(deserializeIdSignature())
                 else -> tagError(tag)
             }
         }
@@ -281,16 +281,16 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
                 ImmediateTags.CONST_U8 -> WasmImmediate.ConstU8(b.readUByte())
                 ImmediateTags.DATA_INDEX -> WasmImmediate.DataIdx(deserializeSymbol(::deserializeInt))
                 ImmediateTags.ELEMENT_INDEX -> WasmImmediate.ElemIdx(deserializeElement())
-                ImmediateTags.FUNC_INDEX -> WasmImmediate.FuncIdx(deserializeIdSignature())
+                ImmediateTags.FUNC_INDEX -> FuncSymbol(deserializeIdSignature())
 
-                ImmediateTags.GC_TYPE -> WasmImmediate.TypeIdx.GcTypeIdx(deserializeIdSignature())
-                ImmediateTags.VT_TYPE -> WasmImmediate.TypeIdx.VTableTypeIdx(deserializeIdSignature())
-                ImmediateTags.FUNC_TYPE -> WasmImmediate.TypeIdx.FunctionTypeIdx(deserializeIdSignature())
+                ImmediateTags.GC_TYPE -> GcTypeSymbol(deserializeIdSignature())
+                ImmediateTags.VT_TYPE -> VTableTypeSymbol(deserializeIdSignature())
+                ImmediateTags.FUNC_TYPE -> FunctionTypeSymbol(deserializeIdSignature())
 
-                ImmediateTags.GLOBAL_FIELD -> WasmImmediate.GlobalIdx.FieldIdx(deserializeIdSignature())
-                ImmediateTags.GLOBAL_VTABLE -> WasmImmediate.GlobalIdx.VTableIdx(deserializeIdSignature())
-                ImmediateTags.GLOBAL_CLASSITABLE -> WasmImmediate.GlobalIdx.ClassITableIdx(deserializeIdSignature())
-                ImmediateTags.GLOBAL_RTTI -> WasmImmediate.GlobalIdx.RttiIdx(deserializeIdSignature())
+                ImmediateTags.GLOBAL_FIELD -> FieldGlobalSymbol(deserializeIdSignature())
+                ImmediateTags.GLOBAL_VTABLE -> VTableGlobalSymbol(deserializeIdSignature())
+                ImmediateTags.GLOBAL_CLASSITABLE -> ClassITableGlobalSymbol(deserializeIdSignature())
+                ImmediateTags.GLOBAL_RTTI -> RttiGlobalSymbol(deserializeIdSignature())
 
                 ImmediateTags.HEAP_TYPE -> WasmImmediate.HeapType(deserializeHeapType())
                 ImmediateTags.LABEL_INDEX -> WasmImmediate.LabelIdx(deserializeInt())

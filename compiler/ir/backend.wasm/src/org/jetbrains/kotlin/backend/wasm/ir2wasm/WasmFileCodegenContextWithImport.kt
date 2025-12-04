@@ -38,7 +38,7 @@ class WasmFileCodegenContextWithImport(
         if (signature !in moduleReferencedDeclarations.referencedGlobalVTable) return true
         val global = WasmGlobal(
             name = "<classVTable>",
-            type = WasmRefType(WasmHeapType.Type.VTableType(declaration.getReferenceKey())),
+            type = WasmRefType(VTableHeapTypeSymbol(declaration.getReferenceKey())),
             isMutable = false,
             init = emptyList(),
             importPair = WasmImportDescriptor(moduleName, WasmSymbol("${WasmServiceImportExportKind.VTABLE.prefix}$signature"))

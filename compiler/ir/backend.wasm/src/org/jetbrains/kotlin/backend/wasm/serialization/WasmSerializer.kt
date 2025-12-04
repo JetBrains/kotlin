@@ -157,7 +157,7 @@ class WasmSerializer(outputStream: OutputStream) {
 
     private fun serializeWasmFunction(func: WasmFunction) =
         serializeNamedModuleField(func) {
-            serializeIdSignature(func.type.type)
+            serializeIdSignature((func.type as FunctionHeapTypeSymbol).type)
             when (func) {
                 is WasmFunction.Defined -> withTag(FunctionTags.DEFINED) {
                     serializeList(func.locals, ::serializeWasmLocal)
@@ -216,7 +216,7 @@ class WasmSerializer(outputStream: OutputStream) {
 
     private fun serializeWasmTag(tag: WasmTag): Unit =
         serializeNamedModuleField(tag, listOf(tag.importPair == null)) {
-            serializeIdSignature(tag.type.type)
+            serializeIdSignature((tag.type as FunctionHeapTypeSymbol).type)
             tag.importPair?.let { serializeWasmImportDescriptor(it) }
         }
 
@@ -261,9 +261,10 @@ class WasmSerializer(outputStream: OutputStream) {
             WasmHeapType.Simple.None -> setTag(HeapTypeTags.NONE)
             WasmHeapType.Simple.NoFunc -> setTag(HeapTypeTags.NO_FUNC)
             WasmHeapType.Simple.Struct -> setTag(HeapTypeTags.STRUCT)
-            is WasmHeapType.Type.GcType -> withTag(HeapTypeTags.HEAP_GC_TYPE) { serializeIdSignature(type.type) }
-            is WasmHeapType.Type.VTableType -> withTag(HeapTypeTags.HEAP_VT_TYPE) { serializeIdSignature(type.type) }
-            is WasmHeapType.Type.FunctionType -> withTag(HeapTypeTags.HEAP_FUNC_TYPE) { serializeIdSignature(type.type) }
+            is GcHeapTypeSymbol -> withTag(HeapTypeTags.HEAP_GC_TYPE) { serializeIdSignature(type.type) }
+            is VTableHeapTypeSymbol -> withTag(HeapTypeTags.HEAP_VT_TYPE) { serializeIdSignature(type.type) }
+            is FunctionHeapTypeSymbol -> withTag(HeapTypeTags.HEAP_FUNC_TYPE) { serializeIdSignature(type.type) }
+            else -> error("Unknown heap type:${type::class.simpleName}")
         }
 
     private fun serializeWasmLocal(local: WasmLocal) {
@@ -330,16 +331,16 @@ class WasmSerializer(outputStream: OutputStream) {
             is WasmImmediate.ConstU8 -> withTag(ImmediateTags.CONST_U8) { b.writeUByte(i.value) }
             is WasmImmediate.DataIdx -> withTag(ImmediateTags.DATA_INDEX) { serializeWasmSymbolReadOnly(i.value) { serializeInt(it) } }
             is WasmImmediate.ElemIdx -> withTag(ImmediateTags.ELEMENT_INDEX) { serializeWasmElement(i.value) }
-            is WasmImmediate.FuncIdx -> withTag(ImmediateTags.FUNC_INDEX) { serializeIdSignature(i.value) }
+            is FuncSymbol -> withTag(ImmediateTags.FUNC_INDEX) { serializeIdSignature(i.value) }
 
-            is WasmImmediate.TypeIdx.GcTypeIdx -> withTag(ImmediateTags.GC_TYPE) { serializeIdSignature(i.value) }
-            is WasmImmediate.TypeIdx.VTableTypeIdx -> withTag(ImmediateTags.VT_TYPE) { serializeIdSignature(i.value) }
-            is WasmImmediate.TypeIdx.FunctionTypeIdx -> withTag(ImmediateTags.FUNC_TYPE) { serializeIdSignature(i.value) }
+            is GcTypeSymbol -> withTag(ImmediateTags.GC_TYPE) { serializeIdSignature(i.value) }
+            is VTableTypeSymbol -> withTag(ImmediateTags.VT_TYPE) { serializeIdSignature(i.value) }
+            is FunctionTypeSymbol -> withTag(ImmediateTags.FUNC_TYPE) { serializeIdSignature(i.value) }
 
-            is WasmImmediate.GlobalIdx.FieldIdx -> withTag(ImmediateTags.GLOBAL_FIELD) { serializeIdSignature(i.value) }
-            is WasmImmediate.GlobalIdx.VTableIdx -> withTag(ImmediateTags.GLOBAL_VTABLE) { serializeIdSignature(i.value) }
-            is WasmImmediate.GlobalIdx.ClassITableIdx -> withTag(ImmediateTags.GLOBAL_CLASSITABLE) { serializeIdSignature(i.value) }
-            is WasmImmediate.GlobalIdx.RttiIdx -> withTag(ImmediateTags.GLOBAL_RTTI) { serializeIdSignature(i.value) }
+            is FieldGlobalSymbol -> withTag(ImmediateTags.GLOBAL_FIELD) { serializeIdSignature(i.value) }
+            is VTableGlobalSymbol -> withTag(ImmediateTags.GLOBAL_VTABLE) { serializeIdSignature(i.value) }
+            is ClassITableGlobalSymbol -> withTag(ImmediateTags.GLOBAL_CLASSITABLE) { serializeIdSignature(i.value) }
+            is RttiGlobalSymbol -> withTag(ImmediateTags.GLOBAL_RTTI) { serializeIdSignature(i.value) }
             is WasmImmediate.HeapType -> withTag(ImmediateTags.HEAP_TYPE) { serializeWasmHeapType(i.value) }
             is WasmImmediate.LabelIdx -> withTag(ImmediateTags.LABEL_INDEX) { serializeInt(i.value) }
             is WasmImmediate.LabelIdxVector -> withTag(ImmediateTags.LABEL_INDEX_VECTOR) { serializeList(i.value) { serializeInt(it) } }
@@ -351,6 +352,7 @@ class WasmSerializer(outputStream: OutputStream) {
             is WasmImmediate.TableIdx -> withTag(ImmediateTags.TABLE_INDEX) { serializeWasmSymbolReadOnly(i.value) { serializeInt(it) } }
             is WasmImmediate.TagIdx -> withTag(ImmediateTags.TAG_INDEX) { serializeWasmSymbolReadOnly(i.value) { serializeInt(it) } }
             is WasmImmediate.ValTypeVector -> withTag(ImmediateTags.VALUE_TYPE_VECTOR) { serializeList(i.value, ::serializeWasmType) }
+            else -> error("Unknown WasmImmediate type: ${i::class.simpleName}")
         }
 
     private fun serializeCatchImmediate(catch: WasmImmediate.Catch) {

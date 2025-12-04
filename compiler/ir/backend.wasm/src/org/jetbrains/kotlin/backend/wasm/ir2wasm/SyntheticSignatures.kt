@@ -6,8 +6,6 @@
 package org.jetbrains.kotlin.backend.wasm.ir2wasm
 
 import org.jetbrains.kotlin.ir.util.IdSignature
-import org.jetbrains.kotlin.wasm.ir.WasmHeapType
-import org.jetbrains.kotlin.wasm.ir.WasmImmediate
 
 private const val syntheticFqName = "__SYNTHETIC__"
 
@@ -27,26 +25,20 @@ object Synthetics {
         IdSignature.CommonSignature(syntheticFqName, "masterInitFunction", null, 0, null)
 
     object Functions {
-        val createStringLiteralLatin1 =
-            WasmImmediate.FuncIdx(createStringLiteralLatin1Signature)
-        val createStringLiteralUtf16 =
-            WasmImmediate.FuncIdx(createStringLiteralUtf16Signature)
-        val fieldInitializerFunction =
-            WasmImmediate.FuncIdx(fieldInitializerFunctionSignature)
-        val associatedObjectGetter =
-            WasmImmediate.FuncIdx(tryGetAssociatedObjectSignature)
-        val startUnitTestsFunction =
-            WasmImmediate.FuncIdx(startUnitTestsFunctionSignature)
-        val masterInitFunction =
-            WasmImmediate.FuncIdx(masterInitFunctionSignature)
+        val createStringLiteralLatin1 = FuncSymbol(createStringLiteralLatin1Signature)
+        val createStringLiteralUtf16 = FuncSymbol(createStringLiteralUtf16Signature)
+        val fieldInitializerFunction = FuncSymbol(fieldInitializerFunctionSignature)
+        val associatedObjectGetter = FuncSymbol(tryGetAssociatedObjectSignature)
+        val startUnitTestsFunction = FuncSymbol(startUnitTestsFunctionSignature)
+        val masterInitFunction = FuncSymbol(masterInitFunctionSignature)
     }
 
     // GLOBALS
     object Globals {
         val addressesAndLengthsGlobal =
-            WasmImmediate.GlobalIdx.FieldIdx(IdSignature.CommonSignature(syntheticFqName, "addressesAndLengthsGlobal", null, 0, null))
+            FieldGlobalSymbol(IdSignature.CommonSignature(syntheticFqName, "addressesAndLengthsGlobal", null, 0, null))
         val stringPoolGlobal =
-            WasmImmediate.GlobalIdx.FieldIdx(IdSignature.CommonSignature(syntheticFqName, "stringPoolGlobal", null, 0, null))
+            FieldGlobalSymbol(IdSignature.CommonSignature(syntheticFqName, "stringPoolGlobal", null, 0, null))
     }
 
     // GC TYPES
@@ -76,33 +68,33 @@ object Synthetics {
         IdSignature.CommonSignature(syntheticFqName, "jsExceptionTagFuncType", null, 0, null)
 
     object HeapTypes {
-        val wasmAnyArrayType = WasmHeapType.Type.GcType(wasmAnyArrayTypeSignature)
-        val specialSlotITableType = WasmHeapType.Type.GcType(specialSlotITableTypeSignature)
-        val rttiType = WasmHeapType.Type.GcType(rttiTypeSignature)
-        val wasmLongArray = WasmHeapType.Type.GcType(wasmLongArraySignature)
-        val wasmLongArrayDeclaration = WasmHeapType.Type.GcType(wasmLongArrayDeclarationSignature)
-        val wasmStringArrayType = WasmHeapType.Type.GcType(wasmStringArrayTypeSignature)
-        val byteArray = WasmHeapType.Type.GcType(byteArraySignature)
-        val associatedObjectGetterType = WasmHeapType.Type.FunctionType(associatedObjectGetterTypeSignature)
+        val wasmAnyArrayType = GcHeapTypeSymbol(wasmAnyArrayTypeSignature)
+        val specialSlotITableType = GcHeapTypeSymbol(specialSlotITableTypeSignature)
+        val rttiType = GcHeapTypeSymbol(rttiTypeSignature)
+        val wasmLongArray = GcHeapTypeSymbol(wasmLongArraySignature)
+        val wasmLongArrayDeclaration = GcHeapTypeSymbol(wasmLongArrayDeclarationSignature)
+        val wasmStringArrayType = GcHeapTypeSymbol(wasmStringArrayTypeSignature)
+        val byteArray = GcHeapTypeSymbol(byteArraySignature)
+        val associatedObjectGetterType = FunctionHeapTypeSymbol(associatedObjectGetterTypeSignature)
     }
 
     object GcTypes {
-        val wasmAnyArrayType = WasmImmediate.TypeIdx.GcTypeIdx(wasmAnyArrayTypeSignature)
-        val specialSlotITableType = WasmImmediate.TypeIdx.GcTypeIdx(specialSlotITableTypeSignature)
-        val rttiType = WasmImmediate.TypeIdx.GcTypeIdx(rttiTypeSignature)
-        val wasmLongArray = WasmImmediate.TypeIdx.GcTypeIdx(wasmLongArraySignature)
-        val wasmLongArrayDeclaration = WasmImmediate.TypeIdx.GcTypeIdx(wasmLongArrayDeclarationSignature)
-        val wasmStringArrayType = WasmImmediate.TypeIdx.GcTypeIdx(wasmStringArrayTypeSignature)
-        val byteArray = WasmImmediate.TypeIdx.GcTypeIdx(byteArraySignature)
-        val associatedObjectGetterWrapper = WasmImmediate.TypeIdx.GcTypeIdx(associatedObjectGetterWrapperSignature)
-        val stringLiteralFunctionType = WasmImmediate.TypeIdx.FunctionTypeIdx(stringLiteralFunctionTypeSignature)
+        val wasmAnyArrayType = GcTypeSymbol(wasmAnyArrayTypeSignature)
+        val specialSlotITableType = GcTypeSymbol(specialSlotITableTypeSignature)
+        val rttiType = GcTypeSymbol(rttiTypeSignature)
+        val wasmLongArray = GcTypeSymbol(wasmLongArraySignature)
+        val wasmLongArrayDeclaration = GcTypeSymbol(wasmLongArrayDeclarationSignature)
+        val wasmStringArrayType = GcTypeSymbol(wasmStringArrayTypeSignature)
+        val byteArray = GcTypeSymbol(byteArraySignature)
+        val associatedObjectGetterWrapper = GcTypeSymbol(associatedObjectGetterWrapperSignature)
+        val stringLiteralFunctionType = FunctionTypeSymbol(stringLiteralFunctionTypeSignature)
     }
 
     object FunctionHeapTypes {
-        val stringLiteralFunctionType = WasmHeapType.Type.FunctionType(stringLiteralFunctionTypeSignature)
-        val jsExceptionTagFuncType = WasmHeapType.Type.FunctionType(jsExceptionTagFuncTypeSignature)
-        val parameterlessNoReturnFunctionType = WasmHeapType.Type.FunctionType(parameterlessNoReturnFunctionTypeSignature)
-        val associatedObjectGetterType = WasmHeapType.Type.FunctionType(associatedObjectGetterTypeSignature)
+        val stringLiteralFunctionType = FunctionHeapTypeSymbol(stringLiteralFunctionTypeSignature)
+        val jsExceptionTagFuncType = FunctionHeapTypeSymbol(jsExceptionTagFuncTypeSignature)
+        val parameterlessNoReturnFunctionType = FunctionHeapTypeSymbol(parameterlessNoReturnFunctionTypeSignature)
+        val associatedObjectGetterType = FunctionHeapTypeSymbol(associatedObjectGetterTypeSignature)
     }
 
 }

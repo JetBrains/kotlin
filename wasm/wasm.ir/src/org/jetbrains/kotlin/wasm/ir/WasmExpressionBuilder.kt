@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.wasm.ir
 
 import org.jetbrains.kotlin.wasm.ir.convertors.OptimizeFlow
 import org.jetbrains.kotlin.wasm.ir.convertors.createInstructionsFlow
-import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocation
 
 internal fun WasmOp.isBlockStart(): Boolean = when (this) {
@@ -297,12 +296,8 @@ open class WasmExpressionBuilder(
         buildInstr(WasmOp.CALL, location, symbol)
     }
 
-    fun buildCall(symbol: IdSignature, location: SourceLocation) {
-        buildInstr(WasmOp.CALL, location, WasmImmediate.FuncIdx(symbol))
-    }
-
     fun buildCallIndirect(
-        symbol: WasmImmediate.TypeIdx.GcTypeIdx,
+        symbol: WasmImmediate.TypeIdx,
         tableIdx: WasmSymbolReadOnly<Int> = WasmSymbol(0),
         location: SourceLocation
     ) {
@@ -347,7 +342,7 @@ open class WasmExpressionBuilder(
         buildInstr(WasmOp.STRUCT_NEW, location, struct)
     }
 
-    fun buildStructSet(struct: WasmImmediate.TypeIdx.GcTypeIdx, fieldId: Int, location: SourceLocation) {
+    fun buildStructSet(struct: WasmImmediate.TypeIdx, fieldId: Int, location: SourceLocation) {
         buildInstr(
             WasmOp.STRUCT_SET,
             location,

@@ -7,11 +7,37 @@
 
 package org.jetbrains.kotlin.wasm.ir.convertors
 
-import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.wasm.ir.*
 import java.io.BufferedInputStream
 import java.nio.ByteBuffer
 
+private class FunctionHeapType(val index: Int) : WasmHeapType.Type.FunctionType()
+private class FunctionType(val index: Int) : WasmImmediate.TypeIdx()
+private class Function(val index: Int) : WasmImmediate.FuncIdx()
+private class Global(val index: Int) : WasmImmediate.GlobalIdx()
+private class Type(val index: Int) : WasmImmediate.TypeIdx()
+
+private class BinaryToIrResolver : DeclarationResolver() {
+    val functions: MutableMap<Int, WasmFunction> = mutableMapOf()
+    val globalFields: MutableMap<Int, WasmGlobal> = mutableMapOf()
+    val gcTypes: MutableMap<Int, WasmTypeDeclaration> = mutableMapOf()
+    val functionTypes: MutableMap<Int, WasmFunctionType> = mutableMapOf()
+
+    override fun resolve(type: WasmHeapType.Type): WasmTypeDeclaration =
+        functionTypes.getValue((type as FunctionHeapType).index)
+
+    override fun resolve(type: WasmImmediate.TypeIdx): WasmTypeDeclaration = when(type) {
+        is FunctionType -> functionTypes.getValue(type.index)
+        is Type -> gcTypes.getValue(type.index)
+        else -> error("Unknown type:${type::class.simpleName}")
+    }
+
+    override fun resolve(global: WasmImmediate.GlobalIdx): WasmGlobal =
+        globalFields.getValue((global as Global).index)
+
+    override fun resolve(function: WasmImmediate.FuncIdx): WasmFunction =
+        functions.getValue((function as Function).index)
+}
 
 class WasmBinaryToIR(val b: MyByteReader) {
     val validVersion = 1u
@@ -36,19 +62,6 @@ class WasmBinaryToIR(val b: MyByteReader) {
     val data: MutableList<WasmData> = mutableListOf()
     var dataCount: Boolean = true
     val tags: MutableList<WasmTag> = mutableListOf()
-
-    private val packageName = "<BINARY_READ>"
-    private fun getFunctionTypeSignature(i: Int): IdSignature =
-        IdSignature.CommonSignature(packageName, "function_type", i.toLong(), 0, null)
-
-    private fun getFunctionIndexSignature(i: Int): IdSignature =
-        IdSignature.CommonSignature(packageName, "function_index", i.toLong(), 0, null)
-
-    private fun getGlobalIndexSignature(i: Int): IdSignature =
-        IdSignature.CommonSignature(packageName, "global_index", i.toLong(), 0, null)
-
-    private fun getGcTypeIndexSignature(i: Int): IdSignature =
-        IdSignature.CommonSignature(packageName, "type_index", i.toLong(), 0, null)
 
     private fun <T> byIdx(l1: List<T>, l2: List<T>, index: Int): T {
         if (index < l1.size)
@@ -112,7 +125,7 @@ class WasmBinaryToIR(val b: MyByteReader) {
                                     val index = b.readVarUInt32AsInt()
                                     importedFunctions += WasmFunction.Imported(
                                         name = "",
-                                        type = WasmHeapType.Type.FunctionType(getFunctionTypeSignature(index)),
+                                        type = FunctionHeapType(index),
                                         importPair = importPair,
                                     ).also { importsInOrder.add(it) }
                                 }
@@ -157,7 +170,7 @@ class WasmBinaryToIR(val b: MyByteReader) {
                             definedFunctions.add(
                                 WasmFunction.Defined(
                                     "",
-                                    WasmHeapType.Type.FunctionType(getFunctionTypeSignature(index)),
+                                    FunctionHeapType(index),
                                     locals = functionType.parameterTypes.mapIndexed { index, wasmType ->
                                         WasmLocal(index, "", wasmType, true)
                                     }.toMutableList()
@@ -343,26 +356,25 @@ class WasmBinaryToIR(val b: MyByteReader) {
             }
         }
 
-        val definedDeclarations = DefinedDeclarations()
+        val definedDeclarations = BinaryToIrResolver()
         functionTypes.forEachIndexed { index, type ->
-            definedDeclarations.functionTypes[getFunctionTypeSignature((index))] = type
+            definedDeclarations.functionTypes[index] = type
         }
         gcTypes.forEachIndexed { index, type ->
-            definedDeclarations.gcTypes[getGcTypeIndexSignature((index))] = type
+            definedDeclarations.gcTypes[index] = type
         }
         importedFunctions.forEachIndexed { index, function ->
-            definedDeclarations.functions[getFunctionIndexSignature((index))] = function
+            definedDeclarations.functions[index] = function
         }
         definedFunctions.forEachIndexed { index, function ->
-            definedDeclarations.functions[getFunctionIndexSignature((importedFunctions.size + index))] = function
+            definedDeclarations.functions[importedFunctions.size + index] = function
         }
         importedGlobals.forEachIndexed { index, global ->
-            definedDeclarations.globalFields[getGlobalIndexSignature(index)] = global
+            definedDeclarations.globalFields[index] = global
         }
         globals.forEachIndexed { index, global ->
-            definedDeclarations.globalFields[getGlobalIndexSignature(importedGlobals.size + index)] = global
+            definedDeclarations.globalFields[importedGlobals.size + index] = global
         }
-
 
         return WasmModule(
             resolver = definedDeclarations,
@@ -399,7 +411,7 @@ class WasmBinaryToIR(val b: MyByteReader) {
     private fun readTag(importPair: WasmImportDescriptor? = null): WasmTag {
         val attribute = b.readByte()
         check(attribute.toInt() == 0) { "as per spec" }
-        val type = WasmHeapType.Type.FunctionType(getFunctionTypeSignature(b.readVarUInt32AsInt()))
+        val type = FunctionHeapType(b.readVarUInt32AsInt())
         return WasmTag(type, importPair)
     }
 
@@ -459,10 +471,10 @@ class WasmBinaryToIR(val b: MyByteReader) {
                     )
                 }
                 WasmImmediateKind.BLOCK_TYPE -> readBlockType()
-                WasmImmediateKind.FUNC_IDX -> WasmImmediate.FuncIdx(getFunctionIndexSignature(b.readVarUInt32AsInt()))
+                WasmImmediateKind.FUNC_IDX -> Function(b.readVarUInt32AsInt())
                 WasmImmediateKind.LOCAL_IDX -> WasmImmediate.LocalIdx(locals[b.readVarUInt32AsInt()])
-                WasmImmediateKind.GLOBAL_IDX -> WasmImmediate.GlobalIdx.FieldIdx(getGlobalIndexSignature(b.readVarUInt32AsInt()))
-                WasmImmediateKind.TYPE_IDX -> WasmImmediate.TypeIdx.FunctionTypeIdx(getFunctionTypeSignature(b.readVarUInt32AsInt()))
+                WasmImmediateKind.GLOBAL_IDX -> Global(b.readVarUInt32AsInt())
+                WasmImmediateKind.TYPE_IDX -> FunctionType(b.readVarUInt32AsInt())
                 WasmImmediateKind.MEMORY_IDX -> WasmImmediate.MemoryIdx(b.readVarUInt32AsInt())
                 WasmImmediateKind.DATA_IDX -> WasmImmediate.DataIdx(b.readVarUInt32AsInt())
                 WasmImmediateKind.TABLE_IDX -> WasmImmediate.TableIdx(b.readVarUInt32AsInt())

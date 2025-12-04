@@ -106,7 +106,7 @@ class BodyGenerator(
         error("Unexpected element of type ${element::class}")
     }
 
-    private fun tryGenerateConstVarargArray(irVararg: IrVararg, wasmArrayType: WasmImmediate.TypeIdx.GcTypeIdx): Boolean {
+    private fun tryGenerateConstVarargArray(irVararg: IrVararg, wasmArrayType: GcTypeSymbol): Boolean {
         if (irVararg.elements.isEmpty()) return false
 
         val kind = (irVararg.elements[0] as? IrConst)?.kind ?: return false
@@ -134,7 +134,7 @@ class BodyGenerator(
         return true
     }
 
-    private fun tryGenerateVarargArray(irVararg: IrVararg, wasmArrayType: WasmImmediate.TypeIdx.GcTypeIdx) {
+    private fun tryGenerateVarargArray(irVararg: IrVararg, wasmArrayType: GcTypeSymbol) {
         irVararg.elements.forEach {
             check(it is IrExpression)
             generateExpression(it)
@@ -1555,7 +1555,7 @@ class BodyGenerator(
                     body.buildInstr(op, location)
                 }
                 1 -> {
-                    fun getReferenceGcType(): WasmImmediate.TypeIdx.GcTypeIdx {
+                    fun getReferenceGcType(): GcTypeSymbol {
                         val type = function.dispatchReceiverParameter?.type ?: call.typeArguments[0]!!
                         return wasmFileCodegenContext.referenceGcType(type.classOrNull!!)
                     }

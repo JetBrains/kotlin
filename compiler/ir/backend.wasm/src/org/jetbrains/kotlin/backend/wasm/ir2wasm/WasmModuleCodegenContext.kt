@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.wasm.ir.*
-import org.jetbrains.kotlin.wasm.ir.WasmImmediate
 
 enum class WasmServiceImportExportKind(val prefix: String) {
     VTABLE($$"__vt$"),
@@ -104,38 +103,38 @@ open class WasmFileCodegenContext(
         }
     }
 
-    open fun referenceFunction(irFunction: IrFunctionSymbol): WasmImmediate.FuncIdx =
-        WasmImmediate.FuncIdx(irFunction.getReferenceKey())
+    open fun referenceFunction(irFunction: IrFunctionSymbol): FuncSymbol =
+        FuncSymbol(irFunction.getReferenceKey())
 
-    open fun referenceGlobalField(irField: IrFieldSymbol): WasmImmediate.GlobalIdx.FieldIdx =
-        WasmImmediate.GlobalIdx.FieldIdx(irField.getReferenceKey())
+    open fun referenceGlobalField(irField: IrFieldSymbol): FieldGlobalSymbol =
+        FieldGlobalSymbol(irField.getReferenceKey())
 
-    open fun referenceGlobalVTable(irClass: IrClassSymbol): WasmImmediate.GlobalIdx.VTableIdx =
-        WasmImmediate.GlobalIdx.VTableIdx(irClass.getReferenceKey())
+    open fun referenceGlobalVTable(irClass: IrClassSymbol): VTableGlobalSymbol =
+        VTableGlobalSymbol(irClass.getReferenceKey())
 
-    open fun referenceGlobalClassITable(irClass: IrClassSymbol): WasmImmediate.GlobalIdx.ClassITableIdx =
-        WasmImmediate.GlobalIdx.ClassITableIdx(irClass.getReferenceKey())
+    open fun referenceGlobalClassITable(irClass: IrClassSymbol): ClassITableGlobalSymbol =
+        ClassITableGlobalSymbol(irClass.getReferenceKey())
 
-    open fun referenceRttiGlobal(irClass: IrClassSymbol): WasmImmediate.GlobalIdx.RttiIdx =
-        WasmImmediate.GlobalIdx.RttiIdx(irClass.getReferenceKey())
+    open fun referenceRttiGlobal(irClass: IrClassSymbol): RttiGlobalSymbol =
+        RttiGlobalSymbol(irClass.getReferenceKey())
 
-    fun referenceGcType(irClass: IrClassSymbol): WasmImmediate.TypeIdx.GcTypeIdx =
-        WasmImmediate.TypeIdx.GcTypeIdx(irClass.getReferenceKey())
+    fun referenceGcType(irClass: IrClassSymbol): GcTypeSymbol =
+        GcTypeSymbol(irClass.getReferenceKey())
 
-    fun referenceHeapType(irClass: IrClassSymbol): WasmHeapType.Type.GcType =
-        WasmHeapType.Type.GcType(irClass.getReferenceKey())
+    fun referenceHeapType(irClass: IrClassSymbol): GcHeapTypeSymbol =
+        GcHeapTypeSymbol(irClass.getReferenceKey())
 
-    fun referenceVTableGcType(irClass: IrClassSymbol): WasmImmediate.TypeIdx.VTableTypeIdx =
-        WasmImmediate.TypeIdx.VTableTypeIdx(irClass.getReferenceKey())
+    fun referenceVTableGcType(irClass: IrClassSymbol): VTableTypeSymbol =
+        VTableTypeSymbol(irClass.getReferenceKey())
 
-    fun referenceVTableHeapType(irClass: IrClassSymbol): WasmHeapType.Type.VTableType =
-        WasmHeapType.Type.VTableType(irClass.getReferenceKey())
+    fun referenceVTableHeapType(irClass: IrClassSymbol): VTableHeapTypeSymbol =
+        VTableHeapTypeSymbol(irClass.getReferenceKey())
 
-    fun referenceFunctionType(irClass: IrFunctionSymbol): WasmImmediate.TypeIdx.FunctionTypeIdx =
-        WasmImmediate.TypeIdx.FunctionTypeIdx(irClass.getReferenceKey())
+    fun referenceFunctionType(irClass: IrFunctionSymbol): FunctionTypeSymbol =
+        FunctionTypeSymbol(irClass.getReferenceKey())
 
-    fun referenceFunctionHeapType(irClass: IrFunctionSymbol): WasmHeapType.Type.FunctionType =
-        WasmHeapType.Type.FunctionType(irClass.getReferenceKey())
+    fun referenceFunctionHeapType(irClass: IrFunctionSymbol): FunctionHeapTypeSymbol =
+        FunctionHeapTypeSymbol(irClass.getReferenceKey())
 
     fun referenceTypeId(irClass: IrClassSymbol): Long =
         cityHash64(irClass.getSignature().toString().encodeToByteArray()).toLong()
