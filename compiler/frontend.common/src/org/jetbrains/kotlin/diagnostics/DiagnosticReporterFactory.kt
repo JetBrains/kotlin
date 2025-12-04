@@ -5,18 +5,12 @@
 
 package org.jetbrains.kotlin.diagnostics
 
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.diagnostics.impl.PendingDiagnosticsCollectorWithSuppress
 import org.jetbrains.kotlin.diagnostics.impl.SimpleDiagnosticsCollector
 import org.jetbrains.kotlin.diagnostics.impl.SimpleDiagnosticsCollectorWithSuppress
 
 object DiagnosticReporterFactory {
-    // kept only to keep compatibility with Compose tests
-    fun createReporter(messageCollector: MessageCollector): BaseDiagnosticsCollector {
-        return createReporter()
-    }
-
     fun createReporter(disableSuppress: Boolean = false): BaseDiagnosticsCollector {
         return if (disableSuppress) {
             SimpleDiagnosticsCollector()

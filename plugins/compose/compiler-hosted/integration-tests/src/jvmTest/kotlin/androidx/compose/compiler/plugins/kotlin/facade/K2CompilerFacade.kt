@@ -165,8 +165,7 @@ class K2CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
         val commonKtFiles = commonFiles.map { it.toKtFile(project) }
         val platformKtFiles = platformFiles.map { it.toKtFile(project) }
 
-        val messageCollector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
-        val reporter = DiagnosticReporterFactory.createReporter(messageCollector)
+        val reporter = DiagnosticReporterFactory.createReporter()
         val commonAnalysis =
             buildResolveAndCheckFirFromKtFiles(commonSession, commonKtFiles, reporter)
         val platformAnalysis =
