@@ -1220,10 +1220,12 @@ class BodyGenerator(
                 val contVarType = WasmRefNullType(WasmHeapType.Type(contType))
                 val contLocalVarIdx = functionContext.defineVariable(contVarType, "continuation")
                 val contLocalVar = functionContext.referenceLocal(contLocalVarIdx)
-                val completionVarIdx = functionContext.defineVariable(WasmAnyRef, "completion")
-                val completionLocalVar = functionContext.referenceLocal(completionVarIdx)
                 val kotlinAny = wasmFileCodegenContext.referenceGcType(irBuiltIns.anyClass)
                 val kotlinAnyRefType = WasmRefNullType(WasmHeapType.Type(kotlinAny))
+                val kotlinThrowable = wasmFileCodegenContext.referenceGcType(irBuiltIns.throwableClass)
+                val kotlinThrowableRefType = WasmRefNullType(WasmHeapType.Type(kotlinThrowable))
+                val completionVarIdx = functionContext.defineVariable(kotlinAnyRefType, "completion")
+                val completionLocalVar = functionContext.referenceLocal(completionVarIdx)
                 val zeroArgContType = WasmHeapType.Type(wasmFileCodegenContext.referenceContType(1))
                 body.buildSetLocal(completionLocalVar, location)
 
@@ -1237,12 +1239,43 @@ class BodyGenerator(
                 wasmFileCodegenContext.defineContBlockType(blockType)
                 val blockTypeSymbol = wasmFileCodegenContext.referenceContBlockType(blockType)
                 body.buildFunctionTypedBlock("on_suspend", blockTypeSymbol) { idx ->
-                    for (i in 0 until arity) {
-                        body.buildGetLocal(functionContext.referenceLocal(i), location)
+                    body.buildBlock(null, kotlinAnyRefType) { topLevelBlock ->
+                        body.buildBlock(null, rawExceptionType) { toCatch ->
+                            body.buildTryTable(body.createNewCatch(exceptionTagId, toCatch)) {
+                                for (i in 0 until arity) {
+                                    body.buildGetLocal(functionContext.referenceLocal(i), location)
+                                }
+                                body.buildGetLocal(contLocalVar, location)
+                                val contHandle = body.createNewContHandle(contTagId, idx)
+
+                                body.buildResume(WasmHeapType.Type(contType), contHandle, location)
+                                body.buildBr(
+                                    topLevelBlock,
+                                    SourceLocation.NoLocation("Branch to success level after finish try block without any exception")
+                                )
+                            }
+
+                            body.buildUnreachableForVerifier()
+                        }
+                        val exceptionVarIdx = functionContext.defineVariable(kotlinThrowableRefType, "exception")
+                        val exceptionVar = functionContext.referenceLocal(exceptionVarIdx)
+                        body.buildSetLocal(exceptionVar, location)
+
+                        body.buildGetLocal(completionLocalVar, location)
+                        body.buildGetLocal(exceptionVar, location)
+                        body.buildCall(wasmFileCodegenContext.referenceFunction(wasmSymbols.resumeCompletionWithException), location)
+
+                        body.buildGetLocal(exceptionVar, location)
+                        body.buildThrow(exceptionTagId, location)
                     }
-                    body.buildGetLocal(contLocalVar, location)
-                    val contHandle = body.createNewContHandle(contTagId, idx)
-                    body.buildResume(WasmHeapType.Type(contType), contHandle, location)
+                    val resultVarIdx = functionContext.defineVariable(kotlinAnyRefType, "result")
+                    val resultVar = functionContext.referenceLocal(resultVarIdx)
+                    body.buildSetLocal(resultVar, location)
+
+                    body.buildGetLocal(completionLocalVar, location)
+                    body.buildGetLocal(resultVar, location)
+                    body.buildCall(wasmFileCodegenContext.referenceFunction(wasmSymbols.resumeCompletionWithValue), location)
+                    body.buildGetLocal(resultVar, location)
                     body.buildInstr(WasmOp.RETURN, location)
                 }
                 body.buildCall(wasmFileCodegenContext.referenceFunction(wasmSymbols.setWasmContinuation), location)

@@ -80,6 +80,14 @@ internal fun setWasmContinuation(a: Any?, b: contref1): Any? {
     return cont
 }
 
+internal fun resumeCompletionWithValue(completion: Continuation<Any?>, value: Any?) {
+    completion.resume(value)
+}
+
+internal fun resumeCompletionWithException(completion: Continuation<Throwable>, exception: Throwable) {
+    completion.resumeWithException(exception)
+}
+
 @Suppress("UNUSED_PARAMETER")
 @ExcludedFromCodegen
 internal fun resumeWithIntrinsic(wasmContinuation: contref1, result: Result<*>): Pair<WasmContinuation<*>, WasmContinuationBox>? {

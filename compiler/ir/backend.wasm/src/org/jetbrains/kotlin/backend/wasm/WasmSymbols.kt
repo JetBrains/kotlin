@@ -260,6 +260,8 @@ class WasmSymbols(
     val resumeWithIntrinsic = getInternalWasmFunction("resumeWithIntrinsic")
     val buildPair = getInternalWasmFunction("buildPair")
     val setWasmContinuation = getInternalWasmFunction("setWasmContinuation")
+    val resumeCompletionWithValue = getInternalWasmFunction("resumeCompletionWithValue")
+    val resumeCompletionWithException = getInternalWasmFunction("resumeCompletionWithException")
 
     // KProperty implementations
     val kLocalDelegatedPropertyImpl: IrClassSymbol = getInternalWasmClass("KLocalDelegatedPropertyImpl")
