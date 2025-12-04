@@ -1,0 +1,5 @@
+expression: {
+        callsInPlace(fallbackOnAbort, InvocationKind.AT_MOST_ONCE)
+        callsInPlace(onCancelled, InvocationKind.AT_MOST_ONCE)
+    }
+type: kotlin.contracts.ContractBuilder.() -> kotlin.Unit
