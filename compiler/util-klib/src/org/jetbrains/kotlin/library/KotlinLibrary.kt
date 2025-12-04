@@ -86,7 +86,6 @@ const val KLIB_PROPERTY_MANUALLY_ENABLED_POISONING_LANGUAGE_FEATURES = "poisonin
 interface BaseKotlinLibrary {
     val libraryName: String
     val libraryFile: File
-    val componentList: List<String>
     val versions: KotlinLibraryVersioning
 
     val manifestProperties: Properties
