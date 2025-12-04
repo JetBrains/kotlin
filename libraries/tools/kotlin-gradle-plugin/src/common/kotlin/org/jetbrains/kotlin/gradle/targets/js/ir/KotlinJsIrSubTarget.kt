@@ -89,7 +89,7 @@ abstract class KotlinJsIrSubTarget(
         lowerCamelCaseName(target.disambiguationClassifier, disambiguationClassifier, *names)
 
     private fun configureTests() {
-        testRuns = project.container(KotlinJsPlatformTestRun::class.java) { name -> KotlinJsPlatformTestRun(name, target) }.also {
+        testRuns = project.objects.domainObjectContainer(KotlinJsPlatformTestRun::class.java) { name -> KotlinJsPlatformTestRun(name, target) }.also {
             (this as ExtensionAware).extensions.add(this::testRuns.name, it)
         }
 

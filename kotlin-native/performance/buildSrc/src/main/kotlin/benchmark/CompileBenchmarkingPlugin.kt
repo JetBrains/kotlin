@@ -7,7 +7,7 @@ import org.gradle.api.tasks.Exec
 import org.jetbrains.kotlin.*
 import javax.inject.Inject
 
-class BuildStep (private val _name: String): Named  {
+open class BuildStep @Inject constructor(private val _name: String): Named  {
     override fun getName(): String = _name
     lateinit var command: List<String>
 
@@ -16,7 +16,7 @@ class BuildStep (private val _name: String): Named  {
     }
 }
 
-class BuildStepContainer(val project: Project): NamedDomainObjectContainer<BuildStep> by project.container(BuildStep::class.java) {
+class BuildStepContainer(val project: Project): NamedDomainObjectContainer<BuildStep> by project.objects.domainObjectContainer(BuildStep::class.java) {
     fun step(name: String, configure: Action<BuildStep>) =
         maybeCreate(name).apply { configure.execute(this) }
     

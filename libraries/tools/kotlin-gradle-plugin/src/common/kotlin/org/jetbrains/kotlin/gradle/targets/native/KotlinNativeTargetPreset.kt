@@ -60,7 +60,7 @@ internal abstract class AbstractKotlinNativeTargetPreset<T : KotlinNativeTarget>
             targetPreset = this@AbstractKotlinNativeTargetPreset
 
             val compilationFactory = KotlinNativeCompilationFactory(this)
-            compilations = project.container(compilationFactory.itemClass, compilationFactory)
+            compilations = project.objects.domainObjectContainer(compilationFactory.itemClass, compilationFactory)
         }
 
         createTargetConfigurator().configureTarget(result)
