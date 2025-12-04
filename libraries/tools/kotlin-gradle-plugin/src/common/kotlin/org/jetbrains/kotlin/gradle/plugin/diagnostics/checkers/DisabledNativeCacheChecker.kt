@@ -42,7 +42,7 @@ internal object DisabledNativeCacheChecker : KotlinGradleProjectChecker {
                     } else {
                         KotlinToolingDiagnostics.NativeCacheDisabledDiagnostic(
                             nativeVersion,
-                            binary.konanTarget,
+                            binary,
                             disableCache.reason,
                             disableCache.issueUrl
                         )
