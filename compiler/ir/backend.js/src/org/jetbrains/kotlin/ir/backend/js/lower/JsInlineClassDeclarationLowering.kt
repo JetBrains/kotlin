@@ -6,11 +6,14 @@
 package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.lower.InlineClassDeclarationLowering
+import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.shouldBeCompiledAsGenerator
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 
+// `ConstLowering` generates inline class constructors for unsigned integers which should be lowered by this lowering.
+@PhasePrerequisites(ConstLowering::class)
 class JsInlineClassDeclarationLowering(context: JsIrBackendContext) : InlineClassDeclarationLowering(context) {
     /**
      * After the InlineClassLowering, the member methods are delegating to the top-level functions like this:
