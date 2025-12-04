@@ -1,10 +1,10 @@
 #!/bin/bash
 
-set -eou pipefail
+set -ueo pipefail
 
 TARGET=$1
 VERSION=$2
-TOOLCHAIN_VERSION_SUFFIX=$3
+TOOLCHAIN_VERSION_SUFFIX="${3:-""}"
 HOME=/home/ct
 ZLIB_VERSION=1.2.11
 
@@ -34,7 +34,7 @@ build_zlib() {
 
 build_archive() {
   cd $HOME/x-tools
-  if [ -z "$TOOLCHAIN_VERSION_SUFFIX" ]
+  if [ "$TOOLCHAIN_VERSION_SUFFIX" == "" ]
   then
     FULL_NAME="$TARGET-$VERSION"
   else
