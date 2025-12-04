@@ -5,32 +5,12 @@
 
 package org.jetbrains.kotlin.fir.analysis.diagnostics
 
-import org.jetbrains.kotlin.diagnostics.AbstractKtDiagnosticFactory
-import org.jetbrains.kotlin.diagnostics.KtDiagnostic
-import org.jetbrains.kotlin.diagnostics.KtDiagnosticRenderer
-import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
-import org.jetbrains.kotlin.diagnostics.rendering.DiagnosticRendererFactory
+import org.jetbrains.kotlin.diagnostics.KtRegisteredDiagnosticFactoriesStorage
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
-import org.jetbrains.kotlin.fir.SessionConfiguration
 
-class FirComposedDiagnosticRendererFactory : DiagnosticRendererFactory, FirSessionComponent {
-    private val factories = mutableSetOf<BaseDiagnosticRendererFactory>()
+class FirRegisteredDiagnosticFactoriesStorage(val storage: KtRegisteredDiagnosticFactoriesStorage) : FirSessionComponent
 
-    @SessionConfiguration
-    fun registerFactories(factories: List<BaseDiagnosticRendererFactory>) {
-        this.factories += factories
-    }
-
-    override fun invoke(diagnostic: KtDiagnostic): KtDiagnosticRenderer? {
-        val diagnosticFactory = diagnostic.factory
-        return factories.firstNotNullOfOrNull {
-            it.MAP[diagnosticFactory]
-        }
-    }
-
-    val allDiagnosticFactories: List<AbstractKtDiagnosticFactory>
-        get() = factories.flatMap { it.MAP.factories }
-}
-
-val FirSession.diagnosticRendererFactory: FirComposedDiagnosticRendererFactory by FirSession.sessionComponentAccessor()
+private val FirSession.firRegisteredDiagnosticFactories: FirRegisteredDiagnosticFactoriesStorage by FirSession.sessionComponentAccessor()
+val FirSession.registeredDiagnosticFactoriesStorage: KtRegisteredDiagnosticFactoriesStorage
+    get() = firRegisteredDiagnosticFactories.storage
