@@ -9,17 +9,9 @@ public abstract class C2 {
     // source: 'interfaceBridgesDisabled.kt'
     public method <init>(): void
     public abstract @org.jetbrains.annotations.NotNull method bar(): java.lang.Integer
-    public synthetic bridge method bar(): java.lang.Number
-    public synthetic bridge method bar(): java.lang.Object
     public abstract method foo(p0: int): void
-    public synthetic bridge method foo(p0: java.lang.Number): void
-    public synthetic bridge method foo(p0: java.lang.Object): void
     public abstract method getProperty(): int
-    public synthetic bridge method getProperty(): java.lang.Number
-    public synthetic bridge method getProperty(): java.lang.Object
     public abstract method setProperty(p0: int): void
-    public synthetic bridge method setProperty(p0: java.lang.Number): void
-    public synthetic bridge method setProperty(p0: java.lang.Object): void
 }
 
 @kotlin.Metadata

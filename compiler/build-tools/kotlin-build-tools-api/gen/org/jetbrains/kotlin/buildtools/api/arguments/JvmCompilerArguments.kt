@@ -235,16 +235,6 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
         JvmCompilerArgument("X_INDY_ALLOW_ANNOTATED_LAMBDAS", KotlinReleaseVersion(2, 2, 0))
 
     /**
-     * Enables generation of bridge methods as default methods in interfaces
-     *
-     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
-     */
-    @JvmField
-    @ExperimentalCompilerArgument
-    public val X_INTERFACE_BRIDGES: JvmCompilerArgument<Boolean> =
-        JvmCompilerArgument("X_INTERFACE_BRIDGES", KotlinReleaseVersion(2, 3, 20))
-
-    /**
      * When using the IR backend, do not clear BindingContext between 'psi2ir' and lowerings.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.

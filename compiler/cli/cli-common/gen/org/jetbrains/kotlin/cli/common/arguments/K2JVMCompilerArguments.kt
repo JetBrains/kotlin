@@ -226,16 +226,6 @@ inside suspend functions and lambdas to distinguish them from user code by debug
         }
 
     @Argument(
-        value = "-Xinterface-bridges",
-        description = "Enables generation of bridge methods as default methods in interfaces",
-    )
-    var interfaceBridges: Boolean = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(
         value = "-Xir-do-not-clear-binding-context",
         description = "When using the IR backend, do not clear BindingContext between 'psi2ir' and lowerings.",
     )

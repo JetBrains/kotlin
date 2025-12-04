@@ -948,16 +948,6 @@ inside suspend functions and lambdas to distinguish them from user code by debug
     }
 
     compilerArgument {
-        name = "Xinterface-bridges"
-        description = "Enables generation of bridge methods as default methods in interfaces".asReleaseDependent()
-        valueType = BooleanType.defaultFalse
-
-        lifecycle(
-            introducedVersion = KotlinReleaseVersion.v2_3_20,
-        )
-    }
-
-    compilerArgument {
         name = "Xwhen-expressions"
         compilerName = "whenExpressionsGeneration"
         description = """Select the code generation scheme for type-checking 'when' expressions:

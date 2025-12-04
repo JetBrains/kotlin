@@ -1,6 +1,6 @@
 // JVM_DEFAULT_MODE: disable
 // WITH_STDLIB
-// ENABLE_INTERFACE_BRIDGES
+// LANGUAGE: +JvmEnhancedBridges
 
 interface Root<T> {
     fun test(p: T): T = null!!

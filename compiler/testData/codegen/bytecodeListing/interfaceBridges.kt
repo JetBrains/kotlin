@@ -1,5 +1,5 @@
 // JVM_DEFAULT_MODE: disable
-// ENABLE_INTERFACE_BRIDGES
+// LANGUAGE: +JvmEnhancedBridges
 
 interface I1<T: Any> {
     var property: T

@@ -117,6 +117,4 @@ class JvmBackendConfig(configuration: CompilerConfiguration) {
         else JvmWhenGenerationScheme.INLINE
 
     val generateDebugMetadataV2: Boolean = languageVersionSettings.apiVersion >= ApiVersion.KOTLIN_2_3
-
-    val enableInterfaceBridges: Boolean = configuration.get(JVMConfigurationKeys.ENABLE_INTERFACE_BRIDGES, false)
 }

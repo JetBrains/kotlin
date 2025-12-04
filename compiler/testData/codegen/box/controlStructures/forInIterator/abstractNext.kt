@@ -1,5 +1,6 @@
 // TARGET_BACKEND: JVM
 // WITH_STDLIB
+// LANGUAGE: +JvmEnhancedBridges
 
 fun iterate(iterator: MyIterator): String {
     for (x in iterator) return x

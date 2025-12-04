@@ -1,5 +1,5 @@
 // JVM_DEFAULT_MODE: disable
-// ENABLE_INTERFACE_BRIDGES
+// LANGUAGE: +JvmEnhancedBridges
 
 // This test is checking that:
 // 1) Test2 has the bridges with Any in the signature, for both property accessors

@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.backend.jvm.*
 import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.backend.jvm.mapping.MethodSignatureMapper
 import org.jetbrains.kotlin.codegen.AsmUtil
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.builders.*
@@ -111,6 +112,8 @@ import org.jetbrains.org.objectweb.asm.commons.Method
  */
 @PhasePrerequisites(JvmInlineClassLowering::class, InheritedDefaultMethodsOnClassesLowering::class)
 internal class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPass {
+    private val useEnhancedBridges = context.config.languageVersionSettings.supportsFeature(LanguageFeature.JvmEnhancedBridges)
+
     // Represents a synthetic bridge to `overridden` with a precomputed signature
     private class Bridge(
         val overridden: IrSimpleFunction,
@@ -166,16 +169,23 @@ internal class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPas
         val specialBridgeOrNull = if (!parentAsClass.isInterface) this.specialBridgeOrNull else null
         val mayNeedSpecialBridge = specialBridgeOrNull != null && isJvmAbstract(context.config.jvmDefaultMode)
 
-        if (!context.config.enableInterfaceBridges && isJvmAbstract(context.config.jvmDefaultMode) && parentAsClass.isJvmInterface)
+        if (useEnhancedBridges) {
+            // Finally, the JVM backend also ignores concrete fake overrides whose implementation is directly inherited from an interface.
+            // This is sound, since we do not generate type-specialized versions of fake overrides and if the method
+            // were to override several interface methods the frontend would require a separate implementation.
+            if (!isFakeOverride || resolvesToClass() || mayNeedSpecialBridge)
+                return BridgeTarget(this, specialBridgeOrNull)
+
             return null
-
-        // Finally, the JVM backend also ignores concrete fake overrides whose implementation is directly inherited from an interface.
-        // This is sound, since we do not generate type-specialized versions of fake overrides and if the method
-        // were to override several interface methods the frontend would require a separate implementation.
-        if (!isFakeOverride || resolvesToClass() || mayNeedSpecialBridge)
-            return BridgeTarget(this, specialBridgeOrNull)
-
-        return null
+        } else {
+            // old behavior
+            val isCandidate = if (isJvmAbstract(context.config.jvmDefaultMode)) {
+                !parentAsClass.isJvmInterface
+            } else {
+                !isFakeOverride || resolvesToClass()
+            }
+            return if (isCandidate) BridgeTarget(this, specialBridgeOrNull) else null
+        }
     }
 
     private fun createBridges(irClass: IrClass, irFunction: IrSimpleFunction, specialBridge: SpecialBridge?) {
@@ -297,6 +307,12 @@ internal class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPas
                     }
                 }
             }
+        } else if (!useEnhancedBridges && irFunction.isJvmAbstract(context.config.jvmDefaultMode)) {
+            // Do not generate bridge methods for abstract methods which do not override a special bridge method.
+            // This matches the behavior of the JVM backend, but it does mean that we generate superfluous bridges
+            // for abstract methods overriding a special bridge for which we do not create a bridge due to,
+            // e.g., signature clashes.
+            return
         } else if (irFunction.hasAnnotation(JvmStandardClassIds.JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME)) {
             // Do not generate bridge methods for exposed methods, since we already generate bridges for
             // their mangled counterparts. Generating both bridges will lead to declaration clash.
