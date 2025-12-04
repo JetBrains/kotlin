@@ -8,7 +8,9 @@ fun foo_1(): ()->Unit = TODO()
 
 fun foo_consume_simple(block: ()->Unit): Unit = TODO()
 
-fun foo_consume_recursive(block: (()->Unit)->(()->Unit)): Unit = TODO()
+fun foo_consume_producing(block: ()->(()->Unit)): Unit = TODO()
+// KT-82907 Swift Export: attributes are not printed for parameters of closures
+//fun foo_consume_consuming(block: (()->Unit)->Unit): Unit = TODO()
 
 var closure_property: () -> Unit = {}
 
@@ -42,9 +44,9 @@ fun consume_block_with_byte_id(block: (Byte) -> Byte): Byte = TODO()
 // FILE: optional_closure.kt
 
 fun consume_opt_closure(arg: (()->Unit)?): Unit = TODO()
-fun produce_opt_closure(arg: Unit): (()->Unit)? = TODO()
+fun produce_opt_closure(arg: Unit): (()->String)? = TODO()
 fun consume_producing_opt_closure(arg: (()->(()->Unit)?)?): Unit = TODO()
-fun consume_consuming_opt_closure(arg: (((()->Unit)?)->Unit)?): Unit = TODO()
+fun consume_consuming_opt_closure(arg: (((()->String)?)->Unit)?): Unit = TODO()
 
 // MODULE: functional_types
 // EXPORT_TO_SWIFT
@@ -91,7 +93,7 @@ fun fooList(i: List<Int>.()->Unit): Unit = TODO()
 // EXPORT_TO_SWIFT
 // FILE: typealias_to_closure.kt
 
-typealias Closure = () -> Unit
+typealias Closure = (Int, Int) -> Unit
 
 fun typealias_demo(input: Closure): Closure = TODO()
 

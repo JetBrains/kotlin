@@ -71,7 +71,7 @@ public class SirTypeProviderImpl(
         fun buildRegularType(kaType: KaType): SirType = sirSession.withSessions {
             when (kaType) {
                 is KaUsualClassType -> {
-                    if (kaType.isTypealiasToFunctionalType && kaType.isUnsupportedFunctionalType(ctx)) {
+                    if (kaType.isTypealiasToFunctionalType && kaType.isUnsupportedFunctionalType()) {
                         return@withSessions SirUnsupportedType
                     }
                     when {
@@ -100,7 +100,7 @@ public class SirTypeProviderImpl(
                         ?: SirUnsupportedType
                 }
                 is KaFunctionType -> {
-                    if (kaType.isUnsupportedFunctionalType(ctx)) {
+                    if (kaType.isUnsupportedFunctionalType()) {
                         return@withSessions SirUnsupportedType
                     } else {
                         SirFunctionalType(
@@ -191,6 +191,8 @@ public class SirTypeProviderImpl(
             }
             is SirErrorType -> {}
             SirUnsupportedType -> {}
+            is SirArrayType, is SirDictionaryType, is SirOptionalType ->
+                TODO("already covered by NominalType, exhaustive check is faulty here")
         }
         return this
     }
@@ -218,7 +220,7 @@ public class SirTypeProviderImpl(
         get() = (symbol as? KaTypeAliasSymbol)?.expandedType?.isFunctionType ?: false
 
     context(ka: KaSession)
-    private fun KaType.isUnsupportedFunctionalType(ctx: TypeTranslationCtx, ): Boolean =
-        isSuspendFunctionType || ctx.currentPosition == SirTypeVariance.COVARIANT
+    private fun KaType.isUnsupportedFunctionalType(): Boolean =
+        isSuspendFunctionType
 }
 
