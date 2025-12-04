@@ -1,9 +1,6 @@
 type Nullable<T> = T | null | undefined
 declare function KtSingleton<T>(): T & (abstract new() => any);
-export declare namespace kotlin {
-    /* ErrorDeclaration: Class declarations are not implemented yet */
-    /* ErrorDeclaration: Class declarations are not implemented yet */
-}
+
 
 export declare namespace foo {
     const prop: number;
@@ -12,5 +9,15 @@ export declare namespace foo {
     function arrayOfLists(): Array<any/* kotlin.collections.List<number> */>;
     function acceptArrayOfPairs(array: Array<kotlin.Pair<string, string>>): void;
     function justSomeDefaultExport(): string;
-    /* ErrorDeclaration: Class declarations are not implemented yet */
+    class C {
+        constructor(x: number);
+        doubleX(): number;
+        get x(): number;
+    }
+    namespace C {
+        /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+        namespace $metadata$ {
+            const constructor: abstract new () => C;
+        }
+    }
 }

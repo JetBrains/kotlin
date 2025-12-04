@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.ir.backend.js.tsexport.ExportedType.Function
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.Variance
-import org.jetbrains.kotlin.utils.memoryOptimizedMap
 
 internal class TypeExporter(private val config: TypeScriptExportConfig, private val scope: TypeParameterScope) {
     /**
@@ -133,40 +132,52 @@ internal class TypeExporter(private val config: TypeScriptExportConfig, private 
                 ?: error("Type parameter ${type.symbol.render()} is not in scope")
         }
         if (type is KaClassType) {
-            val symbol = type.symbol
-            val isExported = shouldDeclarationBeExportedImplicitlyOrExplicitly(symbol)
-            return when (symbol) {
-                is KaNamedClassSymbol -> {
-                    val isImplicitlyExported = !isExported && !symbol.isExternal
-                    val isNonExportedExternal = symbol.isExternal && !isExported
-                    val name = symbol
-                        .getExportedFqName(shouldIncludePackage = !isNonExportedExternal && config.generateNamespacesForPackages, config)
-                        .asString()
-
-                    // TODO(KT-82340): Approximate to actual supertype
-                    val exportedSupertype = Primitive.Any
-
-                    val classType = ClassType(
-                        name = name,
-                        arguments = type.typeArguments.memoryOptimizedMap { exportTypeArgument(it) },
-                        classId = symbol.classId,
-                    )
-
-                    when (symbol.classKind) {
-                        KaClassKind.OBJECT, KaClassKind.COMPANION_OBJECT -> TypeOf(classType)
-                        KaClassKind.CLASS, KaClassKind.ENUM_CLASS, KaClassKind.INTERFACE -> classType
-                        KaClassKind.ANNOTATION_CLASS -> ErrorType("Annotation classes are not supported")
-                        KaClassKind.ANONYMOUS_OBJECT -> ErrorType("Anonymous objects are not supported")
-                    }.withImplicitlyExported(isImplicitlyExported, exportedSupertype)
-                }
-                is KaTypeAliasSymbol -> {
-                    // TODO(KT-49795): Don't expand, export as a type alias reference instead.
-                    exportType(type.fullyExpandedType)
-                }
-                is KaAnonymousObjectSymbol -> ErrorType("Anonymous objects are not supported")
-            }
+            return exportClassType(type)
         }
         error("type must be either KaClassType or KaTypeParameterType. Actual type: ${type.javaClass.name}")
+    }
+
+    context(_: KaSession)
+    private fun exportClassType(type: KaClassType): ExportedType {
+        val symbol = type.symbol
+        val isExported = shouldDeclarationBeExportedImplicitlyOrExplicitly(symbol)
+        return when (symbol) {
+            is KaNamedClassSymbol -> {
+                val isImplicitlyExported = !isExported && !symbol.isExternal
+                val isNonExportedExternal = symbol.isExternal && !isExported
+                val name = symbol
+                    .getExportedFqName(shouldIncludePackage = !isNonExportedExternal && config.generateNamespacesForPackages, config)
+                    .asString()
+
+                // TODO(KT-82340): Approximate to actual supertype
+                val exportedSupertype = Primitive.Any
+
+                val classType = ClassType(
+                    name = name,
+                    arguments = exportAllTypeArguments(type),
+                    classId = symbol.classId,
+                )
+
+                when (symbol.classKind) {
+                    KaClassKind.OBJECT, KaClassKind.COMPANION_OBJECT -> TypeOf(classType)
+                    KaClassKind.CLASS, KaClassKind.ENUM_CLASS, KaClassKind.INTERFACE -> classType
+                    KaClassKind.ANNOTATION_CLASS -> ErrorType("Annotation classes are not supported")
+                    KaClassKind.ANONYMOUS_OBJECT -> ErrorType("Anonymous objects are not supported")
+                }.withImplicitlyExported(isImplicitlyExported, exportedSupertype)
+            }
+            is KaTypeAliasSymbol -> {
+                // TODO(KT-49795): Don't expand, export as a type alias reference instead.
+                exportType(type.fullyExpandedType)
+            }
+            is KaAnonymousObjectSymbol -> ErrorType("Anonymous objects are not supported")
+        }
+    }
+
+    context(_: KaSession)
+    private fun exportAllTypeArguments(type: KaClassType): List<ExportedType> = buildList {
+        for (qualifier in type.qualifiers.asReversed()) {
+            qualifier.typeArguments.mapTo(this) { exportTypeArgument(it) }
+        }
     }
 
     @OptIn(KaExperimentalApi::class)

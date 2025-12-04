@@ -1,10 +1,7 @@
 declare namespace JS_TESTS {
     type Nullable<T> = T | null | undefined
     function KtSingleton<T>(): T & (abstract new() => any);
-    namespace kotlin {
-        /* ErrorDeclaration: Class declarations are not implemented yet */
-        /* ErrorDeclaration: Class declarations are not implemented yet */
-    }
+
 
     function provideList(): any/* kotlin.collections.List<number> */;
     function provideMutableList(): any/* kotlin.collections.MutableList<number> */;
