@@ -1229,7 +1229,6 @@ class BodyGenerator(
                 val zeroArgContType = WasmHeapType.Type(wasmFileCodegenContext.referenceContType(1))
                 body.buildSetLocal(completionLocalVar, location)
 
-                // FIXME: doesn't work with startCoroutineUninterceptedOrReturn1
                 castAnyToInvokable(suspendFunctionInvoke.owner, suspendFunctionClassType.classOrFail.owner, location)
 
                 body.buildContNew(contType, location)
