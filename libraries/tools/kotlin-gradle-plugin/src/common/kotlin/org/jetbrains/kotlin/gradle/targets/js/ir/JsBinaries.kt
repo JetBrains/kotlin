@@ -83,18 +83,20 @@ sealed class JsIrBinary(
 
                 task.duplicatesStrategy = DuplicatesStrategy.WARN
 
-                task.from.from(project.tasks.named(compilation.processResourcesTaskName))
+                task.from.from(linkSyncTaskRegisteredResources)
 
                 task.destinationDirectory.set(compilation.npmProject.dist.mapToFile())
             }
         }
 
+    internal val defaultLinkSyncTaskInput = linkTask
+        .flatMap(KotlinJsIrLink::destinationDirectory)
+
+    internal val linkSyncTaskRegisteredResources: TaskProvider<*>
+        get() = project.tasks.named(compilation.processResourcesTaskName)
+
     protected open fun syncInputConfigure(syncTask: DefaultIncrementalSyncTask) {
-        syncTask.from.from(
-            linkTask.flatMap { linkTask ->
-                linkTask.destinationDirectory
-            }
-        )
+        syncTask.from.from(defaultLinkSyncTaskInput)
     }
 
     // Wasi target doesn't have sync task
