@@ -29,8 +29,8 @@ class KlibElementWithSize private constructor(val name: String, val size: Long, 
     constructor(name: String, children: List<KlibElementWithSize>) : this(name, children.sumOf { it.size }, children)
 }
 
-fun KotlinLibrary.loadSizeInfo(): KlibElementWithSize? {
-    val libraryFile = libraryFile.absoluteFile
+fun loadSizeInfo(klibFile: KFile): KlibElementWithSize? {
+    val libraryFile = klibFile.absoluteFile
 
     return when {
         libraryFile.isFile -> KlibElementWithSize(
