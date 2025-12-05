@@ -13,8 +13,12 @@ import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
 class KtRegisteredDiagnosticFactoriesStorage {
     private val factories = mutableSetOf<BaseDiagnosticRendererFactory>()
 
-    fun registerFactories(factories: List<BaseDiagnosticRendererFactory>) {
-        this.factories += factories
+    fun registerDiagnosticContainers(vararg containers: KtDiagnosticsContainer) {
+        registerDiagnosticContainers(containers.toList())
+    }
+
+    fun registerDiagnosticContainers(containers: List<KtDiagnosticsContainer>) {
+        this.factories += containers.map { it.getRendererFactory() }
     }
 
     val allDiagnosticFactories: List<AbstractKtDiagnosticFactory>

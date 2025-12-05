@@ -66,7 +66,7 @@ class FirSessionConfigurator(private val session: FirSession) {
 
     @OptIn(SessionConfiguration::class)
     fun registerDiagnosticContainers(vararg diagnosticContainers: KtDiagnosticsContainer) {
-        session.registeredDiagnosticFactoriesStorage.registerFactories(diagnosticContainers.map { it.getRendererFactory() })
+        session.registeredDiagnosticFactoriesStorage.registerDiagnosticContainers(*diagnosticContainers)
     }
 
     @OptIn(PluginServicesInitialization::class)
