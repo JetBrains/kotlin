@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.test.backend.handlers
 
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.KOTLIN_REFLECT_DUMP_MISMATCH
+import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.SKIP_NEW_KOTLIN_REFLECT_COMPATIBILITY_CHECK
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.DISABLE_JAVA_FACADE
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.model.singleOrZeroValue
@@ -34,6 +35,7 @@ import kotlin.reflect.jvm.jvmName
 class JvmNewKotlinReflectCompatibilityCheck(testServices: TestServices) : JvmBinaryArtifactHandler(testServices) {
     private val k1ReflectStringBuilder = StringBuilder()
     private val newReflectStringBuilder = StringBuilder()
+    private var skipAsserts = false
 
     override fun processModule(module: TestModule, info: BinaryArtifacts.Jvm) {
         // Running the test is impossible if there are errors in Java code
@@ -65,12 +67,17 @@ class JvmNewKotlinReflectCompatibilityCheck(testServices: TestServices) : JvmBin
             ?.let { RuntimeException("Exception during New kotlin-reflect dumping", it) }
         when {
             exceptionK1Reflect == null && exceptionNewReflect == null -> {
+                assertions.assertTrue(SKIP_NEW_KOTLIN_REFLECT_COMPATIBILITY_CHECK !in module.directives) {
+                    "Please drop SKIP_NEW_KOTLIN_REFLECT_COMPATIBILITY_CHECK. kotlin-reflect didn't throw any exceptions"
+                }
                 val k1ReflectDump = k1ReflectDumpResult.getOrNull()!!
                 val newReflectDump = newReflectDumpResult.getOrNull()!!
                 k1ReflectStringBuilder.append(k1ReflectDump)
                 newReflectStringBuilder.append(newReflectDump)
             }
 
+            // An exception occurred
+            SKIP_NEW_KOTLIN_REFLECT_COMPATIBILITY_CHECK in module.directives -> skipAsserts = true
             else -> {
                 val msg = when (exceptionK1Reflect != null && exceptionNewReflect != null) {
                     true -> "Exceptions during kotlin-reflect dumping in both implementations (K1 and New)\n"
@@ -90,6 +97,7 @@ class JvmNewKotlinReflectCompatibilityCheck(testServices: TestServices) : JvmBin
     }
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
+        if (skipAsserts) return
         val k1ReflectDump = k1ReflectStringBuilder.toString()
         val newReflectDump = newReflectStringBuilder.toString()
         val kotlinReflectDumpMismatch =
