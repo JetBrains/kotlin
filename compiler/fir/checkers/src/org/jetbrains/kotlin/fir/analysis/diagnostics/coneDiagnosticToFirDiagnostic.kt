@@ -342,17 +342,13 @@ private fun ConeConstraintSystemHasContradiction.mapSystemHasContradictionError(
     qualifiedAccessSource: KtSourceElement?,
 ): List<KtDiagnostic> {
     val errors = candidate.errors
-    return buildList {
-        for (error in errors) {
-            addIfNotNull(
-                error.mapConstraintSystemError(
-                    source,
-                    qualifiedAccessSource,
-                    session,
-                    candidate,
-                )
-            )
-        }
+    return errors.mapNotNull { error ->
+        error.mapConstraintSystemError(
+            source,
+            qualifiedAccessSource,
+            session,
+            candidate,
+        )
     }.ifEmpty {
         // Check if we already have some other reported error
         if (errors.any { error ->
