@@ -44,6 +44,11 @@ class UnitStatsSerializationTest {
                 GarbageCollectionStats("GC 2", 18_000L, 4),
             ),
             jitTimeMillis = 9_000L,
+            klibElementStats = listOf(
+                KlibElementStats("KLIB directory cumulative size", 100_000),
+                KlibElementStats("KLIB directory cumulative size/Manifest file", 40_000),
+                KlibElementStats("KLIB directory cumulative size/IR files", 60_000)
+            ),
         )
 
         val serialized = UnitStatsJsonDumper.dump(moduleStats)
