@@ -6,6 +6,7 @@
 package kotlin.script.experimental.jvmhost.test
 
 import kotlinx.coroutines.runBlocking
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.ScriptJvmCompilerIsolated
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.toScriptSource
 import kotlin.script.experimental.jvm.BasicJvmScriptEvaluator
@@ -68,7 +69,10 @@ class ConfigurationDslTest {
         val script = "@file:MyTestAnnotation1\nann1+ann12".toScriptSource()
 
         val compiledScript = runBlocking {
-            JvmScriptCompiler(defaultJvmScriptingHostConfiguration).invoke(script, baseConfig).valueOrThrow()
+            JvmScriptCompiler(
+                defaultJvmScriptingHostConfiguration,
+                if (isRunningTestOnK2) null else ScriptJvmCompilerIsolated(defaultJvmScriptingHostConfiguration),
+            ).invoke(script, baseConfig).valueOrThrow()
         }
         val finalConfig = compiledScript.compilationConfiguration
 
@@ -130,7 +134,10 @@ class ConfigurationDslTest {
         val script = "val x = 1".toScriptSource()
 
         val evalRes = runBlocking {
-            JvmScriptCompiler(defaultJvmScriptingHostConfiguration).invoke(script, ScriptCompilationConfiguration()).onSuccess {
+            JvmScriptCompiler(
+                defaultJvmScriptingHostConfiguration,
+                if (isRunningTestOnK2) null else ScriptJvmCompilerIsolated(defaultJvmScriptingHostConfiguration),
+            ).invoke(script, ScriptCompilationConfiguration()).onSuccess {
                 BasicJvmScriptEvaluator().invoke(it, ScriptEvaluationConfiguration())
             }.valueOrThrow()
         }
