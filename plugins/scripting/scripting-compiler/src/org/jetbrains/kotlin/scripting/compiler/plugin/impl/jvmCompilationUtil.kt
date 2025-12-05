@@ -132,14 +132,14 @@ internal fun makeCompiledScript(
         scriptDependenciesStack.push(script)
 
         val otherScripts =
-            sourceDependencies.find { it.script.locationId == script.locationId }?.sourceDependencies?.valueOrThrow()
+            sourceDependencies.find { it.script.locationId == script.locationId }?.sourceDependencies?.valueOr { return it }
                 ?.mapNotNullSuccess { sourceFile ->
                     makeOtherScripts(sourceFile).onSuccess { otherScripts ->
                         getScriptClassFqName(sourceFile)?.let { scriptClassFqName ->
                             KJvmCompiledScript(
                                 sourceFile.locationId,
                                 getScriptConfiguration(sourceFile),
-                                scriptClassFqName.asString (),
+                                scriptClassFqName.asString(),
                                 null,
                                 otherScripts,
                                 null
@@ -154,7 +154,8 @@ internal fun makeCompiledScript(
 
     val module = makeCompiledModule(generationState)
 
-    val scriptClassFqName = getScriptClassFqName(script) ?: return  ResultWithDiagnostics.Failure("Only PSI infrastructure is supported here".asErrorDiagnostics())
+    val scriptClassFqName = getScriptClassFqName(script)
+        ?: return ResultWithDiagnostics.Failure("Only PSI infrastructure is supported here".asErrorDiagnostics())
 
     val resultField = resultFields[scriptClassFqName]?.let {
         it.fieldName.asString() to KotlinType(it.fieldTypeName)
