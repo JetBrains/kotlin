@@ -11,8 +11,10 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.diagnostics.WhenMissingCase
 import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.analysis.checkers.checkUpperBoundViolatedNoReport
 import org.jetbrains.kotlin.fir.declarations.FirEnumEntry
 import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.declarations.declaredProperties
 import org.jetbrains.kotlin.fir.declarations.getSealedClassInheritors
 import org.jetbrains.kotlin.fir.declarations.utils.isEnumClass
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
@@ -21,7 +23,9 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
+import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.resolve.transformers.WhenOnSealedClassExhaustivenessChecker.ConditionChecker.processBranch
+import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.computeRepresentativeTypeForBareType
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
@@ -447,12 +451,40 @@ private object WhenOnSealedClassExhaustivenessChecker : WhenExhaustivenessChecke
         }
 
         for (notCheckedRegularClasses in notCheckedRegularClasses) {
-            destination += WhenMissingCase.IsTypeCheckIsMissing(
-                notCheckedRegularClasses.classId,
-                notCheckedRegularClasses.fir.classKind.isSingleton,
-                notCheckedRegularClasses.ownTypeParameterSymbols.size
-            )
+            if (!isUninhabited(notCheckedRegularClasses, subjectType, session)) {
+                destination += WhenMissingCase.IsTypeCheckIsMissing(
+                    notCheckedRegularClasses.classId,
+                    notCheckedRegularClasses.fir.classKind.isSingleton,
+                    notCheckedRegularClasses.ownTypeParameterSymbols.size
+                )
+            }
         }
+    }
+
+    private fun isUninhabited(
+        classSymbol: FirClassSymbol<*>,
+        subjectType: ConeKotlinType,
+        session: FirSession,
+    ): Boolean {
+        val classType =
+            session.computeRepresentativeTypeForBareType(classSymbol.defaultType(), subjectType) ?: return false
+        val boundsViolated =
+            checkUpperBoundViolatedNoReport(classSymbol.typeParameterSymbols, classType.typeArguments.toList(), session)
+        val containsNothing: Boolean by lazy {
+            val typeMapping =
+                classSymbol.typeParameterSymbols.zip(classType.typeArguments).mapNotNull { (parameter, arg) ->
+                    when (arg) {
+                        is ConeKotlinType -> parameter to arg
+                        is ConeKotlinTypeProjectionOut -> parameter to arg.type
+                        else -> null
+                    }
+                }.toMap()
+            val substitutor = substitutorByMap(typeMapping, session)
+            val typesOfProperties = classSymbol.declaredProperties(session)
+                .map { substitutor.substituteOrSelf(it.resolvedReturnType) }
+            typesOfProperties.any { it.isNothing }
+        }
+        return boundsViolated || containsNothing
     }
 
     private fun inferVariantsFromSubjectSmartCast(subject: FirExpression, data: Info) {
