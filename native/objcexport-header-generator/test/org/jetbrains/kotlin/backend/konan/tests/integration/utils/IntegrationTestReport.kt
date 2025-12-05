@@ -31,6 +31,12 @@ internal data class IntegrationTestReport(
             val k2Source: ObjCClassOrProtocol,
         ) : Issue()
 
+        data class ClassTypeParameters(
+            val k1: List<String>, val k2: List<String>,
+            val k1Source: ObjCClassOrProtocol,
+            val k2Source: ObjCClassOrProtocol,
+        ) : Issue()
+
         data class MethodsCount(
             val k1: Int, val k2: Int,
             val k1Source: ObjCClassOrProtocol,
@@ -228,6 +234,16 @@ private fun compareProtocolsOrClasses(
                         k1Container.swiftName, k2Container.swiftName, k1Container, k2Container
                     )
                 )
+            }
+
+            if (k1Container is ObjCClass && k2Container is ObjCClass) {
+                if (k1Container.typeParameters != k2Container.typeParameters) {
+                    result.add(
+                        ClassTypeParameters(
+                            k1Container.typeParameters, k2Container.typeParameters, k1Container, k2Container
+                        )
+                    )
+                }
             }
 
             if (k1Container.methods.size != k2Container.methods.size) {
