@@ -7,6 +7,7 @@
 
 package org.jetbrains.kotlin.gradle.unitTests
 
+import org.gradle.api.InvalidUserCodeException
 import org.gradle.kotlin.dsl.provideDelegate
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
@@ -231,13 +232,13 @@ class KotlinMultiplatformSourceSetConventionsTest {
     fun `test - register new source set and access convention one from configure block - linuxMain before creation`() {
         val project = buildProjectWithMPP()
         project.multiplatformExtension.apply {
-            val error = assertFailsWith<IllegalStateException> {
+            val error = assertFailsWith<InvalidUserCodeException> {
                 sourceSets.register("fooBar") {
                     it.dependsOn(sourceSets.linuxMain.get())
                 }
             }
             assertEquals(
-                "Could not create domain object 'fooBar' (KotlinSourceSet)",
+                "Could not create domain object 'fooBar' (KotlinSourceSet) in KotlinSourceSet container",
                 error.message
             )
 
