@@ -1591,6 +1591,12 @@ public class LLReversedDiagnosticsFirTestGenerated extends AbstractLLReversedDia
         }
 
         @Test
+        @TestMetadata("samVsDefault.kt")
+        public void testSamVsDefault() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/orblrt/samVsDefault.kt");
+        }
+
+        @Test
         @TestMetadata("specifityAfterLambdaAnalysis.kt")
         public void testSpecifityAfterLambdaAnalysis() {
           runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/orblrt/specifityAfterLambdaAnalysis.kt");
