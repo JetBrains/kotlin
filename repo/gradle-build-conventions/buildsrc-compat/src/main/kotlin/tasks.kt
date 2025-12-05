@@ -81,7 +81,6 @@ val kotlinGradlePluginAndItsRequired = arrayOf(
     ":plugins:compose-compiler-plugin:compiler",
     ":kotlin-script-runtime",
     ":kotlin-scripting-common",
-    ":kotlin-scripting-common-fir",
     ":kotlin-scripting-jvm",
     ":kotlin-scripting-compiler-embeddable",
     ":kotlin-scripting-compiler-impl-embeddable",

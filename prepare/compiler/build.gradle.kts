@@ -95,7 +95,6 @@ val distLibraryProjects = listOfNotNull(
     ":kotlin-runner",
     ":kotlin-script-runtime",
     ":kotlin-scripting-common",
-    ":kotlin-scripting-common-fir",
     ":kotlin-scripting-compiler",
     ":kotlin-scripting-compiler-impl",
     ":kotlin-scripting-jvm",

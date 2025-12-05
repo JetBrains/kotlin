@@ -64,9 +64,11 @@ import org.jetbrains.kotlin.utils.tryCreateCallableMapping
 import java.io.File
 import kotlin.reflect.KClass
 import kotlin.script.experimental.api.*
-import kotlin.script.experimental.api.ast.parseToAst
+import kotlin.script.experimental.api.ast.parseToSyntaxTree
 import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.host.getScriptingClass
+import kotlin.script.experimental.impl.refineOnAnnotationsWithLazyDataCollection
+import kotlin.script.experimental.impl.refineOnSyntaxTree
 import kotlin.script.experimental.jvm.GetScriptingClassByClassLoader
 import kotlin.script.experimental.jvm.JvmDependency
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
@@ -104,26 +106,16 @@ class ScriptJvmK2Compiler(
         }
 
         return scriptCompilationConfiguration.refineBeforeParsing(script).onSuccess {
-            @Suppress("DEPRECATION")
-            val hasK1refine = it.getNoDefault(ScriptCompilationConfiguration.refineConfigurationOnAnnotations) != null
-//            val hasFirRefine = it.getNoDefault(ScriptCompilationConfiguration.refineConfigurationOnFir) != null
-            val hasAstRefine = it.getNoDefault(ScriptCompilationConfiguration.refineConfigurationOnAst) != null
-            when {
-                hasAstRefine -> {
-                    val ast = parseToAst(script)
-                    val collectedData = ScriptCollectedData(mapOf(ScriptCollectedData.syntaxTree to ast))
-                    it.refineOnSyntaxTree(script, collectedData)
-                }
-                hasK1refine -> {
-                    val collectedData =
-                        getCollectedData(script, scriptCompilationConfiguration, diagnosticsCollector, null)
+            it.refineOnSyntaxTree(script) {
+                ScriptCollectedData(mapOf(ScriptCollectedData.syntaxTree to parseToSyntaxTree(script)))
+            }
+        }.onSuccess {
+            it.refineOnAnnotationsWithLazyDataCollection(script) {
+                getCollectedData(script, scriptCompilationConfiguration, diagnosticsCollector, null)?.let {
                     if (diagnosticsCollector.hasErrors) {
                         failure(diagnosticsCollector)
-                    } else {
-                        it.refineOnAnnotations(script, collectedData!!)
-                    }
+                    } else it.asSuccess()
                 }
-                else -> it.asSuccess()
             }
         }.onSuccess {
             it.refineBeforeCompiling(script)
@@ -227,6 +219,7 @@ class ScriptJvmK2Compiler(
                     ScriptSourceAnnotation(
                         it.valueOrThrow(), // TODO: error propagation
                         if (location != null && startOffset != null && endOffset != null)
+                            // TODO: offset to position
                             SourceCode.LocationWithId(
                                 location, SourceCode.Location(SourceCode.Position(startOffset, endOffset))
                             )
@@ -235,12 +228,7 @@ class ScriptJvmK2Compiler(
                 }
             }.takeIf { it.isNotEmpty() }
                 ?: return null
-        return ScriptCollectedData(
-            mapOf(
-                ScriptCollectedData.collectedAnnotations to annotations,
-                ScriptCollectedData.foundAnnotations to annotations.map { it.annotation }
-            )
-        )
+        return ScriptCollectedData(mapOf(ScriptCollectedData.collectedAnnotations to annotations))
     }
 }
 

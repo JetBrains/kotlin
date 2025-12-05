@@ -8,9 +8,9 @@ package kotlin.script.experimental.api.ast
 import com.intellij.platform.syntax.SyntaxElementType
 import com.intellij.platform.syntax.parser.SyntaxTreeBuilder
 import kotlin.script.experimental.api.SourceCode
-import kotlin.script.experimental.api.impl.parseImpl
+import kotlin.script.experimental.impl.parseImpl
 
-fun parseToAst(script: SourceCode): SyntaxElement = parseImpl(true, script.text)
+fun parseToSyntaxTree(script: SourceCode): SyntaxElement = parseImpl(true, script.text)
 
 sealed class SyntaxElement {
 

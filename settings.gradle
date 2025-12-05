@@ -353,7 +353,6 @@ include ":kotlin-script-runtime",
         ":kotlin-daemon-embeddable",
         ":kotlin-annotations-jvm",
         ":kotlin-scripting-common",
-        ":kotlin-scripting-common-fir",
         ":kotlin-scripting-common-syntax-tree",
         ":kotlin-scripting-jvm",
         ":kotlin-scripting-jvm-host-unshaded",
@@ -966,7 +965,6 @@ project(':kotlin-annotation-processing-runtime').projectDir = "$rootDir/plugins/
 project(':kotlin-annotation-processing').projectDir = "$rootDir/plugins/kapt/kapt-compiler" as File
 project(':kotlin-annotations-jvm').projectDir = "$rootDir/libraries/tools/kotlin-annotations-jvm" as File
 project(':kotlin-scripting-common').projectDir = "$rootDir/libraries/scripting/common" as File
-project(':kotlin-scripting-common-fir').projectDir = "$rootDir/libraries/scripting/common-fir" as File
 project(':kotlin-scripting-common-syntax-tree').projectDir = "$rootDir/libraries/scripting/common-syntax-tree" as File
 project(':kotlin-scripting-jvm').projectDir = "$rootDir/libraries/scripting/jvm" as File
 project(':kotlin-scripting-jvm-host-unshaded').projectDir = "$rootDir/libraries/scripting/jvm-host" as File

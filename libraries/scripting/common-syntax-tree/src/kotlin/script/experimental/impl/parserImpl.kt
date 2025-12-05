@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package kotlin.script.experimental.api.impl
+package kotlin.script.experimental.impl
 
 import com.intellij.platform.syntax.lexer.performLexing
 import com.intellij.platform.syntax.parser.SyntaxTreeBuilder
