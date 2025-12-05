@@ -1315,6 +1315,12 @@ public class FirSourceLazyDeclarationResolveTestGenerated extends AbstractFirSou
       }
 
       @Test
+      @TestMetadata("functionInsideUnnamedObject.kt")
+      public void testFunctionInsideUnnamedObject() {
+        runTest("analysis/low-level-api-fir/testData/lazyResolve/danglingFile/ignoreSelf/functionInsideUnnamedObject.kt");
+      }
+
+      @Test
       @TestMetadata("regularFunction.kt")
       public void testRegularFunction() {
         runTest("analysis/low-level-api-fir/testData/lazyResolve/danglingFile/ignoreSelf/regularFunction.kt");
@@ -1507,6 +1513,12 @@ public class FirSourceLazyDeclarationResolveTestGenerated extends AbstractFirSou
     @TestMetadata("functionDuplicatedContextParameter2.kt")
     public void testFunctionDuplicatedContextParameter2() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/errors/functionDuplicatedContextParameter2.kt");
+    }
+
+    @Test
+    @TestMetadata("functionInsideUnnamedObject.kt")
+    public void testFunctionInsideUnnamedObject() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/errors/functionInsideUnnamedObject.kt");
     }
 
     @Test
@@ -1763,6 +1775,12 @@ public class FirSourceLazyDeclarationResolveTestGenerated extends AbstractFirSou
     @TestMetadata("superTypeCallNestedNameClashImplicitConstructor.kt")
     public void testSuperTypeCallNestedNameClashImplicitConstructor() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/superTypeCallNestedNameClashImplicitConstructor.kt");
+    }
+
+    @Test
+    @TestMetadata("syntheticEqualsWithDuplication.kt")
+    public void testSyntheticEqualsWithDuplication() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/syntheticEqualsWithDuplication.kt");
     }
 
     @Test
