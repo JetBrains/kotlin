@@ -116,14 +116,16 @@ fun performGCM(session: Session): GCMResult {
         var lca: BlockEntry? = null
         for (use in n.uses) {
             scheduleLate(use) // FIXME this brakes on Placeholder nodes creating data-flow cycles
-            val useBlock = when (use) {
-                is Phi -> if (use.block == n) use.block else use.inputs[n]!!.block
-                else -> late[use]
+            val useBlocks = when (use) {
+                is Phi -> if (use.block == n) listOf(use.block) else use.inputs.filter { it.first == n }.map { it.second.block }
+                else -> listOf(late[use])
             }
-            if (lca == null) {
-                lca = useBlock
-            } else if (useBlock != null) {
-                lca = dominators.common(lca, useBlock)
+            for (useBlock in useBlocks) {
+                if (lca == null) {
+                    lca = useBlock
+                } else if (useBlock != null) {
+                    lca = dominators.common(lca, useBlock)
+                }
             }
         }
 
