@@ -1310,8 +1310,20 @@ public class FirOutOfContentRootWithDependenciesLazyDeclarationResolveTestGenera
     @TestDataPath("$PROJECT_ROOT")
     public class IgnoreSelf {
       @Test
+      @TestMetadata("addPackage.kt")
+      public void testAddPackage() {
+        runTest("analysis/low-level-api-fir/testData/lazyResolve/danglingFile/ignoreSelf/addPackage.kt");
+      }
+
+      @Test
       public void testAllFilesPresentInIgnoreSelf() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/lazyResolve/danglingFile/ignoreSelf"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
+      }
+
+      @Test
+      @TestMetadata("changePackage.kt")
+      public void testChangePackage() {
+        runTest("analysis/low-level-api-fir/testData/lazyResolve/danglingFile/ignoreSelf/changePackage.kt");
       }
 
       @Test
@@ -1344,8 +1356,20 @@ public class FirOutOfContentRootWithDependenciesLazyDeclarationResolveTestGenera
     @TestDataPath("$PROJECT_ROOT")
     public class PreferSelf {
       @Test
+      @TestMetadata("addPackage.kt")
+      public void testAddPackage() {
+        runTest("analysis/low-level-api-fir/testData/lazyResolve/danglingFile/preferSelf/addPackage.kt");
+      }
+
+      @Test
       public void testAllFilesPresentInPreferSelf() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/lazyResolve/danglingFile/preferSelf"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
+      }
+
+      @Test
+      @TestMetadata("changePackage.kt")
+      public void testChangePackage() {
+        runTest("analysis/low-level-api-fir/testData/lazyResolve/danglingFile/preferSelf/changePackage.kt");
       }
 
       @Test

@@ -1,19 +1,14 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir
 
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.resolver.AbstractResolveDanglingFileReferenceTest
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileResolutionMode
 import org.jetbrains.kotlin.analysis.low.level.api.fir.AbstractFirLazyDeclarationResolveTestCase.Directives.LAZY_MODE
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLResolutionFacade
-import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirCustomScriptDefinitionTestConfigurator
-import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirOutOfContentRootTestConfigurator
-import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirOutOfContentRootWithDependenciesTestConfigurator
-import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirScriptTestConfigurator
-import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
+import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.*
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.psi.KtFile
@@ -35,6 +30,10 @@ abstract class AbstractFirLazyDeclarationResolveTest : AbstractFirLazyDeclaratio
         val DANGLING_FILE_RESOLUTION_MODE by enumDirective(description = "Dangling file resolution mode for a copy") {
             KaDanglingFileResolutionMode.valueOf(it)
         }
+
+        val DANGLING_FILE_CUSTOM_PACKAGE by stringDirective(
+            description = "Custom package for a dangling file. Note: <caret> search won't work with a new package",
+        )
     }
 
     override fun checkResolutionFacade(resolutionFacade: LLResolutionFacade) {
@@ -49,7 +48,28 @@ abstract class AbstractFirLazyDeclarationResolveTest : AbstractFirLazyDeclaratio
         val fileToTest = if (danglingFileResolutionMode == null) {
             mainFile
         } else {
-            KtPsiFactory.contextual(mainFile).createFile("fake.kt", mainFile.text).apply {
+            val customPackage = testServices.moduleStructure.allDirectives.singleOrZeroValue(Directives.DANGLING_FILE_CUSTOM_PACKAGE)
+            val newText = mainFile.text.let { oldText ->
+                if (customPackage == null) {
+                    oldText
+                } else {
+                    val newPackage = "package $customPackage"
+                    val oldPackage = mainFile.packageDirective?.text
+                    if (oldPackage.isNullOrBlank()) {
+                        // Note: a new package won't work in a combination of <caret> search
+                        // due to `PsiTreeUtil.findSameElementInCopy` implementation
+                        buildString {
+                            appendLine(newPackage)
+                            appendLine()
+                            append(oldText)
+                        }
+                    } else {
+                        oldText.replaceFirst(oldPackage, newPackage)
+                    }
+                }
+            }
+
+            KtPsiFactory.contextual(mainFile).createFile("fake.kt", newText).apply {
                 when (danglingFileResolutionMode) {
                     KaDanglingFileResolutionMode.PREFER_SELF -> {}
                     KaDanglingFileResolutionMode.IGNORE_SELF -> {
