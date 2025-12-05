@@ -745,6 +745,9 @@ class ComparisonExpressionNode(owner: ControlFlowGraph, override val fir: FirCom
 }
 
 class EqualityOperatorCallNode(owner: ControlFlowGraph, override val fir: FirEqualityOperatorCall, level: Int) : CFGNode<FirEqualityOperatorCall>(owner, level) {
+    override val isUnion: Boolean
+        get() = true
+
     override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
         return visitor.visitEqualityOperatorCallNode(this, data)
     }

@@ -595,7 +595,7 @@ digraph kt44814_kt {
                     181 [label="Access variable R|<local>/<when-subject>| [4]"];
                     182 [label="Exit $subj [4]"];
                     183 [label="Const: Null(null) [4]"];
-                    184 [label="Equality operator == [4]"];
+                    184 [label="Equality operator == [4]" style="filled" fillcolor=yellow];
                     185 [label="Exit when branch condition [4]"];
                 }
                 subgraph cluster_66 {
@@ -647,7 +647,7 @@ digraph kt44814_kt {
                                 215 [label="Exit safe call [5]"];
                                 216 [label="Access qualifier /TokenType [5]"];
                                 217 [label="Access variable R|/TokenType.Companion.MODIFIER_LIST| [5]"];
-                                218 [label="Equality operator == [5]"];
+                                218 [label="Equality operator == [5]" style="filled" fillcolor=yellow];
                                 219 [label="Exit block [5]"];
                             }
                             220 [label="Exit function <anonymous> [5]" style="filled" fillcolor=red];

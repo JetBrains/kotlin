@@ -1053,6 +1053,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         require(arguments.size == 2) {
             "Unexpected number of arguments in equality call: ${arguments.size}"
         }
+        dataFlowAnalyzer.enterEqualityOperatorCall()
         // In cases like materialize1() == materialize2() we add expected type just for the right argument.
         // One of the reasons is just consistency with K1 and with the desugared form `a.equals(b)`. See KT-47409 for clarifications.
         val leftArgumentTransformed: FirExpression = arguments[0].transform(transformer, ContextIndependent)
@@ -1060,23 +1061,21 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         val rightArgumentTransformed: FirExpression =
             arguments[1].transform(
                 transformer,
-                withExpectedType(
-                    // We use `Any?` as a real expected type used for inference and other things
-                    builtinTypes.nullableAnyType,
-                    // But for context-sensitive resolution cases like myValue == ENUM_ENTRY we use the type of the LHS.
-                    // Potentially, we might just use LHS type just as a regular expected type which would be used both
-                    // for inference and context-sensitive resolution but that would be a very big shift in the semantics.
-                    hintForContextSensitiveResolution = leftArgumentTransformed.resolvedType,
-                )
+                // For context-sensitive resolution cases like myValue == ENUM_ENTRY we use the type of the LHS.
+                // Potentially, we might just use LHS type just as a regular expected type which would be used both
+                // for inference and context-sensitive resolution but that would be a very big shift in the semantics.
+                ResolutionMode.ContextDependent(hintForContextSensitiveResolution = leftArgumentTransformed.resolvedType)
             )
 
         equalityOperatorCall
             .transformAnnotations(transformer, ContextIndependent)
             .replaceArgumentList(buildBinaryArgumentList(leftArgumentTransformed, rightArgumentTransformed))
         equalityOperatorCall.resultType = builtinTypes.booleanType.coneType
-
-        dataFlowAnalyzer.exitEqualityOperatorCall(equalityOperatorCall)
-        return equalityOperatorCall
+        val result = callCompleter.completeCall(
+            components.syntheticCallGenerator.generateCalleeForEqualityOperatorCall(equalityOperatorCall, resolutionContext, data), data
+        )
+        dataFlowAnalyzer.exitEqualityOperatorCall(equalityOperatorCall, data.forceFullCompletion)
+        return result
     }
 
     private fun FirFunctionCall.resolveCandidateForAssignmentOperatorCall(): FirFunctionCall {
@@ -1999,7 +1998,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                 else -> {
                     collectionLiteral.transformAnnotations(transformer, data)
                     collectionLiteral.transformChildren(transformer, ResolutionMode.ContextDependent)
-                    if (data != ResolutionMode.ContextDependent) {
+                    if (data !is ResolutionMode.ContextDependent) {
                         components.syntheticCallGenerator.resolveCollectionLiteralExpressionWithSyntheticOuterCall(
                             collectionLiteral, data as? ResolutionMode.WithExpectedType, resolutionContext
                         )

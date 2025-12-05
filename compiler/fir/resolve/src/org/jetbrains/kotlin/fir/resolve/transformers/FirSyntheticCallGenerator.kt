@@ -77,6 +77,8 @@ class FirSyntheticCallGenerator(
     private val idFunction: FirNamedFunction = generateSyntheticSelectFunction(SyntheticCallableId.ID)
     private val checkNotNullFunction: FirNamedFunction = generateSyntheticCheckNotNullFunction()
     private val elvisFunction: FirNamedFunction = generateSyntheticElvisFunction()
+    private val equalityFunction: FirNamedFunction = generateSyntheticEqualityFunction()
+
     private val arrayOfSymbolCache: FirCache<Name, FirNamedFunctionSymbol?, Nothing?> =
         session.firCachesFactory.createCache(::getArrayOfSymbol)
 
@@ -201,6 +203,26 @@ class FirSyntheticCallGenerator(
         )
 
         return elvisExpression.transformCalleeReference(UpdateReference, reference)
+    }
+
+    fun generateCalleeForEqualityOperatorCall(
+        equalityOperatorCall: FirEqualityOperatorCall,
+        context: ResolutionContext,
+        resolutionMode: ResolutionMode,
+    ): FirEqualityOperatorCall {
+        assertSyntheticResolvableReferenceIsNotResolved(equalityOperatorCall)
+
+        val argumentList = equalityOperatorCall.argumentList
+        val reference = generateCalleeReferenceWithCandidate(
+            equalityOperatorCall,
+            equalityFunction,
+            argumentList,
+            SyntheticCallableId.EQUALITY.callableName,
+            context = context,
+            resolutionMode = resolutionMode,
+        )
+
+        return equalityOperatorCall.transformCalleeReference(UpdateReference, reference)
     }
 
     fun generateSyntheticIdCall(arrayLiteral: FirExpression, context: ResolutionContext, resolutionMode: ResolutionMode): FirFunctionCall {
@@ -744,6 +766,22 @@ class FirSyntheticCallGenerator(
                 .withNullability(nullable = true, session.typeContext)
                 .toValueParameter("x", functionSymbol)
             valueParameters += rightArgumentType
+                .toValueParameter("y", functionSymbol)
+        }.build()
+    }
+
+    private fun generateSyntheticEqualityFunction(): FirNamedFunction {
+        // Synthetic function signature:
+        //   fun equals(x: Any?, y: Any?): Boolean
+        val functionSymbol = FirSyntheticFunctionSymbol(SyntheticCallableId.EQUALITY)
+        return generateMemberFunction(
+            functionSymbol,
+            SyntheticCallableId.EQUALITY.callableName,
+            session.builtinTypes.booleanType
+        ).apply {
+            valueParameters += session.builtinTypes.nullableAnyType.coneType
+                .toValueParameter("x", functionSymbol)
+            valueParameters += session.builtinTypes.nullableAnyType.coneType
                 .toValueParameter("y", functionSymbol)
         }.build()
     }

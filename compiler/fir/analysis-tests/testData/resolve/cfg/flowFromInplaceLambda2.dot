@@ -561,7 +561,7 @@ digraph flowFromInplaceLambda2_kt {
                     191 [label="Enter when branch condition "];
                     192 [label="Access variable R|<local>/p|"];
                     193 [label="Const: Null(null)"];
-                    194 [label="Equality operator !="];
+                    194 [label="Equality operator !=" style="filled" fillcolor=yellow];
                     195 [label="Exit when branch condition"];
                 }
                 196 [label="Synthetic else branch"];
@@ -1184,7 +1184,7 @@ digraph flowFromInplaceLambda2_kt {
                     407 [label="Enter when branch condition "];
                     408 [label="Access variable R|<local>/p|"];
                     409 [label="Const: Null(null)"];
-                    410 [label="Equality operator !="];
+                    410 [label="Equality operator !=" style="filled" fillcolor=yellow];
                     411 [label="Exit when branch condition"];
                 }
                 412 [label="Synthetic else branch"];

@@ -45,7 +45,7 @@ digraph variableInitializedInTryBlock_kt {
                         21 [label="Access variable R|<local>/s|"];
                         22 [label="Access variable R|kotlin/String.length|"];
                         23 [label="Const: Int(0)"];
-                        24 [label="Equality operator !="];
+                        24 [label="Equality operator !=" style="filled" fillcolor=yellow];
                         25 [label="Assignment: R|<local>/b|"];
                         26 [label="Exit block"];
                     }

@@ -367,7 +367,7 @@ digraph booleanOperators_kt {
                         131 [label="Smart cast: R|<local>/x|"];
                         132 [label="Access variable R|kotlin/String.length|"];
                         133 [label="Const: Int(0)"];
-                        134 [label="Equality operator =="];
+                        134 [label="Equality operator ==" style="filled" fillcolor=yellow];
                         135 [label="Exit ||"];
                     }
                     136 [label="Exit when branch condition"];

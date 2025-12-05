@@ -25,7 +25,7 @@ digraph when_kt {
                     6 [label="Enter when branch condition "];
                     7 [label="Access variable R|<local>/x|"];
                     8 [label="Const: Int(1)"];
-                    9 [label="Equality operator =="];
+                    9 [label="Equality operator ==" style="filled" fillcolor=yellow];
                     10 [label="Exit when branch condition"];
                 }
                 subgraph cluster_5 {
@@ -41,7 +41,7 @@ digraph when_kt {
                     16 [label="Function call enter: R|<local>/x|.R|kotlin/Int.rem|(...)"];
                     17 [label="Function call exit: R|<local>/x|.R|kotlin/Int.rem|(...)" style="filled" fillcolor=yellow];
                     18 [label="Const: Int(0)"];
-                    19 [label="Equality operator =="];
+                    19 [label="Equality operator ==" style="filled" fillcolor=yellow];
                     20 [label="Exit when branch condition"];
                 }
                 subgraph cluster_7 {
@@ -57,7 +57,7 @@ digraph when_kt {
                     26 [label="Function call enter: Int(1).R|kotlin/Int.minus|(...)"];
                     27 [label="Function call exit: Int(1).R|kotlin/Int.minus|(...)" style="filled" fillcolor=yellow];
                     28 [label="Const: Int(0)"];
-                    29 [label="Equality operator =="];
+                    29 [label="Equality operator ==" style="filled" fillcolor=yellow];
                     30 [label="Exit when branch condition"];
                 }
                 subgraph cluster_9 {

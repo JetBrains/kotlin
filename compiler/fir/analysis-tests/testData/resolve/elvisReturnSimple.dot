@@ -25,7 +25,7 @@ digraph elvisReturnSimple_kt {
                     6 [label="Enter when branch condition "];
                     7 [label="Access variable R|<local>/s|"];
                     8 [label="Const: Null(null)"];
-                    9 [label="Equality operator !="];
+                    9 [label="Equality operator !=" style="filled" fillcolor=yellow];
                     10 [label="Exit when branch condition"];
                 }
                 subgraph cluster_5 {

@@ -60,7 +60,7 @@ digraph safeCalls_kt {
                 19 [label="Smart cast: R|<local>/x|"];
                 20 [label="Access variable R|kotlin/String.length|"];
                 21 [label="Const: Int(1)"];
-                22 [label="Equality operator =="];
+                22 [label="Equality operator ==" style="filled" fillcolor=yellow];
                 23 [label="Function call arguments exit"];
             }
             24 [label="Function call enter: $subj$.R|/foo|(...)"];

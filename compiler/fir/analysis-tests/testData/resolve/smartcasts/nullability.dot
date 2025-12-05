@@ -229,7 +229,7 @@ digraph nullability_kt {
                     68 [label="Enter when branch condition "];
                     69 [label="Access variable R|<local>/x|"];
                     70 [label="Const: Null(null)"];
-                    71 [label="Equality operator !="];
+                    71 [label="Equality operator !=" style="filled" fillcolor=yellow];
                     72 [label="Exit when branch condition"];
                 }
                 subgraph cluster_28 {
@@ -335,7 +335,7 @@ digraph nullability_kt {
                     106 [label="Enter when branch condition "];
                     107 [label="Access variable R|<local>/x|"];
                     108 [label="Const: Null(null)"];
-                    109 [label="Equality operator =="];
+                    109 [label="Equality operator ==" style="filled" fillcolor=yellow];
                     110 [label="Exit when branch condition"];
                 }
                 subgraph cluster_38 {
@@ -494,7 +494,7 @@ digraph nullability_kt {
                     167 [label="Function call exit: $subj$.R|/A.getA|()" style="filled" fillcolor=yellow];
                     168 [label="Exit safe call"];
                     169 [label="Const: Null(null)"];
-                    170 [label="Equality operator =="];
+                    170 [label="Equality operator ==" style="filled" fillcolor=yellow];
                     171 [label="Exit when branch condition"];
                 }
                 172 [label="Synthetic else branch"];
@@ -582,7 +582,7 @@ digraph nullability_kt {
                     203 [label="Exit safe call"];
                     204 [label="Exit safe call"];
                     205 [label="Const: Null(null)"];
-                    206 [label="Equality operator !="];
+                    206 [label="Equality operator !=" style="filled" fillcolor=yellow];
                     207 [label="Exit when branch condition"];
                 }
                 208 [label="Synthetic else branch"];
@@ -802,7 +802,7 @@ digraph nullability_kt {
                     296 [label="Exit safe call"];
                     297 [label="Exit safe call"];
                     298 [label="Const: Null(null)"];
-                    299 [label="Equality operator !="];
+                    299 [label="Equality operator !=" style="filled" fillcolor=yellow];
                     300 [label="Exit when branch condition"];
                 }
                 301 [label="Synthetic else branch"];
@@ -945,7 +945,7 @@ digraph nullability_kt {
                     342 [label="Enter when branch condition "];
                     343 [label="Access variable R|<local>/b|"];
                     344 [label="Const: Boolean(true)"];
-                    345 [label="Equality operator =="];
+                    345 [label="Equality operator ==" style="filled" fillcolor=yellow];
                     346 [label="Exit when branch condition"];
                 }
                 347 [label="Synthetic else branch"];
@@ -1007,7 +1007,7 @@ digraph nullability_kt {
                     364 [label="Enter when branch condition "];
                     365 [label="Access variable R|<local>/a|"];
                     366 [label="Access variable R|<local>/b|"];
-                    367 [label="Equality operator =="];
+                    367 [label="Equality operator ==" style="filled" fillcolor=yellow];
                     368 [label="Exit when branch condition"];
                 }
                 369 [label="Synthetic else branch"];
@@ -1045,7 +1045,7 @@ digraph nullability_kt {
                     387 [label="Enter when branch condition "];
                     388 [label="Access variable R|<local>/a|"];
                     389 [label="Access variable R|<local>/b|"];
-                    390 [label="Equality operator ==="];
+                    390 [label="Equality operator ===" style="filled" fillcolor=yellow];
                     391 [label="Exit when branch condition"];
                 }
                 392 [label="Synthetic else branch"];
@@ -1083,7 +1083,7 @@ digraph nullability_kt {
                     410 [label="Enter when branch condition "];
                     411 [label="Access variable R|<local>/b|"];
                     412 [label="Access variable R|<local>/a|"];
-                    413 [label="Equality operator =="];
+                    413 [label="Equality operator ==" style="filled" fillcolor=yellow];
                     414 [label="Exit when branch condition"];
                 }
                 415 [label="Synthetic else branch"];
@@ -1121,7 +1121,7 @@ digraph nullability_kt {
                     433 [label="Enter when branch condition "];
                     434 [label="Access variable R|<local>/b|"];
                     435 [label="Access variable R|<local>/a|"];
-                    436 [label="Equality operator ==="];
+                    436 [label="Equality operator ===" style="filled" fillcolor=yellow];
                     437 [label="Exit when branch condition"];
                 }
                 438 [label="Synthetic else branch"];
@@ -1265,7 +1265,7 @@ digraph nullability_kt {
                     460 [label="Enter when branch condition "];
                     461 [label="Access variable R|<local>/a|"];
                     462 [label="Access variable R|<local>/b|"];
-                    463 [label="Equality operator =="];
+                    463 [label="Equality operator ==" style="filled" fillcolor=yellow];
                     464 [label="Exit when branch condition"];
                 }
                 465 [label="Synthetic else branch"];
@@ -1302,7 +1302,7 @@ digraph nullability_kt {
                     482 [label="Enter when branch condition "];
                     483 [label="Access variable R|<local>/a|"];
                     484 [label="Access variable R|<local>/b|"];
-                    485 [label="Equality operator ==="];
+                    485 [label="Equality operator ===" style="filled" fillcolor=yellow];
                     486 [label="Exit when branch condition"];
                 }
                 487 [label="Synthetic else branch"];
@@ -1339,7 +1339,7 @@ digraph nullability_kt {
                     504 [label="Enter when branch condition "];
                     505 [label="Access variable R|<local>/b|"];
                     506 [label="Access variable R|<local>/a|"];
-                    507 [label="Equality operator =="];
+                    507 [label="Equality operator ==" style="filled" fillcolor=yellow];
                     508 [label="Exit when branch condition"];
                 }
                 509 [label="Synthetic else branch"];
@@ -1376,7 +1376,7 @@ digraph nullability_kt {
                     526 [label="Enter when branch condition "];
                     527 [label="Access variable R|<local>/b|"];
                     528 [label="Access variable R|<local>/a|"];
-                    529 [label="Equality operator ==="];
+                    529 [label="Equality operator ===" style="filled" fillcolor=yellow];
                     530 [label="Exit when branch condition"];
                 }
                 531 [label="Synthetic else branch"];
@@ -1530,7 +1530,7 @@ digraph nullability_kt {
                     564 [label="Exit safe call"];
                     565 [label="Exit safe call"];
                     566 [label="Const: Null(null)"];
-                    567 [label="Equality operator !="];
+                    567 [label="Equality operator !=" style="filled" fillcolor=yellow];
                     568 [label="Exit when branch condition"];
                 }
                 569 [label="Synthetic else branch"];
@@ -1583,7 +1583,7 @@ digraph nullability_kt {
                             604 [label="Access variable R|<local>/q2|"];
                             605 [label="Access variable R|/QImpl.data|"];
                             606 [label="Const: Null(null)"];
-                            607 [label="Equality operator !="];
+                            607 [label="Equality operator !=" style="filled" fillcolor=yellow];
                             608 [label="Exit when branch condition"];
                         }
                         609 [label="Synthetic else branch"];
@@ -1732,7 +1732,7 @@ digraph nullability_kt {
                     647 [label="Exit safe call"];
                     648 [label="Exit safe call"];
                     649 [label="Const: Null(null)"];
-                    650 [label="Equality operator !="];
+                    650 [label="Equality operator !=" style="filled" fillcolor=yellow];
                     651 [label="Exit when branch condition"];
                 }
                 652 [label="Synthetic else branch"];
@@ -1845,7 +1845,7 @@ digraph nullability_kt {
                     693 [label="Exit safe call"];
                     694 [label="Exit safe call"];
                     695 [label="Const: Null(null)"];
-                    696 [label="Equality operator !="];
+                    696 [label="Equality operator !=" style="filled" fillcolor=yellow];
                     697 [label="Exit when branch condition"];
                 }
                 698 [label="Synthetic else branch"];
@@ -1944,7 +1944,7 @@ digraph nullability_kt {
                     728 [label="Access variable R|<local>/q|"];
                     729 [label="Access variable R|/Q.data|"];
                     730 [label="Const: Null(null)"];
-                    731 [label="Equality operator =="];
+                    731 [label="Equality operator ==" style="filled" fillcolor=yellow];
                     732 [label="Exit when branch condition"];
                 }
                 733 [label="Synthetic else branch"];

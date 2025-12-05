@@ -75,7 +75,7 @@ class FirPCLAInferenceSession(
 
         // Integrating back would happen at FirDelegatedPropertyInferenceSession.completeSessionOrPostponeIfNonRoot
         // after all other delegation-related calls are being analyzed
-        if (resolutionMode == ResolutionMode.Delegate) return
+        if (resolutionMode is ResolutionMode.Delegate) return
 
         currentCommonSystem.replaceContentWith(candidate.system.currentStorage())
 
