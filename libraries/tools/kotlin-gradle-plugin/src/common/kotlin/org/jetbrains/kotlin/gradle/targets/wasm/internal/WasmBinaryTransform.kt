@@ -10,11 +10,7 @@ import org.gradle.api.file.*
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
-import org.gradle.api.tasks.Classpath
-import org.gradle.api.tasks.CompileClasspath
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.Internal
-import org.gradle.api.tasks.Optional
+import org.gradle.api.tasks.*
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.copyOf
 import org.jetbrains.kotlin.compilerRunner.*
@@ -22,7 +18,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.report.ReportingSettings
 import org.jetbrains.kotlin.gradle.targets.js.internal.LibraryFilterCachingService
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
-import org.jetbrains.kotlin.library.impl.isKotlinLibrary
+import org.jetbrains.kotlin.library.loader.KlibLoader
 import java.io.File
 import javax.inject.Inject
 
@@ -89,9 +85,10 @@ abstract class WasmBinaryTransform : TransformAction<WasmBinaryTransform.Paramet
         val isKotlinLibrary = parameters.libraryFilterCacheService.get().getOrCompute(
             LibraryFilterCachingService.LibraryFilterCacheKey(
                 inputFile
-            ),
-            ::isKotlinLibrary
-        )
+            )
+        ) {
+            KlibLoader { libraryPaths(it.absolutePath) }.load().librariesStdlibFirst.isNotEmpty()
+        }
 
         if (!isKotlinLibrary) {
             fs.copy {
