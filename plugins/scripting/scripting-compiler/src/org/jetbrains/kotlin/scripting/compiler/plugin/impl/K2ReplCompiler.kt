@@ -22,30 +22,19 @@ import org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.generateCodeFromIr
 import org.jetbrains.kotlin.cli.jvm.compiler.toVfsBasedProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
-import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.jvmTarget
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
-import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.FirBinaryDependenciesModuleData
+import org.jetbrains.kotlin.fir.FirModuleData
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.FirSourceModuleData
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
-import org.jetbrains.kotlin.fir.java.FirCliSession
-import org.jetbrains.kotlin.fir.java.deserialization.JvmClassFileBasedSymbolProvider
 import org.jetbrains.kotlin.fir.pipeline.*
-import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
-import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
-import org.jetbrains.kotlin.fir.resolve.providers.impl.FirBuiltinSyntheticFunctionInterfaceProvider
-import org.jetbrains.kotlin.fir.resolve.providers.impl.FirCachingCompositeSymbolProvider
-import org.jetbrains.kotlin.fir.resolve.providers.impl.FirLibrarySessionProvider
-import org.jetbrains.kotlin.fir.resolve.providers.impl.syntheticFunctionInterfacesSymbolProvider
-import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
-import org.jetbrains.kotlin.fir.resolve.scopes.wrapScopeWithJvmMapped
-import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
-import org.jetbrains.kotlin.fir.session.*
-import org.jetbrains.kotlin.fir.session.FirJvmSessionFactory.flattenAndFilterOwnProviders
-import org.jetbrains.kotlin.fir.session.FirJvmSessionFactory.registerLibrarySessionComponents
+import org.jetbrains.kotlin.fir.session.FirJvmSessionFactory
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.name.Name
@@ -90,8 +79,7 @@ class K2ReplCompiler(
         snippets.forEach { snippet ->
             // Messages from earlier snippets should not leak into the next snippet
             state.messageCollector.clear()
-            val res = compileImpl(state, snippet, configuration)
-            when (res) {
+            when (val res = compileImpl(state, snippet, configuration)) {
                 is ResultWithDiagnostics.Success -> {
                     state.lastCompiledSnippet = state.lastCompiledSnippet.add(res.value)
                 }
@@ -117,7 +105,7 @@ class K2ReplCompiler(
                 ScriptingHostConfiguration(defaultJvmScriptingHostConfiguration) {
                     repl {
                         firReplHistoryProvider(FirReplHistoryProviderImpl())
-                        isReplSnippetSource { sourceFile, scriptSource -> true }
+                        isReplSnippetSource { _, _ -> true }
                     }
                 }
         ): K2ReplCompilationState {
@@ -202,7 +190,7 @@ class ReplModuleDataProvider(baseLibraryPaths: List<Path>) : ModuleDataProvider(
     val moduleDataHistory: MutableList<FirModuleData> = mutableListOf()
 
     init {
-        baseLibraryPaths.map { it.toAbsolutePath().normalize() }.associateTo(pathToModuleData) { it to baseDependenciesModuleData }
+        baseLibraryPaths.map { it.toAbsolutePath().normalize() }.associateWithTo(pathToModuleData) { baseDependenciesModuleData }
         moduleDataHistory.add(baseDependenciesModuleData)
     }
 
@@ -228,7 +216,7 @@ class ReplModuleDataProvider(baseLibraryPaths: List<Path>) : ModuleDataProvider(
         val newLibraryPaths = libraryPaths.map { it.toAbsolutePath().normalize() }.filter { it !in pathToModuleData }
         if (newLibraryPaths.isEmpty()) return null to emptyList()
         val newDependenciesModuleData = makeLibraryModuleData(Name.special("<REPL-lib-${moduleDataHistory.size + 1}>"))
-        newLibraryPaths.associateTo(pathToModuleData) { it to newDependenciesModuleData }
+        newLibraryPaths.associateWithTo(pathToModuleData) { newDependenciesModuleData }
         moduleDataHistory.add(newDependenciesModuleData)
         return newDependenciesModuleData to newLibraryPaths
     }
@@ -305,7 +293,7 @@ private fun compileImpl(
 
     // Updating compiler options
     val baseCompilerOptions = state.scriptCompilationConfiguration[ScriptCompilationConfiguration.compilerOptions]
-    val updatedCompilerOptions = allSourceFiles.flatMapTo(mutableListOf<String>()) { file ->
+    val updatedCompilerOptions = allSourceFiles.flatMapTo(mutableListOf()) { file ->
         state.scriptConfigurationsProvider?.getScriptCompilationConfiguration(file)?.valueOrNull()?.configuration?.get(
             ScriptCompilationConfiguration.compilerOptions
         )?.takeIf { it != baseCompilerOptions } ?: emptyList()
@@ -327,7 +315,21 @@ private fun compileImpl(
 
     val extensionRegistrars = FirExtensionRegistrar.getInstances(project)
     if (libModuleData != null) {
-        createReplAdditionalLibrariesSession(libModuleData, state, extensionRegistrars, compilerConfiguration)
+        val projectEnvironment = state.sessionFactoryContext.projectEnvironment
+        val searchScope = state.moduleDataProvider.getModuleDataPaths(libModuleData)?.let { paths ->
+            projectEnvironment.getSearchScopeByClassPath(paths)
+        } ?: state.sessionFactoryContext.librariesScope
+
+        createScriptingAdditionalLibrariesSession(
+            libModuleData,
+            state.sessionFactoryContext,
+            state.moduleDataProvider,
+            state.sharedLibrarySession,
+            extensionRegistrars,
+            compilerConfiguration,
+            getKotlinClassFinder = { projectEnvironment.getKotlinClassFinder(searchScope) },
+            getJavaFacade = { projectEnvironment.getFirJavaFacade(it, libModuleData, state.sessionFactoryContext.librariesScope) }
+        )
         KotlinJavaPsiFacade.getInstance(project).clearPackageCaches()
     }
 
@@ -347,7 +349,11 @@ private fun compileImpl(
     )
     val rawFir = allSourceFiles.partition { it is KtFileScriptSource }.let { (ktSources, otherSources) ->
         session.buildFirFromKtFiles(ktSources.map { it.getKtFile(definition, project) }) +
-                session.buildFirViaLightTree(otherSources.mapNotNull { it.toKtSourceFile() }, diagnosticsReporter, reportFilesAndLines = null)
+                session.buildFirViaLightTree(
+                    otherSources.mapNotNull { it.toKtSourceFile() },
+                    diagnosticsReporter,
+                    reportFilesAndLines = null
+                )
     }
 
     checkKotlinPackageUsageForLightTree(compilerConfiguration, rawFir, messageCollector)
@@ -386,63 +392,6 @@ private fun compileImpl(
         extractResultFields(irInput.irModuleFragment)
     ).onSuccess { compiledScript ->
         ResultWithDiagnostics.Success(compiledScript, messageCollector.diagnostics)
-    }
-}
-
-@OptIn(SessionConfiguration::class, PrivateSessionConstructor::class)
-private fun createReplAdditionalLibrariesSession(
-    libModuleData: FirModuleData,
-    state: K2ReplCompilationState,
-    extensionRegistrars: List<FirExtensionRegistrar>,
-    compilerConfiguration: CompilerConfiguration,
-) {
-    FirCliSession(FirSession.Kind.Library).apply session@{
-        libModuleData.bindSession(this@session)
-
-        registerCliCompilerAndCommonComponents(compilerConfiguration.languageVersionSettings, false)
-        registerLibrarySessionComponents(state.sessionFactoryContext)
-        register(FirBuiltinSyntheticFunctionInterfaceProvider::class, state.sharedLibrarySession.syntheticFunctionInterfacesSymbolProvider)
-
-        val kotlinScopeProvider = FirKotlinScopeProvider(::wrapScopeWithJvmMapped)
-        register(FirKotlinScopeProvider::class, kotlinScopeProvider)
-
-        FirSessionConfigurator(this).apply {
-            for (extensionRegistrar in extensionRegistrars) {
-                registerExtensions(extensionRegistrar.configure())
-            }
-        }.configure()
-        registerCommonComponentsAfterExtensionsAreConfigured()
-
-        val providers = buildList {
-            val projectEnvironment = state.sessionFactoryContext.projectEnvironment
-            val searchScope = state.moduleDataProvider.getModuleDataPaths(libModuleData)?.let { paths ->
-                projectEnvironment.getSearchScopeByClassPath(paths)
-            } ?: state.sessionFactoryContext.librariesScope
-            add(
-                JvmClassFileBasedSymbolProvider(
-                    this@session,
-                    state.moduleDataProvider,
-                    kotlinScopeProvider,
-                    state.sessionFactoryContext.packagePartProviderForLibraries,
-                    projectEnvironment.getKotlinClassFinder(searchScope),
-                    projectEnvironment.getFirJavaFacade(this@session, libModuleData, state.sessionFactoryContext.librariesScope),
-                )
-            )
-        }
-        register(
-            StructuredProviders::class,
-            StructuredProviders(
-                sourceProviders = emptyList(),
-                dependencyProviders = providers,
-                sharedProvider = state.sharedLibrarySession.symbolProvider,
-            )
-        )
-
-        val providersWithShared = providers + state.sharedLibrarySession.symbolProvider.flattenAndFilterOwnProviders()
-
-        val symbolProvider = FirCachingCompositeSymbolProvider(this, providersWithShared)
-        register(FirSymbolProvider::class, symbolProvider)
-        register(FirProvider::class, FirLibrarySessionProvider(symbolProvider))
     }
 }
 
