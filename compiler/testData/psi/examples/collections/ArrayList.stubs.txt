@@ -50,6 +50,7 @@ FILE[kind=File[packageFqName=<root>]]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=IMutableIterator]
+              VALUE_ARGUMENT_LIST
           CLASS_BODY
             PROPERTY[fqName=null, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=index]
               MODIFIER_LIST[private]

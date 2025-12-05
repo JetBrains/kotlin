@@ -74,3 +74,4 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=RecoveryKt]]
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=Base]
+        VALUE_ARGUMENT_LIST

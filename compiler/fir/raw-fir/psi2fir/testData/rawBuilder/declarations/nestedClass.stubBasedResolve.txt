@@ -13,16 +13,16 @@ FILE: [ResolvedTo(BODY_RESOLVE)] nestedClass.kt
             super<R|kotlin/Any|>()
         }
 
-        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class Derived : R|Base| {
-            public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=Derived] constructor([ResolvedTo(ANNOTATION_ARGUMENTS)] s: R|kotlin/String|): R|Outer.Derived| {
-                LAZY_super<R|Base|>
+        public final [ResolvedTo(BODY_RESOLVE)] class Derived : R|Base| {
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Derived] constructor([ResolvedTo(BODY_RESOLVE)] s: R|kotlin/String|): R|Outer.Derived| {
+                super<R|Base|>(R|<local>/s|)
             }
 
         }
 
-        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] object Obj : R|Base| {
-            private [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=Obj] constructor(): R|Outer.Obj| {
-                LAZY_super<R|Base|>
+        public final [ResolvedTo(BODY_RESOLVE)] object Obj : R|Base| {
+            private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Obj] constructor(): R|Outer.Obj| {
+                super<R|Base|>(String())
             }
 
         }

@@ -38,6 +38,7 @@ FILE[kind=File[packageFqName=<root>]]
           SUPER_TYPE_CALL_ENTRY
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
+            VALUE_ARGUMENT_LIST
         CLASS_BODY
   CLASS[classId=/Outer4, fqName=Outer4, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Outer4, superNames=[]]
     CLASS_BODY
@@ -53,6 +54,7 @@ FILE[kind=File[packageFqName=<root>]]
           SUPER_TYPE_CALL_ENTRY
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
+            VALUE_ARGUMENT_LIST
         CLASS_BODY
   OBJECT_DECLARATION[classId=/TopLevel, fqName=TopLevel, isLocal=false, isObjectLiteral=false, isTopLevel=true, name=TopLevel, superNames=[]]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=TopLevel]

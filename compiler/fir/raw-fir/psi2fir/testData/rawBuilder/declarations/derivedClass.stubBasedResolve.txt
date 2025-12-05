@@ -8,9 +8,9 @@ FILE: [ResolvedTo(BODY_RESOLVE)] derivedClass.kt
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Base] get(): R|T|
 
     }
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class Derived<[ResolvedTo(ANNOTATION_ARGUMENTS)] T : R|kotlin/Any|> : R|Base<T>| {
-        public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=Derived] constructor<[ResolvedTo(ANNOTATION_ARGUMENTS)] T : R|kotlin/Any|>([ResolvedTo(ANNOTATION_ARGUMENTS)] x: R|T|): R|Derived<T>| {
-            LAZY_super<R|Base<T>|>
+    public final [ResolvedTo(BODY_RESOLVE)] class Derived<[ResolvedTo(BODY_RESOLVE)] T : R|kotlin/Any|> : R|Base<T>| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Derived] constructor<[ResolvedTo(BODY_RESOLVE)] T : R|kotlin/Any|>([ResolvedTo(BODY_RESOLVE)] x: R|T|): R|Derived<T>| {
+            super<R|Base<T>|>(R|<local>/x|)
         }
 
     }

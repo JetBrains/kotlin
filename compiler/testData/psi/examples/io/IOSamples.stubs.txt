@@ -41,6 +41,9 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=IOSamplesKt]]
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=ICloseable]
+        VALUE_ARGUMENT_LIST
+          VALUE_ARGUMENT[isSpread=false]
+            REFERENCE_EXPRESSION[referencedName=closeable]
   FUN[fqName=streamCopy, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=false, name=streamCopy]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, name=T]

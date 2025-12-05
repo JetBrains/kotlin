@@ -19,6 +19,7 @@ FILE[kind=File[packageFqName=<root>]]
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=Base1]
+        VALUE_ARGUMENT_LIST
       SUPER_TYPE_ENTRY
         TYPE_REFERENCE
           USER_TYPE

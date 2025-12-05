@@ -26,6 +26,7 @@ FILE[kind=File[packageFqName=<root>]]
               TYPE_REFERENCE
                 USER_TYPE
                   ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION[referencedName=A]
+            VALUE_ARGUMENT_LIST
       ENUM_ENTRY[classId=null, fqName=A.Y, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=Y, superNames=[A]]
         MODIFIER_LIST[]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=Ann]
@@ -39,6 +40,7 @@ FILE[kind=File[packageFqName=<root>]]
               TYPE_REFERENCE
                 USER_TYPE
                   ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION[referencedName=A]
+            VALUE_ARGUMENT_LIST
         CLASS_BODY
       ENUM_ENTRY[classId=null, fqName=A.Z, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=Z, superNames=[A]]
         MODIFIER_LIST[private]
@@ -54,6 +56,7 @@ FILE[kind=File[packageFqName=<root>]]
               TYPE_REFERENCE
                 USER_TYPE
                   ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION[referencedName=A]
+            VALUE_ARGUMENT_LIST
       ENUM_ENTRY[classId=null, fqName=A.Q, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=Q, superNames=[]]
         MODIFIER_LIST[]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=Ann]

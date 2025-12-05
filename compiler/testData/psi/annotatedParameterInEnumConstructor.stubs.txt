@@ -38,3 +38,10 @@ FILE[kind=File[packageFqName=test]]
               TYPE_REFERENCE
                 USER_TYPE
                   ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION[referencedName=AnnotatedParameterInEnumConstructor]
+            VALUE_ARGUMENT_LIST
+              VALUE_ARGUMENT[isSpread=false]
+                STRING_TEMPLATE
+                  LITERAL_STRING_TEMPLATE_ENTRY[text=1]
+              VALUE_ARGUMENT[isSpread=false]
+                STRING_TEMPLATE
+                  LITERAL_STRING_TEMPLATE_ENTRY[text=b]

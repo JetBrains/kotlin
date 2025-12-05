@@ -43,6 +43,9 @@ FILE[kind=File[packageFqName=a]]
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=A]
+            VALUE_ARGUMENT_LIST
+              VALUE_ARGUMENT[isSpread=false]
+                INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=2]
         CLASS_BODY
           FUN[fqName=a.InheritingClasses.B.of, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=of]
             MODIFIER_LIST[override]
@@ -82,6 +85,7 @@ FILE[kind=File[packageFqName=a]]
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=B]
+            VALUE_ARGUMENT_LIST
           SUPER_TYPE_ENTRY
             TYPE_REFERENCE
               USER_TYPE
@@ -111,6 +115,7 @@ FILE[kind=File[packageFqName=a]]
                   TYPE_REFERENCE
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=Any]
+                VALUE_ARGUMENT_LIST
           CLASS[classId=a/InheritingClasses.InheritAny.OnlyTrait, fqName=a.InheritingClasses.InheritAny.OnlyTrait, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=OnlyTrait, superNames=[SomeTrait]]
             SUPER_TYPE_LIST
               SUPER_TYPE_ENTRY
@@ -134,6 +139,7 @@ FILE[kind=File[packageFqName=a]]
                   TYPE_REFERENCE
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=Any]
+                VALUE_ARGUMENT_LIST
               SUPER_TYPE_ENTRY
                 TYPE_REFERENCE
                   USER_TYPE
@@ -149,6 +155,7 @@ FILE[kind=File[packageFqName=a]]
                   TYPE_REFERENCE
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=Any]
+                VALUE_ARGUMENT_LIST
               SUPER_TYPE_ENTRY
                 TYPE_REFERENCE
                   USER_TYPE

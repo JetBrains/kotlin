@@ -15,6 +15,7 @@ DependencyOnNestedClasses.kt:
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=D]
                 REFERENCE_EXPRESSION[referencedName=Nested]
+          VALUE_ARGUMENT_LIST
       CLASS_BODY
         FUN[fqName=test.DependencyOnNestedClasses.f, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
           VALUE_PARAMETER_LIST

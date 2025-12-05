@@ -12,6 +12,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=AnonymousObjectsKt]]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=MouseAdapter]
+          VALUE_ARGUMENT_LIST
       CLASS_BODY
         PROPERTY[fqName=null, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=true, name=clickCount]
           MODIFIER_LIST[private]
