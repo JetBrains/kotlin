@@ -174,7 +174,7 @@ class BuildReportsIT : KGPBaseTest() {
             jsonReport.aggregatedMetrics
         }
 
-        val buildTimeMetrics = buildMetrics.buildTimes.buildTimesMapMs().keys
+        val buildTimeMetrics = buildMetrics.buildTimes.buildTimesMapMs().keys + buildMetrics.buildPerformanceMetrics.asMap().keys
         val missedMetrics = metrics.filter { it !in buildTimeMetrics }.map { it.name }
         assertTrue("<${missedMetrics.joinToString(separator = ",")}> metrics are missing in JSON report") { missedMetrics.isEmpty() }
 
@@ -975,6 +975,9 @@ class BuildReportsIT : KGPBaseTest() {
                     CustomBuildTimeMetric.createIfDoesNotExistAndReturn("ConstructorsLowering", IR_LOWERING),
                     CustomBuildTimeMetric.createIfDoesNotExistAndReturn("ValidateIrAfterLowering", IR_LOWERING),
                     CustomBuildTimeMetric.createIfDoesNotExistAndReturn("UpgradeCallableReferences", IR_PRE_LOWERING),
+                    KlibSizeMetric.createIfDoesNotExistAndReturn("KLIB directory cumulative size"),
+                    KlibSizeMetric.createIfDoesNotExistAndReturn("KLIB directory cumulative size/IR (main)"),
+                    KlibSizeMetric.createIfDoesNotExistAndReturn("KLIB directory cumulative size/IR (main)/IR bodies")
                 )
             }
         }
