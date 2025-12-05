@@ -56,7 +56,7 @@
         <entry key="$PROJECT_DIR$/js/js.translator/testData/typescript-export">
           <value>
             <array>
-              <option value="$PROJECT_DIR$/js/js.tests/build/node/{out,out-min,out-per-module,out-per-module-min}/typescript-export/{es5,es5-withInlinedFunInKlib,es6}/$TEST_DATA_FILE$-JS_TESTS{.d.ts,_v5.js}" />
+              <option value="$PROJECT_DIR$/js/js.tests/build/node/{out,out-min,out-per-module,out-per-module-min}/typescript-export/{es5,es5-whole-file,es5-withInlinedFunInKlib,es6,es6-whole-file}/$TEST_DATA_FILE$-JS_TESTS{.d.ts,_v5.js}" />
               <option value="$PROJECT_DIR$/js/js.translator/testData/typescript-export/$TEST_DATA_FILE$__main.{js,ts}" />
             </array>
           </value>

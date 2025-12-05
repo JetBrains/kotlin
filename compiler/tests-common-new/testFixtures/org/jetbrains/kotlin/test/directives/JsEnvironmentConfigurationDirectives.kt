@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -212,5 +212,10 @@ object JsEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
     val KEEP by stringDirective(
         description = "Keep declarations",
         applicability = DirectiveApplicability.Global
+    )
+
+    val DISABLE_JS_EXPORT_SOURCE_PREPROCESSOR by directive(
+        description = "Disable JsExportSourcePreprocessor",
+        applicability = DirectiveApplicability.Any,
     )
 }

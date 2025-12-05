@@ -9,13 +9,13 @@
 @file:JsQualifier("WebAssembly")
 package qualified
 
+@JsExport.Ignore
 external interface CompileError
-
 // FILE: notQualified.kt
 package notQualified
 
+@JsExport.Ignore
 external interface Console
-
 // FILE: declarations.kt
 
 package foo
@@ -23,8 +23,10 @@ package foo
 import notQualified.Console
 import qualified.CompileError
 
+@JsExport.Ignore
 interface NeverUsedInsideExportedDeclarationsType
 
+@JsExport.Ignore
 open class NonExportedParent {
     open class NonExportedSecond {
         open class NonExportedUsedChild
@@ -32,12 +34,22 @@ open class NonExportedParent {
     }
 }
 
+@JsExport.Ignore
 interface NonExportedInterface
+
+@JsExport.Ignore
 interface NonExportedGenericInterface<T>
+
+@JsExport.Ignore
 open class NonExportedType(val value: Int)
+
+@JsExport.Ignore
 open class NonExportedGenericType<T>(val value: T)
 
+@JsExport.Ignore
 open class NotExportedChildClass : NonExportedInterface, NeverUsedInsideExportedDeclarationsType, NonExportedType(322)
+
+@JsExport.Ignore
 open class NotExportedChildGenericClass<T>(value: T) : NonExportedInterface, NeverUsedInsideExportedDeclarationsType, NonExportedGenericInterface<T>, NonExportedGenericType<T>(value)
 
 
@@ -145,22 +157,28 @@ val error: CompileError
 @JsExport
 interface IA
 
+@JsExport.Ignore
 interface IB : IA
 
+@JsExport.Ignore
 interface IC : IB
 
 @JsExport
 open class Third: Second()
 
+@JsExport.Ignore
 open class Forth: Third(), IB, IC
 
+@JsExport.Ignore
 open class Fifth: Forth()
 
 @JsExport
 class Sixth: Fifth(), IC
+
 @JsExport
 open class First
 
+@JsExport.Ignore
 open class Second: First()
 
 @JsExport
@@ -179,7 +197,10 @@ interface Service<Self : Service<Self, TEvent>, in TEvent : Event<Self>>
 @JsExport
 interface Event<out TService : Service<out TService, *>>
 
+@JsExport.Ignore
 class SomeService : Service<SomeService, SomeEvent>
+
+@JsExport.Ignore
 class SomeEvent : Event<SomeService>
 
 @JsExport
@@ -187,6 +208,7 @@ class SomeServiceRequest : Service<SomeService, SomeEvent>
 
 // This class should not appear in the .d.ts, since it's only referenced in constructors
 // that are generated with private visibility in .d.ts.
+@JsExport.Ignore
 class NonExportedTypeOnlyReferencedInPrivateConstructors
 
 @JsExport

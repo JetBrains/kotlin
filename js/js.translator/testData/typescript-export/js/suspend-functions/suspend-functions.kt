@@ -87,6 +87,7 @@ class WithSuspendFunInsideInnerClass {
     }
 }
 
+@JsExport.Ignore
 fun suspendParameter(call: suspend () -> Int) = <!ILLEGAL_SUSPEND_FUNCTION_CALL!>call<!>()
 
 @JsExport
@@ -147,6 +148,7 @@ open class TestChild : Test() {
     override suspend fun <A, B, C, D, E> forth(a: A, b: B, c: C, d: D): E? = js("'OK'").unsafeCast<E>()
 }
 
+@JsExport.Ignore
 open class NotExportedTestChild : Test() {
     override suspend fun sum(x: Int, y: Int): Int = 42
     override suspend fun varargNullableInt(vararg x: Int?): Int = 43
@@ -157,7 +159,8 @@ open class NotExportedTestChild : Test() {
 @JsExport
 fun generateOneMoreChildOfTest(): Test = NotExportedTestChild()
 
-@JsExport suspend fun acceptTest(test: Test) {
+@JsExport
+suspend fun acceptTest(test: Test) {
     assert(test.sum(1, 2) == when (test) {
         is NotExportedTestChild -> 42
         else -> 3
@@ -219,6 +222,7 @@ fun generateOneMoreChildOfTest(): Test = NotExportedTestChild()
     assert(test.genericWithMultipleConstraints(error) == error)
 }
 
+@JsExport.Ignore
 open class NotExportedParent {
     open suspend fun parentSuspendFun1() = "NotExportedParent 1"
     open suspend fun parentSuspendFun2() = "NotExportedParent 2"
