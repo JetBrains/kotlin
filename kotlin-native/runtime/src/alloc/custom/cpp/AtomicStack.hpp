@@ -47,7 +47,7 @@ public:
     }
 
     void Push(T* elm) noexcept {
-        T* head = nullptr;
+        T* head = atomicHead().load(std::memory_order_acquire);
         do {
             elm->atomicNext().store(head, std::memory_order_relaxed);
         } while (!atomicHead().compare_exchange_weak(head, elm, std::memory_order_acq_rel));
