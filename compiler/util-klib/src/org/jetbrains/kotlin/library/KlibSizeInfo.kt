@@ -49,6 +49,20 @@ fun KFile.loadSizeInfo(): KlibElementWithSize? {
     }
 }
 
+/**
+ * Returns a depth-first list of (path, sizeBytes), where path is slash-separated from the root.
+ */
+fun KlibElementWithSize.flatten(): List<Pair<String, Long>> = buildList {
+    fun visit(node: KlibElementWithSize, path: String) {
+        add(path to node.size)
+        for (child in node.children) {
+            visit(child, path + "/" + child.name)
+        }
+    }
+
+    visit(this@flatten, this@flatten.name)
+}
+
 private fun KFile.collectTopLevelElements(): List<KlibElementWithSize> {
     var defaultEntry: KFile? = null
     val otherTopLevelEntries = ArrayList<KFile>()
