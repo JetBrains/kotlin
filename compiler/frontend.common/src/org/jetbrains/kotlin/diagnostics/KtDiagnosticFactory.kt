@@ -10,6 +10,7 @@ package org.jetbrains.kotlin.diagnostics
 import org.jetbrains.kotlin.AbstractKtSourceElement
 import org.jetbrains.kotlin.KtLightSourceElement
 import org.jetbrains.kotlin.KtPsiSourceElement
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
@@ -48,9 +49,9 @@ class KtSourcelessDiagnosticFactory(
     severity: Severity,
     rendererFactory: BaseDiagnosticRendererFactory,
 ) : AbstractKtDiagnosticFactory(name, severity, rendererFactory) {
-    fun create(message: String, context: DiagnosticBaseContext): KtDiagnosticWithoutSource? {
+    fun create(message: String, location: CompilerMessageSourceLocation?, context: DiagnosticBaseContext): KtDiagnosticWithoutSource? {
         val effectiveSeverity = getEffectiveSeverity(context.languageVersionSettings) ?: return null
-        return KtDiagnosticWithoutSource(message, effectiveSeverity, this, context)
+        return KtDiagnosticWithoutSource(message, location, effectiveSeverity, this, context)
     }
 }
 

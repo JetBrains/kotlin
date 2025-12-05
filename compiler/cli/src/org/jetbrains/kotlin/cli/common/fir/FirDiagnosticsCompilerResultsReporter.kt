@@ -69,7 +69,7 @@ object FirDiagnosticsCompilerResultsReporter {
 
                 for (diagnostic in diagnosticList.sortedWith(InFileDiagnosticsComparator)) {
                     val location = when (diagnostic) {
-                        is KtDiagnosticWithoutSource -> null
+                        is KtDiagnosticWithoutSource -> diagnostic.location
                         is KtDiagnosticWithSource -> when (diagnostic) {
                             is KtPsiDiagnostic -> {
                                 val file = diagnostic.element.psi.containingFile

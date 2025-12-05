@@ -176,6 +176,7 @@ private fun CompilerConfiguration.checkRedundantArguments(
         val argValue = if (propertyValue is String) "=$propertyValue" else ""
         val diagnostic = CliDiagnostics.REDUNDANT_CLI_ARG.create(
             "The argument '${property.argumentAnnotation.value}${argValue}' is redundant for the current language version $languageVersion.",
+            location = null,
             context
         ) ?: continue
 
