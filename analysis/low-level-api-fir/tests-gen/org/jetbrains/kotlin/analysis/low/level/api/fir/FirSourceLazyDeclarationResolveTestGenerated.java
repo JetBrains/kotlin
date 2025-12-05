@@ -1315,6 +1315,12 @@ public class FirSourceLazyDeclarationResolveTestGenerated extends AbstractFirSou
       }
 
       @Test
+      @TestMetadata("regularFunction.kt")
+      public void testRegularFunction() {
+        runTest("analysis/low-level-api-fir/testData/lazyResolve/danglingFile/ignoreSelf/regularFunction.kt");
+      }
+
+      @Test
       @TestMetadata("syntheticHashCode.kt")
       public void testSyntheticHashCode() {
         runTest("analysis/low-level-api-fir/testData/lazyResolve/danglingFile/ignoreSelf/syntheticHashCode.kt");
@@ -1334,6 +1340,12 @@ public class FirSourceLazyDeclarationResolveTestGenerated extends AbstractFirSou
       @Test
       public void testAllFilesPresentInPreferSelf() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/lazyResolve/danglingFile/preferSelf"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
+      }
+
+      @Test
+      @TestMetadata("regularFunction.kt")
+      public void testRegularFunction() {
+        runTest("analysis/low-level-api-fir/testData/lazyResolve/danglingFile/preferSelf/regularFunction.kt");
       }
 
       @Test
