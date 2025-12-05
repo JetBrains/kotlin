@@ -9,6 +9,8 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileResolutionMode
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.llFirModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirLibraryOrLibrarySourceResolvableModuleSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.nullableJavaSymbolProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.*
 import org.jetbrains.kotlin.analysis.utils.errors.unexpectedElementError
@@ -17,6 +19,7 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticPropertyAccessor
+import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.toSymbol
@@ -212,6 +215,18 @@ private fun collectDesignationPathWithContainingClass(
     return FirDesignation(patchedPath, target)
 }
 
+/**
+ * Whether the search via [FirSymbolProvider] is required to find a declaration in the context of [this] session.
+ *
+ * Not all sessions have required providers in the session itself (not its dependencies).
+ * In such cases, the search might not be able to find even the containing declaration
+ */
+private val LLFirSession.requiresDependenciesSearch: Boolean
+    get() = when (this) {
+        is LLFirLibraryOrLibrarySourceResolvableModuleSession -> true
+        else -> false
+    }
+
 private fun collectDesignationPathWithContainingClassFallback(
     target: FirDeclaration,
     containingClassId: ClassId?,
@@ -219,7 +234,7 @@ private fun collectDesignationPathWithContainingClassFallback(
     val useSiteSession = getTargetSession(target)
 
     fun resolveChunk(classId: ClassId): FirRegularClass {
-        val declaration = if (useSiteSession is LLFirLibraryOrLibrarySourceResolvableModuleSession) {
+        val declaration = if (useSiteSession.requiresDependenciesSearch) {
             useSiteSession.symbolProvider.getClassLikeSymbolByClassId(classId)?.fir
         } else {
             useSiteSession.firProvider.getFirClassifierByFqName(classId)
@@ -229,7 +244,7 @@ private fun collectDesignationPathWithContainingClassFallback(
 
         checkWithAttachment(
             declaration is FirRegularClass,
-            message = { "'FirRegularClass' expected as a containing declaration, got '${declaration?.javaClass?.name}'" },
+            message = { "'FirRegularClass' expected as a containing declaration, got '${declaration?.javaClass?.simpleName}'. Module: ${useSiteSession.ktModule::class.simpleName}" },
             buildAttachment = {
                 withEntry("chunk", "$classId in $containingClassId")
                 withFirEntry("target", target)
@@ -295,16 +310,16 @@ private fun collectDesignationPathWithTreeTraversal(target: FirDeclaration): Lis
     return result
 }
 
-private fun getTargetSession(target: FirDeclaration): FirSession {
+private fun getTargetSession(target: FirDeclaration): LLFirSession {
     if (target is FirCallableDeclaration) {
         val containingSymbol = target.containingClassLookupTag()?.toSymbol(target.moduleData.session)
         if (containingSymbol != null) {
             // Synthetic declarations might have a call site session
-            return containingSymbol.moduleData.session
+            return containingSymbol.llFirSession
         }
     }
 
-    return target.moduleData.session
+    return target.llFirSession
 }
 
 private fun findKotlinStdlibClass(classId: ClassId, target: FirDeclaration): FirRegularClass? {
