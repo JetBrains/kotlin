@@ -10,8 +10,8 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.diagnostics.report
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.diagnostics.CliDiagnostics.ERROR_SEVERITY_CHANGED
-import org.jetbrains.kotlin.fir.analysis.diagnostics.CliDiagnostics.MISSING_DIAGNOSTIC_NAME
+import org.jetbrains.kotlin.fir.analysis.diagnostics.CliFrontendDiagnostics.ERROR_SEVERITY_CHANGED
+import org.jetbrains.kotlin.fir.analysis.diagnostics.CliFrontendDiagnostics.MISSING_DIAGNOSTIC_NAME
 import org.jetbrains.kotlin.fir.analysis.diagnostics.registeredDiagnosticFactoriesStorage
 import org.jetbrains.kotlin.fir.languageVersionSettings
 

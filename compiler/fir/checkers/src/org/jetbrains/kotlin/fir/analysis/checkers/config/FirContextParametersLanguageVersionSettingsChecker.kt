@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.report
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.diagnostics.CliDiagnostics
+import org.jetbrains.kotlin.fir.analysis.diagnostics.CliFrontendDiagnostics
 import org.jetbrains.kotlin.fir.isEnabled
 
 object FirContextParametersLanguageVersionSettingsChecker : FirLanguageVersionSettingsChecker() {
@@ -30,6 +30,6 @@ object FirContextParametersLanguageVersionSettingsChecker : FirLanguageVersionSe
                     "Remove the '-Xcontext-receivers' compiler argument."
             else -> DIAGNOSTIC_MESSAGE
         }
-        reporter.report(CliDiagnostics.CONTEXT_PARAMETERS_ARE_DEPRECATED, message)
+        reporter.report(CliFrontendDiagnostics.CONTEXT_PARAMETERS_ARE_DEPRECATED, message)
     }
 }

@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.report
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.diagnostics.CliDiagnostics
+import org.jetbrains.kotlin.fir.analysis.diagnostics.CliFrontendDiagnostics
 import org.jetbrains.kotlin.fir.declarations.hasAnnotationWithClassId
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.transformers.PackageResolutionResult
@@ -38,7 +38,7 @@ object FirOptInLanguageVersionSettingsChecker : FirLanguageVersionSettingsChecke
 
         if (symbol == null) {
             reporter.report(
-                CliDiagnostics.OPT_IN_REQUIREMENT_MARKER_IS_UNRESOLVED,
+                CliFrontendDiagnostics.OPT_IN_REQUIREMENT_MARKER_IS_UNRESOLVED,
                 "Opt-in requirement marker '$fqNameAsString' is unresolved. Make sure it's present in the module dependencies.",
             )
             return
@@ -46,15 +46,15 @@ object FirOptInLanguageVersionSettingsChecker : FirLanguageVersionSettingsChecke
 
         if (!symbol.hasAnnotationWithClassId(OptInNames.REQUIRES_OPT_IN_CLASS_ID, context.session)) {
             reporter.report(
-                CliDiagnostics.NOT_AN_OPT_IN_REQUIREMENT_MARKER,
+                CliFrontendDiagnostics.NOT_AN_OPT_IN_REQUIREMENT_MARKER,
                 "Class '$fqNameAsString' is not an opt-in requirement marker.",
             )
             return
         }
         val deprecationInfo = symbol.getOwnDeprecation(context.languageVersionSettings)?.all ?: return
         val diagnosticFactory = when (deprecationInfo.deprecationLevel) {
-            DeprecationLevelValue.WARNING -> CliDiagnostics.OPT_IN_REQUIREMENT_MARKER_IS_DEPRECATED
-            else -> CliDiagnostics.OPT_IN_REQUIREMENT_MARKER_IS_DEPRECATED_ERROR
+            DeprecationLevelValue.WARNING -> CliFrontendDiagnostics.OPT_IN_REQUIREMENT_MARKER_IS_DEPRECATED
+            else -> CliFrontendDiagnostics.OPT_IN_REQUIREMENT_MARKER_IS_DEPRECATED_ERROR
         }
         reporter.report(
             diagnosticFactory,
