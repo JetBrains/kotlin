@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.ir.moveBodyTo
 import org.jetbrains.kotlin.backend.common.lower.SamEqualsHashCodeMethodsGenerator
+import org.jetbrains.kotlin.backend.common.lower.UpgradeCallableReferences
 import org.jetbrains.kotlin.backend.common.lower.VariableRemapper
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
@@ -427,8 +428,6 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
         return block
     }
 
-    private val jvmIndyLambdaMetafactoryIntrinsic = context.symbols.indyLambdaMetafactoryIntrinsic // delete
-
     private val specialNullabilityAnnotationsFqNames =
         setOf(
             JvmSymbols.FLEXIBLE_NULLABILITY_ANNOTATION_FQ_NAME,
@@ -444,10 +443,33 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
     ): IrExpression {
         val notNullSamType = samType.makeNotNull()
             .removeAnnotations { it.type.classFqName in specialNullabilityAnnotationsFqNames }
+        val parent = currentScope!!.scope.getLocalDeclarationParent()
         return context.createJvmIrBuilder(currentScope!!, startOffset, endOffset).run {
             // See [org.jetbrains.kotlin.backend.jvm.JvmSymbols::indyLambdaMetafactoryIntrinsic].
-            val invokeFunction = lambdaMetafactoryArguments.implMethodReference.symbol.owner as IrSimpleFunction
-            functionsToDelete.add(invokeFunction)
+            val calculatedInvokeFunction = lambdaMetafactoryArguments.implMethodReference.symbol.owner
+            fun IrFunction.isAdaptable() =
+                when (this.origin) {
+                    IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA,
+                    JvmLoweredDeclarationOrigin.PROXY_FUN_FOR_METAFACTORY,
+                    JvmLoweredDeclarationOrigin.SYNTHETIC_PROXY_FUN_FOR_METAFACTORY,
+                        -> true
+                    IrDeclarationOrigin.LOCAL_FUNCTION -> isAnonymousFunction
+                    else -> false
+                }
+
+            val invokeFunction = if (calculatedInvokeFunction.isAdaptable()) {
+                functionsToDelete.add(calculatedInvokeFunction)
+                calculatedInvokeFunction as IrSimpleFunction
+            } else {
+                with(UpgradeCallableReferences(this@FunctionReferenceLowering.context).UpgradeTransformer()) {
+                    val arguments = lambdaMetafactoryArguments.implMethodReference.getCapturedValues()
+                    lambdaMetafactoryArguments.implMethodReference.wrapFunction(
+                        captured = arguments,
+                        parent = parent,
+                        referencedFunction = calculatedInvokeFunction,
+                    )
+                }
+            }
             IrRichFunctionReferenceImpl(
                 startOffset = UNDEFINED_OFFSET, endOffset = UNDEFINED_OFFSET,
                 type = notNullSamType,

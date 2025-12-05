@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.findInlineLambdas
 import org.jetbrains.kotlin.backend.jvm.ir.findRichInlineLambdas
 import org.jetbrains.kotlin.backend.jvm.isEnclosedInConstructor
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 
 /**
@@ -36,12 +37,19 @@ internal class JvmLocalDeclarationPopupLowering(context: JvmBackendContext) : Lo
     // or capture crossinline lambdas.)
     // Upon moving such class, we record that it used to be in an initializer so that the codegen later sets its EnclosingMethod
     // to the primary constructor.
-    override fun shouldPopUp(declaration: IrDeclaration, currentScope: ScopeWithIr?): Boolean {
-        if (declaration is IrClass) {
-            // On JVM, lambdas have package-private visibility after LocalDeclarationsLowering; see `forClass` in `localDeclarationsPhase`.
-            if (!super.shouldPopUp(declaration, currentScope) && !declaration.isGeneratedLambdaClass) return false
+    override fun shouldPopUp(declaration: IrDeclaration, currentScope: ScopeWithIr?): Boolean = when {
+        declaration !is IrClass -> super.shouldPopUp(declaration, currentScope)
+        // On JVM, lambdas have package-private visibility after LocalDeclarationsLowering; see `forClass` in `localDeclarationsPhase`.
+        !super.shouldPopUp(declaration, currentScope) && !declaration.isGeneratedLambdaClass -> false
+        else -> isEnclosedInConstructor(currentScope?.irElement, declaration, inlineLambdaToScope)
+    }
 
-            var parent = currentScope?.irElement
+    companion object {
+
+        fun isEnclosedInConstructor(
+            parent: IrElement?, declaration: IrClass, inlineLambdaToScope: Map<IrFunction, IrDeclaration>
+        ): Boolean {
+            var parent = parent
             while (parent is IrFunction) {
                 parent = inlineLambdaToScope[parent] ?: break
             }
@@ -53,7 +61,6 @@ internal class JvmLocalDeclarationPopupLowering(context: JvmBackendContext) : Lo
                 return true
             }
             return false
-        } else
-            return super.shouldPopUp(declaration, currentScope)
+        }
     }
 }

@@ -56,14 +56,14 @@ open class UpgradeCallableReferences(
         val referenceType: IrType,
     )
 
-    private data class CapturedValue(
+    data class CapturedValue(
         val name: Name,
         val type: IrType,
         val correspondingParameter: IrValueParameter?,
         val expression: IrExpression,
     )
 
-    private inner class UpgradeTransformer : IrTransformer<IrDeclarationParent>() {
+    inner class UpgradeTransformer : IrTransformer<IrDeclarationParent>() {
         private fun IrClass?.isRestrictedSuspension(): Boolean {
             if (this == null) return false
             return hasAnnotation(StandardClassIds.Annotations.RestrictsSuspension) ||
@@ -237,7 +237,7 @@ open class UpgradeCallableReferences(
             return super.visitTypeOperator(expression, data)
         }
 
-        private fun IrCallableReference<*>.getCapturedValues() = getArgumentsWithIr().map {
+        fun IrCallableReference<*>.getCapturedValues() = getArgumentsWithIr().map {
             CapturedValue(it.first.name, it.second.type, it.first, it.second)
         }
 
@@ -495,7 +495,7 @@ open class UpgradeCallableReferences(
             }
         }
 
-        private fun IrCallableReference<*>.wrapFunction(
+        fun IrCallableReference<*>.wrapFunction(
             captured: List<CapturedValue>,
             parent: IrDeclarationParent,
             referencedFunction: IrFunction,

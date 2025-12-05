@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.JvmIrBuilder
 import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
+import org.jetbrains.kotlin.backend.jvm.ir.findRichInlineLambdas
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineClassType
 import org.jetbrains.kotlin.backend.jvm.lower.indy.getDefinitelyExistingLambdaMetafactoryArguments
 import org.jetbrains.kotlin.backend.jvm.unboxInlineClass
@@ -37,7 +38,9 @@ import org.jetbrains.kotlin.ir.builders.irTemporary
 import org.jetbrains.kotlin.ir.builders.irVararg
 import org.jetbrains.kotlin.ir.builders.irWhen
 import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
@@ -51,6 +54,7 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.getSimpleFunction
+import org.jetbrains.kotlin.ir.util.isLocal
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.name.Name
@@ -64,9 +68,15 @@ import kotlin.collections.set
 class IndyLambdaMetafactoryLowering(val backendContext: JvmBackendContext): FileLoweringPass, IrBuildingTransformer(backendContext) {
     val functionsToClasses = HashMap<IrSimpleFunction, IrClass>()
     val classStack = mutableListOf<IrClass>()
+    private val inlineLambdaToScope = mutableMapOf<IrFunction, IrDeclaration>()
+
 
     override fun lower(irFile: IrFile) {
+        irFile.findRichInlineLambdas(backendContext) { argument, _, _, scope ->
+            inlineLambdaToScope[argument.invokeFunction] = scope
+        }
         irFile.transformChildrenVoid()
+        inlineLambdaToScope.clear()
 
         for ((function, parent) in functionsToClasses) {
             function.visibility = DescriptorVisibilities.PRIVATE
@@ -83,10 +93,8 @@ class IndyLambdaMetafactoryLowering(val backendContext: JvmBackendContext): File
             null -> super.visitRichFunctionReference(expression)
             else -> {
                 expression.transformChildrenVoid()
-                if (expression.invokeFunction.body != null) {
-                    functionsToClasses[expression.invokeFunction] = classStack.lastOrNull()
-                        ?: error("Top level function reference: ${expression.dump()}")
-                }
+                functionsToClasses[expression.invokeFunction] = classStack.lastOrNull()
+                    ?: error("Top level function reference: ${expression.dump()}")
                 rewriteIndyLambdaMetafactoryCall(expression, backendContext, indyCallData)
             }
         }
