@@ -82,7 +82,7 @@ class RealVariable(
         append(
             when (symbol) {
                 is FirClassSymbol<*> -> symbol.classId
-                is FirCallableSymbol<*> -> symbol.callableId
+                is FirCallableSymbol<*> -> symbol.callableId ?: symbol.name
                 else -> symbol
             }
         )
