@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.konan.library.components
+package org.jetbrains.kotlin.library.components
 
 /** Common constants for Native Klib extensions. */
 object KlibNativeConstants {
