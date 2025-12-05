@@ -18,6 +18,11 @@ FILE[kind=File[packageFqName=foo]]
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=foo]
+        VALUE_ARGUMENT_LIST
+          VALUE_ARGUMENT[isSpread=false]
+            VALUE_ARGUMENT_NAME
+              REFERENCE_EXPRESSION[referencedName=d]
+            INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=0]
       DELEGATED_SUPER_TYPE_ENTRY
         TYPE_REFERENCE
           USER_TYPE

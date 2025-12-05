@@ -2177,8 +2177,6 @@ org.jetbrains.kotlin.psi.stubs.elements.KtTypeProjectionElementType:constructor(
 org.jetbrains.kotlin.psi.stubs.elements.KtUserTypeElementType
 org.jetbrains.kotlin.psi.stubs.elements.KtUserTypeElementType:constructor(String)
 org.jetbrains.kotlin.psi.stubs.elements.KtValueArgumentElementType
-org.jetbrains.kotlin.psi.stubs.elements.KtValueArgumentListElementType
-org.jetbrains.kotlin.psi.stubs.elements.KtValueArgumentListElementType:constructor(String)
 org.jetbrains.kotlin.psi.stubs.elements.StubIndexService
 org.jetbrains.kotlin.psi.stubs.elements.StubIndexService.Companion.getInstance()
 org.jetbrains.kotlin.psi.stubs.elements.StubIndexService.indexAnnotation(KotlinAnnotationEntryStub, IndexSink)

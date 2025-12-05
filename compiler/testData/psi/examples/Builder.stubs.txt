@@ -11,6 +11,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=BuilderKt]]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=AntBuilder]
+          VALUE_ARGUMENT_LIST
       CLASS_BODY
         PROPERTY[fqName=null, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=groovy]
           MODIFIER_LIST[]

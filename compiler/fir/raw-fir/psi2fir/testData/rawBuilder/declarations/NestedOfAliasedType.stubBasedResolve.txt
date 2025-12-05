@@ -13,14 +13,14 @@ FILE: [ResolvedTo(BODY_RESOLVE)] NestedOfAliasedType.kt
 
     }
     public final [ResolvedTo(BODY_RESOLVE)] typealias TA = R|A|
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class B : R|{TA=} A| {
-        public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=B] constructor(): R|B| {
-            LAZY_super<R|{TA=} A|>
+    public final [ResolvedTo(BODY_RESOLVE)] class B : R|{TA=} A| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=B] constructor(): R|B| {
+            super<R|{TA=} A|>()
         }
 
-        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class NestedInB : R|A.Nested| {
-            public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=NestedInB] constructor(): R|B.NestedInB| {
-                LAZY_super<R|A.Nested|>
+        public final [ResolvedTo(BODY_RESOLVE)] class NestedInB : R|A.Nested| {
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=NestedInB] constructor(): R|B.NestedInB| {
+                super<R|A.Nested|>()
             }
 
         }

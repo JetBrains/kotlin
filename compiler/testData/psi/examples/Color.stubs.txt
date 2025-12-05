@@ -25,6 +25,13 @@ FILE[kind=File[packageFqName=<root>]]
               TYPE_REFERENCE
                 USER_TYPE
                   ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION[referencedName=Color]
+            VALUE_ARGUMENT_LIST
+              VALUE_ARGUMENT[isSpread=false]
+                INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=255]
+              VALUE_ARGUMENT[isSpread=false]
+                INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=0]
+              VALUE_ARGUMENT[isSpread=false]
+                INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=0]
       ENUM_ENTRY[classId=null, fqName=Color.GREEN, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=GREEN, superNames=[Color]]
         INITIALIZER_LIST
           SUPER_TYPE_CALL_ENTRY
@@ -32,6 +39,13 @@ FILE[kind=File[packageFqName=<root>]]
               TYPE_REFERENCE
                 USER_TYPE
                   ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION[referencedName=Color]
+            VALUE_ARGUMENT_LIST
+              VALUE_ARGUMENT[isSpread=false]
+                INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=0]
+              VALUE_ARGUMENT[isSpread=false]
+                INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=255]
+              VALUE_ARGUMENT[isSpread=false]
+                INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=0]
       ENUM_ENTRY[classId=null, fqName=Color.BLUE, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=BLUE, superNames=[Color]]
         INITIALIZER_LIST
           SUPER_TYPE_CALL_ENTRY
@@ -39,3 +53,10 @@ FILE[kind=File[packageFqName=<root>]]
               TYPE_REFERENCE
                 USER_TYPE
                   ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION[referencedName=Color]
+            VALUE_ARGUMENT_LIST
+              VALUE_ARGUMENT[isSpread=false]
+                INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=0]
+              VALUE_ARGUMENT[isSpread=false]
+                INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=0]
+              VALUE_ARGUMENT[isSpread=false]
+                INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=255]

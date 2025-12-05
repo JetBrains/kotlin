@@ -12,6 +12,7 @@ FILE[kind=File[packageFqName=test]]
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=Sealed]
+            VALUE_ARGUMENT_LIST
       OBJECT_DECLARATION[classId=test/Sealed.Top, fqName=test.Sealed.Top, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Top, superNames=[Sealed]]
         SUPER_TYPE_LIST
           SUPER_TYPE_CALL_ENTRY
@@ -19,3 +20,4 @@ FILE[kind=File[packageFqName=test]]
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=Sealed]
+            VALUE_ARGUMENT_LIST

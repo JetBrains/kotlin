@@ -65,6 +65,7 @@ FILE[kind=File[packageFqName=<root>]]
                       TYPE_REFERENCE
                         USER_TYPE
                           REFERENCE_EXPRESSION[referencedName=Goo]
+                    VALUE_ARGUMENT_LIST
           CLASS[classId=/foo.Bar.Bar, fqName=foo.Bar.Bar, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=Bar, superNames=[]]
             CLASS_BODY
           FUN[fqName=foo.Bar.foo, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
@@ -127,3 +128,4 @@ FILE[kind=File[packageFqName=<root>]]
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=Goo]
+            VALUE_ARGUMENT_LIST

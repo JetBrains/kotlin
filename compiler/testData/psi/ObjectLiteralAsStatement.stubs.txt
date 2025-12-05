@@ -21,6 +21,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=ObjectLiteralAsStatementKt]]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Thread]
+          VALUE_ARGUMENT_LIST
       CLASS_BODY
     OBJECT_DECLARATION[classId=null, fqName=null, isLocal=true, isObjectLiteral=true, isTopLevel=false, name=null, superNames=[]]
       CLASS_BODY

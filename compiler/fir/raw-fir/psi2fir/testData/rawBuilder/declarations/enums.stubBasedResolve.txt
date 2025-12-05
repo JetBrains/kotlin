@@ -71,8 +71,20 @@ FILE: [ResolvedTo(BODY_RESOLVE)] enums.kt
 
         }
 
-        public final static [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=PseudoInsn] enum entry FAKE_ALWAYS_TRUE_IFEQ: R|PseudoInsn| = LAZY_EXPRESSION
-        public final static [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=PseudoInsn] enum entry FAKE_ALWAYS_FALSE_IFEQ: R|PseudoInsn| = LAZY_EXPRESSION
+        public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=PseudoInsn] enum entry FAKE_ALWAYS_TRUE_IFEQ: R|PseudoInsn| = object : R|PseudoInsn| {
+            private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
+                super<R|PseudoInsn|>(String(()I))
+            }
+
+        }
+
+        public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=PseudoInsn] enum entry FAKE_ALWAYS_FALSE_IFEQ: R|PseudoInsn| = object : R|PseudoInsn| {
+            private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
+                super<R|PseudoInsn|>(String(()I))
+            }
+
+        }
+
         public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=PseudoInsn] enum entry SAVE_STACK_BEFORE_TRY: R|PseudoInsn| = object : R|PseudoInsn| {
             private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
                 super<R|PseudoInsn|>()
@@ -94,7 +106,13 @@ FILE: [ResolvedTo(BODY_RESOLVE)] enums.kt
 
         }
 
-        public final static [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=PseudoInsn] enum entry AS_NOT_NULL: R|PseudoInsn| = LAZY_EXPRESSION
+        public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=PseudoInsn] enum entry AS_NOT_NULL: R|PseudoInsn| = object : R|PseudoInsn| {
+            private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
+                super<R|PseudoInsn|>(String((Ljava/lang/Object;)Ljava/lang/Object;))
+            }
+
+        }
+
         public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun emit(): R|kotlin/Unit| { LAZY_BLOCK }
 
         public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=PseudoInsn] fun values(): R|kotlin/Array<PseudoInsn>| {

@@ -4,14 +4,14 @@ FILE: [ResolvedTo(BODY_RESOLVE)] NestedSuperType.kt
             super<R|kotlin/Any|>()
         }
 
-        public abstract [ResolvedTo(ANNOTATION_ARGUMENTS)] class NestedOne : R|p/My| {
-            public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=NestedOne] constructor(): R|p/My.NestedOne| {
-                LAZY_super<R|p/My|>
+        public abstract [ResolvedTo(BODY_RESOLVE)] class NestedOne : R|p/My| {
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=NestedOne] constructor(): R|p/My.NestedOne| {
+                super<R|p/My|>()
             }
 
-            public abstract [ResolvedTo(ANNOTATION_ARGUMENTS)] class NestedTwo : R|p/My.NestedOne| {
-                public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=NestedTwo] constructor(): R|p/My.NestedOne.NestedTwo| {
-                    LAZY_super<R|p/My.NestedOne|>
+            public abstract [ResolvedTo(BODY_RESOLVE)] class NestedTwo : R|p/My.NestedOne| {
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=NestedTwo] constructor(): R|p/My.NestedOne.NestedTwo| {
+                    super<R|p/My.NestedOne|>()
                 }
 
             }
@@ -19,14 +19,14 @@ FILE: [ResolvedTo(BODY_RESOLVE)] NestedSuperType.kt
         }
 
     }
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class Your : R|p/My| {
-        public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=Your] constructor(): R|p/Your| {
-            LAZY_super<R|p/My|>
+    public final [ResolvedTo(BODY_RESOLVE)] class Your : R|p/My| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Your] constructor(): R|p/Your| {
+            super<R|p/My|>()
         }
 
-        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class NestedThree : R|p/My.NestedOne| {
-            public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=NestedThree] constructor(): R|p/Your.NestedThree| {
-                LAZY_super<R|p/My.NestedOne|>
+        public final [ResolvedTo(BODY_RESOLVE)] class NestedThree : R|p/My.NestedOne| {
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=NestedThree] constructor(): R|p/Your.NestedThree| {
+                super<R|p/My.NestedOne|>()
             }
 
         }

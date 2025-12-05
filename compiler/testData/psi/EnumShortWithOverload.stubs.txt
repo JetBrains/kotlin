@@ -17,6 +17,9 @@ FILE[kind=File[packageFqName=<root>]]
               TYPE_REFERENCE
                 USER_TYPE
                   ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION[referencedName=Color]
+            VALUE_ARGUMENT_LIST
+              VALUE_ARGUMENT[isSpread=false]
+                INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=0xFF000]
         CLASS_BODY
           FUN[fqName=Color.RED.foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
             MODIFIER_LIST[override]
@@ -31,6 +34,9 @@ FILE[kind=File[packageFqName=<root>]]
               TYPE_REFERENCE
                 USER_TYPE
                   ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION[referencedName=Color]
+            VALUE_ARGUMENT_LIST
+              VALUE_ARGUMENT[isSpread=false]
+                INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=0x00FF00]
         CLASS_BODY
           FUN[fqName=Color.GREEN.foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
             MODIFIER_LIST[override]
@@ -45,6 +51,9 @@ FILE[kind=File[packageFqName=<root>]]
               TYPE_REFERENCE
                 USER_TYPE
                   ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION[referencedName=Color]
+            VALUE_ARGUMENT_LIST
+              VALUE_ARGUMENT[isSpread=false]
+                INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=0x0000FF]
         CLASS_BODY
           FUN[fqName=Color.BLUE.foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
             MODIFIER_LIST[override]

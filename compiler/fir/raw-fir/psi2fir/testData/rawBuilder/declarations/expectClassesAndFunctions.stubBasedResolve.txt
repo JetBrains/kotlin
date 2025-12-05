@@ -13,16 +13,16 @@ FILE: [ResolvedTo(BODY_RESOLVE)] expectClassesAndFunctions.kt
         }
 
     }
-    public final expect [ResolvedTo(ANNOTATION_ARGUMENTS)] class D : R|B| {
-        public expect [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=D] error_constructor(): R|D| {
-            LAZY_super<R|B|>
+    public final expect [ResolvedTo(BODY_RESOLVE)] class D : R|B| {
+        public expect [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=D] error_constructor(): R|D| {
+            super<R|B|>()
         }
 
     }
-    public final expect [ResolvedTo(ANNOTATION_ARGUMENTS)] class E : R|B|, R|C| {
-        public expect [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=E] error_constructor(): R|E| {
-            LAZY_super<R|B|>
-            LAZY_super<R|C|>
+    public final expect [ResolvedTo(BODY_RESOLVE)] class E : R|B|, R|C| {
+        public expect [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=E] error_constructor(): R|E| {
+            super<R|B|>()
+            super<R|C|>()
         }
 
     }
