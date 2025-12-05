@@ -169,7 +169,7 @@ abstract class KotlinLibrarySearchPathResolver<L : KotlinLibrary>(
     // Store already resolved libraries.
     private inner class ResolvedLibrary(val library: L?)
 
-    private val resolvedLibraries = HashMap<UnresolvedLibrary, ResolvedLibrary>()
+    private val resolvedLibraries = java.util.concurrent.ConcurrentHashMap<UnresolvedLibrary, ResolvedLibrary>()
 
     private fun resolveOrNull(unresolved: UnresolvedLibrary): L? {
         return resolvedLibraries.getOrPut(unresolved) {

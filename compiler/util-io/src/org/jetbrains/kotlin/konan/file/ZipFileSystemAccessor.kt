@@ -32,20 +32,24 @@ class ZipFileSystemCacheableAccessor(private val cacheLimit: Int) : ZipFileSyste
     }
 
     override fun <T> withZipFileSystem(zipFile: File, action: (FileSystem) -> T): T {
-        val fileSystem = openedFileSystems.getOrPut(zipFile) { zipFile.zipFileSystem() }
+        val fileSystem = synchronized(openedFileSystems) {
+            openedFileSystems.getOrPut(zipFile) { zipFile.zipFileSystem() }
+        }
         return action(fileSystem)
     }
 
     fun reset() {
         var lastException: Exception? = null
-        for (fileSystem in openedFileSystems.values) {
-            try {
-                fileSystem.close()
-            } catch (e: Exception) {
-                lastException = e
+        synchronized(openedFileSystems) {
+            for (fileSystem in openedFileSystems.values) {
+                try {
+                    fileSystem.close()
+                } catch (e: Exception) {
+                    lastException = e
+                }
             }
+            openedFileSystems.clear()
         }
-        openedFileSystems.clear()
 
         lastException?.let {
             throw it
