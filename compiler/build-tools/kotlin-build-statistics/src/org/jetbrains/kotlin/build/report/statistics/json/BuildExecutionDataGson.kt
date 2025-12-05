@@ -16,6 +16,7 @@ import com.google.gson.JsonSerializer
 import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
 import org.jetbrains.kotlin.build.report.metrics.BuildTimeMetric
 import org.jetbrains.kotlin.build.report.metrics.CustomBuildTimeMetric
+import org.jetbrains.kotlin.build.report.metrics.KlibSizeMetric
 import org.jetbrains.kotlin.build.report.metrics.allBuildTimeMetrics
 import org.jetbrains.kotlin.build.report.metrics.getAllMetrics
 import java.io.File
@@ -43,6 +44,10 @@ val buildExecutionDataGson = GsonBuilder()
             val metricName = json?.asJsonObject["name"]?.let { context?.deserialize<String>(it, String::class.java) } ?: return null
             val metric = getAllMetrics().firstOrNull { it.name == metricName }
             if (metric != null) return metric
+
+            if (metricName.startsWith(KlibSizeMetric.ROOT_METRIC_NAME)) {
+                return KlibSizeMetric.createIfDoesNotExistAndReturn(metricName)
+            }
 
             val parentMetricName =
                 json.asJsonObject["parent"]?.asJsonObject["name"]?.let { context?.deserialize<String>(it, String::class.java) }

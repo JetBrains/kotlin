@@ -20,7 +20,8 @@ fun getAllMetrics() = allBuildPerformanceMetrics + getAllCustomBuildTimeMetrics(
 val allBuildTimeMetrics: List<BuildTimeMetric>
     get() = getAllMetricsByType(BuildTimeMetric::class) + getAllCustomBuildTimeMetrics()
 
-internal val allBuildPerformanceMetrics = getAllMetricsByType(BuildPerformanceMetric::class)
+internal val allBuildPerformanceMetrics
+    get() = getAllMetricsByType(BuildPerformanceMetric::class) + getAllKLibSizeMetrics()
 
 val allBuildTimeMetricsByParentMap
     get() = allBuildTimeMetrics.groupBy { it.parent }
