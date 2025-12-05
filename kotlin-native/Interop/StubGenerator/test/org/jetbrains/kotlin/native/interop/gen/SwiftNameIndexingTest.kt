@@ -60,82 +60,68 @@ class SwiftNameIndexingTest : IndexerTestsBase() {
 
     @Test
     fun `method without swift_name`() {
-        val method = indexObjCMethod("""
-            @interface Foo
-            - (void)doSomething;
-            @end
-        """.trimIndent())
+        val method = indexObjCMethod("- (void)doSomething;")
         assertNull(method.swiftName)
     }
 
     @Test
     fun `method with swift_name attribute`() {
         val method = indexObjCMethod("""
-            @interface Foo
             - (void)doSomething __attribute__((swift_name("performAction()")));
-            @end
-        """.trimIndent())
+            """.trimIndent()
+        )
         assertEquals("performAction()", method.swiftName)
     }
 
     @Test
     fun `method with swift_name and parameters`() {
         val method = indexObjCMethod("""
-            @interface Foo
             - (void)doSomething:(int)value with:(char *)name __attribute__((swift_name("perform(value:name:)")));
-            @end
-        """.trimIndent())
+            """.trimIndent()
+        )
         assertEquals("perform(value:name:)", method.swiftName)
     }
 
     @Test
     fun `init method with swift_name`() {
         val method = indexObjCMethod("""
-            @interface Foo
             - (instancetype)initWithValue:(int)value
                 __attribute__((swift_name("swiftNameInit(value:)")));
-            @end
-        """.trimIndent())
+        """.trimIndent()
+        )
         assertEquals("swiftNameInit(value:)", method.swiftName)
     }
 
     @Test
     fun `class method with swift_name`() {
         val method = indexObjCMethod("""
-            @interface Foo
             + (void)factoryMethod __attribute__((swift_name("create()")));
-            @end
-        """.trimIndent())
+            """.trimIndent()
+        )
         assertEquals("create()", method.swiftName)
     }
 
     @Test
     fun `property without swift_name`() {
-        val property = indexObjCProperty("""
-            @interface Foo
-            @property int value;
-            @end
-        """.trimIndent())
+        val property = indexObjCProperty("@property int value;")
         assertNull(property.swiftName)
     }
 
     @Test
     fun `property with swift_name attribute`() {
         val property = indexObjCProperty("""
-            @interface Foo
             @property int value __attribute__((swift_name("renamedValue")));
-            @end
-        """.trimIndent())
+            """.trimIndent()
+        )
         assertEquals("renamedValue", property.swiftName)
     }
 
     @Test
     fun `readonly property with swift_name`() {
         val property = indexObjCProperty("""
-            @interface Foo
-            @property (readonly) int count __attribute__((swift_name("numberOfItems")));
-            @end
-        """.trimIndent())
+                    @property (readonly) int count __attribute__((swift_name("numberOfItems")));
+                    """.trimIndent()
+        )
         assertEquals("numberOfItems", property.swiftName)
     }
 
@@ -145,11 +131,23 @@ class SwiftNameIndexingTest : IndexerTestsBase() {
     private fun indexObjCProtocol(headerContents: String, protocolName: String = "Foo"): ObjCProtocol =
             indexObjCHeader(headerContents).index.objCProtocols.single { it.name == protocolName }
 
-    private fun indexObjCMethod(headerContents: String, className: String = "Foo"): ObjCMethod =
-            indexObjCClasses(headerContents).single { it.name == className }.methods.single()
+    private fun indexObjCMethod(methodDeclaration: String): ObjCMethod {
+        val header = """
+            @interface Foo
+            $methodDeclaration
+            @end
+        """.trimIndent()
+        return indexObjCClasses(header).single { it.name == "Foo" }.methods.single()
+    }
 
-    private fun indexObjCProperty(headerContents: String, className: String = "Foo"): ObjCProperty =
-            indexObjCClasses(headerContents).single { it.name == className }.properties.single()
+    private fun indexObjCProperty(propertyDeclaration: String): ObjCProperty {
+        val header = """
+            @interface Foo
+            $propertyDeclaration
+            @end
+        """.trimIndent()
+        return indexObjCClasses(header).single { it.name == "Foo" }.properties.single()
+    }
 
     private fun indexObjCClasses(headerContents: String): Collection<ObjCClass> =
             indexObjCHeader(headerContents).index.objCClasses
