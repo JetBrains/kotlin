@@ -19,6 +19,7 @@
 package androidx.compose.compiler.plugins.kotlin.lower
 
 import androidx.compose.compiler.plugins.kotlin.ComposeNames
+import androidx.compose.compiler.plugins.kotlin.ComposeNames.ComposerParameter
 import androidx.compose.compiler.plugins.kotlin.FeatureFlags
 import androidx.compose.compiler.plugins.kotlin.ModuleMetrics
 import androidx.compose.compiler.plugins.kotlin.analysis.StabilityInferencer
@@ -320,6 +321,7 @@ class ComposerParamTransformer(
                     )
                 }
                 adapterFn.parent = localParent
+                transformedFunctionSet.add(adapterFn)
                 add(adapterFn)
 
                 add(
@@ -424,10 +426,10 @@ class ComposerParamTransformer(
                 val p = newFn.parameters[i]
                 p.kind == IrParameterKind.Regular && newCall.arguments[i] != null
             }
-            var argIndex = newCall.arguments.count { it != null }
-//            if (oldValParams != valueParamCount || argIndex != arguments.size) {
-//                error("paramcount")
-//            }
+
+            val composerParamIdx = newFn.parameters.indexOfFirst { it.name == ComposerParameter }
+            // find composer param, but lambdas dont have it
+            var argIndex = if (composerParamIdx != -1) composerParamIdx else newCall.arguments.count { it != null }
             newCall.arguments[argIndex++] = irGet(composerParam)
 
             // $changed[n]
