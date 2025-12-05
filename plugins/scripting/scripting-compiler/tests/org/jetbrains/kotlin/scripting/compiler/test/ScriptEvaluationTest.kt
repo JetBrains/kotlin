@@ -5,6 +5,7 @@ import org.jetbrains.kotlin.scripting.compiler.plugin.SCRIPT_TEST_BASE_COMPILER_
 import org.jetbrains.kotlin.scripting.compiler.plugin.configureFirSession
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.SCRIPT_BASE_COMPILER_ARGUMENTS_PROPERTY
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.ScriptJvmCompilerIsolated
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.ScriptJvmK2CompilerIsolated
 import org.jetbrains.kotlin.scripting.compiler.test.assertEqualsTrimmed
 import org.jetbrains.kotlin.scripting.compiler.test.dependenciesResolver
 import org.jetbrains.kotlin.test.util.JUnit4Assertions.assertTrue
@@ -150,7 +151,7 @@ class ScriptEvaluationTest {
         compilationConfiguration: ScriptCompilationConfiguration = ScriptCompilationConfiguration(),
         hostConfiguration: ScriptingHostConfiguration = defaultJvmScriptingHostConfiguration,
     ): ResultWithDiagnostics<CompiledScript> {
-        val compiler = ScriptJvmCompilerIsolated(hostConfiguration)
+        val compiler = if (isK2) ScriptJvmK2CompilerIsolated(hostConfiguration) else ScriptJvmCompilerIsolated(hostConfiguration)
         return compiler.compile(script, compilationConfiguration)
     }
 

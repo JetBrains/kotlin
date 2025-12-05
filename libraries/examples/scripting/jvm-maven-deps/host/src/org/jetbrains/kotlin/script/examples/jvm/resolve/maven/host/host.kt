@@ -6,24 +6,18 @@
 package org.jetbrains.kotlin.script.examples.jvm.resolve.maven.host
 
 import org.jetbrains.kotlin.script.examples.jvm.resolve.maven.ScriptWithMavenDeps
-import org.jetbrains.kotlin.scripting.compiler.plugin.impl.withK2ScriptCompilerProxyWithLightTree
 import java.io.File
 import kotlin.script.experimental.api.EvaluationResult
 import kotlin.script.experimental.api.ResultWithDiagnostics
 import kotlin.script.experimental.host.toScriptSource
 import kotlin.script.experimental.jvmhost.BasicJvmScriptingHost
-import kotlin.script.experimental.jvmhost.JvmScriptCompiler
 import kotlin.script.experimental.jvmhost.createJvmCompilationConfigurationFromTemplate
 
 fun evalFile(scriptFile: File): ResultWithDiagnostics<EvaluationResult> {
 
     val compilationConfiguration = createJvmCompilationConfigurationFromTemplate<ScriptWithMavenDeps>()
 
-    return withK2ScriptCompilerProxyWithLightTree(compilationConfiguration) { compilerProxy ->
-        BasicJvmScriptingHost(
-            compiler = JvmScriptCompiler(compilerProxy = compilerProxy)
-        ).eval(scriptFile.toScriptSource(), compilationConfiguration, null)
-    }
+    return BasicJvmScriptingHost().eval(scriptFile.toScriptSource(), compilationConfiguration, null)
 }
 
 fun main(vararg args: String) {

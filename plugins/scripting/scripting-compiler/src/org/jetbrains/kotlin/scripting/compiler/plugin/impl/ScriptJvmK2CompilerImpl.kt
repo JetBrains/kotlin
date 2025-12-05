@@ -63,10 +63,24 @@ import kotlin.script.experimental.impl.refineOnSyntaxTree
 import kotlin.script.experimental.jvm.*
 import kotlin.script.experimental.jvm.util.toSourceCodePosition
 
-class ScriptJvmK2Compiler(
+class ScriptJvmK2CompilerIsolated(val hostConfiguration: ScriptingHostConfiguration) : ScriptCompilerProxy {
+    override fun compile(
+        script: SourceCode,
+        scriptCompilationConfiguration: ScriptCompilationConfiguration
+    ): ResultWithDiagnostics<CompiledScript> =
+        withK2ScriptCompilerWithLightTree(
+            scriptCompilationConfiguration.with {
+                hostConfiguration(this@ScriptJvmK2CompilerIsolated.hostConfiguration)
+            }
+        ) {
+            it.compile(script)
+        }
+}
+
+class ScriptJvmK2CompilerImpl(
     state: K2ScriptingCompilerEnvironment,
     private val convertToFir: SourceCode.(FirSession, BaseDiagnosticsCollector) -> FirFile
-) : ScriptCompilerProxy {
+) {
 
     private val state = (state as? K2ScriptingCompilerEnvironmentInternal)
         ?: error("Expected the state of type K2ScriptingCompilerEnvironmentInternal, got ${state::class}")
@@ -79,7 +93,7 @@ class ScriptJvmK2Compiler(
         val renderDiagnosticName: Boolean,
     )
 
-    override fun compile(
+    fun compile(
         script: SourceCode,
         scriptCompilationConfiguration: ScriptCompilationConfiguration,
     ): ResultWithDiagnostics<CompiledScript> = context(
@@ -129,7 +143,7 @@ class ScriptJvmK2Compiler(
         val extensionRegistrars = FirExtensionRegistrar.getInstances(project)
         val compilerEnvironment = ModuleCompilerEnvironment(state.projectEnvironment, reportingCtx.diagnosticsCollector)
         val renderDiagnosticName = compilerConfiguration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
-        val targetId = TargetId(script.name!!, "java-production")
+        val targetId = TargetId(script.name ?: "main", "java-production")
 
         scriptCompilationConfiguration[ScriptCompilationConfiguration.dependencies]?.let { dependencies ->
             val classpathFiles = dependencies.flatMap {
@@ -158,7 +172,7 @@ class ScriptJvmK2Compiler(
             }
         }
 
-        val moduleData = state.moduleDataProvider.addNewScriptModuleData(Name.special("<script-${script.name!!}>"))
+        val moduleData = state.moduleDataProvider.addNewScriptModuleData(Name.special("<script-${script.name ?: "main"}>"))
 
         val session = FirJvmSessionFactory.createSourceSession(
             moduleData,
@@ -258,37 +272,37 @@ class ScriptJvmK2Compiler(
     }
 }
 
-fun <T> withK2ScriptCompilerProxyWithLightTree(
+fun <T> withK2ScriptCompilerWithLightTree(
     scriptCompilationConfiguration: ScriptCompilationConfiguration,
     parentMessageCollector: MessageCollector? = null,
     moduleName: Name = Name.special("<script-module>"),
-    body: (ScriptJvmK2Compiler) -> T
+    body: (ScriptJvmK2CompilerImpl) -> T
 ): T {
     val disposable = Disposer.newDisposable("Default disposable for scripting compiler")
     return try {
-        body(createK2ScriptCompilerProxyWithLightTree(scriptCompilationConfiguration, parentMessageCollector, moduleName, disposable))
+        body(createK2ScriptCompilerWithLightTree(scriptCompilationConfiguration, parentMessageCollector, moduleName, disposable))
     } finally {
         Disposer.dispose(disposable)
     }
 }
 
-fun createK2ScriptCompilerProxyWithLightTree(
+fun createK2ScriptCompilerWithLightTree(
     scriptCompilationConfiguration: ScriptCompilationConfiguration,
     parentMessageCollector: MessageCollector? = null,
     moduleName: Name = Name.special("<script-module>"),
     disposable: Disposable
-): ScriptJvmK2Compiler {
+): ScriptJvmK2CompilerImpl {
     val state =
         createCompilerState(
             moduleName, ScriptDiagnosticsMessageCollector(parentMessageCollector), disposable,
             scriptCompilationConfiguration,
             scriptCompilationConfiguration[ScriptCompilationConfiguration.hostConfiguration] ?: defaultJvmScriptingHostConfiguration
         )
-    return ScriptJvmK2Compiler(state) { session, diagnosticsReporter ->
+    return ScriptJvmK2CompilerImpl(state) { session, diagnosticsReporter ->
         val sourcesToPathsMapper = session.sourcesToPathsMapper
         val builder = LightTree2Fir(session, session.kotlinScopeProvider, diagnosticsReporter)
         val linesMapping = text.toSourceLinesMapping()
-        builder.buildFirFile(text, toKtSourceFile()!!, linesMapping).also { firFile ->
+        builder.buildFirFile(text, toKtSourceFile()!!, linesMapping, forceAsScript = true).also { firFile ->
             (session.firProvider as FirProviderImpl).recordFile(firFile)
             sourcesToPathsMapper.registerFileSource(firFile.source!!, locationId ?: name!!)
         }
