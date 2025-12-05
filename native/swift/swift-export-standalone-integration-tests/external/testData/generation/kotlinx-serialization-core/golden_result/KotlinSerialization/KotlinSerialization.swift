@@ -820,7 +820,7 @@ extension ExportedKotlinPackages.kotlinx.serialization.modules {
     public final class PolymorphicModuleBuilder: KotlinRuntime.KotlinBase {
         @available(*, deprecated, message: "Deprecated in favor of function with more precise name: defaultDeserializer. Replacement: defaultDeserializer(defaultSerializerProvider)")
         public func `default`(
-            defaultSerializerProvider: @escaping (Swift.Optional<Swift.String>) -> Swift.Optional<any ExportedKotlinPackages.kotlinx.serialization.DeserializationStrategy>
+            defaultSerializerProvider: @escaping (Swift.String?) -> (any ExportedKotlinPackages.kotlinx.serialization.DeserializationStrategy)?
         ) -> Swift.Void {
             return kotlinx_serialization_modules_PolymorphicModuleBuilder_default__TypesOfArguments__U28Swift_Optional_Swift_String_U29202D_U20Swift_Optional_anyU20ExportedKotlinPackages_kotlinx_serialization_DeserializationStrategy___(self.__externalRCRef(), {
                 let originalBlock = defaultSerializerProvider
@@ -828,7 +828,7 @@ extension ExportedKotlinPackages.kotlinx.serialization.modules {
             }())
         }
         public func defaultDeserializer(
-            defaultDeserializerProvider: @escaping (Swift.Optional<Swift.String>) -> Swift.Optional<any ExportedKotlinPackages.kotlinx.serialization.DeserializationStrategy>
+            defaultDeserializerProvider: @escaping (Swift.String?) -> (any ExportedKotlinPackages.kotlinx.serialization.DeserializationStrategy)?
         ) -> Swift.Void {
             return kotlinx_serialization_modules_PolymorphicModuleBuilder_defaultDeserializer__TypesOfArguments__U28Swift_Optional_Swift_String_U29202D_U20Swift_Optional_anyU20ExportedKotlinPackages_kotlinx_serialization_DeserializationStrategy___(self.__externalRCRef(), {
                 let originalBlock = defaultDeserializerProvider

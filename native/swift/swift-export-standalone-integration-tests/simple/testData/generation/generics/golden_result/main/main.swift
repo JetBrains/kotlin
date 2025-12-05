@@ -285,7 +285,7 @@ public func createMap(
 }
 public func customFilter(
     _ receiver: [(any KotlinRuntimeSupport._KotlinBridgeable)?],
-    predicate: @escaping (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Bool
+    predicate: @escaping ((any KotlinRuntimeSupport._KotlinBridgeable)?) -> Swift.Bool
 ) -> [(any KotlinRuntimeSupport._KotlinBridgeable)?] {
     return __root___customFilter__TypesOfArguments__Swift_Array_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U29202D_U20Swift_Bool__(receiver.map { it in it as! NSObject? ?? NSNull() }, {
         let originalBlock = predicate

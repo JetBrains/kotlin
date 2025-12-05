@@ -4,7 +4,7 @@ import KotlinRuntimeSupport
 import data
 
 public func consume_block_with_opt_reftype(
-    block: @escaping (Swift.Optional<Swift.Int32>, Swift.Optional<data.Bar>, Swift.Optional<Swift.String>, Swift.Optional<Swift.Set<Swift.AnyHashable>>) -> Swift.Optional<data.Foo>
+    block: @escaping (Swift.Int32?, data.Bar?, Swift.String?, Swift.Set<Swift.AnyHashable>?) -> data.Foo?
 ) -> Swift.Void {
     return __root___consume_block_with_opt_reftype__TypesOfArguments__U28Swift_Optional_Swift_Int32__U20Swift_Optional_data_Bar__U20Swift_Optional_Swift_String__U20Swift_Optional_Swift_Set_Swift_AnyHashable__U29202D_U20Swift_Optional_data_Foo___({
         let originalBlock = block

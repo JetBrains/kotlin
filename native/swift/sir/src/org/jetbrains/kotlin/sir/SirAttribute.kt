@@ -5,6 +5,10 @@
 
 package org.jetbrains.kotlin.sir
 
+public sealed interface SirFunctionalTypeAttribute {
+    fun isPrintableInPosition(position: SirTypeVariance): Boolean
+}
+
 public sealed interface SirAttribute {
     val identifier: String
     val arguments: List<SirArgument>? get() = null
@@ -46,9 +50,11 @@ public sealed interface SirAttribute {
         override val arguments: List<SirArgument>? get() = null
     }
 
-    object Escaping : SirAttribute {
+    object Escaping : SirAttribute, SirFunctionalTypeAttribute {
         override val identifier: String get() = "escaping"
         override val arguments: List<SirArgument>? get() = null
+
+        override fun isPrintableInPosition(position: SirTypeVariance): Boolean = position == SirTypeVariance.CONTRAVARIANT
     }
 
     class ObjC(val name: String?) : SirAttribute {

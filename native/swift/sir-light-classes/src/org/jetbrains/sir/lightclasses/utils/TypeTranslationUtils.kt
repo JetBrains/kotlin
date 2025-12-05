@@ -44,7 +44,6 @@ internal inline fun <reified T : KaFunctionSymbol> SirFromKtSymbol<T>.translateP
             val sirType = createParameterType(ktSymbol, parameter)
                 .let {
                     when (it) {
-                        is SirFunctionalType -> it.copyAppendingAttributes(SirAttribute.Escaping)
                         is SirNominalType -> if (it.isTypealiasOntoFunctionalType) {
                             it.copyAppendingAttributes(SirAttribute.Escaping)
                         } else {

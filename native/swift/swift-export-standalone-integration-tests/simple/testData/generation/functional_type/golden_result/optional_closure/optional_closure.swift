@@ -3,7 +3,7 @@ import KotlinRuntime
 import KotlinRuntimeSupport
 
 public func consume_consuming_opt_closure(
-    arg: ((Swift.Optional<() -> Swift.String>) -> Swift.Void)?
+    arg: (((() -> Swift.String)?) -> Swift.Void)?
 ) -> Swift.Void {
     return __root___consume_consuming_opt_closure__TypesOfArguments__Swift_Optional_U28Swift_Optional_U2829202D_U20Swift_String_U29202D_U20Swift_Void___(arg.map { it in {
         let originalBlock = it
@@ -22,7 +22,7 @@ public func consume_opt_closure(
     }() } ?? nil)
 }
 public func consume_producing_opt_closure(
-    arg: (() -> Swift.Optional<() -> Swift.Void>)?
+    arg: (() -> (() -> Swift.Void)?)?
 ) -> Swift.Void {
     return __root___consume_producing_opt_closure__TypesOfArguments__Swift_Optional_U2829202D_U20Swift_Optional_U2829202D_U20Swift_Void____(arg.map { it in {
         let originalBlock = it
