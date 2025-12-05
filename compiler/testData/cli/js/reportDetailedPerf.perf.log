@@ -9,6 +9,19 @@ Kotlin to JS compiler performance report
        DYNAMIC PHASE        $UINT>>$ ms            $REAL>>$ loc/s (InlineCallCycleChecker)
     IR SERIALIZATION        $UINT>>$ ms            $REAL>>$ loc/s
         KLIB WRITING        $UINT>>$ ms            $REAL>>$ loc/s
+KLIB element $QUOTEDSTRING$ has size of $UINT$ Bytes
+KLIB element $QUOTEDSTRING$ has size of $UINT$ Bytes
+KLIB element $QUOTEDSTRING$ has size of $UINT$ Bytes
+KLIB element $QUOTEDSTRING$ has size of $UINT$ Bytes
+KLIB element $QUOTEDSTRING$ has size of $UINT$ Bytes
+KLIB element $QUOTEDSTRING$ has size of $UINT$ Bytes
+KLIB element $QUOTEDSTRING$ has size of $UINT$ Bytes
+KLIB element $QUOTEDSTRING$ has size of $UINT$ Bytes
+KLIB element $QUOTEDSTRING$ has size of $UINT$ Bytes
+KLIB element $QUOTEDSTRING$ has size of $UINT$ Bytes
+KLIB element $QUOTEDSTRING$ has size of $UINT$ Bytes
+KLIB element $QUOTEDSTRING$ has size of $UINT$ Bytes
+KLIB element $QUOTEDSTRING$ has size of $UINT$ Bytes
 GC time for PS MarkSweep is $UINT$ ms, $UINT$ collections
 GC time for PS Scavenge is $UINT$ ms, $UINT$ collections
 JIT time is $UINT$ ms
