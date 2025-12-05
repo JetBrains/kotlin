@@ -1,6 +1,5 @@
 // ISSUE: KT-74518
 // MEMBER_NAME_FILTER: hashCode
-// IGNORE_FIR
 package one
 
 class TopLevel {
