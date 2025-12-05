@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR, JS_IR_ES6
 // FILE: file1.kt
 @JsFun("() => 42")
 private external fun clashName(): Int

@@ -1,4 +1,4 @@
-// TARGET_BACKEND: WASM
+// WITH_STDLIB
 // KT-79317
 
 import kotlin.js.*

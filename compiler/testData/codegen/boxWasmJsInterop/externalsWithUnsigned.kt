@@ -1,4 +1,5 @@
 // TARGET_BACKEND: WASM
+// ^^ For JS_IR and JS_IR_ES6, unsigned values we don't box them on external providing, so they remain to be signed (for 255 it's -1)
 // FILE: externals.js
 function provideUByte() { return -1 }
 function provideNullableUByte(nullable) { return nullable ? null : - 1 }

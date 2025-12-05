@@ -1,4 +1,5 @@
-// TARGET_BACKEND: WASM
+// IGNORE_BACKEND: JS_IR
+// ^^ In non ES6 Long is not represented as BigInt
 // WITH_STDLIB
 
 fun assertTrue(x: Boolean): Unit = check(x)

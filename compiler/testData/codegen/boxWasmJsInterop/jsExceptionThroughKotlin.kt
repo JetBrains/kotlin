@@ -1,4 +1,5 @@
 // TARGET_BACKEND: WASM
+// ^^ For JS_IR and JS_IR_ES6, the test doesn't work since we don't expect that non Error could came to the catch block
 
 //FILE: main.kt
 fun throwSomeJsException(): Int = js("{ throw new TypeError('Test'); }")

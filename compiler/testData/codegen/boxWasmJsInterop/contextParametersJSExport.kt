@@ -1,5 +1,6 @@
 // LANGUAGE: +ContextParameters
 // TARGET_BACKEND: WASM
+// ^^ For JS_IR and JS_IR_ES6, we need to emit index.mjs instead of "$moduleName_$fileName_v5.js" files to unmute this test
 
 // FILE: jsExport.kt
 external interface ContextA { fun value(): String }

@@ -1,6 +1,6 @@
 // LANGUAGE: +ContextParameters
-// TARGET_BACKEND: WASM
 // WITH_STDLIB
+// ES_MODULES
 // FILE: contextParametersJSModule.kt
 
 external interface ContextA { fun value(): String }

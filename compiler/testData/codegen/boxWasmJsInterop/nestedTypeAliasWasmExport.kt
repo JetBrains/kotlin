@@ -1,5 +1,6 @@
 // LANGUAGE: +NestedTypeAliases
 // TARGET_BACKEND: WASM
+// ^^ For JS_IR and JS_IR_ES6, we don't have and don't plan to have @WasmImport and @WasmExport annotations
 
 import kotlin.wasm.WasmExport
 

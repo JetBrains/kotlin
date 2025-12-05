@@ -1,4 +1,3 @@
-// TARGET_BACKEND: WASM
 // WITH_STDLIB
 
 // FILE: externals.js

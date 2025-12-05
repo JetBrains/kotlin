@@ -1,4 +1,5 @@
 // TARGET_BACKEND: WASM_JS
+// ^ For JS_IR and JS_IR_ES6, there is no difference between Byte and Float
 // IGNORE_BACKEND: WASM_JS
 // Ignore reason KT-67438
 

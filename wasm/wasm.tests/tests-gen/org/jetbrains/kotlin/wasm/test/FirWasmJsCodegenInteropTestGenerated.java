@@ -434,6 +434,12 @@ public class FirWasmJsCodegenInteropTestGenerated extends AbstractFirWasmJsCodeg
   }
 
   @Test
+  @TestMetadata("jsToKotlinAdaptersWithNPEAndNullCast.kt")
+  public void testJsToKotlinAdaptersWithNPEAndNullCast() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/jsToKotlinAdaptersWithNPEAndNullCast.kt");
+  }
+
+  @Test
   @TestMetadata("jsTypes.kt")
   public void testJsTypes() {
     runTest("compiler/testData/codegen/boxWasmJsInterop/jsTypes.kt");
