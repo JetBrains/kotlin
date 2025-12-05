@@ -8,17 +8,8 @@ package org.jetbrains.kotlin.ir
 import org.jetbrains.kotlin.AbstractKtSourceElement
 import org.jetbrains.kotlin.KtRealPsiSourceElement
 import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.diagnostics.AbstractKotlinSuppressCache
-import org.jetbrains.kotlin.diagnostics.DiagnosticContext
-import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.diagnostics.KtDiagnostic
-import org.jetbrains.kotlin.diagnostics.KtDiagnosticReporterWithContext
-import org.jetbrains.kotlin.diagnostics.KtSourcelessDiagnosticFactory
-import org.jetbrains.kotlin.ir.declarations.IrAnnotationContainer
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrMetadataSourceOwner
-import org.jetbrains.kotlin.ir.declarations.path
+import org.jetbrains.kotlin.diagnostics.*
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.util.file
@@ -70,7 +61,7 @@ class KtDiagnosticReporterWithImplicitIrBasedContext(
             override val languageVersionSettings: LanguageVersionSettings
                 get() = this@KtDiagnosticReporterWithImplicitIrBasedContext.languageVersionSettings
         }
-        val diagnostic = factory.create(message, context) ?: return
+        val diagnostic = factory.create(message, location = null, context) ?: return
         report(diagnostic, context)
     }
 

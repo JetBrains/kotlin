@@ -8,6 +8,7 @@
 package org.jetbrains.kotlin.diagnostics
 
 import org.jetbrains.kotlin.AbstractKtSourceElement
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
 
 // #### KtSourcelessFactory ####
 
@@ -15,8 +16,9 @@ context(context: DiagnosticContext)
 fun DiagnosticReporter.report(
     factory: KtSourcelessDiagnosticFactory,
     message: String,
+    location: CompilerMessageSourceLocation? = null,
 ) {
-    report(factory.create(message, context), context)
+    report(factory.create(message, location, context), context)
 }
 
 // #### KtDiagnosticFactory0 ####

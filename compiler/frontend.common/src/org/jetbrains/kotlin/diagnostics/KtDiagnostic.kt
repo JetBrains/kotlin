@@ -11,6 +11,7 @@ import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.AbstractKtSourceElement
 import org.jetbrains.kotlin.KtLightSourceElement
 import org.jetbrains.kotlin.KtPsiSourceElement
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
 
 // ------------------------------ diagnostics ------------------------------
 
@@ -31,6 +32,7 @@ sealed class KtDiagnostic {
 
 class KtDiagnosticWithoutSource(
     val message: String,
+    val location: CompilerMessageSourceLocation?,
     override val severity: Severity,
     override val factory: KtSourcelessDiagnosticFactory,
     override val context: DiagnosticBaseContext,
