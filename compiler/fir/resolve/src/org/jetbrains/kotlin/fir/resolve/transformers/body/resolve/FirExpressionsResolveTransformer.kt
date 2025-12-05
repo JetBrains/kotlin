@@ -263,8 +263,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         if (originalExpression !is FirPropertyAccessExpression) return null
         if (!LanguageFeature.ContextSensitiveResolutionUsingExpectedType.isEnabled()) return null
 
-        val expectedType =
-            (data as? ResolutionMode.WithExpectedType)?.hintForContextSensitiveResolution ?: data.expectedType ?: return null
+        val expectedType = data.hintForContextSensitiveResolution ?: data.expectedType ?: return null
 
         if (!originalExpression.shouldBeResolvedInContextSensitiveMode()) return null
 
