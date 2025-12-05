@@ -1,5 +1,5 @@
-// IGNORE_BACKEND: JS_IR, JS_IR_ES6
-// ^^ There is a frontend diagnostic thrown that it's impossible to infer type of .get after toJsReference
+// IGNORE_BACKEND: JS_IR
+// ^^ Only in ES6 mode, Long is represented as BigInt
 // WITH_STDLIB
 
 fun assertTrue(x: Boolean): Unit = check(x)
