@@ -70,7 +70,7 @@ abstract class CheckerContext : DiagnosticContext, SessionAndScopeSessionHolder 
 
         val suppressedByAll = when (factory.severity) {
             Severity.INFO -> allInfosSuppressed
-            Severity.WARNING -> allWarningsSuppressed
+            Severity.WARNING, Severity.STRONG_WARNING -> allWarningsSuppressed
             Severity.ERROR -> allErrorsSuppressed
             // diagnostic factory cannot have FIXED_WARNING severity
             Severity.FIXED_WARNING -> shouldNotBeCalled()

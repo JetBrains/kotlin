@@ -13,6 +13,11 @@ import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
 
 context(container: KtDiagnosticsContainer)
+fun strongWarningWithoutSource(): SourcelessDiagnosticFactoryDelegateProvider {
+    return SourcelessDiagnosticFactoryDelegateProvider(Severity.STRONG_WARNING, container)
+}
+
+context(container: KtDiagnosticsContainer)
 fun warningWithoutSource(): SourcelessDiagnosticFactoryDelegateProvider {
     return SourcelessDiagnosticFactoryDelegateProvider(Severity.WARNING, container)
 }

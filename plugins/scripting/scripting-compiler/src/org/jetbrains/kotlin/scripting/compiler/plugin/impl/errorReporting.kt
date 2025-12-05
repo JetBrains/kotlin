@@ -215,7 +215,7 @@ fun KtDiagnostic.asScriptDiagnostic(sourceCode: SourceCode): ScriptDiagnostic {
     val (diagnosticCode, scriptSeverity) = when (severity) {
         Severity.INFO -> ScriptDiagnostic.unspecifiedInfo to ScriptDiagnostic.Severity.INFO
         Severity.ERROR -> ScriptDiagnostic.unspecifiedError to ScriptDiagnostic.Severity.ERROR
-        Severity.WARNING, Severity.FIXED_WARNING -> ScriptDiagnostic.unspecifiedInfo to ScriptDiagnostic.Severity.WARNING
+        Severity.WARNING, Severity.FIXED_WARNING, Severity.STRONG_WARNING -> ScriptDiagnostic.unspecifiedInfo to ScriptDiagnostic.Severity.WARNING
     }
 
     val textRanges = (this as? KtDiagnosticWithSource)?.textRanges
