@@ -63,8 +63,9 @@ fun configureMavenDepsOnAnnotations(
     context: ScriptConfigurationRefinementContext,
     resolver: ScriptDependenciesResolver
 ): ResultWithDiagnostics<ScriptCompilationConfiguration> {
-    val annotations = context.collectedData?.get(ScriptCollectedData.foundAnnotations)?.takeIf { it.isNotEmpty() }
-        ?: return context.compilationConfiguration.asSuccess()
+    val annotations =
+        context.collectedData?.get(ScriptCollectedData.collectedAnnotations)?.map { it.annotation }?.takeIf { it.isNotEmpty() }
+            ?: return context.compilationConfiguration.asSuccess()
     val scriptContents = object : ScriptContents {
         override val annotations: Iterable<Annotation> = annotations
         override val file: File? = null

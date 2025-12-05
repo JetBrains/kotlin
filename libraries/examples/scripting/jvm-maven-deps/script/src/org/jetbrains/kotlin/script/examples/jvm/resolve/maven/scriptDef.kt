@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.script.examples.jvm.resolve.maven
 
 import kotlinx.coroutines.runBlocking
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import kotlin.script.experimental.annotations.KotlinScript
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.dependencies.*
@@ -33,8 +32,6 @@ object ScriptWithMavenDepsConfiguration : ScriptCompilationConfiguration(
         refineConfiguration {
             @Suppress("DEPRECATION")
             onAnnotations(DependsOn::class, Repository::class, handler = ::configureMavenDepsOnAnnotations)
-//            onAst(handler = ::configureMavenDepsOnAst)
-//            onFir(handler = ::configureMavenDepsOnFir)
         }
     }
 ) {
@@ -54,28 +51,4 @@ fun configureMavenDepsOnAnnotations(context: ScriptConfigurationRefinementContex
             dependencies.append(JvmDependency(it))
         }.asSuccess()
     }
-}
-
-private fun configureMavenDepsOnFir(context: ScriptConfigurationRefinementContext): ResultWithDiagnostics<ScriptCompilationConfiguration> {
-    val fir = context.collectedData?.get(ScriptCollectedData.fir) ?: return context.compilationConfiguration.asSuccess()
-    val annotations = fir.flatMap {
-        it.annotations.mapNotNull {
-            (it as? FirAnnotationCall)?.toAnnotationObjectIfMatches(DependsOn::class, Repository::class)?.valueOrNull()?.let {
-                ScriptSourceAnnotation(it, null)
-            }
-        }
-    }
-    if (annotations.isEmpty()) return context.compilationConfiguration.asSuccess()
-    return runBlocking {
-        resolver.resolveFromScriptSourceAnnotations(annotations)
-    }.onSuccess {
-        context.compilationConfiguration.with {
-            dependencies.append(JvmDependency(it))
-        }.asSuccess()
-    }
-}
-
-private fun configureMavenDepsOnAst(context: ScriptConfigurationRefinementContext): ResultWithDiagnostics<ScriptCompilationConfiguration> {
-    @Suppress("UnusedVariable") val ast = context.collectedData?.get(ScriptCollectedData.syntaxTree)
-    return context.compilationConfiguration.asSuccess()
 }

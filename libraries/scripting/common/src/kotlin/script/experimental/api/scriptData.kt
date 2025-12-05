@@ -111,14 +111,15 @@ class ScriptCollectedData(properties: Map<PropertiesCollection.Key<*>, Any>) : P
 /**
  * The script file-level annotations found during script source parsing
  */
-val ScriptCollectedDataKeys.foundAnnotations by PropertiesCollection.key<List<Annotation>>()
+@Deprecated("Use collectedAnnotations instead", ReplaceWith("collectedAnnotations"))
+val ScriptCollectedDataKeys.foundAnnotations by PropertiesCollection.key<List<Annotation>>(getDefaultValue = {
+    get(ScriptCollectedData.collectedAnnotations)?.map { it.annotation }
+})
 
 /**
  * The script file-level annotations and their locations found during script source parsing
  */
-val ScriptCollectedDataKeys.collectedAnnotations by PropertiesCollection.key<List<ScriptSourceAnnotation<*>>>(getDefaultValue = {
-    get(ScriptCollectedData.foundAnnotations)?.map { ScriptSourceAnnotation(it, null) }
-})
+val ScriptCollectedDataKeys.collectedAnnotations by PropertiesCollection.key<List<ScriptSourceAnnotation<*>>>()
 
 /**
  * The facade to the script data for compilation configuration refinement callbacks
