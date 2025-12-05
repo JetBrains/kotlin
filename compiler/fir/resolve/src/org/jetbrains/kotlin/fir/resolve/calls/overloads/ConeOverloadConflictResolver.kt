@@ -236,16 +236,16 @@ class ConeOverloadConflictResolver(
 
         findMaximallySpecificCall(candidates, false)?.let { return setOf(it) }
 
+        if (discriminationFlags.generics) {
+            findMaximallySpecificCall(candidates, true)?.let { return setOf(it) }
+        }
+
         if (discriminationFlags.SAMs) {
             filterCandidatesByDiscriminationFlag(
                 candidates,
                 { !it.usesSamConversionOrSamConstructor },
                 { discriminationFlags.copy(SAMs = false) },
             )?.let { return it }
-        }
-
-        if (discriminationFlags.generics) {
-            findMaximallySpecificCall(candidates, true)?.let { return setOf(it) }
         }
 
         if (discriminationFlags.suspendConversions) {

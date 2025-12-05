@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 
 // FILE: Action.java
 public interface Action<T> {
@@ -18,7 +18,7 @@ fun bar(x: MyAction<String>) {}
 
 fun main() {
     foo {
-        <!UNRESOLVED_REFERENCE!>length<!>
+        length
     }
 
     foo("1") {
@@ -26,7 +26,7 @@ fun main() {
     }
 
     bar {
-        <!UNRESOLVED_REFERENCE!>length<!>
+        length
     }
 
     bar("") {

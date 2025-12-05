@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // FULL_JDK
 import java.util.function.Consumer
 
@@ -18,8 +18,8 @@ fun baz(x: StringCollector.() -> Unit) {}
 fun baz(x: KConsumer<StringCollector>) {}
 
 fun main() {
-    foo { <!UNRESOLVED_REFERENCE!>add<!>("1") }
-    bar { <!UNRESOLVED_REFERENCE!>add<!>("1") }
+    foo { add("1") }
+    bar { add("1") }
     baz { add("1") }
 }
 
