@@ -13,6 +13,6 @@ import org.junit.jupiter.api.Test
 class LombokDiagnosticsTest {
     @Test
     fun verify() {
-        verifyDiagnostics(KtDiagnosticMessagesLombok.MAP to LombokDiagnostics)
+        verifyDiagnostics(LombokDiagnostics)
     }
 }
