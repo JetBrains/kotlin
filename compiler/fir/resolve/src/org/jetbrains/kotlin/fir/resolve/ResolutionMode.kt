@@ -15,7 +15,14 @@ import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 sealed class ResolutionMode(
     val forceFullCompletion: Boolean,
 ) {
-    data object ContextDependent : ResolutionMode(forceFullCompletion = false)
+    open val hintForContextSensitiveResolution: ConeKotlinType? get() = null
+
+    open class ContextDependent(
+        override val hintForContextSensitiveResolution: ConeKotlinType? = null
+    ) : ResolutionMode(forceFullCompletion = false) {
+        companion object : ContextDependent()
+    }
+
     data object Delegate : ResolutionMode(forceFullCompletion = false)
     data object ContextIndependent : ResolutionMode(forceFullCompletion = true)
 
@@ -57,7 +64,7 @@ sealed class ResolutionMode(
          * it can contain type parameter types which aren't substituted to type variable types.
          */
         val arrayLiteralPosition: ArrayLiteralPosition? = null,
-        val hintForContextSensitiveResolution: ConeKotlinType? = null,
+        override val hintForContextSensitiveResolution: ConeKotlinType? = null,
         /** Currently the only case for expected type when we don't force completion are when's branches */
         forceFullCompletion: Boolean = true,
     ) : ResolutionMode(forceFullCompletion) {
