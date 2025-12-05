@@ -11,12 +11,16 @@ import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors
 import org.jetbrains.kotlin.cli.pipeline.PerformanceNotifications
 import org.jetbrains.kotlin.cli.pipeline.PipelinePhase
 import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.config.perfManager
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.packageFqName
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.serialization.FirKLibSerializerExtension
 import org.jetbrains.kotlin.fir.serialization.serializeSingleFirFile
+import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.library.SerializedMetadata
+import org.jetbrains.kotlin.library.flatten
+import org.jetbrains.kotlin.library.loadSizeInfo
 import org.jetbrains.kotlin.library.metadata.KlibMetadataHeaderFlags
 import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
 import org.jetbrains.kotlin.util.klibMetadataVersionOrDefault
@@ -83,6 +87,10 @@ object MetadataKlibFileWriterPhase : PipelinePhase<MetadataInMemorySerialization
     override fun executePhase(input: MetadataInMemorySerializationArtifact): MetadataSerializationArtifact {
         val destDir = input.configuration.metadataDestinationDirectory!!
         buildKotlinMetadataLibrary(input.configuration, input.metadata, destDir)
+
+        File(destDir.absolutePath).loadSizeInfo()?.flatten()?.let { stats ->
+            input.configuration.perfManager?.registerKlibElementStats(stats)
+        }
 
         return MetadataSerializationArtifact(
             outputInfo = null,
