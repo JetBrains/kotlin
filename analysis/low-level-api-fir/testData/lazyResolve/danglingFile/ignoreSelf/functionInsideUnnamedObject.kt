@@ -1,6 +1,5 @@
 // ISSUE: KT-74518
 // MEMBER_NAME_FILTER: hashCode
-// SKIP_WHEN_OUT_OF_CONTENT_ROOT
 package one
 
 class TopLevel {

@@ -1,5 +1,5 @@
 // ISSUE: KT-82948
-// MEMBER_NAME_FILTER: hashCode
+// MEMBER_NAME_FILTER: equals
 package one
 
 class TopLevel {

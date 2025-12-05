@@ -24,16 +24,15 @@ import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
-import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirScriptSymbol
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
-import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.ClassIdBasedLocality
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtScript
+import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.exceptions.ExceptionAttachmentBuilder
 import org.jetbrains.kotlin.utils.exceptions.checkWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
@@ -209,7 +208,7 @@ private fun collectDesignationPathWithContainingClass(
         }
     }
 
-    val fallbackClassPath = collectDesignationPathWithContainingClassFallback(target, containingClassId)
+    val fallbackClassPath = containingClassId?.let { collectDesignationPathWithContainingClassFallback(target, it) }.orEmpty()
     val fallbackFile = providedFile ?: fallbackClassPath.lastOrNull()?.getContainingFile() ?: file
     val fallbackScript = fallbackFile?.declarations?.singleOrNull() as? FirScript
     val fallbackPath = listOfNotNull(fallbackFile, fallbackScript) + fallbackClassPath
@@ -238,9 +237,9 @@ private val LLFirSession.requiresDependenciesSearch: Boolean
 
 private fun collectDesignationPathWithContainingClassFallback(
     target: FirDeclaration,
-    containingClassId: ClassId?,
+    containingClassId: ClassId,
 ): List<FirDeclaration> {
-    val useSiteSession = getTargetSession(target)
+    val useSiteSession by lazy(LazyThreadSafetyMode.NONE) { getTargetSession(target) }
 
     fun resolveChunk(classId: ClassId): FirRegularClass {
         val declaration = if (useSiteSession.requiresDependenciesSearch) {
@@ -253,7 +252,11 @@ private fun collectDesignationPathWithContainingClassFallback(
 
         checkWithAttachment(
             declaration is FirRegularClass,
-            message = { "'FirRegularClass' expected as a containing declaration, got '${declaration?.javaClass?.simpleName}'. Module: ${useSiteSession.ktModule::class.simpleName}" },
+            message = {
+                "'${FirRegularClass::class.simpleName}' expected as a containing declaration, " +
+                        "got '${declaration?.javaClass?.simpleName}'. " +
+                        "Module: ${useSiteSession.ktModule::class.simpleName}"
+            },
             buildAttachment = {
                 withEntry("chunk", "$classId in $containingClassId")
                 withFirEntry("target", target)
@@ -266,62 +269,46 @@ private fun collectDesignationPathWithContainingClassFallback(
         return declaration
     }
 
-    val chunks = generateSequence(containingClassId) { it.outerClassId }.toList()
-
-    if (chunks.any { it.shortClassName.isSpecial }) {
-        val fallbackResult = collectDesignationPathWithTreeTraversal(target)
-        if (fallbackResult != null) {
-            return fallbackResult
+    val containingClassIds = generateSequence(containingClassId) { it.outerClassId }
+    val (_, containingClasses) = containingClassIds.fold(target to SmartList<FirRegularClass>()) { (declaration, result), classId ->
+        // Psi-based calculator is called explicitly to avoid `LLFirProvider#getContainingClassSymbol`
+        // since we have a fallback logic with strict checking (no dependencies in the search scope)
+        val psiBasedContainingClass = LLContainingClassCalculator.getContainingClassSymbol(declaration.symbol)?.fir
+        checkWithAttachment(
+            psiBasedContainingClass == null || psiBasedContainingClass is FirRegularClass,
+            message = {
+                "${LLContainingClassCalculator::class.simpleName} is supposed to return '${FirRegularClass::class.simpleName}' " +
+                        "as a containing declaration since the class is not local (classId exists), got '${psiBasedContainingClass?.javaClass?.simpleName}'. " +
+                        "Module: ${useSiteSession.ktModule::class.simpleName}"
+            },
+        ) {
+            withEntry("classId", classId.toString())
+            withEntry("containingClassId", containingClassId.toString())
+            withFirEntry("declaration", declaration)
         }
-    }
 
-    val result = chunks
-        .dropWhile { it.shortClassName.isSpecial }
-        .map { resolveChunk(it) }
-        .asReversed()
-
-    return result
-}
-
-/*
-    This implementation is certainly inefficient, however there seem to be no better way to implement designation collection for
-    anonymous outer classes unless FIR tree gets a way to get an element parent.
- */
-private fun collectDesignationPathWithTreeTraversal(target: FirDeclaration): List<FirRegularClass>? {
-    val containingFile = target.getContainingFile() ?: return null
-
-    val path = mutableListOf<FirRegularClass>()
-    var result: List<FirRegularClass>? = null
-
-    val visitor = object : FirVisitorVoid() {
-        override fun visitElement(element: FirElement) {
-            if (result != null) {
-                return
-            } else if (element === target) {
-                result = path
-            } else {
-                try {
-                    if (element is FirRegularClass) {
-                        path += element
-                    }
-
-                    element.acceptChildren(this)
-                } finally {
-                    if (element is FirRegularClass) {
-                        path.removeLast()
-                    }
-                }
+        if (psiBasedContainingClass == null && classId.shortClassName.isSpecial) {
+            errorWithAttachment(
+                "Special classes are supposed to be covered via ${LLContainingClassCalculator::class.simpleName}. " +
+                        "Module: ${useSiteSession.ktModule::class.simpleName}"
+            ) {
+                withEntry("classId", classId.toString())
+                withEntry("containingClassId", containingClassId.toString())
+                withFirEntry("declaration", declaration)
             }
         }
+
+        val containingClass = psiBasedContainingClass ?: resolveChunk(classId)
+        result += containingClass
+        containingClass to result
     }
 
-    containingFile.accept(visitor)
-    return result
+    return containingClasses.asReversed()
 }
 
 private fun getTargetSession(target: FirDeclaration): LLFirSession {
     if (target is FirCallableDeclaration) {
-        val containingSymbol = target.containingClassLookupTag()?.toSymbol(target.moduleData.session)
+        val containingSymbol = target.getContainingClassSymbol()
         if (containingSymbol != null) {
             // Synthetic declarations might have a call site session
             return containingSymbol.llFirSession
