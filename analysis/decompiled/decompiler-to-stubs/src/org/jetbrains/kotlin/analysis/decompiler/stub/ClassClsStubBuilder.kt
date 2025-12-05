@@ -87,9 +87,7 @@ private class ClassClsStubBuilder(
         val classOrObjectStub = doCreateClassOrObjectStub()
         val modifierList = createModifierListForClass(classOrObjectStub)
         typeStubBuilder.createContextReceiverStubs(modifierList, classProto.contextReceiverTypes(c.typeTable))
-        if (Flags.HAS_ANNOTATIONS.get(classProto.flags)) {
-            createAnnotationStubs(c.components.annotationLoader.loadClassAnnotations(thisAsProtoContainer), modifierList)
-        }
+        createAnnotationStubs(c.components.annotationLoader.loadClassAnnotations(thisAsProtoContainer), modifierList)
         return classOrObjectStub
     }
 

@@ -408,28 +408,26 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
                 ProtoBuf.ReturnValueStatus.UNSPECIFIED,
             )
 
-            if (Flags.HAS_ANNOTATIONS.get(valueParameterProto.flags)) {
-                val parameterAnnotations = if (isContextParameter) {
-                    c.components.annotationLoader.loadContextParameterAnnotations(
-                        container = container,
-                        callableProto = callableProto,
-                        kind = callableKind,
-                        parameterIndex = index,
-                        proto = valueParameterProto,
-                    )
-                } else {
-                    c.components.annotationLoader.loadValueParameterAnnotations(
-                        container = container,
-                        callableProto = callableProto,
-                        kind = callableKind,
-                        parameterIndex = index,
-                        proto = valueParameterProto,
-                    )
-                }
+            val parameterAnnotations = if (isContextParameter) {
+                c.components.annotationLoader.loadContextParameterAnnotations(
+                    container = container,
+                    callableProto = callableProto,
+                    kind = callableKind,
+                    parameterIndex = index,
+                    proto = valueParameterProto,
+                )
+            } else {
+                c.components.annotationLoader.loadValueParameterAnnotations(
+                    container = container,
+                    callableProto = callableProto,
+                    kind = callableKind,
+                    parameterIndex = index,
+                    proto = valueParameterProto,
+                )
+            }
 
-                if (parameterAnnotations.isNotEmpty()) {
-                    createAnnotationStubs(parameterAnnotations, modifierList ?: createEmptyModifierListStub(parameterStub))
-                }
+            if (parameterAnnotations.isNotEmpty()) {
+                createAnnotationStubs(parameterAnnotations, modifierList ?: createEmptyModifierListStub(parameterStub))
             }
 
             createTypeReferenceStub(parameterStub, typeProto)

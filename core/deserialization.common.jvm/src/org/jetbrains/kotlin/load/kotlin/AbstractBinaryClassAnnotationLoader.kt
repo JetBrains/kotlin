@@ -53,6 +53,7 @@ abstract class AbstractBinaryClassAnnotationLoader<A : Any, S : AbstractBinaryCl
     protected open fun getCachedFileContent(kotlinClass: KotlinJvmBinaryClass): ByteArray? = null
 
     override fun loadClassAnnotations(container: ProtoContainer.Class): List<A> {
+        if (noAnnotationsInBytecode(container.classProto.flags)) return emptyList()
         val kotlinClass = container.toBinaryClass() ?: error("Class for loading annotations is not found: ${container.debugFqName()}")
 
         val result = ArrayList<A>(1)
@@ -70,6 +71,9 @@ abstract class AbstractBinaryClassAnnotationLoader<A : Any, S : AbstractBinaryCl
     }
 
     override fun loadCallableAnnotations(container: ProtoContainer, proto: MessageLite, kind: AnnotatedCallableKind): List<A> {
+        val flags = proto.getCallableAnnotationFlags(kind)
+        if (noAnnotationsInBytecode(flags)) return emptyList()
+
         if (kind == AnnotatedCallableKind.PROPERTY) {
             return loadPropertyAnnotations(container, proto as ProtoBuf.Property, PropertyRelatedElement.PROPERTY)
         }
@@ -79,10 +83,14 @@ abstract class AbstractBinaryClassAnnotationLoader<A : Any, S : AbstractBinaryCl
     }
 
     override fun loadPropertyBackingFieldAnnotations(container: ProtoContainer, proto: ProtoBuf.Property): List<A> =
-        loadPropertyAnnotations(container, proto, PropertyRelatedElement.BACKING_FIELD)
+        loadAnnotationsIfPresentInBytecode(proto.flags) {
+            loadPropertyAnnotations(container, proto, PropertyRelatedElement.BACKING_FIELD)
+        }
 
     override fun loadPropertyDelegateFieldAnnotations(container: ProtoContainer, proto: ProtoBuf.Property): List<A> =
-        loadPropertyAnnotations(container, proto, PropertyRelatedElement.DELEGATE_FIELD)
+        loadAnnotationsIfPresentInBytecode(proto.flags) {
+            loadPropertyAnnotations(container, proto, PropertyRelatedElement.DELEGATE_FIELD)
+        }
 
     private enum class PropertyRelatedElement {
         PROPERTY,
@@ -154,8 +162,9 @@ abstract class AbstractBinaryClassAnnotationLoader<A : Any, S : AbstractBinaryCl
         kind: AnnotatedCallableKind,
         parameterIndex: Int,
         proto: ProtoBuf.ValueParameter,
-    ): List<A> =
+    ): List<A> = loadAnnotationsIfPresentInBytecode(proto.flags) {
         loadParameterAnnotations(container, callableProto, kind, parameterIndex + computeJvmParameterIndexShift(container, callableProto))
+    }
 
     private fun computeJvmParameterIndexShift(container: ProtoContainer, message: MessageLite): Int {
         return message.contextParameterCount + when (message) {
@@ -182,7 +191,9 @@ abstract class AbstractBinaryClassAnnotationLoader<A : Any, S : AbstractBinaryCl
         parameterIndex: Int,
         proto: ProtoBuf.ValueParameter?,
     ): List<A> =
-        loadParameterAnnotations(container, callableProto, kind, parameterIndex)
+        loadAnnotationsIfPresentInBytecode(proto?.flags ?: 0) {
+            loadParameterAnnotations(container, callableProto, kind, parameterIndex)
+        }
 
     private fun loadParameterAnnotations(
         container: ProtoContainer, callableProto: MessageLite, kind: AnnotatedCallableKind, parameterIndex: Int,
@@ -198,6 +209,25 @@ abstract class AbstractBinaryClassAnnotationLoader<A : Any, S : AbstractBinaryCl
             is ProtoBuf.Property -> contextParameterCount
             else -> 0
         }
+
+    private fun MessageLite.getCallableAnnotationFlags(kind: AnnotatedCallableKind) = when (this) {
+        is ProtoBuf.Constructor -> flags
+        is ProtoBuf.Function -> flags
+        is ProtoBuf.Property -> getPropertyFlags(kind)
+        else -> 0
+    }
+
+    private fun ProtoBuf.Property.getPropertyFlags(kind: AnnotatedCallableKind) = when (kind) {
+        AnnotatedCallableKind.PROPERTY_GETTER -> if (hasGetterFlags()) getterFlags else flags
+        AnnotatedCallableKind.PROPERTY_SETTER -> if (hasSetterFlags()) setterFlags else flags
+        else -> flags
+    }
+
+    private fun loadAnnotationsIfPresentInBytecode(flags: Int, loadAnnotations: () -> List<A>): List<A> =
+        if (noAnnotationsInBytecode(flags)) emptyList() else loadAnnotations()
+
+    private fun noAnnotationsInBytecode(flags: Int): Boolean =
+        !Flags.HAS_ANNOTATIONS.get(flags)
 
     override fun loadTypeAnnotations(proto: ProtoBuf.Type, nameResolver: NameResolver): List<A> {
         return proto.annotationList.map { loadAnnotation(it, nameResolver) }

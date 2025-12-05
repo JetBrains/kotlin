@@ -49,14 +49,12 @@ fun createTypeAliasStub(
         "'where' constraints are not allowed for type aliases"
     }
 
-    if (Flags.HAS_ANNOTATIONS.get(typeAliasProto.flags)) {
-        createAnnotationStubs(
-            typeAliasProto.annotationList.map {
-                c.components.annotationLoader.loadAnnotation(it, c.nameResolver)
-            },
-            modifierList
-        )
-    }
+    createAnnotationStubs(
+        typeAliasProto.annotationList.map {
+            c.components.annotationLoader.loadAnnotation(it, c.nameResolver)
+        },
+        modifierList
+    )
 
     val typeAliasUnderlyingType = typeAliasProto.underlyingType(c.typeTable)
     typeStubBuilder.createTypeReferenceStub(typeAlias, typeAliasUnderlyingType)
