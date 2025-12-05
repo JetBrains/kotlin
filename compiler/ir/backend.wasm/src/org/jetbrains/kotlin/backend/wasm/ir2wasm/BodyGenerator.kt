@@ -1194,11 +1194,11 @@ class BodyGenerator(
                 val tryGetAssociatedObjectType =
                     wasmFileCodegenContext.referenceFunctionType(backendContext.wasmSymbols.tryGetAssociatedObject)
 
-                body.buildInstr(
-                    op = WasmOp.REF_CAST,
+                body.buildRefCastStatic(
+                    toType = Synthetics.HeapTypes.associatedObjectGetterWrapper,
                     location = location,
-                    Synthetics.GcTypes.associatedObjectGetterWrapper,
                 )
+
                 body.buildStructGet(
                     struct = Synthetics.GcTypes.associatedObjectGetterWrapper,
                     fieldId = CLASS_ASSOCIATED_OBJECT_GETTER_WRAPPER_FIELD_ID,
@@ -1353,8 +1353,7 @@ class BodyGenerator(
                 else
                     WasmHeapType.Simple.None
 
-            body.buildInstr(WasmOp.REF_CAST_NULL, location, WasmImmediate.HeapType(type))
-
+            body.buildRefCastNullStatic(type, location)
             return
         }
 

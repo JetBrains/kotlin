@@ -76,6 +76,7 @@ object Synthetics {
         val wasmStringArrayType = GcHeapTypeSymbol(wasmStringArrayTypeSignature)
         val byteArray = GcHeapTypeSymbol(byteArraySignature)
         val associatedObjectGetterType = FunctionHeapTypeSymbol(associatedObjectGetterTypeSignature)
+        val associatedObjectGetterWrapper = GcHeapTypeSymbol(associatedObjectGetterWrapperSignature)
     }
 
     object GcTypes {
