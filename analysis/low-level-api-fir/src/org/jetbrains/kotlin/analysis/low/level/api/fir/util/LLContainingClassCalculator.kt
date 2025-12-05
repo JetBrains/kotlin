@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtFakeSourceElementKind.*
 import org.jetbrains.kotlin.KtPsiSourceElement
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getResolutionFacade
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbolOfTypeSafe
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbolOfType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.llFirModuleData
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.containingClassLookupTag
@@ -26,7 +26,7 @@ internal object LLContainingClassCalculator {
      * Returns a containing class symbol for the given symbol, computing it solely from the source information
      * and information inside FIR nodes.
      */
-    fun getContainingClassSymbol(symbol: FirBasedSymbol<*>): FirClassLikeSymbol<*>? {
+    fun getContainingClassSymbol(symbol: FirBasedSymbol<*>): FirClassSymbol<*>? {
         if (!symbol.origin.isLazyResolvable) {
             // Handle only source or source-based declarations for now as below we use the PSI tree
             return null
@@ -34,7 +34,7 @@ internal object LLContainingClassCalculator {
 
         if (symbol is FirAnonymousInitializerSymbol) {
             // For anonymous initializers, the containing class symbol is right there, no need in PSI traversal
-            return symbol.containingDeclarationSymbol as? FirClassLikeSymbol<*>
+            return symbol.containingDeclarationSymbol as? FirClassSymbol<*>
         }
 
         if (!canHaveContainingClassSymbol(symbol)) {
@@ -51,13 +51,11 @@ internal object LLContainingClassCalculator {
         // For members of local classes lookup tag should be used to avoid a phase
         // contract violation
         if (containingClassLookupTag is ConeClassLikeLookupTagWithFixedSymbol) {
-            return containingClassLookupTag.symbol
+            return containingClassLookupTag.symbol as? FirClassSymbol<*>
         }
 
         val source = symbol.source as? KtPsiSourceElement ?: return null
-        val kind = source.kind
-
-        when (kind) {
+        when (val kind = source.kind) {
             is KtFakeSourceElementKind -> {
                 if (symbol is FirBackingFieldSymbol) {
                     if (kind == DefaultAccessor) {
@@ -122,8 +120,7 @@ internal object LLContainingClassCalculator {
                 }
 
                 if (symbol is FirCallableSymbol<*>) {
-                    val selfCallable = source.psi
-                    return when (selfCallable) {
+                    return when (val selfCallable = source.psi) {
                         is KtCallableDeclaration, is KtEnumEntry -> {
                             computeContainingClass(symbol, selfCallable.containingClassOrObject)
                         }
@@ -149,13 +146,13 @@ internal object LLContainingClassCalculator {
         else -> false
     }
 
-    private fun computeContainingClass(symbol: FirBasedSymbol<*>, psi: PsiElement?): FirClassLikeSymbol<*>? {
+    private fun computeContainingClass(symbol: FirBasedSymbol<*>, psi: PsiElement?): FirClassSymbol<*>? {
         if (psi !is KtClassOrObject) {
             return null
         }
 
         val module = symbol.llFirModuleData.ktModule
         val resolutionFacade = module.getResolutionFacade(module.project)
-        return psi.resolveToFirSymbolOfTypeSafe<FirClassLikeSymbol<*>>(resolutionFacade)
+        return psi.resolveToFirSymbolOfType<FirClassSymbol<*>>(resolutionFacade)
     }
 }
