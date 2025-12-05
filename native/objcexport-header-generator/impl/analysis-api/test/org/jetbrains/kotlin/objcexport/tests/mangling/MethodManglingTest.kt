@@ -29,7 +29,7 @@ class MethodManglingTest(
             }            
         """.trimMargin()
         ) { foo ->
-            val stub = translateToObjCExportStub(foo)
+            val stub = translateToObjCExportStub(foo)?.objCClass
             val methods = stub?.members ?: error("no translated members")
             val mangledMethods = mangleObjCMethods(methods, stub).filterIsInstance<ObjCMethod>().filter { it.name.startsWith("bar") }
 
@@ -49,7 +49,7 @@ class MethodManglingTest(
             }            
         """.trimMargin()
         ) { foo ->
-            val stub = translateToObjCExportStub(foo)
+            val stub = translateToObjCExportStub(foo)?.objCClass
             val methods = stub?.members ?: error("no translated members")
             val mangledMethods = mangleObjCMethods(methods, stub).filterIsInstance<ObjCMethod>().filter { it.name.startsWith("bar") }
 

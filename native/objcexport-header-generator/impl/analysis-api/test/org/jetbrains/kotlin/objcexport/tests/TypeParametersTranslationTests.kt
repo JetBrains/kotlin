@@ -192,8 +192,8 @@ class TypeParametersTranslationTests(
             val foo = analysisSession.getClassOrFail(file, "Foo")
             val bar = analysisSession.getClassOrFail(file, "Bar")
 
-            val fooObjC = translateToObjCClass(foo)
-            val barObjC = translateToObjCClass(bar)
+            val fooObjC = translateToObjCClass(foo)?.objCClass
+            val barObjC = translateToObjCClass(bar)?.objCClass
 
             val initFoo = fooObjC?.members?.first { it.name.startsWith("initWith") } as? ObjCMethod
                 ?: error("no initWith constructor were translate for Foo")

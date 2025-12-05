@@ -356,7 +356,7 @@ class ObjCExportLazyImpl(
 
         override val origin: ObjCExportStubOrigin? by lazy { ObjCExportStubOrigin(descriptor) }
 
-        override fun computeRealStub(): ObjCInterface = lazy.translator.translateClass(descriptor)
+        override fun computeRealStub(): ObjCInterface = lazy.translator.translateClass(descriptor).objCInterface
     }
 
     private class LazyObjCFileInterface(
