@@ -133,7 +133,7 @@ class NativeAtomicfuIrBuilder(
             else -> error("kotlin.native.internal/getAndAddField intrinsic is not supported for values of type ${valueType.dumpKotlinLike()}")
         }
 
-    private fun addAndGetField(propertyRef: IrExpression, valueType: IrType, delta: IrConst?): IrCall =
+    private fun addAndGetField(propertyRef: IrExpression, valueType: IrType, delta: IrExpression?): IrCall =
         getAndAddField(propertyRef, valueType, delta).plus(delta?.deepCopyWithoutPatchingParents())
 
     private fun getAndIncrementField(propertyRef: IrExpression, valueType: IrType): IrCall {
