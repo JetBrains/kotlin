@@ -42,7 +42,6 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirReceiverParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.ClassId
@@ -264,8 +263,8 @@ internal object FirReferenceResolveHelper {
             is FirResolvedNamedReference -> getSymbolByResolvedNameReference(fir, expression, analysisSession, session, symbolBuilder)
             is FirDelegatedConstructorCall ->
                 getSymbolByDelegatedConstructorCall(expression, adjustedResolutionExpression, fir, session, symbolBuilder)
-            is FirResolvable -> getSymbolsByResolvable(fir, expression, session, symbolBuilder)
             is FirEqualityOperatorCall -> getSymbolsByEqualsName(fir, session, analysisSession, symbolBuilder)
+            is FirResolvable -> getSymbolsByResolvable(fir, expression, session, symbolBuilder)
             is FirTypeParameter -> getSybmolsByTypeParameter(symbolBuilder, fir)
             is FirResolvedReifiedParameterReference -> getSymbolsByResolvedReifiedTypeParameterReference(symbolBuilder, fir)
             is FirErrorExpression -> handleErrorExpression(fir, expression, symbolBuilder)

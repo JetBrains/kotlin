@@ -374,6 +374,8 @@ internal class KaFirResolver(
         }
 
         return when (this) {
+            // FIR does not resolve to a symbol for equality calls.
+            is FirEqualityOperatorCall -> toKtCallInfo(psi)
             is FirResolvable, is FirVariableAssignment -> {
                 when (val calleeReference = toReference(analysisSession.firSession)) {
                     is FirResolvedErrorReference -> transformErrorReference(this, calleeReference)
@@ -405,8 +407,6 @@ internal class KaFirResolver(
                 resolveCalleeExpressionOfFunctionCall,
                 resolveFragmentOfCall
             )
-            // FIR does not resolve to a symbol for equality calls.
-            is FirEqualityOperatorCall -> toKtCallInfo(psi)
             is FirSafeCallExpression -> selector.toKtCallInfo(
                 psi,
                 resolveCalleeExpressionOfFunctionCall,

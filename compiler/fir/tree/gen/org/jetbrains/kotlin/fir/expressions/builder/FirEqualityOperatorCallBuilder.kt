@@ -20,6 +20,8 @@ import org.jetbrains.kotlin.fir.expressions.FirArgumentList
 import org.jetbrains.kotlin.fir.expressions.FirEqualityOperatorCall
 import org.jetbrains.kotlin.fir.expressions.FirOperation
 import org.jetbrains.kotlin.fir.expressions.impl.FirEqualityOperatorCallImpl
+import org.jetbrains.kotlin.fir.references.FirReference
+import org.jetbrains.kotlin.fir.references.impl.FirStubReference
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 
 @FirBuilderDsl
@@ -27,6 +29,7 @@ class FirEqualityOperatorCallBuilder : FirAnnotationContainerBuilder, FirExpress
     override var source: KtSourceElement? = null
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
     lateinit var argumentList: FirArgumentList
+    var calleeReference: FirReference = FirStubReference
     lateinit var operation: FirOperation
 
     override fun build(): FirEqualityOperatorCall {
@@ -34,6 +37,7 @@ class FirEqualityOperatorCallBuilder : FirAnnotationContainerBuilder, FirExpress
             source,
             annotations.toMutableOrEmpty(),
             argumentList,
+            calleeReference,
             operation,
         )
     }
