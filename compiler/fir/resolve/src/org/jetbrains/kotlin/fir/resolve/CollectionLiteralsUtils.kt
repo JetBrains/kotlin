@@ -124,12 +124,8 @@ fun ResolutionContext.runResolutionForDanglingCollectionLiteral(collectionLitera
 
     val newArgumentList = buildArgumentList {
         for (argument in completedCall.arguments) {
-            if (argument is FirVarargArgumentsExpression) {
-                arguments += argument.arguments
-            } else {
-                // generally, should not happen
-                arguments += argument
-            }
+            check(argument is FirVarargArgumentsExpression) { "Arguments should me mapped to vararg" }
+            arguments += argument.arguments
         }
     }
 
