@@ -67,8 +67,8 @@ abstract class SyntheticAccessorGenerator<Context : LoweringContext, ScopeInfo>(
             createAccessor(expression.symbol, scopeInfo, null, null)
     }
 
-    fun getSyntheticFunctionAccessor(reference: IrFunctionReference, scopeInfo: ScopeInfo): IrFunction {
-        return createAccessor(reference.symbol, scopeInfo, reference.dispatchReceiver?.type, null)
+    fun getSyntheticFunctionAccessor(implFunctionSymbol: IrFunctionSymbol, scopeInfo: ScopeInfo): IrFunction {
+        return createAccessor(implFunctionSymbol, scopeInfo, null, null)
     }
 
     private fun createAccessor(

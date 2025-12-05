@@ -146,8 +146,8 @@ private class SyntheticAccessorTransformer(
         val generateSpecialAccessWithoutSyntheticAccessor =
             shouldGenerateSpecialAccessWithoutSyntheticAccessor(expression, withSuper, thisSymbol)
 
-        if (expression is IrCall && callee.symbol == context.symbols.indyLambdaMetafactoryIntrinsic) { // todo
-            return super.visitExpression(handleLambdaMetafactoryIntrinsic(expression, thisSymbol))
+        if (expression is IrCall && callee.symbol == context.symbols.jvmIndyIntrinsic) {
+            return super.visitExpression(handleIndyIntrinsic(expression, thisSymbol))
         }
 
         val accessor = when {
@@ -187,34 +187,19 @@ private class SyntheticAccessorTransformer(
     private fun IrSymbol.isDirectlyAccessible(withSuper: Boolean, thisObjReference: IrClassSymbol?): Boolean =
         isAccessible(context, currentScope, inlineScopeResolver, withSuper, thisObjReference, fromOtherClassLoader = true)
 
-    private fun handleLambdaMetafactoryIntrinsic(call: IrCall, thisSymbol: IrClassSymbol?): IrExpression {
-        // TODO change after KT-78719
-        val implFunRef = call.arguments[1] as? IrFunctionReference
-            ?: throw AssertionError("'implMethodReference' is expected to be 'IrFunctionReference': ${call.dump()}")
-        val implFunSymbol = implFunRef.symbol
+    private fun handleIndyIntrinsic(call: IrCall, thisSymbol: IrClassSymbol?): IrExpression {
+        val bootstrapMethodHandleArguments = call.arguments[2] as? IrVararg
+            ?: throw AssertionError("'bootstrapMethodHandleArguments' is expected to be 'IrVararg': ${call.dump()}")
+        val implFunctionRef = bootstrapMethodHandleArguments.elements[1] as? IrRawFunctionReference
+            ?: throw AssertionError("'implFunctionRef' is expected to be 'IrRawFunctionReference': ${call.dump()}")
+        val implFunctionSymbol = implFunctionRef.symbol
 
-        if (implFunSymbol.isAccessibleFromSyntheticProxy(thisSymbol))
+        if (implFunctionSymbol.isAccessibleFromSyntheticProxy(thisSymbol))
             return call
 
-        val accessor = accessorGenerator.getSyntheticFunctionAccessor(implFunRef, allScopes).save()
-        val accessorRef =
-            IrFunctionReferenceImpl(
-                implFunRef.startOffset, implFunRef.endOffset, implFunRef.type,
-                accessor.symbol,
-                accessor.typeParameters.size,
-                implFunRef.reflectionTarget, implFunRef.origin
-            )
+        val accessor = accessorGenerator.getSyntheticFunctionAccessor(implFunctionSymbol, allScopes).save()
+        implFunctionRef.symbol = accessor.symbol
 
-        accessorRef.copyTypeArgumentsFrom(implFunRef)
-
-        for (implArgIndex in implFunRef.arguments.indices) {
-            accessorRef.arguments[implArgIndex] = implFunRef.arguments[implArgIndex]
-        }
-        if (accessor is IrConstructor) {
-            accessorRef.arguments[implFunRef.arguments.size] = accessorGenerator.createAccessorMarkerArgument()
-        }
-
-        call.arguments[1] = accessorRef
         return call
     }
 
