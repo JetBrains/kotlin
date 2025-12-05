@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.test.backend.handlers
 
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.KOTLIN_REFLECT_DUMP_MISMATCH
+import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.SKIP_NEW_KOTLIN_REFLECT_COMPATIBILITY_CHECK
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.DISABLE_JAVA_FACADE
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.model.singleOrZeroValue
@@ -38,6 +39,7 @@ class JvmNewKotlinReflectCompatibilityCheck(testServices: TestServices) : JvmBin
     override fun processModule(module: TestModule, info: BinaryArtifacts.Jvm) {
         // Running the test is impossible if there are errors in Java code
         if (DISABLE_JAVA_FACADE in module.directives) return
+        if (SKIP_NEW_KOTLIN_REFLECT_COMPATIBILITY_CHECK in module.directives) return
         when (module.directives.singleOrZeroValue(JvmEnvironmentConfigurationDirectives.JDK_KIND)) {
             TestJdkKind.MOCK_JDK, TestJdkKind.MODIFIED_MOCK_JDK, TestJdkKind.FULL_JDK, null -> {}
             // Classes for newer JDK can't be loaded into the current old Java runtime (Java 8)
