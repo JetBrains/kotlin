@@ -31,6 +31,7 @@ class MarkdownReportRenderer(val statsCalculator: StatsCalculator) {
         return buildString {
             renderInfo()
             renderAggregateTimeStats()
+            renderKlibStats()
             renderSystemStats()
             if (statsCalculator.unitStats.size > 1) {
                 renderTopUnitStats()
@@ -103,6 +104,15 @@ class MarkdownReportRenderer(val statsCalculator: StatsCalculator) {
             appendLine("  * ${gcStats.kind}: ${gcStats.millis} ms (${gcStats.count} collections)")
         }
         appendLine()
+    }
+
+    private fun StringBuilder.renderKlibStats() {
+        totalStats.klibElementStats?.let { stats ->
+            appendLine("# KLIB stats")
+            stats.forEach { (path, size) ->
+                appendLine("* KLIB element '$path' has size of $size Bytes")
+            }
+        }
     }
 
     private fun StringBuilder.renderTopUnitStats() {
