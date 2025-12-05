@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir
 
+import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.psi.util.PsiUtil
+import com.intellij.psi.util.PsiUtilCore
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLResolutionFacade
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirResolvableModuleSession
@@ -49,6 +52,7 @@ abstract class AbstractFirLazyDeclarationResolveTestCase : AbstractAnalysisApiBa
         ktFile: KtFile,
         testServices: TestServices,
         resolutionFacade: LLResolutionFacade,
+        fileWithCaret: KtFile = ktFile,
     ): Pair<FirElementWithResolveState, ((FirResolvePhase) -> Unit)> = when {
         Directives.RESOLVE_FILE in testServices.moduleStructure.allDirectives -> {
             val session = resolutionFacade.useSiteFirSession as LLFirResolvableModuleSession
@@ -69,7 +73,13 @@ abstract class AbstractFirLazyDeclarationResolveTestCase : AbstractAnalysisApiBa
             val ktDeclaration = if (Directives.RESOLVE_SCRIPT in testServices.moduleStructure.allDirectives) {
                 ktFile.script!!
             } else {
-                testServices.expressionMarkerProvider.getBottommostElementOfTypeAtCaret<KtDeclaration>(ktFile)
+                testServices.expressionMarkerProvider.getBottommostElementOfTypeAtCaret<KtDeclaration>(fileWithCaret).let {
+                    if (ktFile === fileWithCaret) {
+                        it
+                    } else {
+                        PsiTreeUtil.findSameElementInCopy(it, ktFile)
+                    }
+                }
             }
 
             val declarationSymbol = ktDeclaration.resolveToFirSymbol(resolutionFacade)

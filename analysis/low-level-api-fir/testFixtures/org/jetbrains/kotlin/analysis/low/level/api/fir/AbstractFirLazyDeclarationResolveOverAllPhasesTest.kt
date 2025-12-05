@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.AbstractFirLazyDeclarationResolveOverAllPhasesTest.Directives.PRE_RESOLVED_PHASE
-import org.jetbrains.kotlin.analysis.low.level.api.fir.AbstractFirLazyDeclarationResolveOverAllPhasesTest.OutputRenderingMode.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLResolutionFacade
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.LLFirResolveDesignationCollector
@@ -77,7 +76,10 @@ abstract class AbstractFirLazyDeclarationResolveOverAllPhasesTest : AbstractFirL
             val (elementToResolve, resolver) = resolverProvider(resolutionFacade)
             val filesToRender = when (outputRenderingMode) {
                 OutputRenderingMode.ALL_FILES_FROM_ALL_MODULES -> {
-                    allKtFiles.map(resolutionFacade::getOrBuildFirFile)
+                    val firFile = resolutionFacade.getOrBuildFirFile(ktFile)
+                    // The current firFile might not be present in allKtFiles in case of dangling files
+                    // since it is not declared in the test infrastructure directly
+                    allKtFiles.map(resolutionFacade::getOrBuildFirFile).plus(firFile).distinct()
                 }
                 OutputRenderingMode.USE_SITE_AND_DESIGNATION_FILES -> {
                     val firFile = resolutionFacade.getOrBuildFirFile(ktFile)
