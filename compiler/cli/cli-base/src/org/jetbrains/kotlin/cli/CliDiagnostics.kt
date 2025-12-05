@@ -12,12 +12,44 @@ import org.jetbrains.kotlin.diagnostics.rendering.BaseSourcelessDiagnosticRender
 
 object CliDiagnostics : KtDiagnosticsContainer() {
     val COMPILER_PLUGIN_ARG_IS_EXPERIMENTAL: KtSourcelessDiagnosticFactory by warningWithoutSource()
+    val CLASSPATH_RESOLUTION_WARNING: KtSourcelessDiagnosticFactory by strongWarningWithoutSource()
+    val CLASSPATH_RESOLUTION_ERROR: KtSourcelessDiagnosticFactory by errorWithoutSource()
+    val JAVA_MODULE_RESOLUTION_ERROR: KtSourcelessDiagnosticFactory by errorWithoutSource()
+    val ROOTS_RESOLUTION_WARNING: KtSourcelessDiagnosticFactory by strongWarningWithoutSource()
+    val ROOTS_RESOLUTION_ERROR: KtSourcelessDiagnosticFactory by errorWithoutSource()
+
+    val COMPILER_PLUGIN_INITIALIZATION_WARNING: KtSourcelessDiagnosticFactory by warningWithoutSource()
+    val COMPILER_PLUGIN_INITIALIZATION_ERROR: KtSourcelessDiagnosticFactory by errorWithoutSource()
+
+    val INITIALIZATION_WARNING: KtSourcelessDiagnosticFactory by strongWarningWithoutSource()
+
+    val COMPILER_ARGUMENTS_WARNING: KtSourcelessDiagnosticFactory by strongWarningWithoutSource()
+    val COMPILER_ARGUMENTS_ERROR: KtSourcelessDiagnosticFactory by errorWithoutSource()
+
+    val JAVAC_INTEGRATION_ERROR: KtSourcelessDiagnosticFactory by errorWithoutSource()
 
     override fun getRendererFactory(): BaseDiagnosticRendererFactory = Messages
 
     object Messages : BaseSourcelessDiagnosticRendererFactory() {
         override val MAP: KtDiagnosticFactoryToRendererMap by KtDiagnosticFactoryToRendererMap("CLI") { map ->
             map.put(COMPILER_PLUGIN_ARG_IS_EXPERIMENTAL, MESSAGE_PLACEHOLDER)
+            map.put(CLASSPATH_RESOLUTION_WARNING, MESSAGE_PLACEHOLDER)
+            map.put(CLASSPATH_RESOLUTION_ERROR, MESSAGE_PLACEHOLDER)
+            map.put(JAVA_MODULE_RESOLUTION_ERROR, MESSAGE_PLACEHOLDER)
+            map.put(ROOTS_RESOLUTION_WARNING, MESSAGE_PLACEHOLDER)
+            map.put(ROOTS_RESOLUTION_ERROR, MESSAGE_PLACEHOLDER)
+
+            map.put(COMPILER_PLUGIN_INITIALIZATION_WARNING, MESSAGE_PLACEHOLDER)
+            map.put(COMPILER_PLUGIN_INITIALIZATION_ERROR, MESSAGE_PLACEHOLDER)
+
+            map.put(INITIALIZATION_WARNING, MESSAGE_PLACEHOLDER)
+
+
+
+            map.put(COMPILER_ARGUMENTS_WARNING, MESSAGE_PLACEHOLDER)
+            map.put(COMPILER_ARGUMENTS_ERROR, MESSAGE_PLACEHOLDER)
+
+            map.put(JAVAC_INTEGRATION_ERROR, MESSAGE_PLACEHOLDER)
         }
     }
 }

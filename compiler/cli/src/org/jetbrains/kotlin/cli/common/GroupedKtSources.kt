@@ -9,7 +9,6 @@ import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.KtVirtualFileSourceFile
-import org.jetbrains.kotlin.cli.common.config.kotlinSourceRoots
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
@@ -70,7 +69,7 @@ fun collectSources(
             compilerConfiguration.getBoolean(CommonConfigurationKeys.USE_LIGHT_TREE)
     var skipScriptsInLtModeWarning = false
 
-    getSourceRootsCheckingForDuplicates(compilerConfiguration, messageCollector).forAllFiles(
+    getSourceRootsCheckingForDuplicates(compilerConfiguration).forAllFiles(
         compilerConfiguration,
         project
     ) { virtualFile, isCommon, moduleName ->

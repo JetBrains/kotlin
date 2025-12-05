@@ -7,9 +7,9 @@ package org.jetbrains.kotlin.scripting.compiler.plugin.dependencies
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiManager
+import org.jetbrains.kotlin.cli.CliDiagnostics.ROOTS_RESOLUTION_ERROR
+import org.jetbrains.kotlin.cli.common.diagnosticReporter
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
-import org.jetbrains.kotlin.cli.jvm.compiler.report
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.scripting.definitions.ScriptConfigurationsProvider
@@ -64,8 +64,8 @@ fun collectScriptsCompilationDependencies(
                                     ?: error("expecting script sources resolved to virtual files here")
                                 (psiManager.findFile(virtualFileSource.virtualFile) as? KtFile).also {
                                     if (it == null) {
-                                        configuration.report(
-                                            CompilerMessageSeverity.ERROR,
+                                        configuration.diagnosticReporter.report(
+                                            ROOTS_RESOLUTION_ERROR,
                                             "imported file is not kotlin source: ${virtualFileSource.virtualFile.path}",
                                             // TODO: consider receiving and using precise location from the resolver in the future
                                             CompilerMessageLocation.create(source.virtualFile.path)

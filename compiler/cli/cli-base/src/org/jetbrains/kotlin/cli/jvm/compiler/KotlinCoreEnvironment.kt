@@ -46,6 +46,10 @@ import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.jvm.extensions.ClassGeneratorExtension
+import org.jetbrains.kotlin.cli.CliDiagnostics.COMPILER_PLUGIN_INITIALIZATION_ERROR
+import org.jetbrains.kotlin.cli.CliDiagnostics.COMPILER_PLUGIN_INITIALIZATION_WARNING
+import org.jetbrains.kotlin.cli.CliDiagnostics.INITIALIZATION_WARNING
+import org.jetbrains.kotlin.cli.CliDiagnostics.ROOTS_RESOLUTION_WARNING
 import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.config.ContentRoot
 import org.jetbrains.kotlin.cli.common.config.KotlinSourceRoot
@@ -116,7 +120,7 @@ class KotlinCoreEnvironment private constructor(
         val jarFileSystem: VirtualFileSystem
 
         init {
-            val messageCollector = configuration.messageCollector
+            val diagnosticReporter = configuration.diagnosticReporter
 
             setIdeaIoUseFallback()
 
@@ -126,17 +130,14 @@ class KotlinCoreEnvironment private constructor(
 
             when {
                 useFastJarFSFlag == true && !useK2 -> {
-                    messageCollector.report(
-                        STRONG_WARNING,
+                    diagnosticReporter.report(
+                        INITIALIZATION_WARNING,
                         "Using new faster version of JAR FS: it should make your build faster, " +
                                 "but the new implementation is not thoroughly tested with language versions below 2.0"
                     )
                 }
                 useFastJarFSFlag == false && useK2 -> {
-                    messageCollector.report(
-                        INFO,
-                        "Using outdated version of JAR FS: it might make your build slower"
-                    )
+                    diagnosticReporter.info("Using outdated version of JAR FS: it might make your build slower")
                 }
             }
 
@@ -150,8 +151,8 @@ class KotlinCoreEnvironment private constructor(
                 useFastJarFS -> {
                     val fastJarFs = applicationEnvironment.fastJarFileSystem
                     if (fastJarFs == null) {
-                        messageCollector.report(
-                            STRONG_WARNING,
+                        diagnosticReporter.report(
+                            INITIALIZATION_WARNING,
                             "Your JDK doesn't seem to support mapped buffer unmapping, so the slower (old) version of JAR FS will be used"
                         )
                         applicationEnvironment.jarFileSystem
@@ -163,8 +164,8 @@ class KotlinCoreEnvironment private constructor(
                             val contentRoots = configuration.get(CLIConfigurationKeys.CONTENT_ROOTS)
                             if (contentRoots?.any { it is JvmClasspathRoot && it.file.path == outputJar.path } == true) {
                                 // See KT-61883
-                                messageCollector.report(
-                                    STRONG_WARNING,
+                                diagnosticReporter.report(
+                                    INITIALIZATION_WARNING,
                                     "JAR from the classpath ${outputJar.path} is reused as output JAR, so the slower (old) version of JAR FS will be used"
                                 )
                                 applicationEnvironment.jarFileSystem
@@ -224,7 +225,7 @@ class KotlinCoreEnvironment private constructor(
 
         sourceFiles += createSourceFilesFromSourceRoots(
             configuration, project,
-            getSourceRootsCheckingForDuplicates(configuration, configuration[CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY])
+            getSourceRootsCheckingForDuplicates(configuration)
         )
 
         collectAdditionalSources(project)
@@ -235,13 +236,13 @@ class KotlinCoreEnvironment private constructor(
 
         val javaFileManager = project.getService(CoreJavaFileManager::class.java) as KotlinCliJavaFileManagerImpl
 
-        val messageCollector = configuration.get(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+        val diagnosticReporter = configuration.diagnosticReporter
 
         val jdkHome = configuration.get(JVMConfigurationKeys.JDK_HOME)
         val releaseTarget = configuration.get(JVMConfigurationKeys.JDK_RELEASE)
         val javaModuleFinder = CliJavaModuleFinder(
             jdkHome,
-            messageCollector,
+            diagnosticReporter,
             javaFileManager,
             project,
             releaseTarget
@@ -255,7 +256,7 @@ class KotlinCoreEnvironment private constructor(
 
         classpathRootsResolver = ClasspathRootsResolver(
             PsiManager.getInstance(project),
-            messageCollector,
+            diagnosticReporter,
             configuration.getList(JVMConfigurationKeys.ADDITIONAL_JAVA_MODULES),
             this::contentRootToVirtualFile,
             javaModuleFinder,
@@ -337,7 +338,7 @@ class KotlinCoreEnvironment private constructor(
 
     fun createPackagePartProvider(scope: GlobalSearchScope): JvmPackagePartProvider {
         return JvmPackagePartProvider(configuration.languageVersionSettings, scope).apply {
-            addRoots(initialRoots, configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY))
+            addRoots(initialRoots, configuration.diagnosticReporter)
             packagePartProviders += this
         }
     }
@@ -400,7 +401,7 @@ class KotlinCoreEnvironment private constructor(
             initialRoots.addAll(newRoots)
         } else {
             for (packagePartProvider in packagePartProviders) {
-                packagePartProvider.addRoots(newRoots, configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY))
+                packagePartProvider.addRoots(newRoots, configuration.diagnosticReporter)
             }
         }
 
@@ -430,7 +431,7 @@ class KotlinCoreEnvironment private constructor(
     private fun findExistingRoot(root: JvmContentRoot, rootDescription: String): VirtualFile? {
         return findLocalFile(root.file.absolutePath).also {
             if (it == null) {
-                report(STRONG_WARNING, "$rootDescription points to a non-existent location: ${root.file}")
+                configuration.diagnosticReporter.report(ROOTS_RESOLUTION_WARNING, "$rootDescription points to a non-existent location: ${root.file}")
             }
         }
     }
@@ -443,8 +444,6 @@ class KotlinCoreEnvironment private constructor(
             .fold(sourceFiles as Collection<KtFile>) { files, extension ->
                 extension.processSources(files, configuration)
             }.toList()
-
-    internal fun report(severity: CompilerMessageSeverity, message: String) = configuration.report(severity, message)
 
     companion object {
         private val LOG = Logger.getInstance(KotlinCoreEnvironment::class.java)
@@ -777,7 +776,7 @@ class KotlinCoreEnvironment private constructor(
                 return "The provided plugin ${extension.javaClass.name} is not compatible with this version of compiler"
             }
 
-            val messageCollector = configuration.messageCollector
+            val diagnosticReporter = configuration.diagnosticReporter
 
             for (registrar in configuration.getList(ComponentRegistrar.PLUGIN_COMPONENT_REGISTRARS)) {
                 try {
@@ -787,11 +786,11 @@ class KotlinCoreEnvironment private constructor(
                     // Since the scripting plugin is often discovered in the compiler environment, it is often taken from the incompatible
                     // location, and in many cases this is not a fatal error, therefore strong warning is generated instead of exception
                     if (registrar.javaClass.simpleName == "ScriptingCompilerConfigurationComponentRegistrar") {
-                        messageCollector.report(STRONG_WARNING, "Default scripting plugin is disabled: $message")
+                        diagnosticReporter.report(COMPILER_PLUGIN_INITIALIZATION_WARNING, "Default scripting plugin is disabled: $message")
                     } else {
                         val errorMessageWithStackTrace = "$message.\n" +
                                 e.stackTraceToString().lines().take(6).joinToString("\n")
-                        messageCollector.report(ERROR, errorMessageWithStackTrace)
+                        diagnosticReporter.report(COMPILER_PLUGIN_INITIALIZATION_ERROR, errorMessageWithStackTrace)
                     }
                 }
             }

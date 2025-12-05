@@ -43,7 +43,11 @@ class CliDiagnosticReporter(
         }
     }
 
-    fun log(message: String) {
-        configuration.messageCollector.report(CompilerMessageSeverity.LOGGING, message)
+    fun info(message: String, location: CompilerMessageSourceLocation? = null) {
+        configuration.messageCollector.report(CompilerMessageSeverity.INFO, message, location)
+    }
+
+    fun log(message: String, location: CompilerMessageSourceLocation? = null) {
+        configuration.messageCollector.report(CompilerMessageSeverity.LOGGING, message, location)
     }
 }

@@ -53,6 +53,8 @@ import org.jetbrains.kotlin.analysis.decompiler.psi.BuiltinsVirtualFileProviderC
 import org.jetbrains.kotlin.analysis.decompiler.stub.file.ClsKotlinBinaryClassCache
 import org.jetbrains.kotlin.analysis.decompiler.stub.file.DummyFileAttributeService
 import org.jetbrains.kotlin.analysis.decompiler.stub.file.FileAttributeService
+import org.jetbrains.kotlin.cli.CliDiagnosticReporter
+import org.jetbrains.kotlin.cli.common.diagnosticReporter
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.*
 import org.jetbrains.kotlin.cli.jvm.index.JavaRoot
@@ -64,6 +66,7 @@ import org.jetbrains.kotlin.cli.jvm.modules.CliJavaModuleResolver
 import org.jetbrains.kotlin.cli.jvm.modules.CoreJrtFileSystem
 import org.jetbrains.kotlin.cli.jvm.modules.JavaModuleGraph
 import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.library.KLIB_FILE_EXTENSION
 import org.jetbrains.kotlin.load.kotlin.MetadataFinderFactory
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
@@ -586,9 +589,16 @@ object StandaloneProjectFactory {
     fun createPackagePartsProvider(
         libraryRoots: List<JavaRoot>,
         languageVersionSettings: LanguageVersionSettings = latestLanguageVersionSettings,
-    ): (GlobalSearchScope) -> JvmPackagePartProvider = { scope ->
-        JvmPackagePartProvider(languageVersionSettings, scope).apply {
-            addRoots(libraryRoots, MessageCollector.NONE)
+    ): (GlobalSearchScope) -> JvmPackagePartProvider {
+        val dummyConfiguration = CompilerConfiguration().apply {
+            this.languageVersionSettings = languageVersionSettings
+            messageCollector = MessageCollector.NONE
+        }
+        val diagnosticReporter = CliDiagnosticReporter(DiagnosticReporterFactory.createReporter(), dummyConfiguration)
+        return { scope ->
+            JvmPackagePartProvider(languageVersionSettings, scope).apply {
+                addRoots(libraryRoots, diagnosticReporter)
+            }
         }
     }
 

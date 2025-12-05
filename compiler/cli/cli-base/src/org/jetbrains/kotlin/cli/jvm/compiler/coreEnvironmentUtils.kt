@@ -11,8 +11,11 @@ import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiManager
+import org.jetbrains.kotlin.cli.CliDiagnostics.ROOTS_RESOLUTION_ERROR
+import org.jetbrains.kotlin.cli.CliDiagnostics.ROOTS_RESOLUTION_WARNING
 import org.jetbrains.kotlin.cli.common.config.KotlinSourceRoot
 import org.jetbrains.kotlin.cli.common.config.kotlinSourceRoots
+import org.jetbrains.kotlin.cli.common.diagnosticReporter
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
@@ -26,10 +29,6 @@ import org.jetbrains.kotlin.resolve.multiplatform.hmppModuleName
 import org.jetbrains.kotlin.resolve.multiplatform.isCommonSource
 import java.io.File
 
-fun CompilerConfiguration.report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageLocation? = null) {
-    messageCollector.report(severity, message, location)
-}
-
 fun List<KotlinSourceRoot>.forAllFiles(
     configuration: CompilerConfiguration,
     project: Project,
@@ -42,6 +41,7 @@ fun List<KotlinSourceRoot>.forAllFiles(
     val processedFiles = hashSetOf<VirtualFile>()
 
     val virtualFileCreator = PreprocessedFileCreator(project)
+    val diagnosticReporter = configuration.diagnosticReporter
 
     var pluginsConfigured = false
     fun ensurePluginsConfigured() {
@@ -65,14 +65,14 @@ fun List<KotlinSourceRoot>.forAllFiles(
                     .warn("$message\n\nbuild file path: $buildFilePath\ncontent:\n${buildFilePath.readText()}")
             }
 
-            configuration.report(CompilerMessageSeverity.ERROR, message, reportLocation)
+            diagnosticReporter.report(ROOTS_RESOLUTION_ERROR, message, reportLocation)
             continue
         }
 
         if (!vFile.isDirectory && vFile.extension != KotlinFileType.EXTENSION) {
             ensurePluginsConfigured()
             if (vFile.fileType != KotlinFileType.INSTANCE) {
-                configuration.report(CompilerMessageSeverity.ERROR, "Source entry is not a Kotlin file: $sourceRootPath", reportLocation)
+                diagnosticReporter.report(ROOTS_RESOLUTION_ERROR, "Source entry is not a Kotlin file: $sourceRootPath", reportLocation)
                 continue
             }
         }
@@ -136,13 +136,13 @@ fun CompilerConfiguration.applyModuleProperties(module: Module, buildFile: File?
     put(JVMConfigurationKeys.OUTPUT_DIRECTORY, File(module.getOutputDirectory()))
 }
 
-fun getSourceRootsCheckingForDuplicates(configuration: CompilerConfiguration, messageCollector: MessageCollector?): List<KotlinSourceRoot> {
+fun getSourceRootsCheckingForDuplicates(configuration: CompilerConfiguration): List<KotlinSourceRoot> {
     val uniqueSourceRoots = hashSetOf<String>()
     val result = mutableListOf<KotlinSourceRoot>()
-
+    val diagnosticReporter = configuration.diagnosticReporter
     for (root in configuration.kotlinSourceRoots) {
         if (!uniqueSourceRoots.add(root.path)) {
-            messageCollector?.report(CompilerMessageSeverity.STRONG_WARNING, "Duplicate source root: ${root.path}")
+            diagnosticReporter.report(ROOTS_RESOLUTION_WARNING, "Duplicate source root: ${root.path}")
         }
         result.add(root)
     }
