@@ -6,15 +6,12 @@
 package org.jetbrains.kotlin.cli.common
 
 import com.intellij.ide.highlighter.JavaFileType
-import org.jetbrains.kotlin.cli.CliDiagnostics
-import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
-import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArgumentsConfigurator
-import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments
-import org.jetbrains.kotlin.cli.common.arguments.ManualLanguageFeatureSetting
-import org.jetbrains.kotlin.cli.common.arguments.cliArgument
-import org.jetbrains.kotlin.cli.common.arguments.toLanguageVersionSettings
+import org.jetbrains.kotlin.cli.CliDiagnosticReporter
+import org.jetbrains.kotlin.cli.CliDiagnostics.COMPILER_ARGUMENTS_ERROR
+import org.jetbrains.kotlin.cli.CliDiagnostics.COMPILER_ARGUMENTS_WARNING
+import org.jetbrains.kotlin.cli.CliDiagnostics.IO_ERROR
+import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.types.AbstractTypeChecker
@@ -29,7 +26,7 @@ fun CompilerConfiguration.setupCommonArguments(
     arguments: CommonCompilerArguments,
     createMetadataVersion: ((IntArray) -> BinaryVersion)? = null
 ) {
-    val messageCollector = getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+    val diagnosticReporter = this.diagnosticReporter
 
     put(CommonConfigurationKeys.DISABLE_INLINE, arguments.noInline)
     put(CommonConfigurationKeys.USE_FIR_EXTRA_CHECKERS, arguments.extraWarnings)
@@ -49,7 +46,7 @@ fun CompilerConfiguration.setupCommonArguments(
     val irVerificationMode = arguments.verifyIr?.let { verifyIrString ->
         IrVerificationMode.resolveMode(verifyIrString).also {
             if (it == null) {
-                messageCollector.report(CompilerMessageSeverity.ERROR, "Unsupported IR verification mode $verifyIrString")
+                diagnosticReporter.report(COMPILER_ARGUMENTS_ERROR, "Unsupported IR verification mode $verifyIrString")
             }
         }
     } ?: IrVerificationMode.NONE
@@ -58,8 +55,8 @@ fun CompilerConfiguration.setupCommonArguments(
     if (arguments.verifyIrVisibility) {
         put(CommonConfigurationKeys.ENABLE_IR_VISIBILITY_CHECKS, true)
         if (irVerificationMode == IrVerificationMode.NONE) {
-            messageCollector.report(
-                CompilerMessageSeverity.WARNING,
+            diagnosticReporter.report(
+                COMPILER_ARGUMENTS_WARNING,
                 "'-Xverify-ir-visibility' has no effect unless '-Xverify-ir=warning' or '-Xverify-ir=error' is specified"
             )
         }
@@ -68,8 +65,8 @@ fun CompilerConfiguration.setupCommonArguments(
     if (arguments.verifyIrNestedOffsets) {
         put(CommonConfigurationKeys.ENABLE_IR_NESTED_OFFSETS_CHECKS, true)
         if (irVerificationMode == IrVerificationMode.NONE) {
-            messageCollector.report(
-                CompilerMessageSeverity.WARNING,
+            diagnosticReporter.report(
+                COMPILER_ARGUMENTS_WARNING,
                 "'-Xverify-ir-nested-offsets' has no effect unless '-Xverify-ir=warning' or '-Xverify-ir=error' is specified"
             )
         }
@@ -78,8 +75,8 @@ fun CompilerConfiguration.setupCommonArguments(
     @Suppress("DEPRECATION")
     if (arguments.useFirExperimentalCheckers) {
         put(CommonConfigurationKeys.USE_FIR_EXPERIMENTAL_CHECKERS, true)
-        messageCollector.report(
-            CompilerMessageSeverity.WARNING,
+        diagnosticReporter.report(
+            COMPILER_ARGUMENTS_WARNING,
             "'-Xuse-fir-experimental-checkers' is deprecated and will be removed in a future release"
         )
     }
@@ -109,8 +106,8 @@ fun CompilerConfiguration.setupMetadataVersion(
     if (metadataVersionString != null) {
         val versionArray = BinaryVersion.parseVersionArray(metadataVersionString)
         when {
-            versionArray == null -> messageCollector.report(
-                CompilerMessageSeverity.ERROR, "Invalid metadata version: $metadataVersionString", null
+            versionArray == null -> diagnosticReporter.report(
+                COMPILER_ARGUMENTS_ERROR, "Invalid metadata version: $metadataVersionString", null
             )
             createMetadataVersion == null -> throw IllegalStateException("Unable to create metadata version: missing argument")
             else -> put(CommonConfigurationKeys.METADATA_VERSION, createMetadataVersion(versionArray))
@@ -122,11 +119,11 @@ fun CompilerConfiguration.setupLanguageVersionSettings(arguments: CommonCompiler
     val diagnosticReporter = this.diagnosticReporter
     val reporter = object : CommonCompilerArgumentsConfigurator.Reporter {
         override fun reportWarning(message: String) {
-            diagnosticReporter.report(CliDiagnostics.COMPILER_ARGUMENTS_WARNING, message)
+            diagnosticReporter.report(COMPILER_ARGUMENTS_WARNING, message)
         }
 
         override fun reportError(message: String) {
-            diagnosticReporter.report(CliDiagnostics.COMPILER_ARGUMENTS_ERROR, message)
+            diagnosticReporter.report(COMPILER_ARGUMENTS_ERROR, message)
         }
 
         override fun info(message: String) {
@@ -138,7 +135,7 @@ fun CompilerConfiguration.setupLanguageVersionSettings(arguments: CommonCompiler
 
 const val KOTLIN_HOME_PROPERTY = "kotlin.home"
 
-fun computeKotlinPaths(messageCollector: MessageCollector, arguments: CommonCompilerArguments): KotlinPaths? {
+fun computeKotlinPaths(diagnosticReporter: CliDiagnosticReporter, arguments: CommonCompilerArguments): KotlinPaths? {
     val kotlinHomeProperty = System.getProperty(KOTLIN_HOME_PROPERTY)
     val kotlinHome = when {
         arguments.kotlinHome != null -> File(arguments.kotlinHome!!)
@@ -150,43 +147,48 @@ fun computeKotlinPaths(messageCollector: MessageCollector, arguments: CommonComp
         kotlinHome == null -> PathUtil.kotlinPathsForCompiler
         kotlinHome.isDirectory -> KotlinPathsFromHomeDir(kotlinHome)
         else -> {
-            messageCollector.report(CompilerMessageSeverity.ERROR, "Kotlin home does not exist or is not a directory: $kotlinHome", null)
+            diagnosticReporter.report(IO_ERROR, "Kotlin home does not exist or is not a directory: $kotlinHome")
             null
         }
     }?.also {
-        messageCollector.report(CompilerMessageSeverity.LOGGING, "Using Kotlin home directory " + it.homePath, null)
+        diagnosticReporter.log("Using Kotlin home directory " + it.homePath)
     }
 }
 
-fun MessageCollector.reportArgumentParseProblems(arguments: CommonToolArguments) {
+fun CliDiagnosticReporter.reportArgumentParseProblems(arguments: CommonToolArguments) {
     val errors = arguments.errors ?: return
     for (flag in errors.unknownExtraFlags) {
-        report(CompilerMessageSeverity.STRONG_WARNING, "Flag is not supported by this version of the compiler: $flag")
+        report(COMPILER_ARGUMENTS_WARNING, "Flag is not supported by this version of the compiler: $flag")
     }
     for (argument in errors.extraArgumentsPassedInObsoleteForm) {
         report(
-            CompilerMessageSeverity.STRONG_WARNING,
+            COMPILER_ARGUMENTS_WARNING,
             "Advanced option value is passed in an obsolete form. Please use the '=' character to specify the value: $argument=..."
         )
     }
     for ((key, value) in errors.duplicateArguments) {
-        report(CompilerMessageSeverity.STRONG_WARNING, "Argument $key is passed multiple times. Only the last value will be used: $value")
+        report(COMPILER_ARGUMENTS_WARNING, "Argument $key is passed multiple times. Only the last value will be used: $value")
     }
     for ((deprecatedName, newName) in errors.deprecatedArguments) {
-        report(CompilerMessageSeverity.STRONG_WARNING, "Argument $deprecatedName is deprecated. Please use $newName instead")
+        report(COMPILER_ARGUMENTS_WARNING, "Argument $deprecatedName is deprecated. Please use $newName instead")
     }
     for (argfileError in errors.argfileErrors) {
-        report(CompilerMessageSeverity.STRONG_WARNING, argfileError)
+        report(COMPILER_ARGUMENTS_WARNING, argfileError)
     }
 
     reportUnsafeInternalArgumentsIfAny(arguments)
 
     for ((severity, internalArgumentsProblem) in errors.internalArgumentsParsingProblems) {
-        report(severity, internalArgumentsProblem)
+        val factory = when (severity) {
+            CompilerMessageSeverity.ERROR -> COMPILER_ARGUMENTS_ERROR
+            CompilerMessageSeverity.STRONG_WARNING -> COMPILER_ARGUMENTS_WARNING
+            else -> error("Unexpected severity: $severity")
+        }
+        report(factory, internalArgumentsProblem)
     }
 }
 
-private fun MessageCollector.reportUnsafeInternalArgumentsIfAny(arguments: CommonToolArguments) {
+private fun CliDiagnosticReporter.reportUnsafeInternalArgumentsIfAny(arguments: CommonToolArguments) {
     val unsafeArguments = arguments.internalArguments.filterNot {
         // -XXLanguage which turns on BUG_FIX considered safe
         it.languageFeature.actuallyEnabledInProgressiveMode && it.state == LanguageFeature.State.ENABLED
@@ -198,7 +200,7 @@ private fun MessageCollector.reportUnsafeInternalArgumentsIfAny(arguments: Commo
         }
 
         report(
-            CompilerMessageSeverity.STRONG_WARNING,
+            COMPILER_ARGUMENTS_WARNING,
             "ATTENTION!\n" +
                     "This build uses unsafe internal compiler arguments:\n" +
                     unsafeArgumentsString +
@@ -220,14 +222,14 @@ private fun CompilerConfiguration.buildHmppModuleStructure(arguments: CommonComp
     val rawFragmentSources = arguments.fragmentSources
     val rawFragmentRefines = arguments.fragmentRefines
 
-    val messageCollector = getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+    val diagnosticReporter = this.diagnosticReporter
 
     fun reportError(message: String) {
-        messageCollector.report(CompilerMessageSeverity.ERROR, message)
+        diagnosticReporter.report(COMPILER_ARGUMENTS_ERROR, message)
     }
 
     fun reportWarning(message: String) {
-        messageCollector.report(CompilerMessageSeverity.WARNING, message)
+        diagnosticReporter.report(COMPILER_ARGUMENTS_WARNING, message)
     }
 
     if (rawFragments == null) {

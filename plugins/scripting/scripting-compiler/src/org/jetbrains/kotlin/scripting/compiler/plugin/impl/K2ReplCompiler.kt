@@ -287,7 +287,7 @@ private fun compileImpl(
         }
         hasSyntaxErrors = hasSyntaxErrors || syntaxErrorReport.isHasErrors
     }
-    checkKotlinPackageUsageForPsi(compilerConfiguration, allSourceFiles, messageCollector)
+    checkKotlinPackageUsageForPsi(compilerConfiguration, allSourceFiles)
 
     // Updating compiler options
     val configurationsProvider = ScriptConfigurationsProvider.getInstance(project)

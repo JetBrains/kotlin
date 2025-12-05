@@ -9,8 +9,7 @@ import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.KtVirtualFileSourceFile
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.CliDiagnostics.COMPILER_ARGUMENTS_WARNING
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.forAllFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.getSourceRootsCheckingForDuplicates
@@ -18,7 +17,7 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.dontSortSourceFiles
 import org.jetbrains.kotlin.idea.KotlinFileType
-import java.util.TreeSet
+import java.util.*
 
 private const val kotlinFileExtensionWithDot = ".${KotlinFileType.EXTENSION}"
 private const val javaFileExtensionWithDot = ".${JavaFileType.DEFAULT_EXTENSION}"
@@ -36,10 +35,9 @@ val GroupedKtSources.allFiles: List<KtSourceFile>
 
 fun collectSources(
     compilerConfiguration: CompilerConfiguration,
-    projectEnvironment: VfsBasedProjectEnvironment,
-    messageCollector: MessageCollector
+    projectEnvironment: VfsBasedProjectEnvironment
 ): GroupedKtSources {
-    return collectSources(compilerConfiguration, projectEnvironment.project, messageCollector)
+    return collectSources(compilerConfiguration, projectEnvironment.project)
 }
 
 private val ktSourceFileComparator = Comparator<KtSourceFile> { o1, o2 ->
@@ -50,8 +48,7 @@ private val ktSourceFileComparator = Comparator<KtSourceFile> { o1, o2 ->
 
 fun collectSources(
     compilerConfiguration: CompilerConfiguration,
-    project: Project,
-    messageCollector: MessageCollector
+    project: Project
 ): GroupedKtSources {
     fun createSet(): MutableSet<KtSourceFile> = if (compilerConfiguration.dontSortSourceFiles) {
         mutableSetOf()
@@ -93,8 +90,8 @@ fun collectSources(
 
     if (skipScriptsInLtModeWarning) {
         // TODO: remove then Scripts are supported in LT (probably different K2 extension should be written for handling the case properly)
-        messageCollector.report(
-            CompilerMessageSeverity.STRONG_WARNING,
+        compilerConfiguration.diagnosticReporter.report(
+            COMPILER_ARGUMENTS_WARNING,
             "Scripts are not yet supported with K2 in LightTree mode, consider using K1 or disable LightTree mode with -Xuse-fir-lt=false"
         )
     }

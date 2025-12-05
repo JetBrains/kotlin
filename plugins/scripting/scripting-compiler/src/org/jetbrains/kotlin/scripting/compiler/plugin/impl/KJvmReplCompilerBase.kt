@@ -92,7 +92,7 @@ open class KJvmReplCompilerBase<AnalyzerT : ReplCodeAnalyzerBase>(
                 if (firstFailure != null)
                     return firstFailure
 
-                checkKotlinPackageUsageForPsi(context.environment.configuration, sourceFiles, messageCollector)
+                checkKotlinPackageUsageForPsi(context.environment.configuration, sourceFiles)
 
                 if (messageCollector.hasErrors()) return failure(messageCollector)
 

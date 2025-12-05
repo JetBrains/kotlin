@@ -146,7 +146,7 @@ private fun compileImpl(
         messageCollector
     )
 
-    checkKotlinPackageUsageForPsi(context.environment.configuration, sourceFiles, messageCollector)
+    checkKotlinPackageUsageForPsi(context.environment.configuration, sourceFiles)
 
     if (messageCollector.hasErrors() || sourceDependencies.any { it.sourceDependencies is ResultWithDiagnostics.Failure }) {
         return failure(messageCollector)

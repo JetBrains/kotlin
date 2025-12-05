@@ -5,11 +5,13 @@
 
 package org.jetbrains.kotlin.cli.pipeline.metadata
 
+import org.jetbrains.kotlin.cli.CliDiagnosticReporter
+import org.jetbrains.kotlin.cli.CliDiagnostics.COMPILER_ARGUMENTS_ERROR
+import org.jetbrains.kotlin.cli.CliDiagnostics.COMPILER_ARGUMENTS_WARNING
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.common.diagnosticReporter
 import org.jetbrains.kotlin.cli.jvm.config.K2MetadataConfigurationKeys
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
 import org.jetbrains.kotlin.cli.pipeline.AbstractConfigurationPhase
@@ -60,13 +62,13 @@ object MetadataConfigurationUpdater : ConfigurationUpdater<K2MetadataCompilerArg
     }
 
     fun fillConfiguration(configuration: CompilerConfiguration, arguments: K2MetadataCompilerArguments) {
-        val collector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+        val diagnosticReporter = configuration.diagnosticReporter
 
         val commonSources = arguments.commonSources?.toSet() ?: emptySet()
         val hmppCliModuleStructure = configuration.get(CommonConfigurationKeys.HMPP_MODULE_STRUCTURE)
         if (hmppCliModuleStructure != null) {
-            collector.report(
-                ERROR,
+            diagnosticReporter.report(
+                COMPILER_ARGUMENTS_ERROR,
                 "HMPP module structure should not be passed during metadata compilation. Please remove `-Xfragments` and related flags"
             )
             return
@@ -92,20 +94,20 @@ object MetadataConfigurationUpdater : ConfigurationUpdater<K2MetadataCompilerArg
             targetDescription = moduleName
         }
 
-        configuration.targetPlatform = computeTargetPlatform(arguments.targetPlatform.orEmpty().toList(), collector)
+        configuration.targetPlatform = computeTargetPlatform(arguments.targetPlatform.orEmpty().toList(), configuration.diagnosticReporter)
 
         val destination = arguments.destination
         if (destination != null) {
             if (destination.endsWith(".jar")) {
                 // TODO: support .jar destination
-                collector.report(
-                    STRONG_WARNING,
+                diagnosticReporter.report(
+                    COMPILER_ARGUMENTS_WARNING,
                     ".jar destination is not yet supported, results will be written to the directory with the given name"
                 )
             }
             configuration.put(CLIConfigurationKeys.METADATA_DESTINATION_DIRECTORY, File(destination))
         } else {
-            collector.report(ERROR, "Specify destination via -d")
+            diagnosticReporter.report(COMPILER_ARGUMENTS_ERROR, "Specify destination via -d")
         }
     }
 
@@ -130,11 +132,15 @@ object MetadataConfigurationUpdater : ConfigurationUpdater<K2MetadataCompilerArg
         return TargetPlatform(platforms)
     }
 
-    private fun computeTargetPlatform(platformsFromArg: List<String>, collector: MessageCollector): TargetPlatform {
+    private fun computeTargetPlatform(platformsFromArg: List<String>, diagnosticReporter: CliDiagnosticReporter): TargetPlatform {
         return computeTargetPlatform(
             platformsFromArg,
-            onUnknownPlatform = { collector.report(ERROR, "Unknown target platform: $it. Possible values are: ${platformMap.keys}") },
-            onEmptyPlatforms = { collector.report(WARNING, "No target platform specified, using default") }
+            onUnknownPlatform = {
+                diagnosticReporter.report(COMPILER_ARGUMENTS_ERROR, "Unknown target platform: $it. Possible values are: ${platformMap.keys}")
+            },
+            onEmptyPlatforms = {
+                diagnosticReporter.report(COMPILER_ARGUMENTS_WARNING, "No target platform specified, using default")
+            }
         )
     }
 }

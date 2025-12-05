@@ -5,11 +5,13 @@
 
 package org.jetbrains.kotlin.cli.jvm
 
+import org.jetbrains.kotlin.cli.CliDiagnosticReporter
+import org.jetbrains.kotlin.cli.CliDiagnostics.COMPILER_ARGUMENTS_ERROR
+import org.jetbrains.kotlin.cli.CliDiagnostics.COMPILER_ARGUMENTS_WARNING
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.cli.common.diagnosticReporter
 import org.jetbrains.kotlin.cli.common.getLibraryFromHome
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.config.JvmModulePathRoot
@@ -25,6 +27,7 @@ fun CompilerConfiguration.setupJvmSpecificArguments(arguments: K2JVMCompilerArgu
 
     putIfNotNull(JVMConfigurationKeys.FRIEND_PATHS, arguments.friendPaths?.asList())
 
+    val diagnosticReporter = this.diagnosticReporter
     val releaseTargetArg = arguments.jdkRelease
     val jvmTargetArg = arguments.jvmTarget
     if (releaseTargetArg != null) {
@@ -36,7 +39,7 @@ fun CompilerConfiguration.setupJvmSpecificArguments(arguments: K2JVMCompilerArgu
                 else -> releaseTargetArg.toIntOrNull()
             }
         if (value == null || value < 6) {
-            messageCollector.report(ERROR, "Unknown JDK release version: $releaseTargetArg")
+            diagnosticReporter.report(COMPILER_ARGUMENTS_ERROR, "Unknown JDK release version: $releaseTargetArg")
         } else {
             //don't use release flag if it equals to compilation JDK version
             if (value != getJavaVersion() || arguments.jdkHome != null) {
@@ -46,8 +49,8 @@ fun CompilerConfiguration.setupJvmSpecificArguments(arguments: K2JVMCompilerArgu
                 val suggestion =
                     if (value < 8) "Please change the value of the 'jvm-target' option to 1.8"
                     else "Please remove the '-jvm-target' option"
-                messageCollector.report(
-                    ERROR,
+                diagnosticReporter.report(
+                    COMPILER_ARGUMENTS_ERROR,
                     "'-Xjdk-release=$releaseTargetArg' option conflicts with '-jvm-target $jvmTargetArg'. $suggestion"
                 )
             }
@@ -57,8 +60,8 @@ fun CompilerConfiguration.setupJvmSpecificArguments(arguments: K2JVMCompilerArgu
     val jvmTargetValue = when (releaseTargetArg) {
         "6", "1.6", "7", "1.7" -> {
             if (jvmTargetArg == null) {
-                messageCollector.report(
-                    ERROR,
+                diagnosticReporter.report(
+                    COMPILER_ARGUMENTS_ERROR,
                     "'-Xjdk-release=$releaseTargetArg' option requires JVM target explicitly set to 1.8. " +
                             "Please specify the '-jvm-target' option"
                 )
@@ -74,14 +77,14 @@ fun CompilerConfiguration.setupJvmSpecificArguments(arguments: K2JVMCompilerArgu
         if (jvmTarget != null) {
             put(JVMConfigurationKeys.JVM_TARGET, jvmTarget)
             if (jvmTarget == JvmTarget.JVM_1_6) {
-                messageCollector.report(
-                    ERROR,
+                diagnosticReporter.report(
+                    COMPILER_ARGUMENTS_ERROR,
                     "JVM target 1.6 is no longer supported. Please migrate to JVM target 1.8 or above"
                 )
             }
         } else {
-            messageCollector.report(
-                ERROR, "Unknown JVM target version: $jvmTargetValue\n" +
+            diagnosticReporter.report(
+                COMPILER_ARGUMENTS_ERROR, "Unknown JVM target version: $jvmTargetValue\n" +
                         "Supported versions: ${JvmTarget.supportedValues().joinToString { it.description }}"
             )
         }
@@ -95,14 +98,14 @@ fun CompilerConfiguration.setupJvmSpecificArguments(arguments: K2JVMCompilerArgu
         if (runtimeStringConcat != null) {
             put(JVMConfigurationKeys.STRING_CONCAT, runtimeStringConcat)
             if (jvmTarget.majorVersion < JvmTarget.JVM_9.majorVersion && runtimeStringConcat != JvmStringConcat.INLINE) {
-                messageCollector.report(
-                    WARNING,
+                diagnosticReporter.report(
+                    COMPILER_ARGUMENTS_WARNING,
                     "`-Xstring-concat=$stringConcat` does nothing with JVM target `${jvmTarget.description}`."
                 )
             }
         } else {
-            messageCollector.report(
-                ERROR, "Unknown `-Xstring-concat` mode: $stringConcat\n" +
+            diagnosticReporter.report(
+                COMPILER_ARGUMENTS_ERROR, "Unknown `-Xstring-concat` mode: $stringConcat\n" +
                         "Supported modes: ${JvmStringConcat.entries.joinToString { it.description }}"
             )
         }
@@ -114,14 +117,14 @@ fun CompilerConfiguration.setupJvmSpecificArguments(arguments: K2JVMCompilerArgu
         if (whenGenerationScheme != null) {
             put(JVMConfigurationKeys.WHEN_GENERATION_SCHEME, whenGenerationScheme)
             if (jvmTarget.majorVersion < JvmTarget.JVM_21.majorVersion && whenGenerationScheme != JvmWhenGenerationScheme.INLINE) {
-                messageCollector.report(
-                    WARNING,
+                diagnosticReporter.report(
+                    COMPILER_ARGUMENTS_WARNING,
                     "`-Xwhen-expressions=$whenExpressionsGeneration` does nothing with JVM target `${jvmTarget.description}`."
                 )
             }
         } else {
-            messageCollector.report(
-                ERROR, "Unknown `-Xwhen-expressions` mode: $whenExpressionsGeneration\n" +
+            diagnosticReporter.report(
+                COMPILER_ARGUMENTS_ERROR, "Unknown `-Xwhen-expressions` mode: $whenExpressionsGeneration\n" +
                         "Supported modes: ${JvmWhenGenerationScheme.entries.joinToString { it.description }}"
             )
         }
@@ -153,8 +156,8 @@ private fun CompilerConfiguration.handleClosureGenerationSchemeArgument(
     if (parsedValue != null) {
         put(key, parsedValue)
     } else {
-        messageCollector.report(
-            ERROR,
+        diagnosticReporter.report(
+            COMPILER_ARGUMENTS_ERROR,
             "Unknown `$flag` argument: ${value}\n." +
                     "Supported arguments: ${JvmClosureGenerationScheme.entries.joinToString { it.description }}"
         )
@@ -166,7 +169,7 @@ fun CompilerConfiguration.configureJdkHome(arguments: K2JVMCompilerArguments): B
         put(JVMConfigurationKeys.NO_JDK, true)
 
         if (arguments.jdkHome != null) {
-            messageCollector.report(STRONG_WARNING, "The '-jdk-home' option is ignored because '-no-jdk' is specified")
+            diagnosticReporter.report(COMPILER_ARGUMENTS_WARNING, "The '-jdk-home' option is ignored because '-no-jdk' is specified")
         }
         return true
     }
@@ -174,10 +177,10 @@ fun CompilerConfiguration.configureJdkHome(arguments: K2JVMCompilerArguments): B
     if (arguments.jdkHome != null) {
         val jdkHome = File(arguments.jdkHome!!)
         if (!jdkHome.exists()) {
-            messageCollector.report(ERROR, "JDK home directory does not exist: $jdkHome")
+            diagnosticReporter.report(COMPILER_ARGUMENTS_ERROR, "JDK home directory does not exist: $jdkHome")
             return false
         }
-        messageCollector.report(LOGGING, "Using JDK home directory $jdkHome")
+        diagnosticReporter.log("Using JDK home directory $jdkHome")
         put(JVMConfigurationKeys.JDK_HOME, jdkHome)
     } else {
         configureJdkHomeFromSystemProperty()
@@ -188,7 +191,7 @@ fun CompilerConfiguration.configureJdkHome(arguments: K2JVMCompilerArguments): B
 
 fun CompilerConfiguration.configureJdkHomeFromSystemProperty() {
     val javaHome = File(System.getProperty("java.home"))
-    messageCollector.report(LOGGING, "Using JDK home inferred from java.home: $javaHome")
+    diagnosticReporter.log("Using JDK home inferred from java.home: $javaHome")
     put(JVMConfigurationKeys.JDK_HOME, javaHome)
 }
 
@@ -227,7 +230,7 @@ fun <PathProvider : Any> CompilerConfiguration.configureStandardLibs(
     fun addRoot(moduleName: String, libraryName: String, getLibrary: (PathProvider) -> File, noLibraryArgument: String) {
         addModularRootIfNotNull(
             isModularJava, moduleName,
-            getLibraryFromHome(paths, getLibrary, libraryName, messageCollector, noLibraryArgument)
+            getLibraryFromHome(paths, getLibrary, libraryName, diagnosticReporter, noLibraryArgument)
         )
     }
 
@@ -278,10 +281,11 @@ fun CompilerConfiguration.configureAdvancedJvmOptions(arguments: K2JVMCompilerAr
     put(JVMConfigurationKeys.PARAMETERS_METADATA, arguments.javaParameters)
 
     val abiStability = JvmAbiStability.fromStringOrNull(arguments.abiStability)
+    val diagnosticReporter = this.diagnosticReporter
     if (arguments.abiStability != null) {
         if (abiStability == null) {
-            messageCollector.report(
-                ERROR,
+            diagnosticReporter.report(
+                COMPILER_ARGUMENTS_ERROR,
                 "Unknown ABI stability mode: ${arguments.abiStability}, supported modes: ${JvmAbiStability.entries.map { it.description }}"
             )
         } else {
@@ -314,8 +318,8 @@ fun CompilerConfiguration.configureAdvancedJvmOptions(arguments: K2JVMCompilerAr
     val assertionsMode =
         JVMAssertionsMode.fromStringOrNull(arguments.assertionsMode)
     if (assertionsMode == null) {
-        messageCollector.report(
-            ERROR,
+        diagnosticReporter.report(
+            COMPILER_ARGUMENTS_ERROR,
             "Unknown assertions mode: ${arguments.assertionsMode}, supported modes: ${JVMAssertionsMode.entries.map { it.description }}"
         )
     }
@@ -326,7 +330,7 @@ fun CompilerConfiguration.configureAdvancedJvmOptions(arguments: K2JVMCompilerAr
     arguments.useFastJarFileSystem?.let { put(JVMConfigurationKeys.USE_FAST_JAR_FILE_SYSTEM, it) }
 
     if (arguments.useOldClassFilesReading) {
-        messageCollector.report(INFO, "Using the old java class files reading implementation")
+        diagnosticReporter.info("Using the old java class files reading implementation")
     }
 
     put(CLIConfigurationKeys.ALLOW_KOTLIN_PACKAGE, arguments.allowKotlinPackage)
@@ -335,25 +339,31 @@ fun CompilerConfiguration.configureAdvancedJvmOptions(arguments: K2JVMCompilerAr
     put(JVMConfigurationKeys.ENABLE_JVM_PREVIEW, arguments.enableJvmPreview)
 
     if (arguments.enableJvmPreview) {
-        messageCollector.report(INFO, "Using preview Java language features")
+        diagnosticReporter.info("Using preview Java language features")
     }
 
-    val nThreadsRaw = parseBackendThreads(arguments.backendThreads, messageCollector)
+    val nThreadsRaw = parseBackendThreads(arguments.backendThreads, diagnosticReporter)
     val nThreads = if (nThreadsRaw == 0) Runtime.getRuntime().availableProcessors() else nThreadsRaw
     if (nThreads > 1) {
-        messageCollector.report(LOGGING, "Running backend in parallel with $nThreads threads")
+        diagnosticReporter.log("Running backend in parallel with $nThreads threads")
     }
     put(CommonConfigurationKeys.PARALLEL_BACKEND_THREADS, nThreads)
 }
 
-private fun parseBackendThreads(stringValue: String, messageCollector: MessageCollector): Int {
+private fun parseBackendThreads(stringValue: String, diagnosticReporter: CliDiagnosticReporter): Int {
     val value = stringValue.toIntOrNull()
     if (value == null) {
-        messageCollector.report(ERROR, "Cannot parse -Xbackend-threads value: \"$stringValue\". Please use an integer number")
+        diagnosticReporter.report(
+            COMPILER_ARGUMENTS_ERROR,
+            "Cannot parse -Xbackend-threads value: \"$stringValue\". Please use an integer number"
+        )
         return 1
     }
     if (value < 0) {
-        messageCollector.report(ERROR, "-Xbackend-threads value cannot be negative")
+        diagnosticReporter.report(
+            COMPILER_ARGUMENTS_ERROR,
+            "-Xbackend-threads value cannot be negative"
+        )
         return 1
     }
     return value

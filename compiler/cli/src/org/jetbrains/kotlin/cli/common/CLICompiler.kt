@@ -23,6 +23,7 @@ import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.analyzer.CompilationErrorException
 import org.jetbrains.kotlin.cli.CliDiagnosticReporter
 import org.jetbrains.kotlin.cli.CliDiagnostics
+import org.jetbrains.kotlin.cli.CliDiagnostics.COMPILER_ARGUMENTS_ERROR
 import org.jetbrains.kotlin.cli.common.ExitCode.*
 import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.cli.common.environment.setIdeaIoUseFallback
@@ -468,21 +469,21 @@ fun checkPluginsArguments(
 ): Boolean {
     var hasErrors = false
 
-    val messageCollector = configuration.messageCollector
+    val diagnosticReporter = configuration.diagnosticReporter
 
     for (classpath in pluginClasspaths) {
         if (!File(classpath).exists()) {
-            messageCollector.report(ERROR, "Plugin classpath entry points to a non-existent location: $classpath")
+            diagnosticReporter.report(COMPILER_ARGUMENTS_ERROR, "Plugin classpath entry points to a non-existent location: $classpath")
         }
     }
 
     if (pluginConfigurations.isNotEmpty()) {
-        configuration.reportIfNeeded(CliDiagnostics.COMPILER_PLUGIN_ARG_IS_EXPERIMENTAL, "Argument -Xcompiler-plugin is experimental")
+        configuration.diagnosticReporter.report(CliDiagnostics.COMPILER_PLUGIN_ARG_IS_EXPERIMENTAL, "Argument -Xcompiler-plugin is experimental")
 
         if (!useK2) {
             hasErrors = true
-            messageCollector.report(
-                ERROR,
+            diagnosticReporter.report(
+                COMPILER_ARGUMENTS_ERROR,
                 "-Xcompiler-plugin argument is allowed only for language version 2.0. Please use -Xplugin argument for language version 1.9 and below"
             )
         }
@@ -502,7 +503,7 @@ fun checkPluginsArguments(
                     appendLine("  -Xcompiler-plugin=$it")
                 }
             }
-            messageCollector.report(ERROR, message)
+            diagnosticReporter.report(COMPILER_ARGUMENTS_ERROR, message)
         }
     }
     return !hasErrors

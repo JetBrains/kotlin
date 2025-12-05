@@ -13,6 +13,7 @@ import com.intellij.openapi.vfs.VirtualFileSystem
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.cli.common.diagnosticReporter
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.OutputMessageUtil
@@ -75,7 +76,7 @@ private fun writeOutput(
 ) {
     val reportOutputFiles = configuration.getBoolean(CommonConfigurationKeys.REPORT_OUTPUT_FILES)
     val jarPath = configuration.get(JVMConfigurationKeys.OUTPUT_JAR)
-    val messageCollector = configuration.messageCollector
+    val diagnosticReporter = configuration.diagnosticReporter
     if (jarPath != null) {
         val includeRuntime = configuration.get(JVMConfigurationKeys.INCLUDE_RUNTIME, false)
         val noReflect = configuration.get(JVMConfigurationKeys.NO_REFLECT, false)
@@ -87,7 +88,7 @@ private fun writeOutput(
             resetJarTimestamps,
             mainClassFqName,
             outputFiles,
-            messageCollector
+            diagnosticReporter
         )
         val sourceFiles = outputFiles.asList().flatMap { it.sourceFiles }.distinct()
         configuration.fileMappingTracker?.recordSourceFilesToOutputFileMapping(
@@ -96,12 +97,18 @@ private fun writeOutput(
         )
         if (reportOutputFiles) {
             val message = OutputMessageUtil.formatOutputMessage(sourceFiles, jarPath)
-            messageCollector.report(CompilerMessageSeverity.OUTPUT, message)
+            configuration.messageCollector.report(CompilerMessageSeverity.OUTPUT, message)
         }
         return
     }
 
-    outputFiles.writeAll(configuration.outputDirOrCurrentDirectory(), messageCollector, reportOutputFiles, configuration.fileMappingTracker)
+    outputFiles.writeAll(
+        configuration.outputDirOrCurrentDirectory(),
+        configuration.messageCollector,
+        diagnosticReporter,
+        reportOutputFiles,
+        configuration.fileMappingTracker
+    )
 }
 
 private fun CompilerConfiguration.outputDirOrCurrentDirectory(): File =

@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.cli.common.CLICompiler.Companion.SCRIPT_PLUGIN_COMMA
 import org.jetbrains.kotlin.cli.common.CLICompiler.Companion.SCRIPT_PLUGIN_K2_REGISTRAR_NAME
 import org.jetbrains.kotlin.cli.common.CLICompiler.Companion.SCRIPT_PLUGIN_REGISTRAR_NAME
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.LOGGING
 import org.jetbrains.kotlin.cli.initializeDiagnosticFactoriesStorageForCli
 import org.jetbrains.kotlin.cli.jvm.plugins.PluginCliParser
 import org.jetbrains.kotlin.cli.plugins.extractPluginClasspathAndOptions
@@ -112,8 +111,7 @@ abstract class AbstractConfigurationPhase<A : CommonCompilerArguments>(
                 if (missingJars.isEmpty()) {
                     scriptingPluginClasspath.addAll(0, jars.map { it.canonicalPath })
                 } else {
-                    configuration.messageCollector.report(
-                        LOGGING,
+                    configuration.diagnosticReporter.log(
                         "Scripting plugin will not be loaded: not all required jars are present in the classpath (missing files: $missingJars)"
                     )
                 }
@@ -153,7 +151,7 @@ abstract class AbstractConfigurationPhase<A : CommonCompilerArguments>(
                 true
             } else false
         } catch (e: Throwable) {
-            configuration.messageCollector.report(LOGGING, "Exception on loading scripting plugin: $e")
+            configuration.diagnosticReporter.log("Exception on loading scripting plugin: $e")
             false
         }
     }

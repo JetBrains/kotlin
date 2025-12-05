@@ -28,6 +28,12 @@ object CliDiagnostics : KtDiagnosticsContainer() {
 
     val JAVAC_INTEGRATION_ERROR: KtSourcelessDiagnosticFactory by errorWithoutSource()
 
+    val KOTLIN_PACKAGE_USAGE: KtSourcelessDiagnosticFactory by errorWithoutSource()
+    val IO_ERROR: KtSourcelessDiagnosticFactory by errorWithoutSource()
+
+    val SCRIPTING_WARNING: KtSourcelessDiagnosticFactory by warningWithoutSource()
+    val SCRIPTING_ERROR: KtSourcelessDiagnosticFactory by errorWithoutSource()
+
     override fun getRendererFactory(): BaseDiagnosticRendererFactory = Messages
 
     object Messages : BaseSourcelessDiagnosticRendererFactory() {
@@ -44,12 +50,16 @@ object CliDiagnostics : KtDiagnosticsContainer() {
 
             map.put(INITIALIZATION_WARNING, MESSAGE_PLACEHOLDER)
 
-
-
             map.put(COMPILER_ARGUMENTS_WARNING, MESSAGE_PLACEHOLDER)
             map.put(COMPILER_ARGUMENTS_ERROR, MESSAGE_PLACEHOLDER)
 
             map.put(JAVAC_INTEGRATION_ERROR, MESSAGE_PLACEHOLDER)
+
+            map.put(KOTLIN_PACKAGE_USAGE, MESSAGE_PLACEHOLDER)
+            map.put(IO_ERROR, MESSAGE_PLACEHOLDER)
+
+            map.put(SCRIPTING_WARNING, MESSAGE_PLACEHOLDER)
+            map.put(SCRIPTING_ERROR, MESSAGE_PLACEHOLDER)
         }
     }
 }
