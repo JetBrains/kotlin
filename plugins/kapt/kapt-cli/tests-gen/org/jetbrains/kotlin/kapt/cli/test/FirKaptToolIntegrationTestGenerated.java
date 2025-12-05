@@ -102,6 +102,12 @@ public class FirKaptToolIntegrationTestGenerated extends AbstractFirKaptToolInte
   }
 
   @Test
+  @TestMetadata("kt80572")
+  public void testKt80572() {
+    runTest("plugins/kapt/kapt-cli/testData/integration/kt80572/");
+  }
+
+  @Test
   @TestMetadata("multipass")
   public void testMultipass() {
     runTest("plugins/kapt/kapt-cli/testData/integration/multipass/");

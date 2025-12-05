@@ -1,0 +1,58 @@
+# mkdir
+output/ap
+output/stubs
+output/classes
+output/javaClasses
+output/sources
+
+# kotlinc
+-cp %KOTLIN_STDLIB%
+-d output/ap
+ap/Processor.kt
+
+# copy
+ap/META-INF/services/javax.annotation.processing.Processor
+output/ap/META-INF/services/javax.annotation.processing.Processor
+
+# kotlinc
+-cp %KOTLIN_STDLIB%
+-d output/foo_library.jar
+FooLibrary.kt
+
+# kotlinc
+-cp %KOTLIN_STDLIB%
+-d output/foo_annotations.jar
+annotations.kt
+
+# kapt
+-Kapt-mode=stubs
+-Kapt-stubs=output/stubs
+-Kapt-classes=output/classes
+-Kapt-sources=output/sources
+-Kapt-classpath=output/ap
+-d output/classes
+-cp output/ap:output/foo_library.jar:output/foo_annotations.jar:%KOTLIN_STDLIB%
+-Xfriend-paths=output/foo_annotations.jar
+FooAnnotationUser.kt
+
+# kotlinc
+-cp %KOTLIN_STDLIB%
+-d output/classes
+Test.kt
+
+# java
+-cp output/classes:%KOTLIN_STDLIB%
+TestKt
+
+# after
+    @OuterTypeA.TargetTypeAA()
+    public abstract void annotationUserAAOuter();
+
+    @OuterTypeA.TargetTypeAA()
+    public abstract void annotationUserAAInner();
+
+    @OuterTypeB.TargetTypeBA()
+    public abstract void annotationUserBAOuter();
+
+    @OuterTypeB.TargetTypeBA()
+    public abstract void annotationUserBAInner();

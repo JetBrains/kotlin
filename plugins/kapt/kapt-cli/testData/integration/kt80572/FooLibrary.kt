@@ -1,0 +1,3 @@
+interface TargetTypeAA
+
+interface TargetTypeBA
