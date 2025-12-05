@@ -148,7 +148,9 @@ abstract class Symbols(irBuiltIns: IrBuiltIns) : PreSerializationSymbols.Impl(ir
 
     val extensionToString: IrSimpleFunctionSymbol = CallableIds.extensionToString.functionSymbol()
     val memberToString: IrSimpleFunctionSymbol = CallableIds.memberToString.functionSymbol()
-    val extensionStringPlus: IrSimpleFunctionSymbol = CallableIds.extensionStringPlus.functionSymbol()
+    val extensionStringPlus: IrSimpleFunctionSymbol by CallableIds.extensionStringPlus.functionSymbol {
+        it.hasShape(dispatchReceiver = false, extensionReceiver = true, parameterTypes = listOf(irBuiltIns.stringType, irBuiltIns.anyType))
+    }
     val memberStringPlus: IrSimpleFunctionSymbol = CallableIds.memberPlus.functionSymbol()
 
     fun isStringPlus(functionSymbol: IrFunctionSymbol): Boolean {
