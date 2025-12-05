@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.cli.common.checkKotlinPackageUsageForLightTree
 import org.jetbrains.kotlin.cli.common.fir.reportToMessageCollector
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.renderDiagnosticInternalName
 import org.jetbrains.kotlin.cli.jvm.compiler.PsiBasedProjectFileSearchScope
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
@@ -449,7 +450,7 @@ private fun createReplAdditionalLibrariesSession(
 // Since this can be configured in two places, we check if both places agree on the same value (if configured twice).
 // If not, CompilerOptions takes precedence and a warning is reported. We treat CompilerOptions with a higher priority
 // as we assume they are more likely to be under the user's control.
-internal fun selectJvmTarget(configuration: ScriptCompilationConfiguration, messageCollector: ScriptDiagnosticsMessageCollector): JvmTarget {
+internal fun selectJvmTarget(configuration: ScriptCompilationConfiguration, messageCollector: MessageCollector): JvmTarget {
     val jvmTargetFromBlock = configuration[ScriptCompilationConfiguration.jvm.jvmTarget]?.let { JvmTarget.fromString(it) }
     val jvmTargetFromOptions = configuration[ScriptCompilationConfiguration.compilerOptions]
         ?.zipWithNext()

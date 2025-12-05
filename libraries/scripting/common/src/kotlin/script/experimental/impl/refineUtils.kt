@@ -18,6 +18,7 @@ fun ScriptCompilationConfiguration.refineOnAnnotationsWithLazyDataCollection(
         val foundAnnotationNames =
             collectedData[ScriptCollectedData.collectedAnnotations]?.mapTo(HashSet()) { it.annotation.annotationClass.java.name }.orEmpty()
 
+        // deprecated legacy templates used unconditional refinement, so we need to call the handler, even if there are no annotations found
         @Suppress("DEPRECATION")
         val isFromLegacy = this[ScriptCompilationConfiguration.fromLegacyTemplate] ?: false
         if (foundAnnotationNames.isEmpty() && !isFromLegacy) return this.asSuccess()

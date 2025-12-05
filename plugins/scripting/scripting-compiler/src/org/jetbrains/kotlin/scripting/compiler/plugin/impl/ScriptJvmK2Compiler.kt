@@ -22,11 +22,11 @@ import org.jetbrains.kotlin.config.jvmTarget
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
-import org.jetbrains.kotlin.diagnostics.impl.PendingDiagnosticsCollectorWithSuppress
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirScript
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
@@ -71,131 +71,154 @@ import kotlin.script.experimental.impl.refineOnAnnotationsWithLazyDataCollection
 import kotlin.script.experimental.impl.refineOnSyntaxTree
 import kotlin.script.experimental.jvm.GetScriptingClassByClassLoader
 import kotlin.script.experimental.jvm.JvmDependency
+import kotlin.script.experimental.jvm.baseClassLoader
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
+import kotlin.script.experimental.jvm.jvm
 
 class ScriptJvmK2Compiler(
     state: K2ScriptingCompilerEnvironment,
     private val convertToFir: SourceCode.(FirSession, BaseDiagnosticsCollector) -> FirFile
 ) : ScriptCompilerProxy {
 
-    private val state = (state as? K2ScriptingCompilerEnvironmentInternal) ?: error("Expected the state of type K2ScriptingCompilerEnvironmentInternal, got ${state::class}")
+    private val state = (state as? K2ScriptingCompilerEnvironmentInternal)
+        ?: error("Expected the state of type K2ScriptingCompilerEnvironmentInternal, got ${state::class}")
 
     fun compile(script: SourceCode) = compile(script, state.baseScriptCompilationConfiguration)
 
-    @OptIn(LegacyK2CliPipeline::class, DirectDeclarationsAccess::class)
+    private class ErrorReportingContext(
+        val messageCollector: ScriptDiagnosticsMessageCollector,
+        val diagnosticsCollector: BaseDiagnosticsCollector,
+        val renderDiagnosticName: Boolean,
+    )
+
     override fun compile(
         script: SourceCode,
         scriptCompilationConfiguration: ScriptCompilationConfiguration,
+    ): ResultWithDiagnostics<CompiledScript> = context(
+        ErrorReportingContext(
+            state.messageCollector,
+            DiagnosticReporterFactory.createPendingReporter(state.messageCollector),
+            state.compilerContext.environment.configuration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
+        )
+    ) {
+        scriptCompilationConfiguration.refineBeforeParsing(script)
+            .onSuccess {
+                it.refineOnSyntaxTree(script) {
+                    ScriptCollectedData(mapOf(ScriptCollectedData.syntaxTree to parseToSyntaxTree(script)))
+                }
+            }.onSuccess {
+                it.refineOnAnnotationsWithLazyDataCollection(script) {
+                    collectScriptAnnotations(script, it)
+                }
+            }.onSuccess {
+                it.refineBeforeCompiling(script)
+            }.onSuccess {
+                compileImpl(script, it)
+            }
+    }
+
+    context(reportingCtx: ErrorReportingContext)
+    private fun failure(
+        diagnosticsCollector: BaseDiagnosticsCollector,
+        vararg diagnostics: ScriptDiagnostic
+    ): ResultWithDiagnostics.Failure {
+        diagnosticsCollector.reportToMessageCollector(reportingCtx.messageCollector, reportingCtx.renderDiagnosticName)
+        return ResultWithDiagnostics.Failure(*reportingCtx.messageCollector.diagnostics.toTypedArray<ScriptDiagnostic>(), *diagnostics)
+    }
+
+    @OptIn(LegacyK2CliPipeline::class, DirectDeclarationsAccess::class)
+    context(reportingCtx: ErrorReportingContext)
+    private fun compileImpl(
+        script: SourceCode,
+        scriptCompilationConfiguration: ScriptCompilationConfiguration
     ): ResultWithDiagnostics<CompiledScript> {
 
         val project = state.projectEnvironment.project
-        val messageCollector = state.messageCollector
-        val diagnosticsCollector = DiagnosticReporterFactory.createPendingReporter(messageCollector)
-
         val compilerConfiguration = state.compilerContext.environment.configuration.copy().apply {
-            jvmTarget = selectJvmTarget(scriptCompilationConfiguration, messageCollector)
+            jvmTarget = selectJvmTarget(scriptCompilationConfiguration, reportingCtx.messageCollector)
         }
+
         val extensionRegistrars = FirExtensionRegistrar.getInstances(project)
-        val compilerEnvironment = ModuleCompilerEnvironment(state.projectEnvironment, diagnosticsCollector)
+        val compilerEnvironment = ModuleCompilerEnvironment(state.projectEnvironment, reportingCtx.diagnosticsCollector)
         val renderDiagnosticName = compilerConfiguration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
         val targetId = TargetId(script.name!!, "java-production")
 
-        fun failure(diagnosticsCollector: BaseDiagnosticsCollector, vararg diagnostics: ScriptDiagnostic): ResultWithDiagnostics.Failure {
-            diagnosticsCollector.reportToMessageCollector(messageCollector, renderDiagnosticName)
-            return failure(messageCollector, *diagnostics)
+        scriptCompilationConfiguration[ScriptCompilationConfiguration.dependencies]?.let { dependencies ->
+            val classpathFiles = dependencies.flatMap {
+                (it as? JvmDependency)?.classpath ?: emptyList()
+            }
+            // needed for class finders for now anyway
+            compilerConfiguration.addJvmClasspathRoots(classpathFiles)
+            state.compilerContext.environment.updateClasspath(classpathFiles.map(::JvmClasspathRoot))
+            val (libModuleData, _) = state.moduleDataProvider.addNewLibraryModuleDataIfNeeded(classpathFiles.map(File::toPath))
+            if (libModuleData != null) {
+                createScriptDependenciesSession(
+                    libModuleData,
+                    state as K2ScriptingCompilerEnvironmentImpl, extensionRegistrars, compilerConfiguration
+                )
+            }
         }
 
-        return scriptCompilationConfiguration.refineBeforeParsing(script).onSuccess {
-            it.refineOnSyntaxTree(script) {
-                ScriptCollectedData(mapOf(ScriptCollectedData.syntaxTree to parseToSyntaxTree(script)))
-            }
-        }.onSuccess {
-            it.refineOnAnnotationsWithLazyDataCollection(script) {
-                getCollectedData(script, scriptCompilationConfiguration, diagnosticsCollector, null)?.let {
-                    if (diagnosticsCollector.hasErrors) {
-                        failure(diagnosticsCollector)
-                    } else it.asSuccess()
-                }
-            }
-        }.onSuccess {
-            it.refineBeforeCompiling(script)
-        }.onSuccess { refinedConfiguration ->
-            // TODO: separate reporter for refinement, to avoid double raw fir warnings reporting
+        val moduleData = state.moduleDataProvider.addNewScriptModuleData(Name.special("<script-${script.name!!}>"))
 
-            refinedConfiguration[ScriptCompilationConfiguration.dependencies]?.let { dependencies ->
-                val classpathFiles = dependencies.flatMap {
-                    (it as? JvmDependency)?.classpath ?: emptyList()
-                }
-                // likely needed for class finders anyway
-                compilerConfiguration.addJvmClasspathRoots(classpathFiles)
-                state.compilerContext.environment.updateClasspath(classpathFiles.map(::JvmClasspathRoot))
-                val (libModuleData, _) = state.moduleDataProvider.addNewLibraryModuleDataIfNeeded(classpathFiles.map(File::toPath))
-                if (libModuleData != null) {
-                    createScriptDependenciesSession(libModuleData,
-                                                    state as K2ScriptingCompilerEnvironmentImpl, extensionRegistrars, compilerConfiguration)
-                }
-            }
+        val session = FirJvmSessionFactory.createSourceSession(
+            moduleData,
+            AbstractProjectFileSearchScope.EMPTY,
+            createIncrementalCompilationSymbolProviders = { null },
+            extensionRegistrars,
+            compilerConfiguration,
+            context = state.sessionFactoryContext,
+            needRegisterJavaElementFinder = true,
+            isForLeafHmppModule = false,
+            init = {},
+        )
 
-            val moduleData = state.moduleDataProvider.addNewScriptModuleData(Name.special("<script-${script.name!!}>"))
+        session.scriptDefinitionProviderService!!.storeRefinedConfiguration(script, scriptCompilationConfiguration.asSuccess())
 
-            // create source session (with dependent one if 1.1
-            val session = FirJvmSessionFactory.createSourceSession(
-                moduleData,
-                AbstractProjectFileSearchScope.EMPTY,
-                createIncrementalCompilationSymbolProviders = { null },
-                extensionRegistrars,
-                compilerConfiguration,
-                // TODO: from script config
-                context = state.sessionFactoryContext,
-                needRegisterJavaElementFinder = true,
-                isForLeafHmppModule = false,
-                init = {},
-            )
+        val rawFir = script.convertToFir(session, reportingCtx.diagnosticsCollector)
 
-            session.scriptDefinitionProviderService!!.storeRefinedConfiguration(script, refinedConfiguration.asSuccess())
+        val outputs = listOf(resolveAndCheckFir(session, listOf(rawFir), reportingCtx.diagnosticsCollector)).also {
+            it.runPlatformCheckers(reportingCtx.diagnosticsCollector)
+        }
+        val frontendOutput = AllModulesFrontendOutput(outputs)
 
-            val rawFir = script.convertToFir(session, diagnosticsCollector)
+        if (reportingCtx.diagnosticsCollector.hasErrors) return failure(reportingCtx.diagnosticsCollector)
 
-            val outputs = listOf(resolveAndCheckFir(session, listOf(rawFir), diagnosticsCollector)).also {
-                it.runPlatformCheckers(diagnosticsCollector)
-            }
-            val frontendOutput = AllModulesFrontendOutput(outputs)
+        val irInput = convertAnalyzedFirToIr(compilerConfiguration, targetId, frontendOutput, compilerEnvironment)
 
-            if (diagnosticsCollector.hasErrors) return failure(diagnosticsCollector)
+        if (reportingCtx.diagnosticsCollector.hasErrors) return failure(reportingCtx.diagnosticsCollector)
 
-            val irInput = convertAnalyzedFirToIr(compilerConfiguration, targetId, frontendOutput, compilerEnvironment)
+        val generationState = generateCodeFromIr(irInput, compilerEnvironment)
 
-            if (diagnosticsCollector.hasErrors) return failure(diagnosticsCollector)
+        reportingCtx.diagnosticsCollector.reportToMessageCollector(reportingCtx.messageCollector, renderDiagnosticName)
 
-            val generationState = generateCodeFromIr(irInput, compilerEnvironment)
+        if (reportingCtx.diagnosticsCollector.hasErrors) {
+            return failure(reportingCtx.diagnosticsCollector)
+        }
 
-            diagnosticsCollector.reportToMessageCollector(messageCollector, renderDiagnosticName)
-
-            if (diagnosticsCollector.hasErrors) {
-                return failure(messageCollector)
-            }
-
-            return makeCompiledScript(
-                generationState,
-                script,
-                { rawFir.declarations.firstIsInstanceOrNull<FirScript>()?.let { it.symbol.packageFqName().child(NameUtils.getScriptTargetClassName(it.name)) } },
-                emptyList(),
-                { refinedConfiguration },
-                extractResultFields(irInput.irModuleFragment)
-            ).onSuccess { compiledScript ->
-                ResultWithDiagnostics.Success(compiledScript, messageCollector.diagnostics)
-            }
+        return makeCompiledScript(
+            generationState,
+            script,
+            {
+                rawFir.declarations.firstIsInstanceOrNull<FirScript>()
+                    ?.let { it.symbol.packageFqName().child(NameUtils.getScriptTargetClassName(it.name)) }
+            },
+            emptyList(),
+            { scriptCompilationConfiguration },
+            extractResultFields(irInput.irModuleFragment)
+        ).onSuccess { compiledScript ->
+            ResultWithDiagnostics.Success(compiledScript, reportingCtx.messageCollector.diagnostics)
         }
     }
 
-    private fun getCollectedData(
+    context(reportingCtx: ErrorReportingContext)
+    private fun collectScriptAnnotations(
         script: SourceCode,
         compilationConfiguration: ScriptCompilationConfiguration,
-        diagnosticsCollector: PendingDiagnosticsCollectorWithSuppress,
-        contextClassLoader: ClassLoader?,
-    ): ScriptCollectedData? {
+    ): ResultWithDiagnostics<ScriptCollectedData> {
         val hostConfiguration =
             compilationConfiguration[ScriptCompilationConfiguration.hostConfiguration] ?: defaultJvmScriptingHostConfiguration
+        val contextClassLoader = hostConfiguration[ScriptingHostConfiguration.jvm.baseClassLoader]
         val getScriptingClass = hostConfiguration[ScriptingHostConfiguration.getScriptingClass]
         val jvmGetScriptingClass = (getScriptingClass as? GetScriptingClassByClassLoader)
             ?: throw IllegalArgumentException("Expecting class implementing GetScriptingClassByClassLoader in the hostConfiguration[getScriptingClass], got $getScriptingClass")
@@ -205,30 +228,35 @@ class ScriptJvmK2Compiler(
                     @Suppress("UNCHECKED_CAST")
                     jvmGetScriptingClass(ann, contextClassLoader, hostConfiguration) as? KClass<Annotation> // TODO errors
                 }
-            }?.takeIf { it.isNotEmpty() } ?: return null
+            }?.takeIf { it.isNotEmpty() } ?: return ScriptCollectedData(emptyMap()).asSuccess()
+        // separate reporter for refinement to avoid double raw fir warnings reporting
+        val diagnosticsCollector = DiagnosticReporterFactory.createPendingReporter(state.messageCollector)
         val firFile = script.convertToFir(
             createDummySessionForScriptRefinement(script),
             diagnosticsCollector
         )
-        val annotations =
-            firFile.annotations.mapNotNull { firAnnotation ->
-                (firAnnotation as? FirAnnotationCall)?.toAnnotationObjectIfMatches(acceptedAnnotations)?.let {
-                    val location = script.locationId
-                    val startOffset = firAnnotation.source?.startOffset
-                    val endOffset = firAnnotation.source?.endOffset
-                    ScriptSourceAnnotation(
-                        it.valueOrThrow(), // TODO: error propagation
-                        if (location != null && startOffset != null && endOffset != null)
-                            // TODO: offset to position
-                            SourceCode.LocationWithId(
-                                location, SourceCode.Location(SourceCode.Position(startOffset, endOffset))
-                            )
-                        else null
-                    )
-                }
-            }.takeIf { it.isNotEmpty() }
-                ?: return null
-        return ScriptCollectedData(mapOf(ScriptCollectedData.collectedAnnotations to annotations))
+        if (diagnosticsCollector.hasErrors)
+            return failure(diagnosticsCollector)
+
+        fun loadAnnotation(firAnnotation: FirAnnotation): ResultWithDiagnostics<ScriptSourceAnnotation<Annotation>?> =
+            (firAnnotation as? FirAnnotationCall)?.toAnnotationObjectIfMatches(acceptedAnnotations)?.onSuccess {
+                val location = script.locationId
+                val startOffset = firAnnotation.source?.startOffset
+                val endOffset = firAnnotation.source?.endOffset
+                ScriptSourceAnnotation(
+                    it,
+                    if (location != null && startOffset != null && endOffset != null)
+                    // TODO: offset to position
+                        SourceCode.LocationWithId(
+                            location, SourceCode.Location(SourceCode.Position(startOffset, endOffset))
+                        )
+                    else null
+                ).asSuccess()
+            } ?: ResultWithDiagnostics.Success(null)
+
+        return firFile.annotations.mapNotNullSuccess(::loadAnnotation).onSuccess { annotations ->
+            ScriptCollectedData(mapOf(ScriptCollectedData.collectedAnnotations to annotations)).asSuccess()
+        }
     }
 }
 
@@ -281,10 +309,12 @@ private fun createDummySessionForScriptRefinement(script: SourceCode): FirSessio
         )
         registerModuleData(moduleData)
         moduleData.bindSession(this)
-        register(FirLanguageSettingsComponent::class, FirLanguageSettingsComponent(
+        register(
+            FirLanguageSettingsComponent::class, FirLanguageSettingsComponent(
                 LanguageVersionSettingsImpl.DEFAULT,
                 isMetadataCompilation = false
-            ))
+            )
+        )
         register(FirExtensionService::class, FirExtensionService(this))
         register(FirKotlinScopeProvider::class, FirKotlinScopeProvider())
         register(FirProvider::class, FirProviderImpl(this, kotlinScopeProvider))
@@ -348,10 +378,8 @@ private fun createScriptDependenciesSession(
     }
 }
 
-
-
 private fun FirAnnotationCall.toAnnotationObjectIfMatches(expectedAnnClasses: List<KClass<out Annotation>>): ResultWithDiagnostics<Annotation>? {
-    val shortName = when(val typeRef = annotationTypeRef) {
+    val shortName = when (val typeRef = annotationTypeRef) {
         is FirResolvedTypeRef -> typeRef.coneType.classId?.shortClassName ?: return null
         is FirUserTypeRef -> typeRef.qualifier.last().name
         else -> return null
@@ -369,12 +397,11 @@ private fun FirAnnotationCall.toAnnotationObjectIfMatches(expectedAnnClasses: Li
                 }
             }
         )
-    if (mapping != null) {
+    return if (mapping != null)
         try {
-            return ctor.callBy(mapping).asSuccess()
-        } catch (e: Exception) { // TODO: find the exact exception type thrown then callBy fails
-            return makeFailureResult(e.asDiagnostics())
+            ctor.callBy(mapping).asSuccess()
+        } catch (e: Error) {
+            makeFailureResult(e.asDiagnostics())
         }
-    }
-    return null
+    else null
 }
