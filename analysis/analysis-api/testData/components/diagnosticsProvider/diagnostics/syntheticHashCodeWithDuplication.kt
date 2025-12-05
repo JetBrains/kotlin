@@ -1,5 +1,4 @@
 // ISSUE: KT-82948
-// IGNORE_FIR
 package one
 
 class TopLevel {
@@ -8,3 +7,5 @@ class TopLevel {
 }
 
 interface InterfaceWithParameter<T>
+
+// SUPPRESS_INDIVIDUAL_DIAGNOSTICS_CHECK: KT-63221

@@ -1,0 +1,466 @@
+TYPES:
+TARGET: public open [ResolvedTo(TYPES)] fun hashCode(): R|kotlin/Int|
+
+FILE: [ResolvedTo(RAW_FIR)] syntheticHashCodeWithDuplication.kt
+    public final? [ResolvedTo(RAW_FIR)] class TopLevel : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevel] constructor(): R|one/TopLevel| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(RAW_FIR)] typealias State = String
+
+        public final? data [ResolvedTo(RAW_FIR)] class State : InterfaceWithParameter<State> {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=State] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/TopLevel.State.i] i: Int): R|one/TopLevel.State| {
+                LAZY_super<<implicit>>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=one/TopLevel.State.component1, IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=State] get(): Int
+
+            public? final operator [ResolvedTo(RAW_FIR)] fun component1(): Int
+
+            public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] i: Int = this@R|one/TopLevel.State|.R|one/TopLevel.State.i|): R|one/TopLevel.State|
+
+        }
+
+    }
+    public final? [ResolvedTo(RAW_FIR)] interface InterfaceWithParameter<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+    }
+
+FILE: [ResolvedTo(IMPORTS)] fake.kt
+    public final [ResolvedTo(STATUS)] class TopLevel : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=TopLevel] constructor(): R|one/TopLevel| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(RAW_FIR)] typealias State = String
+
+        public final data [ResolvedTo(STATUS)] class State : R|one/InterfaceWithParameter<one/TopLevel.State>| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=State] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/TopLevel.State.i] i: R|kotlin/Int|): R|one/TopLevel.State| {
+                LAZY_super<<implicit>>
+            }
+
+            public final [ResolvedTo(STATUS)] [ComponentFunctionSymbolKey=one/TopLevel.State.component1, IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=State] get(): R|kotlin/Int|
+
+            public final operator [ResolvedTo(STATUS)] fun component1(): R|kotlin/Int|
+
+            public final [ResolvedTo(STATUS)] fun copy([ResolvedTo(STATUS)] i: R|kotlin/Int| = this@R|one/TopLevel.State|.R|one/TopLevel.State.i|): R|one/TopLevel.State|
+
+        }
+
+    }
+    public abstract [ResolvedTo(STATUS)] interface InterfaceWithParameter<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+    }
+
+STATUS:
+TARGET: public open [ResolvedTo(STATUS)] fun hashCode(): R|kotlin/Int|
+
+FILE: [ResolvedTo(RAW_FIR)] syntheticHashCodeWithDuplication.kt
+    public final? [ResolvedTo(RAW_FIR)] class TopLevel : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevel] constructor(): R|one/TopLevel| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(RAW_FIR)] typealias State = String
+
+        public final? data [ResolvedTo(RAW_FIR)] class State : InterfaceWithParameter<State> {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=State] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/TopLevel.State.i] i: Int): R|one/TopLevel.State| {
+                LAZY_super<<implicit>>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=one/TopLevel.State.component1, IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=State] get(): Int
+
+            public? final operator [ResolvedTo(RAW_FIR)] fun component1(): Int
+
+            public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] i: Int = this@R|one/TopLevel.State|.R|one/TopLevel.State.i|): R|one/TopLevel.State|
+
+        }
+
+    }
+    public final? [ResolvedTo(RAW_FIR)] interface InterfaceWithParameter<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+    }
+
+FILE: [ResolvedTo(IMPORTS)] fake.kt
+    public final [ResolvedTo(STATUS)] class TopLevel : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=TopLevel] constructor(): R|one/TopLevel| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(RAW_FIR)] typealias State = String
+
+        public final data [ResolvedTo(STATUS)] class State : R|one/InterfaceWithParameter<one/TopLevel.State>| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=State] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/TopLevel.State.i] i: R|kotlin/Int|): R|one/TopLevel.State| {
+                LAZY_super<<implicit>>
+            }
+
+            public final [ResolvedTo(STATUS)] [ComponentFunctionSymbolKey=one/TopLevel.State.component1, IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=State] get(): R|kotlin/Int|
+
+            public final operator [ResolvedTo(STATUS)] fun component1(): R|kotlin/Int|
+
+            public final [ResolvedTo(STATUS)] fun copy([ResolvedTo(STATUS)] i: R|kotlin/Int| = this@R|one/TopLevel.State|.R|one/TopLevel.State.i|): R|one/TopLevel.State|
+
+        }
+
+    }
+    public abstract [ResolvedTo(STATUS)] interface InterfaceWithParameter<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+    }
+
+EXPECT_ACTUAL_MATCHING:
+TARGET: public open [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun hashCode(): R|kotlin/Int|
+
+FILE: [ResolvedTo(RAW_FIR)] syntheticHashCodeWithDuplication.kt
+    public final? [ResolvedTo(RAW_FIR)] class TopLevel : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevel] constructor(): R|one/TopLevel| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(RAW_FIR)] typealias State = String
+
+        public final? data [ResolvedTo(RAW_FIR)] class State : InterfaceWithParameter<State> {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=State] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/TopLevel.State.i] i: Int): R|one/TopLevel.State| {
+                LAZY_super<<implicit>>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=one/TopLevel.State.component1, IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=State] get(): Int
+
+            public? final operator [ResolvedTo(RAW_FIR)] fun component1(): Int
+
+            public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] i: Int = this@R|one/TopLevel.State|.R|one/TopLevel.State.i|): R|one/TopLevel.State|
+
+        }
+
+    }
+    public final? [ResolvedTo(RAW_FIR)] interface InterfaceWithParameter<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+    }
+
+FILE: [ResolvedTo(IMPORTS)] fake.kt
+    public final [ResolvedTo(STATUS)] class TopLevel : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=TopLevel] constructor(): R|one/TopLevel| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(RAW_FIR)] typealias State = String
+
+        public final data [ResolvedTo(STATUS)] class State : R|one/InterfaceWithParameter<one/TopLevel.State>| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=State] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/TopLevel.State.i] i: R|kotlin/Int|): R|one/TopLevel.State| {
+                LAZY_super<<implicit>>
+            }
+
+            public final [ResolvedTo(STATUS)] [ComponentFunctionSymbolKey=one/TopLevel.State.component1, IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=State] get(): R|kotlin/Int|
+
+            public final operator [ResolvedTo(STATUS)] fun component1(): R|kotlin/Int|
+
+            public final [ResolvedTo(STATUS)] fun copy([ResolvedTo(STATUS)] i: R|kotlin/Int| = this@R|one/TopLevel.State|.R|one/TopLevel.State.i|): R|one/TopLevel.State|
+
+        }
+
+    }
+    public abstract [ResolvedTo(STATUS)] interface InterfaceWithParameter<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+    }
+
+CONTRACTS:
+TARGET: public open [ResolvedTo(CONTRACTS)] fun hashCode(): R|kotlin/Int|
+
+FILE: [ResolvedTo(RAW_FIR)] syntheticHashCodeWithDuplication.kt
+    public final? [ResolvedTo(RAW_FIR)] class TopLevel : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevel] constructor(): R|one/TopLevel| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(RAW_FIR)] typealias State = String
+
+        public final? data [ResolvedTo(RAW_FIR)] class State : InterfaceWithParameter<State> {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=State] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/TopLevel.State.i] i: Int): R|one/TopLevel.State| {
+                LAZY_super<<implicit>>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=one/TopLevel.State.component1, IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=State] get(): Int
+
+            public? final operator [ResolvedTo(RAW_FIR)] fun component1(): Int
+
+            public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] i: Int = this@R|one/TopLevel.State|.R|one/TopLevel.State.i|): R|one/TopLevel.State|
+
+        }
+
+    }
+    public final? [ResolvedTo(RAW_FIR)] interface InterfaceWithParameter<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+    }
+
+FILE: [ResolvedTo(IMPORTS)] fake.kt
+    public final [ResolvedTo(STATUS)] class TopLevel : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=TopLevel] constructor(): R|one/TopLevel| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(RAW_FIR)] typealias State = String
+
+        public final data [ResolvedTo(STATUS)] class State : R|one/InterfaceWithParameter<one/TopLevel.State>| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=State] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/TopLevel.State.i] i: R|kotlin/Int|): R|one/TopLevel.State| {
+                LAZY_super<<implicit>>
+            }
+
+            public final [ResolvedTo(STATUS)] [ComponentFunctionSymbolKey=one/TopLevel.State.component1, IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=State] get(): R|kotlin/Int|
+
+            public final operator [ResolvedTo(STATUS)] fun component1(): R|kotlin/Int|
+
+            public final [ResolvedTo(STATUS)] fun copy([ResolvedTo(STATUS)] i: R|kotlin/Int| = this@R|one/TopLevel.State|.R|one/TopLevel.State.i|): R|one/TopLevel.State|
+
+        }
+
+    }
+    public abstract [ResolvedTo(STATUS)] interface InterfaceWithParameter<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+    }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+TARGET: public open [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun hashCode(): R|kotlin/Int|
+
+FILE: [ResolvedTo(RAW_FIR)] syntheticHashCodeWithDuplication.kt
+    public final? [ResolvedTo(RAW_FIR)] class TopLevel : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevel] constructor(): R|one/TopLevel| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(RAW_FIR)] typealias State = String
+
+        public final? data [ResolvedTo(RAW_FIR)] class State : InterfaceWithParameter<State> {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=State] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/TopLevel.State.i] i: Int): R|one/TopLevel.State| {
+                LAZY_super<<implicit>>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=one/TopLevel.State.component1, IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=State] get(): Int
+
+            public? final operator [ResolvedTo(RAW_FIR)] fun component1(): Int
+
+            public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] i: Int = this@R|one/TopLevel.State|.R|one/TopLevel.State.i|): R|one/TopLevel.State|
+
+        }
+
+    }
+    public final? [ResolvedTo(RAW_FIR)] interface InterfaceWithParameter<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+    }
+
+FILE: [ResolvedTo(IMPORTS)] fake.kt
+    public final [ResolvedTo(STATUS)] class TopLevel : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=TopLevel] constructor(): R|one/TopLevel| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(RAW_FIR)] typealias State = String
+
+        public final data [ResolvedTo(STATUS)] class State : R|one/InterfaceWithParameter<one/TopLevel.State>| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=State] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/TopLevel.State.i] i: R|kotlin/Int|): R|one/TopLevel.State| {
+                LAZY_super<<implicit>>
+            }
+
+            public final [ResolvedTo(STATUS)] [ComponentFunctionSymbolKey=one/TopLevel.State.component1, IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=State] get(): R|kotlin/Int|
+
+            public final operator [ResolvedTo(STATUS)] fun component1(): R|kotlin/Int|
+
+            public final [ResolvedTo(STATUS)] fun copy([ResolvedTo(STATUS)] i: R|kotlin/Int| = this@R|one/TopLevel.State|.R|one/TopLevel.State.i|): R|one/TopLevel.State|
+
+        }
+
+    }
+    public abstract [ResolvedTo(STATUS)] interface InterfaceWithParameter<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+    }
+
+CONSTANT_EVALUATION:
+TARGET: public open [ResolvedTo(CONSTANT_EVALUATION)] fun hashCode(): R|kotlin/Int|
+
+FILE: [ResolvedTo(RAW_FIR)] syntheticHashCodeWithDuplication.kt
+    public final? [ResolvedTo(RAW_FIR)] class TopLevel : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevel] constructor(): R|one/TopLevel| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(RAW_FIR)] typealias State = String
+
+        public final? data [ResolvedTo(RAW_FIR)] class State : InterfaceWithParameter<State> {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=State] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/TopLevel.State.i] i: Int): R|one/TopLevel.State| {
+                LAZY_super<<implicit>>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=one/TopLevel.State.component1, IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=State] get(): Int
+
+            public? final operator [ResolvedTo(RAW_FIR)] fun component1(): Int
+
+            public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] i: Int = this@R|one/TopLevel.State|.R|one/TopLevel.State.i|): R|one/TopLevel.State|
+
+        }
+
+    }
+    public final? [ResolvedTo(RAW_FIR)] interface InterfaceWithParameter<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+    }
+
+FILE: [ResolvedTo(IMPORTS)] fake.kt
+    public final [ResolvedTo(STATUS)] class TopLevel : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=TopLevel] constructor(): R|one/TopLevel| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(RAW_FIR)] typealias State = String
+
+        public final data [ResolvedTo(STATUS)] class State : R|one/InterfaceWithParameter<one/TopLevel.State>| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=State] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/TopLevel.State.i] i: R|kotlin/Int|): R|one/TopLevel.State| {
+                LAZY_super<<implicit>>
+            }
+
+            public final [ResolvedTo(STATUS)] [ComponentFunctionSymbolKey=one/TopLevel.State.component1, IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=State] get(): R|kotlin/Int|
+
+            public final operator [ResolvedTo(STATUS)] fun component1(): R|kotlin/Int|
+
+            public final [ResolvedTo(STATUS)] fun copy([ResolvedTo(STATUS)] i: R|kotlin/Int| = this@R|one/TopLevel.State|.R|one/TopLevel.State.i|): R|one/TopLevel.State|
+
+        }
+
+    }
+    public abstract [ResolvedTo(STATUS)] interface InterfaceWithParameter<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+    }
+
+ANNOTATION_ARGUMENTS:
+TARGET: public open [ResolvedTo(ANNOTATION_ARGUMENTS)] fun hashCode(): R|kotlin/Int|
+
+FILE: [ResolvedTo(RAW_FIR)] syntheticHashCodeWithDuplication.kt
+    public final? [ResolvedTo(RAW_FIR)] class TopLevel : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevel] constructor(): R|one/TopLevel| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(RAW_FIR)] typealias State = String
+
+        public final? data [ResolvedTo(RAW_FIR)] class State : InterfaceWithParameter<State> {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=State] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/TopLevel.State.i] i: Int): R|one/TopLevel.State| {
+                LAZY_super<<implicit>>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=one/TopLevel.State.component1, IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=State] get(): Int
+
+            public? final operator [ResolvedTo(RAW_FIR)] fun component1(): Int
+
+            public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] i: Int = this@R|one/TopLevel.State|.R|one/TopLevel.State.i|): R|one/TopLevel.State|
+
+        }
+
+    }
+    public final? [ResolvedTo(RAW_FIR)] interface InterfaceWithParameter<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+    }
+
+FILE: [ResolvedTo(IMPORTS)] fake.kt
+    public final [ResolvedTo(STATUS)] class TopLevel : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=TopLevel] constructor(): R|one/TopLevel| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(RAW_FIR)] typealias State = String
+
+        public final data [ResolvedTo(STATUS)] class State : R|one/InterfaceWithParameter<one/TopLevel.State>| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=State] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/TopLevel.State.i] i: R|kotlin/Int|): R|one/TopLevel.State| {
+                LAZY_super<<implicit>>
+            }
+
+            public final [ResolvedTo(STATUS)] [ComponentFunctionSymbolKey=one/TopLevel.State.component1, IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=State] get(): R|kotlin/Int|
+
+            public final operator [ResolvedTo(STATUS)] fun component1(): R|kotlin/Int|
+
+            public final [ResolvedTo(STATUS)] fun copy([ResolvedTo(STATUS)] i: R|kotlin/Int| = this@R|one/TopLevel.State|.R|one/TopLevel.State.i|): R|one/TopLevel.State|
+
+        }
+
+    }
+    public abstract [ResolvedTo(STATUS)] interface InterfaceWithParameter<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+    }
+
+BODY_RESOLVE:
+TARGET: public open [ResolvedTo(BODY_RESOLVE)] fun hashCode(): R|kotlin/Int|
+
+FILE: [ResolvedTo(RAW_FIR)] syntheticHashCodeWithDuplication.kt
+    public final? [ResolvedTo(RAW_FIR)] class TopLevel : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevel] constructor(): R|one/TopLevel| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(RAW_FIR)] typealias State = String
+
+        public final? data [ResolvedTo(RAW_FIR)] class State : InterfaceWithParameter<State> {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=State] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/TopLevel.State.i] i: Int): R|one/TopLevel.State| {
+                LAZY_super<<implicit>>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=one/TopLevel.State.component1, IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=State] get(): Int
+
+            public? final operator [ResolvedTo(RAW_FIR)] fun component1(): Int
+
+            public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] i: Int = this@R|one/TopLevel.State|.R|one/TopLevel.State.i|): R|one/TopLevel.State|
+
+        }
+
+    }
+    public final? [ResolvedTo(RAW_FIR)] interface InterfaceWithParameter<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+    }
+
+FILE: [ResolvedTo(IMPORTS)] fake.kt
+    public final [ResolvedTo(STATUS)] class TopLevel : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=TopLevel] constructor(): R|one/TopLevel| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(RAW_FIR)] typealias State = String
+
+        public final data [ResolvedTo(STATUS)] class State : R|one/InterfaceWithParameter<one/TopLevel.State>| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=State] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/TopLevel.State.i] i: R|kotlin/Int|): R|one/TopLevel.State| {
+                LAZY_super<<implicit>>
+            }
+
+            public final [ResolvedTo(STATUS)] [ComponentFunctionSymbolKey=one/TopLevel.State.component1, IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=State] get(): R|kotlin/Int|
+
+            public final operator [ResolvedTo(STATUS)] fun component1(): R|kotlin/Int|
+
+            public final [ResolvedTo(STATUS)] fun copy([ResolvedTo(STATUS)] i: R|kotlin/Int| = this@R|one/TopLevel.State|.R|one/TopLevel.State.i|): R|one/TopLevel.State|
+
+        }
+
+    }
+    public abstract [ResolvedTo(STATUS)] interface InterfaceWithParameter<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+    }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] fake.kt
+    public final [ResolvedTo(BODY_RESOLVE)] class TopLevel : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevel] constructor(): R|one/TopLevel| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] typealias State = R|kotlin/String|
+
+        public final data [ResolvedTo(BODY_RESOLVE)] class State : R|one/InterfaceWithParameter<one/TopLevel.State>| {
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=State] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=one/TopLevel.State.i] i: R|kotlin/Int|): R|one/TopLevel.State| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] [ComponentFunctionSymbolKey=one/TopLevel.State.component1, IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=State] get(): R|kotlin/Int|
+
+            public final operator [ResolvedTo(BODY_RESOLVE)] fun component1(): R|kotlin/Int|
+
+            public final [ResolvedTo(BODY_RESOLVE)] fun copy([ResolvedTo(BODY_RESOLVE)] i: R|kotlin/Int| = this@R|one/TopLevel.State|.R|one/TopLevel.State.i|): R|one/TopLevel.State|
+
+        }
+
+    }
+    public abstract [ResolvedTo(BODY_RESOLVE)] interface InterfaceWithParameter<[ResolvedTo(BODY_RESOLVE)] T> : R|kotlin/Any| {
+    }

@@ -5,3 +5,6 @@ Diagnostics from file:
   for PSI element of type KtTypeAlias at (5,5-29)
     REDECLARATION      text ranges: [(63,68)]
       PSI: KtTypeAlias at (5,5-29)
+  for PSI element of type KtTypeAlias at (5,5-29)
+    TOPLEVEL_TYPEALIASES_ONLY      text ranges: [(53,77)]
+      PSI: KtTypeAlias at (5,5-29)
