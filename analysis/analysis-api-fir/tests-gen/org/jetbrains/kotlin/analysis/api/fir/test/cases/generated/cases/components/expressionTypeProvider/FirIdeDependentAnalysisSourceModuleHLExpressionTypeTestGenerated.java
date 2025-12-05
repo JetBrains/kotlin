@@ -161,6 +161,12 @@ public class FirIdeDependentAnalysisSourceModuleHLExpressionTypeTestGenerated ex
   }
 
   @Test
+  @TestMetadata("contractLambda.kt")
+  public void testContractLambda() {
+    runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/contractLambda.kt");
+  }
+
+  @Test
   @TestMetadata("forExpression.kt")
   public void testForExpression() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/forExpression.kt");
