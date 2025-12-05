@@ -26,6 +26,6 @@ object CliDiagnostics : KtDiagnosticsContainer() {
 
 fun CompilerConfiguration.initializeDiagnosticFactoriesStorageForCli() {
     val storage = KtRegisteredDiagnosticFactoriesStorage()
-    storage.registerFactories(listOf(CliDiagnostics.getRendererFactory()))
+    storage.registerDiagnosticContainers(CliDiagnostics)
     this.diagnosticFactoriesStorage = storage
 }
