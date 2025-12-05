@@ -24,9 +24,34 @@ import org.jetbrains.kotlin.konan.file.File as KFile
 /**
  * [size] is always in bytes.
  */
-class KlibElementWithSize private constructor(val name: String, val size: Long, val children: List<KlibElementWithSize>) {
+class KlibElementWithSize private constructor(
+    val name: String,
+    val size: Long,
+    val children: List<KlibElementWithSize>
+) {
+    var parent: KlibElementWithSize? = null
+        private set
+
+    val fullName: String
+        get() = parent?.let { "${it.fullName}/$name" } ?: name
+
+    init {
+        for (child in children) {
+            child.parent = this
+        }
+    }
+
     constructor(name: String, size: Long) : this(name, size, emptyList())
     constructor(name: String, children: List<KlibElementWithSize>) : this(name, children.sumOf { it.size }, children)
+
+    /**
+     * Recursively collects this element and all its children into a flat list.
+     *
+     * Each entry in the result is a pair consisting of:
+     *  - the element full name
+     *  - the element size
+     */
+    fun flatten(): List<Pair<String, Long>> = listOf(fullName to size) + children.flatMap { it.flatten() }
 }
 
 fun loadSizeInfo(klibFile: KFile): KlibElementWithSize? {
