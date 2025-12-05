@@ -16,7 +16,9 @@ import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.ir.backend.js.getSerializedData
 import org.jetbrains.kotlin.ir.backend.js.serializeModuleIntoKlib
 import org.jetbrains.kotlin.js.config.*
+import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
+import org.jetbrains.kotlin.library.loadSizeInfo
 import org.jetbrains.kotlin.wasm.config.wasmTarget
 
 object WebKlibSerializationPipelinePhase : PipelinePhase<JsFir2IrPipelineArtifact, JsSerializedKlibPipelineArtifact>(
@@ -52,6 +54,11 @@ object WebKlibSerializationPipelinePhase : PipelinePhase<JsFir2IrPipelineArtifac
             wasmTarget = configuration.wasmTarget,
             performanceManager = moduleStructure.compilerConfiguration.perfManager,
         )
+
+        loadSizeInfo(File(outputKlibPath))?.flatten()?.let { stats ->
+            configuration.perfManager?.registerKlibElementStats(stats)
+        }
+
         return JsSerializedKlibPipelineArtifact(
             outputKlibPath,
             diagnosticCollector,
