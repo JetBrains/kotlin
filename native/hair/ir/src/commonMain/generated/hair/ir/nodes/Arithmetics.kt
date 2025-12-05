@@ -516,3 +516,23 @@ class Truncate internal constructor(form: Form, operand: Node?) : Cast(form, lis
 }
 
 
+class Reinterpret internal constructor(form: Form, operand: Node?) : Cast(form, listOf(operand)) {
+    class Form internal constructor(metaForm: MetaForm, val targetType: HairType) : MetaForm.ParametrisedValueForm<Form>(metaForm) {
+        override val args = listOf<Any>(targetType)
+    }
+    
+    val targetType: HairType by form::targetType
+    
+    
+    override fun paramName(index: Int): String = when (index) {
+        0 -> "operand"
+        else -> error("Unexpected arg index: $index")
+    }
+    
+    override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitReinterpret(this)
+    companion object {
+        internal fun metaForm(session: Session) = MetaForm(session, "Reinterpret")
+    }
+}
+
+

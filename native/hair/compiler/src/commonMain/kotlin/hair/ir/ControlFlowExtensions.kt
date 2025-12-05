@@ -14,9 +14,6 @@ val ControlFlow.block: BlockEntry get() = generateSequence(this) { when (it) {
     is Unreachable -> error("Should not reach here")
 }}.last() as BlockEntry
 
-val BlockEntry.phies: Sequence<Phi>
-    get() = uses.asSequence().filterIsInstance<Phi>()
-
 // FIXME always use the first use slot?
 val Controlling.nextOrNull: Controlled? get() = uses.firstOrNull { it is Controlled && it.control == this }?.let { it as Controlled }
 val Controlling.next: Controlled get() = nextOrNull!!

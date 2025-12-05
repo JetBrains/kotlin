@@ -98,6 +98,14 @@ internal class HairGenerator(val context: Context, val module: IrModuleFragment)
 
         with (funCompilation.session) {
             buildInitialIR {
+                fun Const(type: HairType, value: Number) = when (type) {
+                    HairType.INT -> ConstI(value as Int)
+                    HairType.LONG -> ConstL(value as Long)
+                    HairType.FLOAT -> ConstF(value as Float)
+                    HairType.DOUBLE -> ConstD(value as Double)
+                    else -> error("Should not reach here $type")
+                }
+
                 // FIXME
                 val unitConst by lazy { UnitValue() }
 
@@ -184,7 +192,7 @@ internal class HairGenerator(val context: Context, val module: IrModuleFragment)
                         }
                     }
 
-                    private fun generateIntrinsic(call: IrCall, resType: HairType, args: List<Node?>): Node = when (tryGetIntrinsicType(call)) {
+                    private fun generateIntrinsic(call: IrCall, resType: HairType, args: List<Node?>): Node = when (val iType = tryGetIntrinsicType(call)) {
                         IntrinsicType.PLUS -> Add(resType)(args[0]!!, args[1]!!)
                         IntrinsicType.MINUS -> Sub(resType)(args[0]!!, args[1]!!)
                         IntrinsicType.TIMES -> Mul(resType)(args[0]!!, args[1]!!)
@@ -202,12 +210,19 @@ internal class HairGenerator(val context: Context, val module: IrModuleFragment)
                         IntrinsicType.THE_UNIT_INSTANCE -> UnitValue()
 
                         IntrinsicType.CREATE_UNINITIALIZED_INSTANCE -> New(HairClassImpl(call.typeArguments[0]!!.getClass()!!))
+                        IntrinsicType.CREATE_UNINITIALIZED_ARRAY -> NewArray(HairClassImpl(call.typeArguments[0]!!.getClass()!!))(args[0]!!)
 
                         IntrinsicType.SIGN_EXTEND -> SignExtend(resType)(args[0]!!)
                         IntrinsicType.ZERO_EXTEND -> ZeroExtend(resType)(args[0]!!)
                         IntrinsicType.INT_TRUNCATE -> Truncate(resType)(args[0]!!)
+                        IntrinsicType.REINTERPRET -> Reinterpret(resType)(args[0]!!)
 
-                        else -> TODO("Intrinsic: ${call.render()}")
+                        IntrinsicType.IDENTITY -> args[0]!!
+
+                        IntrinsicType.INC -> Add(resType)(args[0]!!, Const(resType, 1))
+                        IntrinsicType.DEC -> Sub(resType)(args[0]!!, Const(resType, 1))
+
+                        else -> TODO("Intrinsic: $iType")
                     }
 
                     private fun generateBuiltinOperator(call: IrCall, resType: HairType, args: List<Node?>): Node {
@@ -226,28 +241,28 @@ internal class HairGenerator(val context: Context, val module: IrModuleFragment)
                                 val op = when {
                                     functionSymbol.isComparisonFunction(ib.greaterFunByOperandType) -> {
                                         when {
-                                            isFloatingPoint -> CmpOp.U_GT
+                                            isFloatingPoint -> CmpOp.S_GT
                                             shouldUseUnsignedComparison -> CmpOp.U_GT
                                             else -> CmpOp.S_GT
                                         }
                                     }
                                     functionSymbol.isComparisonFunction(ib.greaterOrEqualFunByOperandType) -> {
                                         when {
-                                            isFloatingPoint -> CmpOp.U_GE
+                                            isFloatingPoint -> CmpOp.S_GE
                                             shouldUseUnsignedComparison -> CmpOp.U_GE
                                             else -> CmpOp.S_GE
                                         }
                                     }
                                     functionSymbol.isComparisonFunction(ib.lessFunByOperandType) -> {
                                         when {
-                                            isFloatingPoint -> CmpOp.U_LT
+                                            isFloatingPoint -> CmpOp.S_LT
                                             shouldUseUnsignedComparison -> CmpOp.U_LT
                                             else -> CmpOp.S_LT
                                         }
                                     }
                                     functionSymbol.isComparisonFunction(ib.lessOrEqualFunByOperandType) -> {
                                         when {
-                                            isFloatingPoint -> CmpOp.U_LE
+                                            isFloatingPoint -> CmpOp.S_LE
                                             shouldUseUnsignedComparison -> CmpOp.U_LE
                                             else -> CmpOp.S_LE
                                         }
@@ -269,6 +284,7 @@ internal class HairGenerator(val context: Context, val module: IrModuleFragment)
                             if (it.isUnconditional()) {
                                 exhaustive = true
                                 val value = it.result.accept(this, Unit)
+                                // FIXME check for unreachable instead?
                                 val exit = if (controlBuilder.lastControl != null) Goto() else null
                                 value to exit
                             } else {
@@ -347,14 +363,14 @@ internal class HairGenerator(val context: Context, val module: IrModuleFragment)
                     override fun visitBreak(jump: IrBreak, data: Unit): Node {
                         val goto = Goto()
                         loopBreaks.getOrPut(jump.loop) { mutableListOf() } += goto
-                        BlockEntry() // FIXME unreachable
+                        Unreachable()
                         return NoValue()
                     }
 
                     override fun visitContinue(jump: IrContinue, data: Unit): Node {
                         val goto = Goto()
                         loopContinues.getOrPut(jump.loop) { mutableListOf() } += goto
-                        BlockEntry() // FIXME unreachable
+                        Unreachable()
                         return NoValue()
                     }
 
@@ -366,17 +382,18 @@ internal class HairGenerator(val context: Context, val module: IrModuleFragment)
                         if (target is IrReturnableBlockSymbol) {
                             val goto = Goto()
                             returns.getOrPut(target) { mutableListOf() } += goto to value
-                            BlockEntry() // FIXME unreachable
-                            return goto
+                        } else {
+                            // FIXME what if return Unit?
+                            Return(value)
                         }
-                        // FIXME what if return Unit?
-                        return Return(value).also { BlockEntry() } // FIXME unreachable
+                        Unreachable()
+                        return NoValue()
                     }
 
                     override fun visitReturnableBlock(expression: IrReturnableBlock, data: Unit): Node {
                         returns[expression.symbol] = mutableListOf()
                         val mainResult = super.visitReturnableBlock(expression, data)
-                        val mainExit = if (controlBuilder.lastControl != null) Goto() else null
+                        val mainExit = if (controlBuilder.lastControl !is Unreachable) Goto() else null
                         val (exits, results) = (returns[expression.symbol]!! + listOf(mainExit to mainResult)).filter { it.first != null }.unzip()
                         require(exits.all { it != null })
                         val exitBlock = BlockEntry(*exits.toTypedArray()) as BlockEntry
@@ -402,12 +419,14 @@ internal class HairGenerator(val context: Context, val module: IrModuleFragment)
                                 UnitValue()
                             }
                             IrTypeOperator.IMPLICIT_INTEGER_COERCION -> TODO()
-                            IrTypeOperator.SAFE_CAST -> TODO()
                             IrTypeOperator.INSTANCEOF -> IsInstanceOf(cls!!)(arg)
-                            IrTypeOperator.NOT_INSTANCEOF -> TODO()
-                            IrTypeOperator.SAM_CONVERSION -> TODO()
-                            IrTypeOperator.IMPLICIT_DYNAMIC_CAST -> TODO()
-                            IrTypeOperator.REINTERPRET_CAST -> TODO()
+                            IrTypeOperator.NOT_INSTANCEOF -> Not(IsInstanceOf(cls!!)(arg))
+
+                            IrTypeOperator.SAFE_CAST -> error("Should have beed lowered ${expression.operator}")
+
+                            IrTypeOperator.SAM_CONVERSION -> error("Should not be here ${expression.operator}")
+                            IrTypeOperator.IMPLICIT_DYNAMIC_CAST -> error("Should not be here ${expression.operator}")
+                            IrTypeOperator.REINTERPRET_CAST -> error("Should not be here ${expression.operator}")
                         }
                     }
 
@@ -438,8 +457,8 @@ internal class HairGenerator(val context: Context, val module: IrModuleFragment)
                 }, Unit)
             }
 
-//            println("HaIR of ${f.name} before SSA:")
-//            printGraphvizNoGCM()
+            println("HaIR of ${f.name} before SSA:")
+            printGraphvizNoGCM()
 
             buildSSA {
                 it as IrValueSymbol
