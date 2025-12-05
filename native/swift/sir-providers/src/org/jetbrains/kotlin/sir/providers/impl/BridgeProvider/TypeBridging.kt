@@ -798,8 +798,7 @@ internal sealed class Bridge(
             ): AsCovariantBlock = AsCovariantBlock(
                 swiftType,
                 bridgeProxy = session.generateFunctionBridge(
-                    // fixme: remove useSiteModule in favor of https://jetbrains.team/p/kt/reviews/24738/timeline
-                    baseBridgeName = session.useSiteModule.sirModule().name + "_internal_functional_type_caller_" + swiftType.returnType.swiftName,
+                    baseBridgeName = session.moduleToTranslate.sirModule().name + "_internal_functional_type_caller_" + swiftType.returnType.swiftName,
                     explicitParameters = listOf(
                         SirParameter(
                             argumentName = "pointerToBlock",

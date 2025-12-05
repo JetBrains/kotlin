@@ -385,7 +385,7 @@ public var block: main.closure {
     get {
         return {
             let pointerToBlock = __root___block_get()
-            return { return fakeSourceModule_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer__(pointerToBlock) }
+            return { return main_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer__(pointerToBlock) }
         }()
     }
     set {
@@ -411,7 +411,7 @@ public func deeper_closure_typealiase(
         let originalBlock = block
         return { return originalBlock() }
     }())
-        return { return fakeSourceModule_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer__(pointerToBlock) }
+        return { return main_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer__(pointerToBlock) }
     }()
 }
 public func increment(
@@ -422,7 +422,7 @@ public func increment(
 public func produce_closure() -> main.closure {
     return {
         let pointerToBlock = __root___produce_closure()
-        return { return fakeSourceModule_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer__(pointerToBlock) }
+        return { return main_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer__(pointerToBlock) }
     }()
 }
 extension main.OUTSIDE_PROTO where Self : KotlinRuntimeSupport._KotlinBridgeable {

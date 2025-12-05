@@ -9,7 +9,7 @@ public func consume_consuming_opt_closure(
         let originalBlock = it
         return { arg0 in return originalBlock(arg0.map { it in {
         let pointerToBlock = it
-        return { return fakeSourceModule_internal_functional_type_caller_SwiftU2EString__TypesOfArguments__Swift_UnsafeMutableRawPointer__(pointerToBlock) }
+        return { return optional_closure_internal_functional_type_caller_SwiftU2EString__TypesOfArguments__Swift_UnsafeMutableRawPointer__(pointerToBlock) }
     }() }) }
     }() } ?? nil)
 }
@@ -37,6 +37,6 @@ public func produce_opt_closure(
 ) -> (() -> Swift.String)? {
     return __root___produce_opt_closure__TypesOfArguments__Swift_Void__().map { it in {
         let pointerToBlock = it
-        return { return fakeSourceModule_internal_functional_type_caller_SwiftU2EString__TypesOfArguments__Swift_UnsafeMutableRawPointer__(pointerToBlock) }
+        return { return optional_closure_internal_functional_type_caller_SwiftU2EString__TypesOfArguments__Swift_UnsafeMutableRawPointer__(pointerToBlock) }
     }() }
 }

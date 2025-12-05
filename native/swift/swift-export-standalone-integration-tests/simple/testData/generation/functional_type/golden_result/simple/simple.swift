@@ -6,7 +6,7 @@ public var closure_property: () -> Swift.Void {
     get {
         return {
             let pointerToBlock = __root___closure_property_get()
-            return { return fakeSourceModule_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer__(pointerToBlock) }
+            return { return simple_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer__(pointerToBlock) }
         }()
     }
     set {
@@ -19,7 +19,7 @@ public var closure_property: () -> Swift.Void {
 public func foo_1() -> () -> Swift.Void {
     return {
         let pointerToBlock = __root___foo_1()
-        return { return fakeSourceModule_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer__(pointerToBlock) }
+        return { return simple_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer__(pointerToBlock) }
     }()
 }
 public func foo_consume_producing(

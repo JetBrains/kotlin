@@ -101,7 +101,7 @@ int32_t __root___increment__TypesOfArguments__Swift_Int32__(int32_t integer);
 
 void * __root___produce_closure();
 
-void fakeSourceModule_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * pointerToBlock);
+void main_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * pointerToBlock);
 
 void * typealiases_Foo_init_allocate();
 

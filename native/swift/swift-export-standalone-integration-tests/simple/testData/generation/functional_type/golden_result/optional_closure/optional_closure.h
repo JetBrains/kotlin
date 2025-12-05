@@ -11,6 +11,6 @@ void __root___consume_producing_opt_closure__TypesOfArguments__Swift_Optional_U2
 
 void * _Nullable __root___produce_opt_closure__TypesOfArguments__Swift_Void__();
 
-NSString * fakeSourceModule_internal_functional_type_caller_SwiftU2EString__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * pointerToBlock);
+NSString * optional_closure_internal_functional_type_caller_SwiftU2EString__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * pointerToBlock);
 
 NS_ASSUME_NONNULL_END
