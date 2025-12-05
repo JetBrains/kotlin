@@ -36,6 +36,12 @@ public class WasmPartialLinkageWithICTestCaseGenerated extends AbstractWasmParti
   }
 
   @Test
+  @TestMetadata("cInterop")
+  public void testCInterop() {
+    runTest("compiler/testData/klib/partial-linkage/cInterop/");
+  }
+
+  @Test
   @TestMetadata("callableReferenceTypeTransformations")
   public void testCallableReferenceTypeTransformations() {
     runTest("compiler/testData/klib/partial-linkage/callableReferenceTypeTransformations/");
@@ -369,12 +375,6 @@ public class WasmPartialLinkageWithICTestCaseGenerated extends AbstractWasmParti
   @TestMetadata("inlineFunctions-withInliningInKlibsNative")
   public void testInlineFunctions_withInliningInKlibsNative() {
     runTest("compiler/testData/klib/partial-linkage/inlineFunctions-withInliningInKlibsNative/");
-  }
-
-  @Test
-  @TestMetadata("interop-changedFunction")
-  public void testInterop_changedFunction() {
-    runTest("compiler/testData/klib/partial-linkage/interop-changedFunction/");
   }
 
   @Test
