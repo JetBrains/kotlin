@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.api
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileResolutionMode
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.llFirModuleData
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirDanglingFileSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirLibraryOrLibrarySourceResolvableModuleSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
@@ -19,6 +20,7 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticPropertyAccessor
+import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
@@ -224,6 +226,13 @@ private fun collectDesignationPathWithContainingClass(
 private val LLFirSession.requiresDependenciesSearch: Boolean
     get() = when (this) {
         is LLFirLibraryOrLibrarySourceResolvableModuleSession -> true
+        is LLFirDanglingFileSession -> {
+            val module = ktModule as KaDanglingFileModule
+            // Dangling files in the ignore self mode have the empty declaration provider,
+            // so they cannot find any declarations inside themselves. Search in the context is required
+            module.resolutionMode == KaDanglingFileResolutionMode.IGNORE_SELF
+        }
+
         else -> false
     }
 
