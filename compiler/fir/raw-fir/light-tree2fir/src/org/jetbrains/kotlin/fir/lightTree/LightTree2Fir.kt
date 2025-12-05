@@ -47,9 +47,11 @@ class LightTree2Fir(
             .convertFile(lightTree.root, sourceFile, linesMapping)
     }
 
-    fun buildFirFile(code: CharSequence, sourceFile: KtSourceFile, linesMapping: KtSourceFileLinesMapping): FirFile {
+    fun buildFirFile(
+        code: CharSequence, sourceFile: KtSourceFile, linesMapping: KtSourceFileLinesMapping, forceAsScript: Boolean = false
+    ): FirFile {
         val errorListener = makeErrorListener(sourceFile)
-        val lightTree = KotlinLightParser.buildLightTree(code, sourceFile, errorListener)
+        val lightTree = KotlinLightParser.buildLightTree(code, sourceFile, forceAsScript, errorListener)
         return buildFirFile(lightTree, sourceFile, linesMapping)
     }
 

@@ -40,7 +40,7 @@ class TotalKotlinTest : AbstractRawFirBuilderTestCase() {
         text: CharSequence, sourceFile: KtSourceFile, linesMapping: KtSourceFileLinesMapping
     ) {
         if (onlyLightTree) {
-            val lightTree = KotlinLightParser.buildLightTree(text, sourceFile, errorListener = null)
+            val lightTree = KotlinLightParser.buildLightTree(text, sourceFile, forceAsScript = false, errorListener = null)
             DebugUtil.lightTreeToString(lightTree, false)
         } else {
             val firFile = converter.buildFirFile(text, sourceFile, linesMapping)

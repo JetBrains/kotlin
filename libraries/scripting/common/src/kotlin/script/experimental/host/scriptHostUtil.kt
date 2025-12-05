@@ -107,7 +107,7 @@ fun File.toScriptSource(): SourceCode = FileScriptSource(this)
 open class StringScriptSource(
     val source: String,
     override val name: String? = null,
-    override val locationId: String? = "${name ?: ""}\$${source.hashCode().toHexString()}",
+    override val locationId: String? = "\$${source.hashCode().toHexString()}${name ?: ".kts"}",
 ) : SourceCode, Serializable {
 
     override val text: String get() = source

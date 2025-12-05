@@ -8,6 +8,8 @@ package kotlin.script.experimental.impl
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.util.PropertiesCollection
 
+// the proper place for the refinement helpers. Others should eventually be moved here too
+
 fun ScriptCompilationConfiguration.refineOnAnnotationsWithLazyDataCollection(
     script: SourceCode,
     collectData: () -> ResultWithDiagnostics<ScriptCollectedData>?

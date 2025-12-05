@@ -154,8 +154,7 @@ internal fun makeCompiledScript(
 
     val module = makeCompiledModule(generationState)
 
-    val scriptClassFqName = getScriptClassFqName(script)
-        ?: return ResultWithDiagnostics.Failure("Only PSI infrastructure is supported here".asErrorDiagnostics())
+    val scriptClassFqName = getScriptClassFqName(script) ?: error("Unable to get target class for script: ${script.locationId}")
 
     val resultField = resultFields[scriptClassFqName]?.let {
         it.fieldName.asString() to KotlinType(it.fieldTypeName)
