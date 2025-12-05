@@ -61,7 +61,8 @@ internal class WasmContinuation<in T>(
                     resumeThrowIntrinsic(it, contBox.cont)
                     return
                 }
-                val (newCont, wasmContBox) = resumeWithImpl(contBox.cont, result, completion) ?: error("resumWithImpl returned null")
+                val (newCont, wasmContBox) = resumeWithImpl(contBox.cont, result, completion)
+                    ?: error("TODO: this is the case where coroutine doesn't suspend and returns the result. We need to handle it by resuming completion with the returned value")
                 newCont.wasmContBox = wasmContBox
             } catch (e: Throwable) {
                 completion.resumeWithException(e)
