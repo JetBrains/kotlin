@@ -27,6 +27,8 @@ internal abstract class CoroutineImpl(private val resultContinuation: Continuati
                     .also { intercepted_ = it }
 
     override fun resumeWith(result: Result<Any?>) {
+        println("CoroutineImpl::resumeWith")
+        println("result=$result")
         var current = this
         var currentResult: Any? = result.getOrNull()
         var currentException: Throwable? = result.exceptionOrNull()
@@ -38,6 +40,8 @@ internal abstract class CoroutineImpl(private val resultContinuation: Continuati
                 if (currentException == null) {
                     this.result = currentResult
                 } else {
+                    println(currentException.message)
+                    println(currentException.printStackTrace())
                     state = exceptionState
                     exception = currentException
                 }

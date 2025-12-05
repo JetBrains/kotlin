@@ -53,19 +53,27 @@ internal class WasmContinuation<in T>(
     override val context: CoroutineContext = completion.context
 
     override fun resumeWith(result: Result<T>) {
+        println("resumeWith($result)")
         if (isResumed) error("Continuation is already resumed")
         wasmContBox?.let { contBox ->
             isResumed = true
             try {
                 result.exceptionOrNull()?.let {
+                    println("before resumeThrowIntrinsic(it, contBox.cont)")
                     resumeThrowIntrinsic(it, contBox.cont)
+                    println("after resumeThrowIntrinsic(it, contBox.cont)")
                     return
                 }
+                println("before resumeWithImpl(contBox.cont, result, completion)")
                 val (newCont, wasmContBox) = resumeWithImpl(contBox.cont, result, completion)
                     ?: error("TODO: this is the case where coroutine doesn't suspend and returns the result. We need to handle it by resuming completion with the returned value")
+                println("after resumeWithImpl(contBox.cont, result, completion)")
                 newCont.wasmContBox = wasmContBox
             } catch (e: Throwable) {
+                println("before completion.resumeWithException(e)")
+                println(completion::class.qualifiedName)
                 completion.resumeWithException(e)
+                println("before completion.resumeWithException(e)")
             }
         } ?: error("Continuation is not set")
     }

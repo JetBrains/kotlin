@@ -136,9 +136,12 @@ private inline fun <T> createCoroutineFromSuspendFunction(
     completion: Continuation<T>,
     crossinline block: () -> Any?
 ): Continuation<Unit> {
+    println("createCoroutineFromSuspendFunction")
     return object : CoroutineImpl(completion as Continuation<Any?>) {
         override fun doResume(): Any? {
+            println("CoroutineImpl::doResume")
             exception?.let { throw it }
+            println("before block() in CoroutineImpl::doResume")
             return block()
         }
     }
