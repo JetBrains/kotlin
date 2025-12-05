@@ -299,6 +299,12 @@ public class Fe10IdeNormalAnalysisSourceModuleCollectDiagnosticsTestGenerated ex
   }
 
   @Test
+  @TestMetadata("syntheticHashCode.kt")
+  public void testSyntheticHashCode() {
+    runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/syntheticHashCode.kt");
+  }
+
+  @Test
   @TestMetadata("typeMismatches.kt")
   public void testTypeMismatches() {
     runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/typeMismatches.kt");
