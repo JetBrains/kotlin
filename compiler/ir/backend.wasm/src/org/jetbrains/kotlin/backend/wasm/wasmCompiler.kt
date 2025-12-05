@@ -166,6 +166,8 @@ fun lowerPreservingTags(
 
 data class WasmModuleDependencyImport(val name: String, val fileName: String)
 
+internal const val mainFunctionName = "_main"
+
 private fun String.normalizeEmptyLines(): String {
     return this.replace(Regex("\n\\s*\n+"), "\n\n")
 }
@@ -211,7 +213,7 @@ fun linkAndCompileWasmIrToBinary(moduleConfiguration: WasmIrModuleConfiguration)
 
     val multimoduleParameters = moduleConfiguration.multimoduleOptions
 
-    val wasmCompiledModuleFragment = WasmCompiledModuleFragment(wasmCompiledFileFragments)
+    val wasmCompiledModuleFragment = WasmCompiledModuleFragment(wasmCompiledFileFragments, isWasmJsTarget)
 
     val linkedModule = wasmCompiledModuleFragment.linkWasmCompiledFragments(
         multimoduleOptions = multimoduleParameters,
@@ -325,7 +327,7 @@ fun linkAndCompileWasmIrToBinary(moduleConfiguration: WasmIrModuleConfiguration)
             baseFileName = baseFileName,
             isStdlibModule = isStdlibModule,
             wholeProgramMode = wholeProgramMode,
-            mainFunctionDefined = linkedModule.exports.any { it.name == "_main" }
+            mainFunctionDefined = linkedModule.exports.any { it.name == mainFunctionName }
         )
 
     } else {
@@ -671,7 +673,7 @@ For more information, see https://kotl.in/wasm-help
 
 const exports = wasmInstance.exports
 setWasmExports(exports);
-${if (mainFunctionDefined) "exports._main();" else ""}
+${if (mainFunctionDefined) "exports.$mainFunctionName();" else ""}
 
 ${generateExports(exports, wholeProgramMode, isStdlibModule)}
 """

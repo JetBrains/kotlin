@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.serialization.cityHash64
 import org.jetbrains.kotlin.backend.wasm.MultimoduleCompileOptions
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmCompiledModuleFragment.*
+import org.jetbrains.kotlin.backend.wasm.mainFunctionName
 import org.jetbrains.kotlin.backend.wasm.utils.fitsLatin1
 import org.jetbrains.kotlin.ir.backend.js.ic.IrICProgramFragment
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
@@ -89,7 +90,10 @@ class WasmCompiledFileFragment(
 
 enum class ExceptionTagType { WASM_TAG, JS_TAG, TRAP }
 
-class WasmCompiledModuleFragment(private val wasmCompiledFileFragments: List<WasmCompiledFileFragment>) {
+class WasmCompiledModuleFragment(
+    private val wasmCompiledFileFragments: List<WasmCompiledFileFragment>,
+    private val isWasmJsTarget: Boolean,
+) {
     // Used during linking
     private val serviceCodeLocation = SourceLocation.NoLocation("Generated service code")
     private val parameterlessNoReturnFunctionType = WasmFunctionType(emptyList(), emptyList())
@@ -185,14 +189,26 @@ class WasmCompiledModuleFragment(private val wasmCompiledFileFragments: List<Was
             additionalTypes.add(associatedObjectGetterAndWrapper.second)
         }
 
+        val mainFunctionSymbols = wasmCompiledFileFragments.flatMap { fragment ->
+            fragment.mainFunctionWrappers.map { signature ->
+                fragment.functions.defined[signature]
+                    ?: compilationException("Cannot find symbol for main wrapper", type = null)
+            }
+        }
+
         val masterInitFunction = createMasterInitFunction(
             fieldInitializerFunction = fieldInitializerFunction,
             tryGetAssociatedObjectAndWrapper = associatedObjectGetterAndWrapper,
-            initializeUnit = initializeUnit
+            initializeUnit = initializeUnit,
+            mainFunctionSymbols = mainFunctionSymbols
         )
         definedFunctions.add(masterInitFunction)
 
-        exportMainFunction(exports)
+        if (isWasmJsTarget) {
+            exports.addAll(mainFunctionSymbols.map { WasmExport.Function(mainFunctionName, it) })
+        } else {
+            exports.add(WasmExport.Function("_initialize", masterInitFunction))
+        }
 
         val stringPoolField = createStringPoolField(stringPoolSize, stringEntities)
         globals.add(stringPoolField)
@@ -340,7 +356,7 @@ class WasmCompiledModuleFragment(private val wasmCompiledFileFragments: List<Was
             globals = definedGlobals,
             importedGlobals = importedGlobals,
             exports = exports,
-            startFunction = masterInitFunction,
+            startFunction = if (isWasmJsTarget) masterInitFunction else null,
             elements = elements,
             data = data,
             dataCount = true,
@@ -531,20 +547,11 @@ class WasmCompiledModuleFragment(private val wasmCompiledFileFragments: List<Was
         return listOf(memory)
     }
 
-    private fun exportMainFunction(exports: MutableList<WasmExport<*>>) {
-        wasmCompiledFileFragments.forEach { fragment ->
-            fragment.mainFunctionWrappers.forEach { signature ->
-                val wrapperFunction = fragment.functions.defined[signature]
-                    ?: compilationException("Cannot find symbol for main wrapper", type = null)
-                exports.add(WasmExport.Function("_main", wrapperFunction))
-            }
-        }
-    }
-
     private fun createMasterInitFunction(
         fieldInitializerFunction: WasmFunction,
         tryGetAssociatedObjectAndWrapper: Pair<WasmFunction.Defined, WasmStructDeclaration>?,
         initializeUnit: Boolean,
+        mainFunctionSymbols: List<WasmFunction>
     ): WasmFunction.Defined {
         val masterInitFunction = WasmFunction.Defined("_initializeModule", WasmSymbol(parameterlessNoReturnFunctionType))
         with(WasmExpressionBuilder(masterInitFunction.instructions)) {
@@ -563,6 +570,12 @@ class WasmCompiledModuleFragment(private val wasmCompiledFileFragments: List<Was
                 buildInstr(WasmOp.REF_FUNC, serviceCodeLocation, WasmImmediate.FuncIdx(WasmSymbol(tryGetAssociatedObjectAndWrapper.first)))
                 buildInstr(WasmOp.STRUCT_NEW, serviceCodeLocation, WasmImmediate.GcType(WasmSymbol(tryGetAssociatedObjectAndWrapper.second)))
                 buildInstr(WasmOp.CALL, serviceCodeLocation, WasmImmediate.FuncIdx(WasmSymbol(registerModuleDescriptor)))
+            }
+
+            if (!isWasmJsTarget) {
+                mainFunctionSymbols.forEach {
+                    buildCall(WasmSymbol(it), serviceCodeLocation)
+                }
             }
 
             buildInstr(WasmOp.RETURN, serviceCodeLocation)
