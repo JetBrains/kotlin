@@ -79,9 +79,7 @@ public expect annotation class ObjCName(val name: String = "", val swiftName: St
  * The enum literals will be prefixed with the type name, as they live in a global namespace.
  * Swift naming will remove these disambiguation prefixes. The NSEnum values are accessible via the "nsEnum" property.
  */
-@Target(
-    AnnotationTarget.CLASS,
-)
+@Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.BINARY)
 @MustBeDocumented
 @OptionalExpectation
