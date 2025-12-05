@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.cli.common.CLICompiler.Companion.SCRIPT_PLUGIN_K2_RE
 import org.jetbrains.kotlin.cli.common.CLICompiler.Companion.SCRIPT_PLUGIN_REGISTRAR_NAME
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.LOGGING
-import org.jetbrains.kotlin.cli.diagnosticFactoriesStorage
+import org.jetbrains.kotlin.cli.initializeDiagnosticFactoriesStorageForCli
 import org.jetbrains.kotlin.cli.jvm.plugins.PluginCliParser
 import org.jetbrains.kotlin.cli.plugins.extractPluginClasspathAndOptions
 import org.jetbrains.kotlin.cli.plugins.processCompilerPluginsOptions
@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.config.perfManager
 import org.jetbrains.kotlin.config.phaser.Action
-import org.jetbrains.kotlin.diagnostics.KtRegisteredDiagnosticFactoriesStorage
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.utils.KotlinPaths
 import org.jetbrains.kotlin.utils.PathUtil
@@ -61,7 +60,7 @@ abstract class AbstractConfigurationPhase<A : CommonCompilerArguments>(
     private fun CompilerConfiguration.setupCommonConfiguration(input: ArgumentsPipelineArtifact<A>) {
         val (arguments, _, _, messageCollector, performanceManager) = input
         this.messageCollector = messageCollector
-        diagnosticFactoriesStorage = KtRegisteredDiagnosticFactoriesStorage()
+        initializeDiagnosticFactoriesStorageForCli()
         perfManager = performanceManager
         printVersion = arguments.version
         // TODO(KT-73711): move script-related configuration to JVM CLI

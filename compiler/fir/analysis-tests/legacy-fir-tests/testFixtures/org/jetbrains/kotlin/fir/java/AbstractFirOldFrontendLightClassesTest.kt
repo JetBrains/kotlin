@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.ObsoleteTestInfrastructure
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.checkers.BaseDiagnosticsTest
+import org.jetbrains.kotlin.cli.initializeDiagnosticFactoriesStorageForCli
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.PsiBasedProjectFileSearchScope
 import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
@@ -83,6 +84,7 @@ abstract class AbstractFirOldFrontendLightClassesTest : BaseDiagnosticsTest() {
 
             val configuration = CompilerConfiguration().apply {
                 this.languageVersionSettings = config?.languageVersionSettings ?: LanguageVersionSettingsImpl.DEFAULT
+                initializeDiagnosticFactoriesStorageForCli()
             }
             FirSessionFactoryHelper.createSessionWithDependencies(
                 Name.identifier(info.name.asString().removeSurrounding("<", ">")),

@@ -10,7 +10,6 @@ import com.intellij.openapi.Disposable;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.CharsetToolkit;
 import com.intellij.psi.PsiElement;
 import com.intellij.testFramework.TestDataFile;
 import com.intellij.util.lang.JavaVersion;
@@ -25,7 +24,7 @@ import org.jetbrains.kotlin.analyzer.AnalysisResult;
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.checkers.CompilerTestLanguageVersionSettingsKt;
-import org.jetbrains.kotlin.cli.FrontendConfigurationKeys;
+import org.jetbrains.kotlin.cli.CliDiagnosticsKt;
 import org.jetbrains.kotlin.cli.common.config.ContentRootsKt;
 import org.jetbrains.kotlin.cli.common.config.KotlinSourceRoot;
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity;
@@ -39,7 +38,6 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.config.JVMConfigurationKeys;
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
-import org.jetbrains.kotlin.diagnostics.KtRegisteredDiagnosticFactoriesStorage;
 import org.jetbrains.kotlin.jvm.compiler.LoadDescriptorUtil;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.name.Name;
@@ -55,7 +53,10 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -122,8 +123,8 @@ public class KotlinTestUtils {
     @NotNull
     public static CompilerConfiguration newConfiguration() {
         CompilerConfiguration configuration = new CompilerConfiguration();
+        CliDiagnosticsKt.initializeDiagnosticFactoriesStorageForCli(configuration);
         configuration.put(CommonConfigurationKeys.MODULE_NAME, TEST_MODULE_NAME);
-        configuration.put(FrontendConfigurationKeys.DIAGNOSTIC_FACTORIES_STORAGE, new KtRegisteredDiagnosticFactoriesStorage());
         configuration.put(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY, new MessageCollector() {
             @Override
             public void clear() {

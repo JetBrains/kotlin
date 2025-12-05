@@ -10,6 +10,7 @@ import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.ObsoleteTestInfrastructure
+import org.jetbrains.kotlin.cli.initializeDiagnosticFactoriesStorageForCli
 import org.jetbrains.kotlin.cli.jvm.compiler.PsiBasedProjectFileSearchScope
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -22,7 +23,6 @@ import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import java.nio.file.Path
-import kotlin.io.path.absolutePathString
 import kotlin.io.path.pathString
 
 object FirTestSessionFactoryHelper {
@@ -37,6 +37,7 @@ object FirTestSessionFactoryHelper {
     ): FirSession {
         val configuration = CompilerConfiguration().apply {
             this.languageVersionSettings = languageVersionSettings
+            initializeDiagnosticFactoriesStorageForCli()
         }
         return FirSessionFactoryHelper.createSessionWithDependencies(
             Name.identifier(moduleName),

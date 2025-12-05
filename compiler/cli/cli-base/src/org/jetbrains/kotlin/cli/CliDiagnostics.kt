@@ -5,12 +5,10 @@
 
 package org.jetbrains.kotlin.cli
 
-import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactoryToRendererMap
-import org.jetbrains.kotlin.diagnostics.KtDiagnosticsContainer
-import org.jetbrains.kotlin.diagnostics.KtSourcelessDiagnosticFactory
+import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
 import org.jetbrains.kotlin.diagnostics.rendering.BaseSourcelessDiagnosticRendererFactory
-import org.jetbrains.kotlin.diagnostics.warningWithoutSource
 
 object CliDiagnostics : KtDiagnosticsContainer() {
     val COMPILER_PLUGIN_ARG_IS_EXPERIMENTAL: KtSourcelessDiagnosticFactory by warningWithoutSource()
@@ -24,4 +22,10 @@ object CliDiagnostics : KtDiagnosticsContainer() {
             map.put(REDUNDANT_CLI_ARG, MESSAGE_PLACEHOLDER)
         }
     }
+}
+
+fun CompilerConfiguration.initializeDiagnosticFactoriesStorageForCli() {
+    val storage = KtRegisteredDiagnosticFactoriesStorage()
+    storage.registerFactories(listOf(CliDiagnostics.getRendererFactory()))
+    this.diagnosticFactoriesStorage = storage
 }

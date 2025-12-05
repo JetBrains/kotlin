@@ -55,6 +55,8 @@ import org.jetbrains.kotlin.cli.common.extensions.ShellExtension
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.diagnosticFactoriesStorage
+import org.jetbrains.kotlin.cli.initializeDiagnosticFactoriesStorageForCli
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment.Companion.resetApplicationManager
 import org.jetbrains.kotlin.cli.jvm.config.*
 import org.jetbrains.kotlin.cli.jvm.index.*
@@ -684,6 +686,10 @@ class KotlinCoreEnvironment private constructor(
             registerExtensionsFromPlugins(configuration)
             // otherwise consider that project environment is properly configured before passing to the environment
             // TODO: consider some asserts to check important extension points
+
+            if (configuration.diagnosticFactoriesStorage == null) {
+                configuration.initializeDiagnosticFactoriesStorageForCli()
+            }
 
             val isJvm = configFiles == EnvironmentConfigFiles.JVM_CONFIG_FILES
             project.registerService(ModuleVisibilityManager::class.java, CliModuleVisibilityManagerImpl(isJvm))
