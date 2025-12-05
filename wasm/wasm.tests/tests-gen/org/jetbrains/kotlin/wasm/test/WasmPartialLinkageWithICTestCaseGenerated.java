@@ -378,12 +378,6 @@ public class WasmPartialLinkageWithICTestCaseGenerated extends AbstractWasmParti
   }
 
   @Test
-  @TestMetadata("interop-removedFunctionReference")
-  public void testInterop_removedFunctionReference() {
-    runTest("compiler/testData/klib/partial-linkage/interop-removedFunctionReference/");
-  }
-
-  @Test
   @TestMetadata("intraModuleInlining")
   public void testIntraModuleInlining() {
     runTest("compiler/testData/klib/partial-linkage/intraModuleInlining/");
@@ -423,6 +417,12 @@ public class WasmPartialLinkageWithICTestCaseGenerated extends AbstractWasmParti
   @TestMetadata("nonExhaustivenessOfWhenClause")
   public void testNonExhaustivenessOfWhenClause() {
     runTest("compiler/testData/klib/partial-linkage/nonExhaustivenessOfWhenClause/");
+  }
+
+  @Test
+  @TestMetadata("objCInterop")
+  public void testObjCInterop() {
+    runTest("compiler/testData/klib/partial-linkage/objCInterop/");
   }
 
   @Test
