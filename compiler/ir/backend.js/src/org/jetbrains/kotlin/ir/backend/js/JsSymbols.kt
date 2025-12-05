@@ -499,7 +499,6 @@ class JsSymbols(
 
     val kpropertyBuilder = CallableIds.getPropertyCallableRef.functionSymbol()
     val klocalDelegateBuilder = CallableIds.getLocalDelegateReference.functionSymbol()
-    val throwLinkageErrorInCallableNameSymbol = CallableIds.throwLinkageErrorInCallableName.functionSymbol()
 
     val eagerInitialization: IrClassSymbol = ClassIds.EagerInitialization.classSymbol()
 }
@@ -670,7 +669,6 @@ private object CallableIds {
     val setPropertiesToThrowableInstance = "setPropertiesToThrowableInstance".jsCallableId
     val getPropertyCallableRef = "getPropertyCallableRef".jsCallableId
     val getLocalDelegateReference = "getLocalDelegateReference".jsCallableId
-    val throwLinkageErrorInCallableName = "throwLinkageErrorInCallableName".jsCallableId
 
     // JS Long functions
     private val String.jsBoxedLongId get() = CallableId(JsStandardClassIds.BOXED_LONG_PACKAGE, Name.identifier(this))

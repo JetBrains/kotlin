@@ -10,7 +10,6 @@ import kotlin.internal.throwIrLinkageError
 import kotlin.internal.throwUnsupportedOperationException
 import kotlin.reflect.KProperty
 
-@UsedFromCompilerGeneratedCode
 internal fun throwLinkageErrorInCallableName(function: dynamic, linkageError: String) {
     defineProp(
         function,
