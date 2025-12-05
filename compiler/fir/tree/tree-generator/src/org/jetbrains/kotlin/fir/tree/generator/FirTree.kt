@@ -433,6 +433,7 @@ object FirTree : AbstractFirTreeBuilder() {
     val equalityOperatorCall: Element by element(Expression) {
         parent(expression)
         parent(call)
+        parent(resolvable)
 
         +field("operation", operationType)
     }

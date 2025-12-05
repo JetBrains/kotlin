@@ -402,6 +402,11 @@ class BuilderConfigurator(model: Model) : AbstractFirBuilderConfigurator<Abstrac
             additionalImports(stubReferenceType)
         }
 
+        builder(equalityOperatorCall) {
+            default("calleeReference", "FirStubReference")
+            additionalImports(stubReferenceType)
+        }
+
         builder(anonymousInitializer) {
             parents += declarationBuilder
             default("symbol", "FirAnonymousInitializerSymbol()")
