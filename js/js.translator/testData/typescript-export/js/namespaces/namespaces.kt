@@ -24,7 +24,6 @@ data class C1(val value: String)
 fun f(x1: C1, x2: C2, x3: C3): String {
     return "foo.bar.baz.f($x1, $x2, $x3)"
 }
-
 // FILE: file2.kt
 
 package a.b
@@ -38,7 +37,6 @@ data class C2(val value: String)
 fun f(x1: C1, x2: C2, x3: C3): String {
     return "a.b.f($x1, $x2, $x3)"
 }
-
 // FILE: file3.kt
 
 import a.b.*

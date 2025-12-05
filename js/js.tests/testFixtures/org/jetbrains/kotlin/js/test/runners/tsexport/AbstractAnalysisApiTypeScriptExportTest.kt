@@ -37,14 +37,10 @@ abstract class AbstractAnalysisApiTypeScriptExportTest : AbstractKotlinCompilerT
 
         facadeStep(::AnalysisApiBasedDtsGeneratorFacade)
         jsArtifactsHandlersStep()
-        configureJsTypeScriptExportTest(expectedDtsSuffix = "aa")
 
-        // TODO(KT-82224): Remove this when we implement support for file-level @JsExport in Analysis-API-based TypeScript Export
-        forTestsMatching("*-in-exported-file/*") {
-            defaultDirectives {
-                IGNORE_ANALYSIS_API_BASED_TYPESCRIPT_EXPORT with TargetBackend.ANY
-            }
-        }
+        // TODO(KT-82224): Add a separate test runner with isWholeFileJsExport = true when we implement support for file-level @JsExport
+        //  in Analysis API-based TypeScript Export
+        configureJsTypeScriptExportTest(isWholeFileJsExport = false, expectedDtsSuffix = "aa")
     }
 }
 

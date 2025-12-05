@@ -139,9 +139,7 @@ fun generateTypeScriptTestFor(dir: String): TaskProvider<NpmTask> = tasks.regist
 val generateTypeScriptTests = parallel(
     beforeAll = installTsDependencies,
     tasksToRun = jsTestsDir.listFiles { it: File ->
-        it.isDirectory &&
-                !it.path.endsWith("module-systems") &&
-                !it.path.endsWith("module-systems-in-exported-file")
+        it.isDirectory && !it.path.endsWith("module-systems")
     }
         .map { generateTypeScriptTestFor(it.name) }
 )

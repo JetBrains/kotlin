@@ -4,6 +4,8 @@
 // INFER_MAIN_MODULE
 // MODULE: JS_TESTS
 // WITH_STDLIB
+// DISABLE_JS_EXPORT_SOURCE_PREPROCESSOR
+
 // FILE: declarations.kt
 
 package foo

@@ -26,7 +26,6 @@ fun main(args: Array<String>) {
 
     // TODO: repair these tests
     //generateTestDataForReservedWords()
-    generateTypeScriptJsExportOnFiles("js/js.translator/testData/typescript-export/js")
 
     generateTestGroupSuiteWithJUnit5(args) {
         testGroup(testsRoot, "compiler/testData/klib/partial-linkage") {
@@ -109,7 +108,15 @@ fun main(args: Array<String>) {
                 model(pattern = "^([^_](.+))\\.kt$")
             }
 
+            testClass<AbstractJsTypeScriptWholeFileExportTest> {
+                model(pattern = "^([^_](.+))\\.kt$")
+            }
+
             testClass<AbstractJsES6TypeScriptExportTest>(annotations = listOf(*es6())) {
+                model(pattern = "^([^_](.+))\\.kt$")
+            }
+
+            testClass<AbstractJsES6TypeScriptWholeFileExportTest> {
                 model(pattern = "^([^_](.+))\\.kt$")
             }
 

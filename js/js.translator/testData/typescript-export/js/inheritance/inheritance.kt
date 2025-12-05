@@ -84,6 +84,7 @@ fun getI3(): I3 = object : I3 {
     override fun bay(): String = "bayI3"
 }
 
+@JsExport.Ignore
 abstract class A : I3
 
 @JsExport
@@ -97,6 +98,7 @@ fun getA(): I3 = object : A() {
     override fun bay(): String = "bayA"
 }
 
+@JsExport.Ignore
 open class B : A() {
     override val foo: String = "fooB"
 
@@ -110,6 +112,7 @@ open class B : A() {
 @JsExport
 fun getB(): I3 = B()
 
+@JsExport.Ignore
 open class C : B() {
     override val foo: String = "fooC"
 
@@ -183,12 +186,15 @@ interface IG<T> {
     fun process(value: T): Unit
 }
 
+@JsExport.Ignore
 interface IB : IA
 
+@JsExport.Ignore
 interface IC : IB {
     override val foo: Any
 }
 
+@JsExport.Ignore
 interface ID : IC {
     override val foo: Int
 }
@@ -196,10 +202,12 @@ interface ID : IC {
 @JsExport
 open class Third<T>: Second()
 
+@JsExport.Ignore
 open class Forth<A>: Third<A>(), IB, ID {
     override val foo: Int = 42
 }
 
+@JsExport.Ignore
 open class Fifth<B>: Forth<B>(), IG<B> {
     override fun process(value: B) {}
 }
@@ -210,6 +218,7 @@ class Sixth: Fifth<Int>(), IC
 @JsExport
 open class First
 
+@JsExport.Ignore
 open class Second: First()
 
 @JsExport
@@ -221,5 +230,8 @@ fun <T> acceptMoreGenericForthLike(forth: T) where T: IB, T: IC, T: Second {}
 @JsExport
 val fifth = Fifth<Boolean>()
 
-@JsExport open class MyRootException : RuntimeException()
-@JsExport open class MySpecificException : MyRootException()
+@JsExport
+open class MyRootException : RuntimeException()
+
+@JsExport
+open class MySpecificException : MyRootException()

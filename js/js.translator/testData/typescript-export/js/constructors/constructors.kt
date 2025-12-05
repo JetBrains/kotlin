@@ -69,7 +69,6 @@ open class GenericClassWithSecondaryCtor<Self: GenericClassWithSecondaryCtor<Sel
         x = y
     }
 }
-
 // FILE: f2.kt
 
 @JsExport

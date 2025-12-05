@@ -8,6 +8,11 @@
 
 package foo
 
+@JsExport
+fun getParent(): Parent {
+    return Parent
+}
+
 @JsExport.Default
 object Parent {
     object Nested1 {
@@ -18,9 +23,4 @@ object Parent {
             }
         }
     }
-}
-
-@JsExport
-fun getParent(): Parent {
-    return Parent
 }

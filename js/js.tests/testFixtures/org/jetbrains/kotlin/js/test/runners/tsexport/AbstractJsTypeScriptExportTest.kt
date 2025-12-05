@@ -13,17 +13,23 @@ import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
 
-open class AbstractJsTypeScriptExportTest(
-    testGroupOutputDirPrefix: String = "typescript-export/es5"
+abstract class AbstractJsTypeScriptExportTest(
+    testGroupOutputDirPrefix: String = "typescript-export/es5",
+    private val isWholeFileJsExport: Boolean = false,
 ) : AbstractJsTest(
     pathToTestDir = "${JsEnvironmentConfigurator.Companion.TEST_DATA_DIR_PATH}/typescript-export/",
     testGroupOutputDirPrefix = testGroupOutputDirPrefix
 ) {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
-        builder.configureJsTypeScriptExportTest()
+        builder.configureJsTypeScriptExportTest(isWholeFileJsExport)
     }
 }
+
+abstract class AbstractJsTypeScriptWholeFileExportTest : AbstractJsTypeScriptExportTest(
+    testGroupOutputDirPrefix = "typescript-export/es5-whole-file",
+    isWholeFileJsExport = true,
+)
 
 open class AbstractJsTypeScriptExportWithInlinedFunInKlibTest : AbstractJsTypeScriptExportTest(
     testGroupOutputDirPrefix = "typescript-export/es5-withInlinedFunInKlib"
@@ -42,13 +48,19 @@ open class AbstractJsTypeScriptExportWithInlinedFunInKlibTest : AbstractJsTypeSc
 }
 
 open class AbstractJsES6TypeScriptExportTest(
-    testGroupOutputDirPrefix: String = "typescript-export/es6"
+    testGroupOutputDirPrefix: String = "typescript-export/es6",
+    private val isWholeFileJsExport: Boolean = false,
 ) : AbstractJsES6Test(
     pathToTestDir = "${JsEnvironmentConfigurator.Companion.TEST_DATA_DIR_PATH}/typescript-export/",
     testGroupOutputDirPrefix = testGroupOutputDirPrefix
 ) {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
-        builder.configureJsTypeScriptExportTest()
+        builder.configureJsTypeScriptExportTest(isWholeFileJsExport)
     }
 }
+
+abstract class AbstractJsES6TypeScriptWholeFileExportTest : AbstractJsES6TypeScriptExportTest(
+    testGroupOutputDirPrefix = "typescript-export/es6-whole-file",
+    isWholeFileJsExport = true,
+)

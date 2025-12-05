@@ -29,11 +29,13 @@ open class SomeBaseClass private constructor(val answer: Int): ClassWithoutPrima
     constructor() : this(42)
 }
 
+@JsExport.Ignore
 open class IntermediateClass1: SomeBaseClass()
 
 @JsExport
 open class SomeExtendingClass @JsExport.Ignore public constructor() : IntermediateClass1()
 
+@JsExport.Ignore
 open class IntermediateClass2: SomeExtendingClass()
 
 @JsExport
