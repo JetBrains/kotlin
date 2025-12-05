@@ -52,6 +52,8 @@ data class UnitStats(
 
     val dynamicStats: List<DynamicStats>? = null,
 
+    val klibElementStats: List<KlibElementStats>? = null,
+
     // Null in case of java files not used
     val findJavaClassStats: SideStats? = null,
     // Typically always not null because binary files are used for stdlib deserializing.
@@ -197,6 +199,8 @@ data class GarbageCollectionStats(val kind: String, val millis: Long, val count:
 }
 
 data class DynamicStats(val parentPhaseType: PhaseType, val name: String, val time: Time)
+
+data class KlibElementStats(val path: String, val size: Long)
 
 fun UnitStats.forEachPhaseMeasurement(action: (PhaseType, Time?) -> Unit) {
     action(PhaseType.Initialization, initStats)
