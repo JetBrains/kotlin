@@ -344,11 +344,11 @@ class ComposerParamTransformer(
     }
 
     override fun visitLocalDelegatedProperty(declaration: IrLocalDelegatedProperty): IrStatement {
-        if (declaration.getter.isComposableDelegatedAccessor()) {
+        if (declaration.getter.isComposableDelegatedAccessor() && !declaration.getter.hasComposableAnnotation()) {
             declaration.getter.annotations += createComposableAnnotation()
         }
 
-        if (declaration.setter?.isComposableDelegatedAccessor() == true) {
+        if (declaration.setter?.isComposableDelegatedAccessor() == true && declaration.setter?.hasComposableAnnotation() == false) {
             declaration.setter!!.annotations += createComposableAnnotation()
         }
 
