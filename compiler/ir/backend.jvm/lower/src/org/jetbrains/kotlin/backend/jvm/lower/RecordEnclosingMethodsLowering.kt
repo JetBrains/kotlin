@@ -74,17 +74,22 @@ internal class RecordEnclosingMethodsLowering(val context: JvmBackendContext) : 
                 return super.visitFunctionAccess(expression, data)
             }
 
-            private fun recordEnclosingMethodOverride(from: IrFunction, to: IrFunction) {
-                val old = from.enclosingMethodOverride
-                if (old != null) {
-                    // A single lambda can be referenced multiple times if it is in a field initializer
-                    // or an anonymous initializer block and there are multiple non-delegating constructors.
-                    classStack.last().primaryConstructor?.let {
-                        from.enclosingMethodOverride = it
-                    }
-                } else {
-                    from.enclosingMethodOverride = to
-                }
-            }
+            private fun recordEnclosingMethodOverride(from: IrFunction, to: IrFunction) =
+                recordEnclosingMethodOverride(from, to, classStack.last())
         }, null)
+
+    internal companion object {
+        internal fun recordEnclosingMethodOverride(from: IrFunction, to: IrFunction, mostNestedClass: IrClass) {
+            val old = from.enclosingMethodOverride
+            if (old != null) {
+                // A single lambda can be referenced multiple times if it is in a field initializer
+                // or an anonymous initializer block and there are multiple non-delegating constructors.
+                mostNestedClass.primaryConstructor?.let {
+                    from.enclosingMethodOverride = it
+                }
+            } else {
+                from.enclosingMethodOverride = to
+            }
+        }
+    }
 }

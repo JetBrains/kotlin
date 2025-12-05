@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.backend.jvm.ir.JvmIrBuilder
 import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
 import org.jetbrains.kotlin.backend.jvm.ir.findRichInlineLambdas
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineClassType
+import org.jetbrains.kotlin.backend.jvm.lower.RecordEnclosingMethodsLowering.Companion.recordEnclosingMethodOverride
 import org.jetbrains.kotlin.backend.jvm.lower.indy.getDefinitelyExistingLambdaMetafactoryArguments
 import org.jetbrains.kotlin.backend.jvm.unboxInlineClass
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -88,13 +89,24 @@ class IndyLambdaMetafactoryLowering(val backendContext: JvmBackendContext): File
         classStack.clear()
     }
 
+    private val functionStack = mutableListOf<IrFunction>()
+
+    override fun visitFunction(declaration: IrFunction): IrStatement {
+        functionStack.push(declaration)
+        return super.visitFunction(declaration).also { functionStack.pop() }
+    }
+
     override fun visitRichFunctionReference(expression: IrRichFunctionReference): IrExpression =
         when (val indyCallData = expression.indyCallData) {
             null -> super.visitRichFunctionReference(expression)
             else -> {
-                expression.transformChildrenVoid()
-                functionsToClasses[expression.invokeFunction] = classStack.lastOrNull()
+                val enclosingClass = classStack.lastOrNull()
                     ?: error("Top level function reference: ${expression.dump()}")
+                val enclosingFunction = functionStack.lastOrNull()
+                if (enclosingFunction != null)
+                    recordEnclosingMethodOverride(expression.invokeFunction, enclosingFunction, enclosingClass)
+                expression.transformChildrenVoid()
+                functionsToClasses[expression.invokeFunction] = enclosingClass
                 rewriteIndyLambdaMetafactoryCall(expression, backendContext, indyCallData)
             }
         }
