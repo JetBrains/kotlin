@@ -111,16 +111,10 @@ class ScriptJvmK2Compiler(
             }
         }.onSuccess {
             it.refineOnAnnotationsWithLazyDataCollection(script) {
-                getCollectedData(script, scriptCompilationConfiguration, diagnosticsCollector, null)?.asSuccess()
-            }
-            if (it.getNoDefault(ScriptCompilationConfiguration.refineConfigurationOnAnnotations) == null) it.asSuccess()
-            else {
-                val collectedData =
-                    getCollectedData(script, scriptCompilationConfiguration, diagnosticsCollector, null)
-                if (diagnosticsCollector.hasErrors) {
-                    failure(diagnosticsCollector)
-                } else {
-                    it.refineOnAnnotations(script, collectedData!!)
+                getCollectedData(script, scriptCompilationConfiguration, diagnosticsCollector, null)?.let {
+                    if (diagnosticsCollector.hasErrors) {
+                        failure(diagnosticsCollector)
+                    } else it.asSuccess()
                 }
             }
         }.onSuccess {
