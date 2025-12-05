@@ -275,6 +275,12 @@ fun PerformanceManager.forEachStringMeasurement(action: (String) -> Unit) {
             }
         }
 
+        if (detailedPerf) {
+            klibElementStats?.forEach { (path, size) ->
+                action("KLIB element '$path' has size of $size Bytes")
+            }
+        }
+
         forEachPhaseSideMeasurement { phaseSideType, sideStats ->
             if (sideStats == null) return@forEachPhaseSideMeasurement
 
