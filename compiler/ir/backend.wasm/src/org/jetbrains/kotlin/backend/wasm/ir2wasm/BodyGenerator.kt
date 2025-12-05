@@ -1189,6 +1189,11 @@ class BodyGenerator(
 
             wasmSymbols.resumeWithIntrinsic -> {
                 val wasmContinuation = functionContext.referenceLocal(0)
+                val completionParam = functionContext.referenceLocal(2)
+                body.buildDrop(location)
+
+                val kotlinThrowable = wasmFileCodegenContext.referenceGcType(irBuiltIns.throwableClass)
+                val kotlinThrowableRefType = WasmRefNullType(WasmHeapType.Type(kotlinThrowable))
 
                 val kotlinAny = wasmFileCodegenContext.referenceGcType(irBuiltIns.anyClass)
                 val kotlinAnyRefType = WasmRefNullType(WasmHeapType.Type(kotlinAny))
@@ -1197,15 +1202,40 @@ class BodyGenerator(
                 wasmFileCodegenContext.defineContBlockType(blockType)
                 val blockTypeSymbol = wasmFileCodegenContext.referenceContBlockType(blockType)
                 body.buildFunctionTypedBlock("on_suspend", blockTypeSymbol) { idx ->
-                    // result: Result<T>
-                    body.buildGetLocal(functionContext.referenceLocal(1), location)
-                    body.buildGetLocal(wasmContinuation, location)
-                    val contHandle = body.createNewContHandle(contTagId, idx)
-                    body.buildResume(zeroArgContType, contHandle, location)
+                    body.buildBlock(null, kotlinAnyRefType) { topLevelBlock ->
+                        body.buildBlock(null, rawExceptionType) { toCatch ->
+                            body.buildTryTable(body.createNewCatch(exceptionTagId, toCatch)) {
+                                // try body
+                                body.buildGetLocal(functionContext.referenceLocal(1), location)
+                                body.buildGetLocal(wasmContinuation, location)
+                                val contHandle = body.createNewContHandle(contTagId, idx)
+                                body.buildResume(zeroArgContType, contHandle, location)
+                                body.buildBr(
+                                    topLevelBlock,
+                                    SourceLocation.NoLocation("Branch to success level after finish try block without any exception")
+                                )
+                            }
+
+                            body.buildUnreachableForVerifier()
+                        }
+                        // exception caught
+                        val exceptionVarIdx = functionContext.defineVariable(kotlinThrowableRefType, "exception")
+                        val exceptionVar = functionContext.referenceLocal(exceptionVarIdx)
+                        body.buildSetLocal(exceptionVar, location)
+
+                        body.buildGetLocal(completionParam, location)
+                        body.buildGetLocal(exceptionVar, location)
+                        body.buildCall(wasmFileCodegenContext.referenceFunction(wasmSymbols.resumeCompletionWithException), location)
+
+                        body.buildGetLocal(exceptionVar, location)
+                        body.buildThrow(exceptionTagId, location)
+                    }
+                    // no suspend
                     body.buildDrop(location)
                     body.buildRefNull(WasmHeapType.Simple.None, location)
                     body.buildInstr(WasmOp.RETURN, location)
                 }
+                // suspend
                 body.buildCall(wasmFileCodegenContext.referenceFunction(wasmSymbols.buildPair), location)
             }
 
@@ -1241,6 +1271,7 @@ class BodyGenerator(
                     body.buildBlock(null, kotlinAnyRefType) { topLevelBlock ->
                         body.buildBlock(null, rawExceptionType) { toCatch ->
                             body.buildTryTable(body.createNewCatch(exceptionTagId, toCatch)) {
+                                // try body
                                 for (i in 0 until arity) {
                                     body.buildGetLocal(functionContext.referenceLocal(i), location)
                                 }
@@ -1256,6 +1287,7 @@ class BodyGenerator(
 
                             body.buildUnreachableForVerifier()
                         }
+                        // exception caught
                         val exceptionVarIdx = functionContext.defineVariable(kotlinThrowableRefType, "exception")
                         val exceptionVar = functionContext.referenceLocal(exceptionVarIdx)
                         body.buildSetLocal(exceptionVar, location)
@@ -1267,6 +1299,7 @@ class BodyGenerator(
                         body.buildGetLocal(exceptionVar, location)
                         body.buildThrow(exceptionTagId, location)
                     }
+                    // no suspend
                     val resultVarIdx = functionContext.defineVariable(kotlinAnyRefType, "result")
                     val resultVar = functionContext.referenceLocal(resultVarIdx)
                     body.buildSetLocal(resultVar, location)
@@ -1277,6 +1310,7 @@ class BodyGenerator(
                     body.buildGetLocal(resultVar, location)
                     body.buildInstr(WasmOp.RETURN, location)
                 }
+                // suspend
                 body.buildCall(wasmFileCodegenContext.referenceFunction(wasmSymbols.setWasmContinuation), location)
             }
 
