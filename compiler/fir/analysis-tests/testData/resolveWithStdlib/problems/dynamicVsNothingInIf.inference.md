@@ -3,6 +3,18 @@
 ### Call 1
 
 ```
+==(this@R|/Test|.R|/Test.something|, Null(null))
+```
+
+#### Candidate 1: `FirSyntheticFunctionSymbol _synthetic/EQUALITY_CALL` --- `fun EQUALITY_CALL(x: Any?, y: Any?): Boolean↩`
+##### Resolution Stages > CheckArguments:
+
+1. `kotlin/String? <: kotlin/Any?` _from Argument this|/Test|.R|/Test.something|_
+2. `kotlin/Nothing? <: kotlin/Any?` _from Argument Null(null)_
+
+### Call 2
+
+```
 IllegalStateException#(String(Something is not defined.))
 ```
 
@@ -22,7 +34,7 @@ IllegalStateException#(String(Something is not defined.))
 
 1. `{kotlin/IllegalStateException=} java/lang/IllegalStateException <: kotlin/Throwable` _from ExpectedType for some call_
 
-### Call 2
+### Call 3
 
 ```
 parse#(R|<local>/data|)
@@ -45,7 +57,7 @@ parse#(R|<local>/data|)
 
 1. Choose `TypeVariable(T)` with `FORBIDDEN`
 
-### Call 3
+### Call 4
 
 ```
 when () {
@@ -85,7 +97,7 @@ when () {
 4. Choose `TypeVariable(T)` with `READY_FOR_FIXATION_UPPER`
 5. `TypeVariable(T) == dynamic` _from Fix variable T_
 
-### Call 4
+### Call 5
 
 ```
 TODO#()

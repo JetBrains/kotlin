@@ -1,6 +1,6 @@
 FILE: elvisAndLongIlt.kt
     public final fun fooElvis(x: R|kotlin/Long|, y: R|kotlin/Long?|): R|kotlin/Boolean| {
-        ^fooElvis !=(R|<local>/x|, R|<local>/y| ?: Int(0))
+        ^fooElvis !=(R|<local>/x|, R|<local>/y| ?: Long(0))
     }
     public final fun <I> id(i: R|I|): R|I| {
         ^id R|<local>/i|
@@ -15,7 +15,7 @@ FILE: elvisAndLongIlt.kt
         ^bar R|<local>/x| ?: R|<local>/y|
     }
     public final fun fooBarExact(x: R|kotlin/Long|, y: R|kotlin/Long?|): R|kotlin/Boolean| {
-        ^fooBarExact !=(R|<local>/x|, R|/barExact|<R|kotlin/Any?|>(R|<local>/y|, Int(0)))
+        ^fooBarExact !=(R|<local>/x|, R|/barExact|<R|kotlin/Long|>(R|<local>/y|, Long(0)))
     }
     @R|kotlin/Suppress|(names = vararg(String(INVISIBLE_REFERENCE))) public final fun <E> barExact(x: R|E?|, y: R|E|): R|@Exact E| {
         ^barExact R|<local>/x| ?: R|<local>/y|
