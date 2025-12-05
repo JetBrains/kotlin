@@ -17,11 +17,7 @@ sealed class ResolutionMode(
 ) {
     open val hintForContextSensitiveResolution: ConeKotlinType? get() = null
 
-    open class ContextDependent(
-        override val hintForContextSensitiveResolution: ConeKotlinType? = null
-    ) : ResolutionMode(forceFullCompletion = false) {
-        companion object : ContextDependent()
-    }
+    data object ContextDependent : ResolutionMode(forceFullCompletion = false)
 
     data object Delegate : ResolutionMode(forceFullCompletion = false)
     data object ContextIndependent : ResolutionMode(forceFullCompletion = true)
