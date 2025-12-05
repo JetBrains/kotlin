@@ -273,6 +273,12 @@ context(nodeBuilder: NodeBuilder)
 operator fun Truncate.Form.invoke(operand: Node?): Node = nodeBuilder.onNodeBuilt(Truncate(this@invoke, operand))
 
 context(nodeBuilder: NodeBuilder)
+fun Reinterpret(targetType: HairType): Reinterpret.Form = Reinterpret.Form(nodeBuilder.session.reinterpretMetaForm, targetType).ensureFormUniq()
+
+context(nodeBuilder: NodeBuilder)
+operator fun Reinterpret.Form.invoke(operand: Node?): Node = nodeBuilder.onNodeBuilt(Reinterpret(this@invoke, operand))
+
+context(nodeBuilder: NodeBuilder)
 private fun NewForm(objectType: HairClass): New.Form = New.Form(nodeBuilder.session.newMetaForm, objectType).ensureFormUniq()
 
 context(nodeBuilder: NodeBuilder, _: NoControlFlowBuilder)
@@ -286,6 +292,15 @@ operator fun New.Form.invoke(control: Controlling?): Controlling = nodeBuilder.o
 
 context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
 operator fun New.Form.invoke(): Controlling = controlBuilder.appendControlled { ctrl -> this@invoke(ctrl) }
+
+context(nodeBuilder: NodeBuilder)
+fun NewArray(elementType: HairClass): NewArray.Form = NewArray.Form(nodeBuilder.session.newArrayMetaForm, elementType).ensureFormUniq()
+
+context(nodeBuilder: NodeBuilder)
+operator fun NewArray.Form.invoke(control: Controlling?, size: Node?): Controlling = nodeBuilder.onNodeBuilt(NewArray(this@invoke, control, size)) as Controlling
+
+context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
+operator fun NewArray.Form.invoke(size: Node?): Controlling = controlBuilder.appendControlled { ctrl -> this@invoke(ctrl, size) }
 
 context(nodeBuilder: NodeBuilder)
 fun IsInstanceOf(targetType: HairClass): IsInstanceOf.Form = IsInstanceOf.Form(nodeBuilder.session.isInstanceOfMetaForm, targetType).ensureFormUniq()

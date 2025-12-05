@@ -94,7 +94,11 @@ class ShallowNodeCloner(val nodeBuilder: NodeBuilder): NodeVisitor<Node>() {
 
     override fun visitTruncate(node: Truncate): Truncate = context(nodeBuilder, NoControlFlowBuilder) { Truncate(node.targetType)(null) } as Truncate
 
+    override fun visitReinterpret(node: Reinterpret): Reinterpret = context(nodeBuilder, NoControlFlowBuilder) { Reinterpret(node.targetType)(null) } as Reinterpret
+
     override fun visitNew(node: New): New = context(nodeBuilder, NoControlFlowBuilder) { New(node.objectType)(null) } as New
+
+    override fun visitNewArray(node: NewArray): NewArray = context(nodeBuilder, NoControlFlowBuilder) { NewArray(node.elementType)(null, null) } as NewArray
 
     override fun visitIsInstanceOf(node: IsInstanceOf): IsInstanceOf = context(nodeBuilder, NoControlFlowBuilder) { IsInstanceOf(node.targetType)(null) } as IsInstanceOf
 

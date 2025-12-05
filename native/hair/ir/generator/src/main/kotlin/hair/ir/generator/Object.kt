@@ -14,6 +14,12 @@ object Object : ModelDSL() {
         formParam("objectType", HairClass::class)
     }
 
+    val newArray by node(ControlFlow.blockBody) {
+        interfaces(anyNew)
+        formParam("elementType", HairClass::class)
+        param("size")
+    }
+
     // type-checks
 
     val typeCheck by abstractClass {

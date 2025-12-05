@@ -21,11 +21,10 @@ object RawArgsUpdater : ArgsUpdater {
 }
 
 open class NormalizingNodeBuilder(override val session: Session) : NodeBuilder {
-    // FIXME allow only trivial args updates in normalization
-    val normalization = NormalizationImpl(session, RawNodeBuilder(session), RawArgsUpdater)
+    // FIXME use proper args updater
+    val normalization = NormalizationImpl(session, this, RawArgsUpdater)
 
     override fun onNodeBuilt(node: Node): Node = normalization.normalize(node).also {
-        require(normalization.normalize(it) == it)
         // node must still be not-GVNed
         require(node !in session.allNodes())
     }
@@ -42,7 +41,7 @@ class RegisteringNodeBuilder(session: Session) : NormalizingGvnNodeBuilder(sessi
     }
 }
 
-class ArgsUpdaterImpl(val session: Session, val nodeBuilder: NodeBuilder) : ArgsUpdater {
+class ArgsUpdaterImpl(val session: Session, nodeBuilder: NodeBuilder) : ArgsUpdater {
     val normalization = NormalizationImpl(session, nodeBuilder, this)
     override fun onArgUpdate(node: Node, index: Int, oldValue: Node?, newValue: Node?) {
         require(newValue != oldValue)

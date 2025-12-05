@@ -79,5 +79,6 @@ object Arithmetics : ModelDSL() {
     val signExtend by node(cast)
     val zeroExtend by node(cast)
     val truncate by node(cast)
+    val reinterpret by node(cast)
 
 }
