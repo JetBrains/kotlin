@@ -31,6 +31,38 @@ class New internal constructor(form: Form, control: Controlling?) : BlockBody(fo
 }
 
 
+class NewArray internal constructor(form: Form, control: Controlling?, size: Node?) : BlockBody(form, listOf(control, size)), AnyNew {
+    class Form internal constructor(metaForm: MetaForm, val elementType: HairClass) : MetaForm.ParametrisedControlFlowForm<Form>(metaForm) {
+        override val args = listOf<Any>(elementType)
+    }
+    
+    val elementType: HairClass by form::elementType
+    val size: Node
+        get() = args[1]
+    val sizeOrNull: Node?
+        get() = args.getOrNull(1)
+    context(_: ArgsUpdater)
+     var size: Node
+        get() = args[1]
+        set(value) { args[1] = value }
+    context(_: ArgsUpdater)
+     var sizeOrNull: Node?
+        get() = args.getOrNull(1)
+        set(value) { args[1] = value }
+    
+    override fun paramName(index: Int): String = when (index) {
+        0 -> "control"
+        1 -> "size"
+        else -> error("Unexpected arg index: $index")
+    }
+    
+    override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitNewArray(this)
+    companion object {
+        internal fun metaForm(session: Session) = MetaForm(session, "NewArray")
+    }
+}
+
+
 sealed class TypeCheck(form: Form, args: List<Node?>) : NodeBase(form, args) {
     val obj: Node
         get() = args[0]

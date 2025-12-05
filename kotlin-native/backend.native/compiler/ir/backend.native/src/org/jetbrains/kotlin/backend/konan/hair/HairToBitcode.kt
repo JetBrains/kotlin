@@ -14,12 +14,7 @@ import hair.sym.HairType
 import hair.transform.GCMResult
 import hair.transform.withGCM
 import hair.utils.printGraphviz
-import llvm.LLVMBasicBlockRef
-import llvm.LLVMBuildMul
-import llvm.LLVMBuildStructGEP2
-import llvm.LLVMTypeOf
-import llvm.LLVMTypeRef
-import llvm.LLVMValueRef
+import llvm.*
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState;
 import org.jetbrains.kotlin.backend.konan.binaryTypeIsReference
 import org.jetbrains.kotlin.backend.konan.llvm.CodeContext
@@ -41,6 +36,14 @@ import org.jetbrains.kotlin.ir.types.isNothing
 // TODO move to utils
 context(gcm: GCMResult)
 val gcm get() = gcm
+
+val HairType.isIntegral get() = when (this) {
+    HairType.INT,
+    HairType.LONG -> true
+    HairType.FLOAT,
+    HairType.DOUBLE -> false
+    else -> true // FIXME error("Should not reach here $this")
+}
 
 internal class HairToBitcode(
         val generationState :NativeGenerationState,
@@ -128,7 +131,7 @@ internal class HairToBitcode(
                                     // llvm requires phis to be generated first, but GCM can insert floating stuff inbetween
                                     for (phi in node.uses.filterIsInstance<Phi>()) {
                                         deferredPhies += phi
-                                        nodeValues[phi] = functionGenerationContext.phi(phi.type.asLLVMType(), "phi_${node.id}")
+                                        nodeValues[phi] = functionGenerationContext.phi(phi.type.asLLVMType(), "phi_${phi.id}")
                                     }
                                     null // blocks[node]!!
                                 }
@@ -144,11 +147,21 @@ internal class HairToBitcode(
                                 is Null -> llvm.kNullObjHeaderPtr
 
                                 // TODO respect floating types
-                                is Add -> {
+                                is Add -> if (node.type.isIntegral) {
                                     add(nodeValues[node.lhs]!!, nodeValues[node.rhs]!!)
+                                } else {
+                                    fadd(nodeValues[node.lhs]!!, nodeValues[node.rhs]!!)
                                 }
-                                is Sub -> sub(nodeValues[node.lhs]!!, nodeValues[node.rhs]!!)
-                                is Mul -> LLVMBuildMul(builder, nodeValues[node.lhs]!!, nodeValues[node.rhs]!!, "")!!
+                                is Sub -> if (node.type.isIntegral) {
+                                    sub(nodeValues[node.lhs]!!, nodeValues[node.rhs]!!)
+                                } else {
+                                    fsub(nodeValues[node.lhs]!!, nodeValues[node.rhs]!!)
+                                }
+                                is Mul -> if (node.type.isIntegral) {
+                                    LLVMBuildMul(builder, nodeValues[node.lhs]!!, nodeValues[node.rhs]!!, "")!!
+                                } else {
+                                    LLVMBuildFMul(builder, nodeValues[node.lhs]!!, nodeValues[node.rhs]!!, "")!!
+                                }
 
                                 // TODO divs
 
@@ -161,6 +174,7 @@ internal class HairToBitcode(
                                 is SignExtend -> sext(nodeValues[node.operand]!!, node.targetType.asLLVMType())
                                 is ZeroExtend -> zext(nodeValues[node.operand]!!, node.targetType.asLLVMType())
                                 is Truncate -> trunc(nodeValues[node.operand]!!, node.targetType.asLLVMType())
+                                is Reinterpret -> bitcast(node.targetType.asLLVMType(), nodeValues[node.operand]!!)
 
                                 // TODO other arithmetics
                                 is Phi -> {
@@ -238,19 +252,32 @@ internal class HairToBitcode(
                                 is Cmp -> {
                                     val lhs = nodeValues[node.lhs]!!
                                     val rhs = nodeValues[node.rhs]!!
-                                    adaptToHair(when (node.op) {
-                                        CmpOp.EQ -> icmpEq(lhs, rhs)
-                                        CmpOp.NE -> icmpNe(lhs, rhs)
-                                        CmpOp.U_GT -> icmpUGt(lhs, rhs)
-                                        CmpOp.U_GE -> icmpUGe(lhs, rhs)
-                                        CmpOp.U_LT -> icmpULt(lhs, rhs)
-                                        CmpOp.U_LE -> icmpULe(lhs, rhs)
-                                        CmpOp.S_GT -> icmpGt(lhs, rhs)
-                                        CmpOp.S_GE -> icmpGe(lhs, rhs)
-                                        CmpOp.S_LT -> icmpLt(lhs, rhs)
-                                        CmpOp.S_LE -> icmpLe(lhs, rhs)
-                                    })
+                                    if (node.type.isIntegral) {
+                                        adaptToHair(when (node.op) {
+                                            CmpOp.EQ -> icmpEq(lhs, rhs)
+                                            CmpOp.NE -> icmpNe(lhs, rhs)
+                                            CmpOp.U_GT -> icmpUGt(lhs, rhs)
+                                            CmpOp.U_GE -> icmpUGe(lhs, rhs)
+                                            CmpOp.U_LT -> icmpULt(lhs, rhs)
+                                            CmpOp.U_LE -> icmpULe(lhs, rhs)
+                                            CmpOp.S_GT -> icmpGt(lhs, rhs)
+                                            CmpOp.S_GE -> icmpGe(lhs, rhs)
+                                            CmpOp.S_LT -> icmpLt(lhs, rhs)
+                                            CmpOp.S_LE -> icmpLe(lhs, rhs)
+                                        })
+                                    } else {
+                                        when (node.op) {
+                                            CmpOp.EQ -> fcmpEq(lhs, rhs)
+                                            CmpOp.S_GT -> fcmpGt(lhs, rhs)
+                                            CmpOp.S_GE -> fcmpGe(lhs, rhs)
+                                            CmpOp.S_LT -> fcmpLt(lhs, rhs)
+                                            CmpOp.S_LE -> fcmpLe(lhs, rhs)
+                                            else -> error("Should not reach here ${node.op}")
+                                        }
+                                    }
                                 }
+
+                                is Not -> adaptToHair(not(adaptFromHair(nodeValues[node.operand]!!, llvm.int1Type)))
 
                                 is LoadGlobal -> {
                                     val irField = (node.field as HairGlobalImpl).irField
@@ -333,6 +360,15 @@ internal class HairToBitcode(
                                             llvm.allocInstanceFunction,
                                             listOf(typeInfo),
                                             Lifetime.GLOBAL,
+                                    )
+                                }
+                                is NewArray -> {
+                                    val irClass = (node.elementType as HairClassImpl).irClass
+                                    allocArray(
+                                            irClass,
+                                            nodeValues[node.size]!!,
+                                            Lifetime.GLOBAL,
+                                            ExceptionHandler.Caller, // FIXME should not throw!!
                                     )
                                 }
 

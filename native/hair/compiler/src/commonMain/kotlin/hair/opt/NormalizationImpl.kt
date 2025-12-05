@@ -9,10 +9,10 @@ class NormalizationImpl(val session: Session, nodeBuilder: NodeBuilder, argsUpda
 
     override fun normalize(node: Node): Node {
         if (node.args.any { it == null }) return node
-        return node.accept(normalizer).also { require(it.accept(normalizer) == it)}
+        return node.accept(normalizer).also { require(it.accept(normalizer) == it) }
     }
 
-    val normalizer: NodeVisitor<Node> = context(nodeBuilder, argsUpdater) {
+    val normalizer: NodeVisitor<Node> = context(nodeBuilder, argsUpdater, NoControlFlowBuilder) {
         object : NodeVisitor<Node>() {
             override fun visitNode(node: Node): Node = node
 
@@ -21,11 +21,24 @@ class NormalizationImpl(val session: Session, nodeBuilder: NodeBuilder, argsUpda
                 if (node.preds.isEmpty) return session.unreachable
                 val singlePred = node.preds.singleOrNull()
                 if (singlePred is Unreachable) return singlePred
-                if (singlePred is Goto) {
-                    val replacement = singlePred.control
-                    singlePred.control = session.unreachable
-                    return replacement
-                }
+                // FIXME move to post processing
+//                if (singlePred is Goto) {
+//                    val replacement = singlePred.control
+//                    singlePred.control = session.unreachable
+//                    return replacement
+//                }
+                // TODO move to post processing
+                //      Can't be done here, cause unaware phies can be attached later
+//                val unreachablePredIndexes = node.preds.withIndex().filter { it.value is Unreachable }.map { it.index }
+//                if (unreachablePredIndexes.isNotEmpty()) {
+//                    val reachablePreds = node.preds.withIndex().filter { it.index !in unreachablePredIndexes }.map { it.value }.toTypedArray()
+//                    val replacement = BlockEntry(*reachablePreds) as BlockEntry
+//                    for (phi in node.phies.toList()) {
+//                        val reachingValues = phi.joinedValues.withIndex().filter { it.index !in unreachablePredIndexes }.map { it.value }.toTypedArray()
+//                        phi.replaceValueUsesAndKill(Phi(phi.type)(replacement, *reachingValues))
+//                    }
+//                    return replacement
+//                }
                 return super.visitBlockEntry(node)
             }
 

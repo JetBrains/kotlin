@@ -60,6 +60,10 @@ context(argsUpdater: ArgsUpdater)
 private fun Node.updateArg(index: Int, oldValue: Node?, newValue: Node?, update: () -> Unit) {
     if (oldValue == newValue) return
 
+    if (this is Phi) {
+        require(newValue !is BlockExit && newValue !is BlockEntry )
+    }
+
     form.deregister(this)
 
     update()

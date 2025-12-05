@@ -98,7 +98,11 @@ class Session: SessionBase() {
 
     internal val truncateMetaForm = Truncate.metaForm(this)
 
+    internal val reinterpretMetaForm = Reinterpret.metaForm(this)
+
     internal val newMetaForm = New.metaForm(this)
+
+    internal val newArrayMetaForm = NewArray.metaForm(this)
 
     internal val isInstanceOfMetaForm = IsInstanceOf.metaForm(this)
 
