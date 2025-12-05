@@ -446,6 +446,12 @@ public class FirWasmJsCodegenInteropTestGenerated extends AbstractFirWasmJsCodeg
   }
 
   @Test
+  @TestMetadata("jsTypesCasts.kt")
+  public void testJsTypesCasts() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/jsTypesCasts.kt");
+  }
+
+  @Test
   @TestMetadata("kotlinToJsAdapters.kt")
   public void testKotlinToJsAdapters() {
     runTest("compiler/testData/codegen/boxWasmJsInterop/kotlinToJsAdapters.kt");
