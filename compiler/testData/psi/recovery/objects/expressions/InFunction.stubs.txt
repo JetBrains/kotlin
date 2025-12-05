@@ -33,6 +33,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=InFunctionKt]]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=bar]
+              VALUE_ARGUMENT_LIST
         VALUE_PARAMETER_LIST
       CLASS_BODY
     OBJECT_DECLARATION[classId=null, fqName=null, isLocal=true, isObjectLiteral=true, isTopLevel=false, name=null, superNames=[]]

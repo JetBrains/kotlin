@@ -47,6 +47,7 @@ FILE[kind=File[packageFqName=<root>]]
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=Ann]
+            VALUE_ARGUMENT_LIST
         INITIALIZER_LIST
           SUPER_TYPE_CALL_ENTRY
             CONSTRUCTOR_CALLEE
@@ -72,6 +73,7 @@ FILE[kind=File[packageFqName=<root>]]
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=Ann]
+            VALUE_ARGUMENT_LIST
       FUN[fqName=A.foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
         MODIFIER_LIST[]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=Ann]

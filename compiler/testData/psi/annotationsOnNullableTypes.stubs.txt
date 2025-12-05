@@ -103,6 +103,7 @@ FILE[kind=File[packageFqName=<root>]]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=A]
+              VALUE_ARGUMENT_LIST
           NULLABLE_TYPE
             FUNCTION_TYPE
               VALUE_PARAMETER_LIST

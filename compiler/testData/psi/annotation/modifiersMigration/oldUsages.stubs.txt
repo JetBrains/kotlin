@@ -37,3 +37,4 @@ FILE[kind=File[packageFqName=<root>]]
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=kotlin]
                     REFERENCE_EXPRESSION[referencedName=data]
+              VALUE_ARGUMENT_LIST

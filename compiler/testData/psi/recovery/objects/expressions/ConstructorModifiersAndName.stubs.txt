@@ -36,6 +36,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=ConstructorModifiersAndNameK
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=bar]
+              VALUE_ARGUMENT_LIST
         VALUE_PARAMETER_LIST
       CLASS_BODY
   PROPERTY[fqName=foo, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=foo]

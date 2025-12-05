@@ -104,6 +104,7 @@ FILE[kind=File[packageFqName=foo.bar.goo]]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=a]
+              VALUE_ARGUMENT_LIST
             ANNOTATION_ENTRY[hasValueArguments=true, shortName=sdfsdf]
               CONSTRUCTOR_CALLEE
                 TYPE_REFERENCE

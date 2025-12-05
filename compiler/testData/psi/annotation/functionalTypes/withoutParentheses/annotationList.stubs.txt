@@ -405,6 +405,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=AnnotationListKt]]
                   TYPE_REFERENCE
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=Foo]
+                VALUE_ARGUMENT_LIST
           FUNCTION_TYPE
             VALUE_PARAMETER_LIST
               VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]

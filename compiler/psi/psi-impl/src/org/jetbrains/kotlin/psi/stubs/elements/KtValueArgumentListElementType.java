@@ -22,22 +22,18 @@ public class KtValueArgumentListElementType extends KtPlaceHolderStubElementType
         if (treeParent == null) return false;
 
         IElementType callType = treeParent.getElementType();
-        if (shouldSkipStubCreation(node, callType)) return false;
+        if (shouldSkipStubCreation(callType)) return false;
 
         return super.shouldCreateStub(node);
     }
 
-    private static boolean shouldSkipStubCreation(ASTNode listNode, IElementType callType) {
-        if (callType == KtStubElementTypes.ANNOTATION_ENTRY) {
-            KtValueArgumentList psi = listNode.getPsi(KtValueArgumentList.class);
-            // Empty argument list is not preserved for annotations
-            return psi.getArguments().isEmpty();
-        } else if (callType == KtStubElementTypes.CALL_EXPRESSION) {
-            // Argument list is preserved for calls (even empty)
+    private static boolean shouldSkipStubCreation(IElementType callType) {
+        // Argument list is preserved for materialized calls (even empty)
+        if (callType == KtStubElementTypes.ANNOTATION_ENTRY || callType == KtStubElementTypes.CALL_EXPRESSION) {
             return false;
-        } else {
-            // Unsupported call type
-            return true;
         }
+
+        // Unsupported call type
+        return true;
     }
 }

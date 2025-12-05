@@ -11,7 +11,6 @@ import com.intellij.navigation.ItemPresentationProviders;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.KtStubBasedElementTypes;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.name.Name;
@@ -54,11 +53,6 @@ public class KtAnnotationEntry extends KtElementImplStub<KotlinAnnotationEntrySt
     @Override
     @SuppressWarnings("deprecation") // KT-78356
     public KtValueArgumentList getValueArgumentList() {
-        KotlinAnnotationEntryStub stub = getStub();
-        if (stub == null && getGreenStub() != null) {
-            return (KtValueArgumentList) findChildByType(KtNodeTypes.VALUE_ARGUMENT_LIST);
-        }
-
         return getStubOrPsiChild(KtStubBasedElementTypes.VALUE_ARGUMENT_LIST);
     }
 

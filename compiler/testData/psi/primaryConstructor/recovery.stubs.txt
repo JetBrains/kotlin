@@ -57,6 +57,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=RecoveryKt]]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Ann]
+          VALUE_ARGUMENT_LIST
     CLASS_BODY
   CLASS[classId=/A9, fqName=A9, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=A9, superNames=[Base]]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=A9]
@@ -66,6 +67,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=RecoveryKt]]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Ann]
+          VALUE_ARGUMENT_LIST
     SUPER_TYPE_LIST
       SUPER_TYPE_CALL_ENTRY
         CONSTRUCTOR_CALLEE

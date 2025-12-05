@@ -35,4 +35,5 @@ FILE[kind=File[packageFqName=<root>]]
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=bar]
+            VALUE_ARGUMENT_LIST
       VALUE_PARAMETER_LIST

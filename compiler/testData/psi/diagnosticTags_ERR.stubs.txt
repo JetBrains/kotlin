@@ -129,6 +129,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=DiagnosticTags_ERRKt]]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=A]
+          VALUE_ARGUMENT_LIST
       FUNCTION_TYPE
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
@@ -156,6 +157,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=DiagnosticTags_ERRKt]]
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=A]
+            VALUE_ARGUMENT_LIST
         FUNCTION_TYPE
           VALUE_PARAMETER_LIST
           TYPE_REFERENCE
