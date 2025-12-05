@@ -15,6 +15,8 @@
  */
 
 #include <cassert>
+#include <cstdlib>
+#include <cstring>
 
 #include <clang/AST/Attr.h>
 #include <clang/AST/DeclObjC.h>
@@ -197,9 +199,7 @@ extern "C" {
       const Decl *decl = getCursorDecl(cursor);
       if (decl) {
         if (const auto *attr = decl->getAttr<SwiftNameAttr>()) {
-          static std::string storage;
-          storage = attr->getName().str();
-          return storage.c_str();
+          return strdup(attr->getName().str().c_str());
         }
       }
     }

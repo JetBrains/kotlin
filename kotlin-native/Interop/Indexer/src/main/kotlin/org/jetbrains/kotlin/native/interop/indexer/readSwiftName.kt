@@ -9,5 +9,10 @@ import clang.*
 import kotlinx.cinterop.*
 
 internal fun readSwiftName(cursor: CValue<CXCursor>): String? {
-    return clang_Cursor_getSwiftName(cursor)?.toKString()
+    val ptr = clang_Cursor_getSwiftName(cursor) ?: return null
+    try {
+        return ptr.toKString()
+    } finally {
+        clang_free(ptr)
+    }
 }
