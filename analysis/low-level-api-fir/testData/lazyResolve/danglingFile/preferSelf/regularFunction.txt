@@ -1,0 +1,482 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] regularFunction.kt
+    public final? [ResolvedTo(RAW_FIR)] class TopLevel : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevel] constructor(): R|bar/TopLevel| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final? [ResolvedTo(RAW_FIR)] class NestedClass : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedClass] constructor(): R|bar/TopLevel.NestedClass| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] i: Int): <implicit> { LAZY_BLOCK }
+
+        }
+
+    }
+
+FILE: [ResolvedTo(RAW_FIR)] fake.kt
+    public final? [ResolvedTo(RAW_FIR)] class TopLevel : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevel] constructor(): R|bar/TopLevel| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final? [ResolvedTo(RAW_FIR)] class NestedClass : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedClass] constructor(): R|bar/TopLevel.NestedClass| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] i: Int): <implicit> { LAZY_BLOCK }
+
+        }
+
+    }
+
+IMPORTS:
+FILE: [ResolvedTo(RAW_FIR)] regularFunction.kt
+    public final? [ResolvedTo(RAW_FIR)] class TopLevel : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevel] constructor(): R|bar/TopLevel| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final? [ResolvedTo(RAW_FIR)] class NestedClass : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedClass] constructor(): R|bar/TopLevel.NestedClass| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] i: Int): <implicit> { LAZY_BLOCK }
+
+        }
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] fake.kt
+    public final? [ResolvedTo(RAW_FIR)] class TopLevel : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevel] constructor(): R|bar/TopLevel| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final? [ResolvedTo(RAW_FIR)] class NestedClass : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedClass] constructor(): R|bar/TopLevel.NestedClass| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] i: Int): <implicit> { LAZY_BLOCK }
+
+        }
+
+    }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(RAW_FIR)] regularFunction.kt
+    public final? [ResolvedTo(RAW_FIR)] class TopLevel : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevel] constructor(): R|bar/TopLevel| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final? [ResolvedTo(RAW_FIR)] class NestedClass : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedClass] constructor(): R|bar/TopLevel.NestedClass| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] i: Int): <implicit> { LAZY_BLOCK }
+
+        }
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] fake.kt
+    public final? [ResolvedTo(RAW_FIR)] class TopLevel : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevel] constructor(): R|bar/TopLevel| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final? [ResolvedTo(RAW_FIR)] class NestedClass : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedClass] constructor(): R|bar/TopLevel.NestedClass| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun foo([ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] i: Int): <implicit> { LAZY_BLOCK }
+
+        }
+
+    }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(RAW_FIR)] regularFunction.kt
+    public final? [ResolvedTo(RAW_FIR)] class TopLevel : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevel] constructor(): R|bar/TopLevel| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final? [ResolvedTo(RAW_FIR)] class NestedClass : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedClass] constructor(): R|bar/TopLevel.NestedClass| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] i: Int): <implicit> { LAZY_BLOCK }
+
+        }
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] fake.kt
+    public final? [ResolvedTo(RAW_FIR)] class TopLevel : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevel] constructor(): R|bar/TopLevel| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final? [ResolvedTo(RAW_FIR)] class NestedClass : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedClass] constructor(): R|bar/TopLevel.NestedClass| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(COMPANION_GENERATION)] fun foo([ResolvedTo(COMPANION_GENERATION)] i: Int): <implicit> { LAZY_BLOCK }
+
+        }
+
+    }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(RAW_FIR)] regularFunction.kt
+    public final? [ResolvedTo(RAW_FIR)] class TopLevel : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevel] constructor(): R|bar/TopLevel| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final? [ResolvedTo(RAW_FIR)] class NestedClass : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedClass] constructor(): R|bar/TopLevel.NestedClass| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] i: Int): <implicit> { LAZY_BLOCK }
+
+        }
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] fake.kt
+    public final? [ResolvedTo(SUPER_TYPES)] class TopLevel : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevel] constructor(): R|bar/TopLevel| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final? [ResolvedTo(SUPER_TYPES)] class NestedClass : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedClass] constructor(): R|bar/TopLevel.NestedClass| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(SUPER_TYPES)] fun foo([ResolvedTo(SUPER_TYPES)] i: Int): <implicit> { LAZY_BLOCK }
+
+        }
+
+    }
+
+TYPES:
+FILE: [ResolvedTo(RAW_FIR)] regularFunction.kt
+    public final? [ResolvedTo(RAW_FIR)] class TopLevel : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevel] constructor(): R|bar/TopLevel| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final? [ResolvedTo(RAW_FIR)] class NestedClass : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedClass] constructor(): R|bar/TopLevel.NestedClass| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] i: Int): <implicit> { LAZY_BLOCK }
+
+        }
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] fake.kt
+    public final? [ResolvedTo(TYPES)] class TopLevel : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevel] constructor(): R|bar/TopLevel| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final? [ResolvedTo(TYPES)] class NestedClass : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedClass] constructor(): R|bar/TopLevel.NestedClass| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(TYPES)] fun foo([ResolvedTo(TYPES)] i: R|kotlin/Int|): <implicit> { LAZY_BLOCK }
+
+        }
+
+    }
+
+STATUS:
+FILE: [ResolvedTo(RAW_FIR)] regularFunction.kt
+    public final? [ResolvedTo(RAW_FIR)] class TopLevel : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevel] constructor(): R|bar/TopLevel| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final? [ResolvedTo(RAW_FIR)] class NestedClass : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedClass] constructor(): R|bar/TopLevel.NestedClass| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] i: Int): <implicit> { LAZY_BLOCK }
+
+        }
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] fake.kt
+    public final [ResolvedTo(STATUS)] class TopLevel : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=TopLevel] constructor(): R|bar/TopLevel| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] class NestedClass : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=NestedClass] constructor(): R|bar/TopLevel.NestedClass| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public final [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] i: R|kotlin/Int|): <implicit> { LAZY_BLOCK }
+
+        }
+
+    }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(RAW_FIR)] regularFunction.kt
+    public final? [ResolvedTo(RAW_FIR)] class TopLevel : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevel] constructor(): R|bar/TopLevel| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final? [ResolvedTo(RAW_FIR)] class NestedClass : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedClass] constructor(): R|bar/TopLevel.NestedClass| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] i: Int): <implicit> { LAZY_BLOCK }
+
+        }
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] fake.kt
+    public final [ResolvedTo(STATUS)] class TopLevel : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=TopLevel] constructor(): R|bar/TopLevel| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] class NestedClass : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=NestedClass] constructor(): R|bar/TopLevel.NestedClass| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun foo([ResolvedTo(EXPECT_ACTUAL_MATCHING)] i: R|kotlin/Int|): <implicit> { LAZY_BLOCK }
+
+        }
+
+    }
+
+CONTRACTS:
+FILE: [ResolvedTo(RAW_FIR)] regularFunction.kt
+    public final? [ResolvedTo(RAW_FIR)] class TopLevel : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevel] constructor(): R|bar/TopLevel| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final? [ResolvedTo(RAW_FIR)] class NestedClass : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedClass] constructor(): R|bar/TopLevel.NestedClass| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] i: Int): <implicit> { LAZY_BLOCK }
+
+        }
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] fake.kt
+    public final [ResolvedTo(STATUS)] class TopLevel : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=TopLevel] constructor(): R|bar/TopLevel| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] class NestedClass : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=NestedClass] constructor(): R|bar/TopLevel.NestedClass| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public final [ResolvedTo(CONTRACTS)] fun foo([ResolvedTo(CONTRACTS)] i: R|kotlin/Int|): <implicit> { LAZY_BLOCK }
+
+        }
+
+    }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(RAW_FIR)] regularFunction.kt
+    public final? [ResolvedTo(RAW_FIR)] class TopLevel : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevel] constructor(): R|bar/TopLevel| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final? [ResolvedTo(RAW_FIR)] class NestedClass : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedClass] constructor(): R|bar/TopLevel.NestedClass| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] i: Int): <implicit> { LAZY_BLOCK }
+
+        }
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] fake.kt
+    public final [ResolvedTo(STATUS)] class TopLevel : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=TopLevel] constructor(): R|bar/TopLevel| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] class NestedClass : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=NestedClass] constructor(): R|bar/TopLevel.NestedClass| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun foo([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] i: R|kotlin/Int|): R|kotlin/String| {
+                ^foo String(str)
+            }
+
+        }
+
+    }
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(RAW_FIR)] regularFunction.kt
+    public final? [ResolvedTo(RAW_FIR)] class TopLevel : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevel] constructor(): R|bar/TopLevel| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final? [ResolvedTo(RAW_FIR)] class NestedClass : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedClass] constructor(): R|bar/TopLevel.NestedClass| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] i: Int): <implicit> { LAZY_BLOCK }
+
+        }
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] fake.kt
+    public final [ResolvedTo(STATUS)] class TopLevel : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=TopLevel] constructor(): R|bar/TopLevel| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] class NestedClass : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=NestedClass] constructor(): R|bar/TopLevel.NestedClass| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public final [ResolvedTo(CONSTANT_EVALUATION)] fun foo([ResolvedTo(CONSTANT_EVALUATION)] i: R|kotlin/Int|): R|kotlin/String| {
+                ^foo String(str)
+            }
+
+        }
+
+    }
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(RAW_FIR)] regularFunction.kt
+    public final? [ResolvedTo(RAW_FIR)] class TopLevel : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevel] constructor(): R|bar/TopLevel| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final? [ResolvedTo(RAW_FIR)] class NestedClass : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedClass] constructor(): R|bar/TopLevel.NestedClass| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] i: Int): <implicit> { LAZY_BLOCK }
+
+        }
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] fake.kt
+    public final [ResolvedTo(STATUS)] class TopLevel : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=TopLevel] constructor(): R|bar/TopLevel| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] class NestedClass : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=NestedClass] constructor(): R|bar/TopLevel.NestedClass| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun foo([ResolvedTo(ANNOTATION_ARGUMENTS)] i: R|kotlin/Int|): R|kotlin/String| {
+                ^foo String(str)
+            }
+
+        }
+
+    }
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(RAW_FIR)] regularFunction.kt
+    public final? [ResolvedTo(RAW_FIR)] class TopLevel : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevel] constructor(): R|bar/TopLevel| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final? [ResolvedTo(RAW_FIR)] class NestedClass : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedClass] constructor(): R|bar/TopLevel.NestedClass| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] i: Int): <implicit> { LAZY_BLOCK }
+
+        }
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] fake.kt
+    public final [ResolvedTo(STATUS)] class TopLevel : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=TopLevel] constructor(): R|bar/TopLevel| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] class NestedClass : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=NestedClass] constructor(): R|bar/TopLevel.NestedClass| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] i: R|kotlin/Int|): R|kotlin/String| {
+                ^foo String(str)
+            }
+
+        }
+
+    }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] fake.kt
+    public final [ResolvedTo(BODY_RESOLVE)] class TopLevel : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevel] constructor(): R|bar/TopLevel| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] class NestedClass : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=NestedClass] constructor(): R|bar/TopLevel.NestedClass| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] i: R|kotlin/Int|): R|kotlin/String| {
+                ^foo String(str)
+            }
+
+        }
+
+    }
