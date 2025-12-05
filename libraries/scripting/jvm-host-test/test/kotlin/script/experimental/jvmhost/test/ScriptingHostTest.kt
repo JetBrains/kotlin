@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.CompiledScriptClassLoader
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.KJvmCompiledModuleInMemoryImpl
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.SCRIPT_BASE_COMPILER_ARGUMENTS_PROPERTY
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.ScriptJvmCompilerIsolated
 import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.ClassVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
@@ -148,7 +149,11 @@ class ScriptingHostTest {
             updateClasspath(classpathFromClass<SimpleScriptTemplate>())
             updateClasspath(KotlinJars.kotlinScriptStandardJarsWithReflect)
         }
-        val compiler = JvmScriptCompiler(defaultJvmScriptingHostConfiguration)
+        val compiler =
+            JvmScriptCompiler(
+                defaultJvmScriptingHostConfiguration,
+                if (isRunningTestOnK2) null else ScriptJvmCompilerIsolated(defaultJvmScriptingHostConfiguration),
+            )
         val scriptName = "SavedRunnableScript"
         val compiledScript = runBlocking {
             compiler("println(\"$greeting\")".toScriptSource(name = "$scriptName.kts"), compilationConfiguration).throwOnFailure()
@@ -795,7 +800,11 @@ class ScriptingHostTest {
         val compilationConfiguration = createJvmCompilationConfigurationFromTemplate<SimpleScriptTemplate> {
             compilerOptions(K2JVMCompilerArguments::jvmTarget.cliArgument, target)
         }
-        val compiler = JvmScriptCompiler(defaultJvmScriptingHostConfiguration)
+        val compiler =
+            JvmScriptCompiler(
+                defaultJvmScriptingHostConfiguration,
+                if (isRunningTestOnK2) null else ScriptJvmCompilerIsolated(defaultJvmScriptingHostConfiguration),
+            )
         val compiledScript = runBlocking { compiler(script.toScriptSource(name = "SavedScript.kts"), compilationConfiguration) }
         assertTrue(compiledScript is ResultWithDiagnostics.Success)
 
@@ -826,7 +835,11 @@ class ScriptingHostTest {
     fun testCompiledScriptClassLoader() {
         val script = "val x = 1"
         val scriptCompilationConfiguration = createJvmCompilationConfigurationFromTemplate<SimpleScriptTemplate>()
-        val compiler = JvmScriptCompiler(defaultJvmScriptingHostConfiguration)
+        val compiler =
+            JvmScriptCompiler(
+                defaultJvmScriptingHostConfiguration,
+                if (isRunningTestOnK2) null else ScriptJvmCompilerIsolated(defaultJvmScriptingHostConfiguration),
+            )
         val compiledScript = runBlocking {
             val res = compiler(script.toScriptSource(), scriptCompilationConfiguration).throwOnFailure()
             (res as ResultWithDiagnostics.Success<CompiledScript>).value
