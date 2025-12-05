@@ -6,7 +6,9 @@
 package org.jetbrains.kotlin.cli.common
 
 import com.intellij.ide.highlighter.JavaFileType
+import org.jetbrains.kotlin.cli.CliDiagnostics
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArgumentsConfigurator
 import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments
 import org.jetbrains.kotlin.cli.common.arguments.ManualLanguageFeatureSetting
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
@@ -117,7 +119,21 @@ fun CompilerConfiguration.setupMetadataVersion(
 }
 
 fun CompilerConfiguration.setupLanguageVersionSettings(arguments: CommonCompilerArguments) {
-    languageVersionSettings = arguments.toLanguageVersionSettings(getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY))
+    val diagnosticReporter = this.diagnosticReporter
+    val reporter = object : CommonCompilerArgumentsConfigurator.Reporter {
+        override fun reportWarning(message: String) {
+            diagnosticReporter.report(CliDiagnostics.COMPILER_ARGUMENTS_WARNING, message)
+        }
+
+        override fun reportError(message: String) {
+            diagnosticReporter.report(CliDiagnostics.COMPILER_ARGUMENTS_ERROR, message)
+        }
+
+        override fun info(message: String) {
+            diagnosticReporter.info(message)
+        }
+    }
+    languageVersionSettings = arguments.toLanguageVersionSettings(reporter)
 }
 
 const val KOTLIN_HOME_PROPERTY = "kotlin.home"
