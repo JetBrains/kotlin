@@ -3,6 +3,8 @@ package hair.ir
 import hair.ir.nodes.*
 import hair.utils.closure
 
+val BlockEntry.phies: Sequence<Phi> get() = uses.filterIsInstance<Phi>()
+
 val Phi.extendedFamilyPhies: Set<Phi> get() = closure(this) {
     (it.joinedValues + it.uses).filterIsInstance<Phi>()
 }
@@ -19,7 +21,7 @@ val Phi.allPossibleValues get() = closure<Node>(this) {
 }.filterNot { it is Phi }
 
 // FIXME better name
-val Phi.inputs: Map<Node, BlockExit> get() = joinedValues.withIndex().associate { (idx, value) ->
+val Phi.inputs: List<Pair<Node, BlockExit>> get() = joinedValues.withIndex().map { (idx, value) ->
     // FIXME support handlers?
     value to block.preds[idx]
 }

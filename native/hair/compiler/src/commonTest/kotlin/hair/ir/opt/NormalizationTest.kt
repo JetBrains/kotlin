@@ -3,13 +3,17 @@ package hair.ir.opt
 import hair.ir.*
 import hair.ir.Add
 import hair.ir.nodes.Add
+import hair.ir.nodes.BlockEntry
 import hair.ir.nodes.ConstI
+import hair.ir.nodes.ControlFlowBuilder
 import hair.ir.nodes.Node
 import hair.ir.nodes.Return
 import hair.ir.nodes.Throw
 import hair.ir.nodes.Use
 import hair.sym.HairType
 import hair.sym.HairType.*
+import hair.test.Fun
+import sun.rmi.transport.TransportConstants.Return
 import kotlin.test.*
 
 class NormalizationTest : IrTest {
@@ -85,5 +89,30 @@ class NormalizationTest : IrTest {
         val ret = allNodes<Return>().single()
         assertEquals(value, (ret.result as ConstI).value)
     }
+
+    context(cfb: ControlFlowBuilder)
+    val lastControl get() = cfb.lastControl
+
+//    @Test
+//    fun testPhiFromUnreachable() = withTestSession {
+//        lateinit var value1: Node
+//        lateinit var value2: Node
+//        buildInitialIR {
+//            branch(
+//                cond = Param(1010),
+//                trueInit = {
+//                    value1 = ConstI(42)
+//                },
+//                falseInit = {
+//                    Throw(ConstI(0))
+//                    BlockEntry()
+//                    value2 = InvokeStatic(Fun("f"))()
+//                })
+//
+//            Return(Phi(INT)(lastControl as BlockEntry, value1, value2))
+//        }
+//        allNodes().forEach { println(it) }
+//        assertEquals(value1, allNodes<Return>().single().result)
+//    }
 
 }
