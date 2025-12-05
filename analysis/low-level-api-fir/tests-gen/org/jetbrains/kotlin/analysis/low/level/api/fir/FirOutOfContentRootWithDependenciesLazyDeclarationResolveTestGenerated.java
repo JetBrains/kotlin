@@ -1297,6 +1297,60 @@ public class FirOutOfContentRootWithDependenciesLazyDeclarationResolveTestGenera
   }
 
   @Nested
+  @TestMetadata("analysis/low-level-api-fir/testData/lazyResolve/danglingFile")
+  @TestDataPath("$PROJECT_ROOT")
+  public class DanglingFile {
+    @Test
+    public void testAllFilesPresentInDanglingFile() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/lazyResolve/danglingFile"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
+    }
+
+    @Nested
+    @TestMetadata("analysis/low-level-api-fir/testData/lazyResolve/danglingFile/ignoreSelf")
+    @TestDataPath("$PROJECT_ROOT")
+    public class IgnoreSelf {
+      @Test
+      public void testAllFilesPresentInIgnoreSelf() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/lazyResolve/danglingFile/ignoreSelf"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
+      }
+
+      @Test
+      @TestMetadata("syntheticHashCode.kt")
+      public void testSyntheticHashCode() {
+        runTest("analysis/low-level-api-fir/testData/lazyResolve/danglingFile/ignoreSelf/syntheticHashCode.kt");
+      }
+
+      @Test
+      @TestMetadata("syntheticHashCodeWithDuplication.kt")
+      public void testSyntheticHashCodeWithDuplication() {
+        runTest("analysis/low-level-api-fir/testData/lazyResolve/danglingFile/ignoreSelf/syntheticHashCodeWithDuplication.kt");
+      }
+    }
+
+    @Nested
+    @TestMetadata("analysis/low-level-api-fir/testData/lazyResolve/danglingFile/preferSelf")
+    @TestDataPath("$PROJECT_ROOT")
+    public class PreferSelf {
+      @Test
+      public void testAllFilesPresentInPreferSelf() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/lazyResolve/danglingFile/preferSelf"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
+      }
+
+      @Test
+      @TestMetadata("syntheticHashCode.kt")
+      public void testSyntheticHashCode() {
+        runTest("analysis/low-level-api-fir/testData/lazyResolve/danglingFile/preferSelf/syntheticHashCode.kt");
+      }
+
+      @Test
+      @TestMetadata("syntheticHashCodeWithDuplication.kt")
+      public void testSyntheticHashCodeWithDuplication() {
+        runTest("analysis/low-level-api-fir/testData/lazyResolve/danglingFile/preferSelf/syntheticHashCodeWithDuplication.kt");
+      }
+    }
+  }
+
+  @Nested
   @TestMetadata("analysis/low-level-api-fir/testData/lazyResolve/errors")
   @TestDataPath("$PROJECT_ROOT")
   public class Errors {

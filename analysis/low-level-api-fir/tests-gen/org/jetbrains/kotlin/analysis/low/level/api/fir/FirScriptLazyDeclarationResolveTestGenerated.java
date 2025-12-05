@@ -835,6 +835,36 @@ public class FirScriptLazyDeclarationResolveTestGenerated extends AbstractFirScr
   }
 
   @Nested
+  @TestMetadata("analysis/low-level-api-fir/testData/lazyResolve/danglingFile")
+  @TestDataPath("$PROJECT_ROOT")
+  public class DanglingFile {
+    @Test
+    public void testAllFilesPresentInDanglingFile() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/lazyResolve/danglingFile"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
+    }
+
+    @Nested
+    @TestMetadata("analysis/low-level-api-fir/testData/lazyResolve/danglingFile/ignoreSelf")
+    @TestDataPath("$PROJECT_ROOT")
+    public class IgnoreSelf {
+      @Test
+      public void testAllFilesPresentInIgnoreSelf() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/lazyResolve/danglingFile/ignoreSelf"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
+      }
+    }
+
+    @Nested
+    @TestMetadata("analysis/low-level-api-fir/testData/lazyResolve/danglingFile/preferSelf")
+    @TestDataPath("$PROJECT_ROOT")
+    public class PreferSelf {
+      @Test
+      public void testAllFilesPresentInPreferSelf() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/lazyResolve/danglingFile/preferSelf"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
+      }
+    }
+  }
+
+  @Nested
   @TestMetadata("analysis/low-level-api-fir/testData/lazyResolve/errors")
   @TestDataPath("$PROJECT_ROOT")
   public class Errors {
