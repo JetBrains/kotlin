@@ -59,7 +59,7 @@ extension ExportedKotlinPackages.kotlin {
         }
         public init(
             size: Swift.Int32,
-            `init`: @escaping (Swift.Int32) -> Swift.Bool
+            `init`: @escaping (_: Swift.Int32) -> Swift.Bool
         ) {
             fatalError()
         }
@@ -107,7 +107,7 @@ extension ExportedKotlinPackages.kotlin {
         }
         public init(
             size: Swift.Int32,
-            `init`: @escaping (Swift.Int32) -> Swift.Int32
+            `init`: @escaping (_: Swift.Int32) -> Swift.Int32
         ) {
             fatalError()
         }

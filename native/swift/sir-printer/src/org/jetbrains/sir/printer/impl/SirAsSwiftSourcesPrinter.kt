@@ -555,8 +555,13 @@ internal class SirAsSwiftSourcesPrinter private constructor(
                 is SirArrayType -> "[${elementType.swiftRender}]"
                 is SirDictionaryType -> "[${keyType.swiftRender}: ${valueType.swiftRender}]"
 
+                is SirFunctionalType ->
+                    "(${parameterTypes.asParameters().joinToString { it.swiftRender }})${" async".takeIf { isAsync } ?: ""} -> ${returnType.swiftName}"
+
                 else -> swiftName
             }
+
+    private fun List<SirType>.asParameters(): List<SirParameter> = map { SirParameter(type = it, isVariadic = false) }
 
     private val SirType.swiftRenderAsConstraint: String
         get() = when (this) {

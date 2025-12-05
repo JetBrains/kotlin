@@ -1566,6 +1566,45 @@ class SirAsSwiftSourcesPrinterTests {
                     returnType = SirType.void
                 }
             )
+
+            declarations.add(
+                buildFunction {
+                    origin = SirOrigin.Unknown
+                    visibility = SirVisibility.PUBLIC
+                    name = "functionConsumingClosureConsumingClosure"
+                    parameters.add(
+                        SirParameter(
+                            argumentName = "asyncReturnClosure",
+                            type = SirFunctionalType(
+                                parameterTypes = listOf(
+                                    SirFunctionalType(
+                                        parameterTypes = listOf(SirNominalType(SirSwiftModule.int32)),
+                                        isAsync = true,
+                                        returnType = SirNominalType(SirSwiftModule.bool),
+                                        attributes = listOf(SirAttribute.Escaping)
+                                    )
+                                ),
+                                isAsync = true,
+                                returnType = SirNominalType(SirSwiftModule.bool),
+                                attributes = listOf(SirAttribute.Escaping)
+                            )
+                        )
+                    )
+                    returnType = SirFunctionalType(
+                        parameterTypes = listOf(
+                            SirFunctionalType(
+                                parameterTypes = listOf(SirNominalType(SirSwiftModule.int32)),
+                                isAsync = true,
+                                returnType = SirNominalType(SirSwiftModule.bool),
+                                attributes = listOf(SirAttribute.Escaping)
+                            )
+                        ),
+                        isAsync = true,
+                        returnType = SirNominalType(SirSwiftModule.bool),
+                        attributes = listOf(SirAttribute.Escaping)
+                    )
+                }
+            )
         }.attachDeclarations()
 
         runTest(

@@ -3,7 +3,7 @@ import KotlinRuntime
 import KotlinRuntimeSupport
 
 public func consume_consuming_opt_closure(
-    arg: ((Swift.Never) -> Swift.Void)?
+    arg: ((_: Swift.Never) -> Swift.Void)?
 ) -> Swift.Void {
     fatalError()
 }

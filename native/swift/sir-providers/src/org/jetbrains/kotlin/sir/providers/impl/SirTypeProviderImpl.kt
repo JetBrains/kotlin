@@ -110,6 +110,7 @@ public class SirTypeProviderImpl(
                                 )
                             ) + kaType.parameterTypes.map { it.translateType(ctx.copy(currentPosition = ctx.currentPosition.flip())) },
                             returnType = kaType.returnType.translateType(ctx.copy(currentPosition = ctx.currentPosition)),
+                            attributes = listOf(SirAttribute.Escaping),
                         ).optionalIfNeeded(kaType)
                     }
                 }

@@ -126,7 +126,7 @@ extension ExportedKotlinPackages.kotlin {
         }
         public init(
             size: Swift.Int32,
-            `init`: @escaping (Swift.Int32) -> Swift.Int8
+            `init`: @escaping (_: Swift.Int32) -> Swift.Int8
         ) {
             fatalError()
         }
@@ -174,7 +174,7 @@ extension ExportedKotlinPackages.kotlin {
         }
         public init(
             size: Swift.Int32,
-            `init`: @escaping (Swift.Int32) -> Swift.Unicode.UTF16.CodeUnit
+            `init`: @escaping (_: Swift.Int32) -> Swift.Unicode.UTF16.CodeUnit
         ) {
             fatalError()
         }

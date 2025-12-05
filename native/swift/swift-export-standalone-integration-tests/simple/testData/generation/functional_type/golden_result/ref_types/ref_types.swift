@@ -4,7 +4,7 @@ import KotlinRuntimeSupport
 import data
 
 public func consume_block_with_opt_reftype(
-    block: @escaping (Swift.Optional<Swift.Int32>, Swift.Optional<data.Bar>, Swift.Optional<Swift.String>, Swift.Optional<Swift.Set<Swift.AnyHashable>>) -> Swift.Optional<data.Foo>
+    block: @escaping (_: Swift.Int32?, _: data.Bar?, _: Swift.String?, _: Swift.Set<Swift.AnyHashable>?) -> Swift.Optional<data.Foo>
 ) -> Swift.Void {
     return __root___consume_block_with_opt_reftype__TypesOfArguments__U28Swift_Optional_Swift_Int32__U20Swift_Optional_data_Bar__U20Swift_Optional_Swift_String__U20Swift_Optional_Swift_Set_Swift_AnyHashable__U29202D_U20Swift_Optional_data_Foo___({
         let originalBlock = block
@@ -12,7 +12,7 @@ public func consume_block_with_opt_reftype(
     }())
 }
 public func consume_block_with_reftype_consumer(
-    block: @escaping (data.Foo) -> Swift.Void
+    block: @escaping (_: data.Foo) -> Swift.Void
 ) -> Swift.Void {
     return __root___consume_block_with_reftype_consumer__TypesOfArguments__U28data_FooU29202D_U20Swift_Void__({
         let originalBlock = block
@@ -28,7 +28,7 @@ public func consume_block_with_reftype_factory(
     }()))
 }
 public func consume_block_with_reftype_unzip(
-    block: @escaping (data.Bar) -> data.Foo
+    block: @escaping (_: data.Bar) -> data.Foo
 ) -> data.Foo {
     return data.Foo.__createClassWrapper(externalRCRef: __root___consume_block_with_reftype_unzip__TypesOfArguments__U28data_BarU29202D_U20data_Foo__({
         let originalBlock = block
@@ -36,7 +36,7 @@ public func consume_block_with_reftype_unzip(
     }()))
 }
 public func consume_block_with_reftype_zip(
-    block: @escaping (data.Foo, data.Foo) -> data.Bar
+    block: @escaping (_: data.Foo, _: data.Foo) -> data.Bar
 ) -> data.Bar {
     return data.Bar.__createClassWrapper(externalRCRef: __root___consume_block_with_reftype_zip__TypesOfArguments__U28data_Foo_U20data_FooU29202D_U20data_Bar__({
         let originalBlock = block

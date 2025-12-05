@@ -32,7 +32,12 @@ public func functionWithAsyncClosure(
     stub()
 }
 public func functionWithAsyncReturnClosure(
-    asyncReturnClosure: (Swift.Int32) async -> Swift.Bool
+    asyncReturnClosure: (_: Swift.Int32) async -> Swift.Bool
 ) -> Swift.Void {
+    stub()
+}
+public func functionConsumingClosureConsumingClosure(
+    asyncReturnClosure: @escaping (_: @escaping (_: Swift.Int32) async -> Swift.Bool) async -> Swift.Bool
+) -> (_: @escaping (_: Swift.Int32) async -> Swift.Bool) async -> Swift.Bool {
     stub()
 }

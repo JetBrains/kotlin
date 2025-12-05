@@ -14,7 +14,7 @@ public func foo_1() -> Swift.Never {
     fatalError()
 }
 public func foo_consume_recursive(
-    block: @escaping (Swift.Never) -> () -> Swift.Void
+    block: @escaping (_: Swift.Never) -> () -> Swift.Void
 ) -> Swift.Void {
     fatalError()
 }

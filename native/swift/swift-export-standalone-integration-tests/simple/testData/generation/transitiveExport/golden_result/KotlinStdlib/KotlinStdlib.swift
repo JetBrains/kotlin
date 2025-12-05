@@ -56,7 +56,7 @@ extension ExportedKotlinPackages.kotlin {
         }
         public init(
             size: Swift.Int32,
-            `init`: @escaping (Swift.Int32) -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>
+            `init`: @escaping (_: Swift.Int32) -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>
         ) {
             fatalError()
         }
@@ -104,7 +104,7 @@ extension ExportedKotlinPackages.kotlin {
         }
         public init(
             size: Swift.Int32,
-            `init`: @escaping (Swift.Int32) -> Swift.Int8
+            `init`: @escaping (_: Swift.Int32) -> Swift.Int8
         ) {
             fatalError()
         }

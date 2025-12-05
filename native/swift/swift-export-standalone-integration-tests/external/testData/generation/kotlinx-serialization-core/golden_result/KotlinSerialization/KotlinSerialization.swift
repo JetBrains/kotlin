@@ -437,7 +437,7 @@ extension ExportedKotlinPackages.kotlinx.serialization.`internal` {
         }
         public init(
             descriptor: any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor,
-            readIfAbsent: @escaping (any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor, Swift.Int32) -> Swift.Bool
+            readIfAbsent: @escaping (_: any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor, _: Swift.Int32) -> Swift.Bool
         ) {
             if Self.self != ExportedKotlinPackages.kotlinx.serialization.`internal`.ElementMarker.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.kotlinx.serialization.`internal`.ElementMarker ") }
             let __kt = kotlinx_serialization_internal_ElementMarker_init_allocate()
@@ -820,7 +820,7 @@ extension ExportedKotlinPackages.kotlinx.serialization.modules {
     public final class PolymorphicModuleBuilder: KotlinRuntime.KotlinBase {
         @available(*, deprecated, message: "Deprecated in favor of function with more precise name: defaultDeserializer. Replacement: defaultDeserializer(defaultSerializerProvider)")
         public func `default`(
-            defaultSerializerProvider: @escaping (Swift.Optional<Swift.String>) -> Swift.Optional<any ExportedKotlinPackages.kotlinx.serialization.DeserializationStrategy>
+            defaultSerializerProvider: @escaping (_: Swift.String?) -> Swift.Optional<any ExportedKotlinPackages.kotlinx.serialization.DeserializationStrategy>
         ) -> Swift.Void {
             return kotlinx_serialization_modules_PolymorphicModuleBuilder_default__TypesOfArguments__U28Swift_Optional_Swift_String_U29202D_U20Swift_Optional_anyU20ExportedKotlinPackages_kotlinx_serialization_DeserializationStrategy___(self.__externalRCRef(), {
                 let originalBlock = defaultSerializerProvider
@@ -828,7 +828,7 @@ extension ExportedKotlinPackages.kotlinx.serialization.modules {
             }())
         }
         public func defaultDeserializer(
-            defaultDeserializerProvider: @escaping (Swift.Optional<Swift.String>) -> Swift.Optional<any ExportedKotlinPackages.kotlinx.serialization.DeserializationStrategy>
+            defaultDeserializerProvider: @escaping (_: Swift.String?) -> Swift.Optional<any ExportedKotlinPackages.kotlinx.serialization.DeserializationStrategy>
         ) -> Swift.Void {
             return kotlinx_serialization_modules_PolymorphicModuleBuilder_defaultDeserializer__TypesOfArguments__U28Swift_Optional_Swift_String_U29202D_U20Swift_Optional_anyU20ExportedKotlinPackages_kotlinx_serialization_DeserializationStrategy___(self.__externalRCRef(), {
                 let originalBlock = defaultDeserializerProvider
@@ -1312,7 +1312,7 @@ extension ExportedKotlinPackages.kotlinx.serialization.descriptors {
     public static func buildClassSerialDescriptor(
         serialName: Swift.String,
         typeParameters: any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor...,
-        builderAction: @escaping (ExportedKotlinPackages.kotlinx.serialization.descriptors.ClassSerialDescriptorBuilder) -> Swift.Void
+        builderAction: @escaping (_: ExportedKotlinPackages.kotlinx.serialization.descriptors.ClassSerialDescriptorBuilder) -> Swift.Void
     ) -> any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor {
         return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_serialization_descriptors_buildClassSerialDescriptor__TypesOfArguments__Swift_String_Swift_Array_anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor__U28ExportedKotlinPackages_kotlinx_serialization_descriptors_ClassSerialDescriptorBuilderU29202D_U20Swift_Void__(serialName, typeParameters, {
             let originalBlock = builderAction
@@ -1323,7 +1323,7 @@ extension ExportedKotlinPackages.kotlinx.serialization.descriptors {
         serialName: Swift.String,
         kind: ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialKind,
         typeParameters: any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor...,
-        builder: @escaping (ExportedKotlinPackages.kotlinx.serialization.descriptors.ClassSerialDescriptorBuilder) -> Swift.Void
+        builder: @escaping (_: ExportedKotlinPackages.kotlinx.serialization.descriptors.ClassSerialDescriptorBuilder) -> Swift.Void
     ) -> any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor {
         return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_serialization_descriptors_buildSerialDescriptor__TypesOfArguments__Swift_String_ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialKind_Swift_Array_anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor__U28ExportedKotlinPackages_kotlinx_serialization_descriptors_ClassSerialDescriptorBuilderU29202D_U20Swift_Void__(serialName, kind.__externalRCRef(), typeParameters, {
             let originalBlock = builder
@@ -1520,7 +1520,7 @@ extension ExportedKotlinPackages.kotlinx.serialization.builtins {
 extension ExportedKotlinPackages.kotlinx.serialization.encoding {
     public protocol ChunkedDecoder: KotlinRuntime.KotlinBase {
         func decodeStringChunked(
-            consumeChunk: @escaping (Swift.String) -> Swift.Void
+            consumeChunk: @escaping (_: Swift.String) -> Swift.Void
         ) -> Swift.Void
     }
     @objc(_ChunkedDecoder)
@@ -2163,7 +2163,7 @@ extension ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescrip
 }
 extension ExportedKotlinPackages.kotlinx.serialization.encoding.ChunkedDecoder where Self : KotlinRuntimeSupport._KotlinBridgeable {
     public func decodeStringChunked(
-        consumeChunk: @escaping (Swift.String) -> Swift.Void
+        consumeChunk: @escaping (_: Swift.String) -> Swift.Void
     ) -> Swift.Void {
         return kotlinx_serialization_encoding_ChunkedDecoder_decodeStringChunked__TypesOfArguments__U28Swift_StringU29202D_U20Swift_Void__(self.__externalRCRef(), {
             let originalBlock = consumeChunk
