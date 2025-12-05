@@ -15,11 +15,13 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.NativeCacheKind
 import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.kotlinToolingDiagnosticsCollector
 import org.jetbrains.kotlin.gradle.plugin.extraProperties
 import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import org.jetbrains.kotlin.gradle.plugin.mpp.DisableCacheInKotlinVersion
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCacheApi
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.konan.target.HostManager
@@ -100,7 +102,7 @@ class DisabledNativeCacheTest {
             if (HostManager.hostIsMac) {
                 assertEquals(
                     NativeCacheKind.STATIC,
-                    konanCacheKind(MAC_ARM64_LINK_TASK_NAME).get(),
+                    konanCacheKind(MAC_ARM64_LINK_DEBUG_TASK_NAME).get(),
                     "Native cache should be enabled on macOS Arm64 target"
                 )
                 assertEquals(
@@ -116,7 +118,7 @@ class DisabledNativeCacheTest {
             } else if (HostManager.hostIsLinux) {
                 assertEquals(
                     NativeCacheKind.STATIC,
-                    konanCacheKind(LINUX_X64_LINK_TASK_NAME).get(),
+                    konanCacheKind(LINUX_X64_LINK_DEBUG_TASK_NAME).get(),
                     "Native cache should be enabled on Linux x64 target"
                 )
             }
@@ -147,7 +149,7 @@ class DisabledNativeCacheTest {
             if (HostManager.hostIsMac) {
                 assertEquals(
                     NativeCacheKind.NONE,
-                    konanCacheKind(MAC_ARM64_LINK_TASK_NAME).get(),
+                    konanCacheKind(MAC_ARM64_LINK_DEBUG_TASK_NAME).get(),
                     "Native cache should be disabled on macOS Arm64 target for version ${getKotlinPluginVersion()}"
                 )
                 assertEquals(
@@ -163,7 +165,7 @@ class DisabledNativeCacheTest {
             } else if (HostManager.hostIsLinux) {
                 assertEquals(
                     NativeCacheKind.NONE,
-                    konanCacheKind(LINUX_X64_LINK_TASK_NAME).get(),
+                    konanCacheKind(LINUX_X64_LINK_DEBUG_TASK_NAME).get(),
                     "Native cache should be disabled on Linux x64 target for version ${getKotlinPluginVersion()}"
                 )
             }
@@ -192,12 +194,63 @@ class DisabledNativeCacheTest {
         }
     }
 
+    // KT-82786 Warning about disabled K/N caches is displayed twice"
+    @Test
+    fun `test disabled native cache diagnostic emitted only once`() {
+        Assume.assumeTrue(!HostManager.hostIsMingw) // No cacheable targets on Windows
+        with(buildProjectWithMPP()) {
+            kotlin {
+                val target = if (HostManager.hostIsMac) macosArm64() else linuxX64()
+                target.binaries.staticLib {
+                    if (buildType == NativeBuildType.DEBUG) {
+                        disableNativeCache(
+                            currentVersionForDisableCache,
+                            "Disabled for tests for DEBUG only",
+                            URI("https://kotlinlang.org")
+                        )
+                    }
+                }
+            }
+
+            evaluate()
+
+            if (HostManager.hostIsMac) {
+                assertEquals(
+                    NativeCacheKind.STATIC,
+                    konanCacheKind(MAC_ARM64_LINK_RELEASE_TASK_NAME).get(),
+                    "Native cache should be enabled on macOS Arm64 RELEASE target"
+                )
+                assertEquals(
+                    NativeCacheKind.NONE,
+                    konanCacheKind(MAC_ARM64_LINK_DEBUG_TASK_NAME).get(),
+                    "Native cache should be disabled on iOS Arm64 DEBUG target"
+                )
+            } else if (HostManager.hostIsLinux) {
+                assertEquals(
+                    NativeCacheKind.STATIC,
+                    konanCacheKind(LINUX_X64_LINK_RELEASE_TASK_NAME).get(),
+                    "Native cache should be enabled on Linux x64 RELEASE target"
+                )
+                assertEquals(
+                    NativeCacheKind.NONE,
+                    konanCacheKind(LINUX_X64_LINK_DEBUG_TASK_NAME).get(),
+                    "Native cache should be disabled on Linux x64 DEBUG target"
+                )
+            }
+
+            val emittedDiagnostics = kotlinToolingDiagnosticsCollector
+                .getDiagnosticsForProject(this)
+                .filter { it.id == KotlinToolingDiagnostics.NativeCacheDisabledDiagnostic.id }
+
+            assertEquals(1, emittedDiagnostics.size, "Expected only one diagnostic emitted for disabled cache")
+        }
+    }
+
     companion object {
-        private const val MAC_ARM64_LINK_TASK_NAME = "linkDebugStaticMacosArm64"
-        private const val MAC_X64_LINK_TASK_NAME = "linkDebugStaticMacosX64"
-        private const val WIN_X64_LINK_TASK_NAME = "linkDebugStaticMingwX64"
-        private const val LINUX_X64_LINK_TASK_NAME = "linkDebugStaticLinuxX64"
-        private const val IOS_X64_LINK_TASK_NAME = "linkDebugStaticIosX64"
+        private const val MAC_ARM64_LINK_DEBUG_TASK_NAME = "linkDebugStaticMacosArm64"
+        private const val MAC_ARM64_LINK_RELEASE_TASK_NAME = "linkReleaseStaticMacosArm64"
+        private const val LINUX_X64_LINK_DEBUG_TASK_NAME = "linkDebugStaticLinuxX64"
+        private const val LINUX_X64_LINK_RELEASE_TASK_NAME = "linkReleaseStaticLinuxX64"
         private const val IOS_ARM64_LINK_TASK_NAME = "linkDebugStaticIosArm64"
         private const val IOS_SIMULATOR_ARM64_LINK_TASK_NAME = "linkDebugStaticIosSimulatorArm64"
     }
