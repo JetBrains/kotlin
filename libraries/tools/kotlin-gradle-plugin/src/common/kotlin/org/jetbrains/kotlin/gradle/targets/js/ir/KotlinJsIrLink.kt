@@ -140,7 +140,7 @@ abstract class KotlinJsIrLink @Inject constructor(
                 args.debuggerCustomFormatters = true
             }
 
-            if (delegateTranspilationToExternalTool) {
+            if (delegateTranspilationToExternalTool && !isWasmPlatform) {
                 // If the delegated transpilation used, we should compile to the latest supported JS version
                 // so that the third-party transpilation tool (swc) will transpile it by the rules defined by users
                 if (args.target != ES_2015) {
