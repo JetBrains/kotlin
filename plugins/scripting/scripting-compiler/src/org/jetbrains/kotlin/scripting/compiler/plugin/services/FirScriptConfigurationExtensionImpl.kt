@@ -61,8 +61,7 @@ class FirScriptConfiguratorExtensionImpl(
 
     // TODO: find out some way to differentiate detection form REPL snippets, to allow reporting conflicts on FIR building
     override fun accepts(sourceFile: KtSourceFile?, scriptSource: KtSourceElement): Boolean =
-        sourceFile != null && // this implementation requires a file to find definition (this could be relaxed eventually)
-                (scriptSource is KtPsiSourceElement && scriptSource.psi is KtScript) // workd only with PSI so far
+        sourceFile != null
 
     @OptIn(SymbolInternals::class)
     override fun FirScriptBuilder.configure(sourceFile: KtSourceFile?, context: Context<*>) {

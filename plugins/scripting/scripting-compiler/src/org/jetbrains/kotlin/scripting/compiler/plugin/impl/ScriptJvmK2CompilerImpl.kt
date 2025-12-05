@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.config.jvmTarget
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.*
@@ -58,6 +59,7 @@ import kotlin.script.experimental.api.*
 import kotlin.script.experimental.api.ast.parseToSyntaxTree
 import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.host.getScriptingClass
+import kotlin.script.experimental.impl._languageVersion
 import kotlin.script.experimental.impl.refineOnAnnotationsWithLazyDataCollection
 import kotlin.script.experimental.impl.refineOnSyntaxTree
 import kotlin.script.experimental.jvm.*
@@ -115,7 +117,12 @@ class ScriptJvmK2CompilerImpl(
             }.onSuccess {
                 it.refineBeforeCompiling(script)
             }.onSuccess {
-                compileImpl(script, it)
+                compileImpl(
+                    script,
+                    it.with {
+                        _languageVersion(state.compilerContext.environment.configuration.languageVersionSettings.languageVersion.versionString)
+                    }
+                )
             }
     }
 

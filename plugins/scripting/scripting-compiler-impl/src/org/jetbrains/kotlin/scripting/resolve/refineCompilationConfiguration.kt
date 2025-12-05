@@ -88,7 +88,7 @@ fun KtSourceFile.toSourceCode(): SourceCode? = when (this) {
     is KtPsiSourceFile -> (psiFile as? KtFile)?.let(::KtFileScriptSource) ?: VirtualFileScriptSource(psiFile.virtualFile)
     is KtVirtualFileSourceFile -> VirtualFileScriptSource(virtualFile)
     is KtIoFileSourceFile -> FileScriptSource(file)
-    is KtInMemoryTextSourceFile -> StringScriptSource(text.toString(), name)
+    is KtInMemoryTextSourceFile -> StringScriptSource(text.toString(), name, path)
     else -> null
 }
 
