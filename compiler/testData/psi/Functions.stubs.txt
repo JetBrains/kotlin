@@ -47,6 +47,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=FunctionsKt]]
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=a]
+            VALUE_ARGUMENT_LIST
       USER_TYPE
         REFERENCE_EXPRESSION[referencedName=T]
     TYPE_PARAMETER_LIST
@@ -113,6 +114,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=FunctionsKt]]
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=a]
+            VALUE_ARGUMENT_LIST
       USER_TYPE
         REFERENCE_EXPRESSION[referencedName=T]
     TYPE_PARAMETER_LIST
@@ -179,6 +181,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=FunctionsKt]]
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=a]
+            VALUE_ARGUMENT_LIST
       USER_TYPE
         REFERENCE_EXPRESSION[referencedName=T]
     TYPE_PARAMETER_LIST
@@ -210,6 +213,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=FunctionsKt]]
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=a]
+            VALUE_ARGUMENT_LIST
       USER_TYPE
         REFERENCE_EXPRESSION[referencedName=T]
     TYPE_PARAMETER_LIST

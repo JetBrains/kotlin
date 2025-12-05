@@ -10,6 +10,7 @@ FILE[kind=File[packageFqName=<root>]]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Ann]
+          VALUE_ARGUMENT_LIST
   CLASS[classId=/Outer2, fqName=Outer2, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Outer2, superNames=[]]
     CLASS_BODY
       CLASS[classId=/Outer2.Nested2, fqName=Outer2.Nested2, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=Nested2, superNames=[]]
@@ -44,6 +45,7 @@ FILE[kind=File[packageFqName=<root>]]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=Ann]
+              VALUE_ARGUMENT_LIST
         CLASS_BODY
       FUN[fqName=Outer4.foo, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
         VALUE_PARAMETER_LIST
@@ -57,6 +59,7 @@ FILE[kind=File[packageFqName=<root>]]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=Ann]
+              VALUE_ARGUMENT_LIST
         SUPER_TYPE_LIST
           SUPER_TYPE_CALL_ENTRY
             CONSTRUCTOR_CALLEE

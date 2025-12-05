@@ -91,5 +91,6 @@ FILE[kind=File[packageFqName=<root>]]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Ann]
+          VALUE_ARGUMENT_LIST
       VALUE_PARAMETER_LIST
     CLASS_BODY

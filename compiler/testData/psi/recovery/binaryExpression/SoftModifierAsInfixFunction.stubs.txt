@@ -11,3 +11,4 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=SoftModifierAsInfixFunctionK
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Ann]
+          VALUE_ARGUMENT_LIST

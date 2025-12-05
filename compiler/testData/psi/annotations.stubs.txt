@@ -58,6 +58,7 @@ FILE[kind=File[packageFqName=<root>]]
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=a]
+            VALUE_ARGUMENT_LIST
       FUN[fqName=Annotations.f, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
         MODIFIER_LIST[protected]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]

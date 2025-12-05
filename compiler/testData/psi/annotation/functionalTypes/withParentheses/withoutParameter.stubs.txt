@@ -11,6 +11,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=WithoutParameterKt]]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Foo]
+          VALUE_ARGUMENT_LIST
       FUNCTION_TYPE
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
@@ -26,6 +27,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=WithoutParameterKt]]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Foo]
+          VALUE_ARGUMENT_LIST
       FUNCTION_TYPE
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
@@ -41,6 +43,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=WithoutParameterKt]]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Foo]
+          VALUE_ARGUMENT_LIST
       FUNCTION_TYPE
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
@@ -61,6 +64,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=WithoutParameterKt]]
                     TYPE_REFERENCE
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=Fo]
+                  VALUE_ARGUMENT_LIST
                 ANNOTATION_ENTRY[hasValueArguments=true, shortName=Bar]
                   CONSTRUCTOR_CALLEE
                     TYPE_REFERENCE
@@ -74,6 +78,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=WithoutParameterKt]]
                     TYPE_REFERENCE
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=Foo]
+                  VALUE_ARGUMENT_LIST
               FUNCTION_TYPE
                 VALUE_PARAMETER_LIST
                 TYPE_REFERENCE
@@ -95,6 +100,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=WithoutParameterKt]]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=Foo]
+              VALUE_ARGUMENT_LIST
           FUNCTION_TYPE
             VALUE_PARAMETER_LIST
             TYPE_REFERENCE
@@ -119,6 +125,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=WithoutParameterKt]]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=Bar]
+              VALUE_ARGUMENT_LIST
           FUNCTION_TYPE
             VALUE_PARAMETER_LIST
             TYPE_REFERENCE
@@ -140,6 +147,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=WithoutParameterKt]]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=Foo]
+              VALUE_ARGUMENT_LIST
           FUNCTION_TYPE
             VALUE_PARAMETER_LIST
               VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
@@ -166,6 +174,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=WithoutParameterKt]]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=Foo]
+              VALUE_ARGUMENT_LIST
             ANNOTATION_ENTRY[hasValueArguments=true, shortName=Bar]
               CONSTRUCTOR_CALLEE
                 TYPE_REFERENCE
@@ -179,6 +188,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=WithoutParameterKt]]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=Foo]
+              VALUE_ARGUMENT_LIST
           FUNCTION_TYPE
             VALUE_PARAMETER_LIST
             TYPE_REFERENCE
@@ -195,6 +205,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=WithoutParameterKt]]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=Foo]
                 REFERENCE_EXPRESSION[referencedName=Bar]
+          VALUE_ARGUMENT_LIST
       FUNCTION_TYPE
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
@@ -214,6 +225,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=WithoutParameterKt]]
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=Foo]
                     REFERENCE_EXPRESSION[referencedName=Bar]
+              VALUE_ARGUMENT_LIST
           FUNCTION_TYPE
             VALUE_PARAMETER_LIST
             TYPE_REFERENCE
@@ -234,6 +246,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=WithoutParameterKt]]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=Foo]
+              VALUE_ARGUMENT_LIST
           FUNCTION_TYPE
             VALUE_PARAMETER_LIST
             TYPE_REFERENCE
