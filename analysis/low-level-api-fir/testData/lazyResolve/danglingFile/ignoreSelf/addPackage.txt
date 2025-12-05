@@ -1,0 +1,528 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] addPackage.kt
+    public final? [ResolvedTo(RAW_FIR)] class TopLevel : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevel] constructor(): R|TopLevel| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final? [ResolvedTo(RAW_FIR)] class Nested : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Nested] constructor(): R|TopLevel.Nested| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] fun function([ResolvedTo(RAW_FIR)] i: Int): <implicit> { LAZY_BLOCK }
+
+        }
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] val baz: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+FILE: [ResolvedTo(RAW_FIR)] fake.kt
+    public final? [ResolvedTo(RAW_FIR)] class TopLevel : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevel] constructor(): R|bar/bar/TopLevel| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final? [ResolvedTo(RAW_FIR)] class Nested : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Nested] constructor(): R|bar/bar/TopLevel.Nested| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] fun function([ResolvedTo(RAW_FIR)] i: Int): <implicit> { LAZY_BLOCK }
+
+        }
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] val baz: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+IMPORTS:
+FILE: [ResolvedTo(RAW_FIR)] addPackage.kt
+    public final? [ResolvedTo(RAW_FIR)] class TopLevel : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevel] constructor(): R|TopLevel| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final? [ResolvedTo(RAW_FIR)] class Nested : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Nested] constructor(): R|TopLevel.Nested| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] fun function([ResolvedTo(RAW_FIR)] i: Int): <implicit> { LAZY_BLOCK }
+
+        }
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] val baz: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+FILE: [ResolvedTo(IMPORTS)] fake.kt
+    public final? [ResolvedTo(RAW_FIR)] class TopLevel : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevel] constructor(): R|bar/bar/TopLevel| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final? [ResolvedTo(RAW_FIR)] class Nested : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Nested] constructor(): R|bar/bar/TopLevel.Nested| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] fun function([ResolvedTo(RAW_FIR)] i: Int): <implicit> { LAZY_BLOCK }
+
+        }
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] val baz: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(RAW_FIR)] addPackage.kt
+    public final? [ResolvedTo(RAW_FIR)] class TopLevel : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevel] constructor(): R|TopLevel| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final? [ResolvedTo(RAW_FIR)] class Nested : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Nested] constructor(): R|TopLevel.Nested| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] fun function([ResolvedTo(RAW_FIR)] i: Int): <implicit> { LAZY_BLOCK }
+
+        }
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] val baz: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+FILE: [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fake.kt
+    public final? [ResolvedTo(RAW_FIR)] class TopLevel : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevel] constructor(): R|bar/bar/TopLevel| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final? [ResolvedTo(RAW_FIR)] class Nested : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Nested] constructor(): R|bar/bar/TopLevel.Nested| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] fun function([ResolvedTo(RAW_FIR)] i: Int): <implicit> { LAZY_BLOCK }
+
+        }
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] val baz: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(RAW_FIR)] addPackage.kt
+    public final? [ResolvedTo(RAW_FIR)] class TopLevel : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevel] constructor(): R|TopLevel| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final? [ResolvedTo(RAW_FIR)] class Nested : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Nested] constructor(): R|TopLevel.Nested| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] fun function([ResolvedTo(RAW_FIR)] i: Int): <implicit> { LAZY_BLOCK }
+
+        }
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] val baz: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+FILE: [ResolvedTo(COMPANION_GENERATION)] fake.kt
+    public final? [ResolvedTo(RAW_FIR)] class TopLevel : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevel] constructor(): R|bar/bar/TopLevel| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final? [ResolvedTo(RAW_FIR)] class Nested : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Nested] constructor(): R|bar/bar/TopLevel.Nested| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] fun function([ResolvedTo(RAW_FIR)] i: Int): <implicit> { LAZY_BLOCK }
+
+        }
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] val baz: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+SUPER_TYPES:
+FILE: [ResolvedTo(RAW_FIR)] addPackage.kt
+    public final? [ResolvedTo(RAW_FIR)] class TopLevel : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevel] constructor(): R|TopLevel| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final? [ResolvedTo(RAW_FIR)] class Nested : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Nested] constructor(): R|TopLevel.Nested| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] fun function([ResolvedTo(RAW_FIR)] i: Int): <implicit> { LAZY_BLOCK }
+
+        }
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] val baz: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+FILE: [ResolvedTo(SUPER_TYPES)] fake.kt
+    public final? [ResolvedTo(RAW_FIR)] class TopLevel : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevel] constructor(): R|bar/bar/TopLevel| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final? [ResolvedTo(RAW_FIR)] class Nested : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Nested] constructor(): R|bar/bar/TopLevel.Nested| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] fun function([ResolvedTo(RAW_FIR)] i: Int): <implicit> { LAZY_BLOCK }
+
+        }
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] val baz: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+TYPES:
+FILE: [ResolvedTo(RAW_FIR)] addPackage.kt
+    public final? [ResolvedTo(RAW_FIR)] class TopLevel : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevel] constructor(): R|TopLevel| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final? [ResolvedTo(RAW_FIR)] class Nested : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Nested] constructor(): R|TopLevel.Nested| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] fun function([ResolvedTo(RAW_FIR)] i: Int): <implicit> { LAZY_BLOCK }
+
+        }
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] val baz: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+FILE: [ResolvedTo(TYPES)] fake.kt
+    public final? [ResolvedTo(RAW_FIR)] class TopLevel : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevel] constructor(): R|bar/bar/TopLevel| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final? [ResolvedTo(RAW_FIR)] class Nested : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Nested] constructor(): R|bar/bar/TopLevel.Nested| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] fun function([ResolvedTo(RAW_FIR)] i: Int): <implicit> { LAZY_BLOCK }
+
+        }
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] val baz: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+STATUS:
+FILE: [ResolvedTo(RAW_FIR)] addPackage.kt
+    public final? [ResolvedTo(RAW_FIR)] class TopLevel : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevel] constructor(): R|TopLevel| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final? [ResolvedTo(RAW_FIR)] class Nested : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Nested] constructor(): R|TopLevel.Nested| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] fun function([ResolvedTo(RAW_FIR)] i: Int): <implicit> { LAZY_BLOCK }
+
+        }
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] val baz: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+FILE: [ResolvedTo(STATUS)] fake.kt
+    public final? [ResolvedTo(RAW_FIR)] class TopLevel : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevel] constructor(): R|bar/bar/TopLevel| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final? [ResolvedTo(RAW_FIR)] class Nested : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Nested] constructor(): R|bar/bar/TopLevel.Nested| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] fun function([ResolvedTo(RAW_FIR)] i: Int): <implicit> { LAZY_BLOCK }
+
+        }
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] val baz: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(RAW_FIR)] addPackage.kt
+    public final? [ResolvedTo(RAW_FIR)] class TopLevel : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevel] constructor(): R|TopLevel| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final? [ResolvedTo(RAW_FIR)] class Nested : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Nested] constructor(): R|TopLevel.Nested| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] fun function([ResolvedTo(RAW_FIR)] i: Int): <implicit> { LAZY_BLOCK }
+
+        }
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] val baz: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+FILE: [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fake.kt
+    public final? [ResolvedTo(RAW_FIR)] class TopLevel : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevel] constructor(): R|bar/bar/TopLevel| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final? [ResolvedTo(RAW_FIR)] class Nested : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Nested] constructor(): R|bar/bar/TopLevel.Nested| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] fun function([ResolvedTo(RAW_FIR)] i: Int): <implicit> { LAZY_BLOCK }
+
+        }
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] val baz: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+CONTRACTS:
+FILE: [ResolvedTo(RAW_FIR)] addPackage.kt
+    public final? [ResolvedTo(RAW_FIR)] class TopLevel : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevel] constructor(): R|TopLevel| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final? [ResolvedTo(RAW_FIR)] class Nested : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Nested] constructor(): R|TopLevel.Nested| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] fun function([ResolvedTo(RAW_FIR)] i: Int): <implicit> { LAZY_BLOCK }
+
+        }
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] val baz: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+FILE: [ResolvedTo(CONTRACTS)] fake.kt
+    public final? [ResolvedTo(RAW_FIR)] class TopLevel : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevel] constructor(): R|bar/bar/TopLevel| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final? [ResolvedTo(RAW_FIR)] class Nested : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Nested] constructor(): R|bar/bar/TopLevel.Nested| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] fun function([ResolvedTo(RAW_FIR)] i: Int): <implicit> { LAZY_BLOCK }
+
+        }
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] val baz: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(RAW_FIR)] addPackage.kt
+    public final? [ResolvedTo(RAW_FIR)] class TopLevel : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevel] constructor(): R|TopLevel| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final? [ResolvedTo(RAW_FIR)] class Nested : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Nested] constructor(): R|TopLevel.Nested| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] fun function([ResolvedTo(RAW_FIR)] i: Int): <implicit> { LAZY_BLOCK }
+
+        }
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] val baz: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+FILE: [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fake.kt
+    public final? [ResolvedTo(RAW_FIR)] class TopLevel : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevel] constructor(): R|bar/bar/TopLevel| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final? [ResolvedTo(RAW_FIR)] class Nested : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Nested] constructor(): R|bar/bar/TopLevel.Nested| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] fun function([ResolvedTo(RAW_FIR)] i: Int): <implicit> { LAZY_BLOCK }
+
+        }
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] val baz: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(RAW_FIR)] addPackage.kt
+    public final? [ResolvedTo(RAW_FIR)] class TopLevel : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevel] constructor(): R|TopLevel| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final? [ResolvedTo(RAW_FIR)] class Nested : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Nested] constructor(): R|TopLevel.Nested| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] fun function([ResolvedTo(RAW_FIR)] i: Int): <implicit> { LAZY_BLOCK }
+
+        }
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] val baz: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+FILE: [ResolvedTo(CONSTANT_EVALUATION)] fake.kt
+    public final? [ResolvedTo(RAW_FIR)] class TopLevel : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevel] constructor(): R|bar/bar/TopLevel| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final? [ResolvedTo(RAW_FIR)] class Nested : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Nested] constructor(): R|bar/bar/TopLevel.Nested| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] fun function([ResolvedTo(RAW_FIR)] i: Int): <implicit> { LAZY_BLOCK }
+
+        }
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] val baz: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(RAW_FIR)] addPackage.kt
+    public final? [ResolvedTo(RAW_FIR)] class TopLevel : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevel] constructor(): R|TopLevel| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final? [ResolvedTo(RAW_FIR)] class Nested : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Nested] constructor(): R|TopLevel.Nested| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] fun function([ResolvedTo(RAW_FIR)] i: Int): <implicit> { LAZY_BLOCK }
+
+        }
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] val baz: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+FILE: [ResolvedTo(ANNOTATION_ARGUMENTS)] fake.kt
+    public final? [ResolvedTo(RAW_FIR)] class TopLevel : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevel] constructor(): R|bar/bar/TopLevel| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final? [ResolvedTo(RAW_FIR)] class Nested : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Nested] constructor(): R|bar/bar/TopLevel.Nested| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] fun function([ResolvedTo(RAW_FIR)] i: Int): <implicit> { LAZY_BLOCK }
+
+        }
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] val baz: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] addPackage.kt
+    public final? [ResolvedTo(RAW_FIR)] class TopLevel : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevel] constructor(): R|TopLevel| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final? [ResolvedTo(RAW_FIR)] class Nested : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Nested] constructor(): R|TopLevel.Nested| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] fun function([ResolvedTo(RAW_FIR)] i: Int): <implicit> { LAZY_BLOCK }
+
+        }
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] val baz: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+FILE: [ResolvedTo(BODY_RESOLVE)] fake.kt
+    public final? [ResolvedTo(RAW_FIR)] class TopLevel : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevel] constructor(): R|bar/bar/TopLevel| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final? [ResolvedTo(RAW_FIR)] class Nested : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Nested] constructor(): R|bar/bar/TopLevel.Nested| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] fun function([ResolvedTo(RAW_FIR)] i: Int): <implicit> { LAZY_BLOCK }
+
+        }
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] val baz: R|kotlin/Int| = Int(1)
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] fake.kt
+    public final [ResolvedTo(BODY_RESOLVE)] class TopLevel : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevel] constructor(): R|bar/bar/TopLevel| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] class Nested : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Nested] constructor(): R|bar/bar/TopLevel.Nested| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] fun function([ResolvedTo(BODY_RESOLVE)] i: R|kotlin/Int|): R|kotlin/String| {
+                ^function String()
+            }
+
+        }
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] val baz: R|kotlin/Int| = Int(1)
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
