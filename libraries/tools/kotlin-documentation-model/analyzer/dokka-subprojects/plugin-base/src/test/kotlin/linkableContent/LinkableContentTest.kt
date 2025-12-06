@@ -211,16 +211,8 @@ class LinkableContentTest : BaseAbstractTest() {
                         .let { it as ContentCodeBlock }.children.single()
                         .let { it as ContentText }.text
                     assertEquals(
-                        """
-                        |import p2.${name}Class
-                        |import kotlin.collections.List
-                        |import kotlin.collections.Map
-                            |
-                            |fun main() { 
-                            |   //sampleStart 
-                            |   ${name}Class().printWithExclamation("Hi, $name") 
-                            |   //sampleEnd
-                            |}""".trimMargin(),
+                        """${name}Class().printWithExclamation("Hi, $name")"""
+                            .trimMargin(),
                         text
                     )
                 }
