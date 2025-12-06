@@ -15,7 +15,6 @@ import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
 import org.jetbrains.kotlin.gradle.plugin.*
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsSubTargetContainerDsl
@@ -28,7 +27,6 @@ import java.io.File
 import javax.inject.Inject
 
 internal val RegisterBuildKotlinToolingMetadataTask = KotlinProjectSetupAction {
-    if (!project.kotlinPropertiesProvider.enableKotlinToolingMetadataArtifact) return@KotlinProjectSetupAction
     buildKotlinToolingMetadataTask
 }
 
@@ -38,7 +36,6 @@ internal val RegisterBuildKotlinToolingMetadataTask = KotlinProjectSetupAction {
  */
 internal val Project.buildKotlinToolingMetadataTask: TaskProvider<BuildKotlinToolingMetadataTask.FromKotlinExtension>?
     get() {
-        if (!kotlinPropertiesProvider.enableKotlinToolingMetadataArtifact) return null
         val taskName = BuildKotlinToolingMetadataTask.defaultTaskName
         return locateOrRegisterTask(taskName) { task ->
             task.group = "build"

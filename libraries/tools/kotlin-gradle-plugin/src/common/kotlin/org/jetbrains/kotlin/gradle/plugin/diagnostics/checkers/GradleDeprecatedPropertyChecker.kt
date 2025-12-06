@@ -74,6 +74,10 @@ internal object GradleDeprecatedPropertyChecker : KotlinGradleProjectChecker {
             propertyName = "kotlin.mpp.import.enableKgpDependencyResolution",
             details = "Legacy mode of KMP IDE import has been removed: https://kotl.in/KT-61127",
         ),
+        DeprecatedProperty(
+            propertyName = "kotlin.mpp.enableKotlinToolingMetadataArtifact",
+            details = "This property is deprecated and ignored. kotlin-tooling-metadata.json is always produced. See https://youtrack.jetbrains.com/issue/KT-79924.",
+        ),
     )
 
     private val errorDeprecatedProperties: List<DeprecatedProperty> = listOf(

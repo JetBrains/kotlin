@@ -217,8 +217,9 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val computeTransformedLibraryChecksum: Boolean
         get() = booleanProperty(KOTLIN_MPP_COMPUTE_TRANSFORMED_LIBRARY_CHECKSUM) ?: true
 
+    @Deprecated("'kotlin.mpp.enableKotlinToolingMetadataArtifact' is deprecated and ignored. kotlin-tooling-metadata.json is always produced. See https://youtrack.jetbrains.com/issue/KT-79924.", level = DeprecationLevel.WARNING)
     val enableKotlinToolingMetadataArtifact: Boolean
-        get() = booleanProperty("kotlin.mpp.enableKotlinToolingMetadataArtifact") ?: true
+        get() = true
 
     val mppEnableOptimisticNumberCommonization: Boolean
         get() = booleanProperty(KOTLIN_MPP_ENABLE_OPTIMISTIC_NUMBER_COMMONIZATION) ?: true

@@ -102,8 +102,8 @@ class KotlinToolingMetadataMppIT : KGPBaseTest() {
     }
 
     @GradleTest
-    @DisplayName("KotlinToolingMetadata should be not published when disabled")
-    fun checkPublishingWithKotlinToolingMetadataArtifactDisabled(
+    @DisplayName("KotlinToolingMetadata is still published even if the legacy property is set to false")
+    fun checkPublishingWithLegacyKotlinToolingMetadataArtifactPropertySetToFalse(
         gradleVersion: GradleVersion,
         @TempDir localRepository: Path,
     ) {
@@ -114,8 +114,8 @@ class KotlinToolingMetadataMppIT : KGPBaseTest() {
         ) {
             gradleProperties.appendText("\nkotlin.mpp.enableKotlinToolingMetadataArtifact=false")
             build("publish") {
-                assertFileNotExists(defaultKotlinToolingMetadataJsonPath)
-                assertTasksAreNotInTaskGraph(":$buildKotlinToolingMetadataTaskName")
+                assertTasksExecuted(":$buildKotlinToolingMetadataTaskName")
+                assertFileExists(defaultKotlinToolingMetadataJsonPath)
             }
         }
     }
