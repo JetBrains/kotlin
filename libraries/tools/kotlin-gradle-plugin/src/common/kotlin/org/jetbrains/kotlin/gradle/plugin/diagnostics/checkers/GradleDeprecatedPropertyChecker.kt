@@ -80,6 +80,10 @@ internal object GradleDeprecatedPropertyChecker : KotlinGradleProjectChecker {
             details = "Since Kotlin 2.2, the KMP Isolated Projects support is enabled by default. This property will be removed in 2.4 release." +
                     " Leave your questions here https://youtrack.jetbrains.com/issue/KT-79257",
         ), // Since 2.3.20
+        DeprecatedProperty(
+            propertyName = "kotlin.mpp.enableKotlinToolingMetadataArtifact",
+            details = "The flag is deprecated and scheduled to be removed in 2.4.0: https://kotl.in/KT-79924",
+        ), // since 2.3.20
     )
 
     private val errorDeprecatedProperties: List<DeprecatedProperty> = listOf(
