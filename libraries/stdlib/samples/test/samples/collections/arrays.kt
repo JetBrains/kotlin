@@ -536,6 +536,36 @@ class Arrays {
 
     class Constructors {
         @Sample
+        fun arrayOfSample() {
+            val emptyArray = arrayOf<Any>()
+            assertPrints(emptyArray.contentToString(), "[]")
+
+            val doubleArray = arrayOf(1.0, 2.5, 3.14)
+            assertPrints(doubleArray.contentToString(), "[1.0, 2.5, 3.14]")
+
+            val floatArray = arrayOf(1.0f, 2.5f, 3.14f)
+            assertPrints(floatArray.contentToString(), "[1.0, 2.5, 3.14]")
+
+            val longArray = arrayOf(1L, 2L, 3L)
+            assertPrints(longArray.contentToString(), "[1, 2, 3]")
+
+            val intArray = arrayOf(1, 2, 3)
+            assertPrints(intArray.contentToString(), "[1, 2, 3]")
+
+            val charArray = arrayOf('a', 'b', 'c')
+            assertPrints(charArray.contentToString(), "[a, b, c]")
+
+            val shortArray = arrayOf(1, 2, 3)
+            assertPrints(shortArray.contentToString(), "[1, 2, 3]")
+
+            val byteArray = arrayOf(1, 2, 3)
+            assertPrints(byteArray.contentToString(), "[1, 2, 3]")
+
+            val booleanArray = arrayOf(true, false, true)
+            assertPrints(booleanArray.contentToString(), "[true, false, true]")
+        }
+
+        @Sample
         fun doubleArrayOfSample() {
             val emptyDoubleArray = doubleArrayOf()
             assertPrints(emptyDoubleArray.contentToString(), "[]")

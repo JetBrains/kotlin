@@ -30,13 +30,15 @@ public actual fun <reified T> arrayOfNulls(size: Int): Array<T?>
 
 /**
  * Returns an array containing the specified elements.
+ *
+ * @sample samples.collections.Arrays.Constructors.arrayOfSample
  */
 public actual inline fun <reified T> arrayOf(vararg elements: T): Array<T>
 
 /**
  * Returns an array containing the specified [Double] numbers.
  *
- * @sample samples.collections.Arrays.Constructors.doubleArrayOfSampl
+ * @sample samples.collections.Arrays.Constructors.doubleArrayOfSample
  */
 public actual fun doubleArrayOf(vararg elements: Double): DoubleArray
 
