@@ -460,6 +460,8 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
             val invokeFunction = if (calculatedInvokeFunction.isAdaptable()) {
                 functionsToDelete.add(calculatedInvokeFunction)
                 calculatedInvokeFunction as IrSimpleFunction
+            } else if (calculatedInvokeFunction.isFakeOverride) {
+                calculatedInvokeFunction as IrSimpleFunction
             } else {
                 with(UpgradeCallableReferences(this@FunctionReferenceLowering.context).UpgradeTransformer()) {
                     val arguments = lambdaMetafactoryArguments.implMethodReference.getCapturedValues()

@@ -80,6 +80,7 @@ class IndyLambdaMetafactoryLowering(val backendContext: JvmBackendContext): File
         inlineLambdaToScope.clear()
 
         for ((function, parent) in functionsToClasses) {
+            if (function.isFakeOverride) continue
             function.visibility = DescriptorVisibilities.PRIVATE
             function.patchDeclarationParents(parent)
             parent.declarations.add(function)
