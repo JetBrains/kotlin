@@ -35,41 +35,57 @@ public actual inline fun <reified T> arrayOf(vararg elements: T): Array<T>
 
 /**
  * Returns an array containing the specified [Double] numbers.
+ *
+ * @sample samples.collections.Arrays.Constructors.doubleArrayOfSampl
  */
 public actual fun doubleArrayOf(vararg elements: Double): DoubleArray
 
 /**
  * Returns an array containing the specified [Float] numbers.
+ *
+ * @sample samples.collections.Arrays.Constructors.floatArrayOfSample
  */
 public actual fun floatArrayOf(vararg elements: Float): FloatArray
 
 /**
  * Returns an array containing the specified [Long] numbers.
+ *
+ * @sample samples.collections.Arrays.Constructors.longArrayOfSample
  */
 public actual fun longArrayOf(vararg elements: Long): LongArray
 
 /**
  * Returns an array containing the specified [Int] numbers.
+ *
+ * @sample samples.collections.Arrays.Constructors.intArrayOfSample
  */
 public actual fun intArrayOf(vararg elements: Int): IntArray
 
 /**
  * Returns an array containing the specified characters.
+ *
+ * @sample samples.collections.Arrays.Constructors.charArrayOfSample
  */
 public actual fun charArrayOf(vararg elements: Char): CharArray
 
 /**
  * Returns an array containing the specified [Short] numbers.
+ *
+ * @sample samples.collections.Arrays.Constructors.shortArrayOfSample
  */
 public actual fun shortArrayOf(vararg elements: Short): ShortArray
 
 /**
  * Returns an array containing the specified [Byte] numbers.
+ *
+ * @sample samples.collections.Arrays.Constructors.byteArrayOfSample
  */
 public actual fun byteArrayOf(vararg elements: Byte): ByteArray
 
 /**
  * Returns an array containing the specified boolean values.
+ *
+ * @sample samples.collections.Arrays.Constructors.booleanArrayOfSample
  */
 public actual fun booleanArrayOf(vararg elements: Boolean): BooleanArray
 
