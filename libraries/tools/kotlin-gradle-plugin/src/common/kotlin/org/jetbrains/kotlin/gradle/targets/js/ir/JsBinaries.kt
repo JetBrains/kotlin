@@ -88,8 +88,8 @@ sealed class JsIrBinary(
             }
         }
 
-    internal val defaultLinkSyncTaskInput = linkTask
-        .flatMap(KotlinJsIrLink::destinationDirectory)
+    internal val defaultLinkSyncTaskInput: Provider<Directory>
+        get() = linkTask.flatMap(KotlinJsIrLink::destinationDirectory)
 
     internal val linkSyncTaskRegisteredResources: TaskProvider<*>
         get() = project.tasks.named(compilation.processResourcesTaskName)
