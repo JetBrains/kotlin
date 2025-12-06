@@ -34,56 +34,56 @@ public expect inline fun <reified T> arrayOf(vararg elements: T): Array<T>
 /**
  * Returns an array containing the specified [Double] numbers.
  *
- * @sample samples.collections.Arrays.Constructors.doubleArrayOf
+ * @sample samples.collections.Arrays.Constructors.doubleArrayOfSample
  */
 public expect fun doubleArrayOf(vararg elements: Double): DoubleArray
 
 /**
  * Returns an array containing the specified [Float] numbers.
  *
- * @sample samples.collections.Arrays.Constructors.floatArrayOf
+ * @sample samples.collections.Arrays.Constructors.floatArrayOfSample
  */
 public expect fun floatArrayOf(vararg elements: Float): FloatArray
 
 /**
  * Returns an array containing the specified [Long] numbers.
  *
- * @sample samples.collections.Arrays.Constructors.longArrayOf
+ * @sample samples.collections.Arrays.Constructors.longArrayOfSample
  */
 public expect fun longArrayOf(vararg elements: Long): LongArray
 
 /**
  * Returns an array containing the specified [Int] numbers.
  *
- * @sample samples.collections.Arrays.Constructors.intArrayOf
+ * @sample samples.collections.Arrays.Constructors.intArrayOfSample
  */
 public expect fun intArrayOf(vararg elements: Int): IntArray
 
 /**
  * Returns an array containing the specified characters.
  *
- * @sample samples.collections.Arrays.Constructors.charArrayOf
+ * @sample samples.collections.Arrays.Constructors.charArrayOfSample
  */
 public expect fun charArrayOf(vararg elements: Char): CharArray
 
 /**
  * Returns an array containing the specified [Short] numbers.
  *
- * @sample samples.collections.Arrays.Constructors.shortArrayOf
+ * @sample samples.collections.Arrays.Constructors.shortArrayOfSample
  */
 public expect fun shortArrayOf(vararg elements: Short): ShortArray
 
 /**
  * Returns an array containing the specified [Byte] numbers.
  *
- * @sample samples.collections.Arrays.Constructors.byteArrayOf
+ * @sample samples.collections.Arrays.Constructors.byteArrayOfSample
  */
 public expect fun byteArrayOf(vararg elements: Byte): ByteArray
 
 /**
  * Returns an array containing the specified boolean values.
  *
- * @sample samples.collections.Arrays.Constructors.booleanArrayOf
+ * @sample samples.collections.Arrays.Constructors.booleanArrayOfSample
  */
 public expect fun booleanArrayOf(vararg elements: Boolean): BooleanArray
 
