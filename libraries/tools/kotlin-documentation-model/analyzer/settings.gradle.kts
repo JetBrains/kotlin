@@ -97,9 +97,10 @@ include(
     ":dokka-subprojects:plugin-jekyll",
     ":dokka-subprojects:plugin-jekyll-template-processing",
     ":dokka-subprojects:plugin-kotlin-as-java",
+    ":dokka-subprojects:plugin-kotlin-playground-samples",
     ":dokka-subprojects:plugin-mathjax",
     ":dokka-subprojects:plugin-templating",
-    ":dokka-subprojects:plugin-versioning",
+    ":dokka-subprojects:plugin-versioning"
 )
 
 // This hack is required for included build support.
