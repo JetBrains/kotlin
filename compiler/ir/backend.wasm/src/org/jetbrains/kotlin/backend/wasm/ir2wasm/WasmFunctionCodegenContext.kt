@@ -52,12 +52,6 @@ class WasmFunctionCodegenContext(
         wasmFunction.locals += wasmLocal
     }
 
-    fun defineTmpVariable(type: WasmType): Int {
-        val wasmLocal = WasmLocal(wasmFunction.locals.size, "tmp", type, false)
-        wasmFunction.locals += wasmLocal
-        return wasmLocal.id
-    }
-
     fun referenceLocal(irValueDeclaration: IrValueSymbol): WasmLocal {
         return wasmLocals.getValue(irValueDeclaration)
     }
