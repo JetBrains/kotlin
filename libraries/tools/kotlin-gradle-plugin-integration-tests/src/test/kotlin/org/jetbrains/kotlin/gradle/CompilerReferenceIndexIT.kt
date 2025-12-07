@@ -100,7 +100,7 @@ class CompilerReferenceIndexIT : KGPDaemonsBaseTest() {
 
             val (initialLookups, initialFileIdsToPaths, initialSubtypes) = deserializeCriData()
 
-            val requiredSource1Path = kotlinSourcesDir().resolve(source1Filename).relativeTo(projectPath).toString()
+            val requiredSource1Path = (kotlinSourcesDir() / source1Filename).relativeTo(projectPath).invariantSeparatorsPathString
             val source1FileIdToPath = assertNotNull(initialFileIdsToPaths.singleOrNull { it.path == requiredSource1Path })
             val baseHash = hashCode("Base")
             val derivedHash = hashCode("Derived")
@@ -143,7 +143,7 @@ class CompilerReferenceIndexIT : KGPDaemonsBaseTest() {
             assertEquals(2, source1FileIdsToPaths.size)
             assertEquals(source1FileIdsToPaths.first().fileId, source1FileIdsToPaths.last().fileId)
 
-            val requiredSource2Path = kotlinSourcesDir().resolve(source2Filename).relativeTo(projectPath).toString()
+            val requiredSource2Path = (kotlinSourcesDir() / source2Filename).relativeTo(projectPath).invariantSeparatorsPathString
             val source2FileIdToPath = assertNotNull(modifiedFileIdsToPaths.singleOrNull { it.path == requiredSource2Path })
 
             val oldDerivedLookupEntry = assertNotNull(modifiedLookups.singleOrNull { it.fqNameHashCode == derivedHash })
