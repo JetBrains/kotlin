@@ -392,8 +392,8 @@ class WasmIrToText(
 
     private fun WasmImportDescriptor.appendImportPair() {
         sameLineList("import") {
-            toWatString(moduleName)
-            toWatString(declarationName.owner)
+            appendWatString(moduleName)
+            appendWatString(declarationName.owner)
         }
     }
 
@@ -453,7 +453,7 @@ class WasmIrToText(
 
     private fun appendExport(export: WasmExport<*>) {
         newLineList("export") {
-            toWatString(export.name)
+            appendWatString(export.name)
             sameLineList(export.keyword) {
                 appendModuleFieldReference(export.field)
             }
@@ -634,8 +634,8 @@ class WasmIrToText(
         appendElement("\$${sanitizeWatIdentifier(field.name)}___${indexSpaceKind}_$id")
     }
 
-    private fun toWatString(s: String) {
-        stringBuilder.append(s.toByteArray().toWatString())
+    private fun appendWatString(s: String) {
+        appendElement(s.toByteArray().toWatString())
     }
 }
 
