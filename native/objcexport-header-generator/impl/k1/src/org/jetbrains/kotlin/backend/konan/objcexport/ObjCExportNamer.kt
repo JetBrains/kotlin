@@ -836,7 +836,7 @@ class ObjCExportNamerImpl(
                     return it
                 }
 
-                if (!reportedCollision) {
+                if (!reportedCollision && (element !is DeclarationDescriptor || !element.hasObjCExportIgnoreNameCollisionAnnotation())) {
                     reportedCollision = true
                     val conflict = when (res) {
                         is AssignResult.Conflict if res.conflictingElement is DeclarationDescriptor ->
@@ -1101,6 +1101,13 @@ fun abbreviate(name: String): String {
     return normalizedName
 }
 
+private fun DeclarationDescriptor.hasObjCExportIgnoreNameCollisionAnnotation(): Boolean {
+    val hasAnnotation = annotations.hasAnnotation(KonanFqNames.objCExportIgnoreNameCollision)
+    check(!hasAnnotation || this is FunctionDescriptor) {
+        "@ObjCExportIgnoreNameCollision on $this is not supported. Only functions and constructors are supported."
+    }
+    return hasAnnotation
+}
 // Note: most usages of this method rely on the fact that concatenation of valid identifiers is valid identifier.
 // This may sometimes be a bit conservative (since it requires mangling non-first character as if it was first);
 // ignore this for simplicity as having Kotlin identifiers starting from digits is supposed to be rare case.

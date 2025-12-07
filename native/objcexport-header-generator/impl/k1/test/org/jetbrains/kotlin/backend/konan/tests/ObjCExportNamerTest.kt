@@ -7,17 +7,24 @@ package org.jetbrains.kotlin.backend.konan.tests
 
 import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.K1Deprecation
+import org.jetbrains.kotlin.backend.konan.ObjCExportNameCollisionMode
 import org.jetbrains.kotlin.backend.konan.descriptors.enumEntries
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportNamer
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportNamer.ClassOrProtocolName
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportNamer.PropertyName
+import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportProblemCollector
+import org.jetbrains.kotlin.backend.konan.objcexport.getBaseMethods
 import org.jetbrains.kotlin.backend.konan.testUtils.InlineSourceTestEnvironment
 import org.jetbrains.kotlin.backend.konan.testUtils.compileAndDeserializeSources
+import org.jetbrains.kotlin.backend.konan.testUtils.createObjCExportMapper
 import org.jetbrains.kotlin.backend.konan.testUtils.createObjCExportNamer
 import org.jetbrains.kotlin.backend.konan.testUtils.createObjCExportNamerConfiguration
 import org.jetbrains.kotlin.backend.konan.testUtils.findSingleFunction
 import org.jetbrains.kotlin.cli.common.disposeRootInWriteAction
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -27,6 +34,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 /**
  * ## Test Scope
@@ -216,5 +224,127 @@ class ObjCExportNamerTest : InlineSourceTestEnvironment {
         assertEquals(ClassOrProtocolName("Foo", "Foo"), namer.getClassOrProtocolName(foo))
         assertEquals("a", namer.getEnumEntrySelector(fooA))
         assertEquals("a", namer.getEnumEntrySwiftName(fooA))
+    }
+
+    private fun createCollisionNamerConfig(mode: ObjCExportNameCollisionMode) = object : ObjCExportNamer.Configuration {
+        override val topLevelNamePrefix = ""
+        override fun getAdditionalPrefix(module: ModuleDescriptor) = null
+        override val objcGenerics = true
+        override val nameCollisionMode = mode
+    }
+
+    @Test
+    fun `test - Appendable name collision suppresses error`() {
+        val problemCollector = TestObjCExportProblemCollector()
+        val module = compileAndDeserializeSources("class Dummy")
+        val appendable = module.findClassAcrossModuleDependencies(ClassId.fromString("kotlin/text/Appendable"))!!
+        val appendMethods = appendable.unsubstitutedMemberScope
+            .getContributedFunctions(Name.identifier("append"), NoLookupLocation.FROM_TEST)
+
+        val namer = createObjCExportNamer(
+            configuration = createCollisionNamerConfig(ObjCExportNameCollisionMode.ERROR),
+            problemCollector = problemCollector,
+        )
+
+        val selectors = appendMethods.map { namer.getSelector(it) }
+
+        assertTrue(selectors.any { it.endsWith("_:") }, "Expected a mangled selector among $selectors")
+        assertEquals(0, problemCollector.errors.size)
+    }
+
+    @Test
+    fun `test - StringBuilder name collisions suppress error for constructors and methods`() {
+        val problemCollector = TestObjCExportProblemCollector()
+        val module = compileAndDeserializeSources("class Dummy")
+        val stringBuilder = module.findClassAcrossModuleDependencies(ClassId.fromString("kotlin/text/StringBuilder"))!!
+
+        val mapper = createObjCExportMapper()
+        val namer = createObjCExportNamer(
+            configuration = createCollisionNamerConfig(ObjCExportNameCollisionMode.ERROR),
+            problemCollector = problemCollector,
+            mapper = mapper,
+        )
+
+        val ctorSelectors = stringBuilder.constructors.map { namer.getSelector(it) }
+        val methodSelectors = listOf("append", "insert", "appendRange", "insertRange").flatMap { name ->
+            stringBuilder.unsubstitutedMemberScope
+                .getContributedFunctions(Name.identifier(name), NoLookupLocation.FROM_TEST)
+                .flatMap { mapper.getBaseMethods(it) }
+        }.distinct().map { namer.getSelector(it) }
+
+        assertTrue(ctorSelectors.any { it.endsWith("_:") }, "Expected a mangled constructor selector among $ctorSelectors")
+        assertTrue(methodSelectors.any { it.endsWith("_:") }, "Expected a mangled method selector among $methodSelectors")
+        assertEquals(0, problemCollector.errors.size)
+    }
+
+    @Test
+    fun `test - Appendable name collision suppresses warning`() {
+        val problemCollector = TestObjCExportProblemCollector()
+        val module = compileAndDeserializeSources("class Dummy")
+        val appendable = module.findClassAcrossModuleDependencies(ClassId.fromString("kotlin/text/Appendable"))!!
+        val appendMethods = appendable.unsubstitutedMemberScope
+            .getContributedFunctions(Name.identifier("append"), NoLookupLocation.FROM_TEST)
+
+        val namer = createObjCExportNamer(
+            configuration = createCollisionNamerConfig(ObjCExportNameCollisionMode.WARNING),
+            problemCollector = problemCollector,
+        )
+
+        appendMethods.forEach { namer.getSelector(it) }
+
+        assertEquals(0, problemCollector.warnings.size)
+    }
+
+    @Test
+    fun `test - unannotated method name collision reports error`() {
+        val problemCollector = TestObjCExportProblemCollector()
+        val module = compileAndDeserializeSources(
+            """
+            package test
+            class Foo {
+                fun bar(x: Int) {}
+                fun bar(x: String) {}
+            }
+            """.trimIndent()
+        )
+
+        val foo = module.findClassAcrossModuleDependencies(ClassId.fromString("test/Foo"))!!
+        val barMethods = foo.unsubstitutedMemberScope
+            .getContributedFunctions(Name.identifier("bar"), NoLookupLocation.FROM_TEST)
+
+        val namer = createObjCExportNamer(
+            configuration = createCollisionNamerConfig(ObjCExportNameCollisionMode.ERROR),
+            problemCollector = problemCollector,
+        )
+
+        barMethods.forEach { namer.getSelector(it) }
+
+        assertEquals(1, problemCollector.errors.size)
+    }
+}
+
+private class TestObjCExportProblemCollector : ObjCExportProblemCollector {
+    val warnings = mutableListOf<String>()
+    val errors = mutableListOf<String>()
+    val exceptions = mutableListOf<Throwable>()
+
+    override fun reportWarning(text: String) {
+        warnings.add(text)
+    }
+
+    override fun reportWarning(declaration: DeclarationDescriptor, text: String) {
+        warnings.add("$declaration: $text")
+    }
+
+    override fun reportError(text: String) {
+        errors.add(text)
+    }
+
+    override fun reportError(declaration: DeclarationDescriptor, text: String) {
+        errors.add("$declaration: $text")
+    }
+
+    override fun reportException(throwable: Throwable) {
+        exceptions.add(throwable)
     }
 }

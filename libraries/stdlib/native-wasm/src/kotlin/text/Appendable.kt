@@ -5,6 +5,8 @@
 
 package kotlin.text
 
+import kotlin.native.ObjCExportIgnoreNameCollision
+
 /**
  * An object to which char sequences and values can be appended.
  */
@@ -15,6 +17,7 @@ public actual interface Appendable {
      * @param value the character to append.
      */
     @IgnorableReturnValue
+    @ObjCExportIgnoreNameCollision
     public actual fun append(value: Char): Appendable
 
     /**
@@ -23,6 +26,7 @@ public actual interface Appendable {
      * @param value the character sequence to append. If [value] is `null`, then the four characters `"null"` are appended to this Appendable.
      */
     @IgnorableReturnValue
+    @ObjCExportIgnoreNameCollision
     public actual fun append(value: CharSequence?): Appendable
 
     /**
