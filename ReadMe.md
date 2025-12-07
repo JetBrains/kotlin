@@ -1,47 +1,93 @@
+<div align="center">
+
 [![official project](https://jb.gg/badges/official.svg)](https://confluence.jetbrains.com/display/ALL/JetBrains+on+GitHub)
 [![TeamCity (simple build status)](https://img.shields.io/teamcity/http/teamcity.jetbrains.com/s/Kotlin_KotlinPublic_Compiler.svg)](https://teamcity.jetbrains.com/buildConfiguration/Kotlin_KotlinPublic_Compiler?branch=%3Cdefault%3E&buildTypeTab=overview&mode=builds)
 [![Maven Central](https://img.shields.io/maven-central/v/org.jetbrains.kotlin/kotlin-maven-plugin.svg)](https://search.maven.org/#search%7Cga%7C1%7Cg%3A%22org.jetbrains.kotlin%22)
 [![GitHub license](https://img.shields.io/badge/license-Apache%20License%202.0-blue.svg?style=flat)](https://www.apache.org/licenses/LICENSE-2.0)
 [![Revved up by Develocity](https://img.shields.io/badge/Revved%20up%20by-Develocity-06A0CE?logo=Gradle&labelColor=02303A)](https://ge.jetbrains.com/scans?search.rootProjectNames=Kotlin)
 
+<img src="https://upload.wikimedia.org/wikipedia/commons/7/74/Kotlin_Icon.png" width="120" alt="Kotlin logo" />
+
 # Kotlin Programming Language
 
-Welcome to [Kotlin](https://kotlinlang.org/)!   
-Kotlin is a concise multiplatform language developed by [JetBrains](https://www.jetbrains.com/) and [contributors](https://kotlinlang.org/docs/contribute.html).
+_Kotlin: Concise • Safe • Multiplatform_
 
-Some handy links:
+Kotlin is a concise multiplatform language developed by [JetBrains](https://www.jetbrains.com/) and
+[contributors](https://kotlinlang.org/docs/contribute.html).
 
- * [Kotlin Site](https://kotlinlang.org/)
- * [Getting Started Guide](https://kotlinlang.org/docs/tutorials/getting-started.html)
- * [Try Kotlin](https://play.kotlinlang.org/)
- * [Kotlin Standard Library](https://kotlinlang.org/api/latest/jvm/stdlib/index.html)
- * [Issue Tracker](https://youtrack.jetbrains.com/issues/KT)
- * [Kotlin YouTube Channel](https://www.youtube.com/channel/UCP7uiEZIqci43m22KDl0sNw)
- * [Forum](https://discuss.kotlinlang.org/)
- * [Kotlin Blog](https://blog.jetbrains.com/kotlin/)
- * [Subscribe to Kotlin YouTube channel](https://www.youtube.com/channel/UCP7uiEZIqci43m22KDl0sNw)
- * [Follow Kotlin on Twitter](https://twitter.com/kotlin)
- * [Public Slack channel](https://slack.kotlinlang.org/)
- * [TeamCity CI build](https://teamcity.jetbrains.com/project.html?tab=projectOverview&projectId=Kotlin)
- * [Kotlin Foundation](https://kotlinfoundation.org/)
+---
 
-## Kotlin Multiplatform capabilities
+### 🔗 Helpful Resources
 
-Support for multiplatform programming is one of Kotlin’s key benefits. It reduces time spent writing and maintaining the same code for [different platforms](https://kotlinlang.org/docs/reference/mpp-supported-platforms.html) while retaining the flexibility and benefits of native programming.
+[Website](https://kotlinlang.org/) •
+[Getting Started](https://kotlinlang.org/docs/tutorials/getting-started.html) •
+[Try Kotlin](https://play.kotlinlang.org/) •
+[Standard Library](https://kotlinlang.org/api/latest/jvm/stdlib/index.html) •
+[Issue Tracker](https://youtrack.jetbrains.com/issues/KT) •
+[YouTube Channel](https://www.youtube.com/channel/UCP7uiEZIqci43m22KDl0sNw) •
+[Blog](https://blog.jetbrains.com/kotlin/) •
+[Forum](https://discuss.kotlinlang.org/) •
+[Slack Community](https://slack.kotlinlang.org/) •
+[Twitter](https://twitter.com/kotlin) •
+[TeamCity CI](https://teamcity.jetbrains.com/project.html?tab=projectOverview&projectId=Kotlin) •
+[Kotlin Foundation](https://kotlinfoundation.org/)
 
- * [Kotlin Multiplatform](https://www.jetbrains.com/kotlin-multiplatform/) and [Compose Multiplatform](https://www.jetbrains.com/compose-multiplatform/) for sharing business logic and UI between Android, iOS, desktop, and web.
- * [Get started with Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html)
- * [Kotlin Multiplatform Benefits](https://kotlinlang.org/docs/reference/multiplatform.html)
- * [Share code on all platforms](https://kotlinlang.org/docs/reference/mpp-share-on-platforms.html#share-code-on-all-platforms)
- * [Share code on similar platforms](https://kotlinlang.org/docs/reference/mpp-share-on-platforms.html#share-code-on-similar-platforms)
+</div>
 
-## Editing Kotlin
+---
 
- * [Kotlin IntelliJ IDEA Plugin](https://kotlinlang.org/docs/tutorials/getting-started.html) ([source code](https://github.com/JetBrains/intellij-community/tree/master/plugins/kotlin))
- * [Kotlin Eclipse Plugin](https://kotlinlang.org/docs/tutorials/getting-started-eclipse.html)
- * [Kotlin Sublime Text Package](https://github.com/vkostyukov/kotlin-sublime-package)
+## 📚 Table of Contents
 
-## Build environment requirements
+- [Kotlin Multiplatform capabilities](#kotlin-multiplatform-capabilities)
+- [Editing Kotlin](#editing-kotlin)
+- [Build environment requirements](#build-environment-requirements)
+- [Building](#building)
+    - [Important Gradle tasks](#important-gradle-tasks)
+- [Working with the project in IntelliJ IDEA](#working-with-the-project-in-intellij-idea)
+    - [Dependency verification](#dependency-verification)
+- [Using -dev versions](#using--dev-versions)
+- [License](#license)
+- [Contributing](#contributing)
+- [Kotlin Foundation](#kotlin-foundation)
+
+---
+
+## 💻📱🖥 Kotlin Multiplatform Capabilities
+
+Kotlin enables sharing code across [different platforms](https://kotlinlang.org/docs/reference/mpp-supported-platforms.html)
+— while offering native performance and flexibility.
+
+Use:
+
+- [Kotlin Multiplatform](https://www.jetbrains.com/kotlin-multiplatform/)
+- [Compose Multiplatform](https://www.jetbrains.com/compose-multiplatform/)
+
+To share:
+
+- Business logic
+- UI components
+- Across Android, iOS, desktop and web
+
+More details:
+
+- [Get Started](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html)
+- [Benefits](https://kotlinlang.org/docs/reference/multiplatform.html)
+- [Share code on all platforms](https://kotlinlang.org/docs/reference/mpp-share-on-platforms.html#share-code-on-all-platforms)
+- [Share code on similar platforms](https://kotlinlang.org/docs/reference/mpp-share-on-platforms.html#share-code-on-similar-platforms)
+
+---
+
+## 🛠️ Editing Kotlin
+
+Choose your favorite editor or IDE:
+
+- [Kotlin IntelliJ Plugin](https://kotlinlang.org/docs/tutorials/getting-started.html)  
+  ([source](https://github.com/JetBrains/intellij-community/tree/master/plugins/kotlin))
+- [Kotlin Eclipse Plugin](https://kotlinlang.org/docs/tutorials/getting-started-eclipse.html)
+- [Kotlin Sublime Text Package](https://github.com/vkostyukov/kotlin-sublime-package)
+
+---
+## ⚙️ Build Environment Requirements
 
 This repository is using [Gradle toolchains](https://docs.gradle.org/current/userguide/toolchains.html) feature
 to select and auto-provision required JDKs from [AdoptOpenJdk](https://adoptopenjdk.net) project.
@@ -54,8 +100,8 @@ from environmental variables - disable Gradle toolchain auto-detection by passin
 On Windows you might need to add long paths setting to the repo:
 
     git config core.longpaths true 
-
-## Building
+---
+## 🔨 Building
 
 The project is built with Gradle. Run Gradle to build the project and to run the tests 
 using the following command on Unix/macOS:
@@ -76,8 +122,8 @@ you might face timeouts getting them. In this case, you can increase timeout by 
 command line parameters on the first run: 
     
     ./gradlew -Dhttp.socketTimeout=60000 -Dhttp.connectionTimeout=60000
-
-## Important gradle tasks
+---
+## 📌 Important gradle tasks
 
 - `clean` - clean build results
 - `dist` - assembles the compiler distribution into `dist/kotlinc/` folder
@@ -93,8 +139,8 @@ Refer to [libraries/ReadMe.md](libraries/ReadMe.md) for details.
 
 To build Kotlin/Native, see
 [kotlin-native/README.md](kotlin-native/README.md#building-from-source).
-
-## <a name="working-in-idea"></a> Working with the project in IntelliJ IDEA
+---
+## <a name="working-in-idea"></a> 🧑‍💻 Working with the project in IntelliJ IDEA
 
 It is recommended to use the latest released version of Intellij IDEA (Community or Ultimate Edition). You can download IntelliJ IDEA [here](https://www.jetbrains.com/idea/download).
 
@@ -138,7 +184,8 @@ Keep in mind:
   Otherwise, native-only dependencies may not be added to the verification metadata. This is because `local.properties` has higher 
   precedence than the `-Pkotlin.native.enabled=true` specified in the Gradle command.
 
-## Using -dev versions
+---
+## ⚡ Using -dev versions
 
 We publish `-dev` versions frequently.
 
@@ -148,13 +195,40 @@ For `-dev` versions you can use the [list of available versions](https://redirec
 maven("https://redirector.kotlinlang.org/maven/bootstrap")
 ```
 
-# License
-Kotlin is distributed under the terms of the Apache License (Version 2.0). See [license folder](license/README.md) for details.
+---
 
-# Contributing
+## 📜 License
 
-Please be sure to review Kotlin's [contributing guidelines](docs/contributing.md) to learn how to help the project.
+Kotlin is distributed under the terms of the **Apache License 2.0**.
 
-# Kotlin Foundation
+You can find full licensing details here:  
+➡️ [`/license`](license/README.md)
 
-The Kotlin Foundation is a non-profit organization whose mission is to promote and advance the Kotlin ecosystem. You can learn more about the structure and goals of the Kotlin Foundation on its [official website](https://kotlinfoundation.org/).
+---
+
+## 🤝 Contributing
+
+We love community contributions! 💜  
+Before you begin, please review our guidelines:
+
+➡️ [`docs/contributing.md`](docs/contributing.md)
+
+This will help you understand development workflow, code style, and how to submit changes successfully.
+
+---
+
+## 🏛 Kotlin Foundation
+
+The **Kotlin Foundation** is a non-profit organization dedicated to promoting and advancing the Kotlin ecosystem,
+ensuring long-term development and community support.
+
+Learn more:  
+➡️ https://kotlinfoundation.org/
+
+---
+
+<div align="center">
+
+Made with ❤️ by JetBrains & the Kotlin Community
+
+</div>
