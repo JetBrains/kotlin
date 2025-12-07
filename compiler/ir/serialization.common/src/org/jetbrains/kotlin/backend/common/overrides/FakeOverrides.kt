@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.builders.declarations.buildProperty
 import org.jetbrains.kotlin.ir.builders.declarations.buildTypeParameter
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.objcinterop.isObjCClass
 import org.jetbrains.kotlin.ir.overrides.FakeOverrideBuilderStrategy
 import org.jetbrains.kotlin.ir.overrides.IrExternalOverridabilityCondition
 import org.jetbrains.kotlin.ir.overrides.IrFakeOverrideBuilder
@@ -120,12 +121,16 @@ private class IrLinkerFakeOverrideBuilderStrategy(
                  * If there is a **real** super-class function in the list, it must be unique.
                  * In that case it is preferred over functions coming from the default implementation in interfaces.
                  *
-                 * If there is no such function, but there are several interface functions - it is an incompatible change.
+                 * If there is no such function, but there are several Kotlin/Java interface functions - it is an incompatible change.
+                 * Objective-C protocol properties, however, are always oddly final, but it causes no harm, so the error is relaxed.
                  *
                  * This is done to mimic jvm behaviour.
                  */
 
-                runIf(nonAbstractOverrides.all { it.parentAsClass.isInterface }) {
+                runIf(nonAbstractOverrides.all {
+                    it.parentAsClass.isInterface &&
+                            (it.modality == Modality.FINAL && it.parentAsClass.isInterface && it.parentAsClass.isObjCClass())
+                }) {
                     PartiallyLinkedDeclarationOrigin.AMBIGUOUS_NON_OVERRIDDEN_CALLABLE_MEMBER
                 }
             }
