@@ -7,7 +7,7 @@ This mode is not recommended for production use,
 as no stability/compatibility guarantees are given on
 compiler or generated code. Use it at your own risk!
 
-warning: language version 2.0 is deprecated and its support will be removed in a future version of Kotlin.
+warning: language version 2.0 is deprecated and its support will be removed in a future version of Kotlin. Update the version to 2.1.
 compiler/testData/cli/jvm/readingConfigFromEnvironment/overridingXx.kt:18:5: error: cannot use 'Nothing?' as reified type parameter.
     foo(b)
     ^^^

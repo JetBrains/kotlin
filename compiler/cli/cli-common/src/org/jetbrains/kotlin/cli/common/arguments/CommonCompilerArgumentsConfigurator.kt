@@ -259,13 +259,20 @@ private fun CommonCompilerArguments.checkLanguageVersionIsStable(languageVersion
         collector.report(
             CompilerMessageSeverity.STRONG_WARNING,
             "Language version ${languageVersion.versionString} is experimental, there are no backwards compatibility guarantees for " +
-                    "new language and library features."
+                    "new language and library features. " +
+                    "Use the stable version ${LanguageVersion.LATEST_STABLE} instead."
         )
     }
 }
 
 private fun CommonCompilerArguments.checkOutdatedVersions(language: LanguageVersion, api: ApiVersion, collector: MessageCollector) {
     val (version, supportedVersion, versionKind) = findOutdatedVersion(language, api) ?: return
+    val firstNonDeprecated by lazy {
+        when (versionKind) {
+            VersionKind.LANGUAGE -> LanguageVersion.FIRST_NON_DEPRECATED
+            VersionKind.API -> ApiVersion.FIRST_NON_DEPRECATED
+        }
+    }
     when {
         version.isUnsupported -> {
             if ((!language.isJvmOnly || this !is K2JVMCompilerArguments)) {
@@ -278,7 +285,8 @@ private fun CommonCompilerArguments.checkOutdatedVersions(language: LanguageVers
                 collector.report(
                     CompilerMessageSeverity.STRONG_WARNING,
                     "${versionKind.text} version ${version.versionString} is deprecated in JVM " +
-                            "and its support will be removed in a future version of Kotlin."
+                            "and its support will be removed in a future version of Kotlin. " +
+                            "Update the version to $firstNonDeprecated."
                 )
             }
         }
@@ -286,7 +294,8 @@ private fun CommonCompilerArguments.checkOutdatedVersions(language: LanguageVers
             collector.report(
                 CompilerMessageSeverity.STRONG_WARNING,
                 "${versionKind.text} version ${version.versionString} is deprecated " +
-                        "and its support will be removed in a future version of Kotlin."
+                        "and its support will be removed in a future version of Kotlin. " +
+                        "Update the version to $firstNonDeprecated."
             )
         }
     }
