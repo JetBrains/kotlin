@@ -1,0 +1,30 @@
+//
+// Source
+// ------------------------------------------
+
+@Composable
+fun Test(isEnabled: Boolean = false) {
+    val composition: Composition = remember { TODO() }
+    LaunchedEffect(isEnabled) {
+        disposingComposition {
+            composition.suspendContent { println(isEnabled) }
+        }
+    }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+========= FunctionMeta: true, OptimizeGroups: true =========
+TestKt {
+    file: Test.kt
+    Test(ZLandroidx/compose/runtime/Composer;II)V
+        RestartGroup { key: <key>, line: 5 }
+}
+
+TestKt$Test$1$1 {
+    file: Test.kt
+    invokeSuspend$lambda$0$0(ZLandroidx/compose/runtime/Composer;I)Lkotlin/Unit;
+        Root { key: <key>, line: 9 }
+}
