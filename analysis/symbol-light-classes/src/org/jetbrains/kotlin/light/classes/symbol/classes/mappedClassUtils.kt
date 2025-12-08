@@ -199,9 +199,10 @@ internal fun KaSession.processPossiblyMappedMethod(
  * ## Conditions for stub generation
  *
  * Stubs are only generated when ALL the following conditions are met:
- * 1. The class is a concrete or abstract class (not an interface or annotation)
- * 2. All supertypes are interfaces (this class is the first non-interface subtype)
- * 3. At least one supertype is a Kotlin collection that maps to a Java collection
+ * 1. The class is a concrete/abstract class or object
+ * 2. At least one supertype is a Kotlin collection that maps to a Java collection
+ * 3. This class is the first non-interface subtype of Kotlin Collection in the inheritance chain (all other supertypes either
+ * do not extend Collection or are interfaces)
  *
  * ## What gets generated
  *
@@ -236,10 +237,9 @@ internal fun KaSession.generateJavaCollectionMethodStubsIfNeeded(
     allSupertypes: List<KaClassType>,
     result: MutableList<PsiMethod>,
 ) {
-    if (classSymbol.classKind != KaClassKind.CLASS) return
-    if (allSupertypes.any { (it.symbol as? KaClassSymbol)?.classKind != KaClassKind.INTERFACE }) return
-
     val closestMappedSupertype = allSupertypes.find { mapKotlinClassToJava(it.classId) != null } ?: return
+    if (!isFirstNonInterfaceSubtypeOfCollection(classSymbol)) return
+
     val javaClassId = mapKotlinClassToJava(closestMappedSupertype.classId) ?: return
     val kotlinCollectionSymbol = closestMappedSupertype.symbol as? KaClassSymbol ?: return
     val javaCollectionSymbol = findClass(javaClassId) ?: return
@@ -247,6 +247,19 @@ internal fun KaSession.generateJavaCollectionMethodStubsIfNeeded(
     val substitutor = createPsiSubstitutor(javaCollectionPsiClass, closestMappedSupertype, containingClass)
 
     generateJavaCollectionMethodStubs(containingClass, javaCollectionPsiClass, kotlinCollectionSymbol, substitutor, result)
+}
+
+private fun KaSession.isFirstNonInterfaceSubtypeOfCollection(classSymbol: KaClassSymbol): Boolean {
+    if (classSymbol.classKind.let { it != KaClassKind.CLASS && it != KaClassKind.OBJECT }) {
+        return false
+    }
+
+    return classSymbol.superTypes.none { directSupertype ->
+        val supertypeSymbol = directSupertype.expandedSymbol ?: return@none false
+        if (supertypeSymbol.classKind == KaClassKind.INTERFACE) return@none false
+        val allSupertypes = supertypeSymbol.defaultType.allSupertypes.filterIsInstance<KaClassType>().toList()
+        hasCollectionSupertype(allSupertypes)
+    }
 }
 
 private fun mapKotlinClassToJava(classId: ClassId): ClassId? {
