@@ -248,7 +248,7 @@ class PostponedArgumentsAnalyzer(
             c.canBeProper(lambdaReturnType) -> substitute(lambdaReturnType)
 
             // For Unit-coercion
-            !lambdaReturnType.isMarkedNullable && c.hasUpperOrEqualUnitConstraint(lambdaReturnType) -> unitType
+            lambdaReturnType.willEventuallyBecomeUnit(c) -> unitType
 
             // Supplying the expected type for lambda effectively makes it being resolved in the FULL completion mode.
             // For non-PCLA lambdas using expected types with non-fixed type variables would lead to illegal state: calls inside return
@@ -289,6 +289,9 @@ class PostponedArgumentsAnalyzer(
         return results
     }
 
+    private fun ConeKotlinType.willEventuallyBecomeUnit(c: PostponedArgumentsAnalyzerContext): Boolean =
+        !isMarkedNullable && c.hasUpperOrEqualUnitConstraint(this)
+
     fun applyResultsOfAnalyzedLambdaToCandidateSystem(
         c: PostponedArgumentsAnalyzerContext,
         lambda: ConeResolvedLambdaAtom,
@@ -317,7 +320,8 @@ class PostponedArgumentsAnalyzer(
             )
         }
         val isLastExpressionCoercedToUnit =
-            returnTypeRef.coneType.isUnitOrFlexibleUnit || lambda.anonymousFunction.lambdaWithExplicitEmptyReturns(returnArguments)
+            returnTypeRef.coneType.isUnitOrFlexibleUnit || returnTypeRef.coneType.willEventuallyBecomeUnit(c)
+                    || lambda.anonymousFunction.lambdaWithExplicitEmptyReturns(returnArguments)
 
         for (atom in returnAtoms) {
             val expression = atom.expression
