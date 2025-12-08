@@ -11,9 +11,9 @@ import org.gradle.api.artifacts.type.ArtifactTypeDefinition
 import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.Jar
-import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.plugin.KotlinGradlePluginExtensionPoint
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
+import org.jetbrains.kotlin.gradle.plugin.addToAssemble
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 
@@ -45,9 +45,7 @@ internal fun KotlinTarget.createPublishArtifact(
     artifactType: String,
     vararg elementsConfiguration: Configuration?,
 ): PublishArtifact {
-    project.tasks.named(LifecycleBasePlugin.ASSEMBLE_TASK_NAME).configure { assembleTask ->
-        assembleTask.dependsOn(artifactTask)
-    }
+    project.addToAssemble(artifactTask)
 
     val primaryConfig = elementsConfiguration.firstOrNull()
         ?: project.configurations.detachedConfiguration()

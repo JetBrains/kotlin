@@ -10,9 +10,9 @@ import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.plugins.ExtensionAware
-import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.addToAssemble
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeOutputKind
 import org.jetbrains.kotlin.gradle.plugin.mpp.enabledOnCurrentHostForBinariesCompilation
@@ -83,7 +83,7 @@ class KotlinNativeLibraryImpl(
             task.description = "Assemble all types of registered '$artifactName' ${kind.description} for ${target.visibleName}."
             task.enabled = target.enabledOnCurrentHostForBinariesCompilation
         }
-        project.tasks.named(LifecycleBasePlugin.ASSEMBLE_TASK_NAME).dependsOn(resultTask)
+        project.addToAssemble(resultTask)
 
         val librariesConfigurationName = project.registerLibsDependencies(target, artifactName, modules)
         val exportConfigurationName = project.registerExportDependencies(target, artifactName, modules)
