@@ -15,23 +15,26 @@ import kotlin.wasm.internal.*
  * String builder can be used to efficiently perform multiple string manipulation operations.
  */
 public actual class StringBuilder private constructor(
-    private var jsString: JsString,
-    private var capacity: Int
+    private var jsString: JsString
 ) : CharSequence, Appendable {
 
     /** Constructs an empty string builder. */
-    public actual constructor() : this(jsEmptyString, 10)
+    public actual constructor() : this(jsEmptyString)
 
-    /** Constructs an empty string builder with the specified initial [capacity]. */
-    public actual constructor(capacity: Int) : this(jsEmptyString, capacity)
+    /**
+     * Constructs an empty string builder.
+     *
+     * In Kotlin/WasmJS implementation of StringBuilder the initial capacity has no effect on the further performance of operations.
+     */
+    public actual constructor(capacity: Int) : this(jsEmptyString)
 
     /** Constructs a string builder that contains the same characters as the specified [content] string. */
-    public actual constructor(content: String) : this(content.internalStr, content.length) {
+    public actual constructor(content: String) : this(content.internalStr) {
     }
 
     /** Constructs a string builder that contains the same characters as the specified [content] char sequence. */
     public actual constructor(content: CharSequence) :
-            this(content.toString().internalStr, content.length) {
+            this(content.toString().internalStr) {
     }
 
     actual override val length: Int
@@ -229,7 +232,6 @@ public actual class StringBuilder private constructor(
     @IgnorableReturnValue
     public actual fun append(value: String?): StringBuilder {
         val toAppend = value ?: "null"
-        ensureExtraCapacity(toAppend.length)
         jsString = jsConcat(jsString, toAppend.internalStr).unsafeCast()
         return this
     }
@@ -238,18 +240,22 @@ public actual class StringBuilder private constructor(
      * Returns the current capacity of this string builder.
      *
      * The capacity is the maximum length this string builder can have before an allocation occurs.
+     *
+     * In Kotlin/WasmJS implementation of StringBuilder the value returned from this method may not indicate the actual size of the backing storage.
      */
-    public actual fun capacity(): Int = capacity
+    @Deprecated("Obtaining StringBuilder capacity is not supported in WasmJS and common code.", level = DeprecationLevel.WARNING)
+    public actual fun capacity(): Int = length
 
     /**
      * Ensures that the capacity of this string builder is at least equal to the specified [minimumCapacity].
      *
      * If the current capacity is less than the [minimumCapacity], a new backing storage is allocated with greater capacity.
      * Otherwise, this method takes no action and simply returns.
+     *
+     * In Kotlin/WasmJS implementation of StringBuilder the size of the backing storage is not extended to comply the given [minimumCapacity],
+     * thus calling this method has no effect on the further performance of operations.
      */
     public actual fun ensureCapacity(minimumCapacity: Int) {
-        if (minimumCapacity <= capacity) return
-        ensureCapacityInternal(minimumCapacity)
     }
 
     /**
@@ -440,7 +446,6 @@ public actual class StringBuilder private constructor(
     public actual fun insert(index: Int, value: String?): StringBuilder {
         val toInsert = value ?: "null"
         AbstractList.checkPositionIndex(index, length)
-        ensureExtraCapacity(toInsert.length)
 
         return insert(index, toInsert.internalStr)
     }
@@ -468,7 +473,6 @@ public actual class StringBuilder private constructor(
         } else if (newLength < length) {
             jsString = jsSubstring(jsString, 0, newLength).unsafeCast()
         }
-        ensureCapacity(newLength)
     }
 
     /**
@@ -527,10 +531,6 @@ public actual class StringBuilder private constructor(
     @IgnorableReturnValue
     public fun setRange(startIndex: Int, endIndex: Int, value: String): StringBuilder {
         checkReplaceRange(startIndex, endIndex, length)
-
-        val coercedEndIndex = endIndex.coerceAtMost(length)
-        val lengthDiff = value.length - (coercedEndIndex - startIndex)
-        ensureExtraCapacity(lengthDiff)
 
         var res = value.internalStr
         if (startIndex != 0) {
@@ -624,8 +624,6 @@ public actual class StringBuilder private constructor(
     @IgnorableReturnValue
     public fun appendRange(value: CharArray, startIndex: Int, endIndex: Int): StringBuilder {
         AbstractList.checkBoundsIndexes(startIndex, endIndex, value.size)
-        val extraLength = endIndex - startIndex
-        ensureExtraCapacity(extraLength)
         jsString = jsConcat(jsString, jsFromCharCodeArray(value.storage, startIndex, endIndex).unsafeCast()).unsafeCast()
         return this
     }
@@ -643,8 +641,6 @@ public actual class StringBuilder private constructor(
     @IgnorableReturnValue
     public fun appendRange(value: CharSequence, startIndex: Int, endIndex: Int): StringBuilder {
         AbstractList.checkBoundsIndexes(startIndex, endIndex, value.length)
-        val extraLength = endIndex - startIndex
-        ensureExtraCapacity(extraLength)
         jsString = jsConcat(jsString, jsSubstring(value.toString().internalStr, startIndex, endIndex).unsafeCast()).unsafeCast()
         return this
     }
@@ -667,8 +663,6 @@ public actual class StringBuilder private constructor(
     public fun insertRange(index: Int, value: CharSequence, startIndex: Int, endIndex: Int): StringBuilder {
         AbstractList.checkBoundsIndexes(startIndex, endIndex, value.length)
         AbstractList.checkPositionIndex(index, length)
-        val extraLength = endIndex - startIndex
-        ensureExtraCapacity(extraLength)
 
         val valueJsString = jsSubstring(value.toString().internalStr, startIndex, endIndex).unsafeCast<JsString>()
         return insert(index, valueJsString)
@@ -693,9 +687,6 @@ public actual class StringBuilder private constructor(
         AbstractList.checkPositionIndex(index, length)
         AbstractList.checkBoundsIndexes(startIndex, endIndex, value.size)
 
-        val extraLength = endIndex - startIndex
-        ensureExtraCapacity(extraLength)
-
         val valueJsString = jsFromCharCodeArray(value.storage, startIndex, endIndex)
         return insert(index, valueJsString)
     }
@@ -719,17 +710,6 @@ public actual class StringBuilder private constructor(
         }
         jsString = res
         return this
-    }
-
-    private fun ensureExtraCapacity(n: Int) {
-        ensureCapacityInternal(length + n)
-    }
-
-    private fun ensureCapacityInternal(minCapacity: Int) {
-        if (minCapacity < 0) throw OutOfMemoryError()    // overflow
-        if (minCapacity > capacity) {
-            capacity = minCapacity
-        }
     }
 
     private fun checkReplaceRange(startIndex: Int, endIndex: Int, length: Int) {
