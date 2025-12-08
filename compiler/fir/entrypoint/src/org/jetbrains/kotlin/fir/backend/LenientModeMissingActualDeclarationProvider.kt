@@ -292,7 +292,7 @@ class LenientModeMissingActualDeclarationProvider(
     private fun addThrowsAnnotation(function: IrSimpleFunction) {
         throwsConstructorSymbol?.let { throwsConstructorSymbol ->
             function.annotations +=
-                IrConstructorCallImpl(
+                IrAnnotationImpl(
                     startOffset = UNDEFINED_OFFSET,
                     endOffset = UNDEFINED_OFFSET,
                     type = throwsConstructorSymbol.owner.returnType,

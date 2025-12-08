@@ -75,7 +75,7 @@ private class DataFrameFileLowering(val context: IrPluginContext) : FileLowering
         val marker = ((getterExtensionReceiver.type as IrSimpleType).arguments.single() as IrSimpleType).classOrFail.owner
         val jvmNameArg = "${marker.nestedName()}_${declaration.name.identifier}"
         getter.annotations = listOf(
-            IrConstructorCallImpl(-1, -1, jvmName.owner.returnType, jvmName, 0, 1)
+            IrAnnotationImpl(-1, -1, jvmName.owner.returnType, jvmName, 0, 1)
                 .also {
                     it.arguments[0] = IrConstImpl.string(-1, -1, context.irBuiltIns.stringType, jvmNameArg)
                 }

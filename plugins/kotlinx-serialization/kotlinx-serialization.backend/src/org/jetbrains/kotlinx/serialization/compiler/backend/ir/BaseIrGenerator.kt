@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.ir.expressions.IrClassReference
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.expressions.IrVararg
-import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrAnnotationImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.types.*
@@ -66,7 +66,7 @@ abstract class BaseIrGenerator(private val currentClass: IrClass, final override
         val jsExportIgnore = compilerContext.jsExportIgnoreClass ?: return
         val jsExportIgnoreCtor = jsExportIgnore.primaryConstructor ?: return
 
-        annotations += IrConstructorCallImpl(
+        annotations += IrAnnotationImpl(
             UNDEFINED_OFFSET,
             UNDEFINED_OFFSET,
             jsExportIgnore.defaultType,
