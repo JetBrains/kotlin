@@ -10,11 +10,15 @@ import kotlin.reflect.KClass
 import kotlin.reflect.KType
 import kotlin.reflect.KTypeParameter
 import kotlin.reflect.KTypeProjection
+import kotlin.reflect.KVariance
 import kotlin.reflect.full.createTypeImpl
 import kotlin.reflect.jvm.internal.types.ReflectTypeSystemContext.withNullability as withNullabilityFromTypeSystem
 
 internal class KTypeSubstitutor(private val substitution: Map<KTypeParameter, KTypeProjection>) {
     fun substitute(type: KType): KTypeProjection {
+        // Small optimization
+        if (substitution.isEmpty()) return KTypeProjection(KVariance.INVARIANT, type)
+
         val lowerBound = (type as? AbstractKType)?.lowerBoundIfFlexible()
         val upperBound = (type as? AbstractKType)?.upperBoundIfFlexible()
         if (lowerBound != null && upperBound != null) {
