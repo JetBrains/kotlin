@@ -75,22 +75,22 @@ class KotlinVersionsTest : KtUsefulTestCase() {
 
         val latestStableVersion = LanguageVersion.LATEST_STABLE.versionString.toVersion("LanguageVersion.LATEST_STABLE")
         // Note: comment the next line before a language version update
-        versions.add(latestStableVersion)
-
-        if (versions.any { v1 -> versions.any { v2 -> !v1.isConsistentWith(v2) } }) {
-            Assert.fail(
-                "Some versions are inconsistent. Please change the versions so that they are consistent:\n\n" +
-                        versions.joinToString(separator = "\n") { with(it) { "$versionString ($source)" } }
-            )
-        }
-
-        // Note: uncomment this fragment before a language version update
-//        if (versions.any { it.isConsistentWith(latestStableVersion) }) {
+//        versions.add(latestStableVersion)
+//
+//        if (versions.any { v1 -> versions.any { v2 -> !v1.isConsistentWith(v2) } }) {
 //            Assert.fail(
-//                "Some versions are consistent with LATEST_STABLE ${latestStableVersion.versionString}. Please edit KotlinVersionsTest accordingly:\n\n" +
+//                "Some versions are inconsistent. Please change the versions so that they are consistent:\n\n" +
 //                        versions.joinToString(separator = "\n") { with(it) { "$versionString ($source)" } }
 //            )
 //        }
+
+        // Note: uncomment this fragment before a language version update
+        if (versions.any { it.isConsistentWith(latestStableVersion) }) {
+            Assert.fail(
+                "Some versions are consistent with LATEST_STABLE ${latestStableVersion.versionString}. Please edit KotlinVersionsTest accordingly:\n\n" +
+                        versions.joinToString(separator = "\n") { with(it) { "$versionString ($source)" } }
+            )
+        }
     }
 
     fun testMavenProjectVersionsAreEqual() {
