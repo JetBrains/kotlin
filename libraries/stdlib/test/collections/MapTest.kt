@@ -12,6 +12,12 @@ import test.collections.js.stringMapOf
 import kotlin.math.pow
 
 class MapTest {
+    @Test fun testBuilder() {
+        val m = buildMap {
+            this["key"] = "value"
+        }
+        println(m)
+    }
 
     @Test fun getOrElse() {
         val data = mapOf<String, Int>()
