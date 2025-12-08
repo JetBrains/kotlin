@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.ir.builders.irReturn
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOriginImpl
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrBody
@@ -51,8 +52,12 @@ class ReplaceSuspendIntrinsicLowering(private val context: JsIrBackendContext) :
         return associateBy { it.regularParamCount }
     }
 
-    override fun lower(irBody: IrBody, container: IrDeclaration) {
+    override fun lower(irModule: IrModuleFragment) {
         if (!context.compileSuspendAsJsGenerator) return
+        super.lower(irModule)
+    }
+
+    override fun lower(irBody: IrBody, container: IrDeclaration) {
         irBody.transformChildrenVoid(object : IrElementTransformerVoid() {
             private val containerFunctionStack = mutableListOf(container)
 
