@@ -301,7 +301,7 @@ abstract class LibrarySpecialCompatibilityChecksTest : TestCaseWithTmpdir() {
         }
 
         private fun createPatchedStdlib(stdlibPath: String): String {
-            val stdlibName = stdlibPath.substringAfterLast("/").substringBeforeLast(".")
+            val stdlibName = File(stdlibPath).nameWithoutExtension
             val patchedStdlibDir = createTempDir(stdlibName).apply {
                 KlibFile(stdlibPath).unzipTo(KlibFile(absolutePath))
                 File(absolutePath).resolve(KLIB_JAR_MANIFEST_FILE).delete()
