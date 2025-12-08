@@ -27,22 +27,18 @@ public actual class StringBuilder private constructor(
 
     /** Constructs a string builder that contains the same characters as the specified [content] string. */
     public actual constructor(content: String) : this(content.internalStr, content.length) {
-        _length = content.length
     }
 
     /** Constructs a string builder that contains the same characters as the specified [content] char sequence. */
     public actual constructor(content: CharSequence) :
             this(content.toString().internalStr, content.length) {
-        _length = content.length
     }
 
-    private var _length: Int = 0
-
     actual override val length: Int
-        get() = _length
+        get() = jsLength(jsString)
 
     actual override fun get(index: Int): Char {
-        AbstractList.checkElementIndex(index, _length)
+        AbstractList.checkElementIndex(index, length)
         return jsCharCodeAt(jsString, index).reinterpretAsChar()
     }
 
@@ -82,18 +78,18 @@ public actual class StringBuilder private constructor(
 
         val array = WasmCharArray(this.length)
         jsIntoCharCodeArray(jsString, array, 0)
-        var end = _length - 1
+        var end = length - 1
         var front = 0
         var frontLeadingChar = array.get(0)
         var endTrailingChar = array.get(end)
         var allowFrontSurrogate = true
         var allowEndSurrogate = true
-        while (front < _length / 2) {
+        while (front < length / 2) {
 
             val frontTrailingChar = array.get(front + 1)
             val endLeadingChar = array.get(end - 1)
             val surrogateAtFront = allowFrontSurrogate && frontTrailingChar.isLowSurrogate() && frontLeadingChar.isHighSurrogate()
-            if (surrogateAtFront && _length < 3) {
+            if (surrogateAtFront && length < 3) {
                 return this
             }
             val surrogateAtEnd = allowEndSurrogate && endTrailingChar.isLowSurrogate() && endLeadingChar.isHighSurrogate()
@@ -138,10 +134,10 @@ public actual class StringBuilder private constructor(
             front++
             end--
         }
-        if (_length % 2 == 1 && (!allowEndSurrogate || !allowFrontSurrogate)) {
+        if (length % 2 == 1 && (!allowEndSurrogate || !allowFrontSurrogate)) {
             array.set(end, if (allowFrontSurrogate) endTrailingChar else frontLeadingChar)
         }
-        jsString = jsFromCharCodeArray(array, 0, _length).unsafeCast()
+        jsString = jsFromCharCodeArray(array, 0, length).unsafeCast()
         return this
     }
 
@@ -235,7 +231,6 @@ public actual class StringBuilder private constructor(
         val toAppend = value ?: "null"
         ensureExtraCapacity(toAppend.length)
         jsString = jsConcat(jsString, toAppend.internalStr).unsafeCast()
-        _length += toAppend.length
         return this
     }
 
@@ -275,7 +270,7 @@ public actual class StringBuilder private constructor(
      */
     @SinceKotlin("1.4")
     public actual fun indexOf(string: String, startIndex: Int): Int {
-        if (string.isEmpty() && startIndex >= _length) return _length
+        if (string.isEmpty() && startIndex >= length) return length
         return (this as CharSequence).indexOf(string, startIndex, ignoreCase = false)
     }
 
@@ -287,7 +282,7 @@ public actual class StringBuilder private constructor(
      */
     @SinceKotlin("1.4")
     public actual fun lastIndexOf(string: String): Int {
-        if (string.isEmpty()) return _length
+        if (string.isEmpty()) return length
         return (this as CharSequence).lastIndexOf(string, startIndex = lastIndex, ignoreCase = false)
     }
 
@@ -299,7 +294,7 @@ public actual class StringBuilder private constructor(
      */
     @SinceKotlin("1.4")
     public actual fun lastIndexOf(string: String, startIndex: Int): Int {
-        if (string.isEmpty() && startIndex >= _length) return _length
+        if (string.isEmpty() && startIndex >= length) return length
         return (this as CharSequence).lastIndexOf(string, startIndex, ignoreCase = false)
     }
 
@@ -402,7 +397,7 @@ public actual class StringBuilder private constructor(
      */
     @IgnorableReturnValue
     public actual fun insert(index: Int, value: CharArray): StringBuilder {
-        AbstractList.checkPositionIndex(index, _length)
+        AbstractList.checkPositionIndex(index, length)
         return insert(index, jsFromCharCodeArray(value.storage, 0, value.size).unsafeCast<JsString>())
     }
 
@@ -444,7 +439,7 @@ public actual class StringBuilder private constructor(
     @IgnorableReturnValue
     public actual fun insert(index: Int, value: String?): StringBuilder {
         val toInsert = value ?: "null"
-        AbstractList.checkPositionIndex(index, _length)
+        AbstractList.checkPositionIndex(index, length)
         ensureExtraCapacity(toInsert.length)
 
         return insert(index, toInsert.internalStr)
@@ -466,15 +461,14 @@ public actual class StringBuilder private constructor(
             throw IllegalArgumentException("Negative new length: $newLength.")
         }
 
-        if (newLength > _length) {
-            val chars = WasmCharArray(newLength - _length)
-            chars.fill(_length, {'\u0000'})
-            jsString = jsConcat(jsString, jsFromCharCodeArray(chars, 0, newLength - _length).unsafeCast()).unsafeCast()
-        } else if (newLength < _length) {
+        if (newLength > length) {
+            val chars = WasmCharArray(newLength - length)
+            chars.fill(length, {'\u0000'})
+            jsString = jsConcat(jsString, jsFromCharCodeArray(chars, 0, newLength - length).unsafeCast()).unsafeCast()
+        } else if (newLength < length) {
             jsString = jsSubstring(jsString, 0, newLength).unsafeCast()
         }
         ensureCapacity(newLength)
-        _length = newLength
     }
 
     /**
@@ -483,7 +477,7 @@ public actual class StringBuilder private constructor(
      * @throws IndexOutOfBoundsException or [IllegalArgumentException] when [startIndex] or [endIndex] is out of range of this string builder indices or when `startIndex > endIndex`.
      */
     public actual fun substring(startIndex: Int, endIndex: Int): String {
-        AbstractList.checkBoundsIndexes(startIndex, endIndex, _length)
+        AbstractList.checkBoundsIndexes(startIndex, endIndex, length)
         return String(jsSubstring(jsString, startIndex, endIndex).unsafeCast())
     }
 
@@ -494,7 +488,7 @@ public actual class StringBuilder private constructor(
      */
     @SinceKotlin("1.4")
     public actual fun substring(startIndex: Int): String {
-        return substring(startIndex, _length)
+        return substring(startIndex, length)
     }
 
     /**
@@ -516,7 +510,7 @@ public actual class StringBuilder private constructor(
      * @throws IndexOutOfBoundsException if [index] is out of bounds of this string builder.
      */
     public operator fun set(index: Int, value: Char) {
-        AbstractList.checkElementIndex(index, _length)
+        AbstractList.checkElementIndex(index, length)
         setRange(index, index + 1, value.toString())
     }
 
@@ -532,9 +526,9 @@ public actual class StringBuilder private constructor(
     @SinceKotlin("1.4")
     @IgnorableReturnValue
     public fun setRange(startIndex: Int, endIndex: Int, value: String): StringBuilder {
-        checkReplaceRange(startIndex, endIndex, _length)
+        checkReplaceRange(startIndex, endIndex, length)
 
-        val coercedEndIndex = endIndex.coerceAtMost(_length)
+        val coercedEndIndex = endIndex.coerceAtMost(length)
         val lengthDiff = value.length - (coercedEndIndex - startIndex)
         ensureExtraCapacity(lengthDiff)
 
@@ -546,7 +540,6 @@ public actual class StringBuilder private constructor(
             res = jsConcat(res, jsSubstring(jsString, endIndex, length).unsafeCast()).unsafeCast()
         }
         jsString = res
-        _length += lengthDiff
 
         return this
     }
@@ -563,7 +556,7 @@ public actual class StringBuilder private constructor(
     @SinceKotlin("1.4")
     @IgnorableReturnValue
     public fun deleteAt(index: Int): StringBuilder {
-        AbstractList.checkElementIndex(index, _length)
+        AbstractList.checkElementIndex(index, length)
         return deleteRange(index, index + 1)
     }
 
@@ -578,9 +571,9 @@ public actual class StringBuilder private constructor(
     @SinceKotlin("1.4")
     @IgnorableReturnValue
     public fun deleteRange(startIndex: Int, endIndex: Int): StringBuilder {
-        checkReplaceRange(startIndex, endIndex, _length)
+        checkReplaceRange(startIndex, endIndex, length)
 
-        val coercedEndIndex = endIndex.coerceAtMost(_length)
+        val coercedEndIndex = endIndex.coerceAtMost(length)
         if (startIndex != 0) {
             if (endIndex != length) {
                 jsString = jsConcat(jsSubstring(jsString, 0, startIndex).unsafeCast(), jsSubstring(jsString, endIndex, length).unsafeCast()).unsafeCast()
@@ -590,7 +583,6 @@ public actual class StringBuilder private constructor(
         } else {
             jsString = jsSubstring(jsString, endIndex, length).unsafeCast()
         }
-        _length -= coercedEndIndex - startIndex
         return this
     }
 
@@ -609,7 +601,7 @@ public actual class StringBuilder private constructor(
     @SinceKotlin("1.4")
     @Suppress("RETURN_VALUE_NOT_USED")
     public fun toCharArray(destination: CharArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = this.length) {
-        AbstractList.checkBoundsIndexes(startIndex, endIndex, _length)
+        AbstractList.checkBoundsIndexes(startIndex, endIndex, length)
         AbstractList.checkBoundsIndexes(destinationOffset, destinationOffset + endIndex - startIndex, destination.size)
 
         jsIntoCharCodeArray(jsSubstring(jsString, startIndex, endIndex).unsafeCast(), destination.storage, destinationOffset)
@@ -633,7 +625,6 @@ public actual class StringBuilder private constructor(
         val extraLength = endIndex - startIndex
         ensureExtraCapacity(extraLength)
         jsString = jsConcat(jsString, jsFromCharCodeArray(value.storage, startIndex, endIndex).unsafeCast()).unsafeCast()
-        _length += extraLength
         return this
     }
 
@@ -653,7 +644,6 @@ public actual class StringBuilder private constructor(
         val extraLength = endIndex - startIndex
         ensureExtraCapacity(extraLength)
         jsString = jsConcat(jsString, jsSubstring(value.toString().internalStr, startIndex, endIndex).unsafeCast()).unsafeCast()
-        _length += extraLength
         return this
     }
 
@@ -674,7 +664,7 @@ public actual class StringBuilder private constructor(
     @IgnorableReturnValue
     public fun insertRange(index: Int, value: CharSequence, startIndex: Int, endIndex: Int): StringBuilder {
         AbstractList.checkBoundsIndexes(startIndex, endIndex, value.length)
-        AbstractList.checkPositionIndex(index, _length)
+        AbstractList.checkPositionIndex(index, length)
         val extraLength = endIndex - startIndex
         ensureExtraCapacity(extraLength)
 
@@ -698,7 +688,7 @@ public actual class StringBuilder private constructor(
     @SinceKotlin("1.4")
     @IgnorableReturnValue
     public fun insertRange(index: Int, value: CharArray, startIndex: Int, endIndex: Int): StringBuilder {
-        AbstractList.checkPositionIndex(index, _length)
+        AbstractList.checkPositionIndex(index, length)
         AbstractList.checkBoundsIndexes(startIndex, endIndex, value.size)
 
         val extraLength = endIndex - startIndex
@@ -726,12 +716,11 @@ public actual class StringBuilder private constructor(
             res = jsConcat(res, jsSubstring(jsString, index, length).unsafeCast()).unsafeCast()
         }
         jsString = res
-        _length = jsLength(res)
         return this
     }
 
     private fun ensureExtraCapacity(n: Int) {
-        ensureCapacityInternal(_length + n)
+        ensureCapacityInternal(length + n)
     }
 
     private fun ensureCapacityInternal(minCapacity: Int) {
