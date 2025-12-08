@@ -1597,6 +1597,12 @@ public class LLReversedDiagnosticsFirTestGenerated extends AbstractLLReversedDia
         }
 
         @Test
+        @TestMetadata("multipleGenericsCandidatesVsRunnable.kt")
+        public void testMultipleGenericsCandidatesVsRunnable() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/orblrt/multipleGenericsCandidatesVsRunnable.kt");
+        }
+
+        @Test
         @TestMetadata("samVsDefault.kt")
         public void testSamVsDefault() {
           runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/orblrt/samVsDefault.kt");
