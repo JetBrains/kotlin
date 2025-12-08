@@ -48340,6 +48340,12 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
       }
 
       @Test
+      @TestMetadata("privateToThisCallableReference.kt")
+      public void testPrivateToThisCallableReference() {
+        runTest("compiler/testData/diagnostics/tests/visibility/privateToThisCallableReference.kt");
+      }
+
+      @Test
       @TestMetadata("privateToThisExotic.kt")
       public void testPrivateToThisExotic() {
         runTest("compiler/testData/diagnostics/tests/visibility/privateToThisExotic.kt");
