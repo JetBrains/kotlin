@@ -1,3 +1,14 @@
+## 2.3.0-RC3
+
+### Compiler
+
+- [`KT-82869`](https://youtrack.jetbrains.com/issue/KT-82869) Green-to-Red change in 2.3 after prioritizing non-suspend-function-type overloads
+
+### Libraries
+
+- [`KT-82901`](https://youtrack.jetbrains.com/issue/KT-82901) `Long.MIN_VALUE.milliseconds` produces invalid denormalized Duration
+
+
 ## 2.3.0-RC2
 
 ### Compiler
