@@ -63,25 +63,25 @@ fun main(args: Array<String>) {
 
     generateTestGroupSuiteWithJUnit5(args) {
         testGroup(testsRoot, "compiler/testData/diagnostics") {
-            testClass<AbstractDiagnosticsFirWasmTest> {
+            testClass<AbstractWasmJsDiagnosticTest> {
                 model("wasmTests", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
-            }
-
-            testClass<AbstractDiagnosticsFirWasmWasiTest> {
-                model("wasmWasiTests", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
-            }
-
-            testClass<AbstractDiagnosticsFirWasmKlibTest> {
                 model("wasmDiagnosticsKlibTests", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
                 model("testsWithAnyBackend", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
             }
 
-            testClass<AbstractDiagnosticsWasmJsWithIrInlinerTestBase> {
+            testClass<AbstractWasmJsDiagnosticWithIrInlinerTest> {
+                model("wasmTests", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
+                model("wasmDiagnosticsKlibTests", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
                 model("irInliner", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
                 model("testsWithAnyBackend", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
             }
 
-            testClass<AbstractDiagnosticsWasmWasiWithIrInlinerTestBase> {
+            testClass<AbstractWasmWasiDiagnosticTest> {
+                model("wasmWasiTests", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
+            }
+
+            testClass<AbstractWasmWasiDiagnosticWithIrInlinerTestBase> {
+                model("wasmWasiTests", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
                 model("irInliner", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
                 model("testsWithAnyBackend", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
             }
