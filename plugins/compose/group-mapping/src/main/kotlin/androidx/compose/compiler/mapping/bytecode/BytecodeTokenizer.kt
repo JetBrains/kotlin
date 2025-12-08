@@ -238,7 +238,7 @@ private object ComposableLambdaTokenizer : BytecodeTokenizer {
         when (lambdaInsn) {
             is InvokeDynamicInsnNode -> {
                 val desc = JvmDescriptor.fromString(lambdaInsn.desc)
-                val capturesCount = captureInsnCount(context, -(composableLambda.lambdaOffset + 1), desc.parameters.size).getOrElse {
+                val capturesCount = captureInsnCount(context, -(composableLambda.lambdaOffset + 1), desc).getOrElse {
                     return Result.failure(it)
                 }
 
@@ -265,7 +265,7 @@ private object ComposableLambdaTokenizer : BytecodeTokenizer {
                 )
 
                 val desc = JvmDescriptor.fromString(lambdaInsn.desc)
-                val capturesCount = captureInsnCount(context, -(composableLambda.lambdaOffset + 1), desc.parameters.size).getOrElse {
+                val capturesCount = captureInsnCount(context, -(composableLambda.lambdaOffset + 1), desc).getOrElse {
                     return Result.failure(it)
                 }
 
@@ -326,14 +326,25 @@ private object ComposableLambdaTokenizer : BytecodeTokenizer {
         }
     }
 
-    private fun captureInsnCount(context: TokenizerContext, capturesOffset: Int, captureCount: Int): Result<Int> {
+    private fun captureInsnCount(context: TokenizerContext, capturesOffset: Int, desc: JvmDescriptor): Result<Int> {
         var offset = capturesOffset
-        repeat(captureCount) {
+        repeat(desc.parameters.size) {
             when (val insn = context[offset]) {
                 is FieldInsnNode -> offset -= 2
                 is VarInsnNode -> offset -= 1
                 else -> {
-                    return tokenizerError("Unexpected ${insn?.opcode}")
+                    if (desc.parameters[it] == "Z" && (insn is FrameNode || insn is LabelNode)) {
+                        // Kotlin generates if (field) true else false for some reason when
+                        // boolean captures are passed through suspend inline functions.
+                        // Traverse back to the last iload instruction to continue analyzing captures.
+                        while (true) {
+                            val i = context[offset--]
+                                ?: return tokenizerError("Could not find iload for boolean capture.")
+                            if (i.opcode == Opcodes.ILOAD) break
+                        }
+                    } else {
+                        return tokenizerError("Unexpected ${insn?.opcode}")
+                    }
                 }
             }
         }
