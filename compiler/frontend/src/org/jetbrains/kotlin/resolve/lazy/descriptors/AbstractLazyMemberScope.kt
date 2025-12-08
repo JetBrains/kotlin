@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.calls.components.InferenceSession
+import org.jetbrains.kotlin.resolve.calls.components.hasDefaultValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.lazy.LazyClassContext
 import org.jetbrains.kotlin.resolve.lazy.declarations.AbstractPsiBasedDeclarationProvider
@@ -93,8 +94,14 @@ protected constructor(
     }
 
     override fun getContributedFunctions(name: Name, location: LookupLocation): Collection<SimpleFunctionDescriptor> {
+        val contributedFunctions = functionDescriptors(name)
         recordLookup(name, location)
-        return functionDescriptors(name)
+        // If method has default value parameter, we need add package scope to look up
+        if (contributedFunctions.filter { it.valueParameters.isNotEmpty() }
+                .any { it.valueParameters.any { parameter -> parameter.hasDefaultValue() } }) {
+            recordSuperPackageLookup(location)
+        }
+        return contributedFunctions
     }
 
     private fun doGetFunctions(name: Name): Collection<SimpleFunctionDescriptor> {
