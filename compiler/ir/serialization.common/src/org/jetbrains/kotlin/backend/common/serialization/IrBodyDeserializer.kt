@@ -299,11 +299,26 @@ class IrBodyDeserializer(
         val startOffset = 0
         val endOffset = 0
 
-        if (settings.useNullableAnyAsAnnotationConstructorCallType)
-            return deserializeConstructorCall(proto, startOffset, endOffset, builtIns.anyNType)
+        return if (settings.useNullableAnyAsAnnotationConstructorCallType)
+            deserializeAnnotation(proto, startOffset, endOffset, builtIns.anyNType)
         else {
             val irType = IrAnnotationType()
-            return deserializeConstructorCall(proto, startOffset, endOffset, irType).also { irType.irConstructorCall = it }
+            deserializeAnnotation(proto, startOffset, endOffset, irType).also { irType.irConstructorCall = it }
+        }
+    }
+
+    private fun deserializeAnnotation(proto: ProtoConstructorCall, start: Int, end: Int, type: IrType): IrAnnotation {
+        val symbol = deserializeTypedSymbol<IrConstructorSymbol>(proto.symbol, CONSTRUCTOR_SYMBOL)
+        return IrAnnotationImplRaw(
+            start,
+            end,
+            type,
+            symbol,
+            proto.constructorTypeArgumentsCount,
+            deserializeIrStatementOrigin(proto.hasOriginName()) { proto.originName },
+            SourceElement.NO_SOURCE,
+        ).also {
+            deserializeMemberAccessCommon(it, proto.memberAccess)
         }
     }
 
