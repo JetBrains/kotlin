@@ -144,7 +144,8 @@ internal fun KaSession.createMethods(
                 result,
                 declaration,
                 isTopLevel = isTopLevel,
-                suppressStatic = suppressStatic
+                suppressStatic = suppressStatic,
+                staticsFromCompanion = staticsFromCompanion,
             )
 
             is KaConstructorSymbol -> error("Constructors should be handled separately and not passed to this function")

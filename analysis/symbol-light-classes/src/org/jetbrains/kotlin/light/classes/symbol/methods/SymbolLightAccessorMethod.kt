@@ -390,7 +390,7 @@ internal class SymbolLightAccessorMethod private constructor(
             val suppressStatic: Boolean,
             val isTopLevel: Boolean,
             /** Whether the accessors should be created only if they are marked with [JvmStatic] annotation. */
-            val onlyJvmStatic: Boolean,
+            val staticsFromCompanion: Boolean,
             private val hasValueClassInParameterType: Boolean,
             private val hasValueClassInReturnType: Boolean,
             private val jvmExposeBoxedMode: JvmExposeBoxedMode,
@@ -421,14 +421,14 @@ internal class SymbolLightAccessorMethod private constructor(
                     destinationLightClass: SymbolLightClassBase,
                     suppressStatic: Boolean,
                     isTopLevel: Boolean,
-                    onlyJvmStatic: Boolean,
+                    staticsFromCompanion: Boolean,
                 ): Context = with(session) {
                     Context(
                         property = property,
                         destinationLightClass = destinationLightClass,
                         suppressStatic = suppressStatic,
                         isTopLevel = isTopLevel,
-                        onlyJvmStatic = onlyJvmStatic,
+                        staticsFromCompanion = staticsFromCompanion,
                         hasValueClassInParameterType = hasValueClassInSignature(property, skipReturnTypeCheck = true),
                         hasValueClassInReturnType = hasValueClassInReturnType(property),
                         jvmExposeBoxedMode = jvmExposeBoxedMode(property),
@@ -446,7 +446,7 @@ internal class SymbolLightAccessorMethod private constructor(
             declaration: KaPropertySymbol,
             isTopLevel: Boolean,
             isMutable: Boolean = !declaration.isVal,
-            onlyJvmStatic: Boolean = false,
+            staticsFromCompanion: Boolean = false,
             suppressStatic: Boolean = false,
         ) {
             ProgressManager.checkCanceled()
@@ -464,7 +464,7 @@ internal class SymbolLightAccessorMethod private constructor(
                 destinationLightClass = lightClass,
                 suppressStatic = suppressStatic,
                 isTopLevel = isTopLevel,
-                onlyJvmStatic = onlyJvmStatic,
+                staticsFromCompanion = staticsFromCompanion,
             )
 
             with(context) {
@@ -515,7 +515,7 @@ internal class SymbolLightAccessorMethod private constructor(
 
             val isNonMaterializableValueClassProperty =
                 // Assessors with JvmStatic should be materialized inside the containing value class
-                !context.onlyJvmStatic &&
+                !context.staticsFromCompanion &&
                         context.destinationLightClass.isValueClass &&
                         // Constructor properties are materialized by default
                         !property.isFromPrimaryConstructor &&
@@ -612,7 +612,7 @@ internal class SymbolLightAccessorMethod private constructor(
             accessorSymbol: KaPropertyAccessorSymbol,
             siteTarget: AnnotationUseSiteTarget,
         ): Boolean = when {
-            context.onlyJvmStatic && !accessorSymbol.hasJvmStaticAnnotation() && !property.hasJvmStaticAnnotation() -> false
+            context.staticsFromCompanion && !accessorSymbol.hasJvmStaticAnnotation() && !property.hasJvmStaticAnnotation() -> false
             isHiddenByDeprecation(property) -> false
             isHiddenOrSynthetic(accessorSymbol, siteTarget) -> false
             !accessorSymbol.isNotDefault && accessorSymbol.visibility == KaSymbolVisibility.PRIVATE -> false

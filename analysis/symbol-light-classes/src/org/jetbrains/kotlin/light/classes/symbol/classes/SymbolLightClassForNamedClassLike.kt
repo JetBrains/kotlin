@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.asJava.classes.getParentForLocalDeclaration
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightField
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightFieldForObject
 import org.jetbrains.kotlin.light.classes.symbol.isConstOrJvmField
-import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightAccessorMethod.Companion.createPropertyAccessors
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.GranularModifiersBox
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
@@ -59,7 +58,7 @@ internal abstract class SymbolLightClassForNamedClassLike : SymbolLightClassForC
         val companionObjectSymbol = classSymbol.companionObject ?: return
         val methods = companionObjectSymbol.declaredMemberScope
             .callables
-            .filterIsInstance<KaNamedFunctionSymbol>()
+            .filter { it is KaNamedFunctionSymbol || it is KaPropertySymbol }
 
         createMethods(
             this@SymbolLightClassForNamedClassLike,
@@ -67,19 +66,6 @@ internal abstract class SymbolLightClassForNamedClassLike : SymbolLightClassForC
             result,
             staticsFromCompanion = true,
         )
-
-        companionObjectSymbol.declaredMemberScope
-            .callables
-            .filterIsInstance<KaPropertySymbol>()
-            .forEach { property ->
-                createPropertyAccessors(
-                    this@SymbolLightClassForNamedClassLike,
-                    result,
-                    property,
-                    isTopLevel = false,
-                    onlyJvmStatic = true,
-                )
-            }
     }
 
     private val isInner: Boolean get() = withClassSymbol { it.isInner }
