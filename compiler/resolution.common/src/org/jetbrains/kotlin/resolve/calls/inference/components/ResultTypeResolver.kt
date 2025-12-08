@@ -312,20 +312,30 @@ class ResultTypeResolver(
         // Nothing and Nothing? is not allowed for reified parameters
         if (c.isReified(variableWithConstraints.typeVariable)) return false
 
-        // It's ok to fix result to non-nullable Nothing and parameter is not reified
-        if (!resultType.isNullableType()) return true
-
-        return isNullableNothingMayBeConsideredAsSuitableResultType(filteredConstraints)
+        return if (!resultType.isNullableType()) {
+            mayNothingBeConsideredAsSuitableResultType(filteredConstraints)
+        } else {
+            mayNullableNothingBeConsideredAsSuitableResultType(filteredConstraints)
+        }
     }
 
     context(c: Context)
-    private fun isNullableNothingMayBeConsideredAsSuitableResultType(constraints: List<Constraint>): Boolean = when {
+    private fun mayNullableNothingBeConsideredAsSuitableResultType(constraints: List<Constraint>): Boolean = when {
         c.isK2 ->
             // There might be an assertion for green code that if `allUpperConstraintsAreFromBounds(constraints) == true` then
             // the single `Nothing?` lower bound constraint has Constraint::isNullabilityConstraint is set to false
             // because otherwise we would not start fixing the variable since it has no proper constraints.
             allUpperConstraintsAreFromBounds(constraints)
         else -> !isThereSingleLowerNullabilityConstraint(constraints)
+    }
+
+    context(c: Context)
+    private fun mayNothingBeConsideredAsSuitableResultType(constraints: List<Constraint>): Boolean = when {
+        // Nothing <: T can't be used to infer T = Nothing in case it's a nullability constraint,
+        // in this case an upper constraint should be preferred. See also comments to KT-81948.
+        c.isK2 -> !constraints.all { it.kind.isUpper() || !it.type.isNothing() || it.isNullabilityConstraint }
+        // It's ok to fix result to non-nullable Nothing and parameter is not reified
+        else -> true
     }
 
     private fun allUpperConstraintsAreFromBounds(constraints: List<Constraint>): Boolean =

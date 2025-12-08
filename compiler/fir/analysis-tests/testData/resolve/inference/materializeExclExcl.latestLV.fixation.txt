@@ -67,8 +67,9 @@ CHOSEN for fixation: TypeVariable(K) --- Readiness(
      >: TypeVariable(T) & Any
      >: kotlin/Nothing
      <: kotlin/String?
-     = kotlin/Nothing (inferred during fixation)
-    FIXED TO: kotlin/Nothing
+     = kotlin/String? (inferred during fixation)
+     >: kotlin/Nothing (inferred during fixation)
+    FIXED TO: kotlin/String?
 TypeVariable(R) --- Readiness(
     	 true ALLOWED
     	 true HAS_PROPER_CONSTRAINTS
@@ -87,8 +88,9 @@ TypeVariable(R) --- Readiness(
      >: TypeVariable(T)?
      >: kotlin/Nothing?
      <: kotlin/String?
-     <: kotlin/Nothing?
-     = kotlin/Nothing? (inferred during fixation)
+     <: kotlin/String?
+     >: kotlin/Nothing? (inferred during fixation)
+     = kotlin/String? (inferred during fixation)
 TypeVariable(T) --- Readiness(
     	 true ALLOWED
     	 true HAS_PROPER_CONSTRAINTS
@@ -105,8 +107,8 @@ TypeVariable(T) --- Readiness(
     	false HAS_PROPER_NON_ILT_EQUALITY_CONSTRAINT
     )
      <: kotlin/String?
-     <: kotlin/Nothing?
-     = kotlin/Nothing?
+     <: kotlin/String?
+     = kotlin/String?
 ********************************
 CHOSEN for fixation: TypeVariable(R) --- Readiness(
     	 true ALLOWED
@@ -121,12 +123,15 @@ CHOSEN for fixation: TypeVariable(R) --- Readiness(
     	false REIFIED
     	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
     	 true HAS_PROPER_NON_ILT_CONSTRAINT
-    	 true HAS_PROPER_NON_ILT_EQUALITY_CONSTRAINT
+    	false HAS_PROPER_NON_ILT_EQUALITY_CONSTRAINT
     )
      >: TypeVariable(T)?
+     >: kotlin/Nothing?
      <: kotlin/String?
-     = kotlin/Nothing?
-    FIXED TO: kotlin/Nothing?
+     <: kotlin/String?
+     >: kotlin/Nothing?
+     = kotlin/String? (inferred during fixation)
+    FIXED TO: kotlin/String?
 TypeVariable(T) --- Readiness(
     	 true ALLOWED
     	 true HAS_PROPER_CONSTRAINTS
@@ -143,8 +148,8 @@ TypeVariable(T) --- Readiness(
     	false HAS_PROPER_NON_ILT_EQUALITY_CONSTRAINT
     )
      <: kotlin/String?
-     <: kotlin/Nothing?
-     = kotlin/Nothing?
+     <: kotlin/String?
+     = kotlin/String?
 ********************************
 CHOSEN for fixation: TypeVariable(T) --- Readiness(
     	 true ALLOWED
@@ -162,7 +167,7 @@ CHOSEN for fixation: TypeVariable(T) --- Readiness(
     	false HAS_PROPER_NON_ILT_EQUALITY_CONSTRAINT
     )
      <: kotlin/String?
-     <: kotlin/Nothing?
-     = kotlin/Nothing? (inferred during fixation)
-    FIXED TO: kotlin/Nothing?
+     <: kotlin/String?
+     = kotlin/String? (inferred during fixation)
+    FIXED TO: kotlin/String?
 ********************************

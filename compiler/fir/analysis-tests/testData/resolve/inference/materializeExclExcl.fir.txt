@@ -5,8 +5,8 @@ FILE: materializeExclExcl.kt
     public final fun <T> materialize(): R|T?| {
         ^materialize (String() as R|T?|)
     }
-    public final val x: R|kotlin/String?| = R|/myRun|<R|kotlin/Nothing?|>(<L> = myRun@fun <anonymous>(): R|kotlin/Nothing?| <inline=NoInline>  {
-        ^ R|/materialize|<R|kotlin/Nothing?|>()
+    public final val x: R|kotlin/String?| = R|/myRun|<R|kotlin/String?|>(<L> = myRun@fun <anonymous>(): R|kotlin/String?| <inline=NoInline>  {
+        ^ R|/materialize|<R|kotlin/String?|>()
     }
     )!!
         public get(): R|kotlin/String?|
