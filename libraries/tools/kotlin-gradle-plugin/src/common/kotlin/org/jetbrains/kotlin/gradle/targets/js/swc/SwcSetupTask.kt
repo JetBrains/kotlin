@@ -16,8 +16,7 @@ import javax.inject.Inject
 @DisableCachingByDefault
 abstract class SwcSetupTask
 @Inject
-@InternalKotlinGradlePluginApi
-constructor(
+internal constructor(
     settings: SwcEnvSpec,
 ) : AbstractSetupTask<SwcEnv, SwcEnvSpec>(settings) {
 
