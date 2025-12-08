@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -15,7 +15,6 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiManager
 import com.intellij.psi.impl.compiled.ClsClassImpl
 import com.intellij.psi.impl.compiled.ClsFileImpl
-import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.analysis.decompiler.psi.file.KtClsFile
 import org.jetbrains.kotlin.asJava.builder.ClsWrapperStubPsiFactory
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
@@ -50,23 +49,23 @@ object DecompiledLightClassesFactory {
         decompiledClassOrObject: KtClassOrObject,
         rootLightClassForDecompiledFile: KtLightClassForDecompiledDeclaration
     ): KtLightClassForDecompiledDeclaration? {
-        val relativeFqName = getClassRelativeName(decompiledClassOrObject) ?: return null
-        val iterator = relativeFqName.pathSegments().iterator()
-        val base = iterator.next()
+        val classId = decompiledClassOrObject.getClassId() ?: return null
+        val relativeFqNameIterator = classId.relativeClassName.pathSegments().iterator()
+        val base = relativeFqNameIterator.next()
 
         // In case class files have been obfuscated (i.e., SomeClass belongs to a.class file), just ignore them
         if (rootLightClassForDecompiledFile.name != base.asString()) return null
 
         var current: KtLightClassForDecompiledDeclaration = rootLightClassForDecompiledFile
-        while (iterator.hasNext()) {
-            val name = iterator.next()
+        while (relativeFqNameIterator.hasNext()) {
+            val name = relativeFqNameIterator.next()
             val innerClass = current.findInnerClassByName(name.asString(), false)
             current = when {
                 innerClass != null -> innerClass as KtLightClassForDecompiledDeclaration
                 checkInconsistency -> {
                     throw KotlinExceptionWithAttachments("Could not find corresponding inner/nested class")
-                        .withAttachment("relativeFqName.txt", relativeFqName)
-                        .withAttachment("decompiledClassOrObjectFqName.txt", decompiledClassOrObject.fqName)
+                        .withAttachment("classId.txt", classId)
+                        .withAttachment("fqName.txt", decompiledClassOrObject.fqName)
                         .withAttachment("decompiledFileName.txt", decompiledClassOrObject.containingKtFile.virtualFile.name)
                         .withPsiAttachment("decompiledClassOrObject.txt", decompiledClassOrObject)
                         .withAttachment("fileClass.txt", decompiledClassOrObject.containingFile::class)
@@ -83,20 +82,6 @@ object DecompiledLightClassesFactory {
         }
 
         return current
-    }
-
-    private fun getClassRelativeName(decompiledClassOrObject: KtClassOrObject): FqName? {
-        val name = decompiledClassOrObject.nameAsName ?: return null
-        val parent = PsiTreeUtil.getParentOfType(
-            decompiledClassOrObject,
-            KtClassOrObject::class.java,
-            true
-        )
-        if (parent == null) {
-            assert(decompiledClassOrObject.isTopLevel())
-            return FqName.topLevel(name)
-        }
-        return getClassRelativeName(parent)?.child(name)
     }
 
     fun createLightClassForDecompiledKotlinFile(file: KtClsFile, project: Project): KtLightClassForDecompiledDeclaration? {
