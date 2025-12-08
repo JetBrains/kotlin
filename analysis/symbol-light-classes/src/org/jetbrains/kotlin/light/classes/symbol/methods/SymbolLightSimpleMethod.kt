@@ -245,6 +245,8 @@ internal class SymbolLightSimpleMethod private constructor(
     companion object {
         /**
          * @param suppressValueClass whether suppress the [containingClass] check for [isValueClass]
+         * @param staticsFromCompanion whether this function was called to materialize static members from a companion object
+         *  * inside the containing class
          */
         internal fun KaSession.createSimpleMethods(
             containingClass: SymbolLightClassBase,
@@ -255,16 +257,20 @@ internal class SymbolLightSimpleMethod private constructor(
             isTopLevel: Boolean,
             suppressStatic: Boolean = false,
             suppressValueClass: Boolean = false,
+            staticsFromCompanion: Boolean = false,
         ) {
             ProgressManager.checkCanceled()
 
             if (functionSymbol.name.isSpecial || functionSymbol.hasReifiedParameters || isHiddenOrSynthetic(functionSymbol)) return
+            if (staticsFromCompanion && !functionSymbol.hasJvmStaticAnnotation()) return
 
             val hasJvmNameAnnotation = functionSymbol.hasJvmNameAnnotation()
             val exposeBoxedMode = jvmExposeBoxedMode(functionSymbol)
             val hasValueClassInReturnType = hasValueClassInReturnType(functionSymbol)
 
             val isNonMaterializableValueClassFunction = !suppressValueClass &&
+                    // Static methods should be materialized even inside value classes if possible
+                    !staticsFromCompanion &&
                     containingClass.isValueClass &&
                     // Overrides are materialized by default
                     !functionSymbol.isOverride

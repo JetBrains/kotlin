@@ -112,12 +112,17 @@ private fun lightClassForEnumEntry(ktEnumEntry: KtEnumEntry): KtLightClass? {
     return (targetField as? SymbolLightFieldForEnumEntry)?.initializingClass as? KtLightClass
 }
 
+/**
+ * @param staticsFromCompanion whether this function was called to materialize static members from a companion object
+ * inside the containing class
+ */
 internal fun KaSession.createMethods(
     lightClass: SymbolLightClassBase,
     declarations: Sequence<KaCallableSymbol>,
     result: MutableList<PsiMethod>,
     isTopLevel: Boolean = false,
     suppressStatic: Boolean = false,
+    staticsFromCompanion: Boolean = false,
 ) {
     val (ctorProperties, regularMembers) = declarations.partition { it is KaPropertySymbol && it.isFromPrimaryConstructor }
 
@@ -131,6 +136,7 @@ internal fun KaSession.createMethods(
                 methodIndex = METHOD_INDEX_BASE,
                 isTopLevel = isTopLevel,
                 suppressStatic = suppressStatic,
+                staticsFromCompanion = staticsFromCompanion,
             )
 
             is KaPropertySymbol -> createPropertyAccessors(

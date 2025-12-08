@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.asJava.classes.getParentForLocalDeclaration
-import org.jetbrains.kotlin.light.classes.symbol.annotations.hasJvmStaticAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightField
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightFieldForObject
 import org.jetbrains.kotlin.light.classes.symbol.isConstOrJvmField
@@ -61,9 +60,13 @@ internal abstract class SymbolLightClassForNamedClassLike : SymbolLightClassForC
         val methods = companionObjectSymbol.declaredMemberScope
             .callables
             .filterIsInstance<KaNamedFunctionSymbol>()
-            .filter { it.hasJvmStaticAnnotation() }
 
-        createMethods(this@SymbolLightClassForNamedClassLike, methods, result)
+        createMethods(
+            this@SymbolLightClassForNamedClassLike,
+            methods,
+            result,
+            staticsFromCompanion = true,
+        )
 
         companionObjectSymbol.declaredMemberScope
             .callables

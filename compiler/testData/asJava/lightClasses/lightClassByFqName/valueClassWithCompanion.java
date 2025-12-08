@@ -6,6 +6,9 @@ public final class StringWrapper /* pack.StringWrapper*/ {
   @org.jetbrains.annotations.NotNull()
   public static final @org.jetbrains.annotations.NotNull() pack.StringWrapper.Companion Companion;
 
+  @kotlin.jvm.JvmStatic()
+  public static final void regularStaticFunction();//  regularStaticFunction()
+
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.lang.String toString();//  toString()
 
