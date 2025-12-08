@@ -53,7 +53,7 @@ abstract class AbstractWasmDiagnosticTestBase(
             LATEST_PHASE_IN_PIPELINE with TestPhase.BACKEND
         }
         useAfterAnalysisCheckers(
-            ::PhasedPipelineChecker.bind(TestPhase.FRONTEND),
+            ::PhasedPipelineChecker,
         )
         configureFirParser(parser)
 
