@@ -628,7 +628,6 @@ class FirSyntheticCallGenerator(
 
     private fun generateSyntheticSelectTypeParameter(
         functionSymbol: FirSyntheticFunctionSymbol,
-        isNullableBound: Boolean = true,
     ): Pair<FirTypeParameter, ConeKotlinType> {
         val typeParameterSymbol = FirTypeParameterSymbol()
         val typeParameter =
@@ -642,11 +641,7 @@ class FirSyntheticCallGenerator(
                 variance = Variance.INVARIANT
                 isReified = false
 
-                if (!isNullableBound) {
-                    bounds += moduleData.session.builtinTypes.anyType
-                } else {
-                    addDefaultBoundIfNecessary()
-                }
+                addDefaultBoundIfNecessary()
             }
 
         val typeParameterType = ConeTypeParameterTypeImpl(typeParameterSymbol.toLookupTag(), false)
@@ -676,7 +671,7 @@ class FirSyntheticCallGenerator(
         // Synthetic function signature:
         //   fun <K> checkNotNull(arg: K?): K & Any
         val functionSymbol = FirSyntheticFunctionSymbol(SyntheticCallableId.CHECK_NOT_NULL)
-        val (typeParameter, typeParameterType) = generateSyntheticSelectTypeParameter(functionSymbol, isNullableBound = true)
+        val (typeParameter, typeParameterType) = generateSyntheticSelectTypeParameter(functionSymbol)
 
         return generateMemberFunction(
             functionSymbol,
