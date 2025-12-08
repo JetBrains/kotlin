@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.backend.common.lower
 
 import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.backend.common.linkage.partial.isPartialLinkageRuntimeError
+import org.jetbrains.kotlin.config.AnalysisFlags
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
@@ -175,7 +177,10 @@ enum class ConstructorDelegationKind {
     PARTIAL_LINKAGE_ERROR
 }
 
-fun IrConstructor.delegationKind(irBuiltIns: IrBuiltIns): ConstructorDelegationKind {
+fun IrConstructor.delegationKind(context: LoweringContext): ConstructorDelegationKind {
+    val irBuiltIns = context.irBuiltIns
+    val headerMode = context.configuration.languageVersionSettings.getFlag(AnalysisFlags.headerMode)
+
     val constructedClass = parent as IrClass
     val superClass = constructedClass.superTypes
         .mapNotNull { it as? IrSimpleType }
@@ -213,8 +218,15 @@ fun IrConstructor.delegationKind(irBuiltIns: IrBuiltIns): ConstructorDelegationK
         }
     })
 
+    /*
+     * In the header mode the frontend does not generate the delegated constructor calls. Also
+     * the code generated in the header mode is not supposed to be executed (JVM) / consumed by the second
+     * compilation stage (non-JVM), so it's enough to insert anything here which will not cause
+     * the compiler to fail. So `PARTIAL_LINKAGE_ERROR` suites here, as it injects just some error
+     * in place of the delegated call.
+     */
     val delegationKind: ConstructorDelegationKind? = when (numberOfDelegatingCalls) {
-        0 -> if (hasPartialLinkageError) ConstructorDelegationKind.PARTIAL_LINKAGE_ERROR else null
+        0 -> if (hasPartialLinkageError || headerMode) ConstructorDelegationKind.PARTIAL_LINKAGE_ERROR else null
         1 -> if (callsSuper) ConstructorDelegationKind.CALLS_SUPER else ConstructorDelegationKind.CALLS_THIS
         else -> null
     }

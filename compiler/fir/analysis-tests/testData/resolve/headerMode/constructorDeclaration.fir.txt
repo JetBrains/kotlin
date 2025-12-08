@@ -1,8 +1,6 @@
 FILE: constructorDeclaration.kt
     public final class A : R|kotlin/Any| {
-        public constructor(a: R|kotlin/String|, b: R|kotlin/Int|): R|A| {
-            super<R|kotlin/Any|>()
-        }
+        public constructor(a: R|kotlin/String|, b: R|kotlin/Int|): R|A|
 
         public final val a: R|kotlin/String|
             public get(): R|kotlin/String|
@@ -10,19 +8,13 @@ FILE: constructorDeclaration.kt
         public final val b: R|kotlin/Int|
             public get(): R|kotlin/Int|
 
-        public constructor(e: R|kotlin/String|): R|A| {
-            this<R|A|>(R|<local>/e|, Int(0))
-        }
+        public constructor(e: R|kotlin/String|): R|A|
 
-        public constructor(): R|A| {
-            this<R|A|>(String())
-        }
+        public constructor(): R|A|
 
     }
     public final class B : R|kotlin/Any| {
-        private constructor(a: R|kotlin/String|, b: R|kotlin/Int|): R|B| {
-            super<R|kotlin/Any|>()
-        }
+        private constructor(a: R|kotlin/String|, b: R|kotlin/Int|): R|B|
 
         public final val a: R|kotlin/String|
             public get(): R|kotlin/String|
@@ -30,12 +22,8 @@ FILE: constructorDeclaration.kt
         public final val b: R|kotlin/Int|
             public get(): R|kotlin/Int|
 
-        public constructor(e: R|kotlin/String|): R|B| {
-            this<R|B|>(R|<local>/e|, Int(0))
-        }
+        public constructor(e: R|kotlin/String|): R|B|
 
-        public constructor(): R|B| {
-            this<R|B|>(String())
-        }
+        public constructor(): R|B|
 
     }

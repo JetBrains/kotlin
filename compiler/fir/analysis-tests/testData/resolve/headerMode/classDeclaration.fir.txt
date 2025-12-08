@@ -1,8 +1,6 @@
 FILE: classDeclaration.kt
     public final class A : R|kotlin/Any| {
-        public constructor(): R|A| {
-            super<R|kotlin/Any|>()
-        }
+        public constructor(): R|A|
 
         public final fun funA(): R|kotlin/String|
 
@@ -37,10 +35,27 @@ FILE: classDeclaration.kt
 
     }
     public final class C : R|B| {
-        public constructor(): R|C| {
-            super<R|kotlin/Any|>()
+        public constructor(): R|C|
+
+        public final inner class D : R|kotlin/Any| {
+            public C.constructor(): R|C.D|
+
+            public final fun funA(): R|kotlin/String|
+
         }
 
         public open override fun funB(): R|kotlin/String|
+
+    }
+    public final class E : R|kotlin/Any| {
+        public constructor(): R|E|
+
+        public final fun funA(): R|kotlin/String|
+
+    }
+    public final class F : R|E| {
+        public constructor(): R|F|
+
+        public final fun funA(): R|kotlin/String|
 
     }

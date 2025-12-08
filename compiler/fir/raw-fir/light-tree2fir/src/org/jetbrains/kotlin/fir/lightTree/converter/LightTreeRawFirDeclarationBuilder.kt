@@ -1043,7 +1043,8 @@ class LightTreeRawFirDeclarationBuilder(
                 hasExplicitDelegatedCalls = classWrapper.delegatedSuperCalls.isNotEmpty()
             )
 
-            val firDelegatedCall = runIf(generateDelegatedSuperCall) {
+            val generateDelegatedConstructorCall = !headerMode || context.forceKeepingTheBodyInHeaderMode
+            val firDelegatedCall = runIf(generateDelegatedSuperCall && generateDelegatedConstructorCall) {
                 fun createDelegatedConstructorCall(
                     delegatedConstructorSource: KtLightSourceElement?,
                     delegatedSuperTypeRef: FirTypeRef,
@@ -1220,7 +1221,8 @@ class LightTreeRawFirDeclarationBuilder(
             val delegatedSelfTypeRef = classWrapper.delegatedSelfTypeRef
             val calculatedModifiers = modifiers ?: ModifierList()
             val isExpect = calculatedModifiers.hasExpect() || context.containerIsExpect
-            if (delegatedConstructorNode != null) {
+            val generateDelegatedConstructorCall = !headerMode || context.forceKeepingTheBodyInHeaderMode
+            if (delegatedConstructorNode != null && generateDelegatedConstructorCall) {
                 constructorDelegationCall = convertConstructorDelegationCall(delegatedConstructorNode, classWrapper, isExpect)
             }
 
@@ -1252,7 +1254,7 @@ class LightTreeRawFirDeclarationBuilder(
                 val (body, contractDescription) = withForcedLocalContext {
                     convertFunctionBody(block, null, allowLegacyContractDescription = true)
                 }
-                this.body = body
+                this.body = body?.takeIf { it.statements.isNotEmpty() }
                 contractDescription?.let { this.contractDescription = it }
                 context.firFunctionTargets.removeLast()
                 this.contextParameters.addContextParameters(modifiers?.contextLists, constructorSymbol)

@@ -62,7 +62,7 @@ internal class JvmLocalDeclarationsLowering(override val context: JvmBackendCont
 
     override fun IrClass.getConstructorsThatCouldCaptureParamsWithoutFieldCreating(): Iterable<IrConstructor> =
         declarations.filterIsInstanceAnd<IrConstructor> {
-            it.delegationKind(context.irBuiltIns) == ConstructorDelegationKind.CALLS_SUPER
+            it.delegationKind(context) == ConstructorDelegationKind.CALLS_SUPER
         }
 }
 

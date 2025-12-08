@@ -1,8 +1,6 @@
 FILE: dataClassDeclaration.kt
     public final data class User : R|kotlin/Any| {
-        public constructor(name: R|kotlin/String|, age: R|kotlin/Int|): R|User| {
-            super<R|kotlin/Any|>()
-        }
+        public constructor(name: R|kotlin/String|, age: R|kotlin/Int|): R|User|
 
         public final val name: R|kotlin/String|
             public get(): R|kotlin/String|
