@@ -388,6 +388,7 @@ private fun doCompileWithK2(
         it.invoke(session)
     }
 
+    @Suppress("DEPRECATION")
     val scriptDefinitionProviderService = session.scriptDefinitionProviderService
 
     scriptDefinitionProviderService?.run {

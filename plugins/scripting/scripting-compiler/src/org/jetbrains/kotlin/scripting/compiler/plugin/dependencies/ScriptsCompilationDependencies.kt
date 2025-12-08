@@ -6,10 +6,16 @@
 package org.jetbrains.kotlin.scripting.compiler.plugin.dependencies
 
 import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationResult
+import org.jetbrains.kotlin.scripting.resolve.resolvedImportScripts
 import java.io.File
 import kotlin.script.experimental.api.ResultWithDiagnostics
+import kotlin.script.experimental.api.ScriptCompilationConfiguration
+import kotlin.script.experimental.api.ScriptDiagnostic
 import kotlin.script.experimental.api.SourceCode
 import kotlin.script.experimental.api.asSuccess
+import kotlin.script.experimental.api.dependencies
+import kotlin.script.experimental.api.importScripts
+import kotlin.script.experimental.jvm.util.toClassPathOrEmpty
 
 data class ScriptsCompilationDependencies(
     val classpath: List<File>,
@@ -23,6 +29,7 @@ data class ScriptsCompilationDependencies(
 }
 
 // recursively collect dependencies from initial and imported scripts
+@Deprecated("Use collectScriptsCompilationDependenciesRecursively instead")
 fun collectScriptsCompilationDependencies(
     initialSources: Iterable<SourceCode>,
     getScriptCompilationConfiguration: (SourceCode) -> ScriptCompilationConfigurationResult?
@@ -72,4 +79,64 @@ fun collectScriptsCompilationDependencies(
         collectedSources,
         collectedSourceDependencies
     )
+}
+
+
+// recursively collect dependencies from initial and imported scripts
+fun collectScriptsCompilationDependenciesRecursively(
+    initialSources: Iterable<SourceCode>,
+    getScriptCompilationConfiguration: (SourceCode) -> ResultWithDiagnostics<ScriptCompilationConfiguration>?
+): ResultWithDiagnostics<ScriptsCompilationDependencies> {
+    val collectedClassPath = ArrayList<File>()
+    val collectedSources = ArrayList<SourceCode>()
+    val collectedSourceDependencies = ArrayList<ScriptsCompilationDependencies.SourceDependencies>()
+    var remainingSources = initialSources
+    val knownSourcePaths = initialSources.mapNotNullTo(HashSet()) { it.locationId }
+    var hasErrors = false
+    val diagnostics = ArrayList<ScriptDiagnostic>()
+    while (true) {
+        val newRemainingSources = ArrayList<SourceCode>()
+        for (source in remainingSources) {
+            when (val refinedConfiguration = getScriptCompilationConfiguration(source)) {
+                null -> {}
+                is ResultWithDiagnostics.Failure -> {
+                    diagnostics.addAll(refinedConfiguration.reports)
+                    hasErrors = true
+                }
+                is ResultWithDiagnostics.Success -> {
+                    diagnostics.addAll(refinedConfiguration.reports)
+                    collectedClassPath.addAll(refinedConfiguration.value[ScriptCompilationConfiguration.dependencies].toClassPathOrEmpty())
+
+                    refinedConfiguration.value.let {
+                        it[ScriptCompilationConfiguration.resolvedImportScripts]
+                            ?: it[ScriptCompilationConfiguration.importScripts]
+                    }?.takeIf { it.isNotEmpty() }?.let { sourceDependencies ->
+                        collectedSourceDependencies.add(
+                            ScriptsCompilationDependencies.SourceDependencies(
+                                source,
+                                sourceDependencies.asSuccess(refinedConfiguration.reports)
+                            )
+                        )
+
+                        val newSources = sourceDependencies.filterNot { knownSourcePaths.contains(it.locationId) }
+                        for (newSource in newSources) {
+                            collectedSources.add(newSource)
+                            newRemainingSources.add(newSource)
+                            knownSourcePaths.add(newSource.locationId!!)
+                        }
+                    }
+                }
+            }
+        }
+        if (newRemainingSources.isEmpty()) break
+        else {
+            remainingSources = newRemainingSources
+        }
+    }
+    return if (hasErrors) ResultWithDiagnostics.Failure(diagnostics)
+    else ScriptsCompilationDependencies(
+        collectedClassPath.distinctBy { it.absolutePath },
+        collectedSources,
+        collectedSourceDependencies
+    ).asSuccess(diagnostics)
 }

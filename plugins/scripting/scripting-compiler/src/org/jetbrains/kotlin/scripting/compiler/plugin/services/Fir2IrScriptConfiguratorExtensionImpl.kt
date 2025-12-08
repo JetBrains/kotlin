@@ -26,8 +26,9 @@ class Fir2IrScriptConfiguratorExtensionImpl(
         // processing only refined scripts here
         val scriptFile = session.firProvider.getFirScriptContainerFile(script.symbol) ?: return
         val scriptSourceFile = scriptFile.sourceFile?.toSourceCode() ?: return
+        @Suppress("DEPRECATION")
         val compilationConfiguration = script.scriptCompilationConfiguration
-            ?: session.getScriptCompilationConfiguration(scriptSourceFile, getDefault = { null }) ?: return
+            ?: session.getScriptCompilationConfiguration(scriptSourceFile) { null } ?: return
 
         // assuming that if the script is compiled, the import files should be all resolved already
         val importedScripts = compilationConfiguration[ScriptCompilationConfiguration.resolvedImportScripts]

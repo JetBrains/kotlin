@@ -23,6 +23,8 @@ class ScriptCompilationConfigurationProviderOverDefinitionProvider(private val p
         provider.getDefaultDefinition().compilationConfiguration.asSuccess()
 }
 
+
+
 fun ScriptingHostConfiguration.withCompilationConfigurationProvider(
     implementation : ScriptCompilationConfigurationProvider
 ): ScriptingHostConfiguration = with {

@@ -29,6 +29,11 @@ import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.scripting.compiler.plugin.ScriptingK2CompilerPluginRegistrar
+import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.CliScriptDefinitionProvider
+import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.ScriptCompilationConfigurationProviderOverDefinitionProvider
+import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.ScriptRefinedCompilationConfigurationCacheImpl
+import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.scriptCompilationConfigurationProvider
+import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.scriptRefinedCompilationConfigurationsCache
 import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import java.io.File
@@ -36,6 +41,7 @@ import java.nio.file.Path
 import kotlin.script.experimental.api.ScriptCompilationConfiguration
 import kotlin.script.experimental.api.dependencies
 import kotlin.script.experimental.host.ScriptingHostConfiguration
+import kotlin.script.experimental.host.with
 import kotlin.script.experimental.jvm.JvmDependency
 
 interface K2ScriptingCompilerEnvironment {
@@ -142,11 +148,26 @@ fun createCompilerState(
     val extensionStorage = CompilerPluginRegistrar.ExtensionStorage()
 
     val scriptCompilationConfiguration = compilerContext.baseScriptCompilationConfiguration
-    compilerConfiguration.scriptingHostConfiguration = hostConfiguration
+
     compilerConfiguration.add(
         ScriptingConfigurationKeys.SCRIPT_DEFINITIONS,
         ScriptDefinition.FromConfigurations(hostConfiguration, scriptCompilationConfiguration, null)
     )
+
+    val definitionSources = compilerConfiguration.getList(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS_SOURCES)
+    val definitions = compilerConfiguration.getList(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS)
+    val scriptDefinitionProvider = CliScriptDefinitionProvider().also {
+        it.setScriptDefinitionsSources(definitionSources)
+        it.setScriptDefinitions(definitions)
+    }
+
+    val hostConfigurationWithProvider = hostConfiguration.with {
+        scriptCompilationConfigurationProvider(ScriptCompilationConfigurationProviderOverDefinitionProvider(scriptDefinitionProvider))
+        scriptRefinedCompilationConfigurationsCache(ScriptRefinedCompilationConfigurationCacheImpl())
+    }
+
+    compilerConfiguration.scriptingHostConfiguration = hostConfigurationWithProvider
+
     with(ScriptingK2CompilerPluginRegistrar()) { extensionStorage.registerExtensions(compilerConfiguration) }
     extensionStorage.registerInProject(project) { "Error on plugin registration: ${it.javaClass.name}" }
 
@@ -184,7 +205,7 @@ fun createCompilerState(
 
     return K2ScriptingCompilerEnvironmentImpl(
         scriptCompilationConfiguration,
-        hostConfiguration,
+        hostConfigurationWithProvider,
         predefinedJavaComponents,
         projectEnvironment,
         moduleDataProvider,

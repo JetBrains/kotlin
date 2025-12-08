@@ -106,4 +106,5 @@ class FirScriptDefinitionProviderService(
     }
 }
 
+@Deprecated("Use ScriptingHost based provider and cache, see `scriptCompilationConfigurationProvider` and `scriptRefinedCompilationConfigurationsCache`")
 val FirSession.scriptDefinitionProviderService: FirScriptDefinitionProviderService? by FirSession.nullableSessionComponentAccessor()

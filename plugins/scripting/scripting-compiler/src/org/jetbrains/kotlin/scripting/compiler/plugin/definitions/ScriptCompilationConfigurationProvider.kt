@@ -22,10 +22,11 @@ interface ScriptCompilationConfigurationProvider {
 }
 
 fun ScriptingHostConfiguration.getBaseOrDefaultCompilationConfiguration(
-    source: SourceCode
+    source: SourceCode?
 ): ResultWithDiagnostics<ScriptCompilationConfiguration> =
     (get(ScriptingHostConfiguration.scriptCompilationConfigurationProvider)
         ?: error("ScriptCompilationConfigurationProvider is not configured"))
-        .let {
-            it.findBaseCompilationConfiguration(source) ?: it.getDefaultCompilationConfiguration()
+        .let { provider ->
+            source?.let { provider.findBaseCompilationConfiguration(it) }
+                ?: provider.getDefaultCompilationConfiguration()
         }

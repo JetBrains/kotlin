@@ -34,6 +34,15 @@ fun ScriptingHostConfiguration.getRefinedCompilationConfiguration(
         ?: error("ScriptRefinedCompilationConfigurationCache is not configured"))
         .getRefinedCompilationConfiguration(source)
 
+fun ScriptingHostConfiguration.getRefinedOrBaseCompilationConfiguration(
+    source: SourceCode?,
+): ResultWithDiagnostics<ScriptCompilationConfiguration> =
+    get(ScriptingHostConfiguration.scriptRefinedCompilationConfigurationsCache)
+        ?.let { cache ->
+            if (source == null) null
+            else cache.getRefinedCompilationConfiguration(source)
+        } ?: getBaseOrDefaultCompilationConfiguration(source)
+
 fun ScriptingHostConfiguration.getOrStoreRefinedCompilationConfiguration(
     source: SourceCode,
     refine: (SourceCode, ScriptCompilationConfiguration) -> ResultWithDiagnostics<ScriptCompilationConfiguration>
