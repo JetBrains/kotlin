@@ -128,6 +128,11 @@ internal sealed interface KaFirBasePropertyAccessorSymbol : KaFirKtBasedSymbol<K
     val hasStableParameterNamesImpl: Boolean
         get() = withValidityAssertion { true }
 
+    val isExternalImpl: Boolean
+        get() = withValidityAssertion {
+            backingPsi?.hasModifier(KtTokens.EXTERNAL_KEYWORD) == true || firSymbol.isEffectivelyExternal(analysisSession.firSession)
+        }
+
     private val annotationUseSiteTarget: AnnotationUseSiteTarget
         get() = if (isGetter) AnnotationUseSiteTarget.PROPERTY_GETTER else AnnotationUseSiteTarget.PROPERTY_SETTER
 

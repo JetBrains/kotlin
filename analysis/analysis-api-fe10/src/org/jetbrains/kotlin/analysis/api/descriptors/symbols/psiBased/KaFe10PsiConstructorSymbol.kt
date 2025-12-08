@@ -27,11 +27,13 @@ import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtConstructor
 import org.jetbrains.kotlin.psi.KtPrimaryConstructor
 import org.jetbrains.kotlin.psi.psiUtil.hasActualModifier
 import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
 
 internal class KaFe10PsiConstructorSymbol(
     override val psi: KtConstructor<*>,
@@ -67,6 +69,9 @@ internal class KaFe10PsiConstructorSymbol(
 
     override val isExpect: Boolean
         get() = withValidityAssertion { descriptor?.isExpect ?: psi.hasExpectModifier() }
+
+    override val isExternal: Boolean
+        get() = withValidityAssertion { descriptor?.isEffectivelyExternal() ?: psi.hasModifier(KtTokens.EXTERNAL_KEYWORD) }
 
     override val typeParameters: List<KaTypeParameterSymbol>
         get() = withValidityAssertion { psi.typeParameters.map { KaFe10PsiTypeParameterSymbol(it, analysisContext) } }

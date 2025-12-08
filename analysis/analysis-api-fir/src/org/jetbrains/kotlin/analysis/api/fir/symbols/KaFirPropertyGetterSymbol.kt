@@ -75,6 +75,9 @@ internal class KaFirPropertyGetterSymbol(
     override val callableId: CallableId?
         get() = callableIdImpl
 
+    override val isExternal: Boolean
+        get() = isExternalImpl
+
     override fun createPointer(): KaSymbolPointer<KaPropertyGetterSymbol> = withValidityAssertion {
         psiBasedSymbolPointerOfTypeIfSource<KaPropertyGetterSymbol>()
             ?: KaBasePropertyGetterSymbolPointer(propertySymbolPointer = owningKaProperty.createPointer(), originalSymbol = this)

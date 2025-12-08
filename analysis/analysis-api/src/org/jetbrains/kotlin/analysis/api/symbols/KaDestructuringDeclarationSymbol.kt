@@ -54,6 +54,7 @@ public abstract class KaDestructuringDeclarationSymbol : KaDeclarationSymbol {
 
     final override val isActual: Boolean get() = withValidityAssertion { false }
     final override val isExpect: Boolean get() = withValidityAssertion { false }
+    final override val isExternal: Boolean get() = withValidityAssertion { false }
 
     abstract override fun createPointer(): KaSymbolPointer<KaDestructuringDeclarationSymbol>
 }

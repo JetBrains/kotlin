@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.inference.returnTypeOrNothing
 import org.jetbrains.kotlin.resolve.calls.tasks.isDynamic
+import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 
 internal class KaFe10DescNamedFunctionSymbol private constructor(
@@ -67,7 +68,7 @@ internal class KaFe10DescNamedFunctionSymbol private constructor(
         }
 
     override val isExternal: Boolean
-        get() = withValidityAssertion { descriptor.isExternal }
+        get() = withValidityAssertion { descriptor.isEffectivelyExternal() }
 
     override val isInline: Boolean
         get() = withValidityAssertion { descriptor.isInline }

@@ -326,7 +326,9 @@ private class KaFirKotlinPropertyKtPropertyBasedSymbol : KaFirKotlinPropertySymb
         }
 
     override val isExternal: Boolean
-        get() = withValidityAssertion { backingPsi?.hasModifier(KtTokens.EXTERNAL_KEYWORD) ?: firSymbol.isExternal }
+        get() = withValidityAssertion {
+            backingPsi?.hasModifier(KtTokens.EXTERNAL_KEYWORD) ?: firSymbol.isEffectivelyExternal(analysisSession.firSession)
+        }
 
     // NB: `field` in accessors indicates the property should have a backing field. To see that, though, we need BODY_RESOLVE.
     override val hasBackingField: Boolean
@@ -459,7 +461,9 @@ private class KaFirKotlinPropertyKtParameterBasedSymbol : KaFirKotlinPropertySym
         get() = withValidityAssertion { true }
 
     override val isExternal: Boolean
-        get() = withValidityAssertion { backingPsi?.hasModifier(KtTokens.EXTERNAL_KEYWORD) ?: firSymbol.isExternal }
+        get() = withValidityAssertion {
+            backingPsi?.hasModifier(KtTokens.EXTERNAL_KEYWORD) == true || firSymbol.isEffectivelyExternal(analysisSession.firSession)
+        }
 
     override val hasBackingField: Boolean
         get() = withValidityAssertion { true }
@@ -556,7 +560,9 @@ private class KaFirKotlinPropertyKtDestructuringDeclarationEntryBasedSymbol : Ka
         get() = withValidityAssertion { false }
 
     override val isExternal: Boolean
-        get() = withValidityAssertion { backingPsi?.hasModifier(KtTokens.EXTERNAL_KEYWORD) ?: firSymbol.isExternal }
+        get() = withValidityAssertion {
+            backingPsi?.hasModifier(KtTokens.EXTERNAL_KEYWORD) == true || firSymbol.isEffectivelyExternal(analysisSession.firSession)
+        }
 
     /** KT-70766 */
     override val hasBackingField: Boolean

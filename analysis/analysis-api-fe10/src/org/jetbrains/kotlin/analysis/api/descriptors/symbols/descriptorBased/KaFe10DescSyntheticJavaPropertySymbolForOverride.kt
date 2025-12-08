@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 
 internal class KaFe10DescSyntheticJavaPropertySymbolForOverride(
@@ -38,7 +39,7 @@ internal class KaFe10DescSyntheticJavaPropertySymbolForOverride(
         get() = withValidityAssertion { DescriptorUtils.isStaticDeclaration(descriptor) }
 
     override val isExternal: Boolean
-        get() = withValidityAssertion { descriptor.isExternal }
+        get() = withValidityAssertion { descriptor.isEffectivelyExternal() }
 
     override val modality: KaSymbolModality
         get() = withValidityAssertion { descriptor.kaSymbolModality }

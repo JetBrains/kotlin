@@ -167,7 +167,9 @@ internal class KaFirNamedFunctionSymbol private constructor(
         }
 
     override val isExternal: Boolean
-        get() = withValidityAssertion { backingPsi?.hasModifier(KtTokens.EXTERNAL_KEYWORD) ?: firSymbol.isExternal }
+        get() = withValidityAssertion {
+            backingPsi?.hasModifier(KtTokens.EXTERNAL_KEYWORD) == true || firSymbol.isEffectivelyExternal(analysisSession.firSession)
+        }
 
     override val isInline: Boolean
         get() = withValidityAssertion { backingPsi?.hasModifier(KtTokens.INLINE_KEYWORD) ?: firSymbol.isInline }

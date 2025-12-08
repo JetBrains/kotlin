@@ -23,11 +23,13 @@ import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtEnumEntry
 import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
 
 internal class KaFe10PsiEnumEntrySymbol(
     override val psi: KtEnumEntry,
@@ -43,6 +45,9 @@ internal class KaFe10PsiEnumEntrySymbol(
 
     override val isExpect: Boolean
         get() = withValidityAssertion { descriptor?.isExpect ?: psi.hasExpectModifier() }
+
+    override val isExternal: Boolean
+        get() = withValidityAssertion { descriptor?.isEffectivelyExternal() ?: psi.hasModifier(KtTokens.EXTERNAL_KEYWORD) }
 
     override val returnType: KaType
         get() = withValidityAssertion {
