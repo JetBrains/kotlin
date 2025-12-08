@@ -18,7 +18,7 @@ FILE: main.kt
             R|/myUnitFun|()
         }
         )
-        R|<local>/app|.R|/Application.runSomething3<CS errors: /Application.runSomething3>#|<R|kotlin/String!|, <ERROR TYPE REF: Cannot infer argument for type parameter E>>(<L> = SAM(runSomething3@fun <anonymous>(): R|kotlin/String!| <inline=NoInline>  {
+        R|<local>/app|.R|/Application.runSomething3|<R|kotlin/String!|, R|kotlin/Throwable!|>(<L> = SAM(runSomething3@fun <anonymous>(): R|kotlin/String!| <inline=NoInline>  {
             ^ String()
         }
         ))
