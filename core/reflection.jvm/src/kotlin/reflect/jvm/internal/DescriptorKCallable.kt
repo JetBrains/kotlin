@@ -43,7 +43,7 @@ internal abstract class DescriptorKCallable<out R> : ReflectKCallableImpl<R>() {
         val descriptor = descriptor
         val result = ArrayList<KParameter>()
         if (includeReceivers) {
-            val instanceReceiver = descriptor.instanceReceiverParameter
+            val instanceReceiver = instanceReceiverParameter
             if (instanceReceiver != null) {
                 result.add(DescriptorKParameter(this, result.size, KParameter.Kind.INSTANCE) { instanceReceiver })
             }
