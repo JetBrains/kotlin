@@ -1,16 +1,4 @@
-info: `-Xklib-ir-inliner=full` will trigger setting the `pre-release` flag for the compiled library.
-compiler/testData/cli/js/compilationWarningExposureOfReferencesToInvisibleEntities.kt:5:37: warning: public-API inline function references a non Public-API function 'foo'. This could happen as a result of cascaded inlining of the following functions:
-private inline fun privateFun1(): KFunction0<Unit>
-private inline fun privateFun2(): KFunction0<Unit>
-private inline fun privateFun3(): KFunction0<Unit>
-
-This will become an error in language version 2.4. See https://youtrack.jetbrains.com/issue/KTLC-283.
-internal inline fun internalFun() = privateFun3()
-                                    ^^^^^^^^^^^^^
-compiler/testData/cli/js/compilationWarningExposureOfReferencesToInvisibleEntities.kt:6:38: warning: public-API inline function references a non Public-API function. This will become an error in language version 2.4. See https://youtrack.jetbrains.com/issue/KTLC-283.
-internal inline fun internalFun2() = ::foo
-                                     ^^^^^
-compiler/testData/cli/js/compilationWarningExposureOfReferencesToInvisibleEntities.kt:6:40: warning: callable reference to 'private-in-class' declaration 'foo' inside 'internal' inline declaration. This will become an error in language version 2.4. See https://youtrack.jetbrains.com/issue/KTLC-283.
+compiler/testData/cli/js/compilationWarningExposureOfReferencesToInvisibleEntities.kt:6:40: error: callable reference to 'private-in-class' declaration 'foo' inside 'internal' inline declaration.
 internal inline fun internalFun2() = ::foo
                                        ^^^
-OK
+COMPILATION_ERROR
