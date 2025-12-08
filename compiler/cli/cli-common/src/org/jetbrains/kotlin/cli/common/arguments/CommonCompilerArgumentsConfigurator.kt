@@ -216,8 +216,6 @@ fun CommonCompilerArguments.toLanguageVersionSettings(
     // (API version cannot be greater than the language version)
     val apiVersion = ApiVersion.createByLanguageVersion(parseVersion(collector, apiVersion, "API") ?: languageVersion)
 
-    checkApiVersionIsNotGreaterThenLanguageVersion(languageVersion, apiVersion, collector)
-
     val languageVersionSettings = LanguageVersionSettingsImpl(
         languageVersion,
         apiVersion,
@@ -225,13 +223,18 @@ fun CommonCompilerArguments.toLanguageVersionSettings(
         configureLanguageFeatures(collector)
     )
 
-    checkLanguageVersionIsStable(languageVersion, collector)
-    checkOutdatedVersions(languageVersion, apiVersion, collector)
-    checkProgressiveMode(languageVersion, collector)
+    checkApiAndLanguageVersion(languageVersion, apiVersion, collector)
 
     checkExplicitApiAndExplicitReturnTypesAtTheSameTime(collector)
 
     return languageVersionSettings
+}
+
+fun CommonCompilerArguments.checkApiAndLanguageVersion(language: LanguageVersion, api: ApiVersion, collector: MessageCollector) {
+    checkApiVersionIsNotGreaterThenLanguageVersion(language, api, collector)
+    checkLanguageVersionIsStable(language, collector)
+    checkOutdatedVersions(language, api, collector)
+    checkProgressiveMode(language, collector)
 }
 
 private fun CommonCompilerArguments.checkApiVersionIsNotGreaterThenLanguageVersion(
@@ -251,7 +254,7 @@ private fun CommonCompilerArguments.checkApiVersionIsNotGreaterThenLanguageVersi
     }
 }
 
-fun CommonCompilerArguments.checkLanguageVersionIsStable(languageVersion: LanguageVersion, collector: MessageCollector) {
+private fun CommonCompilerArguments.checkLanguageVersionIsStable(languageVersion: LanguageVersion, collector: MessageCollector) {
     if (!languageVersion.isStable && !suppressVersionWarnings) {
         collector.report(
             CompilerMessageSeverity.STRONG_WARNING,
