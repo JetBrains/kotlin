@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.asJava.builder.LightMemberOriginForDeclaration
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.light.classes.symbol.methods.MethodSignature
-import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightMethodForMappedClass
+import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightMethodForMappedCollectionClass
 import org.jetbrains.kotlin.load.java.BuiltinSpecialProperties
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.SpecialGenericSignatures
@@ -69,9 +69,9 @@ private val ERASED_COLLECTION_METHOD_NAMES: Set<String> = buildSet {
  * @return Filtered sequence of callable symbols that should be processed normally by the caller.
  *         Functions that were fully replaced by bridge methods are excluded from this sequence.
  *
- * @see processPossiblyMappedMethod
+ * @see processPossiblyMappedCollectionMethod
  */
-internal fun KaSession.processOwnDeclarationsMappedSpecialSignaturesAware(
+internal fun KaSession.processOwnDeclarationsMappedCollectionMethodsAware(
     containingClass: SymbolLightClassForClassOrObject,
     callableDeclarations: Sequence<KaCallableSymbol>,
     allSupertypes: List<KaClassType>,
@@ -90,7 +90,7 @@ internal fun KaSession.processOwnDeclarationsMappedSpecialSignaturesAware(
                     continue
                 }
 
-                val shouldCreateRegularDeclaration = processPossiblyMappedMethod(
+                val shouldCreateRegularDeclaration = processPossiblyMappedCollectionMethod(
                     containingClass = containingClass,
                     ownFunction = callableSymbol,
                     kotlinCollectionFunction = kotlinCollectionFunction,
@@ -149,7 +149,7 @@ internal fun hasCollectionSupertype(allSupertypes: List<KaClassType>): Boolean =
  *
  * @see tryToMapKotlinCollectionMethodToJavaMethod
  */
-internal fun KaSession.processPossiblyMappedMethod(
+internal fun KaSession.processPossiblyMappedCollectionMethod(
     containingClass: SymbolLightClassForClassOrObject,
     ownFunction: KaNamedFunctionSymbol,
     kotlinCollectionFunction: KaNamedFunctionSymbol,
@@ -229,7 +229,7 @@ internal fun KaSession.processPossiblyMappedMethod(
  * @param allSupertypes All supertypes of the class, used to find the closest mapped collection type
  *
  * @see generateJavaCollectionMethodStubs
- * @see mapKotlinClassToJava
+ * @see mapKotlinCollectionClassToJava
  */
 internal fun KaSession.generateJavaCollectionMethodStubsIfNeeded(
     containingClass: SymbolLightClassForClassOrObject,
@@ -237,10 +237,10 @@ internal fun KaSession.generateJavaCollectionMethodStubsIfNeeded(
     allSupertypes: List<KaClassType>,
     result: MutableList<PsiMethod>,
 ) {
-    val closestMappedSupertype = allSupertypes.find { mapKotlinClassToJava(it.classId) != null } ?: return
+    val closestMappedSupertype = allSupertypes.find { mapKotlinCollectionClassToJava(it.classId) != null } ?: return
     if (!isFirstNonInterfaceSubtypeOfCollection(classSymbol)) return
 
-    val javaClassId = mapKotlinClassToJava(closestMappedSupertype.classId) ?: return
+    val javaClassId = mapKotlinCollectionClassToJava(closestMappedSupertype.classId) ?: return
     val kotlinCollectionSymbol = closestMappedSupertype.symbol as? KaClassSymbol ?: return
     val javaCollectionSymbol = findClass(javaClassId) ?: return
     val javaCollectionPsiClass = javaCollectionSymbol.psi as? PsiClass ?: return
@@ -262,7 +262,7 @@ private fun KaSession.isFirstNonInterfaceSubtypeOfCollection(classSymbol: KaClas
     }
 }
 
-private fun mapKotlinClassToJava(classId: ClassId): ClassId? {
+private fun mapKotlinCollectionClassToJava(classId: ClassId): ClassId? {
     return JavaToKotlinClassMap.mutabilityMappings.find {
         classId == it.kotlinReadOnly || classId == it.kotlinMutable
     }?.javaClass
@@ -396,7 +396,7 @@ private fun createJavaUtilMapMethodWithSpecialSignature(
     containingClass: SymbolLightClassForClassOrObject,
     method: PsiMethod,
     substitutor: PsiSubstitutor,
-): SymbolLightMethodForMappedClass? {
+): SymbolLightMethodForMappedCollectionClass? {
     val typeParameters = substitutor.substitutionMap.keys
     val kOriginal = substitutor.substitutionMap[typeParameters.find { it.name == "K" }] ?: return null
     val vOriginal = substitutor.substitutionMap[typeParameters.find { it.name == "V" }] ?: return null
@@ -434,12 +434,12 @@ private fun createJavaUtilMapMethodWithSpecialSignature(
 private fun PsiMethod.finalBridge(
     containingClass: SymbolLightClassForClassOrObject,
     substitutor: PsiSubstitutor,
-): SymbolLightMethodForMappedClass = wrap(containingClass, substitutor, makeFinal = true, hasImplementation = true)
+): SymbolLightMethodForMappedCollectionClass = wrap(containingClass, substitutor, makeFinal = true, hasImplementation = true)
 
 private fun PsiMethod.openBridge(
     containingClass: SymbolLightClassForClassOrObject,
     substitutor: PsiSubstitutor,
-): SymbolLightMethodForMappedClass = wrap(containingClass, substitutor, makeFinal = false, hasImplementation = true)
+): SymbolLightMethodForMappedCollectionClass = wrap(containingClass, substitutor, makeFinal = false, hasImplementation = true)
 
 private fun PsiMethod.wrap(
     containingClass: SymbolLightClassForClassOrObject,
@@ -450,7 +450,7 @@ private fun PsiMethod.wrap(
     name: String = this.name,
     substituteObjectWith: PsiType? = null,
     signature: MethodSignature? = null,
-) = SymbolLightMethodForMappedClass(
+) = SymbolLightMethodForMappedCollectionClass(
     lightMemberOrigin = lightMemberOrigin,
     containingClass = containingClass,
     javaMethod = this,
@@ -505,7 +505,7 @@ private fun KaSession.getJavaMapClass(allSupertypes: List<KaClassType>): PsiClas
 
 private fun KaSession.getJavaPsiClass(allSupertypes: List<KaClassType>, kotlinClassId: ClassId): PsiClass? {
     val kotlinCollection = allSupertypes.find { it.classId == kotlinClassId } ?: return null
-    val javaClassId = mapKotlinClassToJava(kotlinCollection.classId) ?: return null
+    val javaClassId = mapKotlinCollectionClassToJava(kotlinCollection.classId) ?: return null
     val javaCollectionSymbol = findClass(javaClassId) ?: return null
     return javaCollectionSymbol.psi as? PsiClass
 }
