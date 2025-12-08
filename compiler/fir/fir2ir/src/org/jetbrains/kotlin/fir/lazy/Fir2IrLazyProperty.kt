@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.IrParameterKind
+import org.jetbrains.kotlin.ir.expressions.IrAnnotation
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
@@ -191,7 +192,7 @@ class Fir2IrLazyProperty(
     }?.apply {
         this.parent = this@Fir2IrLazyProperty.parent
         this.annotations = fir.backingField?.annotations?.mapNotNull {
-            callGenerator.convertToIrConstructorCall(it) as? IrConstructorCall
+            callGenerator.convertToIrAnnotation(it) as? IrAnnotation
         }.orEmpty()
     }
 

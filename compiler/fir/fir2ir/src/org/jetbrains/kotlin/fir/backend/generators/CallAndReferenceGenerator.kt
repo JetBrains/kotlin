@@ -559,18 +559,33 @@ class CallAndReferenceGenerator(
                     val constructor = firSymbol.unwrapCallRepresentative().fir as FirConstructor
                     val totalTypeParametersCount = constructor.typeParameters.size
                     val constructorTypeParametersCount = constructor.typeParameters.count { it is FirTypeParameter }
-                    IrConstructorCallImplWithShape(
-                        startOffset,
-                        endOffset,
-                        irType,
-                        irSymbol,
-                        typeArgumentsCount = totalTypeParametersCount,
-                        valueArgumentsCount = firSymbol.valueParametersSize(),
-                        contextParameterCount = constructor.contextParameters.size,
-                        constructorTypeArgumentsCount = constructorTypeParametersCount,
-                        hasDispatchReceiver = firSymbol.dispatchReceiverType != null,
-                        hasExtensionReceiver = firSymbol.isExtension,
-                    )
+                    if (firSymbol.isAnnotationConstructor(session)) {
+                        IrAnnotationImplWithShape(
+                            startOffset,
+                            endOffset,
+                            irType,
+                            irSymbol,
+                            typeArgumentsCount = totalTypeParametersCount,
+                            valueArgumentsCount = firSymbol.valueParametersSize(),
+                            contextParameterCount = constructor.contextParameters.size,
+                            constructorTypeArgumentsCount = constructorTypeParametersCount,
+                            hasDispatchReceiver = firSymbol.dispatchReceiverType != null,
+                            hasExtensionReceiver = firSymbol.isExtension,
+                        )
+                    } else {
+                        IrConstructorCallImplWithShape(
+                            startOffset,
+                            endOffset,
+                            irType,
+                            irSymbol,
+                            typeArgumentsCount = totalTypeParametersCount,
+                            valueArgumentsCount = firSymbol.valueParametersSize(),
+                            contextParameterCount = constructor.contextParameters.size,
+                            constructorTypeArgumentsCount = constructorTypeParametersCount,
+                            hasDispatchReceiver = firSymbol.dispatchReceiverType != null,
+                            hasExtensionReceiver = firSymbol.isExtension,
+                        )
+                    }
                 }
                 is IrSimpleFunctionSymbol -> {
                     val callOrigin = calleeReference.statementOrigin()
@@ -922,7 +937,7 @@ class CallAndReferenceGenerator(
         }
     }
 
-    fun convertToIrConstructorCall(annotation: FirAnnotation): IrExpression {
+    fun convertToIrAnnotation(annotation: FirAnnotation): IrExpression {
         val coneType = annotation.annotationTypeRef.coneType.fullyExpandedType()
         val type = coneType.toIrType()
         if (configuration.skipBodies && type is IrErrorType) {
@@ -951,11 +966,11 @@ class CallAndReferenceGenerator(
                 }
                 constructorSymbol
             }
-        val irConstructorCall = annotation.convertWithOffsets { startOffset, endOffset ->
+        val irAnnotation = annotation.convertWithOffsets { startOffset, endOffset ->
             when {
                 // In compiler facility (debugger) scenario it's possible that annotation call is resolved in the session
                 //  where this annotation was applied, but invisible in the current session.
-                // In that case we shouldn't generate `IrConstructorCall`, as it will point to non-existing constructor
+                // In that case we shouldn't generate `IrAnnotation`, as it will point to non-existing constructor
                 //  of stub IR for not found class
                 symbol !is IrClassSymbol || !annotationIsAccessible -> IrErrorCallExpressionImpl(
                     startOffset, endOffset, type, "Unresolved reference: ${annotation.render()}"
@@ -976,7 +991,7 @@ class CallAndReferenceGenerator(
                     }
                     val irConstructor = declarationStorage.getIrConstructorSymbol(fullyExpandedConstructorSymbol)
 
-                    IrConstructorCallImplWithShape(
+                    IrAnnotationImplWithShape(
                         startOffset, endOffset, type, irConstructor,
                         // Get the number of value arguments from FIR because of a possible cycle where an annotation constructor
                         // parameter is annotated with the same annotation.
@@ -996,7 +1011,7 @@ class CallAndReferenceGenerator(
         }
         return visitor.withAnnotationMode {
             val annotationCall = annotation.toAnnotationCall()
-            irConstructorCall
+            irAnnotation
                 .applyReceiversAndArguments(annotationCall, declarationSiteSymbol = firConstructorSymbol, explicitReceiverExpression = null)
                 .applyTypeArgumentsWithTypealiasConstructorRemapping(firConstructorSymbol?.fir, annotationCall?.typeArguments.orEmpty())
         }

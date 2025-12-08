@@ -23,9 +23,10 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.isBoolean
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.expressions.IrAnnotation
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
-import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImplWithShape
+import org.jetbrains.kotlin.ir.expressions.impl.IrAnnotationImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrAnnotationImplWithShape
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
@@ -134,7 +135,7 @@ class Fir2IrBuiltinSymbolsContainer(
         generateAnnotationCall(StandardClassIds.Annotations.NoInfer)
     }
 
-    private fun generateAnnotationCall(classId: ClassId): IrConstructorCallImpl? {
+    private fun generateAnnotationCall(classId: ClassId): IrAnnotationImpl? {
         val firSymbol =
             session.symbolProvider.getClassLikeSymbolByClassId(classId) as? FirRegularClassSymbol
                 ?: return null
@@ -142,7 +143,7 @@ class Fir2IrBuiltinSymbolsContainer(
         val firConstructorSymbol = firSymbol.unsubstitutedScope().getDeclaredConstructors().singleOrNull() ?: return null
         val constructorSymbol = declarationStorage.getIrConstructorSymbol(firConstructorSymbol)
 
-        return IrConstructorCallImplWithShape(
+        return IrAnnotationImplWithShape(
             startOffset = UNDEFINED_OFFSET,
             endOffset = UNDEFINED_OFFSET,
             type = IrSimpleTypeImpl(

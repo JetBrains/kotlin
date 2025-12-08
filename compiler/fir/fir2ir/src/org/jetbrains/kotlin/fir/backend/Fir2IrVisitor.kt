@@ -718,11 +718,11 @@ class Fir2IrVisitor(
     }
 
     override fun visitAnnotation(annotation: FirAnnotation, data: Any?): IrElement {
-        return callGenerator.convertToIrConstructorCall(annotation)
+        return callGenerator.convertToIrAnnotation(annotation)
     }
 
     override fun visitAnnotationCall(annotationCall: FirAnnotationCall, data: Any?): IrElement = whileAnalysing(session, annotationCall) {
-        return callGenerator.convertToIrConstructorCall(annotationCall)
+        return callGenerator.convertToIrAnnotation(annotationCall)
     }
 
     override fun visitQualifiedAccessExpression(qualifiedAccessExpression: FirQualifiedAccessExpression, data: Any?): IrElement {
