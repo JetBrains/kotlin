@@ -1,2 +1,2 @@
-warning: useless suppress -Xsuppress-api-version-greater-than-language-version-error
+warning: useless suppress -Xsuppress-api-version-greater-than-language-version-error.
 OK

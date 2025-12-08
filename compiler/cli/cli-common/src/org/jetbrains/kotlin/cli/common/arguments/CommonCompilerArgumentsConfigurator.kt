@@ -246,11 +246,11 @@ private fun CommonCompilerArguments.checkApiVersionIsNotGreaterThenLanguageVersi
         if (!suppressApiVersionGreaterThanLanguageVersionError) {
             collector.report(
                 CompilerMessageSeverity.ERROR,
-                "-api-version (${apiVersion.versionString}) cannot be greater than -language-version (${languageVersion.versionString})"
+                "-api-version (${apiVersion.versionString}) cannot be greater than -language-version (${languageVersion.versionString})."
             )
         }
     } else if (suppressApiVersionGreaterThanLanguageVersionError) {
-        collector.report(WARNING, "Useless suppress -Xsuppress-api-version-greater-than-language-version-error")
+        collector.report(WARNING, "Useless suppress -Xsuppress-api-version-greater-than-language-version-error.")
     }
 }
 
@@ -259,7 +259,7 @@ private fun CommonCompilerArguments.checkLanguageVersionIsStable(languageVersion
         collector.report(
             CompilerMessageSeverity.STRONG_WARNING,
             "Language version ${languageVersion.versionString} is experimental, there are no backwards compatibility guarantees for " +
-                    "new language and library features"
+                    "new language and library features."
         )
     }
 }
@@ -272,13 +272,13 @@ private fun CommonCompilerArguments.checkOutdatedVersions(language: LanguageVers
                 collector.report(
                     CompilerMessageSeverity.ERROR,
                     "${versionKind.text} version ${version.versionString} is no longer supported; " +
-                            "please, use version ${supportedVersion!!.versionString} or greater."
+                            "use version ${supportedVersion!!.versionString} or greater instead."
                 )
             } else if (!suppressVersionWarnings) {
                 collector.report(
                     CompilerMessageSeverity.STRONG_WARNING,
                     "${versionKind.text} version ${version.versionString} is deprecated in JVM " +
-                            "and its support will be removed in a future version of Kotlin"
+                            "and its support will be removed in a future version of Kotlin."
                 )
             }
         }
@@ -286,7 +286,7 @@ private fun CommonCompilerArguments.checkOutdatedVersions(language: LanguageVers
             collector.report(
                 CompilerMessageSeverity.STRONG_WARNING,
                 "${versionKind.text} version ${version.versionString} is deprecated " +
-                        "and its support will be removed in a future version of Kotlin"
+                        "and its support will be removed in a future version of Kotlin."
             )
         }
     }
@@ -311,7 +311,7 @@ private fun CommonCompilerArguments.checkProgressiveMode(languageVersion: Langua
             CompilerMessageSeverity.STRONG_WARNING,
             "'-progressive' is meaningful only for the latest language version (${LanguageVersion.LATEST_STABLE}), " +
                     "while this build uses $languageVersion\n" +
-                    "Compiler behavior in such mode is undefined; please, consider moving to the latest stable version " +
+                    "Compiler behavior in such mode is undefined; consider moving to the latest stable version " +
                     "or turning off progressive mode."
         )
     }

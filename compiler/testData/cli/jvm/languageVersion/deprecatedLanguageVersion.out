@@ -1,4 +1,4 @@
-warning: language version 2.0 is deprecated and its support will be removed in a future version of Kotlin
+warning: language version 2.0 is deprecated and its support will be removed in a future version of Kotlin.
 compiler/testData/cli/jvm/languageVersion/languageVersion.kt:6:16: error: the feature "break continue in inline lambdas" is only available since language version 2.2
                break
                ^^^^^
