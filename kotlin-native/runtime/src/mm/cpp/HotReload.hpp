@@ -14,9 +14,13 @@
 #include "hot/MachOParser.hpp"
 #include "hot/HotReloadStats.hpp"
 
+namespace kotlin::mm {
+class ThreadData;
+}
+
 namespace kotlin::hot {
 
-class HotReloader : Pinned {
+class HotReloader : private Pinned {
 public:
     class SymbolLoader : Pinned {
         friend class HotReloader;
@@ -73,8 +77,6 @@ private:
 
     SymbolLoader _reloader{};
     HotReloadServer _server{};
-
-    std::atomic_bool _processing{};
 };
 
 } // namespace kotlin::hot
