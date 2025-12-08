@@ -14828,6 +14828,12 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
       }
 
       @Test
+      @TestMetadata("trimMarginBlankPrefix.kt")
+      public void testTrimMarginBlankPrefix() {
+        runTest("compiler/testData/diagnostics/tests/evaluate/trimMarginBlankPrefix.kt");
+      }
+
+      @Test
       @TestMetadata("unaryMinusDepOnExpType.kt")
       public void testUnaryMinusDepOnExpType() {
         runTest("compiler/testData/diagnostics/tests/evaluate/unaryMinusDepOnExpType.kt");
