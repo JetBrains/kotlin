@@ -710,6 +710,12 @@ public actual class StringBuilder private constructor(
 
     // ---------------------------- private ----------------------------
 
+    /*
+     * All insert operations ultimately work by inserting a js-string into the
+     * existing one. Kotlin/WasmJs performs this by using `concat` and `substring`
+     * operations on js-strings (js-string builtins in Wasm).
+     */
+
     private fun insert(index: Int, value: JsString): StringBuilder {
 
         var res = value
