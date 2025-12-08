@@ -302,8 +302,7 @@ private fun KaSession.generateJavaCollectionMethodStubs(
     val candidateMethods = javaMethods.flatMap { method ->
         createWrappersForJavaCollectionMethod(containingClass, method, javaCollectionPsiClass, kotlinNames, substitutor)
     }
-    val existingSignatures = result.map { it.getSignature(substitutor) }.toSet()
-
+    val existingSignatures = result.mapTo(HashSet()) { it.getSignature(substitutor) }
     result += candidateMethods.filter { candidateMethod ->
         candidateMethod.getSignature(substitutor) !in existingSignatures
     }
