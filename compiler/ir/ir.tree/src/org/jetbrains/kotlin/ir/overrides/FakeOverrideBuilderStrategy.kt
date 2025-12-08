@@ -70,11 +70,6 @@ abstract class FakeOverrideBuilderStrategy {
     }
 
     /**
-     * Filters out some members during check for AMBIGUOUS_NON_OVERRIDDEN_CALLABLE_MEMBER error.
-     */
-    open val interfaceFilterForMultipleNonAbstractOverrides: (IrOverridableDeclaration<*>) -> Boolean = { true }
-
-    /**
      * This function is a callback for fake override creation finish.
      *
      * It can modify the created fake override, if needed.

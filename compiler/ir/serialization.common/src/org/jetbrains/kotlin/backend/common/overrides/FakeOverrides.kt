@@ -76,13 +76,14 @@ object DefaultFakeOverrideClassFilter : FakeOverrideClassFilter {
     override fun needToConstructFakeOverrides(clazz: IrClass): Boolean = true
 }
 
-open class IrLinkerFakeOverrideBuilderStrategy(
+private class IrLinkerFakeOverrideBuilderStrategy(
     val linker: FileLocalAwareLinker,
     val symbolTable: SymbolTable,
     private val irBuiltIns: IrBuiltIns,
     private val partialLinkageSupport: PartialLinkageSupportForLinker,
     private val fakeOverrideDeclarationTable: FakeOverrideDeclarationTable,
     private val friendModules: Map<String, Collection<String>>,
+    private val isMultipleInheritedImplementationsAllowed: (IrOverridableDeclaration<*>) -> Boolean = { true },
 ) : FakeOverrideBuilderStrategy() {
 
     override fun <R> inFile(file: IrFile?, block: () -> R): R =
@@ -120,13 +121,12 @@ open class IrLinkerFakeOverrideBuilderStrategy(
                  * If there is a **real** super-class function in the list, it must be unique.
                  * In that case it is preferred over functions coming from the default implementation in interfaces.
                  *
-                 * If there is no such function, but there are several Kotlin/Java interface functions - it is an incompatible change.
-                 * Objective-C protocol properties, however, are always oddly final, but it causes no harm, so the error is relaxed.
+                 * If there is no such function, but there are several interface functions - it is an incompatible change.
                  *
                  * This is done to mimic jvm behaviour.
                  */
 
-                runIf(nonAbstractOverrides.all { it.parentAsClass.isInterface && interfaceFilterForMultipleNonAbstractOverrides(it) }) {
+                runIf(nonAbstractOverrides.all { it.parentAsClass.isInterface && isMultipleInheritedImplementationsAllowed(it) }) {
                     PartiallyLinkedDeclarationOrigin.AMBIGUOUS_NON_OVERRIDDEN_CALLABLE_MEMBER
                 }
             }
@@ -306,21 +306,19 @@ class IrLinkerFakeOverrideProvider(
     val platformSpecificClassFilter: FakeOverrideClassFilter = DefaultFakeOverrideClassFilter,
     private val fakeOverrideDeclarationTable: FakeOverrideDeclarationTable = FakeOverrideDeclarationTable(mangler),
     externalOverridabilityConditions: List<IrExternalOverridabilityCondition> = emptyList(),
-    interfaceFilterForMultipleNonAbstractOverrides: (IrOverridableDeclaration<*>) -> Boolean = { true }
+    isMultipleInheritedImplementationsAllowed: (IrOverridableDeclaration<*>) -> Boolean = { true },
 ) {
     private val irFakeOverrideBuilder = IrFakeOverrideBuilder(
         typeSystem,
-        object: IrLinkerFakeOverrideBuilderStrategy(
+        IrLinkerFakeOverrideBuilderStrategy(
             linker,
             symbolTable,
             typeSystem.irBuiltIns,
             partialLinkageSupport,
             fakeOverrideDeclarationTable,
-            friendModules
-        ) {
-            override val interfaceFilterForMultipleNonAbstractOverrides: (IrOverridableDeclaration<*>) -> Boolean =
-                interfaceFilterForMultipleNonAbstractOverrides
-        },
+            friendModules,
+            isMultipleInheritedImplementationsAllowed,
+        ),
         externalOverridabilityConditions
     )
 
