@@ -6,7 +6,7 @@
 // WITH_STDLIB
 
 const val divideByZero = <!EVALUATION_ERROR!>1 / 0<!>
-const val trimMarginException = "123".<!EVALUATION_ERROR!>trimMargin(" ")<!>
+const val trimMarginException = <!TRIM_MARGIN_BLANK_PREFIX!>"123".<!EVALUATION_ERROR!>trimMargin(" ")<!><!>
 
 annotation class A(val i: Int, val b: Int)
 

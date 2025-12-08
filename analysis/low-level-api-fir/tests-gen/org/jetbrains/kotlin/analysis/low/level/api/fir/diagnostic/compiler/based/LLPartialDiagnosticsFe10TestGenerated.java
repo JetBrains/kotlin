@@ -14876,6 +14876,12 @@ public class LLPartialDiagnosticsFe10TestGenerated extends AbstractLLPartialDiag
       }
 
       @Test
+      @TestMetadata("trimMarginBlankPrefix.kt")
+      public void testTrimMarginBlankPrefix() {
+        runTest("compiler/testData/diagnostics/tests/evaluate/trimMarginBlankPrefix.kt");
+      }
+
+      @Test
       @TestMetadata("unaryMinusDepOnExpType.kt")
       public void testUnaryMinusDepOnExpType() {
         runTest("compiler/testData/diagnostics/tests/evaluate/unaryMinusDepOnExpType.kt");
