@@ -48,8 +48,8 @@ internal data class SwcPlatform(
 
         internal fun parseSwcPlatform(name: String, arch: String): SwcPlatform {
             return SwcPlatform(
-                parseOsName(name.lowercase()),
-                parseOsArch(arch.lowercase()),
+                parseOsName(name.lowercase(java.util.Locale.ROOT)),
+                parseOsArch(arch.lowercase(java.util.Locale.ROOT)),
             )
         }
 
