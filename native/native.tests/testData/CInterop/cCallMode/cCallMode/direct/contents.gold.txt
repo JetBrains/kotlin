@@ -35,8 +35,21 @@ library {
       @kotlinx/cinterop/internal/CCall.Direct(name = "function")
       public final external /* non-stable parameter names */ fun function(arg0: kotlin/Int): kotlin/Int
 
+      @kotlinx/cinterop/internal/CCall.Direct(name = "functionDeclaredInDefFile")
+      public final external fun functionDeclaredInDefFile(): kotlin/Unit
+
+      @kotlinx/cinterop/internal/CCall.Direct(name = "functionDefinedInDefFile")
+      public final external fun functionDefinedInDefFile(): kotlin/Unit
+
+      @kotlinx/cinterop/internal/CCall.Direct(name = "functionDefinedInHeader")
+      public final external fun functionDefinedInHeader(): kotlin/Unit
+
       @kotlinx/cinterop/internal/CCall.Direct(name = "funWithAsm")
       public final external /* non-stable parameter names */ fun functionWithAsm(arg0: kotlin/Int): kotlin/Int
+
+      public final val constGlobalDefinedInHeader: kotlin/Byte
+        @kotlinx/cinterop/internal/CGlobalAccess(name = "constGlobalDefinedInHeader")
+        public final /* non-default */ external get
 
       public final var global: kotlin/Int
         @kotlinx/cinterop/internal/CGlobalAccess(name = "global")
@@ -53,6 +66,24 @@ library {
         @kotlinx/cinterop/internal/CGlobalAccess(name = "globalArray2")
         @kotlinx/cinterop/internal/CGlobalAccess.Pointer
         public final /* non-default */ external get
+
+      public final var globalDeclaredInDefFile: kotlin/Int
+        @kotlinx/cinterop/internal/CGlobalAccess(name = "globalDeclaredInDefFile")
+        public final /* non-default */ external get
+        @kotlinx/cinterop/internal/CGlobalAccess(name = "globalDeclaredInDefFile")
+        public final /* non-default */ external set(value: kotlin/Int)
+
+      public final var globalDefinedInDefFile: kotlin/Int
+        @kotlinx/cinterop/internal/CGlobalAccess(name = "globalDefinedInDefFile")
+        public final /* non-default */ external get
+        @kotlinx/cinterop/internal/CGlobalAccess(name = "globalDefinedInDefFile")
+        public final /* non-default */ external set(value: kotlin/Int)
+
+      public final var globalDefinedInHeader: kotlin/Byte
+        @kotlinx/cinterop/internal/CGlobalAccess(name = "globalDefinedInHeader")
+        public final /* non-default */ external get
+        @kotlinx/cinterop/internal/CGlobalAccess(name = "globalDefinedInHeader")
+        public final /* non-default */ external set(value: kotlin/Byte)
 
       public final val globalStruct: pod1/S
         @kotlinx/cinterop/internal/CGlobalAccess(name = "globalStruct")

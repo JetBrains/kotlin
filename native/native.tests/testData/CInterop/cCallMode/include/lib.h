@@ -1,6 +1,8 @@
 int function(int);
 int functionWithAsm(int) __asm("funWithAsm");
 
+static void functionDefinedInHeader(void) {}
+
 extern int global;
 extern const int globalWithAsm __asm("global2");
 
@@ -10,5 +12,8 @@ extern char globalArrayWithAsm[10] __asm("globalArray2");
 struct S { int x; };
 extern struct S globalStruct;
 extern struct S globalStructWithAsm __asm("globalStruct2");
+
+static char globalDefinedInHeader = 'a';
+static const char constGlobalDefinedInHeader = 'A';
 
 #define wrappedMacro function(0)
