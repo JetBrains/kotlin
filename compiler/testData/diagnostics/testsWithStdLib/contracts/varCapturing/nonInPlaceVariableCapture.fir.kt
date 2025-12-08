@@ -64,7 +64,7 @@ fun foo() {
     }
 
     barRegular {
-        baz(<!IE_DIAGNOSTIC!>x<!>)
+        baz(x)
     }
 
     // OK
@@ -95,7 +95,7 @@ fun foo() {
     var localObj = MutableObject()
     barRegular {
 
-        println(<!IE_DIAGNOSTIC!><!IE_DIAGNOSTIC!>localObj<!>.mutableField<!>)
+        println(<!IE_DIAGNOSTIC!>localObj.mutableField<!>)
     }
 
     val localObjVal = MutableObject()
@@ -118,7 +118,7 @@ fun foo() {
 
     var count = false
     barRegular {
-        if (!<!IE_DIAGNOSTIC!>count<!>) {
+        if (!count) {
             print(2)
         }
     }
@@ -126,7 +126,7 @@ fun foo() {
     var accumulator = ""
     processChunked { chunk ->
         val newChunk = chunk
-        val combinedData = <!IE_DIAGNOSTIC!>accumulator<!> + newChunk
+        val combinedData = accumulator + newChunk
 
         if (accumulator == "") {
             print(1)

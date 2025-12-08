@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.toResolvedVariableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.ConeDynamicType
 import kotlin.reflect.full.memberProperties
@@ -33,6 +34,8 @@ object FirInlineCallsInPlaceLambdaRestrictionsChecker : FirQualifiedAccessExpres
         if (!variableSymbol.isVar) return
 
         if (variableSymbol.resolvedReturnType is ConeDynamicType) return
+
+        if (variableSymbol is FirPropertySymbol && !variableSymbol.fir.isLocal) return
 
         val containingLambda = context.containingDeclarations.filterIsInstance<FirAnonymousFunctionSymbol>().lastOrNull() ?: return
 
