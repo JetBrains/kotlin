@@ -6528,6 +6528,12 @@ public class LLPartialDiagnosticsFirTestGenerated extends AbstractLLPartialDiagn
       }
 
       @Test
+      @TestMetadata("materializeExclExcl2.kt")
+      public void testMaterializeExclExcl2() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/inference/materializeExclExcl2.kt");
+      }
+
+      @Test
       @TestMetadata("nestedExtensionFunctionType.kt")
       public void testNestedExtensionFunctionType() {
         runTest("compiler/fir/analysis-tests/testData/resolve/inference/nestedExtensionFunctionType.kt");

@@ -1,0 +1,12 @@
+FILE: materializeExclExcl2.kt
+    public final fun <R> myRun(x: R|() -> R|): R|R| {
+        ^myRun R|<local>/x|.R|SubstitutionOverride<kotlin/Function0.invoke: R|R|>|()
+    }
+    public final fun <T> materialize(): R|T?| {
+        ^materialize (String() as R|T?|)
+    }
+    public final val x: <ERROR TYPE REF: Cannot infer argument for type parameter K> = R|/myRun|<<ERROR TYPE REF: Cannot infer argument for type parameter R>>(<L> = myRun@fun <anonymous>(): <ERROR TYPE REF: Cannot infer argument for type parameter T> <inline=NoInline>  {
+        ^ R|/materialize|<<ERROR TYPE REF: Cannot infer argument for type parameter T>>()
+    }
+    )!!
+        public get(): <ERROR TYPE REF: Cannot infer argument for type parameter K>

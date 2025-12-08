@@ -26510,6 +26510,18 @@ public class LLBlackBoxTestGenerated extends AbstractLLBlackBoxTest {
     }
 
     @Test
+    @TestMetadata("materializeExclExclWithJavaFlexible.kt")
+    public void testMaterializeExclExclWithJavaFlexible() {
+      runTest("compiler/testData/codegen/box/inference/materializeExclExclWithJavaFlexible.kt");
+    }
+
+    @Test
+    @TestMetadata("materializeExclExclWithJavaNullable.kt")
+    public void testMaterializeExclExclWithJavaNullable() {
+      runTest("compiler/testData/codegen/box/inference/materializeExclExclWithJavaNullable.kt");
+    }
+
+    @Test
     @TestMetadata("noCheckNotNullForFlexibleTypeInWhenAtAssignment.kt")
     public void testNoCheckNotNullForFlexibleTypeInWhenAtAssignment() {
       runTest("compiler/testData/codegen/box/inference/noCheckNotNullForFlexibleTypeInWhenAtAssignment.kt");
