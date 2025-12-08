@@ -10,7 +10,7 @@ import com.intellij.psi.*
 import com.intellij.psi.impl.ElementBase
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
-import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightMethodForMappedClass
+import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightMethodForMappedCollectionClass
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightClassModifierList
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightMemberModifierList
 import org.jetbrains.kotlin.psi.KtFile
@@ -183,7 +183,7 @@ open class AbstractSymbolLightClassesParentingTestBase(
             }
 
             override fun visitMethod(method: PsiMethod) {
-                if (method is SyntheticElement || method is SymbolLightMethodForMappedClass) return
+                if (method is SyntheticElement || method is SymbolLightMethodForMappedCollectionClass) return
 
                 checkParentAndVisitChildren(method) { visitor ->
                     annotations.forEach { it.accept(visitor) }
