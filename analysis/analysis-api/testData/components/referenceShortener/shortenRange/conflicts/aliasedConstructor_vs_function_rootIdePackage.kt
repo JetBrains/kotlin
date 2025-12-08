@@ -1,3 +1,4 @@
+// IDE_MODE
 // FILE: main.kt
 package test
 

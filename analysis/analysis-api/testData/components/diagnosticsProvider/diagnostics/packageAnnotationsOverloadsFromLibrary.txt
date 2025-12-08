@@ -1,10 +1,2 @@
 Diagnostics from file:
-  for PSI element of type KtNameReferenceExpression at (39,12-17)
-    OVERLOAD_RESOLUTION_AMBIGUITY      text ranges: [(128,133)]
-      PSI: KtNameReferenceExpression at (39,12-17)
-  for PSI element of type KtNameReferenceExpression at (40,12-17)
-    OVERLOAD_RESOLUTION_AMBIGUITY      text ranges: [(151,156)]
-      PSI: KtNameReferenceExpression at (40,12-17)
-  for PSI element of type KtNameReferenceExpression at (41,12-17)
-    OVERLOAD_RESOLUTION_AMBIGUITY      text ranges: [(174,179)]
-      PSI: KtNameReferenceExpression at (41,12-17)
+  <NO DIAGNOSTICS>
