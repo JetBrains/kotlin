@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl
 
 import org.gradle.api.plugins.BasePlugin
-import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.artifacts.klibOutputDirectory
 import org.jetbrains.kotlin.gradle.dsl.ExplicitApiMode
 import org.jetbrains.kotlin.gradle.dsl.topLevelExtension
@@ -14,6 +13,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationInfo
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.SubpluginEnvironment
+import org.jetbrains.kotlin.gradle.plugin.addToAssemble
 import org.jetbrains.kotlin.gradle.plugin.launchInStage
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.crossCompilationSharedData
@@ -92,7 +92,7 @@ internal val KotlinCreateNativeCompileTasksSideEffect = KotlinCompilationSideEff
 
     compilationInfo.classesDirs.from(kotlinNativeCompile.map { it.outputFile })
     project.tasks.named(compilation.compileAllTaskName).dependsOn(kotlinNativeCompile)
-    project.tasks.named(LifecycleBasePlugin.ASSEMBLE_TASK_NAME).dependsOn(kotlinNativeCompile)
+    project.addToAssemble(kotlinNativeCompile)
     compilation.addCompilerPlugins()
 }
 

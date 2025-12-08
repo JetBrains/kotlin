@@ -10,8 +10,8 @@ import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.plugins.ExtensionAware
 import org.gradle.api.provider.Provider
-import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.dsl.*
+import org.jetbrains.kotlin.gradle.plugin.addToAssemble
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeOutputKind
 import org.jetbrains.kotlin.gradle.tasks.FatFrameworkTask
@@ -88,7 +88,7 @@ class KotlinNativeFatFrameworkImpl(
             it.group = "build"
             it.description = "Assemble all types of registered '$artifactName' FatFramework"
         }
-        project.tasks.named(LifecycleBasePlugin.ASSEMBLE_TASK_NAME).dependsOn(parentTask)
+        project.addToAssemble(parentTask)
 
         modes.forEach { buildType ->
             val fatTask = project.registerTask<FatFrameworkTask>(
