@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 
 fun <T> bar(x: String, y: Boolean = false, block: () -> T): T = TODO()
 
@@ -8,17 +8,17 @@ fun foo(): Any? = null
 
 fun main() {
     bar<Unit>("") {
-        <!RETURN_TYPE_MISMATCH!>foo()<!>
+        foo()
     }
 
     bar<Unit>("") {
-        <!RETURN_TYPE_MISMATCH!>try {
+        try {
             foo()
         } catch (e: Throwable) {
             if (e.hashCode() == 0) {
                 throw e
             }
-        }<!>
+        }
     }
 }
 
