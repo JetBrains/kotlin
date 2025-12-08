@@ -573,10 +573,12 @@ public actual class StringBuilder private constructor(
     public fun deleteRange(startIndex: Int, endIndex: Int): StringBuilder {
         checkReplaceRange(startIndex, endIndex, length)
 
-        val coercedEndIndex = endIndex.coerceAtMost(length)
         if (startIndex != 0) {
             if (endIndex != length) {
-                jsString = jsConcat(jsSubstring(jsString, 0, startIndex).unsafeCast(), jsSubstring(jsString, endIndex, length).unsafeCast()).unsafeCast()
+                jsString = jsConcat(
+                    jsSubstring(jsString, 0, startIndex).unsafeCast(),
+                    jsSubstring(jsString, endIndex, length).unsafeCast()
+                ).unsafeCast()
             } else {
                 jsString = jsSubstring(jsString, 0, startIndex).unsafeCast()
             }
