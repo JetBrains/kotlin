@@ -71,7 +71,7 @@ internal constructor(
     abstract val outputDirectory: DirectoryProperty
 
     @TaskAction
-    fun exec(inputs: InputChanges) {
+    protected fun exec(inputs: InputChanges) {
         val isIncremental = inputs.isIncremental
 
         val (filesToTranspile, deletedFiles) = if (isIncremental) {
