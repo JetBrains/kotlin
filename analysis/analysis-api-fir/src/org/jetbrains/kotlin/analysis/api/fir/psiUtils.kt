@@ -213,8 +213,16 @@ internal val KtDeclaration.location: KaSymbolLocation
 
         return when (parent) {
             null, is KtScript -> KaSymbolLocation.TOP_LEVEL
+
             is KtClassOrObject -> KaSymbolLocation.CLASS
-            is KtDeclarationWithBody, is KtDeclarationWithInitializer, is KtAnonymousInitializer, is KtModifierList -> KaSymbolLocation.LOCAL
+
+            is KtDeclarationWithBody,
+            is KtDeclarationWithInitializer,
+            is KtAnonymousInitializer,
+            is KtModifierList,
+            is KtParameter,
+                -> KaSymbolLocation.LOCAL
+
             else -> errorWithAttachment("Unexpected parent declaration: ${parent::class.simpleName}") {
                 withPsiEntry("parentDeclaration", parent)
                 withPsiEntry("psi", this@location)
