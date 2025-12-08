@@ -20,11 +20,12 @@ class SandboxPluginIT : KGPBaseTest() {
     @GradleTest
     fun testTopLevelFunctionGeneration(gradleVersion: GradleVersion) {
         project("sandboxPluginGeneratingTopLevelFunction", gradleVersion) {
+            val tripleQuote = "\"\"\"" // windows paths contain illegal "\" escapes, so we need to use triple quotes for the argument
             buildGradleKts.appendText(
                 """
                 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask<*>>().configureEach {
                     compilerOptions {
-                        freeCompilerArgs.add("$pluginArgument")
+                        freeCompilerArgs.add($tripleQuote$pluginArgument$tripleQuote)
                     }
                 }
                 """.trimIndent()
