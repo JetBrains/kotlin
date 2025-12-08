@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.fir.references.FirResolvedCallableReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.resolved
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
-import org.jetbrains.kotlin.fir.references.toResolvedEnumEntrySymbol
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -300,17 +299,15 @@ object FirExpressionEvaluator {
                 evaluate(it).unwrapOr<FirLiteralExpression> { return it } ?: return NotEvaluated
             }
 
-            val opr1 = evaluatedArgs.getOrNull(0) ?: return NotEvaluated
-            evaluateUnary(opr1, symbol.callableId)
-                ?.adjustTypeAndConvertToLiteral(functionCall)
-                ?.let { return it }
-
-            val opr2 = evaluatedArgs.getOrNull(1) ?: return NotEvaluated
-            evaluateBinary(opr1, symbol.callableId, opr2)
-                ?.adjustTypeAndConvertToLiteral(functionCall)
-                ?.let { return it }
-
-            return NotEvaluated
+            return when (evaluatedArgs.size) {
+                1 -> evaluateUnary(evaluatedArgs.first(), symbol.callableId)
+                    ?.adjustTypeAndConvertToLiteral(functionCall)
+                    ?: NotEvaluated
+                2 -> evaluateBinary(evaluatedArgs.first(), symbol.callableId, evaluatedArgs.get(1))
+                    ?.adjustTypeAndConvertToLiteral(functionCall)
+                    ?: NotEvaluated
+                else -> NotEvaluated
+            }
         }
 
         @OptIn(UnresolvedExpressionTypeAccess::class)
@@ -507,6 +504,11 @@ private fun evaluateBinary(
             // If expression is division by zero, then return the original expression as a result. We will handle on later steps.
             return DivisionByZero
         }
+    }
+
+    // Check for trimMargin invalid argument
+    if (functionName == "trimMargin" && (opr2 as? String)?.isBlank() == true) {
+        return TrimMarginBlankPrefix
     }
 
     return evalBinaryOp(
