@@ -51,7 +51,7 @@ fun main(app: Application) {
     app.runSomething { myUnitFun() }
     app.<!OVERLOAD_RESOLUTION_AMBIGUITY!>runSomething2<!> { "" }
     app.<!OVERLOAD_RESOLUTION_AMBIGUITY!>runSomething2<!> { myUnitFun() }
-    app.<!CANNOT_INFER_PARAMETER_TYPE!>runSomething3<!> { "" }
+    app.runSomething3 { "" }
     app.runSomething3 { myUnitFun() }
 }
 
