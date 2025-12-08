@@ -34,12 +34,22 @@ public class MyJavaClass {
     public static <T, E extends Throwable> T runSomething2(MyThrowableComputable<T, E> computable) throws E {
         return null;
     }
+
+    // See ProgressManager.runProcessWithProgressSynchronously overloads
+    public static boolean runSomething3(Runnable runnable) {
+        return false;
+    }
+
+    public static <T, E extends Throwable> T runSomething3(MyThrowableComputable<T, E> computable) throws E {
+        return null;
+    }
 }
 
 // FILE: main.kt
 fun main() {
     MyJavaClass.runSomething { "" }
     MyJavaClass.<!OVERLOAD_RESOLUTION_AMBIGUITY!>runSomething2<!> { "" }
+    MyJavaClass.<!CANNOT_INFER_PARAMETER_TYPE!>runSomething3<!> { "" }
 }
 
 /* GENERATED_FIR_TAGS: functionDeclaration, lambdaLiteral, stringLiteral */
