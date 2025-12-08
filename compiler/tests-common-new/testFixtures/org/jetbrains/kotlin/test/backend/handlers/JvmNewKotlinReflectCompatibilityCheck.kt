@@ -80,10 +80,18 @@ class JvmNewKotlinReflectCompatibilityCheck(testServices: TestServices) : JvmBin
             SKIP_NEW_KOTLIN_REFLECT_COMPATIBILITY_CHECK in module.directives -> skipAsserts = true
             else -> {
                 val msg = when (exceptionK1Reflect != null && exceptionNewReflect != null) {
-                    true -> "Exception during kotlin-reflect dumping in both implementations (K1 and New)"
-                    else -> "One of the kotlin-reflects (K1 or New) failed, and another didn't"
+                    true -> "Exceptions during kotlin-reflect dumping in both implementations (K1 and New)\n"
+                    else -> "One of the kotlin-reflects (K1 or New) failed, and another didn't\n"
                 }
-                assertions.failAll(listOfNotNull(exceptionK1Reflect, exceptionNewReflect), msg)
+                assertions.fail {
+                    listOfNotNull(
+                        msg,
+                        exceptionK1Reflect?.stackTraceToString()?.prependIndent()
+                            ?.let { "K1 kotlin-reflect exception:\n$it" },
+                        exceptionNewReflect?.stackTraceToString()?.prependIndent()
+                            ?.let { "New kotlin-reflect exception:\n$it" }
+                    ).joinToString("\n")
+                }
             }
         }
     }
