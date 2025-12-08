@@ -46,7 +46,7 @@ internal class DescriptorKParameter(
             val descriptor = descriptor
 
             if (descriptor is ReceiverParameterDescriptor &&
-                callable.descriptor.instanceReceiverParameter == descriptor &&
+                callable.instanceReceiverParameter == descriptor &&
                 callable.descriptor.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE
             ) {
                 // In case of fake overrides, dispatch receiver type should be computed manually because Caller.parameterTypes returns
