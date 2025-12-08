@@ -83,7 +83,7 @@ private class IrLinkerFakeOverrideBuilderStrategy(
     private val partialLinkageSupport: PartialLinkageSupportForLinker,
     private val fakeOverrideDeclarationTable: FakeOverrideDeclarationTable,
     private val friendModules: Map<String, Collection<String>>,
-    private val isMultipleInheritedImplementationsAllowed: (IrOverridableDeclaration<*>) -> Boolean = { true },
+    private val isMultipleInheritedImplementationsAllowed: (IrOverridableDeclaration<*>) -> Boolean = { false },
 ) : FakeOverrideBuilderStrategy() {
 
     override fun <R> inFile(file: IrFile?, block: () -> R): R =
@@ -126,7 +126,7 @@ private class IrLinkerFakeOverrideBuilderStrategy(
                  * This is done to mimic jvm behaviour.
                  */
 
-                runIf(nonAbstractOverrides.all { it.parentAsClass.isInterface && isMultipleInheritedImplementationsAllowed(it) }) {
+                runIf(nonAbstractOverrides.all { it.parentAsClass.isInterface && !isMultipleInheritedImplementationsAllowed(it) }) {
                     PartiallyLinkedDeclarationOrigin.AMBIGUOUS_NON_OVERRIDDEN_CALLABLE_MEMBER
                 }
             }
@@ -306,7 +306,7 @@ class IrLinkerFakeOverrideProvider(
     val platformSpecificClassFilter: FakeOverrideClassFilter = DefaultFakeOverrideClassFilter,
     private val fakeOverrideDeclarationTable: FakeOverrideDeclarationTable = FakeOverrideDeclarationTable(mangler),
     externalOverridabilityConditions: List<IrExternalOverridabilityCondition> = emptyList(),
-    isMultipleInheritedImplementationsAllowed: (IrOverridableDeclaration<*>) -> Boolean = { true },
+    isMultipleInheritedImplementationsAllowed: (IrOverridableDeclaration<*>) -> Boolean = { false },
 ) {
     private val irFakeOverrideBuilder = IrFakeOverrideBuilder(
         typeSystem,
