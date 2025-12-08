@@ -662,6 +662,7 @@ class WasmSerializer(outputStream: OutputStream) {
             serializeNullable(fragmentTag, ::serializeString)
 
             serializeDefinedFunctions(definedFunctions)
+            serializeList(forValueFunctions, ::serializeIdSignature)
             serializeDefinedGlobals(definedGlobalFields)
             serializeDefinedGlobals(definedGlobalVTables)
             serializeDefinedGlobals(definedGlobalClassITables)
