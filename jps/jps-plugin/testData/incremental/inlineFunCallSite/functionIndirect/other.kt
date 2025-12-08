@@ -1,3 +1,0 @@
-package usage
-
-fun other() {}
