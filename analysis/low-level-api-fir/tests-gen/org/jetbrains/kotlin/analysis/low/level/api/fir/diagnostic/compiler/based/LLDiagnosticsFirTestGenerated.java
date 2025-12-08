@@ -1615,6 +1615,12 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
         }
 
         @Test
+        @TestMetadata("genericWithUnitConstraints.kt")
+        public void testGenericWithUnitConstraints() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/orblrt/genericWithUnitConstraints.kt");
+        }
+
+        @Test
         @TestMetadata("morePreciseSamVsLessPreciseFunctionType.kt")
         public void testMorePreciseSamVsLessPreciseFunctionType() {
           runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/orblrt/morePreciseSamVsLessPreciseFunctionType.kt");
