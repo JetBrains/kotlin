@@ -21,6 +21,6 @@ abstract class Base {
 
 class Derived : Base() {
     override final inline <!OVERRIDE_BY_INLINE!>fun withDefault(
-            <!NOT_YET_SUPPORTED_IN_INLINE_WARNING!>f: () -> Unit<!>
+            <!NOT_YET_SUPPORTED_IN_INLINE!>f: () -> Unit<!>
     )<!> {}
 }
