@@ -37,23 +37,4 @@ STEP 8:
 STEP 9:
     modifications:
         U : f.9.kt -> f.kt
-    modified ir: f.kt
-STEP 10:
-    modifications:
-        U : f.10.kt -> f.kt
-    modified ir: f.kt
-    updated imports: m.kt
-STEP 11:
-    modifications:
-        U : f.11.kt -> f.kt
-    modified ir: f.kt
-STEP 12:
-    modifications:
-        U : f.12.kt -> f.kt
-    modified ir: f.kt
-    updated imports: m.kt
-STEP 13:
-    modifications:
-        U : f.13.kt -> f.kt
-    modified ir: f.kt
-    updated imports: m.kt
+    modified ir: f.kt m.kt
