@@ -10676,6 +10676,12 @@ public class LLReversedDiagnosticsFirTestGenerated extends AbstractLLReversedDia
       }
 
       @Test
+      @TestMetadata("mutableMapFromSources.kt")
+      public void testMutableMapFromSources() {
+        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/mutableMapFromSources.kt");
+      }
+
+      @Test
       @TestMetadata("MyException.kt")
       public void testMyException() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k/MyException.kt");
