@@ -1000,9 +1000,15 @@ class ControlFlowGraphBuilder private constructor(
      * call, and the second is the exit node of the equality operator call. This allows DFA to
      * determine if an assignment took place within the RHS of the equality operator call.
      */
-    fun exitEqualityOperatorCall(equalityOperatorCall: FirEqualityOperatorCall): Pair<CFGNode<*>, EqualityOperatorCallNode> {
+    fun exitEqualityOperatorCall(
+        equalityOperatorCall: FirEqualityOperatorCall,
+        callCompleted: Boolean,
+    ): Pair<CFGNode<*>, EqualityOperatorCallNode> {
         val lhsExitNode = equalityOperatorCallLhsExitNodes.pop()
-        val node = createEqualityOperatorCallNode(equalityOperatorCall).also { addNewSimpleNode(it) }
+        val node = createEqualityOperatorCallNode(equalityOperatorCall).also {
+            unifyDataFlowFromPostponedLambdas(it, callCompleted)
+            addNewSimpleNode(it)
+        }
         return lhsExitNode to node
     }
 

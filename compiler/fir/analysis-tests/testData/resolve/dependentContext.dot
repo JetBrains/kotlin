@@ -1,0 +1,530 @@
+digraph dependentContext_kt {
+    graph [nodesep=3]
+    node [shape=box penwidth=2]
+    edge [penwidth=2]
+
+    subgraph cluster_0 {
+        color=red
+        0 [label="Enter file dependentContext.kt" style="filled" fillcolor=red];
+        1 [label="Exit file dependentContext.kt" style="filled" fillcolor=red];
+    }
+    0 -> {1} [color=green];
+
+    subgraph cluster_1 {
+        color=red
+        2 [label="Enter class C" style="filled" fillcolor=red];
+        subgraph cluster_2 {
+            color=blue
+            3 [label="Enter function <init>" style="filled" fillcolor=red];
+            4 [label="Delegated constructor call: super<R|kotlin/Any|>()" style="filled" fillcolor=yellow];
+            5 [label="Exit function <init>" style="filled" fillcolor=red];
+        }
+        subgraph cluster_3 {
+            color=blue
+            6 [label="Enter property" style="filled" fillcolor=red];
+            7 [label="Access variable R|<local>/x|"];
+            8 [label="Exit property" style="filled" fillcolor=red];
+        }
+        9 [label="Exit class C" style="filled" fillcolor=red];
+    }
+    2 -> {3} [color=green];
+    2 -> {9} [style=dotted];
+    2 -> {3 6} [style=dashed];
+    3 -> {4};
+    4 -> {5};
+    5 -> {6} [color=green];
+    6 -> {7};
+    7 -> {8};
+    8 -> {9} [color=green];
+
+    subgraph cluster_4 {
+        color=red
+        10 [label="Enter function foo" style="filled" fillcolor=red];
+        subgraph cluster_5 {
+            color=blue
+            11 [label="Enter block"];
+            12 [label="Enter variable declaration: lval c: R|C|"];
+            subgraph cluster_6 {
+                color=blue
+                13 [label="Function call arguments enter"];
+                14 [label="Const: Int(1)"];
+                15 [label="Function call arguments exit"];
+            }
+            16 [label="Function call enter: R|/C.C|(...)"];
+            17 [label="Function call exit: R|/C.C|(...)" style="filled" fillcolor=yellow];
+            18 [label="Exit variable declaration: lval c: R|C|"];
+            19 [label="Enter variable declaration: lvar b: R|kotlin/Any?|"];
+            20 [label="Exit variable declaration: lvar b: R|kotlin/Any?|"];
+            21 [label="Access variable R|<local>/c|"];
+            22 [label=< <TABLE BORDER="0"><TR><TD>Assignment: R|&lt;local&gt;/b|</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>b</B> = c<BR/><BR/><B>c</B>: C<BR/></TD></TR></TABLE> >];
+            subgraph cluster_7 {
+                color=blue
+                23 [label=< <TABLE BORDER="0"><TR><TD>Enter when</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>b</B> = c<BR/><BR/><B>c</B>: C<BR/></TD></TR></TABLE> >];
+                subgraph cluster_8 {
+                    color=blue
+                    24 [label=< <TABLE BORDER="0"><TR><TD>Enter when branch condition </TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>b</B> = c<BR/><BR/><B>c</B>: C<BR/></TD></TR></TABLE> >];
+                    25 [label=< <TABLE BORDER="0"><TR><TD>Access variable R|&lt;local&gt;/b|</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>b</B> = c<BR/><BR/><B>c</B>: C<BR/></TD></TR></TABLE> >];
+                    26 [label=< <TABLE BORDER="0"><TR><TD>Smart cast: "R|&lt;local&gt;/b|"</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>b</B> = c<BR/><BR/><B>c</B>: C<BR/></TD></TR></TABLE> >];
+                    subgraph cluster_9 {
+                        color=blue
+                        27 [label=< <TABLE BORDER="0"><TR><TD>Function call arguments enter</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>b</B> = c<BR/><BR/><B>c</B>: C<BR/></TD></TR></TABLE> >];
+                        28 [label=< <TABLE BORDER="0"><TR><TD>Access variable R|&lt;local&gt;/c|</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>b</B> = c<BR/><BR/><B>c</B>: C<BR/></TD></TR></TABLE> >];
+                        29 [label=< <TABLE BORDER="0"><TR><TD>Anonymous function capture</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>b</B> = c<BR/><BR/><B>c</B>: C<BR/></TD></TR></TABLE> >];
+                        30 [label=< <TABLE BORDER="0"><TR><TD>Postponed enter to lambda</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>b</B> = c<BR/><BR/><B>c</B>: C<BR/></TD></TR></TABLE> >];
+                        subgraph cluster_10 {
+                            color=blue
+                            31 [label=< <TABLE BORDER="0"><TR><TD>Enter function &lt;anonymous&gt;</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>b</B> = c<BR/><BR/><B>c</B>: C<BR/></TD></TR></TABLE> > style="filled" fillcolor=red];
+                            subgraph cluster_11 {
+                                color=blue
+                                32 [label=< <TABLE BORDER="0"><TR><TD>Enter block</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>b</B> = c<BR/><BR/><B>c</B>: C<BR/></TD></TR></TABLE> >];
+                                33 [label=< <TABLE BORDER="0"><TR><TD>Const: String(XXX)</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>b</B> = c<BR/><BR/><B>c</B>: C<BR/></TD></TR></TABLE> >];
+                                34 [label=< <TABLE BORDER="0"><TR><TD>Assignment: R|&lt;local&gt;/b|</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>b</B>: kotlin/String<BR/><BR/><B>c</B>: C<BR/></TD></TR></TABLE> >];
+                                35 [label=< <TABLE BORDER="0"><TR><TD>Exit block</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>b</B>: kotlin/String<BR/><BR/><B>c</B>: C<BR/></TD></TR></TABLE> >];
+                            }
+                            36 [label=< <TABLE BORDER="0"><TR><TD>Exit function &lt;anonymous&gt;</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>b</B>: kotlin/String<BR/><BR/><B>c</B>: C<BR/></TD></TR></TABLE> > style="filled" fillcolor=red];
+                        }
+                        37 [label=< <TABLE BORDER="0"><TR><TD>Function call arguments exit</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>b</B> = c<BR/><BR/><B>c</B>: C<BR/></TD></TR></TABLE> >];
+                    }
+                    38 [label=< <TABLE BORDER="0"><TR><TD>Function call enter: R|&lt;local&gt;/c|.R|kotlin/also|&lt;R|C|&gt;(...)</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>b</B> = c<BR/><BR/><B>c</B>: C<BR/></TD></TR></TABLE> >];
+                    39 [label=< <TABLE BORDER="0"><TR><TD>Postponed exit from lambda</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>b</B>: kotlin/String<BR/><BR/><B>c</B>: C<BR/></TD></TR></TABLE> >];
+                    40 [label=< <TABLE BORDER="0"><TR><TD>Function call exit: R|&lt;local&gt;/c|.R|kotlin/also|&lt;R|C|&gt;(...)</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>b</B> = c<BR/><BR/><B>c</B>: C<BR/></TD></TR></TABLE> > style="filled" fillcolor=yellow];
+                    41 [label=< <TABLE BORDER="0"><TR><TD>Equality operator ==</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>b</B>: C<BR/><BR/><B>c</B>: C<BR/></TD></TR></TABLE> >];
+                    42 [label=< <TABLE BORDER="0"><TR><TD>Exit when branch condition</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>b</B>: C<BR/><BR/><B>c</B>: C<BR/></TD></TR></TABLE> >];
+                }
+                subgraph cluster_12 {
+                    color=blue
+                    43 [label=< <TABLE BORDER="0"><TR><TD>Enter when branch condition "else"</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>b</B>: C<BR/><BR/><B>c</B>: C<BR/></TD></TR></TABLE> >];
+                    44 [label=< <TABLE BORDER="0"><TR><TD>Exit when branch condition</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>b</B>: C<BR/><BR/><B>c</B>: C<BR/></TD></TR></TABLE> >];
+                }
+                45 [label=< <TABLE BORDER="0"><TR><TD>Enter when branch result</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>b</B>: C<BR/><BR/><B>c</B>: C<BR/></TD></TR></TABLE> >];
+                subgraph cluster_13 {
+                    color=blue
+                    46 [label=< <TABLE BORDER="0"><TR><TD>Enter block</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>b</B>: C<BR/><BR/><B>c</B>: C<BR/></TD></TR></TABLE> >];
+                    47 [label=< <TABLE BORDER="0"><TR><TD>Access variable R|&lt;local&gt;/b|</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>b</B>: C<BR/><BR/><B>c</B>: C<BR/></TD></TR></TABLE> >];
+                    48 [label=< <TABLE BORDER="0"><TR><TD>Smart cast: "R|&lt;local&gt;/b|"</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>b</B>: C<BR/><BR/><B>c</B>: C<BR/></TD></TR></TABLE> >];
+                    49 [label=< <TABLE BORDER="0"><TR><TD>Access variable R|/C.x|</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>b</B>: C<BR/><BR/><B>c</B>: C<BR/></TD></TR></TABLE> >];
+                    50 [label=< <TABLE BORDER="0"><TR><TD>Exit block</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>b</B>: C<BR/><BR/><B>c</B>: C<BR/></TD></TR></TABLE> >];
+                }
+                51 [label=< <TABLE BORDER="0"><TR><TD>Exit when branch result</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>b</B>: C<BR/><BR/><B>c</B>: C<BR/></TD></TR></TABLE> >];
+                52 [label=< <TABLE BORDER="0"><TR><TD>Enter when branch result</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>b</B>: C<BR/><BR/><B>c</B>: C<BR/></TD></TR></TABLE> >];
+                subgraph cluster_14 {
+                    color=blue
+                    53 [label=< <TABLE BORDER="0"><TR><TD>Enter block</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>b</B>: C<BR/><BR/><B>c</B>: C<BR/></TD></TR></TABLE> >];
+                    54 [label=< <TABLE BORDER="0"><TR><TD>Access variable R|&lt;local&gt;/b|</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>b</B>: C<BR/><BR/><B>c</B>: C<BR/></TD></TR></TABLE> >];
+                    55 [label=< <TABLE BORDER="0"><TR><TD>Smart cast: "R|&lt;local&gt;/b|"</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>b</B>: C<BR/><BR/><B>c</B>: C<BR/></TD></TR></TABLE> >];
+                    56 [label=< <TABLE BORDER="0"><TR><TD>Access variable R|/C.x|</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>b</B>: C<BR/><BR/><B>c</B>: C<BR/></TD></TR></TABLE> >];
+                    57 [label=< <TABLE BORDER="0"><TR><TD>Exit block</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>b</B>: C<BR/><BR/><B>c</B>: C<BR/></TD></TR></TABLE> >];
+                }
+                58 [label=< <TABLE BORDER="0"><TR><TD>Exit when branch result</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>b</B>: C<BR/><BR/><B>c</B>: C<BR/></TD></TR></TABLE> >];
+                59 [label=< <TABLE BORDER="0"><TR><TD>Exit when</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>b</B>: C<BR/><BR/><B>c</B>: C<BR/></TD></TR></TABLE> >];
+            }
+            60 [label=< <TABLE BORDER="0"><TR><TD>Exit block</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>b</B>: C<BR/><BR/><B>c</B>: C<BR/></TD></TR></TABLE> >];
+        }
+        61 [label=< <TABLE BORDER="0"><TR><TD>Exit function foo</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>b</B>: C<BR/><BR/><B>c</B>: C<BR/></TD></TR></TABLE> > style="filled" fillcolor=red];
+    }
+    10 -> {11};
+    11 -> {12};
+    12 -> {13};
+    13 -> {14};
+    14 -> {15};
+    15 -> {16};
+    16 -> {17};
+    17 -> {18};
+    18 -> {19};
+    19 -> {20};
+    20 -> {21};
+    21 -> {22};
+    22 -> {23};
+    23 -> {24};
+    24 -> {25};
+    25 -> {26};
+    26 -> {27};
+    27 -> {28};
+    28 -> {29};
+    29 -> {30};
+    29 -> {31} [color=green style=dotted label="CapturedByValue"];
+    30 -> {31 37};
+    30 -> {39} [style=dotted];
+    30 -> {31} [style=dashed];
+    31 -> {32};
+    32 -> {33};
+    33 -> {34};
+    34 -> {35};
+    35 -> {36};
+    36 -> {39};
+    37 -> {38};
+    38 -> {40};
+    39 -> {40} [color=green];
+    39 -> {41} [color=red label="Postponed"];
+    40 -> {41};
+    41 -> {42};
+    42 -> {43 52};
+    43 -> {44};
+    44 -> {45};
+    45 -> {46};
+    46 -> {47};
+    47 -> {48};
+    48 -> {49};
+    49 -> {50};
+    50 -> {51};
+    51 -> {59};
+    52 -> {53};
+    53 -> {54};
+    54 -> {55};
+    55 -> {56};
+    56 -> {57};
+    57 -> {58};
+    58 -> {59};
+    59 -> {60};
+    60 -> {61};
+
+    subgraph cluster_15 {
+        color=red
+        62 [label="Enter function gau" style="filled" fillcolor=red];
+        subgraph cluster_16 {
+            color=blue
+            63 [label="Enter block"];
+            64 [label="Enter variable declaration: lval q: R|kotlin/Boolean|"];
+            65 [label="Const: Boolean(true)"];
+            66 [label="Exit variable declaration: lval q: R|kotlin/Boolean|"];
+            67 [label="Enter variable declaration: lvar r: R|kotlin/Boolean?|"];
+            68 [label="Exit variable declaration: lvar r: R|kotlin/Boolean?|"];
+            69 [label="Access variable R|<local>/q|"];
+            70 [label=< <TABLE BORDER="0"><TR><TD>Assignment: R|&lt;local&gt;/r|</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>q</B>: kotlin/Boolean<BR/><BR/><B>r</B> = q<BR/></TD></TR></TABLE> >];
+            subgraph cluster_17 {
+                color=blue
+                71 [label=< <TABLE BORDER="0"><TR><TD>Enter when</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>q</B>: kotlin/Boolean<BR/><BR/><B>r</B> = q<BR/></TD></TR></TABLE> >];
+                subgraph cluster_18 {
+                    color=blue
+                    72 [label=< <TABLE BORDER="0"><TR><TD>Enter when branch condition </TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>q</B>: kotlin/Boolean<BR/><BR/><B>r</B> = q<BR/></TD></TR></TABLE> >];
+                    subgraph cluster_19 {
+                        color=blue
+                        73 [label=< <TABLE BORDER="0"><TR><TD>Enter ||</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>q</B>: kotlin/Boolean<BR/><BR/><B>r</B> = q<BR/></TD></TR></TABLE> >];
+                        74 [label=< <TABLE BORDER="0"><TR><TD>Access variable R|&lt;local&gt;/q|</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>q</B>: kotlin/Boolean<BR/><BR/><B>r</B> = q<BR/></TD></TR></TABLE> >];
+                        75 [label=< <TABLE BORDER="0"><TR><TD>Exit left part of ||</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>q</B>: kotlin/Boolean<BR/><BR/><B>r</B> = q<BR/></TD></TR></TABLE> >];
+                        76 [label=< <TABLE BORDER="0"><TR><TD>Enter right part of ||</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>q</B>: kotlin/Boolean<BR/><BR/><B>r</B> = q<BR/></TD></TR></TABLE> >];
+                        subgraph cluster_20 {
+                            color=blue
+                            77 [label=< <TABLE BORDER="0"><TR><TD>Function call arguments enter</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>q</B>: kotlin/Boolean<BR/><BR/><B>r</B> = q<BR/></TD></TR></TABLE> >];
+                            78 [label=< <TABLE BORDER="0"><TR><TD>Access variable R|&lt;local&gt;/r|</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>q</B>: kotlin/Boolean<BR/><BR/><B>r</B> = q<BR/></TD></TR></TABLE> >];
+                            79 [label=< <TABLE BORDER="0"><TR><TD>Smart cast: "R|&lt;local&gt;/r|"</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>q</B>: kotlin/Boolean<BR/><BR/><B>r</B> = q<BR/></TD></TR></TABLE> >];
+                            80 [label=< <TABLE BORDER="0"><TR><TD>Anonymous function capture</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>q</B>: kotlin/Boolean<BR/><BR/><B>r</B> = q<BR/></TD></TR></TABLE> >];
+                            81 [label=< <TABLE BORDER="0"><TR><TD>Postponed enter to lambda</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>q</B>: kotlin/Boolean<BR/><BR/><B>r</B> = q<BR/></TD></TR></TABLE> >];
+                            subgraph cluster_21 {
+                                color=blue
+                                82 [label=< <TABLE BORDER="0"><TR><TD>Enter function &lt;anonymous&gt;</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>q</B>: kotlin/Boolean<BR/><BR/><B>r</B> = q<BR/></TD></TR></TABLE> > style="filled" fillcolor=red];
+                                subgraph cluster_22 {
+                                    color=blue
+                                    83 [label=< <TABLE BORDER="0"><TR><TD>Enter block</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>q</B>: kotlin/Boolean<BR/><BR/><B>r</B> = q<BR/></TD></TR></TABLE> >];
+                                    84 [label=< <TABLE BORDER="0"><TR><TD>Const: Null(null)</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>q</B>: kotlin/Boolean<BR/><BR/><B>r</B> = q<BR/></TD></TR></TABLE> >];
+                                    85 [label=< <TABLE BORDER="0"><TR><TD>Assignment: R|&lt;local&gt;/r|</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>q</B>: kotlin/Boolean<BR/><BR/><B>r</B>: kotlin/Nothing?<BR/></TD></TR></TABLE> >];
+                                    86 [label=< <TABLE BORDER="0"><TR><TD>Exit block</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>q</B>: kotlin/Boolean<BR/><BR/><B>r</B>: kotlin/Nothing?<BR/></TD></TR></TABLE> >];
+                                }
+                                87 [label=< <TABLE BORDER="0"><TR><TD>Exit function &lt;anonymous&gt;</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>q</B>: kotlin/Boolean<BR/><BR/><B>r</B>: kotlin/Nothing?<BR/></TD></TR></TABLE> > style="filled" fillcolor=red];
+                            }
+                            88 [label=< <TABLE BORDER="0"><TR><TD>Function call arguments exit</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>q</B>: kotlin/Boolean<BR/><BR/><B>r</B> = q<BR/></TD></TR></TABLE> >];
+                        }
+                        89 [label=< <TABLE BORDER="0"><TR><TD>Function call enter: R|&lt;local&gt;/r|.R|kotlin/also|&lt;R|kotlin/Boolean|&gt;(...)</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>q</B>: kotlin/Boolean<BR/><BR/><B>r</B> = q<BR/></TD></TR></TABLE> >];
+                        90 [label=< <TABLE BORDER="0"><TR><TD>Postponed exit from lambda</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>q</B>: kotlin/Boolean<BR/><BR/><B>r</B>: kotlin/Nothing?<BR/></TD></TR></TABLE> >];
+                        91 [label=< <TABLE BORDER="0"><TR><TD>Function call exit: R|&lt;local&gt;/r|.R|kotlin/also|&lt;R|kotlin/Boolean|&gt;(...)</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>q</B>: kotlin/Boolean<BR/><BR/><B>r</B> = q<BR/></TD></TR></TABLE> > style="filled" fillcolor=yellow];
+                        92 [label=< <TABLE BORDER="0"><TR><TD>Check not null: R|&lt;local&gt;/r|.R|kotlin/also|&lt;R|kotlin/Boolean|&gt;(...)!!</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>q</B>: kotlin/Boolean<BR/></TD></TR></TABLE> > style="filled" fillcolor=yellow];
+                        93 [label=< <TABLE BORDER="0"><TR><TD>Exit ||</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>q</B>: kotlin/Boolean<BR/></TD></TR></TABLE> >];
+                    }
+                    94 [label=< <TABLE BORDER="0"><TR><TD>Exit when branch condition</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>q</B>: kotlin/Boolean<BR/></TD></TR></TABLE> >];
+                }
+                subgraph cluster_23 {
+                    color=blue
+                    95 [label=< <TABLE BORDER="0"><TR><TD>Enter when branch condition "else"</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>q</B>: kotlin/Boolean<BR/></TD></TR></TABLE> >];
+                    96 [label=< <TABLE BORDER="0"><TR><TD>Exit when branch condition</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>q</B>: kotlin/Boolean<BR/></TD></TR></TABLE> >];
+                }
+                97 [label=< <TABLE BORDER="0"><TR><TD>Enter when branch result</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>q</B>: kotlin/Boolean<BR/></TD></TR></TABLE> >];
+                subgraph cluster_24 {
+                    color=blue
+                    98 [label=< <TABLE BORDER="0"><TR><TD>Enter block</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>q</B>: kotlin/Boolean<BR/></TD></TR></TABLE> >];
+                    subgraph cluster_25 {
+                        color=blue
+                        99 [label=< <TABLE BORDER="0"><TR><TD>Function call arguments enter</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>q</B>: kotlin/Boolean<BR/></TD></TR></TABLE> >];
+                        100 [label=< <TABLE BORDER="0"><TR><TD>Access variable R|&lt;local&gt;/r|</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>q</B>: kotlin/Boolean<BR/></TD></TR></TABLE> >];
+                        101 [label=< <TABLE BORDER="0"><TR><TD>Function call arguments exit</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>q</B>: kotlin/Boolean<BR/></TD></TR></TABLE> >];
+                    }
+                    102 [label=< <TABLE BORDER="0"><TR><TD>Function call enter: R|&lt;local&gt;/r|.R|/accept&lt;Inapplicable(UNSAFE_CALL): /accept&gt;#|()</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>q</B>: kotlin/Boolean<BR/></TD></TR></TABLE> >];
+                    103 [label=< <TABLE BORDER="0"><TR><TD>Function call exit: R|&lt;local&gt;/r|.R|/accept&lt;Inapplicable(UNSAFE_CALL): /accept&gt;#|()</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>q</B>: kotlin/Boolean<BR/></TD></TR></TABLE> > style="filled" fillcolor=yellow];
+                    104 [label=< <TABLE BORDER="0"><TR><TD>Exit block</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>q</B>: kotlin/Boolean<BR/></TD></TR></TABLE> >];
+                }
+                105 [label=< <TABLE BORDER="0"><TR><TD>Exit when branch result</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>q</B>: kotlin/Boolean<BR/></TD></TR></TABLE> >];
+                106 [label=< <TABLE BORDER="0"><TR><TD>Enter when branch result</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>q</B>: kotlin/Boolean<BR/></TD></TR></TABLE> >];
+                subgraph cluster_26 {
+                    color=blue
+                    107 [label=< <TABLE BORDER="0"><TR><TD>Enter block</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>q</B>: kotlin/Boolean<BR/></TD></TR></TABLE> >];
+                    subgraph cluster_27 {
+                        color=blue
+                        108 [label=< <TABLE BORDER="0"><TR><TD>Function call arguments enter</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>q</B>: kotlin/Boolean<BR/></TD></TR></TABLE> >];
+                        109 [label=< <TABLE BORDER="0"><TR><TD>Access variable R|&lt;local&gt;/r|</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>q</B>: kotlin/Boolean<BR/></TD></TR></TABLE> >];
+                        110 [label=< <TABLE BORDER="0"><TR><TD>Function call arguments exit</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>q</B>: kotlin/Boolean<BR/></TD></TR></TABLE> >];
+                    }
+                    111 [label=< <TABLE BORDER="0"><TR><TD>Function call enter: R|&lt;local&gt;/r|.R|/accept&lt;Inapplicable(UNSAFE_CALL): /accept&gt;#|()</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>q</B>: kotlin/Boolean<BR/></TD></TR></TABLE> >];
+                    112 [label=< <TABLE BORDER="0"><TR><TD>Function call exit: R|&lt;local&gt;/r|.R|/accept&lt;Inapplicable(UNSAFE_CALL): /accept&gt;#|()</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>q</B>: kotlin/Boolean<BR/></TD></TR></TABLE> > style="filled" fillcolor=yellow];
+                    113 [label=< <TABLE BORDER="0"><TR><TD>Exit block</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>q</B>: kotlin/Boolean<BR/></TD></TR></TABLE> >];
+                }
+                114 [label=< <TABLE BORDER="0"><TR><TD>Exit when branch result</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>q</B>: kotlin/Boolean<BR/></TD></TR></TABLE> >];
+                115 [label=< <TABLE BORDER="0"><TR><TD>Exit when</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>q</B>: kotlin/Boolean<BR/></TD></TR></TABLE> >];
+            }
+            116 [label=< <TABLE BORDER="0"><TR><TD>Exit block</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>q</B>: kotlin/Boolean<BR/></TD></TR></TABLE> >];
+        }
+        117 [label=< <TABLE BORDER="0"><TR><TD>Exit function gau</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>q</B>: kotlin/Boolean<BR/></TD></TR></TABLE> > style="filled" fillcolor=red];
+    }
+    62 -> {63};
+    63 -> {64};
+    64 -> {65};
+    65 -> {66};
+    66 -> {67};
+    67 -> {68};
+    68 -> {69};
+    69 -> {70};
+    70 -> {71};
+    71 -> {72};
+    72 -> {73};
+    73 -> {74};
+    74 -> {75};
+    75 -> {76 93};
+    76 -> {77};
+    77 -> {78};
+    78 -> {79};
+    79 -> {80};
+    80 -> {81};
+    80 -> {82} [color=green style=dotted label="CapturedByValue"];
+    81 -> {82 88};
+    81 -> {90} [style=dotted];
+    81 -> {82} [style=dashed];
+    82 -> {83};
+    83 -> {84};
+    84 -> {85};
+    85 -> {86};
+    86 -> {87};
+    87 -> {90};
+    88 -> {89};
+    89 -> {91};
+    90 -> {91} [color=green];
+    90 -> {92} [color=red label="Postponed"];
+    91 -> {92};
+    92 -> {93};
+    93 -> {94};
+    94 -> {95 106};
+    95 -> {96};
+    96 -> {97};
+    97 -> {98};
+    98 -> {99};
+    99 -> {100};
+    100 -> {101};
+    101 -> {102};
+    102 -> {103};
+    103 -> {104};
+    104 -> {105};
+    105 -> {115};
+    106 -> {107};
+    107 -> {108};
+    108 -> {109};
+    109 -> {110};
+    110 -> {111};
+    111 -> {112};
+    112 -> {113};
+    113 -> {114};
+    114 -> {115};
+    115 -> {116};
+    116 -> {117};
+
+    subgraph cluster_28 {
+        color=red
+        118 [label="Enter function accept" style="filled" fillcolor=red];
+        subgraph cluster_29 {
+            color=blue
+            119 [label="Enter block"];
+            120 [label="Exit block"];
+        }
+        121 [label="Exit function accept" style="filled" fillcolor=red];
+    }
+    118 -> {119};
+    119 -> {120};
+    120 -> {121};
+
+    subgraph cluster_30 {
+        color=red
+        122 [label="Enter function bar" style="filled" fillcolor=red];
+        subgraph cluster_31 {
+            color=blue
+            123 [label="Enter block"];
+            124 [label="Enter variable declaration: lval e: R|C|"];
+            subgraph cluster_32 {
+                color=blue
+                125 [label="Function call arguments enter"];
+                126 [label="Const: Int(1)"];
+                127 [label="Function call arguments exit"];
+            }
+            128 [label="Function call enter: R|/C.C|(...)"];
+            129 [label="Function call exit: R|/C.C|(...)" style="filled" fillcolor=yellow];
+            130 [label="Exit variable declaration: lval e: R|C|"];
+            131 [label="Enter variable declaration: lvar d: R|kotlin/Any|"];
+            132 [label="Exit variable declaration: lvar d: R|kotlin/Any|"];
+            133 [label="Access variable R|<local>/e|"];
+            134 [label=< <TABLE BORDER="0"><TR><TD>Assignment: R|&lt;local&gt;/d|</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>d</B> = e<BR/><BR/><B>e</B>: C<BR/></TD></TR></TABLE> >];
+            subgraph cluster_33 {
+                color=blue
+                135 [label=< <TABLE BORDER="0"><TR><TD>Function call arguments enter</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>d</B> = e<BR/><BR/><B>e</B>: C<BR/></TD></TR></TABLE> >];
+                136 [label=< <TABLE BORDER="0"><TR><TD>Access variable R|&lt;local&gt;/d|</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>d</B> = e<BR/><BR/><B>e</B>: C<BR/></TD></TR></TABLE> >];
+                137 [label=< <TABLE BORDER="0"><TR><TD>Smart cast: "R|&lt;local&gt;/d|"</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>d</B> = e<BR/><BR/><B>e</B>: C<BR/></TD></TR></TABLE> >];
+                138 [label=< <TABLE BORDER="0"><TR><TD>Anonymous function capture</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>d</B> = e<BR/><BR/><B>e</B>: C<BR/></TD></TR></TABLE> >];
+                139 [label=< <TABLE BORDER="0"><TR><TD>Postponed enter to lambda</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>d</B> = e<BR/><BR/><B>e</B>: C<BR/></TD></TR></TABLE> >];
+                subgraph cluster_34 {
+                    color=blue
+                    140 [label=< <TABLE BORDER="0"><TR><TD>Enter function &lt;anonymous&gt;</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>d</B> = e<BR/><BR/><B>e</B>: C<BR/></TD></TR></TABLE> > style="filled" fillcolor=red];
+                    subgraph cluster_35 {
+                        color=blue
+                        141 [label=< <TABLE BORDER="0"><TR><TD>Enter block</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>d</B> = e<BR/><BR/><B>e</B>: C<BR/></TD></TR></TABLE> >];
+                        142 [label=< <TABLE BORDER="0"><TR><TD>Const: String(XXXXXX)</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>d</B> = e<BR/><BR/><B>e</B>: C<BR/></TD></TR></TABLE> >];
+                        143 [label=< <TABLE BORDER="0"><TR><TD>Assignment: R|&lt;local&gt;/d|</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>d</B>: kotlin/String<BR/><BR/><B>e</B>: C<BR/></TD></TR></TABLE> >];
+                        144 [label=< <TABLE BORDER="0"><TR><TD>Exit block</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>d</B>: kotlin/String<BR/><BR/><B>e</B>: C<BR/></TD></TR></TABLE> >];
+                    }
+                    145 [label=< <TABLE BORDER="0"><TR><TD>Exit function &lt;anonymous&gt;</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>d</B>: kotlin/String<BR/><BR/><B>e</B>: C<BR/></TD></TR></TABLE> > style="filled" fillcolor=red];
+                }
+                146 [label=< <TABLE BORDER="0"><TR><TD>Function call arguments exit</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>d</B> = e<BR/><BR/><B>e</B>: C<BR/></TD></TR></TABLE> >];
+            }
+            147 [label=< <TABLE BORDER="0"><TR><TD>Function call enter: R|&lt;local&gt;/d|.R|kotlin/also|&lt;R|C|&gt;(...)</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>d</B> = e<BR/><BR/><B>e</B>: C<BR/></TD></TR></TABLE> >];
+            148 [label=< <TABLE BORDER="0"><TR><TD>Postponed exit from lambda</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>d</B>: kotlin/String<BR/><BR/><B>e</B>: C<BR/></TD></TR></TABLE> >];
+            149 [label=< <TABLE BORDER="0"><TR><TD>Function call exit: R|&lt;local&gt;/d|.R|kotlin/also|&lt;R|C|&gt;(...)</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>d</B> = e<BR/><BR/><B>e</B>: C<BR/></TD></TR></TABLE> > style="filled" fillcolor=yellow];
+            150 [label=< <TABLE BORDER="0"><TR><TD>Check not null: R|&lt;local&gt;/d|.R|kotlin/also|&lt;R|C|&gt;(...)!!</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>e</B>: C<BR/></TD></TR></TABLE> > style="filled" fillcolor=yellow];
+            151 [label=< <TABLE BORDER="0"><TR><TD>Access variable R|&lt;local&gt;/d|</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>e</B>: C<BR/></TD></TR></TABLE> >];
+            152 [label=< <TABLE BORDER="0"><TR><TD>Access variable &lt;Unresolved name: x&gt;#</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>e</B>: C<BR/></TD></TR></TABLE> >];
+            153 [label=< <TABLE BORDER="0"><TR><TD>Exit block</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>e</B>: C<BR/></TD></TR></TABLE> >];
+        }
+        154 [label=< <TABLE BORDER="0"><TR><TD>Exit function bar</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>e</B>: C<BR/></TD></TR></TABLE> > style="filled" fillcolor=red];
+    }
+    122 -> {123};
+    123 -> {124};
+    124 -> {125};
+    125 -> {126};
+    126 -> {127};
+    127 -> {128};
+    128 -> {129};
+    129 -> {130};
+    130 -> {131};
+    131 -> {132};
+    132 -> {133};
+    133 -> {134};
+    134 -> {135};
+    135 -> {136};
+    136 -> {137};
+    137 -> {138};
+    138 -> {139};
+    138 -> {140} [color=green style=dotted label="CapturedByValue"];
+    139 -> {140 146};
+    139 -> {148} [style=dotted];
+    139 -> {140} [style=dashed];
+    140 -> {141};
+    141 -> {142};
+    142 -> {143};
+    143 -> {144};
+    144 -> {145};
+    145 -> {148};
+    146 -> {147};
+    147 -> {149};
+    148 -> {149} [color=green];
+    148 -> {150} [color=red label="Postponed"];
+    149 -> {150};
+    150 -> {151};
+    151 -> {152};
+    152 -> {153};
+    153 -> {154};
+
+    subgraph cluster_36 {
+        color=red
+        155 [label="Enter function baz" style="filled" fillcolor=red];
+        subgraph cluster_37 {
+            color=blue
+            156 [label="Enter block"];
+            157 [label="Enter variable declaration: lval g: R|C|"];
+            subgraph cluster_38 {
+                color=blue
+                158 [label="Function call arguments enter"];
+                159 [label="Const: Int(1)"];
+                160 [label="Function call arguments exit"];
+            }
+            161 [label="Function call enter: R|/C.C|(...)"];
+            162 [label="Function call exit: R|/C.C|(...)" style="filled" fillcolor=yellow];
+            163 [label="Exit variable declaration: lval g: R|C|"];
+            164 [label="Enter variable declaration: lvar f: R|kotlin/Any|"];
+            165 [label="Exit variable declaration: lvar f: R|kotlin/Any|"];
+            166 [label="Access variable R|<local>/g|"];
+            167 [label=< <TABLE BORDER="0"><TR><TD>Assignment: R|&lt;local&gt;/f|</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>f</B> = g<BR/><BR/><B>g</B>: C<BR/></TD></TR></TABLE> >];
+            168 [label=< <TABLE BORDER="0"><TR><TD>Access variable R|&lt;local&gt;/f|</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>f</B> = g<BR/><BR/><B>g</B>: C<BR/></TD></TR></TABLE> >];
+            169 [label=< <TABLE BORDER="0"><TR><TD>Smart cast: "R|&lt;local&gt;/f|"</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>f</B> = g<BR/><BR/><B>g</B>: C<BR/></TD></TR></TABLE> >];
+            subgraph cluster_39 {
+                color=blue
+                170 [label=< <TABLE BORDER="0"><TR><TD>Function call arguments enter</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>f</B> = g<BR/><BR/><B>g</B>: C<BR/></TD></TR></TABLE> >];
+                171 [label=< <TABLE BORDER="0"><TR><TD>Access variable R|&lt;local&gt;/g|</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>f</B> = g<BR/><BR/><B>g</B>: C<BR/></TD></TR></TABLE> >];
+                172 [label=< <TABLE BORDER="0"><TR><TD>Anonymous function capture</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>f</B> = g<BR/><BR/><B>g</B>: C<BR/></TD></TR></TABLE> >];
+                173 [label=< <TABLE BORDER="0"><TR><TD>Postponed enter to lambda</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>f</B> = g<BR/><BR/><B>g</B>: C<BR/></TD></TR></TABLE> >];
+                subgraph cluster_40 {
+                    color=blue
+                    174 [label=< <TABLE BORDER="0"><TR><TD>Enter function &lt;anonymous&gt;</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>f</B> = g<BR/><BR/><B>g</B>: C<BR/></TD></TR></TABLE> > style="filled" fillcolor=red];
+                    subgraph cluster_41 {
+                        color=blue
+                        175 [label=< <TABLE BORDER="0"><TR><TD>Enter block</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>f</B> = g<BR/><BR/><B>g</B>: C<BR/></TD></TR></TABLE> >];
+                        176 [label=< <TABLE BORDER="0"><TR><TD>Const: String()</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>f</B> = g<BR/><BR/><B>g</B>: C<BR/></TD></TR></TABLE> >];
+                        177 [label=< <TABLE BORDER="0"><TR><TD>Assignment: R|&lt;local&gt;/f|</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>f</B>: kotlin/String<BR/><BR/><B>g</B>: C<BR/></TD></TR></TABLE> >];
+                        178 [label=< <TABLE BORDER="0"><TR><TD>Exit block</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>f</B>: kotlin/String<BR/><BR/><B>g</B>: C<BR/></TD></TR></TABLE> >];
+                    }
+                    179 [label=< <TABLE BORDER="0"><TR><TD>Exit function &lt;anonymous&gt;</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>f</B>: kotlin/String<BR/><BR/><B>g</B>: C<BR/></TD></TR></TABLE> > style="filled" fillcolor=red];
+                }
+                180 [label=< <TABLE BORDER="0"><TR><TD>Function call arguments exit</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>f</B> = g<BR/><BR/><B>g</B>: C<BR/></TD></TR></TABLE> >];
+            }
+            181 [label=< <TABLE BORDER="0"><TR><TD>Function call enter: R|&lt;local&gt;/g|.R|kotlin/also|&lt;R|C|&gt;(...)</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>f</B> = g<BR/><BR/><B>g</B>: C<BR/></TD></TR></TABLE> >];
+            182 [label=< <TABLE BORDER="0"><TR><TD>Postponed exit from lambda</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>f</B>: kotlin/String<BR/><BR/><B>g</B>: C<BR/></TD></TR></TABLE> >];
+            183 [label=< <TABLE BORDER="0"><TR><TD>Function call exit: R|&lt;local&gt;/g|.R|kotlin/also|&lt;R|C|&gt;(...)</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>f</B> = g<BR/><BR/><B>g</B>: C<BR/></TD></TR></TABLE> > style="filled" fillcolor=yellow];
+            184 [label=< <TABLE BORDER="0"><TR><TD>Equality operator ==</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>f</B>: C<BR/><BR/><B>g</B>: C<BR/></TD></TR></TABLE> >];
+            185 [label=< <TABLE BORDER="0"><TR><TD>Access variable R|&lt;local&gt;/f|</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>f</B>: C<BR/><BR/><B>g</B>: C<BR/></TD></TR></TABLE> >];
+            186 [label=< <TABLE BORDER="0"><TR><TD>Smart cast: "R|&lt;local&gt;/f|"</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>f</B>: C<BR/><BR/><B>g</B>: C<BR/></TD></TR></TABLE> >];
+            187 [label=< <TABLE BORDER="0"><TR><TD>Access variable R|/C.x|</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>f</B>: C<BR/><BR/><B>g</B>: C<BR/></TD></TR></TABLE> >];
+            188 [label=< <TABLE BORDER="0"><TR><TD>Exit block</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>f</B>: C<BR/><BR/><B>g</B>: C<BR/></TD></TR></TABLE> >];
+        }
+        189 [label=< <TABLE BORDER="0"><TR><TD>Exit function baz</TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"><BR/><B>f</B>: C<BR/><BR/><B>g</B>: C<BR/></TD></TR></TABLE> > style="filled" fillcolor=red];
+    }
+    155 -> {156};
+    156 -> {157};
+    157 -> {158};
+    158 -> {159};
+    159 -> {160};
+    160 -> {161};
+    161 -> {162};
+    162 -> {163};
+    163 -> {164};
+    164 -> {165};
+    165 -> {166};
+    166 -> {167};
+    167 -> {168};
+    168 -> {169};
+    169 -> {170};
+    170 -> {171};
+    171 -> {172};
+    172 -> {173};
+    172 -> {174} [color=green style=dotted label="CapturedByValue"];
+    173 -> {174 180};
+    173 -> {182} [style=dotted];
+    173 -> {174} [style=dashed];
+    174 -> {175};
+    175 -> {176};
+    176 -> {177};
+    177 -> {178};
+    178 -> {179};
+    179 -> {182};
+    180 -> {181};
+    181 -> {183};
+    182 -> {183} [color=green];
+    182 -> {184} [color=red label="Postponed"];
+    183 -> {184};
+    184 -> {185};
+    185 -> {186};
+    186 -> {187};
+    187 -> {188};
+    188 -> {189};
+
+}

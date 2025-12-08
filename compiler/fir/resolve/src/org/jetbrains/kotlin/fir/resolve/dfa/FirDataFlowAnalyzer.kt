@@ -633,8 +633,8 @@ abstract class FirDataFlowAnalyzer(
         graphBuilder.exitEqualityOperatorLhs()
     }
 
-    fun exitEqualityOperatorCall(equalityOperatorCall: FirEqualityOperatorCall) {
-        val (lhsExitNode, node) = graphBuilder.exitEqualityOperatorCall(equalityOperatorCall)
+    fun exitEqualityOperatorCall(equalityOperatorCall: FirEqualityOperatorCall, callCompleted: Boolean) {
+        val (lhsExitNode, node) = graphBuilder.exitEqualityOperatorCall(equalityOperatorCall, callCompleted)
         val operation = equalityOperatorCall.operation
         val leftOperand = equalityOperatorCall.arguments[0]
         val rightOperand = equalityOperatorCall.arguments[1]
@@ -814,6 +814,10 @@ abstract class FirDataFlowAnalyzer(
             val argumentVariable = flow.getVariableIfUsedOrReal(checkNotNullCall.argument) ?: return@mergeIncomingFlow
             flow.commitOperationStatement(argumentVariable notEq null)
         }
+    }
+
+    fun enterEqualityOperatorCall() {
+        graphBuilder.enterCall()
     }
 
     // ----------------------------------- When -----------------------------------

@@ -219,6 +219,12 @@ public class LLReversedDiagnosticsFirTestGenerated extends AbstractLLReversedDia
     }
 
     @Test
+    @TestMetadata("dependentContext.kt")
+    public void testDependentContext() {
+      runTest("compiler/fir/analysis-tests/testData/resolve/dependentContext.kt");
+    }
+
+    @Test
     @TestMetadata("derivedClass.kt")
     public void testDerivedClass() {
       runTest("compiler/fir/analysis-tests/testData/resolve/derivedClass.kt");

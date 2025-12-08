@@ -1053,6 +1053,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         require(arguments.size == 2) {
             "Unexpected number of arguments in equality call: ${arguments.size}"
         }
+        dataFlowAnalyzer.enterEqualityOperatorCall()
         // In cases like materialize1() == materialize2() we add expected type just for the right argument.
         // One of the reasons is just consistency with K1 and with the desugared form `a.equals(b)`. See KT-47409 for clarifications.
         val leftArgumentTransformed: FirExpression = arguments[0].transform(transformer, ContextIndependent)
@@ -1073,7 +1074,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         val result = callCompleter.completeCall(
             components.syntheticCallGenerator.generateCalleeForEqualityOperatorCall(equalityOperatorCall, resolutionContext, data), data
         )
-        dataFlowAnalyzer.exitEqualityOperatorCall(equalityOperatorCall)
+        dataFlowAnalyzer.exitEqualityOperatorCall(equalityOperatorCall, data.forceFullCompletion)
         return result
     }
 
