@@ -8,4 +8,8 @@ FILE: main.kt
             ^ String()
         }
         )
+        Q|MyJavaClass|.R|/MyJavaClass.runSomething3*s|<R|kotlin/String!|, R|kotlin/Throwable!|>(<L> = SAM(runSomething3@fun <anonymous>(): R|kotlin/String!| <inline=NoInline>  {
+            ^ String()
+        }
+        ))
     }

@@ -6,12 +6,9 @@
 package org.jetbrains.kotlin.fir.resolve.calls.stages
 
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.fir.OnlyForDefaultLanguageFeatureDisabled
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute
-import org.jetbrains.kotlin.fir.isEnabled
-import org.jetbrains.kotlin.fir.languageVersionSettings
-import org.jetbrains.kotlin.fir.renderWithType
 import org.jetbrains.kotlin.fir.resolve.calls.InapplicableCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.InferenceError
 import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
@@ -19,6 +16,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.CheckerSink
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.yieldDiagnostic
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.yieldIfNeed
+import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.inference.ConeTypeParameterBasedTypeVariable
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeDeclaredUpperBoundConstraintPosition
@@ -33,7 +31,6 @@ import org.jetbrains.kotlin.fir.scopes.impl.typeAliasConstructorInfo
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.unwrapSubstitutionOverrides
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemOperation
 import org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystemConstraintPosition
@@ -231,6 +228,12 @@ internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
 
         for ((lower, upper) in constraints) {
             csBuilder.addSubtypeConstraint(lower, upper, ConeDeclaredUpperBoundConstraintPosition())
+
+            if ((declaration as? FirMemberDeclaration)?.origin == FirDeclarationOrigin.Enhancement
+                && upper.isSubtypeOf(StandardClassIds.Throwable.defaultType(emptyList()), context.session)
+            ) {
+                csBuilder.addSubtypeConstraint(lower, upper, SimpleConstraintSystemConstraintPosition)
+            }
         }
 
         return toFreshVariables to freshTypeVariables

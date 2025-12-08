@@ -49,7 +49,7 @@ public class MyJavaClass {
 fun main() {
     MyJavaClass.runSomething { "" }
     MyJavaClass.<!OVERLOAD_RESOLUTION_AMBIGUITY!>runSomething2<!> { "" }
-    MyJavaClass.<!CANNOT_INFER_PARAMETER_TYPE!>runSomething3<!> { "" }
+    MyJavaClass.runSomething3 { "" }
 }
 
 /* GENERATED_FIR_TAGS: functionDeclaration, lambdaLiteral, stringLiteral */
