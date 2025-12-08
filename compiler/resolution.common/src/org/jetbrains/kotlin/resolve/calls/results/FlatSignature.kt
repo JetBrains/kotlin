@@ -66,7 +66,7 @@ interface SimpleConstraintSystem {
 }
 
 class FlatSignatureComparisonState(
-    private val cs: SimpleConstraintSystem,
+    val cs: SimpleConstraintSystem,
     private val typeParameters: Collection<TypeParameterMarker>,
     private val typeSubstitutor: TypeSubstitutorMarker,
     private val callbacks: SpecificityComparisonCallbacks,
@@ -120,10 +120,32 @@ private fun <T> FlatSignatureComparisonState.isValueParameterTypeEquallyOrMoreSp
     }
 
     for (index in specificValueParameterTypes.indices) {
-        val specificType = typeKindSelector(specificValueParameterTypes[index]) ?: continue
-        val generalType = typeKindSelector(generalValueParameterTypes[index]) ?: continue
+        val specificWithConversion = specificValueParameterTypes[index] ?: continue
+        val generalWithConversion = generalValueParameterTypes[index] ?: continue
+        val specificType = typeKindSelector(specificWithConversion) ?: continue
+        val generalType = typeKindSelector(generalWithConversion) ?: continue
 
-        if (isLessSpecific(specificType, generalType)) return false
+        if (isLessSpecific(specificType, generalType)) {
+            with(cs.context) {
+                if (specificType.isFunctionOrKFunctionWithAnySuspendability()
+                    && generalWithConversion.originalTypeIfWasConverted != null
+                    && generalType.isFunctionOrKFunctionWithAnySuspendability()
+                ) {
+                    if (specificType.isExtensionFunctionType() && !generalType.isExtensionFunctionType()) continue
+                    if (generalType.functionTypeKind()!!.nonReflectKind() != specificType.functionTypeKind()!!.nonReflectKind()) continue
+                }
+            }
+            return false
+        }
+        with(cs.context) {
+            if (specificType.isFunctionOrKFunctionWithAnySuspendability()
+                && specificWithConversion.originalTypeIfWasConverted != null
+                && generalType.isFunctionOrKFunctionWithAnySuspendability()
+            ) {
+                if (generalType.isExtensionFunctionType() && !specificType.isExtensionFunctionType()) return false
+                if (generalType.functionTypeKind()!!.nonReflectKind() != specificType.functionTypeKind()!!.nonReflectKind()) return false
+            }
+        }
     }
 
     return true
