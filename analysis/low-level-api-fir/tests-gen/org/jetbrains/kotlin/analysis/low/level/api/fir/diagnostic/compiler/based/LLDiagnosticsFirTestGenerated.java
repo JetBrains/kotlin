@@ -1997,6 +1997,12 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
         runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/collectionLiteralAsReceiver.kt");
       }
 
+      @Test
+      @TestMetadata("kt82964.kt")
+      public void testKt82964() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/kt82964.kt");
+      }
+
       @Nested
       @TestMetadata("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/collectionLiteralsDisabled")
       @TestDataPath("$PROJECT_ROOT")
