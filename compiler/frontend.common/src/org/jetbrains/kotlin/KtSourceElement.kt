@@ -567,6 +567,12 @@ sealed class KtFakeSourceElementKind(final override val shouldSkipErrorTypeRepor
     object PluginGenerated : KtFakeSourceElementKind()
 
     /**
+     * To store diagnostic for erroneously resolved `arrayOf` which is being transformed to array literal.
+     * Note that this may happen both with original `arrayOf` and with synthetic `arrayOf` itself created to resolve array literal.
+     */
+    object ErrorExpressionForTransformedArrayOf : KtFakeSourceElementKind()
+
+    /**
      * To store some diagnostic for erroneously resolved top-level lambda
      * See [org.jetbrains.kotlin.config.LanguageFeature.ResolveTopLevelLambdasAsSyntheticCallArgument] and its usages
      */

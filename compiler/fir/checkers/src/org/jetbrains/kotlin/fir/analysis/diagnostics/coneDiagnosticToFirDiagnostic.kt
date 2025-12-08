@@ -364,7 +364,7 @@ private fun ConeConstraintSystemHasContradiction.mapSystemHasContradictionError(
                     // - return type of some synthetic call (if/try/!!/?:)
                     // - type argument of some qualified access
                     // ...or, we have a delegated constructor call with an error reported separately,
-                    // see ConstraintSystemError.toDiagnostic, branch isNotEnoughInformationForTypeParameter
+                    // see `ConstraintSystemError.mapConstraintSystemError`, branch `is NotEnoughInformationForTypeParameter<*>`
                     is NotEnoughInformationForTypeParameter<*> -> error.typeVariable is ConeTypeParameterBasedTypeVariable ||
                             // ... or, we will report a diagnostic on this type inside ErrorNodeDiagnosticCollectorComponent
                             (error.resolvedAtom as? FirAnonymousFunction)?.containsErrorType() == true
@@ -813,6 +813,14 @@ private fun ConstraintSystemError.mapConstraintSystemError(
     session: FirSession,
     candidate: AbstractCallCandidate<*>,
 ): KtDiagnostic? {
+    // This error is always reported as CANNOT_INFER_PARAMETER_TYPE except (!) delegated constructor calls
+    //  and `arrayOf` calls transformed to collection literals (including if they themselves originate from collection literals,
+    //  see KT-82684)
+    fun isUnreportedNotEnoughInformationForTypeParameter(): Boolean {
+        return candidate.symbol is FirConstructorSymbol && candidate.callInfo.callSite is FirDelegatedConstructorCall
+                || source?.kind == KtFakeSourceElementKind.ErrorExpressionForTransformedArrayOf
+    }
+
     val typeContext = session.typeContext
     return when (this) {
         is NewConstraintError -> {
@@ -868,19 +876,17 @@ private fun ConstraintSystemError.mapConstraintSystemError(
             }
         }
 
-        // Always reported as CANNOT_INFER_PARAMETER_TYPE except (!) delegated constructor calls
-        is NotEnoughInformationForTypeParameter<*> -> if (candidate.symbol is FirConstructorSymbol &&
-            candidate.callInfo.callSite is FirDelegatedConstructorCall
-        ) {
-            val lookupTag = this.typeVariable.asCone().typeConstructor.originalTypeParameter?.asCone()
-            if (lookupTag != null) {
-                FirErrors.CANNOT_INFER_PARAMETER_TYPE.createOn(
-                    source,
-                    lookupTag.typeParameterSymbol,
-                    session
-                )
+        is NotEnoughInformationForTypeParameter<*> ->
+            if (isUnreportedNotEnoughInformationForTypeParameter()) {
+                val lookupTag = this.typeVariable.asCone().typeConstructor.originalTypeParameter?.asCone()
+                if (lookupTag != null) {
+                    FirErrors.CANNOT_INFER_PARAMETER_TYPE.createOn(
+                        source,
+                        lookupTag.typeParameterSymbol,
+                        session
+                    )
+                } else null
             } else null
-        } else null
 
         is InferredEmptyIntersection -> {
             fun AbstractCallCandidate<*>.sourceOfCallToSymbolWith(

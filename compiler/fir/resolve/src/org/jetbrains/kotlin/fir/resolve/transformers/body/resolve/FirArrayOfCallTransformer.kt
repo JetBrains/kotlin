@@ -53,7 +53,7 @@ class FirArrayOfCallTransformer : FirDefaultTransformer<FirSession>() {
 
         return if (calleeReference.isError()) {
             buildErrorExpression(
-                functionCall.source?.fakeElement(KtFakeSourceElementKind.ErrorTypeRef),
+                functionCall.source?.fakeElement(KtFakeSourceElementKind.ErrorExpressionForTransformedArrayOf),
                 calleeReference.diagnostic,
                 arrayLiteral
             )
