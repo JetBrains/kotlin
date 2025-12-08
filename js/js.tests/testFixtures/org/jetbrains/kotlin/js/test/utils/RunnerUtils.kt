@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -152,77 +152,48 @@ fun getAllFilesForRunner(
 
     val commonFiles = JsAdditionalSourceProvider.getAdditionalJsFiles(originalFile.parent).map { it.absolutePath }
 
-    if (modulesToArtifact.values.any { it is BinaryArtifacts.Js.JsIrArtifact }) {
-        // JS IR
-        val (module, compilerResult) = modulesToArtifact.entries.mapNotNull { (m, c) -> (c as? BinaryArtifacts.Js.JsIrArtifact)?.let { m to c.compilerResult } }
-            .single()
-        val result = mutableMapOf<TranslationMode, List<String>>()
+    val (module, compilerResult) = modulesToArtifact.entries.mapNotNull { (m, c) -> (c as? BinaryArtifacts.Js.JsIrArtifact)?.let { m to c.compilerResult } }
+        .single()
+    val result = mutableMapOf<TranslationMode, List<String>>()
 
-        compilerResult.outputs.entries.forEach { (mode, outputs) ->
-            val outputFile = getModeOutputFilePath(testServices, module, mode)
-            val (inputJsFilesBefore, inputJsFilesAfter) = extractJsFiles(testServices, testServices.moduleStructure.modules, mode)
-            val additionalFiles = getAdditionalFilePaths(testServices, mode)
-            val additionalMainFiles = getAdditionalMainFilePaths(testServices, mode)
+    compilerResult.outputs.entries.forEach { (mode, outputs) ->
+        val outputFile = getModeOutputFilePath(testServices, module, mode)
+        val (inputJsFilesBefore, inputJsFilesAfter) = extractJsFiles(testServices, testServices.moduleStructure.modules, mode)
+        val additionalFiles = getAdditionalFilePaths(testServices, mode)
+        val additionalMainFiles = getAdditionalMainFilePaths(testServices, mode)
 
-            val paths = mutableListOf<String>()
+        val paths = mutableListOf<String>()
 
-            if (mode.granularity == JsGenerationGranularity.PER_MODULE && outputs.dependencies.size > 1) {
-                // Need to sort modules in the reverse topological order to avoid problems in V8 with loading JS files
-                // before loading their dependency JS files.
-                val dependenciesMap: MutableMap</* module ID */ String, /* JS file path */ String> =
-                    outputs.dependencies.associateTo(LinkedHashMap()) { (moduleId, _) ->
-                        moduleId to outputFile.augmentWithModuleName(moduleId)
-                    }
-
-                // These are only paths represented by the existing `TestModule`s.
-                val pathsOfTestModules = topologicalOrder(testServices.moduleStructure.modules) { m: TestModule ->
-                    m.allDependencies.map(DependencyDescription::dependencyModule)
-                }!!.reversed().mapNotNull { m: TestModule ->
-                    val moduleId = m.name.safeModuleName
-                    dependenciesMap.remove(moduleId) // Returns the removed path or null, if no path was stored for the given module ID.
+        if (mode.granularity == JsGenerationGranularity.PER_MODULE && outputs.dependencies.size > 1) {
+            // Need to sort modules in the reverse topological order to avoid problems in V8 with loading JS files
+            // before loading their dependency JS files.
+            val dependenciesMap: MutableMap</* module ID */ String, /* JS file path */ String> =
+                outputs.dependencies.associateTo(LinkedHashMap()) { (moduleId, _) ->
+                    moduleId to outputFile.augmentWithModuleName(moduleId)
                 }
 
-                // These are the paths of auxiliary libraries (stdlib, kotlin test) that are not represented as `TestModule`s.
-                val pathsOfAuxiliaryLibraries = dependenciesMap.values
-
-                paths += pathsOfAuxiliaryLibraries + pathsOfTestModules
-            } else {
-                paths += outputs.dependencies.map { (moduleId, _) -> outputFile.augmentWithModuleName(moduleId) }
+            // These are only paths represented by the existing `TestModule`s.
+            val pathsOfTestModules = topologicalOrder(testServices.moduleStructure.modules) { m: TestModule ->
+                m.allDependencies.map(DependencyDescription::dependencyModule)
+            }!!.reversed().mapNotNull { m: TestModule ->
+                val moduleId = m.name.safeModuleName
+                dependenciesMap.remove(moduleId) // Returns the removed path or null, if no path was stored for the given module ID.
             }
 
-            paths += outputFile
+            // These are the paths of auxiliary libraries (stdlib, kotlin test) that are not represented as `TestModule`s.
+            val pathsOfAuxiliaryLibraries = dependenciesMap.values
 
-            result[mode] = additionalFiles + inputJsFilesBefore + paths + commonFiles + additionalMainFiles + inputJsFilesAfter
+            paths += pathsOfAuxiliaryLibraries + pathsOfTestModules
+        } else {
+            paths += outputs.dependencies.map { (moduleId, _) -> outputFile.augmentWithModuleName(moduleId) }
         }
 
-        return result
-    } else {
-        val (inputJsFilesBefore, inputJsFilesAfter) = extractJsFiles(testServices, testServices.moduleStructure.modules)
-        val additionalFiles = getAdditionalFilePaths(testServices)
-        val additionalMainFiles = getAdditionalMainFilePaths(testServices)
-        // Old BE
-        val outputDir = JsEnvironmentConfigurator.getJsArtifactsOutputDir(testServices)
-        val dceOutputDir = JsEnvironmentConfigurator.getJsArtifactsOutputDir(testServices, TranslationMode.FULL_PROD_MINIMIZED_NAMES)
+        paths += outputFile
 
-        val artifactsPaths = modulesToArtifact.values.map { it.outputFile.absolutePath }.filter { !File(it).isDirectory }
-        val allJsFiles = additionalFiles + inputJsFilesBefore + artifactsPaths + commonFiles + additionalMainFiles + inputJsFilesAfter
-
-        val result = mutableMapOf<TranslationMode, List<String>>()
-
-        val globalDirectives = testServices.moduleStructure.allDirectives
-        val runIrDce = JsEnvironmentConfigurationDirectives.RUN_IR_DCE in globalDirectives
-        val onlyIrDce = JsEnvironmentConfigurationDirectives.ONLY_IR_DCE in globalDirectives
-        if (!onlyIrDce) {
-            result[TranslationMode.FULL_DEV] = allJsFiles
-        }
-        if (runIrDce) {
-            val dceJsFiles = artifactsPaths.map { it.replace(outputDir.absolutePath, dceOutputDir.absolutePath) }
-            val dceAllJsFiles = additionalFiles + inputJsFilesBefore + dceJsFiles + commonFiles + additionalMainFiles + inputJsFilesAfter
-            result[TranslationMode.FULL_PROD_MINIMIZED_NAMES] = dceAllJsFiles
-        }
-
-        return result
+        result[mode] = additionalFiles + inputJsFilesBefore + paths + commonFiles + additionalMainFiles + inputJsFilesAfter
     }
+
+    return result
 }
 
 fun getOnlyJsFilesForRunner(testServices: TestServices, modulesToArtifact: Map<TestModule, BinaryArtifacts.Js>): List<String> {
