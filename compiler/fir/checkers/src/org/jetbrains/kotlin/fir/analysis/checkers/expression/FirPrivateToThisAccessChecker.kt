@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.fir.FirSession
@@ -14,8 +15,11 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
+import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
+import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.toReference
+import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.references.FirResolvedErrorReference
 import org.jetbrains.kotlin.fir.references.FirThisReference
 import org.jetbrains.kotlin.fir.references.resolved
@@ -29,6 +33,7 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.unwrapFakeOverrides
 import org.jetbrains.kotlin.types.EnrichedProjectionKind
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 object FirPrivateToThisAccessChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
@@ -41,7 +46,13 @@ object FirPrivateToThisAccessChecker : FirQualifiedAccessExpressionChecker(MppCh
                 -> return
             }
         }
-        val dispatchReceiver = expression.dispatchReceiver ?: return
+        val dispatchReceiver = expression.dispatchReceiver
+        val qualifierReceiverForUnboundReference = runIf(expression is FirCallableReferenceAccess) {
+            // In this case (unbound callable reference) dispatch receiver is null, but in fact it's an equivalent case
+            expression.explicitReceiver as? FirResolvedQualifier
+        }
+        if (dispatchReceiver == null && qualifierReceiverForUnboundReference == null) return
+
         val symbol = reference.toResolvedCallableSymbol(discardErrorReference = true) ?: return
         if (symbol.visibility != Visibilities.Private) return
         val session = context.session
@@ -49,15 +60,20 @@ object FirPrivateToThisAccessChecker : FirQualifiedAccessExpressionChecker(MppCh
 
         if (!isPrivateToThis(symbol.unwrapFakeOverrides(), containingClassSymbol, session)) return
 
-        val invisible = when (val receiverReference = dispatchReceiver.toReference(session)) {
+        val invisible = when (val receiverReference = dispatchReceiver?.toReference(session)) {
             is FirThisReference -> receiverReference.boundSymbol != containingClassSymbol
             else -> true
         }
 
         if (invisible) {
+            val factory = when {
+                qualifierReceiverForUnboundReference == null -> FirErrors.INVISIBLE_REFERENCE
+                LanguageFeature.ForbidPrivateToThisUnboundCallableReferences.isEnabled() -> FirErrors.INVISIBLE_REFERENCE
+                else -> FirErrors.INVISIBLE_REFERENCE_WARNING
+            }
             reporter.reportOn(
                 source = expression.source,
-                factory = FirErrors.INVISIBLE_REFERENCE,
+                factory = factory,
                 a = symbol,
                 b = Visibilities.PrivateToThis,
                 c = symbol.callableId!!.classId

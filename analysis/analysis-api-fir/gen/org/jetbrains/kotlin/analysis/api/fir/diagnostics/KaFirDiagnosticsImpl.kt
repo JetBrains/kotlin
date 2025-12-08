@@ -355,6 +355,14 @@ internal class InvisibleReferenceImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.InvisibleReference
 
+internal class InvisibleReferenceWarningImpl(
+    override val reference: KaSymbol,
+    override val visible: Visibility,
+    override val containingDeclaration: ClassId?,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.InvisibleReferenceWarning
+
 internal class InvisibleSetterImpl(
     override val property: KaVariableSymbol,
     override val visibility: Visibility,

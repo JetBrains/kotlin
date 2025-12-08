@@ -308,6 +308,13 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val containingDeclaration: ClassId?
     }
 
+    interface InvisibleReferenceWarning : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = InvisibleReferenceWarning::class
+        val reference: KaSymbol
+        val visible: Visibility
+        val containingDeclaration: ClassId?
+    }
+
     interface InvisibleSetter : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = InvisibleSetter::class
         val property: KaVariableSymbol

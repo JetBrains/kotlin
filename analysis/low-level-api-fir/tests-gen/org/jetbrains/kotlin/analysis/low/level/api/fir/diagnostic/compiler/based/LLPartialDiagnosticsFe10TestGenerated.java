@@ -48346,6 +48346,12 @@ public class LLPartialDiagnosticsFe10TestGenerated extends AbstractLLPartialDiag
       }
 
       @Test
+      @TestMetadata("privateToThisCallableReferenceLegacy.kt")
+      public void testPrivateToThisCallableReferenceLegacy() {
+        runTest("compiler/testData/diagnostics/tests/visibility/privateToThisCallableReferenceLegacy.kt");
+      }
+
+      @Test
       @TestMetadata("privateToThisExotic.kt")
       public void testPrivateToThisExotic() {
         runTest("compiler/testData/diagnostics/tests/visibility/privateToThisExotic.kt");

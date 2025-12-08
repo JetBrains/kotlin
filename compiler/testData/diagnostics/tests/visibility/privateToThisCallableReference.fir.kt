@@ -1,9 +1,10 @@
 // RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +ForbidPrivateToThisUnboundCallableReferences
 // ISSUE: KT-82640
 
 class A<in T>(private val x: T) {
-    // Invisible member should be here (otherwise we have CCE in runtime)
-    fun <S> leak() = A<S>::x
+    // Invisible member/reference should be here (otherwise we have CCE in runtime)
+    fun <S> leak() = A<S>::<!INVISIBLE_REFERENCE("val x: S; private/*private to this*/; 'A'")!>x<!>
 
     fun <S> leak(a: A<S>) = a::<!INVISIBLE_REFERENCE!>x<!>
 

@@ -377,6 +377,15 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.INVISIBLE_REFERENCE_WARNING) { firDiagnostic ->
+        InvisibleReferenceWarningImpl(
+            firSymbolBuilder.buildSymbol(firDiagnostic.a),
+            firDiagnostic.b,
+            firDiagnostic.c,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.INVISIBLE_SETTER) { firDiagnostic ->
         InvisibleSetterImpl(
             firSymbolBuilder.variableBuilder.buildVariableSymbol(firDiagnostic.a),

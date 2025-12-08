@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: +ForbidPrivateToThisUnboundCallableReferences
+// LANGUAGE: -ForbidPrivateToThisUnboundCallableReferences
 // ISSUE: KT-82640
 
 class A<in T>(private val x: T) {

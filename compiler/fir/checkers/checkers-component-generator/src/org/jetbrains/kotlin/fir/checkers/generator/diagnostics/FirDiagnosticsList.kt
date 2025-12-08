@@ -147,6 +147,11 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<Visibility>("visible")
             parameter<ClassId?>("containingDeclaration")
         }
+        val INVISIBLE_REFERENCE_WARNING by warning<PsiElement>(PositioningStrategy.REFERENCE_BY_QUALIFIED) {
+            parameter<Symbol>("reference")
+            parameter<Visibility>("visible")
+            parameter<ClassId?>("containingDeclaration")
+        }
         val INVISIBLE_SETTER by error<PsiElement>(PositioningStrategy.SELECTOR_BY_QUALIFIED) {
             parameter<FirPropertySymbol>("property")
             parameter<Visibility>("visibility")

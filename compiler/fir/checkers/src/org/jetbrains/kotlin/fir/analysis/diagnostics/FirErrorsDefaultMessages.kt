@@ -473,6 +473,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVALID_VERSIONIN
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVALID_VERSIONING_ON_VARARG
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVISIBLE_ABSTRACT_MEMBER_FROM_SUPER_ERROR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVISIBLE_REFERENCE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVISIBLE_REFERENCE_WARNING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVISIBLE_SETTER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.IR_WITH_UNSTABLE_ABI_COMPILED_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.IS_ENUM_ENTRY
@@ -1014,6 +1015,13 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(
             INVISIBLE_REFERENCE,
             "Cannot access ''{0}'': it is {1} in {2}.",
+            SYMBOL,
+            VISIBILITY,
+            NAME_OF_DECLARATION_OR_FILE,
+        )
+        map.put(
+            INVISIBLE_REFERENCE_WARNING,
+            "Cannot access ''{0}'': it is {1} in {2}.".toDeprecationWarningMessage(LanguageFeature.ForbidPrivateToThisUnboundCallableReferences),
             SYMBOL,
             VISIBILITY,
             NAME_OF_DECLARATION_OR_FILE,
