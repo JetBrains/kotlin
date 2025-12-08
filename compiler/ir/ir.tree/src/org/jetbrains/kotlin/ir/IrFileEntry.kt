@@ -45,7 +45,7 @@ abstract class AbstractIrFileEntry : IrFileEntry {
         if (offset < 0 || lineStartOffsets.isEmpty()) return UNDEFINED_LINE_NUMBER
         val binarySearchResult: Int = lineStartOffsets.binarySearch(offset)
         val lineIndex = if (binarySearchResult >= 0) binarySearchResult else binarySearchResult.inv() - 1
-        if (lineIndex < 0) return firstRelevantLineIndex // TODO Use `UNDEFINED_LINE_NUMBER` after KT-80814 fix
+        if (lineIndex < 0) return firstRelevantLineIndex
         return firstRelevantLineIndex + lineIndex
     }
 
@@ -53,7 +53,7 @@ abstract class AbstractIrFileEntry : IrFileEntry {
         if (offset < 0 || lineStartOffsets.isEmpty()) return UNDEFINED_COLUMN_NUMBER
         val lineIndex = getLineNumber(offset) - firstRelevantLineIndex
         if (lineIndex !in lineStartOffsets.indices) return UNDEFINED_COLUMN_NUMBER
-        if (offset < lineStartOffsets[lineIndex]) return UNDEFINED_COLUMN_NUMBER // TODO Drop this line after KT-80814 fix
+        if (offset < lineStartOffsets[lineIndex]) return UNDEFINED_COLUMN_NUMBER
         return offset - lineStartOffsets[lineIndex]
     }
 
@@ -61,9 +61,9 @@ abstract class AbstractIrFileEntry : IrFileEntry {
         if (offset < 0 || lineStartOffsets.isEmpty()) return UNDEFINED_LINE_AND_COLUMN
         val lineNumber = getLineNumber(offset)
         val lineIndex = lineNumber - firstRelevantLineIndex
-        if (lineIndex !in lineStartOffsets.indices) return LineAndColumn(firstRelevantLineIndex, UNDEFINED_COLUMN_NUMBER) // TODO Use `UNDEFINED_LINE_AND_COLUMN` after KT-80814 fix
+        if (lineIndex !in lineStartOffsets.indices) return LineAndColumn(firstRelevantLineIndex, UNDEFINED_COLUMN_NUMBER)
         val columnNumber = offset - lineStartOffsets[lineIndex]
-        if (offset < lineStartOffsets[lineIndex]) return LineAndColumn(firstRelevantLineIndex, UNDEFINED_COLUMN_NUMBER) // TODO Drop this line after KT-80814 fix
+        if (offset < lineStartOffsets[lineIndex]) return LineAndColumn(firstRelevantLineIndex, UNDEFINED_COLUMN_NUMBER)
         return LineAndColumn(lineNumber, columnNumber)
     }
 
