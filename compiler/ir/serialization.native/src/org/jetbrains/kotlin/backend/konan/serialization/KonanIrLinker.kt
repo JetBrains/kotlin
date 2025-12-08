@@ -11,15 +11,19 @@ import org.jetbrains.kotlin.backend.common.overrides.IrLinkerFakeOverrideProvide
 import org.jetbrains.kotlin.backend.common.serialization.DeserializationStrategy
 import org.jetbrains.kotlin.backend.common.serialization.KotlinIrLinker
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.konan.isNativeStdlib
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.declarations.IrProperty
+import org.jetbrains.kotlin.ir.objcinterop.isObjCClass
 import org.jetbrains.kotlin.ir.overrides.IrExternalOverridabilityCondition
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
 import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
 import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.metadata.impl.KlibResolvedModuleDescriptorsFactoryImpl
 import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
@@ -56,6 +60,14 @@ class KonanIrLinker(
         partialLinkageSupport = partialLinkageSupport,
         platformSpecificClassFilter = KonanFakeOverrideClassFilter,
         externalOverridabilityConditions = externalOverridabilityConditions,
+        interfaceFilterForMultipleNonAbstractOverrides = {
+            // Properties of ObjC protocols are oddly serialized as final, with abstract getter and setter.
+            // When ObjC interface implements a protocol having property, the property's implementation is auto-generated.
+            // In case of intersection override, the usual logic of IrLinkerFakeOverrideBuilderStrategy.postProcessGeneratedFakeOverride()
+            // will raise AMBIGUOUS_NON_OVERRIDDEN_CALLABLE_MEMBER, since properties in protocols are non-abstract.
+            // So such properties should not be considered during check for AMBIGUOUS_NON_OVERRIDDEN_CALLABLE_MEMBER.
+            !(it is IrProperty && it.modality == Modality.FINAL && it.parentAsClass.isObjCClass())
+        }
     )
 
     val moduleDeserializers = mutableMapOf<ModuleDescriptor, KonanPartialModuleDeserializer>()

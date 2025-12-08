@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.builders.declarations.buildProperty
 import org.jetbrains.kotlin.ir.builders.declarations.buildTypeParameter
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.objcinterop.isObjCClass
 import org.jetbrains.kotlin.ir.overrides.FakeOverrideBuilderStrategy
 import org.jetbrains.kotlin.ir.overrides.IrExternalOverridabilityCondition
 import org.jetbrains.kotlin.ir.overrides.IrFakeOverrideBuilder
@@ -77,7 +76,7 @@ object DefaultFakeOverrideClassFilter : FakeOverrideClassFilter {
     override fun needToConstructFakeOverrides(clazz: IrClass): Boolean = true
 }
 
-private class IrLinkerFakeOverrideBuilderStrategy(
+open class IrLinkerFakeOverrideBuilderStrategy(
     val linker: FileLocalAwareLinker,
     val symbolTable: SymbolTable,
     private val irBuiltIns: IrBuiltIns,
@@ -127,10 +126,7 @@ private class IrLinkerFakeOverrideBuilderStrategy(
                  * This is done to mimic jvm behaviour.
                  */
 
-                runIf(nonAbstractOverrides.all {
-                    it.parentAsClass.isInterface &&
-                            (it.modality == Modality.FINAL && it.parentAsClass.isInterface && it.parentAsClass.isObjCClass())
-                }) {
+                runIf(nonAbstractOverrides.all { it.parentAsClass.isInterface && interfaceFilterForMultipleNonAbstractOverrides(it) }) {
                     PartiallyLinkedDeclarationOrigin.AMBIGUOUS_NON_OVERRIDDEN_CALLABLE_MEMBER
                 }
             }
@@ -310,17 +306,21 @@ class IrLinkerFakeOverrideProvider(
     val platformSpecificClassFilter: FakeOverrideClassFilter = DefaultFakeOverrideClassFilter,
     private val fakeOverrideDeclarationTable: FakeOverrideDeclarationTable = FakeOverrideDeclarationTable(mangler),
     externalOverridabilityConditions: List<IrExternalOverridabilityCondition> = emptyList(),
+    interfaceFilterForMultipleNonAbstractOverrides: (IrOverridableDeclaration<*>) -> Boolean = { true }
 ) {
     private val irFakeOverrideBuilder = IrFakeOverrideBuilder(
         typeSystem,
-        IrLinkerFakeOverrideBuilderStrategy(
+        object: IrLinkerFakeOverrideBuilderStrategy(
             linker,
             symbolTable,
             typeSystem.irBuiltIns,
             partialLinkageSupport,
             fakeOverrideDeclarationTable,
             friendModules
-        ),
+        ) {
+            override val interfaceFilterForMultipleNonAbstractOverrides: (IrOverridableDeclaration<*>) -> Boolean =
+                interfaceFilterForMultipleNonAbstractOverrides
+        },
         externalOverridabilityConditions
     )
 
