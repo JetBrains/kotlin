@@ -155,7 +155,7 @@ internal class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClas
     private fun addJvmInlineAnnotation(valueClass: IrClass) {
         if (valueClass.hasAnnotation(JVM_INLINE_ANNOTATION_FQ_NAME)) return
         val constructor = context.symbols.jvmInlineAnnotation.constructors.first()
-        valueClass.annotations = valueClass.annotations + IrConstructorCallImpl.fromSymbolOwner(
+        valueClass.annotations = valueClass.annotations + IrAnnotationImpl.fromSymbolOwner(
             constructor.owner.returnType,
             constructor
         )

@@ -12,8 +12,8 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.builders.declarations.buildProperty
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
+import org.jetbrains.kotlin.ir.expressions.impl.IrAnnotationImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
 import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
@@ -156,7 +156,7 @@ fun List<IrConstructorCall>.withJvmExposeBoxedAnnotation(declaration: IrDeclarat
     // The declaration is not annotated with @JvmExposeBoxed - the annotation is on class
     // or -Xjvm-expose-boxed is specified. Add the annotation.
     val constructor = context.symbols.jvmExposeBoxedAnnotation.constructors.first()
-    return this + IrConstructorCallImpl.fromSymbolOwner(
+    return this + IrAnnotationImpl.fromSymbolOwner(
         constructor.owner.returnType,
         constructor
     ).apply {

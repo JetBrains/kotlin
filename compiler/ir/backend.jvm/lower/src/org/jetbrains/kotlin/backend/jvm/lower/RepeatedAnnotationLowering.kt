@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationBase
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.expressions.IrClassReference
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
-import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrAnnotationImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
 import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
@@ -120,7 +120,7 @@ internal class RepeatedAnnotationLowering(private val context: JvmBackendContext
         entries: List<IrConstructorCall>,
     ): IrConstructorCall {
         val annotationType = annotationClass.typeWith()
-        return IrConstructorCallImpl.fromSymbolOwner(containerClass.defaultType, containerClass.primaryConstructor!!.symbol).apply {
+        return IrAnnotationImpl.fromSymbolOwner(containerClass.defaultType, containerClass.primaryConstructor!!.symbol).apply {
             arguments[0] = IrVarargImpl(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET,
                 context.irBuiltIns.arrayClass.typeWith(annotationType),

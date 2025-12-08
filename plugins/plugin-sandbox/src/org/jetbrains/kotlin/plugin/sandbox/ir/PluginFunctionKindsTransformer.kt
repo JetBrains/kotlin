@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
-import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrAnnotationImpl
 import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
@@ -120,7 +120,7 @@ class PluginFunctionKindsTransformer(val pluginContext: IrPluginContext) : IrVis
                 inlineable -> inlineableSymbol
                 else -> notInlineableSymbol
             }
-            annotations = annotations + IrConstructorCallImpl.fromSymbolOwner(
+            annotations = annotations + IrAnnotationImpl.fromSymbolOwner(
                 symbol.owner.defaultType,
                 symbol.constructors.single(),
             )

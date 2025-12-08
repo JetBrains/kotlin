@@ -74,7 +74,7 @@ class TransformerForAddingAnnotations(val context: IrPluginContext) : IrVisitorV
             val simpleAnnotationClass = simpleAnnotationClass ?: return
             val arrayAnnotationClass = arrayAnnotationClass ?: return
             val annotationConstructor = annotationClass.owner.constructors.first()
-            val annotationCall = IrConstructorCallImpl.fromSymbolOwner(
+            val annotationCall = IrAnnotationImpl.fromSymbolOwner(
                 type = annotationClass.defaultType,
                 constructorSymbol = annotationConstructor.symbol
             ).also {

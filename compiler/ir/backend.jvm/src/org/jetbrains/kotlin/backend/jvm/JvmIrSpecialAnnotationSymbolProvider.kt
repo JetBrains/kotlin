@@ -13,7 +13,9 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
+import org.jetbrains.kotlin.ir.expressions.IrAnnotation
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
+import org.jetbrains.kotlin.ir.expressions.impl.IrAnnotationImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
@@ -44,15 +46,15 @@ object JvmIrSpecialAnnotationSymbolProvider : IrSpecialAnnotationsProvider() {
     private val rawTypeAnnotationInfo: AnnotationInfo = RawTypeAnnotation.getAnnotationInfo(kotlinInternalIrPackage)
     private val flexibleArrayElementVarianceAnnotationInfo: AnnotationInfo = FlexibleArrayElementVariance.getAnnotationInfo(kotlinInternalIrPackage)
 
-    override fun generateEnhancedNullabilityAnnotationCall(): IrConstructorCall = enhancedNullabilityAnnotationInfo.toConstructorCall()
-    override fun generateFlexibleNullabilityAnnotationCall(): IrConstructorCall = flexibleNullabilityAnnotationInfo.toConstructorCall()
-    override fun generateFlexibleMutabilityAnnotationCall(): IrConstructorCall = flexibleMutabilityAnnotationInfo.toConstructorCall()
-    override fun generateRawTypeAnnotationCall(): IrConstructorCall = rawTypeAnnotationInfo.toConstructorCall()
+    override fun generateEnhancedNullabilityAnnotationCall(): IrConstructorCall = enhancedNullabilityAnnotationInfo.toAnnotation()
+    override fun generateFlexibleNullabilityAnnotationCall(): IrConstructorCall = flexibleNullabilityAnnotationInfo.toAnnotation()
+    override fun generateFlexibleMutabilityAnnotationCall(): IrConstructorCall = flexibleMutabilityAnnotationInfo.toAnnotation()
+    override fun generateRawTypeAnnotationCall(): IrConstructorCall = rawTypeAnnotationInfo.toAnnotation()
     override fun generateFlexibleArrayElementVarianceAnnotationCall(): IrConstructorCall =
-        flexibleArrayElementVarianceAnnotationInfo.toConstructorCall()
+        flexibleArrayElementVarianceAnnotationInfo.toAnnotation()
 
-    private fun AnnotationInfo.toConstructorCall(): IrConstructorCallImpl {
-        return IrConstructorCallImpl.fromSymbolOwner(defaultType, constructorSymbol)
+    private fun AnnotationInfo.toAnnotation(): IrAnnotationImpl {
+        return IrAnnotationImpl.fromSymbolOwner(defaultType, constructorSymbol)
     }
 
     private class AnnotationInfo(val defaultType: IrType, val constructorSymbol: IrConstructorSymbol)
