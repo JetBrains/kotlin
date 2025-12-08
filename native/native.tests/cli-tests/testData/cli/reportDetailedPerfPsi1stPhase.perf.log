@@ -9,20 +9,20 @@ Kotlin to Native compiler performance report
        DYNAMIC PHASE        $UINT>>$ ms            $REAL>>$ loc/s (InlineCallCycleChecker)
     IR SERIALIZATION        $UINT>>$ ms            $REAL>>$ loc/s
         KLIB WRITING        $UINT>>$ ms            $REAL>>$ loc/s
-KLIB element $QUOTEDSTRING$ has size of $UINT$ Bytes
-KLIB element $QUOTEDSTRING$ has size of $UINT$ Bytes
-KLIB element $QUOTEDSTRING$ has size of $UINT$ Bytes
-KLIB element $QUOTEDSTRING$ has size of $UINT$ Bytes
-KLIB element $QUOTEDSTRING$ has size of $UINT$ Bytes
-KLIB element $QUOTEDSTRING$ has size of $UINT$ Bytes
-KLIB element $QUOTEDSTRING$ has size of $UINT$ Bytes
-KLIB element $QUOTEDSTRING$ has size of $UINT$ Bytes
-KLIB element $QUOTEDSTRING$ has size of $UINT$ Bytes
-KLIB element $QUOTEDSTRING$ has size of $UINT$ Bytes
-KLIB element $QUOTEDSTRING$ has size of $UINT$ Bytes
-KLIB element $QUOTEDSTRING$ has size of $UINT$ Bytes
-KLIB element $QUOTEDSTRING$ has size of $UINT$ Bytes
-KLIB element $QUOTEDSTRING$ has size of $UINT$ Bytes
+KLIB element 'KLIB file cumulative size' has size of $UINT$ Bytes
+KLIB element 'KLIB file cumulative size/IR (main)' has size of $UINT$ Bytes
+KLIB element 'KLIB file cumulative size/IR (main)/IR bodies' has size of $UINT$ Bytes
+KLIB element 'KLIB file cumulative size/IR (main)/IR declarations' has size of $UINT$ Bytes
+KLIB element 'KLIB file cumulative size/IR (main)/IR file entries' has size of $UINT$ Bytes
+KLIB element 'KLIB file cumulative size/IR (main)/IR files' has size of $UINT$ Bytes
+KLIB element 'KLIB file cumulative size/IR (main)/IR signatures' has size of $UINT$ Bytes
+KLIB element 'KLIB file cumulative size/IR (main)/IR signatures (debug info)' has size of $UINT$ Bytes
+KLIB element 'KLIB file cumulative size/IR (main)/IR strings' has size of $UINT$ Bytes
+KLIB element 'KLIB file cumulative size/IR (main)/IR types' has size of $UINT$ Bytes
+KLIB element 'KLIB file cumulative size/Manifest file' has size of $UINT$ Bytes
+KLIB element 'KLIB file cumulative size/Metadata' has size of $UINT$ Bytes
+KLIB element 'KLIB file cumulative size/Native-specific binary data' has size of $UINT$ Bytes
+KLIB element 'KLIB file cumulative size/Resources' has size of $UINT$ Bytes
 GC time for PS MarkSweep is $UINT$ ms, $UINT$ collections
 GC time for PS Scavenge is $UINT$ ms, $UINT$ collections
 JIT time is $UINT$ ms

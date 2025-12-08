@@ -134,10 +134,12 @@ class ValueAgnosticSanitizer(val actualText: String) {
         val expectPlaceholderMatcher = PLACEHOLDER_PATTERN.matcher(expectedText)
 
         return buildString {
+            var previousTextFragment: CharSequence? = null
             for (matchFragment in matchFragments) {
                 if (matchFragment is TextFragment) {
                     // Plain string fragments are appended without change
                     append(matchFragment.charSequence)
+                    previousTextFragment = matchFragment.charSequence
                     continue
                 }
 
@@ -158,13 +160,25 @@ class ValueAgnosticSanitizer(val actualText: String) {
                 val normalizedActualFragment = if (expectPlaceholderType != null) {
                     // Match a placeholder in expected text -> extract placeholder from actual considering alignment marker
                     // It causes test data failure if placeholders don't match
-                    val valueType = if (matchFragment.valueType == ValueType.UInt && expectPlaceholderType == ValueType.Int.value) {
-                        // `Int` type includes `UInt` -> coerce `UInt` to `Int` in actual
-                        ValueType.Int.value
+                    // Special case: show actual quoted string instead of placeholder to display KLIB name in performance reports
+                    val showActualQuotedString =
+                        expectPlaceholderType == QUOTED_STRING_MAKER &&
+                                matchFragment.valueType == ValueType.QuotedString &&
+                                // Limit to KLIB element lines to avoid changing behavior globally
+                                (previousTextFragment?.contains("KLIB element ") == true)
+
+                    if (showActualQuotedString) {
+                        // Keep the actual quoted string to make reports more informative
+                        matchFragment.charSequence
                     } else {
-                        matchFragment.valueType.value
+                        val valueType = if (matchFragment.valueType == ValueType.UInt && expectPlaceholderType == ValueType.Int.value) {
+                            // `Int` type includes `UInt` -> coerce `UInt` to `Int` in actual
+                            ValueType.Int.value
+                        } else {
+                            matchFragment.valueType.value
+                        }
+                        generatePlaceholder(valueType, alignment)
                     }
-                    generatePlaceholder(valueType, alignment)
                 } else {
                     // Match a literal in expected data -> use plain literal from actual data
                     matchFragment.charSequence
