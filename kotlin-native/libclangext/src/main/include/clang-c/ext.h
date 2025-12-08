@@ -63,6 +63,8 @@ CString clang_Cursor_getSwiftName(CXCursor cursor);
 
 void clang_disposeCString(CString str);
 
+CString clang_Cursor_getObjCProtocolRuntimeName(CXCursor cursor);
+
 #ifdef __cplusplus
 }
 #endif

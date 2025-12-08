@@ -168,6 +168,17 @@ extern "C" {
 #endif
   }
 
+  CString clang_Cursor_getObjCProtocolRuntimeName(CXCursor cursor) {
+#if LIBCLANGEXT_ENABLE
+    if (cursor.kind == CXCursor_ObjCProtocolDecl) {
+      if (const ObjCProtocolDecl *decl = dyn_cast_or_null<ObjCProtocolDecl>(getCursorDecl(cursor))) {
+        return createCString(decl->getObjCRuntimeNameAsString());
+      }
+    }
+#endif
+    return nullCString();
+  }
+
   unsigned clang_Cursor_isObjCInitMethod(CXCursor cursor) {
 #if LIBCLANGEXT_ENABLE
     if (cursor.kind == CXCursor_ObjCInstanceMethodDecl) {

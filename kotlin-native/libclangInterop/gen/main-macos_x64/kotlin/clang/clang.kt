@@ -4763,6 +4763,17 @@ fun clang_disposeCString(str: CValue<CString>): Unit {
 }
 
 @ExperimentalForeignApi
+fun clang_Cursor_getObjCProtocolRuntimeName(cursor: CValue<CXCursor>): CValue<CString> {
+    memScoped {
+        val kniRetVal = nativeHeap.alloc<CString>()
+        try {
+            kniBridge356(cursor.getPointer(memScope).rawValue, kniRetVal.rawPtr)
+            return kniRetVal.readValue()
+        } finally { nativeHeap.free(kniRetVal) }
+    }
+}
+
+@ExperimentalForeignApi
 val CINDEX_VERSION_MAJOR: Int get() = 0
 
 @ExperimentalForeignApi
@@ -6066,4 +6077,5 @@ private external fun kniBridge352(p0: NativePtr): Int
 private external fun kniBridge353(p0: NativePtr): Int
 private external fun kniBridge354(p0: NativePtr, p1: NativePtr): Unit
 private external fun kniBridge355(p0: NativePtr): Unit
+private external fun kniBridge356(p0: NativePtr, p1: NativePtr): Unit
 private val loadLibrary = loadKonanLibrary("clangstubs")
