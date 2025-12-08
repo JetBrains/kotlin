@@ -11,6 +11,6 @@ interface MySchema {
 
 class Test {
     private val <!DATAFRAME_PLUGIN_NOT_YET_SUPPORTED_IN_PROPERTY_RETURN_TYPE!>df<!> = dataFrameOf("a" to columnOf(42))
-    val <!DATAFRAME_PLUGIN_NOT_YET_SUPPORTED_IN_PROPERTY_RETURN_TYPE, EXPOSED_PROPERTY_TYPE!>df1<!> = dataFrameOf("a" to columnOf(42))
+    val df1 = dataFrameOf("a" to columnOf(42))
     private val df2 = dataFrameOf("a" to columnOf(42)).cast<MySchema>()
 }
