@@ -8,6 +8,7 @@ CONSTRUCTOR:
   isActual: false
   isExpect: false
   isExtension: false
+  isExternal: false
   location: TOP_LEVEL
   modality: FINAL
   name: IntPredicate
@@ -42,6 +43,7 @@ CONSTRUCTOR:
       isCrossinline: false
       isExpect: false
       isExtension: false
+      isExternal: false
       isImplicitLambdaParameter: false
       isNoinline: false
       isVal: true

@@ -63,6 +63,7 @@ KaFlexibleType:
                   compilerVisibility: Local
                   isActual: false
                   isExpect: false
+                  isExternal: false
                   isReified: false
                   location: LOCAL
                   modality: FINAL
@@ -86,6 +87,7 @@ KaFlexibleType:
                 compilerVisibility: Local
                 isActual: false
                 isExpect: false
+                isExternal: false
                 isReified: false
                 location: LOCAL
                 modality: FINAL
@@ -155,6 +157,7 @@ KaFlexibleType:
               compilerVisibility: Local
               isActual: false
               isExpect: false
+              isExternal: false
               isReified: false
               location: LOCAL
               modality: FINAL
@@ -178,6 +181,7 @@ KaFlexibleType:
             compilerVisibility: Local
             isActual: false
             isExpect: false
+            isExternal: false
             isReified: false
             location: LOCAL
             modality: FINAL
@@ -256,6 +260,7 @@ KaFlexibleType:
                   compilerVisibility: Local
                   isActual: false
                   isExpect: false
+                  isExternal: false
                   isReified: false
                   location: LOCAL
                   modality: FINAL
@@ -279,6 +284,7 @@ KaFlexibleType:
                 compilerVisibility: Local
                 isActual: false
                 isExpect: false
+                isExternal: false
                 isReified: false
                 location: LOCAL
                 modality: FINAL
@@ -348,6 +354,7 @@ KaFlexibleType:
               compilerVisibility: Local
               isActual: false
               isExpect: false
+              isExternal: false
               isReified: false
               location: LOCAL
               modality: FINAL
@@ -371,6 +378,7 @@ KaFlexibleType:
             compilerVisibility: Local
             isActual: false
             isExpect: false
+            isExternal: false
             isReified: false
             location: LOCAL
             modality: FINAL

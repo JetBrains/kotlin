@@ -993,6 +993,7 @@ KtCallExpression(488,499): 'funMember()'
           isActual: false
           isExpect: false
           isExtension: false
+          isExternal: false
           isVal: true
           location: LOCAL
           modality: FINAL
@@ -1016,6 +1017,7 @@ KtCallExpression(488,499): 'funMember()'
         isActual: false
         isExpect: false
         isExtension: false
+        isExternal: false
         isVal: true
         location: LOCAL
         modality: FINAL
@@ -1061,6 +1063,7 @@ KtNameReferenceExpression(488,497): 'funMember'
             isActual: false
             isExpect: false
             isExtension: false
+            isExternal: false
             isVal: true
             location: LOCAL
             modality: FINAL
@@ -1084,6 +1087,7 @@ KtNameReferenceExpression(488,497): 'funMember'
           isActual: false
           isExpect: false
           isExtension: false
+          isExternal: false
           isVal: true
           location: LOCAL
           modality: FINAL
@@ -1131,6 +1135,7 @@ KtNameReferenceExpression(512,526): 'propertyMember'
             isActual: false
             isExpect: false
             isExtension: false
+            isExternal: false
             isVal: true
             location: LOCAL
             modality: FINAL
@@ -1154,6 +1159,7 @@ KtNameReferenceExpression(512,526): 'propertyMember'
           isActual: false
           isExpect: false
           isExtension: false
+          isExternal: false
           isVal: true
           location: LOCAL
           modality: FINAL
@@ -1367,6 +1373,7 @@ KtCallExpression(611,629): 'funMember(a = A())'
         isActual: false
         isExpect: false
         isExtension: false
+        isExternal: false
         isVal: true
         location: LOCAL
         modality: FINAL
@@ -1417,6 +1424,7 @@ KtNameReferenceExpression(611,620): 'funMember'
           isActual: false
           isExpect: false
           isExtension: false
+          isExternal: false
           isVal: true
           location: LOCAL
           modality: FINAL

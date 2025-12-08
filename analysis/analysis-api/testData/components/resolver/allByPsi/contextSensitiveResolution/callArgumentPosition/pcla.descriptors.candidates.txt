@@ -354,6 +354,7 @@ KtCallExpression(309,317): 'yield(m)'
           isActual: false
           isExpect: false
           isExtension: false
+          isExternal: false
           isVal: true
           location: LOCAL
           modality: FINAL
@@ -413,6 +414,7 @@ KtNameReferenceExpression(309,314): 'yield'
           isActual: false
           isExpect: false
           isExtension: false
+          isExternal: false
           isVal: true
           location: LOCAL
           modality: FINAL
@@ -496,6 +498,7 @@ KtCallExpression(326,334): 'yield(X)'
           isActual: false
           isExpect: false
           isExtension: false
+          isExternal: false
           isVal: true
           location: LOCAL
           modality: FINAL
@@ -555,6 +558,7 @@ KtNameReferenceExpression(326,331): 'yield'
           isActual: false
           isExpect: false
           isExtension: false
+          isExternal: false
           isVal: true
           location: LOCAL
           modality: FINAL
@@ -727,6 +731,7 @@ KtCallExpression(365,373): 'yield(X)'
           isActual: false
           isExpect: false
           isExtension: false
+          isExternal: false
           isVal: true
           location: LOCAL
           modality: FINAL
@@ -786,6 +791,7 @@ KtNameReferenceExpression(365,370): 'yield'
           isActual: false
           isExpect: false
           isExtension: false
+          isExternal: false
           isVal: true
           location: LOCAL
           modality: FINAL
@@ -870,6 +876,7 @@ KtCallExpression(382,390): 'yield(m)'
           isActual: false
           isExpect: false
           isExtension: false
+          isExternal: false
           isVal: true
           location: LOCAL
           modality: FINAL
@@ -929,6 +936,7 @@ KtNameReferenceExpression(382,387): 'yield'
           isActual: false
           isExpect: false
           isExtension: false
+          isExternal: false
           isVal: true
           location: LOCAL
           modality: FINAL
@@ -1110,6 +1118,7 @@ KtCallExpression(437,445): 'yield(X)'
           isActual: false
           isExpect: false
           isExtension: false
+          isExternal: false
           isVal: true
           location: LOCAL
           modality: FINAL
@@ -1169,6 +1178,7 @@ KtNameReferenceExpression(437,442): 'yield'
           isActual: false
           isExpect: false
           isExtension: false
+          isExternal: false
           isVal: true
           location: LOCAL
           modality: FINAL
@@ -1325,6 +1335,7 @@ KtCallExpression(476,484): 'yield(X)'
           isActual: false
           isExpect: false
           isExtension: false
+          isExternal: false
           isVal: true
           location: LOCAL
           modality: FINAL
@@ -1384,6 +1395,7 @@ KtNameReferenceExpression(476,481): 'yield'
           isActual: false
           isExpect: false
           isExtension: false
+          isExternal: false
           isVal: true
           location: LOCAL
           modality: FINAL

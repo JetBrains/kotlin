@@ -102,7 +102,9 @@ internal class KaFirNamedClassSymbol private constructor(
         }
 
     override val isExternal: Boolean
-        get() = withValidityAssertion { backingPsi?.hasModifier(KtTokens.EXTERNAL_KEYWORD) ?: firSymbol.isExternal }
+        get() = withValidityAssertion {
+            backingPsi?.hasModifier(KtTokens.EXTERNAL_KEYWORD) == true || firSymbol.isEffectivelyExternal(analysisSession.firSession)
+        }
 
     override val isActual: Boolean
         get() = withValidityAssertion { backingPsi?.isActualDeclaration() ?: firSymbol.isActual }

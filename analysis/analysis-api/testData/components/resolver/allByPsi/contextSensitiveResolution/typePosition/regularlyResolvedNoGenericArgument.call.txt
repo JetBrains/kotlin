@@ -187,6 +187,7 @@ KtNameReferenceExpression(305,306): 'y'
             isActual: false
             isExpect: false
             isExtension: false
+            isExternal: false
             isVal: true
             location: LOCAL
             modality: FINAL

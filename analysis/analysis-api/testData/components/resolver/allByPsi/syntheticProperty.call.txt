@@ -747,6 +747,7 @@ KtPostfixExpression(219,230): 'something++'
             isActual: false
             isExpect: false
             isExtension: false
+            isExternal: false
             isVal: true
             location: LOCAL
             modality: FINAL
@@ -785,6 +786,7 @@ KtNameReferenceExpression(219,228): 'something'
           isActual: false
           isExpect: false
           isExtension: false
+          isExternal: false
           isVal: true
           location: LOCAL
           modality: FINAL
@@ -843,6 +845,7 @@ KtOperationReferenceExpression(228,230): '++'
             isActual: false
             isExpect: false
             isExtension: false
+            isExternal: false
             isVal: true
             location: LOCAL
             modality: FINAL
@@ -901,6 +904,7 @@ KtPostfixExpression(235,248): '(something)++'
             isActual: false
             isExpect: false
             isExtension: false
+            isExternal: false
             isVal: true
             location: LOCAL
             modality: FINAL
@@ -942,6 +946,7 @@ KtNameReferenceExpression(236,245): 'something'
           isActual: false
           isExpect: false
           isExtension: false
+          isExternal: false
           isVal: true
           location: LOCAL
           modality: FINAL
@@ -1000,6 +1005,7 @@ KtOperationReferenceExpression(246,248): '++'
             isActual: false
             isExpect: false
             isExtension: false
+            isExternal: false
             isVal: true
             location: LOCAL
             modality: FINAL
@@ -1038,6 +1044,7 @@ KtBinaryExpression(253,268): '(something) = 1'
           isActual: false
           isExpect: false
           isExtension: false
+          isExternal: false
           isVal: true
           location: LOCAL
           modality: FINAL
@@ -1080,6 +1087,7 @@ KtNameReferenceExpression(254,263): 'something'
           isActual: false
           isExpect: false
           isExtension: false
+          isExternal: false
           isVal: true
           location: LOCAL
           modality: FINAL
@@ -1119,6 +1127,7 @@ KtOperationReferenceExpression(265,266): '='
           isActual: false
           isExpect: false
           isExtension: false
+          isExternal: false
           isVal: true
           location: LOCAL
           modality: FINAL

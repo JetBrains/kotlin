@@ -3,6 +3,7 @@ KaTypeParameterSymbol:
   compilerVisibility: Local
   isActual: false
   isExpect: false
+  isExternal: false
   isReified: false
   location: CLASS
   modality: FINAL
@@ -46,6 +47,7 @@ KaNamedClassSymbol:
       compilerVisibility: Local
       isActual: false
       isExpect: false
+      isExternal: false
       isReified: false
       location: CLASS
       modality: FINAL
@@ -81,6 +83,7 @@ KaTypeAliasSymbol:
     type: X<kotlin/Int>
   isActual: false
   isExpect: false
+  isExternal: false
   location: TOP_LEVEL
   modality: FINAL
   name: TopLevelAlias
@@ -107,6 +110,7 @@ KaTypeAliasSymbol:
     type: X<kotlin/String>
   isActual: false
   isExpect: false
+  isExternal: false
   location: CLASS
   modality: FINAL
   name: NestedLevelAlias
@@ -133,6 +137,7 @@ KaTypeAliasSymbol:
     type: X<kotlin/String>
   isActual: false
   isExpect: false
+  isExternal: false
   location: LOCAL
   modality: FINAL
   name: LocalTypeAlias
@@ -159,6 +164,7 @@ KaTypeAliasSymbol:
     type: X<kotlin/String>
   isActual: false
   isExpect: false
+  isExternal: false
   location: CLASS
   modality: FINAL
   name: NestedLevelAliasInLocalClass
@@ -185,6 +191,7 @@ KaTypeAliasSymbol:
     type: X<kotlin/String>
   isActual: false
   isExpect: false
+  isExternal: false
   location: LOCAL
   modality: FINAL
   name: LocalTypeAlias
@@ -211,6 +218,7 @@ KaTypeAliasSymbol:
     type: X<kotlin/String>
   isActual: false
   isExpect: false
+  isExternal: false
   location: CLASS
   modality: FINAL
   name: NestedLevelAliasInLocalClass

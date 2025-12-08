@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
 
 internal class KaFe10DescConstructorSymbol(
     override val descriptor: ConstructorDescriptor,
@@ -49,6 +50,9 @@ internal class KaFe10DescConstructorSymbol(
 
     override val isExpect: Boolean
         get() = withValidityAssertion { descriptor.isExpect }
+
+    override val isExternal: Boolean
+        get() = withValidityAssertion { descriptor.isEffectivelyExternal() }
 
     override val typeParameters: List<KaTypeParameterSymbol>
         get() = withValidityAssertion {

@@ -9,6 +9,7 @@ KaTypeParameterType:
     compilerVisibility: Local
     isActual: false
     isExpect: false
+    isExternal: false
     isReified: false
     location: CLASS
     modality: FINAL

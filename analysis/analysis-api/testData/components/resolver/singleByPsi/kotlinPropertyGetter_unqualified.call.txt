@@ -11,6 +11,7 @@ KtNameReferenceExpression(50,51): 'i'
           isActual: false
           isExpect: false
           isExtension: false
+          isExternal: false
           isVal: true
           location: LOCAL
           modality: FINAL

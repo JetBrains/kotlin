@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.tasks.isDynamic
+import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 
 internal class KaFe10DescKotlinPropertySymbol(
@@ -64,7 +65,7 @@ internal class KaFe10DescKotlinPropertySymbol(
         get() = withValidityAssertion { DescriptorUtils.isEnumEntry(descriptor) }
 
     override val isExternal: Boolean
-        get() = withValidityAssertion { descriptor.isExternal }
+        get() = withValidityAssertion { descriptor.isEffectivelyExternal() }
 
     override val isOverride: Boolean
         get() = withValidityAssertion { descriptor.isExplicitOverride }

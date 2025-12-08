@@ -7,6 +7,7 @@ KaPropertySetterSymbol:
   isActual: false
   isExpect: false
   isExtension: false
+  isExternal: false
   isInline: false
   isNotDefault: true
   isOverride: false
@@ -25,6 +26,7 @@ KaPropertySetterSymbol:
     isCrossinline: false
     isExpect: false
     isExtension: false
+    isExternal: false
     isImplicitLambdaParameter: false
     isNoinline: false
     isVal: true
@@ -69,6 +71,7 @@ KaPropertySetterSymbol:
       isCrossinline: false
       isExpect: false
       isExtension: false
+      isExternal: false
       isImplicitLambdaParameter: false
       isNoinline: false
       isVal: true
