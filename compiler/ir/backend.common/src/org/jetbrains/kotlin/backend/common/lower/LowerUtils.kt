@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.backend.common.lower
 
 import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.backend.common.linkage.partial.isPartialLinkageRuntimeError
+import org.jetbrains.kotlin.config.AnalysisFlags
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
@@ -175,7 +177,10 @@ enum class ConstructorDelegationKind {
     PARTIAL_LINKAGE_ERROR
 }
 
-fun IrConstructor.delegationKind(irBuiltIns: IrBuiltIns): ConstructorDelegationKind {
+fun IrConstructor.delegationKind(context: LoweringContext): ConstructorDelegationKind {
+    val irBuiltIns = context.irBuiltIns
+    val headerMode = context.configuration.languageVersionSettings.getFlag(AnalysisFlags.headerMode)
+
     val constructedClass = parent as IrClass
     val superClass = constructedClass.superTypes
         .mapNotNull { it as? IrSimpleType }
@@ -214,7 +219,7 @@ fun IrConstructor.delegationKind(irBuiltIns: IrBuiltIns): ConstructorDelegationK
     })
 
     val delegationKind: ConstructorDelegationKind? = when (numberOfDelegatingCalls) {
-        0 -> if (hasPartialLinkageError) ConstructorDelegationKind.PARTIAL_LINKAGE_ERROR else null
+        0 -> if (hasPartialLinkageError || headerMode) ConstructorDelegationKind.PARTIAL_LINKAGE_ERROR else null
         1 -> if (callsSuper) ConstructorDelegationKind.CALLS_SUPER else ConstructorDelegationKind.CALLS_THIS
         else -> null
     }

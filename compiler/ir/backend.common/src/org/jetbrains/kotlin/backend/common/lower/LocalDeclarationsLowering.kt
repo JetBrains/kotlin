@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.backend.common.lower
 import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.backend.common.descriptors.synthesizedString
 import org.jetbrains.kotlin.backend.common.lower.ClosureAnnotator.ClosureBuilder
+import org.jetbrains.kotlin.config.AnalysisFlags
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.Modality
@@ -361,10 +363,11 @@ open class LocalDeclarationsLowering(
 
             override fun visitConstructor(declaration: IrConstructor): IrStatement {
                 // Body is transformed separately. See loop over constructors in rewriteDeclarations().
+                val headerMode = context.configuration.languageVersionSettings.getFlag(AnalysisFlags.headerMode)
 
                 val constructorContext = localClassConstructors[declaration] ?: return super.visitConstructor(declaration)
                 return constructorContext.transformedDeclaration.apply {
-                    this.body = declaration.body!!
+                    this.body = if(headerMode) declaration.body else declaration.body!!
 
                     declaration.parameters.filter { it.defaultValue != null }.forEach { argument ->
                         oldParameterToNew[argument]!!.defaultValue = argument.defaultValue
@@ -619,7 +622,7 @@ open class LocalDeclarationsLowering(
             val constructorsByDelegationKinds: Map<ConstructorDelegationKind, List<LocalClassConstructorContext>> = constructors
                 .asSequence()
                 .map { localClassConstructors[it]!! }
-                .groupBy { it.declaration.delegationKind(context.irBuiltIns) }
+                .groupBy { it.declaration.delegationKind(context) }
 
             val constructorsCallingSuper = constructorsByDelegationKinds[ConstructorDelegationKind.CALLS_SUPER].orEmpty()
 

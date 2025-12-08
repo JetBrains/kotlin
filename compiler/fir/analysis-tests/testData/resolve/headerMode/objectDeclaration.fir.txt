@@ -1,8 +1,6 @@
 FILE: objectDeclaration.kt
     public final object A : R|kotlin/Any| {
-        private constructor(): R|A| {
-            super<R|kotlin/Any|>()
-        }
+        private constructor(): R|A|
 
         public final fun funA(): R|kotlin/String|
 

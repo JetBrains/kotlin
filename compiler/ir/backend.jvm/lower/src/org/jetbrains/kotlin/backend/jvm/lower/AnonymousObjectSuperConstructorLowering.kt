@@ -25,6 +25,8 @@ import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.util.transformInPlace
 import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
+import org.jetbrains.kotlin.config.AnalysisFlags
+import org.jetbrains.kotlin.config.languageVersionSettings
 
 /**
  * Moves evaluation of anonymous object super constructor arguments to call site. Specifically, transforms code like this:
@@ -63,11 +65,13 @@ internal class AnonymousObjectSuperConstructorLowering(val context: JvmBackendCo
         if (expression.origin != IrStatementOrigin.OBJECT_LITERAL)
             return super.visitBlock(expression)
 
+        val headerMode = context.configuration.languageVersionSettings.getFlag(AnalysisFlags.headerMode)
+
         val objectConstructorCall = expression.statements.last() as? IrConstructorCall
             ?: throw AssertionError("object literal does not end in a constructor call")
         val objectConstructor = objectConstructorCall.symbol.owner
         val objectConstructorBody = objectConstructor.body as? IrBlockBody
-            ?: throw AssertionError("object literal constructor body is not a block")
+            ?: if (headerMode) return super.visitBlock(expression) else throw AssertionError("object literal constructor body is not a block")
 
         val newArguments = mutableListOf<IrExpression>()
         fun addArgument(value: IrExpression): IrValueParameter {
