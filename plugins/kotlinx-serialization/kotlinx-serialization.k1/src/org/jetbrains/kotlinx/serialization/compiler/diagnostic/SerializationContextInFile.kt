@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.firstArgument
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.supertypes
+import org.jetbrains.kotlin.utils.associateByNotNull
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationAnnotations
 import org.jetbrains.kotlinx.serialization.compiler.resolve.isKSerializer
 import org.jetbrains.kotlinx.serialization.compiler.resolve.toClassDescriptor
@@ -44,14 +45,15 @@ class SerializationContextInFile(val bindingContext: BindingContext, val current
 
     val additionalSerializersInScopeOfCurrentFile: Map<Pair<ClassDescriptor, Boolean>, ClassDescriptor> by lazy {
         getKClassListFromFileAnnotation(SerializationAnnotations.additionalSerializersFqName, currentDeclaration)
-            .associateBy(
+            .associateByNotNull(
                 {
                     val kotlinType = it.supertypes().find(::isKSerializer)?.arguments?.firstOrNull()?.type
+                        ?: return@associateByNotNull null
                     val descriptor = kotlinType.toClassDescriptor
-                        ?: throw AssertionError("Argument for ${SerializationAnnotations.additionalSerializersFqName} does not implement KSerializer or does not provide serializer for concrete type")
-                    descriptor to kotlinType!!.isMarkedNullable
+                        ?: return@associateByNotNull null
+                    descriptor to kotlinType.isMarkedNullable
                 },
-                { it.toClassDescriptor!! }
+                { it.toClassDescriptor }
             )
     }
 }

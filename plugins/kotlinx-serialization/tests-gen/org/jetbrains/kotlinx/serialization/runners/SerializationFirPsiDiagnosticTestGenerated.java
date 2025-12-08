@@ -271,6 +271,12 @@ public class SerializationFirPsiDiagnosticTestGenerated extends AbstractSerializ
     public void testTypeAliasesCustomized() {
       runTest("plugins/kotlinx-serialization/testData/diagnostics/typeAliasesCustomized.kt");
     }
+
+    @Test
+    @TestMetadata("wrongFileLevelAnnotationArgs.kt")
+    public void testWrongFileLevelAnnotationArgs() {
+      runTest("plugins/kotlinx-serialization/testData/diagnostics/wrongFileLevelAnnotationArgs.kt");
+    }
   }
 
   @Nested
