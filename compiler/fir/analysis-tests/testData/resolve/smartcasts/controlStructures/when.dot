@@ -1073,7 +1073,7 @@ digraph when_kt {
                     406 [label="Access variable R|<local>/<when-subject>|"];
                     407 [label="Exit $subj"];
                     408 [label="Const: Int(1)"];
-                    409 [label="Equality operator =="];
+                    409 [label="Equality operator ==" style="filled" fillcolor=yellow];
                     410 [label="Exit when branch condition"];
                 }
                 411 [label="Synthetic else branch"];

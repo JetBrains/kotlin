@@ -139,7 +139,7 @@ digraph safeCalls_kt {
                     50 [label="Function call exit: $subj$.R|/A.bar|(...)" style="filled" fillcolor=yellow];
                     51 [label="Exit safe call"];
                     52 [label="Const: Null(null)"];
-                    53 [label="Equality operator !="];
+                    53 [label="Equality operator !=" style="filled" fillcolor=yellow];
                     54 [label="Exit when branch condition"];
                 }
                 55 [label="Synthetic else branch"];
