@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.load.java.structure.LightClassOriginKind
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
+import javax.swing.Icon
 
 internal class SymbolLightClassForFacade(
     override val facadeClassFqName: FqName,
@@ -165,6 +166,7 @@ internal class SymbolLightClassForFacade(
     override fun getTypeParameterList(): PsiTypeParameterList? = null
     override fun getImplementsList(): LightEmptyImplementsList = object : LightEmptyImplementsList(manager) {
         override fun getParent(): PsiElement = this@SymbolLightClassForFacade
+        override fun getElementIcon(flags: Int): Icon? = null
     }
 
     override fun getInterfaces(): Array<out PsiClass> = PsiClass.EMPTY_ARRAY

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.light.classes.symbol.SymbolLightMemberBase
 import org.jetbrains.kotlin.light.classes.symbol.basicIsEquivalentTo
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassBase
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
-import javax.swing.Icon
 
 internal abstract class SymbolLightField protected constructor(
     containingClass: SymbolLightClassBase,
@@ -51,8 +50,6 @@ internal abstract class SymbolLightField protected constructor(
     }
 
     override fun isVisibilitySupported(): Boolean = true
-
-    override fun getElementIcon(flags: Int): Icon? = throw UnsupportedOperationException("This should be done by KotlinIconProvider")
 
     abstract override fun equals(other: Any?): Boolean
 

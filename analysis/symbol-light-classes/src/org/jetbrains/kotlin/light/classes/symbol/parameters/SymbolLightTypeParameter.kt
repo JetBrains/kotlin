@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.light.classes.symbol.annotations.SymbolAnnotationsPr
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.KtTypeParameter
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import javax.swing.Icon
 
 internal class SymbolLightTypeParameter private constructor(
     private val parent: SymbolLightTypeParameterList,
@@ -205,6 +206,8 @@ internal class SymbolLightTypeParameter private constructor(
     override fun isEquivalentTo(another: PsiElement): Boolean {
         return basicIsEquivalentTo(this, another) || isOriginEquivalentTo(another)
     }
+
+    override fun getElementIcon(flags: Int): Icon? = null
 
     override fun getText(): String? = kotlinOrigin?.text
     override fun getTextRange(): TextRange? = kotlinOrigin?.textRange
