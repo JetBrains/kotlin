@@ -1607,20 +1607,20 @@ abstract class AbstractComposeLowering(
         .single { it.name.toString() == "HIDDEN" }.symbol
 
     private fun jvmSynthetic() = jvmSyntheticIrClass?.let {
-        IrConstructorCallImpl.fromSymbolOwner(
+        IrAnnotationImpl.fromSymbolOwner(
             type = it.defaultType,
             constructorSymbol = it.constructors.first().symbol
         )
     }
 
     private fun hiddenFromObjC() = hiddenFromObjCIrClass?.let {
-        IrConstructorCallImpl.fromSymbolOwner(
+        IrAnnotationImpl.fromSymbolOwner(
             type = it.defaultType,
             constructorSymbol = it.constructors.first().symbol
         )
     }
 
-    private fun hiddenDeprecated(message: String) = IrConstructorCallImpl.fromSymbolOwner(
+    private fun hiddenDeprecated(message: String) = IrAnnotationImpl.fromSymbolOwner(
         type = deprecatedIrClass.defaultType,
         constructorSymbol = deprecatedIrClass.constructors.first { it.owner.isPrimary }
     ).also {
