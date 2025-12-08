@@ -1183,8 +1183,24 @@ class BodyGenerator(
             }
 
             wasmSymbols.resumeThrowIntrinsic -> {
+                val wasmContinuation = functionContext.referenceLocal(1)
+
+                val kotlinAny = wasmFileCodegenContext.referenceGcType(irBuiltIns.anyClass)
+                val kotlinAnyRefType = WasmRefNullType(WasmHeapType.Type(kotlinAny))
                 val zeroArgContType = WasmHeapType.Type(wasmFileCodegenContext.referenceContType(1))
-                body.buildResumeThrow(zeroArgContType, exceptionTagId, location)
+                val blockType = WasmFunctionType(emptyList(), listOf(kotlinAnyRefType, WasmRefNullType(zeroArgContType)))
+                wasmFileCodegenContext.defineContBlockType(blockType)
+                val blockTypeSymbol = wasmFileCodegenContext.referenceContBlockType(blockType)
+                body.buildFunctionTypedBlock("on_suspend", blockTypeSymbol) { idx ->
+                    // Throwable
+                    body.buildGetLocal(functionContext.referenceLocal(0), location)
+                    body.buildGetLocal(wasmContinuation, location)
+                    val contHandle = body.createNewContHandle(contTagId, idx)
+                    body.buildResumeThrow(zeroArgContType, exceptionTagId, contHandle, location)
+                    body.buildCall(wasmFileCodegenContext.referenceFunction(wasmSymbols.buildResumeIntrinsicValueResult), location)
+                    body.buildInstr(WasmOp.RETURN, location)
+                }
+                body.buildCall(wasmFileCodegenContext.referenceFunction(wasmSymbols.buildResumeIntrinsicSuspendResult), location)
             }
 
             wasmSymbols.resumeWithIntrinsic -> {
@@ -1202,11 +1218,10 @@ class BodyGenerator(
                     body.buildGetLocal(wasmContinuation, location)
                     val contHandle = body.createNewContHandle(contTagId, idx)
                     body.buildResume(zeroArgContType, contHandle, location)
-                    body.buildDrop(location)
-                    body.buildRefNull(WasmHeapType.Simple.None, location)
+                    body.buildCall(wasmFileCodegenContext.referenceFunction(wasmSymbols.buildResumeIntrinsicValueResult), location)
                     body.buildInstr(WasmOp.RETURN, location)
                 }
-                body.buildCall(wasmFileCodegenContext.referenceFunction(wasmSymbols.buildPair), location)
+                body.buildCall(wasmFileCodegenContext.referenceFunction(wasmSymbols.buildResumeIntrinsicSuspendResult), location)
             }
 
             in wasmSymbols.startCoroutineUninterceptedOrReturnIntrinsicsStub -> {

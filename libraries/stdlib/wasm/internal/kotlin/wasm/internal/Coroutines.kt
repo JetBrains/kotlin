@@ -45,10 +45,11 @@ internal class WasmContinuationBox(
     internal val cont: contref1,
 )
 
+@Suppress("UNCHECKED_CAST")
 internal class WasmContinuation<in T>(
     internal var wasmContBox: WasmContinuationBox?,
     private var isResumed: Boolean,
-    private val completion: Continuation<*>,
+    private val completion: Continuation<T>,
 ) : Continuation<T> {
     override val context: CoroutineContext = completion.context
 
@@ -57,13 +58,12 @@ internal class WasmContinuation<in T>(
         wasmContBox?.let { contBox ->
             isResumed = true
             try {
-                result.exceptionOrNull()?.let {
-                    resumeThrowIntrinsic(it, contBox.cont)
-                    return
+                val resumeResult: ResumeIntrinsicResult = result.exceptionOrNull()?.let {
+                    resumeThrowImpl(it, contBox.cont)
+                } ?: resumeWithImpl(contBox.cont, result)
+                if (resumeResult.wasmContWrapper == null) {
+                    completion.resume(resumeResult.result as T)
                 }
-                val (newCont, wasmContBox) = resumeWithImpl(contBox.cont, result, completion)
-                    ?: error("TODO: this is the case where coroutine doesn't suspend and returns the result. We need to handle it by resuming completion with the returned value")
-                newCont.wasmContBox = wasmContBox
             } catch (e: Throwable) {
                 completion.resumeWithException(e)
             }
@@ -71,12 +71,34 @@ internal class WasmContinuation<in T>(
     }
 }
 
-internal fun resumeWithImpl(wasmContinuation: contref1, result: Result<*>, completion: Continuation<*>): Pair<WasmContinuation<*>, WasmContinuationBox>? {
-    return resumeWithIntrinsic(wasmContinuation, result, completion)
+internal fun resumeWithImpl(wasmContinuation: contref1, result: Result<*>): ResumeIntrinsicResult = resumeWithIntrinsic(wasmContinuation, result)
+internal fun resumeThrowImpl(objectToThrow: Throwable, cont: contref1): ResumeIntrinsicResult = resumeThrowIntrinsic(objectToThrow, cont)
+
+@Suppress("UNUSED_PARAMETER")
+@ExcludedFromCodegen
+internal fun resumeWithIntrinsic(wasmContinuation: contref1, result: Result<*>): ResumeIntrinsicResult {
+    implementedAsIntrinsic
 }
 
-@Suppress("UNUSED")
-internal fun buildPair(a: Any?, b: contref1) = Pair(a as WasmContinuation<*>, WasmContinuationBox(b))
+@UsedFromCompilerGeneratedCode
+@PublishedApi
+@Suppress("UNUSED_PARAMETER")
+@ExcludedFromCodegen
+internal fun resumeThrowIntrinsic(objectToThrow: Throwable, cont: contref1): ResumeIntrinsicResult {
+    implementedAsIntrinsic
+}
+
+internal data class ResumeIntrinsicResult(val wasmContWrapper: WasmContinuation<*>?, val result: Any?)
+
+internal fun buildResumeIntrinsicSuspendResult(wasmContWrapper: Any?, wasmContRef: contref1): ResumeIntrinsicResult {
+    wasmContWrapper as WasmContinuation<*>
+    wasmContWrapper.wasmContBox = WasmContinuationBox(wasmContRef)
+    return ResumeIntrinsicResult(wasmContWrapper, null)
+}
+
+internal fun buildResumeIntrinsicValueResult(value: Any?): ResumeIntrinsicResult {
+    return ResumeIntrinsicResult(null, value)
+}
 
 @Suppress("UNUSED")
 internal fun setWasmContinuation(a: Any?, b: contref1): Any? {
@@ -95,19 +117,12 @@ internal fun resumeCompletionWithException(completion: Continuation<Throwable>, 
     completion.resumeWithException(exception)
 }
 
-@Suppress("UNUSED_PARAMETER")
-@ExcludedFromCodegen
-internal fun resumeWithIntrinsic(wasmContinuation: contref1, result: Result<*>, completion: Continuation<*>): Pair<WasmContinuation<*>, WasmContinuationBox>? {
-    implementedAsIntrinsic
-}
-
 @PublishedApi
 @Suppress("UNCHECKED_CAST")
 internal suspend fun <T> suspendCoroutineUninterceptedOrReturnImpl(block: (Continuation<T>) -> Any?): T {
-    val completion: Continuation<T> = getContinuation<T>()
-    val remainingFunction = WasmContinuation<T>(null, false, completion)
+    val completion = getContinuation<T>()
+    val remainingFunction = WasmContinuation(null, false, completion)
     val result = block(remainingFunction)
-    // TODO: completion is never resumed
     return if (result == COROUTINE_SUSPENDED) {
         suspendIntrinsic(remainingFunction) as T
     } else result as T
@@ -118,14 +133,6 @@ internal suspend fun <T> suspendCoroutineUninterceptedOrReturnImpl(block: (Conti
 @Suppress("UNUSED_PARAMETER")
 @ExcludedFromCodegen
 internal fun suspendIntrinsic(cont: Continuation<*>): Any? {
-    implementedAsIntrinsic
-}
-
-@UsedFromCompilerGeneratedCode
-@PublishedApi
-@Suppress("UNUSED_PARAMETER")
-@ExcludedFromCodegen
-internal fun resumeThrowIntrinsic(objectToThrow: Throwable, cont: contref1) {
     implementedAsIntrinsic
 }
 

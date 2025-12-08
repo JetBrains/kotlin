@@ -290,10 +290,11 @@ class WasmIrToBinary(
                 appendImmediate(instr.immediates[1])
             }
             WasmOp.RESUME_THROW.opcode -> {
-                require(instr.immediates.size == 2)
+                require(instr.immediates.size == 3)
                 appendImmediate(instr.immediates[0])
                 appendImmediate(instr.immediates[1])
-                b.writeByte(0.toByte())
+                b.writeByte(1.toByte())
+                appendImmediate(instr.immediates[2])
             }
             else -> {
                 instr.immediates.forEach {

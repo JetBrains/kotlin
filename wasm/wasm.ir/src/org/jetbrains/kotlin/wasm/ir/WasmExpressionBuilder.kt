@@ -349,9 +349,10 @@ class WasmExpressionBuilder(val expression: MutableList<WasmInstr>, val skipComm
     fun buildResumeThrow(
         contType: WasmHeapType,
         exceptionTag: WasmSymbol<Int>,
+        contHandle: WasmImmediate.ContHandle,
         location: SourceLocation
     ) {
-        buildInstr(WasmOp.RESUME_THROW, location, WasmImmediate.HeapType(contType), WasmImmediate.TagIdx(exceptionTag))
+        buildInstr(WasmOp.RESUME_THROW, location, WasmImmediate.HeapType(contType), WasmImmediate.TagIdx(exceptionTag), contHandle)
     }
 
 //    fun buildSwitch(ct1: Int, e: Int, location: SourceLocation) {
