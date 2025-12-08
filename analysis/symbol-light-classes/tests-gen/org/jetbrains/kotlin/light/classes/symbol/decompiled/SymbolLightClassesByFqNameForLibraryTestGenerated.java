@@ -523,6 +523,12 @@ public class SymbolLightClassesByFqNameForLibraryTestGenerated extends AbstractS
   }
 
   @Test
+  @TestMetadata("valueClassWithCompanion.kt")
+  public void testValueClassWithCompanion() {
+    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/valueClassWithCompanion.kt");
+  }
+
+  @Test
   @TestMetadata("valueClassWithDelegatedSuperInterface.kt")
   public void testValueClassWithDelegatedSuperInterface() {
     runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/valueClassWithDelegatedSuperInterface.kt");

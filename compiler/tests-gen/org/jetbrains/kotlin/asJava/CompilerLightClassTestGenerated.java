@@ -444,6 +444,11 @@ public class CompilerLightClassTestGenerated extends AbstractCompilerLightClassT
     runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/valueClassMembers.kt");
   }
 
+  @TestMetadata("valueClassWithCompanion.kt")
+  public void testValueClassWithCompanion() {
+    runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/valueClassWithCompanion.kt");
+  }
+
   @TestMetadata("valueClassWithDelegatedSuperInterface.kt")
   public void testValueClassWithDelegatedSuperInterface() {
     runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/valueClassWithDelegatedSuperInterface.kt");
