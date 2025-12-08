@@ -27,7 +27,6 @@ import java.lang.reflect.Modifier
 import kotlin.LazyThreadSafetyMode.PUBLICATION
 import kotlin.jvm.internal.CallableReference
 import kotlin.jvm.internal.FunctionBase
-import kotlin.jvm.internal.Reflection
 import kotlin.reflect.KClass
 import kotlin.reflect.full.valueParameters
 import kotlin.reflect.jvm.internal.JvmFunctionSignature.*
@@ -172,6 +171,9 @@ internal class DescriptorKFunction private constructor(
                 ?: throw KotlinReflectionInternalError("Unknown container class for overridden function: $this")
             DescriptorKFunction(containerClass.kotlin as KClassImpl<*>, it)
         }
+
+    override fun shallowCopy(overriddenStorage: KCallableOverriddenStorage): DescriptorKFunction =
+        DescriptorKFunction(container, descriptor, overriddenStorage)
 
     private fun getFunctionWithDefaultParametersForValueClassOverride(function: ReflectKFunction): ReflectKFunction? {
         if (
