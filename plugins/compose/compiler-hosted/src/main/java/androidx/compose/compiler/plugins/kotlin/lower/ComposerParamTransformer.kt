@@ -579,11 +579,13 @@ class ComposerParamTransformer(
         }
 
     private fun IrSimpleFunction.isLegacyOpenFunctionWithDefault(): Boolean =
-        modality == Modality.OPEN && (
+        overriddenSymbols.isEmpty() &&
+                modality == Modality.OPEN && (
                 origin == IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB &&
                         parameters.any { it.hasDefaultValue() } &&
                         composeMetadata?.supportsOpenFunctionsWithDefaultParams() != true
-        ) || overriddenSymbols.any { it.owner.isLegacyOpenFunctionWithDefault() }
+                )
+                || overriddenSymbols.any { it.owner.isLegacyOpenFunctionWithDefault() }
 
 
     private fun IrSimpleFunction.hasDefaultForParam(index: Int): Boolean {
