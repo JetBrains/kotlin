@@ -5,10 +5,12 @@
 
 package org.jetbrains.kotlin.scripting.compiler.plugin.services
 
-import com.intellij.openapi.diagnostic.Logger
-import org.jetbrains.kotlin.*
+import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.builder.Context
 import org.jetbrains.kotlin.fir.builder.FirScriptConfiguratorExtension
@@ -27,8 +29,8 @@ import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.providers.dependenciesSymbolProvider
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirLocalPropertySymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirRegularPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirReceiverParameterSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularPropertySymbol
 import org.jetbrains.kotlin.fir.toFirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -43,7 +45,8 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.KtScript
+import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.getRefinedOrBaseCompilationConfiguration
+import org.jetbrains.kotlin.scripting.compiler.plugin.fir.scriptCompilationComponent
 import org.jetbrains.kotlin.scripting.definitions.annotationsForSamWithReceivers
 import org.jetbrains.kotlin.scripting.resolve.toSourceCode
 import kotlin.script.experimental.api.*
@@ -65,10 +68,8 @@ class FirScriptConfiguratorExtensionImpl(
 
     @OptIn(SymbolInternals::class)
     override fun FirScriptBuilder.configure(sourceFile: KtSourceFile?, context: Context<*>) {
-        val configuration = getOrLoadConfiguration(session, sourceFile!!) ?: run {
-            log.warn("Configuration for ${sourceFile.asString()} wasn't found. FirScriptBuilder wasn't configured.")
-            return
-        }
+        val configuration = getOrLoadConfiguration(session, sourceFile!!)?.valueOrNull() ?: return
+        // assuming that error reporting happens before calling the compilation, e.g., on refinement
 
         configuration.getNoDefault(ScriptCompilationConfiguration.baseClass)?.let { baseClass ->
             val baseClassTypeRef =
@@ -236,23 +237,26 @@ class FirScriptConfiguratorExtensionImpl(
         get() = _knownAnnotationsForSamWithReceiver
 
     companion object {
-        private val log: Logger get() = Logger.getInstance(FirScriptConfiguratorExtensionImpl::class.java)
-
         fun getFactory(hostConfiguration: ScriptingHostConfiguration): Factory {
             return Factory { session -> FirScriptConfiguratorExtensionImpl(session, hostConfiguration) }
         }
     }
 }
 
-internal fun getOrLoadConfiguration(session: FirSession, file: KtSourceFile): ScriptCompilationConfiguration? {
-    val service = checkNotNull(session.scriptDefinitionProviderService)
+internal fun getOrLoadConfiguration(session: FirSession, file: KtSourceFile): ResultWithDiagnostics<ScriptCompilationConfiguration>? {
     val sourceCode = file.toSourceCode()
-    val configuration = with(service) {
-        sourceCode?.let { asSourceCode ->
-            getRefinedConfiguration(asSourceCode)
-                ?: getBaseConfiguration(asSourceCode)
-        } ?: getDefaultConfiguration()
-    }.valueOrNull()
-    return configuration
+    val hostConfiguration = session.scriptCompilationComponent?.hostConfiguration
+    return if (hostConfiguration != null) {
+        hostConfiguration.getRefinedOrBaseCompilationConfiguration(sourceCode)
+    } else {
+        @Suppress("DEPRECATION")
+        val service = checkNotNull(session.scriptDefinitionProviderService)
+        with(service) {
+            sourceCode?.let { asSourceCode ->
+                getRefinedConfiguration(asSourceCode)
+                    ?: getBaseConfiguration(asSourceCode)
+            } ?: getDefaultConfiguration()
+        }
+    }
 }
 

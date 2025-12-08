@@ -662,7 +662,7 @@ class ScriptingHostTest {
                 }
             }
         }
-        val res = BasicJvmScriptingHost().eval(script.toScriptSource(), compilationConfiguration, null)
+        val res = BasicJvmScriptingHost().eval(script.toScriptSource("script.kts"), compilationConfiguration, null)
         assertTrue(res is ResultWithDiagnostics.Failure)
         val report = res.reports.find { it.message.startsWith("Imported source file not found") }
         assertNotNull(report)

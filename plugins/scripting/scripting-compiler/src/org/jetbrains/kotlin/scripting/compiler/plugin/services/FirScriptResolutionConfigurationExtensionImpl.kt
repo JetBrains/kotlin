@@ -30,6 +30,7 @@ class FirScriptResolutionConfigurationExtensionImpl(
         val scriptSession = script.moduleData.session
         val scriptFile = scriptSession.firProvider.getFirScriptContainerFile(script.symbol) ?: return emptyList()
         val scriptSourceFile = scriptFile.sourceFile?.toSourceCode() ?: return emptyList()
+        @Suppress("DEPRECATION")
         val compilationConfiguration = script.scriptCompilationConfiguration
             ?: session.getScriptCompilationConfiguration(scriptSourceFile, getDefault = { null }) ?: return emptyList()
 
