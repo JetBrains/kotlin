@@ -40,23 +40,27 @@ internal class DescriptorKParameter(
             return if (name.isSpecial) null else name.asString()
         }
 
-
     override val type: KType
-        get() = DescriptorKType(descriptor.type) {
-            val descriptor = descriptor
+        get() {
+            val type = DescriptorKType(descriptor.type) {
+                val descriptor = descriptor
 
-            if (descriptor is ReceiverParameterDescriptor &&
-                callable.instanceReceiverParameter == descriptor &&
-                callable.descriptor.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE
-            ) {
-                // In case of fake overrides, dispatch receiver type should be computed manually because Caller.parameterTypes returns
-                // types from Java reflection where receiver is always the declaring class of the original declaration
-                // (not the class where the fake override is generated, which is returned by KParameter.type)
-                (callable.descriptor.containingDeclaration as ClassDescriptor).toJavaClass()
-                    ?: throw KotlinReflectionInternalError("Cannot determine receiver Java type of inherited declaration: $descriptor")
-            } else {
-                callable.caller.parameterTypes[index]
+                if (descriptor is ReceiverParameterDescriptor &&
+                    callable.instanceReceiverParameter == descriptor &&
+                    (callable.overriddenStorage.isFakeOverride || callable.descriptor.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE)
+                ) {
+                    // In case of fake overrides, dispatch receiver type should be computed manually because Caller.parameterTypes returns
+                    // types from Java reflection where receiver is always the declaring class of the original declaration
+                    // (not the class where the fake override is generated, which is returned by KParameter.type)
+                    ((callable.overriddenStorage.instanceReceiverParameter
+                        ?: callable.descriptor).containingDeclaration as ClassDescriptor).toJavaClass()
+                        ?: throw KotlinReflectionInternalError("Cannot determine receiver Java type of inherited declaration: $descriptor")
+                } else {
+                    callable.caller.parameterTypes[index]
+                }
             }
+            return callable.overriddenStorage.typeSubstitutor.substitute(type).type
+                ?: starProjectionSupertypesAreNotPossible()
         }
 
     override val isOptional: Boolean

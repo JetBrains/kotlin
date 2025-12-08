@@ -36,17 +36,23 @@ internal abstract class DescriptorKProperty<out V> private constructor(
     override val signature: String,
     descriptorInitialValue: PropertyDescriptor?,
     override val rawBoundReceiver: Any?,
-) : DescriptorKCallable<V>(), ReflectKProperty<V> {
+    overriddenStorage: KCallableOverriddenStorage,
+) : DescriptorKCallable<V>(overriddenStorage), ReflectKProperty<V> {
     constructor(container: KDeclarationContainerImpl, name: String, signature: String, boundReceiver: Any?) : this(
-        container, name, signature, null, boundReceiver,
+        container, name, signature, null, boundReceiver, KCallableOverriddenStorage.ZERO
     )
 
-    constructor(container: KDeclarationContainerImpl, descriptor: PropertyDescriptor) : this(
+    constructor(
+        container: KDeclarationContainerImpl,
+        descriptor: PropertyDescriptor,
+        overriddenStorage: KCallableOverriddenStorage,
+    ) : this(
         container,
         descriptor.name.asString(),
         RuntimeTypeMapper.mapPropertySignature(descriptor).asString(),
         descriptor,
         CallableReference.NO_RECEIVER,
+        overriddenStorage,
     )
 
     override val javaField: Field? by lazy(PUBLICATION) {
@@ -122,7 +128,9 @@ internal abstract class DescriptorKProperty<out V> private constructor(
         ReflectionObjectRenderer.renderProperty(this)
 
     abstract class Accessor<out PropertyType, out ReturnType> :
-        DescriptorKCallable<ReturnType>(), KProperty.Accessor<PropertyType>, KFunction<ReturnType> {
+        DescriptorKCallable<ReturnType>(KCallableOverriddenStorage.ZERO),
+        KProperty.Accessor<PropertyType>,
+        KFunction<ReturnType> {
         abstract override val property: DescriptorKProperty<PropertyType>
 
         abstract override val descriptor: PropertyAccessorDescriptor
