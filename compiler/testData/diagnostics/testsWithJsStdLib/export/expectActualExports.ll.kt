@@ -51,7 +51,7 @@ package sample
 actual class <!NOT_EXPORTED_ACTUAL_DECLARATION_WHILE_EXPECT_IS_EXPORTED!>Foo<!>
 
 @kotlin.js.JsExport actual class Bar {
-    <!WRONG_EXPORTED_DECLARATION("suspend function")!>suspend fun foo()<!> = 42
+    suspend fun foo() = 42
 }
 
 @kotlin.js.JsExport actual class Nested {

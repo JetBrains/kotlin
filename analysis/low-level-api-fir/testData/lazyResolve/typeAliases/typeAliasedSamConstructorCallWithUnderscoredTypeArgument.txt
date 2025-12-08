@@ -112,7 +112,7 @@ FILE: [ResolvedTo(IMPORTS)] typeAliasedSamConstructorCallWithUnderscoredTypeArgu
         public abstract [ResolvedTo(STATUS)] fun provide(): R|T|
 
     }
-    public final [ResolvedTo(SUPER_TYPES)] typealias Alias<[ResolvedTo(CONTRACTS)] TT> = R|test/Box<TT>|
+    public final [ResolvedTo(TYPES)] typealias Alias<[ResolvedTo(CONTRACTS)] TT> = R|test/Box<TT>|
     public final [ResolvedTo(BODY_RESOLVE)] fun usage(): R|kotlin/Unit| {
         R|test/Alias|<R|kotlin/String|>(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=() -> TypeVariable(TT)] Alias@fun <anonymous>(): R|kotlin/String| <inline=NoInline>  {
             ^ String(OK)

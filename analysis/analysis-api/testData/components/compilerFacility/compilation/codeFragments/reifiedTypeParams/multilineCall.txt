@@ -4,7 +4,7 @@ public final class CodeFragment {
 
   // compiled from: fragment.kt
 
-  @Lkotlin/Metadata;(mv={2, 3, 0}, k=3, xi=48)
+  @Lkotlin/Metadata;(mv={2, 4, 0}, k=3, xi=48)
 
   // access flags 0x1
   public <init>()V

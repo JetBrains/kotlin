@@ -8,7 +8,7 @@ package foo
 
 <!WRONG_EXPORTED_DECLARATION("inline function with reified type parameters")!>inline fun <reified T> inlineReifiedFun(x: Any)<!> = x is T
 
-<!WRONG_EXPORTED_DECLARATION("suspend function")!>suspend fun suspendFun()<!> { }
+suspend fun suspendFun() { }
 
 <!WRONG_EXPORTED_DECLARATION("extension property")!>val String.extensionProperty<!>
     get() = this.length
