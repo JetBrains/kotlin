@@ -29,8 +29,9 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.expressions.IrAnnotation
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
-import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrAnnotationImpl
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.util.constructors
@@ -118,7 +119,7 @@ class DurableFunctionKeyTransformer(
 
     private fun irKeyMetaAnnotation(
         key: KeyInfo,
-    ): IrConstructorCall = IrConstructorCallImpl(
+    ): IrConstructorCall = IrAnnotationImpl(
         UNDEFINED_OFFSET,
         UNDEFINED_OFFSET,
         keyMetaAnnotation!!.defaultType,
