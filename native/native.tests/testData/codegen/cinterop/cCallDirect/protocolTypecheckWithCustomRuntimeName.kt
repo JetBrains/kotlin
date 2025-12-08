@@ -1,6 +1,4 @@
 // TARGET_BACKEND: NATIVE
-// KT-82200
-// IGNORE_BACKEND: NATIVE
 // FREE_CINTEROP_ARGS: -Xccall-mode direct
 // MODULE: cinterop
 // FILE: lib.def

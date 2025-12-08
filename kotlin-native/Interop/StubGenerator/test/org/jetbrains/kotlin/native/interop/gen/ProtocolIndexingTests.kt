@@ -46,8 +46,7 @@ class ProtocolIndexingTests : IndexerTestsBase() {
             @end
         """.trimIndent())
 
-        // TODO KT-82200: expected should be "P2".
-        assertEquals(null, protocol.binaryName)
+        assertEquals("P2", protocol.binaryName)
     }
 
     @Test
@@ -73,8 +72,7 @@ class ProtocolIndexingTests : IndexerTestsBase() {
             @end
         """.trimIndent())
 
-        // TODO KT-82200: expected should be "P2".
-        assertEquals(null, protocol.binaryName)
+        assertEquals("P2", protocol.binaryName)
     }
 
     @Test
@@ -88,8 +86,7 @@ class ProtocolIndexingTests : IndexerTestsBase() {
             @end
         """.trimIndent())
 
-        // TODO KT-82200: expected should be "P2".
-        assertEquals(null, protocol.binaryName)
+        assertEquals("P2", protocol.binaryName)
     }
 
     @Test
@@ -103,8 +100,7 @@ class ProtocolIndexingTests : IndexerTestsBase() {
             @end
         """.trimIndent())
 
-        // TODO KT-82200: expected should be "P2".
-        assertEquals(null, protocol.binaryName)
+        assertEquals("P2", protocol.binaryName)
     }
 
     @Test
@@ -118,8 +114,7 @@ class ProtocolIndexingTests : IndexerTestsBase() {
             @protocol P;
         """.trimIndent())
 
-        // TODO KT-82200: expected should be "P2".
-        assertEquals(null, protocol.binaryName)
+        assertEquals("P2", protocol.binaryName)
     }
 
     @Test
@@ -145,7 +140,6 @@ class ProtocolIndexingTests : IndexerTestsBase() {
             @protocol P;
         """.trimIndent())
 
-        // TODO KT-82200: expected should be "P2".
-        assertEquals(null, protocol.binaryName)
+        assertEquals("P2", protocol.binaryName)
     }
 }

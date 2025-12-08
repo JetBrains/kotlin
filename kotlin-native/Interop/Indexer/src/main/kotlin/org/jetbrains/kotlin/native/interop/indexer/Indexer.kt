@@ -501,14 +501,7 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
                 }
             }
         }
-
-        val binaryName = if (hasAttribute(cursor, OBJC_RUNTIME_NAME)) {
-            // TODO KT-82200 extract the value from objc_runtime_name here.
-            null
-        } else {
-            name
-        }
-
+        val binaryName = clang_Cursor_getObjCProtocolRuntimeName(cursor).convertAndDispose()
         return objCProtocolRegistry.getOrPut(cursor, {
             ObjCProtocolImpl(
                     name = name,
@@ -1196,7 +1189,6 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
     private val NS_CONSUMED = "ns_consumed"
     private val OBJC_DESIGNATED_INITIALIZER = "objc_designated_initializer"
     private val OBJC_DIRECT = "objc_direct"
-    private val OBJC_RUNTIME_NAME = "objc_runtime_name"
 
     private fun hasAttribute(cursor: CValue<CXCursor>, name: String): Boolean {
         var result = false
