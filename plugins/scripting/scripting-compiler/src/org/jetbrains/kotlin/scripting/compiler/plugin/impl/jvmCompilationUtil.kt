@@ -174,10 +174,9 @@ internal fun makeCompiledScript(
     }
 }
 
-fun SourceCode.toKtSourceFile(): KtSourceFile? = when (this) {
+fun SourceCode.toKtSourceFile(): KtSourceFile = when (this) {
     is KtFileScriptSource -> KtPsiSourceFile(ktFile)
     is VirtualFileScriptSource -> KtVirtualFileSourceFile(virtualFile)
     is FileScriptSource -> KtIoFileSourceFile(file)
-    is StringScriptSource -> KtInMemoryTextSourceFile(name ?: "", locationId, text)
-    else -> null
+    else -> KtInMemoryTextSourceFile(name ?: "", locationId, text)
 }

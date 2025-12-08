@@ -352,7 +352,7 @@ private fun compileImpl(
         // TODO: implement LT support, similarly as for the scripting (KT-83498)
         session.buildFirFromKtFiles(ktSources.map { it.getKtFile(definition, project) }) +
                 session.buildFirViaLightTree(
-                    otherSources.mapNotNull { it.toKtSourceFile() },
+                    otherSources.map { it.toKtSourceFile() },
                     diagnosticsReporter,
                     reportFilesAndLines = null
                 )

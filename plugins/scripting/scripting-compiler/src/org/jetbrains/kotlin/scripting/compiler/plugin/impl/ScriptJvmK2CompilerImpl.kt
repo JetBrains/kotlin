@@ -9,6 +9,7 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.LegacyK2CliPipeline
+import org.jetbrains.kotlin.cli.common.checkKotlinPackageUsageForLightTree
 import org.jetbrains.kotlin.cli.common.fir.reportToMessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.ModuleCompilerEnvironment
@@ -51,7 +52,9 @@ import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.NameUtils
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
+import org.jetbrains.kotlin.readSourceFileWithMapping
 import org.jetbrains.kotlin.scripting.compiler.plugin.ScriptCompilerProxy
+import org.jetbrains.kotlin.scripting.compiler.plugin.configureFirSession
 import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.getOrStoreRefinedCompilationConfiguration
 import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.getRefinedOrBaseCompilationConfiguration
 import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.scriptRefinedCompilationConfigurationsCache
@@ -84,12 +87,18 @@ class ScriptJvmK2CompilerIsolated(val hostConfiguration: ScriptingHostConfigurat
         script: SourceCode,
         scriptCompilationConfiguration: ScriptCompilationConfiguration
     ): ResultWithDiagnostics<CompiledScript> =
-        withK2ScriptCompilerWithLightTree(
-            scriptCompilationConfiguration.with {
-                hostConfiguration(this@ScriptJvmK2CompilerIsolated.hostConfiguration)
+        withMessageCollector { messageCollector ->
+            withScriptCompilationCache(script, scriptCompilationConfiguration, messageCollector) {
+                withK2ScriptCompilerWithLightTree(
+                    scriptCompilationConfiguration.with {
+                        hostConfiguration(this@ScriptJvmK2CompilerIsolated.hostConfiguration)
+                    },
+                    messageCollector
+                ) {
+                    if (messageCollector.hasErrors()) failure(messageCollector)
+                    else it.compile(script)
+                }
             }
-        ) {
-            it.compile(script)
         }
 }
 
@@ -191,6 +200,22 @@ class ScriptJvmK2CompilerImpl(
                 }
             }.valueOr { return it }
         allSourceFiles.addAll(newSources)
+
+        val ignoredOptionsReportingState = state.compilerContext.ignoredOptionsReportingState
+        val updatedCompilerOptions = allSourceFiles.flatMapTo(mutableListOf()) {
+            getRefinedConfiguration(it)[ScriptCompilationConfiguration.compilerOptions] ?: emptyList()
+        }
+        if (updatedCompilerOptions.isNotEmpty() && updatedCompilerOptions != state.baseScriptCompilationConfiguration[ScriptCompilationConfiguration.compilerOptions]) {
+            compilerConfiguration.updateWithCompilerOptions(
+                updatedCompilerOptions,
+                reportingCtx.messageCollector,
+                ignoredOptionsReportingState,
+                true
+            )
+        }
+
+        if (reportingCtx.messageCollector.hasErrors()) return failure(reportingCtx.diagnosticsCollector)
+
         val extensionRegistrars = FirExtensionRegistrar.getInstances(project)
         val compilerEnvironment = ModuleCompilerEnvironment(state.projectEnvironment, reportingCtx.diagnosticsCollector)
         val renderDiagnosticName = compilerConfiguration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
@@ -234,7 +259,17 @@ class ScriptJvmK2CompilerImpl(
 
         session.register(FirScriptCompilationComponent::class, FirScriptCompilationComponent(state.hostConfiguration))
 
+        state.hostConfiguration[ScriptingHostConfiguration.configureFirSession]?.also {
+            it.invoke(session)
+        }
+
         val sourcesToFir = allSourceFiles.associateWith { it.convertToFir(session, reportingCtx.diagnosticsCollector) }
+
+        if (reportingCtx.diagnosticsCollector.hasErrors) return failure(reportingCtx.diagnosticsCollector)
+
+        checkKotlinPackageUsageForLightTree(compilerConfiguration, sourcesToFir.values, reportingCtx.messageCollector)
+
+        if (reportingCtx.messageCollector.hasErrors()) return failure(reportingCtx.diagnosticsCollector)
 
         val outputs = listOf(resolveAndCheckFir(session, sourcesToFir.values.toList(), reportingCtx.diagnosticsCollector)).also {
             it.runPlatformCheckers(reportingCtx.diagnosticsCollector)
@@ -263,14 +298,15 @@ class ScriptJvmK2CompilerImpl(
                     ?.let { it.symbol.packageFqName().child(NameUtils.getScriptTargetClassName(it.name)) }
             },
             sourceDependencies,
-            {
-                state.hostConfiguration.getRefinedOrBaseCompilationConfiguration(it).valueOrThrow() // TODO: errors? orBase?
-            },
+            ::getRefinedConfiguration,
             extractResultFields(irInput.irModuleFragment)
         ).onSuccess { compiledScript ->
             ResultWithDiagnostics.Success(compiledScript, reportingCtx.messageCollector.diagnostics)
         }
     }
+
+    private fun getRefinedConfiguration(script: SourceCode): ScriptCompilationConfiguration =
+        state.hostConfiguration.getRefinedOrBaseCompilationConfiguration(script).valueOrThrow() // TODO: errors? orBase?
 
     context(reportingCtx: ErrorReportingContext)
     private fun collectScriptAnnotations(
@@ -349,8 +385,10 @@ fun createK2ScriptCompilerWithLightTree(
     return ScriptJvmK2CompilerImpl(state) { session, diagnosticsReporter ->
         val sourcesToPathsMapper = session.sourcesToPathsMapper
         val builder = LightTree2Fir(session, session.kotlinScopeProvider, diagnosticsReporter)
-        val linesMapping = text.toSourceLinesMapping()
-        builder.buildFirFile(text, toKtSourceFile()!!, linesMapping).also { firFile ->
+        val (sanitizedText, linesMapping) = text.byteInputStream(Charsets.UTF_8).use {
+            it.reader().readSourceFileWithMapping()
+        }
+        builder.buildFirFile(sanitizedText, toKtSourceFile(), linesMapping).also { firFile ->
             (session.firProvider as FirProviderImpl).recordFile(firFile)
             sourcesToPathsMapper.registerFileSource(firFile.source!!, locationId ?: name!!)
         }

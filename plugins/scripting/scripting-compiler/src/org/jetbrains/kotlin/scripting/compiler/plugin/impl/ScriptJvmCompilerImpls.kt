@@ -106,7 +106,7 @@ class ScriptJvmCompilerFromEnvironment(val environment: KotlinCoreEnvironment) :
         }
 }
 
-private fun withScriptCompilationCache(
+internal fun withScriptCompilationCache(
     script: SourceCode,
     scriptCompilationConfiguration: ScriptCompilationConfiguration,
     messageCollector: ScriptDiagnosticsMessageCollector,
