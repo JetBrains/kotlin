@@ -37,10 +37,82 @@ public abstract class CCollection2 /* test.CCollection2*/<Elem>  extends test.CC
 }
 
 public abstract class CCollection3 /* test.CCollection3*/ extends test.Foo implements java.util.Collection<@org.jetbrains.annotations.NotNull() java.lang.String>, kotlin.jvm.internal.markers.KMappedMarker {
+  @java.lang.Override()
+  public <T> T[] toArray(T[]);// <T>  toArray(T[])
+
+  @java.lang.Override()
+  public abstract boolean contains(@org.jetbrains.annotations.NotNull() java.lang.String);//  contains(@org.jetbrains.annotations.NotNull() java.lang.String)
+
+  @java.lang.Override()
+  public abstract int getSize();//  getSize()
+
+  @java.lang.Override()
+  public boolean add(@org.jetbrains.annotations.NotNull() java.lang.String);//  add(@org.jetbrains.annotations.NotNull() java.lang.String)
+
+  @java.lang.Override()
+  public boolean addAll(java.util.Collection<? extends @org.jetbrains.annotations.NotNull() java.lang.String>);//  addAll(java.util.Collection<? extends @org.jetbrains.annotations.NotNull() java.lang.String>)
+
+  @java.lang.Override()
+  public boolean remove(java.lang.Object);//  remove(java.lang.Object)
+
+  @java.lang.Override()
+  public boolean removeAll(java.util.Collection<?>);//  removeAll(java.util.Collection<?>)
+
+  @java.lang.Override()
+  public boolean retainAll(java.util.Collection<?>);//  retainAll(java.util.Collection<?>)
+
+  @java.lang.Override()
+  public final boolean contains(java.lang.Object);//  contains(java.lang.Object)
+
+  @java.lang.Override()
+  public final int size();//  size()
+
+  @java.lang.Override()
+  public java.lang.Object[] toArray();//  toArray()
+
+  @java.lang.Override()
+  public void clear();//  clear()
+
   public  CCollection3();//  .ctor()
 }
 
 public abstract class CCollection4 /* test.CCollection4*/ extends test.Foo implements test.ICollection<@org.jetbrains.annotations.NotNull() java.lang.String> {
+  @java.lang.Override()
+  public <T> T[] toArray(T[]);// <T>  toArray(T[])
+
+  @java.lang.Override()
+  public abstract boolean contains(@org.jetbrains.annotations.NotNull() java.lang.String);//  contains(@org.jetbrains.annotations.NotNull() java.lang.String)
+
+  @java.lang.Override()
+  public abstract int getSize();//  getSize()
+
+  @java.lang.Override()
+  public boolean add(@org.jetbrains.annotations.NotNull() java.lang.String);//  add(@org.jetbrains.annotations.NotNull() java.lang.String)
+
+  @java.lang.Override()
+  public boolean addAll(java.util.Collection<? extends @org.jetbrains.annotations.NotNull() java.lang.String>);//  addAll(java.util.Collection<? extends @org.jetbrains.annotations.NotNull() java.lang.String>)
+
+  @java.lang.Override()
+  public boolean remove(java.lang.Object);//  remove(java.lang.Object)
+
+  @java.lang.Override()
+  public boolean removeAll(java.util.Collection<?>);//  removeAll(java.util.Collection<?>)
+
+  @java.lang.Override()
+  public boolean retainAll(java.util.Collection<?>);//  retainAll(java.util.Collection<?>)
+
+  @java.lang.Override()
+  public final boolean contains(java.lang.Object);//  contains(java.lang.Object)
+
+  @java.lang.Override()
+  public final int size();//  size()
+
+  @java.lang.Override()
+  public java.lang.Object[] toArray();//  toArray()
+
+  @java.lang.Override()
+  public void clear();//  clear()
+
   public  CCollection4();//  .ctor()
 }
 
@@ -57,6 +129,15 @@ public final class CCollection6 /* test.CCollection6*/ implements java.util.Coll
   public @org.jetbrains.annotations.NotNull() java.util.Iterator<@org.jetbrains.annotations.NotNull() java.lang.String> iterator();//  iterator()
 
   @java.lang.Override()
+  public <T> T[] toArray(T[]);// <T>  toArray(T[])
+
+  @java.lang.Override()
+  public boolean add(@org.jetbrains.annotations.NotNull() java.lang.String);//  add(@org.jetbrains.annotations.NotNull() java.lang.String)
+
+  @java.lang.Override()
+  public boolean addAll(java.util.Collection<? extends @org.jetbrains.annotations.NotNull() java.lang.String>);//  addAll(java.util.Collection<? extends @org.jetbrains.annotations.NotNull() java.lang.String>)
+
+  @java.lang.Override()
   public boolean contains(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  contains(@org.jetbrains.annotations.NotNull() java.lang.String)
 
   @java.lang.Override()
@@ -66,10 +147,28 @@ public final class CCollection6 /* test.CCollection6*/ implements java.util.Coll
   public boolean isEmpty();//  isEmpty()
 
   @java.lang.Override()
+  public boolean remove(java.lang.Object);//  remove(java.lang.Object)
+
+  @java.lang.Override()
+  public boolean removeAll(java.util.Collection<?>);//  removeAll(java.util.Collection<?>)
+
+  @java.lang.Override()
+  public boolean retainAll(java.util.Collection<?>);//  retainAll(java.util.Collection<?>)
+
+  @java.lang.Override()
   public final boolean contains(java.lang.Object);//  contains(java.lang.Object)
 
   @java.lang.Override()
+  public final int size();//  size()
+
+  @java.lang.Override()
   public int getSize();//  getSize()
+
+  @java.lang.Override()
+  public java.lang.Object[] toArray();//  toArray()
+
+  @java.lang.Override()
+  public void clear();//  clear()
 
   private  CCollection6();//  .ctor()
 }
