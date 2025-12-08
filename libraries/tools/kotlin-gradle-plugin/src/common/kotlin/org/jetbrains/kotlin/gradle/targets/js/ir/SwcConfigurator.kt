@@ -106,7 +106,7 @@ internal class SwcConfigurator(private val subTarget: KotlinJsIrSubTarget) :
                 .flatMap { it.compilerOptions.target }
                 // We shouldn't run SWC if the configured target is the latest compiler supported target
                 .filter { it != ES_2015 }
-                .flatMap<Any> { swcTask.flatMap(SwcExec::outputDirectory) }
+                .flatMap { swcTask.flatMap(SwcExec::outputDirectory) }
                 .orElse(binary.defaultLinkSyncTaskInput)
 
             // TODO: think to move this setup to JsIrBinary
