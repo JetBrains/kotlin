@@ -488,7 +488,7 @@ private fun evaluateBinary(
     if (arg2 !is FirLiteralExpression || arg2.value == null) return null
     // NB: some utils accept very general types, and due to the way operation map works, we should up-cast rhs type.
     val rightType = when {
-        callableId.isStringEquals -> CompileTimeType.ANY
+        callableId.isEquals -> CompileTimeType.ANY
         callableId.isStringPlus -> CompileTimeType.ANY
         else -> arg2.kind.toCompileTimeType()
     }
@@ -532,8 +532,8 @@ private fun Any?.adjustTypeAndConvertToLiteral(original: FirExpression): FirEval
 private val CallableId.isStringLength: Boolean
     get() = classId == StandardClassIds.String && callableName.identifierOrNullIfSpecial == "length"
 
-private val CallableId.isStringEquals: Boolean
-    get() = classId == StandardClassIds.String && callableName == OperatorNameConventions.EQUALS
+private val CallableId.isEquals: Boolean
+    get() = callableName == OperatorNameConventions.EQUALS
 
 private val CallableId.isStringPlus: Boolean
     get() = classId == StandardClassIds.String && callableName == OperatorNameConventions.PLUS
