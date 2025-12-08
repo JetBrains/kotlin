@@ -70,12 +70,17 @@ class ScriptJvmK2CompilerIsolated(val hostConfiguration: ScriptingHostConfigurat
         script: SourceCode,
         scriptCompilationConfiguration: ScriptCompilationConfiguration
     ): ResultWithDiagnostics<CompiledScript> =
-        withK2ScriptCompilerWithLightTree(
-            scriptCompilationConfiguration.with {
-                hostConfiguration(this@ScriptJvmK2CompilerIsolated.hostConfiguration)
+        withMessageCollector { messageCollector ->
+            withScriptCompilationCache(script, scriptCompilationConfiguration, messageCollector) {
+                withK2ScriptCompilerWithLightTree(
+                    scriptCompilationConfiguration.with {
+                        hostConfiguration(this@ScriptJvmK2CompilerIsolated.hostConfiguration)
+                    },
+                    messageCollector
+                ) {
+                    it.compile(script)
+                }
             }
-        ) {
-            it.compile(script)
         }
 }
 
