@@ -362,6 +362,34 @@ class GroupAnalysisCompilerTest(
         """
     )
 
+    @Test
+    fun lambdaCaptureWithDefault() = groups(
+        """
+            @Composable
+            fun Test(isEnabled: Boolean = false) {
+                val composition: Composition = remember { TODO() }
+                LaunchedEffect(isEnabled) {
+                    disposingComposition {
+                        composition.suspendContent { println(isEnabled) }
+                    }
+                }
+            }
+        """,
+        """
+            suspend inline fun disposingComposition(f: suspend () -> Composition) {
+                f().dispose()
+            }
+
+            suspend inline fun Composition.suspendContent(noinline content: @Composable () -> Unit): Composition {
+                waitForInit()
+                return this.apply { setContent(content) }
+            }
+
+            suspend fun Composition.waitForInit() {
+            }
+        """
+    )
+
     @JvmField
     @Rule
     val goldenTransformRule = GoldenTransformRule()
