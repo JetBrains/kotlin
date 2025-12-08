@@ -1186,6 +1186,10 @@ JNIEXPORT jint JNICALL Java_clang_clang_kniBridge355 (JNIEnv* jniEnv, jclass jcl
 JNIEXPORT jint JNICALL Java_clang_clang_kniBridge356 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
     return (jint)clang_Cursor_isObjCConsumingSelfMethod(*(CXCursor*)p0);
 }
-JNIEXPORT jlong JNICALL Java_clang_clang_kniBridge357 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
-    return (jlong)clang_Cursor_getSwiftName(*(CXCursor*)p0);
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge357 (JNIEnv* jniEnv, jclass jclss, jlong p0, jlong p1) {
+    CString kniStructResult = clang_Cursor_getSwiftName(*(CXCursor*)p0);
+    memcpy((void*) p1, &kniStructResult, sizeof(kniStructResult));
+}
+JNIEXPORT void JNICALL Java_clang_clang_kniBridge358 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    clang_disposeCString(*(CString*)p0);
 }

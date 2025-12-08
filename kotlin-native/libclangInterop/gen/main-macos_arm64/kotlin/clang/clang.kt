@@ -831,6 +831,18 @@ class CXTypeAttributes(rawPtr: NativePtr) : CStructVar(rawPtr) {
         set(value) { memberAt<COpaquePointerVar>(0).value = value }
 }
 
+@CNaturalStruct("data")
+@ExperimentalForeignApi
+class CString(rawPtr: NativePtr) : CStructVar(rawPtr) {
+    
+    @Deprecated("Use sizeOf\u003CT\u003E() or alignOf\u003CT\u003E() instead.", ReplaceWith(""), DeprecationLevel.WARNING)
+    companion object : CStructVar.Type(8, 8)
+    
+    var data: CPointer<ByteVar>?
+        get() = memberAt<CPointerVar<ByteVar>>(0).value
+        set(value) { memberAt<CPointerVar<ByteVar>>(0).value = value }
+}
+
 @ExperimentalForeignApi
 enum class CXErrorCode(value: Int) : CEnum {
     CXError_Success(0),
@@ -4733,9 +4745,20 @@ fun clang_Cursor_isObjCConsumingSelfMethod(cursor: CValue<CXCursor>): Int {
 }
 
 @ExperimentalForeignApi
-fun clang_Cursor_getSwiftName(cursor: CValue<CXCursor>): CPointer<ByteVar>? {
+fun clang_Cursor_getSwiftName(cursor: CValue<CXCursor>): CValue<CString> {
     memScoped {
-        return interpretCPointer<ByteVar>(kniBridge354(cursor.getPointer(memScope).rawValue))
+        val kniRetVal = nativeHeap.alloc<CString>()
+        try {
+            kniBridge354(cursor.getPointer(memScope).rawValue, kniRetVal.rawPtr)
+            return kniRetVal.readValue()
+        } finally { nativeHeap.free(kniRetVal) }
+    }
+}
+
+@ExperimentalForeignApi
+fun clang_disposeCString(str: CValue<CString>): Unit {
+    memScoped {
+        return kniBridge355(str.getPointer(memScope).rawValue)
     }
 }
 
@@ -6041,5 +6064,6 @@ private external fun kniBridge350(p0: NativePtr, p1: NativePtr): Int
 private external fun kniBridge351(p0: NativePtr): Int
 private external fun kniBridge352(p0: NativePtr): Int
 private external fun kniBridge353(p0: NativePtr): Int
-private external fun kniBridge354(p0: NativePtr): NativePtr
+private external fun kniBridge354(p0: NativePtr, p1: NativePtr): Unit
+private external fun kniBridge355(p0: NativePtr): Unit
 private val loadLibrary = loadKonanLibrary("clangstubs")

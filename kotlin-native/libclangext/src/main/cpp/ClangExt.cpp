@@ -73,7 +73,18 @@ static CXTypeAttributes makeCXTypeAttributes() {
 
 #endif // LIBCLANGEXT_ENABLE
 
+static CString createCString(StringRef str) {
+  return CString { strdup(str.str().c_str()) };
+}
+
+static CString nullCString() {
+  return CString { nullptr };
+}
+
 extern "C" {
+  void clang_disposeCString(CString str) {
+    free(str.data);
+  }
 
   const char* clang_Cursor_getAttributeSpelling(CXCursor cursor) {
 #if LIBCLANGEXT_ENABLE
@@ -193,18 +204,18 @@ extern "C" {
     return 0;
   }
 
-  const char* clang_Cursor_getSwiftName(CXCursor cursor) {
+  CString clang_Cursor_getSwiftName(CXCursor cursor) {
 #if LIBCLANGEXT_ENABLE
     if (clang_isDeclaration(cursor.kind)) {
       const Decl *decl = getCursorDecl(cursor);
       if (decl) {
         if (const auto *attr = decl->getAttr<SwiftNameAttr>()) {
-          return strdup(attr->getName().str().c_str());
+          return createCString(attr->getName());
         }
       }
     }
 #endif
-    return nullptr;
+    return nullCString();
   }
 
 }
