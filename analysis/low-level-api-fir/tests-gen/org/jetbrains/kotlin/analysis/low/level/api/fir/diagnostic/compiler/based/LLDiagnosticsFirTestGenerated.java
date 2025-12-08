@@ -1998,6 +1998,18 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
       }
 
       @Test
+      @TestMetadata("kt82684.kt")
+      public void testKt82684() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/kt82684.kt");
+      }
+
+      @Test
+      @TestMetadata("kt82684withArrayOf.kt")
+      public void testKt82684withArrayOf() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/kt82684withArrayOf.kt");
+      }
+
+      @Test
       @TestMetadata("kt82964.kt")
       public void testKt82964() {
         runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/kt82964.kt");
