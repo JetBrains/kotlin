@@ -61,6 +61,7 @@ class WasmStringsElements(
 class WasmCompiledFileFragment(
     val fragmentTag: String?,
     val functions: ReferencableAndDefinable<IdSignature, WasmFunction> = ReferencableAndDefinable(),
+    val forValueFunctions: MutableMap<IdSignature, WasmElement> = mutableMapOf(),
     val globalFields: ReferencableAndDefinable<IdSignature, WasmGlobal> = ReferencableAndDefinable(),
     val globalVTables: ReferencableAndDefinable<IdSignature, WasmGlobal> = ReferencableAndDefinable(),
     val globalClassITables: ReferencableAndDefinable<IdSignature, WasmGlobal> = ReferencableAndDefinable(),
@@ -298,7 +299,8 @@ class WasmCompiledModuleFragment(private val wasmCompiledFileFragments: List<Was
 
         val globals = getGlobals()
 
-        val elements = mutableListOf<WasmElement>()
+        val elements = getForValueFunctions()
+
         createAndExportServiceFunctions(
             definedFunctions = definedFunctions,
             stringEntities = stringEntities,
@@ -485,6 +487,12 @@ class WasmCompiledModuleFragment(private val wasmCompiledFileFragments: List<Was
 
         wasmCompiledFileFragments.forEach { fragment ->
             fragment.rttiElements?.rttiType?.bind(rttiTypeDeclaration)
+        }
+    }
+
+    private fun getForValueFunctions() = mutableListOf<WasmElement>().apply {
+        wasmCompiledFileFragments.forEach { fragment ->
+            addAll(fragment.forValueFunctions.values)
         }
     }
 

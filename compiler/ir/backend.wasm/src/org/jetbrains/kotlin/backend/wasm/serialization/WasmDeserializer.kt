@@ -628,6 +628,7 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
         vTableGcTypes = deserializeVTableGcTypes(),
         stringLiteralId = deserializeStringLiteralId(),
         constantArrayDataSegmentId = deserializeConstantArrayDataSegmentId(),
+        forValueFunctions = deserializeForValueFunctions(),
         jsFuns = deserializeJsFuns(),
         jsModuleImports = deserializeJsModuleImports(),
         jsBuiltinsPolyfills = deserializeJsBuiltinsPolyfills(),
@@ -655,6 +656,7 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
     private fun deserializeVTableGcTypes() = deserializeReferencableAndDefinable(::deserializeIdSignature, ::deserializeTypeDeclaration)
     private fun deserializeStringLiteralId() = deserializeReferencableElements(::deserializeString, ::deserializeInt)
     private fun deserializeConstantArrayDataSegmentId(): ReferencableElements<Pair<List<Long>, WasmType>, Int> = deserializeReferencableElements({ deserializePair({ deserializeList(::deserializeLong) }, ::deserializeType) }, ::deserializeInt)
+    private fun deserializeForValueFunctions() = deserializeMap(::deserializeIdSignature, ::deserializeElement)
     private fun deserializeJsFuns() = deserializeMap(::deserializeIdSignature, ::deserializeJsCodeSnippet)
     private fun deserializeJsModuleImports() = deserializeMap(::deserializeIdSignature, ::deserializeString)
     private fun deserializeJsBuiltinsPolyfills() = deserializeMap(::deserializeString, ::deserializeString)

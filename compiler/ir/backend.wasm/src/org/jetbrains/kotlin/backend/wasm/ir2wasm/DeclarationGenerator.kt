@@ -49,6 +49,16 @@ class DeclarationGenerator(
 
     private val locationProvider = if (skipLocations) LocationProviderStub else LocationProviderImpl
 
+    private val kotlinClosureToJsClosureConvertFunToKotlinClosureCallFun: Map<IrSimpleFunction, IrSimpleFunction?> = backendContext.fileContexts
+            .flatMap { (_, fileContext) ->
+                fileContext.kotlinClosureToJsConverters.entries.associate { (k, v) ->
+                    v to fileContext.closureCallExports[k]
+                }.entries
+            }
+            .associate { (key, value) ->
+                key to value
+            }
+
     override fun visitElement(element: IrElement) {
         error("Unexpected element of type ${element::class}")
     }
@@ -86,9 +96,27 @@ class DeclarationGenerator(
             else -> wasmModuleTypeTransformer.transformResultType(declaration.returnType)
         }
 
+        val jsClosureConvertTrampoline = kotlinClosureToJsClosureConvertFunToKotlinClosureCallFun[declaration]
+
         val wasmFunctionType =
             WasmFunctionType(
-                parameterTypes = irParameters.map { wasmModuleTypeTransformer.transformValueParameterType(it) },
+                // FIXME: This is an ugly hack, but we don't have a
+                // good story for figuring out function types for
+                // IrReferenceFunction's used as higher-order
+                // parameters.
+                parameterTypes = if (jsClosureConvertTrampoline != null) {
+                    listOf(wasmModuleTypeTransformer.transformValueParameterType(irParameters[0]),
+                           WasmRefNullType(
+                               WasmHeapType.Type(
+                                   wasmFileCodegenContext.referenceFunctionType(jsClosureConvertTrampoline.symbol)
+                            )
+                        )
+                    )
+                } else {
+                    irParameters.map {
+                        wasmModuleTypeTransformer.transformValueParameterType(it)
+                    }
+                },
                 resultTypes = listOfNotNull(resultType)
             )
         wasmFileCodegenContext.defineFunctionType(declaration.symbol, wasmFunctionType)

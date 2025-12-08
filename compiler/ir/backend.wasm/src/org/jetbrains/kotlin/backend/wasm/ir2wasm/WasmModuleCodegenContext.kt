@@ -84,8 +84,19 @@ open class WasmFileCodegenContext(
         wasmFileFragment.functionTypes.define(irFunction.getReferenceKey(), wasmFunctionType)
     }
 
-    fun referenceFunction(irFunction: IrFunctionSymbol): WasmSymbol<WasmFunction> =
-        wasmFileFragment.functions.reference(irFunction.getReferenceKey())
+    fun referenceFunction(irFunction: IrFunctionSymbol, forValue: Boolean = false): WasmSymbol<WasmFunction> {
+        val function = wasmFileFragment.functions.reference(irFunction.getReferenceKey())
+        // WebAssembly requires functions used for value via func.ref to be forward declared.
+        if (forValue)
+            wasmFileFragment.forValueFunctions.getOrPut(irFunction.getReferenceKey()) {
+                WasmElement(
+                    type = WasmFuncRef,
+                    values = listOf(WasmTable.Value.Function(function)),
+                    mode = WasmElement.Mode.Declarative
+                )
+            }
+        return function
+    }
 
     fun referenceGlobalField(irField: IrFieldSymbol): WasmSymbol<WasmGlobal> =
         wasmFileFragment.globalFields.reference(irField.getReferenceKey())

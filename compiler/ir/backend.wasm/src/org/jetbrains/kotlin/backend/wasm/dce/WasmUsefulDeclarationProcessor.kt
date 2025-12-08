@@ -24,11 +24,6 @@ internal class WasmUsefulDeclarationProcessor(
     dumpReachabilityInfoToFile: String?,
 ) : UsefulDeclarationProcessor(printReachabilityInfo, removeUnusedAssociatedObjects = false, dumpReachabilityInfoToFile) {
 
-    // The mapping from function for wrapping a kotlin closure/lambda with JS closure to function used to call a kotlin closure from JS side.
-    private val kotlinClosureToJsClosureConvertFunToKotlinClosureCallFun = context.fileContexts.mapValues { (_, fileContext) ->
-        fileContext.kotlinClosureToJsConverters.entries.associate { (k, v) -> v to fileContext.closureCallExports[k] }
-    }
-
     override val bodyVisitor: BodyVisitorBase = object : BodyVisitorBase() {
         override fun visitConst(expression: IrConst, data: IrDeclaration) = when (expression.kind) {
             is IrConstKind.Null -> expression.type.enqueueType(data, "expression type")
@@ -103,6 +98,18 @@ internal class WasmUsefulDeclarationProcessor(
                 true
             }
             else -> false
+        }
+
+        override fun visitFunctionReference(expression: IrFunctionReference, data: IrDeclaration) {
+            super.visitFunctionReference(expression, data)
+            val function: IrFunction = expression.symbol.owner.realOverrideTarget
+            function.enqueue(data, "method functional reference")
+            if (function is IrSimpleFunction && function.isOverridable) {
+                val klass = function.parentAsClass
+                if (klass.isInterface) {
+                    klass.enqueue(data, "receiver class")
+                }
+            }
         }
 
         override fun visitCall(expression: IrCall, data: IrDeclaration) {
@@ -213,12 +220,6 @@ internal class WasmUsefulDeclarationProcessor(
 
         irFunction.getEffectiveValueParameters().forEach { it.enqueueValueParameterType(irFunction) }
         irFunction.returnType.enqueueType(irFunction, "function return type")
-
-        kotlinClosureToJsClosureConvertFunToKotlinClosureCallFun[irFunction.fileOrNull]?.get(irFunction)?.enqueue(
-            irFunction,
-            "kotlin closure to JS closure conversion",
-            false
-        )
     }
 
     override fun processSimpleFunction(irFunction: IrSimpleFunction) {

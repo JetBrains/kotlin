@@ -650,6 +650,7 @@ class WasmSerializer(outputStream: OutputStream) {
             serializeReferencableAndDefinable(vTableGcTypes, ::serializeIdSignature, ::serializeWasmTypeDeclaration)
             serializeReferencableElements(stringLiteralId, ::serializeString, ::serializeInt)
             serializeReferencableElements(constantArrayDataSegmentId, { serializePair(it, { serializeList(it, ::serializeLong) }, ::serializeWasmType)}, ::serializeInt)
+            serializeMap(forValueFunctions, ::serializeIdSignature, ::serializeWasmElement)
             serializeMap(jsFuns, ::serializeIdSignature, ::serializeJsCodeSnippet)
             serializeMap(jsModuleImports, ::serializeIdSignature, ::serializeString)
             serializeMap(jsBuiltinsPolyfills, ::serializeString, ::serializeString)

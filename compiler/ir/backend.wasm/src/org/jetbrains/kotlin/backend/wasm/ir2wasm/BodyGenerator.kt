@@ -639,6 +639,10 @@ class BodyGenerator(
         generateCall(expression)
     }
 
+    override fun visitFunctionReference(expression: IrFunctionReference) {
+        generateFunctionReference(expression)
+    }
+
     override fun visitConstructorCall(expression: IrConstructorCall) {
         val klass: IrClass = expression.symbol.owner.parentAsClass
         val klassSymbol: IrClassSymbol = klass.symbol
@@ -734,6 +738,17 @@ class BodyGenerator(
         generateExpression(expression)
         body.buildStructNew(wasmFileCodegenContext.referenceGcType(klassSymbol), location)
         body.commentPreviousInstr { "box" }
+    }
+
+    private fun generateFunctionReference(functionRef: IrFunctionReference) {
+        body.buildInstr(
+            WasmOp.REF_FUNC,
+            functionRef.getSourceLocation(),
+            WasmImmediate.FuncIdx(
+                wasmFileCodegenContext.referenceFunction(functionRef.symbol,
+                    forValue = true)
+            )
+        )
     }
 
     private fun generateCall(call: IrFunctionAccessExpression) {
