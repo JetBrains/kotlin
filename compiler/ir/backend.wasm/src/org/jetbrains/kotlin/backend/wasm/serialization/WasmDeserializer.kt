@@ -615,6 +615,7 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
         stringLiteralId = deserializeStringLiteralId(),
 
         constantArrayDataSegmentId = deserializeConstantArrayDataSegmentId(),
+        wasmReferencedFunctions = deserializeWasmReferencedFunctions(),
         jsFuns = deserializeJsFuns(),
         jsModuleImports = deserializeJsModuleImports(),
         jsBuiltinsPolyfills = deserializeJsBuiltinsPolyfills(),
@@ -631,7 +632,7 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
 
 
     private fun deserializeDefinedFunctions() = deserializeMap(::deserializeIdSignature, ::deserializeFunction)
-
+    private fun deserializeWasmReferencedFunctions() = deserializeSet(::deserializeIdSignature)
     private fun deserializeGlobalFields() = deserializeMap(::deserializeIdSignature, ::deserializeGlobal)
     private fun deserializeGlobalVTables() = deserializeMap(::deserializeIdSignature, ::deserializeGlobal)
     private fun deserializeGlobalClassITables() = deserializeMap(::deserializeIdSignature, ::deserializeGlobal)
