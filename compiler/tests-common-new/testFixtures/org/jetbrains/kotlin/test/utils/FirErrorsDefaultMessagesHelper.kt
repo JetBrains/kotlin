@@ -103,7 +103,7 @@ fun KtDiagnosticFactoryToRendererMap.verifyMessageForFactory(
     }
 }
 
-internal fun MutableList<String>.checkRules(name: String, message: String, parameterCount: Int) {
+fun MutableList<String>.checkRules(name: String, message: String, parameterCount: Int) {
     for (parameter in messageParameterRegex.findAll(message)) {
         val index = parameter.value.substring(1, 2).toInt()
         if (index >= parameterCount) {
