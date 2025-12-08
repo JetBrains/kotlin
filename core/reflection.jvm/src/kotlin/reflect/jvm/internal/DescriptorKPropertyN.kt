@@ -21,7 +21,11 @@ import kotlin.LazyThreadSafetyMode.PUBLICATION
 import kotlin.reflect.KMutableProperty
 
 internal open class DescriptorKPropertyN<out V> : DescriptorKProperty<V> {
-    constructor(container: KDeclarationContainerImpl, descriptor: PropertyDescriptor) : super(container, descriptor)
+    constructor(
+        container: KDeclarationContainerImpl,
+        descriptor: PropertyDescriptor,
+        overriddenStorage: KCallableOverriddenStorage = KCallableOverriddenStorage.ZERO,
+    ) : super(container, descriptor, overriddenStorage)
 
     override val getter: Getter<V> by lazy(PUBLICATION) { Getter(this) }
 
@@ -29,7 +33,11 @@ internal open class DescriptorKPropertyN<out V> : DescriptorKProperty<V> {
 }
 
 internal class DescriptorKMutablePropertyN<V> : DescriptorKPropertyN<V>, KMutableProperty<V> {
-    constructor(container: KDeclarationContainerImpl, descriptor: PropertyDescriptor) : super(container, descriptor)
+    constructor(
+        container: KDeclarationContainerImpl,
+        descriptor: PropertyDescriptor,
+        overriddenStorage: KCallableOverriddenStorage = KCallableOverriddenStorage.ZERO,
+    ) : super(container, descriptor, overriddenStorage)
 
     override val setter: Setter<V> by lazy(PUBLICATION) { Setter(this) }
 

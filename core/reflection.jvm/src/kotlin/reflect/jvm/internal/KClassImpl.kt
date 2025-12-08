@@ -613,3 +613,5 @@ internal class KClassImpl<T : Any>(
         }
     }
 }
+
+internal fun starProjectionSupertypesAreNotPossible(): Nothing = error("Star projection supertypes are not possible")
