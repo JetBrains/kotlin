@@ -24,7 +24,7 @@ import javax.swing.Icon
 
 internal data class MethodSignature(val parameterTypes: List<PsiType>, val returnType: PsiType)
 
-internal class SymbolLightMethodForMappedClass(
+internal class SymbolLightMethodForMappedCollectionClass(
     lightMemberOrigin: LightMemberOrigin?,
     containingClass: SymbolLightClassForClassOrObject,
     private val javaMethod: PsiMethod,
@@ -67,7 +67,7 @@ internal class SymbolLightMethodForMappedClass(
                     LightParameter(
                         paramFromJava.name,
                         type,
-                        this@SymbolLightMethodForMappedClass,
+                        this@SymbolLightMethodForMappedCollectionClass,
                         KotlinLanguage.INSTANCE,
                         paramFromJava.isVarArgs
                     )
@@ -115,7 +115,7 @@ internal class SymbolLightMethodForMappedClass(
 
     private val _modifierList: PsiModifierList by lazyPub {
         object : LightModifierList(manager, language) {
-            override fun getParent(): PsiElement = this@SymbolLightMethodForMappedClass
+            override fun getParent(): PsiElement = this@SymbolLightMethodForMappedCollectionClass
 
             private val overrideAnnotation by lazy {
                 SymbolLightSimpleAnnotation(fqName = CommonClassNames.JAVA_LANG_OVERRIDE, parent = this)
@@ -124,7 +124,7 @@ internal class SymbolLightMethodForMappedClass(
             private val allAnnotations: Array<PsiAnnotation> by lazy { arrayOf(overrideAnnotation) }
 
             override fun hasModifierProperty(name: String): Boolean =
-                this@SymbolLightMethodForMappedClass.hasModifierProperty(name)
+                this@SymbolLightMethodForMappedCollectionClass.hasModifierProperty(name)
 
             override fun hasExplicitModifier(name: String): Boolean = hasModifierProperty(name)
 
@@ -144,7 +144,7 @@ internal class SymbolLightMethodForMappedClass(
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other !is SymbolLightMethodForMappedClass) return false
+        if (other !is SymbolLightMethodForMappedCollectionClass) return false
 
         if (name != other.name) return false
         if (isFinal != other.isFinal) return false
