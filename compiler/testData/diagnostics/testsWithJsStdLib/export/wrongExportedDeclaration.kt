@@ -8,8 +8,8 @@ package foo
 <!WRONG_EXPORTED_DECLARATION("inline function with reified type parameters")!>@JsExport
 inline fun <reified T> inlineReifiedFun(x: Any)<!> = x is T
 
-<!WRONG_EXPORTED_DECLARATION("suspend function")!>@JsExport
-suspend fun suspendFun()<!> { }
+@JsExport
+suspend fun suspendFun() { }
 
 <!WRONG_EXPORTED_DECLARATION("extension property")!>@JsExport
 val String.extensionProperty<!>

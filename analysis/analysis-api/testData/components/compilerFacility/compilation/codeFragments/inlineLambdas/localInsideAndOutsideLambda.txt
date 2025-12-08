@@ -5,7 +5,7 @@ public final class CodeFragment$run$1$X {
   // compiled from: fragment.kt
   OUTERCLASS CodeFragment run ()I
 
-  @Lkotlin/Metadata;(mv={2, 3, 0}, k=1, xi=48, d1={"\u0000\u0013\n\u0000\n\u0002\u0010\u0000\n\u0002\u0008\u0003\n\u0002\u0010\u0008\n\u0000*\u0001\u0000\u0008\n\u0018\u00002\u00020\u0001B\u0007\u00a2\u0006\u0004\u0008\u0002\u0010\u0003J\u000e\u0010\u0004\u001a\u00020\u00052\u0006\u0010\u0006\u001a\u00020\u0005"}, d2={"CodeFragment$run$1$X", "", "<init>", "()V", "memberInLocalClass", "", "x"})
+  @Lkotlin/Metadata;(mv={2, 4, 0}, k=1, xi=48, d1={"\u0000\u0013\n\u0000\n\u0002\u0010\u0000\n\u0002\u0008\u0003\n\u0002\u0010\u0008\n\u0000*\u0001\u0000\u0008\n\u0018\u00002\u00020\u0001B\u0007\u00a2\u0006\u0004\u0008\u0002\u0010\u0003J\u000e\u0010\u0004\u001a\u00020\u00052\u0006\u0010\u0006\u001a\u00020\u0005"}, d2={"CodeFragment$run$1$X", "", "<init>", "()V", "memberInLocalClass", "", "x"})
   // access flags 0x19
   public final static INNERCLASS CodeFragment$run$1$X null X
 
@@ -43,7 +43,7 @@ public final class CodeFragment {
 
   // compiled from: fragment.kt
 
-  @Lkotlin/Metadata;(mv={2, 3, 0}, k=3, xi=48)
+  @Lkotlin/Metadata;(mv={2, 4, 0}, k=3, xi=48)
   // access flags 0x19
   public final static INNERCLASS CodeFragment$run$1$X null X
 
