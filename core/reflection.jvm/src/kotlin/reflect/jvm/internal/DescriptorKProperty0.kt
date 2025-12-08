@@ -22,7 +22,11 @@ import kotlin.reflect.KMutableProperty0
 import kotlin.reflect.KProperty0
 
 internal open class DescriptorKProperty0<out V> : KProperty0<V>, DescriptorKProperty<V> {
-    constructor(container: KDeclarationContainerImpl, descriptor: PropertyDescriptor) : super(container, descriptor)
+    constructor(
+        container: KDeclarationContainerImpl,
+        descriptor: PropertyDescriptor,
+        overriddenStorage: KCallableOverriddenStorage,
+    ) : super(container, descriptor, overriddenStorage)
 
     constructor(container: KDeclarationContainerImpl, name: String, signature: String, boundReceiver: Any?) : super(
         container, name, signature, boundReceiver
@@ -44,7 +48,11 @@ internal open class DescriptorKProperty0<out V> : KProperty0<V>, DescriptorKProp
 }
 
 internal class DescriptorKMutableProperty0<V> : DescriptorKProperty0<V>, KMutableProperty0<V> {
-    constructor(container: KDeclarationContainerImpl, descriptor: PropertyDescriptor) : super(container, descriptor)
+    constructor(
+        container: KDeclarationContainerImpl,
+        descriptor: PropertyDescriptor,
+        overriddenStorage: KCallableOverriddenStorage,
+    ) : super(container, descriptor, overriddenStorage)
 
     constructor(container: KDeclarationContainerImpl, name: String, signature: String, boundReceiver: Any?) : super(
         container, name, signature, boundReceiver

@@ -27,7 +27,11 @@ internal open class DescriptorKProperty2<D, E, out V> : KProperty2<D, E, V>, Des
         container, name, signature, CallableReference.NO_RECEIVER
     )
 
-    constructor(container: KDeclarationContainerImpl, descriptor: PropertyDescriptor) : super(container, descriptor)
+    constructor(
+        container: KDeclarationContainerImpl,
+        descriptor: PropertyDescriptor,
+        overriddenStorage: KCallableOverriddenStorage,
+    ) : super(container, descriptor, overriddenStorage)
 
     override val getter: Getter<D, E, V> by lazy(PUBLICATION) { Getter(this) }
 
@@ -47,7 +51,11 @@ internal open class DescriptorKProperty2<D, E, out V> : KProperty2<D, E, V>, Des
 internal class DescriptorKMutableProperty2<D, E, V> : DescriptorKProperty2<D, E, V>, KMutableProperty2<D, E, V> {
     constructor(container: KDeclarationContainerImpl, name: String, signature: String) : super(container, name, signature)
 
-    constructor(container: KDeclarationContainerImpl, descriptor: PropertyDescriptor) : super(container, descriptor)
+    constructor(
+        container: KDeclarationContainerImpl,
+        descriptor: PropertyDescriptor,
+        overriddenStorage: KCallableOverriddenStorage,
+    ) : super(container, descriptor, overriddenStorage)
 
     override val setter: Setter<D, E, V> by lazy(PUBLICATION) { Setter(this) }
 
