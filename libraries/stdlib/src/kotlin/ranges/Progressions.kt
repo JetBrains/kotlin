@@ -180,7 +180,7 @@ public open class LongProgression
         first == other.first && last == other.last && step == other.step)
 
     override fun hashCode(): Int =
-        if (isEmpty()) -1 else (31 * (31 * (first xor (first ushr 32)) + (last xor (last ushr 32))) + (step xor (step ushr 32))).toInt()
+        if (isEmpty()) -1 else (31 * (31 * first.hashCode() + last.hashCode()) + step.hashCode())
 
     override fun toString(): String = if (step > 0) "$first..$last step $step" else "$first downTo $last step ${-step}"
 
