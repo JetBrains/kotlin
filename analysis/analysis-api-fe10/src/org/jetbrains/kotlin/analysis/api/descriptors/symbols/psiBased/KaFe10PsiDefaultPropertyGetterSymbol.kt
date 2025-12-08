@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.psiUtil.isExtensionDeclaration
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
 
 internal class KaFe10PsiDefaultPropertyGetterSymbol(
     private val propertyPsi: KtProperty,
@@ -99,6 +100,11 @@ internal class KaFe10PsiDefaultPropertyGetterSymbol(
     override val annotations: KaAnnotationList
         get() = withValidityAssertion {
             descriptor?.let { KaFe10AnnotationList.create(it.annotations, analysisContext) } ?: KaBaseEmptyAnnotationList(token)
+        }
+
+    override val isExternal: Boolean
+        get() = withValidityAssertion {
+            propertyPsi.hasModifier(KtTokens.EXTERNAL_KEYWORD) || descriptor?.isEffectivelyExternal() == true
         }
 
     override fun createPointer(): KaSymbolPointer<KaPropertyGetterSymbol> = withValidityAssertion {

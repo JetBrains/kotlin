@@ -61,6 +61,40 @@ public sealed interface KaDeclarationSymbol : KaSymbol, KaAnnotatedSymbol {
      */
     public val isExpect: Boolean
 
+    /**
+     * Indicates whether this declaration is `external`.
+     *
+     * A declaration is considered external if any of the following is true:
+     * - it is explicitly marked with the `external` modifier
+     *   (applicable to classes, functions, properties, and property accessors);
+     * - it is a member of an `external` class;
+     * - it is a Java `native` method.
+     *
+     * External declarations have no Kotlin implementation and are expected to be
+     * provided externally — via [JNI](https://kotlinlang.org/docs/java-interop.html#using-jni-with-kotlin) for the JVM target or
+     * [JavaScript interop](https://kotlinlang.org/docs/js-interop.html#external-modifier) for the JS target.
+     *
+     * Other kinds of declarations (parameters, destructuring declarations, local
+     * variables, etc.) are never considered external.
+     *
+     * #### Example
+     *
+     * ```kotlin
+     * external class C {
+     *     fun foo()
+     *
+     *     class Nested {
+     *         fun bar()
+     *     }
+     * }
+     *
+     * external val baz: Int
+     * ```
+     *
+     * In this example (which is legal on the JS target), `C`, `Nested`, `foo`, `bar`, and `baz` are all `external`.
+     */
+    public val isExternal: Boolean
+
     override fun createPointer(): KaSymbolPointer<KaDeclarationSymbol>
 }
 

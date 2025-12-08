@@ -869,6 +869,7 @@ KtCallExpression(625,630): 'foo()'
         isActual: false
         isExpect: false
         isExtension: false
+        isExternal: false
         isVal: true
         location: LOCAL
         modality: FINAL
@@ -906,6 +907,7 @@ KtNameReferenceExpression(625,628): 'foo'
           isActual: false
           isExpect: false
           isExtension: false
+          isExternal: false
           isVal: true
           location: LOCAL
           modality: FINAL
@@ -1397,6 +1399,7 @@ KtCallExpression(891,896): 'foo()'
         isActual: false
         isExpect: false
         isExtension: false
+        isExternal: false
         isVal: true
         location: LOCAL
         modality: FINAL
@@ -1434,6 +1437,7 @@ KtNameReferenceExpression(891,894): 'foo'
           isActual: false
           isExpect: false
           isExtension: false
+          isExternal: false
           isVal: true
           location: LOCAL
           modality: FINAL
@@ -2070,6 +2074,7 @@ KtCallExpression(1272,1282): 'body(this)'
         isActual: false
         isExpect: false
         isExtension: false
+        isExternal: false
         isVal: true
         location: LOCAL
         modality: FINAL

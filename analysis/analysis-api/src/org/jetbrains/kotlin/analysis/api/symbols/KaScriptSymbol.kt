@@ -27,6 +27,7 @@ public abstract class KaScriptSymbol : KaDeclarationSymbol, KaNamedSymbol, KaDec
     final override val modality: KaSymbolModality get() = withValidityAssertion { KaSymbolModality.FINAL }
     final override val isActual: Boolean get() = withValidityAssertion { false }
     final override val isExpect: Boolean get() = withValidityAssertion { false }
+    final override val isExternal: Boolean get() = withValidityAssertion { false }
 
     @KaExperimentalApi
     final override val compilerVisibility: Visibility get() = withValidityAssertion { Visibilities.Local }

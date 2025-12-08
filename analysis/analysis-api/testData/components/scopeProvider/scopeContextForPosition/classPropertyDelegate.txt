@@ -26,6 +26,7 @@ scopes:
         isCrossinline: false
         isExpect: false
         isExtension: false
+        isExternal: false
         isImplicitLambdaParameter: false
         isNoinline: false
         isVal: true
@@ -56,6 +57,7 @@ scopes:
           isActual: false
           isExpect: false
           isExtension: false
+          isExternal: false
           isVal: true
           location: PROPERTY
           modality: FINAL
@@ -81,6 +83,7 @@ scopes:
           isActual: false
           isExpect: false
           isExtension: false
+          isExternal: false
           isInline: false
           isNotDefault: false
           isOverride: false
@@ -163,6 +166,7 @@ scopes:
           isActual: false
           isExpect: false
           isExtension: false
+          isExternal: false
           isVal: true
           location: PROPERTY
           modality: FINAL
@@ -188,6 +192,7 @@ scopes:
           isActual: false
           isExpect: false
           isExtension: false
+          isExternal: false
           isInline: false
           isNotDefault: true
           isOverride: false
@@ -238,6 +243,7 @@ scopes:
           isActual: false
           isExpect: false
           isExtension: false
+          isExternal: false
           isVal: true
           location: PROPERTY
           modality: FINAL
@@ -263,6 +269,7 @@ scopes:
           isActual: false
           isExpect: false
           isExtension: false
+          isExternal: false
           isInline: false
           isNotDefault: false
           isOverride: false
@@ -345,6 +352,7 @@ scopes:
           isActual: false
           isExpect: false
           isExtension: false
+          isExternal: false
           isVal: true
           location: PROPERTY
           modality: FINAL
@@ -370,6 +378,7 @@ scopes:
           isActual: false
           isExpect: false
           isExtension: false
+          isExternal: false
           isInline: false
           isNotDefault: false
           isOverride: false
@@ -453,6 +462,7 @@ scopes:
             isCrossinline: false
             isExpect: false
             isExtension: false
+            isExternal: false
             isImplicitLambdaParameter: false
             isNoinline: false
             isVal: true
@@ -544,6 +554,7 @@ scopes:
         isActual: false
         isExpect: false
         isExtension: false
+        isExternal: false
         isPrimary: true
         location: CLASS
         modality: FINAL
@@ -570,6 +581,7 @@ scopes:
                 isActual: false
                 isExpect: false
                 isExtension: false
+                isExternal: false
                 isVal: true
                 location: PROPERTY
                 modality: FINAL
@@ -595,6 +607,7 @@ scopes:
                 isActual: false
                 isExpect: false
                 isExtension: false
+                isExternal: false
                 isInline: false
                 isNotDefault: false
                 isOverride: false
@@ -641,6 +654,7 @@ scopes:
             isCrossinline: false
             isExpect: false
             isExtension: false
+            isExternal: false
             isImplicitLambdaParameter: false
             isNoinline: false
             isVal: true
@@ -667,6 +681,7 @@ scopes:
             isCrossinline: false
             isExpect: false
             isExtension: false
+            isExternal: false
             isImplicitLambdaParameter: false
             isNoinline: false
             isVal: true

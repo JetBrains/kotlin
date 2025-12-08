@@ -25,6 +25,7 @@ KaValueParameterSymbol:
       isActual: false
       isExpect: false
       isExtension: false
+      isExternal: false
       isVal: true
       location: PROPERTY
       modality: FINAL
@@ -59,6 +60,7 @@ KaValueParameterSymbol:
       isActual: false
       isExpect: false
       isExtension: false
+      isExternal: false
       isInline: false
       isNotDefault: false
       isOverride: false
@@ -128,6 +130,7 @@ KaValueParameterSymbol:
   isCrossinline: false
   isExpect: false
   isExtension: false
+  isExternal: false
   isImplicitLambdaParameter: false
   isNoinline: false
   isVal: true

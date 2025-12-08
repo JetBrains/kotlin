@@ -456,6 +456,7 @@ KtLabelReferenceExpression(686,691): '@anon'
         isActual: false
         isExpect: false
         isExtension: false
+        isExternal: false
         isVal: true
         location: LOCAL
         modality: FINAL
@@ -655,6 +656,7 @@ KtLabelReferenceExpression(952,959): '@myWith'
         isActual: false
         isExpect: false
         isExtension: false
+        isExternal: false
         isVal: true
         location: LOCAL
         modality: FINAL
@@ -824,6 +826,7 @@ KtLabelReferenceExpression(1164,1170): '@label'
         isActual: false
         isExpect: false
         isExtension: false
+        isExternal: false
         isVal: true
         location: LOCAL
         modality: FINAL

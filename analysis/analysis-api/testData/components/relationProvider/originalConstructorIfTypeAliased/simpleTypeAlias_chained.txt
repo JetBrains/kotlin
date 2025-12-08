@@ -9,6 +9,7 @@ Resolved constructor:
     isActual: false
     isExpect: false
     isExtension: false
+    isExternal: false
     isPrimary: false
     location: CLASS
     modality: FINAL
@@ -38,6 +39,7 @@ Original constructor if type aliased:
     isActual: false
     isExpect: false
     isExtension: false
+    isExternal: false
     isPrimary: true
     location: CLASS
     modality: FINAL

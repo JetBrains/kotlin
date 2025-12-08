@@ -6,6 +6,7 @@ KaDestructuringDeclarationSymbol:
   ]
   isActual: false
   isExpect: false
+  isExternal: false
   location: LOCAL
   modality: FINAL
   origin: SOURCE

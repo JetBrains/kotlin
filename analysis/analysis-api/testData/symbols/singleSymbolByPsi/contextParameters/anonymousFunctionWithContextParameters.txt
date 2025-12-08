@@ -11,6 +11,7 @@ KaAnonymousFunctionSymbol:
       isActual: false
       isExpect: false
       isExtension: false
+      isExternal: false
       isVal: true
       location: LOCAL
       modality: FINAL
@@ -38,6 +39,7 @@ KaAnonymousFunctionSymbol:
       isActual: false
       isExpect: false
       isExtension: false
+      isExternal: false
       isVal: true
       location: LOCAL
       modality: FINAL
@@ -92,6 +94,7 @@ KaAnonymousFunctionSymbol:
   isActual: false
   isExpect: false
   isExtension: false
+  isExternal: false
   location: LOCAL
   modality: FINAL
   origin: SOURCE
@@ -113,6 +116,7 @@ KaAnonymousFunctionSymbol:
       isCrossinline: false
       isExpect: false
       isExtension: false
+      isExternal: false
       isImplicitLambdaParameter: false
       isNoinline: false
       isVal: true

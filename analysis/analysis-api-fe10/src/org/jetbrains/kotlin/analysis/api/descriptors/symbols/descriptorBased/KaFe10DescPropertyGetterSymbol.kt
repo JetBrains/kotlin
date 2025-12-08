@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.hasBody
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.resolve.calls.inference.returnTypeOrNothing
+import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
 
 internal class KaFe10DescPropertyGetterSymbol(
     override val descriptor: PropertyGetterDescriptor,
@@ -39,6 +40,9 @@ internal class KaFe10DescPropertyGetterSymbol(
 
     override val isOverride: Boolean
         get() = withValidityAssertion { descriptor.isExplicitOverride }
+
+    override val isExternal: Boolean
+        get() = withValidityAssertion { descriptor.isEffectivelyExternal() }
 
     @Deprecated("Use `isCustom` instead", replaceWith = ReplaceWith("isCustom"))
     override val hasBody: Boolean

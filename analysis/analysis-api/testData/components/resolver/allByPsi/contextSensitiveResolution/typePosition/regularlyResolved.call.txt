@@ -159,6 +159,7 @@ KtNameReferenceExpression(284,285): 'z'
             isActual: false
             isExpect: false
             isExtension: false
+            isExternal: false
             isVal: true
             location: LOCAL
             modality: FINAL
@@ -214,6 +215,7 @@ KtNameReferenceExpression(302,303): 'y'
             isActual: false
             isExpect: false
             isExtension: false
+            isExternal: false
             isVal: true
             location: LOCAL
             modality: FINAL

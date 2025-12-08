@@ -533,6 +533,7 @@ KtNameReferenceExpression(354,355): 'X'
             isActual: false
             isExpect: false
             isExtension: false
+            isExternal: false
             isVal: true
             location: LOCAL
             modality: FINAL

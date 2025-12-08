@@ -8,6 +8,7 @@ CONSTRUCTOR:
   isActual: false
   isExpect: false
   isExtension: false
+  isExternal: false
   location: TOP_LEVEL
   modality: FINAL
   name: Predicate
@@ -31,6 +32,7 @@ CONSTRUCTOR:
               compilerVisibility: Local
               isActual: false
               isExpect: false
+              isExternal: false
               isReified: false
               location: LOCAL
               modality: FINAL
@@ -59,6 +61,7 @@ CONSTRUCTOR:
           compilerVisibility: Local
           isActual: false
           isExpect: false
+          isExternal: false
           isReified: false
           location: LOCAL
           modality: FINAL
@@ -84,6 +87,7 @@ CONSTRUCTOR:
       compilerVisibility: Local
       isActual: false
       isExpect: false
+      isExternal: false
       isReified: false
       location: LOCAL
       modality: FINAL
@@ -110,6 +114,7 @@ CONSTRUCTOR:
       isCrossinline: false
       isExpect: false
       isExtension: false
+      isExternal: false
       isImplicitLambdaParameter: false
       isNoinline: false
       isVal: true
@@ -141,6 +146,7 @@ CONSTRUCTOR:
               compilerVisibility: Local
               isActual: false
               isExpect: false
+              isExternal: false
               isReified: false
               location: LOCAL
               modality: FINAL
@@ -177,6 +183,7 @@ CONSTRUCTOR:
                   compilerVisibility: Local
                   isActual: false
                   isExpect: false
+                  isExternal: false
                   isReified: false
                   location: LOCAL
                   modality: FINAL
@@ -239,6 +246,7 @@ CONSTRUCTOR:
               compilerVisibility: Local
               isActual: false
               isExpect: false
+              isExternal: false
               isReified: false
               location: LOCAL
               modality: FINAL
@@ -328,6 +336,7 @@ CLASS:
       compilerVisibility: Local
       isActual: false
       isExpect: false
+      isExternal: false
       isReified: false
       location: CLASS
       modality: FINAL

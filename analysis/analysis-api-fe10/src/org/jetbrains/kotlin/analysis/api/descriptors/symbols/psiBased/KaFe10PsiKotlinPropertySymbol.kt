@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.psi.psiUtil.hasActualModifier
 import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
 import org.jetbrains.kotlin.psi.psiUtil.isExtensionDeclaration
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
 
 internal class KaFe10PsiKotlinPropertySymbol(
     override val psi: KtProperty,
@@ -96,7 +97,7 @@ internal class KaFe10PsiKotlinPropertySymbol(
         get() = withValidityAssertion { false }
 
     override val isExternal: Boolean
-        get() = withValidityAssertion { psi.hasModifier(KtTokens.EXTERNAL_KEYWORD) }
+        get() = withValidityAssertion { psi.hasModifier(KtTokens.EXTERNAL_KEYWORD) || descriptor?.isEffectivelyExternal() == true }
 
     override val isActual: Boolean
         get() = withValidityAssertion { descriptor?.isActual ?: psi.hasActualModifier() }

@@ -9,6 +9,7 @@ scopes:
         compilerVisibility: Local
         isActual: false
         isExpect: false
+        isExternal: false
         isReified: false
         location: LOCAL
         modality: FINAL
@@ -116,6 +117,7 @@ scopes:
           isActual: false
           isExpect: false
           isExtension: false
+          isExternal: false
           isVal: true
           location: PROPERTY
           modality: FINAL
@@ -139,6 +141,7 @@ scopes:
             isActual: false
             isExpect: false
             isExtension: false
+            isExternal: false
             isVal: true
             location: LOCAL
             modality: FINAL
@@ -168,6 +171,7 @@ scopes:
           isActual: false
           isExpect: false
           isExtension: false
+          isExternal: false
           isInline: false
           isNotDefault: true
           isOverride: false
@@ -182,6 +186,7 @@ scopes:
             isActual: false
             isExpect: false
             isExtension: false
+            isExternal: false
             isVal: true
             location: LOCAL
             modality: FINAL
@@ -227,6 +232,7 @@ scopes:
           isActual: false
           isExpect: false
           isExtension: false
+          isExternal: false
           isVal: true
           location: LOCAL
           modality: FINAL
@@ -250,6 +256,7 @@ scopes:
             compilerVisibility: Local
             isActual: false
             isExpect: false
+            isExternal: false
             isReified: false
             location: LOCAL
             modality: FINAL
