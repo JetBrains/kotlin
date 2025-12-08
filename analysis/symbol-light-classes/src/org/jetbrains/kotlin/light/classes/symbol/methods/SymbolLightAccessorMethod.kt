@@ -513,11 +513,14 @@ internal class SymbolLightAccessorMethod private constructor(
                 isTopLevel = context.isTopLevel,
             )
 
-            val isNonMaterializableValueClassProperty = context.destinationLightClass.isValueClass &&
-                    // Constructor properties are materialized by default
-                    !property.isFromPrimaryConstructor &&
-                    // Overrides are materialized by default
-                    !property.isOverride
+            val isNonMaterializableValueClassProperty =
+                // Assessors with JvmStatic should be materialized inside the containing value class
+                !context.onlyJvmStatic &&
+                        context.destinationLightClass.isValueClass &&
+                        // Constructor properties are materialized by default
+                        !property.isFromPrimaryConstructor &&
+                        // Overrides are materialized by default
+                        !property.isOverride
 
             val generationResult = methodGeneration(
                 exposeBoxedMode = exposeBoxedMode,

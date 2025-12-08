@@ -19,6 +19,10 @@ public final class StringWrapper /* pack.StringWrapper*/ {
 
   public int hashCode();//  hashCode()
 
+  public static final int getRegularStaticVariable();//  getRegularStaticVariable()
+
+  public static final void setRegularStaticVariable(int);//  setRegularStaticVariable(int)
+
   public static final class Companion /* pack.StringWrapper.Companion*/ {
     @kotlin.jvm.JvmStatic()
     public final void regularStaticFunction();//  regularStaticFunction()

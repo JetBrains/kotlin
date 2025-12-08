@@ -19,12 +19,6 @@ public final class StringWrapper /* StringWrapper*/ {
   public  StringWrapper(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  .ctor(@org.jetbrains.annotations.NotNull() java.lang.String)
 
   @kotlin.jvm.JvmExposeBoxed()
-  public static final int getRegularStaticVariable();//  getRegularStaticVariable()
-
-  @kotlin.jvm.JvmExposeBoxed()
-  public static final void setRegularStaticVariable(int);//  setRegularStaticVariable(int)
-
-  @kotlin.jvm.JvmExposeBoxed()
   public static final void setStaticVariable(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() StringWrapper);//  setStaticVariable(@org.jetbrains.annotations.NotNull() StringWrapper)
 
   @kotlin.jvm.JvmStatic()
@@ -39,6 +33,10 @@ public final class StringWrapper /* StringWrapper*/ {
   public boolean equals(@org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() java.lang.Object);//  equals(@org.jetbrains.annotations.Nullable() java.lang.Object)
 
   public int hashCode();//  hashCode()
+
+  public static final int getRegularStaticVariable();//  getRegularStaticVariable()
+
+  public static final void setRegularStaticVariable(int);//  setRegularStaticVariable(int)
 
   class Companion ...
 }
