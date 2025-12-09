@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.js.test.JsAdditionalSourceProvider
 import org.jetbrains.kotlin.js.test.converters.augmentWithModuleName
 import org.jetbrains.kotlin.js.test.converters.finalizePath
 import org.jetbrains.kotlin.js.test.handlers.JsBoxRunner.Companion.TEST_FUNCTION
+import org.jetbrains.kotlin.js.test.handlers.TypeScriptCompilationHandler
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.NO_JS_MODULE_SYSTEM
@@ -136,6 +137,10 @@ fun getAdditionalMainFiles(
                 if (shouldCopyFiles) it.copyTo(this, true)
             }
         }
+        ?.let { additionalFiles += it }
+
+    TypeScriptCompilationHandler.compiledTypeScriptOutput(testServices, mode)
+        .takeIf { it.exists() }
         ?.let { additionalFiles += it }
 
     return additionalFiles

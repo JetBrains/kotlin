@@ -4,6 +4,7 @@
 // MODULE: lib
 // MODULE_KIND: ES
 // ES_MODULES
+// TSC_MODULE: ESNext
 // FILE: js-export-default.kt
 
 package foo

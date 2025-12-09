@@ -203,6 +203,7 @@ fun <FO : ResultingArtifact.FrontendOutput<FO>> TestConfigurationBuilder.commonC
 fun TestConfigurationBuilder.configureJsBoxHandlers() {
     configureJsArtifactsHandlersStep {
         useHandlers(
+            ::TypeScriptCompilationHandler,
             ::NodeJsGeneratorHandler,
             ::JsBoxRunner,
             ::JsAstHandler

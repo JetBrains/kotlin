@@ -221,16 +221,6 @@ val wasmtime by configurations.creating {
     isCanBeConsumed = false
 }
 
-val installedTSDependencies by configurations.dependencyScope("installedTSDependencies")
-
-val installedTSDependenciesResolvable by configurations.resolvable("installedTSDependenciesResolvable") {
-    attributes {
-        attribute(Usage.USAGE_ATTRIBUTE, objects.named("npmrc"))
-    }
-
-    extendsFrom(installedTSDependencies)
-}
-
 dependencies {
     testFixturesApi(testFixtures(project(":compiler:tests-common")))
     testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
@@ -269,8 +259,6 @@ dependencies {
     implicitDependencies("dev.wasmtime:wasmtime:${wasmtimeVersion.get()}:x86_64-windows@zip")
     implicitDependencies("dev.wasmtime:wasmtime:${wasmtimeVersion.get()}:x86_64-linux@tar.xz")
     implicitDependencies("dev.wasmtime:wasmtime:${wasmtimeVersion.get()}:aarch64-macos@tar.xz")
-
-    installedTSDependencies(project(":js:js.tests"))
 }
 
 optInToExperimentalCompilerApi()
@@ -315,17 +303,30 @@ fun generateTypeScriptTestFor(dir: String): TaskProvider<NpmTask> = tasks.regist
         .withPathSensitivity(PathSensitivity.RELATIVE)
         .withPropertyName("mainTsFileToCompile")
 
-    inputs.files(installedTSDependenciesResolvable)
-        .withPathSensitivity(PathSensitivity.RELATIVE)
-        .withPropertyName("installedTcDependencies")
-
     outputs.file(mainJsFile)
     outputs.upToDateWhen { mainJsFile.exists() }
 
     args.set(listOf("run", "generateTypeScriptTests", "--", "./typescript-export/wasm/$dir/tsconfig.json"))
 }
 
+val installTsDependencies by task<NpmTask> {
+    val nodeModules = testDataDir.resolve("node_modules")
+
+    inputs.files(
+        testDataDir.resolve("package.json"),
+        testDataDir.resolve("package-lock.json"),
+    )
+        .withPathSensitivity(PathSensitivity.RELATIVE)
+        .withPropertyName("installedTsDependencies")
+
+    outputs.upToDateWhen { nodeModules.exists() }
+
+    workingDir.set(testDataDir)
+    npmCommand.set(listOf("ci"))
+}
+
 val generateTypeScriptTests = parallel(
+    beforeAll = installTsDependencies,
     tasksToRun = wasmTestDir
         .listFiles { it: File -> it.isDirectory }
         .map { generateTypeScriptTestFor(it.name) }

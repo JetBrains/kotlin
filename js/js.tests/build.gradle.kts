@@ -9,6 +9,7 @@ plugins {
     kotlin("plugin.serialization")
     alias(libs.plugins.gradle.node)
     id("d8-configuration")
+    id("nodejs-configuration")
     id("java-test-fixtures")
     id("project-tests-convention")
     id("test-inputs-check")
@@ -99,65 +100,13 @@ sourceSets {
 }
 
 val testDataDir = project(":js:js.translator").projectDir.resolve("testData")
-val typescriptTestsDir = testDataDir.resolve("typescript-export")
-val jsTestsDir = typescriptTestsDir.resolve("js")
-
-val installTsDependencies by task<NpmTask> {
-    val packageLockFile = testDataDir.resolve("package-lock.json")
-    val nodeModules = testDataDir.resolve("node_modules")
-    inputs.file(testDataDir.resolve("package.json"))
-    inputs.file(packageLockFile)
-    outputs.upToDateWhen { nodeModules.exists() }
-
-    workingDir.set(testDataDir)
-    npmCommand.set(listOf("ci"))
-}
-
-configurations.consumable("installedTSDependencies") {
-    attributes {
-        attribute(Usage.USAGE_ATTRIBUTE, objects.named("npmrc"))
-    }
-
-    outgoing.artifact(
-        installTsDependencies.map { it.outputs.files.singleFile }
-    )
-}
-
-fun generateTypeScriptTestFor(dir: String): TaskProvider<NpmTask> = tasks.register<NpmTask>("generate-ts-for-$dir") {
-    val baseDir = jsTestsDir.resolve(dir)
-    val mainTsFile = fileTree(baseDir).files.find {
-        it.name.endsWith("__main.ts") || it.name.endsWith("__main.mts")
-    } ?: return@register
-
-    val mainJsFile = baseDir.resolve("${mainTsFile.nameWithoutExtension}.js")
-    val mainMjsFile = baseDir.resolve("${mainTsFile.nameWithoutExtension}.mjs")
-
-    workingDir.set(testDataDir)
-
-    // Inputs
-    inputs.file(mainTsFile)
-        .withPathSensitivity(PathSensitivity.RELATIVE)
-        .withPropertyName("mainTsFileToCompile")
-
-    // Outputs
-    outputs.file(mainJsFile)
-    outputs.file(mainMjsFile)
-    outputs.upToDateWhen { mainJsFile.exists() || mainMjsFile.exists() }
-
-    args.set(listOf("run", "generateTypeScriptTests", "--", "./typescript-export/js/$dir/tsconfig.json"))
-}
-
-val generateTypeScriptTests = parallel(
-    beforeAll = installTsDependencies,
-    tasksToRun = jsTestsDir.listFiles { it: File ->
-        it.isDirectory && !it.path.endsWith("module-systems")
-    }
-        .map { generateTypeScriptTestFor(it.name) }
-)
 
 fun Test.setUpJsBoxTests(tags: String?) {
     with(d8KotlinBuild) {
         setupV8()
+    }
+    with(nodeJsKotlinBuild) {
+        setupNodeJs(nodejsVersion)
     }
 
     dependsOn(npmInstall)
@@ -166,10 +115,6 @@ fun Test.setUpJsBoxTests(tags: String?) {
         classpath.from(rootDir.resolve("js/js.tests/testFixtures/org/jetbrains/kotlin/js/engine/repl.js"))
         property.set("javascript.engine.path.repl")
     }
-
-    inputs.files(generateTypeScriptTests)
-        .withPathSensitivity(PathSensitivity.RELATIVE)
-        .withPropertyName("compiledTypeScriptTestFiles")
 
     useJUnitPlatform {
         tags?.let { includeTags(it) }
@@ -248,11 +193,6 @@ projectTests {
     testGenerator(
         "org.jetbrains.kotlin.generators.tests.GenerateJsTestsKt",
         generateTestsInBuildDirectory = true,
-        configureTestDataCollection = {
-            inputs.files(generateTypeScriptTests)
-                .withPathSensitivity(PathSensitivity.RELATIVE)
-                .withPropertyName("compiledTypeScriptTestFiles")
-        }
     )
 
     withJsRuntime()

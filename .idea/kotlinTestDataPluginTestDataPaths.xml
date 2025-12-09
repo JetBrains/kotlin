@@ -53,11 +53,20 @@
             </array>
           </value>
         </entry>
-        <entry key="$PROJECT_DIR$/js/js.translator/testData/typescript-export">
+        <entry key="$PROJECT_DIR$/js/js.translator/testData/typescript-export/js">
           <value>
             <array>
               <option value="$PROJECT_DIR$/js/js.tests/build/node/{out,out-min,out-per-module,out-per-module-min}/typescript-export/{es5,es5-whole-file,es5-withInlinedFunInKlib,es6,es6-whole-file}/$TEST_DATA_FILE$-JS_TESTS{.d.ts,_v5.js}" />
-              <option value="$PROJECT_DIR$/js/js.translator/testData/typescript-export/$TEST_DATA_FILE$__main.{js,ts}" />
+              <option value="$PROJECT_DIR$/js/js.tests/build/node/{out,out-min,out-per-module,out-per-module-min}/typescript-export/{es5,es5-whole-file,es5-withInlinedFunInKlib,es6,es6-whole-file}/$TEST_DATA_FILE$__main.{js,mjs}" />
+              <option value="$PROJECT_DIR$/js/js.translator/testData/typescript-export/js/$TEST_DATA_FILE$__main.{ts,mts}" />
+              <option value="$PROJECT_DIR$/js/js.translator/testData/typescript-export/js/$TEST_DATA_FILE$-lib_v5{.aa,}.d.{ts,mts}" />
+            </array>
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/js/js.translator/testData/typescript-export/wasm">
+          <value>
+            <array>
+              <option value="$PROJECT_DIR$/js/js.translator/testData/typescript-export/wasm/$TEST_DATA_FILE$__main.{ts,mts}" />
             </array>
           </value>
         </entry>

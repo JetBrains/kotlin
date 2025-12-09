@@ -155,6 +155,22 @@ object JsEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
         applicability = DirectiveApplicability.Global
     )
 
+    val TSC_TARGET by stringDirective(
+        description = """
+        The argument for the --target CLI option of the TypeScript compiler.
+        See https://www.typescriptlang.org/tsconfig/#target for supported values.
+        """,
+        applicability = DirectiveApplicability.Global,
+    )
+
+    val TSC_MODULE by stringDirective(
+        description = """
+        The argument for the --module CLI option of the TypeScript compiler.
+        See https://www.typescriptlang.org/tsconfig/#module for supported values.
+        """,
+        applicability = DirectiveApplicability.Global,
+    )
+
     // Directives for IR tests
 
     val RUN_IR_DCE by directive(
