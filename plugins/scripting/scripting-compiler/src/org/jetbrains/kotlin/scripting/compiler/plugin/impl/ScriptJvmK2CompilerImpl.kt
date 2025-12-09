@@ -9,6 +9,7 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.LegacyK2CliPipeline
+import org.jetbrains.kotlin.cli.common.checkKotlinPackageUsageForLightTree
 import org.jetbrains.kotlin.cli.common.fir.reportToMessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.ModuleCompilerEnvironment
@@ -262,6 +263,12 @@ class ScriptJvmK2CompilerImpl(
         session.register(FirScriptCompilationComponent::class, FirScriptCompilationComponent(state.hostConfiguration))
 
         val sourcesToFir = allSourceFiles.associateWith { it.convertToFir(session, reportingCtx.diagnosticsCollector) }
+
+        if (reportingCtx.diagnosticsCollector.hasErrors) return failure(reportingCtx.diagnosticsCollector)
+
+        checkKotlinPackageUsageForLightTree(compilerConfiguration, sourcesToFir.values, reportingCtx.messageCollector)
+
+        if (reportingCtx.messageCollector.hasErrors()) return failure(reportingCtx.diagnosticsCollector)
 
         val outputs = listOf(resolveAndCheckFir(session, sourcesToFir.values.toList(), reportingCtx.diagnosticsCollector)).also {
             it.runPlatformCheckers(reportingCtx.diagnosticsCollector)
