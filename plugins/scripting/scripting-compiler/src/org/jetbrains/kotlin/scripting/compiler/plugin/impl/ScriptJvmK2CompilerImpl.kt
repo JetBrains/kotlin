@@ -128,12 +128,7 @@ class ScriptJvmK2CompilerImpl(
     ) {
         scriptCompilationConfiguration.refineAll(script)
             .onSuccess {
-                compileImpl(
-                    script,
-                    it.with {
-                        _languageVersion(state.compilerContext.environment.configuration.languageVersionSettings.languageVersion.versionString)
-                    }
-                )
+                compileImpl(script, it)
             }
     }
 
@@ -168,7 +163,11 @@ class ScriptJvmK2CompilerImpl(
                 resolvedImportScripts(resolvedScripts)
             }.asSuccess()
         }.onSuccess {
-            it.withUpdatedClasspath(state.hostConfiguration[ScriptingHostConfiguration.configurationDependencies].toClassPathOrEmpty()).asSuccess()
+            it.withUpdatedClasspath(
+                state.hostConfiguration[ScriptingHostConfiguration.configurationDependencies].toClassPathOrEmpty()
+            ).with {
+                _languageVersion(state.compilerContext.environment.configuration.languageVersionSettings.languageVersion.versionString)
+            }.asSuccess()
         }
 
     context(reportingCtx: ErrorReportingContext)
