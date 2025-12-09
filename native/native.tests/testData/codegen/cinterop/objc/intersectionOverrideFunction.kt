@@ -19,7 +19,7 @@ headers = lib.h
 @end
 
 @interface MyObjCInterface : NSObject <Protocol1, Protocol2>
-- (NSString*)ok;
+// both protocols define `ok` function, so an intersection override will be generated in Kotlin classes extending MyObjCInterface
 @end
 
 // FILE: lib.m

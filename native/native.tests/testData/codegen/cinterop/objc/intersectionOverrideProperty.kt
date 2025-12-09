@@ -19,20 +19,14 @@ headers = lib.h
 @end
 
 @interface MyObjCInterface : NSObject <Protocol1, Protocol2>
-@property NSString* ok;
+// both protocols define `ok` property, so an intersection override will be generated in Kotlin classes extending MyObjCInterface
 @end
 
 // FILE: lib.m
 #import "lib.h"
 
 @implementation MyObjCInterface
-- (instancetype)init {
-    self = [super init];
-    if (self) {
-        _ok = @"OK";  // Note: use _ok (the ivar), not self.ok
-    }
-    return self;
-}
+@synthesize ok = _ok;
 @end
 
 // MODULE: main(cinterop)
