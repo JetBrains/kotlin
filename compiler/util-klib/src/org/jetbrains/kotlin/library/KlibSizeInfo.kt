@@ -69,8 +69,7 @@ private fun KFile.collectTopLevelElements(): List<KlibElementWithSize> {
 
     for (entry in entries) {
         // Expand the contents of the "default" directory, don't show the directory itself.
-        val entryNameNormalized = entry.name.trimEnd('/', '\\').lowercase()
-        if (entryNameNormalized == "default" && entry.isDirectory) {
+        if (entry.name.normalizeEntryName() == "default" && entry.isDirectory) {
             defaultEntry = entry
         } else {
             otherTopLevelEntries += entry
@@ -84,7 +83,7 @@ private fun KFile.collectTopLevelElements(): List<KlibElementWithSize> {
     }
 
     return topLevelEntries.map { topLevelEntry ->
-        when (val topLevelEntryName = topLevelEntry.name) {
+        when (val topLevelEntryName = topLevelEntry.name.normalizeEntryName()) {
             KLIB_IR_FOLDER_NAME -> buildIrElement(name = "IR (main)", topLevelEntry)
             KLIB_IR_INLINABLE_FUNCTIONS_FOLDER_NAME -> buildIrElement(name = "IR (inlinable functions)", topLevelEntry)
             KLIB_METADATA_FOLDER_NAME -> buildElement(name = "Metadata", topLevelEntry)
@@ -114,7 +113,7 @@ private fun buildIrElement(name: String, entry: KFile): KlibElementWithSize {
     val nestedElements = ArrayList<KlibElementWithSize>()
 
     entry.entries.mapTo(nestedElements) { childEntry ->
-        val prettyName = when (val childName = childEntry.name) {
+        val prettyName = when (val childName = childEntry.name.normalizeEntryName()) {
             KLIB_IR_FILES_FILE_NAME -> "IR files"
             KLIB_IR_FILE_ENTRIES_FILE_NAME -> "IR file entries"
             KLIB_IR_DECLARATIONS_FILE_NAME -> "IR declarations"
@@ -132,3 +131,6 @@ private fun buildIrElement(name: String, entry: KFile): KlibElementWithSize {
 
     return KlibElementWithSize(name, nestedElements.sortedBy { it.name })
 }
+
+// On Windows, entry names start with an uppercase character and end with '/' that is not trimmed by `File.name` since the separator is `\`
+private fun String.normalizeEntryName() = replaceFirstChar { it.lowercase() }.trimEnd('/')
