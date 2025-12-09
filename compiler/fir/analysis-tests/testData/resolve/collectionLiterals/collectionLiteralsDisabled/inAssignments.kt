@@ -4,7 +4,7 @@
 
 class MyList {
     companion object {
-        <!INAPPLICABLE_OPERATOR_MODIFIER!>operator<!> fun of(vararg args: String): MyList = MyList()
+        <!UNSUPPORTED_FEATURE!>operator<!> fun of(vararg args: String): MyList = MyList()
     }
 }
 
