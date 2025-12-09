@@ -119,8 +119,10 @@ class JvmNewKotlinReflectCompatibilityCheck(testServices: TestServices) : JvmBin
             k1ReflectFile.delete()
             newReflectFile.delete()
             if (k1ReflectDump != newReflectDump) {
-                val k1ReflectHeader = "// K1 kotlin-reflect dump\n"
-                val newReflectHeader = "// New kotlin-reflect dump\n"
+                val tip =
+                    "// Tip: you can use KOTLIN_REFLECT_DUMP_MISMATCH / SKIP_NEW_KOTLIN_REFLECT_COMPATIBILITY_CHECK directives to suppress the test\n"
+                val k1ReflectHeader = "$tip// K1 kotlin-reflect dump\n"
+                val newReflectHeader = "$tip// New kotlin-reflect dump\n"
                 assertions.assertEquals(k1ReflectHeader + k1ReflectDump, newReflectHeader + newReflectDump)
             }
         }
