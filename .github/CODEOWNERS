@@ -385,7 +385,7 @@
 /plugins/allopen/ @JetBrains/kotlin-frontend
 /plugins/assign-plugin/ @JetBrains/kotlin-frontend
 /plugins/atomicfu/ @JetBrains/kotlin-libraries
-/plugins/compose/ ashikov@google.com alanv@google.com lelandr@google.com bentrengrove@google.com anbailey@google.com chuckj@google.com derekx@google.com
+/plugins/compose/ ashikov@google.com alanv@google.com bentrengrove@google.com anbailey@google.com chuckj@google.com derekx@google.com
 /plugins/plugin-sandbox/ @JetBrains/kotlin-frontend
 /plugins/jvm-abi-gen/ @JetBrains/kotlin-jvm
 /plugins/kapt/ @JetBrains/kotlin-jvm
@@ -395,7 +395,7 @@
 /libraries/tools/js-plain-objects @JetBrains/kotlin-js
 /plugins/lombok/ @JetBrains/kotlin-frontend
 /plugins/noarg/ @JetBrains/kotlin-frontend
-/plugins/parcelize/ nikitanazarov@google.com jobay@google.com troels@google.com jpaupore@google.com jsjeon@google.com jaebaek@google.com laszio@google.com
+/plugins/parcelize/ troels@google.com jpaupore@google.com jsjeon@google.com jaebaek@google.com laszio@google.com
 /plugins/power-assert/ brian.norman@jetbrains.com @JetBrains/kotlin-common-backend sergej.jaskiewicz@jetbrains.com
 /plugins/sam-with-receiver/ @JetBrains/kotlin-frontend
 /plugins/scripting/ @JetBrains/kotlin-frontend

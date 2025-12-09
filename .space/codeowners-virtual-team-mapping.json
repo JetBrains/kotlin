@@ -1,10 +1,10 @@
 [
   {
     "spaceTeam": "Google Compose",
-    "virtualMembers": ["ashikov@google.com", "alanv@google.com", "lelandr@google.com", "bentrengrove@google.com", "anbailey@google.com", "chuckj@google.com", "derekx@google.com"]
+    "virtualMembers": ["ashikov@google.com", "alanv@google.com", "bentrengrove@google.com", "anbailey@google.com", "chuckj@google.com", "derekx@google.com"]
   },
   {
     "spaceTeam": "Parcelize",
-    "virtualMembers": ["nikitanazarov@google.com", "jobay@google.com", "troels@google.com", "jpaupore@google.com", "jsjeon@google.com", "jaebaek@google.com", "laszio@google.com"]
+    "virtualMembers": ["troels@google.com", "jpaupore@google.com", "jsjeon@google.com", "jaebaek@google.com", "laszio@google.com"]
   }
 ]
