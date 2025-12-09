@@ -522,7 +522,7 @@ internal class JsAstMapperVisitor(
         }
 
         ctx.StringLiteral()?.let {
-            return it.text.unescapeString().toStringLiteral().applyLocation(ctx)
+            return it.text.unescapeString(ctx).toStringLiteral().applyLocation(ctx)
         }
 
         ctx.numericLiteral()?.let {
@@ -1052,7 +1052,7 @@ internal class JsAstMapperVisitor(
         }
 
         ctx.StringLiteral()?.let {
-            return it.text.unescapeString().toStringLiteral().applyLocation(ctx)
+            return it.text.unescapeString(ctx).toStringLiteral().applyLocation(ctx)
         }
 
         ctx.RegularExpressionLiteral()?.run {
@@ -1080,7 +1080,7 @@ internal class JsAstMapperVisitor(
 
     override fun visitTemplateStringAtom(ctx: JavaScriptParser.TemplateStringAtomContext): JsTemplateStringLiteral.Segment {
         ctx.TemplateStringAtom()?.let { stringElement ->
-            return JsTemplateStringLiteral.Segment.StringLiteral(stringElement.text.unescapeString())
+            return JsTemplateStringLiteral.Segment.StringLiteral(stringElement.text.unescapeString(ctx))
                 .applyLocation(ctx)
         }
 
@@ -1279,7 +1279,7 @@ internal class JsAstMapperVisitor(
         return this
     }
 
-    private fun String.unescapeString(): String {
+    private fun String.unescapeString(ctx: ParserRuleContext): String {
         val chars = this.toCharArray()
 
         return buildString(this.length) {
@@ -1297,11 +1297,28 @@ internal class JsAstMapperVisitor(
                         't' -> { append('\t'); i += 2 }
                         'v' -> { append('\u000B'); i += 2 }
                         '\\' -> { append("\\"); i += 2 }
+                        'u' if chars.getOrNull(i + 2) == '{' -> {
+                            i += 3 // skip '\u{'
+                            val start = i
+
+                            while (i < chars.size && chars[i] != '}' && i - start - 1 <= 6)
+                                i++
+
+                            if (i >= chars.size || chars[i] != '}')
+                                reportError("Unterminated codepoint escape sequence", ctx)
+
+                            val end = i
+                            val codePoint = String(chars, start, end - start).toIntOrNull(16)
+                                ?: reportError("Can't process codepoint escape sequence", ctx)
+                            appendCodePoint(codePoint)
+                            i++ // skip '}'
+                        }
                         'u' if i + 5 < chars.size -> {
                             val hex = String(chars, i + 2, 4)
                             append(hex.toInt(16).toChar())
                             i += 6
                         }
+                        'u' -> reportError("Invalid unicode escape sequence", ctx)
                         'x' if i + 3 < chars.size -> {
                             val hex = String(chars, i + 2, 2)
                             append(hex.toInt(16).toChar())

@@ -17,6 +17,12 @@ inline fun assertRegularTemplates() {
     assertEquals(js("'aaa'"), js("`\\a\\a\\a`"), "Escape any regular character")
     assertEquals(js(""" '"' """), js(""" `"` """), "Do not escape double qoute")
     assertEquals(js(""" "'" """), js(""" `'` """), "Do not escape single qoute")
+    assertEquals(js(""" "\u0000" """), js(""" `\u{0}` """), "Resolve 1-char Unicode codepoint")
+    assertEquals(js(""" "A" """), js(""" `\u{41}` """), "Resolve 2-char Unicode codepoint")
+    assertEquals(js(""" "\u03A9" """), js(""" `\u{3A9}` """), "Resolve 3-char Unicode codepoint")
+    assertEquals(js(""" "\u2764" """), js(""" `\u{2764}` """), "Resolve 4-char Unicode codepoint")
+    assertEquals(js(""" "\uD83D\uDCA9" """), js(""" `\u{1F4A9}` """), "Resolve 5-digit Unicode codepoint")
+    assertEquals(js(""" "\uDBC0\uDC00" """), js(""" `\u{100000}` """), "Resolve 6-digit Unicode codepoint")
 }
 
 inline fun assertTaggedTemplates() {
