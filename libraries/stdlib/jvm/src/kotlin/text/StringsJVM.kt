@@ -338,7 +338,7 @@ public actual inline fun String.toCharArray(
  * @sample samples.text.StringsJvmSpecific.formatExtension
  */
 @kotlin.internal.InlineOnly
-public inline fun String.format(vararg args: Any?): String = java.lang.String.format(this, *args)
+public actual inline fun String.format(vararg args: Any?): String = java.lang.String.format(this, *args)
 
 /**
  * Uses the provided [format] as a format string and returns a string obtained

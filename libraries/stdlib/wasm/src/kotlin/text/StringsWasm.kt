@@ -5,6 +5,7 @@
 
 package kotlin.text
 
+import formatImpl
 import kotlin.wasm.internal.*
 
 /**
@@ -581,3 +582,19 @@ private val STRING_CASE_INSENSITIVE_ORDER = Comparator<String> { a, b -> a.compa
 @SinceKotlin("1.2")
 public actual val String.Companion.CASE_INSENSITIVE_ORDER: Comparator<String>
     get() = STRING_CASE_INSENSITIVE_ORDER
+
+/**
+ * WebAssembly implementation of String.format.
+ * Uses the common formatImpl for cross-platform consistency.
+ *
+ * Example:
+ * ```kotlin
+ * "Hello %s".format("World")      // Returns "Hello World"
+ * "Value: %d".format(42)          // Returns "Value: 42"
+ * "Price: %.2f".format(12.3456)   // Returns "Price: 12.35"
+ * ```
+ *
+ * @param args Arguments to insert into the format string
+ * @return Formatted string with placeholders replaced
+ */
+public actual fun String.format(vararg args: Any?): String = formatImpl(args)

@@ -8,6 +8,7 @@ package kotlin.text
 import kotlin.native.internal.escapeAnalysis.Escapes
 import kotlin.native.internal.GCUnsafeCall
 import kotlin.native.internal.escapeAnalysis.PointsTo
+import formatImpl
 
 /**
  * Returns the index within this string of the first occurrence of the specified character, starting from the specified offset.
@@ -604,3 +605,5 @@ private val STRING_CASE_INSENSITIVE_ORDER = Comparator<String> { a, b -> a.compa
 
 public actual val String.Companion.CASE_INSENSITIVE_ORDER: Comparator<String>
     get() = STRING_CASE_INSENSITIVE_ORDER
+
+public actual fun String.format(vararg args: Any?): String = formatImpl(args)

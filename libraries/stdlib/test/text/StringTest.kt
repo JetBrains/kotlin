@@ -1918,4 +1918,56 @@ ${"    "}
         assertEquals("買っ", "買っ".replace("掌", "X"))
         assertEquals("買", "買".replace("掌", "X"))
     }
+
+    @Test
+    fun testSimpleFormat() {
+        // Basic string formatting
+        assertEquals("Hello World", "Hello %s".format("World"))
+        assertEquals("Sum = 3", "Sum = %d".format(3))
+        assertEquals("A B C", "%s %s %s".format("A", "B", "C"))
+        assertEquals("Age: 24, Name: Bob", "Age: %d, Name: %s".format(24, "Bob"))
+
+        // Width (right-aligned with spaces)
+        assertEquals("       hi", "%9s".format("hi"))
+        assertEquals("   42", "%5d".format(42))
+        assertEquals("   3.14", "%7.2f".format(3.14159))
+
+        // Precision
+        assertEquals("he", "%.2s".format("hello"))
+        assertEquals("3.14", "%.2f".format(3.14159))
+        assertEquals("3.000", "%.3f".format(3.0))
+
+        // Char
+        assertEquals("A", "%c".format('A'))
+        assertEquals("A", "%c".format(65))
+
+        // Literal percent
+        assertEquals("50%", "50%%".format())
+        assertEquals("%", "%%".format())
+
+        // Multiple args
+        assertEquals("a 10 3.14", "%s %d %.2f".format("a", 10, 3.1415))
+
+        // Error handling
+        assertFailsWith<IllegalArgumentException> {
+            "%s %s".format("onlyOne")
+        }
+        assertFailsWith<IllegalArgumentException> {
+            "%q".format(123)
+        }
+        assertFailsWith<IllegalArgumentException> {
+            "%".format(1)
+        }
+
+        // Negative numbers (simple formatting)
+        assertEquals("-7", "%d".format(-7))
+        assertEquals("-3.14", "%.2f".format(-3.14159))
+        assertEquals("   -42", "%6d".format(-42))
+
+        // Null handling
+        assertEquals("null", "%s".format(null))
+        assertEquals("null", "%d".format(null))
+        assertEquals("null", "%f".format(null))
+        assertEquals("null", "%c".format(null))
+    }
 }

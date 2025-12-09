@@ -5,6 +5,7 @@
 
 package kotlin.text
 
+import formatImpl
 import kotlin.js.RegExp
 
 /**
@@ -358,3 +359,20 @@ private val STRING_CASE_INSENSITIVE_ORDER = Comparator<String> { a, b -> a.compa
 @SinceKotlin("1.2")
 public actual val String.Companion.CASE_INSENSITIVE_ORDER: Comparator<String>
     get() = STRING_CASE_INSENSITIVE_ORDER
+
+/**
+ * JavaScript implementation of String.format for Kotlin Multiplatform.
+ *
+ * This is the actual implementation for JavaScript targets that delegates
+ * to the shared format logic in common code.
+ *
+ * Example:
+ * ```kotlin
+ * "Hello %s".format("World")  // Returns "Hello World"
+ * "Value: %d".format(42)      // Returns "Value: 42"
+ * ```
+ *
+ * @param args Arguments to insert into the format string
+ * @return Formatted string with placeholders replaced
+ */
+public actual fun String.format(vararg args: Any?): String = formatImpl(args)

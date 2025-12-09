@@ -1657,3 +1657,10 @@ internal inline fun String.skipWhile(startIndex: Int, predicate: (Char) -> Boole
     while (i < length && predicate(this[i])) i++
     return i
 }
+
+/**
+ * Multiplatform version of String.format().
+ * Initial minimal version with support for %s, %d, %f, %c and %%.
+ */
+public expect fun String.format(vararg args: Any?): String
+
