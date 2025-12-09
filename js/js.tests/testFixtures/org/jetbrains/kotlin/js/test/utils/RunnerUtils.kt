@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.NO_JS_MODULE_SYSTEM
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.RUN_PLAIN_BOX_FUNCTION
+import org.jetbrains.kotlin.test.directives.model.StringDirective
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.DependencyDescription
 import org.jetbrains.kotlin.test.model.TestFile
@@ -286,4 +287,32 @@ internal fun wrapWithModuleEmulationMarkers(content: String, moduleKind: ModuleK
 
         ModuleKind.PLAIN, ModuleKind.ES -> content
     }
+}
+
+fun TestServices.compiledTestOutputDirectory(
+    prefix: String,
+    pathToRootOutputDirDirective: StringDirective,
+    testOutputGroupDirPrefixDirective: StringDirective,
+    pathToTestDirDirective: StringDirective,
+): File {
+    val originalFile = moduleStructure.originalTestDataFiles.first()
+    val allDirectives = moduleStructure.allDirectives
+
+    val pathToRootOutputDir = allDirectives[pathToRootOutputDirDirective].first()
+    val testGroupDirPrefix = allDirectives[testOutputGroupDirPrefixDirective].first()
+    val pathToTestDir = allDirectives[pathToTestDirDirective].first()
+
+    val testGroupOutputDir =
+        File(File(pathToRootOutputDir, prefix), testGroupDirPrefix)
+    val stopFile = ForTestCompileRuntime.transformTestDataPath(pathToTestDir).absoluteFile
+    val parentAbsoluteFile = originalFile.parentFile.absoluteFile
+    val fullPathSequence = generateSequence(parentAbsoluteFile) { it.parentFile }.toList()
+    val suffixPathSequence = fullPathSequence.takeWhile { it != stopFile }
+    require(suffixPathSequence.size < fullPathSequence.size) {
+        "Folder $stopFile (which is set by PATH_TO_TEST_DIR directive) must contain $parentAbsoluteFile"
+    }
+    return suffixPathSequence
+        .map { it.name }
+        .toList().asReversed()
+        .fold(testGroupOutputDir, ::File)
 }

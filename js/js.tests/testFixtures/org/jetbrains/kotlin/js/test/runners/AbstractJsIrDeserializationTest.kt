@@ -56,14 +56,29 @@ abstract class AbstractJsIrDeserializationTest(
     }
 }
 
-open class AbstractJsIrDeserializationCodegenBoxTest : AbstractJsIrDeserializationTest(
+abstract class AbstractJsIrDeserializationCodegenBoxTest : AbstractJsIrDeserializationTest(
     pathToTestDir = "compiler/testData/codegen/box/",
     testGroupOutputDirPrefix = "irDeserialization/codegenBox/",
     useIrInlinerAtFirstCompilationPhase = false,
 )
 
-open class AbstractJsIrDeserializationCodegenBoxWithInlinedFunInKlibTest : AbstractJsIrDeserializationTest(
-    pathToTestDir = "compiler/testData/codegen/box/",
-    testGroupOutputDirPrefix = "irDeserialization/codegenBoxWithInlinedFunInKlib/",
+abstract class AbstractJsIrDeserializationCodegenBoxInlineTest : AbstractJsIrDeserializationTest(
+    pathToTestDir = "compiler/testData/codegen/boxInline/",
+    testGroupOutputDirPrefix = "irDeserialization/codegenBoxInline/",
+    useIrInlinerAtFirstCompilationPhase = false,
+)
+
+abstract class AbstractJsIrDeserializationCodegenBoxWithInlinedFunInKlibTest(
+    pathToTestDir: String = "compiler/testData/codegen/box/",
+    testGroupOutputDirPrefix: String = "irDeserialization/codegenBoxWithInlinedFunInKlib/",
+) : AbstractJsIrDeserializationTest(
+    pathToTestDir,
+    testGroupOutputDirPrefix,
     useIrInlinerAtFirstCompilationPhase = true,
 )
+
+abstract class AbstractJsIrDeserializationCodegenBoxInlineWithInlinedFunInKlibTest :
+    AbstractJsIrDeserializationCodegenBoxWithInlinedFunInKlibTest(
+        pathToTestDir = "compiler/testData/codegen/boxInline/",
+        testGroupOutputDirPrefix = "irDeserialization/codegenBoxInlineWithInlinedFunInKlib/",
+    )

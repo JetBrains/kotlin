@@ -44,7 +44,7 @@ fun main(args: Array<String>) {
             testClass<AbstractJsKlibSyntheticAccessorTest> {
                 model()
             }
-            testClass<AbstractJsCodegenBoxWithInlinedFunInKlibTest>(
+            testClass<AbstractJsKlibSyntheticAccessorsBoxWithInlinedFunInKlibTest>(
                 suiteTestClassName = "JsKlibSyntheticAccessorsBoxTestGenerated"
             ) {
                 model()
@@ -153,6 +153,9 @@ fun main(args: Array<String>) {
 
             testClass<AbstractJsCodegenBoxWithInlinedFunInKlibTest> {
                 model("box", excludeDirs = jvmOnlyBoxTests + k1BoxTestDir)
+            }
+
+            testClass<AbstractJsCodegenBoxInlineWithInlinedFunInKlibTest> {
                 model("boxInline")
             }
 
@@ -168,8 +171,11 @@ fun main(args: Array<String>) {
                 model("boxInline")
             }
 
-            testClass<AbstractJsCodegenSplittingInlineWithInlinedFunInKlibTest> {
+            testClass<AbstractJsCodegenSplittingWithInlinedFunInKlibTest> {
                 model("box")
+            }
+
+            testClass<AbstractJsCodegenSplittingInlineWithInlinedFunInKlibTest> {
                 model("boxInline")
             }
 
@@ -191,11 +197,17 @@ fun main(args: Array<String>) {
 
             testClass<AbstractJsIrDeserializationCodegenBoxTest> {
                 model("box", excludeDirs = jvmOnlyBoxTests + k1BoxTestDir + irInterpreterTests)
+            }
+
+            testClass<AbstractJsIrDeserializationCodegenBoxInlineTest> {
                 model("boxInline")
             }
 
             testClass<AbstractJsIrDeserializationCodegenBoxWithInlinedFunInKlibTest> {
                 model("box", excludeDirs = jvmOnlyBoxTests + k1BoxTestDir + irInterpreterTests)
+            }
+
+            testClass<AbstractJsIrDeserializationCodegenBoxInlineWithInlinedFunInKlibTest> {
                 model("boxInline")
             }
         }

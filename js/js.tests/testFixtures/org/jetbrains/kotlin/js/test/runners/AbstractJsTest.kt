@@ -94,10 +94,10 @@ open class AbstractLightTreeJsBoxTest : AbstractJsTest(
     parser = FirParser.LightTree,
 )
 
-open class AbstractJsCodegenBoxTestBase(testGroupOutputDirPrefix: String) : AbstractJsTest(
-    pathToTestDir = "compiler/testData/codegen/box/",
-    testGroupOutputDirPrefix = testGroupOutputDirPrefix
-) {
+open class AbstractJsCodegenBoxTestBase(
+    pathToTestDir: String = "compiler/testData/codegen/box/",
+    testGroupOutputDirPrefix: String,
+) : AbstractJsTest(pathToTestDir, testGroupOutputDirPrefix) {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.configureFirHandlersStep {
@@ -114,9 +114,10 @@ open class AbstractJsCodegenBoxTest : AbstractJsCodegenBoxTestBase(
     testGroupOutputDirPrefix = "codegen/box/"
 )
 
-open class AbstractJsCodegenBoxWithInlinedFunInKlibTest : AbstractJsCodegenBoxTestBase(
-    testGroupOutputDirPrefix = "codegen/boxWithInlinedFunInKlib"
-) {
+abstract class AbstractJsCodegenBoxWithInlinedFunInKlibTest(
+    pathToTestDir: String = "compiler/testData/codegen/box/",
+    testGroupOutputDirPrefix: String = "codegen/boxWithInlinedFunInKlib",
+) : AbstractJsCodegenBoxTestBase(pathToTestDir, testGroupOutputDirPrefix) {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         with(builder) {
@@ -145,18 +146,25 @@ open class AbstractJsCodegenBoxWithInlinedFunInKlibTest : AbstractJsCodegenBoxTe
     }
 }
 
-open class AbstractJsCodegenInlineTest(
-    testGroupOutputDirPrefix: String = "codegen/boxInline/"
-) : AbstractJsTest(
+abstract class AbstractJsCodegenBoxInlineWithInlinedFunInKlibTest : AbstractJsCodegenBoxWithInlinedFunInKlibTest(
     pathToTestDir = "compiler/testData/codegen/boxInline/",
-    testGroupOutputDirPrefix = testGroupOutputDirPrefix
+    testGroupOutputDirPrefix = "codegen/boxInlineWithInlinedFunInKlib/"
 )
 
-open class AbstractJsCodegenInlineWithInlinedFunInKlibTest(
-    testGroupOutputDirPrefix: String = "codegen/boxInlineInlined/"
-) : AbstractJsCodegenInlineTest(
-    testGroupOutputDirPrefix = testGroupOutputDirPrefix
-) {
+abstract class AbstractJsKlibSyntheticAccessorsBoxWithInlinedFunInKlibTest : AbstractJsCodegenBoxWithInlinedFunInKlibTest(
+    pathToTestDir = "compiler/testData/klib/syntheticAccessors/",
+    testGroupOutputDirPrefix = "klib/syntheticAccessorsWithInlinedFunInKlib/"
+)
+
+abstract class AbstractJsCodegenInlineTest(
+    pathToTestDir: String = "compiler/testData/codegen/boxInline/",
+    testGroupOutputDirPrefix: String = "codegen/boxInline/"
+) : AbstractJsTest(pathToTestDir, testGroupOutputDirPrefix)
+
+abstract class AbstractJsCodegenInlineWithInlinedFunInKlibTest(
+    pathToTestDir: String = "compiler/testData/codegen/boxInline/",
+    testGroupOutputDirPrefix: String = "codegen/boxInlineWithInlinedKlib/"
+) : AbstractJsCodegenInlineTest(pathToTestDir, testGroupOutputDirPrefix) {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         with(builder) {
@@ -170,9 +178,10 @@ open class AbstractJsCodegenInlineWithInlinedFunInKlibTest(
     }
 }
 
-open class AbstractJsCodegenSplittingInlineWithInlinedFunInKlibTest : AbstractJsCodegenInlineWithInlinedFunInKlibTest(
-    testGroupOutputDirPrefix = "codegen/boxInlineSplitted/"
-) {
+abstract class AbstractJsCodegenSplittingInlineWithInlinedFunInKlibTest(
+    pathToTestDir: String = "compiler/testData/codegen/boxInline/",
+    testGroupOutputDirPrefix: String = "codegen/boxInlineSplittedWithInlinedKlib/",
+) : AbstractJsCodegenInlineWithInlinedFunInKlibTest(pathToTestDir, testGroupOutputDirPrefix) {
     override val additionalIgnoreDirectives: List<ValueDirective<TargetBackend>>?
         get() = listOf(IGNORE_BACKEND_K2_MULTI_MODULE)
 
@@ -185,6 +194,11 @@ open class AbstractJsCodegenSplittingInlineWithInlinedFunInKlibTest : AbstractJs
         builder.useMetaTestConfigurators(::SplittingTestConfigurator)
     }
 }
+
+abstract class AbstractJsCodegenSplittingWithInlinedFunInKlibTest : AbstractJsCodegenSplittingInlineWithInlinedFunInKlibTest(
+    pathToTestDir = "compiler/testData/codegen/box/",
+    testGroupOutputDirPrefix = "codegen/boxSplittedWithInlinedKlib/",
+)
 
 open class AbstractJsLineNumberTest(
     testGroupOutputDirPrefix: String = "lineNumbers/"
@@ -316,14 +330,14 @@ open class AbstractJsSteppingSplitWithInlinedFunInKlibTest : AbstractJsSteppingW
 }
 
 open class AbstractJsCodegenWasmJsInteropTest(
-    testGroupOutputDirPrefix: String = "codegen/wasmJsInteropJs/"
+    testGroupOutputDirPrefix: String = "codegen/boxWasmJsInteropJs/"
 ) : AbstractJsTest(
-    pathToTestDir = "compiler/testData/codegen/wasmJsInterop/",
+    pathToTestDir = "compiler/testData/codegen/boxWasmJsInterop/",
     testGroupOutputDirPrefix = testGroupOutputDirPrefix
 )
 
 open class AbstractJsCodegenWasmJsInteropWithInlinedFunInKlibTest : AbstractJsCodegenWasmJsInteropTest(
-    testGroupOutputDirPrefix = "codegen/wasmJsInteropJsWithInlinedFunInKlib/"
+    testGroupOutputDirPrefix = "codegen/boxWasmJsInteropJsWithInlinedFunInKlib/"
 ) {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
