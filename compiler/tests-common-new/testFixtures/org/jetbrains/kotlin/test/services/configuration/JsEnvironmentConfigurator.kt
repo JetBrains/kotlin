@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.codegen.forTestCompile.TestCompilePaths.KOTLIN_JS_ST
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.config.AnalysisFlags.allowFullyQualifiedNameInKClass
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.TranslationMode
+import org.jetbrains.kotlin.js.config.JsGenerationGranularity
 import org.jetbrains.kotlin.js.config.ModuleKind
 import org.jetbrains.kotlin.js.config.moduleKind
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
@@ -132,6 +133,27 @@ abstract class JsEnvironmentConfigurator(testServices: TestServices) : Environme
                 else -> error("Too many module kinds passed ${moduleKinds.joinToArrayString()}")
             }
             return moduleKind
+        }
+
+        fun getTranslationModesForTest(testServices: TestServices, module: TestModule): Set<TranslationMode> {
+            val runIrDce = JsEnvironmentConfigurationDirectives.RUN_IR_DCE in module.directives
+            val onlyIrDce = JsEnvironmentConfigurationDirectives.ONLY_IR_DCE in module.directives
+            val perModuleOnly = JsEnvironmentConfigurationDirectives.SPLIT_PER_MODULE in module.directives
+            val perFileOnly = JsEnvironmentConfigurationDirectives.SPLIT_PER_FILE in module.directives
+            val isEsModules = getModuleKind(testServices, module) == ModuleKind.ES
+            // If runIrDce then include DCE results
+            // If perModuleOnly then skip whole program
+            // (it.dce => runIrDce) && (perModuleOnly => it.perModule)
+            return TranslationMode.entries
+                .filter {
+                    (it.production || !onlyIrDce) &&
+                            (!it.production || runIrDce) &&
+                            (!perModuleOnly || it.granularity == JsGenerationGranularity.PER_MODULE) &&
+                            (!perFileOnly || it.granularity == JsGenerationGranularity.PER_FILE)
+                }
+                .filter { it.production == it.minimizedMemberNames }
+                .filter { isEsModules || it.granularity != JsGenerationGranularity.PER_FILE }
+                .toSet()
         }
     }
 

@@ -142,10 +142,6 @@ class JsIrLoweringFacade(
     }
 
     private fun loweredIr2JsArtifact(module: TestModule, loweredIr: LoweredIr, shouldReferMainFunction: Boolean): BinaryArtifacts.Js {
-        val runIrDce = JsEnvironmentConfigurationDirectives.RUN_IR_DCE in module.directives
-        val onlyIrDce = JsEnvironmentConfigurationDirectives.ONLY_IR_DCE in module.directives
-        val perModuleOnly = JsEnvironmentConfigurationDirectives.SPLIT_PER_MODULE in module.directives
-        val perFileOnly = JsEnvironmentConfigurationDirectives.SPLIT_PER_FILE in module.directives
         val moduleKind = JsEnvironmentConfigurator.getModuleKind(testServices, module)
         val isEsModules = moduleKind == ModuleKind.ES
 
@@ -162,19 +158,7 @@ class JsIrLoweringFacade(
             } ?: emptyMap(),
             shouldReferMainFunction,
         )
-        // If runIrDce then include DCE results
-        // If perModuleOnly then skip whole program
-        // (it.dce => runIrDce) && (perModuleOnly => it.perModule)
-        val translationModes = TranslationMode.entries
-            .filter {
-                (it.production || !onlyIrDce) &&
-                        (!it.production || runIrDce) &&
-                        (!perModuleOnly || it.granularity == JsGenerationGranularity.PER_MODULE) &&
-                        (!perFileOnly || it.granularity == JsGenerationGranularity.PER_FILE)
-            }
-            .filter { it.production == it.minimizedMemberNames }
-            .filter { isEsModules || it.granularity != JsGenerationGranularity.PER_FILE }
-            .toSet()
+        val translationModes = JsEnvironmentConfigurator.getTranslationModesForTest(testServices, module)
         val compilationOut = transformer.generateModule(loweredIr.allModules, translationModes, isEsModules)
         return BinaryArtifacts.Js.JsIrArtifact(outputFile, compilationOut).dump(module)
     }
