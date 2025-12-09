@@ -126,7 +126,7 @@ class ScriptEvaluationTest {
             },
             hostConfiguration
         )
-        assertTrue(compiled is ResultWithDiagnostics.Success)
+        assertTrue(compiled is ResultWithDiagnostics.Success) { compiled.reports.joinToString("\n")}
         val evaluator = BasicJvmScriptEvaluator()
         val res = runBlocking {
             evaluator.invoke(compiled.valueOrThrow()).valueOrThrow()
