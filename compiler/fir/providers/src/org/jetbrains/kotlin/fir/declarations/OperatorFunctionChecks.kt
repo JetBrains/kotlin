@@ -62,7 +62,7 @@ object OperatorFunctionChecks {
         checkFor(
             OperatorNameConventions.SET,
             Checks.memberOrExtension, Checks.ValueParametersCount.atLeast(2),
-            Checks.simple("last parameter should not have a default value or be a vararg") { it, _ ->
+            Checks.simple("last parameter must not have a default value or be a vararg") { it, _ ->
                 it.valueParameters.lastOrNull()?.let { param ->
                     param.defaultValue == null && !param.isVararg
                 } == true
@@ -268,7 +268,7 @@ private object Checks {
 
     val noDefaults =
         simple(
-            "should not have parameters with default values",
+            "must not have parameters with default values",
             requiredResolvePhase = { FirResolvePhase.BODY_RESOLVE }
         ) { it, _ ->
             it.valueParameters.all { param -> param.defaultValue == null }
@@ -276,7 +276,7 @@ private object Checks {
 
     val onlyLastVararg =
         simple(
-            "should not have vararg parameters other than the last one",
+            "must not have vararg parameters other than the last one",
             requiredResolvePhase = { FirResolvePhase.BODY_RESOLVE }
         ) { function, _ ->
             function.valueParameters.dropLast(1).all { param -> !param.isVararg }
@@ -285,9 +285,9 @@ private object Checks {
     val noDefaultAndVarargs = full(requiredResolvePhase = { FirResolvePhase.BODY_RESOLVE }) { function, _ ->
         for (parameter in function.valueParameters) {
             if (parameter.defaultValue != null)
-                return@full OperatorDiagnostic.IllegalOperatorDiagnostic("should not have parameters with default values")
+                return@full OperatorDiagnostic.IllegalOperatorDiagnostic("must not have parameters with default values")
             if (parameter.isVararg)
-                return@full OperatorDiagnostic.IllegalOperatorDiagnostic("should not have varargs")
+                return@full OperatorDiagnostic.IllegalOperatorDiagnostic("must not have varargs")
         }
         null
     }
