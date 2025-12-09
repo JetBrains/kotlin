@@ -727,8 +727,10 @@ class ScriptingHostTest {
             compilerOptions("-jvm-target->1.8")
         }
         val res1 = BasicJvmScriptingHost().eval(script.toScriptSource(), compilationConfiguration1, null)
-        assertTrue(res1 is ResultWithDiagnostics.Failure)
-        assertNotNull(res1.reports.find { it.message == "Invalid argument: -jvm-target->1.8" })
+        assertTrue(
+            res1 is ResultWithDiagnostics.Failure && res1.reports.find { it.message == "Invalid argument: -jvm-target->1.8" } != null,
+            "Expected failure with invalid JVM target option, but got: $res1"
+        )
 
         val compilationConfiguration2 = createJvmCompilationConfigurationFromTemplate<SimpleScriptTemplate> {
             refineConfiguration {
@@ -740,8 +742,10 @@ class ScriptingHostTest {
             }
         }
         val res2 = BasicJvmScriptingHost().eval(script.toScriptSource(), compilationConfiguration2, null)
-        assertTrue(res2 is ResultWithDiagnostics.Failure)
-        assertNotNull(res2.reports.find { it.message == "Invalid argument: -jvm-target->1.6" })
+        assertTrue(
+            res2 is ResultWithDiagnostics.Failure && res2.reports.find { it.message == "Invalid argument: -jvm-target->1.6" } != null,
+            "Expected failure with invalid JVM target option, but got: $res2"
+        )
     }
 
     @Test
