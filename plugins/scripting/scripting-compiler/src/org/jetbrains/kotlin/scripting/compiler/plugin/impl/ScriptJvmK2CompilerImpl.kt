@@ -122,7 +122,7 @@ class ScriptJvmK2CompilerImpl(
     ): ResultWithDiagnostics<CompiledScript> = context(
         ErrorReportingContext(
             state.messageCollector,
-            DiagnosticReporterFactory.createPendingReporter(state.messageCollector),
+            DiagnosticReporterFactory.createPendingReporter(),
             state.compilerContext.environment.configuration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
         )
     ) {
@@ -142,10 +142,10 @@ class ScriptJvmK2CompilerImpl(
         script: SourceCode,
     ): ResultWithDiagnostics<ScriptCompilationConfiguration> = refineBeforeParsing(script)
         .onSuccess {
-            it.refineOnSyntaxTree(script) {
-                ScriptCollectedData(mapOf(ScriptCollectedData.syntaxTree to parseToSyntaxTree(script)))
-            }
-        }.onSuccess {
+//            it.refineOnSyntaxTree(script) {
+//                ScriptCollectedData(mapOf(ScriptCollectedData.syntaxTree to parseToSyntaxTree(script)))
+//            }
+//        }.onSuccess {
             it.refineOnAnnotationsWithLazyDataCollection(script) {
                 collectScriptAnnotations(script, it)
             }
@@ -303,7 +303,7 @@ class ScriptJvmK2CompilerImpl(
                 }
             }?.takeIf { it.isNotEmpty() } ?: return ScriptCollectedData(emptyMap()).asSuccess()
         // separate reporter for refinement to avoid double raw fir warnings reporting
-        val diagnosticsCollector = DiagnosticReporterFactory.createPendingReporter(state.messageCollector)
+        val diagnosticsCollector = DiagnosticReporterFactory.createPendingReporter()
         val firFile = script.convertToFir(
             createDummySessionForScriptRefinement(script),
             diagnosticsCollector
