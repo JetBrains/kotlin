@@ -12,6 +12,7 @@ dependencies {
     testImplementation(project(":kotlin-main-kts"))
     testCompileOnly(project(":compiler:cli"))
     testCompileOnly(project(":kotlin-scripting-jvm-host-unshaded"))
+    testCompileOnly(project(":kotlin-scripting-compiler"))
     testImplementation(kotlinStdlib("jdk8"))
     testImplementation(libs.junit4)
     testImplementation(kotlinTest("junit"))

@@ -68,6 +68,7 @@ import kotlin.script.experimental.api.ast.parseToSyntaxTree
 import kotlin.script.experimental.host.FileBasedScriptSource
 import kotlin.script.experimental.host.FileScriptSource
 import kotlin.script.experimental.host.ScriptingHostConfiguration
+import kotlin.script.experimental.host.configurationDependencies
 import kotlin.script.experimental.host.getScriptingClass
 import kotlin.script.experimental.impl._languageVersion
 import kotlin.script.experimental.impl.refineOnAnnotationsWithLazyDataCollection
@@ -76,7 +77,9 @@ import kotlin.script.experimental.jvm.GetScriptingClassByClassLoader
 import kotlin.script.experimental.jvm.baseClassLoader
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 import kotlin.script.experimental.jvm.jvm
+import kotlin.script.experimental.jvm.util.toClassPathOrEmpty
 import kotlin.script.experimental.jvm.util.toSourceCodePosition
+import kotlin.script.experimental.jvm.withUpdatedClasspath
 
 class ScriptJvmK2CompilerIsolated(val hostConfiguration: ScriptingHostConfiguration) : ScriptCompilerProxy {
     override fun compile(
@@ -164,6 +167,8 @@ class ScriptJvmK2CompilerImpl(
             else it.with {
                 resolvedImportScripts(resolvedScripts)
             }.asSuccess()
+        }.onSuccess {
+            it.withUpdatedClasspath(state.hostConfiguration[ScriptingHostConfiguration.configurationDependencies].toClassPathOrEmpty()).asSuccess()
         }
 
     context(reportingCtx: ErrorReportingContext)

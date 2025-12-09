@@ -9,6 +9,8 @@ import org.jetbrains.kotlin.mainKts.MainKtsScript
 import org.jetbrains.kotlin.mainKts.SCRIPT_FILE_LOCATION_DEFAULT_VARIABLE_NAME
 import org.jetbrains.kotlin.mainKts.impl.Directories
 import org.jetbrains.kotlin.scripting.compiler.plugin.assertTrue
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.SCRIPT_BASE_COMPILER_ARGUMENTS_PROPERTY
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.ScriptJvmCompilerIsolated
 import org.junit.Assert
 import org.junit.Assert.assertEquals
 import org.junit.Ignore
@@ -20,9 +22,13 @@ import java.util.*
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.toScriptSource
 import kotlin.script.experimental.jvm.baseClassLoader
+import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 import kotlin.script.experimental.jvm.jvm
 import kotlin.script.experimental.jvmhost.BasicJvmScriptingHost
+import kotlin.script.experimental.jvmhost.JvmScriptCompiler
 import kotlin.script.experimental.jvmhost.createJvmScriptDefinitionFromTemplate
+
+internal val isRunningTestOnK2 = System.getProperty(SCRIPT_BASE_COMPILER_ARGUMENTS_PROPERTY)?.contains("-language-version 1.9") != true
 
 fun evalFile(
     scriptFile: File,
@@ -51,7 +57,10 @@ fun evalFileWithConfigurations(
         }
     )
 
-    return BasicJvmScriptingHost().eval(
+    val hostConfiguration = scriptDefinition.compilationConfiguration[ScriptCompilationConfiguration.hostConfiguration] ?: defaultJvmScriptingHostConfiguration
+    return BasicJvmScriptingHost(
+        compiler = JvmScriptCompiler(hostConfiguration, if (isRunningTestOnK2) null else ScriptJvmCompilerIsolated(hostConfiguration)),
+    ).eval(
         scriptFile.toScriptSource(), scriptDefinition.compilationConfiguration, scriptDefinition.evaluationConfiguration
     )
 }
