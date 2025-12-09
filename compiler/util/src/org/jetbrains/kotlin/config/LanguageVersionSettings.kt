@@ -489,6 +489,7 @@ enum class LanguageFeature(
     ChangedIntersectionWithRecursiveCapturedType(KOTLIN_2_4, issue = "KT-65059"),
     SkipHiddenObjectsInResolution(KOTLIN_2_4, issue = "KT-82555"),
     JvmEnhancedBridges(KOTLIN_2_4, "KT-82900"),
+    DiscriminateNothingAsNullabilityConstraintInInference(KOTLIN_2_4, "KT-81948"),
 
     // 2.5
 

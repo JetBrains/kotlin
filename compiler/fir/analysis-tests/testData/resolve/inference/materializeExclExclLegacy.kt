@@ -1,14 +1,15 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-81948
 // DIAGNOSTICS: -UNCHECKED_CAST
-// LANGUAGE: +DiscriminateNothingAsNullabilityConstraintInInference
+// LANGUAGE: -DiscriminateNothingAsNullabilityConstraintInInference
 // FIR_DUMP
 
 fun <R> myRun(x: () -> R): R = x()
 
 fun <T> materialize(): T? = "" as T?
 
-val x = <!CANNOT_INFER_PARAMETER_TYPE!>myRun<!> { <!CANNOT_INFER_PARAMETER_TYPE!>materialize<!>() }!!
+// R should be inferred to String?, not to Nothing?
+val x: String? = myRun { materialize() }!!
 
 /* GENERATED_FIR_TAGS: asExpression, checkNotNullCall, functionDeclaration, functionalType, lambdaLiteral, nullableType,
 propertyDeclaration, stringLiteral, typeParameter */

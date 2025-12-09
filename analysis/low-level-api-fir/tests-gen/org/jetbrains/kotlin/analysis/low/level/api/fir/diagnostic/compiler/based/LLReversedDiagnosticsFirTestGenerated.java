@@ -6534,6 +6534,12 @@ public class LLReversedDiagnosticsFirTestGenerated extends AbstractLLReversedDia
       }
 
       @Test
+      @TestMetadata("materializeExclExclLegacy.kt")
+      public void testMaterializeExclExclLegacy() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/inference/materializeExclExclLegacy.kt");
+      }
+
+      @Test
       @TestMetadata("nestedExtensionFunctionType.kt")
       public void testNestedExtensionFunctionType() {
         runTest("compiler/fir/analysis-tests/testData/resolve/inference/nestedExtensionFunctionType.kt");

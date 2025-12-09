@@ -1,5 +1,6 @@
 // TARGET_BACKEND: JVM
 // ISSUE: KT-81948
+// LANGUAGE: +DiscriminateNothingAsNullabilityConstraintInInference
 
 // FILE: JavaUtils.java
 import org.jetbrains.annotations.Nullable;

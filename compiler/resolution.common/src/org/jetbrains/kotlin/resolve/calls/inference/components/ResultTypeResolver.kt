@@ -82,6 +82,9 @@ class ResultTypeResolver(
     private val useImprovedCapturedTypeApproximation: Boolean =
         languageVersionSettings.supportsFeature(LanguageFeature.ImprovedCapturedTypeApproximationInInference)
 
+    private val discriminateNothingAsNullabilityConstraintInInference: Boolean =
+        languageVersionSettings.supportsFeature(LanguageFeature.DiscriminateNothingAsNullabilityConstraintInInference)
+
     context(c: Context)
     fun findResultTypeOrNull(
         variableWithConstraints: VariableWithConstraints,
@@ -333,7 +336,8 @@ class ResultTypeResolver(
     private fun mayNothingBeConsideredAsSuitableResultType(constraints: List<Constraint>): Boolean = when {
         // Nothing <: T can't be used to infer T = Nothing in case it's a nullability constraint,
         // in this case an upper constraint should be preferred. See also comments to KT-81948.
-        c.isK2 -> !constraints.all { it.kind.isUpper() || !it.type.isNothing() || it.isNullabilityConstraint }
+        discriminateNothingAsNullabilityConstraintInInference -> !isThereSingleLowerNullabilityConstraint(constraints)
+        // This (potentially legacy) code is in use only for language versions 2.3 and earlier
         // It's ok to fix result to non-nullable Nothing and parameter is not reified
         else -> true
     }
@@ -348,6 +352,28 @@ class ResultTypeResolver(
     private fun isFromTypeParameterUpperBound(constraint: Constraint): Boolean =
         constraint.position.isFromDeclaredUpperBound || constraint.position.from is DeclaredUpperBoundConstraintPosition<*>
 
+    /**
+     * This function determines if [constraints] contain a single lower constraint which is a nullability constraint.
+     *
+     * The function has two separate use-sites:
+     * - for K1 (legacy code soon to be deleted) we use it to determine if we can use a constraint like `Nothing? <: T`
+     * for a type fixation. This influences quite old OI->NI issues: KT-32106, KT-33166.
+     * - for K2 (new code used from LV 2.4) we use it to determine if we can use a constraint like `Nothing <: T`
+     * for a type fixation. If it's a nullability constraint, we in fact shouldn't.
+     * This allows us to prioritize proper upper constraints like T <: SomeType thus fixing KT-81948.
+     *
+     * In both cases, the result of true means that we shouldn't use a lower constraint like `Nothing(?) <: T` for a type fixation.
+     *
+     * Note: it's likely that the code like below (it covers the current K2 case more obviously)
+     *
+     * ```
+     * constraints.any { it.kind.isLower() && it.type.isNothing() && !it.isNullabilityConstraint }
+     * ```
+     *
+     * is equivalent to `!isThereSingleLowerNullabilityConstraint(constraints)`,
+     * because if there are some other non-Nothing lower constraints, the resulting subtype would be different (less concrete than `Nothing`),
+     * at the same time there should not be two `Nothing` constraints for the same variable (they should be merged).
+     */
     private fun isThereSingleLowerNullabilityConstraint(constraints: List<Constraint>): Boolean {
         return constraints.singleOrNull { it.kind.isLower() }?.isNullabilityConstraint ?: false
     }

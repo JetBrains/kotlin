@@ -1,6 +1,7 @@
 // RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-81948
 // DIAGNOSTICS: -UNCHECKED_CAST
+// LANGUAGE: +DiscriminateNothingAsNullabilityConstraintInInference
 // FIR_DUMP
 // DUMP_INFERENCE_LOGS: FIXATION
 

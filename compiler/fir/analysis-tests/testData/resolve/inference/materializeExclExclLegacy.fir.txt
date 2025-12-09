@@ -1,0 +1,12 @@
+FILE: materializeExclExclLegacy.kt
+    public final fun <R> myRun(x: R|() -> R|): R|R| {
+        ^myRun R|<local>/x|.R|SubstitutionOverride<kotlin/Function0.invoke: R|R|>|()
+    }
+    public final fun <T> materialize(): R|T?| {
+        ^materialize (String() as R|T?|)
+    }
+    public final val x: R|kotlin/String?| = R|/myRun|<R|kotlin/Nothing?|>(<L> = myRun@fun <anonymous>(): R|kotlin/Nothing?| <inline=NoInline>  {
+        ^ R|/materialize|<R|kotlin/Nothing?|>()
+    }
+    )!!
+        public get(): R|kotlin/String?|
