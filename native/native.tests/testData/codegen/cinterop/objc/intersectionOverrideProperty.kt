@@ -26,7 +26,9 @@ headers = lib.h
 #import "lib.h"
 
 @implementation MyObjCInterface
-@synthesize ok = _ok;
+- (NSString*)ok {
+    return @"OK";
+}
 @end
 
 // MODULE: main(cinterop)
