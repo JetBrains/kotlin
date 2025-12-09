@@ -3,28 +3,34 @@ public abstract class CList /* test.CList*/ implements java.util.List<@org.jetbr
   public <T> T[] toArray(T[]);// <T>  toArray(T[])
 
   @java.lang.Override()
-  public abstract boolean contains(int);//  contains(int)
+  public @org.jetbrains.annotations.NotNull() kotlin.UInt remove(int);//  remove(int)
 
   @java.lang.Override()
-  public abstract int get(int);//  get(int)
+  public @org.jetbrains.annotations.NotNull() kotlin.UInt set(int, @org.jetbrains.annotations.NotNull() kotlin.UInt);//  set(int, @org.jetbrains.annotations.NotNull() kotlin.UInt)
+
+  @java.lang.Override()
+  public abstract @org.jetbrains.annotations.NotNull() kotlin.UInt get(int);//  get(int)
+
+  @java.lang.Override()
+  public abstract boolean contains(@org.jetbrains.annotations.NotNull() kotlin.UInt);//  contains(@org.jetbrains.annotations.NotNull() kotlin.UInt)
 
   @java.lang.Override()
   public abstract int getSize();//  getSize()
 
   @java.lang.Override()
-  public abstract int indexOf(int);//  indexOf(int)
+  public abstract int indexOf(@org.jetbrains.annotations.NotNull() kotlin.UInt);//  indexOf(@org.jetbrains.annotations.NotNull() kotlin.UInt)
 
   @java.lang.Override()
-  public abstract int lastIndexOf(int);//  lastIndexOf(int)
+  public abstract int lastIndexOf(@org.jetbrains.annotations.NotNull() kotlin.UInt);//  lastIndexOf(@org.jetbrains.annotations.NotNull() kotlin.UInt)
 
   @java.lang.Override()
-  public boolean add(int);//  add(int)
+  public boolean add(@org.jetbrains.annotations.NotNull() kotlin.UInt);//  add(@org.jetbrains.annotations.NotNull() kotlin.UInt)
 
   @java.lang.Override()
-  public boolean addAll(int, java.util.Collection<? extends int>);//  addAll(int, java.util.Collection<? extends int>)
+  public boolean addAll(int, java.util.Collection<? extends @org.jetbrains.annotations.NotNull() kotlin.UInt>);//  addAll(int, java.util.Collection<? extends @org.jetbrains.annotations.NotNull() kotlin.UInt>)
 
   @java.lang.Override()
-  public boolean addAll(java.util.Collection<? extends int>);//  addAll(java.util.Collection<? extends int>)
+  public boolean addAll(java.util.Collection<? extends @org.jetbrains.annotations.NotNull() kotlin.UInt>);//  addAll(java.util.Collection<? extends @org.jetbrains.annotations.NotNull() kotlin.UInt>)
 
   @java.lang.Override()
   public boolean remove(java.lang.Object);//  remove(java.lang.Object)
@@ -36,10 +42,10 @@ public abstract class CList /* test.CList*/ implements java.util.List<@org.jetbr
   public boolean retainAll(java.util.Collection<?>);//  retainAll(java.util.Collection<?>)
 
   @java.lang.Override()
-  public final boolean contains(java.lang.Object);//  contains(java.lang.Object)
+  public final @org.jetbrains.annotations.NotNull() kotlin.UInt get(int);//  get(int)
 
   @java.lang.Override()
-  public final int get(int);//  get(int)
+  public final boolean contains(java.lang.Object);//  contains(java.lang.Object)
 
   @java.lang.Override()
   public final int indexOf(java.lang.Object);//  indexOf(java.lang.Object)
@@ -51,16 +57,10 @@ public abstract class CList /* test.CList*/ implements java.util.List<@org.jetbr
   public final int size();//  size()
 
   @java.lang.Override()
-  public int remove(int);//  remove(int)
-
-  @java.lang.Override()
-  public int set(int, int);//  set(int, int)
-
-  @java.lang.Override()
   public java.lang.Object[] toArray();//  toArray()
 
   @java.lang.Override()
-  public void add(int, int);//  add(int, int)
+  public void add(int, @org.jetbrains.annotations.NotNull() kotlin.UInt);//  add(int, @org.jetbrains.annotations.NotNull() kotlin.UInt)
 
   @java.lang.Override()
   public void clear();//  clear()
@@ -89,25 +89,31 @@ public abstract class CList2 /* test.CList2*/ implements java.util.List<@org.jet
   public <T> T[] toArray(T[]);// <T>  toArray(T[])
 
   @java.lang.Override()
-  public abstract boolean contains(int);//  contains(int)
+  public @org.jetbrains.annotations.NotNull() kotlin.UInt remove(int);//  remove(int)
 
   @java.lang.Override()
-  public abstract int get(int);//  get(int)
+  public @org.jetbrains.annotations.NotNull() kotlin.UInt set(int, @org.jetbrains.annotations.NotNull() kotlin.UInt);//  set(int, @org.jetbrains.annotations.NotNull() kotlin.UInt)
 
   @java.lang.Override()
-  public abstract int indexOf(int);//  indexOf(int)
+  public abstract @org.jetbrains.annotations.NotNull() kotlin.UInt get(int);//  get(int)
 
   @java.lang.Override()
-  public abstract int lastIndexOf(int);//  lastIndexOf(int)
+  public abstract boolean contains(@org.jetbrains.annotations.NotNull() kotlin.UInt);//  contains(@org.jetbrains.annotations.NotNull() kotlin.UInt)
 
   @java.lang.Override()
-  public boolean add(int);//  add(int)
+  public abstract int indexOf(@org.jetbrains.annotations.NotNull() kotlin.UInt);//  indexOf(@org.jetbrains.annotations.NotNull() kotlin.UInt)
 
   @java.lang.Override()
-  public boolean addAll(int, java.util.Collection<? extends int>);//  addAll(int, java.util.Collection<? extends int>)
+  public abstract int lastIndexOf(@org.jetbrains.annotations.NotNull() kotlin.UInt);//  lastIndexOf(@org.jetbrains.annotations.NotNull() kotlin.UInt)
 
   @java.lang.Override()
-  public boolean addAll(java.util.Collection<? extends int>);//  addAll(java.util.Collection<? extends int>)
+  public boolean add(@org.jetbrains.annotations.NotNull() kotlin.UInt);//  add(@org.jetbrains.annotations.NotNull() kotlin.UInt)
+
+  @java.lang.Override()
+  public boolean addAll(int, java.util.Collection<? extends @org.jetbrains.annotations.NotNull() kotlin.UInt>);//  addAll(int, java.util.Collection<? extends @org.jetbrains.annotations.NotNull() kotlin.UInt>)
+
+  @java.lang.Override()
+  public boolean addAll(java.util.Collection<? extends @org.jetbrains.annotations.NotNull() kotlin.UInt>);//  addAll(java.util.Collection<? extends @org.jetbrains.annotations.NotNull() kotlin.UInt>)
 
   @java.lang.Override()
   public boolean containsAll(java.util.Collection<?>);//  containsAll(java.util.Collection<?>)
@@ -125,10 +131,10 @@ public abstract class CList2 /* test.CList2*/ implements java.util.List<@org.jet
   public boolean retainAll(java.util.Collection<?>);//  retainAll(java.util.Collection<?>)
 
   @java.lang.Override()
-  public final boolean contains(java.lang.Object);//  contains(java.lang.Object)
+  public final @org.jetbrains.annotations.NotNull() kotlin.UInt get(int);//  get(int)
 
   @java.lang.Override()
-  public final int get(int);//  get(int)
+  public final boolean contains(java.lang.Object);//  contains(java.lang.Object)
 
   @java.lang.Override()
   public final int indexOf(java.lang.Object);//  indexOf(java.lang.Object)
@@ -143,16 +149,10 @@ public abstract class CList2 /* test.CList2*/ implements java.util.List<@org.jet
   public int getSize();//  getSize()
 
   @java.lang.Override()
-  public int remove(int);//  remove(int)
-
-  @java.lang.Override()
-  public int set(int, int);//  set(int, int)
-
-  @java.lang.Override()
   public java.lang.Object[] toArray();//  toArray()
 
   @java.lang.Override()
-  public void add(int, int);//  add(int, int)
+  public void add(int, @org.jetbrains.annotations.NotNull() kotlin.UInt);//  add(int, @org.jetbrains.annotations.NotNull() kotlin.UInt)
 
   @java.lang.Override()
   public void clear();//  clear()
@@ -181,25 +181,31 @@ public class CList3 /* test.CList3*/ implements java.util.List<@org.jetbrains.an
   public <T> T[] toArray(T[]);// <T>  toArray(T[])
 
   @java.lang.Override()
-  public abstract boolean contains(int);//  contains(int)
+  public @org.jetbrains.annotations.NotNull() kotlin.UInt remove(int);//  remove(int)
 
   @java.lang.Override()
-  public abstract int get(int);//  get(int)
+  public @org.jetbrains.annotations.NotNull() kotlin.UInt set(int, @org.jetbrains.annotations.NotNull() kotlin.UInt);//  set(int, @org.jetbrains.annotations.NotNull() kotlin.UInt)
 
   @java.lang.Override()
-  public abstract int indexOf(int);//  indexOf(int)
+  public abstract @org.jetbrains.annotations.NotNull() kotlin.UInt get(int);//  get(int)
 
   @java.lang.Override()
-  public abstract int lastIndexOf(int);//  lastIndexOf(int)
+  public abstract boolean contains(@org.jetbrains.annotations.NotNull() kotlin.UInt);//  contains(@org.jetbrains.annotations.NotNull() kotlin.UInt)
 
   @java.lang.Override()
-  public boolean add(int);//  add(int)
+  public abstract int indexOf(@org.jetbrains.annotations.NotNull() kotlin.UInt);//  indexOf(@org.jetbrains.annotations.NotNull() kotlin.UInt)
 
   @java.lang.Override()
-  public boolean addAll(int, java.util.Collection<? extends int>);//  addAll(int, java.util.Collection<? extends int>)
+  public abstract int lastIndexOf(@org.jetbrains.annotations.NotNull() kotlin.UInt);//  lastIndexOf(@org.jetbrains.annotations.NotNull() kotlin.UInt)
 
   @java.lang.Override()
-  public boolean addAll(java.util.Collection<? extends int>);//  addAll(java.util.Collection<? extends int>)
+  public boolean add(@org.jetbrains.annotations.NotNull() kotlin.UInt);//  add(@org.jetbrains.annotations.NotNull() kotlin.UInt)
+
+  @java.lang.Override()
+  public boolean addAll(int, java.util.Collection<? extends @org.jetbrains.annotations.NotNull() kotlin.UInt>);//  addAll(int, java.util.Collection<? extends @org.jetbrains.annotations.NotNull() kotlin.UInt>)
+
+  @java.lang.Override()
+  public boolean addAll(java.util.Collection<? extends @org.jetbrains.annotations.NotNull() kotlin.UInt>);//  addAll(java.util.Collection<? extends @org.jetbrains.annotations.NotNull() kotlin.UInt>)
 
   @java.lang.Override()
   public boolean containsAll(java.util.Collection<?>);//  containsAll(java.util.Collection<?>)
@@ -217,10 +223,10 @@ public class CList3 /* test.CList3*/ implements java.util.List<@org.jetbrains.an
   public boolean retainAll(java.util.Collection<?>);//  retainAll(java.util.Collection<?>)
 
   @java.lang.Override()
-  public final boolean contains(java.lang.Object);//  contains(java.lang.Object)
+  public final @org.jetbrains.annotations.NotNull() kotlin.UInt get(int);//  get(int)
 
   @java.lang.Override()
-  public final int get(int);//  get(int)
+  public final boolean contains(java.lang.Object);//  contains(java.lang.Object)
 
   @java.lang.Override()
   public final int indexOf(java.lang.Object);//  indexOf(java.lang.Object)
@@ -235,16 +241,10 @@ public class CList3 /* test.CList3*/ implements java.util.List<@org.jetbrains.an
   public int getSize();//  getSize()
 
   @java.lang.Override()
-  public int remove(int);//  remove(int)
-
-  @java.lang.Override()
-  public int set(int, int);//  set(int, int)
-
-  @java.lang.Override()
   public java.lang.Object[] toArray();//  toArray()
 
   @java.lang.Override()
-  public void add(int, int);//  add(int, int)
+  public void add(int, @org.jetbrains.annotations.NotNull() kotlin.UInt);//  add(int, @org.jetbrains.annotations.NotNull() kotlin.UInt)
 
   @java.lang.Override()
   public void clear();//  clear()
