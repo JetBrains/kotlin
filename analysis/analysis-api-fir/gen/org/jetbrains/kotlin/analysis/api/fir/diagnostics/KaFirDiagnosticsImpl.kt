@@ -6188,6 +6188,18 @@ internal class NotExportedActualDeclarationWhileExpectIsExportedImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.NotExportedActualDeclarationWhileExpectIsExported
 
+internal class ExposedNotExportedSuperInterfaceErrorImpl(
+    override val restrictingDeclaration: KaClassLikeSymbol,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.ExposedNotExportedSuperInterfaceError
+
+internal class ExposedNotExportedSuperInterfaceWarningImpl(
+    override val restrictingDeclaration: KaClassLikeSymbol,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.ExposedNotExportedSuperInterfaceWarning
+
 internal class NestedJsExportImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,

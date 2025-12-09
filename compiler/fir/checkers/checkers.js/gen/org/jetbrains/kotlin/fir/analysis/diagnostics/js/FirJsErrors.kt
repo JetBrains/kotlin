@@ -6,11 +6,13 @@
 package org.jetbrains.kotlin.fir.analysis.diagnostics.js
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.config.LanguageFeature.JsExposedSuperInterfaceOnExported
 import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory0
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory1
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory2
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory3
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactoryForDeprecation1
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticsContainer
 import org.jetbrains.kotlin.diagnostics.Severity.ERROR
 import org.jetbrains.kotlin.diagnostics.Severity.WARNING
@@ -81,6 +83,7 @@ object FirJsErrors : KtDiagnosticsContainer() {
     val NON_CONSUMABLE_EXPORTED_IDENTIFIER: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("NON_CONSUMABLE_EXPORTED_IDENTIFIER", WARNING, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
     val NAMED_COMPANION_IN_EXPORTED_INTERFACE: KtDiagnosticFactory0 = KtDiagnosticFactory0("NAMED_COMPANION_IN_EXPORTED_INTERFACE", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, KtElement::class, getRendererFactory())
     val NOT_EXPORTED_ACTUAL_DECLARATION_WHILE_EXPECT_IS_EXPORTED: KtDiagnosticFactory0 = KtDiagnosticFactory0("NOT_EXPORTED_ACTUAL_DECLARATION_WHILE_EXPECT_IS_EXPORTED", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, KtElement::class, getRendererFactory())
+    val EXPOSED_NOT_EXPORTED_SUPER_INTERFACE: KtDiagnosticFactoryForDeprecation1<FirClassLikeSymbol<*>> = KtDiagnosticFactoryForDeprecation1("EXPOSED_NOT_EXPORTED_SUPER_INTERFACE", JsExposedSuperInterfaceOnExported, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
 
     // Dynamics
     val DELEGATION_BY_DYNAMIC: KtDiagnosticFactory0 = KtDiagnosticFactory0("DELEGATION_BY_DYNAMIC", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())

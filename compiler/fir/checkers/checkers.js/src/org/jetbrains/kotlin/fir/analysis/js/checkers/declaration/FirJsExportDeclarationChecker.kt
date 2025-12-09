@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.getAnnotationFirstArgument
 import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.analysis.checkers.isTopLevel
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors
+import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.EXPOSED_NOT_EXPORTED_SUPER_INTERFACE
 import org.jetbrains.kotlin.fir.analysis.js.checkers.isExportedObject
 import org.jetbrains.kotlin.fir.analysis.js.checkers.sanitizeName
 import org.jetbrains.kotlin.fir.declarations.*
@@ -181,6 +182,15 @@ object FirJsExportDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind
 
                 if (wrongDeclaration != null) {
                     reportWrongExportedDeclaration(wrongDeclaration)
+                }
+
+                if (declaration.isInterface) {
+                    declaration.superTypeRefs.forEach { superType ->
+                        superType.coneType
+                            .takeIf { !it.isExportable(context.session) }
+                            ?.toRegularClassSymbol()
+                            ?.let { reporter.reportOn(declaration.source, EXPOSED_NOT_EXPORTED_SUPER_INTERFACE, it) }
+                    }
                 }
             }
 

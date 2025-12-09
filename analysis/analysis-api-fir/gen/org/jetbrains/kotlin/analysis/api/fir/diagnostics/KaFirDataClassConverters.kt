@@ -7353,6 +7353,20 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirJsErrors.EXPOSED_NOT_EXPORTED_SUPER_INTERFACE.errorFactory) { firDiagnostic ->
+        ExposedNotExportedSuperInterfaceErrorImpl(
+            firSymbolBuilder.classifierBuilder.buildClassLikeSymbol(firDiagnostic.a),
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJsErrors.EXPOSED_NOT_EXPORTED_SUPER_INTERFACE.warningFactory) { firDiagnostic ->
+        ExposedNotExportedSuperInterfaceWarningImpl(
+            firSymbolBuilder.classifierBuilder.buildClassLikeSymbol(firDiagnostic.a),
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirWebCommonErrors.NESTED_JS_EXPORT) { firDiagnostic ->
         NestedJsExportImpl(
             firDiagnostic as KtPsiDiagnostic,

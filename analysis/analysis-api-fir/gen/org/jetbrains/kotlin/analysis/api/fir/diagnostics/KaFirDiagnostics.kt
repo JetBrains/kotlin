@@ -5144,6 +5144,16 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = NotExportedActualDeclarationWhileExpectIsExported::class
     }
 
+    interface ExposedNotExportedSuperInterfaceError : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = ExposedNotExportedSuperInterfaceError::class
+        val restrictingDeclaration: KaClassLikeSymbol
+    }
+
+    interface ExposedNotExportedSuperInterfaceWarning : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = ExposedNotExportedSuperInterfaceWarning::class
+        val restrictingDeclaration: KaClassLikeSymbol
+    }
+
     interface NestedJsExport : KaFirDiagnostic<KtElement> {
         override val diagnosticClass get() = NestedJsExport::class
     }

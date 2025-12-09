@@ -14,7 +14,7 @@ declare namespace JS_TESTS {
             anotherParentMethod(): kotlin.collections.KtList<string>;
             parentAsyncMethod(): Promise<string>;
         }
-        interface IFoo<T extends unknown/* kotlin.Comparable<T> */> extends foo.ExportedParent/*, foo.HiddenParent */ {
+        interface IFoo<T> extends foo.ExportedParent/*, foo.HiddenParent */ {
             foo(): string;
             asyncFoo(): Promise<string>;
             withDefaults(value?: string): string;
