@@ -57,15 +57,16 @@ internal class WasmContinuation<in T>(
         if (isResumed) error("Continuation is already resumed")
         wasmContBox?.let { contBox ->
             isResumed = true
-            try {
-                val resumeResult: ResumeIntrinsicResult = result.exceptionOrNull()?.let {
+            val resumeResult: ResumeIntrinsicResult = try {
+                result.exceptionOrNull()?.let {
                     resumeThrowImpl(it, contBox.cont)
                 } ?: resumeWithImpl(contBox.cont, result)
-                if (resumeResult.wasmContWrapper == null) {
-                    completion.resume(resumeResult.result as T)
-                }
             } catch (e: Throwable) {
                 completion.resumeWithException(e)
+                return@let
+            }
+            if (resumeResult.wasmContWrapper == null) {
+                completion.resume(resumeResult.result as T)
             }
         } ?: error("Continuation is not set")
     }
@@ -88,7 +89,7 @@ internal fun resumeThrowIntrinsic(objectToThrow: Throwable, cont: contref1): Res
     implementedAsIntrinsic
 }
 
-internal data class ResumeIntrinsicResult(val wasmContWrapper: WasmContinuation<*>?, val result: Any?)
+internal class ResumeIntrinsicResult(val wasmContWrapper: WasmContinuation<*>?, val result: Any?)
 
 internal fun buildResumeIntrinsicSuspendResult(wasmContWrapper: Any?, wasmContRef: contref1): ResumeIntrinsicResult {
     wasmContWrapper as WasmContinuation<*>
