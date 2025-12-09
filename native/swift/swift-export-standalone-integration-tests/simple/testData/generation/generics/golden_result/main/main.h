@@ -57,6 +57,10 @@ void * __root___Demo_init_allocate();
 
 void __root___Demo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
 
+void * __root___FunctionalBox_init_allocate();
+
+void __root___FunctionalBox_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
+
 void * __root___GenericWithComparableUpperBound_init_allocate();
 
 void __root___GenericWithComparableUpperBound_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20ExportedKotlinPackages_kotlin_Comparable__(void * __kt, void * t);

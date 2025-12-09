@@ -5,6 +5,7 @@
 @file:kotlin.native.internal.objc.BindClassToObjCName(CPImpl::class, "4main6CPImplC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(DefaultBox::class, "4main10DefaultBoxC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(Demo::class, "4main4DemoC")
+@file:kotlin.native.internal.objc.BindClassToObjCName(FunctionalBox::class, "4main13FunctionalBoxC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(GenericWithComparableUpperBound::class, "4main31GenericWithComparableUpperBoundC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(Holder::class, "4main6HolderC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(IdentityProcessor::class, "4main17IdentityProcessorC")
@@ -202,6 +203,18 @@ public fun __root___Demo_init_allocate(): kotlin.native.internal.NativePtr {
 public fun __root___Demo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Unit {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
     kotlin.native.internal.initInstance(____kt, Demo())
+}
+
+@ExportedBridge("__root___FunctionalBox_init_allocate")
+public fun __root___FunctionalBox_init_allocate(): kotlin.native.internal.NativePtr {
+    val _result = kotlin.native.internal.createUninitializedInstance<FunctionalBox>()
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("__root___FunctionalBox_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
+public fun __root___FunctionalBox_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Unit {
+    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
+    kotlin.native.internal.initInstance(____kt, FunctionalBox())
 }
 
 @ExportedBridge("__root___GenericWithComparableUpperBound_init_allocate")

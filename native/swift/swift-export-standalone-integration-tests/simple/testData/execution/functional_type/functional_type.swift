@@ -6,6 +6,7 @@ import primitive_types
 import collection_types
 import data
 import receivers
+import consume_consuming
 
 @Test
 func testCallingClosureSentToKotlin() throws {
@@ -195,4 +196,14 @@ func testProduceBlockWithStringReceiver() throws {
     received = block("hello")
     try #require(received == "hellohello")
     try #require(last_seen_bar_by_produceWithStringReceiver == "hello")
+}
+
+@Test
+func testConsumeConsuming() throws {
+    var range: Swift.ClosedRange<Swift.Int32>? = nil
+    foo_consume_consuming { block in
+        range = block(1, 3)
+    }
+    #expect(range!.contains(2))
+    #expect(!range!.contains(11))
 }

@@ -781,6 +781,11 @@ internal sealed class Bridge(
                 |}()""".trimMargin()
             }
         }
+
+        context(sir: SirSession)
+        override fun helperBridges(typeNamer: SirTypeNamer): List<SirBridge> {
+            return parameters.flatMap { it.helperBridges(typeNamer) } + returnType.helperBridges(typeNamer)
+        }
     }
 
     class AsCovariantBlock private constructor(

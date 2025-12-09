@@ -67,6 +67,7 @@ class Demo: A<Int>, B<Int?> {
 abstract class Box<T>(val t: T)
 class DefaultBox<T>(t: T): Box<T>(t)
 class TripleBox: Box<Box<Box<Int>>>(DefaultBox(DefaultBox(5)))
+class FunctionalBox: Box<()->Unit>( {} )
 
 class GenericWithComparableUpperBound<T: Comparable<T>>(val t: T)
 

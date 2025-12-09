@@ -117,6 +117,12 @@ fun produceWithStringReceiver(): String.()->String = {
     "$this$this"
 }
 
+// MODULE: consume_consuming
+// EXPORT_TO_SWIFT
+// FILE: consume_consuming.kt
+
+fun foo_consume_consuming(block: ((Int, Int)-> IntRange)->Unit): Unit = block { l, r -> IntRange(l, r) }
+
 // MODULE: data
 // EXPORT_TO_SWIFT
 // FILE: data.kt

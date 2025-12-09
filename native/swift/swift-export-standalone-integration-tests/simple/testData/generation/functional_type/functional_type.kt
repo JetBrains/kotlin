@@ -9,8 +9,8 @@ fun foo_1(): ()->Unit = TODO()
 fun foo_consume_simple(block: ()->Unit): Unit = TODO()
 
 fun foo_consume_producing(block: ()->(()->Unit)): Unit = TODO()
-// KT-82907 Swift Export: attributes are not printed for parameters of closures
-//fun foo_consume_consuming(block: (()->Unit)->Unit): Unit = TODO()
+fun foo_consume_consuming(block: ((UInt, UInt)-> IntRange)->Unit): Unit = TODO()
+fun foo_consume_consuming_2(block: ((UInt, UInt)-> IntRange)->Unit): Unit = TODO()
 
 var closure_property: () -> Unit = {}
 
