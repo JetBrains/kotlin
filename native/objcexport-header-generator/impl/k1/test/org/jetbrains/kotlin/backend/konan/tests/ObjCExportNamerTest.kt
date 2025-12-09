@@ -6,18 +6,23 @@
 package org.jetbrains.kotlin.backend.konan.tests
 
 import com.intellij.openapi.util.Disposer
+import org.jetbrains.kotlin.backend.konan.ObjCExportNameCollisionMode
 import org.jetbrains.kotlin.backend.konan.descriptors.enumEntries
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportNamer
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportNamer.ClassOrProtocolName
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportNamer.PropertyName
+import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportProblemCollector
 import org.jetbrains.kotlin.backend.konan.testUtils.*
+import org.jetbrains.kotlin.cli.common.disposeRootInWriteAction
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi2ir.findSingleFunction
 import org.jetbrains.kotlin.resolve.scopes.findFirstVariable
-import org.jetbrains.kotlin.cli.common.disposeRootInWriteAction
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
@@ -201,5 +206,191 @@ class ObjCExportNamerTest : InlineSourceTestEnvironment {
         assertEquals(ClassOrProtocolName("Foo", "Foo"), namer.getClassOrProtocolName(foo))
         assertEquals("a", namer.getEnumEntrySelector(fooA))
         assertEquals("a", namer.getEnumEntrySwiftName(fooA))
+    }
+
+    @Test
+    fun `test - name collision with annotation on class suppresses error`() {
+        val problemCollector = TestObjCExportProblemCollector()
+        val module = createModuleDescriptor {
+            source(
+                """
+                package a
+                class Foo
+            """.trimIndent()
+            )
+            source(
+                """
+                package b
+                @kotlin.native.ObjCExportIgnoreNameCollision
+                class Foo
+            """.trimIndent()
+            )
+        }
+
+        val aFoo = module.findClassAcrossModuleDependencies(ClassId.fromString("a/Foo"))!!
+        val bFoo = module.findClassAcrossModuleDependencies(ClassId.fromString("b/Foo"))!!
+
+        val configuration = object : ObjCExportNamer.Configuration {
+            override val topLevelNamePrefix = ""
+            override fun getAdditionalPrefix(module: ModuleDescriptor) = null
+            override val objcGenerics = true
+            override val nameCollisionMode = ObjCExportNameCollisionMode.ERROR
+        }
+
+        val namer = createObjCExportNamer(
+            configuration = configuration,
+            problemCollector = problemCollector
+        )
+
+        assertEquals(ClassOrProtocolName("Foo", "Foo"), namer.getClassOrProtocolName(aFoo))
+        assertEquals(ClassOrProtocolName("Foo_", "Foo_"), namer.getClassOrProtocolName(bFoo))
+
+        assertEquals(0, problemCollector.errors.size)
+    }
+
+    @Test
+    fun `test - name collision with annotation on method suppresses error`() {
+        val problemCollector = TestObjCExportProblemCollector()
+        val module = createModuleDescriptor {
+            source(
+                """
+                package test
+                class Foo {
+                    fun bar() {}
+                    @kotlin.native.ObjCExportIgnoreNameCollision
+                    fun bar(x: Int) {}
+                }
+            """.trimIndent()
+            )
+        }
+
+        val foo = module.findClassAcrossModuleDependencies(ClassId.fromString("test/Foo"))!!
+        val bar0 = foo.unsubstitutedMemberScope.getContributedFunctions(Name.identifier("bar"), NoLookupLocation.FROM_TEST)
+            .first { it.valueParameters.isEmpty() }
+        val bar1 = foo.unsubstitutedMemberScope.getContributedFunctions(Name.identifier("bar"), NoLookupLocation.FROM_TEST)
+            .first { it.valueParameters.size == 1 }
+
+        val configuration = object : ObjCExportNamer.Configuration {
+            override val topLevelNamePrefix = ""
+            override fun getAdditionalPrefix(module: ModuleDescriptor) = null
+            override val objcGenerics = true
+            override val nameCollisionMode = ObjCExportNameCollisionMode.ERROR
+        }
+
+        val namer = createObjCExportNamer(
+            configuration = configuration,
+            problemCollector = problemCollector
+        )
+
+        namer.getSelector(bar0)
+        namer.getSelector(bar1)
+
+        assertEquals(0, problemCollector.errors.size)
+    }
+
+    @Test
+    fun `test - name collision annotation on class propagates to methods`() {
+        val problemCollector = TestObjCExportProblemCollector()
+        val module = createModuleDescriptor {
+            source(
+                """
+                package test
+                @kotlin.native.ObjCExportIgnoreNameCollision
+                class Foo {
+                    fun bar() {}
+                    fun bar(x: Int) {}
+                }
+            """.trimIndent()
+            )
+        }
+
+        val foo = module.findClassAcrossModuleDependencies(ClassId.fromString("test/Foo"))!!
+        val bar0 = foo.unsubstitutedMemberScope.getContributedFunctions(Name.identifier("bar"), NoLookupLocation.FROM_TEST)
+            .first { it.valueParameters.isEmpty() }
+        val bar1 = foo.unsubstitutedMemberScope.getContributedFunctions(Name.identifier("bar"), NoLookupLocation.FROM_TEST)
+            .first { it.valueParameters.size == 1 }
+
+        val configuration = object : ObjCExportNamer.Configuration {
+            override val topLevelNamePrefix = ""
+            override fun getAdditionalPrefix(module: ModuleDescriptor) = null
+            override val objcGenerics = true
+            override val nameCollisionMode = ObjCExportNameCollisionMode.ERROR
+        }
+
+        val namer = createObjCExportNamer(
+            configuration = configuration,
+            problemCollector = problemCollector
+        )
+
+        namer.getSelector(bar0)
+        namer.getSelector(bar1)
+
+        assertEquals(0, problemCollector.errors.size)
+    }
+
+    @Test
+    fun `test - name collision with warning mode and annotation`() {
+        val problemCollector = TestObjCExportProblemCollector()
+        val module = createModuleDescriptor {
+            source(
+                """
+                package a
+                class Foo
+            """.trimIndent()
+            )
+            source(
+                """
+                package b
+                @kotlin.native.ObjCExportIgnoreNameCollision
+                class Foo
+            """.trimIndent()
+            )
+        }
+
+        val aFoo = module.findClassAcrossModuleDependencies(ClassId.fromString("a/Foo"))!!
+        val bFoo = module.findClassAcrossModuleDependencies(ClassId.fromString("b/Foo"))!!
+
+        val configuration = object : ObjCExportNamer.Configuration {
+            override val topLevelNamePrefix = ""
+            override fun getAdditionalPrefix(module: ModuleDescriptor) = null
+            override val objcGenerics = true
+            override val nameCollisionMode = ObjCExportNameCollisionMode.WARNING
+        }
+
+        val namer = createObjCExportNamer(
+            configuration = configuration,
+            problemCollector = problemCollector
+        )
+
+        assertEquals(ClassOrProtocolName("Foo", "Foo"), namer.getClassOrProtocolName(aFoo))
+        assertEquals(ClassOrProtocolName("Foo_", "Foo_"), namer.getClassOrProtocolName(bFoo))
+
+        assertEquals(0, problemCollector.warnings.size)
+    }
+}
+
+private class TestObjCExportProblemCollector : ObjCExportProblemCollector {
+    val warnings = mutableListOf<String>()
+    val errors = mutableListOf<String>()
+    val exceptions = mutableListOf<Throwable>()
+
+    override fun reportWarning(text: String) {
+        warnings.add(text)
+    }
+
+    override fun reportWarning(declaration: DeclarationDescriptor, text: String) {
+        warnings.add("$declaration: $text")
+    }
+
+    override fun reportError(text: String) {
+        errors.add(text)
+    }
+
+    override fun reportError(declaration: DeclarationDescriptor, text: String) {
+        errors.add("$declaration: $text")
+    }
+
+    override fun reportException(throwable: Throwable) {
+        exceptions.add(throwable)
     }
 }

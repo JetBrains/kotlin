@@ -6,16 +6,19 @@
 @file:kotlin.jvm.JvmMultifileClass
 @file:kotlin.jvm.JvmName("StringsKt")
 @file:Suppress("EXTENSION_SHADOWED_BY_MEMBER")
+@file:OptIn(kotlin.experimental.ExperimentalObjCExportIgnoreNameCollision::class)
 
 package kotlin.text
 
 import kotlin.contracts.*
+import kotlin.native.ObjCExportIgnoreNameCollision
 
 /**
  * A mutable sequence of characters.
  *
  * String builder can be used to efficiently perform multiple string manipulation operations.
  */
+@ObjCExportIgnoreNameCollision
 public expect class StringBuilder : Appendable, CharSequence {
     /** Constructs an empty string builder. */
     public constructor()

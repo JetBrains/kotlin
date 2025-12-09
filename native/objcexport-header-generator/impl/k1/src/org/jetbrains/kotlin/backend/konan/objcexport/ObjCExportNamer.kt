@@ -885,7 +885,7 @@ class ObjCExportNamerImpl(
                     return it
                 }
 
-                if (!reportedCollision) {
+                if (!reportedCollision && !element.hasObjCExportIgnoreNameCollisionAnnotation()) {
                     reportedCollision = true
                     val conflict = when (res) {
                         is AssignResult.Conflict if res.conflictingElement is DeclarationDescriptor ->
@@ -1164,6 +1164,23 @@ fun abbreviate(name: String): String {
     if (uppers.length >= 3) return uppers
 
     return normalizedName
+}
+
+private fun Any.hasObjCExportIgnoreNameCollisionAnnotation(): Boolean {
+    if (this !is DeclarationDescriptor) return false
+
+    if (annotations.hasAnnotation(KonanFqNames.objCExportIgnoreNameCollision)) {
+        return true
+    }
+
+    if (this is CallableMemberDescriptor) {
+        val containingClass = containingDeclaration as? ClassDescriptor
+        if (containingClass?.annotations?.hasAnnotation(KonanFqNames.objCExportIgnoreNameCollision) == true) {
+            return true
+        }
+    }
+
+    return false
 }
 
 // Note: most usages of this method rely on the fact that concatenation of valid identifiers is valid identifier.
