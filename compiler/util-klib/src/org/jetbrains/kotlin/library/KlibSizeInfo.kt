@@ -69,7 +69,8 @@ private fun KFile.collectTopLevelElements(): List<KlibElementWithSize> {
 
     for (entry in entries) {
         // Expand the contents of the "default" directory, don't show the directory itself.
-        if (entry.name == "default" && entry.isDirectory) {
+        val entryNameNormalized = entry.name.trimEnd('/', '\\').lowercase()
+        if (entryNameNormalized == "default" && entry.isDirectory) {
             defaultEntry = entry
         } else {
             otherTopLevelEntries += entry
