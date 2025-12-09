@@ -24,13 +24,9 @@ import org.jetbrains.kotlin.fir.scopes.impl.FirStandardOverrideChecker
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.toFirResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.ConeClassLikeType
-import org.jetbrains.kotlin.fir.types.ConeErrorType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.arrayElementType
-import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.coneType
-import org.jetbrains.kotlin.fir.types.lowerBoundIfFlexible
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 
@@ -42,11 +38,10 @@ object FirOperatorOfChecker : FirRegularClassChecker(MppCheckerKind.Common) {
         if (LanguageFeature.CollectionLiterals.isDisabled()) return
         val companion = declaration.companionObjectSymbol?.fir ?: return
 
-        CheckerImpl(declaration, companion).check()
+        CheckerImpl(companion).check()
     }
 
     private class CheckerImpl(
-        val outerClass: FirRegularClass,
         val companion: FirRegularClass,
     ) {
         open class OfOverload(val function: FirNamedFunction)
@@ -54,32 +49,6 @@ object FirOperatorOfChecker : FirRegularClassChecker(MppCheckerKind.Common) {
         class MainOfOverload(function: FirNamedFunction, val mainParameter: FirValueParameter) : OfOverload(function) {
             val mainParameterElementType: ConeKotlinType?
                 get() = mainParameter.returnTypeRef.coneType.arrayElementType()
-        }
-
-        context(context: CheckerContext, reporter: DiagnosticReporter)
-        fun OfOverload.checkReturnType() {
-            fun report(dueToNullability: Boolean) {
-                if (!dueToNullability) {
-                    reporter.reportOn(function.source, FirErrors.RETURN_TYPE_MISMATCH_OF_OPERATOR_OF, outerClass.symbol)
-                } else {
-                    reporter.reportOn(function.source, FirErrors.NULLABLE_RETURN_TYPE_OF_OPERATOR_OF)
-                }
-            }
-
-            val returnType = function.returnTypeRef.coneType.lowerBoundIfFlexible().fullyExpandedType()
-            when {
-                returnType is ConeErrorType -> {
-                }
-                returnType !is ConeClassLikeType -> {
-                    report(dueToNullability = false)
-                }
-                returnType.classId != outerClass.symbol.classId -> {
-                    report(dueToNullability = false)
-                }
-                returnType.isMarkedNullable -> {
-                    report(dueToNullability = true)
-                }
-            }
         }
 
         context(overrideChecker: FirStandardOverrideChecker)
@@ -179,10 +148,6 @@ object FirOperatorOfChecker : FirRegularClassChecker(MppCheckerKind.Common) {
             }
 
             if (allOverloads.isEmpty()) return
-
-            allOverloads.forEach {
-                it.checkReturnType()
-            }
 
             if (!checkNumberOfMainOverloads(allOverloads)) return
 

@@ -16,8 +16,10 @@ import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.scopes.overriddenFunctions
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
@@ -29,6 +31,7 @@ sealed class OperatorDiagnostic {
     class IllegalOperatorDiagnostic(val message: String) : OperatorDiagnostic()
     class DeprecatedOperatorDiagnostic(val message: String, val feature: LanguageFeature) : OperatorDiagnostic()
     class Unsupported(val feature: LanguageFeature) : OperatorDiagnostic()
+    class ReturnTypeMismatchWithOuterClass(val outer: FirRegularClassSymbol, val dueToNullability: Boolean) : OperatorDiagnostic()
 }
 
 sealed class CheckResult(val isSuccess: Boolean) {
@@ -139,8 +142,9 @@ object OperatorFunctionChecks {
         checkFor(
             OperatorNameConventions.OF,
             Checks.FeatureIsSupported(LanguageFeature.CollectionLiterals),
-            Checks.companionMember, Checks.notExtension,
-            Checks.noContextParameters, Checks.noDefaults, Checks.onlyLastVararg,
+            Checks.notExtension, Checks.noContextParameters, Checks.noDefaults, Checks.onlyLastVararg,
+            // Also includes a check that it is a companion member
+            Checks.Returns.outerOfCompanionWhereDefined,
         )
     }
 
@@ -192,11 +196,6 @@ private object Checks {
 
     val member = simple("must be a member function") { function, _ ->
         function.dispatchReceiverType != null
-    }
-
-    val companionMember = simple("must be a member of companion", requiredResolvePhase = { FirResolvePhase.STATUS }) { function, session ->
-        val dispatch = function.dispatchReceiverType ?: return@simple false
-        dispatch.toRegularClassSymbol(session)?.isCompanion == true
     }
 
     val notExtension = simple("must not have an extension receiver") { function, _ ->
@@ -264,6 +263,33 @@ private object Checks {
         val unit = returnsCheck("must return 'Unit'") { function, session ->
             function.returnTypeRef.coneType.fullyExpandedType(session).isUnit
         }
+
+        val outerOfCompanionWhereDefined =
+            full(
+                requiredResolvePhase = { fn ->
+                    when (fn.returnTypeRef) {
+                        is FirResolvedTypeRef -> FirResolvePhase.STATUS
+                        is FirImplicitTypeRef -> FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE
+                        else -> FirResolvePhase.TYPES
+                    }
+                }
+            ) { function, session ->
+                val dispatch = function.dispatchReceiverType?.toRegularClassSymbol(session)
+                if (dispatch?.isCompanion != true)
+                    return@full OperatorDiagnostic.IllegalOperatorDiagnostic("must be a member of companion")
+
+                val outerClass = dispatch.getContainingClassSymbol() as? FirRegularClassSymbol ?: return@full null
+
+                val returnType = function.returnTypeRef.coneType.lowerBoundIfFlexible().fullyExpandedType(session)
+                when {
+                    returnType is ConeErrorType -> null
+                    returnType !is ConeClassLikeType || returnType.classId != outerClass.classId ->
+                        OperatorDiagnostic.ReturnTypeMismatchWithOuterClass(outerClass, dueToNullability = false)
+                    returnType.isMarkedNullable ->
+                        OperatorDiagnostic.ReturnTypeMismatchWithOuterClass(outerClass, dueToNullability = true)
+                    else -> null
+                }
+            }
     }
 
     val noDefaults =

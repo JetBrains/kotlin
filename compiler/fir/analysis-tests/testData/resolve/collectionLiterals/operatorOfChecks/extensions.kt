@@ -9,7 +9,7 @@ class C {
     }
 }
 
-<!INAPPLICABLE_OPERATOR_MODIFIER("must be a member of companion")!>operator<!> fun C.of(): C = C()
+<!INAPPLICABLE_OPERATOR_MODIFIER("must not have an extension receiver")!>operator<!> fun C.of(): C = C()
 
 /* GENERATED_FIR_TAGS: classDeclaration, companionObject, funWithExtensionReceiver, functionDeclaration,
 objectDeclaration, operator, vararg */
