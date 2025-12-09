@@ -652,19 +652,24 @@ internal class TestProcessor(
         }
 
         if (annotationCollector.testClasses.isNotEmpty() || annotationCollector.topLevelFunctions.isNotEmpty()) {
-            irFile.annotations += buildSimpleAnnotation(
-                    context.irBuiltIns, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, symbols.testsProcessed.owner
-            )
+            symbols.testsProcessed?.let {
+                irFile.annotations += buildSimpleAnnotation(
+                        context.irBuiltIns, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, it.owner
+                )
+            }
         }
     }
     // endregion
 
-    private fun shouldSkipFile(irFile: IrFile): Boolean =
-            irFile.hasAnnotation(symbols.testsProcessed)
-                    || irFile.moduleDescriptor.let {
-                // Process test annotations in source libraries too.
-                sourcesModules != null && it !in sourcesModules
-            }
+    private fun shouldSkipFile(irFile: IrFile): Boolean {
+        val hasTestsProcessedAnnotation = symbols.testsProcessed?.let { irFile.hasAnnotation(it) } ?: false
+
+        return hasTestsProcessedAnnotation
+                || irFile.moduleDescriptor.let {
+            // Process test annotations in source libraries too.
+            sourcesModules != null && it !in sourcesModules
+        }
+    }
 
     override fun lower(irFile: IrFile) {
         // TODO: uses descriptors.
