@@ -65,6 +65,8 @@ import java.io.File
 import kotlin.reflect.KClass
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.api.ast.parseToSyntaxTree
+import kotlin.script.experimental.host.FileBasedScriptSource
+import kotlin.script.experimental.host.FileScriptSource
 import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.host.getScriptingClass
 import kotlin.script.experimental.impl._languageVersion
@@ -147,10 +149,20 @@ class ScriptJvmK2CompilerImpl(
         }.onSuccess {
             it.refineBeforeCompiling(script)
         }.onSuccess {
-            it.with {
-                get(ScriptCompilationConfiguration.importScripts)?.let {
-                    resolvedImportScripts(it)
+            val resolvedScripts = it[ScriptCompilationConfiguration.importScripts]?.map { imported ->
+                if (imported is FileBasedScriptSource && !imported.file.exists())
+                    return makeFailureResult("Imported source file not found: ${imported.file}".asErrorDiagnostics(path = script.locationId))
+                when (imported) {
+                    is FileScriptSource -> {
+                        val absoluteFile = imported.file.normalize().absoluteFile
+                        if (imported.file == absoluteFile) imported else FileScriptSource(absoluteFile)
+                    }
+                    else -> imported
                 }
+            }
+            if (resolvedScripts.isNullOrEmpty()) it.asSuccess()
+            else it.with {
+                resolvedImportScripts(resolvedScripts)
             }.asSuccess()
         }
 
