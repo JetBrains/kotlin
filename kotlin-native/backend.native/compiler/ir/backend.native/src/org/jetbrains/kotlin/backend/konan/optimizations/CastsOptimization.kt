@@ -582,7 +582,7 @@ internal class CastsOptimization(val context: Context) : BodyLoweringPass {
                     variableAliases[variable] = if (alias != multipleValuesMarker)
                         alias
                     else
-                        createPhantomVariable(variable, createPhantomValueAt(variable, irElement))
+                        createPhantomVariable(variable, createPhantomValueAt(variable, irElement)) // This is basically a phi node.
                 }
                 return VisitorResult(
                         Predicates.optimizeAwayComplexTerms(cfmpInfo.predicate, complexTermsMask),
