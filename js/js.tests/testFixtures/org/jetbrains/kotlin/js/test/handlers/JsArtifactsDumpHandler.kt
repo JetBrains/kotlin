@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.js.test.handlers
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.TranslationMode
 import org.jetbrains.kotlin.js.engine.ScriptExecutionException
 import org.jetbrains.kotlin.js.test.utils.compiledTestOutputDirectory
-import org.jetbrains.kotlin.js.test.converters.kind
 import org.jetbrains.kotlin.test.WrappedException
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
@@ -48,19 +47,13 @@ class JsArtifactsDumpHandler(testServices: TestServices) : AfterAnalysisChecker(
     }
 
     private fun String.replacePaths(): String = supportedTranslationModes.fold(this) { s, translationMode ->
-        testServices.moduleStructure.modules.fold(s) { s, module ->
-            val oldPath = JsEnvironmentConfigurator.getJsModuleArtifactPath(
-                testServices,
-                module.name,
-                translationMode
-            ) + module.kind.jsExtension
-            val newPath =
-                getOutputDir(translationMode).absolutePath + File.separator + JsEnvironmentConfigurator.getJsModuleArtifactName(
-                    testServices,
-                    module.name
-                ) + module.kind.jsExtension
-            s.replace(oldPath, newPath)
-        }
+        val outputDir = getOutputDir(translationMode)
+        JsEnvironmentConfigurator
+            .getJsArtifactsOutputDir(testServices, translationMode)
+            .listFiles { it.isFile }!!
+            .fold(s) { s, file ->
+                s.replace(file.absolutePath, outputDir.resolve(file.name).absolutePath)
+            }
     }
 
     private fun getOutputDir(translationMode: TranslationMode): File {
