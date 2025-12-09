@@ -10,5 +10,6 @@ import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsBinaryContainer
 
 interface KotlinWasmSpecTargetDsl :
     KotlinWasmTargetDsl,
-    KotlinTargetWithNodeJsDsl,
+    KotlinTargetWithSpecDsl,
+    KotlinJsTargetDsl,
     HasBinaries<KotlinJsBinaryContainer>

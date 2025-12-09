@@ -13,8 +13,7 @@ import java.io.Serializable
 @Suppress("EnumEntryName")
 enum class KotlinWasmTargetAttribute : Named, Serializable {
     wasi,
-    js,
-    spec;
+    js;
 
     override fun getName(): String =
         name

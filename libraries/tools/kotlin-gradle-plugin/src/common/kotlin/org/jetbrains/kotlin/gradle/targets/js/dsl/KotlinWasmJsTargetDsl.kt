@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.targets.wasm.d8.D8Exec
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrSubTargetWithBinary
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinD8Ir
+import org.jetbrains.kotlin.gradle.targets.wasm.spec.SpecExec
 import org.jetbrains.kotlin.gradle.utils.withType
 
 interface KotlinWasmSubTargetContainerDsl : KotlinTarget {
@@ -27,6 +28,8 @@ interface KotlinWasmSubTargetContainerDsl : KotlinTarget {
             .withType<KotlinD8Ir>()
             .configureEach(body)
     }
+
+    val spec: KotlinWasmSpecDsl
 }
 
 interface KotlinWasmJsTargetDsl : KotlinWasmTargetDsl, KotlinJsTargetDsl {
@@ -43,6 +46,16 @@ interface KotlinWasmJsTargetDsl : KotlinWasmTargetDsl, KotlinJsTargetDsl {
 interface KotlinWasmD8Dsl : KotlinJsSubTargetDsl {
     fun runTask(body: Action<D8Exec>)
     fun runTask(body: D8Exec.() -> Unit) {
+        runTask(Action {
+            body(it)
+        })
+    }
+}
+
+@OptIn(ExperimentalWasmDsl::class)
+interface KotlinWasmSpecDsl : KotlinJsSubTargetDsl {
+    fun runTask(body: Action<SpecExec>)
+    fun runTask(body: SpecExec.() -> Unit) {
         runTask(Action {
             body(it)
         })
