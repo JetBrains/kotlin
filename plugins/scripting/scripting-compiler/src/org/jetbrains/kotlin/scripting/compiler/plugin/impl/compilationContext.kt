@@ -354,7 +354,9 @@ internal fun collectRefinedSourcesAndUpdateEnvironment(
     getScriptCompilationConfiguration: (SourceCode) -> ScriptCompilationConfigurationResult?
 ): Pair<List<SourceCode>, List<ScriptsCompilationDependencies.SourceDependencies>> {
     val sourceFiles = arrayListOf(mainSource)
-    val (classpath, newSources, sourceDependencies) = collectScriptsCompilationDependencies(sourceFiles, getScriptCompilationConfiguration)
+    val (classpath, newSources, sourceDependencies) =
+        @Suppress("DEPRECATION")
+        collectScriptsCompilationDependencies(sourceFiles, getScriptCompilationConfiguration)
 
     context.environment.updateClasspath(classpath.map(::JvmClasspathRoot))
 
@@ -365,7 +367,6 @@ internal fun collectRefinedSourcesAndUpdateEnvironment(
     return sourceFiles to sourceDependencies
 }
 
-@OptIn(K1SpecificScriptingServiceAccessor::class)
 private fun CompilerConfiguration.updateWithRefinedConfigurations(
     context: SharedScriptCompilationContext,
     sourceFiles: List<SourceCode>,

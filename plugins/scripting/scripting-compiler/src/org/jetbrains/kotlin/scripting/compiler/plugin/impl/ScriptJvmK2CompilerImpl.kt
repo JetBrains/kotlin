@@ -64,7 +64,6 @@ import org.jetbrains.kotlin.utils.tryCreateCallableMapping
 import java.io.File
 import kotlin.reflect.KClass
 import kotlin.script.experimental.api.*
-import kotlin.script.experimental.api.ast.parseToSyntaxTree
 import kotlin.script.experimental.host.FileBasedScriptSource
 import kotlin.script.experimental.host.FileScriptSource
 import kotlin.script.experimental.host.ScriptingHostConfiguration
@@ -72,7 +71,6 @@ import kotlin.script.experimental.host.configurationDependencies
 import kotlin.script.experimental.host.getScriptingClass
 import kotlin.script.experimental.impl._languageVersion
 import kotlin.script.experimental.impl.refineOnAnnotationsWithLazyDataCollection
-import kotlin.script.experimental.impl.refineOnSyntaxTree
 import kotlin.script.experimental.jvm.GetScriptingClassByClassLoader
 import kotlin.script.experimental.jvm.baseClassLoader
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
@@ -94,7 +92,8 @@ class ScriptJvmK2CompilerIsolated(val hostConfiguration: ScriptingHostConfigurat
                     },
                     messageCollector
                 ) {
-                    it.compile(script)
+                    if (messageCollector.hasErrors()) failure(messageCollector)
+                    else it.compile(script)
                 }
             }
         }
@@ -203,6 +202,22 @@ class ScriptJvmK2CompilerImpl(
                 }
             }.valueOr { return it }
         allSourceFiles.addAll(newSources)
+
+        val ignoredOptionsReportingState = state.compilerContext.ignoredOptionsReportingState
+        val updatedCompilerOptions = allSourceFiles.flatMapTo(mutableListOf()) {
+            getRefinedConfiguration(it)[ScriptCompilationConfiguration.compilerOptions] ?: emptyList()
+        }
+        if (updatedCompilerOptions.isNotEmpty() && updatedCompilerOptions != state.baseScriptCompilationConfiguration[ScriptCompilationConfiguration.compilerOptions]) {
+            compilerConfiguration.updateWithCompilerOptions(
+                updatedCompilerOptions,
+                reportingCtx.messageCollector,
+                ignoredOptionsReportingState,
+                true
+            )
+        }
+
+        if (reportingCtx.messageCollector.hasErrors()) return failure(reportingCtx.diagnosticsCollector)
+
         val extensionRegistrars = FirExtensionRegistrar.getInstances(project)
         val compilerEnvironment = ModuleCompilerEnvironment(state.projectEnvironment, reportingCtx.diagnosticsCollector)
         val renderDiagnosticName = compilerConfiguration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
@@ -275,14 +290,15 @@ class ScriptJvmK2CompilerImpl(
                     ?.let { it.symbol.packageFqName().child(NameUtils.getScriptTargetClassName(it.name)) }
             },
             sourceDependencies,
-            {
-                state.hostConfiguration.getRefinedOrBaseCompilationConfiguration(it).valueOrThrow() // TODO: errors? orBase?
-            },
+            ::getRefinedConfiguration,
             extractResultFields(irInput.irModuleFragment)
         ).onSuccess { compiledScript ->
             ResultWithDiagnostics.Success(compiledScript, reportingCtx.messageCollector.diagnostics)
         }
     }
+
+    private fun getRefinedConfiguration(script: SourceCode): ScriptCompilationConfiguration =
+        state.hostConfiguration.getRefinedOrBaseCompilationConfiguration(script).valueOrThrow() // TODO: errors? orBase?
 
     context(reportingCtx: ErrorReportingContext)
     private fun collectScriptAnnotations(
