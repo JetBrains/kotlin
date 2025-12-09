@@ -277,7 +277,7 @@ interface PreSerializationNativeSymbols : PreSerializationKlibSymbols {
     val isAssertionArgumentEvaluationEnabled: IrSimpleFunctionSymbol
 
     val testInitializer: IrClassSymbol
-    val testsProcessed: IrClassSymbol
+    val testsProcessed: IrClassSymbol? // KT-83151 Restore non-nullability of symbols available since 2.3
 
     val topLevelSuite: IrClassSymbol
     val baseClassSuite: IrClassSymbol
@@ -290,7 +290,7 @@ interface PreSerializationNativeSymbols : PreSerializationKlibSymbols {
             CallableIds.isAssertionArgumentEvaluationEnabled.functionSymbol()
 
         override val testInitializer = ClassIds.testInitializer.classSymbol()
-        override val testsProcessed = ClassIds.testsProcessed.classSymbol()
+        override val testsProcessed = ClassIds.testsProcessed.classSymbolOrNull()
 
         override val topLevelSuite = ClassIds.topLevelSuite.classSymbol()
         override val baseClassSuite = ClassIds.baseClassSuite.classSymbol()
