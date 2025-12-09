@@ -61,7 +61,7 @@ class KonanIrLinker(
         platformSpecificClassFilter = KonanFakeOverrideClassFilter,
         externalOverridabilityConditions = externalOverridabilityConditions,
         isMultipleInheritedImplementationsAllowed = {
-            // Properties of ObjC protocols are oddly serialized as final, with abstract getter and setter.
+            // Properties of ObjC protocols are serialized as final, along with their getters and setters.
             // In case of intersection override, the usual logic of IrLinkerFakeOverrideBuilderStrategy.postProcessGeneratedFakeOverride()
             // will raise AMBIGUOUS_NON_OVERRIDDEN_CALLABLE_MEMBER, since properties in protocols are non-abstract.
             // So such properties are allowed to form intersection overrides without a partial linkage error. Native backend will handle them correctly.
