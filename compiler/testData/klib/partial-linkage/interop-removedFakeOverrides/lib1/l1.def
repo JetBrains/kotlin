@@ -1,6 +1,8 @@
 language=Objective-C
 ---
-@interface Bar
+#import <Foundation/Foundation.h>
+
+@interface Bar : NSObject
 -(instancetype) init;
 -(int) oldFun;
 -(int) newFun;
