@@ -50,7 +50,8 @@ class ValueDirective<T : Any>(
 
 abstract class RegisteredDirectives : Iterable<Directive> {
     companion object {
-        val Empty = RegisteredDirectivesImpl(emptyList(), emptyMap(), emptyMap())
+        // Made lazy to break a class initialization cycle (similar to KT-82886)
+        val Empty by lazy { RegisteredDirectivesImpl(emptyList(), emptyMap(), emptyMap()) }
     }
 
     abstract operator fun contains(directive: Directive): Boolean
