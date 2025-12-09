@@ -71,7 +71,7 @@ internal data class Specifier(
  *
  * @see Specifier for details on the parsed specifiers
  */
-internal class SimpleFormatParser(private val format: String) {
+internal class FormatParser(private val format: String) {
     private var position = 0
 
     /**
@@ -410,7 +410,7 @@ internal object Formatter {
  *   match specifiers, or argument count is incorrect.
  */
 internal fun String.formatImpl(args: Array<out Any?>): String {
-    val parser = SimpleFormatParser(this)
+    val parser = FormatParser(this)
     val parts = parser.parseParts()
     val output = StringBuilder()
     var argIndex = 0
