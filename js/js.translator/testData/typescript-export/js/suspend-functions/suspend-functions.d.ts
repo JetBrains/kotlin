@@ -93,6 +93,7 @@ declare namespace JS_TESTS {
             }
         }
         function generateOneMoreChildOfTest(): foo.Test;
+        function acceptHolderOfSum(test: foo.HolderOfSum): Promise<void>;
         function acceptTest(test: foo.Test): Promise<void>;
         class ExportedChild /* extends foo.NotExportedParent */ {
             constructor();

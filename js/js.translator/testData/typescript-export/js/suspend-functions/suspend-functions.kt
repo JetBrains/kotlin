@@ -160,6 +160,20 @@ open class NotExportedTestChild : Test() {
 fun generateOneMoreChildOfTest(): Test = NotExportedTestChild()
 
 @JsExport
+suspend fun acceptHolderOfSum(test: HolderOfSum) {
+    assert(test.sum(1, 2) == when (test) {
+        is NotExportedTestChild -> 42
+        else -> 3
+    })
+
+    assert(test.sumNullable(null, 5) == when (test) {
+        is TestChild -> 6
+        is NotExportedTestChild -> 44
+        else -> 5
+    })
+}
+
+@JsExport
 suspend fun acceptTest(test: Test) {
     assert(test.sum(1, 2) == when (test) {
         is NotExportedTestChild -> 42

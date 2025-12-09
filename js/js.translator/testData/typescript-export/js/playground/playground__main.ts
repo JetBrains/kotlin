@@ -9,6 +9,7 @@ import callingHiddenParentMethod = JS_TESTS.foo.callingHiddenParentMethod;
 import KtList = JS_TESTS.kotlin.collections.KtList;
 import callingExportedParentMethod = JS_TESTS.foo.callingExportedParentMethod;
 import justCallParentAsyncMethod = JS_TESTS.foo.justCallParentAsyncMethod;
+import justCallAsyncFoo = JS_TESTS.foo.justCallAsyncFoo;
 
 class FooImpl implements IFoo<string> {
     foo(): string { return "OK" }
@@ -40,18 +41,21 @@ class FooImpl implements IFoo<string> {
 
 /**
  * # Existing problems:
- * - Suspend functions don't work (P0)
  * - Check is interface (P2)
  *
- * Solved/Ignored problems
- * - Problem: Default value declared on the Kotlin side is always overridden by TypeScript implementation (P3)
- *   Solution: The problem is the same as for class exports, so we're going to ignore it for now.
- *
+ * Not-solved but has a good-enough solution:
  * - Problem: It's possible to export interface with a not-exported parent (P1)
  *   Solution: It would be a new frontend check the same as we have for interface visibility.
  *
  * - Problem: No default implementations
- *   Solution: We're going to introduce a namespace called "defaults" which containing all the default implementations.
+ *   Solution: We're going to introduce a namespace called "defaults" which contains all the default implementations.
+ *
+ * Solved problems
+ * - Problem: Default value declared on the Kotlin side is always overridden by TypeScript implementation (P3)
+ *   Solution: The problem is the same as for class exports, so we're going to ignore it for now.
+ *
+ * - Problem: Suspend functions don't work (P0)
+ *   Solution: We're generating extra bridge for calling interface virtual methods. It works for both Kotlin and TypeScript implementations
  */
 async function box(): Promise<string> {
     const foo = new FooImpl();
@@ -66,9 +70,8 @@ async function box(): Promise<string> {
     result = await foo.asyncFoo()
     if (result !== "OK") return "Fail: just calling asyncFoo method returns unexpected result: " + result
 
-    // TODO: uncomment when suspend functions implementation will work
-    // result = await justCallAsyncFoo(foo)
-    // if (result !== "OK") return "Fail: providing FooImpl to justCallAsyncFoo returns unexpected result: " + result
+    result = await justCallAsyncFoo(foo)
+    if (result !== "OK") return "Fail: providing FooImpl to justCallAsyncFoo returns unexpected result: " + result
 
     result = foo.withDefaults("CALL SIDE OK")
     if (result !== "CALL SIDE OK") return "Fail: just calling withDefaults method with parameters returns unexpected result: " + result
@@ -110,9 +113,8 @@ async function box(): Promise<string> {
     result = await foo.parentAsyncMethod()
     if (result !== "Parent OK") return "Fail: just calling parentAsyncMethod returns unexpected result: " + result
 
-    // TODO: uncomment when suspend functions implementation will work
-    // result = await justCallParentAsyncMethod(foo)
-    // if (result !== "Parent OK") return "Fail: just calling justCallParentAsyncMethod returns unexpected result: " + result
+    result = await justCallParentAsyncMethod(foo)
+    if (result !== "Parent OK") return "Fail: just calling justCallParentAsyncMethod returns unexpected result: " + result
 
     return "OK"
 }

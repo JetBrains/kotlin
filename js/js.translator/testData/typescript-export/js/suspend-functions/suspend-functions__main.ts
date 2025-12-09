@@ -20,6 +20,7 @@ import inlineChain = JS_TESTS.foo.inlineChain;
 import suspendExtensionFun = JS_TESTS.foo.suspendExtensionFun;
 import suspendFunWithContext = JS_TESTS.foo.suspendFunWithContext;
 import WithSuspendExtensionFunAndContext = JS_TESTS.foo.WithSuspendExtensionFunAndContext;
+import acceptHolderOfSum = JS_TESTS.foo.acceptHolderOfSum;
 
 function assert(condition: boolean) {
     if (!condition) {
@@ -44,6 +45,8 @@ async function box(): Promise<string> {
 
     const test = new Test();
     await acceptTest(test);
+    await acceptHolderOfSum(test);
+
     assert(await test.sum(1, 2) === 3);
     assert(await test.varargInt(new Int32Array([1, 2, 3])) === 3);
     assert(await test.varargNullableInt([1, null, 3]) === 3);
@@ -67,6 +70,7 @@ async function box(): Promise<string> {
 
     const testChild = new TestChild();
     await acceptTest(testChild);
+    await acceptHolderOfSum(testChild);
     assert(await testChild.varargInt(new Int32Array([1, 2, 3])) === 5);
     assert(await testChild.sumNullable(null, null) === 2);
     const testChildResult = await testChild.generic3<number, string, boolean, number, string>(1, "test", true, 1.0);
@@ -74,6 +78,7 @@ async function box(): Promise<string> {
 
     const anotherTestChild = generateOneMoreChildOfTest()
     await acceptTest(anotherTestChild);
+    await acceptHolderOfSum(anotherTestChild);
     assert(await anotherTestChild.sum(1, 2) === 42);
     assert(await anotherTestChild.varargNullableInt([1, null, 3]) === 43);
     assert(await anotherTestChild.sumNullable(null, null) === 44);
@@ -100,6 +105,7 @@ async function box(): Promise<string> {
     assert(!(await typeScriptTest.generic2<string>(null)));
 
     await acceptTest(new TypeScriptTest())
+    await acceptHolderOfSum(new TypeScriptTest());
 
     const exportedChild = new ExportedChild()
     await acceptExportedChild(exportedChild)

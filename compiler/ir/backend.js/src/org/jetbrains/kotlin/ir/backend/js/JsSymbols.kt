@@ -193,6 +193,7 @@ class JsSymbols(
     val jsInstanceOf = CallableIds.jsInstanceOfIntrinsic.functionSymbol()
     val jsTypeOf = CallableIds.jsTypeOf.functionSymbol()
     val isExternalObject = CallableIds.isExternalObject.functionSymbol()
+    val isMemberFunctionExists = CallableIds.isMemberFunctionExists.functionSymbol()
 
     // Number conversions:
 
@@ -583,6 +584,7 @@ private object CallableIds {
     val jsInstanceOfIntrinsic = "jsInstanceOfIntrinsic".jsCallableId
     val jsTypeOf = "jsTypeOf".jsCallableId
     val isExternalObject = "isExternalObject".jsCallableId
+    val isMemberFunctionExists = "jsIsMemberFunctionExists".jsCallableId
     val numberToByte = "numberToByte".jsCallableId
     val numberToDouble = "numberToDouble".jsCallableId
     val numberToInt = "numberToInt".jsCallableId
