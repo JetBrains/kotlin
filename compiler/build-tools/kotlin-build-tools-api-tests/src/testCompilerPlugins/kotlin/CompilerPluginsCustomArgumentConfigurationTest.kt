@@ -615,6 +615,39 @@ class CompilerPluginsCustomArgumentConfigurationTest {
     }
 
     @Test
+    fun testDifferentPluginIdsSameClasspath() {
+        val toolchain = KotlinToolchains.loadImplementation(CompilerPluginsCustomArgumentConfigurationTest::class.java.classLoader)
+        val operation = toolchain.jvm.createJvmCompilationOperation(emptyList(), Paths.get("."))
+        operation.compilerArguments[COMPILER_PLUGINS] = listOf(
+            CompilerPlugin(
+                "fake-plugin-id-1",
+                listOf(Paths.get("/good-lib.jar")),
+                listOf(CompilerPluginOption("opt1", "val1")),
+                emptySet()
+            ),
+            CompilerPlugin(
+                "fake-plugin-id-2",
+                listOf(Paths.get("/good-lib.jar")),
+                listOf(CompilerPluginOption("opt2", "val2")),
+                emptySet()
+            )
+        )
+        val args = operation.compilerArguments.toArgumentStrings()
+        println(args)
+
+        // Find the -Xplugin argument and count occurrences of same-plugin.jar within it
+        val xpluginArg = args.find { it.startsWith("-Xplugin=") } ?: ""
+        val samePluginJarOccurrences = xpluginArg.split(",").count { it.contains("good-lib.jar") }
+        // there's no harm in duplicating it
+        assertEquals(2, samePluginJarOccurrences, "Expected same-plugin.jar to appear twice in -Xplugin classpath: $args")
+
+        // Verify both plugin options are present
+        val pArg = args.find { it.startsWith("plugin:") } ?: ""
+        assertTrue(pArg.contains("plugin:fake-plugin-id-1:opt1=val1"), "Expected fake-plugin-id-1 option in -P: $args")
+        assertTrue(pArg.contains("plugin:fake-plugin-id-2:opt2=val2"), "Expected fake-plugin-id-2 option in -P: $args")
+    }
+
+    @Test
     fun testRawArgumentsMarkerPluginDefault() {
         val toolchain = KotlinToolchains.loadImplementation(CompilerPluginsCustomArgumentConfigurationTest::class.java.classLoader)
         val operation = toolchain.jvm.createJvmCompilationOperation(emptyList(), Paths.get("."))
