@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.light.classes.symbol.cachedValue
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForClassOrObject
 import org.jetbrains.kotlin.light.classes.symbol.annotations.SymbolLightSimpleAnnotation
+import org.jetbrains.kotlin.light.classes.symbol.classes.isTypeParameter
 import org.jetbrains.kotlin.psi.KtDeclaration
 import javax.swing.Icon
 
@@ -62,7 +63,14 @@ internal class SymbolLightMethodForMappedCollectionClass(
     override fun getParameterList(): PsiParameterList = cachedValue {
         LightParameterListBuilder(manager, KotlinLanguage.INSTANCE).apply {
             javaMethod.parameterList.parameters.forEachIndexed { index, paramFromJava ->
-                val type = providedSignature?.parameterTypes?.get(index) ?: substituteType(paramFromJava.type)
+                val typeFromJava = paramFromJava.type
+                val providedType = providedSignature?.parameterTypes?.get(index)
+                val candidateType = providedType ?: substituteType(typeFromJava)
+                val shouldTryToUnbox = typeFromJava.isTypeParameter() ||
+                        providedType != null ||
+                        (typeFromJava.isJavaLangObject() && substituteObjectWith == candidateType)
+                val type = if (shouldTryToUnbox) candidateType.unboxedOrSelf() else candidateType
+
                 addParameter(
                     LightParameter(
                         paramFromJava.name,
@@ -76,12 +84,15 @@ internal class SymbolLightMethodForMappedCollectionClass(
         }
     }
 
-    private fun substituteType(psiType: PsiType): PsiType {
-        fun isJavaLangObject(type: PsiType?): Boolean =
-            type is PsiClassType && type.canonicalText == CommonClassNames.JAVA_LANG_OBJECT
+    private fun PsiType.isJavaLangObject(): Boolean =
+        this is PsiClassType && this.canonicalText == CommonClassNames.JAVA_LANG_OBJECT
 
+    private fun PsiType.unboxedOrSelf(): PsiType =
+        PsiPrimitiveType.getUnboxedType(this)?.annotate(TypeAnnotationProvider.EMPTY) ?: this
+
+    private fun substituteType(psiType: PsiType): PsiType {
         val substituted = substitutor.substitute(psiType) ?: psiType
-        return if (isJavaLangObject(substituted) && substituteObjectWith != null) {
+        return if (substituted.isJavaLangObject() && substituteObjectWith != null) {
             substituteObjectWith
         } else {
             substituted

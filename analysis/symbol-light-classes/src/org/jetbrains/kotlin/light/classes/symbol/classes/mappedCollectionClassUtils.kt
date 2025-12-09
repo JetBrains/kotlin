@@ -9,6 +9,7 @@ import com.intellij.psi.*
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.KaClassType
+import org.jetbrains.kotlin.analysis.api.types.KaTypeMappingMode
 import org.jetbrains.kotlin.analysis.api.types.KaTypeParameterType
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.builder.LightMemberOriginForDeclaration
@@ -275,7 +276,11 @@ private fun KaSession.createPsiSubstitutor(
 ): PsiSubstitutor {
     val substitutionMap = buildMap<PsiTypeParameter, PsiType> {
         javaCollection.typeParameters.zip(kotlinCollection.typeArguments).forEach { (typeParameter, typeArgument) ->
-            val psiType = typeArgument.type?.asPsiType(useSitePosition = containingClass, allowErrorTypes = true) ?: return@forEach
+            val psiType = typeArgument.type?.asPsiType(
+                useSitePosition = containingClass,
+                allowErrorTypes = true,
+                mode = KaTypeMappingMode.GENERIC_ARGUMENT
+            ) ?: return@forEach
             put(typeParameter, psiType)
         }
     }
@@ -388,7 +393,7 @@ private fun createMethodsWithSpecialSignature(
     return listOf(finalBridgeWithObject, abstractKotlinVariantWithGeneric)
 }
 
-private fun PsiType.isTypeParameter(): Boolean =
+internal fun PsiType.isTypeParameter(): Boolean =
     this is PsiClassType && this.resolve() is PsiTypeParameter
 
 private fun createJavaUtilMapMethodWithSpecialSignature(
