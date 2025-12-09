@@ -3,12 +3,14 @@ package org.jetbrains.kotlin.js.test.klib
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.junit.ComparisonFailure
 import org.junit.jupiter.api.Assumptions
+import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.opentest4j.TestAbortedException
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
+@Tag("sanity")
 class CustomJsCompilerSecondStageSanity : AbstractCustomJsCompilerSecondStageTest() {
     private val testDataRoot = "compiler/testData/klib/klib-compatibility/sanity/"
 
