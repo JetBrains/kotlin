@@ -46,6 +46,7 @@
 #include <unistd.h>
 
 #include <algorithm>
+#include <cerrno>
 #include <fstream>
 #include <iostream>
 #include <limits>
@@ -225,8 +226,9 @@ static std::optional<std::string> CreateSyms(string srcPath) {
   return out.str();
 }
 
-static bool createDir(std::string path) {
+static bool ensureDirExists(std::string path) {
   if (mkdir(path.c_str(), 0700) != 0) {
+    if (errno == EEXIST) return true;
     fprintf(stderr, "Failed to create directory at %s: %s\n", path.c_str(), strerror(errno));
     return false;
   }
@@ -235,7 +237,7 @@ static bool createDir(std::string path) {
 
 static bool SaveSyms(std::string syms, std::string symbol_path) {
   std::string slash = "/";
-  if (!createDir(symbol_path))
+  if (!ensureDirExists(symbol_path))
     return false;
   std::string header = syms.substr(0, syms.find_first_of('\n'));
   auto keywordDelimeter = header.find_first_of(' ');
@@ -249,10 +251,10 @@ static bool SaveSyms(std::string syms, std::string symbol_path) {
   std::string hash = std::string(header.substr(archDelimeter + 1, hashDelimeter - archDelimeter - 1));
   std::string moduleName = std::string(header.substr(hashDelimeter + 1));
   std::string modulePath = std::string(symbol_path + slash + moduleName);
-  if (!createDir(modulePath))
+  if (!ensureDirExists(modulePath))
     return false;
   std::string hashPath = modulePath + slash + hash;
-  if (!createDir(hashPath))
+  if (!ensureDirExists(hashPath))
     return false;
   std::ofstream symFile(hashPath + slash + moduleName + std::string(".sym"));
   symFile << syms;
