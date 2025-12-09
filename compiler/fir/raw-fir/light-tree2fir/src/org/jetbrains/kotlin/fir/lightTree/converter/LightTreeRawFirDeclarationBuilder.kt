@@ -1043,8 +1043,8 @@ class LightTreeRawFirDeclarationBuilder(
                 hasExplicitDelegatedCalls = classWrapper.delegatedSuperCalls.isNotEmpty()
             )
 
-            val generateHeader = !headerMode || context.forceKeepingTheBodyInHeaderMode
-            val firDelegatedCall = runIf(generateDelegatedSuperCall && generateHeader) {
+            val generateDelegatedConstructorCall = !headerMode || context.forceKeepingTheBodyInHeaderMode
+            val firDelegatedCall = runIf(generateDelegatedSuperCall && generateDelegatedConstructorCall) {
                 fun createDelegatedConstructorCall(
                     delegatedConstructorSource: KtLightSourceElement?,
                     delegatedSuperTypeRef: FirTypeRef,
@@ -1221,8 +1221,8 @@ class LightTreeRawFirDeclarationBuilder(
             val delegatedSelfTypeRef = classWrapper.delegatedSelfTypeRef
             val calculatedModifiers = modifiers ?: ModifierList()
             val isExpect = calculatedModifiers.hasExpect() || context.containerIsExpect
-            val generateHeader = !headerMode || context.forceKeepingTheBodyInHeaderMode
-            if (delegatedConstructorNode != null && generateHeader) {
+            val generateDelegatedConstructorCall = !headerMode || context.forceKeepingTheBodyInHeaderMode
+            if (delegatedConstructorNode != null && generateDelegatedConstructorCall) {
                 constructorDelegationCall = convertConstructorDelegationCall(delegatedConstructorNode, classWrapper, isExpect)
             }
 

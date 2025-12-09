@@ -363,11 +363,13 @@ open class LocalDeclarationsLowering(
 
             override fun visitConstructor(declaration: IrConstructor): IrStatement {
                 // Body is transformed separately. See loop over constructors in rewriteDeclarations().
-                val headerMode = context.configuration.languageVersionSettings.getFlag(AnalysisFlags.headerMode)
 
                 val constructorContext = localClassConstructors[declaration] ?: return super.visitConstructor(declaration)
                 return constructorContext.transformedDeclaration.apply {
-                    this.body = if(headerMode) declaration.body else declaration.body!!
+                    if (!context.configuration.languageVersionSettings.getFlag(AnalysisFlags.headerMode)) {
+                        checkNotNull(declaration.body)
+                    }
+                    this.body = declaration.body
 
                     declaration.parameters.filter { it.defaultValue != null }.forEach { argument ->
                         oldParameterToNew[argument]!!.defaultValue = argument.defaultValue
