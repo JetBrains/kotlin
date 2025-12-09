@@ -6,7 +6,12 @@
 package org.jetbrains.kotlin.backend.wasm.ir2wasm
 
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
+import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.K2WasmCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.ir.IrFileEntry
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin.Companion.DEFINED
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.expressions.IrLoop
@@ -14,6 +19,7 @@ import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
+import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 import org.jetbrains.kotlin.wasm.ir.*
 import java.util.LinkedList
 
@@ -41,9 +47,19 @@ class WasmFunctionCodegenContext(
         assert(irValueDeclaration !in wasmLocals) { "Redefinition of local" }
 
         val owner = irValueDeclaration.owner
+        // TODO decide on which origins should mean what
+        // prefix internal variables with a special character, to have the debugger sort them separately from "normal" variables declared by the user
+//        val name = (if (irValueDeclaration.owner.origin != IrDeclarationOrigin.DEFINED) backendContext.configuration.get(
+//            WasmConfigurationKeys.WASM_INTERNAL_LOCAL_VARIABLE_PREFIX
+//        ) else "") +
+//                owner.name.asString()
+        // TODO this is a temp change for debugging during development and will be reverted
+        val name = owner.name.asString() + "(${owner.origin.name})"
+
+
         val wasmLocal = WasmLocal(
             wasmFunction.locals.size,
-            owner.name.asString(),
+            name,
             if (owner is IrValueParameter) wasmModuleTypeTransformer.transformValueParameterType(owner) else wasmModuleTypeTransformer.transformType(owner.type),
             isParameter = irValueDeclaration is IrValueParameterSymbol
         )
