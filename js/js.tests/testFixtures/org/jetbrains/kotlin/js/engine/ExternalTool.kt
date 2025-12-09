@@ -7,9 +7,9 @@ package org.jetbrains.kotlin.js.engine
 
 import java.io.BufferedReader
 import java.io.File
+import java.io.InputStream
 import java.io.InputStreamReader
 import java.lang.Boolean.getBoolean
-import kotlin.test.fail
 
 private val toolLogsEnabled: Boolean = getBoolean("kotlin.js.test.verbose")
 
@@ -17,7 +17,6 @@ class ExternalTool(val path: String) {
     fun run(vararg arguments: String, workingDirectory: File? = null): String {
         val command = arrayOf(path, *arguments)
         val processBuilder = ProcessBuilder(*command)
-            .redirectErrorStream(true)
 
         if (workingDirectory != null) {
             processBuilder.directory(workingDirectory)
@@ -36,22 +35,23 @@ class ExternalTool(val path: String) {
             )
         }
 
-        // Print process output
-        val stdout = StringBuilder()
-        val bufferedStdout = BufferedReader(InputStreamReader(process.inputStream))
-
-        while (true) {
-            val line = bufferedStdout.readLine() ?: break
-            stdout.appendLine(line)
-            println(line)
-        }
+        val stdout = dumpStream(process.inputStream)
+        val stderr = dumpStream(process.errorStream)
 
         val exitValue = process.waitFor()
         if (exitValue != 0) {
-            fail("Command \"$commandString\" terminated with exit code $exitValue")
+            throw ScriptExecutionException(stdout, stderr)
         }
 
-        return stdout.toString()
+        return stdout
+    }
+
+    private fun dumpStream(stream: InputStream): String = buildString {
+        val reader = BufferedReader(InputStreamReader(stream))
+        while (true) {
+            val line = reader.readLine() ?: break
+            appendLine(line)
+        }
     }
 }
 
