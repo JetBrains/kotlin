@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.light.classes.symbol.cachedValue
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForClassOrObject
 import org.jetbrains.kotlin.light.classes.symbol.annotations.SymbolLightSimpleAnnotation
+import org.jetbrains.kotlin.light.classes.symbol.classes.isTypeParameter
 import org.jetbrains.kotlin.psi.KtDeclaration
 import javax.swing.Icon
 
@@ -62,7 +63,16 @@ internal class SymbolLightMethodForMappedCollectionClass(
     override fun getParameterList(): PsiParameterList = cachedValue {
         LightParameterListBuilder(manager, KotlinLanguage.INSTANCE).apply {
             javaMethod.parameterList.parameters.forEachIndexed { index, paramFromJava ->
-                val type = providedSignature?.parameterTypes?.get(index) ?: substituteType(paramFromJava.type)
+                val typeFromJava = paramFromJava.type
+                val candidateType = providedSignature?.parameterTypes?.get(index) ?: substituteType(typeFromJava)
+                val type = if (typeFromJava.isTypeParameter() ||
+                    (typeFromJava.isJavaLangObject() && substituteObjectWith == candidateType)
+                ) {
+                    candidateType.unboxedOrSelf()
+                } else {
+                    candidateType
+                }
+
                 addParameter(
                     LightParameter(
                         paramFromJava.name,
@@ -76,12 +86,12 @@ internal class SymbolLightMethodForMappedCollectionClass(
         }
     }
 
-    private fun substituteType(psiType: PsiType): PsiType {
-        fun isJavaLangObject(type: PsiType?): Boolean =
-            type is PsiClassType && type.canonicalText == CommonClassNames.JAVA_LANG_OBJECT
+    private fun PsiType.isJavaLangObject(): Boolean =
+        this is PsiClassType && this.canonicalText == CommonClassNames.JAVA_LANG_OBJECT
 
+    private fun substituteType(psiType: PsiType): PsiType {
         val substituted = substitutor.substitute(psiType) ?: psiType
-        return if (isJavaLangObject(substituted) && substituteObjectWith != null) {
+        return if (substituted.isJavaLangObject() && substituteObjectWith != null) {
             substituteObjectWith
         } else {
             substituted
@@ -90,8 +100,21 @@ internal class SymbolLightMethodForMappedCollectionClass(
 
     override fun getName(): String = name
 
-    override fun getReturnType(): PsiType? =
-        providedSignature?.returnType ?: javaMethod.returnType?.let { substituteType(it) }
+    override fun getReturnType(): PsiType? {
+        val returnTypeFromJava = javaMethod.returnType
+        val candidateType = providedSignature?.returnType ?: returnTypeFromJava?.let { substituteType(it) }
+        val isListRemove = javaMethod.name == "remove" && javaMethod.containingClass?.qualifiedName == CommonClassNames.JAVA_UTIL_LIST
+
+        // TODO other cases?
+        return if (isListRemove && returnTypeFromJava?.isTypeParameter() == true) {
+            candidateType?.unboxedOrSelf()
+        } else {
+            candidateType
+        }
+    }
+
+    private fun PsiType.unboxedOrSelf(): PsiType =
+        PsiPrimitiveType.getUnboxedType(this)?.annotate(TypeAnnotationProvider.EMPTY) ?: this
 
     override fun getTypeParameters(): Array<PsiTypeParameter> = javaMethod.typeParameters
 

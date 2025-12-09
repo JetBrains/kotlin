@@ -21,10 +21,10 @@ public abstract class SList /* test.SList*/ implements java.util.List<@org.jetbr
   public boolean add(int);//  add(int)
 
   @java.lang.Override()
-  public boolean addAll(int, java.util.Collection<? extends int>);//  addAll(int, java.util.Collection<? extends int>)
+  public boolean addAll(int, java.util.Collection<? extends @org.jetbrains.annotations.NotNull() java.lang.Integer>);//  addAll(int, java.util.Collection<? extends @org.jetbrains.annotations.NotNull() java.lang.Integer>)
 
   @java.lang.Override()
-  public boolean addAll(java.util.Collection<? extends int>);//  addAll(java.util.Collection<? extends int>)
+  public boolean addAll(java.util.Collection<? extends @org.jetbrains.annotations.NotNull() java.lang.Integer>);//  addAll(java.util.Collection<? extends @org.jetbrains.annotations.NotNull() java.lang.Integer>)
 
   @java.lang.Override()
   public boolean remove(java.lang.Object);//  remove(java.lang.Object)
@@ -92,10 +92,10 @@ public abstract class SList2 /* test.SList2*/ implements java.util.List<@org.jet
   public boolean add(int);//  add(int)
 
   @java.lang.Override()
-  public boolean addAll(int, java.util.Collection<? extends int>);//  addAll(int, java.util.Collection<? extends int>)
+  public boolean addAll(int, java.util.Collection<? extends @org.jetbrains.annotations.NotNull() java.lang.Integer>);//  addAll(int, java.util.Collection<? extends @org.jetbrains.annotations.NotNull() java.lang.Integer>)
 
   @java.lang.Override()
-  public boolean addAll(java.util.Collection<? extends int>);//  addAll(java.util.Collection<? extends int>)
+  public boolean addAll(java.util.Collection<? extends @org.jetbrains.annotations.NotNull() java.lang.Integer>);//  addAll(java.util.Collection<? extends @org.jetbrains.annotations.NotNull() java.lang.Integer>)
 
   @java.lang.Override()
   public boolean contains(int);//  contains(int)
@@ -185,10 +185,10 @@ public class SList3 /* test.SList3*/ implements java.util.List<@org.jetbrains.an
   public boolean add(int);//  add(int)
 
   @java.lang.Override()
-  public boolean addAll(int, java.util.Collection<? extends int>);//  addAll(int, java.util.Collection<? extends int>)
+  public boolean addAll(int, java.util.Collection<? extends @org.jetbrains.annotations.NotNull() java.lang.Integer>);//  addAll(int, java.util.Collection<? extends @org.jetbrains.annotations.NotNull() java.lang.Integer>)
 
   @java.lang.Override()
-  public boolean addAll(java.util.Collection<? extends int>);//  addAll(java.util.Collection<? extends int>)
+  public boolean addAll(java.util.Collection<? extends @org.jetbrains.annotations.NotNull() java.lang.Integer>);//  addAll(java.util.Collection<? extends @org.jetbrains.annotations.NotNull() java.lang.Integer>)
 
   @java.lang.Override()
   public boolean contains(int);//  contains(int)
