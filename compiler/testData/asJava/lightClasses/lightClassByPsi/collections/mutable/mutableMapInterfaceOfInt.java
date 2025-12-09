@@ -1,27 +1,33 @@
 public abstract class CMutableMap /* test.CMutableMap*/ implements test.IMutableMap {
   @java.lang.Override()
+  public abstract @org.jetbrains.annotations.NotNull() java.lang.Integer get(int);//  get(int)
+
+  @java.lang.Override()
+  public abstract @org.jetbrains.annotations.NotNull() java.lang.Integer remove(int);//  remove(int)
+
+  @java.lang.Override()
   public abstract boolean containsKey(int);//  containsKey(int)
 
   @java.lang.Override()
   public abstract boolean containsValue(int);//  containsValue(int)
 
   @java.lang.Override()
-  public abstract int get(int);//  get(int)
-
-  @java.lang.Override()
   public abstract int getSize();//  getSize()
 
   @java.lang.Override()
-  public abstract int remove(int);//  remove(int)
+  public abstract java.util.Collection<@org.jetbrains.annotations.NotNull() java.lang.Integer> getValues();//  getValues()
 
   @java.lang.Override()
-  public abstract java.util.Collection<int> getValues();//  getValues()
+  public abstract java.util.Set<@org.jetbrains.annotations.NotNull() java.lang.Integer> getKeys();//  getKeys()
 
   @java.lang.Override()
-  public abstract java.util.Set<int> getKeys();//  getKeys()
+  public abstract java.util.Set<java.util.Map.Entry<@org.jetbrains.annotations.NotNull() java.lang.Integer, @org.jetbrains.annotations.NotNull() java.lang.Integer>> getEntries();//  getEntries()
 
   @java.lang.Override()
-  public abstract java.util.Set<java.util.Map.Entry<int, int>> getEntries();//  getEntries()
+  public final @org.jetbrains.annotations.NotNull() java.lang.Integer get(java.lang.Object);//  get(java.lang.Object)
+
+  @java.lang.Override()
+  public final @org.jetbrains.annotations.NotNull() java.lang.Integer remove(java.lang.Object);//  remove(java.lang.Object)
 
   @java.lang.Override()
   public final boolean containsKey(java.lang.Object);//  containsKey(java.lang.Object)
@@ -30,22 +36,16 @@ public abstract class CMutableMap /* test.CMutableMap*/ implements test.IMutable
   public final boolean containsValue(java.lang.Object);//  containsValue(java.lang.Object)
 
   @java.lang.Override()
-  public final int get(java.lang.Object);//  get(java.lang.Object)
-
-  @java.lang.Override()
-  public final int remove(java.lang.Object);//  remove(java.lang.Object)
-
-  @java.lang.Override()
   public final int size();//  size()
 
   @java.lang.Override()
-  public final java.util.Collection<int> values();//  values()
+  public final java.util.Collection<@org.jetbrains.annotations.NotNull() java.lang.Integer> values();//  values()
 
   @java.lang.Override()
-  public final java.util.Set<int> keySet();//  keySet()
+  public final java.util.Set<@org.jetbrains.annotations.NotNull() java.lang.Integer> keySet();//  keySet()
 
   @java.lang.Override()
-  public final java.util.Set<java.util.Map.Entry<int, int>> entrySet();//  entrySet()
+  public final java.util.Set<java.util.Map.Entry<@org.jetbrains.annotations.NotNull() java.lang.Integer, @org.jetbrains.annotations.NotNull() java.lang.Integer>> entrySet();//  entrySet()
 
   public  CMutableMap();//  .ctor()
 }
@@ -87,28 +87,28 @@ public abstract class CMutableMap2 /* test.CMutableMap2*/ implements test.IMutab
   public boolean isEmpty();//  isEmpty()
 
   @java.lang.Override()
+  public final @org.jetbrains.annotations.NotNull() java.lang.Integer get(java.lang.Object);//  get(java.lang.Object)
+
+  @java.lang.Override()
+  public final @org.jetbrains.annotations.NotNull() java.lang.Integer remove(java.lang.Object);//  remove(java.lang.Object)
+
+  @java.lang.Override()
   public final boolean containsKey(java.lang.Object);//  containsKey(java.lang.Object)
 
   @java.lang.Override()
   public final boolean containsValue(java.lang.Object);//  containsValue(java.lang.Object)
 
   @java.lang.Override()
-  public final int get(java.lang.Object);//  get(java.lang.Object)
-
-  @java.lang.Override()
-  public final int remove(java.lang.Object);//  remove(java.lang.Object)
-
-  @java.lang.Override()
   public final int size();//  size()
 
   @java.lang.Override()
-  public final java.util.Collection<int> values();//  values()
+  public final java.util.Collection<@org.jetbrains.annotations.NotNull() java.lang.Integer> values();//  values()
 
   @java.lang.Override()
-  public final java.util.Set<int> keySet();//  keySet()
+  public final java.util.Set<@org.jetbrains.annotations.NotNull() java.lang.Integer> keySet();//  keySet()
 
   @java.lang.Override()
-  public final java.util.Set<java.util.Map.Entry<int, int>> entrySet();//  entrySet()
+  public final java.util.Set<java.util.Map.Entry<@org.jetbrains.annotations.NotNull() java.lang.Integer, @org.jetbrains.annotations.NotNull() java.lang.Integer>> entrySet();//  entrySet()
 
   @java.lang.Override()
   public int getSize();//  getSize()
@@ -117,7 +117,7 @@ public abstract class CMutableMap2 /* test.CMutableMap2*/ implements test.IMutab
   public void clear();//  clear()
 
   @java.lang.Override()
-  public void putAll(java.util.Map<? extends int, ? extends int>);//  putAll(java.util.Map<? extends int, ? extends int>)
+  public void putAll(java.util.Map<? extends @org.jetbrains.annotations.NotNull() java.lang.Integer, ? extends @org.jetbrains.annotations.NotNull() java.lang.Integer>);//  putAll(java.util.Map<? extends @org.jetbrains.annotations.NotNull() java.lang.Integer, ? extends @org.jetbrains.annotations.NotNull() java.lang.Integer>)
 
   public  CMutableMap2(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() test.IMutableMap);//  .ctor(@org.jetbrains.annotations.NotNull() test.IMutableMap)
 }
@@ -157,28 +157,28 @@ public class CMutableMap3 /* test.CMutableMap3*/ implements test.IMutableMap {
   public boolean isEmpty();//  isEmpty()
 
   @java.lang.Override()
+  public final @org.jetbrains.annotations.NotNull() java.lang.Integer get(java.lang.Object);//  get(java.lang.Object)
+
+  @java.lang.Override()
+  public final @org.jetbrains.annotations.NotNull() java.lang.Integer remove(java.lang.Object);//  remove(java.lang.Object)
+
+  @java.lang.Override()
   public final boolean containsKey(java.lang.Object);//  containsKey(java.lang.Object)
 
   @java.lang.Override()
   public final boolean containsValue(java.lang.Object);//  containsValue(java.lang.Object)
 
   @java.lang.Override()
-  public final int get(java.lang.Object);//  get(java.lang.Object)
-
-  @java.lang.Override()
-  public final int remove(java.lang.Object);//  remove(java.lang.Object)
-
-  @java.lang.Override()
   public final int size();//  size()
 
   @java.lang.Override()
-  public final java.util.Collection<int> values();//  values()
+  public final java.util.Collection<@org.jetbrains.annotations.NotNull() java.lang.Integer> values();//  values()
 
   @java.lang.Override()
-  public final java.util.Set<int> keySet();//  keySet()
+  public final java.util.Set<@org.jetbrains.annotations.NotNull() java.lang.Integer> keySet();//  keySet()
 
   @java.lang.Override()
-  public final java.util.Set<java.util.Map.Entry<int, int>> entrySet();//  entrySet()
+  public final java.util.Set<java.util.Map.Entry<@org.jetbrains.annotations.NotNull() java.lang.Integer, @org.jetbrains.annotations.NotNull() java.lang.Integer>> entrySet();//  entrySet()
 
   @java.lang.Override()
   public int getSize();//  getSize()
@@ -187,7 +187,7 @@ public class CMutableMap3 /* test.CMutableMap3*/ implements test.IMutableMap {
   public void clear();//  clear()
 
   @java.lang.Override()
-  public void putAll(java.util.Map<? extends int, ? extends int>);//  putAll(java.util.Map<? extends int, ? extends int>)
+  public void putAll(java.util.Map<? extends @org.jetbrains.annotations.NotNull() java.lang.Integer, ? extends @org.jetbrains.annotations.NotNull() java.lang.Integer>);//  putAll(java.util.Map<? extends @org.jetbrains.annotations.NotNull() java.lang.Integer, ? extends @org.jetbrains.annotations.NotNull() java.lang.Integer>)
 
   public  CMutableMap3();//  .ctor()
 }

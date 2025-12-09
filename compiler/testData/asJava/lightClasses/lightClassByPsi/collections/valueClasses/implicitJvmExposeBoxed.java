@@ -3,16 +3,16 @@ public abstract class SCollection /* test.SCollection*/ implements java.util.Col
   public <T> T[] toArray(T[]);// <T>  toArray(T[])
 
   @java.lang.Override()
-  public abstract boolean contains(int);//  contains(int)
+  public abstract boolean contains(@org.jetbrains.annotations.NotNull() kotlin.UInt);//  contains(@org.jetbrains.annotations.NotNull() kotlin.UInt)
 
   @java.lang.Override()
   public abstract int getSize();//  getSize()
 
   @java.lang.Override()
-  public boolean add(int);//  add(int)
+  public boolean add(@org.jetbrains.annotations.NotNull() kotlin.UInt);//  add(@org.jetbrains.annotations.NotNull() kotlin.UInt)
 
   @java.lang.Override()
-  public boolean addAll(java.util.Collection<? extends int>);//  addAll(java.util.Collection<? extends int>)
+  public boolean addAll(java.util.Collection<? extends @org.jetbrains.annotations.NotNull() kotlin.UInt>);//  addAll(java.util.Collection<? extends @org.jetbrains.annotations.NotNull() kotlin.UInt>)
 
   @java.lang.Override()
   public boolean remove(java.lang.Object);//  remove(java.lang.Object)
@@ -47,13 +47,13 @@ public abstract class SCollection2 /* test.SCollection2*/ implements java.util.C
   public <T> T[] toArray(T[]);// <T>  toArray(T[])
 
   @java.lang.Override()
-  public abstract boolean contains(int);//  contains(int)
+  public abstract boolean contains(@org.jetbrains.annotations.NotNull() kotlin.UInt);//  contains(@org.jetbrains.annotations.NotNull() kotlin.UInt)
 
   @java.lang.Override()
-  public boolean add(int);//  add(int)
+  public boolean add(@org.jetbrains.annotations.NotNull() kotlin.UInt);//  add(@org.jetbrains.annotations.NotNull() kotlin.UInt)
 
   @java.lang.Override()
-  public boolean addAll(java.util.Collection<? extends int>);//  addAll(java.util.Collection<? extends int>)
+  public boolean addAll(java.util.Collection<? extends @org.jetbrains.annotations.NotNull() kotlin.UInt>);//  addAll(java.util.Collection<? extends @org.jetbrains.annotations.NotNull() kotlin.UInt>)
 
   @java.lang.Override()
   public boolean containsAll(java.util.Collection<?>);//  containsAll(java.util.Collection<?>)
@@ -97,13 +97,13 @@ public class SCollection3 /* test.SCollection3*/ implements java.util.Collection
   public <T> T[] toArray(T[]);// <T>  toArray(T[])
 
   @java.lang.Override()
-  public abstract boolean contains(int);//  contains(int)
+  public abstract boolean contains(@org.jetbrains.annotations.NotNull() kotlin.UInt);//  contains(@org.jetbrains.annotations.NotNull() kotlin.UInt)
 
   @java.lang.Override()
-  public boolean add(int);//  add(int)
+  public boolean add(@org.jetbrains.annotations.NotNull() kotlin.UInt);//  add(@org.jetbrains.annotations.NotNull() kotlin.UInt)
 
   @java.lang.Override()
-  public boolean addAll(java.util.Collection<? extends int>);//  addAll(java.util.Collection<? extends int>)
+  public boolean addAll(java.util.Collection<? extends @org.jetbrains.annotations.NotNull() kotlin.UInt>);//  addAll(java.util.Collection<? extends @org.jetbrains.annotations.NotNull() kotlin.UInt>)
 
   @java.lang.Override()
   public boolean containsAll(java.util.Collection<?>);//  containsAll(java.util.Collection<?>)

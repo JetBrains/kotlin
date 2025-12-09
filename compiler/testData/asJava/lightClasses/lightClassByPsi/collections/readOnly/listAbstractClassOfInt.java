@@ -3,10 +3,13 @@ public abstract class SList /* test.SList*/ implements java.util.List<@org.jetbr
   public <T> T[] toArray(T[]);// <T>  toArray(T[])
 
   @java.lang.Override()
-  public abstract boolean contains(int);//  contains(int)
+  public @org.jetbrains.annotations.NotNull() java.lang.Integer set(int, int);//  set(int, int)
 
   @java.lang.Override()
-  public abstract int get(int);//  get(int)
+  public abstract @org.jetbrains.annotations.NotNull() java.lang.Integer get(int);//  get(int)
+
+  @java.lang.Override()
+  public abstract boolean contains(int);//  contains(int)
 
   @java.lang.Override()
   public abstract int getSize();//  getSize()
@@ -21,10 +24,10 @@ public abstract class SList /* test.SList*/ implements java.util.List<@org.jetbr
   public boolean add(int);//  add(int)
 
   @java.lang.Override()
-  public boolean addAll(int, java.util.Collection<? extends int>);//  addAll(int, java.util.Collection<? extends int>)
+  public boolean addAll(int, java.util.Collection<? extends @org.jetbrains.annotations.NotNull() java.lang.Integer>);//  addAll(int, java.util.Collection<? extends @org.jetbrains.annotations.NotNull() java.lang.Integer>)
 
   @java.lang.Override()
-  public boolean addAll(java.util.Collection<? extends int>);//  addAll(java.util.Collection<? extends int>)
+  public boolean addAll(java.util.Collection<? extends @org.jetbrains.annotations.NotNull() java.lang.Integer>);//  addAll(java.util.Collection<? extends @org.jetbrains.annotations.NotNull() java.lang.Integer>)
 
   @java.lang.Override()
   public boolean remove(java.lang.Object);//  remove(java.lang.Object)
@@ -36,10 +39,10 @@ public abstract class SList /* test.SList*/ implements java.util.List<@org.jetbr
   public boolean retainAll(java.util.Collection<?>);//  retainAll(java.util.Collection<?>)
 
   @java.lang.Override()
-  public final boolean contains(java.lang.Object);//  contains(java.lang.Object)
+  public final @org.jetbrains.annotations.NotNull() java.lang.Integer get(int);//  get(int)
 
   @java.lang.Override()
-  public final int get(int);//  get(int)
+  public final boolean contains(java.lang.Object);//  contains(java.lang.Object)
 
   @java.lang.Override()
   public final int indexOf(java.lang.Object);//  indexOf(java.lang.Object)
@@ -52,9 +55,6 @@ public abstract class SList /* test.SList*/ implements java.util.List<@org.jetbr
 
   @java.lang.Override()
   public int remove(int);//  remove(int)
-
-  @java.lang.Override()
-  public int set(int, int);//  set(int, int)
 
   @java.lang.Override()
   public java.lang.Object[] toArray();//  toArray()
@@ -89,13 +89,16 @@ public abstract class SList2 /* test.SList2*/ implements java.util.List<@org.jet
   public <T> T[] toArray(T[]);// <T>  toArray(T[])
 
   @java.lang.Override()
+  public @org.jetbrains.annotations.NotNull() java.lang.Integer set(int, int);//  set(int, int)
+
+  @java.lang.Override()
   public boolean add(int);//  add(int)
 
   @java.lang.Override()
-  public boolean addAll(int, java.util.Collection<? extends int>);//  addAll(int, java.util.Collection<? extends int>)
+  public boolean addAll(int, java.util.Collection<? extends @org.jetbrains.annotations.NotNull() java.lang.Integer>);//  addAll(int, java.util.Collection<? extends @org.jetbrains.annotations.NotNull() java.lang.Integer>)
 
   @java.lang.Override()
-  public boolean addAll(java.util.Collection<? extends int>);//  addAll(java.util.Collection<? extends int>)
+  public boolean addAll(java.util.Collection<? extends @org.jetbrains.annotations.NotNull() java.lang.Integer>);//  addAll(java.util.Collection<? extends @org.jetbrains.annotations.NotNull() java.lang.Integer>)
 
   @java.lang.Override()
   public boolean contains(int);//  contains(int)
@@ -143,9 +146,6 @@ public abstract class SList2 /* test.SList2*/ implements java.util.List<@org.jet
   public int remove(int);//  remove(int)
 
   @java.lang.Override()
-  public int set(int, int);//  set(int, int)
-
-  @java.lang.Override()
   public java.lang.Object[] toArray();//  toArray()
 
   @java.lang.Override()
@@ -182,13 +182,16 @@ public class SList3 /* test.SList3*/ implements java.util.List<@org.jetbrains.an
   public <T> T[] toArray(T[]);// <T>  toArray(T[])
 
   @java.lang.Override()
+  public @org.jetbrains.annotations.NotNull() java.lang.Integer set(int, int);//  set(int, int)
+
+  @java.lang.Override()
   public boolean add(int);//  add(int)
 
   @java.lang.Override()
-  public boolean addAll(int, java.util.Collection<? extends int>);//  addAll(int, java.util.Collection<? extends int>)
+  public boolean addAll(int, java.util.Collection<? extends @org.jetbrains.annotations.NotNull() java.lang.Integer>);//  addAll(int, java.util.Collection<? extends @org.jetbrains.annotations.NotNull() java.lang.Integer>)
 
   @java.lang.Override()
-  public boolean addAll(java.util.Collection<? extends int>);//  addAll(java.util.Collection<? extends int>)
+  public boolean addAll(java.util.Collection<? extends @org.jetbrains.annotations.NotNull() java.lang.Integer>);//  addAll(java.util.Collection<? extends @org.jetbrains.annotations.NotNull() java.lang.Integer>)
 
   @java.lang.Override()
   public boolean contains(int);//  contains(int)
@@ -231,9 +234,6 @@ public class SList3 /* test.SList3*/ implements java.util.List<@org.jetbrains.an
 
   @java.lang.Override()
   public int remove(int);//  remove(int)
-
-  @java.lang.Override()
-  public int set(int, int);//  set(int, int)
 
   @java.lang.Override()
   public java.lang.Object[] toArray();//  toArray()
