@@ -12,7 +12,9 @@ import kotlin.io.path.absolutePathString
 
 internal fun CommonCompilerArguments.applyCompilerPlugins(plugins: List<CompilerPlugin>) {
     val filteredPlugins = plugins.filter { it.pluginId != RAW_PLUGIN_ID }
-    pluginClasspaths = (pluginClasspaths ?: emptyArray()) + filteredPlugins.flatMap { it.classpath }.map { it.absolutePathString() }.toTypedArray()
+    validatePluginsConfiguration(filteredPlugins)
+    pluginClasspaths =
+        (pluginClasspaths ?: emptyArray()) + filteredPlugins.flatMap { it.classpath }.map { it.absolutePathString() }.toTypedArray()
     pluginOptions = (pluginOptions
         ?: emptyArray()) + filteredPlugins.flatMap { plugin -> plugin.rawArguments.map { option -> "plugin:${plugin.pluginId}:${option.key}=${option.value}" } }
         .toTypedArray()
@@ -26,6 +28,23 @@ internal fun CommonCompilerArguments.applyCompilerPlugins(plugins: List<Compiler
     }
         .toSet() // avoid duplicates
         .toTypedArray()
+}
+
+private fun validatePluginsConfiguration(plugins: List<CompilerPlugin>) {
+    for (plugin in plugins) {
+        // Empty plugin id
+        if (plugin.pluginId.isBlank()) {
+            throw IllegalStateException("Invalid compiler plugin configuration: plugin id is empty.")
+        }
+        if (plugin.orderingRequirements.any { it.otherPluginId.isBlank() }) throw IllegalStateException("Invalid compiler plugin configuration: plugin id is empty in the ordering requirements for plugin '${plugin.pluginId}'.")
+
+        // Empty classpath
+        if (plugin.classpath.isEmpty()) {
+            throw IllegalStateException(
+                "Invalid compiler plugin configuration: plugin '${plugin.pluginId}' has empty classpath."
+            )
+        }
+    }
 }
 
 internal const val RAW_PLUGIN_ID = "___RAW_PLUGINS_APPLIED___"
