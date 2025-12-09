@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.ir.backend.js.CompilerResult
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.CompilationOutputsBuilt
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.TranslationMode
 import org.jetbrains.kotlin.js.test.converters.finalizePath
-import org.jetbrains.kotlin.js.test.converters.kind
 import org.jetbrains.kotlin.test.klib.CustomKlibCompilerException
 import org.jetbrains.kotlin.test.klib.CustomKlibCompilerSecondStageFacade
 import org.jetbrains.kotlin.test.model.ArtifactKinds
@@ -46,7 +45,14 @@ class CustomJsCompilerSecondStageFacade(
         regularDependencies: Set<String>,
         friendDependencies: Set<String>,
     ): BinaryArtifacts.Js {
-        val jsArtifactFile = File(JsEnvironmentConfigurator.getJsModuleArtifactPath(testServices, module.name).finalizePath(module.kind))
+        val jsArtifactFile = File(
+            JsEnvironmentConfigurator.getJsModuleArtifactPath(testServices, module.name).finalizePath(
+                JsEnvironmentConfigurator.getModuleKind(
+                    testServices,
+                    module
+                )
+            )
+        )
 
         val compilerXmlOutput = ByteArrayOutputStream()
 

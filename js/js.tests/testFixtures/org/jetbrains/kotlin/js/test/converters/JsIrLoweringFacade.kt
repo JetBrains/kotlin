@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -13,7 +13,10 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.phaseConfig
 import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.backend.js.ic.JsExecutableProducer
-import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.*
+import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.CompilationOutputs
+import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.IrModuleToJsTransformer
+import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.TranslationMode
+import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.safeName
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.js.backend.ast.ESM_EXTENSION
 import org.jetbrains.kotlin.js.backend.ast.REGULAR_EXTENSION
@@ -25,7 +28,6 @@ import org.jetbrains.kotlin.js.test.utils.wrapWithModuleEmulationMarkers
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
-import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
@@ -78,9 +80,10 @@ class JsIrLoweringFacade(
         val perModule = JsEnvironmentConfigurationDirectives.PER_MODULE in module.directives
         val keep = module.directives[JsEnvironmentConfigurationDirectives.KEEP].toSet()
 
+        val moduleKind = JsEnvironmentConfigurator.getModuleKind(testServices, module)
         val granularity = when {
             !firstTimeCompilation -> JsGenerationGranularity.WHOLE_PROGRAM
-            splitPerFile || module.kind == ModuleKind.ES -> JsGenerationGranularity.PER_FILE
+            splitPerFile || moduleKind == ModuleKind.ES -> JsGenerationGranularity.PER_FILE
             splitPerModule || perModule -> JsGenerationGranularity.PER_MODULE
             else -> JsGenerationGranularity.WHOLE_PROGRAM
         }
@@ -92,9 +95,9 @@ class JsIrLoweringFacade(
 
         if (JsEnvironmentConfigurator.incrementalEnabled(testServices)) {
             val outputFile = if (firstTimeCompilation) {
-                File(JsEnvironmentConfigurator.getJsModuleArtifactPath(testServices, module.name) + module.kind.jsExtension)
+                File(JsEnvironmentConfigurator.getJsModuleArtifactPath(testServices, module.name) + moduleKind.jsExtension)
             } else {
-                File(JsEnvironmentConfigurator.getRecompiledJsModuleArtifactPath(testServices, module.name) + module.kind.jsExtension)
+                File(JsEnvironmentConfigurator.getRecompiledJsModuleArtifactPath(testServices, module.name) + moduleKind.jsExtension)
             }
 
             val compiledModule = CompilerResult(
@@ -143,14 +146,12 @@ class JsIrLoweringFacade(
         val onlyIrDce = JsEnvironmentConfigurationDirectives.ONLY_IR_DCE in module.directives
         val perModuleOnly = JsEnvironmentConfigurationDirectives.SPLIT_PER_MODULE in module.directives
         val perFileOnly = JsEnvironmentConfigurationDirectives.SPLIT_PER_FILE in module.directives
-        val isEsModules = JsEnvironmentConfigurationDirectives.ES_MODULES in module.directives ||
-                module.directives[JsEnvironmentConfigurationDirectives.JS_MODULE_KIND].contains(ModuleKind.ES)
+        val moduleKind = JsEnvironmentConfigurator.getModuleKind(testServices, module)
+        val isEsModules = moduleKind == ModuleKind.ES
 
-        val outputFile =
-            File(
-                JsEnvironmentConfigurator.getJsModuleArtifactPath(testServices, module.name, TranslationMode.FULL_DEV)
-                    .finalizePath(module.kind)
-            )
+        val outputFile = File(
+            JsEnvironmentConfigurator.getJsModuleArtifactPath(testServices, module.name, TranslationMode.FULL_DEV).finalizePath(moduleKind)
+        )
 
         val transformer = IrModuleToJsTransformer(
             loweredIr.context,
@@ -274,13 +275,6 @@ class JsIrLoweringFacade(
         writeText(text)
     }
 }
-
-val RegisteredDirectives.moduleKind: ModuleKind
-    get() = get(JsEnvironmentConfigurationDirectives.JS_MODULE_KIND).singleOrNull()
-        ?: if (contains(JsEnvironmentConfigurationDirectives.ES_MODULES)) ModuleKind.ES else ModuleKind.PLAIN
-
-val TestModule.kind: ModuleKind
-    get() = directives.moduleKind
 
 fun String.augmentWithModuleName(moduleName: String): String {
     val suffix = when {

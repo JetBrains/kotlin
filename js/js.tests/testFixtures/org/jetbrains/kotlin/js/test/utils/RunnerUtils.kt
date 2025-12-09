@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.js.config.ModuleKind
 import org.jetbrains.kotlin.js.test.JsAdditionalSourceProvider
 import org.jetbrains.kotlin.js.test.converters.augmentWithModuleName
 import org.jetbrains.kotlin.js.test.converters.finalizePath
-import org.jetbrains.kotlin.js.test.converters.kind
 import org.jetbrains.kotlin.js.test.handlers.JsBoxRunner.Companion.TEST_FUNCTION
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
@@ -65,10 +64,18 @@ private fun extractJsFiles(
         .filter { it.second.isJsFile || it.second.isMjsFile }
 
     val after = inputJsFiles
-        .filter { (module, inputJsFile) -> inputJsFile.name.endsWith("__after${module.kind.jsExtension}") }
+        .filter { (module, inputJsFile) ->
+            inputJsFile.name.endsWith(
+                "__after${JsEnvironmentConfigurator.getModuleKind(testServices, module).jsExtension}"
+            )
+        }
         .map { (module, inputJsFile) -> copyInputJsFile(module, inputJsFile) }
     val before = inputJsFiles
-        .filterNot { (module, inputJsFile) -> inputJsFile.name.endsWith("__after${module.kind.jsExtension}") }
+        .filterNot { (module, inputJsFile) ->
+            inputJsFile.name.endsWith(
+                "__after${JsEnvironmentConfigurator.getModuleKind(testServices, module).jsExtension}"
+            )
+        }
         .map { (module, inputJsFile) -> copyInputJsFile(module, inputJsFile) }
 
     return before to after
@@ -143,7 +150,9 @@ fun testWithModuleSystem(testServices: TestServices): Boolean {
 }
 
 fun getModeOutputFilePath(testServices: TestServices, module: TestModule, mode: TranslationMode): String {
-    return JsEnvironmentConfigurator.getJsModuleArtifactPath(testServices, module.name, mode).finalizePath(module.kind)
+    return JsEnvironmentConfigurator
+        .getJsModuleArtifactPath(testServices, module.name, mode)
+        .finalizePath(JsEnvironmentConfigurator.getModuleKind(testServices, module))
 }
 
 fun getAllFilesForRunner(
@@ -240,7 +249,7 @@ fun extractTestPackage(testServices: TestServices, ignoreEsModules: Boolean = tr
     }
 
     val fileWithBoxFunction = ktFiles.find { (module, ktFile) ->
-        (!ignoreEsModules || module.kind != ModuleKind.ES) &&
+        (!ignoreEsModules || JsEnvironmentConfigurator.getModuleKind(testServices, module) != ModuleKind.ES) &&
                 ktFile.declarations.find { it is KtNamedFunction && it.name == TEST_FUNCTION } != null
     } ?: return null
 
