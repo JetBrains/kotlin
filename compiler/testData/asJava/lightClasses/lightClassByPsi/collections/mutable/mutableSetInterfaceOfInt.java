@@ -43,7 +43,7 @@ public abstract class CMutableSet2 /* test.CMutableSet2*/ implements test.IMutab
   public <T> T[] toArray(T[]);// <T>  toArray(T[])
 
   @java.lang.Override()
-  public boolean addAll(java.util.Collection<? extends int>);//  addAll(java.util.Collection<? extends int>)
+  public boolean addAll(java.util.Collection<? extends @org.jetbrains.annotations.NotNull() java.lang.Integer>);//  addAll(java.util.Collection<? extends @org.jetbrains.annotations.NotNull() java.lang.Integer>)
 
   @java.lang.Override()
   public boolean contains(int);//  contains(int)
@@ -93,7 +93,7 @@ public class CMutableSet3 /* test.CMutableSet3*/ implements test.IMutableSet {
   public boolean add(int);//  add(int)
 
   @java.lang.Override()
-  public boolean addAll(java.util.Collection<? extends int>);//  addAll(java.util.Collection<? extends int>)
+  public boolean addAll(java.util.Collection<? extends @org.jetbrains.annotations.NotNull() java.lang.Integer>);//  addAll(java.util.Collection<? extends @org.jetbrains.annotations.NotNull() java.lang.Integer>)
 
   @java.lang.Override()
   public boolean contains(int);//  contains(int)
