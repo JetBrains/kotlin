@@ -57,6 +57,7 @@ import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.getRefinedOrBa
 import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.scriptRefinedCompilationConfigurationsCache
 import org.jetbrains.kotlin.scripting.compiler.plugin.dependencies.collectScriptsCompilationDependenciesRecursively
 import org.jetbrains.kotlin.scripting.compiler.plugin.fir.FirScriptCompilationComponent
+import org.jetbrains.kotlin.scripting.resolve.resolvedImportScripts
 import org.jetbrains.kotlin.toSourceLinesMapping
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.tryCreateCallableMapping
@@ -145,8 +146,12 @@ class ScriptJvmK2CompilerImpl(
             }
         }.onSuccess {
             it.refineBeforeCompiling(script)
-    //            }.onSuccess {
-    //                it.resolveImportsToVirtualFiles(knownVirtualFileSources)
+        }.onSuccess {
+            it.with {
+                get(ScriptCompilationConfiguration.importScripts)?.let {
+                    resolvedImportScripts(it)
+                }
+            }.asSuccess()
         }
 
     context(reportingCtx: ErrorReportingContext)
@@ -224,9 +229,9 @@ class ScriptJvmK2CompilerImpl(
 
         session.register(FirScriptCompilationComponent::class, FirScriptCompilationComponent(state.hostConfiguration))
 
-        val rawFir = script.convertToFir(session, reportingCtx.diagnosticsCollector)
+        val sourcesToFir = allSourceFiles.associateWith { it.convertToFir(session, reportingCtx.diagnosticsCollector) }
 
-        val outputs = listOf(resolveAndCheckFir(session, listOf(rawFir), reportingCtx.diagnosticsCollector)).also {
+        val outputs = listOf(resolveAndCheckFir(session, sourcesToFir.values.toList(), reportingCtx.diagnosticsCollector)).also {
             it.runPlatformCheckers(reportingCtx.diagnosticsCollector)
         }
         val frontendOutput = AllModulesFrontendOutput(outputs)
@@ -249,7 +254,7 @@ class ScriptJvmK2CompilerImpl(
             generationState,
             script,
             {
-                rawFir.declarations.firstIsInstanceOrNull<FirScript>()
+                sourcesToFir[it]?.declarations?.firstIsInstanceOrNull<FirScript>()
                     ?.let { it.symbol.packageFqName().child(NameUtils.getScriptTargetClassName(it.name)) }
             },
             sourceDependencies,
