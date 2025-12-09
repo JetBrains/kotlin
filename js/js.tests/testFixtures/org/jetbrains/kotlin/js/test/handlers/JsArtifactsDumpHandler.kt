@@ -83,7 +83,13 @@ class JsArtifactsDumpHandler(testServices: TestServices) : AfterAnalysisChecker(
             TranslationMode.PER_FILE_PROD_MINIMIZED_NAMES -> "out-per-file-min"
         }
 
-        return File("$pathToRootOutputDir$prefix/$testGroupOutputDirPrefix")
+        val testGroupOutputDir = File("$pathToRootOutputDir$prefix/$testGroupOutputDirPrefix")
+
+        return generateSequence(originalFile.parentFile) { it.parentFile }
+            .takeWhile { it != stopFile }
+            .map { it.name }
+            .toList().asReversed()
+            .fold(testGroupOutputDir, ::File)
     }
 
     private fun copy(from: File, into: File) {
