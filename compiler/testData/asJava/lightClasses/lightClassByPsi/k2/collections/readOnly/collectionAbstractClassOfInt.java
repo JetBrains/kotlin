@@ -12,7 +12,7 @@ public abstract class SCollection /* test.SCollection*/ implements java.util.Col
   public boolean add(int);//  add(int)
 
   @java.lang.Override()
-  public boolean addAll(java.util.Collection<? extends int>);//  addAll(java.util.Collection<? extends int>)
+  public boolean addAll(java.util.Collection<? extends @org.jetbrains.annotations.NotNull() java.lang.Integer>);//  addAll(java.util.Collection<? extends @org.jetbrains.annotations.NotNull() java.lang.Integer>)
 
   @java.lang.Override()
   public boolean remove(java.lang.Object);//  remove(java.lang.Object)
@@ -50,7 +50,7 @@ public abstract class SCollection2 /* test.SCollection2*/ implements java.util.C
   public boolean add(int);//  add(int)
 
   @java.lang.Override()
-  public boolean addAll(java.util.Collection<? extends int>);//  addAll(java.util.Collection<? extends int>)
+  public boolean addAll(java.util.Collection<? extends @org.jetbrains.annotations.NotNull() java.lang.Integer>);//  addAll(java.util.Collection<? extends @org.jetbrains.annotations.NotNull() java.lang.Integer>)
 
   @java.lang.Override()
   public boolean contains(int);//  contains(int)
@@ -100,7 +100,7 @@ public class SCollection3 /* test.SCollection3*/ implements java.util.Collection
   public boolean add(int);//  add(int)
 
   @java.lang.Override()
-  public boolean addAll(java.util.Collection<? extends int>);//  addAll(java.util.Collection<? extends int>)
+  public boolean addAll(java.util.Collection<? extends @org.jetbrains.annotations.NotNull() java.lang.Integer>);//  addAll(java.util.Collection<? extends @org.jetbrains.annotations.NotNull() java.lang.Integer>)
 
   @java.lang.Override()
   public boolean contains(int);//  contains(int)
