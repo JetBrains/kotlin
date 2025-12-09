@@ -351,7 +351,7 @@ private fun compileImpl(
     val rawFir = allSourceFiles.partition { it is KtFileScriptSource }.let { (ktSources, otherSources) ->
         session.buildFirFromKtFiles(ktSources.map { it.getKtFile(definition, project) }) +
                 session.buildFirViaLightTree(
-                    otherSources.mapNotNull { it.toKtSourceFile() },
+                    otherSources.map { it.toKtSourceFile() },
                     diagnosticsReporter,
                     reportFilesAndLines = null
                 )

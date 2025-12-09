@@ -385,7 +385,7 @@ fun createK2ScriptCompilerWithLightTree(
         val sourcesToPathsMapper = session.sourcesToPathsMapper
         val builder = LightTree2Fir(session, session.kotlinScopeProvider, diagnosticsReporter)
         val linesMapping = text.toSourceLinesMapping()
-        builder.buildFirFile(text, toKtSourceFile()!!, linesMapping).also { firFile ->
+        builder.buildFirFile(text, toKtSourceFile(), linesMapping).also { firFile ->
             (session.firProvider as FirProviderImpl).recordFile(firFile)
             sourcesToPathsMapper.registerFileSource(firFile.source!!, locationId ?: name!!)
         }
