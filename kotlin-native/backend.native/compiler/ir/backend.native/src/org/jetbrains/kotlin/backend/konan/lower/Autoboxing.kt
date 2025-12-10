@@ -221,7 +221,7 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
                 return it
             }
             val parameter = conversion.owner.parameters.single()
-            val argument = if (insertSafeCasts && !skipTypeCheck && expectedType.isInlinedNative())
+            val argument = if (insertSafeCasts && !skipTypeCheck && expectedType.isInlinedNative() && !actualType.isNothing())
                 this.checkedCast(actualType, conversion.owner.returnType)
             else this
 
