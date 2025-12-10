@@ -21,7 +21,7 @@ internal class ResultHandler(
             check.apply(testRun, runResult)
         }.filterIsInstance<TestRunCheck.Result.Failed>()
         if (!testRun.expectedFailure) {
-            verifyExpectation(failedResults.isEmpty()) {
+            verifyExpectation(failedResults.isEmpty(), failedResults) {
                 failedResults.joinToString("\n")
             }
         } else {
@@ -35,7 +35,7 @@ internal class ResultHandler(
                 })
                 appendLine(runResult.processOutput.stdOut.testReport)
             }
-            verifyExpectation(failedResults.isNotEmpty()) {
+            verifyExpectation(failedResults.isNotEmpty(), failedResults) {
                 "Test did not fail as expected: $runResultInfo"
             }
             println("Test failed as expected.\n$runResultInfo")
