@@ -63,10 +63,10 @@ object FirOperatorModifierChecker : FirFunctionChecker(MppCheckerKind.Common) {
                 )
             }
             is OperatorDiagnostic.ReturnTypeMismatchWithOuterClass -> {
-                if (!dueToNullability) {
-                    reporter.reportOn(declaration.source, FirErrors.RETURN_TYPE_MISMATCH_OF_OPERATOR_OF, outer)
-                } else {
-                    reporter.reportOn(declaration.source, FirErrors.NULLABLE_RETURN_TYPE_OF_OPERATOR_OF)
+                when {
+                    dueToNullability -> reporter.reportOn(declaration.source, FirErrors.NULLABLE_RETURN_TYPE_OF_OPERATOR_OF)
+                    dueToFlexibility -> reporter.reportOn(declaration.source, FirErrors.POTENTIALLY_NULLABLE_RETURN_TYPE_OF_OPERATOR_OF)
+                    else -> reporter.reportOn(declaration.source, FirErrors.RETURN_TYPE_MISMATCH_OF_OPERATOR_OF, outer)
                 }
             }
         }

@@ -664,6 +664,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PLACEHOLDER_PROJE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PLATFORM_CLASS_MAPPED_TO_KOTLIN
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PLUGIN_AMBIGUOUS_INTERCEPTED_SYMBOL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.POTENTIALLY_NON_REPORTED_ANNOTATION
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.POTENTIALLY_NULLABLE_RETURN_TYPE_OF_OPERATOR_OF
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PRE_RELEASE_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PRIMARY_CONSTRUCTOR_DELEGATION_CALL_EXPECTED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PRIVATE_CLASS_MEMBER_FROM_INLINE
@@ -1652,6 +1653,10 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             RETURN_TYPE_MISMATCH_OF_OPERATOR_OF,
             "Return type of ''operator of'' must match outer classifier ''{0}''.",
             DECLARATION_NAME,
+        )
+        map.put(
+            POTENTIALLY_NULLABLE_RETURN_TYPE_OF_OPERATOR_OF,
+            "Return type of operator 'of' is inferred from a platform call, which can lead to unchecked nullability issues. Specify return type explicitly."
         )
         map.put(NULLABLE_RETURN_TYPE_OF_OPERATOR_OF, "Return type of 'operator fun of' cannot be nullable.")
         map.put(NO_VARARG_OVERLOAD_OF_OPERATOR_OF, "One of the overloads of operator 'of' must have a single 'vararg' parameter.")

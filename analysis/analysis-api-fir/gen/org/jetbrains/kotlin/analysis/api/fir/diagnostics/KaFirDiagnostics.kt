@@ -1475,6 +1475,10 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val reason: String
     }
 
+    interface PotentiallyNullableReturnTypeOfOperatorOf : KaFirDiagnostic<KtNamedFunction> {
+        override val diagnosticClass get() = PotentiallyNullableReturnTypeOfOperatorOf::class
+    }
+
     interface NullableReturnTypeOfOperatorOf : KaFirDiagnostic<KtNamedFunction> {
         override val diagnosticClass get() = NullableReturnTypeOfOperatorOf::class
     }

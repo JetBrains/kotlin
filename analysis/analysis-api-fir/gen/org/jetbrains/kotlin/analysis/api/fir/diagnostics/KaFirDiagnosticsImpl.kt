@@ -1766,6 +1766,11 @@ internal class InapplicableLateinitModifierImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtModifierListOwner>(firDiagnostic, token), KaFirDiagnostic.InapplicableLateinitModifier
 
+internal class PotentiallyNullableReturnTypeOfOperatorOfImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtNamedFunction>(firDiagnostic, token), KaFirDiagnostic.PotentiallyNullableReturnTypeOfOperatorOf
+
 internal class NullableReturnTypeOfOperatorOfImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,

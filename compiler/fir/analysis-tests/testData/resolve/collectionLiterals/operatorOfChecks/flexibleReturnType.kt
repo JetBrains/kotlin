@@ -27,7 +27,7 @@ public class Intermediate {
 
 class KotlinClass {
     companion object {
-        operator fun of() = Intermediate.flexible<KotlinClass>() // KotlinClass!
+        operator fun <!POTENTIALLY_NULLABLE_RETURN_TYPE_OF_OPERATOR_OF!>of<!>() = Intermediate.flexible<KotlinClass>() // KotlinClass!
         operator fun <!INCONSISTENT_RETURN_TYPES_IN_OF_OVERLOADS, NULLABLE_RETURN_TYPE_OF_OPERATOR_OF!>of<!>(p1: String) = Intermediate.nullable<KotlinClass>() // KotlinClass?
         operator fun of(vararg ps: String) = Intermediate.notNull<KotlinClass>() // KotlinClass
     }
@@ -36,7 +36,7 @@ class KotlinClass {
 class ReversedClass {
     companion object {
         operator fun of() = Intermediate.notNull<ReversedClass>()
-        operator fun of(vararg ss: String) = Intermediate.flexible<ReversedClass>()
+        operator fun <!POTENTIALLY_NULLABLE_RETURN_TYPE_OF_OPERATOR_OF!>of<!>(vararg ss: String) = Intermediate.flexible<ReversedClass>()
     }
 }
 

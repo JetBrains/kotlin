@@ -2054,6 +2054,12 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.POTENTIALLY_NULLABLE_RETURN_TYPE_OF_OPERATOR_OF) { firDiagnostic ->
+        PotentiallyNullableReturnTypeOfOperatorOfImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.NULLABLE_RETURN_TYPE_OF_OPERATOR_OF) { firDiagnostic ->
         NullableReturnTypeOfOperatorOfImpl(
             firDiagnostic as KtPsiDiagnostic,

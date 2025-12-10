@@ -31,7 +31,15 @@ sealed class OperatorDiagnostic {
     class IllegalOperatorDiagnostic(val message: String) : OperatorDiagnostic()
     class DeprecatedOperatorDiagnostic(val message: String, val feature: LanguageFeature) : OperatorDiagnostic()
     class Unsupported(val feature: LanguageFeature) : OperatorDiagnostic()
-    class ReturnTypeMismatchWithOuterClass(val outer: FirRegularClassSymbol, val dueToNullability: Boolean) : OperatorDiagnostic()
+    class ReturnTypeMismatchWithOuterClass(
+        val outer: FirRegularClassSymbol,
+        val dueToNullability: Boolean = false,
+        val dueToFlexibility: Boolean = false,
+    ) : OperatorDiagnostic() {
+        init {
+            require(!dueToNullability || !dueToFlexibility)
+        }
+    }
 }
 
 sealed class CheckResult(val isSuccess: Boolean) {
@@ -264,6 +272,7 @@ private object Checks {
             function.returnTypeRef.coneType.fullyExpandedType(session).isUnit
         }
 
+        // TODO(KT-80494): support this check for java
         val outerOfCompanionWhereDefined =
             full(
                 requiredResolvePhase = { fn ->
@@ -279,14 +288,17 @@ private object Checks {
                     return@full OperatorDiagnostic.IllegalOperatorDiagnostic("must be a member of companion")
 
                 val outerClass = dispatch.getContainingClassSymbol() as? FirRegularClassSymbol ?: return@full null
+                val returnType = function.returnTypeRef.coneType.fullyExpandedType(session)
+                val lowerBound = returnType.lowerBoundIfFlexible()
 
-                val returnType = function.returnTypeRef.coneType.lowerBoundIfFlexible().fullyExpandedType(session)
                 when {
-                    returnType is ConeErrorType -> null
-                    returnType !is ConeClassLikeType || returnType.classId != outerClass.classId ->
-                        OperatorDiagnostic.ReturnTypeMismatchWithOuterClass(outerClass, dueToNullability = false)
-                    returnType.isMarkedNullable ->
+                    lowerBound is ConeErrorType -> null
+                    lowerBound !is ConeClassLikeType || lowerBound.classId != outerClass.classId ->
+                        OperatorDiagnostic.ReturnTypeMismatchWithOuterClass(outerClass)
+                    lowerBound.isMarkedNullable ->
                         OperatorDiagnostic.ReturnTypeMismatchWithOuterClass(outerClass, dueToNullability = true)
+                    returnType is ConeFlexibleType ->
+                        OperatorDiagnostic.ReturnTypeMismatchWithOuterClass(outerClass, dueToFlexibility = true)
                     else -> null
                 }
             }
