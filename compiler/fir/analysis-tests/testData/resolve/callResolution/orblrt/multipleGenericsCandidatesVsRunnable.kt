@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: FRONTEND
 // FULL_JDK
 // WITH_STDLIB
 
@@ -18,6 +18,8 @@ fun <T3, U3> foo(f: Function<T3, U3>): Function<T3, U3> = TODO()
 
 fun <T4> foo(action: () -> T4): () -> T4 = TODO()
 
+fun expectsUnitFunctionType(b: () -> Unit) {}
+
 fun myUnit() {}
 
 fun main() {
@@ -26,6 +28,10 @@ fun main() {
     val x3 = foo { x: String -> "" }
     val x4 = foo { x: String -> myUnit() }
     val x5 = CompletableFuture.supplyAsync(foo { "" })
+
+    val b: () -> Unit = {}
+
+    expectsUnitFunctionType(<!ARGUMENT_TYPE_MISMATCH!>foo(b)<!>)
 
     <!DEBUG_INFO_EXPRESSION_TYPE("() -> kotlin.String")!>x1<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("() -> kotlin.Unit")!>x2<!>
