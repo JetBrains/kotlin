@@ -44,10 +44,10 @@ internal class NodeJsPluginApplier(
         project.registerTask<NodeJsSetupTask>(platformDisambiguate.extensionName(NodeJsSetupTask.BASE_NAME), listOf(nodeJs)) {
             it.group = NodeJsRootPlugin.TASKS_GROUP_NAME
             it.description = "Download and install a local node/npm version"
-            it.configuration = it.ivyDependencyProvider.map { ivyDependency ->
+            it.configuration = if (it.ivyDependencyProvider.get().isNotEmpty()) it.ivyDependencyProvider.map { ivyDependency ->
                 project.configurations.detachedConfiguration(project.dependencies.create(ivyDependency))
                     .also { conf -> conf.isTransitive = false }
-            }
+            } else null
         }
     }
 

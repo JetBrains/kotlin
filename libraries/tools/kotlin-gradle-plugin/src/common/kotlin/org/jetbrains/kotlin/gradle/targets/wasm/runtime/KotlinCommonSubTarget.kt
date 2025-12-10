@@ -46,10 +46,10 @@ constructor(
         envSpec
     ).also {
         it.configure {
-            it.configuration = it.ivyDependencyProvider.map { ivyDependency ->
+            it.configuration = if (it.ivyDependencyProvider.get().isNotEmpty()) it.ivyDependencyProvider.map { ivyDependency ->
                 project.configurations.detachedConfiguration(project.dependencies.create(ivyDependency))
                     .also { conf -> conf.isTransitive = false }
-            }
+            } else null
             it.archiveOperation.set(this@KotlinCommonSubTarget.archiveOperation)
             it.os.set(this@KotlinCommonSubTarget.os)
             it.arch.set(this@KotlinCommonSubTarget.arch)
