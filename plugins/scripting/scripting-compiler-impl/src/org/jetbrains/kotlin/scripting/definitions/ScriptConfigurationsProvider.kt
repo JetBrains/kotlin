@@ -16,10 +16,10 @@ import kotlin.script.experimental.api.ScriptCompilationConfiguration
 import kotlin.script.experimental.api.SourceCode
 import kotlin.script.experimental.api.valueOrNull
 
-@RequiresOptIn(message = "For K2 use session-based scriptDefinitionProviderService", level = RequiresOptIn.Level.ERROR)
+@RequiresOptIn(message = "For K2 use scripting host configuration based helpers (e.g. getRefinedCompilationConfiguration)", level = RequiresOptIn.Level.ERROR)
 annotation class K1SpecificScriptingServiceAccessor
 
-
+// TODO: deprecate/optin in favor of K2 infrastructure (ScriptRefinedCompilationConfigurationCache for this one)
 open class ScriptConfigurationsProvider(
     @property:K1SpecificScriptingServiceAccessor
     protected val project: Project
@@ -42,14 +42,14 @@ open class ScriptConfigurationsProvider(
     open fun getScriptConfigurationResult(file: KtFile): ScriptCompilationConfigurationResult? = null
 
     // TODO: consider fixing implementations and removing default implementation
-    @Deprecated("Use getScriptConfigurationResult(KtFileScriptSource(ktFile), provided configuration) instead")
+    @Deprecated("Use getScriptCompilationConfiguration(KtFileScriptSource(ktFile), provided configuration) instead")
     open fun getScriptConfigurationResult(
         file: KtFile, providedConfiguration: ScriptCompilationConfiguration?,
     ): ScriptCompilationConfigurationResult? {
         return getScriptConfigurationResult(file)
     }
 
-    @Deprecated("Use getScriptConfigurationResult(KtFileScriptSource(ktFile)) instead")
+    @Deprecated("Use getScriptCompilationConfiguration(KtFileScriptSource(ktFile)) instead")
     open fun getScriptConfiguration(file: KtFile): ScriptCompilationConfigurationWrapper? {
         @Suppress("DEPRECATION")
         return getScriptConfigurationResult(file)?.valueOrNull()
