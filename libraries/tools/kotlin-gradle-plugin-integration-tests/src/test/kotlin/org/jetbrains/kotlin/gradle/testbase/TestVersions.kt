@@ -64,8 +64,8 @@ interface TestVersions {
         const val AGP_810 = "8.10.1"
         const val AGP_811 = "8.11.2"
         const val AGP_812 = "8.12.3"
-        const val AGP_813 = "8.13.0"
-        const val AGP_90 = "9.0.0-alpha13"
+        const val AGP_813 = "8.13.1"
+        const val AGP_90 = "9.0.0-beta04"
 
         // Should be in sync with KotlinMultiplatformAndroidGradlePluginCompatibilityHealthCheck
         const val MIN_SUPPORTED = AGP_82 // AgpCompatibilityCheck.minimalSupportedAgpVersion
