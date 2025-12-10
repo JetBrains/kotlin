@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // FULL_JDK
 // WITH_STDLIB
 
@@ -25,13 +25,13 @@ fun main() {
     val x2 = foo { myUnit() }
     val x3 = foo { x: String -> "" }
     val x4 = foo { x: String -> myUnit() }
-    val x5 = CompletableFuture.<!CANNOT_INFER_PARAMETER_TYPE!>supplyAsync<!>(<!ARGUMENT_TYPE_MISMATCH!>foo { "" }<!>)
+    val x5 = CompletableFuture.supplyAsync(foo { "" })
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("java.lang.Runnable")!>x1<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("java.lang.Runnable")!>x2<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("() -> kotlin.String")!>x1<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("() -> kotlin.Unit")!>x2<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("java.util.function.Function<kotlin.String, kotlin.String>")!>x3<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("java.util.function.Consumer<kotlin.String>")!>x4<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("(java.util.concurrent.CompletableFuture<(ERROR CLASS: Cannot infer argument for type parameter U..ERROR CLASS: Cannot infer argument for type parameter U?)>..java.util.concurrent.CompletableFuture<(ERROR CLASS: Cannot infer argument for type parameter U..ERROR CLASS: Cannot infer argument for type parameter U?)>?)")!>x5<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("(java.util.concurrent.CompletableFuture<(kotlin.String..kotlin.String?)>..java.util.concurrent.CompletableFuture<(kotlin.String..kotlin.String?)>?)")!>x5<!>
 }
 
 /* GENERATED_FIR_TAGS: functionDeclaration, functionalType, lambdaLiteral, localProperty, nullableType,
