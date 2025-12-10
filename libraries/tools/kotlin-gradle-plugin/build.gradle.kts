@@ -664,3 +664,10 @@ fun avoidPublishingTestFixtures() {
     javaComponent.withVariantsFromConfiguration(configurations["testFixturesRuntimeElements"]) { skip() }
 }
 avoidPublishingTestFixtures()
+
+tasks.withType<Jar>().configureEach {
+    if (name.endsWith("SourcesJar")) {
+        // FIXME: Entry org/jetbrains/kotlin/cli/common/arguments/CommonCompilerArguments.kt is a duplicate
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    }
+}

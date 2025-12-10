@@ -171,3 +171,10 @@ fun Project.generatedSourcesTask(
 
 private val Project.sourceSets: SourceSetContainer
     get() = extensions.getByType<JavaPluginExtension>().sourceSets
+
+tasks.withType<Jar>().configureEach {
+    if (name.endsWith("Jar") || name == "jar") {
+        // FIXME: Entry org/jetbrains/kotlin/gradle/dsl/KotlinDependencies.class is a duplicate
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    }
+}

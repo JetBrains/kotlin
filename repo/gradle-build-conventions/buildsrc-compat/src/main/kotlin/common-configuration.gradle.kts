@@ -203,10 +203,6 @@ fun Project.configureArtifacts() {
         enabled = false
     }
 
-    tasks.withType<Jar>().configureEach {
-        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-    }
-
     /**
      * Bit mask: `rw-r--r--`
      */

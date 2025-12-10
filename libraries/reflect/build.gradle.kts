@@ -267,6 +267,8 @@ configurePublishedComponent {
 val sourcesJar = tasks.named<Jar>("sourcesJar") {
     archiveClassifier.set("sources")
 
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
     dependsOn(relocateCoreSources)
     from(relocatedCoreSrc)
     from("$core/reflection.jvm/src")
@@ -288,6 +290,7 @@ val result by task<Jar> {
     }
     from(zipTree(provider { reflectShadowJar.get().archiveFile.get().asFile })) {
         include("META-INF/versions/**")
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     }
     includeEmptyDirs = false
     manifestAttributes(
