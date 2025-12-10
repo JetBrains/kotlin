@@ -64,6 +64,222 @@ public class FirStandaloneNormalAnalysisSourceModuleDeclarationTypeAsPsiTypeTest
   }
 
   @Test
+  @TestMetadata("declarationSiteContravariantFunctionContextParameterType.kt")
+  public void testDeclarationSiteContravariantFunctionContextParameterType() {
+    runTest("analysis/analysis-api/testData/components/javaInteroperabilityComponent/asPsiType/forDeclaration/declarationSiteContravariantFunctionContextParameterType.kt");
+  }
+
+  @Test
+  @TestMetadata("declarationSiteContravariantFunctionContextParameterTypeFinal.kt")
+  public void testDeclarationSiteContravariantFunctionContextParameterTypeFinal() {
+    runTest("analysis/analysis-api/testData/components/javaInteroperabilityComponent/asPsiType/forDeclaration/declarationSiteContravariantFunctionContextParameterTypeFinal.kt");
+  }
+
+  @Test
+  @TestMetadata("declarationSiteContravariantFunctionImplicitReturnType.kt")
+  public void testDeclarationSiteContravariantFunctionImplicitReturnType() {
+    runTest("analysis/analysis-api/testData/components/javaInteroperabilityComponent/asPsiType/forDeclaration/declarationSiteContravariantFunctionImplicitReturnType.kt");
+  }
+
+  @Test
+  @TestMetadata("declarationSiteContravariantFunctionImplicitReturnTypeFinal.kt")
+  public void testDeclarationSiteContravariantFunctionImplicitReturnTypeFinal() {
+    runTest("analysis/analysis-api/testData/components/javaInteroperabilityComponent/asPsiType/forDeclaration/declarationSiteContravariantFunctionImplicitReturnTypeFinal.kt");
+  }
+
+  @Test
+  @TestMetadata("declarationSiteContravariantFunctionLocalVariableType.kt")
+  public void testDeclarationSiteContravariantFunctionLocalVariableType() {
+    runTest("analysis/analysis-api/testData/components/javaInteroperabilityComponent/asPsiType/forDeclaration/declarationSiteContravariantFunctionLocalVariableType.kt");
+  }
+
+  @Test
+  @TestMetadata("declarationSiteContravariantFunctionLocalVariableTypeFinal.kt")
+  public void testDeclarationSiteContravariantFunctionLocalVariableTypeFinal() {
+    runTest("analysis/analysis-api/testData/components/javaInteroperabilityComponent/asPsiType/forDeclaration/declarationSiteContravariantFunctionLocalVariableTypeFinal.kt");
+  }
+
+  @Test
+  @TestMetadata("declarationSiteContravariantFunctionParameterType.kt")
+  public void testDeclarationSiteContravariantFunctionParameterType() {
+    runTest("analysis/analysis-api/testData/components/javaInteroperabilityComponent/asPsiType/forDeclaration/declarationSiteContravariantFunctionParameterType.kt");
+  }
+
+  @Test
+  @TestMetadata("declarationSiteContravariantFunctionParameterTypeFinal.kt")
+  public void testDeclarationSiteContravariantFunctionParameterTypeFinal() {
+    runTest("analysis/analysis-api/testData/components/javaInteroperabilityComponent/asPsiType/forDeclaration/declarationSiteContravariantFunctionParameterTypeFinal.kt");
+  }
+
+  @Test
+  @TestMetadata("declarationSiteContravariantFunctionReturnType.kt")
+  public void testDeclarationSiteContravariantFunctionReturnType() {
+    runTest("analysis/analysis-api/testData/components/javaInteroperabilityComponent/asPsiType/forDeclaration/declarationSiteContravariantFunctionReturnType.kt");
+  }
+
+  @Test
+  @TestMetadata("declarationSiteContravariantFunctionReturnTypeFinal.kt")
+  public void testDeclarationSiteContravariantFunctionReturnTypeFinal() {
+    runTest("analysis/analysis-api/testData/components/javaInteroperabilityComponent/asPsiType/forDeclaration/declarationSiteContravariantFunctionReturnTypeFinal.kt");
+  }
+
+  @Test
+  @TestMetadata("declarationSiteContravariantPropertyReturnType.kt")
+  public void testDeclarationSiteContravariantPropertyReturnType() {
+    runTest("analysis/analysis-api/testData/components/javaInteroperabilityComponent/asPsiType/forDeclaration/declarationSiteContravariantPropertyReturnType.kt");
+  }
+
+  @Test
+  @TestMetadata("declarationSiteContravariantPropertyReturnTypeFinal.kt")
+  public void testDeclarationSiteContravariantPropertyReturnTypeFinal() {
+    runTest("analysis/analysis-api/testData/components/javaInteroperabilityComponent/asPsiType/forDeclaration/declarationSiteContravariantPropertyReturnTypeFinal.kt");
+  }
+
+  @Test
+  @TestMetadata("declarationSiteCovariantFunctionContextParameterType.kt")
+  public void testDeclarationSiteCovariantFunctionContextParameterType() {
+    runTest("analysis/analysis-api/testData/components/javaInteroperabilityComponent/asPsiType/forDeclaration/declarationSiteCovariantFunctionContextParameterType.kt");
+  }
+
+  @Test
+  @TestMetadata("declarationSiteCovariantFunctionContextParameterTypeFinal.kt")
+  public void testDeclarationSiteCovariantFunctionContextParameterTypeFinal() {
+    runTest("analysis/analysis-api/testData/components/javaInteroperabilityComponent/asPsiType/forDeclaration/declarationSiteCovariantFunctionContextParameterTypeFinal.kt");
+  }
+
+  @Test
+  @TestMetadata("declarationSiteCovariantFunctionImplicitReturnType.kt")
+  public void testDeclarationSiteCovariantFunctionImplicitReturnType() {
+    runTest("analysis/analysis-api/testData/components/javaInteroperabilityComponent/asPsiType/forDeclaration/declarationSiteCovariantFunctionImplicitReturnType.kt");
+  }
+
+  @Test
+  @TestMetadata("declarationSiteCovariantFunctionImplicitReturnTypeFinal.kt")
+  public void testDeclarationSiteCovariantFunctionImplicitReturnTypeFinal() {
+    runTest("analysis/analysis-api/testData/components/javaInteroperabilityComponent/asPsiType/forDeclaration/declarationSiteCovariantFunctionImplicitReturnTypeFinal.kt");
+  }
+
+  @Test
+  @TestMetadata("declarationSiteCovariantFunctionLocalVariableType.kt")
+  public void testDeclarationSiteCovariantFunctionLocalVariableType() {
+    runTest("analysis/analysis-api/testData/components/javaInteroperabilityComponent/asPsiType/forDeclaration/declarationSiteCovariantFunctionLocalVariableType.kt");
+  }
+
+  @Test
+  @TestMetadata("declarationSiteCovariantFunctionLocalVariableTypeFinal.kt")
+  public void testDeclarationSiteCovariantFunctionLocalVariableTypeFinal() {
+    runTest("analysis/analysis-api/testData/components/javaInteroperabilityComponent/asPsiType/forDeclaration/declarationSiteCovariantFunctionLocalVariableTypeFinal.kt");
+  }
+
+  @Test
+  @TestMetadata("declarationSiteCovariantFunctionParameterType.kt")
+  public void testDeclarationSiteCovariantFunctionParameterType() {
+    runTest("analysis/analysis-api/testData/components/javaInteroperabilityComponent/asPsiType/forDeclaration/declarationSiteCovariantFunctionParameterType.kt");
+  }
+
+  @Test
+  @TestMetadata("declarationSiteCovariantFunctionParameterTypeFinal.kt")
+  public void testDeclarationSiteCovariantFunctionParameterTypeFinal() {
+    runTest("analysis/analysis-api/testData/components/javaInteroperabilityComponent/asPsiType/forDeclaration/declarationSiteCovariantFunctionParameterTypeFinal.kt");
+  }
+
+  @Test
+  @TestMetadata("declarationSiteCovariantFunctionReturnType.kt")
+  public void testDeclarationSiteCovariantFunctionReturnType() {
+    runTest("analysis/analysis-api/testData/components/javaInteroperabilityComponent/asPsiType/forDeclaration/declarationSiteCovariantFunctionReturnType.kt");
+  }
+
+  @Test
+  @TestMetadata("declarationSiteCovariantFunctionReturnTypeFinal.kt")
+  public void testDeclarationSiteCovariantFunctionReturnTypeFinal() {
+    runTest("analysis/analysis-api/testData/components/javaInteroperabilityComponent/asPsiType/forDeclaration/declarationSiteCovariantFunctionReturnTypeFinal.kt");
+  }
+
+  @Test
+  @TestMetadata("declarationSiteCovariantPropertyReturnType.kt")
+  public void testDeclarationSiteCovariantPropertyReturnType() {
+    runTest("analysis/analysis-api/testData/components/javaInteroperabilityComponent/asPsiType/forDeclaration/declarationSiteCovariantPropertyReturnType.kt");
+  }
+
+  @Test
+  @TestMetadata("declarationSiteCovariantPropertyReturnTypeFinal.kt")
+  public void testDeclarationSiteCovariantPropertyReturnTypeFinal() {
+    runTest("analysis/analysis-api/testData/components/javaInteroperabilityComponent/asPsiType/forDeclaration/declarationSiteCovariantPropertyReturnTypeFinal.kt");
+  }
+
+  @Test
+  @TestMetadata("declarationSiteInvariantFunctionContextParameterType.kt")
+  public void testDeclarationSiteInvariantFunctionContextParameterType() {
+    runTest("analysis/analysis-api/testData/components/javaInteroperabilityComponent/asPsiType/forDeclaration/declarationSiteInvariantFunctionContextParameterType.kt");
+  }
+
+  @Test
+  @TestMetadata("declarationSiteInvariantFunctionContextParameterTypeFinal.kt")
+  public void testDeclarationSiteInvariantFunctionContextParameterTypeFinal() {
+    runTest("analysis/analysis-api/testData/components/javaInteroperabilityComponent/asPsiType/forDeclaration/declarationSiteInvariantFunctionContextParameterTypeFinal.kt");
+  }
+
+  @Test
+  @TestMetadata("declarationSiteInvariantFunctionImplicitReturnType.kt")
+  public void testDeclarationSiteInvariantFunctionImplicitReturnType() {
+    runTest("analysis/analysis-api/testData/components/javaInteroperabilityComponent/asPsiType/forDeclaration/declarationSiteInvariantFunctionImplicitReturnType.kt");
+  }
+
+  @Test
+  @TestMetadata("declarationSiteInvariantFunctionImplicitReturnTypeFinal.kt")
+  public void testDeclarationSiteInvariantFunctionImplicitReturnTypeFinal() {
+    runTest("analysis/analysis-api/testData/components/javaInteroperabilityComponent/asPsiType/forDeclaration/declarationSiteInvariantFunctionImplicitReturnTypeFinal.kt");
+  }
+
+  @Test
+  @TestMetadata("declarationSiteInvariantFunctionLocalVariableType.kt")
+  public void testDeclarationSiteInvariantFunctionLocalVariableType() {
+    runTest("analysis/analysis-api/testData/components/javaInteroperabilityComponent/asPsiType/forDeclaration/declarationSiteInvariantFunctionLocalVariableType.kt");
+  }
+
+  @Test
+  @TestMetadata("declarationSiteInvariantFunctionLocalVariableTypeFinal.kt")
+  public void testDeclarationSiteInvariantFunctionLocalVariableTypeFinal() {
+    runTest("analysis/analysis-api/testData/components/javaInteroperabilityComponent/asPsiType/forDeclaration/declarationSiteInvariantFunctionLocalVariableTypeFinal.kt");
+  }
+
+  @Test
+  @TestMetadata("declarationSiteInvariantFunctionParameterType.kt")
+  public void testDeclarationSiteInvariantFunctionParameterType() {
+    runTest("analysis/analysis-api/testData/components/javaInteroperabilityComponent/asPsiType/forDeclaration/declarationSiteInvariantFunctionParameterType.kt");
+  }
+
+  @Test
+  @TestMetadata("declarationSiteInvariantFunctionParameterTypeFinal.kt")
+  public void testDeclarationSiteInvariantFunctionParameterTypeFinal() {
+    runTest("analysis/analysis-api/testData/components/javaInteroperabilityComponent/asPsiType/forDeclaration/declarationSiteInvariantFunctionParameterTypeFinal.kt");
+  }
+
+  @Test
+  @TestMetadata("declarationSiteInvariantFunctionReturnType.kt")
+  public void testDeclarationSiteInvariantFunctionReturnType() {
+    runTest("analysis/analysis-api/testData/components/javaInteroperabilityComponent/asPsiType/forDeclaration/declarationSiteInvariantFunctionReturnType.kt");
+  }
+
+  @Test
+  @TestMetadata("declarationSiteInvariantFunctionReturnTypeFinal.kt")
+  public void testDeclarationSiteInvariantFunctionReturnTypeFinal() {
+    runTest("analysis/analysis-api/testData/components/javaInteroperabilityComponent/asPsiType/forDeclaration/declarationSiteInvariantFunctionReturnTypeFinal.kt");
+  }
+
+  @Test
+  @TestMetadata("declarationSiteInvariantPropertyReturnType.kt")
+  public void testDeclarationSiteInvariantPropertyReturnType() {
+    runTest("analysis/analysis-api/testData/components/javaInteroperabilityComponent/asPsiType/forDeclaration/declarationSiteInvariantPropertyReturnType.kt");
+  }
+
+  @Test
+  @TestMetadata("declarationSiteInvariantPropertyReturnTypeFinal.kt")
+  public void testDeclarationSiteInvariantPropertyReturnTypeFinal() {
+    runTest("analysis/analysis-api/testData/components/javaInteroperabilityComponent/asPsiType/forDeclaration/declarationSiteInvariantPropertyReturnTypeFinal.kt");
+  }
+
+  @Test
   @TestMetadata("duplicatedClass_functionParameter.kt")
   public void testDuplicatedClass_functionParameter() {
     runTest("analysis/analysis-api/testData/components/javaInteroperabilityComponent/asPsiType/forDeclaration/duplicatedClass_functionParameter.kt");

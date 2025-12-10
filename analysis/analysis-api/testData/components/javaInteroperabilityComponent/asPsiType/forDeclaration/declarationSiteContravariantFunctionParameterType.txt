@@ -1,0 +1,2 @@
+KaType: Foo<kotlin.CharSequence>
+PsiType: @org.jetbrains.annotations.NotNull() Foo<? super @org.jetbrains.annotations.NotNull() java.lang.CharSequence>
