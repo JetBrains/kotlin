@@ -62,16 +62,18 @@ internal class AnonymousObjectSuperConstructorLowering(val context: JvmBackendCo
     }
 
     override fun visitBlock(expression: IrBlock): IrExpression {
-        if (expression.origin != IrStatementOrigin.OBJECT_LITERAL)
+        if (
+            expression.origin != IrStatementOrigin.OBJECT_LITERAL ||
+            context.configuration.languageVersionSettings.getFlag(AnalysisFlags.headerMode)
+        ) {
             return super.visitBlock(expression)
-
-        val headerMode = context.configuration.languageVersionSettings.getFlag(AnalysisFlags.headerMode)
+        }
 
         val objectConstructorCall = expression.statements.last() as? IrConstructorCall
             ?: throw AssertionError("object literal does not end in a constructor call")
         val objectConstructor = objectConstructorCall.symbol.owner
         val objectConstructorBody = objectConstructor.body as? IrBlockBody
-            ?: if (headerMode) return super.visitBlock(expression) else throw AssertionError("object literal constructor body is not a block")
+            ?: throw AssertionError("object literal constructor body is not a block")
 
         val newArguments = mutableListOf<IrExpression>()
         fun addArgument(value: IrExpression): IrValueParameter {

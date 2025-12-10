@@ -218,6 +218,13 @@ fun IrConstructor.delegationKind(context: LoweringContext): ConstructorDelegatio
         }
     })
 
+    /*
+     * In the header mode the frontend does not generate the delegated constructor calls. Also
+     * the code generated in the header mode is not supposed to be executed (JVM) / consumed by the second
+     * compilation stage (non-JVM), so it's enough to insert anything here which will not cause
+     * the compiler to fail. So `PARTIAL_LINKAGE_ERROR` suites here, as it injects just some error
+     * in place of the delegated call.
+     */
     val delegationKind: ConstructorDelegationKind? = when (numberOfDelegatingCalls) {
         0 -> if (hasPartialLinkageError || headerMode) ConstructorDelegationKind.PARTIAL_LINKAGE_ERROR else null
         1 -> if (callsSuper) ConstructorDelegationKind.CALLS_SUPER else ConstructorDelegationKind.CALLS_THIS
