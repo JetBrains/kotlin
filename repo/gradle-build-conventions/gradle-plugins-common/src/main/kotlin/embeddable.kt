@@ -4,7 +4,6 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.gradle.api.Project
 import org.gradle.api.attributes.LibraryElements
 import org.gradle.api.attributes.Usage
-import org.gradle.api.file.DuplicatesStrategy
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.jvm.tasks.Jar
 import org.gradle.kotlin.dsl.named
@@ -66,7 +65,6 @@ private fun Project.compilerShadowJar(taskName: String, body: ShadowJar.() -> Un
 
     return tasks.register<ShadowJar>(taskName) {
         destinationDirectory.set(project.layout.buildDirectory.dir("libs"))
-        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
         configurations.set(listOf(compilerJarClasspath.get()))
         body()
     }
@@ -95,7 +93,6 @@ fun Project.rewriteDefaultJarDepsToShadedCompiler(
         archiveClassifier.unset()
 
         destinationDirectory.set(project.layout.buildDirectory.dir("libs"))
-        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
         configureEmbeddableCompilerRelocation(withJavaxInject = false)
         body()
     }
