@@ -470,6 +470,12 @@ public class FirIdeNormalAnalysisSourceModuleCompilerFacilityTestGenerated exten
     }
 
     @Test
+    @TestMetadata("originalIfFakeOverride.kt")
+    public void testOriginalIfFakeOverride() {
+      runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/originalIfFakeOverride.kt");
+    }
+
+    @Test
     @TestMetadata("resultNothing.kt")
     public void testResultNothing() {
       runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/resultNothing.kt");
