@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.js.test.runners.commonConfigurationForJsTest
 import org.jetbrains.kotlin.js.test.runners.configureJsBoxHandlers
 import org.jetbrains.kotlin.js.test.runners.setUpDefaultDirectivesForJsBoxTest
-import org.jetbrains.kotlin.js.test.services.configuration.UnsupportedFeaturesTestConfigurator
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
@@ -31,6 +30,7 @@ import org.jetbrains.kotlin.test.services.KotlinStandardLibrariesPathProvider
 import org.jetbrains.kotlin.test.services.SourceFilePreprocessor
 import org.jetbrains.kotlin.test.services.StandardLibrariesPathProviderForKotlinProject
 import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.configuration.UnsupportedFeaturesTestConfigurator
 import org.jetbrains.kotlin.utils.bind
 import org.junit.jupiter.api.Tag
 import java.io.File
