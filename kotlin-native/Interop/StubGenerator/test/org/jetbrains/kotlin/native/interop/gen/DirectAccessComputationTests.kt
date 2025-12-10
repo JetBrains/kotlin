@@ -27,12 +27,30 @@ class DirectAccessComputationTests : IndexerTestsBase() {
         }
 
     @Test
+    fun `default function symbol name`() {
+        val decl = index("""
+            void foo(void);
+        """.trimIndent()).function
+
+        assertEquals("foo", decl.directAccess.unmangledSymbol)
+    }
+
+    @Test
     fun `default global symbol name`() {
         val decl = index("""
             extern int foo;
         """.trimIndent()).global
 
         assertEquals("foo", decl.directAccess.unmangledSymbol)
+    }
+
+    @Test
+    fun `function with __asm`() {
+        val decl = index("""
+            void foo(void) __asm("bar");
+        """.trimIndent()).function
+
+        assertEquals("bar", decl.directAccess.symbol)
     }
 
     @Test
@@ -45,10 +63,31 @@ class DirectAccessComputationTests : IndexerTestsBase() {
     }
 
     @Test
+    fun `function defined in header`() {
+        val decl = index("""
+            static void foo(void) {}
+        """.trimIndent()).function
+
+        // TODO KT-83039: should be unavailable.
+        assertEquals("foo", decl.directAccess.unmangledSymbol)
+    }
+
+    @Test
     fun `global defined in header`() {
         val decl = index("""
             static int foo = 42;
         """.trimIndent()).global
+
+        // TODO KT-83039: should be unavailable.
+        assertEquals("foo", decl.directAccess.unmangledSymbol)
+    }
+
+    @Test
+    fun `function declared and defined in header`() {
+        val decl = index("""
+            static void foo(void);
+            static void foo(void) {}
+        """.trimIndent()).function
 
         // TODO KT-83039: should be unavailable.
         assertEquals("foo", decl.directAccess.unmangledSymbol)
@@ -66,11 +105,36 @@ class DirectAccessComputationTests : IndexerTestsBase() {
     }
 
     @Test
+    fun `function defined and declared in header`() {
+        val decl = index("""
+            static void foo(void) {}
+            static void foo(void);
+        """.trimIndent()).function
+
+        // TODO KT-83039: should be unavailable.
+        assertEquals("foo", decl.directAccess.unmangledSymbol)
+    }
+
+    @Test
     fun `global defined and declared in header`() {
         val decl = index("""
             static int foo = 42;
             static int foo;
         """.trimIndent()).global
+
+        // TODO KT-83039: should be unavailable.
+        assertEquals("foo", decl.directAccess.unmangledSymbol)
+    }
+
+    @Test
+    fun `function defined in def file`() {
+        val decl = index(
+                headerContents = "",
+                appendDefFile = """
+                    ---
+                    static void foo(void) {}
+                """.trimIndent()
+        ).function
 
         // TODO KT-83039: should be unavailable.
         assertEquals("foo", decl.directAccess.unmangledSymbol)
@@ -91,6 +155,22 @@ class DirectAccessComputationTests : IndexerTestsBase() {
     }
 
     @Test
+    fun `function declared in header and defined in def file`() {
+        val decl = index(
+                headerContents = """
+                    static void foo(void);
+                """.trimIndent(),
+                appendDefFile = """
+                    ---
+                    static void foo(void) {}
+                """.trimIndent()
+        ).function
+
+        // TODO KT-83039: should be unavailable.
+        assertEquals("foo", decl.directAccess.unmangledSymbol)
+    }
+
+    @Test
     fun `global declared in header and defined in def file`() {
         val decl = index(
                 headerContents = """
@@ -101,6 +181,22 @@ class DirectAccessComputationTests : IndexerTestsBase() {
                     static int foo = 42;
                 """.trimIndent()
         ).global
+
+        // TODO KT-83039: should be unavailable.
+        assertEquals("foo", decl.directAccess.unmangledSymbol)
+    }
+
+    @Test
+    fun `function defined in header and declared in def file`() {
+        val decl = index(
+                headerContents = """
+                    static void foo(void) {}
+                """.trimIndent(),
+                appendDefFile = """
+                    ---
+                    static void foo(void);
+                """.trimIndent()
+        ).function
 
         // TODO KT-83039: should be unavailable.
         assertEquals("foo", decl.directAccess.unmangledSymbol)

@@ -7,6 +7,7 @@ import kotlinx.metadata.klib.compileTimeValue
 import org.jetbrains.kotlin.native.interop.indexer.FunctionDecl
 import org.jetbrains.kotlin.native.interop.indexer.IntegerConstantDef
 import org.jetbrains.kotlin.native.interop.indexer.IntegerType
+import org.jetbrains.kotlin.native.interop.indexer.DirectAccess
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -20,7 +21,7 @@ class StubIrToMetadataTests {
     }
 
     private fun createTrivialFunction(name: String): FunctionStub {
-        val cDeclaration = FunctionDecl(name, emptyList(), intType, false, binaryName = name)
+        val cDeclaration = FunctionDecl(name, emptyList(), intType, false, DirectAccess.Symbol(name))
         val origin = StubOrigin.Function(cDeclaration)
         return FunctionStub(
                 name = cDeclaration.name,

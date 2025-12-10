@@ -37,6 +37,9 @@ open class IndexerTestsBase : InteropTestsBase() {
     val IndexerResult.global: GlobalDecl
         get() = index.globals.atMostOne()!!
 
+    val IndexerResult.function: FunctionDecl
+        get() = index.functions.atMostOne()!!
+
     fun indexFunctionOrNull(headerContents: String): FunctionDecl? =
             index(headerContents).index.functions.atMostOne()
 

@@ -363,12 +363,7 @@ class FunctionDecl(
         val returnType: Type,
         val isVararg: Boolean,
 
-        /**
-         * The name of the function in the binary code (i.e. the symbol name as seen by the linker).
-         * It usually equals to `"_$name"` on Apple platforms and `name` on other platforms,
-         * but can be different if some modifiers like `__asm("foo")` are at play.
-         */
-        val binaryName: String,
+        val directAccess: DirectAccess,
 
         val parentName: String? = null
 ) {

@@ -534,8 +534,10 @@ internal abstract class FunctionalStubBuilder(
     }
 
     protected fun buildFunctionAnnotations(func: FunctionDecl, stubName: String = func.name) =
-            cCall(
-                    direct = { AnnotationStub.CCall.Direct(func.binaryName) },
+            cCallModeAnnotations(
+                    name = func.name,
+                    directAccess = func.directAccess,
+                    direct = { symbolName -> listOf(AnnotationStub.CCall.Direct(symbolName)) },
                     indirect = { AnnotationStub.CCall.Symbol("${context.generateNextUniqueId("knifunptr_")}_${stubName}") }
             )
 
@@ -593,21 +595,6 @@ internal abstract class FunctionalStubBuilder(
     // We take this approach as generic 'const short*' shall not be used as String.
     private fun representCFunctionParameterAsWString(function: FunctionDecl, type: Type) = type.isAliasOf(platformWStringTypes)
             && !noStringConversion.contains(function.name)
-}
-
-private inline fun StubElementBuilder.cCall(
-        direct: () -> AnnotationStub.CCall.Direct,
-        indirect: () -> AnnotationStub.CCall.Symbol,
-): List<AnnotationStub> = buildList {
-    val cCallMode = context.configuration.cCallMode
-
-    if (cCallMode != CCallMode.INDIRECT) {
-        add(direct())
-    }
-
-    if (cCallMode != CCallMode.DIRECT) {
-        add(indirect())
-    }
 }
 
 internal class FunctionStubBuilder(
@@ -770,44 +757,19 @@ internal class GlobalStubBuilder(
     private fun cCallOrGlobalAccess(
             isPointer: Boolean,
             indirect: () -> AnnotationStub.CCall.Symbol
-    ): List<AnnotationStub> = buildList {
-        val cCallMode = context.configuration.cCallMode
-
-        if (cCallMode != CCallMode.INDIRECT) {
-            when (val it = global.directAccess) {
-                is DirectAccess.Symbol -> {
-                    add(AnnotationStub.CGlobalAccess.Symbol(it.name))
+    ): List<AnnotationStub> = cCallModeAnnotations(
+            name = global.name,
+            directAccess = global.directAccess,
+            direct = { symbolName: String ->
+                buildList {
+                    add(AnnotationStub.CGlobalAccess.Symbol(symbolName))
                     if (isPointer) {
                         add(AnnotationStub.CGlobalAccess.Pointer)
                     }
                 }
-                is DirectAccess.Unavailable -> {
-                    if (cCallMode == CCallMode.DIRECT) {
-                        // The declaration is not supported in the requested direct mode.
-                        // Mark it accordingly.
-                        //
-                        // The trick here is that we generate a symbol name that can't be resolved into anything.
-                        // So, if such a declaration is used, the linkage will fail with this string as a message.
-                        // This serves two purposes:
-                        // 1. Such problems are reported not during compilation but during linkage,
-                        //    along with other linkage failures caused by `-Xccall-mode direct`
-                        //    (e.g. usages of header-defined functions), allowing a user to collect more problems at once.
-                        // 2. If such a declaration is used in unreachable code, it doesn't make the compilation fail.
-                        add(AnnotationStub.CCall.Direct("${global.name} unsupported: ${it.reason}"))
-                        // Note: the link leads to the issue about non-constant macros (that are also handled with this code).
-                        // That's fine, because it is the only case that reaches this code for now.
-                    }
-                    // TODO: KT-79757 add @LimitedCompatibility(it.reason)
-                }
-            }
-        }
-
-        if (cCallMode != CCallMode.DIRECT) {
-            add(indirect())
-        }
-
-        check(this.isNotEmpty()) { "The generated annotation list is empty for ${global.name}" }
-    }
+            },
+            indirect = indirect
+    )
 
     private fun addWrapperGenerationInfo(
             getter: PropertyAccessor.Getter.ExternalGetter,
@@ -832,6 +794,48 @@ internal class GlobalStubBuilder(
     } else {
         null
     }
+}
+
+private fun StubElementBuilder.cCallModeAnnotations(
+        name: String,
+        directAccess: DirectAccess,
+        direct: (symbolName: String) -> List<AnnotationStub>,
+        indirect: () -> AnnotationStub.CCall.Symbol
+): List<AnnotationStub> = buildList {
+    val cCallMode = context.configuration.cCallMode
+    if (cCallMode != CCallMode.INDIRECT) {
+        when (directAccess) {
+            is DirectAccess.Symbol -> {
+                val directAnnotations = direct(directAccess.name)
+                check(directAnnotations.isNotEmpty()) { "Got no direct access annotations for $name" }
+                addAll(directAnnotations)
+            }
+            is DirectAccess.Unavailable -> {
+                if (cCallMode == CCallMode.DIRECT) {
+                    // The declaration is not supported in the requested direct mode.
+                    // Mark it accordingly.
+                    //
+                    // The trick here is that we generate a symbol name that can't be resolved into anything.
+                    // So, if such a declaration is used, the linkage will fail with this string as a message.
+                    // This serves two purposes:
+                    // 1. Such problems are reported not during compilation but during linkage,
+                    //    along with other linkage failures caused by `-Xccall-mode direct`
+                    //    (e.g. usages of header-defined functions), allowing a user to collect more problems at once.
+                    // 2. If such a declaration is used in unreachable code, it doesn't make the compilation fail.
+                    add(AnnotationStub.CCall.Direct("$name unsupported: ${directAccess.reason}"))
+                    // Note: the link leads to the issue about non-constant macros (that are also handled with this code).
+                    // That's fine, because it is the only case that reaches this code for now.
+                }
+                // TODO: KT-79757 add @LimitedCompatibility(directAccess.reason)
+            }
+        }
+    }
+
+    if (cCallMode != CCallMode.DIRECT) {
+        add(indirect())
+    }
+
+    check(this.isNotEmpty()) { "The generated annotation list is empty for $name" }
 }
 
 internal class TypedefStubBuilder(

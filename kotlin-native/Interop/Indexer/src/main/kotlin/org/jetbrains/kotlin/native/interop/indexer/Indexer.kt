@@ -1097,14 +1097,14 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
         val parameters = mutableListOf<Parameter>()
         parameters += getFunctionParameters(cursor) ?: return null
 
-        val binaryName = clang_Cursor_getMangling(cursor).convertAndDispose()
+        val directAccess = DirectAccess.Symbol(clang_Cursor_getMangling(cursor).convertAndDispose())
 
         val definitionCursor = clang_getCursorDefinition(cursor)
         val isDefined = (clang_Cursor_isNull(definitionCursor) == 0)
 
         val isVararg = clang_Cursor_isVariadic(cursor) != 0
 
-        return FunctionDecl(name, parameters, returnType, isVararg, binaryName)
+        return FunctionDecl(name, parameters, returnType, isVararg, directAccess)
     }
 
     private fun getObjCMethod(cursor: CValue<CXCursor>): ObjCMethod? {
