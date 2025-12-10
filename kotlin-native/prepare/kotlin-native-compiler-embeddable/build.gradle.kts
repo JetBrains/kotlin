@@ -51,7 +51,6 @@ dependencies {
     kotlinNativeEmbedded(project(":kotlin-native:klib"))
     kotlinNativeEmbedded(project(":native:cli-native"))
     kotlinNativeEmbedded(project(":kotlin-native:endorsedLibraries:kotlinx.cli", "jvmRuntimeElements"))
-    kotlinNativeEmbedded(project(":kotlin-compiler")) { isTransitive = false }
 
     kotlinNativeSources(project(":kotlin-native:backend.native"))
     kotlinNativeSources(project(":native:cli-native"))
