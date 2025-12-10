@@ -56,7 +56,7 @@ internal class StandardTestCaseGroupProvider : TestCaseGroupProvider {
                 }
             }
 
-            val lldbTestCases = testCases.filter { it.kind == TestKind.STANDALONE_LLDB }
+            val lldbTestCases = testCases.filter { it.kind == TestKind.STANDALONE_LLDB || it.kind == TestKind.STANDALONE_STEPPING }
             if (lldbTestCases.isNotEmpty()
                 && (settings.get<OptimizationMode>() != OptimizationMode.DEBUG
                         || !settings.get<LLDB>().isAvailable
@@ -219,6 +219,7 @@ internal class StandardTestCaseGroupProvider : TestCaseGroupProvider {
 
         val freeCompilerArgs = parseFreeCompilerArgs(registeredDirectives, location, settings)
         val expectedTimeoutFailure = parseExpectedTimeoutFailure(registeredDirectives, location)
+        val originalTestSourceFiles = testModules.values.flatMap { it.files }.map { it.location }
 
         val testKind = parseTestKind(registeredDirectives, location) ?: settings.get<TestKind>()
 
@@ -226,9 +227,17 @@ internal class StandardTestCaseGroupProvider : TestCaseGroupProvider {
             // Fix package declarations to avoid unintended conflicts between symbols with the same name in different test cases.
             fixPackageNames(testModules.values, nominalPackageName, testDataFile)
         }
+        if (testKind == TestKind.STANDALONE_STEPPING) {
+            // A wrapper for the "fun box" is needed because it may have a return value or be suspend,
+            // both of which make calling it directly as an entry point problematic.
+            generateEntryPointForSteppingTest(testModules.values)
+        }
 
-        val lldbSpec = if (testKind == TestKind.STANDALONE_LLDB) parseReplLLDBSpec(testDataFile) else null
-
+        val lldbSpec = when (testKind) {
+            TestKind.STANDALONE_LLDB -> parseReplLLDBSpec(testDataFile)
+            TestKind.STANDALONE_STEPPING -> SteppingLLDBSessionSpec(registeredDirectives, testDataFile, originalTestSourceFiles)
+            else -> null
+        }
         val outputMatcher = lldbSpec?.let {
             OutputMatcher(Output.STDOUT) { output -> lldbSpec.checkLLDBOutput(output, settings.get()) }
         } ?: parseOutputRegex(registeredDirectives)
@@ -259,7 +268,7 @@ internal class StandardTestCaseGroupProvider : TestCaseGroupProvider {
                 TestKind.REGULAR, TestKind.STANDALONE -> {
                     WithTestRunnerExtras(runnerType = parseTestRunner(registeredDirectives, location))
                 }
-                TestKind.STANDALONE_LLDB -> {
+                TestKind.STANDALONE_LLDB, TestKind.STANDALONE_STEPPING -> {
                     NoTestRunnerExtras(
                         entryPoint = parseEntryPoint(registeredDirectives, location),
                         arguments = lldbSpec!!.generateCLIArguments(settings.get<LLDB>().prettyPrinters)
@@ -276,6 +285,8 @@ internal class StandardTestCaseGroupProvider : TestCaseGroupProvider {
     }
 
     companion object {
+        private val BOX_METHOD_REGEX = """(?<=^|\n)(suspend )?fun box\(\)""".toRegex()
+
         private fun fixPackageNames(testModules: Collection<TestModule.Exclusive>, basePackageName: PackageName, testDataFile: File) {
             testModules.forEach { testModule ->
                 testModule.files.forEach { testFile ->
@@ -297,6 +308,46 @@ internal class StandardTestCaseGroupProvider : TestCaseGroupProvider {
                         testFile.update { text -> "package $basePackageName $text" }
                     }
                 }
+            }
+        }
+
+        private fun generateEntryPointForSteppingTest(testModules: Collection<TestModule.Exclusive>) {
+            var fileWithBoxFun: TestFile<TestModule.Exclusive>? = null
+            var boxIsSuspend = false
+            for (file in testModules.flatMap { it.files }) {
+                val match = BOX_METHOD_REGEX.find(file.text)
+                if (match != null) {
+                    fileWithBoxFun = file
+                    boxIsSuspend = match.groupValues[1].isNotEmpty()
+                    break
+                }
+            }
+
+            if (fileWithBoxFun != null) {
+                val mainSource = if (boxIsSuspend) {
+                    """
+                import kotlin.coroutines.startCoroutine
+
+                fun main() {
+                    ::box.startCoroutine(EmptyContinuation)
+                }
+                """.trimIndent()
+                } else {
+                    """
+                fun main() {
+                    box()
+                }
+                """.trimIndent()
+                }
+                fileWithBoxFun.module.files += TestFile.createUncommitted(
+                    location = fileWithBoxFun.location.parentFile.resolve("Generated_Box_Main.kt"),
+                    module = fileWithBoxFun.module,
+                    text = mainSource
+                )
+                fileWithBoxFun.module.files += TestFile.createCommitted(
+                    location = File("compiler/testData/debug/nativeTestHelpers/coroutineHelpers.kt"),
+                    module = fileWithBoxFun.module,
+                )
             }
         }
 

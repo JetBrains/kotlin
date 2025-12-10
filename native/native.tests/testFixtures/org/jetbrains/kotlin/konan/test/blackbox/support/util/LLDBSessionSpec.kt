@@ -6,9 +6,15 @@
 package org.jetbrains.kotlin.konan.test.blackbox.support.util
 
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeTargets
+import org.jetbrains.kotlin.test.TargetBackend
+import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
+import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertFalse
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
+import org.jetbrains.kotlin.test.utils.SteppingTestLoggedData
+import org.jetbrains.kotlin.test.utils.checkSteppingTestResult
+import org.jetbrains.kotlin.test.utils.formatAsSteppingTestExpectation
 import java.io.File
 
 abstract class LLDBSessionSpec {
@@ -18,6 +24,8 @@ abstract class LLDBSessionSpec {
         this += "-b"
         this += "-o"
         this += "command script import ${prettyPrinters.absolutePath}"
+        this += "-o"
+        this += "command script import ${File("native/native.tests/testFixtures/scripts/konan_lldb_test_helper.py").absolutePath}"
     }
 
     abstract fun checkLLDBOutput(output: String, nativeTargets: KotlinNativeTargets): Boolean
@@ -158,5 +166,76 @@ internal class ReplLLDBSessionSpec private constructor(private val expectedSteps
                 .filterNot(String::isBlank)
                 .map { block -> Step.parse(block, SPEC_COMMAND_PREFIX) }
         )
+    }
+}
+
+/**
+ * Executes step-into command through the entire program, compares line number after each step with the golden data.
+ *
+ * Analogous to [org.jetbrains.kotlin.test.backend.handlers.SteppingDebugRunner], [org.jetbrains.kotlin.js.test.handlers.JsDebugRunner].
+ */
+internal class SteppingLLDBSessionSpec(
+    private val registeredDirectives: RegisteredDirectives,
+    private val originalFile: File,
+    testSourceFiles: Collection<File>,
+) : LLDBSessionSpec() {
+    private val testSourceFilePaths = testSourceFiles.map { it.absoluteFile.invariantSeparatorsPath }
+
+    override fun generateCLIArguments(prettyPrinters: File): List<String> = buildList {
+        addAll(super.generateCLIArguments(prettyPrinters))
+        this += "-o"
+        this += "b -r kfun:#box(#suspend)?\\((kotlin.coroutines.Continuation<kotlin.Unit>)?\\){}"
+        this += "-o"
+        this += "r"
+        this += "-o"
+        this += "step_through_current_frame"
+    }
+
+    override fun checkLLDBOutput(output: String, nativeTargets: KotlinNativeTargets): Boolean {
+        sanityCheckLLDBOutput(output)
+
+        val loggedSteps = output.lines().mapNotNull { line ->
+            val stepLine = line.removePrefix("//step ")
+            if (stepLine == line) {
+                return@mapNotNull null
+            }
+
+            val (filePath, lineStr, funRawName) = stepLine.split('\u001f', limit = 3)
+            if (filePath !in testSourceFilePaths) {
+                return@mapNotNull null
+            }
+
+            // Function names in K/N are mangled in a quite convoluted way, so here we try to extract
+            // the original, simple function name from it.
+            val funNameMatch = KFunNameStaticSuspendRe.matchAt(funRawName, 0)
+                ?: KFunNameInternalRe.matchAt(funRawName, 0)
+                ?: KFunNameRegularRe.matchAt(funRawName, 0)
+            val simpleFunName = funNameMatch?.groupValues?.get(1) ?: funRawName
+
+            val sourceName = filePath.substringAfterLast('/')
+            val line = lineStr.toInt()
+            val expectation = formatAsSteppingTestExpectation(
+                sourceName, line.takeUnless { it == 0 }, simpleFunName, false, null
+            )
+            SteppingTestLoggedData(line, false, expectation)
+        }
+
+        if (loggedSteps.isEmpty()) {
+            return false
+        }
+        checkSteppingTestResult(
+            FrontendKinds.FIR,
+            TargetBackend.NATIVE,
+            originalFile,
+            loggedSteps,
+            registeredDirectives,
+        )
+        return true
+    }
+
+    companion object {
+        private val KFunNameStaticSuspendRe = Regex("kfun:.*?#(.+)#(?:static|suspend)\\(")
+        private val KFunNameInternalRe = Regex("kfun:(?:.*\\.)?(.+)#internal")
+        private val KFunNameRegularRe = Regex("kfun:.*#(.+?)(?:__at__.+)?\\(")
     }
 }

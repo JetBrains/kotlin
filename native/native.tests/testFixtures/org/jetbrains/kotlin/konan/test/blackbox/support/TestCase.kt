@@ -233,7 +233,7 @@ class TestCase(
     val expectedFailure: Boolean = false,
 ) {
     val checks = when (kind) {
-        TestKind.STANDALONE_NO_TR, TestKind.STANDALONE_LLDB -> checks
+        TestKind.STANDALONE_NO_TR, TestKind.STANDALONE_LLDB, TestKind.STANDALONE_STEPPING -> checks
         TestKind.REGULAR, TestKind.STANDALONE -> checks.copy(
             // With these two kinds tests will be run with `--ktest_no_exit_code`, so there must be a TCTestOutputFilter present.
             testFiltering = TestRunCheck.TestFiltering(TCTestOutputFilter)
@@ -246,7 +246,7 @@ class TestCase(
 
     init {
         when (kind) {
-            TestKind.STANDALONE_NO_TR, TestKind.STANDALONE_LLDB -> assertTrue(extras is NoTestRunnerExtras)
+            TestKind.STANDALONE_NO_TR, TestKind.STANDALONE_LLDB, TestKind.STANDALONE_STEPPING -> assertTrue(extras is NoTestRunnerExtras)
             TestKind.REGULAR, TestKind.STANDALONE -> assertTrue(extras is WithTestRunnerExtras)
         }
     }
