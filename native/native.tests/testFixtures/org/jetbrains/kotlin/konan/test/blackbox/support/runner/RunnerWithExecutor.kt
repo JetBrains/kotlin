@@ -61,10 +61,17 @@ internal open class RunnerWithExecutor(
         val response = executor.execute(request)
 
         if (response.exitCode != 0) {
-            val stderrString = stderr.toString("UTF-8")
-            val regex = "^Minidump written to \"(.*)\"$".toRegex(RegexOption.MULTILINE)
-            val matchResult = regex.find(stderrString)
-            val minidumpFileName = matchResult?.groups?.get(1)?.value
+            fun findMinidumpByStderr(): String? {
+                val stderrString = stderr.toString("UTF-8")
+                val regex = "^Minidump written to \"(.*)\"$".toRegex(RegexOption.MULTILINE)
+                val matchResult = regex.find(stderrString)
+                return matchResult?.groups?.get(1)?.value
+            }
+
+            fun findMinidumpInWorkingDirectory(): String? =
+                workingDirectory.listFiles { it.extension == "dmp" }?.singleOrNull()?.path
+
+            val minidumpFileName = findMinidumpByStderr() ?: findMinidumpInWorkingDirectory()
             if (minidumpFileName != null) {
                 val minidumpAnalyzerStdout = ByteArrayOutputStream()
                 val minidumpAnalyzerStderr = ByteArrayOutputStream()
