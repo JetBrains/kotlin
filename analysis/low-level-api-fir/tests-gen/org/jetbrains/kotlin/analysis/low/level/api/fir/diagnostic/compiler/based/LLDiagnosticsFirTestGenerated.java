@@ -4768,6 +4768,18 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
       }
 
       @Test
+      @TestMetadata("implicitNestedClassFromSuperClass.kt")
+      public void testImplicitNestedClassFromSuperClass() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/implicitNestedClassFromSuperClass.kt");
+      }
+
+      @Test
+      @TestMetadata("implicitNestedClassFromSuperInterface.kt")
+      public void testImplicitNestedClassFromSuperInterface() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/implicitNestedClassFromSuperInterface.kt");
+      }
+
+      @Test
       @TestMetadata("inapplicableLateinitModifier.kt")
       public void testInapplicableLateinitModifier() {
         runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/inapplicableLateinitModifier.kt");

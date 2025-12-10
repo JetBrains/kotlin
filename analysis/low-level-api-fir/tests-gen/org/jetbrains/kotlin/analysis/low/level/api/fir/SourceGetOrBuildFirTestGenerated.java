@@ -1738,6 +1738,12 @@ public class SourceGetOrBuildFirTestGenerated extends AbstractSourceGetOrBuildFi
     }
 
     @Test
+    @TestMetadata("implicitNestedClassFromSuperClass.kt")
+    public void testImplicitNestedClassFromSuperClass() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/types/implicitNestedClassFromSuperClass.kt");
+    }
+
+    @Test
     @TestMetadata("invalidTypeArgumentsCount.kt")
     public void testInvalidTypeArgumentsCount() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/types/invalidTypeArgumentsCount.kt");
