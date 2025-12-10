@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.abi.tools.impl
+package org.jetbrains.kotlin.abi.tools.tests
 
 import org.jetbrains.kotlin.abi.tools.AbiFilters
 import org.junit.Rule
@@ -15,7 +15,7 @@ import kotlin.io.path.ExperimentalPathApi
 class PrecompiledCasesTest {
 
     companion object {
-        val baseOutputPath = File("src/test/resources/precompiled")
+        val baseOutputPath = File("src/sharedTests/resources/precompiled")
     }
 
     @Rule

@@ -3,16 +3,13 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.abi.tools.impl
+package org.jetbrains.kotlin.abi.tools.tests
 
 import org.jetbrains.kotlin.abi.tools.KlibDump
 import org.jetbrains.kotlin.abi.tools.KlibTarget
-import org.jetbrains.kotlin.abi.tools.impl.klib.inferAbi
-import org.jetbrains.kotlin.abi.tools.impl.klib.mergeFromKlib
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
-import java.io.File
 import java.io.FileNotFoundException
 import java.util.*
 import kotlin.test.assertEquals
@@ -183,12 +180,6 @@ class KlibDumpTest {
     @Rule
     var tmpFolder = TemporaryFolder()
 
-    private fun asFile(dump: String): File {
-        val file = tmpFolder.newFile()
-        file.bufferedWriter().use { it.write(dump) }
-        return file
-    }
-
     @Test
     fun emptyDump() {
         val dump = buildString {
@@ -238,79 +229,79 @@ class KlibDumpTest {
 
     @Test
     fun loadDumpWithSingleTarget() {
-        val klibDump = AbiToolsImpl.loadKlibDump(asFile(rawLinuxDump))
+        val klibDump = AbiToolsImpl.loadKlibDump(rawLinuxDump)
         assertEquals(setOf(KlibTarget.parse("linuxX64")), klibDump.targets)
         assertEquals(mergedLinuxDump, buildString { klibDump.print(this) })
 
-        val mergedKlibDump = AbiToolsImpl.loadKlibDump(asFile(mergedLinuxDump))
+        val mergedKlibDump = AbiToolsImpl.loadKlibDump(mergedLinuxDump)
         assertEquals(setOf(KlibTarget.parse("linuxX64")), mergedKlibDump.targets)
         assertEquals(mergedLinuxDump, buildString { mergedKlibDump.print(this) })
     }
 
     @Test
     fun mergeDumpWithSingleTarget() {
-        val klibDump = AbiToolsImpl.createKlibDump().also { it.merge(asFile(rawLinuxDump)) }
+        val klibDump = AbiToolsImpl.createKlibDump().also { it.merge(rawLinuxDump) }
         assertEquals(setOf(KlibTarget.parse("linuxX64")), klibDump.targets)
         assertEquals(mergedLinuxDump, buildString { klibDump.print(this) })
 
-        val mergedKlibDump = AbiToolsImpl.createKlibDump().also { it.merge(asFile(mergedLinuxDump)) }
+        val mergedKlibDump = AbiToolsImpl.createKlibDump().also { it.merge(mergedLinuxDump) }
         assertEquals(setOf(KlibTarget.parse("linuxX64")), mergedKlibDump.targets)
         assertEquals(mergedLinuxDump, buildString { mergedKlibDump.print(this) })
     }
 
     @Test
     fun loadDumpWithSingleTargetWithCustomName() {
-        val klibDump = AbiToolsImpl.loadKlibDump(asFile(rawLinuxDump))
+        val klibDump = AbiToolsImpl.loadKlibDump(rawLinuxDump)
         klibDump.setCustomName("testTarget")
         assertEquals(setOf(KlibTarget.parse("linuxX64.testTarget")), klibDump.targets)
         assertEquals(mergedLinuxDumpWithCustomName, buildString { klibDump.print(this) })
 
-        val mergedKlibDump = AbiToolsImpl.loadKlibDump(asFile(mergedLinuxDump))
+        val mergedKlibDump = AbiToolsImpl.loadKlibDump(mergedLinuxDump)
         mergedKlibDump.setCustomName("testTarget")
         assertEquals(setOf(KlibTarget.parse("linuxX64.testTarget")), mergedKlibDump.targets)
         assertEquals(mergedLinuxDumpWithCustomName, buildString { mergedKlibDump.print(this) })
 
-        val customTargetDump = AbiToolsImpl.loadKlibDump(asFile(mergedLinuxDumpWithCustomName))
+        val customTargetDump = AbiToolsImpl.loadKlibDump(mergedLinuxDumpWithCustomName)
         assertEquals(setOf(KlibTarget.parse("linuxX64.testTarget")), customTargetDump.targets)
         assertEquals(mergedLinuxDumpWithCustomName, buildString { customTargetDump.print(this) })
     }
 
     @Test
     fun mergeDumpWithSingleTargetWithCustomName() {
-        val klibDump = AbiToolsImpl.createKlibDump().also { it.merge(asFile(rawLinuxDump)) }
+        val klibDump = AbiToolsImpl.createKlibDump().also { it.merge(rawLinuxDump) }
         klibDump.setCustomName("testTarget")
         assertEquals(setOf(KlibTarget.parse("linuxX64.testTarget")), klibDump.targets)
         assertEquals(mergedLinuxDumpWithCustomName, buildString { klibDump.print(this) })
 
         val mergedKlibDump =
-            AbiToolsImpl.createKlibDump().also { it.merge(asFile(mergedLinuxDump)) }
+            AbiToolsImpl.createKlibDump().also { it.merge(mergedLinuxDump) }
         mergedKlibDump.setCustomName("testTarget")
         assertEquals(setOf(KlibTarget.parse("linuxX64.testTarget")), mergedKlibDump.targets)
         assertEquals(mergedLinuxDumpWithCustomName, buildString { mergedKlibDump.print(this) })
 
-        val customTargetDump = AbiToolsImpl.createKlibDump().also { it.merge(asFile(mergedLinuxDumpWithCustomName)) }
+        val customTargetDump = AbiToolsImpl.createKlibDump().also { it.merge(mergedLinuxDumpWithCustomName) }
         assertEquals(setOf(KlibTarget.parse("linuxX64.testTarget")), customTargetDump.targets)
         assertEquals(mergedLinuxDumpWithCustomName, buildString { customTargetDump.print(this) })
     }
 
     @Test
     fun loadMultitargetDump() {
-        val dump = AbiToolsImpl.loadKlibDump(asFile(rawMultitargetDump))
+        val dump = AbiToolsImpl.loadKlibDump(rawMultitargetDump)
         assertEquals(21, dump.targets.size)
         assertEquals(mergedMultitargetDump, buildString { dump.print(this) })
 
-        val mergedDump = AbiToolsImpl.loadKlibDump(asFile(mergedMultitargetDump))
+        val mergedDump = AbiToolsImpl.loadKlibDump(mergedMultitargetDump)
         assertEquals(21, mergedDump.targets.size)
         assertEquals(mergedMultitargetDump, buildString { mergedDump.print(this) })
     }
 
     @Test
     fun mergeMultitargetDump() {
-        val dump = AbiToolsImpl.createKlibDump().also { it.merge(asFile(rawMultitargetDump)) }
+        val dump = AbiToolsImpl.createKlibDump().also { it.merge(rawMultitargetDump) }
         assertEquals(21, dump.targets.size)
         assertEquals(mergedMultitargetDump, buildString { dump.print(this) })
 
-        val mergedDump = AbiToolsImpl.createKlibDump().also { it.merge(asFile(mergedMultitargetDump)) }
+        val mergedDump = AbiToolsImpl.createKlibDump().also { it.merge(mergedMultitargetDump) }
         assertEquals(21, mergedDump.targets.size)
         assertEquals(mergedMultitargetDump, buildString { mergedDump.print(this) })
     }
@@ -318,14 +309,14 @@ class KlibDumpTest {
     @Test
     fun loadMultitargetDumpUsingCustomName() {
         assertFailsWith<IllegalStateException> {
-            val dump = AbiToolsImpl.loadKlibDump(asFile(rawMultitargetDump))
+            val dump = AbiToolsImpl.loadKlibDump(rawMultitargetDump)
             dump.setCustomName("abc")
         }
     }
 
     @Test
     fun retainAll() {
-        val dump = AbiToolsImpl.loadKlibDump(asFile(mergedMultitargetDump))
+        val dump = AbiToolsImpl.loadKlibDump(mergedMultitargetDump)
         val oldTargets = setOf(*dump.targets.toTypedArray())
 
         dump.retain(oldTargets)
@@ -335,7 +326,7 @@ class KlibDumpTest {
 
     @Test
     fun retainSingle() {
-        val dump = AbiToolsImpl.loadKlibDump(asFile(mergedMultitargetDump))
+        val dump = AbiToolsImpl.loadKlibDump(mergedMultitargetDump)
         val singleTarget = KlibTarget.parse("androidNativeArm32")
 
         dump.retain(setOf(singleTarget))
@@ -345,7 +336,7 @@ class KlibDumpTest {
 
     @Test
     fun retainNone() {
-        val dump = AbiToolsImpl.loadKlibDump(asFile(mergedMultitargetDump))
+        val dump = AbiToolsImpl.loadKlibDump(mergedMultitargetDump)
         dump.retain(emptySet())
 
         assertTrue(dump.targets.isEmpty())
@@ -354,7 +345,7 @@ class KlibDumpTest {
 
     @Test
     fun removeAll() {
-        val dump = AbiToolsImpl.loadKlibDump(asFile(mergedMultitargetDump))
+        val dump = AbiToolsImpl.loadKlibDump(mergedMultitargetDump)
         dump.remove(listOf(*dump.targets.toTypedArray()))
 
         assertTrue(dump.targets.isEmpty())
@@ -363,7 +354,7 @@ class KlibDumpTest {
 
     @Test
     fun removeNone() {
-        val dump = AbiToolsImpl.loadKlibDump(asFile(mergedMultitargetDump))
+        val dump = AbiToolsImpl.loadKlibDump(mergedMultitargetDump)
         val oldTargets = setOf(*dump.targets.toTypedArray())
 
         dump.remove(emptySet())
@@ -373,7 +364,7 @@ class KlibDumpTest {
 
     @Test
     fun removeSome() {
-        val dump = AbiToolsImpl.loadKlibDump(asFile(mergedMultitargetDump))
+        val dump = AbiToolsImpl.loadKlibDump(mergedMultitargetDump)
         val singleTarget = KlibTarget.parse("androidNativeArm32")
 
         dump.remove(dump.targets.subtract(setOf(singleTarget)))
@@ -383,7 +374,7 @@ class KlibDumpTest {
 
     @Test
     fun removeOrRetainTargetsNotPresentedInDump() {
-        val dump = AbiToolsImpl.loadKlibDump(asFile(mergedMultitargetDump))
+        val dump = AbiToolsImpl.loadKlibDump(mergedMultitargetDump)
         val targets = setOf(*dump.targets.toTypedArray())
         dump.remove(listOf(KlibTarget.parse("linuxX64.blablabla")))
         assertEquals(targets, dump.targets)
@@ -394,7 +385,7 @@ class KlibDumpTest {
 
     @Test
     fun removeDeclarationsAlongWithTargets() {
-        val dump = AbiToolsImpl.loadKlibDump(asFile(mergedLinuxDumpWithTargetSpecificDeclaration))
+        val dump = AbiToolsImpl.loadKlibDump(mergedLinuxDumpWithTargetSpecificDeclaration)
         val toRemove = KlibTarget.parse("linuxArm64")
 
         dump.remove(listOf(toRemove))
@@ -403,7 +394,7 @@ class KlibDumpTest {
 
     @Test
     fun testCopy() {
-        val dump = AbiToolsImpl.loadKlibDump(asFile(mergedLinuxDumpWithTargetSpecificDeclaration))
+        val dump = AbiToolsImpl.loadKlibDump(mergedLinuxDumpWithTargetSpecificDeclaration)
         val copy = dump.copy()
 
         dump.remove(listOf(KlibTarget.parse("linuxArm64")))
@@ -413,22 +404,22 @@ class KlibDumpTest {
     @Test
     fun testMergeDumps() {
         val dump = AbiToolsImpl.createKlibDump().also {
-            it.merge(asFile(mergedLinuxDump))
-            it.merge(asFile(mergedLinuxArm64Dump))
+            it.merge(mergedLinuxDump)
+            it.merge(mergedLinuxArm64Dump)
         }
         assertEquals(mergedLinuxDumpWithTargetSpecificDeclaration, buildString { dump.print(this) })
     }
 
     @Test
     fun mergeDumpsWithIntersectingTargets() {
-        val mergedDump = AbiToolsImpl.loadKlibDump(asFile(rawMultitargetDump))
+        val mergedDump = AbiToolsImpl.loadKlibDump(rawMultitargetDump)
 
         assertFailsWith<IllegalStateException> {
-            mergedDump.merge(asFile(rawMultitargetDump))
+            mergedDump.merge(rawMultitargetDump)
         }
 
         assertFailsWith<IllegalStateException> {
-            mergedDump.merge(asFile(mergedLinuxDump))
+            mergedDump.merge(mergedLinuxDump)
         }
     }
 
@@ -437,8 +428,7 @@ class KlibDumpTest {
         val unsupportedTarget = KlibTarget.parse("iosArm64")
 
         val linuxDump = AbiToolsImpl.loadKlibDump(
-            asFile(
-                """
+            """
                 // Klib ABI Dump
                 // Targets: [linuxArm64]
                 // Rendering settings:
@@ -449,15 +439,10 @@ class KlibDumpTest {
                 // Library unique name: <testproject>
                 abstract class examples.classes/NewKlass // examples.classes/NewKlass|null[0]
             """.trimIndent()
-            )
         )
 
         // Let's use these dumps to infer a public ABI on iosArm64
-        val inferredIosArm64Dump = inferAbi(
-            unsupportedTarget = unsupportedTarget,
-            supportedTargetDumps = listOf(linuxDump),
-            oldMergedDump = null
-        )
+        val inferredIosArm64Dump = linuxDump.inferAbiForUnsupportedTarget(AbiToolsImpl.createKlibDump(), unsupportedTarget)
 
         assertEquals(unsupportedTarget, inferredIosArm64Dump.targets.single())
 
@@ -483,8 +468,7 @@ class KlibDumpTest {
         val unsupportedTarget = KlibTarget.parse("iosArm64")
 
         val oldDump = AbiToolsImpl.loadKlibDump(
-            asFile(
-                """
+            """
             // Klib ABI Dump
             // Targets: [iosArm64, linuxArm64]
             // Rendering settings:
@@ -498,15 +482,10 @@ class KlibDumpTest {
             abstract interface examples.classes/Iface // examples.classes/Iface|null[0]
 
         """.trimIndent()
-            )
         )
 
         // Let's use these dumps to infer a public ABI on iosArm64
-        val inferredIosArm64Dump = inferAbi(
-            unsupportedTarget = unsupportedTarget,
-            supportedTargetDumps = emptySet(),
-            oldMergedDump = oldDump
-        )
+        val inferredIosArm64Dump = AbiToolsImpl.createKlibDump().inferAbiForUnsupportedTarget(oldDump, unsupportedTarget)
 
         assertEquals(unsupportedTarget, inferredIosArm64Dump.targets.single())
 
@@ -522,6 +501,8 @@ class KlibDumpTest {
     
                 // Library unique name: <testproject>
                 abstract interface examples.classes/Iface // examples.classes/Iface|null[0]
+                
+                abstract class examples.classes/Klass // examples.classes/Klass|null[0]
 
             """.trimIndent(), inferredDumpContent
         )
@@ -531,37 +512,30 @@ class KlibDumpTest {
     fun inferOutOfThinAir() {
         val unsupportedTarget = KlibTarget.parse("iosArm64")
 
-        assertFailsWith<IllegalArgumentException> {
-            inferAbi(unsupportedTarget, emptySet(), null)
+        assertFailsWith<IllegalStateException> {
+            AbiToolsImpl.createKlibDump().inferAbiForUnsupportedTarget(AbiToolsImpl.createKlibDump(), unsupportedTarget)
         }
     }
 
     @Test
     fun inferFromSelf() {
-        val dump = AbiToolsImpl.loadKlibDump(asFile(mergedLinuxDump))
+        val dump = AbiToolsImpl.loadKlibDump(mergedLinuxDump)
         assertFailsWith<IllegalArgumentException> {
-            inferAbi(dump.targets.first(), listOf(dump))
+            dump.inferAbiForUnsupportedTarget(AbiToolsImpl.createKlibDump(), dump.targets.first())
         }
     }
 
     @Test
     fun inferFromIntersectingDumps() {
-        assertFailsWith<IllegalArgumentException> {
-            inferAbi(
-                KlibTarget.parse("iosArm64.unsupported"),
-                listOf(
-                    AbiToolsImpl.loadKlibDump(asFile(mergedLinuxDump)),
-                    AbiToolsImpl.loadKlibDump(asFile(mergedMultitargetDump))
-                )
-            )
+        assertFailsWith<IllegalStateException> {
+            AbiToolsImpl.loadKlibDump(mergedLinuxDump).merge(mergedMultitargetDump)
         }
     }
 
     @Test
     fun iterativeGrouping() {
         val dump = AbiToolsImpl.loadKlibDump(
-            asFile(
-                """
+            """
             // Klib ABI Dump
             // Targets: [androidNativeArm32, androidNativeArm64, androidNativeX64, androidNativeX86, linuxArm64, linuxX64, mingwX64]
             // Rendering settings:
@@ -584,7 +558,6 @@ class KlibDumpTest {
             final fun (org.different.pack/BuildConfig).org.different.pack/linuxArm64Specific3(): kotlin/Int // org.different.pack/linuxArm64Specific3|linuxArm64Specific@org.different.pack.BuildConfig(){}[0]
             
         """.trimIndent()
-            )
         )
 
         val expectedDump = """
@@ -624,8 +597,7 @@ class KlibDumpTest {
     fun similarGroupRemoval() {
         // native function should use a group alias "ios", not "apple", or "native"
         val dump = AbiToolsImpl.loadKlibDump(
-            asFile(
-                """
+            """
             // Klib ABI Dump
             // Targets: [iosArm64, iosX64, js]
             // Rendering settings:
@@ -639,7 +611,6 @@ class KlibDumpTest {
             final fun org.example/native(): kotlin/Int // com.example/native|native(){}[0]
             
         """.trimIndent()
-            )
         )
 
         val expectedDump = """
@@ -663,7 +634,7 @@ class KlibDumpTest {
 
     @Test
     fun saveToFile() {
-        val dump = AbiToolsImpl.loadKlibDump(asFile(mergedMultitargetDump))
+        val dump = AbiToolsImpl.loadKlibDump(mergedMultitargetDump)
         val tempFile = tmpFolder.newFile()
         dump.print(tempFile)
 
@@ -676,8 +647,7 @@ class KlibDumpTest {
     @Test
     fun declarationsOrdering() {
         val dump = AbiToolsImpl.loadKlibDump(
-            asFile(
-                """
+            """
             // Klib ABI Dump
             // Targets: [iosArm64, iosX64, js]
             // Rendering settings:
@@ -743,7 +713,6 @@ class KlibDumpTest {
             final class cls/A // cls/A|null[0]
 
         """.trimIndent()
-            )
         )
 
         val expectedDump = """

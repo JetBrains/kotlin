@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.abi.tools.impl
+package org.jetbrains.kotlin.abi.tools.tests
 
 import org.jetbrains.kotlin.abi.tools.AbiFilters
 import org.junit.*
@@ -20,7 +20,7 @@ class CasesPublicAPITest {
                 .let { requireNotNull(it) { "Specify testCasesClassesDirs with a system property" } }
                 .split(File.pathSeparator)
                 .map { File(it, "cases").canonicalFile }
-        val baseOutputPath = File("src/test/kotlin/cases")
+        val baseOutputPath = File("src/compiling/kotlin/cases")
     }
 
     @Rule
