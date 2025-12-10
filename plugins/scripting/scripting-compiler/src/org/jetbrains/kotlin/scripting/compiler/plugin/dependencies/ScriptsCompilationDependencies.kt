@@ -84,7 +84,7 @@ fun collectScriptsCompilationDependencies(
 }
 
 
-// recursively collect dependencies from initial and imported scripts, return the main sources list sorted topologically
+// recursively collect dependencies from initial and imported scripts, returns the main sources list sorted topologically
 fun collectScriptsCompilationDependenciesRecursively(
     initialSources: Iterable<SourceCode>,
     getScriptCompilationConfiguration: (SourceCode) -> ResultWithDiagnostics<ScriptCompilationConfiguration>?
