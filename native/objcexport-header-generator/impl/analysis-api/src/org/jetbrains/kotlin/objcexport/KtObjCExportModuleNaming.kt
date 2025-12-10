@@ -10,13 +10,11 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
-import org.jetbrains.kotlin.library.ToolingSingleFileKlibResolveStrategy
+import org.jetbrains.kotlin.library.loader.KlibLoader
 import org.jetbrains.kotlin.library.shortName
 import org.jetbrains.kotlin.library.uniqueName
-import org.jetbrains.kotlin.util.DummyLogger
 import kotlin.io.path.extension
 import kotlin.io.path.isDirectory
-import org.jetbrains.kotlin.konan.file.File as KonanFile
 
 interface KtObjCExportModuleNaming {
 
@@ -56,8 +54,11 @@ internal object KtKlibObjCExportModuleNaming : KtObjCExportModuleNaming {
         if (module !is KaLibraryModule) return null
         val binaryRoot = module.binaryRoots.singleOrNull() ?: return null
         if (!binaryRoot.isDirectory() && binaryRoot.extension != "klib") return null
-        val library = runCatching { ToolingSingleFileKlibResolveStrategy.tryResolve(KonanFile(binaryRoot), DummyLogger) }
-            .getOrElse { error -> error.printStackTrace(); return null } ?: return null
+
+        val library = runCatching{
+            KlibLoader { libraryPaths(binaryRoot) }.load().librariesStdlibFirst.singleOrNull()
+        }.getOrElse { error -> error.printStackTrace(); return null } ?: return null
+
         return library.shortName ?: library.uniqueName
     }
 }
