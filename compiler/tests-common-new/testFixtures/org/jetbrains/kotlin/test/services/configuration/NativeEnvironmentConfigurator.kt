@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import java.io.File
 
-class NativeEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices),
+class NativeEnvironmentConfigurator(testServices: TestServices, customNativeHome: File? = null) : EnvironmentConfigurator(testServices),
     KlibBasedEnvironmentConfigurator
 {
     companion object {
@@ -42,14 +42,18 @@ class NativeEnvironmentConfigurator(testServices: TestServices) : EnvironmentCon
             return testServices.nativeEnvironmentConfigurator.getRuntimeLibraryProviders(module).flatMap { it.getLibraryPaths() }
         }
 
+        /**
+         * Determines if the module is main.
+         * Note: During test initialization, `useAdditionalSourceProviders()` step, a TestModuleStructure under construction is not yet registered
+         * into TestServices, so an explicit `testModuleStructure` param is used instead of `testServices.moduleStructure`.
+         */
         fun isMainModule(module: TestModule, testModuleStructure: TestModuleStructure): Boolean {
-            // testServices might not yet have registered completed TestModuleStructure, so using the current structure instead
             return module.isLeafModule(testModuleStructure)
         }
     }
 
     private val nativeHome: File by lazy {
-        System.getProperty(TEST_PROPERTY_NATIVE_HOME)?.let(::File)
+        customNativeHome ?: System.getProperty(TEST_PROPERTY_NATIVE_HOME)?.let(::File)
             ?: testServices.assertions.fail {
                 "No '$TEST_PROPERTY_NATIVE_HOME' provided. Are you sure the test are executed within :native:native.tests?"
             }
