@@ -6420,6 +6420,12 @@ public class LLReversedDiagnosticsFirTestGenerated extends AbstractLLReversedDia
       }
 
       @Test
+      @TestMetadata("genericWithExpectedAny.kt")
+      public void testGenericWithExpectedAny() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/inference/genericWithExpectedAny.kt");
+      }
+
+      @Test
       @TestMetadata("integerLiteralAsComparable.kt")
       public void testIntegerLiteralAsComparable() {
         runTest("compiler/fir/analysis-tests/testData/resolve/inference/integerLiteralAsComparable.kt");
@@ -6639,6 +6645,12 @@ public class LLReversedDiagnosticsFirTestGenerated extends AbstractLLReversedDia
       @TestMetadata("unitUpperBound.kt")
       public void testUnitUpperBound() {
         runTest("compiler/fir/analysis-tests/testData/resolve/inference/unitUpperBound.kt");
+      }
+
+      @Test
+      @TestMetadata("whenWithNothingInBranch.kt")
+      public void testWhenWithNothingInBranch() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/inference/whenWithNothingInBranch.kt");
       }
 
       @Nested
