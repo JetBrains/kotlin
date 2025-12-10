@@ -14,12 +14,17 @@ declare namespace JS_TESTS {
             anotherParentMethod(): kotlin.collections.KtList<string>;
             parentAsyncMethod(): Promise<string>;
         }
-        interface IFoo<T> extends foo.ExportedParent/*, foo.HiddenParent */ {
+        interface IFoo<T extends unknown/* kotlin.Comparable<T> */> extends foo.ExportedParent/*, foo.HiddenParent */ {
             foo(): string;
             asyncFoo(): Promise<string>;
             withDefaults(value?: string): string;
             withBridge(x: T): T;
             withDefaultImplementation(): string;
+        }
+        namespace IFoo {
+            namespace defaults {
+                function withDefaultImplementation<T extends unknown/* kotlin.Comparable<T> */>($this: foo.IFoo<T>): string;
+            }
         }
         function callingHiddenParentMethod(foo: foo.IFoo<any /*UnknownType **/>): number;
         function callingExportedParentMethod(foo: foo.IFoo<any /*UnknownType **/>): string;

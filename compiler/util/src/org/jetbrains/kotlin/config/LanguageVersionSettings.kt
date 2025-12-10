@@ -567,6 +567,7 @@ enum class LanguageFeature(
 
     // We don't want to turn it on by default (so to show an error instead of a warning) until there will be a possibility to export declarations from libraries
     JsExposedSuperInterfaceOnExported(sinceVersion = null, issue = "KT-83009"),
+    JsExportInterfacesInImplementableWay(sinceVersion = null, issue = "KT-65802"),
 
     // K1 support only. We keep it, as we may want to support it also in K2
     UnitConversionsOnArbitraryExpressions(sinceVersion = null, NO_ISSUE_SPECIFIED),

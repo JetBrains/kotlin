@@ -33,6 +33,8 @@ import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 import org.jetbrains.kotlin.utils.memoryOptimizedPlus
 
+val CONVERTERS_TO_JS_COLLECTIONS by IrDeclarationOriginImpl.Regular
+
 private class ExportedCollectionsInfo(context: JsIrBackendContext) {
     val exportedMethodNames = setOf(
         "asJsReadonlyArrayView",
@@ -82,6 +84,8 @@ class PrepareCollectionsToExportLowering(private val context: JsIrBackendContext
             declaration.declarations.forEach {
                 if (!it.shouldIncludeInInterfaceExport()) {
                     it.excludeFromJsExport()
+                } else {
+                    it.origin = CONVERTERS_TO_JS_COLLECTIONS
                 }
             }
 

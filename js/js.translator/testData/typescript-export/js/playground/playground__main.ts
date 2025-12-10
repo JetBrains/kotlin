@@ -44,13 +44,13 @@ class FooImpl implements IFoo<string> {
  * - Check is interface (P2)
  *
  * Not-solved but has a good-enough solution:
- * - Problem: It's possible to export interface with a not-exported parent (P1)
- *   Solution: It would be a new frontend check the same as we have for interface visibility.
- *
  * - Problem: No default implementations
  *   Solution: We're going to introduce a namespace called "defaults" which contains all the default implementations.
  *
  * Solved problems
+ * - Problem: It's possible to export interface with a not-exported parent (P1)
+ *   Solution: It would be a new frontend check the same as we have for interface visibility.
+ *
  * - Problem: Default value declared on the Kotlin side is always overridden by TypeScript implementation (P3)
  *   Solution: The problem is the same as for class exports, so we're going to ignore it for now.
  *
