@@ -29,11 +29,7 @@ import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.scripting.compiler.plugin.ScriptingK2CompilerPluginRegistrar
-import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.CliScriptDefinitionProvider
-import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.ScriptCompilationConfigurationProviderOverDefinitionProvider
-import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.ScriptRefinedCompilationConfigurationCacheImpl
-import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.scriptCompilationConfigurationProvider
-import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.scriptRefinedCompilationConfigurationsCache
+import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.*
 import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import java.io.File
@@ -50,7 +46,9 @@ interface K2ScriptingCompilerEnvironment {
     val projectEnvironment: VfsBasedProjectEnvironment
     val moduleDataProvider: ScriptingModuleDataProvider
     val messageCollector: ScriptDiagnosticsMessageCollector
+    val extensionRegistrars: List<FirExtensionRegistrar>
     val sharedLibrarySession: FirSession
+    val baseLibrarySession: FirSession
 }
 
 internal interface K2ScriptingCompilerEnvironmentInternal : K2ScriptingCompilerEnvironment {
@@ -69,7 +67,9 @@ internal open class K2ScriptingCompilerEnvironmentImpl(
     override val messageCollector: ScriptDiagnosticsMessageCollector,
     override val compilerContext: SharedScriptCompilationContext,
     override val packagePartProvider: PackagePartProvider,
+    override val extensionRegistrars: List<FirExtensionRegistrar>,
     override val sharedLibrarySession: FirSession,
+    override val baseLibrarySession: FirSession,
     override val sessionFactoryContext: FirJvmSessionFactory.Context
 ) : K2ScriptingCompilerEnvironmentInternal
 
@@ -195,7 +195,7 @@ fun createCompilerState(
         context = sessionFactoryContext,
     )
 
-    FirJvmSessionFactory.createLibrarySession(
+    val baseLibrarySession = FirJvmSessionFactory.createLibrarySession(
         sharedLibrarySession,
         moduleDataProvider = moduleDataProvider,
         extensionRegistrars = extensionRegistrars,
@@ -212,7 +212,9 @@ fun createCompilerState(
         messageCollector,
         compilerContext,
         packagePartProvider,
+        extensionRegistrars,
         sharedLibrarySession,
+        baseLibrarySession,
         sessionFactoryContext,
     )
 }

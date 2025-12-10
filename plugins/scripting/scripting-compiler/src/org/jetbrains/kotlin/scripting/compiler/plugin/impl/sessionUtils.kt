@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.scripting.compiler.plugin.impl
 
+import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
+import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.fir.FirModuleData
@@ -33,6 +35,7 @@ import org.jetbrains.kotlin.fir.session.StructuredProviders
 import org.jetbrains.kotlin.fir.session.registerCliCompilerAndCommonComponents
 import org.jetbrains.kotlin.fir.session.registerCommonComponentsAfterExtensionsAreConfigured
 import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder
+import java.io.File
 
 @OptIn(SessionConfiguration::class, PrivateSessionConstructor::class)
 internal fun createScriptingAdditionalLibrariesSession(
@@ -44,48 +47,76 @@ internal fun createScriptingAdditionalLibrariesSession(
     compilerConfiguration: CompilerConfiguration,
     getKotlinClassFinder: () -> KotlinClassFinder,
     getJavaFacade: (FirSession) -> FirJavaFacade,
-) {
-    FirCliSession(FirSession.Kind.Library).apply session@{
-        libModuleData.bindSession(this@session)
+) : FirSession = FirCliSession(FirSession.Kind.Library).apply session@{
+    libModuleData.bindSession(this@session)
 
-        registerCliCompilerAndCommonComponents(compilerConfiguration.languageVersionSettings, false)
-        registerLibrarySessionComponents(sessionFactoryContext)
-        register(FirBuiltinSyntheticFunctionInterfaceProvider::class, sharedLibrarySession.syntheticFunctionInterfacesSymbolProvider)
+    registerCliCompilerAndCommonComponents(compilerConfiguration.languageVersionSettings, false)
+    registerLibrarySessionComponents(sessionFactoryContext)
+    register(FirBuiltinSyntheticFunctionInterfaceProvider::class, sharedLibrarySession.syntheticFunctionInterfacesSymbolProvider)
 
-        val kotlinScopeProvider = FirKotlinScopeProvider(::wrapScopeWithJvmMapped)
-        register(FirKotlinScopeProvider::class, kotlinScopeProvider)
+    val kotlinScopeProvider = FirKotlinScopeProvider(::wrapScopeWithJvmMapped)
+    register(FirKotlinScopeProvider::class, kotlinScopeProvider)
 
-        FirSessionConfigurator(this).apply {
-            for (extensionRegistrar in extensionRegistrars) {
-                registerExtensions(extensionRegistrar.configure())
-            }
-        }.configure()
-        registerCommonComponentsAfterExtensionsAreConfigured()
+    FirSessionConfigurator(this).apply {
+        for (extensionRegistrar in extensionRegistrars) {
+            registerExtensions(extensionRegistrar.configure())
+        }
+    }.configure()
+    registerCommonComponentsAfterExtensionsAreConfigured()
 
-        val providers = listOf(
-            JvmClassFileBasedSymbolProvider(
-                this@session,
-                moduleDataProvider,
-                kotlinScopeProvider,
-                sessionFactoryContext.packagePartProviderForLibraries,
-                getKotlinClassFinder(),
-                getJavaFacade(this@session),
-            )
+    val providers = listOf(
+        JvmClassFileBasedSymbolProvider(
+            this@session,
+            moduleDataProvider,
+            kotlinScopeProvider,
+            sessionFactoryContext.packagePartProviderForLibraries,
+            getKotlinClassFinder(),
+            getJavaFacade(this@session),
         )
-        register(
-            StructuredProviders::class,
-            StructuredProviders(
-                sourceProviders = emptyList(),
-                dependencyProviders = providers,
-                sharedProvider = sharedLibrarySession.symbolProvider,
-            )
+    )
+    register(
+        StructuredProviders::class,
+        StructuredProviders(
+            sourceProviders = emptyList(),
+            dependencyProviders = providers,
+            sharedProvider = sharedLibrarySession.symbolProvider,
         )
+    )
 
-        val providersWithShared = providers + sharedLibrarySession.symbolProvider.flattenAndFilterOwnProviders()
+    val providersWithShared = providers + sharedLibrarySession.symbolProvider.flattenAndFilterOwnProviders()
 
-        val symbolProvider = FirCachingCompositeSymbolProvider(this, providersWithShared)
-        register(FirSymbolProvider::class, symbolProvider)
-        register(FirProvider::class, FirLibrarySessionProvider(symbolProvider))
-    }
+    val symbolProvider = FirCachingCompositeSymbolProvider(this, providersWithShared)
+    register(FirSymbolProvider::class, symbolProvider)
+    register(FirProvider::class, FirLibrarySessionProvider(symbolProvider))
 }
 
+internal fun configureLibrarySessionIfNeeded(
+    state: K2ScriptingCompilerEnvironment,
+    compilerConfiguration: CompilerConfiguration,
+    classpath: List<File>,
+): FirSession? {
+    (state as? K2ScriptingCompilerEnvironmentInternal)
+        ?: error("Expected the state of type K2ScriptingCompilerEnvironmentInternal, got ${state::class}")
+    // needed for class finders for now anyway
+    compilerConfiguration.addJvmClasspathRoots(classpath)
+    state.compilerContext.environment.updateClasspath(classpath.map(::JvmClasspathRoot))
+    val (libModuleData, _) = state.moduleDataProvider.addNewLibraryModuleDataIfNeeded(classpath.map(File::toPath))
+    if (libModuleData != null) {
+        val projectEnvironment = state.sessionFactoryContext.projectEnvironment
+        val searchScope = state.moduleDataProvider.getModuleDataPaths(libModuleData)?.let { paths ->
+            projectEnvironment.getSearchScopeByClassPath(paths)
+        } ?: state.sessionFactoryContext.librariesScope
+
+        return createScriptingAdditionalLibrariesSession(
+            libModuleData,
+            state.sessionFactoryContext,
+            state.moduleDataProvider,
+            state.sharedLibrarySession,
+            state.extensionRegistrars,
+            compilerConfiguration,
+            getKotlinClassFinder = { projectEnvironment.getKotlinClassFinder(searchScope) },
+            getJavaFacade = { projectEnvironment.getFirJavaFacade(it, libModuleData, state.sessionFactoryContext.librariesScope) }
+        )
+    }
+    return null
+}
