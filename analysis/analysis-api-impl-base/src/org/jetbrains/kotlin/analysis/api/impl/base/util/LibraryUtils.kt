@@ -157,6 +157,10 @@ object LibraryUtils {
         virtualFiles: Collection<VirtualFile>,
     ): List<Path> {
         return virtualFiles.mapNotNull { file ->
+            /**
+             * [com.intellij.openapi.vfs.toNioPathOrNull] fails to return a valid path for virtual files from the JAR file system.
+             * That's why we have to use a regular string path here.
+             */
             val filePath = file.pathOrNull ?: return@mapNotNull null
             val pathString = FileUtil.toSystemIndependentName(filePath)
             when {
