@@ -233,28 +233,3 @@ class CallableValueParametersCommonizer(
             throw IllegalCommonizerStateException("unexpected next state $next with current state $current")
     }
 }
-/*
- * // commonized
- * expect fun foo(x: @UnsafeNumber Int, y: @UnsafeNumber Int) {} // (1)
- * expect fun bar(): @UnsafeNumber Long
- *
- * // linuxX64
- * fun foo(x: Long, y: Int) {} // (2)
- * fun bar(): Long
- *
- * // macArm32
- * fun foo(x: Int, y: Long) {}
- *
- * // common
- * fun test() {
- *     foo(1)
- *     val x: Int = bar()
- * }
- * // main
- *
- * // compileLinuxX64
- * fun test() {
- *     foo(1)
- *     val x: Int = bar()/: Long/
- * }
- */
