@@ -418,44 +418,51 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
-    internal object NativeCacheDisabledDiagnostic : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
+    internal abstract class NativeCacheDiagnostic : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
+        val NativeBinary.binaryBuildType // "DEBUG" -> "debug" -> "Debug"
+            get() = buildType.name.lowercase(Locale.ROOT).replaceFirstChar { it.titlecase(Locale.ROOT) }
+
+        val NativeBinary.targetName
+            get() = target.konanTarget.visibleName
+    }
+
+    internal object NativeCacheDisabledDiagnostic : NativeCacheDiagnostic() {
         operator fun invoke(
             kotlinVersion: StdlibKotlinVersion,
             binary: NativeBinary,
             reason: String,
             issueUrl: URI?
         ) = build {
-            val buildType = binary.buildType.name.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() }
-            val targetName = binary.target.konanTarget.visibleName
-            val binaryName = binary.name
-            title("Kotlin/Native cache is disabled for $buildType binary '$binaryName'")
+            title("Kotlin/Native cache is disabled for ${binary.binaryBuildType} binary '${binary.name}'")
                 .description {
                     """
-                    The Kotlin/Native cache has been disabled for the $buildType binary '$binaryName' on target '$targetName'.
-                    Build times for '$targetName' ($buildType) may be slower as a result.
+                    The Kotlin/Native cache has been disabled for the ${binary.binaryBuildType} binary '${binary.name}' on target '${binary.targetName}'.
+                    Build times for '${binary.targetName}' (${binary.binaryBuildType}) may be slower as a result.
                     
                     Reason: $reason
                     """.trimIndent()
                 }
                 .solution {
-                    "Investigate if '$reason' is still relevant for $kotlinVersion to re-enable caching for '$targetName'."
+                    "Investigate if '$reason' is still relevant for $kotlinVersion to re-enable caching for '${binary.targetName}'."
                 }
                 .documentationLink(issueUrl ?: URI("https://kotl.in/disable-native-cache"))
         }
     }
 
-    internal object NativeCacheRedundantDiagnostic : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
+    internal object NativeCacheRedundantDiagnostic : NativeCacheDiagnostic() {
         operator fun invoke(
-            target: KonanTarget,
-            platformName: String
+            binary: NativeBinary,
+            hostName: String
         ) = build {
-            title("Kotlin/Native cache disable configuration is redundant")
+            title("Kotlin/Native cache disable configuration is redundant for ${binary.binaryBuildType} binary '${binary.name}'")
                 .description {
-                    "The Kotlin/Native cache has been explicitly disabled for target '${target.visibleName}', " +
-                            "but this target does not support caching on the current platform '$platformName' regardless of configuration."
+                    """
+                    The Kotlin/Native cache has been explicitly disabled for the ${binary.binaryBuildType} binary '${binary.name}' on target '${binary.targetName}'.
+                    However, this target does not support caching on the current host '$hostName' regardless of configuration.
+                    """.trimIndent()
                 }
                 .solution {
-                    "Remove the configuration that disables the cache for '${target.visibleName}'. " +
+                    "Remove the configuration that disables the cache for '${binary.name}'. " +
                             "Since caching is not supported for this target on this host, this configuration has no effect."
                 }
                 .documentationLink(URI("https://kotl.in/disable-native-cache"))

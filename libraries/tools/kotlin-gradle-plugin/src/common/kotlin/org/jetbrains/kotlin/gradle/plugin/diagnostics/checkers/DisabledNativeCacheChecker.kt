@@ -36,7 +36,7 @@ internal object DisabledNativeCacheChecker : KotlinGradleProjectChecker {
                 val diagnostics = binary.disableCacheSettings.map { disableCache ->
                     if (konanPropertiesService.defaultCacheKindForTarget(binary.konanTarget) == NativeCacheKind.NONE) {
                         KotlinToolingDiagnostics.NativeCacheRedundantDiagnostic(
-                            binary.konanTarget,
+                            binary,
                             HostManager.platformName()
                         )
                     } else {

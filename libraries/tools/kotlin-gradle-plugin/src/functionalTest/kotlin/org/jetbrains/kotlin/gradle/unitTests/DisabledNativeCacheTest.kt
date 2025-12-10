@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.gradle.unitTests.fus.collectedFusConfigurationTimeMe
 import org.jetbrains.kotlin.gradle.unitTests.fus.enableFusOnCI
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import org.junit.Assume
@@ -267,7 +268,7 @@ class DisabledNativeCacheTest {
                 assertEquals(
                     NativeCacheKind.NONE,
                     konanCacheKind(MAC_ARM64_LINK_DEBUG_TASK_NAME).get(),
-                    "Native cache should be disabled on iOS Arm64 DEBUG target"
+                    "Native cache should be disabled on macOS Arm64 DEBUG target"
                 )
             } else if (HostManager.hostIsLinux) {
                 assertEquals(
@@ -287,6 +288,86 @@ class DisabledNativeCacheTest {
                 .filter { it.id == KotlinToolingDiagnostics.NativeCacheDisabledDiagnostic.id }
 
             assertEquals(1, emittedDiagnostics.size, "Expected only one diagnostic emitted for disabled cache")
+
+            val target = if (HostManager.hostIsMac)
+                KonanTarget.MACOS_ARM64
+            else
+                KonanTarget.LINUX_X64
+
+            assertContains(
+                "The Kotlin/Native cache has been disabled for the Debug binary 'debugStatic' on target '${target.visibleName}'.\n" +
+                        "Build times for '${target.visibleName}' (Debug) may be slower as a result.",
+                emittedDiagnostics.single().message
+            )
+        }
+    }
+
+    // KT-82970 Warning about disabled K/N caches for non-cacheable targets is printed twice
+    @Test
+    fun `test disabled native cache redundant diagnostic emitted only once`() {
+        with(buildProjectWithMPP()) {
+            kotlin {
+                val target = if (HostManager.hostIsMac || HostManager.hostIsMingw)
+                    linuxX64()
+                else if (HostManager.hostIsLinux)
+                    macosArm64()
+                else
+                    error("Unsupported host")
+
+                target.binaries.staticLib {
+                    if (buildType == NativeBuildType.DEBUG) {
+                        disableNativeCache(
+                            currentVersionForDisableCache,
+                            "Disabled for tests for DEBUG only",
+                            URI("https://kotlinlang.org")
+                        )
+                    }
+                }
+            }
+
+            evaluate()
+
+            if (HostManager.hostIsMac || HostManager.hostIsMingw) {
+                assertEquals(
+                    NativeCacheKind.NONE,
+                    konanCacheKind(LINUX_X64_LINK_RELEASE_TASK_NAME).get(),
+                    "Native cache should be disabled on Linux x64 RELEASE target"
+                )
+                assertEquals(
+                    NativeCacheKind.NONE,
+                    konanCacheKind(LINUX_X64_LINK_DEBUG_TASK_NAME).get(),
+                    "Native cache should be disabled on Linux x64 DEBUG target"
+                )
+            } else if (HostManager.hostIsLinux) {
+                assertEquals(
+                    NativeCacheKind.NONE,
+                    konanCacheKind(MAC_ARM64_LINK_RELEASE_TASK_NAME).get(),
+                    "Native cache should be disabled on macOS Arm64 RELEASE target"
+                )
+                assertEquals(
+                    NativeCacheKind.NONE,
+                    konanCacheKind(MAC_ARM64_LINK_DEBUG_TASK_NAME).get(),
+                    "Native cache should be disabled on macOS Arm64 DEBUG target"
+                )
+            }
+
+            val emittedDiagnostics = kotlinToolingDiagnosticsCollector
+                .getDiagnosticsForProject(this)
+                .filter { it.id == KotlinToolingDiagnostics.NativeCacheRedundantDiagnostic.id }
+
+            assertEquals(1, emittedDiagnostics.size, "Expected only one diagnostic emitted for redundant disabled cache")
+
+            val target = if (HostManager.hostIsMac || HostManager.hostIsMingw)
+                KonanTarget.LINUX_X64
+            else if (HostManager.hostIsLinux)
+                KonanTarget.MACOS_ARM64
+            else error("Unsupported host")
+
+            assertContains(
+                "The Kotlin/Native cache has been explicitly disabled for the Debug binary 'debugStatic' on target '${target.visibleName}'.\n" +
+                        "However, this target does not support caching on the current host '${HostManager.platformName()}' regardless of configuration.",
+                emittedDiagnostics.single().message
+            )
         }
     }
 
