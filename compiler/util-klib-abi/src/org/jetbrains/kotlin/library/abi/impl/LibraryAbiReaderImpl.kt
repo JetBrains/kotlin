@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.backend.common.serialization.*
 import org.jetbrains.kotlin.backend.common.serialization.encodings.*
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData.SymbolKind.CLASS_SYMBOL
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData.SymbolKind.TYPE_PARAMETER_SYMBOL
-import org.jetbrains.kotlin.backend.common.serialization.fileEntry
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.util.IdSignature
@@ -27,6 +26,8 @@ import org.jetbrains.kotlin.library.components.KlibIrComponent
 import org.jetbrains.kotlin.library.components.ir
 import org.jetbrains.kotlin.library.components.irOrFail
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
+import org.jetbrains.kotlin.library.loader.KlibLoader
+import org.jetbrains.kotlin.library.loader.reportLoadingProblemsIfAny
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.SpecialNames
@@ -34,38 +35,38 @@ import org.jetbrains.kotlin.storage.CacheWithNotNullValues
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.Variance
-import org.jetbrains.kotlin.util.DummyLogger
 import org.jetbrains.kotlin.utils.*
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 import java.io.File
-import org.jetbrains.kotlin.konan.file.File as KFile
+import org.jetbrains.kotlin.backend.common.serialization.IrFlags as ProtoFlags
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrClass as ProtoClass
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall as ProtoConstructorCall
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration as ProtoDeclaration
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase as ProtoDeclarationBase
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrDefinitelyNotNullType as ProtoIrDefinitelyNotNullType
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrEnumEntry as ProtoEnumEntry
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrFile as ProtoFile
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrFunctionBase as ProtoFunctionBase
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrProperty as ProtoProperty
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter as ProtoValueParameter
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall as ProtoConstructorCall
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrType as ProtoType
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrDefinitelyNotNullType as ProtoIrDefinitelyNotNullType
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType as ProtoSimpleType
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeNullability as ProtoSimpleTypeNullability
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacy as ProtoSimpleTypeLegacy
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeNullability as ProtoSimpleTypeNullability
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrType as ProtoType
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameter as ProtoTypeParameter
-import org.jetbrains.kotlin.backend.common.serialization.IrFlags as ProtoFlags
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter as ProtoValueParameter
 
 @ExperimentalLibraryAbiReader
 internal class LibraryAbiReaderImpl(libraryFile: File, filters: List<AbiReadingFilter>) {
-    private val library: KotlinLibrary = try {
-        ToolingSingleFileKlibResolveStrategy.tryResolve(KFile(libraryFile.absolutePath), DummyLogger)?.apply {
-            check(uniqueName.isNotEmpty()) { "Can't read unique name from manifest" }
-            check(ir != null) { "Library does not have IR" }
-        }
-    } catch (e: Exception) {
-        throw malformedLibrary(libraryFile, e)
-    } ?: error("Library not found: $libraryFile")
+    private val library: KotlinLibrary = run {
+        val klibLoadingResult = KlibLoader { libraryPaths(libraryFile) }.load()
+        klibLoadingResult.reportLoadingProblemsIfAny { _, message -> error(message) }
+
+        val library = klibLoadingResult.librariesStdlibFirst.single()
+        check(library.uniqueName.isNotEmpty()) { "Can't read unique name from manifest" }
+        check(library.ir != null) { "Library does not have IR" }
+
+        library
+    }
 
     private val compositeFilter: AbiReadingFilter.Composite? = if (filters.isNotEmpty()) AbiReadingFilter.Composite(filters) else null
 
@@ -102,9 +103,6 @@ internal class LibraryAbiReaderImpl(libraryFile: File, filters: List<AbiReadingF
     private fun readSupportedSignatureVersions(): Set<AbiSignatureVersion> {
         return library.versions.irSignatureVersions.mapTo(hashSetOf()) { AbiSignatureVersions.resolveByVersionNumber(it.number) }
     }
-
-    private fun malformedLibrary(libraryFile: File, cause: Exception): Nothing =
-        throw IllegalArgumentException("Malformed library: $libraryFile", cause)
 }
 
 @ExperimentalLibraryAbiReader
