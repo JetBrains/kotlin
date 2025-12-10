@@ -71,6 +71,10 @@ public abstract class SList /* test.SList*/ implements java.util.List<@org.jetbr
 public abstract class SList2 /* test.SList2*/ implements java.util.List<@org.jetbrains.annotations.NotNull() java.lang.Integer>, kotlin.jvm.internal.markers.KMappedMarker {
   @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
+  public @org.jetbrains.annotations.NotNull() java.lang.Integer get(int);//  get(int)
+
+  @java.lang.Override()
+  @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.util.Iterator<@org.jetbrains.annotations.NotNull() java.lang.Integer> iterator();//  iterator()
 
   @java.lang.Override()
@@ -129,9 +133,6 @@ public abstract class SList2 /* test.SList2*/ implements java.util.List<@org.jet
 
   @java.lang.Override()
   public final int size();//  size()
-
-  @java.lang.Override()
-  public int get(int);//  get(int)
 
   @java.lang.Override()
   public int getSize();//  getSize()

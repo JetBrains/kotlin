@@ -4,8 +4,7 @@ public abstract class CMapEntry /* test.CMapEntry*/ implements test.IMapEntry {
 
 public abstract class CMapEntry2 /* test.CMapEntry2*/ implements test.IMapEntry {
   @java.lang.Override()
-  @org.jetbrains.annotations.NotNull()
-  public @org.jetbrains.annotations.NotNull() java.lang.Integer getKey();//  getKey()
+  public int getKey();//  getKey()
 
   @java.lang.Override()
   public int getValue();//  getValue()

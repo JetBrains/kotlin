@@ -5,6 +5,16 @@ public abstract class CMutableList /* test.CMutableList*/ implements test.IMutab
 public abstract class CMutableList2 /* test.CMutableList2*/ implements test.IMutableList {
   @java.lang.Override()
   @kotlin.IgnorableReturnValue()
+  @org.jetbrains.annotations.NotNull()
+  public @org.jetbrains.annotations.NotNull() java.lang.Integer removeAt(int);//  removeAt(int)
+
+  @java.lang.Override()
+  @kotlin.IgnorableReturnValue()
+  @org.jetbrains.annotations.NotNull()
+  public @org.jetbrains.annotations.NotNull() java.lang.Integer set(int, int);//  set(int, int)
+
+  @java.lang.Override()
+  @kotlin.IgnorableReturnValue()
   public boolean add(int);//  add(int)
 
   @java.lang.Override()
@@ -28,14 +38,6 @@ public abstract class CMutableList2 /* test.CMutableList2*/ implements test.IMut
   public boolean retainAll(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.Collection<@org.jetbrains.annotations.NotNull() java.lang.Integer>);//  retainAll(@org.jetbrains.annotations.NotNull() java.util.Collection<@org.jetbrains.annotations.NotNull() java.lang.Integer>)
 
   @java.lang.Override()
-  @kotlin.IgnorableReturnValue()
-  public int removeAt(int);//  removeAt(int)
-
-  @java.lang.Override()
-  @kotlin.IgnorableReturnValue()
-  public int set(int, int);//  set(int, int)
-
-  @java.lang.Override()
   @kotlin.SinceKotlin(version = @kotlin.SinceKotlin)
   @kotlin.js.ExperimentalJsCollectionsApi()
   @kotlin.js.ExperimentalJsExport()
@@ -48,6 +50,10 @@ public abstract class CMutableList2 /* test.CMutableList2*/ implements test.IMut
   @kotlin.js.ExperimentalJsExport()
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() kotlin.js.collections.JsReadonlyArray<@org.jetbrains.annotations.NotNull() java.lang.Integer> asJsReadonlyArrayView();//  asJsReadonlyArrayView()
+
+  @java.lang.Override()
+  @org.jetbrains.annotations.NotNull()
+  public @org.jetbrains.annotations.NotNull() java.lang.Integer get(int);//  get(int)
 
   @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
@@ -73,9 +79,6 @@ public abstract class CMutableList2 /* test.CMutableList2*/ implements test.IMut
 
   @java.lang.Override()
   public boolean isEmpty();//  isEmpty()
-
-  @java.lang.Override()
-  public int get(int);//  get(int)
 
   @java.lang.Override()
   public int indexOf(int);//  indexOf(int)

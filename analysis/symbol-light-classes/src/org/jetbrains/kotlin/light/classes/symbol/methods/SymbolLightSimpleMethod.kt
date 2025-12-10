@@ -12,6 +12,7 @@ import kotlinx.collections.immutable.mutate
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin
 import org.jetbrains.kotlin.analysis.api.types.KaClassType
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.api.types.KaTypeMappingMode
@@ -202,8 +203,12 @@ internal class SymbolLightSimpleMethod private constructor(
             isJvmExposedBoxed && typeForValueClass(returnType) -> true
 
             returnType.isPrimitiveBacked -> {
-                functionSymbol.allOverriddenSymbols.any { overriddenSymbol ->
-                    !overriddenSymbol.returnType.isPrimitiveBacked
+                if (functionSymbol.origin == KaSymbolOrigin.DELEGATED) {
+                    !functionSymbol.fakeOverrideOriginal.returnType.isPrimitiveBacked
+                } else {
+                    functionSymbol.allOverriddenSymbols.any { overriddenSymbol ->
+                        !overriddenSymbol.returnType.isPrimitiveBacked
+                    }
                 }
             }
             else -> false
