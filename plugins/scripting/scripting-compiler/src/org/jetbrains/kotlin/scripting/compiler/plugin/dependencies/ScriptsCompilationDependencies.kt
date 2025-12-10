@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.scripting.compiler.plugin.dependencies
 
 import org.jetbrains.kotlin.scripting.resolve.resolvedImportScripts
+import org.jetbrains.kotlin.utils.topologicalSort
 import java.io.File
 import kotlin.script.experimental.api.ResultWithDiagnostics
 import kotlin.script.experimental.api.ScriptCompilationConfiguration
@@ -14,6 +15,7 @@ import kotlin.script.experimental.api.SourceCode
 import kotlin.script.experimental.api.asSuccess
 import kotlin.script.experimental.api.dependencies
 import kotlin.script.experimental.api.importScripts
+import kotlin.script.experimental.api.valueOrNull
 import kotlin.script.experimental.jvm.util.toClassPathOrEmpty
 
 data class ScriptsCompilationDependencies(
@@ -82,7 +84,7 @@ fun collectScriptsCompilationDependencies(
 }
 
 
-// recursively collect dependencies from initial and imported scripts
+// recursively collect dependencies from initial and imported scripts, return the main sources list sorted topologically
 fun collectScriptsCompilationDependenciesRecursively(
     initialSources: Iterable<SourceCode>,
     getScriptCompilationConfiguration: (SourceCode) -> ResultWithDiagnostics<ScriptCompilationConfiguration>?
@@ -133,10 +135,30 @@ fun collectScriptsCompilationDependenciesRecursively(
             remainingSources = newRemainingSources
         }
     }
-    return if (hasErrors) ResultWithDiagnostics.Failure(diagnostics)
-    else ScriptsCompilationDependencies(
-        collectedClassPath.distinctBy { it.absolutePath },
-        collectedSources,
-        collectedSourceDependencies
-    ).asSuccess(diagnostics)
+    if (hasErrors) {
+        return ResultWithDiagnostics.Failure(diagnostics)
+    } else {
+        class CycleDetected(val node: SourceCode) : Throwable()
+
+        val sortedSources = try {
+            topologicalSort(
+                collectedSources, reportCycle = { throw CycleDetected(it) }
+            ) {
+                collectedSourceDependencies.find { it.script == this }?.sourceDependencies?.valueOrNull() ?: emptyList()
+            }.reversed()
+        } catch (e: CycleDetected) {
+            return ResultWithDiagnostics.Failure(
+                ScriptDiagnostic(
+                    ScriptDiagnostic.unspecifiedError,
+                    "Unable to handle recursive script dependencies, cycle detected on file ${e.node.name ?: e.node.locationId}",
+                    sourcePath = e.node.locationId
+                )
+            )
+        }
+        return ScriptsCompilationDependencies(
+            collectedClassPath.distinctBy { it.absolutePath },
+            sortedSources,
+            collectedSourceDependencies
+        ).asSuccess(diagnostics)
+    }
 }
