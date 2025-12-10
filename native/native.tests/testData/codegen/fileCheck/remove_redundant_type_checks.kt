@@ -884,6 +884,15 @@ fun test42(c: C?, o: Any): Int {
     }
 }
 
+// CHECK-LABEL: define ptr @"kfun:#test43(kotlin.collections.List<0:0>){0\C2\A7<kotlin.Any>}kotlin.String
+fun <T: Any> test43(list: List<T>): String {
+// CHECK-DEBUG-NOT: {{call|call zeroext}} i1 @IsSubtype
+// CHECK-OPT-NOT: {{call|call zeroext}} i1 @IsSubclassFast
+// CHECK: call ptr @"kfun:kotlin.Any#toString
+    val x = list[0]
+    return x.toString()
+}
+
 // CHECK-LABEL: define ptr @"kfun:#box(){}kotlin.String"
 fun box(): String {
     val a = A("zzz", 42, 117)
@@ -932,5 +941,6 @@ fun box(): String {
     println(Test40.z)
     println(test41(b, b))
     println(test42(c, b))
+    println(test43(listOf("zzz")))
     return "OK"
 }

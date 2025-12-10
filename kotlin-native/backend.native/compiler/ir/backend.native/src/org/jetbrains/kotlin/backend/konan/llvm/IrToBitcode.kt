@@ -1564,8 +1564,8 @@ internal class CodeGeneratorVisitor(
         val srcArg = evaluateExpression(value.argument, resultSlot)
         require(srcArg.type == codegen.kObjHeaderPtr) { "Expected ObjHeader but was ${llvmtype2string(srcArg.type)} for ${value.argument.dump()}" }
         val srcType = value.argument.type
-        val isSuperClassCast = srcType.classifierOrNull !is IrTypeParameterSymbol // Due to unsafe casts, see unchecked_cast8.kt as an example.
-                && srcType.isSubtypeOfClass(dstClass.symbol)
+        val isSuperClassCast = dstClass.isAny() || (srcType.classifierOrNull !is IrTypeParameterSymbol // Due to unsafe casts, see unchecked_cast8.kt as an example.
+                && srcType.isSubtypeOfClass(dstClass.symbol))
 
         if (isSuperClassCast) {
             onSuperClassCast(srcArg)?.let { return it }
