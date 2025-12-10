@@ -1,3 +1,14 @@
-(Full dump is not available: Parent of element (TYPE_PARAMETER name:D index:0 variance: superTypes:[base.FirCallableDeclaration] reified:true) is not initialized.
-Please assign it explicitly or use utility such as IrElement.patchDeclarationParents().)
 MODULE_FRAGMENT
+  FILE fqName:<root> fileName:fragment.kt
+    CLASS CLASS name:CodeFragment modality:FINAL visibility:public superTypes:[kotlin.Any]
+      thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.CodeFragment
+      CONSTRUCTOR visibility:public returnType:<root>.CodeFragment [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+      FUN name:run visibility:public modality:FINAL returnType:D of impl.ContextKt.originalIfFakeOverride?
+        VALUE_PARAMETER kind:Regular name:p0 index:0 type:D of impl.ContextKt.originalIfFakeOverride
+        EXPRESSION_BODY
+          BLOCK type=D of impl.ContextKt.originalIfFakeOverride? origin=null
+            CALL 'public final fun <get-originalForSubstitutionOverride> <D> (<this>: D of base.BaseKt.<get-originalForSubstitutionOverride>): D of base.BaseKt.<get-originalForSubstitutionOverride>? declared in base.BaseKt' type=D of impl.ContextKt.originalIfFakeOverride? origin=GET_PROPERTY
+              TYPE_ARG D: D of impl.ContextKt.originalIfFakeOverride
+              ARG <this>: GET_VAR 'p0: D of impl.ContextKt.originalIfFakeOverride declared in <root>.CodeFragment.run' type=D of impl.ContextKt.originalIfFakeOverride origin=IMPLICIT_ARGUMENT

@@ -9,6 +9,8 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.backend.generators.isExternalParent
 import org.jetbrains.kotlin.fir.backend.utils.ConversionTypeOrigin
+import org.jetbrains.kotlin.fir.backend.utils.toIrSymbol
+import org.jetbrains.kotlin.fir.backend.utils.toIrSymbolForCall
 import org.jetbrains.kotlin.fir.containingClassForLocalAttr
 import org.jetbrains.kotlin.fir.containingReplSymbolAttr
 import org.jetbrains.kotlin.fir.declarations.*
@@ -163,6 +165,19 @@ class Fir2IrClassifierStorage(
 
         return createAndCacheIrTypeParameter(firTypeParameter, index, conversionTypeOrigin).also {
             classifiersGenerator.initializeTypeParameterBounds(firTypeParameter, it)
+            @OptIn(UnsafeDuringIrConstructionAPI::class)
+            it.parent = when (val firSymbol = firTypeParameter.containingDeclarationSymbol) {
+                is FirClassifierSymbol -> firSymbol.toIrSymbol().owner
+                is FirCallableSymbol -> {
+                    val irSymbol = firSymbol.toIrSymbolForCall(null, null)!!
+                    if (irSymbol is IrPropertySymbol) {
+                        irSymbol.owner.getter
+                    } else {
+                        irSymbol.owner
+                    }
+                }
+                else -> error("")
+            } as IrDeclarationParent
         }.symbol
     }
 
