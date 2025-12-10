@@ -1,3 +1,5 @@
+import GeneratorInputKind.RuntimeClasspath
+
 plugins {
     kotlin("jvm")
     id("project-tests-convention")
@@ -97,31 +99,83 @@ projectTests {
     }
 }
 
-val generateCompilerArgumentsCopy by generator("org.jetbrains.kotlin.generators.arguments.GenerateCompilerArgumentsCopyKt", testSourceSet)
+val generateCompilerArgumentsCopy by generator(
+    "org.jetbrains.kotlin.generators.arguments.GenerateCompilerArgumentsCopyKt",
+    testSourceSet,
+    inputKind = RuntimeClasspath
+)
 
-val generateProtoBuf by generator("org.jetbrains.kotlin.generators.protobuf.GenerateProtoBufKt", protobufSourceSet)
-val generateProtoBufCompare by generator("org.jetbrains.kotlin.generators.protobuf.GenerateProtoBufCompare", protobufCompareSourceSet)
+val generateProtoBuf by generator(
+    "org.jetbrains.kotlin.generators.protobuf.GenerateProtoBufKt",
+    protobufSourceSet,
+    inputKind = RuntimeClasspath
+)
 
-val generateGradleCompilerTypes by generator("org.jetbrains.kotlin.generators.arguments.GenerateGradleCompilerTypesKt", testSourceSet) {
+val generateProtoBufCompare by generator(
+    "org.jetbrains.kotlin.generators.protobuf.GenerateProtoBufCompare",
+    protobufCompareSourceSet,
+    inputKind = RuntimeClasspath
+)
+
+val generateGradleCompilerTypes by generator(
+    "org.jetbrains.kotlin.generators.arguments.GenerateGradleCompilerTypesKt",
+    testSourceSet,
+    inputKind = RuntimeClasspath
+) {
     description = "Generate Kotlin compiler arguments types Gradle representation"
 }
-val generateGradleOptions by generator("org.jetbrains.kotlin.generators.arguments.GenerateGradleOptionsKt", testSourceSet) {
+
+val generateGradleOptions by generator(
+    "org.jetbrains.kotlin.generators.arguments.GenerateGradleOptionsKt",
+    testSourceSet,
+    inputKind = RuntimeClasspath
+) {
     dependsOn(generateGradleCompilerTypes)
     description = "Generate Gradle plugin compiler options"
 }
-val generateUnsupportedGradleLanguageVersionsMetadata by generator("org.jetbrains.kotlin.generators.arguments.GenerateUnsupportedGradleLanguageVersionsMetadataKt", testSourceSet) {
+
+val generateUnsupportedGradleLanguageVersionsMetadata by generator(
+    "org.jetbrains.kotlin.generators.arguments.GenerateUnsupportedGradleLanguageVersionsMetadataKt",
+    testSourceSet,
+    inputKind = RuntimeClasspath
+) {
     description = "Generate Gradle plugin unsupported Kotlin language versions lifecycle metadata"
 }
-val generateKeywordStrings by generator("org.jetbrains.kotlin.generators.frontend.GenerateKeywordStrings", testSourceSet)
 
-val generateBuiltins by generator("org.jetbrains.kotlin.generators.builtins.generateBuiltIns.GenerateBuiltInsKt", builtinsSourceSet)
-val generateOperationsMap by generator("org.jetbrains.kotlin.generators.evaluate.GenerateOperationsMapKt", evaluateSourceSet)
-val generateInterpreterMap by generator("org.jetbrains.kotlin.generators.interpreter.GenerateInterpreterMapKt", interpreterSourceSet)
-val generateWasmIntrinsics by generator("org.jetbrains.kotlin.generators.wasm.WasmIntrinsicGeneratorKt", wasmSourceSet)
+val generateKeywordStrings by generator(
+    "org.jetbrains.kotlin.generators.frontend.GenerateKeywordStrings",
+    testSourceSet,
+    inputKind = RuntimeClasspath
+)
+
+val generateBuiltins by generator(
+    "org.jetbrains.kotlin.generators.builtins.generateBuiltIns.GenerateBuiltInsKt",
+    builtinsSourceSet,
+    inputKind = RuntimeClasspath
+)
+
+val generateOperationsMap by generator(
+    "org.jetbrains.kotlin.generators.evaluate.GenerateOperationsMapKt",
+    evaluateSourceSet,
+    inputKind = RuntimeClasspath
+)
+
+val generateInterpreterMap by generator(
+    "org.jetbrains.kotlin.generators.interpreter.GenerateInterpreterMapKt",
+    interpreterSourceSet,
+    inputKind = RuntimeClasspath
+)
+
+val generateWasmIntrinsics by generator(
+    "org.jetbrains.kotlin.generators.wasm.WasmIntrinsicGeneratorKt",
+    wasmSourceSet,
+    inputKind = RuntimeClasspath
+)
 
 val generateNativeInteropRuntime by generator(
     "org.jetbrains.kotlin.generators.native.interopRuntime.NativeInteropRuntimeGeneratorKt",
-    nativeInteropRuntimeSourceSet
+    nativeInteropRuntimeSourceSet,
+    inputKind = RuntimeClasspath,
 )
 
 testsJar()
