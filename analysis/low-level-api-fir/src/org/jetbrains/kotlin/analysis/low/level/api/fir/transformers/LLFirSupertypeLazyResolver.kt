@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -11,11 +11,12 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirResolveT
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirSingleResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.asResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.tryCollectDesignation
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.withFirDesignationEntry
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkAnalysisReadiness
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkTypeRefIsResolved
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkAnalysisReadiness
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
@@ -425,44 +426,72 @@ internal class LLSupertypeComputationSessionLocalClassesAware : SupertypeComputa
         useSiteSession: FirSession,
     ): List<FirResolvedTypeRef> {
         if (!classLikeDeclaration.isLocal) {
-            resolveToSupertypePhase(classLikeDeclaration, useSiteSession)
+            resolveToSupertypePhase(classLikeDeclaration)
         }
 
         return super.getResolvedSuperTypeRefsForOutOfSessionDeclaration(classLikeDeclaration, useSiteSession)
     }
 
+    /**
+     * The non-empty result means the compiler will iterate through the supertypes
+     * and resolve them in the context of [useSiteSession].
+     * In LL it would work even for non-local declarations since this session catches all supertypes
+     * usages and resolves them via [supertypeRefsWithLazyResolve], so the compiler performs no real resolution,
+     * it only triggers it
+     *
+     * @see resolveToSupertypePhase
+     * */
     override fun supertypeRefs(
         declaration: FirClassLikeDeclaration,
         useSiteSession: FirSession,
     ): List<FirTypeRef> = if (declaration.isLocal) {
         super.supertypeRefs(declaration, useSiteSession)
     } else {
-        resolveToSupertypePhase(declaration, useSiteSession)
-
-        // The hierarchy is fully resolved, so the empty list can be returned
-        emptyList()
+        val resolvedTypeRefs = supertypeRefsWithLazyResolve(declaration, useSiteSession)
+        // If the session is the same, we could optimize the traversal a bit by cutting the supertypes graph.
+        // This is valid since the compiler won't find new cases if the declaration was already processed in this context
+        resolvedTypeRefs.takeIf { declaration.llFirSession != useSiteSession }.orEmpty()
     }
 
-    private fun resolveToSupertypePhase(declaration: FirClassLikeDeclaration, useSiteSession: FirSession) {
-        // 1. Resolve the entire hierarchy for the non-local class (in the declaration-site context)
+    /**
+     * No need to care about the local use-site session view since the compiler will
+     * trigger resolution of the hierarchy from this perspective once [supertypeRefs] returns a non-empty list.
+     *
+     * @see supertypeRefs
+     */
+    private fun resolveToSupertypePhase(declaration: FirClassLikeDeclaration) {
         declaration.lazyResolveToPhase(FirResolvePhase.SUPER_TYPES)
+    }
 
-        val target = declaration.asResolveTarget() ?: return
-        useSiteSession as LLFirSession
+    private fun supertypeRefsWithLazyResolve(
+        declaration: FirClassLikeDeclaration,
+        useSiteSession: FirSession,
+    ): List<FirResolvedTypeRef> = when (val status = getSupertypesComputationStatus(declaration)) {
+        is SupertypeComputationStatus.Computed -> status.supertypeRefs
 
-        val resolver = LLFirSuperTypeTargetResolver(
-            target = target,
-            supertypeComputationSession = LLFirSupertypeComputationSession(
-                useSiteSessions = persistentListOf(useSiteSession),
-            ),
-            visitedElements = hashSetOf(),
-        )
+        SupertypeComputationStatus.Computing -> {
+            val designation = declaration.asResolveTarget()?.designation
+            errorWithFirSpecificEntries(
+                "Unexpected uncomputed declaration" + if (designation == null) " (no designation)" else "",
+                fir = declaration,
+            ) {
+                designation?.let { withFirDesignationEntry("designation.txt", it) }
+            }
+        }
 
-        // 2. Resolve the entire hierarchy for the non-local class (in the use-site context)
-        resolver.crawlAllSupertypes(
-            declaration = declaration,
-            superTypeRefs = super.getResolvedSuperTypeRefsForOutOfSessionDeclaration(declaration, useSiteSession),
-        )
+        SupertypeComputationStatus.NotComputed -> {
+            startComputingSupertypes(declaration)
+
+            resolveToSupertypePhase(declaration)
+
+            val resolvedTypesRefs = super.getResolvedSuperTypeRefsForOutOfSessionDeclaration(declaration, useSiteSession)
+
+            // Resolved references have to be stored in the session so the compiler logic would be able to use them.
+            // Otherwise, the compiler will see the empty list from `supertypeRefs` and will treat it as a supertypes list.
+            // Also, the compiler resolver might try to modify the already resolved non-local declaration without locks
+            // if no resolved status is present
+            storeSupertypes(declaration, resolvedTypesRefs)
+            resolvedTypesRefs
+        }
     }
 }
-
