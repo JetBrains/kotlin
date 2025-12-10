@@ -209,7 +209,8 @@ abstract class BasicCompilation<A : TestCompilationArtifact>(
         val testKind = mainSourceModule.testCase.kind
         if (testKind == TestKind.STANDALONE ||
             testKind == TestKind.STANDALONE_NO_TR ||
-            testKind == TestKind.STANDALONE_LLDB
+            testKind == TestKind.STANDALONE_LLDB ||
+            testKind == TestKind.STANDALONE_STEPPING
         ) {
             add("-module-name", mainSourceModule.name)
         }

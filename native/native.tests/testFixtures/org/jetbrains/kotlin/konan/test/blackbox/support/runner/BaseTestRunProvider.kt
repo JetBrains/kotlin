@@ -31,7 +31,7 @@ open class BaseTestRunProvider {
         addIfNotNull(testCase.checks.outputDataFile?.file?.let(TestRunParameter::WithExpectedOutputData))
 
         when (testCase.kind) {
-            TestKind.STANDALONE_LLDB -> {
+            TestKind.STANDALONE_LLDB, TestKind.STANDALONE_STEPPING -> {
                 assertTrue(testName == null)
                 // Note: TestRunParameter.WithLLDB adds program arguments and would therefore conflict
                 // with other TestRunParameters that do the same (such as WithTCTestLogger).

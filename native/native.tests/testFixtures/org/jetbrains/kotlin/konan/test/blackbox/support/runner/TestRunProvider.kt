@@ -112,7 +112,7 @@ class TestRunProvider(
         fun createTestRun(testRunName: String, testName: TestName?) = createTestRun(testCase, executable, testRunName, testName)
 
         when (testCase.kind) {
-            TestKind.STANDALONE_NO_TR, TestKind.STANDALONE_LLDB -> {
+            TestKind.STANDALONE_NO_TR, TestKind.STANDALONE_LLDB, TestKind.STANDALONE_STEPPING -> {
                 val testRunName = (testCase.extras<NoTestRunnerExtras>().entryPoint ?: "main").substringAfterLast('.')
                 val testRun = createTestRun(testRunName, testName = null)
                 TreeNode.oneLevel(testRun)
@@ -188,7 +188,7 @@ class TestRunProvider(
             TestExecutable.fromCompilationResult(testCase, adapter)
         } else {
             val testCompilation = when (testCase.kind) {
-                TestKind.STANDALONE, TestKind.STANDALONE_NO_TR, TestKind.STANDALONE_LLDB -> {
+                TestKind.STANDALONE, TestKind.STANDALONE_NO_TR, TestKind.STANDALONE_LLDB, TestKind.STANDALONE_STEPPING -> {
                     // Create a separate compilation for each standalone test case.
                     cachedCompilations.computeIfAbsent(
                         TestCompilationCacheKey.Standalone(testCaseId)
