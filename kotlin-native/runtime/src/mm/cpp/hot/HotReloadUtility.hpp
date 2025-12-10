@@ -45,47 +45,23 @@ inline static constexpr int kRuntimeTypeSize[] = {
         16 // VECTOR128
 };
 
-inline std::string field2String(const char* fieldName, const uint8_t* fieldValue, const Konan_RuntimeType fieldType) {
-    std::stringstream ss;
-    ss << fieldName << ":" << kTypeNames[fieldType] << " = ";
+inline uint64_t getCurrentEpoch() {
+    return std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+}
 
-    switch (fieldType) {
-        case RT_INVALID:
-            ss << "???";
-            break;
-        case RT_OBJECT:
-            ss << "ObjHeader*";
-            break;
-        case RT_INT8:
-            ss << *(reinterpret_cast<const int8_t*>(fieldValue));
-            break;
-        case RT_INT16:
-            ss << *(reinterpret_cast<const int16_t*>(fieldValue));
-            break;
-        case RT_INT32:
-            ss << *(reinterpret_cast<const int32_t*>(fieldValue));
-            break;
-        case RT_INT64:
-            ss << *(reinterpret_cast<const int64_t*>(fieldValue));
-            break;
-        case RT_FLOAT32:
-            ss << *(reinterpret_cast<const float*>(fieldValue));
-            break;
-        case RT_FLOAT64:
-            ss << *(reinterpret_cast<const double*>(fieldValue));
-            break;
-        case RT_NATIVE_PTR:
-            ss << *(reinterpret_cast<const uintptr_t*>(fieldValue));
-            break;
-        case RT_BOOLEAN:
-            ss << *(reinterpret_cast<const bool*>(fieldValue));
-            break;
-        case RT_VECTOR128:
-            ss << "vec128";
-            break;
+enum class ReferenceOrigin { Global, ShadowStack, ObjRef };
+
+inline const char* referenceOriginToString(const ReferenceOrigin origin) noexcept {
+    switch (origin) {
+        case ReferenceOrigin::Global:
+            return "Global";
+        case ReferenceOrigin::ShadowStack:
+            return "ShadowStack";
+        case ReferenceOrigin::ObjRef:
+            return "Object Reference";
+        default:
+            return "Unknown";
     }
-
-    return ss.str();
 }
 
 }; // namespace kotlin::hot::utility

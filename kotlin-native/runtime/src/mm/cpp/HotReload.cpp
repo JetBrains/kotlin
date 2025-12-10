@@ -4,7 +4,6 @@
 #include <iomanip>
 #include <chrono>
 #include <fstream>
-#include <sstream>
 
 #include <dlfcn.h>
 
@@ -27,7 +26,6 @@
 
 #include "hot/fishhook.h"
 
-#include <set>
 #include <utility>
 
 using namespace kotlin;
@@ -39,32 +37,16 @@ void resumeTheWorld(GCHandle gcHandle) noexcept;
 } // namespace kotlin::gc
 
 namespace {
+/// Kotlin reference used to store the single `onReloadSuccess` callback from Kotlin-side.
 [[clang::no_destroy]] ObjHeader* gOnSuccess = nullptr;
+/// Token used to initialize the `onReloadSuccess` global variable to Kotlin's runtime.
 [[clang::no_destroy]] std::once_flag gOnSuccessRegOnce;
-}
-
-static uint64_t getCurrentEpoch() {
-    return std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
 }
 
 ManuallyScoped<HotReloader> globalDataInstance{};
 
+/// The HotReloader module will ignore all the classes
 const std::unordered_set<std::string_view> NON_RELOADABLE_CLASS_SYMBOLS = {"kclass:kotlin.Annotation"};
-
-enum class Origin { Global, ShadowStack, ObjRef };
-
-const char* originToString(const Origin origin) noexcept {
-    switch (origin) {
-        case Origin::Global:
-            return "Global";
-        case Origin::ShadowStack:
-            return "ShadowStack";
-        case Origin::ObjRef:
-            return "Object Reference";
-        default:
-            return "Unknown";
-    }
-}
 
 template <typename F>
 void traverseObjectFieldsInternal(ObjHeader* object, F process) noexcept(noexcept(process(std::declval<mm::RefFieldAccessor>()))) {
@@ -84,41 +66,39 @@ void traverseObjectFieldsInternal(ObjHeader* object, F process) noexcept(noexcep
 }
 
 template <typename F>
-int visitObjectGraph(ObjHeader* startObject, F processingFunction) {
+void visitObjectGraph(ObjHeader* startObject, F processingFunction) {
     // We need to perform a BFS, while ensuring that the world is stopped.
     // Let's collect the root set, and start the graph exploration.
     // At the moment, let's make things simple, and single-threaded (otherwise, well, headaches).
-    int32_t updatedObjects{0};
-
     std::queue<ObjHeader*> objectsToVisit{};
     std::unordered_set<ObjHeader*> visitedObjects{};
 
-    // Let's start collecting the root set
-    auto processObject = [&](ObjHeader* obj, Origin origin) {
+    auto processObject = [&](ObjHeader* obj, utility::ReferenceOrigin origin) {
         // const char* originString = originToString(origin);
         if (obj == nullptr || isNullOrMarker(obj)) return;
 
-        // HRLogDebug("processing object of type %s from %s", obj->type_info()->fqName().c_str(), originString);
+        //j HRLogDebug("processing object of type %s from %s", obj->type_info()->fqName().c_str(), originString);
         if (const auto visited = visitedObjects.find(obj); visited != visitedObjects.end()) return;
 
         visitedObjects.insert(obj);
         objectsToVisit.push(obj);
     };
 
+    // Let's start collecting the root set
     for (auto& thread : mm::ThreadRegistry::Instance().LockForIter()) {
         auto& shadowStack = thread.shadowStack();
         for (const auto& object : shadowStack) {
-            processObject(object, Origin::ShadowStack);
+            processObject(object, utility::ReferenceOrigin::ShadowStack);
         }
     }
 
     for (const auto& objRef : mm::GlobalData::Instance().globalsRegistry().LockForIter()) {
         if (objRef != nullptr) {
-            processObject(*objRef, Origin::Global);
+            processObject(*objRef, utility::ReferenceOrigin::Global);
         }
     }
 
-    processObject(startObject, Origin::ObjRef);
+    processObject(startObject, utility::ReferenceOrigin::ObjRef);
 
     HRLogDebug("Starting object graph visit with %ld nodes", objectsToVisit.size());
 
@@ -127,12 +107,12 @@ int visitObjectGraph(ObjHeader* startObject, F processingFunction) {
         objectsToVisit.pop();
         processingFunction(nextObject, processObject);
     }
-
-    return updatedObjects;
 }
 
+//region "C" functions
+
 extern "C" {
-    void Kotlin_native_internal_HotReload_perform(ObjHeader* obj, ObjHeader* dylibPathStr) {
+    void Kotlin_native_internal_HotReload_perform(ObjHeader* obj, const ObjHeader* dylibPathStr) {
         AssertThreadState(ThreadState::kRunnable);
         // TODO: segmentation fault :(
         const auto dylibPath = kotlin::to_string<KStringConversionMode::UNCHECKED>(dylibPathStr);
@@ -152,6 +132,10 @@ extern "C" {
         UpdateHeapRef(&gOnSuccess, fn);
     }
 }
+
+//endregion
+
+//region HotReloader
 
 HotReloader::HotReloader() {
     HRLogInfo("Initializing HotReload module and server");
@@ -221,13 +205,13 @@ void HotReloader::interposeNewFunctionSymbols(const KotlinDynamicLibrary& kotlin
 void HotReloader::reload(const std::string& dylibPath) noexcept {
 
     // TODO: here there may be a concurrency issue, threads are not yet suspended!
-    statsCollector.registerStart(static_cast<int64_t>(getCurrentEpoch()));
+    statsCollector.registerStart(static_cast<int64_t>(utility::getCurrentEpoch()));
     statsCollector.registerLoadedLibrary(dylibPath);
 
     /// 1. Load the new library into memory with `dlopen`
     if (!_reloader.loadLibraryFromPath(dylibPath)) {
         HRLogError("Cannot load dylib in memory space!?");
-        statsCollector.registerEnd(static_cast<int64_t>(getCurrentEpoch()));
+        statsCollector.registerEnd(static_cast<int64_t>(utility::getCurrentEpoch()));
         statsCollector.registerSuccessful(false);
         return;
     }
@@ -250,7 +234,7 @@ void HotReloader::reload(const std::string& dylibPath) noexcept {
         try {
             mm::WaitForThreadsSuspension();
             perform(*currentThreadData, parsedDynamicLib);
-            statsCollector.registerEnd(static_cast<int64_t>(getCurrentEpoch()));
+            statsCollector.registerEnd(static_cast<int64_t>(utility::getCurrentEpoch()));
             statsCollector.registerSuccessful(true);
             mm::ResumeThreads();
 
@@ -260,7 +244,7 @@ void HotReloader::reload(const std::string& dylibPath) noexcept {
             }
         } catch (const std::exception& e) {
             HRLogError("Hot-reload failed with exception: %s", e.what());
-            statsCollector.registerEnd(static_cast<int64_t>(getCurrentEpoch()));
+            statsCollector.registerEnd(static_cast<int64_t>(utility::getCurrentEpoch()));
             statsCollector.registerSuccessful(false);
             mm::ResumeThreads();
         }
@@ -397,7 +381,7 @@ std::vector<ObjHeader*> HotReloader::findObjectsToReload(const TypeInfo* oldType
     visitObjectGraph(nullptr, [&existingObjects, &oldTypeFqName](ObjHeader* nextObject, auto processObject) {
         // Traverse object references inside class properties
         traverseObjectFieldsInternal(nextObject, [&](const mm::RefFieldAccessor& fieldAccessor) {
-            processObject(fieldAccessor.direct(), Origin::ObjRef);
+            processObject(fieldAccessor.direct(), utility::ReferenceOrigin::ObjRef);
         });
 
         if (nextObject->type_info()->fqName() == oldTypeFqName) {
@@ -415,8 +399,8 @@ int HotReloader::updateHeapReferences(ObjHeader* oldObject, ObjHeader* newObject
     std::unordered_set<ObjHeader*> visitedObjects{};
 
     // Let's start collecting the root set
-    auto processObject = [&](ObjHeader* obj, Origin origin) {
-        const char* originString = originToString(origin);
+    auto processObject = [&](ObjHeader* obj, utility::ReferenceOrigin origin) {
+        const char* originString = utility::referenceOriginToString(origin);
         if (obj == nullptr || isNullOrMarker(obj)) return;
 
         if (const auto visited = visitedObjects.find(obj); visited != visitedObjects.end()) return;
@@ -434,7 +418,7 @@ int HotReloader::updateHeapReferences(ObjHeader* oldObject, ObjHeader* newObject
                 UpdateHeapRef(objectLocation, newObject);
                 updatedObjects++;
             }
-            processObject(*objectLocation, Origin::Global);
+            processObject(*objectLocation, utility::ReferenceOrigin::Global);
         }
     }
 
@@ -446,20 +430,19 @@ int HotReloader::updateHeapReferences(ObjHeader* oldObject, ObjHeader* newObject
             updatedObjects++;
         }
 
-        processObject(*objectLocation, Origin::Global);
+        processObject(*objectLocation, utility::ReferenceOrigin::Global);
     }
 
     for (auto& thread : mm::ThreadRegistry::Instance().LockForIter()) {
         auto& shadowStack = thread.shadowStack();
         for (const auto& object : shadowStack) {
-            processObject(object, Origin::ShadowStack);
+            processObject(object, utility::ReferenceOrigin::ShadowStack);
         }
     }
 
-    processObject(oldObject, Origin::ObjRef);
+    processObject(oldObject, utility::ReferenceOrigin::ObjRef);
 
-    HRLogDebug("Updating Heap References");
-    HRLogDebug("Starting visit with %ld objects", objectsToVisit.size());
+    HRLogDebug("Updating Heap References :: starting visit with %ld objects", objectsToVisit.size());
 
     while (!objectsToVisit.empty()) {
         const auto nextObject = objectsToVisit.front();
@@ -471,7 +454,7 @@ int HotReloader::updateHeapReferences(ObjHeader* oldObject, ObjHeader* newObject
                 fieldAccessor.store(newObject);
                 updatedObjects++;
             }
-            processObject(fieldValue, Origin::ObjRef);
+            processObject(fieldValue, utility::ReferenceOrigin::ObjRef);
         });
     }
 
@@ -479,8 +462,7 @@ int HotReloader::updateHeapReferences(ObjHeader* oldObject, ObjHeader* newObject
 }
 
 void HotReloader::updateShadowStackReferences(const ObjHeader* oldObject, ObjHeader* newObject) {
-    auto& threadRegistry = mm::ThreadRegistry::Instance();
-    for (mm::ThreadData& threadData : threadRegistry.LockForIter()) {
+    for (auto& threadData : mm::ThreadRegistry::Instance().LockForIter()) {
         mm::ShadowStack& shadowStack = threadData.shadowStack();
         for (auto it = shadowStack.begin(); it != shadowStack.end(); ++it) {
             if (ObjHeader*& currentRef = *it; currentRef == oldObject) {
@@ -490,7 +472,9 @@ void HotReloader::updateShadowStackReferences(const ObjHeader* oldObject, ObjHea
     }
 }
 
-// Reloader
+// endregion
+
+//region HotReloader::SymbolLoader
 
 bool HotReloader::SymbolLoader::loadLibraryFromPath(const std::string& fileName) {
     void* libraryHandle = dlopen(fileName.c_str(), RTLD_LAZY);
@@ -499,7 +483,7 @@ bool HotReloader::SymbolLoader::loadLibraryFromPath(const std::string& fileName)
         return false;
     }
 
-    const LibraryHandle newHandle{getCurrentEpoch(), libraryHandle, fileName};
+    const LibraryHandle newHandle{utility::getCurrentEpoch(), libraryHandle, fileName};
     HRLogDebug("Loaded library from path: %s", fileName.c_str());
 
     handles.push_front(newHandle);
@@ -528,6 +512,7 @@ TypeInfo* HotReloader::SymbolLoader::lookForTypeInfo(const std::string_view mang
 
     return nullptr;
 }
+
 TypeInfo* HotReloader::SymbolLoader::getNewestTypeInfo(const std::string_view mangledClassName) const {
     return lookForTypeInfo(mangledClassName, 0);
 }
@@ -535,3 +520,5 @@ TypeInfo* HotReloader::SymbolLoader::getNewestTypeInfo(const std::string_view ma
 TypeInfo* HotReloader::SymbolLoader::getPreviousTypeInfo(const std::string_view mangledClassName) const {
     return lookForTypeInfo(mangledClassName, 1);
 }
+
+//endregion

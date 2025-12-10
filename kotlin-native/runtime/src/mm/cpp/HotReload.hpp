@@ -8,7 +8,6 @@
 #include <string>
 #include <vector>
 #include <deque>
-#include <atomic>
 
 #include "hot/HotReloadServer.hpp"
 #include "hot/MachOParser.hpp"
@@ -22,7 +21,7 @@ namespace kotlin::hot {
 
 class HotReloader : private Pinned {
 public:
-    class SymbolLoader : Pinned {
+    class SymbolLoader : private Pinned {
         friend class HotReloader;
 
         struct LibraryHandle {
@@ -82,7 +81,7 @@ private:
 } // namespace kotlin::hot
 
 extern "C" {
-    void Kotlin_native_internal_HotReload_perform(ObjHeader*, ObjHeader* dylibPath);
+    void Kotlin_native_internal_HotReload_perform(ObjHeader*, const ObjHeader* dylibPath);
     void Kotlin_native_internal_HotReload_invokeSuccessCallback(ObjHeader*);
 
     RUNTIME_NOTHROW void Kotlin_native_internal_HotReload_registerSuccessCallback(ObjHeader*, ObjHeader* fn);
