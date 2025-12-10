@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.scripting.compiler.plugin.dependencies
 
-import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationResult
 import org.jetbrains.kotlin.scripting.resolve.resolvedImportScripts
 import java.io.File
 import kotlin.script.experimental.api.ResultWithDiagnostics
@@ -32,7 +31,8 @@ data class ScriptsCompilationDependencies(
 @Deprecated("Use collectScriptsCompilationDependenciesRecursively instead")
 fun collectScriptsCompilationDependencies(
     initialSources: Iterable<SourceCode>,
-    getScriptCompilationConfiguration: (SourceCode) -> ScriptCompilationConfigurationResult?
+    @Suppress("DEPRECATION")
+    getScriptCompilationConfiguration: (SourceCode) -> org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationResult?
 ): ScriptsCompilationDependencies {
     val collectedClassPath = ArrayList<File>()
     val collectedSources = ArrayList<SourceCode>()

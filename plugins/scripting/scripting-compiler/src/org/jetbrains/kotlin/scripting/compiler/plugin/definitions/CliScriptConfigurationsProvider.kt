@@ -22,7 +22,10 @@ class CliScriptConfigurationsProvider(
     getScriptDefinitionProvider: () -> ScriptDefinitionProvider
 ) : ScriptConfigurationsProvider(project) {
     private val cacheLock = ReentrantReadWriteLock()
+
+    @Suppress("DEPRECATION")
     private val cache = hashMapOf<String, ScriptCompilationConfigurationResult?>()
+
     private val knownVirtualFileSources = mutableMapOf<String, VirtualFileScriptSource>()
     private val scriptDefinitionProvider by lazy(LazyThreadSafetyMode.NONE) {
         getScriptDefinitionProvider()
@@ -34,6 +37,7 @@ class CliScriptConfigurationsProvider(
     }
 
     @Deprecated("Use getScriptConfigurationResult(KtFileScriptSource(ktFile), provided configuration) instead")
+    @Suppress("DEPRECATION")
     override fun getScriptConfigurationResult(
         file: KtFile,
         providedConfiguration: ScriptCompilationConfiguration?
@@ -41,6 +45,7 @@ class CliScriptConfigurationsProvider(
         calculateRefinedConfiguration(KtFileScriptSource(file), providedConfiguration)
     }
 
+    @Suppress("DEPRECATION")
     override fun getScriptCompilationConfiguration(
         scriptSource: SourceCode,
         providedConfiguration: ScriptCompilationConfiguration?,
@@ -49,6 +54,7 @@ class CliScriptConfigurationsProvider(
     }
 
     @OptIn(K1SpecificScriptingServiceAccessor::class)
+    @Suppress("DEPRECATION")
     private fun calculateRefinedConfiguration(
         source: SourceCode, providedConfiguration: ScriptCompilationConfiguration?
     ): ScriptCompilationConfigurationResult? {
