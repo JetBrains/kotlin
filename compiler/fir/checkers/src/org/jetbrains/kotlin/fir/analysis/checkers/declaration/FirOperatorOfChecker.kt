@@ -17,11 +17,17 @@ import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.processAllDeclarations
 import org.jetbrains.kotlin.fir.declarations.utils.isOperator
 import org.jetbrains.kotlin.fir.isDisabled
+import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
+import org.jetbrains.kotlin.fir.scopes.impl.FirStandardOverrideChecker
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.toFirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeErrorType
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.arrayElementType
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.lowerBoundIfFlexible
@@ -43,35 +49,93 @@ object FirOperatorOfChecker : FirRegularClassChecker(MppCheckerKind.Common) {
         val outerClass: FirRegularClass,
         val companion: FirRegularClass,
     ) {
-        open inner class OfOverload(val function: FirNamedFunction) {
-            context(context: CheckerContext, reporter: DiagnosticReporter)
-            fun checkReturnType() {
-                fun report(dueToNullability: Boolean) {
-                    if (!dueToNullability) {
-                        reporter.reportOn(function.source, FirErrors.RETURN_TYPE_MISMATCH_OF_OPERATOR_OF, outerClass.symbol)
-                    } else {
-                        reporter.reportOn(function.source, FirErrors.NULLABLE_RETURN_TYPE_OF_OPERATOR_OF)
-                    }
-                }
+        open class OfOverload(val function: FirNamedFunction)
 
-                val returnType = function.returnTypeRef.coneType.lowerBoundIfFlexible().fullyExpandedType()
-                when {
-                    returnType is ConeErrorType -> {
-                    }
-                    returnType !is ConeClassLikeType -> {
-                        report(dueToNullability = false)
-                    }
-                    returnType.classId != outerClass.symbol.classId -> {
-                        report(dueToNullability = false)
-                    }
-                    returnType.isMarkedNullable -> {
-                        report(dueToNullability = true)
-                    }
+        class MainOfOverload(function: FirNamedFunction, val mainParameter: FirValueParameter) : OfOverload(function) {
+            val mainParameterElementType: ConeKotlinType?
+                get() = mainParameter.returnTypeRef.coneType.arrayElementType()
+        }
+
+        context(context: CheckerContext, reporter: DiagnosticReporter)
+        fun OfOverload.checkReturnType() {
+            fun report(dueToNullability: Boolean) {
+                if (!dueToNullability) {
+                    reporter.reportOn(function.source, FirErrors.RETURN_TYPE_MISMATCH_OF_OPERATOR_OF, outerClass.symbol)
+                } else {
+                    reporter.reportOn(function.source, FirErrors.NULLABLE_RETURN_TYPE_OF_OPERATOR_OF)
+                }
+            }
+
+            val returnType = function.returnTypeRef.coneType.lowerBoundIfFlexible().fullyExpandedType()
+            when {
+                returnType is ConeErrorType -> {
+                }
+                returnType !is ConeClassLikeType -> {
+                    report(dueToNullability = false)
+                }
+                returnType.classId != outerClass.symbol.classId -> {
+                    report(dueToNullability = false)
+                }
+                returnType.isMarkedNullable -> {
+                    report(dueToNullability = true)
                 }
             }
         }
 
-        inner class MainOfOverload(function: FirNamedFunction, val mainParameter: FirValueParameter) : OfOverload(function)
+        context(overrideChecker: FirStandardOverrideChecker)
+        private fun MainOfOverload.isMatchingParameter(
+            valueParameter: FirValueParameter,
+            substitutor: ConeSubstitutor,
+        ): Boolean {
+            if (mainParameter === valueParameter) return true
+
+            val mainParameterElementTypeRef = mainParameterElementType?.toFirResolvedTypeRef() ?: return true
+            return overrideChecker.isEqualTypes(
+                mainParameterElementTypeRef,
+                valueParameter.returnTypeRef,
+                substitutor,
+            )
+        }
+
+        context(overrideChecker: FirStandardOverrideChecker, context: CheckerContext, reporter: DiagnosticReporter)
+        private fun MainOfOverload.checkOverload(overload: FirNamedFunction) {
+            // mainOverload -> overload because order is not important for checks while we can get better error messages with this direction
+            val substitutor = overrideChecker.buildTypeParametersSubstitutorIfCompatible(function, overload, checkReifiednessIsSame = true)
+
+            if (substitutor == null) {
+                reporter.reportOn(overload.source, FirErrors.INCONSISTENT_TYPE_PARAMETERS_IN_OF_OVERLOADS, function.symbol)
+                return
+            }
+
+            for (valueParameter in overload.valueParameters) {
+                if (!isMatchingParameter(valueParameter, substitutor)) {
+                    reporter.reportOn(
+                        valueParameter.source,
+                        FirErrors.INCONSISTENT_PARAMETER_TYPES_IN_OF_OVERLOADS,
+                        substitutor.substituteOrSelf(mainParameterElementType!!.fullyExpandedType()),
+                    )
+                }
+            }
+
+            if (function === overload) return
+
+            if (!overrideChecker.isEqualTypes(function.returnTypeRef, overload.returnTypeRef, substitutor)) {
+                reporter.reportOn(
+                    overload.source,
+                    FirErrors.INCONSISTENT_RETURN_TYPES_IN_OF_OVERLOADS,
+                    substitutor.substituteOrSelf(function.returnTypeRef.coneType.fullyExpandedType()),
+                )
+            }
+
+            checkStatus(function, overload)
+        }
+
+        context(context: CheckerContext, reporter: DiagnosticReporter)
+        private fun checkStatus(main: FirNamedFunction, overload: FirNamedFunction) {
+            if (main.visibility != overload.visibility) {
+                reporter.reportOn(overload.source, FirErrors.INCONSISTENT_VISIBILITY_IN_OF_OVERLOADS, main.visibility)
+            }
+        }
 
         /**
          * @return true if exactly one main overload
@@ -123,6 +187,11 @@ object FirOperatorOfChecker : FirRegularClassChecker(MppCheckerKind.Common) {
             if (!checkNumberOfMainOverloads(allOverloads)) return
 
             val mainOverload = allOverloads.filterIsInstance<MainOfOverload>().single()
+
+            context(FirStandardOverrideChecker(context.session)) {
+                for (overload in allOverloads)
+                    mainOverload.checkOverload(overload.function)
+            }
         }
     }
 }

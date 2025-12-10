@@ -2079,6 +2079,34 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.INCONSISTENT_RETURN_TYPES_IN_OF_OVERLOADS) { firDiagnostic ->
+        InconsistentReturnTypesInOfOverloadsImpl(
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.INCONSISTENT_PARAMETER_TYPES_IN_OF_OVERLOADS) { firDiagnostic ->
+        InconsistentParameterTypesInOfOverloadsImpl(
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.INCONSISTENT_VISIBILITY_IN_OF_OVERLOADS) { firDiagnostic ->
+        InconsistentVisibilityInOfOverloadsImpl(
+            firDiagnostic.a,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.INCONSISTENT_TYPE_PARAMETERS_IN_OF_OVERLOADS) { firDiagnostic ->
+        InconsistentTypeParametersInOfOverloadsImpl(
+            firSymbolBuilder.functionBuilder.buildNamedFunctionSymbol(firDiagnostic.a),
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.REDUNDANT_OPEN_IN_INTERFACE) { firDiagnostic ->
         RedundantOpenInInterfaceImpl(
             firDiagnostic as KtPsiDiagnostic,

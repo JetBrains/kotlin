@@ -8,27 +8,35 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class Intermediate {
-    static KotlinClass flexible() {
+    static <T> T flexible() {
+        return null;
+    }
+
+    @Nullable
+    static <T> T nullable() {
         return null;
     }
 
     @NotNull
-    static KotlinClass notNull() {
-        return new KotlinClass();
-    }
-
-    @Nullable
-    static KotlinClass nullable() {
+    static <T> T notNull() {
         return null;
     }
 }
+
 // FILE: Main.kt
 
 class KotlinClass {
     companion object {
-        operator fun of() = Intermediate.flexible()
-        operator fun of(p1: String) = Intermediate.notNull()
-        operator fun <!NULLABLE_RETURN_TYPE_OF_OPERATOR_OF!>of<!>(vararg ps: String) = Intermediate.nullable()
+        operator fun of() = Intermediate.flexible<KotlinClass>() // KotlinClass!
+        operator fun <!INCONSISTENT_RETURN_TYPES_IN_OF_OVERLOADS, NULLABLE_RETURN_TYPE_OF_OPERATOR_OF!>of<!>(p1: String) = Intermediate.nullable<KotlinClass>() // KotlinClass?
+        operator fun of(vararg ps: String) = Intermediate.notNull<KotlinClass>() // KotlinClass
+    }
+}
+
+class ReversedClass {
+    companion object {
+        operator fun of() = Intermediate.notNull<ReversedClass>()
+        operator fun of(vararg ss: String) = Intermediate.flexible<ReversedClass>()
     }
 }
 

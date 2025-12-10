@@ -1787,6 +1787,30 @@ internal class MultipleVarargOverloadsOfOperatorOfImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtNamedFunction>(firDiagnostic, token), KaFirDiagnostic.MultipleVarargOverloadsOfOperatorOf
 
+internal class InconsistentReturnTypesInOfOverloadsImpl(
+    override val mainOverloadType: KaType,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtNamedFunction>(firDiagnostic, token), KaFirDiagnostic.InconsistentReturnTypesInOfOverloads
+
+internal class InconsistentParameterTypesInOfOverloadsImpl(
+    override val mainParameterType: KaType,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.InconsistentParameterTypesInOfOverloads
+
+internal class InconsistentVisibilityInOfOverloadsImpl(
+    override val mainVisibility: Visibility,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtNamedFunction>(firDiagnostic, token), KaFirDiagnostic.InconsistentVisibilityInOfOverloads
+
+internal class InconsistentTypeParametersInOfOverloadsImpl(
+    override val mainOverload: KaFunctionSymbol,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtNamedFunction>(firDiagnostic, token), KaFirDiagnostic.InconsistentTypeParametersInOfOverloads
+
 internal class RedundantOpenInInterfaceImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,

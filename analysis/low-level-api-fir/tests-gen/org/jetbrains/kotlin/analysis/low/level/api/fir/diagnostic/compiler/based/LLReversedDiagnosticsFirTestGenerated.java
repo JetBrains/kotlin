@@ -2359,6 +2359,18 @@ public class LLReversedDiagnosticsFirTestGenerated extends AbstractLLReversedDia
         }
 
         @Test
+        @TestMetadata("errorParameterTypes.kt")
+        public void testErrorParameterTypes() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/operatorOfChecks/errorParameterTypes.kt");
+        }
+
+        @Test
+        @TestMetadata("errorReturnTypes.kt")
+        public void testErrorReturnTypes() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/operatorOfChecks/errorReturnTypes.kt");
+        }
+
+        @Test
         @TestMetadata("extensions.kt")
         public void testExtensions() {
           runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/operatorOfChecks/extensions.kt");
@@ -2374,6 +2386,42 @@ public class LLReversedDiagnosticsFirTestGenerated extends AbstractLLReversedDia
         @TestMetadata("flexibleReturnType.kt")
         public void testFlexibleReturnType() {
           runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/operatorOfChecks/flexibleReturnType.kt");
+        }
+
+        @Test
+        @TestMetadata("flexibleTypeArgumentInReturnType.kt")
+        public void testFlexibleTypeArgumentInReturnType() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/operatorOfChecks/flexibleTypeArgumentInReturnType.kt");
+        }
+
+        @Test
+        @TestMetadata("inconsistentFunctionalParameterTypes.kt")
+        public void testInconsistentFunctionalParameterTypes() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/operatorOfChecks/inconsistentFunctionalParameterTypes.kt");
+        }
+
+        @Test
+        @TestMetadata("inconsistentParameterTypes.kt")
+        public void testInconsistentParameterTypes() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/operatorOfChecks/inconsistentParameterTypes.kt");
+        }
+
+        @Test
+        @TestMetadata("inconsistentReturnTypes.kt")
+        public void testInconsistentReturnTypes() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/operatorOfChecks/inconsistentReturnTypes.kt");
+        }
+
+        @Test
+        @TestMetadata("infixOperatorOf.kt")
+        public void testInfixOperatorOf() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/operatorOfChecks/infixOperatorOf.kt");
+        }
+
+        @Test
+        @TestMetadata("inlineMismatches.kt")
+        public void testInlineMismatches() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/operatorOfChecks/inlineMismatches.kt");
         }
 
         @Test
@@ -2407,15 +2455,45 @@ public class LLReversedDiagnosticsFirTestGenerated extends AbstractLLReversedDia
         }
 
         @Test
+        @TestMetadata("reifiednessMismatches.kt")
+        public void testReifiednessMismatches() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/operatorOfChecks/reifiednessMismatches.kt");
+        }
+
+        @Test
+        @TestMetadata("suspendMismatches.kt")
+        public void testSuspendMismatches() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/operatorOfChecks/suspendMismatches.kt");
+        }
+
+        @Test
+        @TestMetadata("tailrecMismatches.kt")
+        public void testTailrecMismatches() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/operatorOfChecks/tailrecMismatches.kt");
+        }
+
+        @Test
         @TestMetadata("topLevel.kt")
         public void testTopLevel() {
           runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/operatorOfChecks/topLevel.kt");
         }
 
         @Test
+        @TestMetadata("typeParameterMismatches.kt")
+        public void testTypeParameterMismatches() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/operatorOfChecks/typeParameterMismatches.kt");
+        }
+
+        @Test
         @TestMetadata("typealiasInReturnType.kt")
         public void testTypealiasInReturnType() {
           runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/operatorOfChecks/typealiasInReturnType.kt");
+        }
+
+        @Test
+        @TestMetadata("visibilityMismatches.kt")
+        public void testVisibilityMismatches() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/operatorOfChecks/visibilityMismatches.kt");
         }
 
         @Test

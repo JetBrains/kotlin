@@ -1492,6 +1492,26 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = MultipleVarargOverloadsOfOperatorOf::class
     }
 
+    interface InconsistentReturnTypesInOfOverloads : KaFirDiagnostic<KtNamedFunction> {
+        override val diagnosticClass get() = InconsistentReturnTypesInOfOverloads::class
+        val mainOverloadType: KaType
+    }
+
+    interface InconsistentParameterTypesInOfOverloads : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = InconsistentParameterTypesInOfOverloads::class
+        val mainParameterType: KaType
+    }
+
+    interface InconsistentVisibilityInOfOverloads : KaFirDiagnostic<KtNamedFunction> {
+        override val diagnosticClass get() = InconsistentVisibilityInOfOverloads::class
+        val mainVisibility: Visibility
+    }
+
+    interface InconsistentTypeParametersInOfOverloads : KaFirDiagnostic<KtNamedFunction> {
+        override val diagnosticClass get() = InconsistentTypeParametersInOfOverloads::class
+        val mainOverload: KaFunctionSymbol
+    }
+
     interface RedundantOpenInInterface : KaFirDiagnostic<KtModifierListOwner> {
         override val diagnosticClass get() = RedundantOpenInInterface::class
     }

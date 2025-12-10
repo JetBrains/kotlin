@@ -260,7 +260,8 @@ class JavaOverrideChecker internal constructor(
 
     override fun buildTypeParametersSubstitutorIfCompatible(
         overrideCandidate: FirCallableDeclaration,
-        baseDeclaration: FirCallableDeclaration
+        baseDeclaration: FirCallableDeclaration,
+        checkReifiednessIsSame: Boolean,
     ): ConeSubstitutor {
         overrideCandidate.lazyResolveToPhase(FirResolvePhase.TYPES)
         baseDeclaration.lazyResolveToPhase(FirResolvePhase.TYPES)

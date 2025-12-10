@@ -423,6 +423,10 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INCOMPATIBLE_MODI
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INCOMPATIBLE_TYPES
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INCOMPATIBLE_TYPES_WARNING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INCONSISTENT_BACKING_FIELD_TYPE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INCONSISTENT_PARAMETER_TYPES_IN_OF_OVERLOADS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INCONSISTENT_RETURN_TYPES_IN_OF_OVERLOADS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INCONSISTENT_TYPE_PARAMETERS_IN_OF_OVERLOADS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INCONSISTENT_VISIBILITY_IN_OF_OVERLOADS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INCONSISTENT_TYPE_PARAMETER_BOUNDS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INCONSISTENT_TYPE_PARAMETER_VALUES
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INCORRECT_CHARACTER_LITERAL
@@ -1652,6 +1656,28 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(NULLABLE_RETURN_TYPE_OF_OPERATOR_OF, "Return type of 'operator fun of' cannot be nullable.")
         map.put(NO_VARARG_OVERLOAD_OF_OPERATOR_OF, "One of the overloads of operator 'of' must have a single 'vararg' parameter.")
         map.put(MULTIPLE_VARARG_OVERLOADS_OF_OPERATOR_OF, "Only one overload of operator 'of' is allowed to have 'vararg' parameters.")
+
+        map.put(
+            INCONSISTENT_RETURN_TYPES_IN_OF_OVERLOADS,
+            "Return type of operator ''of'' must match return type of overload with ''vararg'' parameter: ''{0}'' expected.",
+            RENDER_TYPE,
+        )
+        map.put(
+            INCONSISTENT_PARAMETER_TYPES_IN_OF_OVERLOADS,
+            "Parameter types in operator ''of'' must match the type of ''vararg'' parameter: ''{0}'' expected.",
+            RENDER_TYPE,
+        )
+        map.put(
+            INCONSISTENT_VISIBILITY_IN_OF_OVERLOADS,
+            "Visibility of operator ''of'' must be the same for all overloads: ''{0}'' expected.",
+            VISIBILITY,
+        )
+        map.put(
+            INCONSISTENT_TYPE_PARAMETERS_IN_OF_OVERLOADS,
+            "Type parameters of operator ''of'' must match type parameters of overload with ''vararg'' parameter: ''{0}''.",
+            SYMBOL,
+        )
+
         map.put(REDUNDANT_OPEN_IN_INTERFACE, "Modifier 'open' is redundant for abstract interface members.")
         map.put(OPERATOR_CALL_ON_CONSTRUCTOR, "Constructor of ''{0}'' cannot be used as an operator.", STRING)
         map.put(NO_EXPLICIT_VISIBILITY_IN_API_MODE, "Visibility must be specified in explicit API mode.")

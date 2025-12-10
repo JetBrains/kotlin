@@ -16,7 +16,8 @@ abstract class FirAbstractOverrideChecker : FirOverrideChecker {
 
     protected abstract fun buildTypeParametersSubstitutorIfCompatible(
         overrideCandidate: FirCallableDeclaration,
-        baseDeclaration: FirCallableDeclaration
+        baseDeclaration: FirCallableDeclaration,
+        checkReifiednessIsSame: Boolean = false,
     ): ConeSubstitutor?
 }
 

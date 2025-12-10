@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.utils.isSuspend
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
@@ -88,9 +87,10 @@ class FirStandardOverrideChecker(private val session: FirSession) : FirAbstractO
             .all { (aBound, bBound) -> isEqualBound(aBound, bBound, overrideCandidate, baseDeclaration, substitutor) }
     }
 
-    override fun buildTypeParametersSubstitutorIfCompatible(
+    public override fun buildTypeParametersSubstitutorIfCompatible(
         overrideCandidate: FirCallableDeclaration,
-        baseDeclaration: FirCallableDeclaration
+        baseDeclaration: FirCallableDeclaration,
+        checkReifiednessIsSame: Boolean,
     ): ConeSubstitutor? {
         overrideCandidate.lazyResolveToPhase(FirResolvePhase.TYPES)
         baseDeclaration.lazyResolveToPhase(FirResolvePhase.TYPES)
@@ -99,6 +99,7 @@ class FirStandardOverrideChecker(private val session: FirSession) : FirAbstractO
             overrideCandidate.typeParameters.isNotEmpty() &&
             overrideCandidate.typeParameters.zip(baseDeclaration.typeParameters).any { (override, base) ->
                 !isCompatibleTypeParameters(override, base, substitutor)
+                        || (checkReifiednessIsSame && override.symbol.isReified != base.symbol.isReified)
             }
         ) return null
         return substitutor

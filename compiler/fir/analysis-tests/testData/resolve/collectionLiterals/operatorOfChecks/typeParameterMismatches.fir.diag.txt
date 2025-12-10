@@ -1,0 +1,11 @@
+/typeParameterMismatches.kt:(353,394): error: Type parameters of operator 'of' must match type parameters of overload with 'vararg' parameter: 'fun <T> of(vararg ts: T): MyList1<T>'.
+
+/typeParameterMismatches.kt:(761,764): error: Type parameters of operator 'of' must match type parameters of overload with 'vararg' parameter: 'fun <T : Any> of(vararg ts: T): MyList3<T>'.
+
+/typeParameterMismatches.kt:(955,963): error: Type parameters of operator 'of' must match type parameters of overload with 'vararg' parameter: 'fun <T> of(vararg ts: T): MyList4<T>'.
+
+/typeParameterMismatches.kt:(1552,1560): error: Type parameters of operator 'of' must match type parameters of overload with 'vararg' parameter: 'fun of(vararg ts: Any): MyList7<Any>'.
+
+/typeParameterMismatches.kt:(2015,2035): error: Type parameters of operator 'of' must match type parameters of overload with 'vararg' parameter: 'fun <K : Comparable<K>> of(vararg ts: K): MyList9<K>'.
+
+/typeParameterMismatches.kt:(2228,2234): error: Type parameters of operator 'of' must match type parameters of overload with 'vararg' parameter: 'fun <K> of(vararg ts: K): MyList10<K>'.
