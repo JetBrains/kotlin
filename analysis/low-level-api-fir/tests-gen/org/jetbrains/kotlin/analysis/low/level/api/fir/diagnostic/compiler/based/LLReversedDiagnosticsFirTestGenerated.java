@@ -2353,6 +2353,12 @@ public class LLReversedDiagnosticsFirTestGenerated extends AbstractLLReversedDia
         }
 
         @Test
+        @TestMetadata("contractsOnOfs.kt")
+        public void testContractsOnOfs() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/operatorOfChecks/contractsOnOfs.kt");
+        }
+
+        @Test
         @TestMetadata("defaultValuesForParameters.kt")
         public void testDefaultValuesForParameters() {
           runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/operatorOfChecks/defaultValuesForParameters.kt");

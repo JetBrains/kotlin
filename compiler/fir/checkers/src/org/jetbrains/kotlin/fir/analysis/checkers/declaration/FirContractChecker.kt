@@ -198,6 +198,9 @@ object FirContractChecker : FirFunctionChecker(MppCheckerKind.Common) {
         OperatorNameConventions.DIV_ASSIGN,
         OperatorNameConventions.REM_ASSIGN,
             -> true
+        // TBD
+        OperatorNameConventions.OF
+            -> true
         else -> false
     }
 
