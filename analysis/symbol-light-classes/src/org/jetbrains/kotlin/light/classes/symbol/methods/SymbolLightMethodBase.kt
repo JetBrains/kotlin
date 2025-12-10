@@ -12,10 +12,15 @@ import com.intellij.psi.impl.light.LightReferenceListBuilder
 import com.intellij.psi.scope.PsiScopeProcessor
 import com.intellij.psi.util.MethodSignature
 import com.intellij.psi.util.MethodSignatureBackedByPsiMethod
+import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.baseContextModuleOrSelf
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolVisibility
+import org.jetbrains.kotlin.analysis.api.types.KaClassType
+import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.checkIsMangled
 import org.jetbrains.kotlin.asJava.classes.KotlinLightReferenceListBuilder
@@ -27,6 +32,7 @@ import org.jetbrains.kotlin.asJava.mangleInternalName
 import org.jetbrains.kotlin.light.classes.symbol.SymbolLightMemberBase
 import org.jetbrains.kotlin.light.classes.symbol.annotations.*
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassBase
+import org.jetbrains.kotlin.light.classes.symbol.classes.typeForValueClass
 
 internal abstract class SymbolLightMethodBase(
     lightMemberOrigin: LightMemberOrigin?,
@@ -135,4 +141,29 @@ internal abstract class SymbolLightMethodBase(
 
     protected val jvmExposeBoxedAwareAnnotationFilter: AnnotationFilter
         get() = if (isJvmExposedBoxed) ExcludeAnnotationFilter.JvmName else ExcludeAnnotationFilter.JvmExposeBoxed
+
+    // Inspired by KotlinTypeMapper#forceBoxedReturnType
+    protected fun KaSession.shouldEnforceBoxedReturnType(symbol: KaCallableSymbol): Boolean {
+        val returnType = symbol.returnType
+        return when {
+            // 'invoke' methods for lambdas, function literals, and callable references
+            // implicitly override generic 'invoke' from a corresponding base class.
+            symbol is KaNamedFunctionSymbol && symbol.isBuiltinFunctionInvoke && isInlineClassType(returnType) -> true
+
+            isJvmExposedBoxed && typeForValueClass(returnType) -> true
+
+            returnType.isPrimitiveBacked -> {
+                symbol.allOverriddenSymbols.any { overriddenSymbol ->
+                    !overriddenSymbol.returnType.isPrimitiveBacked
+                }
+            }
+
+            else -> false
+        }
+    }
+
+    @Suppress("UnusedReceiverParameter")
+    private fun KaSession.isInlineClassType(type: KaType): Boolean {
+        return ((type as? KaClassType)?.symbol as? KaNamedClassSymbol)?.isInline == true
+    }
 }
