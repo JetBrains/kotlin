@@ -194,16 +194,20 @@ internal class SymbolLightSimpleMethod private constructor(
     // Inspired by KotlinTypeMapper#forceBoxedReturnType
     private fun KaSession.shouldEnforceBoxedReturnType(functionSymbol: KaNamedFunctionSymbol): Boolean {
         val returnType = functionSymbol.returnType
-        // 'invoke' methods for lambdas, function literals, and callable references
-        // implicitly override generic 'invoke' from a corresponding base class.
-        if (functionSymbol.isBuiltinFunctionInvoke && isInlineClassType(returnType))
-            return true
+        return when {
+            // 'invoke' methods for lambdas, function literals, and callable references
+            // implicitly override generic 'invoke' from a corresponding base class.
+            functionSymbol.isBuiltinFunctionInvoke && isInlineClassType(returnType) -> true
 
-        return isJvmExposedBoxed && typeForValueClass(returnType) ||
-                returnType.isPrimitiveBacked &&
+            isJvmExposedBoxed && typeForValueClass(returnType) -> true
+
+            returnType.isPrimitiveBacked -> {
                 functionSymbol.allOverriddenSymbols.any { overriddenSymbol ->
                     !overriddenSymbol.returnType.isPrimitiveBacked
                 }
+            }
+            else -> false
+        }
     }
 
     @Suppress("UnusedReceiverParameter")
