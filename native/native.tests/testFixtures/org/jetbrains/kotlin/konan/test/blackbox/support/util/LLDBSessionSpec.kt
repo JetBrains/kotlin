@@ -6,9 +6,15 @@
 package org.jetbrains.kotlin.konan.test.blackbox.support.util
 
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeTargets
+import org.jetbrains.kotlin.test.TargetBackend
+import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
+import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertFalse
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
+import org.jetbrains.kotlin.test.utils.SteppingTestLoggedData
+import org.jetbrains.kotlin.test.utils.checkSteppingTestResult
+import org.jetbrains.kotlin.test.utils.formatAsSteppingTestExpectation
 import java.io.File
 
 abstract class LLDBSessionSpec {
@@ -158,5 +164,75 @@ internal class ReplLLDBSessionSpec private constructor(private val expectedSteps
                 .filterNot(String::isBlank)
                 .map { block -> Step.parse(block, SPEC_COMMAND_PREFIX) }
         )
+    }
+}
+
+/**
+ * Executes step-into command through the entire program, compares line number after each step with the golden data.
+ *
+ * Analogous to [org.jetbrains.kotlin.test.backend.handlers.SteppingDebugRunner], [org.jetbrains.kotlin.js.test.handlers.JsDebugRunner].
+ */
+internal class SteppingLLDBSessionSpec(
+    private val registeredDirectives: RegisteredDirectives,
+    private val originalFile: File,
+) : LLDBSessionSpec() {
+    override fun generateCLIArguments(prettyPrinters: File): List<String> = buildList {
+        addAll(super.generateCLIArguments(prettyPrinters))
+        this += "-o"
+        this += "b -r kfun:#box(#suspend)?\\((kotlin.coroutines.Continuation<kotlin.Unit>)?\\){}"
+        this += "-o"
+        this += "r"
+        this += "-o"
+        this += "step_through_current_frame"
+    }
+
+    override fun checkLLDBOutput(output: String, nativeTargets: KotlinNativeTargets): Boolean {
+        sanityCheckLLDBOutput(output)
+
+        val loggedSteps = output.lines().mapNotNull { line ->
+            val stepLine = line.removePrefix("//step ")
+            if (stepLine == line) {
+                return@mapNotNull null
+            }
+
+            val (sourceName, lineStr, funRawName) = stepLine.split('\u001f', limit = 3)
+            if (funRawName == "") {
+                return@mapNotNull null
+            }
+
+            val funNameMatch = KFunNameStaticSuspendRe.matchAt(funRawName, 0)
+                ?: KFunNameInternalRe.matchAt(funRawName, 0)
+                ?: KFunNameRegularRe.matchAt(funRawName, 0)
+            val container = funNameMatch?.groupValues?.get(1) ?: ""
+            val simpleFunName = funNameMatch?.groupValues?.get(2) ?: funRawName
+
+            if (container == "kotlin" || container.startsWith("kotlin.")) {
+                return@mapNotNull null
+            }
+
+            val line = lineStr.toInt()
+            val expectation = formatAsSteppingTestExpectation(
+                sourceName, line.takeUnless { it == 0 }, simpleFunName, false, null
+            )
+            SteppingTestLoggedData(line, false, expectation)
+        }
+
+        if (loggedSteps.isEmpty()) {
+            return false
+        }
+        checkSteppingTestResult(
+            FrontendKinds.FIR,
+            TargetBackend.NATIVE,
+            originalFile,
+            loggedSteps,
+            registeredDirectives,
+        )
+        return true
+    }
+
+    companion object {
+        private val KFunNameStaticSuspendRe = Regex("kfun:(.*?)#(.+)#(?:static|suspend)\\(")
+        private val KFunNameInternalRe = Regex("kfun:(?:(.*)\\.)?(.+)#internal")
+        private val KFunNameRegularRe = Regex("kfun:(.*)#(.*?)(?:__at__.+)?\\(")
     }
 }
