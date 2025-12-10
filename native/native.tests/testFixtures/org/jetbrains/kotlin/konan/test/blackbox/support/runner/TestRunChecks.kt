@@ -26,6 +26,8 @@ import org.jetbrains.kotlin.native.executors.runProcess
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toUpperCaseAsciiOnly
 import org.jetbrains.kotlin.utils.yieldIfNotNull
 import org.junit.jupiter.api.Assumptions
+import org.opentest4j.AssertionFailedError
+import org.opentest4j.ValueWrapper
 import java.io.File
 import kotlin.time.Duration
 
@@ -35,7 +37,14 @@ sealed interface TestRunCheck {
 
     sealed interface Result {
         data object Passed : Result
-        data class Failed(val reason: String) : Result
+        open class Failed(val reason: String) : Result {
+            override fun toString(): String = reason
+        }
+        class FailedWithMissmatch(
+            reason: String,
+            val expected: Any?,
+            val actual: Any?,
+        ) : Failed(reason)
     }
 
     sealed class ExecutionTimeout(val timeout: Duration) : TestRunCheck {
@@ -112,10 +121,13 @@ sealed interface TestRunCheck {
                     Result.Failed("Tested process output has not passed validation.")
                 } else Result.Passed
             } catch (t: Throwable) {
-                if (t is Exception || t is AssertionError) {
-                    Result.Failed("Tested process output has not passed validation: ${t.message}")
-                } else {
-                    throw t
+                when (t) {
+                    is AssertionFailedError -> Result.FailedWithMissmatch(
+                        "Tested process output has not passed validation: ${t.message}",
+                        t.expected?.value, t.actual?.value
+                    )
+                    is Exception -> Result.Failed("Tested process output has not passed validation: ${t.message}")
+                    else -> throw t
                 }
             }
     }
