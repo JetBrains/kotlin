@@ -231,14 +231,6 @@ internal class SymbolLightAccessorMethod private constructor(
 
     override fun getNameIdentifier(): PsiIdentifier = KtLightIdentifier(this, containingPropertyDeclaration)
 
-    private fun KaSession.shouldEnforceBoxedReturnType(propertySymbol: KaPropertySymbol): Boolean {
-        return isJvmExposedBoxed && typeForValueClass(propertySymbol.returnType) ||
-                propertySymbol.returnType.isPrimitiveBacked &&
-                propertySymbol.allOverriddenSymbols.any { overriddenSymbol ->
-                    !overriddenSymbol.returnType.isPrimitiveBacked
-                }
-    }
-
     private val _returnedType: PsiType by lazyPub {
         if (!isGetter) return@lazyPub PsiTypes.voidType()
 
