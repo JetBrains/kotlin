@@ -53,7 +53,7 @@ object BinaryArtifacts {
         }
     }
 
-    class Native : ResultingArtifact.Binary<Native>() {
+    class Native(val executable: File) : ResultingArtifact.Binary<Native>() {
         override val kind: ArtifactKind<Native>
             get() = ArtifactKinds.Native
     }

@@ -19,9 +19,9 @@ class NativePreSerializationLoweringContext(
     configuration: CompilerConfiguration,
     diagnosticReporter: IrDiagnosticReporter,
 ) : PreSerializationLoweringContext(irBuiltIns, configuration, diagnosticReporter) {
-    override val symbols: PreSerializationNativeSymbols = PreSerializationNativeSymbols.Impl(irBuiltIns)
+    override val symbols: PreSerializationNativeSymbols by lazy { PreSerializationNativeSymbols.Impl(irBuiltIns) }
 
-    override val sharedVariablesManager = KlibSharedVariablesManager(symbols)
+    override val sharedVariablesManager by lazy { KlibSharedVariablesManager(symbols) }
 
     override val irMangler: KotlinMangler.IrMangler = KonanManglerIr
 }
