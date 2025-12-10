@@ -83,7 +83,7 @@ import kotlin.script.experimental.jvm.withUpdatedClasspath
 class ScriptJvmK2CompilerIsolated(val hostConfiguration: ScriptingHostConfiguration) : ScriptCompilerProxy {
     override fun compile(
         script: SourceCode,
-        scriptCompilationConfiguration: ScriptCompilationConfiguration
+        scriptCompilationConfiguration: ScriptCompilationConfiguration,
     ): ResultWithDiagnostics<CompiledScript> =
         withMessageCollector { messageCollector ->
             withScriptCompilationCache(script, scriptCompilationConfiguration, messageCollector) {
@@ -102,7 +102,7 @@ class ScriptJvmK2CompilerIsolated(val hostConfiguration: ScriptingHostConfigurat
 
 class ScriptJvmK2CompilerImpl(
     state: K2ScriptingCompilerEnvironment,
-    private val convertToFir: SourceCode.(FirSession, BaseDiagnosticsCollector) -> FirFile
+    private val convertToFir: SourceCode.(FirSession, BaseDiagnosticsCollector) -> FirFile,
 ) {
 
     private val state = (state as? K2ScriptingCompilerEnvironmentInternal)
@@ -173,7 +173,7 @@ class ScriptJvmK2CompilerImpl(
     context(reportingCtx: ErrorReportingContext)
     private fun failure(
         diagnosticsCollector: BaseDiagnosticsCollector,
-        vararg diagnostics: ScriptDiagnostic
+        vararg diagnostics: ScriptDiagnostic,
     ): ResultWithDiagnostics.Failure {
         diagnosticsCollector.reportToMessageCollector(reportingCtx.messageCollector, reportingCtx.renderDiagnosticName)
         return ResultWithDiagnostics.Failure(*reportingCtx.messageCollector.diagnostics.toTypedArray<ScriptDiagnostic>(), *diagnostics)
@@ -183,7 +183,7 @@ class ScriptJvmK2CompilerImpl(
     context(reportingCtx: ErrorReportingContext)
     private fun compileImpl(
         script: SourceCode,
-        scriptRefinedCompilationConfiguration: ScriptCompilationConfiguration
+        scriptRefinedCompilationConfiguration: ScriptCompilationConfiguration,
     ): ResultWithDiagnostics<CompiledScript> {
 
         val project = state.projectEnvironment.project
@@ -192,9 +192,12 @@ class ScriptJvmK2CompilerImpl(
         }
 
 
-        state.hostConfiguration[ScriptingHostConfiguration.scriptRefinedCompilationConfigurationsCache]!!.storeRefinedCompilationConfiguration(script, scriptRefinedCompilationConfiguration.asSuccess())
+        state.hostConfiguration[ScriptingHostConfiguration.scriptRefinedCompilationConfigurationsCache]!!.storeRefinedCompilationConfiguration(
+            script,
+            scriptRefinedCompilationConfiguration.asSuccess()
+        )
 
-        val allSourceFiles = mutableListOf<SourceCode>(script)
+        val allSourceFiles = mutableListOf(script)
         val (classpath, newSources, sourceDependencies) =
             collectScriptsCompilationDependenciesRecursively(allSourceFiles) { importedScript ->
                 state.hostConfiguration.getOrStoreRefinedCompilationConfiguration(importedScript) { source, baseConfig ->
@@ -358,7 +361,7 @@ fun <T> withK2ScriptCompilerWithLightTree(
     scriptCompilationConfiguration: ScriptCompilationConfiguration,
     parentMessageCollector: MessageCollector? = null,
     moduleName: Name = Name.special("<script-module>"),
-    body: (ScriptJvmK2CompilerImpl) -> T
+    body: (ScriptJvmK2CompilerImpl) -> T,
 ): T {
     val disposable = Disposer.newDisposable("Default disposable for scripting compiler")
     return try {
@@ -372,7 +375,7 @@ fun createK2ScriptCompilerWithLightTree(
     scriptCompilationConfiguration: ScriptCompilationConfiguration,
     parentMessageCollector: MessageCollector? = null,
     moduleName: Name = Name.special("<script-module>"),
-    disposable: Disposable
+    disposable: Disposable,
 ): ScriptJvmK2CompilerImpl {
     val state =
         createCompilerState(
@@ -428,7 +431,7 @@ private fun FirAnnotationCall.toAnnotationObjectIfMatches(expectedAnnClasses: Li
             ctor,
             argumentList.arguments.map {
                 when (it) {
-                    // TODO: classrefs?
+                    // TODO: class refs?
                     is FirLiteralExpression -> it.value
                     else -> null
                 }
