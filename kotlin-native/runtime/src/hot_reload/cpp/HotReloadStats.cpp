@@ -2,6 +2,8 @@
 // Created by Gabriele.Pappalardo on 19/11/2025.
 //
 
+#ifdef KONAN_HOT_RELOAD
+
 #include "HotReloadStats.hpp"
 
 #include "KString.h"
@@ -78,3 +80,5 @@ void StatsCollector::registerSuccessful(bool wasSuccessful) noexcept {
     kCurrent.wasSuccessful = wasSuccessful;
 }
 } // namespace kotlin::hot
+
+#endif

@@ -5,13 +5,15 @@
 #ifndef HOTRELOAD_HPP
 #define HOTRELOAD_HPP
 
+#ifdef KONAN_HOT_RELOAD
+
 #include <string>
 #include <vector>
 #include <deque>
 
-#include "hot/HotReloadServer.hpp"
-#include "hot/MachOParser.hpp"
-#include "hot/HotReloadStats.hpp"
+#include "HotReloadServer.hpp"
+#include "MachOParser.hpp"
+#include "HotReloadStats.hpp"
 
 namespace kotlin::mm {
 class ThreadData;
@@ -86,5 +88,7 @@ extern "C" {
 
     RUNTIME_NOTHROW void Kotlin_native_internal_HotReload_registerSuccessCallback(ObjHeader*, ObjHeader* fn);
 }
+
+#endif
 
 #endif // HOTRELOAD_HPP

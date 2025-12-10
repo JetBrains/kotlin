@@ -94,6 +94,7 @@ bitcode {
                     "NO_UNALIGNED_ACCESS".takeUnless { target.supportsUnalignedAccess() },
                     "FORBID_BUILTIN_MUL_OVERFLOW".takeUnless { target.supports64BitMulOverflow() },
 
+                    "HOT_RELOAD".takeIf { target.supportsObjcInterop() },
                     "OBJC_INTEROP".takeIf { target.supportsObjcInterop() },
                     "HAS_FOUNDATION_FRAMEWORK".takeIf { target.hasFoundationFramework() },
                     "HAS_UIKIT_FRAMEWORK".takeIf { target.hasUIKitFramework() },
@@ -126,7 +127,7 @@ bitcode {
         ) + clangArgsSpecificForKonanSources)
 
         module("main") {
-            headersDirs.from("src/externalCallsChecker/common/cpp", "src/objcExport/cpp", "src/breakpad/cpp", "src/crashHandler/common/cpp", "src/utfcpp/cpp", "src/alloc/common/cpp", "src/gcScheduler/common/cpp", "src/gc/common/cpp",  "src/mm/cpp")
+            headersDirs.from("src/externalCallsChecker/common/cpp", "src/objcExport/cpp", "src/breakpad/cpp", "src/crashHandler/common/cpp", "src/utfcpp/cpp", "src/alloc/common/cpp", "src/gcScheduler/common/cpp", "src/gc/common/cpp", "src/mm/cpp", "src/hot_reload/cpp")
             sourceSets {
                 main {
                     // TODO: Split out out `base` module and merge it together with `main` into `runtime.bc`
@@ -278,6 +279,14 @@ bitcode {
 
         module("debug") {
             headersDirs.from(files("src/externalCallsChecker/common/cpp", "src/objcExport/cpp", "src/main/cpp"))
+            sourceSets {
+                main {}
+            }
+        }
+
+        module("hot_reload") {
+            srcRoot.set(layout.projectDirectory.dir("src/hot_reload"))
+            headersDirs.from("src/alloc/common/cpp", "src/gcScheduler/common/cpp", "src/gc/common/cpp", "src/mm/cpp", "src/externalCallsChecker/common/cpp", "src/main/cpp")
             sourceSets {
                 main {}
             }

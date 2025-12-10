@@ -5,6 +5,8 @@
 #ifndef HOTRELOADSTATS_HPP
 #define HOTRELOADSTATS_HPP
 
+#ifdef KONAN_HOT_RELOAD
+
 #include "Types.h"
 
 namespace kotlin::hot {
@@ -37,5 +39,7 @@ private:
     Stats kCurrent = {};
 };
 }
+
+#endif
 
 #endif //HOTRELOADSTATS_HPP

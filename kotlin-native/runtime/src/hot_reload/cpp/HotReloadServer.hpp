@@ -5,6 +5,8 @@
 #ifndef HOTRELOADSERVER_HPP
 #define HOTRELOADSERVER_HPP
 
+#ifdef KONAN_HOT_RELOAD
+
 #include "CompilerConstants.hpp"
 
 #include <iostream>
@@ -178,5 +180,8 @@ private:
         onReloadCallback(dylibPaths);
     }
 };
+
+#endif
+
 
 #endif // HOTRELOADSERVER_HPP

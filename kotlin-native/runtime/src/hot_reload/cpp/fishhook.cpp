@@ -22,6 +22,7 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "fishhook.h"
+#ifdef KONAN_HOT_RELOAD
 
 #include <dlfcn.h>
 #include <stdbool.h>
@@ -262,3 +263,5 @@ int rebind_symbols(struct rebinding rebindings[], size_t rebindings_nel) {
   }
   return retval;
 }
+
+#endif

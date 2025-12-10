@@ -1,3 +1,5 @@
+#ifdef KONAN_HOT_RELOAD
+
 #include <iostream>
 #include <unordered_set>
 #include <queue>
@@ -20,11 +22,11 @@
 #include "HotReload.hpp"
 
 #include "KString.h"
-#include "hot/HotReloadServer.hpp"
-#include "hot/HotReloadUtility.hpp"
-#include "hot/MachOParser.hpp"
+#include "HotReloadServer.hpp"
+#include "HotReloadUtility.hpp"
+#include "MachOParser.hpp"
 
-#include "hot/fishhook.h"
+#include "fishhook.h"
 
 #include <utility>
 
@@ -522,3 +524,5 @@ TypeInfo* HotReloader::SymbolLoader::getPreviousTypeInfo(const std::string_view 
 }
 
 //endregion
+
+#endif

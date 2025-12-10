@@ -5,6 +5,8 @@
 #ifndef DYNAMICLINKERREGISTRY_HPP
 #define DYNAMICLINKERREGISTRY_HPP
 
+#ifdef KONAN_HOT_RELOAD
+
 #include <unordered_set>
 #include <mach-o/dyld.h>
 #include <mach-o/loader.h>
@@ -129,5 +131,7 @@ inline KotlinDynamicLibrary parseDynamicLibrary(const std::string& dylibPath) {
 }
 
 } // namespace dyld
+
+#endif
 
 #endif // DYNAMICLINKERREGISTRY_HPP

@@ -16,7 +16,7 @@
 #include "Worker.h"
 #include "KString.h"
 
-#include "mm/cpp/HotReload.hpp"
+#include "HotReload.hpp"
 
 #include "CrashHandler.hpp"
 #include <atomic>
@@ -162,9 +162,11 @@ bool kotlin::initializeGlobalRuntimeIfNeeded() noexcept {
 #if KONAN_OBJC_INTEROP
     Kotlin_ObjCExport_initialize();
 #endif
+#if KONAN_HOT_RELOAD
     if (compiler::hotReloadEnabled()) {
         HotReloader::InitModule();
     }
+#endif
     return true;
 }
 

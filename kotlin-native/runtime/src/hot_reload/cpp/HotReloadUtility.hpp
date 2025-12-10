@@ -5,10 +5,10 @@
 #ifndef HOTRELOADUTILITY_HPP
 #define HOTRELOADUTILITY_HPP
 
-#include <string>
-#include <sstream>
+#ifdef KONAN_HOT_RELOAD
 
-#include <TypeInfo.h>
+#include <string>
+#include <chrono>
 #include <Logging.hpp>
 
 #define HRLogInfo(format, ...) RuntimeLogInfo({kotlin::kTagHotReloader}, format, ##__VA_ARGS__)
@@ -65,5 +65,7 @@ inline const char* referenceOriginToString(const ReferenceOrigin origin) noexcep
 }
 
 }; // namespace kotlin::hot::utility
+
+#endif
 
 #endif // HOTRELOADUTILITY_HPP
