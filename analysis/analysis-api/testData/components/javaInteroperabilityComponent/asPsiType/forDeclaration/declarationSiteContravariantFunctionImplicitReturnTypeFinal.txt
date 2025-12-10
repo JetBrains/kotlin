@@ -1,2 +1,15 @@
 KaType: Foo<kotlin.String>
 PsiType: @org.jetbrains.annotations.NotNull() Foo<@org.jetbrains.annotations.NotNull() java.lang.String>
+
+Compilation result:
+@kotlin.Metadata
+public final class<null>  DeclarationSiteContravariantFunctionImplicitReturnTypeFinalKt {
+    // source: 'declarationSiteContravariantFunctionImplicitReturnTypeFinal.kt'
+    public final static @org.jetbrains.annotations.NotNull <()LFoo<Ljava/lang/String;>;> method test(): Foo
+}
+
+@kotlin.Metadata
+public final class<<T:Ljava/lang/Object;>Ljava/lang/Object;>  Foo {
+    // source: 'declarationSiteContravariantFunctionImplicitReturnTypeFinal.kt'
+    public <null> method <init>(): void
+}
