@@ -260,26 +260,6 @@ constructor(
         body(nodejs)
     }
 
-    // spec
-    @OptIn(ExperimentalWasmDsl::class)
-    private val specLazyDelegate = lazy {
-        require(wasmTargetType == KotlinWasmTargetType.SPEC)
-        WasmNodeJsPlugin.apply(project)
-        WasmNodeJsRootPlugin.apply(project.rootProject)
-
-        addSubTarget(KotlinSpecIr::class.java) {
-            configureSubTarget()
-            subTargetConfigurators.add(LibraryConfigurator(this))
-            subTargetConfigurators.add(SpecEnvironmentConfigurator(this))
-        }
-    }
-
-    override val spec: KotlinSpecDsl by specLazyDelegate
-
-    override fun spec(body: KotlinSpecDsl.() -> Unit) {
-        body(spec)
-    }
-
     //d8
     @OptIn(ExperimentalWasmDsl::class)
     private val d8LazyDelegate = lazy {

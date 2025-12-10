@@ -17,7 +17,7 @@ fun KotlinWasmTargetType.toAttribute(): KotlinWasmTargetAttribute {
     return when(this) {
         KotlinWasmTargetType.WASI -> KotlinWasmTargetAttribute.wasi
         KotlinWasmTargetType.JS -> KotlinWasmTargetAttribute.js
-        KotlinWasmTargetType.SPEC -> KotlinWasmTargetAttribute.wasi
+        KotlinWasmTargetType.SPEC -> KotlinWasmTargetAttribute.spec
     }
 }
 
