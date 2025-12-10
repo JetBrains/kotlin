@@ -10,6 +10,8 @@ val <D : FirCallableDeclaration> D.originalForSubstitutionOverride: D?
 
 
 // MODULE: context(base)
+// COMPILATION_ERRORS
+// ^LibrarySource mode doesn't support module dependencies
 // FILE: context.kt
 
 package impl
