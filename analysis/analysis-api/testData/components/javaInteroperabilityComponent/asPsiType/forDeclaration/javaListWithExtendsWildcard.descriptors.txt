@@ -1,2 +1,2 @@
 KaType: List!
-PsiType: .List
+PsiType: List
