@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirCollectionLiteral
+import org.jetbrains.kotlin.fir.expressions.FirErrorExpression
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirExpressionEvaluator
 import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
@@ -52,8 +53,6 @@ import org.jetbrains.kotlin.fir.resolve.transformers.FirDummyCompilerLazyDeclara
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformerDispatcher
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirDeclarationsResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirExpressionsResolveTransformer
-import org.jetbrains.kotlin.fir.resolve.transformers.plugin.AbstractFirSpecificAnnotationResolveTransformer
-import org.jetbrains.kotlin.fir.resolve.transformers.plugin.CompilerRequiredAnnotationsComputationSession
 import org.jetbrains.kotlin.fir.scopes.FirDefaultImportsProviderHolder
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.scopes.FirLookupDefaultStarImportsInSourcesSettingHolder
@@ -97,7 +96,6 @@ import org.jetbrains.kotlin.scripting.compiler.plugin.fir.FirScriptCompilationCo
 import org.jetbrains.kotlin.scripting.resolve.resolvedImportScripts
 import org.jetbrains.kotlin.toSourceLinesMapping
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
-import org.jetbrains.kotlin.utils.tryCreateCallableMapping
 import org.jetbrains.kotlin.utils.tryCreateCallableMappingFromNamedArgs
 import kotlin.reflect.KClass
 import kotlin.script.experimental.api.*
@@ -526,7 +524,6 @@ private fun createDummySessionForScriptRefinement(
 }
 
 
-@OptIn(UnresolvedExpressionTypeAccess::class)
 private fun FirAnnotationCall.toAnnotationObjectIfMatches(
     expectedAnnClasses: List<KClass<out Annotation>>,
     session: FirSession,
@@ -539,15 +536,89 @@ private fun FirAnnotationCall.toAnnotationObjectIfMatches(
     }.asString()
     val expectedAnnClass = expectedAnnClasses.firstOrNull { it.simpleName == shortName } ?: return null
     val ctor = expectedAnnClass.constructors.firstOrNull() ?: return null
-    val scopeSession = ScopeSession()
 
-    class FirEnumAnnotationArgumentsTransformerDispatcher : FirAbstractBodyResolveTransformerDispatcher(
+    val evalRes = evaluateArguments(session, firFile).orEmpty()
+
+    val errors = mutableListOf<ScriptDiagnostic>()
+
+    fun ConeKotlinType?.isString() = this?.classId?.asFqNameString() == StandardNames.FqNames.string.asString()
+    fun ConeKotlinType?.isArray() = this?.classId?.asFqNameString() == StandardNames.FqNames.array.asString()
+
+    fun FirElement.reportError(message: String) {
+        errors.add(message.asErrorDiagnostics(path = firFile.name, location = getLocation()))
+    }
+
+    @OptIn(UnresolvedExpressionTypeAccess::class)
+    fun FirElement.toArgument(argName: String): Any? {
+
+        fun FirExpression.convertAsCollection(arguments: List<FirExpression>): Any? {
+            val collectionType = coneTypeOrNull
+            if (!collectionType.isArray()) {
+                reportError("Only arrays are supported as collections in annotation arguments, but $collectionType is passed")
+                return null
+            }
+            val elementType = collectionType?.typeArguments?.first()?.type
+            return when {
+                elementType.isString() -> Array(arguments.size) { arguments[it].toArgument("element of $argName") as? String }
+                else -> {
+                    reportError("Only string are supported now as collection element types in annotation arguments, but $elementType is passed")
+                    null
+                }
+            }
+        }
+
+        return when (this) {
+            is FirErrorExpression -> {
+                reportError("Error resolving annotation argument: ${this.diagnostic.reason}")
+                null
+            }
+            // TODO: class refs?
+            is FirLiteralExpression -> value
+            is FirVarargArgumentsExpression -> convertAsCollection(arguments)
+            is FirCollectionLiteral -> convertAsCollection(argumentList.arguments)
+            else -> {
+                reportError("Unsupported annotation argument type: ${this::class.simpleName}")
+                null
+            }
+        }
+    }
+
+    val mapping =
+        tryCreateCallableMappingFromNamedArgs(
+            ctor,
+            evalRes.map { (name, result) ->
+                val argName = name.asString()
+                when (result) {
+                    is FirEvaluatorResult.Evaluated -> argName to result.result.toArgument(argName)
+                    else -> {
+                        reportError("Error while evaluating annotation arguments: ${result::class.simpleName}")
+                        null to null
+                    }
+                }
+            }
+        )
+    if (mapping == null) {
+        reportError("Unable to map annotation arguments")
+    }
+    return when {
+        errors.isNotEmpty() -> makeFailureResult(errors)
+        else -> try {
+            ctor.callBy(mapping!!).asSuccess()
+        } catch (e: Error) {
+            makeFailureResult(e.asDiagnostics())
+        }
+    }
+}
+
+private fun FirAnnotationCall.evaluateArguments(session: FirSession, firFile: FirFile): Map<Name, FirEvaluatorResult>? {
+    val scopeSession = ScopeSession()
+    createImportingScopes(firFile, session, scopeSession)
+
+    val dispatcher = object : FirAbstractBodyResolveTransformerDispatcher(
         session,
         FirResolvePhase.COMPILER_REQUIRED_ANNOTATIONS,
         scopeSession = scopeSession,
         implicitTypeOnly = false,
-        // This transformer is only used for COMPILER_REQUIRED_ANNOTATIONS, which is <=SUPER_TYPES,
-        // so we can't yet expand typealiases.
         expandTypeAliases = false,
         outerBodyResolveContext = null
     ) {
@@ -555,64 +626,15 @@ private fun FirAnnotationCall.toAnnotationObjectIfMatches(
         override val declarationsTransformer: FirDeclarationsResolveTransformer? = null
     }
 
-//    val t = FirScriptSpecificAnnotationResolveTransformer(session, scopeSession, CompilerRequiredAnnotationsComputationSession())
-
-    createImportingScopes(firFile, session, scopeSession)
-//    val a = t.withFileScopes(firFile) { t.transformAnnotationCall(this, null) }
-    val transformer = FirEnumAnnotationArgumentsTransformerDispatcher().expressionsTransformer
-    val a =
+    val transformer = dispatcher.expressionsTransformer
+    val resolvedAnnotation =
         transformer.context.withFile(firFile, transformer.components) {
             withFileAnalysisExceptionWrapping(firFile) {
-                transformer.transformAnnotationCall(this, ResolutionMode.ContextDependent)
+                transformer.transformAnnotationCall(this, ResolutionMode.ContextDependent) as FirAnnotationCall
             }
         }
-//    val a = transformer.transformAnnotationCall(this, ResolutionMode.ContextDependent)
-    val evalRes = FirExpressionEvaluator.evaluateAnnotationArguments(this, session) ?: return null
-
-    val errors = mutableListOf<ScriptDiagnostic>()
-
-    fun ConeKotlinType?.isString() = this?.classId?.asFqNameString() == StandardNames.FqNames.string.asString()
-    fun ConeKotlinType?.isArray() = this?.classId?.asFqNameString() == StandardNames.FqNames.array.asString()
-
-    @OptIn(UnresolvedExpressionTypeAccess::class)
-    fun FirElement.toArgument(): Any? =
-        when (this) {
-            // TODO: class refs?
-            is FirLiteralExpression -> value
-            is FirVarargArgumentsExpression -> {
-                val elementType = coneTypeOrNull?.typeArguments?.first()?.type
-                when {
-                    elementType.isString() -> Array(arguments.size) { arguments[it].toArgument() as? String }
-                    else -> null
-                }
-            }
-            is FirCollectionLiteral -> {
-                val elementType = coneTypeOrNull?.typeArguments?.first()?.type
-                val collectionType = coneTypeOrNull
-                when {
-                    elementType.isString() -> Array(argumentList.arguments.size) { argumentList.arguments[it].toArgument() as? String }
-                    else -> null
-                }
-            }
-            else -> null
-        }
-
-    val mapping =
-        tryCreateCallableMappingFromNamedArgs(
-            ctor,
-            evalRes.map { (name, result) ->
-                when (result) {
-                    is FirEvaluatorResult.Evaluated -> name.asString() to result.result.toArgument()
-                    else -> null to null
-                }
-            }
-        )
-    return if (mapping != null)
-        try {
-            ctor.callBy(mapping).asSuccess()
-        } catch (e: Error) {
-            makeFailureResult(e.asDiagnostics())
-        }
-    else null
+    return FirExpressionEvaluator.evaluateAnnotationArguments(resolvedAnnotation, session)
 }
 
+// TODO: implement. Probably need to change SourceCode.Position to accept offsets and then remap them later on reporting
+private fun FirElement.getLocation(): SourceCode.Location? = null
