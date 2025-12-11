@@ -37,6 +37,15 @@ public actual class Boolean private constructor() : Comparable<Boolean> {
     @kotlin.internal.IntrinsicConstEvaluation
     public actual infix fun xor(other: Boolean): Boolean
 
+    /**
+     * Compares this [Boolean] with the specified [Boolean][other] for order. Returns zero if both are equal to each other,
+     * a negative number if [this][Boolean] is `false` and [other] is `true`,
+     * or a positive number if [this][Boolean] is `true` and [other] is `false`.
+     *
+     * In other words, `false` is considered to be "less than" `true`.
+     *
+     * @sample samples.misc.BooleanSamples.compareTo
+     */
     @kotlin.internal.IntrinsicConstEvaluation
     public actual override fun compareTo(other: Boolean): Int
 
