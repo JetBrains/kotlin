@@ -367,52 +367,125 @@ internal object DevirtualizationAnalysis {
                 require(index == nodesCount)
             }
 
+            /**
+             * Re-attach edges to the corresponding "root" nodes and eliminate duplicates.
+             *
+             * Assumptions:
+             *    * safe to create helper arrays of `numberOfNodes` size
+             *    * not safe to allocate extra memory proportional to the number of edges
+             *
+             * Algorithm:
+             *    * use counting sort to group nodes with the same `root().id` together
+             *    * for each such group of nodes:
+             *        * count the number of unique edges
+             *        * build the unique cast edges list, merging the `suitableTypes` in the process
+             *    * iterate over the groups once again and build `reversedEdges`
+             *    * iterate over the `reversedEdges` and build the `directEdges`
+             *
+             * Performance: O(`numberOfNodes`) additional memory, O(`numberOfEdges`) time.
+             */
             private fun mergeEdges() {
                 val numberOfNodes = constraintGraph.nodes.size
 
-                val bagOfEdges = LongHashSet(10, 0.4f)
-                val bagOfCastEdges = LongHashMap<CustomBitSet>(10, 0.4f)
+                // Group all the edges with the same root id, root goes first in the group
+                val idOffsets = IntArray(numberOfNodes)
+                val nodeOrder = IntArray(numberOfNodes)
+                nodes.forEach { idOffsets[it.root().id]++ }
+                var index = 0
+                for (i in 0 until numberOfNodes) {
+                    var cnt = idOffsets[i]
+                    if (cnt == 0) continue
 
-                val directEdgesCount = IntArrayList()
-                val reversedEdgesCount = IntArrayList()
-                directEdgesCount.reserve(numberOfNodes + 1)
-                reversedEdgesCount.reserve(numberOfNodes + 1)
+                    // Put root first
+                    nodeOrder[index++] = i
+                    --cnt
 
-                for (from in nodes) {
-                    directEdges.forEachEdge(from.id) { toId ->
-                        val fromRootId = from.root().id
+                    // Allocate space for the rest
+                    idOffsets[i] = index
+                    index += cnt
+                }
+                nodes.forEach {
+                    if (!it.isRoot) {
+                        nodeOrder[idOffsets[it.root().id]++] = it.id
+                    }
+                }
+
+                val directEdgesCount = IntArray(numberOfNodes + 1)
+                val reversedEdgesCount = IntArray(numberOfNodes + 1)
+
+                // Don't need the reversed cast edges.
+                nodes.forEach { it.reversedCastEdges = null }
+
+                // Instead of having an array of boolean and erasing it - just increment the seenColor
+                val seenEdgeTo = IntArray(numberOfNodes)
+                val seenBitSetTo = arrayOfNulls<CustomBitSet?>(numberOfNodes)
+                var seenColor = 0
+
+                // Cast edge processing needs to be postponed so that we know when a regular edge shadows the cast edge
+                fun processCastEdges(fromRootId: Int, startingIdx: Int, untilIdx: Int) {
+                    for (i in startingIdx until untilIdx) {
+                        val fromId = nodeOrder[i]
+                        val from = nodes[fromId]
+                        require(from.root().id == fromRootId)
+
+                        val castEdges = from.directCastEdges ?: continue
+                        from.directCastEdges = null
+
+                        castEdges.forEach { edge ->
+                            val toRootId = edge.node.root().id
+                            if (fromRootId != toRootId) {
+                                // Regular edge make a cast edge obsolete
+                                if (seenEdgeTo[toRootId] != seenColor) {
+                                    val bitSetTo = seenBitSetTo[toRootId]
+                                    if (bitSetTo == null) {
+                                        seenBitSetTo[toRootId] = edge.suitableTypes.copy()
+                                        // Since root always goes first we can safely add new edge in place
+                                        nodes[fromRootId].addCastEdge(Node.CastEdge(nodes[toRootId], edge.suitableTypes))
+                                    } else {
+                                        // Here we rely on bitset aliasing to merge the bitsets
+                                        bitSetTo.or(edge.suitableTypes)
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    if (fromRootId >= 0) {
+                        // Clear the bitsets so that they don't get reused errenously the nex time
+                        // All the new cast edges go from the `fromRootId`, so we can just iterate over that node's cast edges
+                        nodes[fromRootId].directCastEdges?.forEach {
+                            seenBitSetTo[it.node.id] = null
+                        }
+                    }
+                }
+
+                var prevRootId = -1
+                var prevI = 0
+                for (i in 0 until nodeOrder.size) {
+                    val fromId = nodeOrder[i]
+                    val from = nodes[fromId]
+                    val fromRootId = from.root().id
+                    if (fromRootId != prevRootId) {
+                        processCastEdges(prevRootId, prevI, i)
+                        prevI = i
+                        prevRootId = fromRootId
+                        ++seenColor
+                    }
+
+                    directEdges.forEachEdge(fromId) { toId ->
                         val toRootId = nodes[toId].root().id
                         if (fromRootId != toRootId) {
-                            val value = fromRootId.toLong() or (toRootId.toLong() shl 32)
-
-                            if (bagOfEdges.add(value)) {
+                            if (seenEdgeTo[toRootId] != seenColor) {
+                                seenEdgeTo[toRootId] = seenColor
                                 directEdgesCount[fromRootId]++
                                 reversedEdgesCount[toRootId]++
                             }
                         }
                     }
-
-                    from.directCastEdges?.forEach { edge ->
-                        val fromRootId = from.root().id
-                        val toRootId = edge.node.root().id
-                        if (fromRootId != toRootId) {
-                            val value = fromRootId.toLong() or (toRootId.toLong() shl 32)
-
-                            bagOfCastEdges[value]?.or(edge.suitableTypes) ?: run {
-                                bagOfCastEdges[value] = edge.suitableTypes
-                            }
-                        }
-                    }
                 }
+                processCastEdges(prevRootId, prevI, nodeOrder.size)
 
-                directEdges.fill(0)
-                var index = numberOfNodes + 1
-                for (v in 0..numberOfNodes) {
-                    directEdges[v] = index
-                    index += directEdgesCount[v]
-                    directEdgesCount[v] = 0
-                }
-
+                // Go through all the edges once again and build the reversed edges first.
                 reversedEdges.fill(0)
                 index = numberOfNodes + 1
                 for (v in 0..numberOfNodes) {
@@ -421,24 +494,42 @@ internal object DevirtualizationAnalysis {
                     reversedEdgesCount[v] = 0
                 }
 
-                for (edge in bagOfEdges) {
-                    val from = edge.toInt()
-                    val to = (edge shr 32).toInt()
-                    directEdges[directEdges[from] + (directEdgesCount[from]++)] = to
-                    reversedEdges[reversedEdges[to] + (reversedEdgesCount[to]++)] = from
+                seenEdgeTo.fill(0)
+                seenColor = 0
+                prevRootId = -1
+                for (i in 0 until nodeOrder.size) {
+                    val fromId = nodeOrder[i]
+                    val from = nodes[fromId]
+                    val fromRootId = from.root().id
+                    if (fromRootId != prevRootId) {
+                        prevRootId = fromRootId
+                        ++seenColor
+                    }
+
+                    directEdges.forEachEdge(fromId) { toId ->
+                        val toRootId = nodes[toId].root().id
+                        if (fromRootId != toRootId) {
+                            if (seenEdgeTo[toRootId] != seenColor) {
+                                seenEdgeTo[toRootId] = seenColor
+                                reversedEdges[reversedEdges[toRootId] + (reversedEdgesCount[toRootId]++)] = fromRootId
+                            }
+                        }
+                    }
                 }
 
-                nodes.forEach {
-                    it.directCastEdges = null
-                    it.reversedCastEdges = null
+                // Go through the reversed edges and build the direct edges
+                directEdges.fill(0)
+                index = numberOfNodes + 1
+                for (v in 0..numberOfNodes) {
+                    directEdges[v] = index
+                    index += directEdgesCount[v]
+                    directEdgesCount[v] = 0
                 }
 
-                for (edge in bagOfCastEdges) {
-                    val from = edge.toInt()
-                    val to = (edge shr 32).toInt()
-                    val value = bagOfCastEdges[edge]!!
-
-                    nodes[from].addCastEdge(Node.CastEdge(nodes[to], value))
+                for (to in 0 until numberOfNodes) {
+                    reversedEdges.forEachEdge(to) { from ->
+                        directEdges[directEdges[from] + (directEdgesCount[from]++)] = to
+                    }
                 }
             }
 
