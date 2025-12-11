@@ -9362,6 +9362,12 @@ public class LLReversedBlackBoxTestGenerated extends AbstractLLReversedBlackBoxT
     }
 
     @Test
+    @TestMetadata("array.kt")
+    public void testArray() {
+      runTest("compiler/testData/codegen/box/collectionLiterals/array.kt");
+    }
+
+    @Test
     @TestMetadata("genericCollection.kt")
     public void testGenericCollection() {
       runTest("compiler/testData/codegen/box/collectionLiterals/genericCollection.kt");
@@ -9380,9 +9386,33 @@ public class LLReversedBlackBoxTestGenerated extends AbstractLLReversedBlackBoxT
     }
 
     @Test
+    @TestMetadata("primitiveArrays.kt")
+    public void testPrimitiveArrays() {
+      runTest("compiler/testData/codegen/box/collectionLiterals/primitiveArrays.kt");
+    }
+
+    @Test
     @TestMetadata("resolvesToOperator.kt")
     public void testResolvesToOperator() {
       runTest("compiler/testData/codegen/box/collectionLiterals/resolvesToOperator.kt");
+    }
+
+    @Test
+    @TestMetadata("stdlibCollections.kt")
+    public void testStdlibCollections() {
+      runTest("compiler/testData/codegen/box/collectionLiterals/stdlibCollections.kt");
+    }
+
+    @Test
+    @TestMetadata("stdlibSequence.kt")
+    public void testStdlibSequence() {
+      runTest("compiler/testData/codegen/box/collectionLiterals/stdlibSequence.kt");
+    }
+
+    @Test
+    @TestMetadata("unsignedArrays.kt")
+    public void testUnsignedArrays() {
+      runTest("compiler/testData/codegen/box/collectionLiterals/unsignedArrays.kt");
     }
   }
 

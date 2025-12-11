@@ -1,0 +1,41 @@
+/incorrectCollections.kt:(193,205): error: No 'of' operator is defined for the expected type.
+
+/incorrectCollections.kt:(236,242): error: No 'of' operator is defined for the expected type.
+
+/incorrectCollections.kt:(268,271): error: No 'of' operator is defined for the expected type.
+
+/incorrectCollections.kt:(304,324): error: No 'of' operator is defined for the expected type.
+
+/incorrectCollections.kt:(352,364): error: No 'of' operator is defined for the expected type.
+
+/incorrectCollections.kt:(397,403): error: No 'of' operator is defined for the expected type.
+
+/incorrectCollections.kt:(398,402): error: No 'of' operator is defined for the expected type.
+
+/incorrectCollections.kt:(399,401): error: No 'of' operator is defined for the expected type.
+
+/incorrectCollections.kt:(426,430): error: No 'of' operator is defined for the expected type.
+
+/incorrectCollections.kt:(427,429): error: No 'of' operator is defined for the expected type.
+
+/incorrectCollections.kt:(454,459): error: No 'of' operator is defined for the expected type.
+
+/incorrectCollections.kt:(484,499): error: No 'of' operator is defined for the expected type.
+
+/incorrectCollections.kt:(523,554): error: No 'of' operator is defined for the expected type.
+
+/incorrectCollections.kt:(581,587): error: No 'of' operator is defined for the expected type.
+
+/incorrectCollections.kt:(612,637): error: No 'of' operator is defined for the expected type.
+
+/incorrectCollections.kt:(621,636): warning: This class is not recommended for use in Kotlin. Use 'kotlin.Float' instead.
+
+/incorrectCollections.kt:(663,673): error: No 'of' operator is defined for the expected type.
+
+/incorrectCollections.kt:(698,702): error: No 'of' operator is defined for the expected type.
+
+/incorrectCollections.kt:(727,732): error: No 'of' operator is defined for the expected type.
+
+/incorrectCollections.kt:(758,772): error: No 'of' operator is defined for the expected type.
+
+/incorrectCollections.kt:(797,801): error: No 'of' operator is defined for the expected type.
