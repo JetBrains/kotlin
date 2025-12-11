@@ -4,10 +4,11 @@ public abstract class CIterator /* test.CIterator*/ implements test.IMutableIter
 
 public abstract class CIterator2 /* test.CIterator2*/ implements test.IMutableIterator {
   @java.lang.Override()
-  public boolean hasNext();//  hasNext()
+  @org.jetbrains.annotations.NotNull()
+  public @org.jetbrains.annotations.NotNull() java.lang.Integer next();//  next()
 
   @java.lang.Override()
-  public int next();//  next()
+  public boolean hasNext();//  hasNext()
 
   @java.lang.Override()
   public void remove();//  remove()

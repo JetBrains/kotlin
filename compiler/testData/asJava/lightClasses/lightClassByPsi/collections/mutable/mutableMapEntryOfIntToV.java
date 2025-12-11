@@ -8,10 +8,11 @@ public abstract class SMutableMapEntry2 /* test.SMutableMapEntry2*/<VElem>  impl
   public VElem setValue(VElem);//  setValue(VElem)
 
   @java.lang.Override()
-  public VElem getValue();//  getValue()
+  @org.jetbrains.annotations.NotNull()
+  public @org.jetbrains.annotations.NotNull() java.lang.Integer getKey();//  getKey()
 
   @java.lang.Override()
-  public int getKey();//  getKey()
+  public VElem getValue();//  getValue()
 
   public  SMutableMapEntry2();//  .ctor()
 }
