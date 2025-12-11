@@ -495,6 +495,7 @@ enum class LanguageFeature(
     // 2.5
 
     ErrorAboutDataClassCopyVisibilityChange(KOTLIN_2_5, enabledInProgressiveMode = true, "KT-11914"), // KT-11914. Deprecation phase 2
+    KlibAnnotationsInMetadata(sinceVersion = KOTLIN_2_5, "KT-81466"),
 
     // End of 2.* language features --------------------------------------------------
 
@@ -591,7 +592,6 @@ enum class LanguageFeature(
     UnnamedLocalVariables(sinceVersion = null, forcesPreReleaseBinaries = false, issue = "KT-74809"),
     ContextSensitiveResolutionUsingExpectedType(sinceVersion = null, "KT-16768"),
     AnnotationsInMetadata(sinceVersion = null, "KT-57919"),
-    KlibAnnotationsInMetadata(sinceVersion = null, "KT-64237"),
     DisableWarningsForValueBasedJavaClasses(sinceVersion = null, "KT-70722"),
     DisableWarningsForIdentitySensitiveOperationsOnValueClassesAndPrimitives(sinceVersion = null, "KT-70722"),
     ExportKlibToOlderAbiVersion(sinceVersion = null, forcesPreReleaseBinaries = true, issue = "KT-76131"),
