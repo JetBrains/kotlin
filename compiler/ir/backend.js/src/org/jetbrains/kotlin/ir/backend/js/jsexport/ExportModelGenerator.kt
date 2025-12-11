@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.correspondingEnumEntry
 import org.jetbrains.kotlin.ir.backend.js.getInstanceFun
 import org.jetbrains.kotlin.ir.backend.js.ir.*
+import org.jetbrains.kotlin.ir.backend.js.lower.isDefaultImplementation
 import org.jetbrains.kotlin.ir.backend.js.lower.isEs6ConstructorReplacement
 import org.jetbrains.kotlin.ir.backend.js.objectGetInstanceFunction
 import org.jetbrains.kotlin.ir.backend.js.tsexport.Exportability
@@ -100,6 +101,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
         irGetter = property.getter,
         irSetter = property.setter,
         isStatic = (property.getter ?: property.setter)?.isStaticMethodOfClass == true,
+        isDefaultImplementation = property.isDefaultImplementation
     )
 
     private fun exportEnumEntry(field: IrField): ExportedProperty {
@@ -126,7 +128,8 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
             isInterface = true,
             members = members,
             nestedClasses = nestedClasses,
-            ir = klass
+            ir = klass,
+            defaultImplementations = emptyList()
         )
     }
 
@@ -140,12 +143,13 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
             Exportability.Allowed -> {}
         }
 
-        val (members, nestedClasses) = exportClassDeclarations(klass)
+        val (members, nestedClasses, defaultImplementations) = exportClassDeclarations(klass)
 
         return exportClass(
             klass,
             members,
-            nestedClasses
+            nestedClasses,
+            defaultImplementations
         )
     }
 
@@ -167,7 +171,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
         enumEntries
             .keysToMap(enumEntries::indexOf)
 
-        val (members, nestedClasses) = exportClassDeclarations(klass) { candidate ->
+        val (members, nestedClasses, defaultImplementations) = exportClassDeclarations(klass) { candidate ->
             val enumExportedMember = exportAsEnumMember(candidate)
             enumExportedMember
         }
@@ -175,7 +179,8 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
         return exportClass(
             klass,
             members,
-            nestedClasses
+            nestedClasses,
+            defaultImplementations
         )
     }
 
@@ -186,6 +191,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
         val members = mutableListOf<ExportedDeclaration>()
         val specialMembers = mutableListOf<ExportedDeclaration>()
         val nestedClasses = mutableListOf<ExportedClass>()
+        val defaultImplementations = mutableListOf<ExportedDeclaration>()
 
         klass.forEachExportedMember(context) { candidate, declaration ->
             val processingResult = specialProcessing(candidate)
@@ -196,12 +202,24 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
 
             when (candidate) {
                 is IrSimpleFunction ->
-                    members.addIfNotNull(exportFunction(candidate))
+                    exportFunction(candidate).also {
+                        if (candidate.isDefaultImplementation) {
+                            defaultImplementations.addIfNotNull(it)
+                        } else {
+                            members.addIfNotNull(it)
+                        }
+                    }
 
                 is IrConstructor -> return@forEachExportedMember
 
                 is IrProperty ->
-                    members.addIfNotNull(exportProperty(candidate))
+                    exportProperty(candidate).also {
+                        if (candidate.isDefaultImplementation) {
+                            defaultImplementations.addIfNotNull(it)
+                        } else {
+                            members.addIfNotNull(it)
+                        }
+                    }
 
                 is IrClass -> {
                     val ec = exportClass(candidate)
@@ -229,7 +247,8 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
 
         return ExportedClassDeclarationsInfo(
             specialMembers + members,
-            nestedClasses
+            nestedClasses,
+            defaultImplementations
         )
     }
 
@@ -237,11 +256,12 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
         klass: IrClass,
         members: List<ExportedDeclaration>,
         nestedClasses: List<ExportedClass>,
+        defaultImplementations: List<ExportedDeclaration>
     ): ExportedDeclaration {
         val name = klass.getExportedIdentifier()
 
         return if (klass.kind == ClassKind.OBJECT) {
-            return ExportedObject(
+            ExportedObject(
                 ir = klass,
                 name = name,
                 members = members,
@@ -254,7 +274,8 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
                 isInterface = klass.isInterface,
                 members = members,
                 nestedClasses = nestedClasses,
-                ir = klass
+                ir = klass,
+                defaultImplementations = defaultImplementations
             )
         }
     }
@@ -286,10 +307,12 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
 
 private class ExportedClassDeclarationsInfo(
     val members: List<ExportedDeclaration>,
-    val nestedClasses: List<ExportedClass>
+    val nestedClasses: List<ExportedClass>,
+    val defaultImplementations: List<ExportedDeclaration>
 ) {
     operator fun component1() = members
     operator fun component2() = nestedClasses
+    operator fun component3() = defaultImplementations
 }
 
 private val IrFunction.isStaticMethod: Boolean

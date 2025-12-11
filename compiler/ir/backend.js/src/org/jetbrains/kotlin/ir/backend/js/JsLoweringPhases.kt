@@ -471,11 +471,6 @@ private val preventExportOfSyntheticDeclarationsLowering = makeIrModulePhase(
     prerequisite = setOf(implicitlyExportedDeclarationsMarkingLowering)
 )
 
-private val exportedDefaultImplementationsLowering = makeIrModulePhase(
-    ::ExportedDefaultImplementationsLowering,
-    name = "ExportedDefaultImplementationsLowering",
-)
-
 private val privateMembersLoweringPhase = makeIrModulePhase(
     ::PrivateMembersLowering,
     name = "PrivateMembersLowering",
@@ -484,6 +479,11 @@ private val privateMembersLoweringPhase = makeIrModulePhase(
 private val privateMemberUsagesLoweringPhase = makeIrModulePhase(
     ::PrivateMemberBodiesLowering,
     name = "PrivateMemberUsagesLowering",
+)
+
+private val exportedDefaultImplementationsLowering = makeIrModulePhase(
+    ::PrepareExportedDefaultImplementationsLowering,
+    name = "ExportedDefaultImplementationsLowering",
 )
 
 private val interopCallableReferenceLoweringPhase = makeIrModulePhase(
@@ -840,9 +840,9 @@ fun getJsLowerings(
     copyPropertyAccessorBodiesLoweringPass,
     booleanPropertyInExternalLowering,
     externalPropertyOverridingLowering,
-    exportedDefaultImplementationsLowering,
     privateMembersLoweringPhase,
     privateMemberUsagesLoweringPhase,
+    exportedDefaultImplementationsLowering,
     defaultArgumentStubGeneratorPhase,
     defaultArgumentPatchOverridesPhase,
     defaultParameterInjectorPhase,

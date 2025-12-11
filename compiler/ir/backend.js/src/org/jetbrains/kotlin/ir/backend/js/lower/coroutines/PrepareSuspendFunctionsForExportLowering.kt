@@ -199,17 +199,23 @@ internal class PrepareSuspendFunctionsForExportLowering(private val context: JsI
                 val originalMemberIsInterfaceMethod = originallyExportedSuspendMemberFunction.isInterfaceMethod
 
                 val promisifiedWrapperFunction = originallyExportedSuspendMemberFunction.promisifiedWrapperFunction
-                    ?: generatePromisifiedWrapper(declaration, originalMemberIsInterfaceMethod)
+                    ?: generatePromisifiedWrapper(originallyExportedSuspendMemberFunction)
                         .also { originallyExportedSuspendMemberFunction.promisifiedWrapperFunction = it }
 
                 val implementationBridgeFunction = originallyExportedSuspendMemberFunction.bridgeFunction
-                    ?: generateImplementorBridgeFunction(declaration, promisifiedWrapperFunction, originalMemberIsInterfaceMethod)
-                        .also { originallyExportedSuspendMemberFunction.bridgeFunction = it }
+                    ?: generateImplementorBridgeFunction(
+                        originallyExportedSuspendMemberFunction,
+                        promisifiedWrapperFunction,
+                        originalMemberIsInterfaceMethod
+                    ).also { originallyExportedSuspendMemberFunction.bridgeFunction = it }
 
                 val virtualBridgeFunction = runIf(originalMemberIsInterfaceMethod) {
                     originallyExportedSuspendMemberFunction.virtualBridgeFunction
-                        ?: generateVirtualBridgeFunction(declaration, promisifiedWrapperFunction, implementationBridgeFunction)
-                            .also { originallyExportedSuspendMemberFunction.virtualBridgeFunction = it }
+                        ?: generateVirtualBridgeFunction(
+                            originallyExportedSuspendMemberFunction,
+                            promisifiedWrapperFunction,
+                            implementationBridgeFunction
+                        ).also { originallyExportedSuspendMemberFunction.virtualBridgeFunction = it }
                 }
 
                 if (originallyExportedSuspendMemberFunction === declaration)
@@ -280,6 +286,7 @@ internal class PrepareSuspendFunctionsForExportLowering(private val context: JsI
         buildBridgeFunction("${originalFunc.name}$EXPORTED_SUSPEND_FUNCTION_BRIDGE_SUFFIX", originalFunc) { bridgeFunction ->
             if (isInterfaceMethod) {
                 bridgeFunction.modality = Modality.ABSTRACT
+                bridgeFunction.body = null
                 return@buildBridgeFunction
             }
 
@@ -352,7 +359,6 @@ internal class PrepareSuspendFunctionsForExportLowering(private val context: JsI
 
     private fun generatePromisifiedWrapper(
         originalFunc: IrSimpleFunction,
-        isInterfaceMethod: Boolean = false,
         isFakeOverride: Boolean = false,
     ): IrSimpleFunction =
         context.irFactory.buildFun {
@@ -392,7 +398,7 @@ internal class PrepareSuspendFunctionsForExportLowering(private val context: JsI
 
             originalFunc.annotations = irrelevantAnnotations.compactIfPossible()
 
-            if (isInterfaceMethod) {
+            if (originalFunc.modality == Modality.ABSTRACT) {
                 modality = Modality.ABSTRACT
             } else if (!isFakeOverride) {
                 body = context.createIrBuilder(symbol).irBlockBody(this) {

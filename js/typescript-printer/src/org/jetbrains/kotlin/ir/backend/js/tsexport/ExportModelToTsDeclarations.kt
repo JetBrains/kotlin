@@ -18,6 +18,7 @@ private const val export = "export "
 
 private const val getInstance = "getInstance"
 
+private const val defaults = "defaults"
 private const val Metadata = $$"$metadata$"
 private const val MetadataType = "type"
 private const val MetadataConstructor = "constructor"
@@ -338,7 +339,11 @@ public class ExportModelToTsDeclarations(private val moduleKind: ModuleKind) {
 
         val bodyString = privateCtorString + membersString + indent
 
-        val metadataNamespace = listOfNotNull(runIf(requireMetadata) {
+        val defaultsNamespace = runIf(defaultImplementations.isNotEmpty()) {
+            ExportedNamespace(defaults, defaultImplementations)
+        }.let(::listOfNotNull)
+
+        val metadataNamespace = runIf(requireMetadata) {
             val constructorProperty = ExportedProperty(
                 name = MetadataConstructor,
                 type = ExportedType.ConstructorType(
@@ -353,9 +358,9 @@ public class ExportModelToTsDeclarations(private val moduleKind: ModuleKind) {
                 isQualified = true
             )
             generateMetadataNamespace(listOf(constructorProperty))
-        })
+        }.let(::listOfNotNull)
 
-        val realNestedDeclarations = metadataNamespace + namespaceMembers + nestedClasses
+        val realNestedDeclarations = metadataNamespace + namespaceMembers + defaultsNamespace + nestedClasses
 
         val klassExport =
             "$prefix$modifiers$keyword $name$renderedTypeParameters$superClassClause$superInterfacesClause {\n$bodyString}${

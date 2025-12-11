@@ -9,28 +9,33 @@
 
 package foo
 
-interface HiddenParent {
-    fun someMethod(): List<Int>
-}
-
 @JsExport
 interface ExportedParent {
     fun anotherParentMethod(): List<String>
     suspend fun parentAsyncMethod(): String
+    fun withDefaultImplementation() = "KOTLIN IMPLEMENTATION: ${anotherParentMethod[0]}"
+    var propertyWithDefaultSetter: String
+        get() = "KOTLIN IMPLEMENTATION ${anotherParentMethod[0]}"
+        set(value) {}
+
+    @get:JsName("getGetterAndSetterWithJsName")
+    @set:JsName("setGetterAndSetterWithJsName")
+    var getterAndSetterWithJsName: String
+        get() = "KOTLIN IMPLEMENTATION ${anotherParentMethod[0]}"
+        set(value) {}
 }
 
 @JsExport
-interface IFoo<T : Comparable<T>> : HiddenParent, ExportedParent {
+interface IFoo<T : Comparable<T>> : ExportedParent {
     fun foo(): String
     suspend fun asyncFoo(): String
     fun withDefaults(value: String = "OK"): String
     fun withBridge(x: T): T
-    fun withDefaultImplementation() = "KOTLIN IMPLEMENTATION"
+    suspend fun suspendWithDefaultImplementation() = "KOTLIN IMPLEMENTATION ${foo()}"
+    val propertyWithDefaultGetter: String
+        get() = "KOTLIN IMPLEMENTATION ${propertyWithDefaultSetter}"
 }
 
-@JsExport
-fun callingHiddenParentMethod(foo: IFoo<*>): Int =
-   foo.someMethod()[0]
 
 @JsExport
 fun callingExportedParentMethod(foo: IFoo<*>): String =
@@ -67,3 +72,15 @@ fun checkIsInterface(foo: Any): Boolean =
 @JsExport
 fun callingWithDefaultImplementations(foo: IFoo<*>): String =
     foo.withDefaultImplementation()
+
+@JsExport
+class KotlinFooImpl : IFoo<String> {
+    override fun foo(): String = "OK"
+    override fun anotherParentMethod() = listOf("OK")
+
+    override fun withBridge(x: String) = "KOTLIN: $x"
+    override fun withDefaults(value: String) = "KOTLIN SIDE $value"
+
+    override suspend fun asyncFoo(): String = "OK"
+    override suspend fun parentAsyncMethod(): String = "Parent OK"
+}

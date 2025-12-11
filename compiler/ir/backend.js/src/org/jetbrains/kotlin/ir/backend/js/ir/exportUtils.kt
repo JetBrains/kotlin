@@ -44,7 +44,7 @@ internal fun IrClass.exportability(): Exportability {
     return Exportability.Allowed
 }
 
-internal fun IrSimpleFunction.exportability(context: JsIrBackendContext): Exportability {
+internal fun IrSimpleFunction.exportability(context: JsIrBackendContext, forcedName: String? = null): Exportability {
     if (isInline && typeParameters.any { it.isReified })
         return Exportability.Prohibited("Inline reified function")
     if (isSuspend)
@@ -78,7 +78,7 @@ internal fun IrSimpleFunction.exportability(context: JsIrBackendContext): Export
         return Exportability.NotNeeded
     }
 
-    val name = getExportedIdentifier()
+    val name = forcedName ?: getExportedIdentifier()
     // TODO: Use [] syntax instead of prohibiting
     if (parentClass == null && name in allReservedWords)
         return Exportability.Prohibited("Name is a reserved word")
@@ -100,12 +100,16 @@ internal fun getExportCandidate(declaration: IrDeclaration): IrDeclarationWithNa
     if (declaration is IrSimpleFunction) {
         val property = declaration.correspondingPropertySymbol?.owner
         if (property != null) {
+            val customJsName = declaration.getJsNameForOverriddenDeclaration()
             // Return property for getter accessors only to prevent
             // returning it twice (for getter and setter) in the same scope
-            return if (property.getter == declaration)
-                property
-            else
-                null
+            return when {
+                // to respect defined @JsName on accessors, we need to export them as regular functions
+                // not as a property
+                customJsName != null -> declaration
+                property.getter == declaration -> property
+                else -> null
+            }
         }
     }
 

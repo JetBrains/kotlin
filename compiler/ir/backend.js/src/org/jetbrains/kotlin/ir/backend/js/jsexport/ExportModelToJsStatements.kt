@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.ir.util.irError
 import org.jetbrains.kotlin.ir.util.isObject
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.common.makeValidES5Identifier
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.filterIsInstanceAnd
 
 class ExportModelToJsStatements(
@@ -99,9 +100,13 @@ class ExportModelToJsStatements(
 
             is ExportedProperty -> {
                 require(namespace != null || esModules) { "Only namespaced properties are allowed" }
-                when (namespace) {
-                    null -> {
-                        val property = declaration.generateTopLevelGetters()
+                when {
+                    namespace == null -> {
+                        val property = JsVars.JsVar(
+                            JsName(makeValidES5Identifier(declaration.name), false),
+                            declaration.generateTopLevelGetters()
+                        )
+
                         val exportStatement = if (declaration.attributes.contains(ExportedAttribute.DefaultExport)) {
                             JsExport(JsExport.Subject.Default(property.name.makeRef()))
                         } else {
@@ -109,6 +114,9 @@ class ExportModelToJsStatements(
                         }
 
                         listOf(JsVars(JsVars.Variant.Var, property), exportStatement)
+                    }
+                    declaration.isDefaultImplementation -> {
+                        listOf(jsAssignment(jsElementAccess(declaration.name, namespace), declaration.generateTopLevelGetters()).makeStmt())
                     }
                     else -> {
                         val getter = declaration.irGetter?.let { staticContext.getNameForStaticDeclaration(it) }
@@ -171,7 +179,12 @@ class ExportModelToJsStatements(
                     .filter { it is ExportedFunction && it.isStatic && !it.ir.isEs6ConstructorReplacement }
                     .takeIf { !declaration.ir.isInner }.orEmpty()
 
-                if (declaration.isInterface && staticFunctions.isEmpty() && declaration.nestedClasses.isEmpty()) {
+                if (
+                    declaration.isInterface &&
+                    staticFunctions.isEmpty() &&
+                    declaration.nestedClasses.isEmpty() &&
+                    declaration.defaultImplementations.isEmpty()
+                ) {
                     return emptyList()
                 }
 
@@ -199,7 +212,11 @@ class ExportModelToJsStatements(
                     .filter { it.ir.isInner }
                     .map { it.generateInnerClassAssignment(name) }
 
-                val staticsExport = (staticFunctions + enumEntries + declaration.nestedClasses)
+                val defaultsNamespace = runIf(declaration.defaultImplementations.isNotEmpty()) {
+                    ExportedNamespace("defaults", declaration.defaultImplementations)
+                }.let(::listOfNotNull)
+
+                val staticsExport = (staticFunctions + enumEntries + defaultsNamespace + declaration.nestedClasses)
                     .flatMap { generateDeclarationExport(it, newNameSpace, esModules, declaration.ir) }
 
                 listOfNotNull(classInitialization, klassExport) + staticsExport + innerClassesAssignments
@@ -207,24 +224,20 @@ class ExportModelToJsStatements(
         }
     }
 
-    private fun ExportedProperty.generateTopLevelGetters(): JsVars.JsVar {
-        val sanitizedName = makeValidES5Identifier(name)
+    private fun ExportedProperty.generateTopLevelGetters(): JsObjectLiteral {
         val getter = irGetter?.let { staticContext.getNameForStaticDeclaration(it) }
         val setter = irSetter?.let { staticContext.getNameForStaticDeclaration(it) }
 
-        return JsVars.JsVar(
-            JsName(sanitizedName, false),
-            JsObjectLiteral(false).apply {
-                getter?.let {
-                    val fieldName = when (irGetter.origin) {
-                        JsLoweredDeclarationOrigin.OBJECT_GET_INSTANCE_FUNCTION -> "getInstance"
-                        else -> "get"
-                    }
-                    propertyInitializers += JsPropertyInitializer(JsStringLiteral(fieldName), it.makeRef())
+        return JsObjectLiteral(false).apply {
+            getter?.let {
+                val fieldName = when (irGetter.origin) {
+                    JsLoweredDeclarationOrigin.OBJECT_GET_INSTANCE_FUNCTION -> "getInstance"
+                    else -> "get"
                 }
-                setter?.let { propertyInitializers += JsPropertyInitializer(JsStringLiteral("set"), it.makeRef()) }
+                propertyInitializers += JsPropertyInitializer(JsStringLiteral(fieldName), it.makeRef())
             }
-        )
+            setter?.let { propertyInitializers += JsPropertyInitializer(JsStringLiteral("set"), it.makeRef()) }
+        }
     }
 
     private fun ExportedClass.generateInnerClassAssignment(outerClassName: JsName): JsStatement {

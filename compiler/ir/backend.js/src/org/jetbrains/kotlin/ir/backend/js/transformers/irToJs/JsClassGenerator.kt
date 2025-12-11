@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.ir.backend.js.ir.isOverriddenEnumProperty
 import org.jetbrains.kotlin.ir.backend.js.ir.isOverriddenExported
 import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.suspendArityStore
 import org.jetbrains.kotlin.ir.backend.js.lower.isEs6ConstructorReplacement
+import org.jetbrains.kotlin.ir.backend.js.lower.transformers.correspondingStatic
 import org.jetbrains.kotlin.ir.backend.js.objectGetInstanceFunction
 import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.*
@@ -389,9 +390,14 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
                     val implClassDeclaration = realOverride.parent as IrClass
 
                     if (implClassDeclaration.shouldCopyFrom()) {
-                        val reference = context.getNameForStaticDeclaration(realOverride).makeRef()
+                        val correspondingStatic = realOverride.correspondingStatic
+                        val reference = context.getNameForStaticDeclaration(correspondingStatic ?: realOverride).makeRef()
                         val elementAccess = jsElementAccess(memberName, symbolKey, classPrototypeRef)
-                        classModel.postDeclarationBlock.statements += jsAssignment(elementAccess, reference).makeStmt()
+                        val defaultImplementation = when (correspondingStatic) {
+                            null -> reference
+                            else -> wrapExportedDefaultImplementationIntoFunctionExpression(reference, realOverride)
+                        }
+                        classModel.postDeclarationBlock.statements += jsAssignment(elementAccess, defaultImplementation).makeStmt()
                         if (isFakeOverride) {
                             classModel.postDeclarationBlock.statements += missedOverrides
                                 .map { missedOverride ->
@@ -413,6 +419,23 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
             val func = JsFunction(emptyScope, JsBlock(), "Ctor for ${irClass.name}")
             func.name = classNameUsedInsideDeclarationStatements
             classBlock.statements += func.makeStmt()
+        }
+    }
+
+    private fun wrapExportedDefaultImplementationIntoFunctionExpression(reference: JsNameRef, declaration: IrSimpleFunction): JsFunction {
+        val functionContext = context.newDeclaration()
+
+        return JsFunction(emptyScope, "exported default implementation applier").apply {
+            val parameters = declaration.nonDispatchParameters.mapTo(parameters) { param ->
+                JsParameter(functionContext.getNameForValueDeclaration(param))
+            }
+            body = JsBlock().apply {
+                val arguments = mutableListOf<JsExpression>().apply {
+                    add(JsThisRef())
+                    parameters.mapTo(this) { it.name.makeRef() }
+                }
+                statements += JsReturn(JsInvocation(reference, arguments))
+            }
         }
     }
 

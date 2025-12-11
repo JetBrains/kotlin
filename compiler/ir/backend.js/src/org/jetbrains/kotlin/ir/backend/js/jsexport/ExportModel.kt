@@ -38,6 +38,7 @@ data class ExportedProperty(
     val isStatic: Boolean = false,
     val irGetter: IrFunction? = null,
     val irSetter: IrFunction? = null,
+    val isDefaultImplementation: Boolean = false
 ) : ExportedDeclaration()
 
 sealed class ExportedClass : ExportedDeclaration() {
@@ -53,6 +54,7 @@ data class ExportedRegularClass(
     override val members: List<ExportedDeclaration>,
     override val nestedClasses: List<ExportedClass>,
     override val ir: IrClass,
+    val defaultImplementations: List<ExportedDeclaration>,
 ) : ExportedClass()
 
 data class ExportedObject(

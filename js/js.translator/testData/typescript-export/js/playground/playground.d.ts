@@ -13,20 +13,38 @@ declare namespace JS_TESTS {
         interface ExportedParent {
             anotherParentMethod(): kotlin.collections.KtList<string>;
             parentAsyncMethod(): Promise<string>;
+            withDefaultImplementation(): string;
+            propertyWithDefaultSetter: string;
+            setGetterAndSetterWithJsName(value: string): void;
+            getGetterAndSetterWithJsName(): string;
         }
-        interface IFoo<T extends unknown/* kotlin.Comparable<T> */> extends foo.ExportedParent/*, foo.HiddenParent */ {
+        namespace ExportedParent {
+            namespace defaults {
+                function withDefaultImplementation($this: foo.ExportedParent): string;
+                const propertyWithDefaultSetter: {
+                    get($this: foo.ExportedParent): string;
+                    set($this: foo.ExportedParent, value: string): void;
+                };
+                function setGetterAndSetterWithJsName($this: foo.ExportedParent, value: string): void;
+                function getGetterAndSetterWithJsName($this: foo.ExportedParent): string;
+            }
+        }
+        interface IFoo<T extends unknown/* kotlin.Comparable<T> */> extends foo.ExportedParent {
             foo(): string;
             asyncFoo(): Promise<string>;
             withDefaults(value?: string): string;
             withBridge(x: T): T;
-            withDefaultImplementation(): string;
+            suspendWithDefaultImplementation(): Promise<string>;
+            readonly propertyWithDefaultGetter: string;
         }
         namespace IFoo {
             namespace defaults {
-                function withDefaultImplementation<T extends unknown/* kotlin.Comparable<T> */>($this: foo.IFoo<T>): string;
+                function suspendWithDefaultImplementation<T extends unknown/* kotlin.Comparable<T> */>($this: foo.IFoo<T>): Promise<string>;
+                const propertyWithDefaultGetter: {
+                    get<T extends unknown/* kotlin.Comparable<T> */>($this: foo.IFoo<T>): string;
+                };
             }
         }
-        function callingHiddenParentMethod(foo: foo.IFoo<any /*UnknownType **/>): number;
         function callingExportedParentMethod(foo: foo.IFoo<any /*UnknownType **/>): string;
         function justCallFoo(foo: foo.IFoo<any /*UnknownType **/>): string;
         function justCallAsyncFoo(foo: foo.IFoo<any /*UnknownType **/>): Promise<string>;
@@ -36,5 +54,27 @@ declare namespace JS_TESTS {
         function callingWithBridge(foo: foo.IFoo<string>): string;
         function checkIsInterface(foo: any): boolean;
         function callingWithDefaultImplementations(foo: foo.IFoo<any /*UnknownType **/>): string;
+        class KotlinFooImpl implements foo.IFoo<string> {
+            constructor();
+            foo(): string;
+            anotherParentMethod(): kotlin.collections.KtList<string>;
+            withBridge(x: string): string;
+            withDefaults(value?: string): string;
+            asyncFoo(): Promise<string>;
+            parentAsyncMethod(): Promise<string>;
+            suspendWithDefaultImplementation(): Promise<string>;
+            get propertyWithDefaultGetter(): string;
+            withDefaultImplementation(): string;
+            get propertyWithDefaultSetter(): string;
+            set propertyWithDefaultSetter(value: string);
+            setGetterAndSetterWithJsName(value: string): void;
+            getGetterAndSetterWithJsName(): string;
+        }
+        namespace KotlinFooImpl {
+            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+            namespace $metadata$ {
+                const constructor: abstract new () => KotlinFooImpl;
+            }
+        }
     }
 }
