@@ -113,6 +113,9 @@ fun TestModule.isLeafModuleInMppGraph(moduleStructure: TestModuleStructure): Boo
     return isLeafModule(moduleStructure, TestModule::dependsOnDependencies)
 }
 
+fun TestModule.isLeafModule(moduleStructure: TestModuleStructure): Boolean =
+    isLeafModule(moduleStructure, TestModule::allDependencies)
+
 private inline fun TestModule.isLeafModule(
     moduleStructure: TestModuleStructure,
     dependencies: TestModule.() -> List<DependencyDescription>,
