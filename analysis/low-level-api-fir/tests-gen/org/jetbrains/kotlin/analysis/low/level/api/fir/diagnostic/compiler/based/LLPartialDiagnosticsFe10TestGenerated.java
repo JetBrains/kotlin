@@ -9958,6 +9958,12 @@ public class LLPartialDiagnosticsFe10TestGenerated extends AbstractLLPartialDiag
       }
 
       @Test
+      @TestMetadata("coercions.kt")
+      public void testCoercions() {
+        runTest("compiler/testData/diagnostics/tests/crv/coercions.kt");
+      }
+
+      @Test
       @TestMetadata("collectionsAndJavaTypes.kt")
       public void testCollectionsAndJavaTypes() {
         runTest("compiler/testData/diagnostics/tests/crv/collectionsAndJavaTypes.kt");

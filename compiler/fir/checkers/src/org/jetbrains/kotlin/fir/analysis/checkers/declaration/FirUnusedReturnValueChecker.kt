@@ -8,32 +8,26 @@ package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.ReturnValueCheckerMode
-import org.jetbrains.kotlin.contracts.description.LogicOperationKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.directOverriddenSymbolsSafe
-import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
+import org.jetbrains.kotlin.fir.declarations.mustUseReturnValueStatusComponent
+import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
 import org.jetbrains.kotlin.fir.declarations.utils.isOverride
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.originalOrSelf
-import org.jetbrains.kotlin.fir.references.resolved
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
+import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
-import org.jetbrains.kotlin.fir.types.ConeErrorType
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.classId
-import org.jetbrains.kotlin.fir.types.coneType
-import org.jetbrains.kotlin.fir.types.hasError
-import org.jetbrains.kotlin.fir.types.isMarkedNullable
-import org.jetbrains.kotlin.fir.types.resolvedType
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.ReturnValueStatus
@@ -115,12 +109,7 @@ object FirUnusedReturnValueChecker : FirUnusedCheckerBase() {
 
         if (expression.resolvedType.isIgnorable()) return false
 
-        val calleeReference = expression.toReference(context.session)
-        val resolvedReference = calleeReference?.resolved
-
-        val resolvedSymbol = resolvedReference?.toResolvedCallableSymbol()?.originalOrSelf()
-        if (resolvedSymbol != null && !resolvedSymbol.isSubjectToCheck()) return false
-        if (resolvedSymbol?.isExcluded(context.session) == true) return false
+        val resolvedSymbol = expression.toResolvedCallableSymbol(context.session)?.originalOrSelf()
 
         // Special case for `x[y] = z` assigment:
         if ((expression is FirFunctionCall) && expression.origin == FirFunctionCallOrigin.Operator && resolvedSymbol?.name?.asString() == "set") return false
@@ -128,6 +117,16 @@ object FirUnusedReturnValueChecker : FirUnusedCheckerBase() {
         // Special case for `condition() || throw/return` or `condition() && throw/return`:
         if (expression is FirBooleanOperatorExpression && expression.rightOperand.resolvedType.isIgnorable()) return false
 
+        return reportForSymbol(expression, resolvedSymbol)
+    }
+
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    private fun reportForSymbol(
+        expression: FirExpression,
+        resolvedSymbol: FirCallableSymbol<*>?,
+    ): Boolean {
+        if (resolvedSymbol != null && !resolvedSymbol.isSubjectToCheck()) return false
+        if (resolvedSymbol?.isExcluded(context.session) == true) return false
         val functionName = resolvedSymbol?.name
         reporter.reportOn(
             expression.source,
@@ -161,7 +160,24 @@ object FirUnusedReturnValueChecker : FirUnusedCheckerBase() {
         override fun visitTypeOperatorCall(typeOperatorCall: FirTypeOperatorCall, data: UsageState) {
             typeOperatorCall.arguments.forEach { it.accept(this, data) }
         }
+
+        override fun visitCallableReferenceAccess(
+            callableReferenceAccess: FirCallableReferenceAccess,
+            data: UsageState,
+        ) {
+            if (!callableReferenceAccess.resolvedType.isFunctionalTypeThatReturnsUnit(context.session)) return
+            val referencedSymbol = callableReferenceAccess.calleeReference.toResolvedCallableSymbol(discardErrorReference = true) ?: return
+
+            context(context, reporter) {
+                if (!referencedSymbol.resolvedReturnType.isIgnorable()) // referenceAccess is Unit, referencedSymbol is not => coercion to Unit happened
+                    reportForSymbol(callableReferenceAccess, referencedSymbol)
+            }
+            // do not visit deeper in any case because there all reference parts are considered used
+        }
     }
+
+    private fun ConeKotlinType.isFunctionalTypeThatReturnsUnit(session: FirSession): Boolean =
+        functionTypeKind(session) != null && typeArguments.last().type?.isUnit == true
 
     private fun FirCallableSymbol<*>.isExcluded(session: FirSession): Boolean =
         session.mustUseReturnValueStatusComponent.hasIgnorableLikeAnnotation(resolvedAnnotationClassIds)
