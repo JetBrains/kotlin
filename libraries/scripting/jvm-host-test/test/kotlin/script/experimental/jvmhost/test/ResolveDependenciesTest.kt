@@ -5,15 +5,18 @@
 
 package kotlin.script.experimental.jvmhost.test
 
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.ScriptJvmCompilerIsolated
 import java.io.File
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.toScriptSource
 import kotlin.script.experimental.jvm.JvmDependencyFromClassLoader
 import kotlin.script.experimental.jvm.baseClassLoader
+import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 import kotlin.script.experimental.jvm.jvm
 import kotlin.script.experimental.jvm.updateClasspath
 import kotlin.script.experimental.jvm.util.classpathFromClass
 import kotlin.script.experimental.jvmhost.BasicJvmScriptingHost
+import kotlin.script.experimental.jvmhost.JvmScriptCompiler
 import kotlin.script.experimental.jvmhost.test.ReplTest.Companion.checkEvaluateInRepl
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -118,7 +121,12 @@ class ResolveDependenciesTest {
         evaluationConfiguration: ScriptEvaluationConfiguration?,
         expectedResult: T
     ) {
-        val res = BasicJvmScriptingHost().eval(script, compilationConfiguration, evaluationConfiguration).valueOrThrow().returnValue
+        val res = BasicJvmScriptingHost(
+            compiler = JvmScriptCompiler(
+                defaultJvmScriptingHostConfiguration,
+                if (isRunningTestOnK2) null else ScriptJvmCompilerIsolated(defaultJvmScriptingHostConfiguration)
+            ),
+        ).eval(script, compilationConfiguration, evaluationConfiguration).valueOrThrow().returnValue
         when (res) {
             is ResultValue.Value -> assertEquals(expectedResult, res.value)
             is ResultValue.Error -> throw res.error

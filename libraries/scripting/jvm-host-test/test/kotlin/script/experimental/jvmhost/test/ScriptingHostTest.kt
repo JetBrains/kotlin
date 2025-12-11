@@ -53,7 +53,7 @@ class ScriptingHostTest {
         assertEquals(greeting, output)
         // another API
         val output2 = captureOut {
-            BasicJvmScriptingHost().evalWithTemplate<SimpleScriptTemplate>("println(\"$greeting\")".toScriptSource()).throwOnFailure()
+            makeScriptingHost().evalWithTemplate<SimpleScriptTemplate>("println(\"$greeting\")".toScriptSource()).throwOnFailure()
         }
         assertEquals(greeting, output2)
     }
@@ -62,7 +62,9 @@ class ScriptingHostTest {
     fun testSourceWithName() {
         val greeting = "Hello from script!"
         val output = captureOut {
-            val basicJvmScriptingHost = BasicJvmScriptingHost()
+            val basicJvmScriptingHost = BasicJvmScriptingHost(
+                compiler = JvmScriptCompiler(defaultJvmScriptingHostConfiguration, if (isRunningTestOnK2) null else ScriptJvmCompilerIsolated(defaultJvmScriptingHostConfiguration)),
+            )
             basicJvmScriptingHost.evalWithTemplate<SimpleScript>(
                 "println(\"$greeting\")".toScriptSource("name"),
                 compilation = {
@@ -115,7 +117,10 @@ class ScriptingHostTest {
         val greeting = "Hello from script classes!"
         val outDir = Files.createTempDirectory("saveToClassesOut").toFile()
         val compilationConfiguration = createJvmCompilationConfigurationFromTemplate<SimpleScriptTemplate>()
-        val host = BasicJvmScriptingHost(evaluator = BasicJvmScriptClassFilesGenerator(outDir))
+        val host = BasicJvmScriptingHost(
+            compiler = JvmScriptCompiler(defaultJvmScriptingHostConfiguration, if (isRunningTestOnK2) null else ScriptJvmCompilerIsolated(defaultJvmScriptingHostConfiguration)),
+            evaluator = BasicJvmScriptClassFilesGenerator(outDir)
+        )
         host.eval("println(\"$greeting\")".toScriptSource(name = "SavedScript.kts"), compilationConfiguration, null).throwOnFailure()
         val classloader = URLClassLoader(arrayOf(outDir.toURI().toURL()), ScriptingHostTest::class.java.classLoader)
         val scriptClass = classloader.loadClass("SavedScript")
@@ -130,7 +135,10 @@ class ScriptingHostTest {
         val greeting = "Hello from script jar!"
         val outJar = Files.createTempFile("saveToJar", ".jar").toFile()
         val compilationConfiguration = createJvmCompilationConfigurationFromTemplate<SimpleScriptTemplate>()
-        val host = BasicJvmScriptingHost(evaluator = BasicJvmScriptJarGenerator(outJar))
+        val host = BasicJvmScriptingHost(
+            compiler = JvmScriptCompiler(defaultJvmScriptingHostConfiguration, if (isRunningTestOnK2) null else ScriptJvmCompilerIsolated(defaultJvmScriptingHostConfiguration)),
+            evaluator = BasicJvmScriptJarGenerator(outJar)
+        )
         host.eval("println(\"$greeting\")".toScriptSource(name = "SavedScript.kts"), compilationConfiguration, null).throwOnFailure()
         Thread.sleep(100)
         val classloader = URLClassLoader(arrayOf(outJar.toURI().toURL()), ScriptingHostTest::class.java.classLoader)
@@ -198,7 +206,7 @@ class ScriptingHostTest {
             importScripts(File(TEST_DATA_DIR, "importTest/requiredSrc.kt").toScriptSource())
         }
         val output = captureOut {
-            BasicJvmScriptingHost().eval(script.toScriptSource(), compilationConfiguration, null).throwOnFailure()
+            makeScriptingHost().eval(script.toScriptSource(), compilationConfiguration, null).throwOnFailure()
         }
         assertEquals(greeting, output)
     }
@@ -211,7 +219,7 @@ class ScriptingHostTest {
             makeSimpleConfigurationWithTestImport()
         }
         val output = captureOut {
-            BasicJvmScriptingHost().eval(script.toScriptSource(), compilationConfiguration, null).throwOnFailure().throwOnExceptionResult()
+            makeScriptingHost().eval(script.toScriptSource(), compilationConfiguration, null).throwOnFailure().throwOnExceptionResult()
         }.lines()
         assertEquals(greeting, output)
     }
@@ -230,7 +238,7 @@ class ScriptingHostTest {
             }
         )
         val output = captureOut {
-            BasicJvmScriptingHost().eval(
+            makeScriptingHost().eval(
                 script.toScriptSource(), definition.compilationConfiguration, definition.evaluationConfiguration
             ).throwOnFailure()
         }.lines()
@@ -251,7 +259,7 @@ class ScriptingHostTest {
             }
         )
         val output = captureOut {
-            BasicJvmScriptingHost().eval(
+            makeScriptingHost().eval(
                 script.toScriptSource(), definition.compilationConfiguration, definition.evaluationConfiguration
             ).throwOnFailure()
         }.lines()
@@ -273,7 +281,7 @@ class ScriptingHostTest {
                 implicitReceivers("abc")
             }
         )
-        BasicJvmScriptingHost().eval(
+        makeScriptingHost().eval(
             script.toScriptSource(), definition.compilationConfiguration, definition.evaluationConfiguration
         ).throwOnFailure()
     }
@@ -308,7 +316,7 @@ class ScriptingHostTest {
                 )
             },
         )
-        with(BasicJvmScriptingHost()) {
+        with(makeScriptingHost()) {
             val res = runBlocking {
                 compiler("this@NotExistent.toString()".toScriptSource(), definition.compilationConfiguration)
             }
@@ -330,7 +338,7 @@ class ScriptingHostTest {
                 implicitReceivers(null)
             }
         )
-        with(BasicJvmScriptingHost()) {
+        with(makeScriptingHost()) {
             val res = runBlocking {
                 compiler("42".toScriptSource(), definition.compilationConfiguration)
             }
@@ -349,7 +357,7 @@ class ScriptingHostTest {
                 )
             },
         )
-        with(BasicJvmScriptingHost()) {
+        with(makeScriptingHost()) {
             val res = runBlocking {
                 compiler("notExistent".toScriptSource(), definition.compilationConfiguration)
             }
@@ -401,7 +409,7 @@ class ScriptingHostTest {
                 providedProperties("notExistent" to null)
             }
         )
-        with(BasicJvmScriptingHost()) {
+        with(makeScriptingHost()) {
             val res = runBlocking {
                 compiler("42".toScriptSource(), definition.compilationConfiguration)
             }
@@ -539,7 +547,7 @@ class ScriptingHostTest {
             providedProperties("notNullable" to null)
         }
 
-        with(BasicJvmScriptingHost()) {
+        with(makeScriptingHost()) {
             // compile time
             val comp0 = runBlocking {
                 compiler("nullable.length".toScriptSource(), definition.compilationConfiguration)
@@ -585,7 +593,7 @@ class ScriptingHostTest {
     fun testEvalWithWrapper() {
         val greeting = "Hello from script!"
         var output = ""
-        BasicJvmScriptingHost().evalWithTemplate<SimpleScriptTemplate>(
+        makeScriptingHost().evalWithTemplate<SimpleScriptTemplate>(
             "println(\"$greeting\")".toScriptSource(),
             {},
             {
@@ -645,7 +653,7 @@ class ScriptingHostTest {
             }
         }
         val output = captureOut {
-            BasicJvmScriptingHost().eval(mainScript, compilationConfiguration, evaluationConfiguration).throwOnFailure().throwOnExceptionResult()
+            makeScriptingHost().eval(mainScript, compilationConfiguration, evaluationConfiguration).throwOnFailure().throwOnExceptionResult()
         }.lines()
         return output
     }
@@ -662,7 +670,7 @@ class ScriptingHostTest {
                 }
             }
         }
-        val res = BasicJvmScriptingHost().eval(script.toScriptSource("script.kts"), compilationConfiguration, null)
+        val res = makeScriptingHost().eval(script.toScriptSource("script.kts"), compilationConfiguration, null)
         assertTrue(res is ResultWithDiagnostics.Failure)
         val report = res.reports.find { it.message.startsWith("Imported source file not found") }
         assertNotNull(report)
@@ -688,7 +696,7 @@ class ScriptingHostTest {
                 CommonCompilerArguments::whenGuards.cliArgument,
             )
         }
-        val res = BasicJvmScriptingHost().eval(script.toScriptSource(), compilationConfiguration1, null)
+        val res = makeScriptingHost().eval(script.toScriptSource(), compilationConfiguration1, null)
         assertTrue(res is ResultWithDiagnostics.Failure)
         res.reports.find { it.message.startsWith("The feature \"break continue in inline lambdas\" is only available since language version 2.2") }
             ?: fail("Error report about language version not found. Reported:\n  ${res.reports.joinToString("\n  ") { it.message }}")
@@ -726,7 +734,7 @@ class ScriptingHostTest {
         val compilationConfiguration1 = createJvmCompilationConfigurationFromTemplate<SimpleScriptTemplate> {
             compilerOptions("-jvm-target->1.8")
         }
-        val res1 = BasicJvmScriptingHost().eval(script.toScriptSource(), compilationConfiguration1, null)
+        val res1 = makeScriptingHost().eval(script.toScriptSource(), compilationConfiguration1, null)
         assertTrue(
             res1 is ResultWithDiagnostics.Failure && res1.reports.find { it.message == "Invalid argument: -jvm-target->1.8" } != null,
             "Expected failure with invalid JVM target option, but got: $res1"
@@ -741,7 +749,7 @@ class ScriptingHostTest {
                 }
             }
         }
-        val res2 = BasicJvmScriptingHost().eval(script.toScriptSource(), compilationConfiguration2, null)
+        val res2 = makeScriptingHost().eval(script.toScriptSource(), compilationConfiguration2, null)
         assertTrue(
             res2 is ResultWithDiagnostics.Failure && res2.reports.find { it.message == "Invalid argument: -jvm-target->1.6" } != null,
             "Expected failure with invalid JVM target option, but got: $res2"
@@ -761,7 +769,7 @@ class ScriptingHostTest {
                 }
             }
         }
-        val res = BasicJvmScriptingHost().eval(script.toScriptSource(), compilationConfiguration, null)
+        val res = makeScriptingHost().eval(script.toScriptSource(), compilationConfiguration, null)
         assertTrue(res is ResultWithDiagnostics.Success)
         assertNotNull(res.reports.find { it.message == "Flag is not supported by this version of the compiler: -Xunknown1" })
         assertNotNull(res.reports.find { it.message == "Flag is not supported by this version of the compiler: -Xunknown2" })
@@ -792,7 +800,7 @@ class ScriptingHostTest {
                 }
             }
         }
-        val res = BasicJvmScriptingHost().eval(script.toScriptSource(), compilationConfiguration, null)
+        val res = makeScriptingHost().eval(script.toScriptSource(), compilationConfiguration, null)
         assertTrue(res is ResultWithDiagnostics.Success)
         assertNotNull(res.reports.find { it.message == "The following compiler arguments are ignored on script compilation: ${K2JVMCompilerArguments::version.cliArgument}, ${K2JVMCompilerArguments::destination.cliArgument}, ${K2JVMCompilerArguments::reportPerf.cliArgument}" })
         assertNotNull(res.reports.find { it.message == "The following compiler arguments are ignored on script compilation: ${K2JVMCompilerArguments::dumpPerf.cliArgument}" })
@@ -912,12 +920,12 @@ fun <T> ResultWithDiagnostics<T>.throwOnExceptionResult(): ResultWithDiagnostics
     }
 }
 
-private fun evalScript(script: String, host: BasicScriptingHost = BasicJvmScriptingHost()): ResultWithDiagnostics<*> =
+private fun evalScript(script: String, host: BasicScriptingHost = makeScriptingHost()): ResultWithDiagnostics<*> =
     evalScriptWithConfiguration(script, host) {}
 
 private fun evalScriptWithResult(
     script: String,
-    host: BasicScriptingHost = BasicJvmScriptingHost(),
+    host: BasicScriptingHost = makeScriptingHost(),
     compilation: ScriptCompilationConfiguration.Builder.() -> Unit = {},
     evaluation: ScriptEvaluationConfiguration.Builder.() -> Unit = {}
 ): ResultValue =
@@ -925,7 +933,7 @@ private fun evalScriptWithResult(
 
 internal fun evalScriptWithConfiguration(
     script: String,
-    host: BasicScriptingHost = BasicJvmScriptingHost(),
+    host: BasicScriptingHost = makeScriptingHost(),
     compilation: ScriptCompilationConfiguration.Builder.() -> Unit = {},
     evaluation: ScriptEvaluationConfiguration.Builder.() -> Unit = {}
 ): ResultWithDiagnostics<EvaluationResult> {
@@ -936,13 +944,18 @@ internal fun evalScriptWithConfiguration(
 
 private fun ScriptDefinition.evalScriptAndCheckOutput(script: String, expectedOutput: List<String>) {
     val output = captureOut {
-        val retVal = BasicJvmScriptingHost().eval(
+        val retVal = makeScriptingHost().eval(
             script.toScriptSource(), compilationConfiguration, evaluationConfiguration
         ).valueOrThrow().returnValue
         if (retVal is ResultValue.Error) throw retVal.error
     }.lines()
     assertEquals(expectedOutput, output)
 }
+
+private fun makeScriptingHost(): BasicJvmScriptingHost =
+    BasicJvmScriptingHost(
+        compiler = JvmScriptCompiler(defaultJvmScriptingHostConfiguration, if (isRunningTestOnK2) null else ScriptJvmCompilerIsolated(defaultJvmScriptingHostConfiguration)),
+    )
 
 internal fun ScriptCompilationConfiguration.Builder.makeSimpleConfigurationWithTestImport() {
     updateClasspath(classpathFromClass<ScriptingHostTest>()) // the lambda below should be in the classpath

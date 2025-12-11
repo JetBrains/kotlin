@@ -5,12 +5,15 @@
 
 package kotlin.script.experimental.jvmhost.test
 
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.ScriptJvmCompilerIsolated
 import kotlin.script.experimental.annotations.KotlinScript
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.toScriptSource
+import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 import kotlin.script.experimental.jvm.updateClasspath
 import kotlin.script.experimental.jvm.util.classpathFromClass
 import kotlin.script.experimental.jvmhost.BasicJvmScriptingHost
+import kotlin.script.experimental.jvmhost.JvmScriptCompiler
 import kotlin.script.experimental.jvmhost.createJvmCompilationConfigurationFromTemplate
 
 @KotlinScript(fileExtension = "simplescript.kts")
@@ -72,12 +75,13 @@ object ConflictingPropertiesConfiguration : ScriptCompilationConfiguration(
 
 class ImplicitReceiverClass(val receiverString: String)
 
-inline fun <reified T : Any> evalString(
+internal inline fun <reified T : Any> evalString(
     source: String,
     noinline configure: ScriptEvaluationConfiguration.Builder.() -> Unit
 ): ResultWithDiagnostics<EvaluationResult> {
     val actualConfiguration = createJvmCompilationConfigurationFromTemplate<T>()
-    return BasicJvmScriptingHost()
-        .eval(source.toScriptSource(), actualConfiguration, ScriptEvaluationConfiguration(configure))
+    return BasicJvmScriptingHost(
+        compiler = JvmScriptCompiler(defaultJvmScriptingHostConfiguration, if (isRunningTestOnK2) null else ScriptJvmCompilerIsolated(defaultJvmScriptingHostConfiguration)),
+    ).eval(source.toScriptSource(), actualConfiguration, ScriptEvaluationConfiguration(configure))
 }
 

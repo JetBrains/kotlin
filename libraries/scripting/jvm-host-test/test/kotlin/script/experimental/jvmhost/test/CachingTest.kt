@@ -205,8 +205,8 @@ class CachingTest {
                 }
                 val host = BasicJvmScriptingHost(
                     compiler = JvmScriptCompiler(hostConfiguration, if (isRunningTestOnK2) null else ScriptJvmCompilerIsolated(
-                        hostConfiguration
-                    )
+                            hostConfiguration
+                        )
                     ),
                     evaluator = BasicJvmScriptEvaluator()
                 )
