@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 
 class JsFirstStageEnvironmentConfigurator(testServices: TestServices) : JsEnvironmentConfigurator(testServices),
-    KlibBasedEnvironmentConfiguratorUtils
+    KlibBasedEnvironmentConfigurator
 {
     override val compilationStage: CompilationStage
         get() = CompilationStage.FIRST
