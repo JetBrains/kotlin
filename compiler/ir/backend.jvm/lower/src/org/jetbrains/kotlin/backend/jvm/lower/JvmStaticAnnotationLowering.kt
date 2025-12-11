@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyFunctionBase
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
@@ -43,7 +44,7 @@ internal class JvmStaticInCompanionLowering(val context: JvmBackendContext) : Fi
         irFile.transformChildrenVoid(CompanionObjectJvmStaticTransformer(context))
 }
 
-private fun IrDeclaration.isJvmStaticDeclaration(): Boolean =
+internal fun IrDeclaration.isJvmStaticDeclaration(): Boolean =
     hasAnnotation(JVM_STATIC_ANNOTATION_FQ_NAME) ||
             (this as? IrSimpleFunction)?.correspondingPropertySymbol?.owner?.hasAnnotation(JVM_STATIC_ANNOTATION_FQ_NAME) == true ||
             (this as? IrProperty)?.getter?.hasAnnotation(JVM_STATIC_ANNOTATION_FQ_NAME) == true
@@ -156,6 +157,18 @@ private class CompanionObjectJvmStaticTransformer(val context: JvmBackendContext
             shouldReplaceWithStaticCall(callee) -> {
                 val (staticProxy, _) = context.cachedDeclarations.getStaticAndCompanionDeclaration(callee)
                 expression.makeStatic(context.irBuiltIns, staticProxy)
+            }
+            callee.symbol == context.symbols.jvmIndyIntrinsic -> {
+                val bootstrapMethodArguments = expression.arguments[2] as? IrVararg
+                    ?: error("Expected vararg for bootstrapMethodArguments: ${expression.dump()}")
+                val implMethodReference = bootstrapMethodArguments.elements[1] as? IrRawFunctionReference
+                    ?: error("Expected raw function reference for implMethodReference: ${expression.dump()}")
+                val implFun = implMethodReference.symbol.owner
+                if (/*implMethodReference.dispatchReceiver != null && */implFun is IrSimpleFunction && shouldReplaceWithStaticCall(implFun)) {
+                    val (staticProxy, _) = context.cachedDeclarations.getStaticAndCompanionDeclaration(implFun)
+                    implMethodReference.symbol = staticProxy.symbol
+                }
+                expression
             }
             else ->
                 expression

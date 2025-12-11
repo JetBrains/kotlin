@@ -446,7 +446,8 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
         val parent = currentScope!!.scope.getLocalDeclarationParent()
         return context.createJvmIrBuilder(currentScope!!, startOffset, endOffset).run {
             // See [org.jetbrains.kotlin.backend.jvm.JvmSymbols::indyLambdaMetafactoryIntrinsic].
-            val calculatedInvokeFunction = lambdaMetafactoryArguments.implMethodReference.symbol.owner
+            val implMethodReference = lambdaMetafactoryArguments.implMethodReference.let(::replaceWithStaticCallOrThis)
+            val calculatedInvokeFunction = implMethodReference.symbol.owner
             fun IrFunction.isAdaptable() =
                 when (this.origin) {
                     IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA,
@@ -464,8 +465,8 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
                 calculatedInvokeFunction as IrSimpleFunction
             } else {
                 with(UpgradeCallableReferences(this@FunctionReferenceLowering.context).UpgradeTransformer()) {
-                    val arguments = lambdaMetafactoryArguments.implMethodReference.getCapturedValues()
-                    lambdaMetafactoryArguments.implMethodReference.wrapFunction(
+                    val arguments = implMethodReference.getCapturedValues()
+                    implMethodReference.wrapFunction(
                         captured = arguments,
                         parent = parent,
                         referencedFunction = calculatedInvokeFunction,
@@ -481,7 +482,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
                 origin = origin,
             ).apply {
                 indyCallData = IndyCallData(lambdaMetafactoryArguments.shouldBeSerializable)
-                boundValues.addAll(lambdaMetafactoryArguments.implMethodReference.arguments.filterNotNull())
+                boundValues.addAll(implMethodReference.arguments.filterNotNull())
             }
 //            irCall(jvmIndyLambdaMetafactoryIntrinsic, notNullSamType).apply {
 //                typeArguments[0] = notNullSamType
@@ -492,6 +493,20 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
 //                arguments[4] = irBoolean(lambdaMetafactoryArguments.shouldBeSerializable)
 //            }
         }
+    }
+
+    private fun replaceWithStaticCallOrThis(implFunRef: IrFunctionReference): IrFunctionReference {
+        val implFun = implFunRef.symbol.owner
+        if (implFunRef.dispatchReceiver != null && implFun is IrSimpleFunction && implFun.isJvmStaticDeclaration()) {
+            val (staticProxy, _) = context.cachedDeclarations.getStaticAndCompanionDeclaration(implFun)
+            return IrFunctionReferenceImpl(
+                implFunRef.startOffset, implFunRef.endOffset, implFunRef.type,
+                staticProxy.symbol,
+                staticProxy.typeParameters.size,
+                implFunRef.reflectionTarget, implFunRef.origin
+            )
+        }
+        return implFunRef
     }
 
     private fun IrBuilderWithScope.irRawFunctionRef(irFun: IrFunction) =
