@@ -41,6 +41,11 @@ class NativeEnvironmentConfigurator(testServices: TestServices) : EnvironmentCon
         fun getRuntimePathsForModule(module: TestModule, testServices: TestServices): List<String> {
             return testServices.nativeEnvironmentConfigurator.getRuntimeLibraryProviders(module).flatMap { it.getLibraryPaths() }
         }
+
+        fun isMainModule(module: TestModule, testModuleStructure: TestModuleStructure): Boolean {
+            // testServices might not yet have registered completed TestModuleStructure, so using the current structure instead
+            return module.isLeafModule(testModuleStructure)
+        }
     }
 
     private val nativeHome: File by lazy {
