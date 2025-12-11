@@ -48,6 +48,7 @@ build/
 .idea/misc.xml
 .idea/protoeditor.xml
 .idea/uiDesigner.xml
+.idea/copilot.data.migration.*.xml
 node_modules/
 .rpt2_cache/
 local.properties
