@@ -53,12 +53,7 @@ import org.jetbrains.kotlin.fir.types.hasResolvedType
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.psi
-import org.jetbrains.kotlin.psi.KtBlockExpression
-import org.jetbrains.kotlin.psi.KtCodeFragment
-import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtProperty
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.utils.exceptions.checkWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
@@ -949,15 +944,24 @@ private fun StateKeeperScope<FirAnonymousInitializer, FirDesignation>.preserveRe
     builder: StateKeeperBuilder,
     initializer: FirAnonymousInitializer
 ) {
-    preservePartialBodyResolveResult(builder, initializer, FirAnonymousInitializer::body) { emptyList() }
+    preservePartialBodyResolveResult(
+        builder = builder,
+        declaration = initializer,
+        bodySupplier = FirAnonymousInitializer::body,
+        parameterSupplier = { emptyList() },
+    )
 }
 
 private fun StateKeeperScope<FirFunction, FirDesignation>.preserveResolvedState(builder: StateKeeperBuilder, function: FirFunction) {
-    if (preservePartialBodyResolveResult(builder, function, FirFunction::body, FirFunction::valueParameters)) {
-        // If the function is partially analyzed, its contract (if present) is also copied, so we don't need to patch it once more.
-        return
+    val analyzedFirStatementCount = preservePartialBodyResolveResult(builder, function, FirFunction::body, FirFunction::valueParameters)
+    // If the function is partially analyzed, its contract (if present) is also copied, so we don't need to patch it once more.
+    // BUT! The function might be partially analyzed with 0 statements, in this case the contract still has to be copied
+    if (analyzedFirStatementCount == null || analyzedFirStatementCount < 1) {
+        preserveLegacyContract(function, builder)
     }
+}
 
+private fun StateKeeperScope<FirFunction, FirDesignation>.preserveLegacyContract(function: FirFunction, builder: StateKeeperBuilder) {
     val oldBody = function.body
     if (oldBody == null || oldBody is FirLazyBlock) {
         return
@@ -981,21 +985,24 @@ private fun StateKeeperScope<FirFunction, FirDesignation>.preserveResolvedState(
     }
 }
 
+/**
+ * @return the number of analyzed fir statements or null if no partial result is present
+ */
 private fun <T : FirDeclaration> StateKeeperScope<T, FirDesignation>.preservePartialBodyResolveResult(
     builder: StateKeeperBuilder,
     declaration: T,
     bodySupplier: (T) -> FirBlock?,
     parameterSupplier: (T) -> List<FirValueParameter>
-): Boolean {
+): Int? {
     val oldBody = bodySupplier(declaration)
     val oldDefaultValues = parameterSupplier(declaration).map { it.defaultValue }
 
     // No need to check parameters explicitly as they are substituted together with the body
     if (oldBody == null || oldBody is FirLazyBlock) {
-        return false
+        return null
     }
 
-    val state = declaration.partialBodyAnalysisState ?: return false
+    val state = declaration.partialBodyAnalysisState ?: return null
 
     builder.postProcess {
         val newBody = bodySupplier(declaration)
@@ -1019,7 +1026,7 @@ private fun <T : FirDeclaration> StateKeeperScope<T, FirDesignation>.preservePar
         }
     }
 
-    return true
+    return state.analyzedFirStatementCount
 }
 
 private val FirFunction.isCertainlyResolved: Boolean
