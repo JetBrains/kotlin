@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.SCRIPT_BASE_COMPILER_ARGUMENTS_PROPERTY
-import org.jetbrains.kotlin.scripting.compiler.plugin.impl.ScriptJvmCompilerIsolated
 import org.junit.jupiter.api.parallel.ResourceLock
 import org.junit.jupiter.api.parallel.Resources
 import java.io.*
@@ -148,10 +147,9 @@ class CachingTest {
                         compilationCache(cache)
                     }
                 }
-                val host = BasicJvmScriptingHost(
-                    compiler = JvmScriptCompiler(hostConfiguration, if (isRunningTestOnK2) null else ScriptJvmCompilerIsolated(hostConfiguration)),
-                    evaluator = BasicJvmScriptEvaluator()
-                )
+                val host =
+                    if (isRunningTestOnK2) BasicJvmScriptingHost(hostConfiguration)
+                    else BasicJvmScriptingHost.createLegacy(hostConfiguration)
 
                 val scriptCompilationConfiguration = ScriptCompilationConfiguration {
                     updateClasspath(standardJars +outJar)
@@ -203,13 +201,9 @@ class CachingTest {
                         compilationCache(cache)
                     }
                 }
-                val host = BasicJvmScriptingHost(
-                    compiler = JvmScriptCompiler(hostConfiguration, if (isRunningTestOnK2) null else ScriptJvmCompilerIsolated(
-                        hostConfiguration
-                    )
-                    ),
-                    evaluator = BasicJvmScriptEvaluator()
-                )
+                val host =
+                    if (isRunningTestOnK2) BasicJvmScriptingHost(hostConfiguration)
+                    else BasicJvmScriptingHost.createLegacy(hostConfiguration)
 
                 val scriptCompilationConfiguration = ScriptCompilationConfiguration {
                     updateClasspath(standardJars + outJar)
@@ -272,7 +266,9 @@ class CachingTest {
                 compilationCache(cache)
             }
         }
-        val compiler = JvmScriptCompiler(myHostConfiguration, if (isRunningTestOnK2) null else ScriptJvmCompilerIsolated(myHostConfiguration))
+        val compiler =
+            if (isRunningTestOnK2) JvmScriptCompiler(myHostConfiguration)
+            else JvmScriptCompiler.createLegacy(myHostConfiguration)
         val evaluator = BasicJvmScriptEvaluator()
         val host = BasicJvmScriptingHost(compiler = compiler, evaluator = evaluator)
 

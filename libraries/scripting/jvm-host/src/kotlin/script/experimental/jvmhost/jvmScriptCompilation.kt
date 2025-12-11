@@ -6,6 +6,7 @@
 package kotlin.script.experimental.jvmhost
 
 import org.jetbrains.kotlin.scripting.compiler.plugin.ScriptCompilerProxy
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.ScriptJvmCompilerIsolated
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.ScriptJvmK2CompilerIsolated
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.ScriptingHostConfiguration
@@ -31,5 +32,12 @@ open class JvmScriptCompiler(
                 hostConfiguration.update { it.withDefaultsFrom(this@JvmScriptCompiler.hostConfiguration) }
             }
         )
+
+    companion object {
+        fun createLegacy(baseHostConfiguration: ScriptingHostConfiguration = defaultJvmScriptingHostConfiguration): JvmScriptCompiler {
+            val hostConfiguration = baseHostConfiguration.withDefaultsFrom(defaultJvmScriptingHostConfiguration)
+            return JvmScriptCompiler(hostConfiguration, compilerProxy = ScriptJvmCompilerIsolated(hostConfiguration))
+        }
+    }
 }
 

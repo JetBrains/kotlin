@@ -36,10 +36,11 @@ class FeaturesTest {
                 dependencies(JvmDependency(destDir))
             }
 
-            JvmScriptCompiler(
-                defaultJvmScriptingHostConfiguration,
-                if (isRunningTestOnK2) null else ScriptJvmCompilerIsolated(defaultJvmScriptingHostConfiguration),
-            )(File(srcDir, "test.samwr.kts").toScriptSource(), baseConfig).let { res ->
+            val compiler =
+                if (isRunningTestOnK2) JvmScriptCompiler()
+                else JvmScriptCompiler.createLegacy()
+
+            compiler.invoke(File(srcDir, "test.samwr.kts").toScriptSource(), baseConfig).let { res ->
                 when (res) {
                     is ResultWithDiagnostics.Success -> fail("Expecting \"Unresolved reference\" error, got successful compilation")
                     is ResultWithDiagnostics.Failure ->

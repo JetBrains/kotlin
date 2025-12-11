@@ -24,6 +24,9 @@ import kotlin.script.experimental.jvm.jvm
 import kotlin.script.experimental.jvmhost.BasicJvmScriptingHost
 import kotlin.script.experimental.jvmhost.createJvmScriptDefinitionFromTemplate
 
+internal const val SCRIPT_BASE_COMPILER_ARGUMENTS_PROPERTY = "kotlin.script.base.compiler.arguments"
+internal val isRunningTestOnK2 = System.getProperty(SCRIPT_BASE_COMPILER_ARGUMENTS_PROPERTY)?.contains("-language-version 1.9") != true
+
 fun evalFile(
     scriptFile: File,
     cacheDir: File? = null,
@@ -51,9 +54,11 @@ fun evalFileWithConfigurations(
         }
     )
 
-    return BasicJvmScriptingHost().eval(
-        scriptFile.toScriptSource(), scriptDefinition.compilationConfiguration, scriptDefinition.evaluationConfiguration
-    )
+    val host =
+        if (isRunningTestOnK2) BasicJvmScriptingHost()
+        else BasicJvmScriptingHost.createLegacy()
+
+    return host.eval(scriptFile.toScriptSource(), scriptDefinition.compilationConfiguration, scriptDefinition.evaluationConfiguration)
 }
 
 

@@ -72,12 +72,14 @@ object ConflictingPropertiesConfiguration : ScriptCompilationConfiguration(
 
 class ImplicitReceiverClass(val receiverString: String)
 
-inline fun <reified T : Any> evalString(
+internal inline fun <reified T : Any> evalString(
     source: String,
     noinline configure: ScriptEvaluationConfiguration.Builder.() -> Unit
 ): ResultWithDiagnostics<EvaluationResult> {
     val actualConfiguration = createJvmCompilationConfigurationFromTemplate<T>()
-    return BasicJvmScriptingHost()
-        .eval(source.toScriptSource(), actualConfiguration, ScriptEvaluationConfiguration(configure))
+    val host =
+        if (isRunningTestOnK2) BasicJvmScriptingHost()
+        else BasicJvmScriptingHost.createLegacy()
+    return host.eval(source.toScriptSource(), actualConfiguration, ScriptEvaluationConfiguration(configure))
 }
 

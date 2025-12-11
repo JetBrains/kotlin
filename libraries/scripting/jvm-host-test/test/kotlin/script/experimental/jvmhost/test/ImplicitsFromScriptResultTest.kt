@@ -6,7 +6,6 @@
 package kotlin.script.experimental.jvmhost.test
 
 import kotlinx.coroutines.runBlocking
-import org.jetbrains.kotlin.scripting.compiler.plugin.impl.ScriptJvmCompilerIsolated
 import java.io.BufferedOutputStream
 import java.io.FileOutputStream
 import java.nio.file.Files
@@ -110,10 +109,8 @@ class CompilerHost {
     private val evaluationConfiguration = ScriptEvaluationConfiguration()
 
     private val compiler =
-        JvmScriptCompiler(
-            myHostConfiguration,
-            if (isRunningTestOnK2) null else ScriptJvmCompilerIsolated(myHostConfiguration),
-        )
+        if (isRunningTestOnK2) JvmScriptCompiler(myHostConfiguration)
+        else JvmScriptCompiler.createLegacy(myHostConfiguration)
 
     private fun getImplicitsClasses(): List<KClass<*>> = implicits
 
