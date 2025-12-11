@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
 /**
@@ -163,6 +164,23 @@ internal fun KaFirSession.hasDeclarationStatusCompilerPlugin(declaration: KtDecl
     val declarationSiteModule = getModule(declaration)
     val declarationSiteSession = resolutionFacade.getSessionFor(declarationSiteModule)
     return declarationSiteSession.extensionService.statusTransformerExtensions.isNotEmpty()
+}
+
+/**
+ * Executes [action] if the declaration has no compiler plugin that may transform its status.
+ *
+ * @see hasDeclarationStatusCompilerPlugin
+ */
+@OptIn(ExperimentalContracts::class)
+context(symbol: KaFirSymbol<*>)
+internal inline fun <T> KtDeclaration.ifNoStatusCompilerPluginPresent(action: () -> T): T? {
+    contract { callsInPlace(action, InvocationKind.AT_MOST_ONCE) }
+
+    return if (symbol.analysisSession.hasDeclarationStatusCompilerPlugin(this)) {
+        null
+    } else {
+        action()
+    }
 }
 
 internal fun KaFirKtBasedSymbol<KtClassOrObject, FirClassSymbol<*>>.createSuperTypes(): List<KaType> {
