@@ -1622,6 +1622,12 @@ public class OutOfContentRootGetOrBuildFirTestGenerated extends AbstractOutOfCon
     }
 
     @Test
+    @TestMetadata("lambdaFromContract.kt")
+    public void testLambdaFromContract() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/partialBodyAnalysis/lambdaFromContract.kt");
+    }
+
+    @Test
     @TestMetadata("logicalOperators.kt")
     public void testLogicalOperators() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFir/partialBodyAnalysis/logicalOperators.kt");
