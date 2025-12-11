@@ -55664,6 +55664,12 @@ public class LLBlackBoxTestGenerated extends AbstractLLBlackBoxTest {
         runTest("compiler/testData/codegen/box/reflection/callBy/topLevelsWithDefaultValuesAndContextParams.kt");
       }
 
+      @Test
+      @TestMetadata("typeParameterWithPrimitiveUpperBound.kt")
+      public void testTypeParameterWithPrimitiveUpperBound() {
+        runTest("compiler/testData/codegen/box/reflection/callBy/typeParameterWithPrimitiveUpperBound.kt");
+      }
+
       @Nested
       @TestMetadata("compiler/testData/codegen/box/reflection/callBy/inlineClasses")
       @TestDataPath("$PROJECT_ROOT")
