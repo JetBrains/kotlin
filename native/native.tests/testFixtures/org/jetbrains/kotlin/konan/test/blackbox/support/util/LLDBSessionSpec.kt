@@ -25,7 +25,7 @@ abstract class LLDBSessionSpec {
         this += "-o"
         this += "command script import ${prettyPrinters.absolutePath}"
         this += "-o"
-        this += "command script import ${File("native/native.tests/testFixtures/scripts/konan_lldb_test_helper.py").absolutePath}"
+        this += "command script import ${File("native/native.tests/scripts/konan_lldb_test_helper.py").absolutePath}"
     }
 
     abstract fun checkLLDBOutput(output: String, nativeTargets: KotlinNativeTargets): Boolean
@@ -206,7 +206,8 @@ internal class SteppingLLDBSessionSpec(
             }
 
             // Function names in K/N are mangled in a quite convoluted way, so here we try to extract
-            // the original, simple function name from it.
+            // the original, simple function name from it. There are a few naming patters, those regexes
+            // try to match one from the most to the least specific.
             val funNameMatch = KFunNameStaticSuspendRe.matchAt(funRawName, 0)
                 ?: KFunNameInternalRe.matchAt(funRawName, 0)
                 ?: KFunNameRegularRe.matchAt(funRawName, 0)

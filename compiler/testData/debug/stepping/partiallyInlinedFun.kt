@@ -45,6 +45,27 @@ fun box(): String {
 // InlineFunCallSite.kt:12 render
 // test.kt:30 box
 
+// EXPECTATIONS NATIVE
+// test.kt:30 box
+// InlineFunCallSite.kt:10 <init>
+// InlineFunCallSite.kt:17 <init>
+// test.kt:30 box
+// InlineFunCallSite.kt:11 render
+// InlineFunCallSite.kt:12 render
+// InlineFunDeclaration.kt:21 render
+// scalars.kt:6 render
+// InlineFunCallSite.kt:13 render
+// InlineFunCallSite.kt:13 render
+// InlineFunCallSite.kt:14 render
+// InlineFunCallSite.kt:13 render
+// InlineFunCallSite.kt:13 render
+// InlineFunCallSite.kt:14 render
+// InlineFunCallSite.kt:15 render
+// InlineFunCallSite.kt:15 render
+// InlineFunCallSite.kt:16 render
+// test.kt:30 box
+// test.kt:31 box
+
 // EXPECTATIONS JS_IR
 // test.kt:30 box
 // InlineFunCallSite.kt:10 <init>
