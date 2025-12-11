@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.scripting.compiler.plugin.impl
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.Disposer
-import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.LegacyK2CliPipeline
 import org.jetbrains.kotlin.cli.common.checkKotlinPackageUsageForLightTree
@@ -16,77 +15,31 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.ModuleCompilerEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.convertAnalyzedFirToIr
 import org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.generateCodeFromIr
-import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.config.jvmTarget
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
-import org.jetbrains.kotlin.fir.*
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirComposedDiagnosticRendererFactory
-import org.jetbrains.kotlin.fir.caches.FirCachesFactory
-import org.jetbrains.kotlin.fir.caches.FirThreadUnsafeCachesFactory
-import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.SessionConfiguration
+import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
+import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.declarations.FirScript
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
-import org.jetbrains.kotlin.fir.expressions.FirCollectionLiteral
-import org.jetbrains.kotlin.fir.expressions.FirErrorExpression
-import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.FirExpressionEvaluator
-import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
-import org.jetbrains.kotlin.fir.expressions.FirVarargArgumentsExpression
-import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
-import org.jetbrains.kotlin.fir.extensions.*
-import org.jetbrains.kotlin.fir.java.FirSyntheticPropertiesStorage
 import org.jetbrains.kotlin.fir.lightTree.LightTree2Fir
+import org.jetbrains.kotlin.fir.packageFqName
 import org.jetbrains.kotlin.fir.pipeline.AllModulesFrontendOutput
 import org.jetbrains.kotlin.fir.pipeline.resolveAndCheckFir
 import org.jetbrains.kotlin.fir.pipeline.runPlatformCheckers
-import org.jetbrains.kotlin.fir.resolve.FirJvmDefaultImportsProvider
-import org.jetbrains.kotlin.fir.resolve.FirQualifierResolver
-import org.jetbrains.kotlin.fir.resolve.FirTypeResolver
-import org.jetbrains.kotlin.fir.resolve.ResolutionMode
-import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.inference.InferenceComponents
-import org.jetbrains.kotlin.fir.resolve.providers.*
-import org.jetbrains.kotlin.fir.resolve.providers.impl.*
-import org.jetbrains.kotlin.fir.resolve.transformers.FirDummyCompilerLazyDeclarationResolver
-import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformerDispatcher
-import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirDeclarationsResolveTransformer
-import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirExpressionsResolveTransformer
-import org.jetbrains.kotlin.fir.scopes.FirDefaultImportsProviderHolder
-import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
-import org.jetbrains.kotlin.fir.scopes.FirLookupDefaultStarImportsInSourcesSettingHolder
-import org.jetbrains.kotlin.fir.scopes.FirOverrideChecker
-import org.jetbrains.kotlin.fir.scopes.FirOverrideService
-import org.jetbrains.kotlin.fir.scopes.createImportingScopes
-import org.jetbrains.kotlin.fir.scopes.impl.FirDeclaredMemberScopeProvider
-import org.jetbrains.kotlin.fir.scopes.impl.FirIntersectionOverrideStorage
-import org.jetbrains.kotlin.fir.scopes.impl.FirStandardOverrideChecker
-import org.jetbrains.kotlin.fir.scopes.impl.FirSubstitutionOverrideStorage
+import org.jetbrains.kotlin.fir.resolve.providers.firProvider
+import org.jetbrains.kotlin.fir.resolve.providers.impl.FirProviderImpl
 import org.jetbrains.kotlin.fir.scopes.kotlinScopeProvider
-import org.jetbrains.kotlin.fir.session.FirJsSessionFactory.flattenAndFilterOwnProviders
 import org.jetbrains.kotlin.fir.session.FirJvmSessionFactory
-import org.jetbrains.kotlin.fir.session.FirSessionConfigurator
-import org.jetbrains.kotlin.fir.session.SourcesToPathsMapper
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
-import org.jetbrains.kotlin.fir.session.registerModuleData
 import org.jetbrains.kotlin.fir.session.sourcesToPathsMapper
-import org.jetbrains.kotlin.fir.session.registerCommonComponents
-import org.jetbrains.kotlin.fir.session.registerJavaComponents
-import org.jetbrains.kotlin.fir.symbols.FirLazyDeclarationResolver
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.FirFunctionTypeKindService
-import org.jetbrains.kotlin.fir.types.FirFunctionTypeKindServiceImpl
-import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.FirUserTypeRef
-import org.jetbrains.kotlin.fir.types.TypeComponents
-import org.jetbrains.kotlin.fir.types.classId
-import org.jetbrains.kotlin.fir.types.type
 import org.jetbrains.kotlin.modules.TargetId
-import org.jetbrains.kotlin.name.*
-import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
-import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.NameUtils
 import org.jetbrains.kotlin.scripting.compiler.plugin.ScriptCompilerProxy
 import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.getOrStoreRefinedCompilationConfiguration
 import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.getRefinedOrBaseCompilationConfiguration
@@ -96,7 +49,6 @@ import org.jetbrains.kotlin.scripting.compiler.plugin.fir.FirScriptCompilationCo
 import org.jetbrains.kotlin.scripting.resolve.resolvedImportScripts
 import org.jetbrains.kotlin.toSourceLinesMapping
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
-import org.jetbrains.kotlin.utils.tryCreateCallableMappingFromNamedArgs
 import kotlin.reflect.KClass
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.*
@@ -212,11 +164,9 @@ class ScriptJvmK2CompilerImpl(
         scriptRefinedCompilationConfiguration: ScriptCompilationConfiguration,
     ): ResultWithDiagnostics<CompiledScript> {
 
-        val project = state.projectEnvironment.project
         val compilerConfiguration = state.compilerContext.environment.configuration.copy().apply {
             jvmTarget = selectJvmTarget(scriptRefinedCompilationConfiguration, reportingCtx.messageCollector)
         }
-
 
         state.hostConfiguration[ScriptingHostConfiguration.scriptRefinedCompilationConfigurationsCache]!!.storeRefinedCompilationConfiguration(
             script,
@@ -336,26 +286,7 @@ class ScriptJvmK2CompilerImpl(
         // separate reporter for refinement to avoid double raw fir warnings reporting
         val diagnosticsCollector = DiagnosticReporterFactory.createPendingReporter()
 
-//        val dummySession =
-//            createDummySessionForScriptRefinement(
-//                state.baseLibrarySession, script, acceptedAnnotations, state.extensionRegistrars, state.hostConfiguration,
-//                state.projectEnvironment.getJavaModuleResolver()
-//            )
-        val moduleData = state.moduleDataProvider.addNewScriptModuleData(Name.special("<raw-script-${script.name ?: "main"}>"))
-
-        val dummySession = FirJvmSessionFactory.createSourceSession(
-            moduleData,
-            AbstractProjectFileSearchScope.EMPTY,
-            createIncrementalCompilationSymbolProviders = { null },
-            state.extensionRegistrars,
-            state.compilerContext.environment.configuration,
-            context = state.sessionFactoryContext,
-            needRegisterJavaElementFinder = true,
-            isForLeafHmppModule = false,
-            init = {},
-        ).apply {
-            register(FirScriptCompilationComponent::class, FirScriptCompilationComponent(state.hostConfiguration))
-        }
+        val dummySession = state.getOrCreateSessionForAnnotationResolution()
 
         val firFile = script.convertToFir(dummySession, diagnosticsCollector)
         if (diagnosticsCollector.hasErrors)
@@ -419,222 +350,21 @@ fun createK2ScriptCompilerWithLightTree(
     }
 }
 
-@OptIn(SessionConfiguration::class, PrivateSessionConstructor::class)
-private fun createDummySessionForScriptRefinement(
-    baseLibrarySession: FirSession,
-    script: SourceCode,
-    acceptedAnnotations: List<KClass<Annotation>>,
-    extensionRegistrars: List<FirExtensionRegistrar>,
-    hostConfiguration: ScriptingHostConfiguration,
-    javaModuleResolver: JavaModuleResolver
-): FirSession {
 
-    val annotationsComponent = object : FirAnnotationsPlatformSpecificSupportComponent() {
-        override val requiredAnnotationsWithArguments: Set<ClassId> = acceptedAnnotations.mapTo(mutableSetOf()) {
-            ClassId.topLevel(FqName.fromSegments(it.qualifiedName!!.split('.')))
-        }
-
-        override val requiredAnnotations: Set<ClassId> = requiredAnnotationsWithArguments
-
-        override val volatileAnnotations: Set<ClassId> = setOf(StandardClassIds.Annotations.Volatile)
-
-        override val deprecationAnnotationsWithOverridesPropagation: Map<ClassId, Boolean> = mapOf(
-            StandardClassIds.Annotations.Deprecated to true,
-            StandardClassIds.Annotations.SinceKotlin to true,
-        )
-
-        override fun symbolContainsRepeatableAnnotation(symbol: FirClassLikeSymbol<*>, session: FirSession): Boolean {
-            return symbol.hasAnnotationWithClassId(StandardClassIds.Annotations.Repeatable, session)
-        }
-
-        override fun extractBackingFieldAnnotationsFromProperty(
-            property: FirProperty,
-            session: FirSession,
-            propertyAnnotations: List<FirAnnotation>,
-            backingFieldAnnotations: List<FirAnnotation>,
-        ): AnnotationsPosition? {
-            return null
-        }
-    }
-
-    return object : FirSession(Kind.Source) {}.apply {
-        register(FirCachesFactory::class, FirThreadUnsafeCachesFactory)
-        val moduleData = FirSourceModuleData(
-            Name.identifier("<${script.name}stub module for script refinement>"),
-            dependencies = emptyList(),
-            dependsOnDependencies = emptyList(),
-            friendDependencies = emptyList(),
-            platform = JvmPlatforms.unspecifiedJvmPlatform,
-        )
-        registerModuleData(moduleData)
-        moduleData.bindSession(this)
-        register(
-            FirLanguageSettingsComponent::class, FirLanguageSettingsComponent(
-                LanguageVersionSettingsImpl.DEFAULT,
-                isMetadataCompilation = false
-            )
-        )
-        registerCommonComponents(languageVersionSettings, false)
-        registerJavaComponents(javaModuleResolver)
-        register(TypeComponents::class, TypeComponents(this))
-        register(InferenceComponents::class, InferenceComponents(this))
-        register(FirExtensionService::class, FirExtensionService(this))
-        register(FirKotlinScopeProvider::class, FirKotlinScopeProvider())
-        register(FirProvider::class, FirProviderImpl(this, kotlinScopeProvider))
-        register(SourcesToPathsMapper::class, SourcesToPathsMapper())
-        register(FirRegisteredPluginAnnotations::class, FirRegisteredPluginAnnotationsImpl(this))
-        register(FirPredicateBasedProvider::class, FirEmptyPredicateBasedProvider)
-        register(FirHiddenDeprecationProvider::class, FirHiddenDeprecationProvider(this))
-        register(FirLazyDeclarationResolver::class, FirDummyCompilerLazyDeclarationResolver)
-        register(FirDefaultImportsProviderHolder.of(FirJvmDefaultImportsProvider))
-        register(FirQualifierResolver::class, FirQualifierResolverImpl(this))
-        register(FirTypeResolver::class, FirTypeResolverImpl(this))
-        register(FirFunctionTypeKindService::class, FirFunctionTypeKindServiceImpl(this))
-        register(FirDeclaredMemberScopeProvider::class, FirDeclaredMemberScopeProvider(this))
-        register(FirOverrideChecker::class, FirStandardOverrideChecker(this))
-        register(FirSubstitutionOverrideStorage::class, FirSubstitutionOverrideStorage(this))
-        register(FirIntersectionOverrideStorage::class, FirIntersectionOverrideStorage(this))
-        register(FirOverrideService::class, FirOverrideService(this))
-        register(FirComposedDiagnosticRendererFactory::class, FirComposedDiagnosticRendererFactory())
-        register(FirSyntheticPropertiesStorage::class, FirSyntheticPropertiesStorage(this))
-
-        register(
-            FirLookupDefaultStarImportsInSourcesSettingHolder::class,
-            FirLookupDefaultStarImportsInSourcesSettingHolder.createDefault(languageVersionSettings)
-        )
-
-        register(FirAnnotationsPlatformSpecificSupportComponent::class, annotationsComponent)
-
-        register(FirBuiltinSyntheticFunctionInterfaceProvider::class, baseLibrarySession.syntheticFunctionInterfacesSymbolProvider)
-
-        val providersWithShared = baseLibrarySession.symbolProvider.flattenAndFilterOwnProviders()
-
-        register(FirSymbolProvider::class, FirCachingCompositeSymbolProvider(this, providersWithShared))
-
-        register(DEPENDENCIES_SYMBOL_PROVIDER_QUALIFIED_KEY, FirEmptySymbolProvider(this))
-
-        FirSessionConfigurator(this).apply {
-            for (extensionRegistrar in extensionRegistrars) {
-                registerExtensions(extensionRegistrar.configure())
-            }
-        }.configure()
-
+@SessionConfiguration
+private fun K2ScriptingCompilerEnvironmentInternal.getOrCreateSessionForAnnotationResolution(): FirSession =
+    dummySessionForAnnotationResolution ?: (FirJvmSessionFactory.createSourceSession(
+        moduleDataProvider.addNewScriptModuleData(Name.special("<raw-script>")),
+        AbstractProjectFileSearchScope.EMPTY,
+        createIncrementalCompilationSymbolProviders = { null },
+        extensionRegistrars,
+        compilerContext.environment.configuration,
+        context = sessionFactoryContext,
+        needRegisterJavaElementFinder = true,
+        isForLeafHmppModule = false,
+        init = {},
+    ).apply {
         register(FirScriptCompilationComponent::class, FirScriptCompilationComponent(hostConfiguration))
-    }
-}
+        dummySessionForAnnotationResolution = this
+    })
 
-
-private fun FirAnnotationCall.toAnnotationObjectIfMatches(
-    expectedAnnClasses: List<KClass<out Annotation>>,
-    session: FirSession,
-    firFile: FirFile
-): ResultWithDiagnostics<Annotation>? {
-    val shortName = when (val typeRef = annotationTypeRef) {
-        is FirResolvedTypeRef -> typeRef.coneType.classId?.shortClassName ?: return null
-        is FirUserTypeRef -> typeRef.qualifier.last().name
-        else -> return null
-    }.asString()
-    val expectedAnnClass = expectedAnnClasses.firstOrNull { it.simpleName == shortName } ?: return null
-    val ctor = expectedAnnClass.constructors.firstOrNull() ?: return null
-
-    val evalRes = evaluateArguments(session, firFile).orEmpty()
-
-    val errors = mutableListOf<ScriptDiagnostic>()
-
-    fun ConeKotlinType?.isString() = this?.classId?.asFqNameString() == StandardNames.FqNames.string.asString()
-    fun ConeKotlinType?.isArray() = this?.classId?.asFqNameString() == StandardNames.FqNames.array.asString()
-
-    fun FirElement.reportError(message: String) {
-        errors.add(message.asErrorDiagnostics(path = firFile.name, location = getLocation()))
-    }
-
-    @OptIn(UnresolvedExpressionTypeAccess::class)
-    fun FirElement.toArgument(argName: String): Any? {
-
-        fun FirExpression.convertAsCollection(arguments: List<FirExpression>): Any? {
-            val collectionType = coneTypeOrNull
-            if (!collectionType.isArray()) {
-                reportError("Only arrays are supported as collections in annotation arguments, but $collectionType is passed")
-                return null
-            }
-            val elementType = collectionType?.typeArguments?.first()?.type
-            return when {
-                elementType.isString() -> Array(arguments.size) { arguments[it].toArgument("element of $argName") as? String }
-                else -> {
-                    reportError("Only string are supported now as collection element types in annotation arguments, but $elementType is passed")
-                    null
-                }
-            }
-        }
-
-        return when (this) {
-            is FirErrorExpression -> {
-                reportError("Error resolving annotation argument: ${this.diagnostic.reason}")
-                null
-            }
-            // TODO: class refs?
-            is FirLiteralExpression -> value
-            is FirVarargArgumentsExpression -> convertAsCollection(arguments)
-            is FirCollectionLiteral -> convertAsCollection(argumentList.arguments)
-            else -> {
-                reportError("Unsupported annotation argument type: ${this::class.simpleName}")
-                null
-            }
-        }
-    }
-
-    val mapping =
-        tryCreateCallableMappingFromNamedArgs(
-            ctor,
-            evalRes.map { (name, result) ->
-                val argName = name.asString()
-                when (result) {
-                    is FirEvaluatorResult.Evaluated -> argName to result.result.toArgument(argName)
-                    else -> {
-                        reportError("Error while evaluating annotation arguments: ${result::class.simpleName}")
-                        null to null
-                    }
-                }
-            }
-        )
-    if (mapping == null) {
-        reportError("Unable to map annotation arguments")
-    }
-    return when {
-        errors.isNotEmpty() -> makeFailureResult(errors)
-        else -> try {
-            ctor.callBy(mapping!!).asSuccess()
-        } catch (e: Error) {
-            makeFailureResult(e.asDiagnostics())
-        }
-    }
-}
-
-private fun FirAnnotationCall.evaluateArguments(session: FirSession, firFile: FirFile): Map<Name, FirEvaluatorResult>? {
-    val scopeSession = ScopeSession()
-    createImportingScopes(firFile, session, scopeSession)
-
-    val dispatcher = object : FirAbstractBodyResolveTransformerDispatcher(
-        session,
-        FirResolvePhase.COMPILER_REQUIRED_ANNOTATIONS,
-        scopeSession = scopeSession,
-        implicitTypeOnly = false,
-        expandTypeAliases = false,
-        outerBodyResolveContext = null
-    ) {
-        override val expressionsTransformer: FirExpressionsResolveTransformer = FirExpressionsResolveTransformer(this)
-        override val declarationsTransformer: FirDeclarationsResolveTransformer? = null
-    }
-
-    val transformer = dispatcher.expressionsTransformer
-    val resolvedAnnotation =
-        transformer.context.withFile(firFile, transformer.components) {
-            withFileAnalysisExceptionWrapping(firFile) {
-                transformer.transformAnnotationCall(this, ResolutionMode.ContextDependent) as FirAnnotationCall
-            }
-        }
-    return FirExpressionEvaluator.evaluateAnnotationArguments(resolvedAnnotation, session)
-}
-
-// TODO: implement. Probably need to change SourceCode.Position to accept offsets and then remap them later on reporting
-private fun FirElement.getLocation(): SourceCode.Location? = null

@@ -48,10 +48,11 @@ interface K2ScriptingCompilerEnvironment {
     val messageCollector: ScriptDiagnosticsMessageCollector
     val extensionRegistrars: List<FirExtensionRegistrar>
     val sharedLibrarySession: FirSession
-    val baseLibrarySession: FirSession
+    val dummySessionForAnnotationResolution: FirSession?
 }
 
 internal interface K2ScriptingCompilerEnvironmentInternal : K2ScriptingCompilerEnvironment {
+    override var dummySessionForAnnotationResolution: FirSession?
     val predefinedJavaComponents: FirSharableJavaComponents
     val compilerContext: SharedScriptCompilationContext
     val packagePartProvider: PackagePartProvider
@@ -69,7 +70,7 @@ internal open class K2ScriptingCompilerEnvironmentImpl(
     override val packagePartProvider: PackagePartProvider,
     override val extensionRegistrars: List<FirExtensionRegistrar>,
     override val sharedLibrarySession: FirSession,
-    override val baseLibrarySession: FirSession,
+    override var dummySessionForAnnotationResolution: FirSession?,
     override val sessionFactoryContext: FirJvmSessionFactory.Context
 ) : K2ScriptingCompilerEnvironmentInternal
 
@@ -83,7 +84,7 @@ open class ScriptingModuleDataProvider(private val baseName: String, baseLibrary
     protected val moduleDataHistory: MutableList<FirModuleData> = mutableListOf()
 
     init {
-        baseLibraryPaths.associateTo(pathToModuleData) { it to baseDependenciesModuleData }
+        baseLibraryPaths.associateWithTo(pathToModuleData) { baseDependenciesModuleData }
         moduleDataHistory.add(baseDependenciesModuleData)
     }
 
@@ -109,7 +110,7 @@ open class ScriptingModuleDataProvider(private val baseName: String, baseLibrary
         val newLibraryPaths = libraryPaths.filter { it !in pathToModuleData }
         if (newLibraryPaths.isEmpty()) return null to emptyList()
         val newDependenciesModuleData = makeLibraryModuleData(Name.special("<$baseName-lib-${moduleDataHistory.size + 1}>"))
-        newLibraryPaths.associateTo(pathToModuleData) { it to newDependenciesModuleData }
+        newLibraryPaths.associateWithTo(pathToModuleData) { newDependenciesModuleData }
         moduleDataHistory.add(newDependenciesModuleData)
         return newDependenciesModuleData to newLibraryPaths
     }
@@ -131,7 +132,8 @@ fun createCompilerState(
     baseScriptCompilationConfiguration: ScriptCompilationConfiguration,
     hostConfiguration: ScriptingHostConfiguration,
     configureCompiler: CompilerConfiguration.() -> Unit = {},
-    createModuleDataProvider: (List<Path>) -> ScriptingModuleDataProvider = { ScriptingModuleDataProvider(moduleName.asStringStripSpecialMarkers(), it) },
+    createModuleDataProvider:
+        (List<Path>) -> ScriptingModuleDataProvider = { ScriptingModuleDataProvider(moduleName.asStringStripSpecialMarkers(), it) },
 ): K2ScriptingCompilerEnvironment {
 
     val compilerContext = createIsolatedCompilationContext(
@@ -195,7 +197,7 @@ fun createCompilerState(
         context = sessionFactoryContext,
     )
 
-    val baseLibrarySession = FirJvmSessionFactory.createLibrarySession(
+    FirJvmSessionFactory.createLibrarySession(
         sharedLibrarySession,
         moduleDataProvider = moduleDataProvider,
         extensionRegistrars = extensionRegistrars,
@@ -214,7 +216,7 @@ fun createCompilerState(
         packagePartProvider,
         extensionRegistrars,
         sharedLibrarySession,
-        baseLibrarySession,
+        dummySessionForAnnotationResolution = null,
         sessionFactoryContext,
     )
 }
