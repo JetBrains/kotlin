@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.util.capitalizeDecapitalize.decapitalizeAsciiOnly
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.io.File
 
-interface KlibBasedEnvironmentConfiguratorUtils {
+interface KlibBasedEnvironmentConfigurator {
     fun getKlibArtifactSimpleName(testServices: TestServices, moduleName: String): String {
         val testName = testServices.testInfo.methodName.removePrefix("test").decapitalizeAsciiOnly()
         val outputFileSuffix = if (moduleName == ModuleStructureExtractor.DEFAULT_MODULE_NAME) "" else "-$moduleName"
@@ -76,6 +76,6 @@ interface KlibBasedEnvironmentConfiguratorUtils {
     }
 }
 
-val TestServices.klibEnvironmentConfigurator: KlibBasedEnvironmentConfiguratorUtils
-    get() = environmentConfigurators.firstIsInstanceOrNull<KlibBasedEnvironmentConfiguratorUtils>()
-        ?: assertions.fail { "No registered ${KlibBasedEnvironmentConfiguratorUtils::class.java.simpleName}" }
+val TestServices.klibEnvironmentConfigurator: KlibBasedEnvironmentConfigurator
+    get() = environmentConfigurators.firstIsInstanceOrNull<KlibBasedEnvironmentConfigurator>()
+        ?: error("No registered ${KlibBasedEnvironmentConfigurator::class.java.simpleName}")
