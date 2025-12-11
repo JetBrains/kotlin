@@ -169,7 +169,7 @@ class FirSyntheticCallGenerator(
             elvisExpression,
             elvisFunction,
             argumentList,
-            SyntheticCallableId.ELVIS_NOT_NULL.callableName,
+            SyntheticCallableId.ELVIS.callableName,
             context = context,
             resolutionMode = resolutionMode,
         )
@@ -691,12 +691,12 @@ class FirSyntheticCallGenerator(
 
     private fun generateSyntheticElvisFunction(): FirNamedFunction {
         // Synthetic function signature:
-        //   fun <K> checkNotNull(x: K?, y: K): @Exact K
+        //   fun <K> elvis(x: K?, y: K): @Exact K
         //
         // Note: The upper bound of `K` cannot be `Any` because of the following case:
         //   fun <X> test(a: X, b: X) = a ?: b
         // `X` is not a subtype of `Any` and hence cannot satisfy `K` if it had an upper bound of `Any`.
-        val functionSymbol = FirSyntheticFunctionSymbol(SyntheticCallableId.ELVIS_NOT_NULL)
+        val functionSymbol = FirSyntheticFunctionSymbol(SyntheticCallableId.ELVIS)
         val (typeParameter, rightArgumentType) = generateSyntheticSelectTypeParameter(functionSymbol)
 
         val returnType = rightArgumentType
@@ -710,7 +710,7 @@ class FirSyntheticCallGenerator(
 
         return generateMemberFunction(
             functionSymbol,
-            SyntheticCallableId.ELVIS_NOT_NULL.callableName,
+            SyntheticCallableId.ELVIS.callableName,
             typeArgument.typeRef
         ).apply {
             typeParameters += typeParameter

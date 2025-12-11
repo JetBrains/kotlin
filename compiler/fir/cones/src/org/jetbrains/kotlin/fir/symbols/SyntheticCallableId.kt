@@ -26,7 +26,7 @@ object SyntheticCallableId {
         Name.identifier("CHECK_NOT_NULL_CALL")
     )
 
-    val ELVIS_NOT_NULL = CallableId(
+    val ELVIS = CallableId(
         syntheticPackageName,
         Name.identifier("ELVIS_CALL")
     )
