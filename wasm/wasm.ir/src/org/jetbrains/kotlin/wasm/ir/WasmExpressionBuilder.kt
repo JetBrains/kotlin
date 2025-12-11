@@ -326,13 +326,13 @@ class WasmExpressionBuilder(val expression: MutableList<WasmInstr>, val skipComm
         buildInstr(WasmOp.CONT_NEW, location, WasmImmediate.TypeIdx(contType))
     }
 
-//    fun buildContBind(ct1: WasmHeapType, ct2: WasmHeapType, location: SourceLocation) {
-//        buildInstr(
-//            WasmOp.CONT_BIND, location,
-//            WasmImmediate.HeapType(WasmRefType(ct1)),
-//            WasmImmediate.HeapType(WasmRefType(ct2))
-//        )
-//    }
+    fun buildContBind(contType: WasmSymbol<WasmTypeDeclaration>, bindContType: WasmSymbol<WasmTypeDeclaration>, location: SourceLocation) {
+        buildInstr(
+            WasmOp.CONT_BIND, location,
+            WasmImmediate.TypeIdx(contType),
+            WasmImmediate.TypeIdx(bindContType),
+        )
+    }
 
     fun buildSuspend(tag: WasmSymbol<Int>, location: SourceLocation) {
         buildInstr(WasmOp.SUSPEND, location, WasmImmediate.TagIdx(tag))

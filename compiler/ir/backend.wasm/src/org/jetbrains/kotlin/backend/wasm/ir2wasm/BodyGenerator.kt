@@ -1224,75 +1224,21 @@ class BodyGenerator(
                 body.buildCall(wasmFileCodegenContext.referenceFunction(wasmSymbols.buildResumeIntrinsicSuspendResult), location)
             }
 
-            in wasmSymbols.startCoroutineUninterceptedOrReturnIntrinsicsStub -> {
-                val intrinsicIndex = wasmSymbols.startCoroutineUninterceptedOrReturnIntrinsicsStub.indexOfFirst { it == function.symbol }
+            in wasmSymbols.suspendFunctionToContref -> {
+                val intrinsicIndex = wasmSymbols.suspendFunctionToContref.indexOfFirst { it == function.symbol }
                 val arity = intrinsicIndex + 2
-                val suspendFunctionClassType = function.parameters[intrinsicIndex].type
+                val suspendFunctionClassType = function.parameters[0].type
                 val suspendFunctionInvoke = suspendFunctionClassType.classOrFail.functions.singleOrNull {
                     it.owner.name.asString() == "invoke"
                 } ?: error("No `invoke` function for suspend function type\n${suspendFunctionClassType.dumpKotlinLike()}")
                 val contType = wasmFileCodegenContext.referenceContType(arity)
-                val contVarType = WasmRefNullType(WasmHeapType.Type(contType))
-                val contLocalVarIdx = functionContext.defineVariable(contVarType, "continuation")
-                val contLocalVar = functionContext.referenceLocal(contLocalVarIdx)
-                val kotlinAny = wasmFileCodegenContext.referenceGcType(irBuiltIns.anyClass)
-                val kotlinAnyRefType = WasmRefNullType(WasmHeapType.Type(kotlinAny))
-                val kotlinThrowable = wasmFileCodegenContext.referenceGcType(irBuiltIns.throwableClass)
-                val kotlinThrowableRefType = WasmRefNullType(WasmHeapType.Type(kotlinThrowable))
-                val completionVarIdx = functionContext.defineVariable(kotlinAnyRefType, "completion")
-                val completionLocalVar = functionContext.referenceLocal(completionVarIdx)
-                val zeroArgContType = WasmHeapType.Type(wasmFileCodegenContext.referenceContType(1))
-                body.buildSetLocal(completionLocalVar, location)
+                val bindContType = wasmFileCodegenContext.referenceContType(1)
 
+                body.buildGetLocal(functionContext.referenceLocal(0), location)
                 castAnyToInvokable(suspendFunctionInvoke.owner, suspendFunctionClassType.classOrFail.owner, location)
-
                 body.buildContNew(contType, location)
-                body.buildSetLocal(contLocalVar, location)
-
-                val blockType = WasmFunctionType(emptyList(), listOf(kotlinAnyRefType, WasmRefNullType(zeroArgContType)))
-                wasmFileCodegenContext.defineContBlockType(blockType)
-                val blockTypeSymbol = wasmFileCodegenContext.referenceContBlockType(blockType)
-                body.buildFunctionTypedBlock("on_suspend", blockTypeSymbol) { idx ->
-                    body.buildBlock(null, kotlinAnyRefType) { topLevelBlock ->
-                        body.buildBlock(null, rawExceptionType) { toCatch ->
-                            body.buildTryTable(body.createNewCatch(exceptionTagId, toCatch)) {
-                                for (i in 0 until arity) {
-                                    body.buildGetLocal(functionContext.referenceLocal(i), location)
-                                }
-                                body.buildGetLocal(contLocalVar, location)
-                                val contHandle = body.createNewContHandle(contTagId, idx)
-
-                                body.buildResume(WasmHeapType.Type(contType), contHandle, location)
-                                body.buildBr(
-                                    topLevelBlock,
-                                    SourceLocation.NoLocation("Branch to success level after finish try block without any exception")
-                                )
-                            }
-
-                            body.buildUnreachableForVerifier()
-                        }
-                        val exceptionVarIdx = functionContext.defineVariable(kotlinThrowableRefType, "exception")
-                        val exceptionVar = functionContext.referenceLocal(exceptionVarIdx)
-                        body.buildSetLocal(exceptionVar, location)
-
-                        body.buildGetLocal(completionLocalVar, location)
-                        body.buildGetLocal(exceptionVar, location)
-                        body.buildCall(wasmFileCodegenContext.referenceFunction(wasmSymbols.resumeCompletionWithException), location)
-
-                        body.buildGetLocal(exceptionVar, location)
-                        body.buildThrow(exceptionTagId, location)
-                    }
-                    val resultVarIdx = functionContext.defineVariable(kotlinAnyRefType, "result")
-                    val resultVar = functionContext.referenceLocal(resultVarIdx)
-                    body.buildSetLocal(resultVar, location)
-
-                    body.buildGetLocal(completionLocalVar, location)
-                    body.buildGetLocal(resultVar, location)
-                    body.buildCall(wasmFileCodegenContext.referenceFunction(wasmSymbols.resumeCompletionWithValue), location)
-                    body.buildGetLocal(resultVar, location)
-                    body.buildInstr(WasmOp.RETURN, location)
-                }
-                body.buildCall(wasmFileCodegenContext.referenceFunction(wasmSymbols.setWasmContinuation), location)
+                body.buildContBind(contType, bindContType, location)
+                body.buildInstr(WasmOp.RETURN, location)
             }
 
             wasmSymbols.wasmArrayCopy -> {
