@@ -1100,10 +1100,7 @@ open class LocalDeclarationsLowering(
             class Data(
                 val isInInlineFunction: Boolean,
                 val sourceFileWhenInlined: IrFileEntry? = null,
-            ) {
-                fun withInline(isInline: Boolean, sourceFileWhenInlined: IrFileEntry?): Data =
-                    if (isInline && !isInInlineFunction) Data(true, sourceFileWhenInlined) else this
-            }
+            )
 
             irElement.accept(object : IrVisitor<Unit, Data>() {
 
@@ -1114,9 +1111,9 @@ open class LocalDeclarationsLowering(
                 override fun visitInlinedFunctionBlock(inlinedBlock: IrInlinedFunctionBlock, data: Data) {
                     super.visitInlinedFunctionBlock(
                         inlinedBlock,
-                        data.withInline(
-                            inlinedBlock.isFunctionInlining(),
-                            inlinedBlock.inlinedFunctionFileEntry
+                        Data(
+                            isInInlineFunction = inlinedBlock.isFunctionInlining(),
+                            sourceFileWhenInlined = inlinedBlock.inlinedFunctionFileEntry
                         )
                     )
                 }
@@ -1147,13 +1144,10 @@ open class LocalDeclarationsLowering(
 
                 override fun visitSimpleFunction(declaration: IrSimpleFunction, data: Data) {
                     if (declaration.visibility == DescriptorVisibilities.LOCAL) {
-                        localFunctions[declaration] = LocalFunctionContext(
-                            declaration,
-                            data.sourceFileWhenInlined,
-                        )
+                        localFunctions[declaration] = LocalFunctionContext(declaration, data.sourceFileWhenInlined)
                     }
 
-                    val newData = data.withInline(declaration.isInline, data.sourceFileWhenInlined)
+                    val newData = Data(declaration.isInline, data.sourceFileWhenInlined)
                     super.visitSimpleFunction(declaration, newData)
                 }
 
