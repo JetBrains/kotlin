@@ -1,4 +1,49 @@
-enum class X {
-  Y,
-  Z
+enum class Regular {
+  Entry1,
+  EntryWithBody {
+    fun function2()
+
+    var variable2: kotlin.Int
+
+    private fun privateFunction2()
+
+    internal fun internalFunction2()
+
+    private var privateVariable2: kotlin.Int
+
+    internal var internalVariable2: kotlin.Int
+
+    inner class InnerClass
+  };
+
+  fun function()
+
+  private fun privateFunction()
+
+  internal fun internalFunction()
+
+  var variable: kotlin.Int
+
+  private var privateVariable: kotlin.Int
+
+  internal var internalVariable: kotlin.Int
+
+  class NestedClass
+
+  inner class InnerClass
+
+  object NestedObject
+
+  interface NestedInterface
+
+  annotation class NestedAnnotation
+
+  typealias NestedTypeAlias = kotlin.String
+}
+
+enum class WithConstructor(property: kotlin.Int, parameter: kotlin.Int) {
+  Entry,
+  WithBody;
+
+  val property: kotlin.Int
 }

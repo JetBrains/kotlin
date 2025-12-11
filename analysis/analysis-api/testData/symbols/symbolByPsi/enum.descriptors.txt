@@ -59,7 +59,7 @@ KaNamedFunctionSymbol:
   getDispatchReceiver(): KaUsualClassType:
     annotations: []
     typeArguments: []
-    type: <anonymous>
+    type: Regular.EntryWithBody
   getContainingFileSymbol: KaFileSymbol(enum.kt)
   getContainingJvmClassName: null
   canBeOperator: false
@@ -90,10 +90,6 @@ KaKotlinPropertySymbol:
       typeArguments: []
       type: kotlin/Int
     visibility: PRIVATE
-    getDispatchReceiver(): KaUsualClassType:
-      annotations: []
-      typeArguments: []
-      type: <anonymous>
     getContainingFileSymbol: KaFileSymbol(enum.kt)
     getContainingJvmClassName: null
     getContainingModule: KaSourceModule "Sources of main"
@@ -128,7 +124,7 @@ KaKotlinPropertySymbol:
     getDispatchReceiver(): KaUsualClassType:
       annotations: []
       typeArguments: []
-      type: <anonymous>
+      type: Regular.EntryWithBody
     getContainingFileSymbol: KaFileSymbol(enum.kt)
     getContainingJvmClassName: null
     getContainingModule: KaSourceModule "Sources of main"
@@ -176,7 +172,7 @@ KaKotlinPropertySymbol:
     parameter: KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      compilerVisibility: Local
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
@@ -198,7 +194,7 @@ KaKotlinPropertySymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
-      visibility: PUBLIC
+      visibility: LOCAL
       getContainingFileSymbol: KaFileSymbol(enum.kt)
       getContainingJvmClassName: null
       getContainingModule: KaSourceModule "Sources of main"
@@ -213,7 +209,7 @@ KaKotlinPropertySymbol:
       KaValueParameterSymbol:
         annotations: []
         callableId: null
-        compilerVisibility: Public
+        compilerVisibility: Local
         contextReceivers: []
         generatedPrimaryConstructorProperty: null
         hasDeclaredDefaultValue: false
@@ -235,7 +231,7 @@ KaKotlinPropertySymbol:
           annotations: []
           typeArguments: []
           type: kotlin/Int
-        visibility: PUBLIC
+        visibility: LOCAL
         getContainingFileSymbol: KaFileSymbol(enum.kt)
         getContainingJvmClassName: null
         getContainingModule: KaSourceModule "Sources of main"
@@ -246,7 +242,7 @@ KaKotlinPropertySymbol:
     getDispatchReceiver(): KaUsualClassType:
       annotations: []
       typeArguments: []
-      type: <anonymous>
+      type: Regular.EntryWithBody
     getContainingFileSymbol: KaFileSymbol(enum.kt)
     getContainingJvmClassName: null
     getContainingModule: KaSourceModule "Sources of main"
@@ -257,7 +253,7 @@ KaKotlinPropertySymbol:
   getDispatchReceiver(): KaUsualClassType:
     annotations: []
     typeArguments: []
-    type: <anonymous>
+    type: Regular.EntryWithBody
   getContainingFileSymbol: KaFileSymbol(enum.kt)
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"
@@ -304,7 +300,7 @@ KaNamedFunctionSymbol:
   getDispatchReceiver(): KaUsualClassType:
     annotations: []
     typeArguments: []
-    type: <anonymous>
+    type: Regular.EntryWithBody
   getContainingFileSymbol: KaFileSymbol(enum.kt)
   getContainingJvmClassName: null
   canBeOperator: false
@@ -348,7 +344,7 @@ KaNamedFunctionSymbol:
   getDispatchReceiver(): KaUsualClassType:
     annotations: []
     typeArguments: []
-    type: <anonymous>
+    type: Regular.EntryWithBody
   getContainingFileSymbol: KaFileSymbol(enum.kt)
   getContainingJvmClassName: null
   canBeOperator: false
@@ -379,10 +375,6 @@ KaKotlinPropertySymbol:
       typeArguments: []
       type: kotlin/Int
     visibility: PRIVATE
-    getDispatchReceiver(): KaUsualClassType:
-      annotations: []
-      typeArguments: []
-      type: <anonymous>
     getContainingFileSymbol: KaFileSymbol(enum.kt)
     getContainingJvmClassName: null
     getContainingModule: KaSourceModule "Sources of main"
@@ -417,7 +409,7 @@ KaKotlinPropertySymbol:
     getDispatchReceiver(): KaUsualClassType:
       annotations: []
       typeArguments: []
-      type: <anonymous>
+      type: Regular.EntryWithBody
     getContainingFileSymbol: KaFileSymbol(enum.kt)
     getContainingJvmClassName: null
     getContainingModule: KaSourceModule "Sources of main"
@@ -465,7 +457,7 @@ KaKotlinPropertySymbol:
     parameter: KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      compilerVisibility: Local
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
@@ -487,7 +479,7 @@ KaKotlinPropertySymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
-      visibility: PUBLIC
+      visibility: LOCAL
       getContainingFileSymbol: KaFileSymbol(enum.kt)
       getContainingJvmClassName: null
       getContainingModule: KaSourceModule "Sources of main"
@@ -502,7 +494,7 @@ KaKotlinPropertySymbol:
       KaValueParameterSymbol:
         annotations: []
         callableId: null
-        compilerVisibility: Public
+        compilerVisibility: Local
         contextReceivers: []
         generatedPrimaryConstructorProperty: null
         hasDeclaredDefaultValue: false
@@ -524,7 +516,7 @@ KaKotlinPropertySymbol:
           annotations: []
           typeArguments: []
           type: kotlin/Int
-        visibility: PUBLIC
+        visibility: LOCAL
         getContainingFileSymbol: KaFileSymbol(enum.kt)
         getContainingJvmClassName: null
         getContainingModule: KaSourceModule "Sources of main"
@@ -535,7 +527,7 @@ KaKotlinPropertySymbol:
     getDispatchReceiver(): KaUsualClassType:
       annotations: []
       typeArguments: []
-      type: <anonymous>
+      type: Regular.EntryWithBody
     getContainingFileSymbol: KaFileSymbol(enum.kt)
     getContainingJvmClassName: null
     getContainingModule: KaSourceModule "Sources of main"
@@ -546,7 +538,7 @@ KaKotlinPropertySymbol:
   getDispatchReceiver(): KaUsualClassType:
     annotations: []
     typeArguments: []
-    type: <anonymous>
+    type: Regular.EntryWithBody
   getContainingFileSymbol: KaFileSymbol(enum.kt)
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"
@@ -580,10 +572,6 @@ KaKotlinPropertySymbol:
       typeArguments: []
       type: kotlin/Int
     visibility: PRIVATE
-    getDispatchReceiver(): KaUsualClassType:
-      annotations: []
-      typeArguments: []
-      type: <anonymous>
     getContainingFileSymbol: KaFileSymbol(enum.kt)
     getContainingJvmClassName: null
     getContainingModule: KaSourceModule "Sources of main"
@@ -618,7 +606,7 @@ KaKotlinPropertySymbol:
     getDispatchReceiver(): KaUsualClassType:
       annotations: []
       typeArguments: []
-      type: <anonymous>
+      type: Regular.EntryWithBody
     getContainingFileSymbol: KaFileSymbol(enum.kt)
     getContainingJvmClassName: null
     getContainingModule: KaSourceModule "Sources of main"
@@ -666,7 +654,7 @@ KaKotlinPropertySymbol:
     parameter: KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      compilerVisibility: Local
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
@@ -688,7 +676,7 @@ KaKotlinPropertySymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
-      visibility: PUBLIC
+      visibility: LOCAL
       getContainingFileSymbol: KaFileSymbol(enum.kt)
       getContainingJvmClassName: null
       getContainingModule: KaSourceModule "Sources of main"
@@ -703,7 +691,7 @@ KaKotlinPropertySymbol:
       KaValueParameterSymbol:
         annotations: []
         callableId: null
-        compilerVisibility: Public
+        compilerVisibility: Local
         contextReceivers: []
         generatedPrimaryConstructorProperty: null
         hasDeclaredDefaultValue: false
@@ -725,7 +713,7 @@ KaKotlinPropertySymbol:
           annotations: []
           typeArguments: []
           type: kotlin/Int
-        visibility: PUBLIC
+        visibility: LOCAL
         getContainingFileSymbol: KaFileSymbol(enum.kt)
         getContainingJvmClassName: null
         getContainingModule: KaSourceModule "Sources of main"
@@ -736,7 +724,7 @@ KaKotlinPropertySymbol:
     getDispatchReceiver(): KaUsualClassType:
       annotations: []
       typeArguments: []
-      type: <anonymous>
+      type: Regular.EntryWithBody
     getContainingFileSymbol: KaFileSymbol(enum.kt)
     getContainingJvmClassName: null
     getContainingModule: KaSourceModule "Sources of main"
@@ -747,7 +735,7 @@ KaKotlinPropertySymbol:
   getDispatchReceiver(): KaUsualClassType:
     annotations: []
     typeArguments: []
-    type: <anonymous>
+    type: Regular.EntryWithBody
   getContainingFileSymbol: KaFileSymbol(enum.kt)
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"
@@ -789,14 +777,14 @@ KaNamedClassSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null
-  importableFqName: null
+  importableFqName: Regular.EntryWithBody.InnerClass
 
 KaEnumEntrySymbol:
   annotations: []
   callableId: /Regular.EntryWithBody
   compilerVisibility: Public
   contextReceivers: []
-  enumEntryInitializer: KaAnonymousObjectSymbol(<local>/<no name provided>)
+  enumEntryInitializer: KaEnumEntrySymbol(/Regular.EntryWithBody)
   isActual: false
   isExpect: false
   isExtension: false
@@ -971,10 +959,6 @@ KaKotlinPropertySymbol:
       typeArguments: []
       type: kotlin/Int
     visibility: PRIVATE
-    getDispatchReceiver(): KaUsualClassType:
-      annotations: []
-      typeArguments: []
-      type: Regular
     getContainingFileSymbol: KaFileSymbol(enum.kt)
     getContainingJvmClassName: Regular
     getContainingModule: KaSourceModule "Sources of main"
@@ -1057,7 +1041,7 @@ KaKotlinPropertySymbol:
     parameter: KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      compilerVisibility: Local
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
@@ -1079,7 +1063,7 @@ KaKotlinPropertySymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
-      visibility: PUBLIC
+      visibility: LOCAL
       getContainingFileSymbol: KaFileSymbol(enum.kt)
       getContainingJvmClassName: null
       getContainingModule: KaSourceModule "Sources of main"
@@ -1094,7 +1078,7 @@ KaKotlinPropertySymbol:
       KaValueParameterSymbol:
         annotations: []
         callableId: null
-        compilerVisibility: Public
+        compilerVisibility: Local
         contextReceivers: []
         generatedPrimaryConstructorProperty: null
         hasDeclaredDefaultValue: false
@@ -1116,7 +1100,7 @@ KaKotlinPropertySymbol:
           annotations: []
           typeArguments: []
           type: kotlin/Int
-        visibility: PUBLIC
+        visibility: LOCAL
         getContainingFileSymbol: KaFileSymbol(enum.kt)
         getContainingJvmClassName: null
         getContainingModule: KaSourceModule "Sources of main"
@@ -1172,10 +1156,6 @@ KaKotlinPropertySymbol:
       typeArguments: []
       type: kotlin/Int
     visibility: PRIVATE
-    getDispatchReceiver(): KaUsualClassType:
-      annotations: []
-      typeArguments: []
-      type: Regular
     getContainingFileSymbol: KaFileSymbol(enum.kt)
     getContainingJvmClassName: Regular
     getContainingModule: KaSourceModule "Sources of main"
@@ -1258,7 +1238,7 @@ KaKotlinPropertySymbol:
     parameter: KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      compilerVisibility: Local
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
@@ -1280,7 +1260,7 @@ KaKotlinPropertySymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
-      visibility: PUBLIC
+      visibility: LOCAL
       getContainingFileSymbol: KaFileSymbol(enum.kt)
       getContainingJvmClassName: null
       getContainingModule: KaSourceModule "Sources of main"
@@ -1295,7 +1275,7 @@ KaKotlinPropertySymbol:
       KaValueParameterSymbol:
         annotations: []
         callableId: null
-        compilerVisibility: Public
+        compilerVisibility: Local
         contextReceivers: []
         generatedPrimaryConstructorProperty: null
         hasDeclaredDefaultValue: false
@@ -1317,7 +1297,7 @@ KaKotlinPropertySymbol:
           annotations: []
           typeArguments: []
           type: kotlin/Int
-        visibility: PUBLIC
+        visibility: LOCAL
         getContainingFileSymbol: KaFileSymbol(enum.kt)
         getContainingJvmClassName: null
         getContainingModule: KaSourceModule "Sources of main"
@@ -1373,10 +1353,6 @@ KaKotlinPropertySymbol:
       typeArguments: []
       type: kotlin/Int
     visibility: PRIVATE
-    getDispatchReceiver(): KaUsualClassType:
-      annotations: []
-      typeArguments: []
-      type: Regular
     getContainingFileSymbol: KaFileSymbol(enum.kt)
     getContainingJvmClassName: Regular
     getContainingModule: KaSourceModule "Sources of main"
@@ -1459,7 +1435,7 @@ KaKotlinPropertySymbol:
     parameter: KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      compilerVisibility: Local
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
@@ -1481,7 +1457,7 @@ KaKotlinPropertySymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
-      visibility: PUBLIC
+      visibility: LOCAL
       getContainingFileSymbol: KaFileSymbol(enum.kt)
       getContainingJvmClassName: null
       getContainingModule: KaSourceModule "Sources of main"
@@ -1496,7 +1472,7 @@ KaKotlinPropertySymbol:
       KaValueParameterSymbol:
         annotations: []
         callableId: null
-        compilerVisibility: Public
+        compilerVisibility: Local
         contextReceivers: []
         generatedPrimaryConstructorProperty: null
         hasDeclaredDefaultValue: false
@@ -1518,7 +1494,7 @@ KaKotlinPropertySymbol:
           annotations: []
           typeArguments: []
           type: kotlin/Int
-        visibility: PUBLIC
+        visibility: LOCAL
         getContainingFileSymbol: KaFileSymbol(enum.kt)
         getContainingJvmClassName: null
         getContainingModule: KaSourceModule "Sources of main"
@@ -1794,7 +1770,7 @@ KaConstructorSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      compilerVisibility: Local
       contextReceivers: []
       generatedPrimaryConstructorProperty: KaKotlinPropertySymbol:
         annotations: []
@@ -1818,10 +1794,6 @@ KaConstructorSymbol:
             typeArguments: []
             type: kotlin/Int
           visibility: PRIVATE
-          getDispatchReceiver(): KaUsualClassType:
-            annotations: []
-            typeArguments: []
-            type: WithConstructor
           getContainingFileSymbol: KaFileSymbol(enum.kt)
           getContainingJvmClassName: WithConstructor
           getContainingModule: KaSourceModule "Sources of main"
@@ -1922,7 +1894,7 @@ KaConstructorSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
-      visibility: PUBLIC
+      visibility: LOCAL
       getContainingFileSymbol: KaFileSymbol(enum.kt)
       getContainingJvmClassName: WithConstructor
       getContainingModule: KaSourceModule "Sources of main"
@@ -1931,7 +1903,7 @@ KaConstructorSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
+      compilerVisibility: Local
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
@@ -1953,7 +1925,7 @@ KaConstructorSymbol:
         annotations: []
         typeArguments: []
         type: kotlin/Int
-      visibility: PUBLIC
+      visibility: LOCAL
       getContainingFileSymbol: KaFileSymbol(enum.kt)
       getContainingJvmClassName: WithConstructor
       getContainingModule: KaSourceModule "Sources of main"
@@ -1972,7 +1944,7 @@ KaEnumEntrySymbol:
   callableId: /WithConstructor.Entry
   compilerVisibility: Public
   contextReceivers: []
-  enumEntryInitializer: KaAnonymousObjectSymbol(<local>/<no name provided>)
+  enumEntryInitializer: null
   isActual: false
   isExpect: false
   isExtension: false
@@ -1998,7 +1970,7 @@ KaEnumEntrySymbol:
   callableId: /WithConstructor.WithBody
   compilerVisibility: Public
   contextReceivers: []
-  enumEntryInitializer: KaAnonymousObjectSymbol(<local>/<no name provided>)
+  enumEntryInitializer: KaEnumEntrySymbol(/WithConstructor.WithBody)
   isActual: false
   isExpect: false
   isExtension: false

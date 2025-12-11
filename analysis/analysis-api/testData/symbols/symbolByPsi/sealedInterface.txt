@@ -1,158 +1,6 @@
 KaNamedFunctionSymbol:
   annotations: []
-  callableId: null
-  compilerVisibility: Public
-  contextParameters: []
-  contextReceivers: []
-  contractEffects: []
-  hasStableParameterNames: true
-  isActual: false
-  isBuiltinFunctionInvoke: false
-  isExpect: false
-  isExtension: false
-  isExternal: false
-  isInfix: false
-  isInline: false
-  isOperator: false
-  isOverride: true
-  isStatic: false
-  isSuspend: false
-  isTailRec: false
-  location: CLASS
-  modality: OPEN
-  name: run
-  origin: SOURCE
-  receiverParameter: null
-  returnType: KaUsualClassType:
-    annotations: []
-    typeArguments: []
-    type: kotlin/Unit
-  typeParameters: []
-  valueParameters: []
-  visibility: PUBLIC
-  getDispatchReceiver(): KaUsualClassType:
-    annotations: []
-    typeArguments: []
-    type: <anonymous>
-  getContainingFileSymbol: KaFileSymbol(anonymousObject.kt)
-  getContainingJvmClassName: null
-  canBeOperator: false
-  getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
-  returnValueStatus: Unspecified
-  importableFqName: null
-
-KaKotlinPropertySymbol:
-  annotations: []
-  backingFieldSymbol: KaBackingFieldSymbol:
-    annotations: []
-    callableId: null
-    compilerVisibility: Private
-    contextReceivers: []
-    isActual: false
-    isExpect: false
-    isExtension: false
-    isVal: true
-    location: PROPERTY
-    modality: FINAL
-    name: field
-    origin: PROPERTY_BACKING_FIELD
-    owningProperty: KaKotlinPropertySymbol(<local>/data)
-    receiverParameter: null
-    returnType: KaUsualClassType:
-      annotations: []
-      typeArguments: []
-      type: kotlin/Int
-    visibility: PRIVATE
-    getDispatchReceiver(): KaUsualClassType:
-      annotations: []
-      typeArguments: []
-      type: <anonymous>
-    getContainingFileSymbol: KaFileSymbol(anonymousObject.kt)
-    getContainingJvmClassName: null
-    getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
-    importableFqName: null
-  callableId: null
-  compilerVisibility: Public
-  contextParameters: []
-  contextReceivers: []
-  getter: KaPropertyGetterSymbol:
-    annotations: []
-    callableId: null
-    compilerVisibility: Public
-    contextReceivers: []
-    hasStableParameterNames: true
-    isActual: false
-    isExpect: false
-    isExtension: false
-    isInline: false
-    isNotDefault: false
-    isOverride: false
-    location: PROPERTY
-    modality: FINAL
-    origin: SOURCE
-    receiverParameter: null
-    returnType: KaUsualClassType:
-      annotations: []
-      typeArguments: []
-      type: kotlin/Int
-    valueParameters: []
-    visibility: PUBLIC
-    getDispatchReceiver(): KaUsualClassType:
-      annotations: []
-      typeArguments: []
-      type: <anonymous>
-    getContainingFileSymbol: KaFileSymbol(anonymousObject.kt)
-    getContainingJvmClassName: null
-    getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
-    importableFqName: null
-  hasBackingField: true
-  hasGetter: true
-  hasSetter: false
-  initializer: KaConstantInitializerValue(123)
-  isActual: false
-  isConst: false
-  isDelegatedProperty: false
-  isExpect: false
-  isExtension: false
-  isExternal: false
-  isFromPrimaryConstructor: false
-  isLateInit: false
-  isOverride: false
-  isStatic: false
-  isVal: true
-  location: CLASS
-  modality: FINAL
-  name: data
-  origin: SOURCE
-  receiverParameter: null
-  returnType: KaUsualClassType:
-    annotations: []
-    typeArguments: []
-    type: kotlin/Int
-  setter: null
-  typeParameters: []
-  visibility: PUBLIC
-  getDispatchReceiver(): KaUsualClassType:
-    annotations: []
-    typeArguments: []
-    type: <anonymous>
-  getContainingFileSymbol: KaFileSymbol(anonymousObject.kt)
-  getContainingJvmClassName: null
-  getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
-  getterDeprecationStatus: null
-  javaGetterName: getData
-  javaSetterName: null
-  setterDeprecationStatus: null
-  isInline: false
-  importableFqName: null
-
-KaNamedFunctionSymbol:
-  annotations: []
-  callableId: null
+  callableId: /SealedInterface.function
   compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
@@ -171,7 +19,7 @@ KaNamedFunctionSymbol:
   isSuspend: false
   isTailRec: false
   location: CLASS
-  modality: FINAL
+  modality: ABSTRACT
   name: function
   origin: SOURCE
   receiverParameter: null
@@ -185,9 +33,9 @@ KaNamedFunctionSymbol:
   getDispatchReceiver(): KaUsualClassType:
     annotations: []
     typeArguments: []
-    type: <anonymous>
-  getContainingFileSymbol: KaFileSymbol(anonymousObject.kt)
-  getContainingJvmClassName: null
+    type: SealedInterface
+  getContainingFileSymbol: KaFileSymbol(sealedInterface.kt)
+  getContainingJvmClassName: SealedInterface
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
@@ -196,7 +44,51 @@ KaNamedFunctionSymbol:
 
 KaNamedFunctionSymbol:
   annotations: []
-  callableId: null
+  callableId: /SealedInterface.defaultFunction
+  compilerVisibility: Public
+  contextParameters: []
+  contextReceivers: []
+  contractEffects: []
+  hasStableParameterNames: true
+  isActual: false
+  isBuiltinFunctionInvoke: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  isTailRec: false
+  location: CLASS
+  modality: OPEN
+  name: defaultFunction
+  origin: SOURCE
+  receiverParameter: null
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: kotlin/Unit
+  typeParameters: []
+  valueParameters: []
+  visibility: PUBLIC
+  getDispatchReceiver(): KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: SealedInterface
+  getContainingFileSymbol: KaFileSymbol(sealedInterface.kt)
+  getContainingJvmClassName: SealedInterface
+  canBeOperator: false
+  getContainingModule: KaSourceModule "Sources of main"
+  deprecationStatus: null
+  returnValueStatus: Unspecified
+  importableFqName: null
+
+KaNamedFunctionSymbol:
+  annotations: []
+  callableId: /SealedInterface.privateDefaultFunction
   compilerVisibility: Private
   contextParameters: []
   contextReceivers: []
@@ -216,7 +108,7 @@ KaNamedFunctionSymbol:
   isTailRec: false
   location: CLASS
   modality: FINAL
-  name: privateFunction
+  name: privateDefaultFunction
   origin: SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -229,53 +121,9 @@ KaNamedFunctionSymbol:
   getDispatchReceiver(): KaUsualClassType:
     annotations: []
     typeArguments: []
-    type: <anonymous>
-  getContainingFileSymbol: KaFileSymbol(anonymousObject.kt)
-  getContainingJvmClassName: null
-  canBeOperator: false
-  getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
-  returnValueStatus: Unspecified
-  importableFqName: null
-
-KaNamedFunctionSymbol:
-  annotations: []
-  callableId: null
-  compilerVisibility: Internal
-  contextParameters: []
-  contextReceivers: []
-  contractEffects: []
-  hasStableParameterNames: true
-  isActual: false
-  isBuiltinFunctionInvoke: false
-  isExpect: false
-  isExtension: false
-  isExternal: false
-  isInfix: false
-  isInline: false
-  isOperator: false
-  isOverride: false
-  isStatic: false
-  isSuspend: false
-  isTailRec: false
-  location: CLASS
-  modality: FINAL
-  name: internalFunction
-  origin: SOURCE
-  receiverParameter: null
-  returnType: KaUsualClassType:
-    annotations: []
-    typeArguments: []
-    type: kotlin/Unit
-  typeParameters: []
-  valueParameters: []
-  visibility: INTERNAL
-  getDispatchReceiver(): KaUsualClassType:
-    annotations: []
-    typeArguments: []
-    type: <anonymous>
-  getContainingFileSymbol: KaFileSymbol(anonymousObject.kt)
-  getContainingJvmClassName: null
+    type: SealedInterface
+  getContainingFileSymbol: KaFileSymbol(sealedInterface.kt)
+  getContainingJvmClassName: SealedInterface
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
@@ -297,7 +145,7 @@ KaKotlinPropertySymbol:
     modality: FINAL
     name: field
     origin: PROPERTY_BACKING_FIELD
-    owningProperty: KaKotlinPropertySymbol(<local>/variable)
+    owningProperty: KaKotlinPropertySymbol(/SealedInterface.variable)
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
@@ -307,13 +155,13 @@ KaKotlinPropertySymbol:
     getDispatchReceiver(): KaUsualClassType:
       annotations: []
       typeArguments: []
-      type: <anonymous>
-    getContainingFileSymbol: KaFileSymbol(anonymousObject.kt)
-    getContainingJvmClassName: null
+      type: SealedInterface
+    getContainingFileSymbol: KaFileSymbol(sealedInterface.kt)
+    getContainingJvmClassName: SealedInterface
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
     importableFqName: null
-  callableId: null
+  callableId: /SealedInterface.variable
   compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
@@ -330,7 +178,7 @@ KaKotlinPropertySymbol:
     isNotDefault: false
     isOverride: false
     location: PROPERTY
-    modality: FINAL
+    modality: ABSTRACT
     origin: SOURCE
     receiverParameter: null
     returnType: KaUsualClassType:
@@ -342,16 +190,16 @@ KaKotlinPropertySymbol:
     getDispatchReceiver(): KaUsualClassType:
       annotations: []
       typeArguments: []
-      type: <anonymous>
-    getContainingFileSymbol: KaFileSymbol(anonymousObject.kt)
-    getContainingJvmClassName: null
+      type: SealedInterface
+    getContainingFileSymbol: KaFileSymbol(sealedInterface.kt)
+    getContainingJvmClassName: SealedInterface
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
     importableFqName: null
-  hasBackingField: true
+  hasBackingField: false
   hasGetter: true
   hasSetter: true
-  initializer: KaConstantInitializerValue(1)
+  initializer: null
   isActual: false
   isConst: false
   isDelegatedProperty: false
@@ -364,7 +212,7 @@ KaKotlinPropertySymbol:
   isStatic: false
   isVal: false
   location: CLASS
-  modality: FINAL
+  modality: ABSTRACT
   name: variable
   origin: SOURCE
   receiverParameter: null
@@ -385,7 +233,7 @@ KaKotlinPropertySymbol:
     isNotDefault: false
     isOverride: false
     location: PROPERTY
-    modality: FINAL
+    modality: ABSTRACT
     origin: SOURCE
     parameter: KaValueParameterSymbol:
       annotations: []
@@ -413,7 +261,7 @@ KaKotlinPropertySymbol:
         typeArguments: []
         type: kotlin/Int
       visibility: PUBLIC
-      getContainingFileSymbol: KaFileSymbol(anonymousObject.kt)
+      getContainingFileSymbol: KaFileSymbol(sealedInterface.kt)
       getContainingJvmClassName: null
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
@@ -450,7 +298,7 @@ KaKotlinPropertySymbol:
           typeArguments: []
           type: kotlin/Int
         visibility: PUBLIC
-        getContainingFileSymbol: KaFileSymbol(anonymousObject.kt)
+        getContainingFileSymbol: KaFileSymbol(sealedInterface.kt)
         getContainingJvmClassName: null
         getContainingModule: KaSourceModule "Sources of main"
         deprecationStatus: null
@@ -460,9 +308,9 @@ KaKotlinPropertySymbol:
     getDispatchReceiver(): KaUsualClassType:
       annotations: []
       typeArguments: []
-      type: <anonymous>
-    getContainingFileSymbol: KaFileSymbol(anonymousObject.kt)
-    getContainingJvmClassName: null
+      type: SealedInterface
+    getContainingFileSymbol: KaFileSymbol(sealedInterface.kt)
+    getContainingJvmClassName: SealedInterface
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
     importableFqName: null
@@ -471,9 +319,9 @@ KaKotlinPropertySymbol:
   getDispatchReceiver(): KaUsualClassType:
     annotations: []
     typeArguments: []
-    type: <anonymous>
-  getContainingFileSymbol: KaFileSymbol(anonymousObject.kt)
-  getContainingJvmClassName: null
+    type: SealedInterface
+  getContainingFileSymbol: KaFileSymbol(sealedInterface.kt)
+  getContainingJvmClassName: SealedInterface
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
   getterDeprecationStatus: null
@@ -498,61 +346,57 @@ KaKotlinPropertySymbol:
     modality: FINAL
     name: field
     origin: PROPERTY_BACKING_FIELD
-    owningProperty: KaKotlinPropertySymbol(<local>/privateVariable)
+    owningProperty: KaKotlinPropertySymbol(/SealedInterface.defaultVariable)
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
       typeArguments: []
-      type: kotlin/Int
+      type: kotlin/Long
     visibility: PRIVATE
     getDispatchReceiver(): KaUsualClassType:
       annotations: []
       typeArguments: []
-      type: <anonymous>
-    getContainingFileSymbol: KaFileSymbol(anonymousObject.kt)
-    getContainingJvmClassName: null
+      type: SealedInterface
+    getContainingFileSymbol: KaFileSymbol(sealedInterface.kt)
+    getContainingJvmClassName: SealedInterface
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
     importableFqName: null
-  callableId: null
-  compilerVisibility: Private
+  callableId: /SealedInterface.defaultVariable
+  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
     callableId: null
-    compilerVisibility: Private
+    compilerVisibility: Public
     contextReceivers: []
     hasStableParameterNames: true
     isActual: false
     isExpect: false
     isExtension: false
     isInline: false
-    isNotDefault: false
+    isNotDefault: true
     isOverride: false
     location: PROPERTY
-    modality: FINAL
+    modality: OPEN
     origin: SOURCE
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
       typeArguments: []
-      type: kotlin/Int
+      type: kotlin/Long
     valueParameters: []
-    visibility: PRIVATE
-    getDispatchReceiver(): KaUsualClassType:
-      annotations: []
-      typeArguments: []
-      type: <anonymous>
-    getContainingFileSymbol: KaFileSymbol(anonymousObject.kt)
-    getContainingJvmClassName: null
+    visibility: PUBLIC
+    getContainingFileSymbol: KaFileSymbol(sealedInterface.kt)
+    getContainingJvmClassName: SealedInterface
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
     importableFqName: null
-  hasBackingField: true
+  hasBackingField: false
   hasGetter: true
   hasSetter: true
-  initializer: KaConstantInitializerValue(1)
+  initializer: null
   isActual: false
   isConst: false
   isDelegatedProperty: false
@@ -565,28 +409,28 @@ KaKotlinPropertySymbol:
   isStatic: false
   isVal: false
   location: CLASS
-  modality: FINAL
-  name: privateVariable
+  modality: OPEN
+  name: defaultVariable
   origin: SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
     typeArguments: []
-    type: kotlin/Int
+    type: kotlin/Long
   setter: KaPropertySetterSymbol:
     annotations: []
     callableId: null
-    compilerVisibility: Private
+    compilerVisibility: Public
     contextReceivers: []
     hasStableParameterNames: true
     isActual: false
     isExpect: false
     isExtension: false
     isInline: false
-    isNotDefault: false
+    isNotDefault: true
     isOverride: false
     location: PROPERTY
-    modality: FINAL
+    modality: OPEN
     origin: SOURCE
     parameter: KaValueParameterSymbol:
       annotations: []
@@ -612,9 +456,9 @@ KaKotlinPropertySymbol:
       returnType: KaUsualClassType:
         annotations: []
         typeArguments: []
-        type: kotlin/Int
+        type: kotlin/Long
       visibility: PUBLIC
-      getContainingFileSymbol: KaFileSymbol(anonymousObject.kt)
+      getContainingFileSymbol: KaFileSymbol(sealedInterface.kt)
       getContainingJvmClassName: null
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
@@ -649,37 +493,33 @@ KaKotlinPropertySymbol:
         returnType: KaUsualClassType:
           annotations: []
           typeArguments: []
-          type: kotlin/Int
+          type: kotlin/Long
         visibility: PUBLIC
-        getContainingFileSymbol: KaFileSymbol(anonymousObject.kt)
+        getContainingFileSymbol: KaFileSymbol(sealedInterface.kt)
         getContainingJvmClassName: null
         getContainingModule: KaSourceModule "Sources of main"
         deprecationStatus: null
         importableFqName: null
     ]
-    visibility: PRIVATE
-    getDispatchReceiver(): KaUsualClassType:
-      annotations: []
-      typeArguments: []
-      type: <anonymous>
-    getContainingFileSymbol: KaFileSymbol(anonymousObject.kt)
-    getContainingJvmClassName: null
+    visibility: PUBLIC
+    getContainingFileSymbol: KaFileSymbol(sealedInterface.kt)
+    getContainingJvmClassName: SealedInterface
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
     importableFqName: null
   typeParameters: []
-  visibility: PRIVATE
+  visibility: PUBLIC
   getDispatchReceiver(): KaUsualClassType:
     annotations: []
     typeArguments: []
-    type: <anonymous>
-  getContainingFileSymbol: KaFileSymbol(anonymousObject.kt)
-  getContainingJvmClassName: null
+    type: SealedInterface
+  getContainingFileSymbol: KaFileSymbol(sealedInterface.kt)
+  getContainingJvmClassName: SealedInterface
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
   getterDeprecationStatus: null
-  javaGetterName: getPrivateVariable
-  javaSetterName: setPrivateVariable
+  javaGetterName: getDefaultVariable
+  javaSetterName: setDefaultVariable
   setterDeprecationStatus: null
   isInline: false
   importableFqName: null
@@ -699,37 +539,37 @@ KaKotlinPropertySymbol:
     modality: FINAL
     name: field
     origin: PROPERTY_BACKING_FIELD
-    owningProperty: KaKotlinPropertySymbol(<local>/internalVariable)
+    owningProperty: KaKotlinPropertySymbol(/SealedInterface.privateDefaultVariable)
     receiverParameter: null
     returnType: KaUsualClassType:
       annotations: []
       typeArguments: []
-      type: kotlin/Int
+      type: kotlin/Long
     visibility: PRIVATE
     getDispatchReceiver(): KaUsualClassType:
       annotations: []
       typeArguments: []
-      type: <anonymous>
-    getContainingFileSymbol: KaFileSymbol(anonymousObject.kt)
-    getContainingJvmClassName: null
+      type: SealedInterface
+    getContainingFileSymbol: KaFileSymbol(sealedInterface.kt)
+    getContainingJvmClassName: SealedInterface
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
     importableFqName: null
-  callableId: null
-  compilerVisibility: Internal
+  callableId: /SealedInterface.privateDefaultVariable
+  compilerVisibility: Private
   contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
     callableId: null
-    compilerVisibility: Internal
+    compilerVisibility: Private
     contextReceivers: []
     hasStableParameterNames: true
     isActual: false
     isExpect: false
     isExtension: false
     isInline: false
-    isNotDefault: false
+    isNotDefault: true
     isOverride: false
     location: PROPERTY
     modality: FINAL
@@ -738,22 +578,18 @@ KaKotlinPropertySymbol:
     returnType: KaUsualClassType:
       annotations: []
       typeArguments: []
-      type: kotlin/Int
+      type: kotlin/Long
     valueParameters: []
-    visibility: INTERNAL
-    getDispatchReceiver(): KaUsualClassType:
-      annotations: []
-      typeArguments: []
-      type: <anonymous>
-    getContainingFileSymbol: KaFileSymbol(anonymousObject.kt)
-    getContainingJvmClassName: null
+    visibility: PRIVATE
+    getContainingFileSymbol: KaFileSymbol(sealedInterface.kt)
+    getContainingJvmClassName: SealedInterface
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
     importableFqName: null
-  hasBackingField: true
+  hasBackingField: false
   hasGetter: true
   hasSetter: true
-  initializer: KaConstantInitializerValue(1)
+  initializer: null
   isActual: false
   isConst: false
   isDelegatedProperty: false
@@ -767,24 +603,24 @@ KaKotlinPropertySymbol:
   isVal: false
   location: CLASS
   modality: FINAL
-  name: internalVariable
+  name: privateDefaultVariable
   origin: SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
     annotations: []
     typeArguments: []
-    type: kotlin/Int
+    type: kotlin/Long
   setter: KaPropertySetterSymbol:
     annotations: []
     callableId: null
-    compilerVisibility: Internal
+    compilerVisibility: Private
     contextReceivers: []
     hasStableParameterNames: true
     isActual: false
     isExpect: false
     isExtension: false
     isInline: false
-    isNotDefault: false
+    isNotDefault: true
     isOverride: false
     location: PROPERTY
     modality: FINAL
@@ -813,9 +649,9 @@ KaKotlinPropertySymbol:
       returnType: KaUsualClassType:
         annotations: []
         typeArguments: []
-        type: kotlin/Int
+        type: kotlin/Long
       visibility: PUBLIC
-      getContainingFileSymbol: KaFileSymbol(anonymousObject.kt)
+      getContainingFileSymbol: KaFileSymbol(sealedInterface.kt)
       getContainingJvmClassName: null
       getContainingModule: KaSourceModule "Sources of main"
       deprecationStatus: null
@@ -850,47 +686,43 @@ KaKotlinPropertySymbol:
         returnType: KaUsualClassType:
           annotations: []
           typeArguments: []
-          type: kotlin/Int
+          type: kotlin/Long
         visibility: PUBLIC
-        getContainingFileSymbol: KaFileSymbol(anonymousObject.kt)
+        getContainingFileSymbol: KaFileSymbol(sealedInterface.kt)
         getContainingJvmClassName: null
         getContainingModule: KaSourceModule "Sources of main"
         deprecationStatus: null
         importableFqName: null
     ]
-    visibility: INTERNAL
-    getDispatchReceiver(): KaUsualClassType:
-      annotations: []
-      typeArguments: []
-      type: <anonymous>
-    getContainingFileSymbol: KaFileSymbol(anonymousObject.kt)
-    getContainingJvmClassName: null
+    visibility: PRIVATE
+    getContainingFileSymbol: KaFileSymbol(sealedInterface.kt)
+    getContainingJvmClassName: SealedInterface
     getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
     importableFqName: null
   typeParameters: []
-  visibility: INTERNAL
+  visibility: PRIVATE
   getDispatchReceiver(): KaUsualClassType:
     annotations: []
     typeArguments: []
-    type: <anonymous>
-  getContainingFileSymbol: KaFileSymbol(anonymousObject.kt)
-  getContainingJvmClassName: null
+    type: SealedInterface
+  getContainingFileSymbol: KaFileSymbol(sealedInterface.kt)
+  getContainingJvmClassName: SealedInterface
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
   getterDeprecationStatus: null
-  javaGetterName: getInternalVariable
-  javaSetterName: setInternalVariable
+  javaGetterName: getPrivateDefaultVariable
+  javaSetterName: setPrivateDefaultVariable
   setterDeprecationStatus: null
   isInline: false
   importableFqName: null
 
 KaNamedClassSymbol:
   annotations: []
-  classId: null
+  classId: SealedInterface.NestedClass
   classKind: CLASS
   companionObject: null
-  compilerVisibility: Local
+  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isData: false
@@ -910,19 +742,19 @@ KaNamedClassSymbol:
       type: kotlin/Any
   ]
   typeParameters: []
-  visibility: LOCAL
-  getContainingFileSymbol: KaFileSymbol(anonymousObject.kt)
+  visibility: PUBLIC
+  getContainingFileSymbol: KaFileSymbol(sealedInterface.kt)
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null
-  importableFqName: null
+  importableFqName: SealedInterface.NestedClass
 
 KaNamedClassSymbol:
   annotations: []
-  classId: null
+  classId: SealedInterface.InnerClass
   classKind: CLASS
   companionObject: null
-  compilerVisibility: Local
+  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isData: false
@@ -942,19 +774,19 @@ KaNamedClassSymbol:
       type: kotlin/Any
   ]
   typeParameters: []
-  visibility: LOCAL
-  getContainingFileSymbol: KaFileSymbol(anonymousObject.kt)
+  visibility: PUBLIC
+  getContainingFileSymbol: KaFileSymbol(sealedInterface.kt)
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null
-  importableFqName: null
+  importableFqName: SealedInterface.InnerClass
 
 KaNamedClassSymbol:
   annotations: []
-  classId: null
+  classId: SealedInterface.NestedObject
   classKind: OBJECT
   companionObject: null
-  compilerVisibility: Local
+  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isData: false
@@ -974,19 +806,19 @@ KaNamedClassSymbol:
       type: kotlin/Any
   ]
   typeParameters: []
-  visibility: LOCAL
-  getContainingFileSymbol: KaFileSymbol(anonymousObject.kt)
+  visibility: PUBLIC
+  getContainingFileSymbol: KaFileSymbol(sealedInterface.kt)
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null
-  importableFqName: null
+  importableFqName: SealedInterface.NestedObject
 
 KaNamedClassSymbol:
   annotations: []
-  classId: null
+  classId: SealedInterface.NestedInterface
   classKind: INTERFACE
   companionObject: null
-  compilerVisibility: Local
+  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isData: false
@@ -1006,19 +838,19 @@ KaNamedClassSymbol:
       type: kotlin/Any
   ]
   typeParameters: []
-  visibility: LOCAL
-  getContainingFileSymbol: KaFileSymbol(anonymousObject.kt)
+  visibility: PUBLIC
+  getContainingFileSymbol: KaFileSymbol(sealedInterface.kt)
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null
-  importableFqName: null
+  importableFqName: SealedInterface.NestedInterface
 
 KaNamedClassSymbol:
   annotations: []
-  classId: null
+  classId: SealedInterface.NestedAnnotation
   classKind: ANNOTATION_CLASS
   companionObject: null
-  compilerVisibility: Local
+  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isData: false
@@ -1038,17 +870,17 @@ KaNamedClassSymbol:
       type: kotlin/Annotation
   ]
   typeParameters: []
-  visibility: LOCAL
-  getContainingFileSymbol: KaFileSymbol(anonymousObject.kt)
+  visibility: PUBLIC
+  getContainingFileSymbol: KaFileSymbol(sealedInterface.kt)
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: [CLASS, ANNOTATION_CLASS, PROPERTY, FIELD, LOCAL_VARIABLE, VALUE_PARAMETER, CONSTRUCTOR, FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER, BACKING_FIELD]
   deprecationStatus: null
-  importableFqName: null
+  importableFqName: SealedInterface.NestedAnnotation
 
 KaTypeAliasSymbol:
   annotations: []
-  classId: null
-  compilerVisibility: Local
+  classId: SealedInterface.NestedTypeAlias
+  compilerVisibility: Public
   expandedType: KaUsualClassType:
     annotations: []
     typeArguments: []
@@ -1060,176 +892,16 @@ KaTypeAliasSymbol:
   name: NestedTypeAlias
   origin: SOURCE
   typeParameters: []
-  visibility: LOCAL
-  getContainingFileSymbol: KaFileSymbol(anonymousObject.kt)
-  getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
-  importableFqName: null
-
-KaConstructorSymbol:
-  annotations: []
-  callableId: null
-  compilerVisibility: Private
-  containingClassId: null
-  contextReceivers: []
-  hasStableParameterNames: true
-  isActual: false
-  isExpect: false
-  isExtension: false
-  isPrimary: false
-  location: CLASS
-  modality: FINAL
-  origin: SOURCE
-  receiverParameter: null
-  returnType: KaUsualClassType:
-    annotations: []
-    typeArguments: []
-    type: <anonymous>
-  typeParameters: []
-  valueParameters: []
-  visibility: PRIVATE
-  getContainingFileSymbol: KaFileSymbol(anonymousObject.kt)
-  getContainingJvmClassName: null
-  getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
-  importableFqName: null
-
-KaAnonymousObjectSymbol:
-  annotations: []
-  classId: null
-  classKind: ANONYMOUS_OBJECT
-  compilerVisibility: Local
-  isActual: false
-  isExpect: false
-  location: LOCAL
-  modality: FINAL
-  name: null
-  origin: SOURCE
-  superTypes: [
-    KaUsualClassType:
-      annotations: []
-      typeArguments: []
-      type: java/lang/Runnable
-  ]
-  visibility: LOCAL
-  getContainingFileSymbol: KaFileSymbol(anonymousObject.kt)
-  getContainingModule: KaSourceModule "Sources of main"
-  annotationApplicableTargets: null
-  deprecationStatus: null
-  importableFqName: null
-
-KaKotlinPropertySymbol:
-  annotations: []
-  backingFieldSymbol: KaBackingFieldSymbol:
-    annotations: []
-    callableId: null
-    compilerVisibility: Private
-    contextReceivers: []
-    isActual: false
-    isExpect: false
-    isExtension: false
-    isVal: true
-    location: PROPERTY
-    modality: FINAL
-    name: field
-    origin: PROPERTY_BACKING_FIELD
-    owningProperty: KaKotlinPropertySymbol(/AnonymousContainer.anonymousObject)
-    receiverParameter: null
-    returnType: KaUsualClassType:
-      annotations: []
-      typeArguments: []
-      type: java/lang/Runnable
-    visibility: PRIVATE
-    getDispatchReceiver(): KaUsualClassType:
-      annotations: []
-      typeArguments: []
-      type: AnonymousContainer
-    getContainingFileSymbol: KaFileSymbol(anonymousObject.kt)
-    getContainingJvmClassName: AnonymousContainer
-    getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
-    importableFqName: null
-  callableId: /AnonymousContainer.anonymousObject
-  compilerVisibility: Public
-  contextParameters: []
-  contextReceivers: []
-  getter: KaPropertyGetterSymbol:
-    annotations: []
-    callableId: null
-    compilerVisibility: Public
-    contextReceivers: []
-    hasStableParameterNames: true
-    isActual: false
-    isExpect: false
-    isExtension: false
-    isInline: false
-    isNotDefault: false
-    isOverride: false
-    location: PROPERTY
-    modality: FINAL
-    origin: SOURCE
-    receiverParameter: null
-    returnType: KaUsualClassType:
-      annotations: []
-      typeArguments: []
-      type: java/lang/Runnable
-    valueParameters: []
-    visibility: PUBLIC
-    getDispatchReceiver(): KaUsualClassType:
-      annotations: []
-      typeArguments: []
-      type: AnonymousContainer
-    getContainingFileSymbol: KaFileSymbol(anonymousObject.kt)
-    getContainingJvmClassName: AnonymousContainer
-    getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
-    importableFqName: null
-  hasBackingField: true
-  hasGetter: true
-  hasSetter: false
-  initializer: KaNonConstantInitializerValue(object : Runnable { ...)
-  isActual: false
-  isConst: false
-  isDelegatedProperty: false
-  isExpect: false
-  isExtension: false
-  isExternal: false
-  isFromPrimaryConstructor: false
-  isLateInit: false
-  isOverride: false
-  isStatic: false
-  isVal: true
-  location: CLASS
-  modality: FINAL
-  name: anonymousObject
-  origin: SOURCE
-  receiverParameter: null
-  returnType: KaUsualClassType:
-    annotations: []
-    typeArguments: []
-    type: java/lang/Runnable
-  setter: null
-  typeParameters: []
   visibility: PUBLIC
-  getDispatchReceiver(): KaUsualClassType:
-    annotations: []
-    typeArguments: []
-    type: AnonymousContainer
-  getContainingFileSymbol: KaFileSymbol(anonymousObject.kt)
-  getContainingJvmClassName: AnonymousContainer
+  getContainingFileSymbol: KaFileSymbol(sealedInterface.kt)
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
-  getterDeprecationStatus: null
-  javaGetterName: getAnonymousObject
-  javaSetterName: null
-  setterDeprecationStatus: null
-  isInline: false
-  importableFqName: null
+  importableFqName: SealedInterface.NestedTypeAlias
 
 KaNamedClassSymbol:
   annotations: []
-  classId: AnonymousContainer
-  classKind: CLASS
+  classId: SealedInterface
+  classKind: INTERFACE
   companionObject: null
   compilerVisibility: Public
   contextReceivers: []
@@ -1241,8 +913,8 @@ KaNamedClassSymbol:
   isInline: false
   isInner: false
   location: TOP_LEVEL
-  modality: FINAL
-  name: AnonymousContainer
+  modality: SEALED
+  name: SealedInterface
   origin: SOURCE
   superTypes: [
     KaUsualClassType:
@@ -1252,8 +924,8 @@ KaNamedClassSymbol:
   ]
   typeParameters: []
   visibility: PUBLIC
-  getContainingFileSymbol: KaFileSymbol(anonymousObject.kt)
+  getContainingFileSymbol: KaFileSymbol(sealedInterface.kt)
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
   deprecationStatus: null
-  importableFqName: AnonymousContainer
+  importableFqName: SealedInterface

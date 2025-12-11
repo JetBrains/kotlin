@@ -437,6 +437,12 @@ public class FirIdeNormalAnalysisSourceModuleSymbolByPsiTestGenerated extends Ab
   }
 
   @Test
+  @TestMetadata("object.kt")
+  public void testObject() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByPsi/object.kt");
+  }
+
+  @Test
   @TestMetadata("outerAndInnerClasses.kt")
   public void testOuterAndInnerClasses() {
     runTest("analysis/analysis-api/testData/symbols/symbolByPsi/outerAndInnerClasses.kt");
@@ -524,6 +530,18 @@ public class FirIdeNormalAnalysisSourceModuleSymbolByPsiTestGenerated extends Ab
   @TestMetadata("returnValueStatusFull.kt")
   public void testReturnValueStatusFull() {
     runTest("analysis/analysis-api/testData/symbols/symbolByPsi/returnValueStatusFull.kt");
+  }
+
+  @Test
+  @TestMetadata("sealedClass.kt")
+  public void testSealedClass() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByPsi/sealedClass.kt");
+  }
+
+  @Test
+  @TestMetadata("sealedInterface.kt")
+  public void testSealedInterface() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByPsi/sealedInterface.kt");
   }
 
   @Test

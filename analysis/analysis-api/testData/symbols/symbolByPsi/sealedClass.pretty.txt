@@ -1,0 +1,37 @@
+interface InterfaceA {
+  fun foo()
+}
+
+sealed class SealedClassWithImplicitConstructor : InterfaceA {
+  override fun foo()
+
+  fun function()
+
+  private fun privateFunction()
+
+  internal fun internalFunction()
+
+  var variable: kotlin.Int
+
+  private var privateVariable: kotlin.Int
+
+  internal var internalVariable: kotlin.Int
+
+  class NestedClass
+
+  inner class InnerClass
+
+  object NestedObject
+
+  interface NestedInterface
+
+  annotation class NestedAnnotation
+
+  typealias NestedTypeAlias = kotlin.String
+}
+
+sealed class SealedClassWithExplicitConstructor(constructorProperty: kotlin.Int, constructorParameter: kotlin.Long) {
+  val constructorProperty: kotlin.Int
+
+  constructor()
+}

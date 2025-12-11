@@ -1,0 +1,29 @@
+interface SealedInterface {
+  fun function()
+
+  fun defaultFunction()
+
+  private fun privateDefaultFunction()
+
+  var variable: kotlin.Int
+
+  var defaultVariable: kotlin.Long
+    get()
+    set(value: kotlin.Long)
+
+  private var privateDefaultVariable: kotlin.Long
+    private get()
+    private set(value: kotlin.Long)
+
+  class NestedClass
+
+  class InnerClass
+
+  object NestedObject
+
+  interface NestedInterface
+
+  annotation class NestedAnnotation
+
+  typealias NestedTypeAlias = kotlin.String
+}
