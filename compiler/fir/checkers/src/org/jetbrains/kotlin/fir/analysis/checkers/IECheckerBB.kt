@@ -20,6 +20,21 @@ import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirSafeCallExpression
 import org.jetbrains.kotlin.fir.expressions.argument
 import org.jetbrains.kotlin.fir.render
+import org.jetbrains.kotlin.fir.types.ConeCapturedType
+import org.jetbrains.kotlin.fir.types.ConeDefinitelyNotNullType
+import org.jetbrains.kotlin.fir.types.ConeFlexibleType
+import org.jetbrains.kotlin.fir.types.ConeIntegerConstantOperatorType
+import org.jetbrains.kotlin.fir.types.ConeIntegerLiteralConstantType
+import org.jetbrains.kotlin.fir.types.ConeIntersectionType
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.ConeLookupTagBasedType
+import org.jetbrains.kotlin.fir.types.ConeStubTypeForTypeVariableInSubtyping
+import org.jetbrains.kotlin.fir.types.ConeTypeParameterType
+import org.jetbrains.kotlin.fir.types.ConeTypeVariableType
+import org.jetbrains.kotlin.fir.types.isAny
+import org.jetbrains.kotlin.fir.types.isNullableAny
+import org.jetbrains.kotlin.fir.types.renderReadable
+import org.jetbrains.kotlin.fir.types.resolvedType
 import kotlin.reflect.full.memberProperties
 
 class IEReporter(
@@ -46,119 +61,47 @@ class IEReporter(
 }
 
 data class IEData(
-    val operator: String? = null,
-    val trailing: Boolean? = null,
-    val kind: String? = null,
-    val chainCall: String? = null,
+    val simplifiedType: String? = null,
+    val type: String? = null,
+    val isAny: Boolean? = null,
 )
 
-private fun topDownTraverse(element: FirElement, acc: MutableList<String>) {
-    when (element) {
-        is FirSafeCallExpression -> {
-            acc.add("?")
-            val rec = element.receiver
-            if (rec is FirQualifiedAccessExpression) {
-                topDownTraverse(rec.explicitReceiver ?: return, acc)
-            }
-            if (rec is FirSafeCallExpression) {
-                topDownTraverse(rec, acc)
-            }
-        }
-        is FirQualifiedAccessExpression -> {
-            acc.add(".")
-            val receiver = element.explicitReceiver ?: return
-            topDownTraverse(receiver, acc)
-        }
-        is FirCheckNotNullCall -> {
-            acc.add("!!")
-            topDownTraverse(element.argument, acc)
-        }
-    }
+context(context: CheckerContext)
+fun ConeKotlinType.simplifyType(): ConeKotlinType? = when (this) {
+    is ConeFlexibleType -> upperBound.simplifyType()
+    is ConeDefinitelyNotNullType -> original.simplifyType()
+    is ConeCapturedType -> leastUpperBound(context.session).simplifyType()
+    is ConeIntegerConstantOperatorType -> this
+    is ConeIntegerLiteralConstantType -> this
+    is ConeIntersectionType -> this
+    is ConeTypeParameterType -> leastUpperBound(context.session).simplifyType()
+    is ConeLookupTagBasedType -> this
+    is ConeStubTypeForTypeVariableInSubtyping -> null
+    is ConeTypeVariableType -> null
 }
 
-private fun downTopTraverse(index: Int, elements: List<FirElement>): FirElement? {
-    if (index >= elements.size) return null
-    when (elements[index]) {
-        is FirCheckNotNullCall -> {
-            return downTopTraverse(index + 1, elements) ?: elements[index]
-        }
-        is FirArgumentList -> {
-            val element = elements[index + 1]
-            if (element is FirQualifiedAccessExpression) {
-                if (element.explicitReceiver != elements[index - 1]) return null
-                return downTopTraverse(index + 1, elements)
-            }
-            if (element is FirCheckNotNullCall) {
-                return downTopTraverse(index + 1, elements)
-            }
-            return null
-        }
-        is FirQualifiedAccessExpression -> {
-            return downTopTraverse(index + 1, elements) ?: elements[index]
-        }
-        is FirSafeCallExpression -> {
-            return downTopTraverse(index + 1, elements) ?: elements[index]
-        }
-        else -> return null
-    }
-}
-
-private fun List<String>.kind() = when {
-    all { it == "!!" } -> "all-!!"
-    all { it == "?" } -> "all-?"
-    suffixOf("!!") -> "suffix-!!"
-    suffixOf("?") -> "suffix-??"
-    contains("?") && contains("!!") -> "mix"
-    else -> "unknown"
-}
-
-private fun List<String>.suffixOf(str: String): Boolean {
-    var inSuffix = false
-    for (s in this) {
-        if (s == ".") continue
-        if (s == str) {
-            inSuffix = true
-        }
-        return false
-    }
-    return inSuffix
-}
 
 object IECheckerBB : FirCheckNotNullCallChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirCheckNotNullCall) {
-        val report = IEReporter(expression.source, context, reporter, FirErrors.IE_DIAGNOSTIC)
+        try {
+            val report = IEReporter(expression.source, context, reporter, FirErrors.IE_DIAGNOSTIC)
 
-        val elements = context.containingElements.asReversed()
-        val root = downTopTraverse(0, elements) ?: return
-        val chainCall = mutableListOf<String>().also { topDownTraverse(root, it) }
+            val argument = expression.argumentList.arguments.first()
+            val type = argument.resolvedType
+            val simplifiedType = argument.resolvedType.simplifyType()
 
-        report(
-            IEData(
-                operator = "!!",
-                trailing = (root === expression),
-                kind = chainCall.asReversed().kind(),
-                chainCall = chainCall.joinToString(" "),
-            )
-        )
-    }
-}
 
-object IECheckerSC : FirSafeCallExpressionChecker(MppCheckerKind.Common) {
-    context(context: CheckerContext, reporter: DiagnosticReporter)
-    override fun check(expression: FirSafeCallExpression) {
-        val report = IEReporter(expression.source, context, reporter, FirErrors.IE_DIAGNOSTIC)
-
-        val elements = context.containingElements.asReversed()
-        val root = downTopTraverse(0, elements) ?: return
-        val chainCall = mutableListOf<String>().also { topDownTraverse(root, it) }
-
-        report(
-            IEData(
-                operator = "?",
-                kind = chainCall.asReversed().kind(),
-                chainCall = chainCall.joinToString(" "),
-            )
-        )
+            if (simplifiedType == null || simplifiedType.isAny || simplifiedType.isNullableAny) {
+                report(
+                    IEData(
+                        isAny = simplifiedType?.isNullableAny,
+                        type = type.renderReadable(),
+                        simplifiedType = simplifiedType?.renderReadable(),
+                    )
+                )
+            }
+        } catch (_: Exception) {
+        }
     }
 }
