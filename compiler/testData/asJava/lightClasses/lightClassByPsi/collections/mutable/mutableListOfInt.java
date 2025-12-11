@@ -53,6 +53,16 @@ public abstract class SMutableList /* test.SMutableList*/ implements java.util.L
 public abstract class SMutableList2 /* test.SMutableList2*/ implements java.util.List<@org.jetbrains.annotations.NotNull() java.lang.Integer>, kotlin.jvm.internal.markers.KMutableList {
   @java.lang.Override()
   @kotlin.IgnorableReturnValue()
+  @org.jetbrains.annotations.NotNull()
+  public @org.jetbrains.annotations.NotNull() java.lang.Integer removeAt(int);//  removeAt(int)
+
+  @java.lang.Override()
+  @kotlin.IgnorableReturnValue()
+  @org.jetbrains.annotations.NotNull()
+  public @org.jetbrains.annotations.NotNull() java.lang.Integer set(int, int);//  set(int, int)
+
+  @java.lang.Override()
+  @kotlin.IgnorableReturnValue()
   public boolean add(int);//  add(int)
 
   @java.lang.Override()
@@ -60,12 +70,8 @@ public abstract class SMutableList2 /* test.SMutableList2*/ implements java.util
   public boolean remove(int);//  remove(int)
 
   @java.lang.Override()
-  @kotlin.IgnorableReturnValue()
-  public int removeAt(int);//  removeAt(int)
-
-  @java.lang.Override()
-  @kotlin.IgnorableReturnValue()
-  public int set(int, int);//  set(int, int)
+  @org.jetbrains.annotations.NotNull()
+  public @org.jetbrains.annotations.NotNull() java.lang.Integer get(int);//  get(int)
 
   @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
@@ -121,9 +127,6 @@ public abstract class SMutableList2 /* test.SMutableList2*/ implements java.util
 
   @java.lang.Override()
   public final int size();//  size()
-
-  @java.lang.Override()
-  public int get(int);//  get(int)
 
   @java.lang.Override()
   public int getSize();//  getSize()

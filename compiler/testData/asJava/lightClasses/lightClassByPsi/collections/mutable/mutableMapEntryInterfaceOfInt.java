@@ -5,13 +5,16 @@ public abstract class CMutableMapEntry /* test.CMutableMapEntry*/ implements tes
 public abstract class CMutableMapEntry2 /* test.CMutableMapEntry2*/ implements test.IMutableMapEntry {
   @java.lang.Override()
   @kotlin.IgnorableReturnValue()
-  public int setValue(int);//  setValue(int)
+  @org.jetbrains.annotations.NotNull()
+  public @org.jetbrains.annotations.NotNull() java.lang.Integer setValue(int);//  setValue(int)
 
   @java.lang.Override()
-  public int getKey();//  getKey()
+  @org.jetbrains.annotations.NotNull()
+  public @org.jetbrains.annotations.NotNull() java.lang.Integer getKey();//  getKey()
 
   @java.lang.Override()
-  public int getValue();//  getValue()
+  @org.jetbrains.annotations.NotNull()
+  public @org.jetbrains.annotations.NotNull() java.lang.Integer getValue();//  getValue()
 
   public  CMutableMapEntry2(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() test.IMutableMapEntry);//  .ctor(@org.jetbrains.annotations.NotNull() test.IMutableMapEntry)
 }
