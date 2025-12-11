@@ -31,12 +31,12 @@ import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 abstract class WasmEnvironmentConfigurator(
     testServices: TestServices,
     protected val wasmTarget: WasmTarget,
-) : EnvironmentConfigurator(testServices) {
+) : EnvironmentConfigurator(testServices), KlibBasedEnvironmentConfiguratorUtils {
 
     override val directiveContainers: List<DirectivesContainer>
         get() = listOf(WasmEnvironmentConfigurationDirectives, KlibBasedCompilerTestDirectives)
 
-    companion object : KlibBasedEnvironmentConfiguratorUtils {
+    companion object {
         fun getRuntimePathsForModule(target: WasmTarget): List<String> {
             return listOf(stdlibPath(target), kotlinTestPath(target))
         }

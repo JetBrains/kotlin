@@ -22,8 +22,10 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import java.io.File
 
-class NativeEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {
-    companion object : KlibBasedEnvironmentConfiguratorUtils {
+class NativeEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices),
+    KlibBasedEnvironmentConfiguratorUtils
+{
+    companion object {
         private const val TEST_PROPERTY_NATIVE_HOME = "kotlin.internal.native.test.nativeHome"
         private const val TEST_PROPERTY_TEST_TARGET = "kotlin.internal.native.test.target"
 

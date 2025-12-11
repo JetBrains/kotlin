@@ -17,11 +17,11 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 
-class JsFirstStageEnvironmentConfigurator(testServices: TestServices) : JsEnvironmentConfigurator(testServices) {
+class JsFirstStageEnvironmentConfigurator(testServices: TestServices) : JsEnvironmentConfigurator(testServices),
+    KlibBasedEnvironmentConfiguratorUtils
+{
     override val compilationStage: CompilationStage
         get() = CompilationStage.FIRST
-
-    companion object : KlibBasedEnvironmentConfiguratorUtils
 
     override fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule) {
         if (!module.targetPlatform(testServices).isJs()) return

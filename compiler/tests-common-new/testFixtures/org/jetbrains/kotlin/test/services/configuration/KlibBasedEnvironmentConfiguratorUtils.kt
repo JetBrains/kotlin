@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.libraryProvider
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.decapitalizeAsciiOnly
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.io.File
 
 interface KlibBasedEnvironmentConfiguratorUtils {
@@ -74,3 +75,7 @@ interface KlibBasedEnvironmentConfiguratorUtils {
         private const val OUTPUT_KLIB_DIR_NAME = "outputKlibDir"
     }
 }
+
+val TestServices.klibEnvironmentConfigurator: KlibBasedEnvironmentConfiguratorUtils
+    get() = environmentConfigurators.firstIsInstanceOrNull<KlibBasedEnvironmentConfiguratorUtils>()
+        ?: assertions.fail { "No registered ${KlibBasedEnvironmentConfiguratorUtils::class.java.simpleName}" }

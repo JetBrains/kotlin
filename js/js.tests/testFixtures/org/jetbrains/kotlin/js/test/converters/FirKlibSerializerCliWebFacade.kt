@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.ServiceRegistrationData
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.configuration.klibEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.defaultsProvider
 import org.jetbrains.kotlin.test.services.service
 import java.io.File
@@ -51,7 +52,7 @@ class FirKlibSerializerCliWebFacade(
             WebKlibSerializationPipelinePhase.executePhase(input)
         } else {
             JsSerializedKlibPipelineArtifact(
-                outputKlibPath = JsEnvironmentConfigurator.getKlibArtifactFile(testServices, module.name).absolutePath,
+                outputKlibPath = testServices.klibEnvironmentConfigurator.getKlibArtifactFile(testServices, module.name).absolutePath,
                 diagnosticsCollector = diagnosticReporter,
                 configuration = cliArtifact.configuration,
             )

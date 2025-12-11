@@ -30,8 +30,7 @@ import org.jetbrains.kotlin.test.model.Frontend2BackendConverter
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
-import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
-import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.configuration.klibEnvironmentConfigurator
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 
 class ClassicFrontend2IrConverter(
@@ -83,7 +82,7 @@ class ClassicFrontend2IrConverter(
         val sourceFiles = psiFiles.values.toList()
         val icData = configuration.incrementalDataProvider?.getSerializedData(sourceFiles) ?: emptyList()
 
-        val klibs = LoadedKlibs(all = JsEnvironmentConfigurator.getDependencyLibrariesFor(module, testServices))
+        val klibs = LoadedKlibs(all = testServices.klibEnvironmentConfigurator.getDependencyLibrariesFor(module, testServices))
 
         val (moduleFragment, pluginContext) = generateIrForKlibSerialization(
             project = project,
@@ -129,7 +128,7 @@ class ClassicFrontend2IrConverter(
         val sourceFiles = psiFiles.values.toList()
         val icData = configuration.incrementalDataProvider?.getSerializedData(sourceFiles) ?: emptyList()
 
-        val klibs = LoadedKlibs(all = WasmEnvironmentConfigurator.getDependencyLibrariesFor(module, testServices))
+        val klibs = LoadedKlibs(all = testServices.klibEnvironmentConfigurator.getDependencyLibrariesFor(module, testServices))
 
         val (moduleFragment, pluginContext) = generateIrForKlibSerialization(
             project = project,

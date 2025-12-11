@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.test.model.ArtifactKinds
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
-import org.jetbrains.kotlin.test.services.configuration.NativeEnvironmentConfigurator.Companion.getKlibArtifactFile
+import org.jetbrains.kotlin.test.services.configuration.klibEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.nativeEnvironmentConfigurator
 import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.util.klibMetadataVersionOrDefault
@@ -65,7 +65,7 @@ class NativeKlibSerializerFacade(
             diagnosticReporter.deduplicating(),
             configuration.languageVersionSettings
         )
-        val outputFile = getKlibArtifactFile(testServices, module.name)
+        val outputFile = testServices.klibEnvironmentConfigurator.getKlibArtifactFile(testServices, module.name)
 
         serializeBare(module, inputArtifact, outputFile, configuration, irDiagnosticReporter)
 

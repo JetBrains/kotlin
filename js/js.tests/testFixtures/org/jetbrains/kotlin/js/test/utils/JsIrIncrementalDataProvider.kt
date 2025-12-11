@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.configuration.klibEnvironmentConfigurator
 import java.io.ByteArrayOutputStream
 import java.io.File
 
@@ -50,6 +51,7 @@ class JsIrIncrementalDataProvider(private val testServices: TestServices) : Test
     private val fullRuntimeKlib = testServices.standardLibrariesPathProvider.fullJsStdlib()
     private val defaultRuntimeKlib = testServices.standardLibrariesPathProvider.defaultJsStdlib()
     private val kotlinTestKLib = testServices.standardLibrariesPathProvider.kotlinTestJsKLib()
+    private val klibEnvironmentConfigurator = testServices.klibEnvironmentConfigurator
 
     private val predefinedKlibHasIcCache = mutableMapOf<String, TestArtifactCache?>(
         fullRuntimeKlib.absolutePath to null,
@@ -62,7 +64,7 @@ class JsIrIncrementalDataProvider(private val testServices: TestServices) : Test
     fun getCaches() = icCache.map { it.value.fetchArtifacts() }
 
     fun getCacheForModule(module: TestModule): Map<String, ByteArray> {
-        val path = JsEnvironmentConfigurator.getKlibArtifactFile(testServices, module.name)
+        val path = klibEnvironmentConfigurator.getKlibArtifactFile(testServices, module.name)
         val canonicalPath = path.canonicalPath
         val moduleCache = icCache[canonicalPath] ?: error("No cache found for $path")
 
@@ -110,12 +112,12 @@ class JsIrIncrementalDataProvider(private val testServices: TestServices) : Test
         recordIncrementalDataForRuntimeKlib(module)
 
         val dirtyFiles = module.files.map { "/${it.relativePath}" }
-        val path = JsEnvironmentConfigurator.getKlibArtifactFile(testServices, module.name).path
+        val path = klibEnvironmentConfigurator.getKlibArtifactFile(testServices, module.name).path
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
 
         val mainArguments = JsEnvironmentConfigurator.getMainCallParametersForModule(module)
 
-        val allDependencies = JsEnvironmentConfigurator.getDependencyLibrariesFor(module, testServices)
+        val allDependencies = klibEnvironmentConfigurator.getDependencyLibrariesFor(module, testServices)
             .filterNot { it.libraryFile == library.libraryFile } // Avoid including the library twice.
 
         recordIncrementalData(
