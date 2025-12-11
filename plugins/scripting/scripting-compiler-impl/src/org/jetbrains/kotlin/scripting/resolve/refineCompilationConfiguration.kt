@@ -85,7 +85,10 @@ class ScriptLightVirtualFile(name: String, private val _path: String?, text: Str
 }
 
 fun KtSourceFile.toSourceCode(): SourceCode? = when (this) {
-    is KtPsiSourceFile -> (psiFile as? KtFile)?.let(::KtFileScriptSource) ?: VirtualFileScriptSource(psiFile.virtualFile)
+    is KtPsiSourceFile -> {
+        val originalFile = psiFile.originalFile
+        (originalFile as? KtFile)?.let(::KtFileScriptSource) ?: VirtualFileScriptSource(originalFile.virtualFile)
+    }
     is KtVirtualFileSourceFile -> VirtualFileScriptSource(virtualFile)
     is KtIoFileSourceFile -> FileScriptSource(file)
     is KtInMemoryTextSourceFile -> StringScriptSource(text.toString(), name, path)
