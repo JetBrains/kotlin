@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 abstract class WasmEnvironmentConfigurator(
     testServices: TestServices,
     protected val wasmTarget: WasmTarget,
-) : EnvironmentConfigurator(testServices), KlibBasedEnvironmentConfiguratorUtils {
+) : EnvironmentConfigurator(testServices), KlibBasedEnvironmentConfigurator {
 
     override val directiveContainers: List<DirectivesContainer>
         get() = listOf(WasmEnvironmentConfigurationDirectives, KlibBasedCompilerTestDirectives)

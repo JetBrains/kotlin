@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.test.util.joinToArrayString
 import java.io.File
 
 abstract class JsEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices),
-    KlibBasedEnvironmentConfiguratorUtils
+    KlibBasedEnvironmentConfigurator
 {
     override val directiveContainers: List<DirectivesContainer>
         get() = listOf(JsEnvironmentConfigurationDirectives, KlibBasedCompilerTestDirectives)
