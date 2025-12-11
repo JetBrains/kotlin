@@ -94,7 +94,7 @@ private val expectDeclarationsRemovingPhase = makeIrModulePhase(
 )
 
 private val stringConcatenationLowering = makeIrModulePhase(
-    ::StringConcatenationLowering,
+    ::WasmStringConcatenationLowering,
     name = "StringConcatenation",
 )
 
