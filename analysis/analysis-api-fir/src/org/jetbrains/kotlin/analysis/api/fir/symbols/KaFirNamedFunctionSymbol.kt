@@ -204,7 +204,21 @@ internal class KaFirNamedFunctionSymbol private constructor(
         get() = withValidityAssertion { backingPsi?.kaSymbolModality ?: firSymbol.kaSymbolModality }
 
     override val compilerVisibility: Visibility
-        get() = withValidityAssertion { backingPsi?.visibility ?: firSymbol.visibility }
+        get() = withValidityAssertion {
+            val backingPsi = backingPsi
+            if (backingPsi != null) {
+                val visibility = when {
+                    backingPsi.isLocal -> Visibilities.Local
+                    else -> backingPsi.visibilityByModifiers
+                } ?: backingPsi.ifNoStatusCompilerPluginPresent {
+                    Visibilities.Public.takeUnless { isOverride }
+                }
+
+                visibility?.let { return it }
+            }
+
+            firSymbol.visibility
+        }
 
     override fun createPointer(): KaSymbolPointer<KaNamedFunctionSymbol> = withValidityAssertion {
         psiBasedSymbolPointerOfTypeIfSource<KaNamedFunctionSymbol>()?.let { return it }

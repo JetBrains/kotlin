@@ -168,12 +168,6 @@ internal val KtDeclaration.kaSymbolModalityByModifiers: KaSymbolModality?
         else -> null
     }
 
-internal val KtNamedFunction.visibility: Visibility?
-    get() = when {
-        isLocal -> Visibilities.Local
-        else -> visibilityByModifiers
-    }
-
 /**
  * The compiler forces the class-like declarations to have proper visibility right
  * away during their constructions and forbids its changes later, so the visibility might be
