@@ -17,12 +17,28 @@
 // TODO include no_mach on TVOS/WATCHOS
 #include "client/mac/handler/exception_handler.h"
 
-#include <mach/exception_types.h>
-#include <mach/mach_init.h>
 #include <sys/sysctl.h>
 #endif
 
 namespace {
+
+void minidumpSigaction(int sig, siginfo_t*, void*) {
+    konan::consoleErrorf("Signal %s received. Generating minidump.\n", sys_signame[sig]);
+    kotlin::writeMinidump();
+    _exit(EXIT_FAILURE);
+}
+
+bool installMinidumpSigaction() {
+    auto signal = SIGTERM;
+    struct sigaction sa{};
+    sigemptyset(&sa.sa_mask);
+    sigaddset(&sa.sa_mask, signal);
+    sa.sa_sigaction = minidumpSigaction;
+    sa.sa_flags = SA_ONSTACK | SA_SIGINFO;
+
+    return sigaction(signal, &sa, nullptr) == 0;
+}
+
 #if KONAN_OSX
     bool minidumpsEnabled() {
         return kotlin::compiler::minidumpLocation() != nullptr;
@@ -74,6 +90,15 @@ void kotlin::crashHandlerInit() noexcept {
         if (isDebuggerAttached()) {
             RuntimeLogInfo({logging::Tag::kRT}, "Debugger detected, skipping crash handler initialization");
             return;
+        }
+
+        if (compiler::minidumpOnSIGTERM()) {
+            bool installed = installMinidumpSigaction();
+            if (installed) {
+                RuntimeLogInfo({logging::Tag::kRT}, "SIGTERM sigaction installed");
+            } else {
+                RuntimeLogWarning({logging::Tag::kRT}, "Failed to install SIGTERM sigaction: %s", std::strerror(errno));
+            }
         }
 
         RuntimeLogInfo({logging::Tag::kRT}, "Initializing crash handler, minidumps will be written to \"%s\"",

@@ -2760,6 +2760,7 @@ internal class CodeGeneratorVisitor(
             llvm.staticData.cStringLiteral(it)
         } ?: constValue(llvm.kNullInt8Ptr)
         overrideRuntimeGlobal("Kotlin_minidumpLocation", minidumpLocation)
+        overrideRuntimeGlobal("Kotlin_minidumpOnSIGTERM", llvm.constInt32(if (context.config.minidumpOnSIGTERM) 1 else 0))
     }
 
     //-------------------------------------------------------------------------//

@@ -124,6 +124,15 @@ abstract class BasicCompilation<A : TestCompilationArtifact>(
             .forEach { add(it.asCompilerCliArgument()) }
     }
 
+    protected fun ArgsBuilder.applyMinidumpArgs() {
+        add("-Xbinary=minidumpLocation=${expectedArtifact.logFile.parentFile.absolutePath}")
+
+        // SIGTERM is what happens to the process when it's killed by a timeout. Generate minidumps in this case to help debug.
+        if (targets.testTarget.family == Family.OSX) {
+            add("-Xbinary=minidumpOnSIGTERM=true")
+        }
+    }
+
     protected abstract fun applySpecificArgs(argsBuilder: ArgsBuilder)
     protected open fun applyDependencies(argsBuilder: ArgsBuilder) = with(argsBuilder) {
         if (this@BasicCompilation !is LibraryCompilation) {
@@ -409,8 +418,8 @@ class ObjCFrameworkCompilation(
         add(
             "-produce", "framework",
             "-output", expectedArtifact.frameworkDir.absolutePath,
-            "-Xbinary=minidumpLocation=${expectedArtifact.logFile.parentFile.absolutePath}",
         )
+        applyMinidumpArgs()
         super.applySpecificArgs(argsBuilder)
     }
 
@@ -690,8 +699,7 @@ abstract class FinalBinaryCompilation<A : TestCompilationArtifact>(
 
     override fun applySpecificArgs(argsBuilder: ArgsBuilder) {
         super.applySpecificArgs(argsBuilder)
-
-        argsBuilder.add("-Xbinary=minidumpLocation=${expectedArtifact.logFile.parentFile.absolutePath}")
+        argsBuilder.applyMinidumpArgs()
     }
 }
 

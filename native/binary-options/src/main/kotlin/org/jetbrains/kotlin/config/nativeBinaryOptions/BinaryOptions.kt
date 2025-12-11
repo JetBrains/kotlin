@@ -113,6 +113,8 @@ object BinaryOptions : BinaryOptionRegistry() {
 
     val minidumpLocation by stringOption()
 
+    val minidumpOnSIGTERM by booleanOption()
+
     val cCallMode by option<CCallMode>()
 
     /**
