@@ -2544,7 +2544,11 @@ internal class CodeGeneratorVisitor(
         )
         val protocolGetter = llvm.externalFunction(protocolGetterProto)
 
-        return call(protocolGetter, emptyList())
+        // a protocol getter can call objc_retain, which takes a global objc lock see KT-80770
+        functionGenerationContext.switchThreadState(ThreadState.Native)
+        val result = call(protocolGetter, emptyList())
+        functionGenerationContext.switchThreadState(ThreadState.Runnable)
+        return result
     }
 
     //-------------------------------------------------------------------------//
