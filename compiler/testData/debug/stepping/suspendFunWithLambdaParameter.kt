@@ -23,6 +23,22 @@ suspend fun box() {
 // test.kt:9 box
 // test.kt:12 box
 
+// EXPECTATIONS NATIVE
+// test.kt:8 box
+// test.kt:8 invokeSuspend
+// test.kt:8 invokeSuspend
+// test.kt:9 invokeSuspend
+// test.kt:4 foo
+// test.kt:5 foo
+// test.kt:5 foo
+// test.kt:6 foo
+// test.kt:9 invokeSuspend
+// test.kt:9 invokeSuspend
+// test.kt:8 invokeSuspend
+// test.kt:12 invokeSuspend
+// test.kt:8 box
+// test.kt:12 box
+
 // EXPECTATIONS JS_IR
 // test.kt:9 doResume
 // test.kt:5 foo
