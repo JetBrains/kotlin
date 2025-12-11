@@ -289,7 +289,7 @@ class FirCallCompleter(
     }
 
     private fun FirBasedSymbol<*>.isSyntheticElvisFunction(): Boolean {
-        return origin == FirDeclarationOrigin.Synthetic.FakeFunction && (this as? FirCallableSymbol)?.callableId == SyntheticCallableId.ELVIS_NOT_NULL
+        return origin == FirDeclarationOrigin.Synthetic.FakeFunction && (this as? FirCallableSymbol)?.callableId == SyntheticCallableId.ELVIS
     }
 
     fun <T> runCompletionForCall(
