@@ -12,6 +12,10 @@ public abstract class SList2 /* test.SList2*/ implements java.util.List<@org.jet
 
   @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
+  public @org.jetbrains.annotations.NotNull() java.lang.Integer get(int);//  get(int)
+
+  @java.lang.Override()
+  @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.util.Iterator<@org.jetbrains.annotations.NotNull() java.lang.Integer> iterator();//  iterator()
 
   @java.lang.Override()
@@ -34,9 +38,6 @@ public abstract class SList2 /* test.SList2*/ implements java.util.List<@org.jet
 
   @java.lang.Override()
   public boolean isEmpty();//  isEmpty()
-
-  @java.lang.Override()
-  public int get(int);//  get(int)
 
   @java.lang.Override()
   public int getSize();//  getSize()

@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.baseContextModuleOrSel
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolVisibility
 import org.jetbrains.kotlin.analysis.api.types.KaClassType
 import org.jetbrains.kotlin.analysis.api.types.KaType
@@ -153,8 +154,12 @@ internal abstract class SymbolLightMethodBase(
             isJvmExposedBoxed && typeForValueClass(returnType) -> true
 
             returnType.isPrimitiveBacked -> {
-                symbol.allOverriddenSymbols.any { overriddenSymbol ->
-                    !overriddenSymbol.returnType.isPrimitiveBacked
+                if (symbol.origin == KaSymbolOrigin.DELEGATED) {
+                    !symbol.fakeOverrideOriginal.returnType.isPrimitiveBacked
+                } else {
+                    symbol.allOverriddenSymbols.any { overriddenSymbol ->
+                        !overriddenSymbol.returnType.isPrimitiveBacked
+                    }
                 }
             }
 

@@ -7,13 +7,14 @@ public abstract class SMapEntry /* test.SMapEntry*/<VElem>  implements java.util
 
 public abstract class SMapEntry2 /* test.SMapEntry2*/<VElem>  implements java.util.Map.Entry<@org.jetbrains.annotations.NotNull() java.lang.Integer, VElem>, kotlin.jvm.internal.markers.KMappedMarker {
   @java.lang.Override()
+  @org.jetbrains.annotations.NotNull()
+  public @org.jetbrains.annotations.NotNull() java.lang.Integer getKey();//  getKey()
+
+  @java.lang.Override()
   public VElem getValue();//  getValue()
 
   @java.lang.Override()
   public VElem setValue(VElem);//  setValue(VElem)
-
-  @java.lang.Override()
-  public int getKey();//  getKey()
 
   public  SMapEntry2();//  .ctor()
 }

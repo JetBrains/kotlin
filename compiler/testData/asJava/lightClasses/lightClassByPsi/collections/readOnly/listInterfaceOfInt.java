@@ -71,6 +71,10 @@ public abstract class CList /* test.CList*/ implements test.IList {
 public abstract class CList2 /* test.CList2*/ implements test.IList {
   @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
+  public @org.jetbrains.annotations.NotNull() java.lang.Integer get(int);//  get(int)
+
+  @java.lang.Override()
+  @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.util.Iterator<@org.jetbrains.annotations.NotNull() java.lang.Integer> iterator();//  iterator()
 
   @java.lang.Override()
@@ -129,9 +133,6 @@ public abstract class CList2 /* test.CList2*/ implements test.IList {
 
   @java.lang.Override()
   public final int size();//  size()
-
-  @java.lang.Override()
-  public int get(int);//  get(int)
 
   @java.lang.Override()
   public int getSize();//  getSize()
