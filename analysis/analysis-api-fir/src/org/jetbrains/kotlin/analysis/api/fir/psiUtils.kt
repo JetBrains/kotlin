@@ -180,11 +180,10 @@ internal val KtNamedFunction.visibility: Visibility?
  * computed from the PSI directly
  */
 internal val KtClassLikeDeclaration.visibility: Visibility
-    get() = when (this) {
-        // TODO: KT-80716 replaced with native isLocal check
-        is KtTypeAlias if getClassId() == null -> Visibilities.Local
-        is KtClassOrObject if isLocal -> Visibilities.Local
-        else -> visibilityByModifiers ?: Visibilities.Public
+    get() = if (getClassId() == null) {
+        Visibilities.Local
+    } else {
+        visibilityByModifiers ?: Visibilities.Public
     }
 
 internal val KtProperty.visibility: Visibility?

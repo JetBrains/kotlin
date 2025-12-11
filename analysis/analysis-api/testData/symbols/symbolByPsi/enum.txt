@@ -764,7 +764,7 @@ KaNamedClassSymbol:
   classId: null
   classKind: CLASS
   companionObject: null
-  compilerVisibility: Public
+  compilerVisibility: Local
   contextReceivers: []
   isActual: false
   isData: false
@@ -784,7 +784,7 @@ KaNamedClassSymbol:
       type: kotlin/Any
   ]
   typeParameters: []
-  visibility: PUBLIC
+  visibility: LOCAL
   getContainingFileSymbol: KaFileSymbol(enum.kt)
   getContainingModule: KaSourceModule "Sources of main"
   annotationApplicableTargets: null
