@@ -150,6 +150,8 @@ HotReloader::HotReloader() {
             const auto& dylibPath = dylibPaths[0];
             reload(dylibPath);
         });
+    } else {
+        HRLogError("Failed to start HotReload server, maybe a TCP port is already busy?");
     }
 }
 

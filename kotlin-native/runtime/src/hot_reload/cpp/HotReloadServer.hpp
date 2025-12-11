@@ -7,13 +7,10 @@
 
 #ifdef KONAN_HOT_RELOAD
 
-#include "CompilerConstants.hpp"
-
 #include <iostream>
 #include <vector>
 #include <string>
 #include <thread>
-#include <string_view>
 
 #include <unistd.h>
 #include <sys/socket.h>
@@ -26,10 +23,25 @@ using namespace kotlin::hot;
 
 class HotReloadServer {
 public:
-    explicit HotReloadServer(
-            const int32_t port = (kotlin::compiler::hotReloadServerPort() == -1) ? kDefaultServerPort
-                                                                             : kotlin::compiler::hotReloadServerPort()) :
-        port(port) {}
+    explicit HotReloadServer(const int32_t port) : port(port) {}
+
+    explicit HotReloadServer() {
+        if (const auto* portEnv = getenv(kKonanHotReloadPortEnvVar); portEnv != nullptr) {
+            try {
+                port = std::stoi(std::string(portEnv));
+                if (port <= 0 || port > std::numeric_limits<uint16_t>::max())
+                    throw std::out_of_range("Port number out of range");
+            } catch (std::invalid_argument&) {
+                HRLogWarning("(HotReloadServer) Parsed invalid server port, falling back to the default one");
+                port = kDefaultServerPort;
+            } catch (std::out_of_range&) {
+                HRLogWarning("(HotReloadServer) Out of range server port, falling back to the default one");
+                port = kDefaultServerPort;
+            }
+        } else {
+            port = kDefaultServerPort;
+        }
+    }
 
     ~HotReloadServer() { stop(); }
 
@@ -121,6 +133,7 @@ public:
     }
 
 private:
+    static constexpr auto kKonanHotReloadPortEnvVar = "KONAN_HOT_RELOAD_PORT";
     static constexpr auto kServerEndpoint = "127.0.0.1";
     static constexpr auto kDefaultServerPort = 5567;
 

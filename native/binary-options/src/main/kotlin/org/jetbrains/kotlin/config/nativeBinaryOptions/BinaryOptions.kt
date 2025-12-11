@@ -121,8 +121,6 @@ object BinaryOptions : BinaryOptionRegistry() {
     val macabi by booleanOption()
 
     val hotReload by booleanOption()
-
-    val hotReloadServerPort by stringOption()
 }
 
 open class BinaryOption<T : Any>(
