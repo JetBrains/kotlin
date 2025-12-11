@@ -220,7 +220,6 @@ extern "C" const char* Kotlin_callsCheckerGoodFunctionNames[] = {
         "objc_retain",
         "objc_retainAutoreleaseReturnValue",
         "objc_retainBlock",
-        "objc_storeWeak",
         "object_getClass",
         "object_isClass",
         "_os_signpost_emit_with_name_impl",
