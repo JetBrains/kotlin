@@ -222,52 +222,51 @@ internal fun decodeUtf8(bytes: ByteArray, startIndex: Int, endIndex: Int, throwO
     require(startIndex >= 0 && endIndex <= bytes.size && startIndex <= endIndex)
 
     var byteIndex = startIndex
-    val stringBuilder = StringBuilder()
+    var stringBuilder = ""
 
     while (byteIndex < endIndex) {
         val byte = bytes[byteIndex++].toInt()
         when {
             byte >= 0 ->
-                stringBuilder.append(byte.toChar())
+                stringBuilder = stringBuilder.plus(byte.toChar().toString())
             byte shr 5 == -2 -> {
                 val code = codePointFrom2(bytes, byte, byteIndex, endIndex, throwOnMalformed)
                 if (code <= 0) {
-                    stringBuilder.append(REPLACEMENT_CHAR)
+                    stringBuilder = stringBuilder.plus(REPLACEMENT_CHAR.toString())
                     byteIndex += -code
                 } else {
-                    stringBuilder.append(code.toChar())
+                    stringBuilder = stringBuilder.plus(code.toChar().toString())
                     byteIndex += 1
                 }
             }
             byte shr 4 == -2 -> {
                 val code = codePointFrom3(bytes, byte, byteIndex, endIndex, throwOnMalformed)
                 if (code <= 0) {
-                    stringBuilder.append(REPLACEMENT_CHAR)
+                    stringBuilder = stringBuilder.plus(REPLACEMENT_CHAR.toString())
                     byteIndex += -code
                 } else {
-                    stringBuilder.append(code.toChar())
+                    stringBuilder = stringBuilder.plus(code.toChar().toString())
                     byteIndex += 2
                 }
             }
             byte shr 3 == -2 -> {
                 val code = codePointFrom4(bytes, byte, byteIndex, endIndex, throwOnMalformed)
                 if (code <= 0) {
-                    stringBuilder.append(REPLACEMENT_CHAR)
+                    stringBuilder = stringBuilder.plus(REPLACEMENT_CHAR.toString())
                     byteIndex += -code
                 } else {
                     val high = (code - 0x10000) shr 10 or 0xD800
                     val low = (code and 0x3FF) or 0xDC00
-                    stringBuilder.append(high.toChar())
-                    stringBuilder.append(low.toChar())
+                    stringBuilder = stringBuilder.plus(high.toChar().toString())
+                    stringBuilder = stringBuilder.plus(low.toChar().toString())
                     byteIndex += 3
                 }
             }
             else -> {
                 val _ = malformed(0, byteIndex, throwOnMalformed)
-                stringBuilder.append(REPLACEMENT_CHAR)
+                stringBuilder = stringBuilder.plus(REPLACEMENT_CHAR.toString())
             }
         }
     }
-
-    return stringBuilder.toString()
+    return stringBuilder
 }

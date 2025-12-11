@@ -369,18 +369,16 @@ public actual fun String.replace(oldValue: String, newValue: String, ignoreCase:
 
         val oldValueLength = oldValue.length
         val searchStep = oldValueLength.coerceAtLeast(1)
-        val newLengthHint = length - oldValueLength + newValue.length
-        if (newLengthHint < 0) throw OutOfMemoryError()
-        val stringBuilder = StringBuilder(newLengthHint)
+        var stringBuilder = ""
 
         var i = 0
         do {
-            stringBuilder.append(this, i, occurrenceIndex).append(newValue)
+            stringBuilder = stringBuilder.plus(this.substring(i, occurrenceIndex)).plus(newValue)
             i = occurrenceIndex + oldValueLength
             if (occurrenceIndex >= length) break
             occurrenceIndex = indexOf(oldValue, occurrenceIndex + searchStep, ignoreCase)
         } while (occurrenceIndex > 0)
-        return stringBuilder.append(this, i, length).toString()
+        return stringBuilder.plus(this.substring(i, length))
     }
 }
 

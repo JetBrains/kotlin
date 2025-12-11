@@ -17,13 +17,14 @@ internal fun parseDouble(string: String): Double {
         }
     }
 
-    fun parseNumber(sb: StringBuilder) {
+    fun parseNumber(): String {
+        val startIndex = index
         while (index <= string.lastIndex) {
             val ch = string[index]
             if (ch !in '0'..'9') break
-            sb.append(string[index])
             index++
         }
+        return string.substring(startIndex, index)
     }
 
     fun parseSign(): Boolean {
@@ -85,17 +86,17 @@ internal fun parseDouble(string: String): Double {
         return if (!isNegative) Double.POSITIVE_INFINITY else Double.NEGATIVE_INFINITY
     }
 
-    val numberBuilder = StringBuilder()
-    parseNumber(numberBuilder)
+    var numberBuilder = parseNumber()
     var scale = numberBuilder.length
-    if (parseDot()) parseNumber(numberBuilder)
+    if (parseDot()) {
+        numberBuilder = numberBuilder.plus(parseNumber())
+    }
     if (numberBuilder.isEmpty()) numberFormatError(string)
-    val numberString = numberBuilder.toString()
+    val numberString = numberBuilder
 
     if (parseE()) {
-        numberBuilder.clear()
         val isExponentNegative = parseSign()
-        parseNumber(numberBuilder)
+        numberBuilder = parseNumber()
         if (numberBuilder.isEmpty()) numberFormatError(string)
         parseUnsignificants()
         if (index != string.length) numberFormatError(string)
@@ -104,7 +105,7 @@ internal fun parseDouble(string: String): Double {
             return if (isNegative) -0.0 else 0.0
         }
 
-        val exponentScale = numberBuilder.toString().toIntOrNull() ?: run {
+        val exponentScale = numberBuilder.toIntOrNull() ?: run {
             return if (isExponentNegative) {
                 if (isNegative) -0.0 else 0.0
             } else {
