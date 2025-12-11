@@ -31,6 +31,23 @@ fun box(): String {
 // test.kt:8 box
 // test.kt:11 box
 
+// EXPECTATIONS NATIVE
+// test.kt:11 box
+// test.kt:8 box
+// test.kt:12 box
+// test.kt:3 box
+// test.kt:12 box
+// test.kt:8 box
+// test.kt:13 box
+// test.kt:8 box
+// test.kt:14 box
+// test.kt:5 foo2
+// test.kt:14 box
+// test.kt:8 box
+// test.kt:11 box
+// test.kt:11 box
+// test.kt:16 box
+
 // EXPECTATIONS JS_IR
 // test.kt:3 box
 // test.kt:11 box

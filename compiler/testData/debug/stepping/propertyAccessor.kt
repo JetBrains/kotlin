@@ -20,6 +20,16 @@ fun box() {
 // test.kt:12 box
 // test.kt:13 box
 
+// EXPECTATIONS NATIVE
+// test.kt:12 box
+// test.kt:4 <init>
+// test.kt:9 <init>
+// test.kt:12 box
+// test.kt:6 <get-prop>
+// test.kt:7 <get-prop>
+// test.kt:8 <get-prop>
+// test.kt:13 box
+
 // EXPECTATIONS JS_IR
 // test.kt:12 box
 // test.kt:4 <init>

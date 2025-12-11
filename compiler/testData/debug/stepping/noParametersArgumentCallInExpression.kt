@@ -22,6 +22,14 @@ inline fun lookAtMe(f: () -> Int) {
 // test.kt:14 box
 // test.kt:9 box
 
+// EXPECTATIONS NATIVE
+// test.kt:6 box
+// test.kt:12 box
+// test.kt:13 box
+// test.kt:7 box
+// test.kt:14 box
+// test.kt:9 box
+
 // EXPECTATIONS JS_IR
 // test.kt:12 box
 // test.kt:13 box

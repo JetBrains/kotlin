@@ -36,6 +36,34 @@ fun box() {
 // test.kt:13 foo
 // test.kt:19 box
 
+// EXPECTATIONS NATIVE
+// test.kt:16 box
+// test.kt:8 foo
+// test.kt:9 foo
+// test.kt:6 cond
+// test.kt:4 <get-value>
+// test.kt:6 cond
+// test.kt:9 foo
+// test.kt:12 foo
+// test.kt:13 foo
+// test.kt:16 box
+// test.kt:17 box
+// test.kt:4 <set-value>
+// test.kt:18 box
+// test.kt:8 foo
+// test.kt:9 foo
+// test.kt:6 cond
+// test.kt:4 <get-value>
+// test.kt:6 cond
+// test.kt:9 foo
+// test.kt:10 foo
+// test.kt:6 cond
+// test.kt:4 <get-value>
+// test.kt:6 cond
+// test.kt:10 foo
+// test.kt:13 foo
+// test.kt:19 box
+
 // EXPECTATIONS JS_IR
 // test.kt:16 box
 // test.kt:9 foo

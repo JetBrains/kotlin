@@ -16,6 +16,12 @@ class A {
 // test.kt:5 box
 // test.kt:6 box
 
+// EXPECTATIONS NATIVE
+// test.kt:5 box
+// test.kt:9 <init>
+// test.kt:11 <init>
+// test.kt:6 box
+
 // EXPECTATIONS JS_IR
 // test.kt:5 box
 // test.kt:9 <init>

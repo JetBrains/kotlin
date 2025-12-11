@@ -53,6 +53,22 @@ fun box() {
 // test.kt:31 box
 // test.kt:32 box
 
+// EXPECTATIONS NATIVE
+// test.kt:30 box
+// test.kt:5 <get-$companion>
+// test.kt:1 <get-$companion>
+// test.kt:24 <get-$companion>
+// test.kt:30 box
+// test.kt:12 <get-x>
+// test.kt:30 box
+// test.kt:31 box
+// test.kt:5 <get-$companion>
+// test.kt:1 <get-$companion>
+// test.kt:24 <get-$companion>
+// test.kt:31 box
+// test.kt:6 <get-s>
+// test.kt:32 box
+
 // EXPECTATIONS JS_IR
 // test.kt:30 box
 // test.kt:9 <init>

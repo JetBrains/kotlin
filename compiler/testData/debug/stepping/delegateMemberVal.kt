@@ -58,6 +58,33 @@ fun box() {
 // test.kt:19 box
 // test.kt:20 box
 
+// EXPECTATIONS NATIVE
+// test.kt:19 box
+// test.kt:2 <init>
+// test.kt:5 <init>
+// test.kt:10 <init>
+// test.kt:11 <init>
+// test.kt:12 <init>
+// test.kt:5 <init>
+// test.kt:8 <init>
+// test.kt:19 box
+// test.kt:3 <get-z>
+// test.kt:5 <get-z>
+// test.kt:13 getValue
+// test.kt:14 getValue
+// test.kt:11 <get-f>
+// test.kt:14 getValue
+// test.kt:5 invoke
+// test.kt:6 invoke
+// test.kt:7 invoke
+// test.kt:14 getValue
+// test.kt:14 getValue
+// test.kt:15 getValue
+// test.kt:5 <get-z>
+// test.kt:7 <get-z>
+// test.kt:19 box
+// test.kt:20 box
+
 // EXPECTATIONS JS_IR
 // test.kt:19 box
 // test.kt:5 <init>

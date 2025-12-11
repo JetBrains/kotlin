@@ -43,6 +43,22 @@ class A {
 // test.kt:32 bar
 // test.kt:8 box
 
+// EXPECTATIONS NATIVE
+// test.kt:6 box
+// test.kt:16 <init>
+// test.kt:33 <init>
+// test.kt:6 box
+// test.kt:23 foo
+// test.kt:25 foo
+// test.kt:6 box
+// test.kt:7 box
+// test.kt:16 <init>
+// test.kt:33 <init>
+// test.kt:7 box
+// test.kt:30 bar
+// test.kt:32 bar
+// test.kt:8 box
+
 // EXPECTATIONS JS_IR
 // test.kt:6 box
 // test.kt:16 <init>

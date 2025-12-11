@@ -46,6 +46,32 @@ fun testExpressionBody(nullable: String?) =
 
 // test.kt:11 box
 
+// EXPECTATIONS NATIVE
+// test.kt:7 box
+// test.kt:13 test
+// test.kt:14 test
+// test.kt:16 test
+// test.kt:16 test
+// test.kt:17 test
+// test.kt:7 box
+// test.kt:8 box
+// test.kt:13 test
+// test.kt:14 test
+// test.kt:16 test
+// test.kt:17 test
+// test.kt:8 box
+// test.kt:9 box
+// test.kt:19 testExpressionBody
+// test.kt:20 testExpressionBody
+// test.kt:22 testExpressionBody
+// test.kt:22 testExpressionBody
+// test.kt:9 box
+// test.kt:10 box
+// test.kt:19 testExpressionBody
+// test.kt:20 testExpressionBody
+// test.kt:22 testExpressionBody
+// test.kt:11 box
+
 // EXPECTATIONS JS_IR
 // test.kt:7 box
 // test.kt:14 test
