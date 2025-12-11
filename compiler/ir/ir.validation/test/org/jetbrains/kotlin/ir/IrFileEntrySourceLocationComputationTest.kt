@@ -62,10 +62,10 @@ class IrFileEntrySourceLocationComputationTest {
     fun `Compressed file entry with one offset`() {
         val fileEntry = compressedFileEntry(firstLineIndex = 2, 20, 30)
 
-        fileEntry.assertSourceLocationComputation(UNDEFINED_LINE_AND_COLUMN, offset = 0)
-        fileEntry.assertSourceLocationComputation(UNDEFINED_LINE_AND_COLUMN, offset = 1)
-        fileEntry.assertSourceLocationComputation(UNDEFINED_LINE_AND_COLUMN, offset = 10)
-        fileEntry.assertSourceLocationComputation(UNDEFINED_LINE_AND_COLUMN, offset = 19)
+        fileEntry.assertSourceLocationComputation(LineAndColumn(line = 2, column = UNDEFINED_COLUMN_NUMBER), offset = 0)
+        fileEntry.assertSourceLocationComputation(LineAndColumn(line = 2, column = UNDEFINED_COLUMN_NUMBER), offset = 1)
+        fileEntry.assertSourceLocationComputation(LineAndColumn(line = 2, column = UNDEFINED_COLUMN_NUMBER), offset = 10)
+        fileEntry.assertSourceLocationComputation(LineAndColumn(line = 2, column = UNDEFINED_COLUMN_NUMBER), offset = 19)
         fileEntry.assertSourceLocationComputation(LineAndColumn(line = 2, column = 0), offset = 20)
         fileEntry.assertSourceLocationComputation(LineAndColumn(line = 2, column = 1), offset = 21)
         fileEntry.assertSourceLocationComputation(LineAndColumn(line = 2, column = 2), offset = 22)
