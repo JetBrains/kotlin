@@ -58627,6 +58627,12 @@ public class LLBlackBoxTestGenerated extends AbstractLLBlackBoxTest {
       }
 
       @Test
+      @TestMetadata("flexibleTypes.kt")
+      public void testFlexibleTypes() {
+        runTest("compiler/testData/codegen/box/reflection/types/flexibleTypes.kt");
+      }
+
+      @Test
       @TestMetadata("functionTypes.kt")
       public void testFunctionTypes() {
         runTest("compiler/testData/codegen/box/reflection/types/functionTypes.kt");
@@ -58651,21 +58657,9 @@ public class LLBlackBoxTestGenerated extends AbstractLLBlackBoxTest {
       }
 
       @Test
-      @TestMetadata("platformTypeClassifier.kt")
-      public void testPlatformTypeClassifier() {
-        runTest("compiler/testData/codegen/box/reflection/types/platformTypeClassifier.kt");
-      }
-
-      @Test
       @TestMetadata("platformTypeNotEqualToKotlinType.kt")
       public void testPlatformTypeNotEqualToKotlinType() {
         runTest("compiler/testData/codegen/box/reflection/types/platformTypeNotEqualToKotlinType.kt");
-      }
-
-      @Test
-      @TestMetadata("platformTypeToString.kt")
-      public void testPlatformTypeToString() {
-        runTest("compiler/testData/codegen/box/reflection/types/platformTypeToString.kt");
       }
 
       @Test

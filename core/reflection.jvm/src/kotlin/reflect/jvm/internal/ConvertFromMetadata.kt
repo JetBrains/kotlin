@@ -23,10 +23,12 @@ import kotlin.metadata.*
 import kotlin.metadata.jvm.annotations
 import kotlin.metadata.jvm.fieldSignature
 import kotlin.metadata.jvm.getterSignature
+import kotlin.metadata.jvm.isRaw
 import kotlin.metadata.jvm.signature
 import kotlin.reflect.*
 import kotlin.reflect.jvm.internal.calls.createAnnotationInstance
 import kotlin.reflect.jvm.internal.types.AbstractKType
+import kotlin.reflect.jvm.internal.types.FlexibleKType
 import kotlin.reflect.jvm.internal.types.MutableCollectionKClass
 import kotlin.reflect.jvm.internal.types.SimpleKType
 import kotlin.reflect.jvm.internal.types.getMutableCollectionKClass
@@ -126,6 +128,11 @@ internal fun KmType.toKType(
         // Suspend function types are represented in metadata in a non-trivial way, see kdoc on [KmType.isSuspend].
         result = unwrapSuspendFunctionType(result, computeJavaType)
             ?: throw KotlinReflectionInternalError("Invalid suspend function type: $result")
+    }
+    flexibleTypeUpperBound?.let {
+        if (it.typeFlexibilityId == JvmProtoBufUtil.PLATFORM_TYPE_ID) {
+            return FlexibleKType.create(result, it.type.toKType(classLoader, typeParameterTable) as SimpleKType, isRaw, computeJavaType)
+        }
     }
     return result
 }
