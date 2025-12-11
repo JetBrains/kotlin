@@ -16,8 +16,10 @@ pluginApiReference {
 
     additionalDokkaConfiguration {
         reportUndocumented.set(true)
-        if (name == "jvm") {
+        if (name != "main") {
             includes.setFrom("api-reference-description.md")
+        } else if (name == "main") {
+            suppress = true
         }
     }
 
