@@ -44,8 +44,8 @@ FIR element: FirAnonymousFunctionExpressionImpl
 FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
-<L> = [ResolvedTo(BODY_RESOLVE)] contract@fun [ResolvedTo(BODY_RESOLVE)] <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
-    callsInPlace#(action#, InvocationKind#.AT_MOST_ONCE#)
+<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=@ExtensionFunctionType kotlin/Function1<kotlin/contracts/ContractBuilder, kotlin/Unit>] contract@fun [ResolvedTo(BODY_RESOLVE)] R|kotlin/contracts/ContractBuilder|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+    this@R|special/anonymous|.R|kotlin/contracts/ContractBuilder.callsInPlace|<R|kotlin/Unit|>(R|<local>/action|, Q|kotlin/contracts/InvocationKind|.R|kotlin/contracts/InvocationKind.AT_MOST_ONCE|)
 }
 
 FIR FILE:
@@ -61,8 +61,8 @@ FILE: [ResolvedTo(IMPORTS)] lambdaFromContract.kt
         >
      {
          {
-            contract#(<L> = [ResolvedTo(BODY_RESOLVE)] contract@fun [ResolvedTo(BODY_RESOLVE)] <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
-                callsInPlace#(action#, InvocationKind#.AT_MOST_ONCE#)
+            R|kotlin/contracts/contract|(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=@ExtensionFunctionType kotlin/Function1<kotlin/contracts/ContractBuilder, kotlin/Unit>] contract@fun [ResolvedTo(BODY_RESOLVE)] R|kotlin/contracts/ContractBuilder|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+                this@R|special/anonymous|.R|kotlin/contracts/ContractBuilder.callsInPlace|<R|kotlin/Unit|>(R|<local>/action|, Q|kotlin/contracts/InvocationKind|.R|kotlin/contracts/InvocationKind.AT_MOST_ONCE|)
             }
             )
         }
