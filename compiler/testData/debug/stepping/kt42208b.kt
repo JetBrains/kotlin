@@ -21,6 +21,15 @@ inline fun foo() = {
 // test.kt:7 box
 // test.kt:8 box
 
+// EXPECTATIONS NATIVE
+// test.kt:6 box
+// test1.kt:11 box
+// test.kt:6 box
+// test.kt:7 box
+// test1.kt:11 invoke
+// test1.kt:12 invoke
+// test.kt:8 box
+
 // EXPECTATIONS JS_IR
 // test1.kt:11 box
 // test.kt:7 box

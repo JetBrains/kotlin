@@ -23,6 +23,14 @@ fun test(): Long {
 // test.kt:6 box
 // test.kt:7 box
 
+// EXPECTATIONS NATIVE
+// test.kt:6 box
+// test.kt:9 test
+// test.kt:11 test
+// test.kt:12 test
+// test.kt:16 test
+// test.kt:7 box
+
 // EXPECTATIONS JS_IR
 // test.kt:6 box
 // test.kt:10 test

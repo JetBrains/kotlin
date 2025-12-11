@@ -36,6 +36,27 @@ fun baz(v:(() -> Unit)) {
 // test3.kt:17 baz
 // test.kt:9 box
 
+// EXPECTATIONS NATIVE
+// test.kt:6 box
+// test1.kt:12 box
+// test.kt:6 box
+// test3.kt:15 baz
+// test3.kt:16 baz
+// test1.kt:12 invoke
+// test1.kt:13 invoke
+// test3.kt:17 baz
+// test.kt:6 box
+// test.kt:7 box
+// test1.kt:12 box
+// test.kt:7 box
+// test.kt:8 box
+// test3.kt:15 baz
+// test3.kt:16 baz
+// test1.kt:12 invoke
+// test1.kt:13 invoke
+// test3.kt:17 baz
+// test.kt:9 box
+
 // EXPECTATIONS JS_IR
 // test1.kt:12 box
 // test.kt:6 box

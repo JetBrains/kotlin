@@ -24,6 +24,22 @@ fun box() {
 // test.kt:7 foo$default (synthetic)
 // test.kt:13 box
 
+// EXPECTATIONS NATIVE
+// test.kt:12 box
+// test.kt:4 <init>
+// test.kt:9 <init>
+// test.kt:12 box
+// test.kt:7 foo$default
+// test.kt:5 computeParam
+// test.kt:7 foo$default
+// test.kt:8 foo$default
+// test.kt:7 foo$default
+// test.kt:7 foo
+// test.kt:8 foo
+// test.kt:7 foo$default
+// test.kt:8 foo$default
+// test.kt:13 box
+
 // EXPECTATIONS JS_IR
 // test.kt:12 box
 // test.kt:4 <init>
