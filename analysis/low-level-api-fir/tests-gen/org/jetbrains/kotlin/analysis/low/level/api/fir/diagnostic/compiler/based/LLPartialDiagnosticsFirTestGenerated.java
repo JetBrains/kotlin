@@ -1556,6 +1556,12 @@ public class LLPartialDiagnosticsFirTestGenerated extends AbstractLLPartialDiagn
       }
 
       @Test
+      @TestMetadata("comparisonWithChangingTryBlock.kt")
+      public void testComparisonWithChangingTryBlock() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/cfa/comparisonWithChangingTryBlock.kt");
+      }
+
+      @Test
       @TestMetadata("initializationInTry.kt")
       public void testInitializationInTry() {
         runTest("compiler/fir/analysis-tests/testData/resolve/cfa/initializationInTry.kt");

@@ -1,0 +1,16 @@
+FILE: comparisonWithChangingTryBlock.kt
+    public final fun case(): R|kotlin/Unit| {
+        lvar x: R|kotlin/Int?| = Null(null)
+        when () {
+            ==(R|<local>/x|, try {
+                R|<local>/x| = Int(10)
+                Null(null)
+            }
+            finally {
+            }
+            ) && !=(R|<local>/x|, Null(null)) ->  {
+                R|<local>/x|
+            }
+        }
+
+    }
