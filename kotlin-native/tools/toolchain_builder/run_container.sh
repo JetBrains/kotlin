@@ -1,5 +1,5 @@
 #!/bin/bash
-set -eou pipefail
+set -eo pipefail
 
 CONTAINER_NAME=kotlin-toolchain-builder
 IMAGE_NAME=kotlin-toolchain-builder
@@ -19,6 +19,6 @@ docker run \
   --name=$CONTAINER_NAME $IMAGE_NAME
 
 mkdir -p artifacts
-docker cp kotlin-toolchain-builder:"/home/ct/x-tools/$TARGET-$VERSION-$TOOLCHAIN_VERSION_SUFFIX.tar.gz" artifacts/
+docker cp kotlin-toolchain-builder:"/home/ct/x-tools/$TARGET-$VERSION$TOOLCHAIN_VERSION_SUFFIX.tar.gz" artifacts/
 
 echo "Done."
