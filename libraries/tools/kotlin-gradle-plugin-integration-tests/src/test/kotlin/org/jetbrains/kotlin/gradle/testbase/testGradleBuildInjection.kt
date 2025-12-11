@@ -567,9 +567,7 @@ fun TestProject.plugins(build: PluginDependenciesSpec.() -> Unit) {
             .supportGradleBuiltInPlugins()
             .forEach {
                 val pluginPointer = buildscript.dependencies.create(
-                    group = it.id,
-                    name = "${it.id}.gradle.plugin",
-                    version = it.version,
+                    "${it.id}:${it.id}.gradle.plugin:${it.version}"
                 )
                 buildscript.configurations.getByName("classpath").dependencies.add(pluginPointer)
             }
