@@ -6,7 +6,7 @@ apply plugin: 'maven-publish'
 dependencies {
     testApi "org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version"
     testApi "org.jetbrains.kotlin:kotlin-test:$kotlin_version"
-    testApi group: 'junit', name: 'junit', version: '4.12'
+    testApi "junit:junit:4.12"
     api "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
 }
 

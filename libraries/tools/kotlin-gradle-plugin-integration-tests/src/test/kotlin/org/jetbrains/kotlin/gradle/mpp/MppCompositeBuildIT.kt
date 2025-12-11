@@ -551,6 +551,8 @@ class MppCompositeBuildIT : KGPBaseTest() {
     }
 
     @TestMetadata("mpp-composite-build/sample0")
+    // The archives configuration has been deprecated for artifact declaration since Gradle 9.1.0
+    @GradleTestVersions(maxVersion = TestVersions.Gradle.G_9_0)
     @GradleTest
     fun `test included build of older version works correctly`(gradleVersion: GradleVersion) {
         val defaultKotlinNativeVersion = defaultBuildOptions.nativeOptions.version

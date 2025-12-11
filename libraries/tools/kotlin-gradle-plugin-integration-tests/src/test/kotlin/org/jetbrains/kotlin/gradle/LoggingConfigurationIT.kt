@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.replaceFirst
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
+import kotlin.io.path.appendText
 
 /**
  * Logging model in Gradle builds is not simple.
@@ -39,6 +40,12 @@ class LoggingConfigurationMppIT : KGPBaseTest() {
             // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
             buildOptions = defaultBuildOptions.disableIsolatedProjects(),
         ) {
+            projectPath.resolve("lib/build.gradle.kts").appendText(
+                """
+                // Hack: Read property to ensure Gradle 9.1.0+ invalidates CC when it changes
+                providers.gradleProperty("invalidateCC").orNull
+                """.trimIndent()
+            )
             for (mainCompileTask in listOf(":lib:compileKotlinJvm", ":lib:compileKotlinJs")) {
                 checkLoggingConfigurations("lib/build.gradle.kts", mainCompileTask, buildOptions)
             }
@@ -54,6 +61,12 @@ class LoggingConfigurationJvmIT : KGPBaseTest() {
     @TestMetadata("jvmTargetModernDsl")
     fun testBasicConfigurations(gradleVersion: GradleVersion) {
         project("jvmTargetModernDsl", gradleVersion) {
+            buildGradleKts.appendText(
+                """
+                // Hack: Read property to ensure Gradle 9.1.0+ invalidates CC when it changes
+                providers.gradleProperty("invalidateCC").orNull
+                """.trimIndent()
+            )
             checkLoggingConfigurations("build.gradle.kts", ":compileKotlin", defaultBuildOptions)
         }
     }
@@ -91,7 +104,7 @@ private fun TestProject.checkLoggingConfigurations(gradleKtsPath: String, mainCo
 
 private fun TestProject.checkDebugLogPlusImplicitVerboseTrue(mainCompileTask: String, buildOptions: BuildOptions) {
     // KT-75850: we need to explicitly invalidate the CC here,as changing the logLevel doesn't trigger it
-    build("clean", "-PinvalidateCC${generateIdentifier()}", mainCompileTask, buildOptions = buildOptions) {
+    build("clean", "-PinvalidateCC=${generateIdentifier()}", mainCompileTask, buildOptions = buildOptions) {
         assertOutputContains("[DEBUG]")
         assertOutputContains("Kotlin compiler args:.*-verbose".toRegex())
         assertOutputContains("IncrementalCompilationOptions.*reportSeverity=3".toRegex())
