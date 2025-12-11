@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-56614
 
 // FILE: package1.kt
@@ -25,7 +25,7 @@ import p1.*
 import p2.*
 
 fun main() {
-    bar("", "") {} // Resolves to p1.bar in K1, but to p2.bar in K2
+    <!OVERLOAD_RESOLUTION_AMBIGUITY!>bar<!>("", "") {} // Resolves to p1.bar in K1, but to p2.bar in K2
 }
 
 /* GENERATED_FIR_TAGS: funInterface, functionDeclaration, functionalType, interfaceDeclaration, lambdaLiteral,

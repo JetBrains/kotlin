@@ -6,22 +6,18 @@
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
 
-class Foo {
-    interface FObject<T> {
-        void invoke(T i);
+public class Foo {
+    interface FObject {
+        void invoke(Object i);
     }
 
-    public String foo(FObject<Integer> f) { return ""; }
-    public int foo(Function1<Integer, Unit> f) { return 1; }
-
-    public String bar(FObject<Object> f) { return ""; }
-    public int bar(Function1<Integer, Unit> f) { return 1; }
+    public String test(FObject f) { return ""; }
+    public int test(Function1<Integer, Unit> f) { return 1; }
 }
 
 // FILE: 1.kt
-fun test() {
-    Foo().foo {} checkType { _<Int>() }
-    Foo().bar {} checkType { _<String>() }
+fun bar() {
+    Foo().test {} checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><String>() }
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, flexibleType, funWithExtensionReceiver, functionDeclaration, functionalType,

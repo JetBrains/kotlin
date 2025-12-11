@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // FULL_JDK
 // WITH_STDLIB
 
@@ -31,7 +31,7 @@ fun main() {
 
     val b: () -> Unit = {}
 
-    expectsUnitFunctionType(<!ARGUMENT_TYPE_MISMATCH!>foo(b)<!>)
+    expectsUnitFunctionType(foo(b))
 
     <!DEBUG_INFO_EXPRESSION_TYPE("() -> kotlin.String")!>x1<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("() -> kotlin.Unit")!>x2<!>

@@ -151,7 +151,9 @@ class Candidate(
         get() = samConversionInfosOfArguments != null
 
     val usesSamConversionOrSamConstructor: Boolean
-        get() = usesSamConversion || symbol.origin == FirDeclarationOrigin.SamConstructor
+        get() = usesSamConversion || usesSamConstructor
+
+    val usesSamConstructor: Boolean get() = symbol.origin == FirDeclarationOrigin.SamConstructor
 
     val usesFunctionKindConversion: Boolean
         get() = argumentsWithFunctionKindConversion != null || callableReferenceAdaptation?.hasFunctionKindConversion() == true

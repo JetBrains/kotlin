@@ -125,30 +125,22 @@ private fun <T> FlatSignatureComparisonState.isValueParameterTypeEquallyOrMoreSp
         val specificType = typeKindSelector(specificWithConversion) ?: continue
         val generalType = typeKindSelector(generalWithConversion) ?: continue
 
+        if (isFunctionTypAndSam(specificWithConversion, generalWithConversion)) continue
+        if (isFunctionTypAndSam(generalWithConversion, specificWithConversion)) return false
+
         if (isLessSpecific(specificType, generalType)) {
-            with(cs.context) {
-                if (specificType.isFunctionOrKFunctionWithAnySuspendability()
-                    && generalWithConversion.originalTypeIfWasConverted != null
-                    && generalType.isFunctionOrKFunctionWithAnySuspendability()
-                ) {
-                    if (specificType.isExtensionFunctionType() && !generalType.isExtensionFunctionType()) continue
-                    if (generalType.functionTypeKind()!!.nonReflectKind() != specificType.functionTypeKind()!!.nonReflectKind()) continue
-                }
-            }
             return false
-        }
-        with(cs.context) {
-            if (specificType.isFunctionOrKFunctionWithAnySuspendability()
-                && specificWithConversion.originalTypeIfWasConverted != null
-                && generalType.isFunctionOrKFunctionWithAnySuspendability()
-            ) {
-                if (generalType.isExtensionFunctionType() && !specificType.isExtensionFunctionType()) return false
-                if (generalType.functionTypeKind()!!.nonReflectKind() != specificType.functionTypeKind()!!.nonReflectKind()) return false
-            }
         }
     }
 
     return true
+}
+
+context(state: FlatSignatureComparisonState)
+private fun isFunctionTypAndSam(f: TypeWithConversion, sam: TypeWithConversion): Boolean {
+    if (f.originalTypeIfWasConverted != null || sam.originalTypeIfWasConverted == null) return false
+
+    return context(state.cs.context) { f.resultType?.isFunctionOrKFunctionWithAnySuspendability() == true }
 }
 
 fun <T> SimpleConstraintSystem.signatureComparisonStateIfEquallyOrMoreSpecific(

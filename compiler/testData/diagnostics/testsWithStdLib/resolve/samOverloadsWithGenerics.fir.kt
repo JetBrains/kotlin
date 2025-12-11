@@ -21,7 +21,7 @@ class Foo {
 // FILE: 1.kt
 fun test() {
     Foo().foo {} checkType { _<Int>() }
-    Foo().bar {} checkType { _<String>() }
+    Foo().bar {} checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><String>() }
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, flexibleType, funWithExtensionReceiver, functionDeclaration, functionalType,
