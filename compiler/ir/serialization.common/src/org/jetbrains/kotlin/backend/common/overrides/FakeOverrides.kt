@@ -83,7 +83,7 @@ private class IrLinkerFakeOverrideBuilderStrategy(
     private val partialLinkageSupport: PartialLinkageSupportForLinker,
     private val fakeOverrideDeclarationTable: FakeOverrideDeclarationTable,
     private val friendModules: Map<String, Collection<String>>,
-    private val isMultipleInheritedImplementationsAllowed: (IrOverridableDeclaration<*>) -> Boolean = { false },
+    private val isMultipleInheritedImplementationsAllowed: (IrOverridableDeclaration<*>) -> Boolean,
 ) : FakeOverrideBuilderStrategy() {
 
     override fun <R> inFile(file: IrFile?, block: () -> R): R =
