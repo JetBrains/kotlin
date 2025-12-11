@@ -38,6 +38,23 @@ fun box() {
 // test.kt:17 <clinit>
 // test.kt:25 box
 
+// EXPECTATIONS NATIVE
+// test.kt:23 box
+// test.kt:4 $getEnumAt
+// test.kt:1 $getEnumAt
+// test.kt:4 $getEnumAt
+// test.kt:13 $getEnumAt
+// test.kt:23 box
+// test.kt:8 foo
+// test.kt:10 foo
+// test.kt:23 box
+// test.kt:24 box
+// test.kt:15 $getEnumAt
+// test.kt:1 $getEnumAt
+// test.kt:15 $getEnumAt
+// test.kt:20 $getEnumAt
+// test.kt:25 box
+
 // EXPECTATIONS JS_IR
 // test.kt:23 box
 // test.kt:5 E_initEntries

@@ -34,6 +34,29 @@ fun box() {
 // test.kt:6 box
 // test.kt:16 box
 
+// EXPECTATIONS NATIVE
+// test.kt:10 box
+// test.kt:6 box
+// Standard.kt:118 box
+// test.kt:6 box
+// test.kt:6 invoke
+// test.kt:12 invoke
+// test.kt:6 invoke
+// Standard.kt:118 invoke
+// test.kt:6 invoke
+// test.kt:6 invoke
+// test.kt:13 invoke
+// test.kt:6 invoke
+// test.kt:6 invoke
+// Standard.kt:118 invoke
+// test.kt:6 invoke
+// test.kt:14 invoke
+// test.kt:6 invoke
+// test.kt:6 box
+// Standard.kt:118 box
+// test.kt:6 box
+// test.kt:16 box
+
 // EXPECTATIONS JS_IR
 // test.kt:6 box
 // test.kt:6 box$lambda
