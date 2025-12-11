@@ -2,7 +2,8 @@ FILE: objectDeclaration.kt
     public final object A : R|kotlin/Any| {
         private constructor(): R|A|
 
-        public final fun funA(): R|kotlin/String|
+        public final fun funA(): R|kotlin/String| {
+        }
 
         public final inline fun funB(): R|kotlin/String| {
             ^funB String(A.funB body)
@@ -13,11 +14,14 @@ FILE: objectDeclaration.kt
              <
                 Returns(TRUE) -> value != null
             >
+         {
+        }
 
+        private final fun funC(): R|kotlin/String| {
+        }
 
-        private final fun funC(): R|kotlin/String|
-
-        public final fun funD(): R|kotlin/Int|
+        public final fun funD(): R|kotlin/Int| {
+        }
 
         public final inline fun funE(): R|kotlin/String| {
             local final fun funF(): R|kotlin/String| {

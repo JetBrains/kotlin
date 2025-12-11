@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.expressions.builder.buildEmptyExpressionBlock
 import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.extensions.replSnippetResolveExtensions
@@ -729,8 +730,8 @@ open class FirDeclarationsResolveTransformer(
             session.languageVersionSettings.getFlag(AnalysisFlags.headerMode) &&
             !this.isLocal && !this.isInline
         ) {
-            if (getter?.isInline == false) getter?.replaceBody(newBody = null)
-            if (setter?.isInline == false) setter?.replaceBody(newBody = null)
+            if (getter?.body != null && getter?.isInline == false) getter?.replaceBody(newBody = buildEmptyExpressionBlock())
+            if (setter?.body != null && setter?.isInline == false) setter?.replaceBody(newBody = buildEmptyExpressionBlock())
         }
     }
 
@@ -1068,10 +1069,11 @@ open class FirDeclarationsResolveTransformer(
             function !is FirPropertyAccessor && // property accessors are processed in `resolveAccessors`
             !function.isInline &&
             !function.isLocal &&
+            result.body != null &&
             result.returnTypeRef.coneType.toClassSymbol(session) !is FirAnonymousObjectSymbol // Methods of anonymous return types should be preserved.
         ) {
             // Header mode: once the return type for non-inline function is known, the body can be removed.
-            result.replaceBody(null)
+            result.replaceBody(buildEmptyExpressionBlock())
         }
 
         return result

@@ -12,4 +12,5 @@ FILE: anonymousObjects.kt
         }
 
     }
-    public final fun useAnonObject(): R|kotlin/Unit|
+    public final fun useAnonObject(): R|kotlin/Unit| {
+    }
