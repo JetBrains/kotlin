@@ -55,8 +55,7 @@ class KotlinLibraryResolverImpl<L : KotlinLibrary> internal constructor(
         noEndorsedLibs: Boolean,
     ): List<KotlinLibrary> {
 
-        val userProvidedLibraries = unresolvedLibraries.asSequence()
-            .toList()
+        val userProvidedLibraries = unresolvedLibraries
             .parallelStream()
             .map { searchPathResolver.resolve(it) }
             .filter { it != null }
