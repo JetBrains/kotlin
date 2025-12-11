@@ -14,7 +14,7 @@ fun Test.useJsIrBoxTests(
     buildDir: Provider<Directory>,
     fullStdLib: String = "libraries/stdlib/build/classes/kotlin/js/main",
     reducedStdlibPath: String = "libraries/stdlib/js-ir-minimal-for-test/build/classes/kotlin/js/main",
-    domApiCompatPath: String = "libraries/kotlin-dom-api-compat/build/classes/kotlin/main"
+    domApiCompatPath: String = "libraries/kotlin-dom-api-compat/build/classes/kotlin/js/main"
 ) {
     with(project.the<D8Extension>()) {
         setupV8()

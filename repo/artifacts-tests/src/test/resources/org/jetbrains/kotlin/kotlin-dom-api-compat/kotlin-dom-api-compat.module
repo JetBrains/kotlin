@@ -15,13 +15,6 @@
     },
     "variants": [
         {
-            "name": "commonFakeApiElements-published",
-            "attributes": {
-                "org.gradle.usage": "kotlin-api",
-                "org.jetbrains.kotlin.platform.type": "common"
-            }
-        },
-        {
             "name": "jsApiElements-published",
             "attributes": {
                 "org.gradle.category": "library",

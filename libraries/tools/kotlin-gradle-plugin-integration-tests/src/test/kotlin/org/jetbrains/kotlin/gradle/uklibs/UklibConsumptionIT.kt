@@ -242,7 +242,7 @@ class UklibConsumptionIT : KGPBaseTest() {
                     ),
                     "org.jetbrains.kotlin:kotlin-dom-api-compat:${defaultBuildOptions.kotlinVersion}" to ResolvedComponentWithArtifacts(
                         artifacts = mutableListOf(),
-                        configuration = "commonFakeApiElements-published",
+                        configuration = "fallbackVariant_KT-81412",
                     ),
                     "org.jetbrains.kotlin:kotlin-stdlib:${defaultBuildOptions.kotlinVersion}" to ResolvedComponentWithArtifacts(
                         artifacts = mutableListOf(),

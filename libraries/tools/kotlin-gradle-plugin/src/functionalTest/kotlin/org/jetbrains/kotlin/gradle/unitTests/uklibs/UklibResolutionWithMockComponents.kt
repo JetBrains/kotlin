@@ -536,7 +536,7 @@ class UklibResolutionTestsWithMockComponents {
             assertEquals(
                 mapOf<String, ResolvedComponentWithArtifacts>(
                     "org.jetbrains.kotlin:kotlin-dom-api-compat:${consumer.kotlinToolingVersion}" to ResolvedComponentWithArtifacts(
-                        configuration = "commonFakeApiElements-published",
+                        configuration = "fallbackVariant_KT-81412",
                         artifacts = mutableListOf()
                     ),
                 ).prettyPrinted,
