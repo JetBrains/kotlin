@@ -32,7 +32,7 @@ fun Project.configureJsCacheRedirector() {
                 tasks.withType<NpmTask>().configureEach {
                     val command = npmCommand.orNull?.takeIf { it.isNotEmpty() }
                         ?: args.get() // some tasks may be configured by putting command into args instead of npmCommand
-                    if (command.first() in listOf("install", "ci")) {
+                    if (command.firstOrNull() in listOf("install", "ci")) {
                         val workingDirectory = workingDir.orNull?.asFile ?: layout.projectDirectory.asFile
                         val npmRcFile = workingDirectory.resolve(".npmrc")
 
