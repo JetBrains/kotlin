@@ -1,3 +1,5 @@
+// IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_SECOND_STAGE: Native:2.2
+// ^^^ KT-79092 is fixed in 2.3.0-Beta1
 // FILE: A.kt
 
 fun interface I {
