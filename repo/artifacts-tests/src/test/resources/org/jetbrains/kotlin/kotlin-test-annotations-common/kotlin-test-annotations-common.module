@@ -15,7 +15,7 @@
     },
     "variants": [
         {
-            "name": "kotlinTestAnnotationsCommonElements",
+            "name": "legacyElements",
             "attributes": {
                 "org.gradle.category": "library"
             },

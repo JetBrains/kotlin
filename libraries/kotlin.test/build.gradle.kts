@@ -4,7 +4,6 @@ import com.google.gson.GsonBuilder
 import com.google.gson.JsonObject
 import org.gradle.api.publish.internal.PublicationInternal
 import org.gradle.jvm.tasks.Jar
-import org.gradle.kotlin.dsl.assign
 import org.gradle.kotlin.dsl.withType
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptions
@@ -12,7 +11,6 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.GenerateProjectStructureMetadata
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 import org.jetbrains.kotlin.library.KOTLINTEST_MODULE_NAME
 import plugins.configureDefaultPublishing
 import plugins.configureKotlinPomAttributes
@@ -440,22 +438,18 @@ configurations {
         }
     }
 
-    for (configurationName in listOf("kotlinTestCommon", "kotlinTestAnnotationsCommon")) {
-        val legacyConfigurationDeps = create("${configurationName}Dependencies") {
-            isCanBeResolved = true
-            isCanBeConsumed = false
+    val legacyConfigurationDeps = dependencyScope("legacyDependencies")
+    resolvable("legacyClasspath") {
+        extendsFrom(legacyConfigurationDeps.get())
+    }
+    consumable("legacyElements") {
+        attributes {
+            attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.LIBRARY))
         }
-        val legacyConfiguration = create("${configurationName}Elements") {
-            isCanBeResolved = false
-            isCanBeConsumed = false
-            attributes {
-                attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.LIBRARY))
-            }
-            extendsFrom(legacyConfigurationDeps)
-        }
-        dependencies {
-            legacyConfigurationDeps(project)
-        }
+        extendsFrom(legacyConfigurationDeps.get())
+    }
+    dependencies {
+        legacyConfigurationDeps(project)
     }
 
     val jvmMainApi by getting
@@ -558,7 +552,7 @@ publishing {
                 configureKotlinPomAttributes(project, "Legacy artifact of Kotlin Test library. Use kotlin-test instead", packaging = "pom")
                 (this as PublicationInternal<*>).isAlias = true
             }
-            variant("kotlinTestCommonElements")
+            variant("legacyElements")
         }
         module("testAnnotationsCommonModule") {
             mavenPublication {
@@ -566,7 +560,7 @@ publishing {
                 configureKotlinPomAttributes(project, "Legacy artifact of Kotlin Test library. Use kotlin-test instead", packaging = "pom")
                 (this as PublicationInternal<*>).isAlias = true
             }
-            variant("kotlinTestAnnotationsCommonElements")
+            variant("legacyElements")
         }
 
         // Makes all variants from accompanying artifacts visible through `available-at`
@@ -579,8 +573,8 @@ publishing {
             listOf("jsModule", "Js", "kotlin-test-js", "jsRuntimeClasspath"),
             listOf("wasmJsModule", "Wasm-Js", "kotlin-test-wasm-js", "wasmJsRuntimeClasspath"),
             listOf("wasmWasiModule", "Wasm-Wasi", "kotlin-test-wasm-wasi", "wasmWasiRuntimeClasspath"),
-            listOf("testCommonModule", "Common", "kotlin-test-common", "kotlinTestCommonDependencies"),
-            listOf("testAnnotationsCommonModule", "AnnotationsCommon", "kotlin-test-annotations-common", "kotlinTestAnnotationsCommonDependencies"),
+            listOf("testCommonModule", "Common", "kotlin-test-common", "legacyClasspath"),
+            listOf("testAnnotationsCommonModule", "AnnotationsCommon", "kotlin-test-annotations-common", "legacyClasspath"),
         ) + jvmTestFrameworks.map { framework ->
             listOf("${framework.lowercase()}Module", "$framework", "kotlin-test-${framework.lowercase()}", "jvm${framework}RuntimeDependencies")
         }).forEach { (module, sbomTarget, sbomDocument, classpath) ->
