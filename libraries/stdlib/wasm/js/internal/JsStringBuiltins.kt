@@ -7,8 +7,6 @@
 
 package kotlin.wasm.internal
 
-import kotlin.internal.IntrinsicConstEvaluation
-
 /**
  * The following Js builtins are internal and used for the implementation of String class in Wasm target.
  * Range/bound checks in Js code are omitted, as the String class performs checks in Kotlin code, before calling builtins.
@@ -16,7 +14,6 @@ import kotlin.internal.IntrinsicConstEvaluation
  */
 private const val jsStringModuleName = "js-string"
 
-@IntrinsicConstEvaluation
 @JsBuiltin(
     jsStringModuleName,
     "length",
@@ -25,7 +22,6 @@ private const val jsStringModuleName = "js-string"
 internal external fun jsLength(a: JsString): Int
 
 
-@IntrinsicConstEvaluation
 @JsBuiltin(
     jsStringModuleName,
     "concat",
