@@ -53,7 +53,7 @@ fun createJsTestPhaseConfig(testServices: TestServices, module: TestModule): Pha
     return if (debugMode >= DebugMode.SUPER_DEBUG) {
         val dumpOutputDir = File(
             JsEnvironmentConfigurator.getJsArtifactsOutputDir(testServices),
-            JsEnvironmentConfigurator.getKlibArtifactSimpleName(testServices, module.name) + "-irdump"
+            testServices.klibEnvironmentConfigurator.getKlibArtifactSimpleName(testServices, module.name) + "-irdump"
         )
         PhaseConfig(
             toDumpStateAfter = PhaseSet.All,
