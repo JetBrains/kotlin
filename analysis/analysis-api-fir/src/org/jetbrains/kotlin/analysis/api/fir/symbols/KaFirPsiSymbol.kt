@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.analysis.api.base.KaContextReceiver
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForDeclaration
 import org.jetbrains.kotlin.analysis.api.fir.utils.withSymbolAttachment
+import org.jetbrains.kotlin.analysis.api.fir.visibilityByModifiers
 import org.jetbrains.kotlin.analysis.api.getModule
 import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaBaseEmptyAnnotationList
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaBasePsiSymbolPointer
@@ -23,6 +24,8 @@ import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbolOfType
 import org.jetbrains.kotlin.asJava.classes.lazyPub
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.utils.isOverride
 import org.jetbrains.kotlin.fir.extensions.declarationGenerators
@@ -181,6 +184,20 @@ internal inline fun <T> KtDeclaration.ifNoStatusCompilerPluginPresent(action: ()
     } else {
         action()
     }
+}
+
+/**
+ * Determines the visibility of a callable declaration based on its PSI structure if possible.
+ *
+ * @param isOverride whether [this] declaration overrides something
+ */
+context(symbol: KaFirSymbol<*>)
+internal fun KtCallableDeclaration.psiBasedVisibility(isOverride: () -> Boolean): Visibility? = when (this) {
+    is KtNamedFunction if isLocal -> Visibilities.Local
+    is KtProperty if isLocal -> Visibilities.Local
+    else -> visibilityByModifiers
+} ?: ifNoStatusCompilerPluginPresent {
+    Visibilities.Public.takeUnless { isOverride() }
 }
 
 internal fun KaFirKtBasedSymbol<KtClassOrObject, FirClassSymbol<*>>.createSuperTypes(): List<KaType> {

@@ -80,7 +80,10 @@ internal sealed class KaFirKotlinPropertySymbol<P : KtCallableDeclaration>(
             createKaTypeParameters() ?: firSymbol.createKtTypeParameters(builder)
         }
 
-    abstract val compilerVisibilityByPsi: Visibility?
+    open val compilerVisibilityByPsi: Visibility?
+        get() = withValidityAssertion {
+            backingPsi?.psiBasedVisibility(::isOverride)
+        }
 
     override val compilerVisibility: Visibility
         get() = withValidityAssertion { compilerVisibilityByPsi ?: firSymbol.visibility }
@@ -297,9 +300,6 @@ private class KaFirKotlinPropertyKtPropertyBasedSymbol : KaFirKotlinPropertySymb
     override val modalityByPsi: KaSymbolModality?
         get() = withValidityAssertion { backingPsi?.kaSymbolModality }
 
-    override val compilerVisibilityByPsi: Visibility?
-        get() = withValidityAssertion { backingPsi?.visibility }
-
     override val callableId: CallableId?
         get() = withValidityAssertion {
             if (backingPsi != null)
@@ -424,9 +424,6 @@ private class KaFirKotlinPropertyKtParameterBasedSymbol : KaFirKotlinPropertySym
     override val modalityByPsi: KaSymbolModality?
         get() = withValidityAssertion { backingPsi?.kaSymbolModalityByModifiers }
 
-    override val compilerVisibilityByPsi: Visibility?
-        get() = withValidityAssertion { backingPsi?.visibilityByModifiers }
-
     override val callableId: CallableId?
         get() = withValidityAssertion {
             if (backingPsi != null)
@@ -521,7 +518,7 @@ private class KaFirKotlinPropertyKtDestructuringDeclarationEntryBasedSymbol : Ka
     override val modalityByPsi: KaSymbolModality?
         get() = withValidityAssertion { KaSymbolModality.FINAL }
 
-    override val compilerVisibilityByPsi: Visibility?
+    override val compilerVisibilityByPsi: Visibility
         get() = withValidityAssertion { Visibilities.Public }
 
     override val callableId: CallableId?

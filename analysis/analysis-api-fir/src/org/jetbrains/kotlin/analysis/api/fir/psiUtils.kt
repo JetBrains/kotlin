@@ -180,12 +180,6 @@ internal val KtClassLikeDeclaration.visibility: Visibility
         visibilityByModifiers ?: Visibilities.Public
     }
 
-internal val KtProperty.visibility: Visibility?
-    get() = when {
-        isLocal -> Visibilities.Local
-        else -> visibilityByModifiers
-    }
-
 internal val KtDeclaration.visibilityByModifiers: Visibility?
     get() = when {
         hasModifier(KtTokens.PRIVATE_KEYWORD) -> Visibilities.Private
