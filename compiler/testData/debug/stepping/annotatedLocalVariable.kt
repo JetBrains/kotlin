@@ -26,6 +26,16 @@ fun box() {
 // test.kt:17 box
 // test.kt:18 box
 
+// EXPECTATIONS NATIVE
+// test.kt:8 box
+// test.kt:11 box
+// test.kt:13 box
+// test.kt:14 box
+// test.kt:14 box
+// test.kt:16 box
+// test.kt:17 box
+// test.kt:18 box
+
 // EXPECTATIONS JS_IR
 // test.kt:8 box
 // test.kt:11 box

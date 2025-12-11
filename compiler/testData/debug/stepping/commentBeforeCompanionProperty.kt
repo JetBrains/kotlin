@@ -20,6 +20,15 @@ fun box() {
 // test.kt:12 box
 // test.kt:13 box
 
+// EXPECTATIONS NATIVE
+// test.kt:12 box
+// test.kt:5 <get-$companion>
+// test.kt:1 <get-$companion>
+// test.kt:8 <get-$companion>
+// test.kt:12 box
+// test.kt:7 <get-compPropVal>
+// test.kt:13 box
+
 // EXPECTATIONS JS_IR
 // test.kt:12 box
 // test.kt:7 <init>

@@ -19,6 +19,17 @@ fun box(): String {
 // test.kt:7 invoke
 // test.kt:10 box
 
+// EXPECTATIONS NATIVE
+// test.kt:10 box
+// test.kt:6 bar
+// test.kt:7 bar
+// test.kt:10 box
+// test.kt:7 invoke
+// test.kt:4 invoke
+// test.kt:7 invoke
+// test.kt:10 box
+// test.kt:11 box
+
 // EXPECTATIONS JS_IR
 // test.kt:10 box
 // test.kt:7 bar

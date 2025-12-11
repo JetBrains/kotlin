@@ -24,6 +24,14 @@ fun box(): String {
 // test.kt:16 box
 // test.kt:17 box
 
+// EXPECTATIONS NATIVE
+// test.kt:15 box
+// a.kt:8 box
+// test.kt:16 box
+// test.kt:16 box
+// test.kt:17 box
+// test.kt:19 box
+
 // EXPECTATIONS WASM
 // test.kt:15 $box (4, 8)
 // a.kt:8 $box (17, 11)
