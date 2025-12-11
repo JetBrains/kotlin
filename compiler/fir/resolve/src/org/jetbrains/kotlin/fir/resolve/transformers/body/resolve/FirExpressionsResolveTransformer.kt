@@ -1060,19 +1060,39 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         val rightArgumentTransformed: FirExpression =
             arguments[1].transform(
                 transformer,
-                withExpectedType(
-                    // We use `Any?` as a real expected type used for inference and other things
-                    builtinTypes.nullableAnyType,
-                    // But for context-sensitive resolution cases like myValue == ENUM_ENTRY we use the type of the LHS.
-                    // Potentially, we might just use LHS type just as a regular expected type which would be used both
-                    // for inference and context-sensitive resolution but that would be a very big shift in the semantics.
-                    hintForContextSensitiveResolution = leftArgumentTransformed.resolvedType,
-                )
+                // For context-sensitive resolution cases like myValue == ENUM_ENTRY we use the type of the LHS.
+                // Potentially, we might just use LHS type just as a regular expected type which would be used both
+                // for inference and context-sensitive resolution but that would be a very big shift in the semantics.
+                ResolutionMode.ContextDependent(hintForContextSensitiveResolution = leftArgumentTransformed.resolvedType)
             )
+
+        val expectedType = builtinTypes.nullableAnyType.coneType
+        val argumentList = buildUnaryArgumentList(rightArgumentTransformed)
+
+        val reference = components.syntheticCallGenerator.generateCalleeReferenceToFunctionWithExpectedTypeForArgument(
+            equalityOperatorCall,
+            argumentList,
+            expectedType,
+            resolutionContext,
+        )
+
+        val fakeCall = buildFunctionCall {
+            calleeReference = reference
+            this.argumentList = argumentList
+        }
+
+        components.dataFlowAnalyzer.enterCallArguments(fakeCall, argumentList.arguments)
+        components.dataFlowAnalyzer.exitCallArguments()
+
+        val resultingCall = components.callCompleter.completeCall(fakeCall, data)
+
+        components.dataFlowAnalyzer.exitFunctionCall(fakeCall, callCompleted = true)
+
+        val rightArgumentCompleted = resultingCall.arguments[0]
 
         equalityOperatorCall
             .transformAnnotations(transformer, ContextIndependent)
-            .replaceArgumentList(buildBinaryArgumentList(leftArgumentTransformed, rightArgumentTransformed))
+            .replaceArgumentList(buildBinaryArgumentList(leftArgumentTransformed, rightArgumentCompleted))
         equalityOperatorCall.resultType = builtinTypes.booleanType.coneType
 
         dataFlowAnalyzer.exitEqualityOperatorCall(equalityOperatorCall)

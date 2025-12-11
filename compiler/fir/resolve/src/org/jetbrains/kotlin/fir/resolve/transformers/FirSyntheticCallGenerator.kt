@@ -523,7 +523,7 @@ class FirSyntheticCallGenerator(
      * For no expected type or Unit one, it runs resolution with them as arguments for the function `fun accept(p: Any): Unit`
      * Otherwise, it's `fun accept(p: <expectedType>): Unit`
      */
-    private fun generateCalleeReferenceToFunctionWithExpectedTypeForArgument(
+    fun generateCalleeReferenceToFunctionWithExpectedTypeForArgument(
         callSite: FirExpression,
         argumentList: FirArgumentList,
         expectedType: ConeKotlinType?,
