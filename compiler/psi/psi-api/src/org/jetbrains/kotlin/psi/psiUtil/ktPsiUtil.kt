@@ -666,6 +666,23 @@ private val HARD_KEYWORDS: Set<String> by lazy(LazyThreadSafetyMode.PUBLICATION)
     KtTokens.KEYWORDS.types.mapTo(HashSet()) { (it as KtKeywordToken).value }
 }
 
+/**
+ * Checks if this string is a valid Kotlin identifier.
+ *
+ * A regular identifier (without backticks) must:
+ * - Start with a letter (including Unicode letters) or underscore;
+ * - Contain only letters, digits, or underscores;
+ * - Not be a hard keyword.
+ *
+ * Escaped identifiers (strings starting with a backtick) are also supported: the function returns `true` for strings like
+ * "`class`" or "`with spaces`".
+ *
+ * The function performs only basic, platform-agnostic validation. Individual build targets may impose additional restrictions.
+ * Such as, for the JVM platform, Java bytecode and Dalvik restrictions apply
+ * (see 'org.jetbrains.kotlin.resolve.jvm.checkers.DalvikIdentifierUtils.isValidDalvikCharacter').
+ *
+ * @see quoteIfNeeded
+ */
 fun String?.isIdentifier(): Boolean {
     if (this == null || isEmpty()) return false
 
@@ -685,14 +702,9 @@ fun String?.isIdentifier(): Boolean {
     while (index < length) {
         val codePoint = codePointAt(index)
 
-        val isValid = if (codePoint < 256) {
-            (codePoint == '_'.code)
-                    || (codePoint in 'A'.code..'Z'.code)
-                    || (codePoint in 'a'.code..'z'.code)
-                    || (index > 0 && codePoint in '0'.code..'9'.code)
-        } else {
-            Character.isLetter(codePoint) || (index > 0 && Character.isDigit(codePoint))
-        }
+        val isValid = (codePoint == '_'.code)
+                || Character.isLetter(codePoint)
+                || (index > 0 && Character.isDigit(codePoint))
 
         if (!isValid) {
             return false
