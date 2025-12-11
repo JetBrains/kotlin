@@ -12,6 +12,10 @@ import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin.Companion.DEFINED
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin.Companion.DESTRUCTURED_OBJECT_PARAMETER
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin.Companion.FOR_LOOP_ITERATOR
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin.Companion.IR_TEMPORARY_VARIABLE
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin.Companion.UNDERSCORE_PARAMETER
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.expressions.IrLoop
@@ -47,14 +51,20 @@ class WasmFunctionCodegenContext(
         assert(irValueDeclaration !in wasmLocals) { "Redefinition of local" }
 
         val owner = irValueDeclaration.owner
-        // TODO decide on which origins should mean what
+        val origin = owner.origin
+
         // prefix internal variables with a special character, to have the debugger sort them separately from "normal" variables declared by the user
-//        val name = (if (irValueDeclaration.owner.origin != IrDeclarationOrigin.DEFINED) backendContext.configuration.get(
-//            WasmConfigurationKeys.WASM_INTERNAL_LOCAL_VARIABLE_PREFIX
-//        ) else "") +
-//                owner.name.asString()
+        val internalVariablePrefix = backendContext.configuration.get(WasmConfigurationKeys.WASM_INTERNAL_LOCAL_VARIABLE_PREFIX)
+        val name = when (origin) {
+            // "blacklist" internal origins (this tries to match the JVM backend as closely as possible
+            // TODO can unify with JVM's ExpressionCodegen.kt IrValueDeclaration.isVisibleinLVT?
+            IR_TEMPORARY_VARIABLE, FOR_LOOP_ITERATOR, UNDERSCORE_PARAMETER, DESTRUCTURED_OBJECT_PARAMETER -> {
+                internalVariablePrefix + owner.name.asString()
+            }
+            else -> owner.name.asString()
+        }
         // TODO this is a temp change for debugging during development and will be reverted
-        val name = owner.name.asString() + "(${owner.origin.name})"
+//        val name = owner.name.asString() + "(${owner.origin.name})"
 
 
         val wasmLocal = WasmLocal(
