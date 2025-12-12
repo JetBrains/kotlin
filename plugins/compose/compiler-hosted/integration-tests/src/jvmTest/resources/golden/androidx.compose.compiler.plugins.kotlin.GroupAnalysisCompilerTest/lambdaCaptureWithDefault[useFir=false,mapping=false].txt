@@ -20,7 +20,7 @@ fun Test(isEnabled: Boolean = false) {
 TestKt {
     file: Test.kt
     Test(ZLandroidx/compose/runtime/Composer;II)V
-        RestartGroup { key: <key>, line: 5 }
+        Root { key: <key>, line: 5 }
 }
 
 TestKt$Test$1$1$1$1 {

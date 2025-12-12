@@ -16,7 +16,7 @@
 TestKt {
     file: Test.kt
     App(Ljava/lang/String;Landroidx/compose/runtime/Composer;I)V
-        RestartGroup { key: <key>, line: 4 }
+        Root { key: <key>, line: 4 }
 }
 
 TestKt$App$1 {
@@ -35,8 +35,8 @@ TestKt$App$2 {
 TestKt {
     file: Test.kt
     App(Ljava/lang/String;Landroidx/compose/runtime/Composer;I)V
-        RestartGroup { key: <key>, line: 4 }
         Root { key: null, line: 4 }
+        RestartGroup { key: <key>, line: 4 }
 }
 
 TestKt$App$1 {
