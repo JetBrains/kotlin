@@ -84,6 +84,7 @@ fun Session.buildSSA(variableType: (Any) -> HairType) {
 
         for (placeholder in allNodes().filterIsInstance<PhiPlaceholder>().toList()) {
             val type = variableType(placeholder.origin)
+            // TODO use Phi builder
             val phi = Phi(type)(placeholder.block, *placeholder.joinedValues.toTypedArray<Node>())
             placeholder.replaceValueUses(phi)
         }

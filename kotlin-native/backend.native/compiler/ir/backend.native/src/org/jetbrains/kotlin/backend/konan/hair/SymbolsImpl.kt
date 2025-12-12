@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.backend.konan.BinaryType
 import org.jetbrains.kotlin.backend.konan.PrimitiveBinaryType
 import org.jetbrains.kotlin.backend.konan.computeBinaryType
 import org.jetbrains.kotlin.backend.konan.computePrimitiveBinaryTypeOrNull
+import org.jetbrains.kotlin.backend.konan.llvm.computeFullName
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
@@ -36,6 +37,11 @@ internal fun IrType.asHairType(): HairType = when (val binaryType = computePrimi
 
 internal data class HairFunctionImpl(val irFunction: IrSimpleFunction) : HairFunction {
     override fun toString() = irFunction.name.toString()
+
+    // FIXME I use full name here to provide full names to the IR dumper
+    override val name: String
+        get() = irFunction.computeFullName()
+
     override val resultHairType: HairType
         get() = irFunction.returnType.asHairType()
 }

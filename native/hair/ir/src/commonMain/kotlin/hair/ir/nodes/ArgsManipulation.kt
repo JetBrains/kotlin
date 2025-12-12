@@ -19,8 +19,8 @@ value class ArgsList(val host: NodeBase) : Iterable<Node?> {
 @Suppress("UNCHECKED_CAST")
 class VarArgsList<N: Node>(val argsList: ArgsList, val firstVarargIndex: Int, val type: KClass<N>) : Iterable<N> {
     val size: Int = argsList.elements.size - firstVarargIndex // TODO make list expandable?
-    val isEmpty: Boolean get() = size == 0
-    val isNotEmpty: Boolean get() = !isEmpty
+    fun isEmpty(): Boolean = size == 0
+    fun isNotEmpty(): Boolean = !isEmpty()
     fun getOrNull(index: Int): N? = argsList.getOrNull(index + firstVarargIndex) as N?
     operator fun get(index: Int): N = getOrNull(index)!!
     override fun iterator() = object : Iterator<N> {

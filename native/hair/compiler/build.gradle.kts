@@ -1,6 +1,5 @@
 plugins {
     kotlin("multiplatform")
-    //id("test-inputs-check")
 }
 
 kotlin {

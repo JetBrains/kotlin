@@ -137,6 +137,8 @@ object BinaryOptions : BinaryOptionRegistry() {
     val enableReleaseBinaryCache by booleanOption()
 
     val enableHair by booleanOption()
+
+    val dumpHairTo by stringOption()
 }
 
 open class BinaryOption<T : Any>(
