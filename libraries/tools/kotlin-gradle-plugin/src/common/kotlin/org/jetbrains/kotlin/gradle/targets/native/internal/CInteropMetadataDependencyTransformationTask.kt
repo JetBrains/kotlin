@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.tasks.withType
+import org.jetbrains.kotlin.gradle.utils.ParallelTask
 import org.jetbrains.kotlin.gradle.utils.contains
 import org.jetbrains.kotlin.gradle.utils.currentBuild
 import org.jetbrains.kotlin.gradle.utils.filesProvider
@@ -114,7 +115,7 @@ internal abstract class CInteropMetadataDependencyTransformationTask @Inject con
     @get:OutputDirectory val outputDirectory: File,
     @get:Internal val cleaning: Cleaning,
     objectFactory: ObjectFactory,
-) : DefaultTask(), UsesKotlinToolingDiagnostics {
+) : ParallelTask(), UsesKotlinToolingDiagnostics {
 
     private val parameters = GranularMetadataTransformation.Params(project, sourceSet, transformProjectDependenciesWithSourceSetMetadataOutputs = false)
 
@@ -147,7 +148,7 @@ internal abstract class CInteropMetadataDependencyTransformationTask @Inject con
         }
     }
 
-    @TaskAction
+    override fun parallelWork() = transformDependencies()
     protected fun transformDependencies() {
         cleaning.cleanOutputDirectory(outputDirectory)
         outputDirectory.mkdirs()

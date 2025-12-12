@@ -228,7 +228,18 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
     @get:Input
     internal abstract val separateKmpCompilation: Property<Boolean>
 
+    @get:Inject
+    abstract val executor: WorkerExecutor
+
     @TaskAction
+    fun parallelWork(inputChanges: InputChanges) {
+        executor.noIsolation().submit(EnableParallelWork::class.java) {
+            it.work = HackGradleSerialization {
+                execute(inputChanges)
+            }
+        }
+    }
+
     fun execute(inputChanges: InputChanges) {
         kotlinGradleBuildServices.orNull // KT-76379: just instantiate the build service if it wasn't yet
         val buildMetrics = metrics.get()

@@ -18,6 +18,8 @@ import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
+import org.gradle.work.InputChanges
+import org.gradle.workers.WorkerExecutor
 import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
 import org.jetbrains.kotlin.commonizer.KonanDistribution
 import org.jetbrains.kotlin.compilerRunner.*
@@ -431,7 +433,18 @@ constructor(
             simpleKotlinNativeVersion
         )
 
+    @get:Inject
+    abstract val executor: WorkerExecutor
+
     @TaskAction
+    fun parallelWork() {
+        executor.noIsolation().submit(EnableParallelWork::class.java) {
+            it.work = HackGradleSerialization {
+                compile()
+            }
+        }
+    }
+
     fun compile() {
         val metricsReporter = metrics.get()
 

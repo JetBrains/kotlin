@@ -1453,11 +1453,12 @@ public abstract class org/jetbrains/kotlin/gradle/plugin/mpp/KotlinWithJavaTarge
 	public fun getTargetName ()Ljava/lang/String;
 }
 
-public abstract class org/jetbrains/kotlin/gradle/plugin/mpp/MetadataDependencyTransformationTask : org/gradle/api/DefaultTask, org/jetbrains/kotlin/gradle/plugin/diagnostics/UsesKotlinToolingDiagnostics {
+public abstract class org/jetbrains/kotlin/gradle/plugin/mpp/MetadataDependencyTransformationTask : org/jetbrains/kotlin/gradle/utils/ParallelTask, org/jetbrains/kotlin/gradle/plugin/diagnostics/UsesKotlinToolingDiagnostics {
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/plugin/mpp/MetadataDependencyTransformationTask$Companion;
 	public fun <init> (Lorg/jetbrains/kotlin/gradle/plugin/KotlinSourceSet;Lorg/gradle/api/model/ObjectFactory;Lorg/gradle/api/file/ProjectLayout;)V
 	protected final fun getParentLibrariesIndexFiles ()Lorg/gradle/api/provider/SetProperty;
 	protected final fun getTransformedLibrariesIndexFile ()Lorg/gradle/api/file/RegularFileProperty;
+	public fun parallelWork ()V
 	public fun reportDiagnostic (Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnostic;)V
 	public final fun transformMetadata ()V
 }
@@ -5797,6 +5798,7 @@ public abstract class org/jetbrains/kotlin/gradle/tasks/AbstractKotlinCompile : 
 	protected final fun getChangedFiles (Lorg/gradle/work/InputChanges;Ljava/util/List;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/buildtools/api/SourcesChanges;
 	public static synthetic fun getChangedFiles$default (Lorg/jetbrains/kotlin/gradle/tasks/AbstractKotlinCompile;Lorg/gradle/work/InputChanges;Ljava/util/List;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lorg/jetbrains/kotlin/buildtools/api/SourcesChanges;
 	public abstract fun getCompilerOptions ()Lorg/jetbrains/kotlin/gradle/dsl/KotlinCommonCompilerOptions;
+	public abstract fun getExecutor ()Lorg/gradle/workers/WorkerExecutor;
 	public abstract fun getExplicitApiMode ()Lorg/gradle/api/provider/Property;
 	protected final fun getGradleCompileTaskProvider ()Lorg/gradle/api/provider/Provider;
 	public final fun getIncremental ()Z
@@ -5804,6 +5806,7 @@ public abstract class org/jetbrains/kotlin/gradle/tasks/AbstractKotlinCompile : 
 	protected final fun getMultiModuleICSettings ()Lorg/jetbrains/kotlin/daemon/common/MultiModuleICSettings;
 	public fun getNormalizedKotlinDaemonJvmArguments ()Lorg/gradle/api/provider/Provider;
 	protected fun makeIncrementalCompilationFeatures ()Lorg/jetbrains/kotlin/incremental/IncrementalCompilationFeatures;
+	public final fun parallelWork (Lorg/gradle/work/InputChanges;)V
 	public fun reportDiagnostic (Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnostic;)V
 	public final fun setIncremental (Z)V
 	protected fun skipCondition ()Z
@@ -5862,7 +5865,7 @@ public abstract class org/jetbrains/kotlin/gradle/tasks/AbstractKotlinNativeComp
 	public final fun setKotlinPluginData (Lorg/gradle/api/provider/Provider;)V
 }
 
-public abstract class org/jetbrains/kotlin/gradle/tasks/CInteropProcess : org/gradle/api/DefaultTask, org/jetbrains/kotlin/gradle/internal/UsesClassLoadersCachingBuildService, org/jetbrains/kotlin/gradle/internal/tasks/ProducesKlib, org/jetbrains/kotlin/gradle/report/UsesBuildMetricsService, org/jetbrains/kotlin/gradle/targets/native/UsesKonanPropertiesBuildService, org/jetbrains/kotlin/gradle/targets/native/toolchain/UsesKotlinNativeBundleBuildService {
+public abstract class org/jetbrains/kotlin/gradle/tasks/CInteropProcess : org/jetbrains/kotlin/gradle/utils/ParallelTask, org/jetbrains/kotlin/gradle/internal/UsesClassLoadersCachingBuildService, org/jetbrains/kotlin/gradle/internal/tasks/ProducesKlib, org/jetbrains/kotlin/gradle/report/UsesBuildMetricsService, org/jetbrains/kotlin/gradle/targets/native/UsesKonanPropertiesBuildService, org/jetbrains/kotlin/gradle/targets/native/toolchain/UsesKotlinNativeBundleBuildService {
 	public final fun getAllHeadersDirs ()Ljava/util/Set;
 	public final fun getBaseKlibName ()Ljava/lang/String;
 	public final fun getCompilerOpts ()Ljava/util/List;
@@ -5891,6 +5894,7 @@ public abstract class org/jetbrains/kotlin/gradle/tasks/CInteropProcess : org/gr
 	public fun getProduceUnpackagedKlib ()Lorg/gradle/api/provider/Property;
 	public abstract fun getProviderFactory ()Lorg/gradle/api/provider/ProviderFactory;
 	public final fun getSettings ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/DefaultCInteropSettings;
+	public fun parallelWork ()V
 	public final fun processInterop ()V
 }
 
@@ -6132,6 +6136,7 @@ public abstract class org/jetbrains/kotlin/gradle/tasks/KotlinNativeCompile : or
 	public fun getCompilerOptions ()Lorg/jetbrains/kotlin/gradle/dsl/KotlinNativeCompilerOptions;
 	public fun getDebuggable ()Z
 	public final fun getEnabledLanguageFeatures ()Ljava/util/Set;
+	public abstract fun getExecutor ()Lorg/gradle/workers/WorkerExecutor;
 	public final fun getExportKdoc ()Lorg/gradle/api/provider/Property;
 	public fun getKlibOutput ()Lorg/gradle/api/provider/Provider;
 	public final fun getKonanDataDir ()Lorg/gradle/api/provider/Provider;
@@ -6147,6 +6152,7 @@ public abstract class org/jetbrains/kotlin/gradle/tasks/KotlinNativeCompile : or
 	public final fun getShortModuleName ()Ljava/lang/String;
 	public fun kotlinOptions (Lkotlin/jvm/functions/Function1;)V
 	public fun kotlinOptions (Lorg/gradle/api/Action;)V
+	public final fun parallelWork ()V
 	public synthetic fun setupCompilerArgs (Lorg/jetbrains/kotlin/cli/common/arguments/CommonToolArguments;ZZ)V
 	public fun setupCompilerArgs (Lorg/jetbrains/kotlin/cli/common/arguments/K2NativeCompilerArguments;ZZ)V
 }
@@ -6167,6 +6173,7 @@ public abstract class org/jetbrains/kotlin/gradle/tasks/KotlinNativeLink : org/j
 	public final fun getDebuggable ()Z
 	public fun getDestinationDirectory ()Lorg/gradle/api/file/DirectoryProperty;
 	public final fun getEntryPoint ()Ljava/lang/String;
+	public abstract fun getExecutor ()Lorg/gradle/workers/WorkerExecutor;
 	public final fun getExportKdoc ()Lorg/gradle/api/provider/Provider;
 	public final fun getExportLibraries ()Lorg/gradle/api/file/FileCollection;
 	protected final fun getFriendModule ()Lorg/gradle/api/file/FileCollection;
@@ -6186,6 +6193,7 @@ public abstract class org/jetbrains/kotlin/gradle/tasks/KotlinNativeLink : org/j
 	public final fun isStaticFramework ()Z
 	public final fun kotlinOptions (Lkotlin/jvm/functions/Function1;)V
 	public final fun kotlinOptions (Lorg/gradle/api/Action;)V
+	public final fun parallelWork ()V
 	public fun reportDiagnostic (Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnostic;)V
 	public fun setCompilerPluginClasspath (Lorg/gradle/api/file/FileCollection;)V
 	public final fun setKotlinPluginData (Lorg/gradle/api/provider/Provider;)V
@@ -6393,6 +6401,13 @@ public final class org/jetbrains/kotlin/gradle/utils/GradleConfigurationUtilsKt 
 	public static final fun extendsFrom (Lorg/gradle/api/NamedDomainObjectProvider;Lorg/gradle/api/NamedDomainObjectProvider;)V
 }
 
+public abstract class org/jetbrains/kotlin/gradle/utils/IncrementalParallelTask : org/gradle/api/DefaultTask, java/io/Serializable {
+	public fun <init> ()V
+	public final fun action (Lorg/gradle/work/InputChanges;)V
+	public abstract fun getExecutor ()Lorg/gradle/workers/WorkerExecutor;
+	public abstract fun parallelWork (Lorg/gradle/work/InputChanges;)V
+}
+
 public final class org/jetbrains/kotlin/gradle/utils/IsolatedKotlinClasspathClassCastException : java/lang/ClassCastException {
 	public fun <init> ()V
 }
@@ -6415,6 +6430,13 @@ public final class org/jetbrains/kotlin/gradle/utils/NativeCompilerDownloader$Co
 public abstract interface class org/jetbrains/kotlin/gradle/utils/ObservableSet : java/util/Set, kotlin/jvm/internal/markers/KMappedMarker {
 	public abstract fun forAll (Lkotlin/jvm/functions/Function1;)V
 	public abstract fun whenObjectAdded (Lkotlin/jvm/functions/Function1;)V
+}
+
+public abstract class org/jetbrains/kotlin/gradle/utils/ParallelTask : org/gradle/api/DefaultTask, java/io/Serializable {
+	public fun <init> ()V
+	public final fun action ()V
+	public abstract fun getExecutor ()Lorg/gradle/workers/WorkerExecutor;
+	public abstract fun parallelWork ()V
 }
 
 public final class org/jetbrains/kotlin/gradle/utils/PathsKt {

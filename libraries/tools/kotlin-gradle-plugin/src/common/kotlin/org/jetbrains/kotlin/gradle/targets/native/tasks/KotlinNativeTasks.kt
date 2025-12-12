@@ -20,7 +20,9 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
+import org.gradle.work.InputChanges
 import org.gradle.work.NormalizeLineEndings
+import org.gradle.workers.WorkerExecutor
 import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
@@ -577,7 +579,18 @@ internal constructor(
         return SharedCompilationData(manifestFile, refinesModule)
     }
 
+    @get:Inject
+    abstract val executor: WorkerExecutor
+
     @TaskAction
+    fun parallelWork() {
+        executor.noIsolation().submit(EnableParallelWork::class.java) {
+            it.work = HackGradleSerialization {
+                compile()
+            }
+        }
+    }
+
     fun compile() {
         val buildMetrics = metrics.get()
         addBuildMetricsForTaskAction(
@@ -784,7 +797,7 @@ internal class ExternalDependenciesBuilder(
 
 @DisableCachingByDefault(because = "CInterop task uses custom Up-To-Date check for content of headers instead of Gradle mechanisms.")
 abstract class CInteropProcess @Inject internal constructor(params: Params) :
-    DefaultTask(),
+    ParallelTask(),
     UsesBuildMetricsService,
     UsesKotlinNativeBundleBuildService,
     UsesClassLoadersCachingBuildService,
@@ -980,7 +993,7 @@ abstract class CInteropProcess @Inject internal constructor(params: Params) :
     }
 
     // Task action.
-    @TaskAction
+    override fun parallelWork() = processInterop()
     fun processInterop() {
         val buildMetrics = metrics.get()
 

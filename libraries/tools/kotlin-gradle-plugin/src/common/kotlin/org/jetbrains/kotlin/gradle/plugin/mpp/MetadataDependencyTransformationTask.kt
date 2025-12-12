@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.tasks.locateTask
+import org.jetbrains.kotlin.gradle.utils.ParallelTask
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.gradle.utils.setProperty
 import java.io.File
@@ -69,7 +70,7 @@ abstract class MetadataDependencyTransformationTask
     kotlinSourceSet: KotlinSourceSet,
     objectFactory: ObjectFactory,
     private val projectLayout: ProjectLayout
-) : DefaultTask(), UsesKotlinToolingDiagnostics {
+) : ParallelTask(), UsesKotlinToolingDiagnostics {
 
     //region Task Configuration State & Inputs
     @get:Internal
@@ -162,7 +163,7 @@ abstract class MetadataDependencyTransformationTask
         }
     }
 
-    @TaskAction
+    override fun parallelWork() = transformMetadata()
     fun transformMetadata() {
         val parentLibrariesRecords: List<List<TransformedMetadataLibraryRecord>> = parentLibrariesIndexFiles
             .get()
