@@ -41,7 +41,9 @@ class JsArtifactsDumpHandler(testServices: TestServices) : AfterAnalysisChecker(
         return failedAssertions.map {
             val cause = it.cause as? ScriptExecutionException ?: return@map it
             it.withReplacedCause(
-                ScriptExecutionException(cause.stdout, cause.stderr.replacePaths())
+                ScriptExecutionException(cause.stdout, cause.stderr.replacePaths()).apply {
+                    stackTrace = cause.stackTrace
+                }
             )
         }
     }
