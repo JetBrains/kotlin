@@ -23,7 +23,6 @@ import kotlin.script.experimental.host.ScriptingHostConfiguration
 
 class FirScriptResolutionConfigurationExtensionImpl(
     session: FirSession,
-    @Suppress("UNUSED_PARAMETER") hostConfiguration: ScriptingHostConfiguration
 ) : FirScriptResolutionConfigurationExtension(session) {
 
     override fun getScriptDefaultImports(script: FirScript): List<FirImport>? {
@@ -39,8 +38,8 @@ class FirScriptResolutionConfigurationExtensionImpl(
     }
 
     companion object {
-        fun getFactory(hostConfiguration: ScriptingHostConfiguration): Factory {
-            return Factory { session -> FirScriptResolutionConfigurationExtensionImpl(session, hostConfiguration) }
+        fun getFactory(): Factory {
+            return Factory { session -> FirScriptResolutionConfigurationExtensionImpl(session) }
         }
     }
 }

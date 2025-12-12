@@ -178,7 +178,7 @@ fun refineScriptCompilationConfiguration(
     val compilationConfiguration = providedConfiguration ?: definition.compilationConfiguration
     val collectedData =
         runReadAction {
-            getScriptCollectedData(ktFileSource.ktFile, compilationConfiguration, project, definition.contextClassLoader)
+            getScriptCollectedData(ktFileSource.ktFile, compilationConfiguration, definition.contextClassLoader)
         }
     return compilationConfiguration.refineOnAnnotations(script, collectedData)
         .onSuccess {
@@ -281,7 +281,6 @@ fun SourceCode.toKtFileSource(definition: ScriptDefinition, project: Project): K
 fun getScriptCollectedData(
     scriptFile: KtFile,
     compilationConfiguration: ScriptCompilationConfiguration,
-    project: Project,
     contextClassLoader: ClassLoader?,
 ): ScriptCollectedData {
     val hostConfiguration =
@@ -299,7 +298,7 @@ fun getScriptCollectedData(
     val annotations = scriptFile.annotationEntries.construct(
         contextClassLoader,
         acceptedAnnotations,
-        project,
+        scriptFile.project,
         scriptFile.viewProvider.document,
         scriptFile.virtualFilePath
     )

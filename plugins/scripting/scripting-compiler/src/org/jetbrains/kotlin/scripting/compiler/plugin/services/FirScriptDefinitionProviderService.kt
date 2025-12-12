@@ -5,103 +5,129 @@
 
 package org.jetbrains.kotlin.scripting.compiler.plugin.services
 
-import com.intellij.mock.MockProject
-import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.extensions.FirExtensionSessionComponent
-import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.CliScriptConfigurationsProvider
-import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.CliScriptDefinitionProvider
+import org.jetbrains.kotlin.fir.lightTree.LightTree2Fir
+import org.jetbrains.kotlin.fir.resolve.providers.firProvider
+import org.jetbrains.kotlin.fir.resolve.providers.impl.FirProviderImpl
+import org.jetbrains.kotlin.fir.scopes.kotlinScopeProvider
+import org.jetbrains.kotlin.fir.session.sourcesToPathsMapper
+import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.ScriptCompilationConfigurationProvider
+import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.ScriptRefinedCompilationConfigurationCache
+import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.scriptCompilationConfigurationProvider
+import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.scriptRefinedCompilationConfigurationsCache
+import org.jetbrains.kotlin.scripting.compiler.plugin.fir.scriptCompilationComponent
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.collectAndResolveScriptAnnotationsViaFir
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.refineAllForK2
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.toKtSourceFile
 import org.jetbrains.kotlin.scripting.definitions.ScriptConfigurationsProvider
-import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionProvider
+import org.jetbrains.kotlin.scripting.resolve.KtFileScriptSource
+import org.jetbrains.kotlin.scripting.resolve.getScriptCollectedData
+import org.jetbrains.kotlin.toSourceLinesMapping
 import kotlin.script.experimental.api.*
+import kotlin.script.experimental.host.ScriptingHostConfiguration
+import kotlin.script.experimental.jvm.baseClassLoader
+import kotlin.script.experimental.jvm.jvm
 
 class FirScriptDefinitionProviderService(
     session: FirSession,
-    private val makeDefaultDefinitionProvider: () -> ScriptDefinitionProvider,
-    private val makeDefaultConfigurationProvider: (ScriptDefinitionProvider) -> ScriptConfigurationsProvider,
+    getDefaultHostConfiguration: () -> ScriptingHostConfiguration,
 ) : FirExtensionSessionComponent(session) {
 
-    // TODO: get rid of project-based implementation, write and use own singleton in K2
+    @Deprecated("The host configuration based provider should be used instead")
+    var definitionProvider: ScriptDefinitionProvider? = null
 
-    private var _definitionProvider: ScriptDefinitionProvider? = null
-    var definitionProvider: ScriptDefinitionProvider?
-        get() = synchronized(this) {
-            if (_definitionProvider == null) _definitionProvider = makeDefaultDefinitionProvider()
-            _definitionProvider
+    @Deprecated("The host configuration based cache should be used instead")
+    var configurationProvider: ScriptConfigurationsProvider? = null
+
+    private val defaultHostConfiguration: ScriptingHostConfiguration by lazy { getDefaultHostConfiguration() }
+
+    // host configuration owns the script definitions and (optionally) refined configurations cache
+    // if not configured via scriptCompilationComponent, the properly configured default should be provided by the plugin registrar
+    val hostConfiguration: ScriptingHostConfiguration
+        get() = session.scriptCompilationComponent?.hostConfiguration
+            ?: defaultHostConfiguration
+
+    private val compilationConfigurationProvider: ScriptCompilationConfigurationProvider
+        get() = hostConfiguration.get(ScriptingHostConfiguration.scriptCompilationConfigurationProvider)
+            ?: error("ScriptCompilationConfigurationProvider is not configured in the host configuration")
+
+    private val refinedCompilationConfigurationCache: ScriptRefinedCompilationConfigurationCache?
+        get() = hostConfiguration.get(
+            ScriptingHostConfiguration.scriptRefinedCompilationConfigurationsCache
+        )
+
+    fun getDefaultConfiguration(): ResultWithDiagnostics<ScriptCompilationConfiguration> {
+        @Suppress("DEPRECATION")
+        return definitionProvider?.getDefaultDefinition()?.compilationConfiguration?.asSuccess()
+            ?: compilationConfigurationProvider.getDefaultCompilationConfiguration()
+    }
+
+    fun getBaseConfiguration(sourceCode: SourceCode): ResultWithDiagnostics<ScriptCompilationConfiguration>? {
+        @Suppress("DEPRECATION")
+        return definitionProvider?.let { it.findDefinition(sourceCode)?.compilationConfiguration?.asSuccess() }
+            ?: compilationConfigurationProvider.findBaseCompilationConfiguration(sourceCode)
+    }
+
+    fun getRefinedConfiguration(sourceCode: SourceCode): ResultWithDiagnostics<ScriptCompilationConfiguration>? {
+        @Suppress("DEPRECATION")
+        return if (configurationProvider != null)
+            configurationProvider!!.getScriptCompilationConfiguration(sourceCode)?.onSuccess {
+                it.configuration?.asSuccess() ?: return null
+            }
+        else {
+            val hostBasedCache = refinedCompilationConfigurationCache
+            // if the cache is not configured, performing refinement on every request
+            hostBasedCache?.getRefinedCompilationConfiguration(sourceCode) ?: run {
+                getBaseConfiguration(sourceCode)?.onSuccess {
+                    (it.refineAllForK2(
+                        sourceCode,
+                        hostConfiguration
+                    ) { source, configuration, hostConfiguration ->
+                        if (source is KtFileScriptSource) {
+                            getScriptCollectedData(
+                                source.ktFile,
+                                configuration,
+                                hostConfiguration[ScriptingHostConfiguration.jvm.baseClassLoader]
+                            ).asSuccess()
+                        } else {
+                            collectAndResolveScriptAnnotationsViaFir(
+                                sourceCode, it, hostConfiguration,
+                                getSessionForAnnotationResolution = { session },
+                                convertToFir = { session, diagnosticsReporter ->
+                                    val sourcesToPathsMapper = session.sourcesToPathsMapper
+                                    val builder = LightTree2Fir(session, session.kotlinScopeProvider, diagnosticsReporter)
+                                    val linesMapping = this.text.toSourceLinesMapping()
+                                    builder.buildFirFile(text, toKtSourceFile(), linesMapping).also { firFile ->
+                                        (session.firProvider as FirProviderImpl).recordFile(firFile)
+                                        sourcesToPathsMapper.registerFileSource(firFile.source!!, locationId ?: name!!)
+                                    }
+                                }
+                            )
+                        }
+                    }).also { refined ->
+                        hostBasedCache?.storeRefinedCompilationConfiguration(sourceCode, refined)
+                    }
+                }
+            }
         }
-        set(value) {
-            synchronized(this) { _definitionProvider = value }
-        }
-
-    private var _configurationProvider: ScriptConfigurationsProvider? = null
-    var configurationProvider: ScriptConfigurationsProvider?
-        get() = synchronized(this) {
-            if (_configurationProvider == null) _configurationProvider = makeDefaultConfigurationProvider(definitionProvider!!)
-            _configurationProvider
-        }
-        set(value) {
-            synchronized(this) { _configurationProvider = value }
-        }
-
-    fun getDefaultConfiguration(): ResultWithDiagnostics<ScriptCompilationConfiguration> =
-        definitionProvider!!.getDefaultDefinition().compilationConfiguration.asSuccess()
-
-    fun getBaseConfiguration(sourceCode: SourceCode): ResultWithDiagnostics<ScriptCompilationConfiguration>? =
-        definitionProvider!!.findDefinition(sourceCode)?.compilationConfiguration?.asSuccess()
-
-    private val refinedCache = mutableMapOf<String, ResultWithDiagnostics<ScriptCompilationConfiguration>>()
-
-    fun getRefinedConfiguration(sourceCode: SourceCode): ResultWithDiagnostics<ScriptCompilationConfiguration>? =
-        sourceCode.locationId?.let { refinedCache[it] }
-            ?: configurationProvider!!.getScriptCompilationConfiguration(sourceCode)?.onSuccess { it.configuration?.asSuccess() ?: return null }
+    }
 
     fun storeRefinedConfiguration(
         sourceCode: SourceCode,
         configuration: ResultWithDiagnostics<ScriptCompilationConfiguration>
-    ): ResultWithDiagnostics<ScriptCompilationConfiguration>? {
-        val locationId = sourceCode.locationId ?: error("Cannot cache script without location: ${sourceCode.name ?: sourceCode.text}")
-        return refinedCache.put(locationId, configuration)
-    }
+    ): ResultWithDiagnostics<ScriptCompilationConfiguration>? =
+        refinedCompilationConfigurationCache?.storeRefinedCompilationConfiguration(sourceCode, configuration)
 
-    fun clearRefinedConfiguration(sourceCode: SourceCode): ResultWithDiagnostics<ScriptCompilationConfiguration>? {
-        val locationId = sourceCode.locationId ?: return null
-        return refinedCache.remove(locationId)
-    }
+    fun clearRefinedConfiguration(sourceCode: SourceCode): ResultWithDiagnostics<ScriptCompilationConfiguration>? =
+        refinedCompilationConfigurationCache?.clearRefinedCompilationConfiguration(sourceCode)
 
     companion object {
         fun getFactory(
-            definitions: List<ScriptDefinition>,
-            @Suppress("DEPRECATION") //KT-82551
-            definitionSources: List<org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionsSource>,
-            definitionProvider: ScriptDefinitionProvider? = null,
-            configurationProvider: ScriptConfigurationsProvider? = null,
+            getDefaultHostConfiguration: () -> ScriptingHostConfiguration
         ): Factory {
-            val makeDefinitionsProvider = definitionProvider?.let { { it } }
-                ?: {
-                    CliScriptDefinitionProvider().also {
-                        it.setScriptDefinitionsSources(definitionSources)
-                        it.setScriptDefinitions(definitions)
-                    }
-                }
-
-            val makeConfigurationProvider: (ScriptDefinitionProvider) -> ScriptConfigurationsProvider =
-                configurationProvider?.let { cp -> { cp } }
-                    ?: { definitionProvider ->
-                        // TODO: check if memory can leak in MockProject (probably not too important, since currently the providers are set externaly in important cases)
-                        CliScriptConfigurationsProvider(
-                            MockProject(
-                                null,
-                                Disposer.newDisposable(
-                                    "Disposable for project of ${CliScriptConfigurationsProvider::class.simpleName} created by" +
-                                            " ${FirScriptDefinitionProviderService::class.simpleName}"
-                                ),
-                            ),
-                            { definitionProvider }
-                        )
-                    }
-
-            return Factory { session -> FirScriptDefinitionProviderService(session, makeDefinitionsProvider, makeConfigurationProvider) }
+            return Factory { session -> FirScriptDefinitionProviderService(session, getDefaultHostConfiguration) }
         }
     }
 }

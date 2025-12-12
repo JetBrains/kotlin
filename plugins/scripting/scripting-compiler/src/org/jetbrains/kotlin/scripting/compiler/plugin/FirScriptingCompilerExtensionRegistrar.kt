@@ -6,30 +6,53 @@
 package org.jetbrains.kotlin.scripting.compiler.plugin
 
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.scriptingHostConfiguration
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
+import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.*
 import org.jetbrains.kotlin.scripting.compiler.plugin.services.Fir2IrScriptConfiguratorExtensionImpl
 import org.jetbrains.kotlin.scripting.compiler.plugin.services.FirScriptConfiguratorExtensionImpl
 import org.jetbrains.kotlin.scripting.compiler.plugin.services.FirScriptDefinitionProviderService
 import org.jetbrains.kotlin.scripting.compiler.plugin.services.FirScriptResolutionConfigurationExtensionImpl
 import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
 import kotlin.script.experimental.host.ScriptingHostConfiguration
+import kotlin.script.experimental.host.with
+import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 
 class FirScriptingCompilerExtensionRegistrar(
-    private val hostConfiguration: ScriptingHostConfiguration, private val compilerConfiguration: CompilerConfiguration
+    private val compilerConfiguration: CompilerConfiguration
 ) : FirExtensionRegistrar() {
 
     override fun ExtensionRegistrarContext.configurePlugin() {
         if (compilerConfiguration.getBoolean(ScriptingConfigurationKeys.DISABLE_SCRIPTING_PLUGIN_OPTION)) return
 
-        configureScriptDefinitions(compilerConfiguration, hostConfiguration, this::class.java.classLoader)
-        val definitionSources = compilerConfiguration.getList(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS_SOURCES)
-        val definitions = compilerConfiguration.getList(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS)
-        if (definitionSources.isNotEmpty() || definitions.isNotEmpty()) {
-            +FirScriptDefinitionProviderService.getFactory(definitions, definitionSources)
-        }
+        +FirScriptDefinitionProviderService.getFactory(
+            getDefaultHostConfiguration = {
+                (compilerConfiguration.scriptingHostConfiguration as? ScriptingHostConfiguration)
+                    ?: defaultJvmScriptingHostConfiguration.with {
+                        configureScriptDefinitions(
+                            compilerConfiguration,
+                            defaultJvmScriptingHostConfiguration,
+                            compilerConfiguration::class.java.classLoader
+                        )
+                        val definitionSources = compilerConfiguration.getList(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS_SOURCES)
+                        val definitions = compilerConfiguration.getList(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS)
+                        if (definitionSources.isNotEmpty() || definitions.isNotEmpty()) {
+                            val scriptDefinitionProvider = CliScriptDefinitionProvider().also {
+                                it.setScriptDefinitionsSources(definitionSources)
+                                it.setScriptDefinitions(definitions)
+                            }
+                            scriptCompilationConfigurationProvider(
+                                ScriptCompilationConfigurationProviderOverDefinitionProvider(scriptDefinitionProvider)
+                            )
+                            scriptRefinedCompilationConfigurationsCache(ScriptRefinedCompilationConfigurationCacheImpl())
+                        }
+                    }
 
-        +FirScriptConfiguratorExtensionImpl.getFactory(hostConfiguration)
-        +FirScriptResolutionConfigurationExtensionImpl.getFactory(hostConfiguration)
-        +Fir2IrScriptConfiguratorExtensionImpl.getFactory(hostConfiguration)
+            }
+        )
+
+        +FirScriptConfiguratorExtensionImpl.getFactory()
+        +FirScriptResolutionConfigurationExtensionImpl.getFactory()
+        +Fir2IrScriptConfiguratorExtensionImpl.getFactory()
     }
 }

@@ -16,16 +16,15 @@ import org.jetbrains.kotlin.scripting.compiler.plugin.fir.scriptCompilationConfi
 import org.jetbrains.kotlin.scripting.resolve.resolvedImportScripts
 import org.jetbrains.kotlin.scripting.resolve.toSourceCode
 import kotlin.script.experimental.api.ScriptCompilationConfiguration
-import kotlin.script.experimental.host.ScriptingHostConfiguration
 
 class Fir2IrScriptConfiguratorExtensionImpl(
     session: FirSession,
-    @Suppress("UNUSED_PARAMETER") hostConfiguration: ScriptingHostConfiguration
 ) : Fir2IrScriptConfiguratorExtension(session) {
     override fun IrScript.configure(script: FirScript, getIrScriptByFirSymbol: (FirScriptSymbol) -> IrScriptSymbol?) {
         // processing only refined scripts here
         val scriptFile = session.firProvider.getFirScriptContainerFile(script.symbol) ?: return
         val scriptSourceFile = scriptFile.sourceFile?.toSourceCode() ?: return
+
         @Suppress("DEPRECATION")
         val compilationConfiguration = script.scriptCompilationConfiguration
             ?: session.getScriptCompilationConfiguration(scriptSourceFile) { null } ?: return
@@ -42,8 +41,8 @@ class Fir2IrScriptConfiguratorExtensionImpl(
     }
 
     companion object {
-        fun getFactory(hostConfiguration: ScriptingHostConfiguration): Factory {
-            return Factory { session -> Fir2IrScriptConfiguratorExtensionImpl(session, hostConfiguration) }
+        fun getFactory(): Factory {
+            return Factory { session -> Fir2IrScriptConfiguratorExtensionImpl(session) }
         }
     }
 }

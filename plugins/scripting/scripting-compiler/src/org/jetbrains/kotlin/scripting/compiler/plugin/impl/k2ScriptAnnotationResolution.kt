@@ -29,6 +29,7 @@ import kotlin.reflect.KClass
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.host.getScriptingClass
+import kotlin.script.experimental.host.withDefaultsFrom
 import kotlin.script.experimental.jvm.GetScriptingClassByClassLoader
 import kotlin.script.experimental.jvm.baseClassLoader
 import kotlin.script.experimental.jvm.jvm
@@ -37,10 +38,12 @@ import kotlin.script.experimental.jvm.util.toSourceCodePosition
 internal fun collectAndResolveScriptAnnotationsViaFir(
     script: SourceCode,
     compilationConfiguration: ScriptCompilationConfiguration,
-    hostConfiguration: ScriptingHostConfiguration,
+    baseHostConfiguration: ScriptingHostConfiguration,
     getSessionForAnnotationResolution: () -> FirSession,
     convertToFir: SourceCode.(FirSession, BaseDiagnosticsCollector) -> FirFile,
 ): ResultWithDiagnostics<ScriptCollectedData> {
+    val hostConfiguration =
+        compilationConfiguration[ScriptCompilationConfiguration.hostConfiguration].withDefaultsFrom(baseHostConfiguration)
     val contextClassLoader = hostConfiguration[ScriptingHostConfiguration.jvm.baseClassLoader]
     val getScriptingClass = hostConfiguration[ScriptingHostConfiguration.getScriptingClass]
     val jvmGetScriptingClass = (getScriptingClass as? GetScriptingClassByClassLoader)

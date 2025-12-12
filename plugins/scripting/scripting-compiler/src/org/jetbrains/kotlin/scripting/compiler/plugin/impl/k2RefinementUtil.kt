@@ -11,6 +11,7 @@ import kotlin.script.experimental.host.FileBasedScriptSource
 import kotlin.script.experimental.host.FileScriptSource
 import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.host.configurationDependencies
+import kotlin.script.experimental.host.withDefaultsFrom
 import kotlin.script.experimental.impl.refineOnAnnotationsWithLazyDataCollection
 import kotlin.script.experimental.jvm.updateClasspath
 import kotlin.script.experimental.jvm.util.toClassPathOrEmpty
@@ -21,7 +22,7 @@ fun ScriptCompilationConfiguration.refineAllForK2(
     collectAnnotationData: (SourceCode, ScriptCompilationConfiguration, ScriptingHostConfiguration) -> ResultWithDiagnostics<ScriptCollectedData>?
 ): ResultWithDiagnostics<ScriptCompilationConfiguration> =
     with {
-        hostConfiguration(hostConfiguration)
+        this.hostConfiguration.update { it.withDefaultsFrom(hostConfiguration) }
         updateClasspath(hostConfiguration[ScriptingHostConfiguration.configurationDependencies]?.toClassPathOrEmpty())
     }
         .refineBeforeParsing(script)

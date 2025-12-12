@@ -56,8 +56,6 @@ import kotlin.script.experimental.host.ScriptingHostConfiguration
 
 class FirScriptConfiguratorExtensionImpl(
     session: FirSession,
-    // TODO: left here because it seems it will be needed soon, remove suppression if used or remove the param if it is not the case
-    @Suppress("UNUSED_PARAMETER", "unused") hostConfiguration: ScriptingHostConfiguration,
 ) : FirScriptConfiguratorExtension(session) {
 
     override fun FirScriptBuilder.configureContainingFile(fileBuilder: FirFileBuilder) {
@@ -260,8 +258,8 @@ class FirScriptConfiguratorExtensionImpl(
         get() = _knownAnnotationsForSamWithReceiver
 
     companion object {
-        fun getFactory(hostConfiguration: ScriptingHostConfiguration): Factory {
-            return Factory { session -> FirScriptConfiguratorExtensionImpl(session, hostConfiguration) }
+        fun getFactory(): Factory {
+            return Factory { session -> FirScriptConfiguratorExtensionImpl(session) }
         }
     }
 }
