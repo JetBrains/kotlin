@@ -63,6 +63,7 @@ import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
+import org.jetbrains.kotlin.types.model.isError
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.util.PrivateForInline
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
@@ -1071,11 +1072,23 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             .transformAnnotations(transformer, ContextIndependent)
             .replaceArgumentList(buildBinaryArgumentList(leftArgumentTransformed, rightArgumentTransformed))
         equalityOperatorCall.resultType = builtinTypes.booleanType.coneType
-        val result = callCompleter.completeCall(
-            components.syntheticCallGenerator.generateCalleeForEqualityOperatorCall(equalityOperatorCall, resolutionContext, data), data
-        )
+
+        @OptIn(UnresolvedExpressionTypeAccess::class)
+        val result = if (leftArgumentTransformed.coneTypeOrNull?.properArgumentTypeForEqualityOperatorCall() == true &&
+            rightArgumentTransformed.coneTypeOrNull?.properArgumentTypeForEqualityOperatorCall() == true
+        ) {
+            equalityOperatorCall
+        } else {
+            callCompleter.completeCall(
+                components.syntheticCallGenerator.generateCalleeForEqualityOperatorCall(equalityOperatorCall, resolutionContext, data), data
+            )
+        }
         dataFlowAnalyzer.exitEqualityOperatorCall(equalityOperatorCall, data.forceFullCompletion)
         return result
+    }
+
+    private fun ConeKotlinType.properArgumentTypeForEqualityOperatorCall(): Boolean {
+        return !contains { it is ConeTypeVariableType || it is ConeErrorType || it is ConeIntegerLiteralType }
     }
 
     private fun FirFunctionCall.resolveCandidateForAssignmentOperatorCall(): FirFunctionCall {
