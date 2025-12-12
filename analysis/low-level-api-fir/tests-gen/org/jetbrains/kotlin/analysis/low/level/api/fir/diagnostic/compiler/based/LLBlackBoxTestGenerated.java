@@ -43832,24 +43832,6 @@ public class LLBlackBoxTestGenerated extends AbstractLLBlackBoxTest {
         }
 
         @Test
-        @TestMetadata("deprecationActual3-3.kt")
-        public void testDeprecationActual3_3() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/deprecationActual3-3.kt");
-        }
-
-        @Test
-        @TestMetadata("deprecationActual4-4.kt")
-        public void testDeprecationActual4_4() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/deprecationActual4-4.kt");
-        }
-
-        @Test
-        @TestMetadata("deprecationActualTypealias2-2.kt")
-        public void testDeprecationActualTypealias2_2() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/deprecationActualTypealias2-2.kt");
-        }
-
-        @Test
         @TestMetadata("differentDependenciesWithTheSameName.kt")
         public void testDifferentDependenciesWithTheSameName() {
           runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/differentDependenciesWithTheSameName.kt");
@@ -44120,12 +44102,6 @@ public class LLBlackBoxTestGenerated extends AbstractLLBlackBoxTest {
         }
 
         @Test
-        @TestMetadata("optInActual2-2.kt")
-        public void testOptInActual2_2() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/optInActual2-2.kt");
-        }
-
-        @Test
         @TestMetadata("overloadAlias3-3.kt")
         public void testOverloadAlias3_3() {
           runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/overloadAlias3-3.kt");
@@ -44255,6 +44231,40 @@ public class LLBlackBoxTestGenerated extends AbstractLLBlackBoxTest {
         @TestMetadata("typealiasSameNameTwoLibs.kt")
         public void testTypealiasSameNameTwoLibs() {
           runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/typealiasSameNameTwoLibs.kt");
+        }
+
+        @Nested
+        @TestMetadata("compiler/testData/codegen/box/multiplatform/k2/hmpp/moveToDiagnostic")
+        @TestDataPath("$PROJECT_ROOT")
+        public class MoveToDiagnostic {
+          @Test
+          public void testAllFilesPresentInMoveToDiagnostic() {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/k2/hmpp/moveToDiagnostic"), Pattern.compile("^(.+)\\.kt$"), null, true);
+          }
+
+          @Test
+          @TestMetadata("deprecationActual3-3.kt")
+          public void testDeprecationActual3_3() {
+            runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/moveToDiagnostic/deprecationActual3-3.kt");
+          }
+
+          @Test
+          @TestMetadata("deprecationActual4-4.kt")
+          public void testDeprecationActual4_4() {
+            runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/moveToDiagnostic/deprecationActual4-4.kt");
+          }
+
+          @Test
+          @TestMetadata("deprecationActualTypealias2-2.kt")
+          public void testDeprecationActualTypealias2_2() {
+            runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/moveToDiagnostic/deprecationActualTypealias2-2.kt");
+          }
+
+          @Test
+          @TestMetadata("optInActual2-2.kt")
+          public void testOptInActual2_2() {
+            runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/moveToDiagnostic/optInActual2-2.kt");
+          }
         }
       }
 
