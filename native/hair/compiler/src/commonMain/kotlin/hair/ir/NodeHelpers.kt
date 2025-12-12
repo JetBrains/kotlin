@@ -25,6 +25,11 @@ val Phi.inputs: List<Pair<Node, BlockExit>> get() = joinedValues.withIndex().map
     // FIXME support handlers?
     value to block.preds[idx]
 }
+// FIXME delete the one above
+val Phi.inputs0: List<Pair<BlockExit, Node>> get() = joinedValues.withIndex().map { (idx, value) ->
+    // FIXME support handlers?
+    block.preds[idx] to value
+}
 
 fun Node.unproject() = when (this) {
     is Projection -> owner

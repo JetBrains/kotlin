@@ -8,6 +8,7 @@ import hair.ir.nodes.ArgsUpdater
 import hair.ir.nodes.ControlFlowBuilder
 import hair.ir.nodes.NodeBuilder
 import hair.sym.HairFunction
+import hair.test.testConfig
 
 interface AbstractInlinerTest : IrTest {
 
@@ -24,6 +25,6 @@ interface AbstractInlinerTest : IrTest {
     }
 
     fun inlinerTest(test: InlinerTestCompilation.() -> Unit) {
-        InlinerTestCompilation(Compilation()).test()
+        InlinerTestCompilation(Compilation(testConfig)).test()
     }
 }

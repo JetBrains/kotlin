@@ -5,6 +5,7 @@ import hair.ir.nodes.Node
 import hair.opt.NormalizationImpl
 import hair.opt.eliminateDeadBlocks
 import hair.opt.eliminateDeadFoam
+import hair.opt.simplify
 import hair.utils.isEmpty
 
 class RawNodeBuilder(override val session: Session) : NodeBuilder {
@@ -83,6 +84,9 @@ fun <T> Session.buildInitialIR(
         builderAction().also {
             eliminateDeadBlocks()
             eliminateDeadFoam()
+            simplify()
+            // TODO ensure no more dead
+
             // TODO merge with modifyIR
         }
     }

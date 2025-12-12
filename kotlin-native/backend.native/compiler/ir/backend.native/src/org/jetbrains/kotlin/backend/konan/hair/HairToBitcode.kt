@@ -71,7 +71,7 @@ internal class HairToBitcode(
             declaration: IrFunction,
             hairComp: FunctionCompilation
     ) {
-        context.log { "# Generating llvm from HaIR for ${declaration.name}" }
+        context.log { "# Generating llvm from HaIR for ${declaration.computeFullName()}" }
         val functionGenerationContext = (currentCodeContext.functionScope() as FunctionScope).functionGenerationContext
         val entryBlock = functionGenerationContext.currentBlock
 
@@ -107,8 +107,7 @@ internal class HairToBitcode(
         val session = hairComp.session
         with (session) {
             withGCM {
-                println("HaIR for ${declaration.computeFullName()} before codegen")
-                printGraphviz()
+                hairComp.dumpHair("before_codegen")
                 val blocks = topSort(cfg()).associateWith {
                     functionGenerationContext.basicBlock("block_${it.id}", null)
                 }

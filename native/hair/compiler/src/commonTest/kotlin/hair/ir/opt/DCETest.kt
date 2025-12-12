@@ -1,17 +1,8 @@
 package hair.ir.opt
 
 import hair.ir.*
-import hair.ir.Add
-import hair.ir.nodes.Add
-import hair.ir.nodes.ConstI
-import hair.ir.nodes.Node
-import hair.ir.nodes.Return
-import hair.ir.nodes.Use
-import hair.sym.HairType
-import hair.sym.HairType.*
 import hair.test.Fun
 import hair.utils.printGraphviz
-import hair.utils.printGraphvizNoGCM
 import kotlin.test.*
 
 class DCETest : IrTest {

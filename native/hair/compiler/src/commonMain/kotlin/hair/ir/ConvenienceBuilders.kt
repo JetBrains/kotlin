@@ -13,6 +13,7 @@ import hair.ir.nodes.Throwing
 import hair.ir.nodes.Unreachable
 import hair.ir.nodes.set
 import hair.sym.HairClass
+import hair.sym.HairType
 import hair.sym.HairType.*
 import hair.sym.Type
 import hair.utils.ensuring
@@ -32,6 +33,15 @@ fun IfExits(cond: Node): Pair<BlockExit, BlockExit> {
     val trueExit = TrueExit(ifNode)
     val falseExit = FalseExit(ifNode)
     return trueExit to falseExit
+}
+
+context(nodeBuilder: NodeBuilder)
+fun Phi(type: HairType, block: Controlling, vararg inputs: Pair<BlockExit, Node>): Node = when (block) {
+    is BlockEntry -> {
+        val joinedValues = block.preds.map { exit -> inputs.single { it.first == exit }.second }.toTypedArray()
+        Phi(type)(block, *joinedValues)
+    }
+    else -> inputs.single().second
 }
 
 

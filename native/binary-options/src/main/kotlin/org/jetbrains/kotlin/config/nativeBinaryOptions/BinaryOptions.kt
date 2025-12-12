@@ -128,6 +128,8 @@ object BinaryOptions : BinaryOptionRegistry() {
     val perFileCacheForStdlib by booleanOption()
 
     val enableHair by booleanOption()
+
+    val dumpHairTo by stringOption()
 }
 
 open class BinaryOption<T : Any>(
