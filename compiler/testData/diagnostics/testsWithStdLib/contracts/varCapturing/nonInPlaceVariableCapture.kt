@@ -6,7 +6,7 @@ import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
-class MutablePerson(var name: String)
+class MutablePerson(var name: String  = "NoName", val age : String = "1", var child : MutablePerson = MutablePerson())
 class MutableObject(var mutableField: String = "initial")
 class DeepObject {
     var theProblematicVar: String = "Hello"
@@ -50,6 +50,27 @@ fun processChunked(chunkHandler: (String) -> Unit) {
     chunkHandler("dataC")
 }
 
+var hi = "hi"
+
+class WithMemberFunctions {
+    var memberVar = "Member"
+    var person = MutablePerson("Bob")
+
+    fun testMemberCapture() {
+        val personAlice = MutablePerson("Alice")
+
+        barRegular {
+            baz(memberVar)
+            baz(person.name)
+            baz(person.age)
+            baz(this.memberVar)
+            baz(personAlice.name)
+            baz(personAlice.age)
+            baz(personAlice.child.age)
+        }
+    }
+}
+
 fun foo() {
     var x = "bla"
 
@@ -65,6 +86,17 @@ fun foo() {
 
     barRegular {
         baz(x)
+    }
+
+    var person2 = MutablePerson("Alice")
+
+    barRegular {
+        baz(person2.age)
+    }
+
+
+    barRegular {
+        baz(hi)
     }
 
     // OK
