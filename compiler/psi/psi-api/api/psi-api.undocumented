@@ -1178,7 +1178,6 @@ org.jetbrains.kotlin.psi.KtStubbedPsiUtil:getPsiOrStubParent(PsiElement, Class<T
 org.jetbrains.kotlin.psi.KtStubbedPsiUtil:getStubOrPsiChild(KtElementImplStub<?>, TokenSet, ArrayFactory<T>)
 org.jetbrains.kotlin.psi.KtSuperExpression
 org.jetbrains.kotlin.psi.KtSuperExpression:constructor(ASTNode)
-org.jetbrains.kotlin.psi.KtSuperTypeCallEntry
 org.jetbrains.kotlin.psi.KtSuperTypeCallEntry:constructor(ASTNode)
 org.jetbrains.kotlin.psi.KtSuperTypeCallEntry:constructor(KotlinPlaceHolderStub<? extends KtSuperTypeListEntry>)
 org.jetbrains.kotlin.psi.KtSuperTypeEntry

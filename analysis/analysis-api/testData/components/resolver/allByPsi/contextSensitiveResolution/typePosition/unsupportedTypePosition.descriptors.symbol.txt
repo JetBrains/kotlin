@@ -488,7 +488,7 @@ KtSuperTypeList(1110,1128): 'SealedInheritor1()'
 KtSuperTypeCallEntry(1110,1128): 'SealedInheritor1()'
   KaSymbolResolutionError:
     candidateSymbols = []
-    diagnostic = ERROR<OTHER_ERROR: Erroneous delegated constructor call>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: SealedInheritor1>
 
 KtConstructorCalleeExpression(1110,1126): 'SealedInheritor1'
   null

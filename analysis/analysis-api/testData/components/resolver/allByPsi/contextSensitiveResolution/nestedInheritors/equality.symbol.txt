@@ -260,7 +260,8 @@ KtSuperTypeList(540,554): 'OpenSettings()'
   null
 
 KtSuperTypeCallEntry(540,554): 'OpenSettings()'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <constructor>(): OpenSettings
 
 KtConstructorCalleeExpression(540,552): 'OpenSettings'
   null
@@ -287,7 +288,8 @@ KtSuperTypeList(594,608): 'OpenSettings()'
   null
 
 KtSuperTypeCallEntry(594,608): 'OpenSettings()'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <constructor>(): OpenSettings
 
 KtConstructorCalleeExpression(594,606): 'OpenSettings'
   null

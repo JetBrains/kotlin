@@ -1,5 +1,5 @@
 KtSuperTypeCallEntry(93,106): 'Foo<String>()'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaDelegatedConstructorCall:
         argumentMapping = {}

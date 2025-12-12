@@ -1,2 +1,4 @@
 KtSuperTypeCallEntry(41,54): 'Unresolved(p)'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<OTHER_ERROR: Erroneous delegated constructor call>

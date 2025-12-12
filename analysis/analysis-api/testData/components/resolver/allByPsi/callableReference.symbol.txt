@@ -59,7 +59,8 @@ KtSuperTypeList(118,127): 'MyClass()'
   null
 
 KtSuperTypeCallEntry(118,127): 'MyClass()'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <constructor>(): pack.MyClass
 
 KtConstructorCalleeExpression(118,125): 'MyClass'
   null
@@ -137,7 +138,8 @@ KtSuperTypeList(258,282): 'ClassWithType<MyClass>()'
   null
 
 KtSuperTypeCallEntry(258,282): 'ClassWithType<MyClass>()'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <constructor>(): pack.ClassWithType<T>
 
 KtConstructorCalleeExpression(258,280): 'ClassWithType<MyClass>'
   null

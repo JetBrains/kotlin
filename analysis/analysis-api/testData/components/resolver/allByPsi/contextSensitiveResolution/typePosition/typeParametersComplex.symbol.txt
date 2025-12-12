@@ -53,7 +53,8 @@ KtSuperTypeList(150,168): 'SealedGeneric<T>()'
   null
 
 KtSuperTypeCallEntry(150,168): 'SealedGeneric<T>()'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <constructor>(): SealedGeneric<T>
 
 KtConstructorCalleeExpression(150,166): 'SealedGeneric<T>'
   null
@@ -116,7 +117,8 @@ KtSuperTypeList(209,227): 'SealedGeneric<T>()'
   null
 
 KtSuperTypeCallEntry(209,227): 'SealedGeneric<T>()'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <constructor>(): SealedGeneric<T>
 
 KtConstructorCalleeExpression(209,225): 'SealedGeneric<T>'
   null

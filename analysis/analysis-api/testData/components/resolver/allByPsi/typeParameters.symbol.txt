@@ -122,7 +122,8 @@ KtSuperTypeList(186,195): 'Base<C>()'
   null
 
 KtSuperTypeCallEntry(186,195): 'Base<C>()'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <constructor>(): one.two.Base<B>
 
 KtConstructorCalleeExpression(186,193): 'Base<C>'
   null

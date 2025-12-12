@@ -23,7 +23,8 @@ KtSuperTypeList(128,137): 'MyClass()'
   null
 
 KtSuperTypeCallEntry(128,137): 'MyClass()'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <constructor>(): MyClass
 
 KtConstructorCalleeExpression(128,135): 'MyClass'
   null
@@ -131,7 +132,8 @@ KtSuperTypeList(372,384): 'Exception(m)'
   null
 
 KtSuperTypeCallEntry(372,384): 'Exception(m)'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <constructor>(message: kotlin.String!): java.lang.Exception
 
 KtConstructorCalleeExpression(372,381): 'Exception'
   null
@@ -179,7 +181,8 @@ KtSuperTypeList(406,418): 'Exception(m)'
   null
 
 KtSuperTypeCallEntry(406,418): 'Exception(m)'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <constructor>(message: kotlin.String!): java.lang.Exception
 
 KtConstructorCalleeExpression(406,415): 'Exception'
   null
@@ -227,7 +230,8 @@ KtSuperTypeList(440,452): 'Exception(m)'
   null
 
 KtSuperTypeCallEntry(440,452): 'Exception(m)'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <constructor>(message: kotlin.String!): java.lang.Exception
 
 KtConstructorCalleeExpression(440,449): 'Exception'
   null

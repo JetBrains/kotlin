@@ -131,7 +131,8 @@ KtSuperTypeList(291,304): 'SealedClass()'
   null
 
 KtSuperTypeCallEntry(291,304): 'SealedClass()'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <constructor>(): SealedClass
 
 KtConstructorCalleeExpression(291,302): 'SealedClass'
   null
@@ -176,7 +177,8 @@ KtSuperTypeList(353,366): 'SealedClass()'
   null
 
 KtSuperTypeCallEntry(353,366): 'SealedClass()'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <constructor>(): SealedClass
 
 KtConstructorCalleeExpression(353,364): 'SealedClass'
   null
@@ -239,7 +241,8 @@ KtSuperTypeList(442,460): 'SealedGeneric<T>()'
   null
 
 KtSuperTypeCallEntry(442,460): 'SealedGeneric<T>()'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <constructor>(): SealedGeneric<T>
 
 KtConstructorCalleeExpression(442,458): 'SealedGeneric<T>'
   null
@@ -302,7 +305,8 @@ KtSuperTypeList(501,519): 'SealedGeneric<T>()'
   null
 
 KtSuperTypeCallEntry(501,519): 'SealedGeneric<T>()'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <constructor>(): SealedGeneric<T>
 
 KtConstructorCalleeExpression(501,517): 'SealedGeneric<T>'
   null

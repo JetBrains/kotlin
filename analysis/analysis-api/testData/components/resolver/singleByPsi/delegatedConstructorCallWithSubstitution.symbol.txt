@@ -1,2 +1,3 @@
 KtSuperTypeCallEntry(93,111): 'Foo<String>("str")'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <constructor>(x: T): Foo<T>

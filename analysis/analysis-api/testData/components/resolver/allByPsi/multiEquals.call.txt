@@ -227,24 +227,23 @@ KtSuperTypeList(388,405): 'ItemCallback<T>()'
   null
 
 KtSuperTypeCallEntry(388,405): 'ItemCallback<T>()'
-  KaSuccessCallInfo:
-    call = KaDelegatedConstructorCall:
-      argumentMapping = {}
-      kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = ItemCallback<T>
-          symbol = <constructor>(): ItemCallback<T>
-          valueParameters = []
-          contextParameters = []
-          callableId = null
-      typeArgumentsMapping = {
-        T -> (T)
-      }
+  KaDelegatedConstructorCall:
+    argumentMapping = {}
+    kind = SUPER_CALL
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = ItemCallback<T>
+        symbol = <constructor>(): ItemCallback<T>
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+    typeArgumentsMapping = {
+      T -> (T)
+    }
 
 KtConstructorCalleeExpression(388,403): 'ItemCallback<T>'
   KaSuccessCallInfo:
@@ -530,24 +529,23 @@ KtSuperTypeList(615,632): 'ItemCallback<T>()'
   null
 
 KtSuperTypeCallEntry(615,632): 'ItemCallback<T>()'
-  KaSuccessCallInfo:
-    call = KaDelegatedConstructorCall:
-      argumentMapping = {}
-      kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = ItemCallback<T>
-          symbol = <constructor>(): ItemCallback<T>
-          valueParameters = []
-          contextParameters = []
-          callableId = null
-      typeArgumentsMapping = {
-        T -> (T)
-      }
+  KaDelegatedConstructorCall:
+    argumentMapping = {}
+    kind = SUPER_CALL
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = ItemCallback<T>
+        symbol = <constructor>(): ItemCallback<T>
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+    typeArgumentsMapping = {
+      T -> (T)
+    }
 
 KtConstructorCalleeExpression(615,630): 'ItemCallback<T>'
   KaSuccessCallInfo:
@@ -785,24 +783,23 @@ KtSuperTypeList(784,801): 'ItemCallback<T>()'
   null
 
 KtSuperTypeCallEntry(784,801): 'ItemCallback<T>()'
-  KaSuccessCallInfo:
-    call = KaDelegatedConstructorCall:
-      argumentMapping = {}
-      kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = ItemCallback<T>
-          symbol = <constructor>(): ItemCallback<T>
-          valueParameters = []
-          contextParameters = []
-          callableId = null
-      typeArgumentsMapping = {
-        T -> (T)
-      }
+  KaDelegatedConstructorCall:
+    argumentMapping = {}
+    kind = SUPER_CALL
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = ItemCallback<T>
+        symbol = <constructor>(): ItemCallback<T>
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+    typeArgumentsMapping = {
+      T -> (T)
+    }
 
 KtConstructorCalleeExpression(784,799): 'ItemCallback<T>'
   KaSuccessCallInfo:

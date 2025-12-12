@@ -56,7 +56,8 @@ KtSuperTypeList(218,227): 'MyClass()'
   null
 
 KtSuperTypeCallEntry(218,227): 'MyClass()'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <constructor>(): MyClass
 
 KtConstructorCalleeExpression(218,225): 'MyClass'
   null
@@ -98,7 +99,8 @@ KtSuperTypeList(293,302): 'MyClass()'
   null
 
 KtSuperTypeCallEntry(293,302): 'MyClass()'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <constructor>(): MyClass
 
 KtConstructorCalleeExpression(293,300): 'MyClass'
   null
@@ -146,7 +148,8 @@ KtSuperTypeList(389,396): 'Super()'
   null
 
 KtSuperTypeCallEntry(389,396): 'Super()'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <constructor>(): Super
 
 KtConstructorCalleeExpression(389,394): 'Super'
   null

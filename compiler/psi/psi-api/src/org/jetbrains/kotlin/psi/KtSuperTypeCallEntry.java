@@ -10,11 +10,19 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtStubBasedElementTypes;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
+import org.jetbrains.kotlin.resolution.KtResolvableCall;
 
 import java.util.Collections;
 import java.util.List;
 
-public class KtSuperTypeCallEntry extends KtSuperTypeListEntry implements KtCallElement {
+/**
+ * The code example:
+ * <pre>{@code
+ * class SimpleClass : Any()
+ * //                 ^_____^
+ * }</pre>
+ */
+public class KtSuperTypeCallEntry extends KtSuperTypeListEntry implements KtCallElement, KtResolvableCall {
     public KtSuperTypeCallEntry(@NotNull ASTNode node) {
         super(node);
     }

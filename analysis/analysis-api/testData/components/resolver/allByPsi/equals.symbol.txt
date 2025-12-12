@@ -89,7 +89,8 @@ KtSuperTypeList(142,151): 'Another()'
   null
 
 KtSuperTypeCallEntry(142,151): 'Another()'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <constructor>(): Another
 
 KtConstructorCalleeExpression(142,149): 'Another'
   null

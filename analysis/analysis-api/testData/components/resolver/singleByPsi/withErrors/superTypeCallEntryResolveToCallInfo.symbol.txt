@@ -1,2 +1,3 @@
 KtSuperTypeCallEntry(26,44): 'java.lang.Object()'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <constructor>(): java.lang.Object
