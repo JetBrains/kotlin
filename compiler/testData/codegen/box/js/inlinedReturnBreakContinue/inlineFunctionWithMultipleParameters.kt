@@ -1,6 +1,6 @@
 // ISSUE: KT-68975
 // See same test for diagnostics: compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/jsCode/inlinedReturnBreakContinue/inlineFunctionWithMultipleParameters.kt
-// LANGUAGE: +BreakContinueInInlineLambdas
+// LANGUAGE: +BreakContinueInInlineLambdas -ForbidCaptureInlinableLambdasInJsCode
 // WITH_STDLIB
 // TARGET_BACKEND: JS_IR
 // IGNORE_BACKEND: JS_IR, JS_IR_ES6
