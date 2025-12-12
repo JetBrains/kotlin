@@ -194,19 +194,6 @@ class ClassStabilityTransformTests(useFir: Boolean) : AbstractIrTransformTest(us
     )
 
     @Test
-    fun testInterfacesAreUncertainOnIncrementalCompilation() {
-        assertStability(
-            classDefSrc = """
-                interface Foo
-            """,
-            transform = {
-                it.origin = IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB
-            },
-            stability = "Uncertain(Foo)"
-        )
-    }
-
-    @Test
     fun testInterfaceWithStableValAreUncertain() = assertStability(
         "interface Foo { val value: Int }",
         "Uncertain(Foo)"
@@ -222,6 +209,40 @@ class ClassStabilityTransformTests(useFir: Boolean) : AbstractIrTransformTest(us
         "class D(val a: A, val v: B, val C: C)",
         "Runtime(A),Runtime(B),Runtime(C)"
     )
+
+    // In the past, if an `internal` type `T` was inferred to be stable when it was compiled in a
+    // compilation unit `A`, we would infer it to be stable when compiling a compilation unit `B`
+    // that uses the type. This caused failures in situations in which `T` was later made unstable
+    // by an edit and `A` was incrementally recompiled, but `B` was not. This test serves as a
+    // regression test against such failures, e.g. https://issuetracker.google.com/issues/427530633.
+    @Test
+    fun testInferredStabilityOfInternalTypesFromOtherCompilationUnits() {
+        assertStability(
+            classDefSrc = """
+                import androidx.compose.runtime.internal.StabilityInferred
+
+                @StabilityInferred(parameters = 1)
+                internal class Foo
+            """,
+            transform = {
+                it.origin = IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB
+            },
+            stability = "Runtime(Foo)"
+        )
+
+        assertStability(
+            classDefSrc = """
+                import androidx.compose.runtime.internal.StabilityInferred
+
+                @StabilityInferred(parameters = 1)
+                internal interface Bar
+            """,
+            transform = {
+                it.origin = IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB
+            },
+            stability = "Runtime(Bar)"
+        )
+    }
 
     @Test
     fun testStable17() = assertStability(
@@ -1720,7 +1741,7 @@ class ClassStabilityTransformTests(useFir: Boolean) : AbstractIrTransformTest(us
         })
         val irClass = (irModule.files.last().declarations.first() as IrClass).apply(transform)
         val externalTypeMatchers = externalTypes.map { FqNameMatcher(it) }.toSet()
-        val stabilityInferencer = StabilityInferencer(irModule.descriptor, externalTypeMatchers)
+        val stabilityInferencer = StabilityInferencer(externalTypeMatchers)
         val classStability = stabilityInferencer.stabilityOf(irClass.defaultType as IrType)
 
         assertEquals(
@@ -1749,8 +1770,7 @@ class ClassStabilityTransformTests(useFir: Boolean) : AbstractIrTransformTest(us
         val irClass = irModule.files.last().declarations.first() as IrClass
         val externalTypeMatchers = externalTypes.map { FqNameMatcher(it) }.toSet()
         val classStability =
-            StabilityInferencer(irModule.descriptor, externalTypeMatchers)
-                .stabilityOf(irClass.defaultType as IrType)
+            StabilityInferencer(externalTypeMatchers).stabilityOf(irClass.defaultType as IrType)
 
         assertEquals(
             stability,
@@ -1893,7 +1913,7 @@ class ClassStabilityTransformTests(useFir: Boolean) : AbstractIrTransformTest(us
         }
         val externalTypeMatchers = externalTypes.map { FqNameMatcher(it) }.toSet()
         val exprStability =
-            StabilityInferencer(irModule.descriptor, externalTypeMatchers).stabilityOf(irExpr)
+            StabilityInferencer(externalTypeMatchers).stabilityOf(irExpr)
 
         assertEquals(
             stability,

@@ -600,6 +600,23 @@ class FunctionBodySkippingTransformTests(
     )
 
     @Test
+    fun testInternalStableUnstableParams(): Unit = comparisonPropagation(
+        """
+            internal class Foo(var value: Int = 0)
+        """,
+        """
+            @Composable
+            internal fun CanSkip(foo: Foo = Foo()) {
+                used(foo)
+            }
+            @Composable 
+            internal fun CannotSkip(foo: Foo) {
+                used(foo)
+            }
+        """
+    )
+
+    @Test
     fun testOptionalUnstableWithStableExtensionReceiver(): Unit = comparisonPropagation(
         """
             class Foo(var value: Int = 0)
