@@ -1609,6 +1609,24 @@ public class LLReversedDiagnosticsFirTestGenerated extends AbstractLLReversedDia
         }
 
         @Test
+        @TestMetadata("samVsFunctionTypeAndLessPreciseExtension.kt")
+        public void testSamVsFunctionTypeAndLessPreciseExtension() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/orblrt/samVsFunctionTypeAndLessPreciseExtension.kt");
+        }
+
+        @Test
+        @TestMetadata("samVsFunctionTypeAndLessPreciseOtherParameter.kt")
+        public void testSamVsFunctionTypeAndLessPreciseOtherParameter() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/orblrt/samVsFunctionTypeAndLessPreciseOtherParameter.kt");
+        }
+
+        @Test
+        @TestMetadata("samVsKProperty.kt")
+        public void testSamVsKProperty() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/orblrt/samVsKProperty.kt");
+        }
+
+        @Test
         @TestMetadata("specifityAfterLambdaAnalysis.kt")
         public void testSpecifityAfterLambdaAnalysis() {
           runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/orblrt/specifityAfterLambdaAnalysis.kt");
