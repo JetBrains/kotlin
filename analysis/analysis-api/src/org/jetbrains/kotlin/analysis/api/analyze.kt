@@ -58,15 +58,13 @@ public inline fun <R> analyze(
  * Neither the analysis session nor any other [lifetime owners][org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner] may be leaked
  * outside the [analyze] block. Please consult the documentation of [KaSession] for important information about lifetime management.
  */
+@OptIn(KaExperimentalApi::class)
 public inline fun <R> analyzeCopy(
     useSiteElement: KtElement,
     resolutionMode: KaDanglingFileResolutionMode,
     crossinline action: KaSession.() -> R,
 ): R {
-    val containingFile = useSiteElement.containingKtFile
-    return withDanglingFileResolutionMode(containingFile, resolutionMode) {
-        analyze(containingFile, action)
-    }
+    return analyzeCopy(useSiteElement, action)
 }
 
 /**
