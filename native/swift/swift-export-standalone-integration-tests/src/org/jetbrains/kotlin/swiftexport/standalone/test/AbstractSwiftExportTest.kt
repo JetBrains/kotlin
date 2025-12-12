@@ -275,6 +275,7 @@ abstract class AbstractSwiftExportTest {
                     "kotlin.native.internal.InternalForKotlinNative", // for uninitialized object instance manipulation, and ExternalRCRef.
                     "-Xbinary=swiftExport=true",
                     "-Xcontext-parameters",
+                    "-XXLanguage:-ForbidUpperBoundsViolationOnTypeOperatorAndParameterBounds",
                 )
             ),
             nominalPackageName = PackageName(testName),
