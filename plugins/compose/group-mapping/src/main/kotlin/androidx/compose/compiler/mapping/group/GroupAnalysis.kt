@@ -3,9 +3,12 @@ package androidx.compose.compiler.mapping.group
 import androidx.compose.compiler.mapping.ClassId
 import androidx.compose.compiler.mapping.ErrorReporter
 import androidx.compose.compiler.mapping.MethodId
-import androidx.compose.compiler.mapping.bytecode.*
-import androidx.compose.compiler.mapping.bytecode.BytecodeToken.*
-import org.objectweb.asm.Label
+import androidx.compose.compiler.mapping.bytecode.BytecodeToken
+import androidx.compose.compiler.mapping.bytecode.BytecodeToken.ComposableLambdaToken
+import androidx.compose.compiler.mapping.bytecode.BytecodeToken.LineToken
+import androidx.compose.compiler.mapping.bytecode.ComposeIds
+import androidx.compose.compiler.mapping.bytecode.StartGroupToken
+import androidx.compose.compiler.mapping.bytecode.tokenizeBytecode
 import org.objectweb.asm.tree.MethodNode
 
 internal fun analyzeGroups(
@@ -37,17 +40,6 @@ internal fun analyzeGroups(
     }
 }
 
-private class GroupInfoBuilder(
-    val key: Int?,
-    val type: GroupType,
-    var line: Int = -1
-) {
-    val incompleteLabels = mutableSetOf<Label>()
-    val markers = mutableSetOf<Int>()
-
-    fun build() = GroupInfo(key, type, line)
-}
-
 private fun MethodNode.emptyGroup(isComposable: Boolean): List<GroupInfo> =
     if (isComposable) {
         listOf(
@@ -68,103 +60,44 @@ private fun parseGroupInfoFromTokens(
     isComposable: Boolean
 ): Result<List<GroupInfo>> {
     val functionKey = methodNode.readFunctionKeyMetaAnnotation()
-    val nodeStack = if (isComposable) {
-        mutableListOf(
-            GroupInfoBuilder(
-                key = functionKey,
-                type = GroupType.Root,
-            )
-        )
+    val groups = mutableSetOf<GroupInfo>()
+    val rootGroup = if (isComposable) {
+        GroupInfo(
+            key = functionKey,
+            type = GroupType.Root,
+            line = -1
+        ).also {
+            groups.add(it)
+        }
     } else {
-        mutableListOf()
+        null
     }
 
-    val result = mutableSetOf<GroupInfo>()
     var currentLine = -1
     for (tokenIndex in tokens.indices) {
-        val token = tokens[tokenIndex]
-        val currentNode = nodeStack.lastOrNull()
-        when (token) {
+        when (val token = tokens[tokenIndex]) {
             is LineToken -> {
-                val unset = currentLine == -1
+                val isFirstLine = currentLine == -1
                 currentLine = token.lineInsn.line
 
-                if (unset) {
-                    // Assume at most one line per group and work backwards
-                    // In most cases only root group info is missing
-                    for (i in nodeStack.indices) {
-                        val node = nodeStack[nodeStack.size - 1 - i]
-                        node.line = (currentLine - i).coerceAtLeast(0)
+                if (isFirstLine) {
+                    // Groups with missing lines are usually injected before the actual code.
+                    // In most cases only root group info is missing.
+                    groups.forEach {
+                        if (it.line == -1) {
+                            it.line = currentLine
+                        }
                     }
+                    rootGroup?.line = currentLine
                 }
             }
 
             is StartGroupToken -> {
-                val newNode = GroupInfoBuilder(key = token.key, type = token.type, line = currentLine)
-                nodeStack.add(newNode)
-            }
-
-            is EndGroupToken -> {
-                if (currentNode != null && currentNode.incompleteLabels.isEmpty()) {
-                    if (currentNode.type != token.type) {
-                        return parseError("${token.type} is not allowed in ${currentNode.type} scope")
-                    }
-
-                    val node = nodeStack.removeLast()
-                    result += node.build()
-                }
-            }
-
-            is JumpToken -> {
-                token.labels.forEach {
-                    val label = it.label
-                    val labelIndex = tokens.indexOfFirst { it is LabelToken && it.labelInsn.label == label }
-                    if (labelIndex > tokenIndex) {
-                        // Only consider forward branches, backward branches are already processed
-                        currentNode?.incompleteLabels?.add(label)
-                    }
-                }
-            }
-
-            is LabelToken -> {
-                val label = token.labelInsn.label
-                nodeStack.forEach {
-                    it.incompleteLabels -= label
-                }
-            }
-
-            is CurrentMarkerToken -> {
-                currentNode?.markers?.add(token.variableIndex)
-            }
-
-            is EndToMarkerToken -> {
-                val marker = token.variableIndex
-                val nodeIndex = nodeStack.indexOfFirst { marker in it.markers }
-                if (nodeIndex == -1) {
+                if (rootGroup?.key == token.key) {
                     continue
                 }
-
-                for (i in (nodeStack.size - 1) downTo nodeIndex + 1) {
-                    val node = nodeStack[i]
-                    if (node.incompleteLabels.isEmpty()) {
-                        nodeStack.removeAt(i)
-                        result += node.build()
-                    }
-                }
-            }
-
-            is ThrowToken -> {
-                var toRemove = nodeStack.lastIndex
-                while (toRemove >= 0) {
-                    val node = nodeStack[toRemove]
-                    if (node.type == GroupType.Root || node.incompleteLabels.isNotEmpty()) {
-                        break
-                    }
-
-                    nodeStack.removeAt(toRemove)
-                    result += node.build()
-                    toRemove--
-                }
+                val newNode = GroupInfo(key = token.key, type = token.type, line = currentLine)
+                groups.add(newNode)
             }
 
             is ComposableLambdaToken -> {
@@ -179,19 +112,15 @@ private fun parseGroupInfoFromTokens(
         }
     }
 
-    if (isComposable && nodeStack.size > 1) {
-        return parseError("Expected optional root group, but found ${nodeStack.size}")
-    }
-    if (!isComposable && nodeStack.isNotEmpty()) {
+    if (!isComposable && groups.isNotEmpty()) {
         return parseError("Expected no groups in a non-composable function.")
     }
 
-    val rootNode = nodeStack.firstOrNull()
-    if (rootNode != null && result.none { it.key == rootNode.key }) {
-        result.add(rootNode.build())
+    if (rootGroup != null && groups.none { it.key == rootGroup.key }) {
+        groups.add(rootGroup)
     }
 
-    return Result.success(result.toList())
+    return Result.success(groups.sortedBy { it.line })
 }
 
 private fun MethodNode.isComposable() = when {
