@@ -109,3 +109,4 @@ fun <T> Sequence<T>.isNotEmpty() = !isEmpty()
 fun <T> Iterable<T>.indexOfSingle(element: T): Int =
     indexOf(element).ensuring { it != -1 && it == lastIndexOf(element) }
 
+inline fun <reified T> Sequence<T>.toTypedArray(): Array<T> = toList().toTypedArray()
