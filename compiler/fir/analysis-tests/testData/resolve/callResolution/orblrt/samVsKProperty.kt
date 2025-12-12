@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // FULL_JDK
 // WITH_STDLIB
 
@@ -16,11 +16,11 @@ fun onValue2(x: KProperty0<*>): String = ""
 var mutableVar: String = ""
 
 fun main() {
-    val x1 = <!OVERLOAD_RESOLUTION_AMBIGUITY!>onValue1<!>(::mutableVar)
-    val x2 = <!OVERLOAD_RESOLUTION_AMBIGUITY!>onValue2<!>(::mutableVar)
+    val x1 = onValue1(::mutableVar)
+    val x2 = onValue2(::mutableVar)
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Ambiguity: onValue1, [/onValue1, /onValue1]")!>x1<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Ambiguity: onValue2, [/onValue2, /onValue2]")!>x2<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>x1<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>x2<!>
 }
 
 /* GENERATED_FIR_TAGS: functionDeclaration, functionalType, lambdaLiteral, localProperty, nullableType,

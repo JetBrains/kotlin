@@ -14,7 +14,7 @@ FILE: package2.kt
     }
 FILE: main.kt
     public final fun main(): R|kotlin/Unit| {
-        <Ambiguity: bar, [p1/bar, p2/bar]>#(String(), String(), <L> = bar@fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+        R|p2/bar|(String(), String(), <L> = bar@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
             ^@bar Unit
         }
         )

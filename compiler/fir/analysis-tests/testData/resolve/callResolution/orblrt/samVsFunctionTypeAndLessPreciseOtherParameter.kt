@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // FULL_JDK
 
 interface IBase
@@ -14,16 +14,16 @@ fun foo2(i: IBase, isDeferred: Boolean = true, runnable: () -> Unit): String = "
 fun myUnit() {}
 
 fun baz(iDerived: IDerived) {
-    val x1 = <!OVERLOAD_RESOLUTION_AMBIGUITY!>foo1<!>(iDerived) {
+    val x1 = foo1(iDerived) {
         myUnit()
     }
 
-    val x2 = <!OVERLOAD_RESOLUTION_AMBIGUITY!>foo2<!>(iDerived) {
+    val x2 = foo2(iDerived) {
         myUnit()
     }
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Ambiguity: foo1, [/foo1, /foo1]")!>x1<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Ambiguity: foo2, [/foo2, /foo2]")!>x2<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>x1<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>x2<!>
 }
 
 /* GENERATED_FIR_TAGS: functionDeclaration, functionalType, integerLiteral, interfaceDeclaration, lambdaLiteral,

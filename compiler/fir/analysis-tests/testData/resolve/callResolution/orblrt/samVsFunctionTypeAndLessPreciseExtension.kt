@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // WITH_STDLIB
 
 import kotlin.reflect.KClass
@@ -15,10 +15,10 @@ fun <T : Any> Inv<out Any>.named(name: String, type: KClass<T>, configuration: T
 fun myUnit() {}
 
 fun foo(inv: Inv<String>) {
-    val x1 = inv.<!OVERLOAD_RESOLUTION_AMBIGUITY!>named<!>("", String::class) { myUnit() }
+    val x1 = inv.named("", String::class) { myUnit() }
     val x2 = inv.named("", Int::class) { myUnit() }
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Ambiguity: named, [/named, /named]")!>x1<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>x1<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>x2<!>
 }
 

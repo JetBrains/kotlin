@@ -239,7 +239,7 @@ class ConeOverloadConflictResolver(
         if (discriminationFlags.SAMs) {
             filterCandidatesByDiscriminationFlag(
                 candidates,
-                { !it.usesSamConstructor },
+                { !it.usesSamConversionOrSamConstructor },
                 { discriminationFlags.copy(SAMs = false) },
             )?.let { return it }
         }
