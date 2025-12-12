@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin.Companion.DEFINE
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin.Companion.DESTRUCTURED_OBJECT_PARAMETER
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin.Companion.FOR_LOOP_ITERATOR
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin.Companion.IR_TEMPORARY_VARIABLE
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin.Companion.IR_TEMPORARY_VARIABLE_FOR_INLINED_PARAMETER
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin.Companion.UNDERSCORE_PARAMETER
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
@@ -45,23 +46,28 @@ class WasmFunctionCodegenContext(
     private val nonLocalReturnLevels = LinkedHashMap<IrReturnableBlockSymbol, Int>()
 
     data class InlineContext(val inlineFunctionSymbol: IrFunctionSymbol?, val irFileEntry: IrFileEntry)
+
     private val inlineContextStack = LinkedList<InlineContext>()
 
     fun defineLocal(irValueDeclaration: IrValueSymbol) {
         assert(irValueDeclaration !in wasmLocals) { "Redefinition of local" }
 
         val owner = irValueDeclaration.owner
-        val origin = owner.origin
+        val originalName = owner.name.asString()
 
         // prefix internal variables with a special character, to have the debugger sort them separately from "normal" variables declared by the user
         val internalVariablePrefix = backendContext.configuration.get(WasmConfigurationKeys.WASM_INTERNAL_LOCAL_VARIABLE_PREFIX)
-        val name = when (origin) {
-            // "blacklist" internal origins (this tries to match the JVM backend as closely as possible
+        val name = when (owner.origin) {
+            // "blacklist" internal origins
             // TODO can unify with JVM's ExpressionCodegen.kt IrValueDeclaration.isVisibleinLVT?
-            IR_TEMPORARY_VARIABLE, FOR_LOOP_ITERATOR, UNDERSCORE_PARAMETER, DESTRUCTURED_OBJECT_PARAMETER -> {
-                internalVariablePrefix + owner.name.asString()
+            // origins also blacklisted in the JVM backend:
+            IR_TEMPORARY_VARIABLE, FOR_LOOP_ITERATOR, UNDERSCORE_PARAMETER, DESTRUCTURED_OBJECT_PARAMETER,
+                // additional origins that only come up here:
+            IR_TEMPORARY_VARIABLE_FOR_INLINED_PARAMETER,
+                -> {
+                internalVariablePrefix + originalName
             }
-            else -> owner.name.asString()
+            else -> originalName
         }
         // TODO this is a temp change for debugging during development and will be reverted
 //        val name = owner.name.asString() + "(${owner.origin.name})"
