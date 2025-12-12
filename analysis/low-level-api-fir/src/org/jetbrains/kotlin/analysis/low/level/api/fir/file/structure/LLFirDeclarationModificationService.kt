@@ -21,8 +21,8 @@ import org.jetbrains.kotlin.analysis.api.platform.modification.publishModuleOutO
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getResolutionFacade
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getResolutionFacade
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.getNonLocalContainingOrThisDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirResolvableModuleSession
@@ -33,9 +33,9 @@ import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.declarations.FirCodeFragment
+import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.psi.*
@@ -143,7 +143,7 @@ class LLFirDeclarationModificationService(val project: Project) : Disposable {
         }
     }
 
-    private fun calculateChangeType(element: PsiElement, modificationType: KaElementModificationType): ChangeType {
+    fun calculateChangeType(element: PsiElement, modificationType: KaElementModificationType): ChangeType {
         if (!element.isValid) {
             // If PSI is not valid, well something bad happened; OOBM won't hurt
             return ChangeType.OutOfBlock
@@ -346,7 +346,7 @@ private fun nonLocalDeclarationForLocalChange(psi: PsiElement): KtAnnotated? {
     return psi.getNonLocalReanalyzableContainingDeclaration() ?: psi.containingFile as? KtCodeFragment
 }
 
-private sealed interface ChangeType {
+sealed interface ChangeType {
     /**
      * A change that can be deferred to the next flush point (usually the end of a write action) to avoid excessive processing.
      */
