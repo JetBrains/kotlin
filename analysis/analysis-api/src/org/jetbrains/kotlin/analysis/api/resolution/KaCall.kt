@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.analysis.api.resolution
 
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
-import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.signatures.KaCallableSignature
 import org.jetbrains.kotlin.analysis.api.signatures.KaFunctionSignature
 import org.jetbrains.kotlin.analysis.api.signatures.KaVariableSignature
@@ -18,8 +17,8 @@ import org.jetbrains.kotlin.psi.KtExpression
 /**
  * A call to a function, a simple/compound access to a property, or a simple/compound access through `get` and `set` convention.
  */
-@OptIn(KaImplementationDetail::class)
-public sealed interface KaCall : KaLifetimeOwner
+@OptIn(KaImplementationDetail::class, KaExperimentalApi::class)
+public sealed interface KaCall : KaCallResolutionAttempt
 
 /**
  * A call to a function, or a simple/compound access to a property.

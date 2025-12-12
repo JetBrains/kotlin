@@ -640,7 +640,7 @@ public abstract interface class org/jetbrains/kotlin/analysis/api/resolution/KaA
 public abstract interface class org/jetbrains/kotlin/analysis/api/resolution/KaApplicableCallCandidateInfo : org/jetbrains/kotlin/analysis/api/resolution/KaCallCandidateInfo {
 }
 
-public abstract interface class org/jetbrains/kotlin/analysis/api/resolution/KaCall : org/jetbrains/kotlin/analysis/api/lifetime/KaLifetimeOwner {
+public abstract interface class org/jetbrains/kotlin/analysis/api/resolution/KaCall : org/jetbrains/kotlin/analysis/api/resolution/KaCallResolutionAttempt {
 }
 
 public abstract interface class org/jetbrains/kotlin/analysis/api/resolution/KaCallCandidateInfo : org/jetbrains/kotlin/analysis/api/lifetime/KaLifetimeOwner {

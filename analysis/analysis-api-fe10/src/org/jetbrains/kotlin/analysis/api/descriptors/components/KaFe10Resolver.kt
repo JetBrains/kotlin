@@ -88,6 +88,8 @@ internal class KaFe10Resolver(
         error("Not supported")
     }
 
+    override fun performSymbolResolution(psi: KtElement): KaSymbolResolutionAttempt? = null
+
     override fun KtReference.resolveToSymbols(): Collection<KaSymbol> = withPsiValidityAssertion(element) {
         return doResolveToSymbols(this)
     }
@@ -110,7 +112,7 @@ internal class KaFe10Resolver(
         }
     }
 
-    override fun doResolveCall(psi: KtElement): KaCallInfo? {
+    override fun performCallResolution(psi: KtElement): KaCallResolutionAttempt? {
         if (!canBeResolvedAsCall(psi)) return null
 
         val parentBinaryExpression = psi.parentOfType<KtBinaryExpression>()
@@ -127,12 +129,12 @@ internal class KaFe10Resolver(
         ) {
             // Specially handle property assignment because FE1.0 resolves LHS of assignment to just the property, which would then be
             // treated as a property read.
-            return doResolveCall(parentBinaryExpression)
+            return performCallResolution(parentBinaryExpression)
         }
 
         when (psi) {
-            is KtCallableReferenceExpression -> return doResolveCall(psi.callableReference)
-            is KtConstructorDelegationReferenceExpression -> return (psi.parent as? KtElement)?.let(::doResolveCall)
+            is KtCallableReferenceExpression -> return performCallResolution(psi.callableReference)
+            is KtConstructorDelegationReferenceExpression -> return (psi.parent as? KtElement)?.let(::performCallResolution)
         }
 
         val bindingContext = analysisContext.analyze(psi, AnalysisMode.PARTIAL_WITH_DIAGNOSTICS)
@@ -152,18 +154,18 @@ internal class KaFe10Resolver(
         } ?: handleResolveErrors(bindingContext, psi)
     }
 
-    override fun doCollectCallCandidates(psi: KtElement): List<KaCallCandidateInfo> {
+    override fun performCallCandidatesCollection(psi: KtElement): List<KaCallCandidateInfo> {
         val bindingContext = analysisContext.analyze(psi, AnalysisMode.PARTIAL_WITH_DIAGNOSTICS)
-        val resolvedCall = doResolveCall(psi)
-        return doCollectCallCandidates(psi, bindingContext, resolvedCall).ifEmpty {
+        val resolvedCall = performCallResolution(psi)
+        return performCallCandidatesCollection(psi, bindingContext, resolvedCall).ifEmpty {
             resolvedCall.toKaCallCandidateInfos()
         }
     }
 
-    private fun doCollectCallCandidates(
+    private fun performCallCandidatesCollection(
         psi: KtElement,
         bindingContext: BindingContext,
-        resolvedCall: KaCallInfo?,
+        resolvedCall: KaCallResolutionAttempt?,
     ): List<KaCallCandidateInfo> {
         val bestCandidateDescriptors =
             resolvedCall?.calls?.filterIsInstance<KaCallableMemberCall<*, *>>()
@@ -232,7 +234,7 @@ internal class KaFe10Resolver(
             candidateKtCallInfo.toKaCallCandidateInfos(bestCandidateDescriptors)
         }
 
-        return if (resolvedCall is KaSuccessCallInfo) {
+        return if (resolvedCall is KaCall) {
             resolvedCall.toKaCallCandidateInfos() + candidateInfos.filterNot(KaCallCandidateInfo::isInBestCandidates)
         } else {
             candidateInfos
@@ -246,15 +248,20 @@ internal class KaFe10Resolver(
             else -> null
         }
 
-    private fun KaCallInfo?.toKaCallCandidateInfos(): List<KaCallCandidateInfo> {
-        return when (this) {
-            is KaSuccessCallInfo -> listOf(KaBaseApplicableCallCandidateInfo(call, isInBestCandidates = true))
-            is KaErrorCallInfo -> candidateCalls.map { KaBaseInapplicableCallCandidateInfo(it, isInBestCandidates = true, diagnostic) }
-            null -> emptyList()
+    private fun KaCallResolutionAttempt?.toKaCallCandidateInfos(): List<KaCallCandidateInfo> = when (this) {
+        null -> emptyList()
+        is KaCall -> listOf(KaBaseApplicableCallCandidateInfo(backingCandidate = this, isInBestCandidates = true))
+        is KaCallResolutionError -> candidateCalls.map {
+            KaBaseInapplicableCallCandidateInfo(
+                backingCandidate = it,
+                isInBestCandidates = true,
+                diagnostic = diagnostic,
+            )
         }
+
     }
 
-    private fun KaCallInfo?.toKaCallCandidateInfos(bestCandidateDescriptors: Set<CallableDescriptor>): List<KaCallCandidateInfo> {
+    private fun KaCallResolutionAttempt?.toKaCallCandidateInfos(bestCandidateDescriptors: Set<CallableDescriptor>): List<KaCallCandidateInfo> {
         // TODO: We should prefer to compare symbols instead of descriptors, but we can't do so while symbols are not cached.
         fun KaCall.isInBestCandidates(): Boolean {
             val descriptor = this.safeAs<KaCallableMemberCall<*, *>>()?.descriptor as? CallableDescriptor
@@ -269,17 +276,26 @@ internal class KaFe10Resolver(
         }
 
         return when (this) {
-            is KaSuccessCallInfo -> {
-                listOf(KaBaseApplicableCallCandidateInfo(call, call.isInBestCandidates()))
+            is KaCall -> listOf(
+                KaBaseApplicableCallCandidateInfo(
+                    backingCandidate = this,
+                    isInBestCandidates = this.isInBestCandidates(),
+                ),
+            )
+
+            is KaCallResolutionError -> candidateCalls.map {
+                KaBaseInapplicableCallCandidateInfo(
+                    backingCandidate = it,
+                    isInBestCandidates = it.isInBestCandidates(),
+                    diagnostic = diagnostic,
+                )
             }
-            is KaErrorCallInfo -> candidateCalls.map {
-                KaBaseInapplicableCallCandidateInfo(it, it.isInBestCandidates(), diagnostic)
-            }
+
             null -> emptyList()
         }
     }
 
-    private fun handleAsCompoundAssignment(context: BindingContext, binaryExpression: KtBinaryExpression): KaCallInfo? {
+    private fun handleAsCompoundAssignment(context: BindingContext, binaryExpression: KtBinaryExpression): KaCallResolutionAttempt? {
         val left = binaryExpression.left ?: return null
         val right = binaryExpression.right
         val resolvedCalls = mutableListOf<ResolvedCall<*>>()
@@ -325,7 +341,7 @@ internal class KaFe10Resolver(
         }?.let { createCallInfo(context, binaryExpression, it, resolvedCalls) }
     }
 
-    private fun handleAsIncOrDecOperator(context: BindingContext, unaryExpression: KtUnaryExpression): KaCallInfo? {
+    private fun handleAsIncOrDecOperator(context: BindingContext, unaryExpression: KtUnaryExpression): KaCallResolutionAttempt? {
         if (unaryExpression.operationToken !in KtTokens.INCREMENT_AND_DECREMENT) return null
         val operatorCall = unaryExpression.getResolvedCall(context) ?: return null
         val resolvedCalls = mutableListOf(operatorCall)
@@ -368,7 +384,7 @@ internal class KaFe10Resolver(
         )
     }
 
-    private fun handleAsFunctionCall(context: BindingContext, element: KtElement): KaCallInfo? {
+    private fun handleAsFunctionCall(context: BindingContext, element: KtElement): KaCallResolutionAttempt? {
         return element.getResolvedCall(context)?.let { handleAsFunctionCall(context, element, it) }
     }
 
@@ -377,7 +393,7 @@ internal class KaFe10Resolver(
         element: KtElement,
         resolvedCall: ResolvedCall<*>,
         diagnostics: Diagnostics = context.diagnostics,
-    ): KaCallInfo? {
+    ): KaCallResolutionAttempt? {
         return if (resolvedCall is VariableAsFunctionResolvedCall) {
             if (element is KtCallExpression || element is KtQualifiedExpression) {
                 // TODO: consider demoting extension receiver to the first argument to align with FIR behavior. See test case
@@ -392,7 +408,7 @@ internal class KaFe10Resolver(
         }
     }
 
-    private fun handleAsPropertyRead(context: BindingContext, element: KtElement): KaCallInfo? {
+    private fun handleAsPropertyRead(context: BindingContext, element: KtElement): KaCallResolutionAttempt? {
         val call = element.getResolvedCall(context) ?: return null
         return call.toPropertyRead(context)?.let { createCallInfo(context, element, it, listOf(call)) }
     }
@@ -493,16 +509,16 @@ internal class KaFe10Resolver(
         resolvedCall: ResolvedCall<*>,
         smartCastType: KotlinType? = null,
     ): KaReceiverValue? {
-        val ktType = type.toKtType(analysisContext)
+        val kaType = type.toKtType(analysisContext)
         val result = when (this) {
-            is ExpressionReceiver -> expression.toExplicitReceiverValue(ktType)
+            is ExpressionReceiver -> expression.toExplicitReceiverValue(kaType)
             is ExtensionReceiver -> {
                 val extensionReceiverParameter = this.declarationDescriptor.extensionReceiverParameter ?: return null
-                KaBaseImplicitReceiverValue(KaFe10ReceiverParameterSymbol(extensionReceiverParameter, analysisContext), ktType)
+                KaBaseImplicitReceiverValue(KaFe10ReceiverParameterSymbol(extensionReceiverParameter, analysisContext), kaType)
             }
             is ImplicitReceiver -> {
                 val symbol = this.declarationDescriptor.toKtSymbol(analysisContext) ?: return null
-                KaBaseImplicitReceiverValue(symbol, ktType)
+                KaBaseImplicitReceiverValue(symbol, kaType)
             }
             else -> null
         }
@@ -534,7 +550,7 @@ internal class KaFe10Resolver(
         } else {
             resultingDescriptor.returnType
         }
-        val ktReturnType = returnType?.toKtType(analysisContext) ?: return null
+        val kaReturnType = returnType?.toKtType(analysisContext) ?: return null
         val receiverType = if (resultingDescriptor.isSynthesizedPropertyFromJavaAccessors()) {
             // FE1.0 represents synthesized properties as an extension property of the Java class. Hence the extension receiver type should
             // always be null
@@ -554,14 +570,14 @@ internal class KaFe10Resolver(
         return when (symbol) {
             is KaVariableSymbol -> KaFe10VariableSignature(
                 backingSymbol = symbol,
-                backingReturnType = ktReturnType,
+                backingReturnType = kaReturnType,
                 backingReceiverType = receiverType,
                 backingContextParameters = contextParameters,
             )
 
             is KaFunctionSymbol -> KaFe10FunctionSignature(
                 backingSymbol = symbol,
-                backingReturnType = ktReturnType,
+                backingReturnType = kaReturnType,
                 backingReceiverType = receiverType,
                 backingValueParameters = symbol.valueParameters
                     .zip(resultingDescriptor.valueParameters)
@@ -602,25 +618,28 @@ internal class KaFe10Resolver(
     private fun createCallInfo(
         context: BindingContext,
         psi: KtElement,
-        ktCall: KaCall,
+        kaCall: KaCall,
         resolvedCalls: List<ResolvedCall<*>>,
         diagnostics: Diagnostics = context.diagnostics,
-    ): KaCallInfo {
-        val failedResolveCall = resolvedCalls.firstOrNull { !it.status.isSuccess } ?: return KaBaseSuccessCallInfo(ktCall)
+    ): KaCallResolutionAttempt {
+        val failedResolveCall = resolvedCalls.firstOrNull { !it.status.isSuccess } ?: return kaCall
 
-        val diagnostic = getDiagnosticToReport(context, psi, ktCall, diagnostics)?.let { KaFe10Diagnostic(it, token) }
+        val diagnostic = getDiagnosticToReport(context, psi, kaCall, diagnostics)?.let { KaFe10Diagnostic(it, token) }
             ?: KaNonBoundToPsiErrorDiagnostic(
                 factoryName = Errors.UNRESOLVED_REFERENCE.name,
                 "${failedResolveCall.status} with ${failedResolveCall.resultingDescriptor.name}",
                 token
             )
 
-        return KaBaseErrorCallInfo(listOf(ktCall), diagnostic)
+        return KaBaseCallResolutionError(
+            backedDiagnostic = diagnostic,
+            backingCandidateCalls = listOf(kaCall)
+        )
     }
 
-    private fun handleResolveErrors(context: BindingContext, psi: KtElement): KaErrorCallInfo? {
+    private fun handleResolveErrors(context: BindingContext, psi: KtElement): KaCallResolutionError? {
         val diagnostic = getDiagnosticToReport(context, psi, null) ?: return null
-        val ktDiagnostic = diagnostic.let { KaFe10Diagnostic(it, token) }
+        val kaDiagnostic = KaFe10Diagnostic(diagnostic, token)
         val calls = when (diagnostic.factory) {
             in diagnosticWithResolvedCallsAtPosition1 -> {
                 require(diagnostic is DiagnosticWithParameters1<*, *>)
@@ -637,13 +656,16 @@ internal class KaFe10Resolver(
             }
         }
 
-        return KaBaseErrorCallInfo(calls.mapNotNull { it.toFunctionKtCall(context) ?: it.toPropertyRead(context) }, ktDiagnostic)
+        return KaBaseCallResolutionError(
+            backedDiagnostic = kaDiagnostic,
+            backingCandidateCalls = calls.mapNotNull { it.toFunctionKtCall(context) ?: it.toPropertyRead(context) },
+        )
     }
 
     private fun getDiagnosticToReport(
         context: BindingContext,
         psi: KtElement,
-        ktCall: KaCall?,
+        kaCall: KaCall?,
         diagnostics: Diagnostics = context.diagnostics,
     ) = diagnostics.firstOrNull { diagnostic ->
         if (diagnostic.severity != Severity.ERROR) return@firstOrNull false
@@ -680,7 +702,7 @@ internal class KaFe10Resolver(
                     reportedPsi is KtLambdaExpression || reportedPsi is KtLambdaArgument -> true
             // errors on value to set using array access convention
             isCallArgError &&
-                    ktCall is KaSimpleFunctionCall && (reportedPsiParent as? KtBinaryExpression)?.right == reportedPsi -> true
+                    kaCall is KaSimpleFunctionCall && (reportedPsiParent as? KtBinaryExpression)?.right == reportedPsi -> true
             else -> false
         }
     }

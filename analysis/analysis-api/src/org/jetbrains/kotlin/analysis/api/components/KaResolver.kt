@@ -6,16 +6,113 @@
 package org.jetbrains.kotlin.analysis.api.components
 
 import org.jetbrains.kotlin.analysis.api.*
-import org.jetbrains.kotlin.analysis.api.resolution.KaCallCandidateInfo
-import org.jetbrains.kotlin.analysis.api.resolution.KaCallInfo
+import org.jetbrains.kotlin.analysis.api.resolution.*
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.idea.references.KDocReference
 import org.jetbrains.kotlin.idea.references.KtReference
 import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.psi.KtExperimentalApi
+import org.jetbrains.kotlin.resolution.KtResolvable
+import org.jetbrains.kotlin.resolution.KtResolvableCall
 
 @KaSessionComponentImplementationDetail
 @SubclassOptInRequired(KaSessionComponentImplementationDetail::class)
 public interface KaResolver : KaSessionComponent {
+    /**
+     * Attempts to resolve a symbol for the given [KtResolvable].
+     *
+     * Returns a [KaSymbolResolutionAttempt] that describes either success ([KaSymbolResolutionSuccess])
+     * or failure ([KaSymbolResolutionError]), or `null` if no result is available
+     *
+     * @see KaSymbolResolutionSuccess
+     * @see KaSymbolResolutionError
+     */
+    @KaExperimentalApi
+    @OptIn(KtExperimentalApi::class)
+    public fun KtResolvable.tryResolveSymbol(): KaSymbolResolutionAttempt?
+
+    /**
+     * Resolves symbols for the given [KtResolvable].
+     *
+     * Returns all resolved [KaSymbol]s if successful; otherwise, an empty list. Might contain multiple symbols
+     * for a multiple result ([KaMultiSymbolResolutionSuccess])
+     *
+     * @see tryResolveSymbol
+     * @see resolveSymbol
+     * @see KaSingleSymbolResolutionSuccess
+     * @see KaMultiSymbolResolutionSuccess
+     */
+    @KaExperimentalApi
+    @OptIn(KtExperimentalApi::class)
+    public fun KtResolvable.resolveSymbols(): Collection<KaSymbol>
+
+    /**
+     * Resolves a single symbol for the given [KtResolvable].
+     *
+     * Returns the [KaSymbol] if there is exactly one target ([KaSingleSymbolResolutionSuccess]); otherwise, `null`
+     *
+     * @see tryResolveSymbol
+     * @see resolveSymbols
+     * @see KaSingleSymbolResolutionSuccess
+     */
+    @KaExperimentalApi
+    @OptIn(KtExperimentalApi::class)
+    public fun KtResolvable.resolveSymbol(): KaSymbol?
+
+    /**
+     * Attempts to resolve the call for the given [KtResolvableCall].
+     *
+     * ### Usage Example:
+     * ```kotlin
+     * fun KaSession.findResolutionDiagnostic(expression: KtCallExpression): KaDiagnostic? {
+     *   val attempt = expression.tryResolveCall() ?: return null
+     *   val error = attempt as? KaCallResolutionError ?: return null
+     *   return error.diagnostic
+     * }
+     * ```
+     *
+     * Returns a [KaCallResolutionAttempt], or `null` if no result is available
+     *
+     * @see resolveCall
+     */
+    @KaExperimentalApi
+    @OptIn(KtExperimentalApi::class)
+    public fun KtResolvableCall.tryResolveCall(): KaCallResolutionAttempt?
+
+    /**
+     * Resolves the call for the given [KtResolvableCall].
+     *
+     * ### Usage Example:
+     * ```kotlin
+     * fun KaSession.resolveSymbol(expression: KtCallExpression): KaSymbol? {
+     *   val successfulCall = expression.resolveCall() ?: return null
+     *   val callableCall = successfulCall as? KaCallableMemberCall ?: return null
+     *   return callableCall.symbol
+     * }
+     * ```
+     *
+     * Returns the resolved [KaCall] on success; otherwise, `null`
+     *
+     * @see tryResolveCall
+     * @see collectCallCandidates
+     */
+    @KaExperimentalApi
+    @OptIn(KtExperimentalApi::class)
+    public fun KtResolvableCall.resolveCall(): KaCall?
+
+    /**
+     * Returns all candidates considered during [overload resolution](https://kotlinlang.org/spec/overload-resolution.html)
+     * for the call corresponding to the given [KtResolvableCall].
+     *
+     * In contrast, [resolveCall] returns only the final result, i.e., the most specific callable that passes all
+     * compatibility checks
+     *
+     * @see resolveCall
+     */
+    @KaExperimentalApi
+    @OptIn(KtExperimentalApi::class)
+    public fun KtResolvableCall.collectCallCandidates(): List<KaCallCandidateInfo>
+
     /**
      * Resolves the given [KtReference] to symbols.
      *
@@ -90,6 +187,143 @@ public interface KaResolver : KaSessionComponent {
     @KaNonPublicApi
     @KaK1Unsupported
     public fun KDocReference.resolveToSymbolWithClassicKDocResolver(): KaSymbol?
+}
+
+/**
+ * Attempts to resolve a symbol for the given [KtResolvable].
+ *
+ * Returns a [KaSymbolResolutionAttempt] that describes either success ([KaSymbolResolutionSuccess])
+ * or failure ([KaSymbolResolutionError]), or `null` if no result is available
+ *
+ * @see KaSymbolResolutionSuccess
+ * @see KaSymbolResolutionError
+ */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
+@KaExperimentalApi
+@OptIn(KtExperimentalApi::class)
+@KaContextParameterApi
+context(s: KaSession)
+public fun KtResolvable.tryResolveSymbol(): KaSymbolResolutionAttempt? {
+    return with(s) {
+        tryResolveSymbol()
+    }
+}
+
+/**
+ * Resolves symbols for the given [KtResolvable].
+ *
+ * Returns all resolved [KaSymbol]s if successful; otherwise, an empty list. Might contain multiple symbols
+ * for a multiple result ([KaMultiSymbolResolutionSuccess])
+ *
+ * @see tryResolveSymbol
+ * @see resolveSymbol
+ * @see KaSingleSymbolResolutionSuccess
+ * @see KaMultiSymbolResolutionSuccess
+ */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
+@KaExperimentalApi
+@OptIn(KtExperimentalApi::class)
+@KaContextParameterApi
+context(s: KaSession)
+public fun KtResolvable.resolveSymbols(): Collection<KaSymbol> {
+    return with(s) {
+        resolveSymbols()
+    }
+}
+
+/**
+ * Resolves a single symbol for the given [KtResolvable].
+ *
+ * Returns the [KaSymbol] if there is exactly one target ([KaSingleSymbolResolutionSuccess]); otherwise, `null`
+ *
+ * @see tryResolveSymbol
+ * @see resolveSymbols
+ * @see KaSingleSymbolResolutionSuccess
+ */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
+@KaExperimentalApi
+@OptIn(KtExperimentalApi::class)
+@KaContextParameterApi
+context(s: KaSession)
+public fun KtResolvable.resolveSymbol(): KaSymbol? {
+    return with(s) {
+        resolveSymbol()
+    }
+}
+
+/**
+ * Attempts to resolve the call for the given [KtResolvableCall].
+ *
+ * ### Usage Example:
+ * ```kotlin
+ * fun KaSession.findResolutionDiagnostic(expression: KtCallExpression): KaDiagnostic? {
+ *   val attempt = expression.tryResolveCall() ?: return null
+ *   val error = attempt as? KaCallResolutionError ?: return null
+ *   return error.diagnostic
+ * }
+ * ```
+ *
+ * Returns a [KaCallResolutionAttempt], or `null` if no result is available
+ *
+ * @see resolveCall
+ */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
+@KaExperimentalApi
+@OptIn(KtExperimentalApi::class)
+@KaContextParameterApi
+context(s: KaSession)
+public fun KtResolvableCall.tryResolveCall(): KaCallResolutionAttempt? {
+    return with(s) {
+        tryResolveCall()
+    }
+}
+
+/**
+ * Resolves the call for the given [KtResolvableCall].
+ *
+ * ### Usage Example:
+ * ```kotlin
+ * fun KaSession.resolveSymbol(expression: KtCallExpression): KaSymbol? {
+ *   val successfulCall = expression.resolveCall() ?: return null
+ *   val callableCall = successfulCall as? KaCallableMemberCall ?: return null
+ *   return callableCall.symbol
+ * }
+ * ```
+ *
+ * Returns the resolved [KaCall] on success; otherwise, `null`
+ *
+ * @see tryResolveCall
+ * @see collectCallCandidates
+ */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
+@KaExperimentalApi
+@OptIn(KtExperimentalApi::class)
+@KaContextParameterApi
+context(s: KaSession)
+public fun KtResolvableCall.resolveCall(): KaCall? {
+    return with(s) {
+        resolveCall()
+    }
+}
+
+/**
+ * Returns all candidates considered during [overload resolution](https://kotlinlang.org/spec/overload-resolution.html)
+ * for the call corresponding to the given [KtResolvableCall].
+ *
+ * In contrast, [resolveCall] returns only the final result, i.e., the most specific callable that passes all
+ * compatibility checks
+ *
+ * @see resolveCall
+ */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
+@KaExperimentalApi
+@OptIn(KtExperimentalApi::class)
+@KaContextParameterApi
+context(s: KaSession)
+public fun KtResolvableCall.collectCallCandidates(): List<KaCallCandidateInfo> {
+    return with(s) {
+        collectCallCandidates()
+    }
 }
 
 /**
