@@ -58,23 +58,15 @@ fun Project.customCompilerTest(
             implicitDependencies("org.jetbrains.kotlin:kotlin-native-prebuilt:${version.rawVersion}:linux-x86_64@tar.gz")
         }
     }
-    val konanDataDir = DependencyDirectories.localKonanDir
-    val customCompilerDirName = "kotlin-native-prebuilt-${HostManager.platformName()}-${version.rawVersion}"
-    val customCompilerDir = konanDataDir.resolve(customCompilerDirName)
-    val unarchiveTaskName = "unarchiveCustomCompiler_${taskName}_$version"
-    val unarchiveCustomCompiler = tasks.register(unarchiveTaskName, Sync::class) {
-        val unarchive = { archive: File -> if (HostManager.hostIsMingw) zipTree(archive) else tarTree(archive) }
-        from(unarchive(customCompiler.singleFile)) {
-            eachFile {
-                // Strip the top-level directory from the archive (e.g., kotlin-native-prebuilt-macos-aarch64-2.0.0/)
-                val segments = relativePath.segments
-                relativePath = RelativePath(true, *segments.drop(1).toTypedArray())
-            }
-            includeEmptyDirs = false
-        }
-        into(customCompilerDir)
+    // Cannot use exactly `DependencyDirectories.localKonanDir`, since it's wrong to declare whole `~/.konan/` as an output of `unarchiveCustomCompiler_` task
+    // Should it be so, Gradle fails on implicit dependency: task `:kotlin-native:llvmInterop:genInteropStubs` uses files in `~/.konan/dependencies/llvm-19-aarch64*`
+    // So, a subfolder within `~/.konan/` is needed for output of `unarchiveCustomCompiler_` task
+    val customCompilersCollectionDir = DependencyDirectories.localKonanDir.resolve("kotlin-native-prebuilt-releases")
+    val unarchiveCustomCompiler = tasks.register("unarchiveCustomCompiler_${taskName}", Sync::class) {
+        val archiveTree = { archive: File -> if (HostManager.hostIsMingw) zipTree(archive) else tarTree(archive) }
+        from(archiveTree(customCompiler.singleFile))
+        into(customCompilersCollectionDir)
     }
-    val currentCompilerDist = layout.projectDirectory.asFile.resolve("../../../kotlin-native/dist")
     return projectTests.nativeTestTask(
         taskName,
         allowParallelExecution = true,
@@ -88,7 +80,11 @@ fun Project.customCompilerTest(
         dependsOn(unarchiveCustomCompiler)
         inputs.files(unarchiveCustomCompiler.get().outputs)
         doFirst {
-            if (!customCompilerDir.exists()) error ("The folder `$customCompilerDir` must have been created by task `$unarchiveTaskName`")
+            val customCompilerDir = customCompilersCollectionDir.listFiles()?.filter {
+                it.isDirectory && it.name.toString().endsWith(version.rawVersion)
+            }?.first()
+            if (customCompilerDir == null || !customCompilerDir.exists())
+                error ("Folder `$customCompilersCollectionDir` must have a subfolder with version ${version.rawVersion} of K/N prebuilt compiler")
 
             systemProperty("kotlin.internal.native.test.compat.customCompilerDist", customCompilerDir.absolutePath)
             val konanLibDir = customCompilerDir.resolve("konan/lib")
@@ -100,7 +96,7 @@ fun Project.customCompilerTest(
             systemProperty("kotlin.internal.native.test.compat.customCompilerVersion", version.rawVersion)
             systemProperty(
                 "kotlin.internal.native.test.compat.currentCompilerDist",
-                currentCompilerDist
+                rootProject.projectDir.resolve("kotlin-native/dist")
             )
         }
         body()
