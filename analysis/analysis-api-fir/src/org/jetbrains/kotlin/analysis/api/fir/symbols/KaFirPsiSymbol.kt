@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 import kotlin.contracts.ExperimentalContracts
@@ -198,6 +199,31 @@ internal fun KtCallableDeclaration.psiBasedVisibility(isOverride: () -> Boolean)
     else -> visibilityByModifiers
 } ?: ifNoStatusCompilerPluginPresent {
     Visibilities.Public.takeUnless { isOverride() }
+}
+
+/**
+ * Determines the default modality of a callable declaration based on its PSI structure if possible.
+ *
+ * @param isOverride whether [this] declaration overrides something
+ */
+context(symbol: KaFirSymbol<*>)
+internal fun KtCallableDeclaration.psiBasedDefaultKaModality(
+    isOverride: () -> Boolean,
+): KaSymbolModality? = ifNoStatusCompilerPluginPresent {
+    val containingClassOrObject = containingClassOrObject
+    when {
+        containingClassOrObject == null -> KaSymbolModality.FINAL
+        containingClassOrObject is KtClass && containingClassOrObject.isInterface() -> {
+            when {
+                hasModifier(KtTokens.PRIVATE_KEYWORD) -> KaSymbolModality.FINAL
+                this is KtNamedFunction && !hasBody() -> KaSymbolModality.ABSTRACT
+                else -> KaSymbolModality.OPEN
+            }
+        }
+
+        isOverride() -> KaSymbolModality.OPEN
+        else -> KaSymbolModality.FINAL
+    }
 }
 
 internal fun KaFirKtBasedSymbol<KtClassOrObject, FirClassSymbol<*>>.createSuperTypes(): List<KaType> {

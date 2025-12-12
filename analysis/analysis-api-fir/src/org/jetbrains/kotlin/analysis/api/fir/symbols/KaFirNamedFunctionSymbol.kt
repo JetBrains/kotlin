@@ -215,7 +215,8 @@ internal class KaFirNamedFunctionSymbol private constructor(
 
                     // Green code cannot have those modifiers with other modalities
                     hasModifier(KtTokens.INLINE_KEYWORD) || hasModifier(KtTokens.TAILREC_KEYWORD) -> KaSymbolModality.FINAL
-                    else -> null
+
+                    else -> psiBasedDefaultKaModality(::isOverride)
                 }
             }
 
