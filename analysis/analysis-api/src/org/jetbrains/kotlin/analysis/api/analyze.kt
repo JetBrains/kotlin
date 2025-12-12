@@ -8,12 +8,10 @@
 package org.jetbrains.kotlin.analysis.api
 
 import com.intellij.psi.PsiFile
+import org.jetbrains.kotlin.analysis.api.projectStructure.*
 import org.jetbrains.kotlin.analysis.api.session.KaSessionProvider
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileResolutionMode
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
-import org.jetbrains.kotlin.analysis.api.projectStructure.copyOrigin
-import org.jetbrains.kotlin.analysis.api.projectStructure.withDanglingFileResolutionMode
 import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.psi.KtFile
 
 /**
  * Executes the given [action] in an [analysis session][KaSession] context.
@@ -63,6 +61,35 @@ public inline fun <R> analyzeCopy(
     crossinline action: KaSession.() -> R,
 ): R {
     val containingFile = useSiteElement.containingKtFile
+    return withDanglingFileResolutionMode(containingFile, resolutionMode) {
+        analyze(containingFile, action)
+    }
+}
+
+/**
+ * Executes the given [action] in a [KaSession] context.
+ *
+ * The [useSiteElement] must be inside a dangling file copy (specifically, [PsiFile.copyOrigin] must point to the copy source).
+ *
+ * The [KaDanglingFileResolutionMode] is computed automatically based on the file content.
+ * If there was an out-of-block modification made in the containing file compared to its [copyOrigin][KtFile.copyOrigin],
+ * proceeds with [KaDanglingFileResolutionMode.PREFER_SELF]. Otherwise, uses [KaDanglingFileResolutionMode.IGNORE_SELF].
+ * Please note that some use cases might require [PREFER_SELF][KaDanglingFileResolutionMode.PREFER_SELF] even when the content is the same.
+ * For this purpose, use [analyzeCopy] with explicit [KaDanglingFileResolutionMode] parameter.
+ *
+ * The project will be analyzed from the perspective of [useSiteElement]'s module, also called the use-site module.
+ *
+ * Neither the analysis session nor any other [lifetime owners][org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner] may be leaked
+ * outside the [analyze] block. Please consult the documentation of [KaSession] for important information about lifetime management.
+ */
+@KaExperimentalApi
+public inline fun <R> analyzeCopy(
+    useSiteElement: KtElement,
+    crossinline action: KaSession.() -> R,
+): R {
+    val containingFile = useSiteElement.containingKtFile
+    val resolutionMode =
+        KaDanglingFileResolutionModeProvider.calculateMode(containingFile, useSiteElement.project)
     return withDanglingFileResolutionMode(containingFile, resolutionMode) {
         analyze(containingFile, action)
     }

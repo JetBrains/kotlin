@@ -118,6 +118,7 @@ org.jetbrains.kotlin.analysis.api.permissions.KaAnalysisPermissionRegistry.KaExp
 org.jetbrains.kotlin.analysis.api.permissions.KaAnalysisPermissionRegistry.explicitAnalysisRestriction
 org.jetbrains.kotlin.analysis.api.permissions.KaAnalysisPermissionRegistry.isAnalysisAllowedInWriteAction
 org.jetbrains.kotlin.analysis.api.permissions.KaAnalysisPermissionRegistry.isAnalysisAllowedOnEdt
+org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileResolutionModeProvider.Companion.getInstance(Project)
 org.jetbrains.kotlin.analysis.api.projectStructure.KaModuleProvider
 org.jetbrains.kotlin.analysis.api.projectStructure.KaModuleProvider.Companion.getInstance(Project)
 org.jetbrains.kotlin.analysis.api.projectStructure.KaModuleProvider.Companion.getModule(Project, PsiElement, KaModule?)

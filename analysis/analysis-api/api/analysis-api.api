@@ -608,6 +608,16 @@ public final class org/jetbrains/kotlin/analysis/api/projectStructure/KaDangling
 	public static fun values ()[Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaDanglingFileResolutionMode;
 }
 
+public abstract interface class org/jetbrains/kotlin/analysis/api/projectStructure/KaDanglingFileResolutionModeProvider {
+	public static final field Companion Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaDanglingFileResolutionModeProvider$Companion;
+	public abstract fun calculateMode (Lorg/jetbrains/kotlin/psi/KtFile;)Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaDanglingFileResolutionMode;
+}
+
+public final class org/jetbrains/kotlin/analysis/api/projectStructure/KaDanglingFileResolutionModeProvider$Companion {
+	public final fun calculateMode (Lorg/jetbrains/kotlin/psi/KtFile;Lcom/intellij/openapi/project/Project;)Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaDanglingFileResolutionMode;
+	public final fun getInstance (Lcom/intellij/openapi/project/Project;)Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaDanglingFileResolutionModeProvider;
+}
+
 public abstract interface class org/jetbrains/kotlin/analysis/api/projectStructure/KaLibraryModule : org/jetbrains/kotlin/analysis/api/projectStructure/KaModule {
 	public abstract fun getBinaryRoots ()Ljava/util/Collection;
 	public abstract fun getLibraryName ()Ljava/lang/String;
