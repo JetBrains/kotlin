@@ -14,8 +14,7 @@ import java.net.SocketTimeoutException
 import java.net.URL
 import java.net.UnknownHostException
 
-private const val DOMAIN_NAME = "kotlin-build-properties.labs.jb.gg"
-private const val SETUP_JSON_URL = "https://$DOMAIN_NAME/setup.json"
+private const val SETUP_JSON_URL = "https://kotlin-build-properties.labs.jb.gg/setup.json"
 
 private const val PLUGIN_SWITCH_PROPERTY = "kotlin.build.internal.gradle.setup"
 private const val GLOBAL_CONSENT_GRADLE_PROPERTY = "kotlin.build.internal.gradle.setup.consent"
