@@ -111,7 +111,7 @@ class ScriptJvmK2CompilerImpl(
         refineAllForK2(script, state.hostConfiguration) { source, configuration, hostConfiguration ->
             collectAndResolveScriptAnnotationsViaFir(
                 source, configuration, hostConfiguration,
-                { state.getOrCreateSessionForAnnotationResolution() },
+                { _, _ -> state.getOrCreateSessionForAnnotationResolution() },
                 { session, diagnosticsReporter -> convertToFir(session, diagnosticsReporter) }
             )
         }.onSuccess {
@@ -189,7 +189,13 @@ class ScriptJvmK2CompilerImpl(
             init = {},
         )
 
-        session.register(FirScriptCompilationComponent::class, FirScriptCompilationComponent(state.hostConfiguration))
+        session.register(
+            FirScriptCompilationComponent::class,
+            FirScriptCompilationComponent(
+                state.hostConfiguration,
+                { _, _ -> state.getOrCreateSessionForAnnotationResolution() }
+            )
+        )
 
         state.hostConfiguration[ScriptingHostConfiguration.configureFirSession]?.also {
             it.invoke(session)
@@ -293,7 +299,10 @@ private fun K2ScriptingCompilerEnvironmentInternal.getOrCreateSessionForAnnotati
         isForLeafHmppModule = false,
         init = {},
     ).apply {
-        register(FirScriptCompilationComponent::class, FirScriptCompilationComponent(hostConfiguration))
+        register(
+            FirScriptCompilationComponent::class,
+            FirScriptCompilationComponent(hostConfiguration, { _, _ -> this })
+        )
         dummySessionForAnnotationResolution = this
     })
 

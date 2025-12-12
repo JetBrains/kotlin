@@ -94,7 +94,11 @@ class FirScriptDefinitionProviderService(
                         } else {
                             collectAndResolveScriptAnnotationsViaFir(
                                 sourceCode, it, hostConfiguration,
-                                getSessionForAnnotationResolution = { session },
+                                getSessionForAnnotationResolution =
+                                    { source, configuration ->
+                                        session.scriptCompilationComponent?.getSessionForAnnotationResolution(source, configuration)
+                                            ?: session
+                                    },
                                 convertToFir = { session, diagnosticsReporter ->
                                     val sourcesToPathsMapper = session.sourcesToPathsMapper
                                     val builder = LightTree2Fir(session, session.kotlinScopeProvider, diagnosticsReporter)

@@ -39,7 +39,7 @@ internal fun collectAndResolveScriptAnnotationsViaFir(
     script: SourceCode,
     compilationConfiguration: ScriptCompilationConfiguration,
     baseHostConfiguration: ScriptingHostConfiguration,
-    getSessionForAnnotationResolution: () -> FirSession,
+    getSessionForAnnotationResolution: (SourceCode, ScriptCompilationConfiguration) -> FirSession,
     convertToFir: SourceCode.(FirSession, BaseDiagnosticsCollector) -> FirFile,
 ): ResultWithDiagnostics<ScriptCollectedData> {
     val hostConfiguration =
@@ -58,9 +58,9 @@ internal fun collectAndResolveScriptAnnotationsViaFir(
     // separate reporter for refinement to avoid double raw fir warnings reporting
     val diagnosticsCollector = DiagnosticReporterFactory.createPendingReporter()
 
-    val dummySession = getSessionForAnnotationResolution()
+    val sessionForAnnotationResolution = getSessionForAnnotationResolution(script, compilationConfiguration)
 
-    val firFile = script.convertToFir(dummySession, diagnosticsCollector)
+    val firFile = script.convertToFir(sessionForAnnotationResolution, diagnosticsCollector)
     if (diagnosticsCollector.hasErrors) {
         val messageCollector = ScriptDiagnosticsMessageCollector(null)
         diagnosticsCollector.reportToMessageCollector(messageCollector, false)
@@ -68,7 +68,7 @@ internal fun collectAndResolveScriptAnnotationsViaFir(
     }
 
     fun loadAnnotation(firAnnotation: FirAnnotation): ResultWithDiagnostics<ScriptSourceAnnotation<Annotation>?> =
-        (firAnnotation as? FirAnnotationCall)?.toAnnotationObjectIfMatches(acceptedAnnotations, dummySession, firFile)?.onSuccess {
+        (firAnnotation as? FirAnnotationCall)?.toAnnotationObjectIfMatches(acceptedAnnotations, sessionForAnnotationResolution, firFile)?.onSuccess {
             val location = script.locationId
             val startPosition = firAnnotation.source?.startOffset?.toSourceCodePosition(script)
             val endPosition = firAnnotation.source?.endOffset?.toSourceCodePosition(script)
