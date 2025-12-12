@@ -14,10 +14,8 @@ import com.android.build.api.variant.ApplicationAndroidComponentsExtension
 import com.android.build.api.variant.ScopedArtifacts
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
-import org.gradle.api.file.ConfigurableFileCollection
-import org.gradle.api.file.Directory
-import org.gradle.api.file.RegularFile
-import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.file.*
+import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
@@ -100,16 +98,22 @@ private fun String.capitalize(): String =
     replaceFirstChar { if (it.isLowerCase()) it.titlecase(getDefault()) else it.toString() }
 
 @CacheableTask
-internal abstract class ProduceMappingFileTask : DefaultTask() {
+internal abstract class ProduceMappingFileTask @Inject constructor(
+    objects: ObjectFactory
+) : DefaultTask() {
     @get:OutputFile
     abstract val outputFile: RegularFileProperty
 
     @get:OutputFile
     abstract val errorFile: RegularFileProperty
 
+    @get:Internal
+    abstract val projectDirectories: ListProperty<Directory>
+
     @get:InputFiles
     @get:PathSensitive(PathSensitivity.RELATIVE)
-    abstract val projectDirectories: ListProperty<Directory>
+    val projectClasses: FileTree =
+        objects.fileCollection().from(projectDirectories).asFileTree.matching { it.include("**/*.class") }
 
     @get:Classpath
     abstract val projectJars: ListProperty<RegularFile>
@@ -130,7 +134,7 @@ internal abstract class ProduceMappingFileTask : DefaultTask() {
         }
 
         workQueue.submit(Action::class.java) {
-            it.projectFiles.from(projectDirectories.get())
+            it.projectFiles.from(projectClasses)
             it.projectJars.from(projectJars.get())
             it.output.set(outputFile)
             it.errorOutput.set(errorFile)
@@ -167,13 +171,9 @@ internal abstract class ProduceMappingFileTask : DefaultTask() {
             }
 
 
-            parameters.projectFiles.forEach { projectFile ->
-                projectFile.walk().forEach { file ->
-                    if (file.name.endsWith(".class")) {
-                        val bytes = file.readBytes()
-                        mapping.append(bytes)
-                    }
-                }
+            parameters.projectFiles.forEach { file ->
+                val bytes = file.readBytes()
+                mapping.append(bytes)
             }
 
             parameters.output.get().asFile.apply {
