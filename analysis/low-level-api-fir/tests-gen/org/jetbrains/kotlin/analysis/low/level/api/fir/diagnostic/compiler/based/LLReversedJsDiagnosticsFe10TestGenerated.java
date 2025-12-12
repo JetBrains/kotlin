@@ -604,6 +604,12 @@ public class LLReversedJsDiagnosticsFe10TestGenerated extends AbstractLLReversed
     }
 
     @Test
+    @TestMetadata("multipleDefaultExportInOneFile.kt")
+    public void testMultipleDefaultExportInOneFile() {
+      runTest("compiler/testData/diagnostics/testsWithJsStdLib/export/multipleDefaultExportInOneFile.kt");
+    }
+
+    @Test
     @TestMetadata("nestedTypealias.kt")
     public void testNestedTypealias() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/export/nestedTypealias.kt");

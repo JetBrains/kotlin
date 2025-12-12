@@ -604,6 +604,12 @@ public class LLJsDiagnosticsFe10TestGenerated extends AbstractLLJsDiagnosticsTes
     }
 
     @Test
+    @TestMetadata("multipleDefaultExportInOneFile.kt")
+    public void testMultipleDefaultExportInOneFile() {
+      runTest("compiler/testData/diagnostics/testsWithJsStdLib/export/multipleDefaultExportInOneFile.kt");
+    }
+
+    @Test
     @TestMetadata("nestedTypealias.kt")
     public void testNestedTypealias() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/export/nestedTypealias.kt");
