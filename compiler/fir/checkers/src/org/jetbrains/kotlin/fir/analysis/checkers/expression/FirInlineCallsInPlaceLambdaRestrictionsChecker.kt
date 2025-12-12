@@ -21,6 +21,8 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.toResolvedVariableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirLocalPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.ConeDynamicType
 import kotlin.reflect.full.memberProperties
@@ -45,6 +47,9 @@ object FirInlineCallsInPlaceLambdaRestrictionsChecker : FirQualifiedAccessExpres
         if (baseReceiverSymbol != null) {
             val declInsideLambda = isDeclaredInsideLambda(baseReceiverSymbol, containingLambda)
             if (declInsideLambda) return
+            if (!baseReceiverSymbol.fir.isLocal) return
+        } else {
+            if (!variableSymbol.fir.isLocal) return
         }
 
         if (!expression.partOfCall()) return
