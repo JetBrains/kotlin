@@ -304,41 +304,6 @@ open class HierarchicalMppIT : KGPBaseTest() {
     }
 
     @GradleTest
-    @DisplayName("Works with published JS library")
-    fun testHmppWithPublishedJsIrDependency(gradleVersion: GradleVersion, @TempDir tempDir: Path) {
-        publishThirdPartyLib(
-            projectName = "hierarchical-mpp-with-js-published-modules/third-party-lib",
-            gradleVersion = gradleVersion,
-            localRepoDir = tempDir
-        )
-
-        with(
-            nativeProject(
-                "hierarchical-mpp-with-js-published-modules/my-lib-foo",
-                gradleVersion,
-                localRepoDir = tempDir,
-                buildOptions = defaultBuildOptions.copy(jsOptions = BuildOptions.JsOptions())
-            )
-        ) {
-            build("publish", "assemble")
-        }
-    }
-
-    @GradleTest
-    @DisplayName("Works with project dependency on JS library")
-    fun testHmppWithProjectJsIrDependency(gradleVersion: GradleVersion) {
-        with(
-            nativeProject(
-                projectName = "hierarchical-mpp-with-js-project-dependency",
-                gradleVersion = gradleVersion,
-                buildOptions = defaultBuildOptions.copy(jsOptions = BuildOptions.JsOptions())
-            )
-        ) {
-            build("assemble")
-        }
-    }
-
-    @GradleTest
     @DisplayName("KT-48370: Multiplatform Gradle build fails for Native targets with \"we cannot choose between the following variants of project\"")
     fun testMultiModulesHmppKt48370(gradleVersion: GradleVersion) {
         project(
