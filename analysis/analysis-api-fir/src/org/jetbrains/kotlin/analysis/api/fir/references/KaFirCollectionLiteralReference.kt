@@ -8,12 +8,9 @@ package org.jetbrains.kotlin.analysis.api.fir.references
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirArrayOfSymbolProvider.arrayOf
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirArrayOfSymbolProvider.arrayOfSymbol
-import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirArrayOfSymbolProvider.arrayTypeToArrayOfCall
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirSafe
 import org.jetbrains.kotlin.fir.expressions.FirCollectionLiteral
-import org.jetbrains.kotlin.fir.types.ConeClassLikeType
-import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.idea.references.KtCollectionLiteralReference
 import org.jetbrains.kotlin.psi.KtCollectionLiteralExpression
 import org.jetbrains.kotlin.psi.KtImplementationDetail
@@ -26,10 +23,7 @@ internal class KaFirCollectionLiteralReference(
 ) : KtCollectionLiteralReference(expression), KaFirReference {
     override fun KaFirSession.computeSymbols(): Collection<KaSymbol> {
         val fir = element.getOrBuildFirSafe<FirCollectionLiteral>(resolutionFacade) ?: return emptyList()
-
-        val type = fir.resolvedType as? ConeClassLikeType ?: return listOfNotNull(arrayOfSymbol(arrayOf))
-        val call = arrayTypeToArrayOfCall[type.lookupTag.classId] ?: arrayOf
-        return listOfNotNull(arrayOfSymbol(call))
+        return listOfNotNull(arrayOfSymbol(fir) ?: arrayOfSymbol(arrayOf))
     }
 
     override fun isReferenceToImportAlias(alias: KtImportAlias): Boolean {

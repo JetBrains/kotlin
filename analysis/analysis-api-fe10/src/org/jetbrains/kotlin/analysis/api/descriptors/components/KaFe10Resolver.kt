@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaF
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.*
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.KaFe10PsiSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.getResolutionScope
+import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnostic
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseResolver
 import org.jetbrains.kotlin.analysis.api.impl.base.components.withPsiValidityAssertion
 import org.jetbrains.kotlin.analysis.api.impl.base.resolution.*
@@ -88,7 +89,33 @@ internal class KaFe10Resolver(
         error("Not supported")
     }
 
-    override fun performSymbolResolution(psi: KtElement): KaSymbolResolutionAttempt? = null
+    override fun performSymbolResolution(psi: KtElement): KaSymbolResolutionAttempt? {
+        val bindingContext = analysisContext.analyze(psi, AnalysisMode.PARTIAL_WITH_DIAGNOSTICS)
+        val resolvedCall = psi.getResolvedCall(bindingContext)
+        if (resolvedCall != null) {
+            val symbol = resolvedCall.candidateDescriptor.toKtSymbol(analysisContext)
+            return if (resolvedCall.status.isSuccess && symbol != null) {
+                KaBaseSingleSymbolResolutionSuccess(symbol)
+            } else {
+                val diagnostic = getDiagnosticToReport(bindingContext, psi, null)?.let {
+                    KaFe10Diagnostic(it, token)
+                } ?: resolvedCall.nonBoundErrorDiagnostic
+
+                KaBaseSymbolResolutionError(
+                    backingDiagnostic = diagnostic,
+                    backingCandidateSymbols = listOfNotNull(symbol),
+                )
+            }
+        }
+
+        val errors = getResolveErrors(bindingContext, psi) ?: return null
+        val diagnostic = errors.first
+        val candidateSymbols = errors.second.mapNotNull { it.candidateDescriptor.toKtSymbol(analysisContext) }
+        return KaBaseSymbolResolutionError(
+            backingDiagnostic = diagnostic,
+            backingCandidateSymbols = candidateSymbols,
+        )
+    }
 
     override fun KtReference.resolveToSymbols(): Collection<KaSymbol> = withPsiValidityAssertion(element) {
         return doResolveToSymbols(this)
@@ -625,11 +652,7 @@ internal class KaFe10Resolver(
         val failedResolveCall = resolvedCalls.firstOrNull { !it.status.isSuccess } ?: return kaCall
 
         val diagnostic = getDiagnosticToReport(context, psi, kaCall, diagnostics)?.let { KaFe10Diagnostic(it, token) }
-            ?: KaNonBoundToPsiErrorDiagnostic(
-                factoryName = Errors.UNRESOLVED_REFERENCE.name,
-                "${failedResolveCall.status} with ${failedResolveCall.resultingDescriptor.name}",
-                token
-            )
+            ?: failedResolveCall.nonBoundErrorDiagnostic
 
         return KaBaseCallResolutionError(
             backedDiagnostic = diagnostic,
@@ -637,7 +660,14 @@ internal class KaFe10Resolver(
         )
     }
 
-    private fun handleResolveErrors(context: BindingContext, psi: KtElement): KaCallResolutionError? {
+    private val ResolvedCall<*>.nonBoundErrorDiagnostic: KaNonBoundToPsiErrorDiagnostic
+        get() = KaNonBoundToPsiErrorDiagnostic(
+            factoryName = Errors.UNRESOLVED_REFERENCE.name,
+            defaultMessage = "$status with ${resultingDescriptor.name}",
+            token = token,
+        )
+
+    private fun getResolveErrors(context: BindingContext, psi: KtElement): Pair<KaDiagnostic, Collection<ResolvedCall<*>>>? {
         val diagnostic = getDiagnosticToReport(context, psi, null) ?: return null
         val kaDiagnostic = KaFe10Diagnostic(diagnostic, token)
         val calls = when (diagnostic.factory) {
@@ -656,8 +686,14 @@ internal class KaFe10Resolver(
             }
         }
 
+        return kaDiagnostic to calls
+    }
+
+    private fun handleResolveErrors(context: BindingContext, psi: KtElement): KaCallResolutionError? {
+        val (diagnostic, calls) = getResolveErrors(context, psi) ?: return null
+
         return KaBaseCallResolutionError(
-            backedDiagnostic = kaDiagnostic,
+            backedDiagnostic = diagnostic,
             backingCandidateCalls = calls.mapNotNull { it.toFunctionKtCall(context) ?: it.toPropertyRead(context) },
         )
     }

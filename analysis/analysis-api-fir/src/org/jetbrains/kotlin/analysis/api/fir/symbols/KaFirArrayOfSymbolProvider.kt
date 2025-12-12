@@ -7,9 +7,12 @@ package org.jetbrains.kotlin.analysis.api.fir.symbols
 
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.expressions.FirCollectionLiteral
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.types.ConeClassLikeType
+import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -34,4 +37,10 @@ internal object KaFirArrayOfSymbolProvider {
 
     private fun ClassId.correspondingArrayOfCallFqName(): Name =
         Name.identifier("${shortClassName.identifier.replaceFirstChar(Char::lowercaseChar)}Of")
+
+    internal fun KaFirSession.arrayOfSymbol(collectionLiteral: FirCollectionLiteral): KaNamedFunctionSymbol? {
+        val type = collectionLiteral.resolvedType as? ConeClassLikeType ?: return null
+        val call = arrayTypeToArrayOfCall[type.lookupTag.classId] ?: arrayOf
+        return arrayOfSymbol(call)
+    }
 }

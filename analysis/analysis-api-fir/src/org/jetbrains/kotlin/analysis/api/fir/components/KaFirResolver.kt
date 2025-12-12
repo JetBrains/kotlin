@@ -9,9 +9,7 @@ import com.intellij.openapi.diagnostic.logger
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnostic
-import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
-import org.jetbrains.kotlin.analysis.api.fir.getCandidateSymbols
-import org.jetbrains.kotlin.analysis.api.fir.isInvokeFunction
+import org.jetbrains.kotlin.analysis.api.fir.*
 import org.jetbrains.kotlin.analysis.api.fir.references.ClassicKDocReferenceResolver
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirArrayOfSymbolProvider.arrayOf
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirArrayOfSymbolProvider.arrayOfSymbol
@@ -172,7 +170,22 @@ internal class KaFirResolver(
         ).firstOrNull()
     }
 
-    override fun performSymbolResolution(psi: KtElement): KaSymbolResolutionAttempt? = null
+    override fun performSymbolResolution(psi: KtElement): KaSymbolResolutionAttempt? = wrapError(psi) {
+        analysisSession.cacheStorage.resolveSymbolCache.value.getOrPut(psi) {
+            resolveSymbol(psi)
+        }
+    }
+
+    private fun resolveSymbol(psi: KtElement): KaSymbolResolutionAttempt? {
+        val originalFir = psi.getOrBuildFir(resolutionFacade) ?: return null
+        return when (val unwrappedFir = originalFir.unwrapSafeCall()) {
+            is FirResolvable -> unwrappedFir.calleeReference.toKaSymbolResolutionAttempt(psi)
+            is FirCollectionLiteral -> unwrappedFir.toKaSymbolResolutionAttempt()
+            is FirVariableAssignment -> unwrappedFir.calleeReference?.toKaSymbolResolutionAttempt(psi)
+            is FirResolvedQualifier -> unwrappedFir.toKaSymbolResolutionAttempt(psi)
+            else -> null
+        }
+    }
 
     override fun KtReference.resolveToSymbols(): Collection<KaSymbol> = withPsiValidityAssertion(element) {
         return doResolveToSymbols(this)
@@ -233,6 +246,45 @@ internal class KaFirResolver(
                     resolveFragmentOfCall
                 )
             }
+        )
+    }
+
+    private fun FirReference.toKaSymbolResolutionAttempt(psi: KtElement): KaSymbolResolutionAttempt? {
+        if (this is FirDiagnosticHolder) {
+            val kaDiagnostic = createKaDiagnostic(psi)
+            val candidateSymbols = diagnostic.getCandidateSymbols().map(firSymbolBuilder::buildSymbol)
+            return KaBaseSymbolResolutionError(
+                backingDiagnostic = kaDiagnostic,
+                backingCandidateSymbols = candidateSymbols,
+            )
+        }
+
+        val symbol = symbol?.buildSymbol(firSymbolBuilder) ?: return null
+        return KaBaseSingleSymbolResolutionSuccess(backingSymbol = symbol)
+    }
+
+    private fun FirCollectionLiteral.toKaSymbolResolutionAttempt(): KaSymbolResolutionAttempt = with(analysisSession) {
+        val resolvedSymbol = arrayOfSymbol(this@toKaSymbolResolutionAttempt)
+        if (resolvedSymbol != null) {
+            return KaBaseSingleSymbolResolutionSuccess(resolvedSymbol)
+        }
+
+        val defaultSymbol = arrayOfSymbol(arrayOf)
+        return KaBaseSymbolResolutionError(
+            backingDiagnostic = unresolvedArrayOfDiagnostic,
+            backingCandidateSymbols = listOfNotNull(defaultSymbol),
+        )
+    }
+
+    private fun FirResolvedQualifier.toKaSymbolResolutionAttempt(psi: KtElement): KaSymbolResolutionAttempt? {
+        if (psi !is KtCallExpression) {
+            return null
+        }
+
+        val constructors = findQualifierConstructors()
+        return KaBaseSymbolResolutionError(
+            backingDiagnostic = inapplicableCandidateDiagnostic(),
+            backingCandidateSymbols = constructors.map(firSymbolBuilder.functionBuilder::buildConstructorSymbol),
         )
     }
 
@@ -1503,6 +1555,13 @@ internal class KaFirResolver(
             }
         }
 
+    private val unresolvedArrayOfDiagnostic: KaDiagnostic
+        get() = KaNonBoundToPsiErrorDiagnostic(
+            factoryName = FirErrors.OTHER_ERROR.name,
+            defaultMessage = "type of arrayOf call is not resolved",
+            token = token
+        )
+
     private fun FirCollectionLiteral.toKaResolutionAttempt(): KaCallResolutionAttempt? {
         val arrayOfSymbol = with(analysisSession) {
             val type = resolvedType as? ConeClassLikeType ?: return run {
@@ -1516,11 +1575,7 @@ internal class KaFirResolver(
                 )
 
                 KaBaseCallResolutionError(
-                    backedDiagnostic = KaNonBoundToPsiErrorDiagnostic(
-                        factoryName = FirErrors.OTHER_ERROR.name,
-                        defaultMessage = "type of arrayOf call is not resolved",
-                        token = token,
-                    ),
+                    backedDiagnostic = unresolvedArrayOfDiagnostic,
                     backingCandidateCalls = listOf(
                         KaBaseSimpleFunctionCall(
                             backingPartiallyAppliedSymbol = partiallyAppliedSymbol,

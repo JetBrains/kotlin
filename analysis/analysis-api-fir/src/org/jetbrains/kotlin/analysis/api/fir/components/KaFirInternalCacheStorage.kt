@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.platform.caches.NullableConcurrentCache
 import org.jetbrains.kotlin.analysis.api.resolution.KaCallResolutionAttempt
 import org.jetbrains.kotlin.analysis.api.resolution.KaSymbolBasedReference
+import org.jetbrains.kotlin.analysis.api.resolution.KaSymbolResolutionAttempt
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.LLFirInBlockModificationTracker
 import org.jetbrains.kotlin.analysis.utils.caches.softCachedValue
@@ -33,6 +34,12 @@ internal class KaFirInternalCacheStorage(private val analysisSession: KaFirSessi
     private val project get() = analysisSession.project
 
     val resolveCallCache: CachedValue<NullableConcurrentCache<KtElement, KaCallResolutionAttempt?>> by lazy {
+        softCachedValueWithPsiKey {
+            NullableConcurrentCache()
+        }
+    }
+
+    val resolveSymbolCache: CachedValue<NullableConcurrentCache<KtElement, KaSymbolResolutionAttempt?>> by lazy {
         softCachedValueWithPsiKey {
             NullableConcurrentCache()
         }
