@@ -121,6 +121,8 @@ object BinaryOptions : BinaryOptionRegistry() {
     val macabi by booleanOption()
 
     val enableHair by booleanOption()
+
+    val dumpHairTo by stringOption()
 }
 
 open class BinaryOption<T : Any>(

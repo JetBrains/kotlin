@@ -2,10 +2,6 @@ package hair.ir
 
 import hair.ir.nodes.Node
 import hair.sym.HairClass
-import hair.sym.HairFunction
-import hair.sym.HairType
-import hair.sym.HairType.*
-import hair.sym.Type
 import hair.test.Fun
 import hair.utils.printGraphviz
 import kotlin.test.Test

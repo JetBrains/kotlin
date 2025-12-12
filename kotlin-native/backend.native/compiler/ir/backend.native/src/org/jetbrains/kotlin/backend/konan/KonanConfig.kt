@@ -444,6 +444,10 @@ class KonanConfig(
         configuration.get(BinaryOptions.enableHair) ?: false
     }
 
+    val dumpHairTo by lazy {
+        configuration.get(BinaryOptions.dumpHairTo)?.let { java.io.File(it) }
+    }
+
     internal val runtimeLinkageStrategy: RuntimeLinkageStrategy by lazy {
         // Intentionally optimize in debug mode only. See `RuntimeLinkageStrategy`.
         val defaultStrategy = if (debug) RuntimeLinkageStrategy.Optimize else RuntimeLinkageStrategy.Raw

@@ -69,7 +69,7 @@ context(controlBuilder: ControlFlowBuilder)
 val controlBuilder get() = controlBuilder
 
 internal class HairGenerator(val context: Context, val module: IrModuleFragment) : BodyLoweringPass {
-    val moduleCompilation = Compilation()
+    val moduleCompilation = createHairCompilation(context, module)
 
     val funCompilations = mutableMapOf<IrFunction, FunctionCompilation>()
 
@@ -304,8 +304,8 @@ internal class HairGenerator(val context: Context, val module: IrModuleFragment)
 
                         val result = if (exits.isNotEmpty()) {
                             require(exits.size == values.size)
-                            val merge = BlockEntry(*exits.toTypedArray()) as BlockEntry
-                            Phi(expression.type.asHairType())(merge, *values.toTypedArray())
+                            val merge = BlockEntry(*exits.toTypedArray())
+                            Phi(expression.type.asHairType(), merge, *((exits.map { it!! }).zip(values)).toTypedArray())
                         } else NoValue()
 
                         return result
@@ -394,10 +394,10 @@ internal class HairGenerator(val context: Context, val module: IrModuleFragment)
                         returns[expression.symbol] = mutableListOf()
                         val mainResult = super.visitReturnableBlock(expression, data)
                         val mainExit = if (controlBuilder.lastControl !is Unreachable) Goto() else null
-                        val (exits, results) = (returns[expression.symbol]!! + listOf(mainExit to mainResult)).filter { it.first != null }.unzip()
-                        require(exits.all { it != null })
-                        val exitBlock = BlockEntry(*exits.toTypedArray()) as BlockEntry
-                        return Phi(expression.type.asHairType())(exitBlock, *results.toTypedArray())
+                        @Suppress("UNCHECKED_CAST")
+                        val results = (returns[expression.symbol]!! + listOf(mainExit to mainResult)).filter { it.first != null } as List<Pair<BlockExit, Node>>
+                        val exitBlock = BlockEntry(*results.map { it.first }.toTypedArray())
+                        return Phi(expression.type.asHairType(), exitBlock, *results.toTypedArray())
                     }
 
                     override fun visitTypeOperator(expression: IrTypeOperatorCall, data: Unit): Node {
@@ -457,16 +457,15 @@ internal class HairGenerator(val context: Context, val module: IrModuleFragment)
                 }, Unit)
             }
 
-            println("HaIR of ${f.name} before SSA:")
-            printGraphvizNoGCM()
+
+            funCompilation.dumpHair("initial_ir_before_SSA")
 
             buildSSA {
                 it as IrValueSymbol
                 it.owner.type.asHairType()
             }
 
-            println("HaIR of ${f.name} after SSA:")
-            printGraphviz()
+            funCompilation.dumpHair("initial_ir_after_SSA")
         }
         return funCompilation
     }

@@ -9,4 +9,6 @@ class FunctionCompilation(val moduleCompilation: Compilation, val function: Hair
     // TODO analysis data?
 
     // TODO current compilation stage?
+
+    fun dumpHair(title: String) = moduleCompilation.config.hairDumper?.dump(this, title)
 }

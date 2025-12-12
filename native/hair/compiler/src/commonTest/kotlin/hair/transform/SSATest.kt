@@ -11,7 +11,6 @@ import hair.ir.nodes.ReadVar
 import hair.ir.nodes.Return
 import hair.ir.nodes.Throw
 import hair.ir.nodes.Use
-import hair.sym.HairFunction
 import hair.sym.HairType.*
 import hair.test.Fun
 import hair.utils.printGraphviz
