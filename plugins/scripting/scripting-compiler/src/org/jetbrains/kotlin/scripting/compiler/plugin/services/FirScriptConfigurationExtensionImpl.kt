@@ -16,18 +16,19 @@ import org.jetbrains.kotlin.fir.builder.Context
 import org.jetbrains.kotlin.fir.builder.FirScriptConfiguratorExtension
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousInitializer
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
-import org.jetbrains.kotlin.fir.declarations.builder.FirFileBuilder
-import org.jetbrains.kotlin.fir.declarations.builder.FirScriptBuilder
-import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
-import org.jetbrains.kotlin.fir.declarations.builder.buildScriptReceiverParameter
+import org.jetbrains.kotlin.fir.declarations.builder.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.primaryConstructorIfAny
+import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.expressions.builder.buildErrorExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
+import org.jetbrains.kotlin.fir.expressions.impl.buildSingleExpressionBlock
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.providers.dependenciesSymbolProvider
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
+import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousInitializerSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirLocalPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirReceiverParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularPropertySymbol
@@ -68,8 +69,32 @@ class FirScriptConfiguratorExtensionImpl(
 
     @OptIn(SymbolInternals::class)
     override fun FirScriptBuilder.configure(sourceFile: KtSourceFile?, context: Context<*>) {
-        val configuration = getOrLoadConfiguration(session, sourceFile!!)?.valueOrNull() ?: return
-        // assuming that error reporting happens before calling the compilation, e.g., on refinement
+        fun addErrorElement(message: String) {
+            declarations.add(
+                0,
+                buildAnonymousInitializer {
+                    symbol = FirAnonymousInitializerSymbol()
+                    source = this@configure.source
+                    moduleData = this@configure.moduleData
+                    origin = FirDeclarationOrigin.ScriptCustomization.Default
+                    body = buildSingleExpressionBlock(
+                        buildErrorExpression {
+                            source = this@configure.source
+                            diagnostic = ConeSimpleDiagnostic(message)
+                        }
+                    )
+                }
+            )
+        }
+
+        val configuration =
+            getOrLoadConfiguration(session, sourceFile!!)?.valueOr {
+                addErrorElement("Unable to get script compilation configuration: ${it.reports.joinToString("; ") { it.message}}")
+                return
+            } ?: run {
+                addErrorElement("Unable to get script compilation configuration. Scripting is not configured.")
+                return
+            }
 
         configuration.getNoDefault(ScriptCompilationConfiguration.baseClass)?.let { baseClass ->
             val baseClassTypeRef =
@@ -200,8 +225,6 @@ class FirScriptConfiguratorExtensionImpl(
         }
     }
 
-    private fun KtSourceFile.asString() = path ?: name
-
     private fun FirScriptBuilder.tryResolveOrBuildParameterTypeRefFromKotlinType(
         kotlinType: KotlinType,
         sourceElement: KtSourceElement = source.fakeElement(KtFakeSourceElementKind.ScriptParameter),
@@ -249,13 +272,9 @@ internal fun getOrLoadConfiguration(session: FirSession, file: KtSourceFile): Re
     return if (hostConfiguration != null) {
         hostConfiguration.getRefinedOrBaseCompilationConfiguration(sourceCode)
     } else {
-        @Suppress("DEPRECATION")
-        val service = checkNotNull(session.scriptDefinitionProviderService)
-        with(service) {
-            sourceCode?.let { asSourceCode ->
-                getRefinedConfiguration(asSourceCode)
-                    ?: getBaseConfiguration(asSourceCode)
-            } ?: getDefaultConfiguration()
+        session.scriptDefinitionProviderService?.let {
+            it.getRefinedConfiguration(sourceCode)
+                ?: it.getBaseConfiguration(sourceCode)
         }
     }
 }

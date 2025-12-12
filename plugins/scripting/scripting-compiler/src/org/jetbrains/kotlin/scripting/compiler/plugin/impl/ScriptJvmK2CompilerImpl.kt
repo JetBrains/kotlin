@@ -24,8 +24,6 @@ import org.jetbrains.kotlin.fir.SessionConfiguration
 import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirScript
-import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.lightTree.LightTree2Fir
 import org.jetbrains.kotlin.fir.packageFqName
 import org.jetbrains.kotlin.fir.pipeline.AllModulesFrontendOutput
@@ -46,17 +44,12 @@ import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.getRefinedOrBa
 import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.scriptRefinedCompilationConfigurationsCache
 import org.jetbrains.kotlin.scripting.compiler.plugin.dependencies.collectScriptsCompilationDependenciesRecursively
 import org.jetbrains.kotlin.scripting.compiler.plugin.fir.FirScriptCompilationComponent
-import org.jetbrains.kotlin.scripting.resolve.resolvedImportScripts
 import org.jetbrains.kotlin.toSourceLinesMapping
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
-import kotlin.reflect.KClass
 import kotlin.script.experimental.api.*
-import kotlin.script.experimental.host.*
+import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.impl._languageVersion
-import kotlin.script.experimental.impl.refineOnAnnotationsWithLazyDataCollection
-import kotlin.script.experimental.jvm.*
-import kotlin.script.experimental.jvm.util.toClassPathOrEmpty
-import kotlin.script.experimental.jvm.util.toSourceCodePosition
+import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 
 class ScriptJvmK2CompilerIsolated(val hostConfiguration: ScriptingHostConfiguration) : ScriptCompilerProxy {
     override fun compile(
@@ -110,40 +103,18 @@ class ScriptJvmK2CompilerImpl(
             }
     }
 
-    context(reportingCtx: ErrorReportingContext)
+    @OptIn(SessionConfiguration::class)
     private fun ScriptCompilationConfiguration.refineAll(
         script: SourceCode,
-    ): ResultWithDiagnostics<ScriptCompilationConfiguration> = refineBeforeParsing(script)
-        .onSuccess {
-//            it.refineOnSyntaxTree(script) {
-//                ScriptCollectedData(mapOf(ScriptCollectedData.syntaxTree to parseToSyntaxTree(script)))
-//            }
-//        }.onSuccess {
-            it.refineOnAnnotationsWithLazyDataCollection(script) {
-                collectScriptAnnotations(script, it)
-            }
+    ): ResultWithDiagnostics<ScriptCompilationConfiguration> =
+        refineAllForK2(script, state.hostConfiguration) { source, configuration, hostConfiguration ->
+            collectAndResolveScriptAnnotationsViaFir(
+                source, configuration, hostConfiguration,
+                { state.getOrCreateSessionForAnnotationResolution() },
+                { session, diagnosticsReporter -> convertToFir(session, diagnosticsReporter) }
+            )
         }.onSuccess {
-            it.refineBeforeCompiling(script)
-        }.onSuccess {
-            val resolvedScripts = it[ScriptCompilationConfiguration.importScripts]?.map { imported ->
-                if (imported is FileBasedScriptSource && !imported.file.exists())
-                    return makeFailureResult("Imported source file not found: ${imported.file}".asErrorDiagnostics(path = script.locationId))
-                when (imported) {
-                    is FileScriptSource -> {
-                        val absoluteFile = imported.file.normalize().absoluteFile
-                        if (imported.file == absoluteFile) imported else FileScriptSource(absoluteFile)
-                    }
-                    else -> imported
-                }
-            }
-            if (resolvedScripts.isNullOrEmpty()) it.asSuccess()
-            else it.with {
-                resolvedImportScripts(resolvedScripts)
-            }.asSuccess()
-        }.onSuccess {
-            it.withUpdatedClasspath(
-                state.hostConfiguration[ScriptingHostConfiguration.configurationDependencies].toClassPathOrEmpty()
-            ).with {
+            it.with {
                 _languageVersion(state.compilerContext.environment.configuration.languageVersionSettings.languageVersion.versionString)
             }.asSuccess()
         }
@@ -264,53 +235,6 @@ class ScriptJvmK2CompilerImpl(
     private fun getRefinedConfiguration(script: SourceCode): ScriptCompilationConfiguration =
         state.hostConfiguration.getRefinedOrBaseCompilationConfiguration(script).valueOrThrow() // TODO: errors? orBase?
 
-    @OptIn(SessionConfiguration::class)
-    context(reportingCtx: ErrorReportingContext)
-    private fun collectScriptAnnotations(
-        script: SourceCode,
-        compilationConfiguration: ScriptCompilationConfiguration,
-    ): ResultWithDiagnostics<ScriptCollectedData> {
-        val hostConfiguration =
-            compilationConfiguration[ScriptCompilationConfiguration.hostConfiguration] ?: defaultJvmScriptingHostConfiguration
-        val contextClassLoader = hostConfiguration[ScriptingHostConfiguration.jvm.baseClassLoader]
-        val getScriptingClass = hostConfiguration[ScriptingHostConfiguration.getScriptingClass]
-        val jvmGetScriptingClass = (getScriptingClass as? GetScriptingClassByClassLoader)
-            ?: throw IllegalArgumentException("Expecting class implementing GetScriptingClassByClassLoader in the hostConfiguration[getScriptingClass], got $getScriptingClass")
-        val acceptedAnnotations =
-            compilationConfiguration[ScriptCompilationConfiguration.refineConfigurationOnAnnotations]?.flatMap {
-                it.annotations.mapNotNull { ann ->
-                    @Suppress("UNCHECKED_CAST")
-                    jvmGetScriptingClass(ann, contextClassLoader, hostConfiguration) as? KClass<Annotation> // TODO errors
-                }
-            }?.takeIf { it.isNotEmpty() } ?: return ScriptCollectedData(emptyMap()).asSuccess()
-        // separate reporter for refinement to avoid double raw fir warnings reporting
-        val diagnosticsCollector = DiagnosticReporterFactory.createPendingReporter()
-
-        val dummySession = state.getOrCreateSessionForAnnotationResolution()
-
-        val firFile = script.convertToFir(dummySession, diagnosticsCollector)
-        if (diagnosticsCollector.hasErrors)
-            return failure(diagnosticsCollector)
-
-        fun loadAnnotation(firAnnotation: FirAnnotation): ResultWithDiagnostics<ScriptSourceAnnotation<Annotation>?> =
-            (firAnnotation as? FirAnnotationCall)?.toAnnotationObjectIfMatches(acceptedAnnotations, dummySession, firFile)?.onSuccess {
-                val location = script.locationId
-                val startPosition = firAnnotation.source?.startOffset?.toSourceCodePosition(script)
-                val endPosition = firAnnotation.source?.endOffset?.toSourceCodePosition(script)
-                ScriptSourceAnnotation(
-                    it,
-                    if (location != null && startPosition != null)
-                        SourceCode.LocationWithId(
-                            location, SourceCode.Location(startPosition, endPosition)
-                        )
-                    else null
-                ).asSuccess()
-            } ?: ResultWithDiagnostics.Success(null)
-
-        return firFile.annotations.mapNotNullSuccess(::loadAnnotation).onSuccess { annotations ->
-            ScriptCollectedData(mapOf(ScriptCollectedData.collectedAnnotations to annotations)).asSuccess()
-        }
-    }
 }
 
 fun <T> withK2ScriptCompilerWithLightTree(
