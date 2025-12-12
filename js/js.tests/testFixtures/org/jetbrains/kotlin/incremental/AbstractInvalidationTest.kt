@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.cli.common.disposeRootInWriteAction
 import org.jetbrains.kotlin.cli.common.localfs.KotlinLocalFileSystem
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
+import org.jetbrains.kotlin.cli.common.renderDiagnosticInternalName
 import org.jetbrains.kotlin.cli.js.reportCollectedDiagnostics
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.pipeline.ConfigurationPipelineArtifact
@@ -424,6 +425,7 @@ abstract class AbstractInvalidationTest(
         configuration.produceKlibFile = true
         configuration.outputDir = outputKlibFile.parentFile
         configuration.phaseConfig = phaseConfig
+        configuration.renderDiagnosticInternalName = true
 
         val klibSerializationCompoundPhase = WebFrontendPipelinePhase then
                 WebFir2IrPipelinePhase then
