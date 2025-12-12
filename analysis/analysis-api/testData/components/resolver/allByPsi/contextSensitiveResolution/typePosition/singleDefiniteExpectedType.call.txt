@@ -2806,21 +2806,20 @@ KtDeclarationModifierList(2751,2766): '@UnsafeVariance'
   null
 
 KtAnnotationEntry(2751,2766): '@UnsafeVariance'
-  KaSuccessCallInfo:
-    call = KaAnnotationCall:
-      argumentMapping = {}
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.UnsafeVariance
-          symbol = <constructor>(): kotlin.UnsafeVariance
-          valueParameters = []
-          contextParameters = []
-          callableId = null
-      typeArgumentsMapping = {}
+  KaAnnotationCall:
+    argumentMapping = {}
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.UnsafeVariance
+        symbol = <constructor>(): kotlin.UnsafeVariance
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+    typeArgumentsMapping = {}
 
 KtConstructorCalleeExpression(2752,2766): 'UnsafeVariance'
   KaSuccessCallInfo:

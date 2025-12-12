@@ -311,7 +311,6 @@ org.jetbrains.kotlin.psi.KtAnnotation:constructor(KotlinPlaceHolderStub<KtAnnota
 org.jetbrains.kotlin.psi.KtAnnotation:getEntries()
 org.jetbrains.kotlin.psi.KtAnnotation:getUseSiteTarget()
 org.jetbrains.kotlin.psi.KtAnnotation:removeEntry(KtAnnotationEntry)
-org.jetbrains.kotlin.psi.KtAnnotationEntry
 org.jetbrains.kotlin.psi.KtAnnotationEntry:constructor(ASTNode)
 org.jetbrains.kotlin.psi.KtAnnotationEntry:constructor(KotlinAnnotationEntryStub)
 org.jetbrains.kotlin.psi.KtAnnotationEntry:getAtSymbol()

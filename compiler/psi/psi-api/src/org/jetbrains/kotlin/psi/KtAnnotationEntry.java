@@ -15,11 +15,20 @@ import org.jetbrains.kotlin.KtStubBasedElementTypes;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.stubs.KotlinAnnotationEntryStub;
+import org.jetbrains.kotlin.resolution.KtResolvableCall;
 
 import java.util.Collections;
 import java.util.List;
 
-public class KtAnnotationEntry extends KtElementImplStub<KotlinAnnotationEntryStub> implements KtCallElement {
+/**
+ * The code example:
+ * <pre>{@code
+ *     @Anno
+ * // ^_____^
+ * fun foo() {}
+ * }</pre>
+ */
+public class KtAnnotationEntry extends KtElementImplStub<KotlinAnnotationEntryStub> implements KtCallElement, KtResolvableCall {
     public KtAnnotationEntry(@NotNull ASTNode node) {
         super(node);
     }

@@ -1610,7 +1610,8 @@ KtDeclarationModifierList(2751,2766): '@UnsafeVariance'
   null
 
 KtAnnotationEntry(2751,2766): '@UnsafeVariance'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <constructor>(): kotlin.UnsafeVariance
 
 KtConstructorCalleeExpression(2752,2766): 'UnsafeVariance'
   null

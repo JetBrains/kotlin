@@ -23,7 +23,8 @@ KtDeclarationModifierList(38,124): '@Target(AnnotationTarget.EXPRESSION)'
   null
 
 KtAnnotationEntry(38,74): '@Target(AnnotationTarget.EXPRESSION)'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <constructor>(vararg allowedTargets: kotlin.annotation.AnnotationTarget): kotlin.annotation.Target
 
 KtConstructorCalleeExpression(39,45): 'Target'
   null
@@ -53,7 +54,8 @@ KtNameReferenceExpression(63,73): 'EXPRESSION'
   null
 
 KtAnnotationEntry(75,113): '@Retention(AnnotationRetention.SOURCE)'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <constructor>(value: kotlin.annotation.AnnotationRetention): kotlin.annotation.Retention
 
 KtConstructorCalleeExpression(76,85): 'Retention'
   null
@@ -113,7 +115,8 @@ KtAnnotatedExpression(172,226): '@Anno(0 + integer) (@Anno(integer) usage()).toS
   null
 
 KtAnnotationEntry(172,190): '@Anno(0 + integer)'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <constructor>(number: kotlin.Int): Anno
 
 KtConstructorCalleeExpression(173,177): 'Anno'
   null
@@ -155,7 +158,8 @@ KtAnnotatedExpression(192,214): '@Anno(integer) usage()'
   null
 
 KtAnnotationEntry(192,206): '@Anno(integer)'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <constructor>(number: kotlin.Int): Anno
 
 KtConstructorCalleeExpression(193,197): 'Anno'
   null

@@ -104,7 +104,8 @@ KtAnnotatedExpression(135,166): '@Suppress("SOME_ERROR") list[1]'
   null
 
 KtAnnotationEntry(135,158): '@Suppress("SOME_ERROR")'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <constructor>(vararg names: kotlin.String): kotlin.Suppress
 
 KtConstructorCalleeExpression(136,144): 'Suppress'
   null

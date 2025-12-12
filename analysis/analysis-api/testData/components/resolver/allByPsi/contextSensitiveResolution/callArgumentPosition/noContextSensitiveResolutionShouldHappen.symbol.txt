@@ -110,7 +110,8 @@ KtDeclarationModifierList(215,236): '@DslMarker'
   null
 
 KtAnnotationEntry(215,225): '@DslMarker'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <constructor>(): kotlin.DslMarker
 
 KtConstructorCalleeExpression(216,225): 'DslMarker'
   null
@@ -131,7 +132,8 @@ KtDeclarationModifierList(250,256): '@MyDsl'
   null
 
 KtAnnotationEntry(250,256): '@MyDsl'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <constructor>(): MyDsl
 
 KtConstructorCalleeExpression(251,256): 'MyDsl'
   null
@@ -152,7 +154,8 @@ KtDeclarationModifierList(266,272): '@MyDsl'
   null
 
 KtAnnotationEntry(266,272): '@MyDsl'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <constructor>(): MyDsl
 
 KtConstructorCalleeExpression(267,272): 'MyDsl'
   null

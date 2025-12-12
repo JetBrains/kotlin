@@ -406,37 +406,36 @@ KtAnnotatedExpression(135,166): '@Suppress("SOME_ERROR") list[1]'
   null
 
 KtAnnotationEntry(135,158): '@Suppress("SOME_ERROR")'
-  KaSuccessCallInfo:
-    call = KaAnnotationCall:
-      argumentMapping = {
-        "SOME_ERROR" -> (KaVariableSignature:
-          name = names
-          receiverType = null
-          returnType = kotlin.String
-          symbol = vararg names: kotlin.String
-          contextParameters = []
-          callableId = null)
-      }
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Suppress
-          symbol = <constructor>(vararg names: kotlin.String): kotlin.Suppress
-          valueParameters = [
-            KaVariableSignature:
-              name = names
-              receiverType = null
-              returnType = kotlin.String
-              symbol = vararg names: kotlin.String
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
-      typeArgumentsMapping = {}
+  KaAnnotationCall:
+    argumentMapping = {
+      "SOME_ERROR" -> (KaVariableSignature:
+        name = names
+        receiverType = null
+        returnType = kotlin.String
+        symbol = vararg names: kotlin.String
+        contextParameters = []
+        callableId = null)
+    }
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Suppress
+        symbol = <constructor>(vararg names: kotlin.String): kotlin.Suppress
+        valueParameters = [
+          KaVariableSignature:
+            name = names
+            receiverType = null
+            returnType = kotlin.String
+            symbol = vararg names: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+    typeArgumentsMapping = {}
 
 KtConstructorCalleeExpression(136,144): 'Suppress'
   KaSuccessCallInfo:

@@ -140,7 +140,7 @@ KtDeclarationModifierList(159,178): '@Anno(0 + constant)'
   null
 
 KtAnnotationEntry(159,178): '@Anno(0 + constant)'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaAnnotationCall:
         argumentMapping = {
@@ -342,7 +342,7 @@ KtDeclarationModifierList(184,203): '@Anno(1 + constant)'
   null
 
 KtAnnotationEntry(184,203): '@Anno(1 + constant)'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaAnnotationCall:
         argumentMapping = {
@@ -544,7 +544,7 @@ KtDeclarationModifierList(209,228): '@Anno(2 + constant)'
   null
 
 KtAnnotationEntry(209,228): '@Anno(2 + constant)'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaAnnotationCall:
         argumentMapping = {

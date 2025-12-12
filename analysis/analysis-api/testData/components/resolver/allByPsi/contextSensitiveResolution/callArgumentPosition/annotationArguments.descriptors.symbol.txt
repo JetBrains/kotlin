@@ -282,8 +282,11 @@ KtDeclarationModifierList(367,382): '@A3(arrayOf(X))'
   null
 
 KtAnnotationEntry(367,382): '@A3(arrayOf(X))'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(value: kotlin.Array<MyEnum>): A3
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      <constructor>(value: kotlin.Array<MyEnum>): A3
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with <init>>
 
 KtConstructorCalleeExpression(368,370): 'A3'
   null

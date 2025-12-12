@@ -107,7 +107,8 @@ KtDeclarationModifierList(167,183): '@MyAnno((("A")))'
   null
 
 KtAnnotationEntry(167,183): '@MyAnno((("A")))'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <constructor>(value: kotlin.String): MyAnno
 
 KtConstructorCalleeExpression(168,174): 'MyAnno'
   null
@@ -152,7 +153,8 @@ KtDeclarationModifierList(199,223): '@MyAnno(value = (("A")))'
   null
 
 KtAnnotationEntry(199,223): '@MyAnno(value = (("A")))'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <constructor>(value: kotlin.String): MyAnno
 
 KtConstructorCalleeExpression(200,206): 'MyAnno'
   null
@@ -203,7 +205,8 @@ KtDeclarationModifierList(239,269): '@MyAnno((((("A")) as String)))'
   null
 
 KtAnnotationEntry(239,269): '@MyAnno((((("A")) as String)))'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <constructor>(value: kotlin.String): MyAnno
 
 KtConstructorCalleeExpression(240,246): 'MyAnno'
   null
@@ -269,7 +272,8 @@ KtDeclarationModifierList(285,341): '@MyAnnoVararg((("A")), "B", *((arrayOf("A",
   null
 
 KtAnnotationEntry(285,341): '@MyAnnoVararg((("A")), "B", *((arrayOf("A", "B", "C"))))'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <constructor>(vararg value: kotlin.String): MyAnnoVararg
 
 KtConstructorCalleeExpression(286,298): 'MyAnnoVararg'
   null
@@ -368,7 +372,8 @@ KtDeclarationModifierList(357,403): '@MyAnnoVararg(value = ((arrayOf(("A"), "B")
   null
 
 KtAnnotationEntry(357,403): '@MyAnnoVararg(value = ((arrayOf(("A"), "B"))))'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <constructor>(vararg value: kotlin.String): MyAnnoVararg
 
 KtConstructorCalleeExpression(358,370): 'MyAnnoVararg'
   null
@@ -443,7 +448,8 @@ KtDeclarationModifierList(419,453): '@MyAnnoKClass((((String::class))))'
   null
 
 KtAnnotationEntry(419,453): '@MyAnnoKClass((((String::class))))'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <constructor>(value: kotlin.reflect.KClass<*>): MyAnnoKClass
 
 KtConstructorCalleeExpression(420,432): 'MyAnnoKClass'
   null
