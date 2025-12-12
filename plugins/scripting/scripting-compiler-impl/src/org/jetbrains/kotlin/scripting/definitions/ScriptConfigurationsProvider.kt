@@ -16,7 +16,11 @@ import kotlin.script.experimental.api.ScriptCompilationConfiguration
 import kotlin.script.experimental.api.SourceCode
 import kotlin.script.experimental.api.valueOrNull
 
-@RequiresOptIn(message = "For K2 use scripting host configuration based helpers (e.g. getRefinedCompilationConfiguration)", level = RequiresOptIn.Level.ERROR)
+@RequiresOptIn(
+    message = "For K2 use scripting host configuration based helpers (e.g. getRefinedCompilationConfiguration)",
+    // TODO: switch to ERROR after IntelliJ code migration
+    level = RequiresOptIn.Level.WARNING
+)
 annotation class K1SpecificScriptingServiceAccessor
 
 // TODO: deprecate/optin in favor of K2 infrastructure (ScriptRefinedCompilationConfigurationCache for this one)
