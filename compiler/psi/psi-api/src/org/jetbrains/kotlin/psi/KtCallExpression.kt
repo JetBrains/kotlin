@@ -21,9 +21,7 @@ import org.jetbrains.kotlin.resolution.KtResolvableCall
  *
  * Note: this class is not intended to be extended and is marked `open` solely for backward compatibility.
  */
-@OptIn(KtExperimentalApi::class)
-open class KtCallExpression : KtExpressionImplStub<KotlinPlaceHolderStub<KtCallExpression>>, KtCallElement, KtReferenceExpression,
-    KtResolvableCall {
+open class KtCallExpression : KtExpressionImplStub<KotlinPlaceHolderStub<KtCallExpression>>, KtCallElement, KtReferenceExpression {
     constructor(node: ASTNode) : super(node)
 
     @KtImplementationDetail

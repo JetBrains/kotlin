@@ -23,7 +23,7 @@ import java.util.List;
  * }
  * }</pre>
  */
-public class KtConstructorDelegationCall extends KtElementImpl implements KtCallElement, KtResolvableCall {
+public class KtConstructorDelegationCall extends KtElementImpl implements KtCallElement {
     public KtConstructorDelegationCall(@NotNull ASTNode node) {
         super(node);
     }

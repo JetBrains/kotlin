@@ -826,7 +826,7 @@ public class org/jetbrains/kotlin/psi/KtAnnotation : org/jetbrains/kotlin/psi/Kt
 	public fun removeEntry (Lorg/jetbrains/kotlin/psi/KtAnnotationEntry;)V
 }
 
-public class org/jetbrains/kotlin/psi/KtAnnotationEntry : org/jetbrains/kotlin/psi/KtElementImplStub, org/jetbrains/kotlin/psi/KtCallElement, org/jetbrains/kotlin/resolution/KtResolvableCall {
+public class org/jetbrains/kotlin/psi/KtAnnotationEntry : org/jetbrains/kotlin/psi/KtElementImplStub, org/jetbrains/kotlin/psi/KtCallElement {
 	public fun <init> (Lcom/intellij/lang/ASTNode;)V
 	public fun <init> (Lorg/jetbrains/kotlin/psi/stubs/KotlinAnnotationEntryStub;)V
 	public fun accept (Lorg/jetbrains/kotlin/psi/KtVisitor;Ljava/lang/Object;)Ljava/lang/Object;
@@ -943,7 +943,7 @@ public class org/jetbrains/kotlin/psi/KtBreakExpression : org/jetbrains/kotlin/p
 	public fun accept (Lorg/jetbrains/kotlin/psi/KtVisitor;Ljava/lang/Object;)Ljava/lang/Object;
 }
 
-public abstract interface class org/jetbrains/kotlin/psi/KtCallElement : org/jetbrains/kotlin/psi/KtElement {
+public abstract interface class org/jetbrains/kotlin/psi/KtCallElement : org/jetbrains/kotlin/psi/KtElement, org/jetbrains/kotlin/resolution/KtResolvableCall {
 	public abstract fun getCalleeExpression ()Lorg/jetbrains/kotlin/psi/KtExpression;
 	public abstract fun getLambdaArguments ()Ljava/util/List;
 	public abstract fun getTypeArgumentList ()Lorg/jetbrains/kotlin/psi/KtTypeArgumentList;
@@ -952,7 +952,7 @@ public abstract interface class org/jetbrains/kotlin/psi/KtCallElement : org/jet
 	public abstract fun getValueArguments ()Ljava/util/List;
 }
 
-public class org/jetbrains/kotlin/psi/KtCallExpression : org/jetbrains/kotlin/psi/KtExpressionImplStub, org/jetbrains/kotlin/psi/KtCallElement, org/jetbrains/kotlin/psi/KtReferenceExpression, org/jetbrains/kotlin/resolution/KtResolvableCall {
+public class org/jetbrains/kotlin/psi/KtCallExpression : org/jetbrains/kotlin/psi/KtExpressionImplStub, org/jetbrains/kotlin/psi/KtCallElement, org/jetbrains/kotlin/psi/KtReferenceExpression {
 	public fun <init> (Lcom/intellij/lang/ASTNode;)V
 	public fun accept (Lorg/jetbrains/kotlin/psi/KtVisitor;Ljava/lang/Object;)Ljava/lang/Object;
 	public fun getCalleeExpression ()Lorg/jetbrains/kotlin/psi/KtExpression;
@@ -1248,7 +1248,7 @@ public class org/jetbrains/kotlin/psi/KtConstructorCalleeExpression : org/jetbra
 	public fun getTypeReference ()Lorg/jetbrains/kotlin/psi/KtTypeReference;
 }
 
-public class org/jetbrains/kotlin/psi/KtConstructorDelegationCall : org/jetbrains/kotlin/psi/KtElementImpl, org/jetbrains/kotlin/psi/KtCallElement, org/jetbrains/kotlin/resolution/KtResolvableCall {
+public class org/jetbrains/kotlin/psi/KtConstructorDelegationCall : org/jetbrains/kotlin/psi/KtElementImpl, org/jetbrains/kotlin/psi/KtCallElement {
 	public fun <init> (Lcom/intellij/lang/ASTNode;)V
 	public fun accept (Lorg/jetbrains/kotlin/psi/KtVisitor;Ljava/lang/Object;)Ljava/lang/Object;
 	public fun getCalleeExpression ()Lorg/jetbrains/kotlin/psi/KtConstructorDelegationReferenceExpression;
@@ -2670,7 +2670,7 @@ public class org/jetbrains/kotlin/psi/KtSuperExpression : org/jetbrains/kotlin/p
 	public fun getSuperTypeQualifier ()Lorg/jetbrains/kotlin/psi/KtTypeReference;
 }
 
-public class org/jetbrains/kotlin/psi/KtSuperTypeCallEntry : org/jetbrains/kotlin/psi/KtSuperTypeListEntry, org/jetbrains/kotlin/psi/KtCallElement, org/jetbrains/kotlin/resolution/KtResolvableCall {
+public class org/jetbrains/kotlin/psi/KtSuperTypeCallEntry : org/jetbrains/kotlin/psi/KtSuperTypeListEntry, org/jetbrains/kotlin/psi/KtCallElement {
 	public fun <init> (Lcom/intellij/lang/ASTNode;)V
 	public fun <init> (Lorg/jetbrains/kotlin/psi/stubs/KotlinPlaceHolderStub;)V
 	public fun accept (Lorg/jetbrains/kotlin/psi/KtVisitor;Ljava/lang/Object;)Ljava/lang/Object;

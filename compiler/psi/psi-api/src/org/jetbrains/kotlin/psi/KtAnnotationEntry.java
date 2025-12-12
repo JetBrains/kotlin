@@ -28,7 +28,7 @@ import java.util.List;
  * fun foo() {}
  * }</pre>
  */
-public class KtAnnotationEntry extends KtElementImplStub<KotlinAnnotationEntryStub> implements KtCallElement, KtResolvableCall {
+public class KtAnnotationEntry extends KtElementImplStub<KotlinAnnotationEntryStub> implements KtCallElement {
     public KtAnnotationEntry(@NotNull ASTNode node) {
         super(node);
     }

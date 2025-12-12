@@ -22,7 +22,7 @@ import java.util.List;
  * //                 ^_____^
  * }</pre>
  */
-public class KtSuperTypeCallEntry extends KtSuperTypeListEntry implements KtCallElement, KtResolvableCall {
+public class KtSuperTypeCallEntry extends KtSuperTypeListEntry implements KtCallElement {
     public KtSuperTypeCallEntry(@NotNull ASTNode node) {
         super(node);
     }
