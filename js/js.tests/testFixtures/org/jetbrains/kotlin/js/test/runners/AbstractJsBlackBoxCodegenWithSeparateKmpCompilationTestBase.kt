@@ -91,7 +91,7 @@ class JsSecondStageEnvironmentConfiguratorForSeparateKmpCompilation(
     }
 }
 
-open class AbstractJsLightTreeBlackBoxCodegenWithSeparateKmpCompilationTest : AbstractJsBlackBoxCodegenWithSeparateKmpCompilationTestBase(
+abstract class AbstractJsLightTreeBlackBoxCodegenWithSeparateKmpCompilationTest : AbstractJsBlackBoxCodegenWithSeparateKmpCompilationTestBase(
     FirParser.LightTree,
     pathToTestDir = "compiler/testData/codegen/box/multiplatform/k2",
     testGroupOutputDirPrefix = "codegen/irBoxHmpp/lightTree/"

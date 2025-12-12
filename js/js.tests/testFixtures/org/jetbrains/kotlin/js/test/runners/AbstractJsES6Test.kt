@@ -28,12 +28,12 @@ abstract class AbstractJsES6Test(
 }
 
 
-open class AbstractJsES6BoxTest : AbstractJsES6Test(
+abstract class AbstractJsES6BoxTest : AbstractJsES6Test(
     pathToTestDir = "${JsEnvironmentConfigurator.TEST_DATA_DIR_PATH}/box/",
     testGroupOutputDirPrefix = "es6Box/"
 )
 
-open class AbstractJsES6CodegenBoxTest : AbstractJsES6Test(
+abstract class AbstractJsES6CodegenBoxTest : AbstractJsES6Test(
     pathToTestDir = "compiler/testData/codegen/box/",
     testGroupOutputDirPrefix = "codegen/es6Box/"
 ) {
@@ -49,12 +49,12 @@ open class AbstractJsES6CodegenBoxTest : AbstractJsES6Test(
     }
 }
 
-open class AbstractJsES6CodegenInlineTest : AbstractJsES6Test(
+abstract class AbstractJsES6CodegenInlineTest : AbstractJsES6Test(
     pathToTestDir = "compiler/testData/codegen/boxInline/",
     testGroupOutputDirPrefix = "codegen/es6BoxInline/"
 )
 
-open class AbstractJsES6CodegenWasmJsInteropTest : AbstractJsES6Test(
+abstract class AbstractJsES6CodegenWasmJsInteropTest : AbstractJsES6Test(
     pathToTestDir = "compiler/testData/codegen/boxWasmJsInterop",
     testGroupOutputDirPrefix = "codegen/boxWasmJsInteropEs6",
 )

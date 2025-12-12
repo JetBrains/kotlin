@@ -78,7 +78,7 @@ abstract class AbstractJsIrTextTestBase(
     }
 }
 
-open class AbstractLightTreeJsIrTextTest : AbstractJsIrTextTestBase(FirParser.LightTree)
+abstract class AbstractLightTreeJsIrTextTest : AbstractJsIrTextTestBase(FirParser.LightTree)
 
 @FirPsiCodegenTest
-open class AbstractPsiJsIrTextTest : AbstractJsIrTextTestBase(FirParser.Psi)
+abstract class AbstractPsiJsIrTextTest : AbstractJsIrTextTestBase(FirParser.Psi)

@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurato
 import java.lang.Boolean.getBoolean
 
 
-open class AbstractJsTest(
+abstract class AbstractJsTest(
     pathToTestDir: String = "${JsEnvironmentConfigurator.TEST_DATA_DIR_PATH}/box/",
     testGroupOutputDirPrefix: String,
     targetBackend: TargetBackend = TargetBackend.JS_IR,
@@ -82,19 +82,19 @@ open class AbstractJsTest(
     }
 }
 
-open class AbstractPsiJsBoxTest : AbstractJsTest(
+abstract class AbstractPsiJsBoxTest : AbstractJsTest(
     pathToTestDir = "${JsEnvironmentConfigurator.TEST_DATA_DIR_PATH}/box/",
     testGroupOutputDirPrefix = "psiBox/",
     parser = FirParser.Psi,
 )
 
-open class AbstractLightTreeJsBoxTest : AbstractJsTest(
+abstract class AbstractLightTreeJsBoxTest : AbstractJsTest(
     pathToTestDir = "${JsEnvironmentConfigurator.TEST_DATA_DIR_PATH}/box/",
     testGroupOutputDirPrefix = "lightTreeBox/",
     parser = FirParser.LightTree,
 )
 
-open class AbstractJsCodegenBoxTestBase(
+abstract class AbstractJsCodegenBoxTestBase(
     pathToTestDir: String = "compiler/testData/codegen/box/",
     testGroupOutputDirPrefix: String,
 ) : AbstractJsTest(pathToTestDir, testGroupOutputDirPrefix) {
@@ -110,7 +110,7 @@ open class AbstractJsCodegenBoxTestBase(
     }
 }
 
-open class AbstractJsCodegenBoxTest : AbstractJsCodegenBoxTestBase(
+abstract class AbstractJsCodegenBoxTest : AbstractJsCodegenBoxTestBase(
     testGroupOutputDirPrefix = "codegen/box/"
 )
 
@@ -200,7 +200,7 @@ abstract class AbstractJsCodegenSplittingWithInlinedFunInKlibTest : AbstractJsCo
     testGroupOutputDirPrefix = "codegen/boxSplittedWithInlinedKlib/",
 )
 
-open class AbstractJsLineNumberTest(
+abstract class AbstractJsLineNumberTest(
     testGroupOutputDirPrefix: String = "lineNumbers/"
 ) : AbstractJsTest(
     pathToTestDir = "${JsEnvironmentConfigurator.TEST_DATA_DIR_PATH}/lineNumbers/",
@@ -212,7 +212,7 @@ open class AbstractJsLineNumberTest(
     }
 }
 
-open class AbstractJsLineNumberWithInlinedFunInKlibTest : AbstractJsLineNumberTest(
+abstract class AbstractJsLineNumberWithInlinedFunInKlibTest : AbstractJsLineNumberTest(
     testGroupOutputDirPrefix = "lineNumbersInlined/"
 ) {
     override fun configure(builder: TestConfigurationBuilder) {
@@ -229,7 +229,7 @@ open class AbstractJsLineNumberWithInlinedFunInKlibTest : AbstractJsLineNumberTe
     }
 }
 
-open class AbstractSourceMapGenerationSmokeTest : AbstractJsTest(
+abstract class AbstractSourceMapGenerationSmokeTest : AbstractJsTest(
     pathToTestDir = "${JsEnvironmentConfigurator.TEST_DATA_DIR_PATH}/sourcemap/",
     testGroupOutputDirPrefix = "sourcemap/"
 ) {
@@ -244,7 +244,7 @@ open class AbstractSourceMapGenerationSmokeTest : AbstractJsTest(
     }
 }
 
-open class AbstractFirMultiModuleOrderTest : AbstractJsTest(
+abstract class AbstractFirMultiModuleOrderTest : AbstractJsTest(
     pathToTestDir = "${JsEnvironmentConfigurator.TEST_DATA_DIR_PATH}/multiModuleOrder/",
     testGroupOutputDirPrefix = "firMultiModuleOrder/"
 ) {
@@ -260,7 +260,7 @@ open class AbstractFirMultiModuleOrderTest : AbstractJsTest(
     }
 }
 
-open class AbstractJsSteppingTest(
+abstract class AbstractJsSteppingTest(
     testGroupOutputDirPrefix: String = "debug/stepping/"
 ) : AbstractJsTest(
     pathToTestDir = "compiler/testData/debug/stepping/",
@@ -275,7 +275,7 @@ open class AbstractJsSteppingTest(
     }
 }
 
-open class AbstractJsSteppingWithInlinedFunInKlibTest(
+abstract class AbstractJsSteppingWithInlinedFunInKlibTest(
     testGroupOutputDirPrefix: String = "debug/steppingWithInlinedFunInKlib/"
 ) : AbstractJsSteppingTest(
     testGroupOutputDirPrefix = testGroupOutputDirPrefix
@@ -293,7 +293,7 @@ open class AbstractJsSteppingWithInlinedFunInKlibTest(
     }
 }
 
-open class AbstractJsSteppingSplitTest : AbstractJsSteppingTest(
+abstract class AbstractJsSteppingSplitTest : AbstractJsSteppingTest(
     testGroupOutputDirPrefix = "debug/steppingSplit/"
 ) {
     override val additionalIgnoreDirectives: List<ValueDirective<TargetBackend>>?
@@ -311,7 +311,7 @@ open class AbstractJsSteppingSplitTest : AbstractJsSteppingTest(
     }
 }
 
-open class AbstractJsSteppingSplitWithInlinedFunInKlibTest : AbstractJsSteppingWithInlinedFunInKlibTest(
+abstract class AbstractJsSteppingSplitWithInlinedFunInKlibTest : AbstractJsSteppingWithInlinedFunInKlibTest(
     testGroupOutputDirPrefix = "debug/steppingSplitWithInlinedFunInKlib/"
 ) {
     override val additionalIgnoreDirectives: List<ValueDirective<TargetBackend>>?
@@ -329,14 +329,14 @@ open class AbstractJsSteppingSplitWithInlinedFunInKlibTest : AbstractJsSteppingW
     }
 }
 
-open class AbstractJsCodegenWasmJsInteropTest(
+abstract class AbstractJsCodegenWasmJsInteropTest(
     testGroupOutputDirPrefix: String = "codegen/boxWasmJsInteropJs/"
 ) : AbstractJsTest(
     pathToTestDir = "compiler/testData/codegen/boxWasmJsInterop/",
     testGroupOutputDirPrefix = testGroupOutputDirPrefix
 )
 
-open class AbstractJsCodegenWasmJsInteropWithInlinedFunInKlibTest : AbstractJsCodegenWasmJsInteropTest(
+abstract class AbstractJsCodegenWasmJsInteropWithInlinedFunInKlibTest : AbstractJsCodegenWasmJsInteropTest(
     testGroupOutputDirPrefix = "codegen/boxWasmJsInteropJsWithInlinedFunInKlib/"
 ) {
     override fun configure(builder: TestConfigurationBuilder) {
