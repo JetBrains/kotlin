@@ -5,9 +5,15 @@ plugins {
     kotlin("multiplatform")
 }
 
-dependencies {
-    implementation(project(":lib"))
-    testImplementation(kotlin("test-js"))
+kotlin {
+    sourceSets {
+        jsMain {
+            dependencies {
+                implementation(project(":lib"))
+                testImplementation(kotlin("test-js"))
+            }
+        }
+    }
 }
 
 kotlin {

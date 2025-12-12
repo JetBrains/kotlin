@@ -2,9 +2,15 @@ plugins {
     id("org.jetbrains.kotlin.multiplatform")
 }
 
-dependencies {
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-js")
-    testImplementation("org.jetbrains.kotlin:kotlin-test-js")
+kotlin {
+    sourceSets {
+        jsMain {
+            dependencies {
+                implementation("org.jetbrains.kotlin:kotlin-stdlib-js")
+                testImplementation("org.jetbrains.kotlin:kotlin-test-js")
+            }
+        }
+    }
 }
 
 repositories {

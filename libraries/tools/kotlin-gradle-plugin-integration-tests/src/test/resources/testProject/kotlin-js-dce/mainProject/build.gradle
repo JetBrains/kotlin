@@ -10,9 +10,15 @@ repositories {
     mavenCentral()
 }
 
-dependencies {
-    implementation project(":libraryProject")
-    implementation "org.mozilla:rhino:1.7.7.1"
+kotlin {
+    sourceSets {
+        jsMain {
+            dependencies {
+                implementation project(":libraryProject")
+                implementation "org.mozilla:rhino:1.7.7.1"
+            }
+        }
+    }
 }
 
 kotlin {

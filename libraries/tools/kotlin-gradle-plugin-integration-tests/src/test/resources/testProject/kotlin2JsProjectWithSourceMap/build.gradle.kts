@@ -39,8 +39,14 @@ project("app") {
             browser()
             binaries.executable()
         }
-        dependencies {
-            implementation(project(":lib"))
+        kotlin {
+    sourceSets {
+        jsMain {
+            dependencies {
+                        implementation(project(":lib"))
+                    }
         }
+    }
+}
     }
 }

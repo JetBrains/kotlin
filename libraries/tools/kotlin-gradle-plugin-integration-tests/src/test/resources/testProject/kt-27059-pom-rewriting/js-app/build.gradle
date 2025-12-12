@@ -10,11 +10,17 @@ kotlin {
     js()
 }
 
-dependencies {
-    if (project.findProperty("mppProjectDependency") == "true") {
-        api(project(":mpp-lib"))
-    } else {
-        api("com.example:mpp-lib:1.0")
+kotlin {
+    sourceSets {
+        jsMain {
+            dependencies {
+                if (project.findProperty("mppProjectDependency") == "true") {
+                    api(project(":mpp-lib"))
+                } else {
+                    api("com.example:mpp-lib:1.0")
+                }
+            }
+        }
     }
 }
 

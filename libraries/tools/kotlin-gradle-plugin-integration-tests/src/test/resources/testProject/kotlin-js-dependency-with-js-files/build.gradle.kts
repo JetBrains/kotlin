@@ -10,8 +10,14 @@ repositories {
     mavenCentral()
 }
 
-dependencies {
-    implementation("it.unibo.tuprolog:parser-core-js:0.11.1")
+kotlin {
+    sourceSets {
+        jsMain {
+            dependencies {
+                implementation("it.unibo.tuprolog:parser-core-js:0.11.1")
+            }
+        }
+    }
 }
 
 kotlin {

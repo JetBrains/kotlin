@@ -8,8 +8,14 @@ repositories {
     mavenLocal()
 }
 
-dependencies {
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0")
+kotlin {
+    sourceSets {
+        jsMain {
+            dependencies {
+                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0")
+            }
+        }
+    }
 }
 
 kotlin {

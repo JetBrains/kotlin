@@ -4,9 +4,15 @@ plugins {
 
 version = "1.0.0-SNAPSHOT"
 
-dependencies {
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-js")
-    testImplementation("org.jetbrains.kotlin:kotlin-test-js")
+kotlin {
+    sourceSets {
+        jsMain {
+            dependencies {
+                implementation("org.jetbrains.kotlin:kotlin-stdlib-js")
+                testImplementation("org.jetbrains.kotlin:kotlin-test-js")
+            }
+        }
+    }
 }
 
 repositories {

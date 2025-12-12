@@ -2,8 +2,14 @@ plugins {
     kotlin("multiplatform")
 }
 
-dependencies {
-    implementation(project(":lib"))
+kotlin {
+    sourceSets {
+        jsMain {
+            dependencies {
+                implementation(project(":lib"))
+            }
+        }
+    }
 }
 
 kotlin {

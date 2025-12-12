@@ -4,8 +4,14 @@ plugins {
     kotlin("multiplatform")
 }
 
-dependencies {
-    implementation(kotlin("stdlib-js"))
+kotlin {
+    sourceSets {
+        jsMain {
+            dependencies {
+                implementation(kotlin("stdlib-js"))
+            }
+        }
+    }
 }
 
 @Suppress("DEPRECATION")
