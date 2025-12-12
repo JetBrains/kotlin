@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.NameUtils
 import org.jetbrains.kotlin.scripting.compiler.plugin.ScriptCompilerProxy
+import org.jetbrains.kotlin.scripting.compiler.plugin.configureFirSession
 import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.getOrStoreRefinedCompilationConfiguration
 import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.getRefinedOrBaseCompilationConfiguration
 import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.scriptRefinedCompilationConfigurationsCache
@@ -189,6 +190,10 @@ class ScriptJvmK2CompilerImpl(
         )
 
         session.register(FirScriptCompilationComponent::class, FirScriptCompilationComponent(state.hostConfiguration))
+
+        state.hostConfiguration[ScriptingHostConfiguration.configureFirSession]?.also {
+            it.invoke(session)
+        }
 
         val sourcesToFir = allSourceFiles.associateWith { it.convertToFir(session, reportingCtx.diagnosticsCollector) }
 
