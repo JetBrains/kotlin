@@ -167,10 +167,12 @@ internal abstract class ProduceMappingFileTask : DefaultTask() {
             }
 
 
-            parameters.projectFiles.forEach { file ->
-                if (file.name.endsWith(".class")) {
-                    val bytes = file.readBytes()
-                    mapping.append(bytes)
+            parameters.projectFiles.forEach { projectFile ->
+                projectFile.walk().forEach { file ->
+                    if (file.name.endsWith(".class")) {
+                        val bytes = file.readBytes()
+                        mapping.append(bytes)
+                    }
                 }
             }
 
