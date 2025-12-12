@@ -201,7 +201,26 @@ internal class KaFirNamedFunctionSymbol private constructor(
         }
 
     override val modality: KaSymbolModality
-        get() = withValidityAssertion { backingPsi?.kaSymbolModality ?: firSymbol.kaSymbolModality }
+        get() = withValidityAssertion {
+            val psiBasedModality = backingPsi?.run {
+                val modalityByModifiers = kaSymbolModalityByModifiers
+                when {
+                    modalityByModifiers != null -> when {
+                        // KT-80178: interface members with no body have implicit ABSTRACT modality
+                        modalityByModifiers.isOpenFromInterface && !hasBody() -> KaSymbolModality.ABSTRACT
+                        else -> modalityByModifiers
+                    }
+
+                    isTopLevel || isLocal -> KaSymbolModality.FINAL
+
+                    // Green code cannot have those modifiers with other modalities
+                    hasModifier(KtTokens.INLINE_KEYWORD) || hasModifier(KtTokens.TAILREC_KEYWORD) -> KaSymbolModality.FINAL
+                    else -> null
+                }
+            }
+
+            psiBasedModality ?: firSymbol.kaSymbolModality
+        }
 
     override val compilerVisibility: Visibility
         get() = withValidityAssertion {

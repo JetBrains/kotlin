@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.SuspiciousFakeSourceCheck
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnosticWithPsi
 import org.jetbrains.kotlin.analysis.api.fir.diagnostics.KT_DIAGNOSTIC_CONVERTER
-import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirKtBasedSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirPropertySetterSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.ifNoStatusCompilerPluginPresent
@@ -103,25 +102,6 @@ internal fun FirDeclaration.findReferencePsi(scope: GlobalSearchScope): PsiEleme
         psi
     } ?: FirSyntheticFunctionInterfaceSourceProvider.findPsi(this, scope)
 }
-
-internal val KtNamedFunction.kaSymbolModality: KaSymbolModality?
-    get() {
-        val modalityByModifiers = kaSymbolModalityByModifiers
-        return when {
-            modalityByModifiers != null -> when {
-                // KT-80178: interface members with no body have implicit ABSTRACT modality
-                modalityByModifiers.isOpenFromInterface && !hasBody() -> KaSymbolModality.ABSTRACT
-                else -> modalityByModifiers
-            }
-
-            isTopLevel || isLocal -> KaSymbolModality.FINAL
-
-            // Green code cannot have those modifiers with other modalities
-            hasModifier(KtTokens.INLINE_KEYWORD) || hasModifier(KtTokens.TAILREC_KEYWORD) -> KaSymbolModality.FINAL
-
-            else -> null
-        }
-    }
 
 internal val KtDestructuringDeclarationEntry.entryName: Name
     get() = if (isSingleUnderscore) SpecialNames.UNDERSCORE_FOR_UNUSED_VAR else nameAsSafeName
@@ -254,7 +234,7 @@ internal val KtProperty.hasRegularGetter: Boolean
     get() = hasDelegate() || getter?.hasBody() == true
 
 context(callable: KtCallableDeclaration)
-private val KaSymbolModality.isOpenFromInterface: Boolean
+internal val KaSymbolModality.isOpenFromInterface: Boolean
     get() = this == KaSymbolModality.OPEN && (callable.containingClassOrObject as? KtClass)?.isInterface() == true
 
 context(analysisSession: KaFirSession)
