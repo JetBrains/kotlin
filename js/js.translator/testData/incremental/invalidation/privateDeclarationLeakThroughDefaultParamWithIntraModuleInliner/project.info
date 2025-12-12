@@ -1,22 +1,22 @@
 MODULES: main
 
 STEP 0:
-    language: +IrIntraModuleInlinerBeforeKlibSerialization -ForbidExposureOfPrivateTypesInNonPrivateInlineFunctionsInKlibs
+    language: +IrIntraModuleInlinerBeforeKlibSerialization -ForbidExposureOfPrivateTypesInNonPrivateInlineFunctionsInKlibs -ForbidExposingLessVisibleTypesInInline
     libs: main
     dirty js modules: main
     dirty js files:   main/f, main/m, main/m.export, main
 STEP 1:
-    language: +IrIntraModuleInlinerBeforeKlibSerialization -ForbidExposureOfPrivateTypesInNonPrivateInlineFunctionsInKlibs
+    language: +IrIntraModuleInlinerBeforeKlibSerialization -ForbidExposureOfPrivateTypesInNonPrivateInlineFunctionsInKlibs -ForbidExposingLessVisibleTypesInInline
     libs: main
     dirty js modules: main
     dirty js files:   main/f
 STEP 2:
-    language: +IrIntraModuleInlinerBeforeKlibSerialization -ForbidExposureOfPrivateTypesInNonPrivateInlineFunctionsInKlibs
+    language: +IrIntraModuleInlinerBeforeKlibSerialization -ForbidExposureOfPrivateTypesInNonPrivateInlineFunctionsInKlibs -ForbidExposingLessVisibleTypesInInline
     libs: main
     dirty js modules: main
     dirty js files:   main/f main/m
 STEP 3..9:
-    language: +IrIntraModuleInlinerBeforeKlibSerialization -ForbidExposureOfPrivateTypesInNonPrivateInlineFunctionsInKlibs
+    language: +IrIntraModuleInlinerBeforeKlibSerialization -ForbidExposureOfPrivateTypesInNonPrivateInlineFunctionsInKlibs -ForbidExposingLessVisibleTypesInInline
     libs: main
     dirty js modules: main
     dirty js files:   main/f, main/m
