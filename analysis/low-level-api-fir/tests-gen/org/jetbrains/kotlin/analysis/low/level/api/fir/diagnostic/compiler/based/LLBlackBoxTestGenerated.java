@@ -28512,9 +28512,9 @@ public class LLBlackBoxTestGenerated extends AbstractLLBlackBoxTest {
     }
 
     @Test
-    @TestMetadata("inlineFunctionOverridesAbstractMethodWithDefaultValue.kt")
-    public void testInlineFunctionOverridesAbstractMethodWithDefaultValue() {
-      runTest("compiler/testData/codegen/box/inline/inlineFunctionOverridesAbstractMethodWithDefaultValue.kt");
+    @TestMetadata("inlineFunctionOverridesAbstractMethodWithDefaultValueWithIrInlinerBeforeKlibSerializationDisabled.kt")
+    public void testInlineFunctionOverridesAbstractMethodWithDefaultValueWithIrInlinerBeforeKlibSerializationDisabled() {
+      runTest("compiler/testData/codegen/box/inline/inlineFunctionOverridesAbstractMethodWithDefaultValueWithIrInlinerBeforeKlibSerializationDisabled.kt");
     }
 
     @Test
@@ -39109,12 +39109,6 @@ public class LLBlackBoxTestGenerated extends AbstractLLBlackBoxTest {
     @TestMetadata("lambdaWithDynamicReceiver.kt")
     public void testLambdaWithDynamicReceiver() {
       runTest("compiler/testData/codegen/box/js/lambdaWithDynamicReceiver.kt");
-    }
-
-    @Test
-    @TestMetadata("lambdaWithoutNonLocalControlflow.kt")
-    public void testLambdaWithoutNonLocalControlflow() {
-      runTest("compiler/testData/codegen/box/js/lambdaWithoutNonLocalControlflow.kt");
     }
 
     @Test
