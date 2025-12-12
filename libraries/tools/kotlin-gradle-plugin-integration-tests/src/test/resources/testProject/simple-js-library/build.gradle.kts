@@ -1,5 +1,5 @@
 plugins {
-    kotlin("js")
+    kotlin("multiplatform")
 }
 
 group = "com.example"
@@ -16,7 +16,7 @@ kotlin {
         nodejs()
     }
     sourceSets {
-        main {
+        jsMain {
             dependencies {
                 implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.3.3")
                 implementation(npm("decamelize", "6.0.0"))

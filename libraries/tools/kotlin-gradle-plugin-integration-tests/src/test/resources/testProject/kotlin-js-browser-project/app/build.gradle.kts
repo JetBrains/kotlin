@@ -1,14 +1,7 @@
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 
 plugins {
-    kotlin("js")
-}
-
-dependencies {
-    implementation(kotlin("stdlib-js"))
-    implementation(project(":lib"))
-    implementation(npm(projectDir.resolve("src/main/css")))
-    testImplementation(kotlin("test-js"))
+    kotlin("multiplatform")
 }
 
 abstract class CustomWebpackRule
@@ -72,6 +65,17 @@ kotlin {
                     this.setArgs(listOf("./$projectName.js"))
                     workingDir(workDir)
                 }
+            }
+        }
+    }
+
+    sourceSets {
+        jsMain {
+            dependencies {
+                implementation(kotlin("stdlib-js"))
+                implementation(project(":lib"))
+                implementation(npm(projectDir.resolve("src/main/css")))
+                testImplementation(kotlin("test-js"))
             }
         }
     }

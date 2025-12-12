@@ -1,11 +1,7 @@
 import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType.IR as IR_TYPE
 
 plugins {
-    kotlin("js")
-}
-
-dependencies {
-    implementation(kotlin("stdlib-js"))
+    kotlin("multiplatform")
 }
 
 @Suppress("DEPRECATION")
@@ -15,6 +11,14 @@ kotlin {
     js(IR_TYPE) {
         useCommonJs()
         browser {
+        }
+    }
+
+    sourceSets {
+        jsMain {
+            dependencies {
+                implementation(kotlin("stdlib-js"))
+            }
         }
     }
 }

@@ -1,5 +1,5 @@
 plugins {
-    kotlin("js")
+    kotlin("multiplatform")
 }
 
 group = "com.example"
@@ -11,7 +11,7 @@ repositories {
 }
 
 kotlin.sourceSets {
-    getByName("main") {
+    jsMain {
         dependencies {
             implementation(kotlin("stdlib-js"))
             // It has transitive dependency on custom github version of escodegen
@@ -26,7 +26,7 @@ kotlin.sourceSets {
         }
     }
 
-    getByName("test") {
+    jsTest {
         dependencies {
             implementation(kotlin("test-js"))
             implementation(npm("mocha", "*"))
