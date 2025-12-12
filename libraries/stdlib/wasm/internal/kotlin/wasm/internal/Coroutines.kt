@@ -26,7 +26,7 @@ internal suspend fun <T> returnIfSuspended(argument: Any?): T =
 @PublishedApi
 internal fun <T> interceptContinuationIfNeeded(
     context: CoroutineContext,
-    continuation: Continuation<T>
+    continuation: Continuation<T>,
 ): Continuation<T> = context[ContinuationInterceptor]?.interceptContinuation(continuation) ?: continuation
 
 @UsedFromCompilerGeneratedCode
@@ -47,7 +47,7 @@ internal class WasmContinuationBox(
 
 @Suppress("UNCHECKED_CAST")
 internal class WasmContinuation<in T, R>(
-    internal var wasmContBox: WasmContinuationBox?,
+    internal var wasmContBox: WasmContinuationBox,
     private var isResumed: Boolean,
     private val completion: Continuation<R>,
 ) : Continuation<T> {
@@ -58,26 +58,42 @@ internal class WasmContinuation<in T, R>(
     val result get() = _result
     val exception get() = _exception
 
+    private var resumeWithResultValue: Result<Any?>? = null
+
     override fun resumeWith(result: Result<T>) {
         if (isResumed) error("Continuation is already resumed")
-        wasmContBox?.let { contBox ->
-            isResumed = true
+        isResumed = true
+        resumeWithResultValue = result as Result<Any?>
+        while (true) {
             val resumeResult: ResumeIntrinsicResult = try {
-                result.exceptionOrNull()?.let {
-                    resumeThrowImpl(it, contBox.cont)
-                } ?: resumeWithImpl(contBox.cont, result.value)
+                resumeWithResultValue!!.exceptionOrNull()?.let {
+                    resumeThrowImpl(it, wasmContBox.cont)
+                } ?: resumeWithImpl(wasmContBox.cont, result.value)
             } catch (e: Throwable) {
                 _exception = e
                 completion.resumeWithException(e)
-                return@let
+                return
             }
-            if (resumeResult.wasmContWrapper == null) {
-                _result = resumeResult.result
+            _result = if (resumeResult.suspendBody != null) {
+                // Run suspend block and if the result is not COROUTINE_SUSPENDED, then resume the function again
+                val remainingFunction = WasmContinuation<Any?, R>(resumeResult.remainingFunction!!, false, completion)
+                val suspendBlockResult = try {
+                    resumeResult.suspendBody(remainingFunction).let { if (it == COROUTINE_SUSPENDED) null else Result.success(it) }
+                } catch (e: Throwable) {
+                    Result.failure(e)
+                }
+                if (suspendBlockResult != null) {
+                    wasmContBox = resumeResult.remainingFunction
+                    resumeWithResultValue = suspendBlockResult
+                    continue
+                }
+                COROUTINE_SUSPENDED
+            } else resumeResult.result
+            if (_result != COROUTINE_SUSPENDED) {
                 completion.resume(resumeResult.result as R)
-            } else {
-                _result = COROUTINE_SUSPENDED
             }
-        } ?: error("Continuation is not set")
+            return
+        }
     }
 }
 
@@ -99,16 +115,21 @@ internal fun resumeThrowIntrinsic(objectToThrow: Throwable, cont: contref1): Res
     implementedAsIntrinsic
 }
 
-internal class ResumeIntrinsicResult(val wasmContWrapper: WasmContinuation<*, *>?, val result: Any?)
+internal class ResumeIntrinsicResult(
+    val suspendBody: ((Continuation<*>) -> Any?)?,
+    val remainingFunction: WasmContinuationBox?,
+    val result: Any?,
+)
 
-internal fun buildResumeIntrinsicSuspendResult(wasmContWrapper: Any?, wasmContRef: contref1): ResumeIntrinsicResult {
-    wasmContWrapper as WasmContinuation<*, *>
-    wasmContWrapper.wasmContBox = WasmContinuationBox(wasmContRef)
-    return ResumeIntrinsicResult(wasmContWrapper, null)
+internal fun buildResumeIntrinsicSuspendResult(
+    suspendBody: ((Continuation<*>) -> Any?)?,
+    remainingFunction: contref1,
+): ResumeIntrinsicResult {
+    return ResumeIntrinsicResult(suspendBody, WasmContinuationBox(remainingFunction), null)
 }
 
 internal fun buildResumeIntrinsicValueResult(value: Any?): ResumeIntrinsicResult {
-    return ResumeIntrinsicResult(null, value)
+    return ResumeIntrinsicResult(null, null, value)
 }
 
 @Suppress("UNUSED")
@@ -130,19 +151,14 @@ internal fun resumeCompletionWithException(completion: Continuation<Throwable>, 
 @PublishedApi
 @Suppress("UNCHECKED_CAST")
 internal suspend fun <T> suspendCoroutineUninterceptedOrReturnImpl(block: (Continuation<T>) -> Any?): T {
-    val completion = getContinuation<T>()
-    val remainingFunction = WasmContinuation<T, T>(null, false, completion)
-    val result = block(remainingFunction)
-    return if (result == COROUTINE_SUSPENDED) {
-        suspendIntrinsic(remainingFunction) as T
-    } else result as T
+    return suspendIntrinsic(block) as T
 }
 
 @UsedFromCompilerGeneratedCode
 @PublishedApi
 @Suppress("UNUSED_PARAMETER")
 @ExcludedFromCodegen
-internal fun suspendIntrinsic(cont: Continuation<*>): Any? {
+internal fun <T> suspendIntrinsic(block: (Continuation<T>) -> Any?): Any? {
     implementedAsIntrinsic
 }
 
@@ -151,14 +167,13 @@ internal fun suspendIntrinsic(cont: Continuation<*>): Any? {
 @PublishedApi
 internal fun <T> startCoroutineUninterceptedOrReturnIntrinsic0(
     f: (suspend () -> T),
-    completion: Continuation<T>
+    completion: Continuation<T>,
 ): Any? {
     implementedAsIntrinsic
 }
 
 private fun <T> resumeWasmContinuationAndReturnResult(contref1: contref1, completion: Continuation<T>): Any? {
-    val wasmContinuation = WasmContinuation<Continuation<T>, T>(null, false, completion)
-    wasmContinuation.wasmContBox = WasmContinuationBox(contref1)
+    val wasmContinuation = WasmContinuation<Continuation<T>, T>(WasmContinuationBox(contref1), false, completion)
     wasmContinuation.resume(completion)
     return wasmContinuation.result
 }
@@ -199,7 +214,7 @@ internal fun <R, P, T> suspendFunction2ToContref(f: (suspend R.(P) -> T), receiv
 @PublishedApi
 internal fun <T> startCoroutineUninterceptedOrReturn0Impl(
     f: (suspend () -> T),
-    completion: Continuation<T>
+    completion: Continuation<T>,
 ): Any? {
     return resumeWasmContinuationAndReturnResult(suspendFunction0ToContrefImpl(f), completion)
 }
@@ -208,7 +223,7 @@ internal fun <T> startCoroutineUninterceptedOrReturn0Impl(
 internal fun <R, T> startCoroutineUninterceptedOrReturn1Impl(
     f: (suspend R.() -> T),
     receiver: R,
-    completion: Continuation<T>
+    completion: Continuation<T>,
 ): Any? {
     return resumeWasmContinuationAndReturnResult(suspendFunction1ToContrefImpl(f, receiver), completion)
 }
@@ -218,7 +233,7 @@ internal fun <R, P, T> startCoroutineUninterceptedOrReturn2Impl(
     f: (suspend R.(P) -> T),
     receiver: R,
     param: P,
-    completion: Continuation<T>
+    completion: Continuation<T>,
 ): Any? {
     return resumeWasmContinuationAndReturnResult(suspendFunction2ToContrefImpl(f, receiver, param), completion)
 }
