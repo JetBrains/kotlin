@@ -2,7 +2,7 @@ import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
 import org.jetbrains.kotlin.gradle.targets.js.ir.JsIrBinary
 
 plugins {
-    kotlin("js")
+    kotlin("multiplatform")
 }
 
 dependencies {

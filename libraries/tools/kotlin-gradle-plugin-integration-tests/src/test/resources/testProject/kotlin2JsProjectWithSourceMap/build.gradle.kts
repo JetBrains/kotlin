@@ -4,7 +4,7 @@ import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrLink
 import kotlin.text.toBoolean
 
 plugins {
-    kotlin("js")
+    kotlin("multiplatform")
 }
 
 repositories {
