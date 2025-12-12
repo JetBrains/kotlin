@@ -1,0 +1,2 @@
+KtNameReferenceExpression(125,129): 'COMP'
+  null

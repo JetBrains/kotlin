@@ -1,0 +1,2 @@
+KtCallExpression(16,32): 'bar(2, l@{ it })'
+  null

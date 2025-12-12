@@ -1,0 +1,104 @@
+KtFile: 'TypeAliasedObjectAsQualifier.kt'
+  null
+
+KtPackageDirective(0,12): 'package test'
+  null
+
+KtNameReferenceExpression(8,12): 'test'
+  null
+
+KtImportList(12,12): ''
+  null
+
+KtObjectDeclaration(14,83): 'object MyObject {'
+  null
+
+KtClassBody(30,83): '{'
+  null
+
+KtNamedFunction(36,53): 'fun function() {}'
+  null
+
+KtParameterList(48,50): '()'
+  null
+
+KtBlockExpression(51,53): '{}'
+  null
+
+KtProperty(59,81): 'val property: Int = 10'
+  null
+
+KtTypeReference(73,76): 'Int'
+  null
+
+KtUserType(73,76): 'Int'
+  null
+
+KtNameReferenceExpression(73,76): 'Int'
+  null
+
+KtConstantExpression(79,81): '10'
+  null
+
+KtTypeAlias(85,113): 'typealias MyAlias = MyObject'
+  null
+
+KtTypeReference(105,113): 'MyObject'
+  null
+
+KtUserType(105,113): 'MyObject'
+  null
+
+KtNameReferenceExpression(105,113): 'MyObject'
+  null
+
+KtNamedFunction(115,219): 'fun usage() {'
+  null
+
+KtParameterList(124,126): '()'
+  null
+
+KtBlockExpression(127,219): '{'
+  null
+
+KtDotQualifiedExpression(133,151): 'MyAlias.function()'
+  null
+
+KtNameReferenceExpression(133,140): 'MyAlias'
+  null
+
+KtCallExpression(141,151): 'function()'
+  null
+
+KtNameReferenceExpression(141,149): 'function'
+  null
+
+KtValueArgumentList(149,151): '()'
+  null
+
+KtDotQualifiedExpression(156,172): 'MyAlias.property'
+  null
+
+KtNameReferenceExpression(156,163): 'MyAlias'
+  null
+
+KtNameReferenceExpression(164,172): 'property'
+  null
+
+KtCallableReferenceExpression(178,195): 'MyAlias::function'
+  null
+
+KtNameReferenceExpression(178,185): 'MyAlias'
+  null
+
+KtNameReferenceExpression(187,195): 'function'
+  null
+
+KtCallableReferenceExpression(200,217): 'MyAlias::property'
+  null
+
+KtNameReferenceExpression(200,207): 'MyAlias'
+  null
+
+KtNameReferenceExpression(209,217): 'property'
+  null

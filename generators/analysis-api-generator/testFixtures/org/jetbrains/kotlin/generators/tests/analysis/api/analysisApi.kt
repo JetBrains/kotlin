@@ -115,6 +115,7 @@ internal fun AnalysisApiTestGroup.generateAnalysisApiTests() {
 
         test<AbstractResolveCallTest>(init = singleByPsiInit)
         test<AbstractResolveCandidatesTest>(init = singleByPsiInit)
+        test<AbstractResolveSymbolTest>(init = singleByPsiInit)
         test<AbstractResolveReferenceTest>(init = singleByPsiInit)
 
         group(filter = testModuleKindIs(TestModuleKind.Source, TestModuleKind.ScriptSource)) {
@@ -124,6 +125,7 @@ internal fun AnalysisApiTestGroup.generateAnalysisApiTests() {
 
             test<AbstractResolveCallByFileTest>(init = allByPsiInit)
             test<AbstractResolveCandidatesByFileTest>(init = allByPsiInit)
+            test<AbstractResolveSymbolByFileTest>(init = allByPsiInit)
             test<AbstractResolveReferenceByFileTest>(init = allByPsiInit)
         }
     }

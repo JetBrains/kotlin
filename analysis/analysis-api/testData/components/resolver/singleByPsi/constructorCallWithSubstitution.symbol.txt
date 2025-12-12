@@ -1,0 +1,2 @@
+KtCallExpression(45,63): 'Foo<String>("str")'
+  null

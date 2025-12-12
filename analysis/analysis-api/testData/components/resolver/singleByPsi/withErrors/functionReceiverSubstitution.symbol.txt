@@ -1,0 +1,2 @@
+KtDotQualifiedExpression(73,80): 'f.foo()'
+  null

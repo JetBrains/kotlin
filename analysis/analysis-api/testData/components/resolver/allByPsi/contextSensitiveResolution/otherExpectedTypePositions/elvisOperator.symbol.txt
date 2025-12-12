@@ -1,0 +1,344 @@
+KtFile: 'elvisOperator.kt'
+  null
+
+KtPackageDirective(0,0): ''
+  null
+
+KtImportList(0,0): ''
+  null
+
+KtClass(78,301): 'open class MyClass {'
+  null
+
+KtDeclarationModifierList(78,82): 'open'
+  null
+
+KtClassBody(97,301): '{'
+  null
+
+KtObjectDeclaration(103,137): 'object NestedInheritor : MyClass()'
+  null
+
+KtSuperTypeList(128,137): 'MyClass()'
+  null
+
+KtSuperTypeCallEntry(128,137): 'MyClass()'
+  null
+
+KtConstructorCalleeExpression(128,135): 'MyClass'
+  null
+
+KtTypeReference(128,135): 'MyClass'
+  null
+
+KtUserType(128,135): 'MyClass'
+  null
+
+KtNameReferenceExpression(128,135): 'MyClass'
+  null
+
+KtValueArgumentList(135,137): '()'
+  null
+
+KtObjectDeclaration(143,299): 'companion object {'
+  null
+
+KtDeclarationModifierList(143,152): 'companion'
+  null
+
+KtClassBody(160,299): '{'
+  null
+
+KtProperty(170,206): 'val myClassProp: MyClass = MyClass()'
+  null
+
+KtTypeReference(187,194): 'MyClass'
+  null
+
+KtUserType(187,194): 'MyClass'
+  null
+
+KtNameReferenceExpression(187,194): 'MyClass'
+  null
+
+KtCallExpression(197,206): 'MyClass()'
+  null
+
+KtNameReferenceExpression(197,204): 'MyClass'
+  null
+
+KtValueArgumentList(204,206): '()'
+  null
+
+KtProperty(215,242): 'val stringProp: String = ""'
+  null
+
+KtTypeReference(231,237): 'String'
+  null
+
+KtUserType(231,237): 'String'
+  null
+
+KtNameReferenceExpression(231,237): 'String'
+  null
+
+KtStringTemplateExpression(240,242): '""'
+  null
+
+KtNamedFunction(251,293): 'fun getNestedInheritor() = NestedInheritor'
+  null
+
+KtParameterList(273,275): '()'
+  null
+
+KtNameReferenceExpression(278,293): 'NestedInheritor'
+  null
+
+KtNamedFunction(303,326): 'fun <T>receive(e: T) {}'
+  null
+
+KtTypeParameterList(307,310): '<T>'
+  null
+
+KtTypeParameter(308,309): 'T'
+  null
+
+KtParameterList(317,323): '(e: T)'
+  null
+
+KtParameter(318,322): 'e: T'
+  null
+
+KtTypeReference(321,322): 'T'
+  null
+
+KtUserType(321,322): 'T'
+  null
+
+KtNameReferenceExpression(321,322): 'T'
+  null
+
+KtBlockExpression(324,326): '{}'
+  null
+
+KtProperty(327,373): 'val ClassMemberAlias = MyClass.NestedInheritor'
+  null
+
+KtDotQualifiedExpression(350,373): 'MyClass.NestedInheritor'
+  null
+
+KtNameReferenceExpression(350,357): 'MyClass'
+  null
+
+KtNameReferenceExpression(358,373): 'NestedInheritor'
+  null
+
+KtNamedFunction(375,735): 'fun testElvis() {'
+  null
+
+KtParameterList(388,390): '()'
+  null
+
+KtBlockExpression(391,735): '{'
+  null
+
+KtProperty(397,447): 'var i100: MyClass = NestedInheritor ?: myClassProp'
+  null
+
+KtTypeReference(407,414): 'MyClass'
+  null
+
+KtUserType(407,414): 'MyClass'
+  null
+
+KtNameReferenceExpression(407,414): 'MyClass'
+  null
+
+KtBinaryExpression(417,447): 'NestedInheritor ?: myClassProp'
+  null
+
+KtNameReferenceExpression(417,432): 'NestedInheritor'
+  null
+
+KtOperationReferenceExpression(433,435): '?:'
+  null
+
+KtNameReferenceExpression(436,447): 'myClassProp'
+  null
+
+KtProperty(452,501): 'var i110: MyClass = NestedInheritor ?: stringProp'
+  null
+
+KtTypeReference(462,469): 'MyClass'
+  null
+
+KtUserType(462,469): 'MyClass'
+  null
+
+KtNameReferenceExpression(462,469): 'MyClass'
+  null
+
+KtBinaryExpression(472,501): 'NestedInheritor ?: stringProp'
+  null
+
+KtNameReferenceExpression(472,487): 'NestedInheritor'
+  null
+
+KtOperationReferenceExpression(488,490): '?:'
+  null
+
+KtNameReferenceExpression(491,501): 'stringProp'
+  null
+
+KtProperty(506,565): 'var i120: MyClass = NestedInheritor ?: getNestedInheritor()'
+  null
+
+KtTypeReference(516,523): 'MyClass'
+  null
+
+KtUserType(516,523): 'MyClass'
+  null
+
+KtNameReferenceExpression(516,523): 'MyClass'
+  null
+
+KtBinaryExpression(526,565): 'NestedInheritor ?: getNestedInheritor()'
+  null
+
+KtNameReferenceExpression(526,541): 'NestedInheritor'
+  null
+
+KtOperationReferenceExpression(542,544): '?:'
+  null
+
+KtCallExpression(545,565): 'getNestedInheritor()'
+  null
+
+KtNameReferenceExpression(545,563): 'getNestedInheritor'
+  null
+
+KtValueArgumentList(563,565): '()'
+  null
+
+KtCallExpression(571,619): 'receive<MyClass>(NestedInheritor ?: myClassProp)'
+  null
+
+KtNameReferenceExpression(571,578): 'receive'
+  null
+
+KtTypeArgumentList(578,587): '<MyClass>'
+  null
+
+KtTypeProjection(579,586): 'MyClass'
+  null
+
+KtTypeReference(579,586): 'MyClass'
+  null
+
+KtUserType(579,586): 'MyClass'
+  null
+
+KtNameReferenceExpression(579,586): 'MyClass'
+  null
+
+KtValueArgumentList(587,619): '(NestedInheritor ?: myClassProp)'
+  null
+
+KtValueArgument(588,618): 'NestedInheritor ?: myClassProp'
+  null
+
+KtBinaryExpression(588,618): 'NestedInheritor ?: myClassProp'
+  null
+
+KtNameReferenceExpression(588,603): 'NestedInheritor'
+  null
+
+KtOperationReferenceExpression(604,606): '?:'
+  null
+
+KtNameReferenceExpression(607,618): 'myClassProp'
+  null
+
+KtCallExpression(624,671): 'receive<MyClass>(NestedInheritor ?: stringProp)'
+  null
+
+KtNameReferenceExpression(624,631): 'receive'
+  null
+
+KtTypeArgumentList(631,640): '<MyClass>'
+  null
+
+KtTypeProjection(632,639): 'MyClass'
+  null
+
+KtTypeReference(632,639): 'MyClass'
+  null
+
+KtUserType(632,639): 'MyClass'
+  null
+
+KtNameReferenceExpression(632,639): 'MyClass'
+  null
+
+KtValueArgumentList(640,671): '(NestedInheritor ?: stringProp)'
+  null
+
+KtValueArgument(641,670): 'NestedInheritor ?: stringProp'
+  null
+
+KtBinaryExpression(641,670): 'NestedInheritor ?: stringProp'
+  null
+
+KtNameReferenceExpression(641,656): 'NestedInheritor'
+  null
+
+KtOperationReferenceExpression(657,659): '?:'
+  null
+
+KtNameReferenceExpression(660,670): 'stringProp'
+  null
+
+KtCallExpression(676,733): 'receive<MyClass>(NestedInheritor ?: getNestedInheritor())'
+  null
+
+KtNameReferenceExpression(676,683): 'receive'
+  null
+
+KtTypeArgumentList(683,692): '<MyClass>'
+  null
+
+KtTypeProjection(684,691): 'MyClass'
+  null
+
+KtTypeReference(684,691): 'MyClass'
+  null
+
+KtUserType(684,691): 'MyClass'
+  null
+
+KtNameReferenceExpression(684,691): 'MyClass'
+  null
+
+KtValueArgumentList(692,733): '(NestedInheritor ?: getNestedInheritor())'
+  null
+
+KtValueArgument(693,732): 'NestedInheritor ?: getNestedInheritor()'
+  null
+
+KtBinaryExpression(693,732): 'NestedInheritor ?: getNestedInheritor()'
+  null
+
+KtNameReferenceExpression(693,708): 'NestedInheritor'
+  null
+
+KtOperationReferenceExpression(709,711): '?:'
+  null
+
+KtCallExpression(712,732): 'getNestedInheritor()'
+  null
+
+KtNameReferenceExpression(712,730): 'getNestedInheritor'
+  null
+
+KtValueArgumentList(730,732): '()'
+  null

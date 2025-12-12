@@ -1,0 +1,167 @@
+KtFile: 'delegatedProperty.kt'
+  null
+
+KtPackageDirective(16,30): 'package myPack'
+  null
+
+KtNameReferenceExpression(24,30): 'myPack'
+  null
+
+KtImportList(32,63): 'import kotlin.reflect.KProperty'
+  null
+
+KtImportDirective(32,63): 'import kotlin.reflect.KProperty'
+  null
+
+KtDotQualifiedExpression(39,63): 'kotlin.reflect.KProperty'
+  null
+
+KtDotQualifiedExpression(39,53): 'kotlin.reflect'
+  null
+
+KtNameReferenceExpression(39,45): 'kotlin'
+  null
+
+KtNameReferenceExpression(46,53): 'reflect'
+  null
+
+KtNameReferenceExpression(54,63): 'KProperty'
+  null
+
+KtProperty(65,87): 'var prop by Delegate()'
+  null
+
+KtPropertyDelegate(74,87): 'by Delegate()'
+  null
+
+KtCallExpression(77,87): 'Delegate()'
+  null
+
+KtNameReferenceExpression(77,85): 'Delegate'
+  null
+
+KtValueArgumentList(85,87): '()'
+  null
+
+KtClass(89,296): 'class Delegate {'
+  null
+
+KtClassBody(104,296): '{'
+  null
+
+KtNamedFunction(110,204): 'operator fun getValue(thisRef: Any?, property: KProperty<*>): String {'
+  null
+
+KtDeclarationModifierList(110,118): 'operator'
+  null
+
+KtParameterList(131,170): '(thisRef: Any?, property: KProperty<*>)'
+  null
+
+KtParameter(132,145): 'thisRef: Any?'
+  null
+
+KtTypeReference(141,145): 'Any?'
+  null
+
+KtNullableType(141,145): 'Any?'
+  null
+
+KtUserType(141,144): 'Any'
+  null
+
+KtNameReferenceExpression(141,144): 'Any'
+  null
+
+KtParameter(147,169): 'property: KProperty<*>'
+  null
+
+KtTypeReference(157,169): 'KProperty<*>'
+  null
+
+KtUserType(157,169): 'KProperty<*>'
+  null
+
+KtNameReferenceExpression(157,166): 'KProperty'
+  null
+
+KtTypeArgumentList(166,169): '<*>'
+  null
+
+KtTypeProjection(167,168): '*'
+  null
+
+KtTypeReference(172,178): 'String'
+  null
+
+KtUserType(172,178): 'String'
+  null
+
+KtNameReferenceExpression(172,178): 'String'
+  null
+
+KtBlockExpression(179,204): '{'
+  null
+
+KtReturnExpression(189,198): 'return ""'
+  null
+
+KtStringTemplateExpression(196,198): '""'
+  null
+
+KtNamedFunction(210,294): 'operator fun setValue(thisRef: Any?, property: KProperty<*>, value: String) {'
+  null
+
+KtDeclarationModifierList(210,218): 'operator'
+  null
+
+KtParameterList(231,285): '(thisRef: Any?, property: KProperty<*>, value: String)'
+  null
+
+KtParameter(232,245): 'thisRef: Any?'
+  null
+
+KtTypeReference(241,245): 'Any?'
+  null
+
+KtNullableType(241,245): 'Any?'
+  null
+
+KtUserType(241,244): 'Any'
+  null
+
+KtNameReferenceExpression(241,244): 'Any'
+  null
+
+KtParameter(247,269): 'property: KProperty<*>'
+  null
+
+KtTypeReference(257,269): 'KProperty<*>'
+  null
+
+KtUserType(257,269): 'KProperty<*>'
+  null
+
+KtNameReferenceExpression(257,266): 'KProperty'
+  null
+
+KtTypeArgumentList(266,269): '<*>'
+  null
+
+KtTypeProjection(267,268): '*'
+  null
+
+KtParameter(271,284): 'value: String'
+  null
+
+KtTypeReference(278,284): 'String'
+  null
+
+KtUserType(278,284): 'String'
+  null
+
+KtNameReferenceExpression(278,284): 'String'
+  null
+
+KtBlockExpression(286,294): '{'
+  null

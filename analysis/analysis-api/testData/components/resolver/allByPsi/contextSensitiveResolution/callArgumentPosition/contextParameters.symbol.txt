@@ -1,0 +1,365 @@
+KtFile: 'contextParameters.kt'
+  null
+
+KtPackageDirective(0,0): ''
+  null
+
+KtImportList(0,0): ''
+  null
+
+KtClass(98,135): 'enum class MyEnum {'
+  null
+
+KtDeclarationModifierList(98,102): 'enum'
+  null
+
+KtClassBody(116,135): '{'
+  null
+
+KtEnumEntry(122,133): 'EnumValue1;'
+  null
+
+KtClass(137,204): 'sealed class MySealed {'
+  null
+
+KtDeclarationModifierList(137,143): 'sealed'
+  null
+
+KtClassBody(159,204): '{'
+  null
+
+KtObjectDeclaration(165,202): 'object InheritorObject: MySealed() {}'
+  null
+
+KtSuperTypeList(189,199): 'MySealed()'
+  null
+
+KtSuperTypeCallEntry(189,199): 'MySealed()'
+  null
+
+KtConstructorCalleeExpression(189,197): 'MySealed'
+  null
+
+KtTypeReference(189,197): 'MySealed'
+  null
+
+KtUserType(189,197): 'MySealed'
+  null
+
+KtNameReferenceExpression(189,197): 'MySealed'
+  null
+
+KtValueArgumentList(197,199): '()'
+  null
+
+KtClassBody(200,202): '{}'
+  null
+
+KtNamedFunction(206,237): 'context(i: MyEnum)'
+  null
+
+KtDeclarationModifierList(206,224): 'context(i: MyEnum)'
+  null
+
+KtContextReceiverList(206,224): 'context(i: MyEnum)'
+  null
+
+KtParameter(214,223): 'i: MyEnum'
+  null
+
+KtTypeReference(217,223): 'MyEnum'
+  null
+
+KtUserType(217,223): 'MyEnum'
+  null
+
+KtNameReferenceExpression(217,223): 'MyEnum'
+  null
+
+KtParameterList(232,234): '()'
+  null
+
+KtBlockExpression(235,237): '{}'
+  null
+
+KtNamedFunction(239,272): 'context(i: MySealed)'
+  null
+
+KtDeclarationModifierList(239,259): 'context(i: MySealed)'
+  null
+
+KtContextReceiverList(239,259): 'context(i: MySealed)'
+  null
+
+KtParameter(247,258): 'i: MySealed'
+  null
+
+KtTypeReference(250,258): 'MySealed'
+  null
+
+KtUserType(250,258): 'MySealed'
+  null
+
+KtNameReferenceExpression(250,258): 'MySealed'
+  null
+
+KtParameterList(267,269): '()'
+  null
+
+KtBlockExpression(270,272): '{}'
+  null
+
+KtNamedFunction(274,416): 'fun testWithEnum() {'
+  null
+
+KtParameterList(290,292): '()'
+  null
+
+KtBlockExpression(293,416): '{'
+  null
+
+KtCallExpression(299,350): 'with<MyEnum, Unit>(EnumValue1){'
+  null
+
+KtNameReferenceExpression(299,303): 'with'
+  null
+
+KtTypeArgumentList(303,317): '<MyEnum, Unit>'
+  null
+
+KtTypeProjection(304,310): 'MyEnum'
+  null
+
+KtTypeReference(304,310): 'MyEnum'
+  null
+
+KtUserType(304,310): 'MyEnum'
+  null
+
+KtNameReferenceExpression(304,310): 'MyEnum'
+  null
+
+KtTypeProjection(312,316): 'Unit'
+  null
+
+KtTypeReference(312,316): 'Unit'
+  null
+
+KtUserType(312,316): 'Unit'
+  null
+
+KtNameReferenceExpression(312,316): 'Unit'
+  null
+
+KtValueArgumentList(317,329): '(EnumValue1)'
+  null
+
+KtValueArgument(318,328): 'EnumValue1'
+  null
+
+KtNameReferenceExpression(318,328): 'EnumValue1'
+  null
+
+KtLambdaArgument(329,350): '{'
+  null
+
+KtLambdaExpression(329,350): '{'
+  null
+
+KtFunctionLiteral(329,350): '{'
+  null
+
+KtBlockExpression(339,344): 'foo()'
+  null
+
+KtCallExpression(339,344): 'foo()'
+  null
+
+KtNameReferenceExpression(339,342): 'foo'
+  null
+
+KtValueArgumentList(342,344): '()'
+  null
+
+KtCallExpression(356,414): 'with<MySealed, Unit>(InheritorObject){'
+  null
+
+KtNameReferenceExpression(356,360): 'with'
+  null
+
+KtTypeArgumentList(360,376): '<MySealed, Unit>'
+  null
+
+KtTypeProjection(361,369): 'MySealed'
+  null
+
+KtTypeReference(361,369): 'MySealed'
+  null
+
+KtUserType(361,369): 'MySealed'
+  null
+
+KtNameReferenceExpression(361,369): 'MySealed'
+  null
+
+KtTypeProjection(371,375): 'Unit'
+  null
+
+KtTypeReference(371,375): 'Unit'
+  null
+
+KtUserType(371,375): 'Unit'
+  null
+
+KtNameReferenceExpression(371,375): 'Unit'
+  null
+
+KtValueArgumentList(376,393): '(InheritorObject)'
+  null
+
+KtValueArgument(377,392): 'InheritorObject'
+  null
+
+KtNameReferenceExpression(377,392): 'InheritorObject'
+  null
+
+KtLambdaArgument(393,414): '{'
+  null
+
+KtLambdaExpression(393,414): '{'
+  null
+
+KtFunctionLiteral(393,414): '{'
+  null
+
+KtBlockExpression(403,408): 'foo()'
+  null
+
+KtCallExpression(403,408): 'foo()'
+  null
+
+KtNameReferenceExpression(403,406): 'foo'
+  null
+
+KtValueArgumentList(406,408): '()'
+  null
+
+KtProperty(418,472): 'context(i: MyEnum)'
+  null
+
+KtDeclarationModifierList(418,436): 'context(i: MyEnum)'
+  null
+
+KtContextReceiverList(418,436): 'context(i: MyEnum)'
+  null
+
+KtParameter(426,435): 'i: MyEnum'
+  null
+
+KtTypeReference(429,435): 'MyEnum'
+  null
+
+KtUserType(429,435): 'MyEnum'
+  null
+
+KtNameReferenceExpression(429,435): 'MyEnum'
+  null
+
+KtTypeReference(441,447): 'String'
+  null
+
+KtUserType(441,447): 'String'
+  null
+
+KtNameReferenceExpression(441,447): 'String'
+  null
+
+KtTypeReference(451,457): 'String'
+  null
+
+KtUserType(451,457): 'String'
+  null
+
+KtNameReferenceExpression(451,457): 'String'
+  null
+
+KtPropertyAccessor(462,472): 'get() = ""'
+  null
+
+KtParameterList(465,467): '()'
+  null
+
+KtStringTemplateExpression(470,472): '""'
+  null
+
+KtNamedFunction(474,560): 'fun testWithEnumWithProp() {'
+  null
+
+KtParameterList(498,500): '()'
+  null
+
+KtBlockExpression(501,560): '{'
+  null
+
+KtCallExpression(507,558): 'with<MyEnum, Unit>(EnumValue1) {'
+  null
+
+KtNameReferenceExpression(507,511): 'with'
+  null
+
+KtTypeArgumentList(511,525): '<MyEnum, Unit>'
+  null
+
+KtTypeProjection(512,518): 'MyEnum'
+  null
+
+KtTypeReference(512,518): 'MyEnum'
+  null
+
+KtUserType(512,518): 'MyEnum'
+  null
+
+KtNameReferenceExpression(512,518): 'MyEnum'
+  null
+
+KtTypeProjection(520,524): 'Unit'
+  null
+
+KtTypeReference(520,524): 'Unit'
+  null
+
+KtUserType(520,524): 'Unit'
+  null
+
+KtNameReferenceExpression(520,524): 'Unit'
+  null
+
+KtValueArgumentList(525,537): '(EnumValue1)'
+  null
+
+KtValueArgument(526,536): 'EnumValue1'
+  null
+
+KtNameReferenceExpression(526,536): 'EnumValue1'
+  null
+
+KtLambdaArgument(538,558): '{'
+  null
+
+KtLambdaExpression(538,558): '{'
+  null
+
+KtFunctionLiteral(538,558): '{'
+  null
+
+KtBlockExpression(548,552): '"".a'
+  null
+
+KtDotQualifiedExpression(548,552): '"".a'
+  null
+
+KtStringTemplateExpression(548,550): '""'
+  null
+
+KtNameReferenceExpression(551,552): 'a'
+  null

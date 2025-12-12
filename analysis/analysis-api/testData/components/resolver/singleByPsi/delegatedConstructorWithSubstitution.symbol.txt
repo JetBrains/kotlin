@@ -1,0 +1,2 @@
+KtConstructorDelegationCall(144,152): 'super(1)'
+  null

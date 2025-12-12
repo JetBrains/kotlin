@@ -1,0 +1,167 @@
+KtFile: 'compare.kt'
+  null
+
+KtPackageDirective(0,0): ''
+  null
+
+KtImportList(0,0): ''
+  null
+
+KtNamedFunction(0,162): 'fun usage() {'
+  null
+
+KtParameterList(9,11): '()'
+  null
+
+KtBlockExpression(12,162): '{'
+  null
+
+KtBinaryExpression(18,23): '1 > 2'
+  null
+
+KtConstantExpression(18,19): '1'
+  null
+
+KtOperationReferenceExpression(20,21): '>'
+  null
+
+KtConstantExpression(22,23): '2'
+  null
+
+KtBinaryExpression(28,46): '1.compareTo(2) > 0'
+  null
+
+KtDotQualifiedExpression(28,42): '1.compareTo(2)'
+  null
+
+KtConstantExpression(28,29): '1'
+  null
+
+KtCallExpression(30,42): 'compareTo(2)'
+  null
+
+KtNameReferenceExpression(30,39): 'compareTo'
+  null
+
+KtValueArgumentList(39,42): '(2)'
+  null
+
+KtValueArgument(40,41): '2'
+  null
+
+KtConstantExpression(40,41): '2'
+  null
+
+KtOperationReferenceExpression(43,44): '>'
+  null
+
+KtConstantExpression(45,46): '0'
+  null
+
+KtBinaryExpression(52,61): '"3" < "4"'
+  null
+
+KtStringTemplateExpression(52,55): '"3"'
+  null
+
+KtLiteralStringTemplateEntry(53,54): '3'
+  null
+
+KtOperationReferenceExpression(56,57): '<'
+  null
+
+KtStringTemplateExpression(58,61): '"4"'
+  null
+
+KtLiteralStringTemplateEntry(59,60): '4'
+  null
+
+KtProperty(66,80): 'val number = 5'
+  null
+
+KtConstantExpression(79,80): '5'
+  null
+
+KtProperty(85,108): 'val myClass = MyClass()'
+  null
+
+KtCallExpression(99,108): 'MyClass()'
+  null
+
+KtNameReferenceExpression(99,106): 'MyClass'
+  null
+
+KtValueArgumentList(106,108): '()'
+  null
+
+KtBinaryExpression(113,130): 'myClass >= number'
+  null
+
+KtNameReferenceExpression(113,120): 'myClass'
+  null
+
+KtOperationReferenceExpression(121,123): '>='
+  null
+
+KtNameReferenceExpression(124,130): 'number'
+  null
+
+KtDotQualifiedExpression(135,160): 'myClass.compareTo(number)'
+  null
+
+KtNameReferenceExpression(135,142): 'myClass'
+  null
+
+KtCallExpression(143,160): 'compareTo(number)'
+  null
+
+KtNameReferenceExpression(143,152): 'compareTo'
+  null
+
+KtValueArgumentList(152,160): '(number)'
+  null
+
+KtValueArgument(153,159): 'number'
+  null
+
+KtNameReferenceExpression(153,159): 'number'
+  null
+
+KtClass(164,225): 'class MyClass {'
+  null
+
+KtClassBody(178,225): '{'
+  null
+
+KtNamedFunction(184,223): 'operator fun compareTo(i: Int): Int = i'
+  null
+
+KtDeclarationModifierList(184,192): 'operator'
+  null
+
+KtParameterList(206,214): '(i: Int)'
+  null
+
+KtParameter(207,213): 'i: Int'
+  null
+
+KtTypeReference(210,213): 'Int'
+  null
+
+KtUserType(210,213): 'Int'
+  null
+
+KtNameReferenceExpression(210,213): 'Int'
+  null
+
+KtTypeReference(216,219): 'Int'
+  null
+
+KtUserType(216,219): 'Int'
+  null
+
+KtNameReferenceExpression(216,219): 'Int'
+  null
+
+KtNameReferenceExpression(222,223): 'i'
+  null

@@ -1,0 +1,2 @@
+KtDotQualifiedExpression(203,225): 'another.foo(1L, "str")'
+  null

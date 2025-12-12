@@ -1,0 +1,2 @@
+KtFunctionLiteral(73,77): '{ 1}'
+  null

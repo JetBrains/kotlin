@@ -1,0 +1,2 @@
+KtDotQualifiedExpression(162,171): 'b.clear()'
+  null

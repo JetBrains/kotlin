@@ -1,0 +1,164 @@
+KtFile: 'infixFunction.kt'
+  null
+
+KtPackageDirective(0,0): ''
+  null
+
+KtImportList(0,0): ''
+  null
+
+KtNamedFunction(0,45): 'infix fun Int.myMinus(i: Int): Int = this - i'
+  null
+
+KtDeclarationModifierList(0,5): 'infix'
+  null
+
+KtTypeReference(10,13): 'Int'
+  null
+
+KtUserType(10,13): 'Int'
+  null
+
+KtNameReferenceExpression(10,13): 'Int'
+  null
+
+KtParameterList(21,29): '(i: Int)'
+  null
+
+KtParameter(22,28): 'i: Int'
+  null
+
+KtTypeReference(25,28): 'Int'
+  null
+
+KtUserType(25,28): 'Int'
+  null
+
+KtNameReferenceExpression(25,28): 'Int'
+  null
+
+KtTypeReference(31,34): 'Int'
+  null
+
+KtUserType(31,34): 'Int'
+  null
+
+KtNameReferenceExpression(31,34): 'Int'
+  null
+
+KtBinaryExpression(37,45): 'this - i'
+  null
+
+KtThisExpression(37,41): 'this'
+  null
+
+KtNameReferenceExpression(37,41): 'this'
+  null
+
+KtOperationReferenceExpression(42,43): '-'
+  null
+
+KtNameReferenceExpression(44,45): 'i'
+  null
+
+KtNamedFunction(47,251): 'fun usage(parameter: Int) {'
+  null
+
+KtParameterList(56,72): '(parameter: Int)'
+  null
+
+KtParameter(57,71): 'parameter: Int'
+  null
+
+KtTypeReference(68,71): 'Int'
+  null
+
+KtUserType(68,71): 'Int'
+  null
+
+KtNameReferenceExpression(68,71): 'Int'
+  null
+
+KtBlockExpression(73,251): '{'
+  null
+
+KtProperty(79,117): 'val newParameter = parameter myMinus 5'
+  null
+
+KtBinaryExpression(98,117): 'parameter myMinus 5'
+  null
+
+KtNameReferenceExpression(98,107): 'parameter'
+  null
+
+KtOperationReferenceExpression(108,115): 'myMinus'
+  null
+
+KtConstantExpression(116,117): '5'
+  null
+
+KtProperty(122,171): 'val oneMoreParameter = newParameter + 1 myMinus 4'
+  null
+
+KtBinaryExpression(145,171): 'newParameter + 1 myMinus 4'
+  null
+
+KtBinaryExpression(145,161): 'newParameter + 1'
+  null
+
+KtNameReferenceExpression(145,157): 'newParameter'
+  null
+
+KtOperationReferenceExpression(158,159): '+'
+  null
+
+KtConstantExpression(160,161): '1'
+  null
+
+KtOperationReferenceExpression(162,169): 'myMinus'
+  null
+
+KtConstantExpression(170,171): '4'
+  null
+
+KtProperty(176,249): 'val explicitForm = newParameter.plus(parameter.myMinus(oneMoreParameter))'
+  null
+
+KtDotQualifiedExpression(195,249): 'newParameter.plus(parameter.myMinus(oneMoreParameter))'
+  null
+
+KtNameReferenceExpression(195,207): 'newParameter'
+  null
+
+KtCallExpression(208,249): 'plus(parameter.myMinus(oneMoreParameter))'
+  null
+
+KtNameReferenceExpression(208,212): 'plus'
+  null
+
+KtValueArgumentList(212,249): '(parameter.myMinus(oneMoreParameter))'
+  null
+
+KtValueArgument(213,248): 'parameter.myMinus(oneMoreParameter)'
+  null
+
+KtDotQualifiedExpression(213,248): 'parameter.myMinus(oneMoreParameter)'
+  null
+
+KtNameReferenceExpression(213,222): 'parameter'
+  null
+
+KtCallExpression(223,248): 'myMinus(oneMoreParameter)'
+  null
+
+KtNameReferenceExpression(223,230): 'myMinus'
+  null
+
+KtValueArgumentList(230,248): '(oneMoreParameter)'
+  null
+
+KtValueArgument(231,247): 'oneMoreParameter'
+  null
+
+KtNameReferenceExpression(231,247): 'oneMoreParameter'
+  null

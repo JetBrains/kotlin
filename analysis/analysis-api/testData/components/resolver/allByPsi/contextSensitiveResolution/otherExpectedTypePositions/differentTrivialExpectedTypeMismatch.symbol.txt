@@ -1,0 +1,338 @@
+KtFile: 'differentTrivialExpectedTypeMismatch.kt'
+  null
+
+KtPackageDirective(0,0): ''
+  null
+
+KtImportList(0,0): ''
+  null
+
+KtClass(78,186): 'class MyClass {'
+  null
+
+KtClassBody(92,186): '{'
+  null
+
+KtObjectDeclaration(98,184): 'companion object {'
+  null
+
+KtDeclarationModifierList(98,107): 'companion'
+  null
+
+KtClassBody(115,184): '{'
+  null
+
+KtProperty(125,151): 'val X: MyClass = MyClass()'
+  null
+
+KtTypeReference(132,139): 'MyClass'
+  null
+
+KtUserType(132,139): 'MyClass'
+  null
+
+KtNameReferenceExpression(132,139): 'MyClass'
+  null
+
+KtCallExpression(142,151): 'MyClass()'
+  null
+
+KtNameReferenceExpression(142,149): 'MyClass'
+  null
+
+KtValueArgumentList(149,151): '()'
+  null
+
+KtProperty(160,178): 'val Y: String = ""'
+  null
+
+KtTypeReference(167,173): 'String'
+  null
+
+KtUserType(167,173): 'String'
+  null
+
+KtNameReferenceExpression(167,173): 'String'
+  null
+
+KtStringTemplateExpression(176,178): '""'
+  null
+
+KtProperty(188,206): 'val x: MyClass = X'
+  null
+
+KtTypeReference(195,202): 'MyClass'
+  null
+
+KtUserType(195,202): 'MyClass'
+  null
+
+KtNameReferenceExpression(195,202): 'MyClass'
+  null
+
+KtNameReferenceExpression(205,206): 'X'
+  null
+
+KtProperty(207,225): 'val y: MyClass = Y'
+  null
+
+KtTypeReference(214,221): 'MyClass'
+  null
+
+KtUserType(214,221): 'MyClass'
+  null
+
+KtNameReferenceExpression(214,221): 'MyClass'
+  null
+
+KtNameReferenceExpression(224,225): 'Y'
+  null
+
+KtNamedFunction(227,249): 'fun myX(): MyClass = X'
+  null
+
+KtParameterList(234,236): '()'
+  null
+
+KtTypeReference(238,245): 'MyClass'
+  null
+
+KtUserType(238,245): 'MyClass'
+  null
+
+KtNameReferenceExpression(238,245): 'MyClass'
+  null
+
+KtNameReferenceExpression(248,249): 'X'
+  null
+
+KtNamedFunction(250,272): 'fun myY(): MyClass = Y'
+  null
+
+KtParameterList(257,259): '()'
+  null
+
+KtTypeReference(261,268): 'MyClass'
+  null
+
+KtUserType(261,268): 'MyClass'
+  null
+
+KtNameReferenceExpression(261,268): 'MyClass'
+  null
+
+KtNameReferenceExpression(271,272): 'Y'
+  null
+
+KtNamedFunction(274,300): 'fun foo(m: MyClass = X) {}'
+  null
+
+KtParameterList(281,297): '(m: MyClass = X)'
+  null
+
+KtParameter(282,296): 'm: MyClass = X'
+  null
+
+KtTypeReference(285,292): 'MyClass'
+  null
+
+KtUserType(285,292): 'MyClass'
+  null
+
+KtNameReferenceExpression(285,292): 'MyClass'
+  null
+
+KtNameReferenceExpression(295,296): 'X'
+  null
+
+KtBlockExpression(298,300): '{}'
+  null
+
+KtProperty(302,338): 'val property1: MyClass'
+  null
+
+KtTypeReference(317,324): 'MyClass'
+  null
+
+KtUserType(317,324): 'MyClass'
+  null
+
+KtNameReferenceExpression(317,324): 'MyClass'
+  null
+
+KtPropertyAccessor(329,338): 'get() = X'
+  null
+
+KtParameterList(332,334): '()'
+  null
+
+KtNameReferenceExpression(337,338): 'X'
+  null
+
+KtProperty(340,376): 'val property2'
+  null
+
+KtPropertyAccessor(358,376): 'get(): MyClass = X'
+  null
+
+KtParameterList(361,363): '()'
+  null
+
+KtTypeReference(365,372): 'MyClass'
+  null
+
+KtUserType(365,372): 'MyClass'
+  null
+
+KtNameReferenceExpression(365,372): 'MyClass'
+  null
+
+KtNameReferenceExpression(375,376): 'X'
+  null
+
+KtProperty(378,414): 'val property3: MyClass'
+  null
+
+KtTypeReference(393,400): 'MyClass'
+  null
+
+KtUserType(393,400): 'MyClass'
+  null
+
+KtNameReferenceExpression(393,400): 'MyClass'
+  null
+
+KtPropertyAccessor(405,414): 'get() = Y'
+  null
+
+KtParameterList(408,410): '()'
+  null
+
+KtNameReferenceExpression(413,414): 'Y'
+  null
+
+KtProperty(416,452): 'val property4'
+  null
+
+KtPropertyAccessor(434,452): 'get(): MyClass = Y'
+  null
+
+KtParameterList(437,439): '()'
+  null
+
+KtTypeReference(441,448): 'MyClass'
+  null
+
+KtUserType(441,448): 'MyClass'
+  null
+
+KtNameReferenceExpression(441,448): 'MyClass'
+  null
+
+KtNameReferenceExpression(451,452): 'Y'
+  null
+
+KtNamedFunction(454,515): 'fun main() {'
+  null
+
+KtParameterList(462,464): '()'
+  null
+
+KtBlockExpression(465,515): '{'
+  null
+
+KtProperty(471,493): 'var m: MyClass? = null'
+  null
+
+KtTypeReference(478,486): 'MyClass?'
+  null
+
+KtNullableType(478,486): 'MyClass?'
+  null
+
+KtUserType(478,485): 'MyClass'
+  null
+
+KtNameReferenceExpression(478,485): 'MyClass'
+  null
+
+KtConstantExpression(489,493): 'null'
+  null
+
+KtBinaryExpression(498,503): 'm = Y'
+  null
+
+KtNameReferenceExpression(498,499): 'm'
+  null
+
+KtOperationReferenceExpression(500,501): '='
+  null
+
+KtNameReferenceExpression(502,503): 'Y'
+  null
+
+KtBinaryExpression(508,513): 'm = X'
+  null
+
+KtNameReferenceExpression(508,509): 'm'
+  null
+
+KtOperationReferenceExpression(510,511): '='
+  null
+
+KtNameReferenceExpression(512,513): 'X'
+  null
+
+KtNamedFunction(517,582): 'fun bar(b: Boolean): MyClass {'
+  null
+
+KtParameterList(524,536): '(b: Boolean)'
+  null
+
+KtParameter(525,535): 'b: Boolean'
+  null
+
+KtTypeReference(528,535): 'Boolean'
+  null
+
+KtUserType(528,535): 'Boolean'
+  null
+
+KtNameReferenceExpression(528,535): 'Boolean'
+  null
+
+KtTypeReference(538,545): 'MyClass'
+  null
+
+KtUserType(538,545): 'MyClass'
+  null
+
+KtNameReferenceExpression(538,545): 'MyClass'
+  null
+
+KtBlockExpression(546,582): '{'
+  null
+
+KtIfExpression(552,567): 'if (b) return X'
+  null
+
+KtContainerNode(556,557): 'b'
+  null
+
+KtNameReferenceExpression(556,557): 'b'
+  null
+
+KtContainerNodeForControlStructureBody(559,567): 'return X'
+  null
+
+KtReturnExpression(559,567): 'return X'
+  null
+
+KtNameReferenceExpression(566,567): 'X'
+  null
+
+KtReturnExpression(572,580): 'return Y'
+  null
+
+KtNameReferenceExpression(579,580): 'Y'
+  null

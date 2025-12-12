@@ -1,0 +1,2 @@
+KtOperationReferenceExpression(58,65): 'infixOp'
+  null

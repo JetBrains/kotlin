@@ -1,0 +1,2 @@
+KtConstructorDelegationCall(115,132): 'this(i, j, i * j)'
+  null

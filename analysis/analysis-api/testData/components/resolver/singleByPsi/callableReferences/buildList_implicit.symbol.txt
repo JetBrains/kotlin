@@ -1,0 +1,2 @@
+KtCallableReferenceExpression(102,107): '::add'
+  null

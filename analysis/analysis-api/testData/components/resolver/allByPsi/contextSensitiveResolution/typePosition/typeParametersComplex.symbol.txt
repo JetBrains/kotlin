@@ -1,0 +1,917 @@
+KtFile: 'typeParametersComplex.kt'
+  null
+
+KtPackageDirective(0,0): ''
+  null
+
+KtImportList(0,0): ''
+  null
+
+KtClass(78,229): 'sealed class SealedGeneric<T> {'
+  null
+
+KtDeclarationModifierList(78,84): 'sealed'
+  null
+
+KtTypeParameterList(104,107): '<T>'
+  null
+
+KtTypeParameter(105,106): 'T'
+  null
+
+KtClassBody(108,229): '{'
+  null
+
+KtClass(114,168): 'class SGOption1<T>(val prop1: Int): SealedGeneric<T>()'
+  null
+
+KtTypeParameterList(129,132): '<T>'
+  null
+
+KtTypeParameter(130,131): 'T'
+  null
+
+KtPrimaryConstructor(132,148): '(val prop1: Int)'
+  null
+
+KtParameterList(132,148): '(val prop1: Int)'
+  null
+
+KtParameter(133,147): 'val prop1: Int'
+  null
+
+KtTypeReference(144,147): 'Int'
+  null
+
+KtUserType(144,147): 'Int'
+  null
+
+KtNameReferenceExpression(144,147): 'Int'
+  null
+
+KtSuperTypeList(150,168): 'SealedGeneric<T>()'
+  null
+
+KtSuperTypeCallEntry(150,168): 'SealedGeneric<T>()'
+  null
+
+KtConstructorCalleeExpression(150,166): 'SealedGeneric<T>'
+  null
+
+KtTypeReference(150,166): 'SealedGeneric<T>'
+  null
+
+KtUserType(150,166): 'SealedGeneric<T>'
+  null
+
+KtNameReferenceExpression(150,163): 'SealedGeneric'
+  null
+
+KtTypeArgumentList(163,166): '<T>'
+  null
+
+KtTypeProjection(164,165): 'T'
+  null
+
+KtTypeReference(164,165): 'T'
+  null
+
+KtUserType(164,165): 'T'
+  null
+
+KtNameReferenceExpression(164,165): 'T'
+  null
+
+KtValueArgumentList(166,168): '()'
+  null
+
+KtClass(173,227): 'class SGOption2<T>(val prop2: Int): SealedGeneric<T>()'
+  null
+
+KtTypeParameterList(188,191): '<T>'
+  null
+
+KtTypeParameter(189,190): 'T'
+  null
+
+KtPrimaryConstructor(191,207): '(val prop2: Int)'
+  null
+
+KtParameterList(191,207): '(val prop2: Int)'
+  null
+
+KtParameter(192,206): 'val prop2: Int'
+  null
+
+KtTypeReference(203,206): 'Int'
+  null
+
+KtUserType(203,206): 'Int'
+  null
+
+KtNameReferenceExpression(203,206): 'Int'
+  null
+
+KtSuperTypeList(209,227): 'SealedGeneric<T>()'
+  null
+
+KtSuperTypeCallEntry(209,227): 'SealedGeneric<T>()'
+  null
+
+KtConstructorCalleeExpression(209,225): 'SealedGeneric<T>'
+  null
+
+KtTypeReference(209,225): 'SealedGeneric<T>'
+  null
+
+KtUserType(209,225): 'SealedGeneric<T>'
+  null
+
+KtNameReferenceExpression(209,222): 'SealedGeneric'
+  null
+
+KtTypeArgumentList(222,225): '<T>'
+  null
+
+KtTypeProjection(223,224): 'T'
+  null
+
+KtTypeReference(223,224): 'T'
+  null
+
+KtUserType(223,224): 'T'
+  null
+
+KtNameReferenceExpression(223,224): 'T'
+  null
+
+KtValueArgumentList(225,227): '()'
+  null
+
+KtNamedFunction(230,758): 'fun testTypeParams(instance1: SealedGeneric<*>, instance2: SealedGeneric<out CharSequence>): Int {'
+  null
+
+KtParameterList(248,321): '(instance1: SealedGeneric<*>, instance2: SealedGeneric<out CharSequence>)'
+  null
+
+KtParameter(249,276): 'instance1: SealedGeneric<*>'
+  null
+
+KtTypeReference(260,276): 'SealedGeneric<*>'
+  null
+
+KtUserType(260,276): 'SealedGeneric<*>'
+  null
+
+KtNameReferenceExpression(260,273): 'SealedGeneric'
+  null
+
+KtTypeArgumentList(273,276): '<*>'
+  null
+
+KtTypeProjection(274,275): '*'
+  null
+
+KtParameter(278,320): 'instance2: SealedGeneric<out CharSequence>'
+  null
+
+KtTypeReference(289,320): 'SealedGeneric<out CharSequence>'
+  null
+
+KtUserType(289,320): 'SealedGeneric<out CharSequence>'
+  null
+
+KtNameReferenceExpression(289,302): 'SealedGeneric'
+  null
+
+KtTypeArgumentList(302,320): '<out CharSequence>'
+  null
+
+KtTypeProjection(303,319): 'out CharSequence'
+  null
+
+KtDeclarationModifierList(303,306): 'out'
+  null
+
+KtTypeReference(307,319): 'CharSequence'
+  null
+
+KtUserType(307,319): 'CharSequence'
+  null
+
+KtNameReferenceExpression(307,319): 'CharSequence'
+  null
+
+KtTypeReference(323,326): 'Int'
+  null
+
+KtUserType(323,326): 'Int'
+  null
+
+KtNameReferenceExpression(323,326): 'Int'
+  null
+
+KtBlockExpression(327,758): '{'
+  null
+
+KtIfExpression(333,407): 'if (instance1 is SGOption1<String>) {'
+  null
+
+KtContainerNode(337,367): 'instance1 is SGOption1<String>'
+  null
+
+KtIsExpression(337,367): 'instance1 is SGOption1<String>'
+  null
+
+KtNameReferenceExpression(337,346): 'instance1'
+  null
+
+KtOperationReferenceExpression(347,349): 'is'
+  null
+
+KtTypeReference(350,367): 'SGOption1<String>'
+  null
+
+KtUserType(350,367): 'SGOption1<String>'
+  null
+
+KtNameReferenceExpression(350,359): 'SGOption1'
+  null
+
+KtTypeArgumentList(359,367): '<String>'
+  null
+
+KtTypeProjection(360,366): 'String'
+  null
+
+KtTypeReference(360,366): 'String'
+  null
+
+KtUserType(360,366): 'String'
+  null
+
+KtNameReferenceExpression(360,366): 'String'
+  null
+
+KtContainerNodeForControlStructureBody(369,407): '{'
+  null
+
+KtBlockExpression(369,407): '{'
+  null
+
+KtReturnExpression(379,401): 'return instance1.prop1'
+  null
+
+KtDotQualifiedExpression(386,401): 'instance1.prop1'
+  null
+
+KtNameReferenceExpression(386,395): 'instance1'
+  null
+
+KtNameReferenceExpression(396,401): 'prop1'
+  null
+
+KtIfExpression(412,481): 'if (instance1 is SGOption1<*>) {'
+  null
+
+KtContainerNode(416,441): 'instance1 is SGOption1<*>'
+  null
+
+KtIsExpression(416,441): 'instance1 is SGOption1<*>'
+  null
+
+KtNameReferenceExpression(416,425): 'instance1'
+  null
+
+KtOperationReferenceExpression(426,428): 'is'
+  null
+
+KtTypeReference(429,441): 'SGOption1<*>'
+  null
+
+KtUserType(429,441): 'SGOption1<*>'
+  null
+
+KtNameReferenceExpression(429,438): 'SGOption1'
+  null
+
+KtTypeArgumentList(438,441): '<*>'
+  null
+
+KtTypeProjection(439,440): '*'
+  null
+
+KtContainerNodeForControlStructureBody(443,481): '{'
+  null
+
+KtBlockExpression(443,481): '{'
+  null
+
+KtReturnExpression(453,475): 'return instance1.prop1'
+  null
+
+KtDotQualifiedExpression(460,475): 'instance1.prop1'
+  null
+
+KtNameReferenceExpression(460,469): 'instance1'
+  null
+
+KtNameReferenceExpression(470,475): 'prop1'
+  null
+
+KtIfExpression(486,566): 'if (instance2 is SGOption2<CharSequence>) {'
+  null
+
+KtContainerNode(490,526): 'instance2 is SGOption2<CharSequence>'
+  null
+
+KtIsExpression(490,526): 'instance2 is SGOption2<CharSequence>'
+  null
+
+KtNameReferenceExpression(490,499): 'instance2'
+  null
+
+KtOperationReferenceExpression(500,502): 'is'
+  null
+
+KtTypeReference(503,526): 'SGOption2<CharSequence>'
+  null
+
+KtUserType(503,526): 'SGOption2<CharSequence>'
+  null
+
+KtNameReferenceExpression(503,512): 'SGOption2'
+  null
+
+KtTypeArgumentList(512,526): '<CharSequence>'
+  null
+
+KtTypeProjection(513,525): 'CharSequence'
+  null
+
+KtTypeReference(513,525): 'CharSequence'
+  null
+
+KtUserType(513,525): 'CharSequence'
+  null
+
+KtNameReferenceExpression(513,525): 'CharSequence'
+  null
+
+KtContainerNodeForControlStructureBody(528,566): '{'
+  null
+
+KtBlockExpression(528,566): '{'
+  null
+
+KtReturnExpression(538,560): 'return instance2.prop2'
+  null
+
+KtDotQualifiedExpression(545,560): 'instance2.prop2'
+  null
+
+KtNameReferenceExpression(545,554): 'instance2'
+  null
+
+KtNameReferenceExpression(555,560): 'prop2'
+  null
+
+KtIfExpression(571,654): 'if (instance2 is SGOption2<in CharSequence>) {'
+  null
+
+KtContainerNode(575,614): 'instance2 is SGOption2<in CharSequence>'
+  null
+
+KtIsExpression(575,614): 'instance2 is SGOption2<in CharSequence>'
+  null
+
+KtNameReferenceExpression(575,584): 'instance2'
+  null
+
+KtOperationReferenceExpression(585,587): 'is'
+  null
+
+KtTypeReference(588,614): 'SGOption2<in CharSequence>'
+  null
+
+KtUserType(588,614): 'SGOption2<in CharSequence>'
+  null
+
+KtNameReferenceExpression(588,597): 'SGOption2'
+  null
+
+KtTypeArgumentList(597,614): '<in CharSequence>'
+  null
+
+KtTypeProjection(598,613): 'in CharSequence'
+  null
+
+KtDeclarationModifierList(598,600): 'in'
+  null
+
+KtTypeReference(601,613): 'CharSequence'
+  null
+
+KtUserType(601,613): 'CharSequence'
+  null
+
+KtNameReferenceExpression(601,613): 'CharSequence'
+  null
+
+KtContainerNodeForControlStructureBody(616,654): '{'
+  null
+
+KtBlockExpression(616,654): '{'
+  null
+
+KtReturnExpression(626,648): 'return instance2.prop2'
+  null
+
+KtDotQualifiedExpression(633,648): 'instance2.prop2'
+  null
+
+KtNameReferenceExpression(633,642): 'instance2'
+  null
+
+KtNameReferenceExpression(643,648): 'prop2'
+  null
+
+KtIfExpression(659,743): 'if (instance2 is SGOption2<out CharSequence>) {'
+  null
+
+KtContainerNode(663,703): 'instance2 is SGOption2<out CharSequence>'
+  null
+
+KtIsExpression(663,703): 'instance2 is SGOption2<out CharSequence>'
+  null
+
+KtNameReferenceExpression(663,672): 'instance2'
+  null
+
+KtOperationReferenceExpression(673,675): 'is'
+  null
+
+KtTypeReference(676,703): 'SGOption2<out CharSequence>'
+  null
+
+KtUserType(676,703): 'SGOption2<out CharSequence>'
+  null
+
+KtNameReferenceExpression(676,685): 'SGOption2'
+  null
+
+KtTypeArgumentList(685,703): '<out CharSequence>'
+  null
+
+KtTypeProjection(686,702): 'out CharSequence'
+  null
+
+KtDeclarationModifierList(686,689): 'out'
+  null
+
+KtTypeReference(690,702): 'CharSequence'
+  null
+
+KtUserType(690,702): 'CharSequence'
+  null
+
+KtNameReferenceExpression(690,702): 'CharSequence'
+  null
+
+KtContainerNodeForControlStructureBody(705,743): '{'
+  null
+
+KtBlockExpression(705,743): '{'
+  null
+
+KtReturnExpression(715,737): 'return instance2.prop2'
+  null
+
+KtDotQualifiedExpression(722,737): 'instance2.prop2'
+  null
+
+KtNameReferenceExpression(722,731): 'instance2'
+  null
+
+KtNameReferenceExpression(732,737): 'prop2'
+  null
+
+KtReturnExpression(748,756): 'return 0'
+  null
+
+KtConstantExpression(755,756): '0'
+  null
+
+KtNamedFunction(760,968): 'fun <T>testTypeParams2(a: SealedGeneric<T>) {'
+  null
+
+KtTypeParameterList(764,767): '<T>'
+  null
+
+KtTypeParameter(765,766): 'T'
+  null
+
+KtParameterList(782,803): '(a: SealedGeneric<T>)'
+  null
+
+KtParameter(783,802): 'a: SealedGeneric<T>'
+  null
+
+KtTypeReference(786,802): 'SealedGeneric<T>'
+  null
+
+KtUserType(786,802): 'SealedGeneric<T>'
+  null
+
+KtNameReferenceExpression(786,799): 'SealedGeneric'
+  null
+
+KtTypeArgumentList(799,802): '<T>'
+  null
+
+KtTypeProjection(800,801): 'T'
+  null
+
+KtTypeReference(800,801): 'T'
+  null
+
+KtUserType(800,801): 'T'
+  null
+
+KtNameReferenceExpression(800,801): 'T'
+  null
+
+KtBlockExpression(804,968): '{'
+  null
+
+KtWhenExpression(810,885): 'when(a) {'
+  null
+
+KtNameReferenceExpression(815,816): 'a'
+  null
+
+KtWhenEntry(828,849): 'is SGOption1<*> -> ""'
+  null
+
+KtWhenConditionIsPattern(828,843): 'is SGOption1<*>'
+  null
+
+KtTypeReference(831,843): 'SGOption1<*>'
+  null
+
+KtUserType(831,843): 'SGOption1<*>'
+  null
+
+KtNameReferenceExpression(831,840): 'SGOption1'
+  null
+
+KtTypeArgumentList(840,843): '<*>'
+  null
+
+KtTypeProjection(841,842): '*'
+  null
+
+KtStringTemplateExpression(847,849): '""'
+  null
+
+KtWhenEntry(858,879): 'is SGOption2<*> -> ""'
+  null
+
+KtWhenConditionIsPattern(858,873): 'is SGOption2<*>'
+  null
+
+KtTypeReference(861,873): 'SGOption2<*>'
+  null
+
+KtUserType(861,873): 'SGOption2<*>'
+  null
+
+KtNameReferenceExpression(861,870): 'SGOption2'
+  null
+
+KtTypeArgumentList(870,873): '<*>'
+  null
+
+KtTypeProjection(871,872): '*'
+  null
+
+KtStringTemplateExpression(877,879): '""'
+  null
+
+KtWhenExpression(891,966): 'when(a) {'
+  null
+
+KtNameReferenceExpression(896,897): 'a'
+  null
+
+KtWhenEntry(909,930): 'is SGOption1<T> -> ""'
+  null
+
+KtWhenConditionIsPattern(909,924): 'is SGOption1<T>'
+  null
+
+KtTypeReference(912,924): 'SGOption1<T>'
+  null
+
+KtUserType(912,924): 'SGOption1<T>'
+  null
+
+KtNameReferenceExpression(912,921): 'SGOption1'
+  null
+
+KtTypeArgumentList(921,924): '<T>'
+  null
+
+KtTypeProjection(922,923): 'T'
+  null
+
+KtTypeReference(922,923): 'T'
+  null
+
+KtUserType(922,923): 'T'
+  null
+
+KtNameReferenceExpression(922,923): 'T'
+  null
+
+KtStringTemplateExpression(928,930): '""'
+  null
+
+KtWhenEntry(939,960): 'is SGOption2<T> -> ""'
+  null
+
+KtWhenConditionIsPattern(939,954): 'is SGOption2<T>'
+  null
+
+KtTypeReference(942,954): 'SGOption2<T>'
+  null
+
+KtUserType(942,954): 'SGOption2<T>'
+  null
+
+KtNameReferenceExpression(942,951): 'SGOption2'
+  null
+
+KtTypeArgumentList(951,954): '<T>'
+  null
+
+KtTypeProjection(952,953): 'T'
+  null
+
+KtTypeReference(952,953): 'T'
+  null
+
+KtUserType(952,953): 'T'
+  null
+
+KtNameReferenceExpression(952,953): 'T'
+  null
+
+KtStringTemplateExpression(958,960): '""'
+  null
+
+KtNamedFunction(970,1140): 'fun testTypeParams2(a: SealedGeneric<String>, b: SealedGeneric<String> ) {'
+  null
+
+KtParameterList(989,1042): '(a: SealedGeneric<String>, b: SealedGeneric<String> )'
+  null
+
+KtParameter(990,1014): 'a: SealedGeneric<String>'
+  null
+
+KtTypeReference(993,1014): 'SealedGeneric<String>'
+  null
+
+KtUserType(993,1014): 'SealedGeneric<String>'
+  null
+
+KtNameReferenceExpression(993,1006): 'SealedGeneric'
+  null
+
+KtTypeArgumentList(1006,1014): '<String>'
+  null
+
+KtTypeProjection(1007,1013): 'String'
+  null
+
+KtTypeReference(1007,1013): 'String'
+  null
+
+KtUserType(1007,1013): 'String'
+  null
+
+KtNameReferenceExpression(1007,1013): 'String'
+  null
+
+KtParameter(1016,1040): 'b: SealedGeneric<String>'
+  null
+
+KtTypeReference(1019,1040): 'SealedGeneric<String>'
+  null
+
+KtUserType(1019,1040): 'SealedGeneric<String>'
+  null
+
+KtNameReferenceExpression(1019,1032): 'SealedGeneric'
+  null
+
+KtTypeArgumentList(1032,1040): '<String>'
+  null
+
+KtTypeProjection(1033,1039): 'String'
+  null
+
+KtTypeReference(1033,1039): 'String'
+  null
+
+KtUserType(1033,1039): 'String'
+  null
+
+KtNameReferenceExpression(1033,1039): 'String'
+  null
+
+KtBlockExpression(1043,1140): '{'
+  null
+
+KtWhenExpression(1049,1118): 'when(a) {'
+  null
+
+KtNameReferenceExpression(1054,1055): 'a'
+  null
+
+KtWhenEntry(1067,1085): 'is SGOption1 -> ""'
+  null
+
+KtWhenConditionIsPattern(1067,1079): 'is SGOption1'
+  null
+
+KtTypeReference(1070,1079): 'SGOption1'
+  null
+
+KtUserType(1070,1079): 'SGOption1'
+  null
+
+KtNameReferenceExpression(1070,1079): 'SGOption1'
+  null
+
+KtStringTemplateExpression(1083,1085): '""'
+  null
+
+KtWhenEntry(1094,1112): 'is SGOption2 -> ""'
+  null
+
+KtWhenConditionIsPattern(1094,1106): 'is SGOption2'
+  null
+
+KtTypeReference(1097,1106): 'SGOption2'
+  null
+
+KtUserType(1097,1106): 'SGOption2'
+  null
+
+KtNameReferenceExpression(1097,1106): 'SGOption2'
+  null
+
+KtStringTemplateExpression(1110,1112): '""'
+  null
+
+KtBinaryExpressionWithTypeRHS(1124,1138): 'b as SGOption1'
+  null
+
+KtNameReferenceExpression(1124,1125): 'b'
+  null
+
+KtOperationReferenceExpression(1126,1128): 'as'
+  null
+
+KtTypeReference(1129,1138): 'SGOption1'
+  null
+
+KtUserType(1129,1138): 'SGOption1'
+  null
+
+KtNameReferenceExpression(1129,1138): 'SGOption1'
+  null
+
+KtNamedFunction(1142,1269): 'fun testTypeParams3(a: SealedGeneric<*>, b: SealedGeneric<*>) {'
+  null
+
+KtParameterList(1161,1203): '(a: SealedGeneric<*>, b: SealedGeneric<*>)'
+  null
+
+KtParameter(1162,1181): 'a: SealedGeneric<*>'
+  null
+
+KtTypeReference(1165,1181): 'SealedGeneric<*>'
+  null
+
+KtUserType(1165,1181): 'SealedGeneric<*>'
+  null
+
+KtNameReferenceExpression(1165,1178): 'SealedGeneric'
+  null
+
+KtTypeArgumentList(1178,1181): '<*>'
+  null
+
+KtTypeProjection(1179,1180): '*'
+  null
+
+KtParameter(1183,1202): 'b: SealedGeneric<*>'
+  null
+
+KtTypeReference(1186,1202): 'SealedGeneric<*>'
+  null
+
+KtUserType(1186,1202): 'SealedGeneric<*>'
+  null
+
+KtNameReferenceExpression(1186,1199): 'SealedGeneric'
+  null
+
+KtTypeArgumentList(1199,1202): '<*>'
+  null
+
+KtTypeProjection(1200,1201): '*'
+  null
+
+KtBlockExpression(1204,1269): '{'
+  null
+
+KtBinaryExpressionWithTypeRHS(1210,1232): 'a as SGOption1<String>'
+  null
+
+KtNameReferenceExpression(1210,1211): 'a'
+  null
+
+KtOperationReferenceExpression(1212,1214): 'as'
+  null
+
+KtTypeReference(1215,1232): 'SGOption1<String>'
+  null
+
+KtUserType(1215,1232): 'SGOption1<String>'
+  null
+
+KtNameReferenceExpression(1215,1224): 'SGOption1'
+  null
+
+KtTypeArgumentList(1224,1232): '<String>'
+  null
+
+KtTypeProjection(1225,1231): 'String'
+  null
+
+KtTypeReference(1225,1231): 'String'
+  null
+
+KtUserType(1225,1231): 'String'
+  null
+
+KtNameReferenceExpression(1225,1231): 'String'
+  null
+
+KtIfExpression(1237,1267): 'if (b is SGOption1<String>) {}'
+  null
+
+KtContainerNode(1241,1263): 'b is SGOption1<String>'
+  null
+
+KtIsExpression(1241,1263): 'b is SGOption1<String>'
+  null
+
+KtNameReferenceExpression(1241,1242): 'b'
+  null
+
+KtOperationReferenceExpression(1243,1245): 'is'
+  null
+
+KtTypeReference(1246,1263): 'SGOption1<String>'
+  null
+
+KtUserType(1246,1263): 'SGOption1<String>'
+  null
+
+KtNameReferenceExpression(1246,1255): 'SGOption1'
+  null
+
+KtTypeArgumentList(1255,1263): '<String>'
+  null
+
+KtTypeProjection(1256,1262): 'String'
+  null
+
+KtTypeReference(1256,1262): 'String'
+  null
+
+KtUserType(1256,1262): 'String'
+  null
+
+KtNameReferenceExpression(1256,1262): 'String'
+  null
+
+KtContainerNodeForControlStructureBody(1265,1267): '{}'
+  null
+
+KtBlockExpression(1265,1267): '{}'
+  null

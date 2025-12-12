@@ -1,0 +1,2 @@
+KtSuperTypeCallEntry(93,111): 'Foo<String>("str")'
+  null

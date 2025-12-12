@@ -1,0 +1,15 @@
+<caret_1>:
+  KDocName(30,51): 'ReferredContainerJava'
+    null
+
+<caret_2>:
+  KDocName(60,81): 'ReferredContainerJava'
+    null
+
+<caret_3>:
+  KDocName(109,130): 'ReferredContainerJava'
+    null
+
+<caret_4>:
+  KDocName(154,175): 'ReferredContainerJava'
+    null

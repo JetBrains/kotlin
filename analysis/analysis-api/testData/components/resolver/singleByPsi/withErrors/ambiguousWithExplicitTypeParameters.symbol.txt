@@ -1,0 +1,2 @@
+KtCallExpression(128,144): 'function<Int>(1)'
+  null

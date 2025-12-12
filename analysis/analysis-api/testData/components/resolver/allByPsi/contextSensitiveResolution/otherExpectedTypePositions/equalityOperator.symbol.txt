@@ -1,0 +1,680 @@
+KtFile: 'equalityOperator.kt'
+  null
+
+KtPackageDirective(0,0): ''
+  null
+
+KtImportList(0,0): ''
+  null
+
+KtClass(78,108): 'enum class MyEnum {'
+  null
+
+KtDeclarationModifierList(78,82): 'enum'
+  null
+
+KtClassBody(96,108): '{'
+  null
+
+KtEnumEntry(102,104): 'X,'
+  null
+
+KtEnumEntry(105,106): 'Y'
+  null
+
+KtNamedFunction(110,138): 'fun <X> id(x: X): X = TODO()'
+  null
+
+KtTypeParameterList(114,117): '<X>'
+  null
+
+KtTypeParameter(115,116): 'X'
+  null
+
+KtParameterList(120,126): '(x: X)'
+  null
+
+KtParameter(121,125): 'x: X'
+  null
+
+KtTypeReference(124,125): 'X'
+  null
+
+KtUserType(124,125): 'X'
+  null
+
+KtNameReferenceExpression(124,125): 'X'
+  null
+
+KtTypeReference(128,129): 'X'
+  null
+
+KtUserType(128,129): 'X'
+  null
+
+KtNameReferenceExpression(128,129): 'X'
+  null
+
+KtCallExpression(132,138): 'TODO()'
+  null
+
+KtNameReferenceExpression(132,136): 'TODO'
+  null
+
+KtValueArgumentList(136,138): '()'
+  null
+
+KtNamedFunction(140,1157): 'fun foo(a: MyEnum) {'
+  null
+
+KtParameterList(147,158): '(a: MyEnum)'
+  null
+
+KtParameter(148,157): 'a: MyEnum'
+  null
+
+KtTypeReference(151,157): 'MyEnum'
+  null
+
+KtUserType(151,157): 'MyEnum'
+  null
+
+KtNameReferenceExpression(151,157): 'MyEnum'
+  null
+
+KtBlockExpression(159,1157): '{'
+  null
+
+KtProperty(165,181): 'val L = MyEnum.X'
+  null
+
+KtDotQualifiedExpression(173,181): 'MyEnum.X'
+  null
+
+KtNameReferenceExpression(173,179): 'MyEnum'
+  null
+
+KtNameReferenceExpression(180,181): 'X'
+  null
+
+KtIfExpression(187,201): 'if (a == X) {}'
+  null
+
+KtContainerNode(191,197): 'a == X'
+  null
+
+KtBinaryExpression(191,197): 'a == X'
+  null
+
+KtNameReferenceExpression(191,192): 'a'
+  null
+
+KtOperationReferenceExpression(193,195): '=='
+  null
+
+KtNameReferenceExpression(196,197): 'X'
+  null
+
+KtContainerNodeForControlStructureBody(199,201): '{}'
+  null
+
+KtBlockExpression(199,201): '{}'
+  null
+
+KtIfExpression(206,220): 'if (a != X) {}'
+  null
+
+KtContainerNode(210,216): 'a != X'
+  null
+
+KtBinaryExpression(210,216): 'a != X'
+  null
+
+KtNameReferenceExpression(210,211): 'a'
+  null
+
+KtOperationReferenceExpression(212,214): '!='
+  null
+
+KtNameReferenceExpression(215,216): 'X'
+  null
+
+KtContainerNodeForControlStructureBody(218,220): '{}'
+  null
+
+KtBlockExpression(218,220): '{}'
+  null
+
+KtIfExpression(225,240): 'if (a === X) {}'
+  null
+
+KtContainerNode(229,236): 'a === X'
+  null
+
+KtBinaryExpression(229,236): 'a === X'
+  null
+
+KtNameReferenceExpression(229,230): 'a'
+  null
+
+KtOperationReferenceExpression(231,234): '==='
+  null
+
+KtNameReferenceExpression(235,236): 'X'
+  null
+
+KtContainerNodeForControlStructureBody(238,240): '{}'
+  null
+
+KtBlockExpression(238,240): '{}'
+  null
+
+KtIfExpression(245,260): 'if (a !== X) {}'
+  null
+
+KtContainerNode(249,256): 'a !== X'
+  null
+
+KtBinaryExpression(249,256): 'a !== X'
+  null
+
+KtNameReferenceExpression(249,250): 'a'
+  null
+
+KtOperationReferenceExpression(251,254): '!=='
+  null
+
+KtNameReferenceExpression(255,256): 'X'
+  null
+
+KtContainerNodeForControlStructureBody(258,260): '{}'
+  null
+
+KtBlockExpression(258,260): '{}'
+  null
+
+KtIfExpression(265,279): 'if (a == L) {}'
+  null
+
+KtContainerNode(269,275): 'a == L'
+  null
+
+KtBinaryExpression(269,275): 'a == L'
+  null
+
+KtNameReferenceExpression(269,270): 'a'
+  null
+
+KtOperationReferenceExpression(271,273): '=='
+  null
+
+KtNameReferenceExpression(274,275): 'L'
+  null
+
+KtContainerNodeForControlStructureBody(277,279): '{}'
+  null
+
+KtBlockExpression(277,279): '{}'
+  null
+
+KtIfExpression(455,469): 'if (X == a) {}'
+  null
+
+KtContainerNode(459,465): 'X == a'
+  null
+
+KtBinaryExpression(459,465): 'X == a'
+  null
+
+KtNameReferenceExpression(459,460): 'X'
+  null
+
+KtOperationReferenceExpression(461,463): '=='
+  null
+
+KtNameReferenceExpression(464,465): 'a'
+  null
+
+KtContainerNodeForControlStructureBody(467,469): '{}'
+  null
+
+KtBlockExpression(467,469): '{}'
+  null
+
+KtIfExpression(474,488): 'if (L == a) {}'
+  null
+
+KtContainerNode(478,484): 'L == a'
+  null
+
+KtBinaryExpression(478,484): 'L == a'
+  null
+
+KtNameReferenceExpression(478,479): 'L'
+  null
+
+KtOperationReferenceExpression(480,482): '=='
+  null
+
+KtNameReferenceExpression(483,484): 'a'
+  null
+
+KtContainerNodeForControlStructureBody(486,488): '{}'
+  null
+
+KtBlockExpression(486,488): '{}'
+  null
+
+KtIfExpression(683,701): 'if (a == id(X)) {}'
+  null
+
+KtContainerNode(687,697): 'a == id(X)'
+  null
+
+KtBinaryExpression(687,697): 'a == id(X)'
+  null
+
+KtNameReferenceExpression(687,688): 'a'
+  null
+
+KtOperationReferenceExpression(689,691): '=='
+  null
+
+KtCallExpression(692,697): 'id(X)'
+  null
+
+KtNameReferenceExpression(692,694): 'id'
+  null
+
+KtValueArgumentList(694,697): '(X)'
+  null
+
+KtValueArgument(695,696): 'X'
+  null
+
+KtNameReferenceExpression(695,696): 'X'
+  null
+
+KtContainerNodeForControlStructureBody(699,701): '{}'
+  null
+
+KtBlockExpression(699,701): '{}'
+  null
+
+KtIfExpression(706,724): 'if (a == id(L)) {}'
+  null
+
+KtContainerNode(710,720): 'a == id(L)'
+  null
+
+KtBinaryExpression(710,720): 'a == id(L)'
+  null
+
+KtNameReferenceExpression(710,711): 'a'
+  null
+
+KtOperationReferenceExpression(712,714): '=='
+  null
+
+KtCallExpression(715,720): 'id(L)'
+  null
+
+KtNameReferenceExpression(715,717): 'id'
+  null
+
+KtValueArgumentList(717,720): '(L)'
+  null
+
+KtValueArgument(718,719): 'L'
+  null
+
+KtNameReferenceExpression(718,719): 'L'
+  null
+
+KtContainerNodeForControlStructureBody(722,724): '{}'
+  null
+
+KtBlockExpression(722,724): '{}'
+  null
+
+KtWhenExpression(730,849): 'when {'
+  null
+
+KtWhenEntry(745,757): 'a == X -> {}'
+  null
+
+KtWhenConditionWithExpression(745,751): 'a == X'
+  null
+
+KtBinaryExpression(745,751): 'a == X'
+  null
+
+KtNameReferenceExpression(745,746): 'a'
+  null
+
+KtOperationReferenceExpression(747,749): '=='
+  null
+
+KtNameReferenceExpression(750,751): 'X'
+  null
+
+KtBlockExpression(755,757): '{}'
+  null
+
+KtWhenEntry(766,778): 'a != Y -> {}'
+  null
+
+KtWhenConditionWithExpression(766,772): 'a != Y'
+  null
+
+KtBinaryExpression(766,772): 'a != Y'
+  null
+
+KtNameReferenceExpression(766,767): 'a'
+  null
+
+KtOperationReferenceExpression(768,770): '!='
+  null
+
+KtNameReferenceExpression(771,772): 'Y'
+  null
+
+KtBlockExpression(776,778): '{}'
+  null
+
+KtWhenEntry(787,800): 'a === X -> {}'
+  null
+
+KtWhenConditionWithExpression(787,794): 'a === X'
+  null
+
+KtBinaryExpression(787,794): 'a === X'
+  null
+
+KtNameReferenceExpression(787,788): 'a'
+  null
+
+KtOperationReferenceExpression(789,792): '==='
+  null
+
+KtNameReferenceExpression(793,794): 'X'
+  null
+
+KtBlockExpression(798,800): '{}'
+  null
+
+KtWhenEntry(809,822): 'a !== Y -> {}'
+  null
+
+KtWhenConditionWithExpression(809,816): 'a !== Y'
+  null
+
+KtBinaryExpression(809,816): 'a !== Y'
+  null
+
+KtNameReferenceExpression(809,810): 'a'
+  null
+
+KtOperationReferenceExpression(811,814): '!=='
+  null
+
+KtNameReferenceExpression(815,816): 'Y'
+  null
+
+KtBlockExpression(820,822): '{}'
+  null
+
+KtWhenEntry(831,843): 'a == L -> {}'
+  null
+
+KtWhenConditionWithExpression(831,837): 'a == L'
+  null
+
+KtBinaryExpression(831,837): 'a == L'
+  null
+
+KtNameReferenceExpression(831,832): 'a'
+  null
+
+KtOperationReferenceExpression(833,835): '=='
+  null
+
+KtNameReferenceExpression(836,837): 'L'
+  null
+
+KtBlockExpression(841,843): '{}'
+  null
+
+KtWhenExpression(855,906): 'when (a) {'
+  null
+
+KtNameReferenceExpression(861,862): 'a'
+  null
+
+KtWhenEntry(874,881): 'X -> {}'
+  null
+
+KtWhenConditionWithExpression(874,875): 'X'
+  null
+
+KtNameReferenceExpression(874,875): 'X'
+  null
+
+KtBlockExpression(879,881): '{}'
+  null
+
+KtWhenEntry(890,900): 'Y, L -> {}'
+  null
+
+KtWhenConditionWithExpression(890,891): 'Y'
+  null
+
+KtNameReferenceExpression(890,891): 'Y'
+  null
+
+KtWhenConditionWithExpression(893,894): 'L'
+  null
+
+KtNameReferenceExpression(893,894): 'L'
+  null
+
+KtBlockExpression(898,900): '{}'
+  null
+
+KtWhenExpression(912,971): 'when (val c = a) {'
+  null
+
+KtProperty(918,927): 'val c = a'
+  null
+
+KtNameReferenceExpression(926,927): 'a'
+  null
+
+KtWhenEntry(939,946): 'X -> {}'
+  null
+
+KtWhenConditionWithExpression(939,940): 'X'
+  null
+
+KtNameReferenceExpression(939,940): 'X'
+  null
+
+KtBlockExpression(944,946): '{}'
+  null
+
+KtWhenEntry(955,965): 'Y, L -> {}'
+  null
+
+KtWhenConditionWithExpression(955,956): 'Y'
+  null
+
+KtNameReferenceExpression(955,956): 'Y'
+  null
+
+KtWhenConditionWithExpression(958,959): 'L'
+  null
+
+KtNameReferenceExpression(958,959): 'L'
+  null
+
+KtBlockExpression(963,965): '{}'
+  null
+
+KtWhenExpression(977,1059): 'when (a) {'
+  null
+
+KtNameReferenceExpression(983,984): 'a'
+  null
+
+KtWhenEntry(996,1007): 'id(X) -> {}'
+  null
+
+KtWhenConditionWithExpression(996,1001): 'id(X)'
+  null
+
+KtCallExpression(996,1001): 'id(X)'
+  null
+
+KtNameReferenceExpression(996,998): 'id'
+  null
+
+KtValueArgumentList(998,1001): '(X)'
+  null
+
+KtValueArgument(999,1000): 'X'
+  null
+
+KtNameReferenceExpression(999,1000): 'X'
+  null
+
+KtBlockExpression(1005,1007): '{}'
+  null
+
+KtWhenEntry(1016,1034): 'id(Y), id(L) -> {}'
+  null
+
+KtWhenConditionWithExpression(1016,1021): 'id(Y)'
+  null
+
+KtCallExpression(1016,1021): 'id(Y)'
+  null
+
+KtNameReferenceExpression(1016,1018): 'id'
+  null
+
+KtValueArgumentList(1018,1021): '(Y)'
+  null
+
+KtValueArgument(1019,1020): 'Y'
+  null
+
+KtNameReferenceExpression(1019,1020): 'Y'
+  null
+
+KtWhenConditionWithExpression(1023,1028): 'id(L)'
+  null
+
+KtCallExpression(1023,1028): 'id(L)'
+  null
+
+KtNameReferenceExpression(1023,1025): 'id'
+  null
+
+KtValueArgumentList(1025,1028): '(L)'
+  null
+
+KtValueArgument(1026,1027): 'L'
+  null
+
+KtNameReferenceExpression(1026,1027): 'L'
+  null
+
+KtBlockExpression(1032,1034): '{}'
+  null
+
+KtWhenEntry(1043,1053): 'else -> {}'
+  null
+
+KtBlockExpression(1051,1053): '{}'
+  null
+
+KtWhenExpression(1065,1155): 'when (val c = a) {'
+  null
+
+KtProperty(1071,1080): 'val c = a'
+  null
+
+KtNameReferenceExpression(1079,1080): 'a'
+  null
+
+KtWhenEntry(1092,1103): 'id(X) -> {}'
+  null
+
+KtWhenConditionWithExpression(1092,1097): 'id(X)'
+  null
+
+KtCallExpression(1092,1097): 'id(X)'
+  null
+
+KtNameReferenceExpression(1092,1094): 'id'
+  null
+
+KtValueArgumentList(1094,1097): '(X)'
+  null
+
+KtValueArgument(1095,1096): 'X'
+  null
+
+KtNameReferenceExpression(1095,1096): 'X'
+  null
+
+KtBlockExpression(1101,1103): '{}'
+  null
+
+KtWhenEntry(1112,1130): 'id(Y), id(L) -> {}'
+  null
+
+KtWhenConditionWithExpression(1112,1117): 'id(Y)'
+  null
+
+KtCallExpression(1112,1117): 'id(Y)'
+  null
+
+KtNameReferenceExpression(1112,1114): 'id'
+  null
+
+KtValueArgumentList(1114,1117): '(Y)'
+  null
+
+KtValueArgument(1115,1116): 'Y'
+  null
+
+KtNameReferenceExpression(1115,1116): 'Y'
+  null
+
+KtWhenConditionWithExpression(1119,1124): 'id(L)'
+  null
+
+KtCallExpression(1119,1124): 'id(L)'
+  null
+
+KtNameReferenceExpression(1119,1121): 'id'
+  null
+
+KtValueArgumentList(1121,1124): '(L)'
+  null
+
+KtValueArgument(1122,1123): 'L'
+  null
+
+KtNameReferenceExpression(1122,1123): 'L'
+  null
+
+KtBlockExpression(1128,1130): '{}'
+  null
+
+KtWhenEntry(1139,1149): 'else -> {}'
+  null
+
+KtBlockExpression(1147,1149): '{}'
+  null

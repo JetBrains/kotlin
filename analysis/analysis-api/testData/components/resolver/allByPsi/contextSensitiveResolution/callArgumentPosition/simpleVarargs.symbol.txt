@@ -1,0 +1,77 @@
+KtFile: 'simpleVarargs.kt'
+  null
+
+KtPackageDirective(0,0): ''
+  null
+
+KtImportList(0,0): ''
+  null
+
+KtClass(78,108): 'enum class MyEnum {'
+  null
+
+KtDeclarationModifierList(78,82): 'enum'
+  null
+
+KtClassBody(96,108): '{'
+  null
+
+KtEnumEntry(102,104): 'X,'
+  null
+
+KtEnumEntry(105,106): 'Y'
+  null
+
+KtNamedFunction(110,138): 'fun foo(vararg a: MyEnum) {}'
+  null
+
+KtParameterList(117,135): '(vararg a: MyEnum)'
+  null
+
+KtParameter(118,134): 'vararg a: MyEnum'
+  null
+
+KtDeclarationModifierList(118,124): 'vararg'
+  null
+
+KtTypeReference(128,134): 'MyEnum'
+  null
+
+KtUserType(128,134): 'MyEnum'
+  null
+
+KtNameReferenceExpression(128,134): 'MyEnum'
+  null
+
+KtBlockExpression(136,138): '{}'
+  null
+
+KtNamedFunction(140,168): 'fun main() {'
+  null
+
+KtParameterList(148,150): '()'
+  null
+
+KtBlockExpression(151,168): '{'
+  null
+
+KtCallExpression(157,166): 'foo(X, Y)'
+  null
+
+KtNameReferenceExpression(157,160): 'foo'
+  null
+
+KtValueArgumentList(160,166): '(X, Y)'
+  null
+
+KtValueArgument(161,162): 'X'
+  null
+
+KtNameReferenceExpression(161,162): 'X'
+  null
+
+KtValueArgument(164,165): 'Y'
+  null
+
+KtNameReferenceExpression(164,165): 'Y'
+  null

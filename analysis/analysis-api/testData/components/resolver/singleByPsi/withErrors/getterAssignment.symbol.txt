@@ -1,0 +1,2 @@
+KtCallExpression(30,35): 'get()'
+  null

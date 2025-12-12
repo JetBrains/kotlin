@@ -1,0 +1,2 @@
+KtDotQualifiedExpression(257,274): 's.foo(this@usage)'
+  null

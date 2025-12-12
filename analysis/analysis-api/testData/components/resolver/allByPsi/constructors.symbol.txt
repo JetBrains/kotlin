@@ -1,0 +1,344 @@
+KtFile: 'constructors.kt'
+  null
+
+KtPackageDirective(0,9): 'package r'
+  null
+
+KtNameReferenceExpression(8,9): 'r'
+  null
+
+KtImportList(9,9): ''
+  null
+
+KtClass(11,115): 'abstract class BaseClass {'
+  null
+
+KtDeclarationModifierList(11,19): 'abstract'
+  null
+
+KtClassBody(36,115): '{'
+  null
+
+KtSecondaryConstructor(42,61): 'constructor(i: Int)'
+  null
+
+KtParameterList(53,61): '(i: Int)'
+  null
+
+KtParameter(54,60): 'i: Int'
+  null
+
+KtTypeReference(57,60): 'Int'
+  null
+
+KtUserType(57,60): 'Int'
+  null
+
+KtNameReferenceExpression(57,60): 'Int'
+  null
+
+KtConstructorDelegationCall(61,61): ''
+  null
+
+KtConstructorDelegationReferenceExpression(61,61): ''
+  null
+
+KtSecondaryConstructor(66,88): 'constructor(s: String)'
+  null
+
+KtParameterList(77,88): '(s: String)'
+  null
+
+KtParameter(78,87): 's: String'
+  null
+
+KtTypeReference(81,87): 'String'
+  null
+
+KtUserType(81,87): 'String'
+  null
+
+KtNameReferenceExpression(81,87): 'String'
+  null
+
+KtConstructorDelegationCall(88,88): ''
+  null
+
+KtConstructorDelegationReferenceExpression(88,88): ''
+  null
+
+KtNamedFunction(94,113): 'fun call() {'
+  null
+
+KtParameterList(102,104): '()'
+  null
+
+KtBlockExpression(105,113): '{'
+  null
+
+KtClass(117,265): 'class Child : BaseClass {'
+  null
+
+KtSuperTypeList(131,140): 'BaseClass'
+  null
+
+KtSuperTypeEntry(131,140): 'BaseClass'
+  null
+
+KtTypeReference(131,140): 'BaseClass'
+  null
+
+KtUserType(131,140): 'BaseClass'
+  null
+
+KtNameReferenceExpression(131,140): 'BaseClass'
+  null
+
+KtClassBody(141,265): '{'
+  null
+
+KtSecondaryConstructor(147,179): 'constructor(ci: Int) : super(ci)'
+  null
+
+KtParameterList(158,167): '(ci: Int)'
+  null
+
+KtParameter(159,166): 'ci: Int'
+  null
+
+KtTypeReference(163,166): 'Int'
+  null
+
+KtUserType(163,166): 'Int'
+  null
+
+KtNameReferenceExpression(163,166): 'Int'
+  null
+
+KtConstructorDelegationCall(170,179): 'super(ci)'
+  null
+
+KtConstructorDelegationReferenceExpression(170,175): 'super'
+  null
+
+KtValueArgumentList(175,179): '(ci)'
+  null
+
+KtValueArgument(176,178): 'ci'
+  null
+
+KtNameReferenceExpression(176,178): 'ci'
+  null
+
+KtSecondaryConstructor(184,219): 'constructor(cs: String) : super(cs)'
+  null
+
+KtParameterList(195,207): '(cs: String)'
+  null
+
+KtParameter(196,206): 'cs: String'
+  null
+
+KtTypeReference(200,206): 'String'
+  null
+
+KtUserType(200,206): 'String'
+  null
+
+KtNameReferenceExpression(200,206): 'String'
+  null
+
+KtConstructorDelegationCall(210,219): 'super(cs)'
+  null
+
+KtConstructorDelegationReferenceExpression(210,215): 'super'
+  null
+
+KtValueArgumentList(215,219): '(cs)'
+  null
+
+KtValueArgument(216,218): 'cs'
+  null
+
+KtNameReferenceExpression(216,218): 'cs'
+  null
+
+KtNamedFunction(225,263): 'fun foo() {'
+  null
+
+KtParameterList(232,234): '()'
+  null
+
+KtBlockExpression(235,263): '{'
+  null
+
+KtDotQualifiedExpression(245,257): 'super.call()'
+  null
+
+KtSuperExpression(245,250): 'super'
+  null
+
+KtNameReferenceExpression(245,250): 'super'
+  null
+
+KtCallExpression(251,257): 'call()'
+  null
+
+KtNameReferenceExpression(251,255): 'call'
+  null
+
+KtValueArgumentList(255,257): '()'
+  null
+
+KtClass(267,347): 'class ChildWithPrimary() : BaseClass(42) {'
+  null
+
+KtPrimaryConstructor(289,291): '()'
+  null
+
+KtParameterList(289,291): '()'
+  null
+
+KtSuperTypeList(294,307): 'BaseClass(42)'
+  null
+
+KtSuperTypeCallEntry(294,307): 'BaseClass(42)'
+  null
+
+KtConstructorCalleeExpression(294,303): 'BaseClass'
+  null
+
+KtTypeReference(294,303): 'BaseClass'
+  null
+
+KtUserType(294,303): 'BaseClass'
+  null
+
+KtNameReferenceExpression(294,303): 'BaseClass'
+  null
+
+KtValueArgumentList(303,307): '(42)'
+  null
+
+KtValueArgument(304,306): '42'
+  null
+
+KtConstantExpression(304,306): '42'
+  null
+
+KtClassBody(308,347): '{'
+  null
+
+KtSecondaryConstructor(314,345): 'constructor(s: String) : this()'
+  null
+
+KtParameterList(325,336): '(s: String)'
+  null
+
+KtParameter(326,335): 's: String'
+  null
+
+KtTypeReference(329,335): 'String'
+  null
+
+KtUserType(329,335): 'String'
+  null
+
+KtNameReferenceExpression(329,335): 'String'
+  null
+
+KtConstructorDelegationCall(339,345): 'this()'
+  null
+
+KtConstructorDelegationReferenceExpression(339,343): 'this'
+  null
+
+KtValueArgumentList(343,345): '()'
+  null
+
+KtClass(349,384): 'open class ClassWithType<T>(i: Int)'
+  null
+
+KtDeclarationModifierList(349,353): 'open'
+  null
+
+KtTypeParameterList(373,376): '<T>'
+  null
+
+KtTypeParameter(374,375): 'T'
+  null
+
+KtPrimaryConstructor(376,384): '(i: Int)'
+  null
+
+KtParameterList(376,384): '(i: Int)'
+  null
+
+KtParameter(377,383): 'i: Int'
+  null
+
+KtTypeReference(380,383): 'Int'
+  null
+
+KtUserType(380,383): 'Int'
+  null
+
+KtNameReferenceExpression(380,383): 'Int'
+  null
+
+KtClass(386,456): 'class TypedChild : ClassWithType<Int> {'
+  null
+
+KtSuperTypeList(405,423): 'ClassWithType<Int>'
+  null
+
+KtSuperTypeEntry(405,423): 'ClassWithType<Int>'
+  null
+
+KtTypeReference(405,423): 'ClassWithType<Int>'
+  null
+
+KtUserType(405,423): 'ClassWithType<Int>'
+  null
+
+KtNameReferenceExpression(405,418): 'ClassWithType'
+  null
+
+KtTypeArgumentList(418,423): '<Int>'
+  null
+
+KtTypeProjection(419,422): 'Int'
+  null
+
+KtTypeReference(419,422): 'Int'
+  null
+
+KtUserType(419,422): 'Int'
+  null
+
+KtNameReferenceExpression(419,422): 'Int'
+  null
+
+KtClassBody(424,456): '{'
+  null
+
+KtSecondaryConstructor(430,454): 'constructor() : super(1)'
+  null
+
+KtParameterList(441,443): '()'
+  null
+
+KtConstructorDelegationCall(446,454): 'super(1)'
+  null
+
+KtConstructorDelegationReferenceExpression(446,451): 'super'
+  null
+
+KtValueArgumentList(451,454): '(1)'
+  null
+
+KtValueArgument(452,453): '1'
+  null
+
+KtConstantExpression(452,453): '1'
+  null

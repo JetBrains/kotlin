@@ -1,0 +1,170 @@
+KtFile: 'ClassNameBeforeTwoUnsresolvedClasses.kt'
+  null
+
+KtPackageDirective(0,0): ''
+  null
+
+KtImportList(0,0): ''
+  null
+
+KtClass(1,10): 'class Foo'
+  null
+
+KtClass(12,49): 'class C {'
+  null
+
+KtClassBody(20,49): '{'
+  null
+
+KtProperty(26,47): 'val prop: Foo.Bar.Baz'
+  null
+
+KtTypeReference(36,47): 'Foo.Bar.Baz'
+  null
+
+KtUserType(36,47): 'Foo.Bar.Baz'
+  null
+
+KtUserType(36,43): 'Foo.Bar'
+  null
+
+KtUserType(36,39): 'Foo'
+  null
+
+KtNameReferenceExpression(36,39): 'Foo'
+  null
+
+KtNameReferenceExpression(40,43): 'Bar'
+  null
+
+KtNameReferenceExpression(44,47): 'Baz'
+  null
+
+KtNamedFunction(51,99): 'fun testFun() {'
+  null
+
+KtParameterList(62,64): '()'
+  null
+
+KtBlockExpression(65,99): '{'
+  null
+
+KtProperty(71,97): 'val localProp: Foo.Bar.Baz'
+  null
+
+KtTypeReference(86,97): 'Foo.Bar.Baz'
+  null
+
+KtUserType(86,97): 'Foo.Bar.Baz'
+  null
+
+KtUserType(86,93): 'Foo.Bar'
+  null
+
+KtUserType(86,89): 'Foo'
+  null
+
+KtNameReferenceExpression(86,89): 'Foo'
+  null
+
+KtNameReferenceExpression(90,93): 'Bar'
+  null
+
+KtNameReferenceExpression(94,97): 'Baz'
+  null
+
+KtNamedFunction(101,137): 'fun <T> take(action: (T) -> Unit) {}'
+  null
+
+KtTypeParameterList(105,108): '<T>'
+  null
+
+KtTypeParameter(106,107): 'T'
+  null
+
+KtParameterList(113,134): '(action: (T) -> Unit)'
+  null
+
+KtParameter(114,133): 'action: (T) -> Unit'
+  null
+
+KtTypeReference(122,133): '(T) -> Unit'
+  null
+
+KtFunctionType(122,133): '(T) -> Unit'
+  null
+
+KtParameterList(122,125): '(T)'
+  null
+
+KtParameter(123,124): 'T'
+  null
+
+KtTypeReference(123,124): 'T'
+  null
+
+KtUserType(123,124): 'T'
+  null
+
+KtNameReferenceExpression(123,124): 'T'
+  null
+
+KtTypeReference(129,133): 'Unit'
+  null
+
+KtUserType(129,133): 'Unit'
+  null
+
+KtNameReferenceExpression(129,133): 'Unit'
+  null
+
+KtBlockExpression(135,137): '{}'
+  null
+
+KtProperty(139,190): 'val prop = take {'
+  null
+
+KtCallExpression(150,190): 'take {'
+  null
+
+KtNameReferenceExpression(150,154): 'take'
+  null
+
+KtLambdaArgument(155,190): '{'
+  null
+
+KtLambdaExpression(155,190): '{'
+  null
+
+KtFunctionLiteral(155,190): '{'
+  null
+
+KtParameterList(161,185): 'lambdaParam: Foo.Bar.Baz'
+  null
+
+KtParameter(161,185): 'lambdaParam: Foo.Bar.Baz'
+  null
+
+KtTypeReference(174,185): 'Foo.Bar.Baz'
+  null
+
+KtUserType(174,185): 'Foo.Bar.Baz'
+  null
+
+KtUserType(174,181): 'Foo.Bar'
+  null
+
+KtUserType(174,177): 'Foo'
+  null
+
+KtNameReferenceExpression(174,177): 'Foo'
+  null
+
+KtNameReferenceExpression(178,181): 'Bar'
+  null
+
+KtNameReferenceExpression(182,185): 'Baz'
+  null
+
+KtBlockExpression(189,189): ''
+  null

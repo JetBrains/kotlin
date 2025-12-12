@@ -1,0 +1,2 @@
+KtEnumEntrySuperclassReferenceExpression(127,127): ''
+  null

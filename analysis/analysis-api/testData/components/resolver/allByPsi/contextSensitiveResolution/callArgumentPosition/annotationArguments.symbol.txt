@@ -1,0 +1,521 @@
+KtFile: 'annotationArguments.kt'
+  null
+
+KtPackageDirective(0,0): ''
+  null
+
+KtImportList(0,0): ''
+  null
+
+KtClass(78,108): 'enum class MyEnum {'
+  null
+
+KtDeclarationModifierList(78,82): 'enum'
+  null
+
+KtClassBody(96,108): '{'
+  null
+
+KtEnumEntry(102,104): 'X,'
+  null
+
+KtEnumEntry(105,106): 'Y'
+  null
+
+KtClass(110,155): 'annotation class A1('
+  null
+
+KtDeclarationModifierList(110,120): 'annotation'
+  null
+
+KtPrimaryConstructor(129,155): '('
+  null
+
+KtParameterList(129,155): '('
+  null
+
+KtParameter(135,152): 'val value: MyEnum'
+  null
+
+KtTypeReference(146,152): 'MyEnum'
+  null
+
+KtUserType(146,152): 'MyEnum'
+  null
+
+KtNameReferenceExpression(146,152): 'MyEnum'
+  null
+
+KtNamedFunction(157,177): '@A1(X)'
+  null
+
+KtDeclarationModifierList(157,163): '@A1(X)'
+  null
+
+KtAnnotationEntry(157,163): '@A1(X)'
+  null
+
+KtConstructorCalleeExpression(158,160): 'A1'
+  null
+
+KtTypeReference(158,160): 'A1'
+  null
+
+KtUserType(158,160): 'A1'
+  null
+
+KtNameReferenceExpression(158,160): 'A1'
+  null
+
+KtValueArgumentList(160,163): '(X)'
+  null
+
+KtValueArgument(161,162): 'X'
+  null
+
+KtNameReferenceExpression(161,162): 'X'
+  null
+
+KtParameterList(172,174): '()'
+  null
+
+KtBlockExpression(175,177): '{}'
+  null
+
+KtClass(179,231): 'annotation class A2('
+  null
+
+KtDeclarationModifierList(179,189): 'annotation'
+  null
+
+KtPrimaryConstructor(198,231): '('
+  null
+
+KtParameterList(198,231): '('
+  null
+
+KtParameter(204,228): 'vararg val value: MyEnum'
+  null
+
+KtDeclarationModifierList(204,210): 'vararg'
+  null
+
+KtTypeReference(222,228): 'MyEnum'
+  null
+
+KtUserType(222,228): 'MyEnum'
+  null
+
+KtNameReferenceExpression(222,228): 'MyEnum'
+  null
+
+KtNamedFunction(233,257): '@A2(X, Y)'
+  null
+
+KtDeclarationModifierList(233,242): '@A2(X, Y)'
+  null
+
+KtAnnotationEntry(233,242): '@A2(X, Y)'
+  null
+
+KtConstructorCalleeExpression(234,236): 'A2'
+  null
+
+KtTypeReference(234,236): 'A2'
+  null
+
+KtUserType(234,236): 'A2'
+  null
+
+KtNameReferenceExpression(234,236): 'A2'
+  null
+
+KtValueArgumentList(236,242): '(X, Y)'
+  null
+
+KtValueArgument(237,238): 'X'
+  null
+
+KtNameReferenceExpression(237,238): 'X'
+  null
+
+KtValueArgument(240,241): 'Y'
+  null
+
+KtNameReferenceExpression(240,241): 'Y'
+  null
+
+KtParameterList(252,254): '()'
+  null
+
+KtBlockExpression(255,257): '{}'
+  null
+
+KtNamedFunction(259,286): '@A2(*[X, Y])'
+  null
+
+KtDeclarationModifierList(259,271): '@A2(*[X, Y])'
+  null
+
+KtAnnotationEntry(259,271): '@A2(*[X, Y])'
+  null
+
+KtConstructorCalleeExpression(260,262): 'A2'
+  null
+
+KtTypeReference(260,262): 'A2'
+  null
+
+KtUserType(260,262): 'A2'
+  null
+
+KtNameReferenceExpression(260,262): 'A2'
+  null
+
+KtValueArgumentList(262,271): '(*[X, Y])'
+  null
+
+KtValueArgument(263,270): '*[X, Y]'
+  null
+
+KtCollectionLiteralExpression(264,270): '[X, Y]'
+  null
+
+KtNameReferenceExpression(265,266): 'X'
+  null
+
+KtNameReferenceExpression(268,269): 'Y'
+  null
+
+KtParameterList(281,283): '()'
+  null
+
+KtBlockExpression(284,286): '{}'
+  null
+
+KtClass(288,340): 'annotation class A3('
+  null
+
+KtDeclarationModifierList(288,298): 'annotation'
+  null
+
+KtPrimaryConstructor(307,340): '('
+  null
+
+KtParameterList(307,340): '('
+  null
+
+KtParameter(313,337): 'val value: Array<MyEnum>'
+  null
+
+KtTypeReference(324,337): 'Array<MyEnum>'
+  null
+
+KtUserType(324,337): 'Array<MyEnum>'
+  null
+
+KtNameReferenceExpression(324,329): 'Array'
+  null
+
+KtTypeArgumentList(329,337): '<MyEnum>'
+  null
+
+KtTypeProjection(330,336): 'MyEnum'
+  null
+
+KtTypeReference(330,336): 'MyEnum'
+  null
+
+KtUserType(330,336): 'MyEnum'
+  null
+
+KtNameReferenceExpression(330,336): 'MyEnum'
+  null
+
+KtNamedFunction(342,365): '@A3([X])'
+  null
+
+KtDeclarationModifierList(342,350): '@A3([X])'
+  null
+
+KtAnnotationEntry(342,350): '@A3([X])'
+  null
+
+KtConstructorCalleeExpression(343,345): 'A3'
+  null
+
+KtTypeReference(343,345): 'A3'
+  null
+
+KtUserType(343,345): 'A3'
+  null
+
+KtNameReferenceExpression(343,345): 'A3'
+  null
+
+KtValueArgumentList(345,350): '([X])'
+  null
+
+KtValueArgument(346,349): '[X]'
+  null
+
+KtCollectionLiteralExpression(346,349): '[X]'
+  null
+
+KtNameReferenceExpression(347,348): 'X'
+  null
+
+KtParameterList(360,362): '()'
+  null
+
+KtBlockExpression(363,365): '{}'
+  null
+
+KtNamedFunction(367,397): '@A3(arrayOf(X))'
+  null
+
+KtDeclarationModifierList(367,382): '@A3(arrayOf(X))'
+  null
+
+KtAnnotationEntry(367,382): '@A3(arrayOf(X))'
+  null
+
+KtConstructorCalleeExpression(368,370): 'A3'
+  null
+
+KtTypeReference(368,370): 'A3'
+  null
+
+KtUserType(368,370): 'A3'
+  null
+
+KtNameReferenceExpression(368,370): 'A3'
+  null
+
+KtValueArgumentList(370,382): '(arrayOf(X))'
+  null
+
+KtValueArgument(371,381): 'arrayOf(X)'
+  null
+
+KtCallExpression(371,381): 'arrayOf(X)'
+  null
+
+KtNameReferenceExpression(371,378): 'arrayOf'
+  null
+
+KtValueArgumentList(378,381): '(X)'
+  null
+
+KtValueArgument(379,380): 'X'
+  null
+
+KtNameReferenceExpression(379,380): 'X'
+  null
+
+KtParameterList(392,394): '()'
+  null
+
+KtBlockExpression(395,397): '{}'
+  null
+
+KtClass(399,441): 'annotation class A4('
+  null
+
+KtDeclarationModifierList(399,409): 'annotation'
+  null
+
+KtPrimaryConstructor(418,441): '('
+  null
+
+KtParameterList(418,441): '('
+  null
+
+KtParameter(424,438): 'val value: Int'
+  null
+
+KtTypeReference(435,438): 'Int'
+  null
+
+KtUserType(435,438): 'Int'
+  null
+
+KtNameReferenceExpression(435,438): 'Int'
+  null
+
+KtNamedFunction(443,471): '@A4(MAX_VALUE)'
+  null
+
+KtDeclarationModifierList(443,457): '@A4(MAX_VALUE)'
+  null
+
+KtAnnotationEntry(443,457): '@A4(MAX_VALUE)'
+  null
+
+KtConstructorCalleeExpression(444,446): 'A4'
+  null
+
+KtTypeReference(444,446): 'A4'
+  null
+
+KtUserType(444,446): 'A4'
+  null
+
+KtNameReferenceExpression(444,446): 'A4'
+  null
+
+KtValueArgumentList(446,457): '(MAX_VALUE)'
+  null
+
+KtValueArgument(447,456): 'MAX_VALUE'
+  null
+
+KtNameReferenceExpression(447,456): 'MAX_VALUE'
+  null
+
+KtParameterList(466,468): '()'
+  null
+
+KtBlockExpression(469,471): '{}'
+  null
+
+KtClass(473,547): '@Retention(RUNTIME)'
+  null
+
+KtDeclarationModifierList(473,528): '@Retention(RUNTIME)'
+  null
+
+KtAnnotationEntry(473,492): '@Retention(RUNTIME)'
+  null
+
+KtConstructorCalleeExpression(474,483): 'Retention'
+  null
+
+KtTypeReference(474,483): 'Retention'
+  null
+
+KtUserType(474,483): 'Retention'
+  null
+
+KtNameReferenceExpression(474,483): 'Retention'
+  null
+
+KtValueArgumentList(483,492): '(RUNTIME)'
+  null
+
+KtValueArgument(484,491): 'RUNTIME'
+  null
+
+KtNameReferenceExpression(484,491): 'RUNTIME'
+  null
+
+KtAnnotationEntry(493,517): '@Target(CLASS, PROPERTY)'
+  null
+
+KtConstructorCalleeExpression(494,500): 'Target'
+  null
+
+KtTypeReference(494,500): 'Target'
+  null
+
+KtUserType(494,500): 'Target'
+  null
+
+KtNameReferenceExpression(494,500): 'Target'
+  null
+
+KtValueArgumentList(500,517): '(CLASS, PROPERTY)'
+  null
+
+KtValueArgument(501,506): 'CLASS'
+  null
+
+KtNameReferenceExpression(501,506): 'CLASS'
+  null
+
+KtValueArgument(508,516): 'PROPERTY'
+  null
+
+KtNameReferenceExpression(508,516): 'PROPERTY'
+  null
+
+KtProperty(549,577): '@MyAnnotation'
+  null
+
+KtDeclarationModifierList(549,562): '@MyAnnotation'
+  null
+
+KtAnnotationEntry(549,562): '@MyAnnotation'
+  null
+
+KtConstructorCalleeExpression(550,562): 'MyAnnotation'
+  null
+
+KtTypeReference(550,562): 'MyAnnotation'
+  null
+
+KtUserType(550,562): 'MyAnnotation'
+  null
+
+KtNameReferenceExpression(550,562): 'MyAnnotation'
+  null
+
+KtTypeReference(570,573): 'Int'
+  null
+
+KtUserType(570,573): 'Int'
+  null
+
+KtNameReferenceExpression(570,573): 'Int'
+  null
+
+KtConstantExpression(576,577): '1'
+  null
+
+KtClass(579,606): '@MyAnnotation'
+  null
+
+KtDeclarationModifierList(579,592): '@MyAnnotation'
+  null
+
+KtAnnotationEntry(579,592): '@MyAnnotation'
+  null
+
+KtConstructorCalleeExpression(580,592): 'MyAnnotation'
+  null
+
+KtTypeReference(580,592): 'MyAnnotation'
+  null
+
+KtUserType(580,592): 'MyAnnotation'
+  null
+
+KtNameReferenceExpression(580,592): 'MyAnnotation'
+  null
+
+KtNamedFunction(608,641): '@MyAnnotation'
+  null
+
+KtDeclarationModifierList(608,621): '@MyAnnotation'
+  null
+
+KtAnnotationEntry(608,621): '@MyAnnotation'
+  null
+
+KtConstructorCalleeExpression(609,621): 'MyAnnotation'
+  null
+
+KtTypeReference(609,621): 'MyAnnotation'
+  null
+
+KtUserType(609,621): 'MyAnnotation'
+  null
+
+KtNameReferenceExpression(609,621): 'MyAnnotation'
+  null
+
+KtParameterList(636,638): '()'
+  null
+
+KtBlockExpression(639,641): '{}'
+  null

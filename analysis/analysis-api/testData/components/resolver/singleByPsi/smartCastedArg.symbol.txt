@@ -1,0 +1,2 @@
+KtCallExpression(108,119): 'processB(a)'
+  null

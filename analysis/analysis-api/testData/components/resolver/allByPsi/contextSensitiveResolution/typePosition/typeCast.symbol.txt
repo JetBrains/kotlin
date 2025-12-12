@@ -1,0 +1,1232 @@
+KtFile: 'typeCast.kt'
+  null
+
+KtPackageDirective(0,0): ''
+  null
+
+KtImportList(0,0): ''
+  null
+
+KtClass(78,702): 'sealed class SealedClass {'
+  null
+
+KtDeclarationModifierList(78,84): 'sealed'
+  null
+
+KtClassBody(103,702): '{'
+  null
+
+KtClass(109,176): 'open class SealedInheritor1(val prop1: String = "1"): SealedClass()'
+  null
+
+KtDeclarationModifierList(109,113): 'open'
+  null
+
+KtPrimaryConstructor(136,161): '(val prop1: String = "1")'
+  null
+
+KtParameterList(136,161): '(val prop1: String = "1")'
+  null
+
+KtParameter(137,160): 'val prop1: String = "1"'
+  null
+
+KtTypeReference(148,154): 'String'
+  null
+
+KtUserType(148,154): 'String'
+  null
+
+KtNameReferenceExpression(148,154): 'String'
+  null
+
+KtStringTemplateExpression(157,160): '"1"'
+  null
+
+KtLiteralStringTemplateEntry(158,159): '1'
+  null
+
+KtSuperTypeList(163,176): 'SealedClass()'
+  null
+
+KtSuperTypeCallEntry(163,176): 'SealedClass()'
+  null
+
+KtConstructorCalleeExpression(163,174): 'SealedClass'
+  null
+
+KtTypeReference(163,174): 'SealedClass'
+  null
+
+KtUserType(163,174): 'SealedClass'
+  null
+
+KtNameReferenceExpression(163,174): 'SealedClass'
+  null
+
+KtValueArgumentList(174,176): '()'
+  null
+
+KtClass(181,238): 'class SealedInheritor2(val prop2: Int = 2): SealedClass()'
+  null
+
+KtPrimaryConstructor(203,223): '(val prop2: Int = 2)'
+  null
+
+KtParameterList(203,223): '(val prop2: Int = 2)'
+  null
+
+KtParameter(204,222): 'val prop2: Int = 2'
+  null
+
+KtTypeReference(215,218): 'Int'
+  null
+
+KtUserType(215,218): 'Int'
+  null
+
+KtNameReferenceExpression(215,218): 'Int'
+  null
+
+KtConstantExpression(221,222): '2'
+  null
+
+KtSuperTypeList(225,238): 'SealedClass()'
+  null
+
+KtSuperTypeCallEntry(225,238): 'SealedClass()'
+  null
+
+KtConstructorCalleeExpression(225,236): 'SealedClass'
+  null
+
+KtTypeReference(225,236): 'SealedClass'
+  null
+
+KtUserType(225,236): 'SealedClass'
+  null
+
+KtNameReferenceExpression(225,236): 'SealedClass'
+  null
+
+KtValueArgumentList(236,238): '()'
+  null
+
+KtClass(244,321): 'sealed class SealedSealedInheritor1(val prop3: Boolean = true): SealedClass()'
+  null
+
+KtDeclarationModifierList(244,250): 'sealed'
+  null
+
+KtPrimaryConstructor(279,306): '(val prop3: Boolean = true)'
+  null
+
+KtParameterList(279,306): '(val prop3: Boolean = true)'
+  null
+
+KtParameter(280,305): 'val prop3: Boolean = true'
+  null
+
+KtTypeReference(291,298): 'Boolean'
+  null
+
+KtUserType(291,298): 'Boolean'
+  null
+
+KtNameReferenceExpression(291,298): 'Boolean'
+  null
+
+KtConstantExpression(301,305): 'true'
+  null
+
+KtSuperTypeList(308,321): 'SealedClass()'
+  null
+
+KtSuperTypeCallEntry(308,321): 'SealedClass()'
+  null
+
+KtConstructorCalleeExpression(308,319): 'SealedClass'
+  null
+
+KtTypeReference(308,319): 'SealedClass'
+  null
+
+KtUserType(308,319): 'SealedClass'
+  null
+
+KtNameReferenceExpression(308,319): 'SealedClass'
+  null
+
+KtValueArgumentList(319,321): '()'
+  null
+
+KtClass(327,376): 'class IndirectSealedInheritor: SealedInheritor1()'
+  null
+
+KtSuperTypeList(358,376): 'SealedInheritor1()'
+  null
+
+KtSuperTypeCallEntry(358,376): 'SealedInheritor1()'
+  null
+
+KtConstructorCalleeExpression(358,374): 'SealedInheritor1'
+  null
+
+KtTypeReference(358,374): 'SealedInheritor1'
+  null
+
+KtUserType(358,374): 'SealedInheritor1'
+  null
+
+KtNameReferenceExpression(358,374): 'SealedInheritor1'
+  null
+
+KtValueArgumentList(374,376): '()'
+  null
+
+KtClass(382,525): 'class Nested {'
+  null
+
+KtClassBody(395,525): '{'
+  null
+
+KtClass(405,451): 'class DeepSealedNestedInheritor: SealedClass()'
+  null
+
+KtSuperTypeList(438,451): 'SealedClass()'
+  null
+
+KtSuperTypeCallEntry(438,451): 'SealedClass()'
+  null
+
+KtConstructorCalleeExpression(438,449): 'SealedClass'
+  null
+
+KtTypeReference(438,449): 'SealedClass'
+  null
+
+KtUserType(438,449): 'SealedClass'
+  null
+
+KtNameReferenceExpression(438,449): 'SealedClass'
+  null
+
+KtValueArgumentList(449,451): '()'
+  null
+
+KtClass(460,519): 'class DeepIndirectSealedNestedInheritor: SealedInheritor1()'
+  null
+
+KtSuperTypeList(501,519): 'SealedInheritor1()'
+  null
+
+KtSuperTypeCallEntry(501,519): 'SealedInheritor1()'
+  null
+
+KtConstructorCalleeExpression(501,517): 'SealedInheritor1'
+  null
+
+KtTypeReference(501,517): 'SealedInheritor1'
+  null
+
+KtUserType(501,517): 'SealedInheritor1'
+  null
+
+KtNameReferenceExpression(501,517): 'SealedInheritor1'
+  null
+
+KtValueArgumentList(517,519): '()'
+  null
+
+KtClass(531,601): 'inner class Inner(val innerProp: String = "inner prop"): SealedClass()'
+  null
+
+KtDeclarationModifierList(531,536): 'inner'
+  null
+
+KtPrimaryConstructor(548,586): '(val innerProp: String = "inner prop")'
+  null
+
+KtParameterList(548,586): '(val innerProp: String = "inner prop")'
+  null
+
+KtParameter(549,585): 'val innerProp: String = "inner prop"'
+  null
+
+KtTypeReference(564,570): 'String'
+  null
+
+KtUserType(564,570): 'String'
+  null
+
+KtNameReferenceExpression(564,570): 'String'
+  null
+
+KtStringTemplateExpression(573,585): '"inner prop"'
+  null
+
+KtLiteralStringTemplateEntry(574,584): 'inner prop'
+  null
+
+KtSuperTypeList(588,601): 'SealedClass()'
+  null
+
+KtSuperTypeCallEntry(588,601): 'SealedClass()'
+  null
+
+KtConstructorCalleeExpression(588,599): 'SealedClass'
+  null
+
+KtTypeReference(588,599): 'SealedClass'
+  null
+
+KtUserType(588,599): 'SealedClass'
+  null
+
+KtNameReferenceExpression(588,599): 'SealedClass'
+  null
+
+KtValueArgumentList(599,601): '()'
+  null
+
+KtClass(607,620): 'class Nested1'
+  null
+
+KtClass(625,638): 'class Nested2'
+  null
+
+KtClass(643,668): 'sealed class SealedNested'
+  null
+
+KtDeclarationModifierList(643,649): 'sealed'
+  null
+
+KtObjectDeclaration(674,700): 'companion object Companion'
+  null
+
+KtDeclarationModifierList(674,683): 'companion'
+  null
+
+KtNamedFunction(704,744): 'fun <T>consume(arg: T): Nothing = TODO()'
+  null
+
+KtTypeParameterList(708,711): '<T>'
+  null
+
+KtTypeParameter(709,710): 'T'
+  null
+
+KtParameterList(718,726): '(arg: T)'
+  null
+
+KtParameter(719,725): 'arg: T'
+  null
+
+KtTypeReference(724,725): 'T'
+  null
+
+KtUserType(724,725): 'T'
+  null
+
+KtNameReferenceExpression(724,725): 'T'
+  null
+
+KtTypeReference(728,735): 'Nothing'
+  null
+
+KtUserType(728,735): 'Nothing'
+  null
+
+KtNameReferenceExpression(728,735): 'Nothing'
+  null
+
+KtCallExpression(738,744): 'TODO()'
+  null
+
+KtNameReferenceExpression(738,742): 'TODO'
+  null
+
+KtValueArgumentList(742,744): '()'
+  null
+
+KtNamedFunction(746,933): 'fun testUnsafeTypeCast2(i: SealedClass) {'
+  null
+
+KtParameterList(769,785): '(i: SealedClass)'
+  null
+
+KtParameter(770,784): 'i: SealedClass'
+  null
+
+KtTypeReference(773,784): 'SealedClass'
+  null
+
+KtUserType(773,784): 'SealedClass'
+  null
+
+KtNameReferenceExpression(773,784): 'SealedClass'
+  null
+
+KtBlockExpression(786,933): '{'
+  null
+
+KtBinaryExpressionWithTypeRHS(792,813): 'i as SealedInheritor1'
+  null
+
+KtNameReferenceExpression(792,793): 'i'
+  null
+
+KtOperationReferenceExpression(794,796): 'as'
+  null
+
+KtTypeReference(797,813): 'SealedInheritor1'
+  null
+
+KtUserType(797,813): 'SealedInheritor1'
+  null
+
+KtNameReferenceExpression(797,813): 'SealedInheritor1'
+  null
+
+KtDotQualifiedExpression(818,836): 'i.prop1.hashCode()'
+  null
+
+KtDotQualifiedExpression(818,825): 'i.prop1'
+  null
+
+KtNameReferenceExpression(818,819): 'i'
+  null
+
+KtNameReferenceExpression(820,825): 'prop1'
+  null
+
+KtCallExpression(826,836): 'hashCode()'
+  null
+
+KtNameReferenceExpression(826,834): 'hashCode'
+  null
+
+KtValueArgumentList(834,836): '()'
+  null
+
+KtBinaryExpressionWithTypeRHS(842,863): 'i as SealedInheritor2'
+  null
+
+KtNameReferenceExpression(842,843): 'i'
+  null
+
+KtOperationReferenceExpression(844,846): 'as'
+  null
+
+KtTypeReference(847,863): 'SealedInheritor2'
+  null
+
+KtUserType(847,863): 'SealedInheritor2'
+  null
+
+KtNameReferenceExpression(847,863): 'SealedInheritor2'
+  null
+
+KtDotQualifiedExpression(868,881): 'i.prop2.dec()'
+  null
+
+KtDotQualifiedExpression(868,875): 'i.prop2'
+  null
+
+KtNameReferenceExpression(868,869): 'i'
+  null
+
+KtNameReferenceExpression(870,875): 'prop2'
+  null
+
+KtCallExpression(876,881): 'dec()'
+  null
+
+KtNameReferenceExpression(876,879): 'dec'
+  null
+
+KtValueArgumentList(879,881): '()'
+  null
+
+KtBinaryExpressionWithTypeRHS(887,908): 'i as SealedInheritor1'
+  null
+
+KtNameReferenceExpression(887,888): 'i'
+  null
+
+KtOperationReferenceExpression(889,891): 'as'
+  null
+
+KtTypeReference(892,908): 'SealedInheritor1'
+  null
+
+KtUserType(892,908): 'SealedInheritor1'
+  null
+
+KtNameReferenceExpression(892,908): 'SealedInheritor1'
+  null
+
+KtDotQualifiedExpression(913,931): 'i.prop1.hashCode()'
+  null
+
+KtDotQualifiedExpression(913,920): 'i.prop1'
+  null
+
+KtNameReferenceExpression(913,914): 'i'
+  null
+
+KtNameReferenceExpression(915,920): 'prop1'
+  null
+
+KtCallExpression(921,931): 'hashCode()'
+  null
+
+KtNameReferenceExpression(921,929): 'hashCode'
+  null
+
+KtValueArgumentList(929,931): '()'
+  null
+
+KtNamedFunction(935,1391): 'fun testUnsafeTypeCast(i: SealedClass) {'
+  null
+
+KtParameterList(957,973): '(i: SealedClass)'
+  null
+
+KtParameter(958,972): 'i: SealedClass'
+  null
+
+KtTypeReference(961,972): 'SealedClass'
+  null
+
+KtUserType(961,972): 'SealedClass'
+  null
+
+KtNameReferenceExpression(961,972): 'SealedClass'
+  null
+
+KtBlockExpression(974,1391): '{'
+  null
+
+KtDotQualifiedExpression(980,1020): '(i as SealedInheritor1).prop1.hashCode()'
+  null
+
+KtDotQualifiedExpression(980,1009): '(i as SealedInheritor1).prop1'
+  null
+
+KtParenthesizedExpression(980,1003): '(i as SealedInheritor1)'
+  null
+
+KtBinaryExpressionWithTypeRHS(981,1002): 'i as SealedInheritor1'
+  null
+
+KtNameReferenceExpression(981,982): 'i'
+  null
+
+KtOperationReferenceExpression(983,985): 'as'
+  null
+
+KtTypeReference(986,1002): 'SealedInheritor1'
+  null
+
+KtUserType(986,1002): 'SealedInheritor1'
+  null
+
+KtNameReferenceExpression(986,1002): 'SealedInheritor1'
+  null
+
+KtNameReferenceExpression(1004,1009): 'prop1'
+  null
+
+KtCallExpression(1010,1020): 'hashCode()'
+  null
+
+KtNameReferenceExpression(1010,1018): 'hashCode'
+  null
+
+KtValueArgumentList(1018,1020): '()'
+  null
+
+KtBinaryExpressionWithTypeRHS(1026,1047): 'i as SealedInheritor2'
+  null
+
+KtNameReferenceExpression(1026,1027): 'i'
+  null
+
+KtOperationReferenceExpression(1028,1030): 'as'
+  null
+
+KtTypeReference(1031,1047): 'SealedInheritor2'
+  null
+
+KtUserType(1031,1047): 'SealedInheritor2'
+  null
+
+KtNameReferenceExpression(1031,1047): 'SealedInheritor2'
+  null
+
+KtDotQualifiedExpression(1052,1065): 'i.prop2.dec()'
+  null
+
+KtDotQualifiedExpression(1052,1059): 'i.prop2'
+  null
+
+KtNameReferenceExpression(1052,1053): 'i'
+  null
+
+KtNameReferenceExpression(1054,1059): 'prop2'
+  null
+
+KtCallExpression(1060,1065): 'dec()'
+  null
+
+KtNameReferenceExpression(1060,1063): 'dec'
+  null
+
+KtValueArgumentList(1063,1065): '()'
+  null
+
+KtProperty(1071,1100): 'var v = i as SealedInheritor1'
+  null
+
+KtBinaryExpressionWithTypeRHS(1079,1100): 'i as SealedInheritor1'
+  null
+
+KtNameReferenceExpression(1079,1080): 'i'
+  null
+
+KtOperationReferenceExpression(1081,1083): 'as'
+  null
+
+KtTypeReference(1084,1100): 'SealedInheritor1'
+  null
+
+KtUserType(1084,1100): 'SealedInheritor1'
+  null
+
+KtNameReferenceExpression(1084,1100): 'SealedInheritor1'
+  null
+
+KtDotQualifiedExpression(1105,1123): 'v.prop1.hashCode()'
+  null
+
+KtDotQualifiedExpression(1105,1112): 'v.prop1'
+  null
+
+KtNameReferenceExpression(1105,1106): 'v'
+  null
+
+KtNameReferenceExpression(1107,1112): 'prop1'
+  null
+
+KtCallExpression(1113,1123): 'hashCode()'
+  null
+
+KtNameReferenceExpression(1113,1121): 'hashCode'
+  null
+
+KtValueArgumentList(1121,1123): '()'
+  null
+
+KtProperty(1129,1172): 'var v2: SealedClass = i as SealedInheritor1'
+  null
+
+KtTypeReference(1137,1148): 'SealedClass'
+  null
+
+KtUserType(1137,1148): 'SealedClass'
+  null
+
+KtNameReferenceExpression(1137,1148): 'SealedClass'
+  null
+
+KtBinaryExpressionWithTypeRHS(1151,1172): 'i as SealedInheritor1'
+  null
+
+KtNameReferenceExpression(1151,1152): 'i'
+  null
+
+KtOperationReferenceExpression(1153,1155): 'as'
+  null
+
+KtTypeReference(1156,1172): 'SealedInheritor1'
+  null
+
+KtUserType(1156,1172): 'SealedInheritor1'
+  null
+
+KtNameReferenceExpression(1156,1172): 'SealedInheritor1'
+  null
+
+KtDotQualifiedExpression(1177,1196): 'v2.prop1.hashCode()'
+  null
+
+KtDotQualifiedExpression(1177,1185): 'v2.prop1'
+  null
+
+KtNameReferenceExpression(1177,1179): 'v2'
+  null
+
+KtNameReferenceExpression(1180,1185): 'prop1'
+  null
+
+KtCallExpression(1186,1196): 'hashCode()'
+  null
+
+KtNameReferenceExpression(1186,1194): 'hashCode'
+  null
+
+KtValueArgumentList(1194,1196): '()'
+  null
+
+KtProperty(1202,1250): 'var v3: SealedInheritor1 = i as SealedInheritor1'
+  null
+
+KtTypeReference(1210,1226): 'SealedInheritor1'
+  null
+
+KtUserType(1210,1226): 'SealedInheritor1'
+  null
+
+KtNameReferenceExpression(1210,1226): 'SealedInheritor1'
+  null
+
+KtBinaryExpressionWithTypeRHS(1229,1250): 'i as SealedInheritor1'
+  null
+
+KtNameReferenceExpression(1229,1230): 'i'
+  null
+
+KtOperationReferenceExpression(1231,1233): 'as'
+  null
+
+KtTypeReference(1234,1250): 'SealedInheritor1'
+  null
+
+KtUserType(1234,1250): 'SealedInheritor1'
+  null
+
+KtNameReferenceExpression(1234,1250): 'SealedInheritor1'
+  null
+
+KtDotQualifiedExpression(1255,1274): 'v3.prop1.hashCode()'
+  null
+
+KtDotQualifiedExpression(1255,1263): 'v3.prop1'
+  null
+
+KtNameReferenceExpression(1255,1257): 'v3'
+  null
+
+KtNameReferenceExpression(1258,1263): 'prop1'
+  null
+
+KtCallExpression(1264,1274): 'hashCode()'
+  null
+
+KtNameReferenceExpression(1264,1272): 'hashCode'
+  null
+
+KtValueArgumentList(1272,1274): '()'
+  null
+
+KtCallExpression(1280,1323): 'consume<SealedClass>(i as SealedInheritor1)'
+  null
+
+KtNameReferenceExpression(1280,1287): 'consume'
+  null
+
+KtTypeArgumentList(1287,1300): '<SealedClass>'
+  null
+
+KtTypeProjection(1288,1299): 'SealedClass'
+  null
+
+KtTypeReference(1288,1299): 'SealedClass'
+  null
+
+KtUserType(1288,1299): 'SealedClass'
+  null
+
+KtNameReferenceExpression(1288,1299): 'SealedClass'
+  null
+
+KtValueArgumentList(1300,1323): '(i as SealedInheritor1)'
+  null
+
+KtValueArgument(1301,1322): 'i as SealedInheritor1'
+  null
+
+KtBinaryExpressionWithTypeRHS(1301,1322): 'i as SealedInheritor1'
+  null
+
+KtNameReferenceExpression(1301,1302): 'i'
+  null
+
+KtOperationReferenceExpression(1303,1305): 'as'
+  null
+
+KtTypeReference(1306,1322): 'SealedInheritor1'
+  null
+
+KtUserType(1306,1322): 'SealedInheritor1'
+  null
+
+KtNameReferenceExpression(1306,1322): 'SealedInheritor1'
+  null
+
+KtCallExpression(1328,1388): 'consume<SealedClass.SealedInheritor1>(i as SealedInheritor1)'
+  null
+
+KtNameReferenceExpression(1328,1335): 'consume'
+  null
+
+KtTypeArgumentList(1335,1365): '<SealedClass.SealedInheritor1>'
+  null
+
+KtTypeProjection(1336,1364): 'SealedClass.SealedInheritor1'
+  null
+
+KtTypeReference(1336,1364): 'SealedClass.SealedInheritor1'
+  null
+
+KtUserType(1336,1364): 'SealedClass.SealedInheritor1'
+  null
+
+KtUserType(1336,1347): 'SealedClass'
+  null
+
+KtNameReferenceExpression(1336,1347): 'SealedClass'
+  null
+
+KtNameReferenceExpression(1348,1364): 'SealedInheritor1'
+  null
+
+KtValueArgumentList(1365,1388): '(i as SealedInheritor1)'
+  null
+
+KtValueArgument(1366,1387): 'i as SealedInheritor1'
+  null
+
+KtBinaryExpressionWithTypeRHS(1366,1387): 'i as SealedInheritor1'
+  null
+
+KtNameReferenceExpression(1366,1367): 'i'
+  null
+
+KtOperationReferenceExpression(1368,1370): 'as'
+  null
+
+KtTypeReference(1371,1387): 'SealedInheritor1'
+  null
+
+KtUserType(1371,1387): 'SealedInheritor1'
+  null
+
+KtNameReferenceExpression(1371,1387): 'SealedInheritor1'
+  null
+
+KtNamedFunction(1393,1934): 'fun testSafeTypeCast(i: SealedClass) {'
+  null
+
+KtParameterList(1413,1429): '(i: SealedClass)'
+  null
+
+KtParameter(1414,1428): 'i: SealedClass'
+  null
+
+KtTypeReference(1417,1428): 'SealedClass'
+  null
+
+KtUserType(1417,1428): 'SealedClass'
+  null
+
+KtNameReferenceExpression(1417,1428): 'SealedClass'
+  null
+
+KtBlockExpression(1430,1934): '{'
+  null
+
+KtSafeQualifiedExpression(1436,1479): '(i as? SealedInheritor1)?.prop1?.hashCode()'
+  null
+
+KtSafeQualifiedExpression(1436,1467): '(i as? SealedInheritor1)?.prop1'
+  null
+
+KtParenthesizedExpression(1436,1460): '(i as? SealedInheritor1)'
+  null
+
+KtBinaryExpressionWithTypeRHS(1437,1459): 'i as? SealedInheritor1'
+  null
+
+KtNameReferenceExpression(1437,1438): 'i'
+  null
+
+KtOperationReferenceExpression(1439,1442): 'as?'
+  null
+
+KtTypeReference(1443,1459): 'SealedInheritor1'
+  null
+
+KtUserType(1443,1459): 'SealedInheritor1'
+  null
+
+KtNameReferenceExpression(1443,1459): 'SealedInheritor1'
+  null
+
+KtNameReferenceExpression(1462,1467): 'prop1'
+  null
+
+KtCallExpression(1469,1479): 'hashCode()'
+  null
+
+KtNameReferenceExpression(1469,1477): 'hashCode'
+  null
+
+KtValueArgumentList(1477,1479): '()'
+  null
+
+KtBinaryExpressionWithTypeRHS(1485,1507): 'i as? SealedInheritor2'
+  null
+
+KtNameReferenceExpression(1485,1486): 'i'
+  null
+
+KtOperationReferenceExpression(1487,1490): 'as?'
+  null
+
+KtTypeReference(1491,1507): 'SealedInheritor2'
+  null
+
+KtUserType(1491,1507): 'SealedInheritor2'
+  null
+
+KtNameReferenceExpression(1491,1507): 'SealedInheritor2'
+  null
+
+KtSafeQualifiedExpression(1512,1527): 'i?.prop2?.dec()'
+  null
+
+KtSafeQualifiedExpression(1512,1520): 'i?.prop2'
+  null
+
+KtNameReferenceExpression(1512,1513): 'i'
+  null
+
+KtNameReferenceExpression(1515,1520): 'prop2'
+  null
+
+KtCallExpression(1522,1527): 'dec()'
+  null
+
+KtNameReferenceExpression(1522,1525): 'dec'
+  null
+
+KtValueArgumentList(1525,1527): '()'
+  null
+
+KtProperty(1533,1563): 'var v = i as? SealedInheritor1'
+  null
+
+KtBinaryExpressionWithTypeRHS(1541,1563): 'i as? SealedInheritor1'
+  null
+
+KtNameReferenceExpression(1541,1542): 'i'
+  null
+
+KtOperationReferenceExpression(1543,1546): 'as?'
+  null
+
+KtTypeReference(1547,1563): 'SealedInheritor1'
+  null
+
+KtUserType(1547,1563): 'SealedInheritor1'
+  null
+
+KtNameReferenceExpression(1547,1563): 'SealedInheritor1'
+  null
+
+KtSafeQualifiedExpression(1568,1588): 'v?.prop1?.hashCode()'
+  null
+
+KtSafeQualifiedExpression(1568,1576): 'v?.prop1'
+  null
+
+KtNameReferenceExpression(1568,1569): 'v'
+  null
+
+KtNameReferenceExpression(1571,1576): 'prop1'
+  null
+
+KtCallExpression(1578,1588): 'hashCode()'
+  null
+
+KtNameReferenceExpression(1578,1586): 'hashCode'
+  null
+
+KtValueArgumentList(1586,1588): '()'
+  null
+
+KtProperty(1594,1639): 'var v2: SealedClass? = i as? SealedInheritor1'
+  null
+
+KtTypeReference(1602,1614): 'SealedClass?'
+  null
+
+KtNullableType(1602,1614): 'SealedClass?'
+  null
+
+KtUserType(1602,1613): 'SealedClass'
+  null
+
+KtNameReferenceExpression(1602,1613): 'SealedClass'
+  null
+
+KtBinaryExpressionWithTypeRHS(1617,1639): 'i as? SealedInheritor1'
+  null
+
+KtNameReferenceExpression(1617,1618): 'i'
+  null
+
+KtOperationReferenceExpression(1619,1622): 'as?'
+  null
+
+KtTypeReference(1623,1639): 'SealedInheritor1'
+  null
+
+KtUserType(1623,1639): 'SealedInheritor1'
+  null
+
+KtNameReferenceExpression(1623,1639): 'SealedInheritor1'
+  null
+
+KtSafeQualifiedExpression(1644,1665): 'v2?.prop1?.hashCode()'
+  null
+
+KtSafeQualifiedExpression(1644,1653): 'v2?.prop1'
+  null
+
+KtNameReferenceExpression(1644,1646): 'v2'
+  null
+
+KtNameReferenceExpression(1648,1653): 'prop1'
+  null
+
+KtCallExpression(1655,1665): 'hashCode()'
+  null
+
+KtNameReferenceExpression(1655,1663): 'hashCode'
+  null
+
+KtValueArgumentList(1663,1665): '()'
+  null
+
+KtProperty(1671,1721): 'var v3: SealedInheritor1? = i as? SealedInheritor1'
+  null
+
+KtTypeReference(1679,1696): 'SealedInheritor1?'
+  null
+
+KtNullableType(1679,1696): 'SealedInheritor1?'
+  null
+
+KtUserType(1679,1695): 'SealedInheritor1'
+  null
+
+KtNameReferenceExpression(1679,1695): 'SealedInheritor1'
+  null
+
+KtBinaryExpressionWithTypeRHS(1699,1721): 'i as? SealedInheritor1'
+  null
+
+KtNameReferenceExpression(1699,1700): 'i'
+  null
+
+KtOperationReferenceExpression(1701,1704): 'as?'
+  null
+
+KtTypeReference(1705,1721): 'SealedInheritor1'
+  null
+
+KtUserType(1705,1721): 'SealedInheritor1'
+  null
+
+KtNameReferenceExpression(1705,1721): 'SealedInheritor1'
+  null
+
+KtSafeQualifiedExpression(1726,1747): 'v3?.prop1?.hashCode()'
+  null
+
+KtSafeQualifiedExpression(1726,1735): 'v3?.prop1'
+  null
+
+KtNameReferenceExpression(1726,1728): 'v3'
+  null
+
+KtNameReferenceExpression(1730,1735): 'prop1'
+  null
+
+KtCallExpression(1737,1747): 'hashCode()'
+  null
+
+KtNameReferenceExpression(1737,1745): 'hashCode'
+  null
+
+KtValueArgumentList(1745,1747): '()'
+  null
+
+KtCallExpression(1753,1798): 'consume<SealedClass?>(i as? SealedInheritor1)'
+  null
+
+KtNameReferenceExpression(1753,1760): 'consume'
+  null
+
+KtTypeArgumentList(1760,1774): '<SealedClass?>'
+  null
+
+KtTypeProjection(1761,1773): 'SealedClass?'
+  null
+
+KtTypeReference(1761,1773): 'SealedClass?'
+  null
+
+KtNullableType(1761,1773): 'SealedClass?'
+  null
+
+KtUserType(1761,1772): 'SealedClass'
+  null
+
+KtNameReferenceExpression(1761,1772): 'SealedClass'
+  null
+
+KtValueArgumentList(1774,1798): '(i as? SealedInheritor1)'
+  null
+
+KtValueArgument(1775,1797): 'i as? SealedInheritor1'
+  null
+
+KtBinaryExpressionWithTypeRHS(1775,1797): 'i as? SealedInheritor1'
+  null
+
+KtNameReferenceExpression(1775,1776): 'i'
+  null
+
+KtOperationReferenceExpression(1777,1780): 'as?'
+  null
+
+KtTypeReference(1781,1797): 'SealedInheritor1'
+  null
+
+KtUserType(1781,1797): 'SealedInheritor1'
+  null
+
+KtNameReferenceExpression(1781,1797): 'SealedInheritor1'
+  null
+
+KtCallExpression(1803,1865): 'consume<SealedClass.SealedInheritor1?>(i as? SealedInheritor1)'
+  null
+
+KtNameReferenceExpression(1803,1810): 'consume'
+  null
+
+KtTypeArgumentList(1810,1841): '<SealedClass.SealedInheritor1?>'
+  null
+
+KtTypeProjection(1811,1840): 'SealedClass.SealedInheritor1?'
+  null
+
+KtTypeReference(1811,1840): 'SealedClass.SealedInheritor1?'
+  null
+
+KtNullableType(1811,1840): 'SealedClass.SealedInheritor1?'
+  null
+
+KtUserType(1811,1839): 'SealedClass.SealedInheritor1'
+  null
+
+KtUserType(1811,1822): 'SealedClass'
+  null
+
+KtNameReferenceExpression(1811,1822): 'SealedClass'
+  null
+
+KtNameReferenceExpression(1823,1839): 'SealedInheritor1'
+  null
+
+KtValueArgumentList(1841,1865): '(i as? SealedInheritor1)'
+  null
+
+KtValueArgument(1842,1864): 'i as? SealedInheritor1'
+  null
+
+KtBinaryExpressionWithTypeRHS(1842,1864): 'i as? SealedInheritor1'
+  null
+
+KtNameReferenceExpression(1842,1843): 'i'
+  null
+
+KtOperationReferenceExpression(1844,1847): 'as?'
+  null
+
+KtTypeReference(1848,1864): 'SealedInheritor1'
+  null
+
+KtUserType(1848,1864): 'SealedInheritor1'
+  null
+
+KtNameReferenceExpression(1848,1864): 'SealedInheritor1'
+  null
+
+KtCallExpression(1870,1932): 'consume<SealedClass.SealedInheritor2?>(i as? SealedInheritor2)'
+  null
+
+KtNameReferenceExpression(1870,1877): 'consume'
+  null
+
+KtTypeArgumentList(1877,1908): '<SealedClass.SealedInheritor2?>'
+  null
+
+KtTypeProjection(1878,1907): 'SealedClass.SealedInheritor2?'
+  null
+
+KtTypeReference(1878,1907): 'SealedClass.SealedInheritor2?'
+  null
+
+KtNullableType(1878,1907): 'SealedClass.SealedInheritor2?'
+  null
+
+KtUserType(1878,1906): 'SealedClass.SealedInheritor2'
+  null
+
+KtUserType(1878,1889): 'SealedClass'
+  null
+
+KtNameReferenceExpression(1878,1889): 'SealedClass'
+  null
+
+KtNameReferenceExpression(1890,1906): 'SealedInheritor2'
+  null
+
+KtValueArgumentList(1908,1932): '(i as? SealedInheritor2)'
+  null
+
+KtValueArgument(1909,1931): 'i as? SealedInheritor2'
+  null
+
+KtBinaryExpressionWithTypeRHS(1909,1931): 'i as? SealedInheritor2'
+  null
+
+KtNameReferenceExpression(1909,1910): 'i'
+  null
+
+KtOperationReferenceExpression(1911,1914): 'as?'
+  null
+
+KtTypeReference(1915,1931): 'SealedInheritor2'
+  null
+
+KtUserType(1915,1931): 'SealedInheritor2'
+  null
+
+KtNameReferenceExpression(1915,1931): 'SealedInheritor2'
+  null

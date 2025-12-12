@@ -1,0 +1,2 @@
+KtConstructorDelegationReferenceExpression(76,80): 'this'
+  null

@@ -1,0 +1,713 @@
+KtFile: 'tryCatchStatements.kt'
+  null
+
+KtPackageDirective(0,0): ''
+  null
+
+KtImportList(0,0): ''
+  null
+
+KtClass(78,301): 'open class MyClass {'
+  null
+
+KtDeclarationModifierList(78,82): 'open'
+  null
+
+KtClassBody(97,301): '{'
+  null
+
+KtObjectDeclaration(103,137): 'object NestedInheritor : MyClass()'
+  null
+
+KtSuperTypeList(128,137): 'MyClass()'
+  null
+
+KtSuperTypeCallEntry(128,137): 'MyClass()'
+  null
+
+KtConstructorCalleeExpression(128,135): 'MyClass'
+  null
+
+KtTypeReference(128,135): 'MyClass'
+  null
+
+KtUserType(128,135): 'MyClass'
+  null
+
+KtNameReferenceExpression(128,135): 'MyClass'
+  null
+
+KtValueArgumentList(135,137): '()'
+  null
+
+KtObjectDeclaration(143,299): 'companion object {'
+  null
+
+KtDeclarationModifierList(143,152): 'companion'
+  null
+
+KtClassBody(160,299): '{'
+  null
+
+KtProperty(170,206): 'val myClassProp: MyClass = MyClass()'
+  null
+
+KtTypeReference(187,194): 'MyClass'
+  null
+
+KtUserType(187,194): 'MyClass'
+  null
+
+KtNameReferenceExpression(187,194): 'MyClass'
+  null
+
+KtCallExpression(197,206): 'MyClass()'
+  null
+
+KtNameReferenceExpression(197,204): 'MyClass'
+  null
+
+KtValueArgumentList(204,206): '()'
+  null
+
+KtProperty(215,242): 'val stringProp: String = ""'
+  null
+
+KtTypeReference(231,237): 'String'
+  null
+
+KtUserType(231,237): 'String'
+  null
+
+KtNameReferenceExpression(231,237): 'String'
+  null
+
+KtStringTemplateExpression(240,242): '""'
+  null
+
+KtNamedFunction(251,293): 'fun getNestedInheritor() = NestedInheritor'
+  null
+
+KtParameterList(273,275): '()'
+  null
+
+KtNameReferenceExpression(278,293): 'NestedInheritor'
+  null
+
+KtProperty(303,349): 'val ClassMemberAlias = MyClass.NestedInheritor'
+  null
+
+KtDotQualifiedExpression(326,349): 'MyClass.NestedInheritor'
+  null
+
+KtNameReferenceExpression(326,333): 'MyClass'
+  null
+
+KtNameReferenceExpression(334,349): 'NestedInheritor'
+  null
+
+KtClass(351,384): 'class E1(m: String): Exception(m)'
+  null
+
+KtPrimaryConstructor(359,370): '(m: String)'
+  null
+
+KtParameterList(359,370): '(m: String)'
+  null
+
+KtParameter(360,369): 'm: String'
+  null
+
+KtTypeReference(363,369): 'String'
+  null
+
+KtUserType(363,369): 'String'
+  null
+
+KtNameReferenceExpression(363,369): 'String'
+  null
+
+KtSuperTypeList(372,384): 'Exception(m)'
+  null
+
+KtSuperTypeCallEntry(372,384): 'Exception(m)'
+  null
+
+KtConstructorCalleeExpression(372,381): 'Exception'
+  null
+
+KtTypeReference(372,381): 'Exception'
+  null
+
+KtUserType(372,381): 'Exception'
+  null
+
+KtNameReferenceExpression(372,381): 'Exception'
+  null
+
+KtValueArgumentList(381,384): '(m)'
+  null
+
+KtValueArgument(382,383): 'm'
+  null
+
+KtNameReferenceExpression(382,383): 'm'
+  null
+
+KtClass(385,418): 'class E2(m: String): Exception(m)'
+  null
+
+KtPrimaryConstructor(393,404): '(m: String)'
+  null
+
+KtParameterList(393,404): '(m: String)'
+  null
+
+KtParameter(394,403): 'm: String'
+  null
+
+KtTypeReference(397,403): 'String'
+  null
+
+KtUserType(397,403): 'String'
+  null
+
+KtNameReferenceExpression(397,403): 'String'
+  null
+
+KtSuperTypeList(406,418): 'Exception(m)'
+  null
+
+KtSuperTypeCallEntry(406,418): 'Exception(m)'
+  null
+
+KtConstructorCalleeExpression(406,415): 'Exception'
+  null
+
+KtTypeReference(406,415): 'Exception'
+  null
+
+KtUserType(406,415): 'Exception'
+  null
+
+KtNameReferenceExpression(406,415): 'Exception'
+  null
+
+KtValueArgumentList(415,418): '(m)'
+  null
+
+KtValueArgument(416,417): 'm'
+  null
+
+KtNameReferenceExpression(416,417): 'm'
+  null
+
+KtClass(419,452): 'class E3(m: String): Exception(m)'
+  null
+
+KtPrimaryConstructor(427,438): '(m: String)'
+  null
+
+KtParameterList(427,438): '(m: String)'
+  null
+
+KtParameter(428,437): 'm: String'
+  null
+
+KtTypeReference(431,437): 'String'
+  null
+
+KtUserType(431,437): 'String'
+  null
+
+KtNameReferenceExpression(431,437): 'String'
+  null
+
+KtSuperTypeList(440,452): 'Exception(m)'
+  null
+
+KtSuperTypeCallEntry(440,452): 'Exception(m)'
+  null
+
+KtConstructorCalleeExpression(440,449): 'Exception'
+  null
+
+KtTypeReference(440,449): 'Exception'
+  null
+
+KtUserType(440,449): 'Exception'
+  null
+
+KtNameReferenceExpression(440,449): 'Exception'
+  null
+
+KtValueArgumentList(449,452): '(m)'
+  null
+
+KtValueArgument(450,451): 'm'
+  null
+
+KtNameReferenceExpression(450,451): 'm'
+  null
+
+KtNamedFunction(454,477): 'fun <T>receive(e: T) {}'
+  null
+
+KtTypeParameterList(458,461): '<T>'
+  null
+
+KtTypeParameter(459,460): 'T'
+  null
+
+KtParameterList(468,474): '(e: T)'
+  null
+
+KtParameter(469,473): 'e: T'
+  null
+
+KtTypeReference(472,473): 'T'
+  null
+
+KtUserType(472,473): 'T'
+  null
+
+KtNameReferenceExpression(472,473): 'T'
+  null
+
+KtBlockExpression(475,477): '{}'
+  null
+
+KtNamedFunction(478,510): 'fun <T> run(b: () -> T): T = b()'
+  null
+
+KtTypeParameterList(482,485): '<T>'
+  null
+
+KtTypeParameter(483,484): 'T'
+  null
+
+KtParameterList(489,501): '(b: () -> T)'
+  null
+
+KtParameter(490,500): 'b: () -> T'
+  null
+
+KtTypeReference(493,500): '() -> T'
+  null
+
+KtFunctionType(493,500): '() -> T'
+  null
+
+KtParameterList(493,495): '()'
+  null
+
+KtTypeReference(499,500): 'T'
+  null
+
+KtUserType(499,500): 'T'
+  null
+
+KtNameReferenceExpression(499,500): 'T'
+  null
+
+KtTypeReference(503,504): 'T'
+  null
+
+KtUserType(503,504): 'T'
+  null
+
+KtNameReferenceExpression(503,504): 'T'
+  null
+
+KtCallExpression(507,510): 'b()'
+  null
+
+KtNameReferenceExpression(507,508): 'b'
+  null
+
+KtValueArgumentList(508,510): '()'
+  null
+
+KtNamedFunction(512,1889): 'fun testTryCatch() {'
+  null
+
+KtParameterList(528,530): '()'
+  null
+
+KtBlockExpression(531,1889): '{'
+  null
+
+KtProperty(537,1102): 'val c: MyClass = try {'
+  null
+
+KtTypeReference(544,551): 'MyClass'
+  null
+
+KtUserType(544,551): 'MyClass'
+  null
+
+KtNameReferenceExpression(544,551): 'MyClass'
+  null
+
+KtTryExpression(554,1102): 'try {'
+  null
+
+KtBlockExpression(558,687): '{'
+  null
+
+KtNameReferenceExpression(568,583): 'NestedInheritor'
+  null
+
+KtNameReferenceExpression(666,681): 'NestedInheritor'
+  null
+
+KtCatchClause(688,819): 'catch (e: E1) {'
+  null
+
+KtParameterList(694,701): '(e: E1)'
+  null
+
+KtParameter(695,700): 'e: E1'
+  null
+
+KtTypeReference(698,700): 'E1'
+  null
+
+KtUserType(698,700): 'E1'
+  null
+
+KtNameReferenceExpression(698,700): 'E1'
+  null
+
+KtBlockExpression(702,819): '{'
+  null
+
+KtNameReferenceExpression(712,723): 'myClassProp'
+  null
+
+KtNameReferenceExpression(802,813): 'myClassProp'
+  null
+
+KtCatchClause(820,1061): 'catch (e: E2) {'
+  null
+
+KtParameterList(826,833): '(e: E2)'
+  null
+
+KtParameter(827,832): 'e: E2'
+  null
+
+KtTypeReference(830,832): 'E2'
+  null
+
+KtUserType(830,832): 'E2'
+  null
+
+KtNameReferenceExpression(830,832): 'E2'
+  null
+
+KtBlockExpression(834,1061): '{'
+  null
+
+KtNameReferenceExpression(844,854): 'stringProp'
+  null
+
+KtNameReferenceExpression(932,942): 'stringProp'
+  null
+
+KtFinallySection(1062,1102): 'finally {'
+  null
+
+KtBlockExpression(1070,1102): '{'
+  null
+
+KtNameReferenceExpression(1080,1096): 'ClassMemberAlias'
+  null
+
+KtCallExpression(1108,1497): 'receive<MyClass>('
+  null
+
+KtNameReferenceExpression(1108,1115): 'receive'
+  null
+
+KtTypeArgumentList(1115,1124): '<MyClass>'
+  null
+
+KtTypeProjection(1116,1123): 'MyClass'
+  null
+
+KtTypeReference(1116,1123): 'MyClass'
+  null
+
+KtUserType(1116,1123): 'MyClass'
+  null
+
+KtNameReferenceExpression(1116,1123): 'MyClass'
+  null
+
+KtValueArgumentList(1124,1497): '('
+  null
+
+KtValueArgument(1134,1491): 'try {'
+  null
+
+KtTryExpression(1134,1491): 'try {'
+  null
+
+KtBlockExpression(1138,1205): '{'
+  null
+
+KtNameReferenceExpression(1152,1167): 'NestedInheritor'
+  null
+
+KtNameReferenceExpression(1180,1195): 'NestedInheritor'
+  null
+
+KtCatchClause(1206,1278): 'catch(e: E1) {'
+  null
+
+KtParameterList(1211,1218): '(e: E1)'
+  null
+
+KtParameter(1212,1217): 'e: E1'
+  null
+
+KtTypeReference(1215,1217): 'E1'
+  null
+
+KtUserType(1215,1217): 'E1'
+  null
+
+KtNameReferenceExpression(1215,1217): 'E1'
+  null
+
+KtBlockExpression(1219,1278): '{'
+  null
+
+KtNameReferenceExpression(1233,1244): 'myClassProp'
+  null
+
+KtNameReferenceExpression(1257,1268): 'myClassProp'
+  null
+
+KtCatchClause(1279,1350): 'catch (e: E2) {'
+  null
+
+KtParameterList(1285,1292): '(e: E2)'
+  null
+
+KtParameter(1286,1291): 'e: E2'
+  null
+
+KtTypeReference(1289,1291): 'E2'
+  null
+
+KtUserType(1289,1291): 'E2'
+  null
+
+KtNameReferenceExpression(1289,1291): 'E2'
+  null
+
+KtBlockExpression(1293,1350): '{'
+  null
+
+KtNameReferenceExpression(1307,1317): 'stringProp'
+  null
+
+KtNameReferenceExpression(1330,1340): 'stringProp'
+  null
+
+KtCatchClause(1351,1442): 'catch (e: E3) {'
+  null
+
+KtParameterList(1357,1364): '(e: E3)'
+  null
+
+KtParameter(1358,1363): 'e: E3'
+  null
+
+KtTypeReference(1361,1363): 'E3'
+  null
+
+KtUserType(1361,1363): 'E3'
+  null
+
+KtNameReferenceExpression(1361,1363): 'E3'
+  null
+
+KtBlockExpression(1365,1442): '{'
+  null
+
+KtCallExpression(1379,1399): 'getNestedInheritor()'
+  null
+
+KtNameReferenceExpression(1379,1397): 'getNestedInheritor'
+  null
+
+KtValueArgumentList(1397,1399): '()'
+  null
+
+KtCallExpression(1412,1432): 'getNestedInheritor()'
+  null
+
+KtNameReferenceExpression(1412,1430): 'getNestedInheritor'
+  null
+
+KtValueArgumentList(1430,1432): '()'
+  null
+
+KtFinallySection(1443,1491): 'finally {'
+  null
+
+KtBlockExpression(1451,1491): '{'
+  null
+
+KtNameReferenceExpression(1465,1481): 'ClassMemberAlias'
+  null
+
+KtCallExpression(1503,1887): 'run<MyClass> {'
+  null
+
+KtNameReferenceExpression(1503,1506): 'run'
+  null
+
+KtTypeArgumentList(1506,1515): '<MyClass>'
+  null
+
+KtTypeProjection(1507,1514): 'MyClass'
+  null
+
+KtTypeReference(1507,1514): 'MyClass'
+  null
+
+KtUserType(1507,1514): 'MyClass'
+  null
+
+KtNameReferenceExpression(1507,1514): 'MyClass'
+  null
+
+KtLambdaArgument(1516,1887): '{'
+  null
+
+KtLambdaExpression(1516,1887): '{'
+  null
+
+KtFunctionLiteral(1516,1887): '{'
+  null
+
+KtBlockExpression(1526,1881): 'try {'
+  null
+
+KtTryExpression(1526,1881): 'try {'
+  null
+
+KtBlockExpression(1530,1597): '{'
+  null
+
+KtNameReferenceExpression(1544,1559): 'NestedInheritor'
+  null
+
+KtNameReferenceExpression(1572,1587): 'NestedInheritor'
+  null
+
+KtCatchClause(1598,1670): 'catch(e: E1) {'
+  null
+
+KtParameterList(1603,1610): '(e: E1)'
+  null
+
+KtParameter(1604,1609): 'e: E1'
+  null
+
+KtTypeReference(1607,1609): 'E1'
+  null
+
+KtUserType(1607,1609): 'E1'
+  null
+
+KtNameReferenceExpression(1607,1609): 'E1'
+  null
+
+KtBlockExpression(1611,1670): '{'
+  null
+
+KtNameReferenceExpression(1625,1636): 'myClassProp'
+  null
+
+KtNameReferenceExpression(1649,1660): 'myClassProp'
+  null
+
+KtCatchClause(1671,1741): 'catch(e: E2) {'
+  null
+
+KtParameterList(1676,1683): '(e: E2)'
+  null
+
+KtParameter(1677,1682): 'e: E2'
+  null
+
+KtTypeReference(1680,1682): 'E2'
+  null
+
+KtUserType(1680,1682): 'E2'
+  null
+
+KtNameReferenceExpression(1680,1682): 'E2'
+  null
+
+KtBlockExpression(1684,1741): '{'
+  null
+
+KtNameReferenceExpression(1698,1708): 'stringProp'
+  null
+
+KtNameReferenceExpression(1721,1731): 'stringProp'
+  null
+
+KtCatchClause(1742,1832): 'catch(e: E3) {'
+  null
+
+KtParameterList(1747,1754): '(e: E3)'
+  null
+
+KtParameter(1748,1753): 'e: E3'
+  null
+
+KtTypeReference(1751,1753): 'E3'
+  null
+
+KtUserType(1751,1753): 'E3'
+  null
+
+KtNameReferenceExpression(1751,1753): 'E3'
+  null
+
+KtBlockExpression(1755,1832): '{'
+  null
+
+KtCallExpression(1769,1789): 'getNestedInheritor()'
+  null
+
+KtNameReferenceExpression(1769,1787): 'getNestedInheritor'
+  null
+
+KtValueArgumentList(1787,1789): '()'
+  null
+
+KtCallExpression(1802,1822): 'getNestedInheritor()'
+  null
+
+KtNameReferenceExpression(1802,1820): 'getNestedInheritor'
+  null
+
+KtValueArgumentList(1820,1822): '()'
+  null
+
+KtFinallySection(1833,1881): 'finally {'
+  null
+
+KtBlockExpression(1841,1881): '{'
+  null
+
+KtNameReferenceExpression(1855,1871): 'ClassMemberAlias'
+  null

@@ -1,0 +1,2 @@
+KtCallExpression(86,105): 'intArrayOf(1, 2, 3)'
+  null

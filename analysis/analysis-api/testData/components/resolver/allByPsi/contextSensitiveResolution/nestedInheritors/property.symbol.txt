@@ -1,0 +1,230 @@
+KtFile: 'property.kt'
+  null
+
+KtPackageDirective(0,0): ''
+  null
+
+KtImportList(0,0): ''
+  null
+
+KtNamedFunction(78,111): 'fun receiveMyClass(m: MyClass) {}'
+  null
+
+KtParameterList(96,108): '(m: MyClass)'
+  null
+
+KtParameter(97,107): 'm: MyClass'
+  null
+
+KtTypeReference(100,107): 'MyClass'
+  null
+
+KtUserType(100,107): 'MyClass'
+  null
+
+KtNameReferenceExpression(100,107): 'MyClass'
+  null
+
+KtBlockExpression(109,111): '{}'
+  null
+
+KtClass(113,293): 'sealed class MyClass {'
+  null
+
+KtDeclarationModifierList(113,119): 'sealed'
+  null
+
+KtClassBody(134,293): '{'
+  null
+
+KtObjectDeclaration(140,174): 'object NestedInheritor : MyClass()'
+  null
+
+KtSuperTypeList(165,174): 'MyClass()'
+  null
+
+KtSuperTypeCallEntry(165,174): 'MyClass()'
+  null
+
+KtConstructorCalleeExpression(165,172): 'MyClass'
+  null
+
+KtTypeReference(165,172): 'MyClass'
+  null
+
+KtUserType(165,172): 'MyClass'
+  null
+
+KtNameReferenceExpression(165,172): 'MyClass'
+  null
+
+KtValueArgumentList(172,174): '()'
+  null
+
+KtObjectDeclaration(180,291): 'companion object {'
+  null
+
+KtDeclarationModifierList(180,189): 'companion'
+  null
+
+KtClassBody(197,291): '{'
+  null
+
+KtProperty(207,249): 'val myClassProp: MyClass = NestedInheritor'
+  null
+
+KtTypeReference(224,231): 'MyClass'
+  null
+
+KtUserType(224,231): 'MyClass'
+  null
+
+KtNameReferenceExpression(224,231): 'MyClass'
+  null
+
+KtNameReferenceExpression(234,249): 'NestedInheritor'
+  null
+
+KtProperty(258,285): 'val stringProp: String = ""'
+  null
+
+KtTypeReference(274,280): 'String'
+  null
+
+KtUserType(274,280): 'String'
+  null
+
+KtNameReferenceExpression(274,280): 'String'
+  null
+
+KtStringTemplateExpression(283,285): '""'
+  null
+
+KtProperty(295,341): 'val ClassMemberAlias = MyClass.NestedInheritor'
+  null
+
+KtDotQualifiedExpression(318,341): 'MyClass.NestedInheritor'
+  null
+
+KtNameReferenceExpression(318,325): 'MyClass'
+  null
+
+KtNameReferenceExpression(326,341): 'NestedInheritor'
+  null
+
+KtNamedFunction(343,534): 'fun testIfElse(i: Int) {'
+  null
+
+KtParameterList(357,365): '(i: Int)'
+  null
+
+KtParameter(358,364): 'i: Int'
+  null
+
+KtTypeReference(361,364): 'Int'
+  null
+
+KtUserType(361,364): 'Int'
+  null
+
+KtNameReferenceExpression(361,364): 'Int'
+  null
+
+KtBlockExpression(366,534): '{'
+  null
+
+KtCallExpression(372,532): 'receiveMyClass('
+  null
+
+KtNameReferenceExpression(372,386): 'receiveMyClass'
+  null
+
+KtValueArgumentList(386,532): '('
+  null
+
+KtValueArgument(396,526): 'if (i == 0) NestedInheritor'
+  null
+
+KtIfExpression(396,526): 'if (i == 0) NestedInheritor'
+  null
+
+KtContainerNode(400,406): 'i == 0'
+  null
+
+KtBinaryExpression(400,406): 'i == 0'
+  null
+
+KtNameReferenceExpression(400,401): 'i'
+  null
+
+KtOperationReferenceExpression(402,404): '=='
+  null
+
+KtConstantExpression(405,406): '0'
+  null
+
+KtContainerNodeForControlStructureBody(408,423): 'NestedInheritor'
+  null
+
+KtNameReferenceExpression(408,423): 'NestedInheritor'
+  null
+
+KtContainerNodeForControlStructureBody(437,526): 'if (i == 1) myClassProp'
+  null
+
+KtIfExpression(437,526): 'if (i == 1) myClassProp'
+  null
+
+KtContainerNode(441,447): 'i == 1'
+  null
+
+KtBinaryExpression(441,447): 'i == 1'
+  null
+
+KtNameReferenceExpression(441,442): 'i'
+  null
+
+KtOperationReferenceExpression(443,445): '=='
+  null
+
+KtConstantExpression(446,447): '1'
+  null
+
+KtContainerNodeForControlStructureBody(449,460): 'myClassProp'
+  null
+
+KtNameReferenceExpression(449,460): 'myClassProp'
+  null
+
+KtContainerNodeForControlStructureBody(474,526): 'if (i == 2) stringProp'
+  null
+
+KtIfExpression(474,526): 'if (i == 2) stringProp'
+  null
+
+KtContainerNode(478,484): 'i == 2'
+  null
+
+KtBinaryExpression(478,484): 'i == 2'
+  null
+
+KtNameReferenceExpression(478,479): 'i'
+  null
+
+KtOperationReferenceExpression(480,482): '=='
+  null
+
+KtConstantExpression(483,484): '2'
+  null
+
+KtContainerNodeForControlStructureBody(486,496): 'stringProp'
+  null
+
+KtNameReferenceExpression(486,496): 'stringProp'
+  null
+
+KtContainerNodeForControlStructureBody(510,526): 'ClassMemberAlias'
+  null
+
+KtNameReferenceExpression(510,526): 'ClassMemberAlias'
+  null

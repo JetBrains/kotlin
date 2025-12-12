@@ -1,0 +1,275 @@
+KtFile: 'nested.kt'
+  null
+
+KtPackageDirective(0,0): ''
+  null
+
+KtImportList(0,0): ''
+  null
+
+KtClass(0,97): '// LANGUAGE: +ContextSensitiveResolutionUsingExpectedType'
+  null
+
+KtDeclarationModifierList(58,62): 'enum'
+  null
+
+KtClassBody(75,97): '{'
+  null
+
+KtEnumEntry(81,87): 'FIRST,'
+  null
+
+KtEnumEntry(88,95): 'SECOND;'
+  null
+
+KtClass(99,138): 'enum class Inner {'
+  null
+
+KtDeclarationModifierList(99,103): 'enum'
+  null
+
+KtClassBody(116,138): '{'
+  null
+
+KtEnumEntry(122,129): 'SECOND,'
+  null
+
+KtEnumEntry(130,136): 'THIRD;'
+  null
+
+KtNamedFunction(140,309): 'fun foo(o: Outer, i: Inner): Int {'
+  null
+
+KtParameterList(147,167): '(o: Outer, i: Inner)'
+  null
+
+KtParameter(148,156): 'o: Outer'
+  null
+
+KtTypeReference(151,156): 'Outer'
+  null
+
+KtUserType(151,156): 'Outer'
+  null
+
+KtNameReferenceExpression(151,156): 'Outer'
+  null
+
+KtParameter(158,166): 'i: Inner'
+  null
+
+KtTypeReference(161,166): 'Inner'
+  null
+
+KtUserType(161,166): 'Inner'
+  null
+
+KtNameReferenceExpression(161,166): 'Inner'
+  null
+
+KtTypeReference(169,172): 'Int'
+  null
+
+KtUserType(169,172): 'Int'
+  null
+
+KtNameReferenceExpression(169,172): 'Int'
+  null
+
+KtBlockExpression(173,309): '{'
+  null
+
+KtReturnExpression(179,307): 'return when (o) {'
+  null
+
+KtWhenExpression(186,307): 'when (o) {'
+  null
+
+KtNameReferenceExpression(192,193): 'o'
+  null
+
+KtWhenEntry(205,215): 'FIRST -> 1'
+  null
+
+KtWhenConditionWithExpression(205,210): 'FIRST'
+  null
+
+KtNameReferenceExpression(205,210): 'FIRST'
+  null
+
+KtConstantExpression(214,215): '1'
+  null
+
+KtWhenEntry(224,301): 'SECOND -> when (i) {'
+  null
+
+KtWhenConditionWithExpression(224,230): 'SECOND'
+  null
+
+KtNameReferenceExpression(224,230): 'SECOND'
+  null
+
+KtWhenExpression(234,301): 'when (i) {'
+  null
+
+KtNameReferenceExpression(240,241): 'i'
+  null
+
+KtWhenEntry(257,268): 'SECOND -> 2'
+  null
+
+KtWhenConditionWithExpression(257,263): 'SECOND'
+  null
+
+KtNameReferenceExpression(257,263): 'SECOND'
+  null
+
+KtConstantExpression(267,268): '2'
+  null
+
+KtWhenEntry(281,291): 'THIRD -> 3'
+  null
+
+KtWhenConditionWithExpression(281,286): 'THIRD'
+  null
+
+KtNameReferenceExpression(281,286): 'THIRD'
+  null
+
+KtConstantExpression(290,291): '3'
+  null
+
+KtNamedFunction(311,600): 'fun bar(o: Outer, i: Inner): Int {'
+  null
+
+KtParameterList(318,338): '(o: Outer, i: Inner)'
+  null
+
+KtParameter(319,327): 'o: Outer'
+  null
+
+KtTypeReference(322,327): 'Outer'
+  null
+
+KtUserType(322,327): 'Outer'
+  null
+
+KtNameReferenceExpression(322,327): 'Outer'
+  null
+
+KtParameter(329,337): 'i: Inner'
+  null
+
+KtTypeReference(332,337): 'Inner'
+  null
+
+KtUserType(332,337): 'Inner'
+  null
+
+KtNameReferenceExpression(332,337): 'Inner'
+  null
+
+KtTypeReference(340,343): 'Int'
+  null
+
+KtUserType(340,343): 'Int'
+  null
+
+KtNameReferenceExpression(340,343): 'Int'
+  null
+
+KtBlockExpression(344,600): '{'
+  null
+
+KtReturnExpression(350,598): 'return when (o) {'
+  null
+
+KtWhenExpression(357,598): 'when (o) {'
+  null
+
+KtNameReferenceExpression(363,364): 'o'
+  null
+
+KtWhenEntry(376,386): 'FIRST -> 1'
+  null
+
+KtWhenConditionWithExpression(376,381): 'FIRST'
+  null
+
+KtNameReferenceExpression(376,381): 'FIRST'
+  null
+
+KtConstantExpression(385,386): '1'
+  null
+
+KtWhenEntry(395,592): 'SECOND -> {'
+  null
+
+KtWhenConditionWithExpression(395,401): 'SECOND'
+  null
+
+KtNameReferenceExpression(395,401): 'SECOND'
+  null
+
+KtBlockExpression(405,592): '{'
+  null
+
+KtNamedFunction(419,564): 'fun baz(): Int {'
+  null
+
+KtParameterList(426,428): '()'
+  null
+
+KtTypeReference(430,433): 'Int'
+  null
+
+KtUserType(430,433): 'Int'
+  null
+
+KtNameReferenceExpression(430,433): 'Int'
+  null
+
+KtBlockExpression(434,564): '{'
+  null
+
+KtReturnExpression(452,550): 'return when (i) {'
+  null
+
+KtWhenExpression(459,550): 'when (i) {'
+  null
+
+KtNameReferenceExpression(465,466): 'i'
+  null
+
+KtWhenEntry(490,501): 'SECOND -> 2'
+  null
+
+KtWhenConditionWithExpression(490,496): 'SECOND'
+  null
+
+KtNameReferenceExpression(490,496): 'SECOND'
+  null
+
+KtConstantExpression(500,501): '2'
+  null
+
+KtWhenEntry(522,532): 'THIRD -> 3'
+  null
+
+KtWhenConditionWithExpression(522,527): 'THIRD'
+  null
+
+KtNameReferenceExpression(522,527): 'THIRD'
+  null
+
+KtConstantExpression(531,532): '3'
+  null
+
+KtCallExpression(577,582): 'baz()'
+  null
+
+KtNameReferenceExpression(577,580): 'baz'
+  null
+
+KtValueArgumentList(580,582): '()'
+  null

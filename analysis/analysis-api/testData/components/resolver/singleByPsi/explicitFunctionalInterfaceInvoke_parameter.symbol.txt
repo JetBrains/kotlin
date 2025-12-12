@@ -1,0 +1,2 @@
+KtNameReferenceExpression(77,83): 'invoke'
+  null

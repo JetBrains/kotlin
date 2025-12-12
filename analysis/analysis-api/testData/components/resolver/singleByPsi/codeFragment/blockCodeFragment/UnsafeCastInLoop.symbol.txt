@@ -1,0 +1,2 @@
+KtNameReferenceExpression(218,221): 'inc'
+  null

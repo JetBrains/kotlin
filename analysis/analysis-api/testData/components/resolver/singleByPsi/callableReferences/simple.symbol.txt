@@ -1,0 +1,2 @@
+KtCallableReferenceExpression(16,21): '::foo'
+  null

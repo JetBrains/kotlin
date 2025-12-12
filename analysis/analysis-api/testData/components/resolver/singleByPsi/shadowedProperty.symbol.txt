@@ -1,0 +1,2 @@
+KtNameReferenceExpression(107,115): 'property'
+  null

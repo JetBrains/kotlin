@@ -1,0 +1,2 @@
+KtWhenConditionInRange(169,181): 'in MyClass()'
+  null

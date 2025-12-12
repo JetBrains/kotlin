@@ -1,0 +1,11 @@
+<caret_1>:
+  KDocName(8,11): 'abc'
+    null
+
+<caret_2>:
+  KDocName(41,44): 'abc'
+    null
+
+<caret_3>:
+  KDocName(46,49): 'abc'
+    null

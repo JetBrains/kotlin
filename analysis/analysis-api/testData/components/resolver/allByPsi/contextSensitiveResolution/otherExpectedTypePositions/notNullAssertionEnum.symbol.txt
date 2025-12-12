@@ -1,0 +1,311 @@
+KtFile: 'notNullAssertionEnum.kt'
+  null
+
+KtPackageDirective(0,0): ''
+  null
+
+KtImportList(78,109): 'import kotlin.reflect.KProperty'
+  null
+
+KtImportDirective(78,109): 'import kotlin.reflect.KProperty'
+  null
+
+KtDotQualifiedExpression(85,109): 'kotlin.reflect.KProperty'
+  null
+
+KtDotQualifiedExpression(85,99): 'kotlin.reflect'
+  null
+
+KtNameReferenceExpression(85,91): 'kotlin'
+  null
+
+KtNameReferenceExpression(92,99): 'reflect'
+  null
+
+KtNameReferenceExpression(100,109): 'KProperty'
+  null
+
+KtClass(111,301): 'enum class MyEnum {'
+  null
+
+KtDeclarationModifierList(111,115): 'enum'
+  null
+
+KtClassBody(129,301): '{'
+  null
+
+KtEnumEntry(135,143): 'Option1,'
+  null
+
+KtEnumEntry(144,152): 'Option2,'
+  null
+
+KtEnumEntry(153,161): 'Option3;'
+  null
+
+KtObjectDeclaration(166,299): 'companion object {'
+  null
+
+KtDeclarationModifierList(166,175): 'companion'
+  null
+
+KtClassBody(183,299): '{'
+  null
+
+KtProperty(193,223): 'val enumProp: MyEnum = Option1'
+  null
+
+KtTypeReference(207,213): 'MyEnum'
+  null
+
+KtUserType(207,213): 'MyEnum'
+  null
+
+KtNameReferenceExpression(207,213): 'MyEnum'
+  null
+
+KtNameReferenceExpression(216,223): 'Option1'
+  null
+
+KtProperty(232,259): 'val stringProp: String = ""'
+  null
+
+KtTypeReference(248,254): 'String'
+  null
+
+KtUserType(248,254): 'String'
+  null
+
+KtNameReferenceExpression(248,254): 'String'
+  null
+
+KtStringTemplateExpression(257,259): '""'
+  null
+
+KtNamedFunction(268,293): 'fun getOption() = Option1'
+  null
+
+KtParameterList(281,283): '()'
+  null
+
+KtNameReferenceExpression(286,293): 'Option1'
+  null
+
+KtNamedFunction(303,326): 'fun <T>receive(e: T) {}'
+  null
+
+KtTypeParameterList(307,310): '<T>'
+  null
+
+KtTypeParameter(308,309): 'T'
+  null
+
+KtParameterList(317,323): '(e: T)'
+  null
+
+KtParameter(318,322): 'e: T'
+  null
+
+KtTypeReference(321,322): 'T'
+  null
+
+KtUserType(321,322): 'T'
+  null
+
+KtNameReferenceExpression(321,322): 'T'
+  null
+
+KtBlockExpression(324,326): '{}'
+  null
+
+KtProperty(327,363): 'val EnumOptionAlias = MyEnum.Option1'
+  null
+
+KtDotQualifiedExpression(349,363): 'MyEnum.Option1'
+  null
+
+KtNameReferenceExpression(349,355): 'MyEnum'
+  null
+
+KtNameReferenceExpression(356,363): 'Option1'
+  null
+
+KtNamedFunction(365,593): 'fun testNotNullAssertion() {'
+  null
+
+KtParameterList(389,391): '()'
+  null
+
+KtBlockExpression(392,593): '{'
+  null
+
+KtProperty(398,425): 'var i10: MyEnum = Option1!!'
+  null
+
+KtTypeReference(407,413): 'MyEnum'
+  null
+
+KtUserType(407,413): 'MyEnum'
+  null
+
+KtNameReferenceExpression(407,413): 'MyEnum'
+  null
+
+KtPostfixExpression(416,425): 'Option1!!'
+  null
+
+KtNameReferenceExpression(416,423): 'Option1'
+  null
+
+KtOperationReferenceExpression(423,425): '!!'
+  null
+
+KtProperty(430,458): 'var i20: MyEnum = enumProp!!'
+  null
+
+KtTypeReference(439,445): 'MyEnum'
+  null
+
+KtUserType(439,445): 'MyEnum'
+  null
+
+KtNameReferenceExpression(439,445): 'MyEnum'
+  null
+
+KtPostfixExpression(448,458): 'enumProp!!'
+  null
+
+KtNameReferenceExpression(448,456): 'enumProp'
+  null
+
+KtOperationReferenceExpression(456,458): '!!'
+  null
+
+KtProperty(463,493): 'var i30: MyEnum = stringProp!!'
+  null
+
+KtTypeReference(472,478): 'MyEnum'
+  null
+
+KtUserType(472,478): 'MyEnum'
+  null
+
+KtNameReferenceExpression(472,478): 'MyEnum'
+  null
+
+KtPostfixExpression(481,493): 'stringProp!!'
+  null
+
+KtNameReferenceExpression(481,491): 'stringProp'
+  null
+
+KtOperationReferenceExpression(491,493): '!!'
+  null
+
+KtCallExpression(499,525): 'receive<MyEnum>(Option1!!)'
+  null
+
+KtNameReferenceExpression(499,506): 'receive'
+  null
+
+KtTypeArgumentList(506,514): '<MyEnum>'
+  null
+
+KtTypeProjection(507,513): 'MyEnum'
+  null
+
+KtTypeReference(507,513): 'MyEnum'
+  null
+
+KtUserType(507,513): 'MyEnum'
+  null
+
+KtNameReferenceExpression(507,513): 'MyEnum'
+  null
+
+KtValueArgumentList(514,525): '(Option1!!)'
+  null
+
+KtValueArgument(515,524): 'Option1!!'
+  null
+
+KtPostfixExpression(515,524): 'Option1!!'
+  null
+
+KtNameReferenceExpression(515,522): 'Option1'
+  null
+
+KtOperationReferenceExpression(522,524): '!!'
+  null
+
+KtCallExpression(530,557): 'receive<MyEnum>(enumProp!!)'
+  null
+
+KtNameReferenceExpression(530,537): 'receive'
+  null
+
+KtTypeArgumentList(537,545): '<MyEnum>'
+  null
+
+KtTypeProjection(538,544): 'MyEnum'
+  null
+
+KtTypeReference(538,544): 'MyEnum'
+  null
+
+KtUserType(538,544): 'MyEnum'
+  null
+
+KtNameReferenceExpression(538,544): 'MyEnum'
+  null
+
+KtValueArgumentList(545,557): '(enumProp!!)'
+  null
+
+KtValueArgument(546,556): 'enumProp!!'
+  null
+
+KtPostfixExpression(546,556): 'enumProp!!'
+  null
+
+KtNameReferenceExpression(546,554): 'enumProp'
+  null
+
+KtOperationReferenceExpression(554,556): '!!'
+  null
+
+KtCallExpression(562,591): 'receive<MyEnum>(stringProp!!)'
+  null
+
+KtNameReferenceExpression(562,569): 'receive'
+  null
+
+KtTypeArgumentList(569,577): '<MyEnum>'
+  null
+
+KtTypeProjection(570,576): 'MyEnum'
+  null
+
+KtTypeReference(570,576): 'MyEnum'
+  null
+
+KtUserType(570,576): 'MyEnum'
+  null
+
+KtNameReferenceExpression(570,576): 'MyEnum'
+  null
+
+KtValueArgumentList(577,591): '(stringProp!!)'
+  null
+
+KtValueArgument(578,590): 'stringProp!!'
+  null
+
+KtPostfixExpression(578,590): 'stringProp!!'
+  null
+
+KtNameReferenceExpression(578,588): 'stringProp'
+  null
+
+KtOperationReferenceExpression(588,590): '!!'
+  null

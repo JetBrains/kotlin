@@ -1,0 +1,2 @@
+KtConstructorDelegationCall(111,125): 'this(s.length)'
+  null

@@ -1,0 +1,1742 @@
+KtFile: 'test.kt'
+  null
+
+KtPackageDirective(0,0): ''
+  null
+
+KtImportList(0,0): ''
+  null
+
+KtClass(18,209): '// FILE: test.kt'
+  null
+
+KtDeclarationModifierList(35,41): 'sealed'
+  null
+
+KtClassBody(68,209): '{'
+  null
+
+KtClass(74,207): 'class NestedInheritor(prop: String): SealedInterface {'
+  null
+
+KtPrimaryConstructor(95,109): '(prop: String)'
+  null
+
+KtParameterList(95,109): '(prop: String)'
+  null
+
+KtParameter(96,108): 'prop: String'
+  null
+
+KtTypeReference(102,108): 'String'
+  null
+
+KtUserType(102,108): 'String'
+  null
+
+KtNameReferenceExpression(102,108): 'String'
+  null
+
+KtSuperTypeList(111,126): 'SealedInterface'
+  null
+
+KtSuperTypeEntry(111,126): 'SealedInterface'
+  null
+
+KtTypeReference(111,126): 'SealedInterface'
+  null
+
+KtUserType(111,126): 'SealedInterface'
+  null
+
+KtNameReferenceExpression(111,126): 'SealedInterface'
+  null
+
+KtClassBody(127,207): '{'
+  null
+
+KtClass(137,201): 'class NestedNestedInheritor(propNested: String): SealedInterface'
+  null
+
+KtPrimaryConstructor(164,184): '(propNested: String)'
+  null
+
+KtParameterList(164,184): '(propNested: String)'
+  null
+
+KtParameter(165,183): 'propNested: String'
+  null
+
+KtTypeReference(177,183): 'String'
+  null
+
+KtUserType(177,183): 'String'
+  null
+
+KtNameReferenceExpression(177,183): 'String'
+  null
+
+KtSuperTypeList(186,201): 'SealedInterface'
+  null
+
+KtSuperTypeEntry(186,201): 'SealedInterface'
+  null
+
+KtTypeReference(186,201): 'SealedInterface'
+  null
+
+KtUserType(186,201): 'SealedInterface'
+  null
+
+KtNameReferenceExpression(186,201): 'SealedInterface'
+  null
+
+KtClass(211,368): 'sealed class SealedClass {'
+  null
+
+KtDeclarationModifierList(211,217): 'sealed'
+  null
+
+KtClassBody(236,368): '{'
+  null
+
+KtClass(242,304): 'class SealedInheritor1(val prop1: String = "1"): SealedClass()'
+  null
+
+KtPrimaryConstructor(264,289): '(val prop1: String = "1")'
+  null
+
+KtParameterList(264,289): '(val prop1: String = "1")'
+  null
+
+KtParameter(265,288): 'val prop1: String = "1"'
+  null
+
+KtTypeReference(276,282): 'String'
+  null
+
+KtUserType(276,282): 'String'
+  null
+
+KtNameReferenceExpression(276,282): 'String'
+  null
+
+KtStringTemplateExpression(285,288): '"1"'
+  null
+
+KtLiteralStringTemplateEntry(286,287): '1'
+  null
+
+KtSuperTypeList(291,304): 'SealedClass()'
+  null
+
+KtSuperTypeCallEntry(291,304): 'SealedClass()'
+  null
+
+KtConstructorCalleeExpression(291,302): 'SealedClass'
+  null
+
+KtTypeReference(291,302): 'SealedClass'
+  null
+
+KtUserType(291,302): 'SealedClass'
+  null
+
+KtNameReferenceExpression(291,302): 'SealedClass'
+  null
+
+KtValueArgumentList(302,304): '()'
+  null
+
+KtClass(309,366): 'class SealedInheritor2(val prop2: Int = 2): SealedClass()'
+  null
+
+KtPrimaryConstructor(331,351): '(val prop2: Int = 2)'
+  null
+
+KtParameterList(331,351): '(val prop2: Int = 2)'
+  null
+
+KtParameter(332,350): 'val prop2: Int = 2'
+  null
+
+KtTypeReference(343,346): 'Int'
+  null
+
+KtUserType(343,346): 'Int'
+  null
+
+KtNameReferenceExpression(343,346): 'Int'
+  null
+
+KtConstantExpression(349,350): '2'
+  null
+
+KtSuperTypeList(353,366): 'SealedClass()'
+  null
+
+KtSuperTypeCallEntry(353,366): 'SealedClass()'
+  null
+
+KtConstructorCalleeExpression(353,364): 'SealedClass'
+  null
+
+KtTypeReference(353,364): 'SealedClass'
+  null
+
+KtUserType(353,364): 'SealedClass'
+  null
+
+KtNameReferenceExpression(353,364): 'SealedClass'
+  null
+
+KtValueArgumentList(364,366): '()'
+  null
+
+KtClass(370,521): 'sealed class SealedGeneric<T> {'
+  null
+
+KtDeclarationModifierList(370,376): 'sealed'
+  null
+
+KtTypeParameterList(396,399): '<T>'
+  null
+
+KtTypeParameter(397,398): 'T'
+  null
+
+KtClassBody(400,521): '{'
+  null
+
+KtClass(406,460): 'class SGOption1<T>(val prop1: Int): SealedGeneric<T>()'
+  null
+
+KtTypeParameterList(421,424): '<T>'
+  null
+
+KtTypeParameter(422,423): 'T'
+  null
+
+KtPrimaryConstructor(424,440): '(val prop1: Int)'
+  null
+
+KtParameterList(424,440): '(val prop1: Int)'
+  null
+
+KtParameter(425,439): 'val prop1: Int'
+  null
+
+KtTypeReference(436,439): 'Int'
+  null
+
+KtUserType(436,439): 'Int'
+  null
+
+KtNameReferenceExpression(436,439): 'Int'
+  null
+
+KtSuperTypeList(442,460): 'SealedGeneric<T>()'
+  null
+
+KtSuperTypeCallEntry(442,460): 'SealedGeneric<T>()'
+  null
+
+KtConstructorCalleeExpression(442,458): 'SealedGeneric<T>'
+  null
+
+KtTypeReference(442,458): 'SealedGeneric<T>'
+  null
+
+KtUserType(442,458): 'SealedGeneric<T>'
+  null
+
+KtNameReferenceExpression(442,455): 'SealedGeneric'
+  null
+
+KtTypeArgumentList(455,458): '<T>'
+  null
+
+KtTypeProjection(456,457): 'T'
+  null
+
+KtTypeReference(456,457): 'T'
+  null
+
+KtUserType(456,457): 'T'
+  null
+
+KtNameReferenceExpression(456,457): 'T'
+  null
+
+KtValueArgumentList(458,460): '()'
+  null
+
+KtClass(465,519): 'class SGOption2<T>(val prop2: Int): SealedGeneric<T>()'
+  null
+
+KtTypeParameterList(480,483): '<T>'
+  null
+
+KtTypeParameter(481,482): 'T'
+  null
+
+KtPrimaryConstructor(483,499): '(val prop2: Int)'
+  null
+
+KtParameterList(483,499): '(val prop2: Int)'
+  null
+
+KtParameter(484,498): 'val prop2: Int'
+  null
+
+KtTypeReference(495,498): 'Int'
+  null
+
+KtUserType(495,498): 'Int'
+  null
+
+KtNameReferenceExpression(495,498): 'Int'
+  null
+
+KtSuperTypeList(501,519): 'SealedGeneric<T>()'
+  null
+
+KtSuperTypeCallEntry(501,519): 'SealedGeneric<T>()'
+  null
+
+KtConstructorCalleeExpression(501,517): 'SealedGeneric<T>'
+  null
+
+KtTypeReference(501,517): 'SealedGeneric<T>'
+  null
+
+KtUserType(501,517): 'SealedGeneric<T>'
+  null
+
+KtNameReferenceExpression(501,514): 'SealedGeneric'
+  null
+
+KtTypeArgumentList(514,517): '<T>'
+  null
+
+KtTypeProjection(515,516): 'T'
+  null
+
+KtTypeReference(515,516): 'T'
+  null
+
+KtUserType(515,516): 'T'
+  null
+
+KtNameReferenceExpression(515,516): 'T'
+  null
+
+KtValueArgumentList(517,519): '()'
+  null
+
+KtNamedFunction(523,745): 'fun <T: SealedClass>testTypeParam(instance: T): String = when (instance) {'
+  null
+
+KtTypeParameterList(527,543): '<T: SealedClass>'
+  null
+
+KtTypeParameter(528,542): 'T: SealedClass'
+  null
+
+KtTypeReference(531,542): 'SealedClass'
+  null
+
+KtUserType(531,542): 'SealedClass'
+  null
+
+KtNameReferenceExpression(531,542): 'SealedClass'
+  null
+
+KtParameterList(556,569): '(instance: T)'
+  null
+
+KtParameter(557,568): 'instance: T'
+  null
+
+KtTypeReference(567,568): 'T'
+  null
+
+KtUserType(567,568): 'T'
+  null
+
+KtNameReferenceExpression(567,568): 'T'
+  null
+
+KtTypeReference(571,577): 'String'
+  null
+
+KtUserType(571,577): 'String'
+  null
+
+KtNameReferenceExpression(571,577): 'String'
+  null
+
+KtWhenExpression(580,745): 'when (instance) {'
+  null
+
+KtNameReferenceExpression(586,594): 'instance'
+  null
+
+KtWhenEntry(602,639): 'is SealedInheritor1 -> instance.prop1'
+  null
+
+KtWhenConditionIsPattern(602,621): 'is SealedInheritor1'
+  null
+
+KtTypeReference(605,621): 'SealedInheritor1'
+  null
+
+KtUserType(605,621): 'SealedInheritor1'
+  null
+
+KtNameReferenceExpression(605,621): 'SealedInheritor1'
+  null
+
+KtDotQualifiedExpression(625,639): 'instance.prop1'
+  null
+
+KtNameReferenceExpression(625,633): 'instance'
+  null
+
+KtNameReferenceExpression(634,639): 'prop1'
+  null
+
+KtWhenEntry(644,725): '!is SealedInheritor1 if instance is SealedInheritor2 -> instance.prop2.toString()'
+  null
+
+KtWhenConditionIsPattern(644,664): '!is SealedInheritor1'
+  null
+
+KtTypeReference(648,664): 'SealedInheritor1'
+  null
+
+KtUserType(648,664): 'SealedInheritor1'
+  null
+
+KtNameReferenceExpression(648,664): 'SealedInheritor1'
+  null
+
+KtWhenEntryGuard(665,696): 'if instance is SealedInheritor2'
+  null
+
+KtIsExpression(668,696): 'instance is SealedInheritor2'
+  null
+
+KtNameReferenceExpression(668,676): 'instance'
+  null
+
+KtOperationReferenceExpression(677,679): 'is'
+  null
+
+KtTypeReference(680,696): 'SealedInheritor2'
+  null
+
+KtUserType(680,696): 'SealedInheritor2'
+  null
+
+KtNameReferenceExpression(680,696): 'SealedInheritor2'
+  null
+
+KtDotQualifiedExpression(700,725): 'instance.prop2.toString()'
+  null
+
+KtDotQualifiedExpression(700,714): 'instance.prop2'
+  null
+
+KtNameReferenceExpression(700,708): 'instance'
+  null
+
+KtNameReferenceExpression(709,714): 'prop2'
+  null
+
+KtCallExpression(715,725): 'toString()'
+  null
+
+KtNameReferenceExpression(715,723): 'toString'
+  null
+
+KtValueArgumentList(723,725): '()'
+  null
+
+KtWhenEntry(730,743): 'else -> "100"'
+  null
+
+KtStringTemplateExpression(738,743): '"100"'
+  null
+
+KtLiteralStringTemplateEntry(739,742): '100'
+  null
+
+KtClass(747,763): 'interface OtherI'
+  null
+
+KtNamedFunction(765,1009): 'fun <T>testTypeParams(instance: T): String where T : SealedClass, T : OtherI = when (instance) {'
+  null
+
+KtTypeParameterList(769,772): '<T>'
+  null
+
+KtTypeParameter(770,771): 'T'
+  null
+
+KtParameterList(786,799): '(instance: T)'
+  null
+
+KtParameter(787,798): 'instance: T'
+  null
+
+KtTypeReference(797,798): 'T'
+  null
+
+KtUserType(797,798): 'T'
+  null
+
+KtNameReferenceExpression(797,798): 'T'
+  null
+
+KtTypeReference(801,807): 'String'
+  null
+
+KtUserType(801,807): 'String'
+  null
+
+KtNameReferenceExpression(801,807): 'String'
+  null
+
+KtTypeConstraintList(814,841): 'T : SealedClass, T : OtherI'
+  null
+
+KtTypeConstraint(814,829): 'T : SealedClass'
+  null
+
+KtNameReferenceExpression(814,815): 'T'
+  null
+
+KtTypeReference(818,829): 'SealedClass'
+  null
+
+KtUserType(818,829): 'SealedClass'
+  null
+
+KtNameReferenceExpression(818,829): 'SealedClass'
+  null
+
+KtTypeConstraint(831,841): 'T : OtherI'
+  null
+
+KtNameReferenceExpression(831,832): 'T'
+  null
+
+KtTypeReference(835,841): 'OtherI'
+  null
+
+KtUserType(835,841): 'OtherI'
+  null
+
+KtNameReferenceExpression(835,841): 'OtherI'
+  null
+
+KtWhenExpression(844,1009): 'when (instance) {'
+  null
+
+KtNameReferenceExpression(850,858): 'instance'
+  null
+
+KtWhenEntry(866,903): 'is SealedInheritor1 -> instance.prop1'
+  null
+
+KtWhenConditionIsPattern(866,885): 'is SealedInheritor1'
+  null
+
+KtTypeReference(869,885): 'SealedInheritor1'
+  null
+
+KtUserType(869,885): 'SealedInheritor1'
+  null
+
+KtNameReferenceExpression(869,885): 'SealedInheritor1'
+  null
+
+KtDotQualifiedExpression(889,903): 'instance.prop1'
+  null
+
+KtNameReferenceExpression(889,897): 'instance'
+  null
+
+KtNameReferenceExpression(898,903): 'prop1'
+  null
+
+KtWhenEntry(908,989): '!is SealedInheritor1 if instance is SealedInheritor2 -> instance.prop2.toString()'
+  null
+
+KtWhenConditionIsPattern(908,928): '!is SealedInheritor1'
+  null
+
+KtTypeReference(912,928): 'SealedInheritor1'
+  null
+
+KtUserType(912,928): 'SealedInheritor1'
+  null
+
+KtNameReferenceExpression(912,928): 'SealedInheritor1'
+  null
+
+KtWhenEntryGuard(929,960): 'if instance is SealedInheritor2'
+  null
+
+KtIsExpression(932,960): 'instance is SealedInheritor2'
+  null
+
+KtNameReferenceExpression(932,940): 'instance'
+  null
+
+KtOperationReferenceExpression(941,943): 'is'
+  null
+
+KtTypeReference(944,960): 'SealedInheritor2'
+  null
+
+KtUserType(944,960): 'SealedInheritor2'
+  null
+
+KtNameReferenceExpression(944,960): 'SealedInheritor2'
+  null
+
+KtDotQualifiedExpression(964,989): 'instance.prop2.toString()'
+  null
+
+KtDotQualifiedExpression(964,978): 'instance.prop2'
+  null
+
+KtNameReferenceExpression(964,972): 'instance'
+  null
+
+KtNameReferenceExpression(973,978): 'prop2'
+  null
+
+KtCallExpression(979,989): 'toString()'
+  null
+
+KtNameReferenceExpression(979,987): 'toString'
+  null
+
+KtValueArgumentList(987,989): '()'
+  null
+
+KtWhenEntry(994,1007): 'else -> "100"'
+  null
+
+KtStringTemplateExpression(1002,1007): '"100"'
+  null
+
+KtLiteralStringTemplateEntry(1003,1006): '100'
+  null
+
+KtNamedFunction(1011,1193): 'fun testNullable(instance: SealedClass?): String = when(instance) {'
+  null
+
+KtParameterList(1027,1051): '(instance: SealedClass?)'
+  null
+
+KtParameter(1028,1050): 'instance: SealedClass?'
+  null
+
+KtTypeReference(1038,1050): 'SealedClass?'
+  null
+
+KtNullableType(1038,1050): 'SealedClass?'
+  null
+
+KtUserType(1038,1049): 'SealedClass'
+  null
+
+KtNameReferenceExpression(1038,1049): 'SealedClass'
+  null
+
+KtTypeReference(1053,1059): 'String'
+  null
+
+KtUserType(1053,1059): 'String'
+  null
+
+KtNameReferenceExpression(1053,1059): 'String'
+  null
+
+KtWhenExpression(1062,1193): 'when(instance) {'
+  null
+
+KtNameReferenceExpression(1067,1075): 'instance'
+  null
+
+KtWhenEntry(1083,1120): 'is SealedInheritor1 -> instance.prop1'
+  null
+
+KtWhenConditionIsPattern(1083,1102): 'is SealedInheritor1'
+  null
+
+KtTypeReference(1086,1102): 'SealedInheritor1'
+  null
+
+KtUserType(1086,1102): 'SealedInheritor1'
+  null
+
+KtNameReferenceExpression(1086,1102): 'SealedInheritor1'
+  null
+
+KtDotQualifiedExpression(1106,1120): 'instance.prop1'
+  null
+
+KtNameReferenceExpression(1106,1114): 'instance'
+  null
+
+KtNameReferenceExpression(1115,1120): 'prop1'
+  null
+
+KtWhenEntry(1125,1173): 'is SealedInheritor2 -> instance.prop2.toString()'
+  null
+
+KtWhenConditionIsPattern(1125,1144): 'is SealedInheritor2'
+  null
+
+KtTypeReference(1128,1144): 'SealedInheritor2'
+  null
+
+KtUserType(1128,1144): 'SealedInheritor2'
+  null
+
+KtNameReferenceExpression(1128,1144): 'SealedInheritor2'
+  null
+
+KtDotQualifiedExpression(1148,1173): 'instance.prop2.toString()'
+  null
+
+KtDotQualifiedExpression(1148,1162): 'instance.prop2'
+  null
+
+KtNameReferenceExpression(1148,1156): 'instance'
+  null
+
+KtNameReferenceExpression(1157,1162): 'prop2'
+  null
+
+KtCallExpression(1163,1173): 'toString()'
+  null
+
+KtNameReferenceExpression(1163,1171): 'toString'
+  null
+
+KtValueArgumentList(1171,1173): '()'
+  null
+
+KtWhenEntry(1178,1191): 'null -> "100"'
+  null
+
+KtWhenConditionWithExpression(1178,1182): 'null'
+  null
+
+KtConstantExpression(1178,1182): 'null'
+  null
+
+KtStringTemplateExpression(1186,1191): '"100"'
+  null
+
+KtLiteralStringTemplateEntry(1187,1190): '100'
+  null
+
+KtClass(1195,1262): 'interface ITestContravariant<in T> {'
+  null
+
+KtTypeParameterList(1223,1229): '<in T>'
+  null
+
+KtTypeParameter(1224,1228): 'in T'
+  null
+
+KtDeclarationModifierList(1224,1226): 'in'
+  null
+
+KtClassBody(1230,1262): '{'
+  null
+
+KtNamedFunction(1236,1260): 'fun test(arg: T): String'
+  null
+
+KtParameterList(1244,1252): '(arg: T)'
+  null
+
+KtParameter(1245,1251): 'arg: T'
+  null
+
+KtTypeReference(1250,1251): 'T'
+  null
+
+KtUserType(1250,1251): 'T'
+  null
+
+KtNameReferenceExpression(1250,1251): 'T'
+  null
+
+KtTypeReference(1254,1260): 'String'
+  null
+
+KtUserType(1254,1260): 'String'
+  null
+
+KtNameReferenceExpression(1254,1260): 'String'
+  null
+
+KtClass(1264,1467): 'class TestContravariant: ITestContravariant<SealedClass> {'
+  null
+
+KtSuperTypeList(1289,1320): 'ITestContravariant<SealedClass>'
+  null
+
+KtSuperTypeEntry(1289,1320): 'ITestContravariant<SealedClass>'
+  null
+
+KtTypeReference(1289,1320): 'ITestContravariant<SealedClass>'
+  null
+
+KtUserType(1289,1320): 'ITestContravariant<SealedClass>'
+  null
+
+KtNameReferenceExpression(1289,1307): 'ITestContravariant'
+  null
+
+KtTypeArgumentList(1307,1320): '<SealedClass>'
+  null
+
+KtTypeProjection(1308,1319): 'SealedClass'
+  null
+
+KtTypeReference(1308,1319): 'SealedClass'
+  null
+
+KtUserType(1308,1319): 'SealedClass'
+  null
+
+KtNameReferenceExpression(1308,1319): 'SealedClass'
+  null
+
+KtClassBody(1321,1467): '{'
+  null
+
+KtNamedFunction(1327,1465): 'override fun test(arg: SealedClass): String = when (arg) {'
+  null
+
+KtDeclarationModifierList(1327,1335): 'override'
+  null
+
+KtParameterList(1344,1362): '(arg: SealedClass)'
+  null
+
+KtParameter(1345,1361): 'arg: SealedClass'
+  null
+
+KtTypeReference(1350,1361): 'SealedClass'
+  null
+
+KtUserType(1350,1361): 'SealedClass'
+  null
+
+KtNameReferenceExpression(1350,1361): 'SealedClass'
+  null
+
+KtTypeReference(1364,1370): 'String'
+  null
+
+KtUserType(1364,1370): 'String'
+  null
+
+KtNameReferenceExpression(1364,1370): 'String'
+  null
+
+KtWhenExpression(1373,1465): 'when (arg) {'
+  null
+
+KtNameReferenceExpression(1379,1382): 'arg'
+  null
+
+KtWhenEntry(1394,1422): 'is SealedInheritor1 -> "100"'
+  null
+
+KtWhenConditionIsPattern(1394,1413): 'is SealedInheritor1'
+  null
+
+KtTypeReference(1397,1413): 'SealedInheritor1'
+  null
+
+KtUserType(1397,1413): 'SealedInheritor1'
+  null
+
+KtNameReferenceExpression(1397,1413): 'SealedInheritor1'
+  null
+
+KtStringTemplateExpression(1417,1422): '"100"'
+  null
+
+KtLiteralStringTemplateEntry(1418,1421): '100'
+  null
+
+KtWhenEntry(1431,1459): 'is SealedInheritor2 -> "201"'
+  null
+
+KtWhenConditionIsPattern(1431,1450): 'is SealedInheritor2'
+  null
+
+KtTypeReference(1434,1450): 'SealedInheritor2'
+  null
+
+KtUserType(1434,1450): 'SealedInheritor2'
+  null
+
+KtNameReferenceExpression(1434,1450): 'SealedInheritor2'
+  null
+
+KtStringTemplateExpression(1454,1459): '"201"'
+  null
+
+KtLiteralStringTemplateEntry(1455,1458): '201'
+  null
+
+KtNamedFunction(1469,1684): 'fun <T: SealedClass?>testDefinitelyNotNullIntersection(instance: T & Any): String = when(instance) {'
+  null
+
+KtTypeParameterList(1473,1490): '<T: SealedClass?>'
+  null
+
+KtTypeParameter(1474,1489): 'T: SealedClass?'
+  null
+
+KtTypeReference(1477,1489): 'SealedClass?'
+  null
+
+KtNullableType(1477,1489): 'SealedClass?'
+  null
+
+KtUserType(1477,1488): 'SealedClass'
+  null
+
+KtNameReferenceExpression(1477,1488): 'SealedClass'
+  null
+
+KtParameterList(1523,1542): '(instance: T & Any)'
+  null
+
+KtParameter(1524,1541): 'instance: T & Any'
+  null
+
+KtTypeReference(1534,1541): 'T & Any'
+  null
+
+KtIntersectionType(1534,1541): 'T & Any'
+  null
+
+KtTypeReference(1534,1535): 'T'
+  null
+
+KtUserType(1534,1535): 'T'
+  null
+
+KtNameReferenceExpression(1534,1535): 'T'
+  null
+
+KtTypeReference(1538,1541): 'Any'
+  null
+
+KtUserType(1538,1541): 'Any'
+  null
+
+KtNameReferenceExpression(1538,1541): 'Any'
+  null
+
+KtTypeReference(1544,1550): 'String'
+  null
+
+KtUserType(1544,1550): 'String'
+  null
+
+KtNameReferenceExpression(1544,1550): 'String'
+  null
+
+KtWhenExpression(1553,1684): 'when(instance) {'
+  null
+
+KtNameReferenceExpression(1558,1566): 'instance'
+  null
+
+KtWhenEntry(1574,1611): 'is SealedInheritor1 -> instance.prop1'
+  null
+
+KtWhenConditionIsPattern(1574,1593): 'is SealedInheritor1'
+  null
+
+KtTypeReference(1577,1593): 'SealedInheritor1'
+  null
+
+KtUserType(1577,1593): 'SealedInheritor1'
+  null
+
+KtNameReferenceExpression(1577,1593): 'SealedInheritor1'
+  null
+
+KtDotQualifiedExpression(1597,1611): 'instance.prop1'
+  null
+
+KtNameReferenceExpression(1597,1605): 'instance'
+  null
+
+KtNameReferenceExpression(1606,1611): 'prop1'
+  null
+
+KtWhenEntry(1616,1664): 'is SealedInheritor2 -> instance.prop2.toString()'
+  null
+
+KtWhenConditionIsPattern(1616,1635): 'is SealedInheritor2'
+  null
+
+KtTypeReference(1619,1635): 'SealedInheritor2'
+  null
+
+KtUserType(1619,1635): 'SealedInheritor2'
+  null
+
+KtNameReferenceExpression(1619,1635): 'SealedInheritor2'
+  null
+
+KtDotQualifiedExpression(1639,1664): 'instance.prop2.toString()'
+  null
+
+KtDotQualifiedExpression(1639,1653): 'instance.prop2'
+  null
+
+KtNameReferenceExpression(1639,1647): 'instance'
+  null
+
+KtNameReferenceExpression(1648,1653): 'prop2'
+  null
+
+KtCallExpression(1654,1664): 'toString()'
+  null
+
+KtNameReferenceExpression(1654,1662): 'toString'
+  null
+
+KtValueArgumentList(1662,1664): '()'
+  null
+
+KtWhenEntry(1669,1682): 'else -> "100"'
+  null
+
+KtStringTemplateExpression(1677,1682): '"100"'
+  null
+
+KtLiteralStringTemplateEntry(1678,1681): '100'
+  null
+
+KtNamedFunction(1686,2023): 'fun testFakeIntersection2(instance: Any): String {'
+  null
+
+KtParameterList(1711,1726): '(instance: Any)'
+  null
+
+KtParameter(1712,1725): 'instance: Any'
+  null
+
+KtTypeReference(1722,1725): 'Any'
+  null
+
+KtUserType(1722,1725): 'Any'
+  null
+
+KtNameReferenceExpression(1722,1725): 'Any'
+  null
+
+KtTypeReference(1728,1734): 'String'
+  null
+
+KtUserType(1728,1734): 'String'
+  null
+
+KtNameReferenceExpression(1728,1734): 'String'
+  null
+
+KtBlockExpression(1735,2023): '{'
+  null
+
+KtIfExpression(1741,2004): 'if (instance is SealedInterface && instance is SealedInterface.NestedInheritor) {'
+  null
+
+KtContainerNode(1745,1819): 'instance is SealedInterface && instance is SealedInterface.NestedInheritor'
+  null
+
+KtBinaryExpression(1745,1819): 'instance is SealedInterface && instance is SealedInterface.NestedInheritor'
+  null
+
+KtIsExpression(1745,1772): 'instance is SealedInterface'
+  null
+
+KtNameReferenceExpression(1745,1753): 'instance'
+  null
+
+KtOperationReferenceExpression(1754,1756): 'is'
+  null
+
+KtTypeReference(1757,1772): 'SealedInterface'
+  null
+
+KtUserType(1757,1772): 'SealedInterface'
+  null
+
+KtNameReferenceExpression(1757,1772): 'SealedInterface'
+  null
+
+KtOperationReferenceExpression(1773,1775): '&&'
+  null
+
+KtIsExpression(1776,1819): 'instance is SealedInterface.NestedInheritor'
+  null
+
+KtNameReferenceExpression(1776,1784): 'instance'
+  null
+
+KtOperationReferenceExpression(1785,1787): 'is'
+  null
+
+KtTypeReference(1788,1819): 'SealedInterface.NestedInheritor'
+  null
+
+KtUserType(1788,1819): 'SealedInterface.NestedInheritor'
+  null
+
+KtUserType(1788,1803): 'SealedInterface'
+  null
+
+KtNameReferenceExpression(1788,1803): 'SealedInterface'
+  null
+
+KtNameReferenceExpression(1804,1819): 'NestedInheritor'
+  null
+
+KtContainerNodeForControlStructureBody(1821,2004): '{'
+  null
+
+KtBlockExpression(1821,2004): '{'
+  null
+
+KtReturnExpression(1831,1998): 'return when(instance) {'
+  null
+
+KtWhenExpression(1838,1998): 'when(instance) {'
+  null
+
+KtNameReferenceExpression(1843,1851): 'instance'
+  null
+
+KtWhenEntry(1867,1902): 'is NestedInheritor -> instance.prop'
+  null
+
+KtWhenConditionIsPattern(1867,1885): 'is NestedInheritor'
+  null
+
+KtTypeReference(1870,1885): 'NestedInheritor'
+  null
+
+KtUserType(1870,1885): 'NestedInheritor'
+  null
+
+KtNameReferenceExpression(1870,1885): 'NestedInheritor'
+  null
+
+KtDotQualifiedExpression(1889,1902): 'instance.prop'
+  null
+
+KtNameReferenceExpression(1889,1897): 'instance'
+  null
+
+KtNameReferenceExpression(1898,1902): 'prop'
+  null
+
+KtWhenEntry(1915,1962): 'is NestedNestedInheritor -> instance.propNested'
+  null
+
+KtWhenConditionIsPattern(1915,1939): 'is NestedNestedInheritor'
+  null
+
+KtTypeReference(1918,1939): 'NestedNestedInheritor'
+  null
+
+KtUserType(1918,1939): 'NestedNestedInheritor'
+  null
+
+KtNameReferenceExpression(1918,1939): 'NestedNestedInheritor'
+  null
+
+KtDotQualifiedExpression(1943,1962): 'instance.propNested'
+  null
+
+KtNameReferenceExpression(1943,1951): 'instance'
+  null
+
+KtNameReferenceExpression(1952,1962): 'propNested'
+  null
+
+KtWhenEntry(1975,1988): 'else -> "100"'
+  null
+
+KtStringTemplateExpression(1983,1988): '"100"'
+  null
+
+KtLiteralStringTemplateEntry(1984,1987): '100'
+  null
+
+KtReturnExpression(2009,2021): 'return "100"'
+  null
+
+KtStringTemplateExpression(2016,2021): '"100"'
+  null
+
+KtLiteralStringTemplateEntry(2017,2020): '100'
+  null
+
+KtNamedFunction(2025,2329): 'fun testIntersection(instance: Any): String {'
+  null
+
+KtParameterList(2045,2060): '(instance: Any)'
+  null
+
+KtParameter(2046,2059): 'instance: Any'
+  null
+
+KtTypeReference(2056,2059): 'Any'
+  null
+
+KtUserType(2056,2059): 'Any'
+  null
+
+KtNameReferenceExpression(2056,2059): 'Any'
+  null
+
+KtTypeReference(2062,2068): 'String'
+  null
+
+KtUserType(2062,2068): 'String'
+  null
+
+KtNameReferenceExpression(2062,2068): 'String'
+  null
+
+KtBlockExpression(2069,2329): '{'
+  null
+
+KtIfExpression(2075,2310): 'if (instance is SealedInterface && instance is Any) {'
+  null
+
+KtContainerNode(2079,2125): 'instance is SealedInterface && instance is Any'
+  null
+
+KtBinaryExpression(2079,2125): 'instance is SealedInterface && instance is Any'
+  null
+
+KtIsExpression(2079,2106): 'instance is SealedInterface'
+  null
+
+KtNameReferenceExpression(2079,2087): 'instance'
+  null
+
+KtOperationReferenceExpression(2088,2090): 'is'
+  null
+
+KtTypeReference(2091,2106): 'SealedInterface'
+  null
+
+KtUserType(2091,2106): 'SealedInterface'
+  null
+
+KtNameReferenceExpression(2091,2106): 'SealedInterface'
+  null
+
+KtOperationReferenceExpression(2107,2109): '&&'
+  null
+
+KtIsExpression(2110,2125): 'instance is Any'
+  null
+
+KtNameReferenceExpression(2110,2118): 'instance'
+  null
+
+KtOperationReferenceExpression(2119,2121): 'is'
+  null
+
+KtTypeReference(2122,2125): 'Any'
+  null
+
+KtUserType(2122,2125): 'Any'
+  null
+
+KtNameReferenceExpression(2122,2125): 'Any'
+  null
+
+KtContainerNodeForControlStructureBody(2127,2310): '{'
+  null
+
+KtBlockExpression(2127,2310): '{'
+  null
+
+KtReturnExpression(2137,2304): 'return when(instance) {'
+  null
+
+KtWhenExpression(2144,2304): 'when(instance) {'
+  null
+
+KtNameReferenceExpression(2149,2157): 'instance'
+  null
+
+KtWhenEntry(2173,2208): 'is NestedInheritor -> instance.prop'
+  null
+
+KtWhenConditionIsPattern(2173,2191): 'is NestedInheritor'
+  null
+
+KtTypeReference(2176,2191): 'NestedInheritor'
+  null
+
+KtUserType(2176,2191): 'NestedInheritor'
+  null
+
+KtNameReferenceExpression(2176,2191): 'NestedInheritor'
+  null
+
+KtDotQualifiedExpression(2195,2208): 'instance.prop'
+  null
+
+KtNameReferenceExpression(2195,2203): 'instance'
+  null
+
+KtNameReferenceExpression(2204,2208): 'prop'
+  null
+
+KtWhenEntry(2221,2268): 'is NestedNestedInheritor -> instance.propNested'
+  null
+
+KtWhenConditionIsPattern(2221,2245): 'is NestedNestedInheritor'
+  null
+
+KtTypeReference(2224,2245): 'NestedNestedInheritor'
+  null
+
+KtUserType(2224,2245): 'NestedNestedInheritor'
+  null
+
+KtNameReferenceExpression(2224,2245): 'NestedNestedInheritor'
+  null
+
+KtDotQualifiedExpression(2249,2268): 'instance.propNested'
+  null
+
+KtNameReferenceExpression(2249,2257): 'instance'
+  null
+
+KtNameReferenceExpression(2258,2268): 'propNested'
+  null
+
+KtWhenEntry(2281,2294): 'else -> "100"'
+  null
+
+KtStringTemplateExpression(2289,2294): '"100"'
+  null
+
+KtLiteralStringTemplateEntry(2290,2293): '100'
+  null
+
+KtReturnExpression(2315,2327): 'return "100"'
+  null
+
+KtStringTemplateExpression(2322,2327): '"100"'
+  null
+
+KtLiteralStringTemplateEntry(2323,2326): '100'
+  null
+
+KtNamedFunction(2331,2546): 'fun <T>testRegularIntersection(instance: T): String where T : SealedInterface, T : SealedClass = when(instance) {'
+  null
+
+KtTypeParameterList(2335,2338): '<T>'
+  null
+
+KtTypeParameter(2336,2337): 'T'
+  null
+
+KtParameterList(2361,2374): '(instance: T)'
+  null
+
+KtParameter(2362,2373): 'instance: T'
+  null
+
+KtTypeReference(2372,2373): 'T'
+  null
+
+KtUserType(2372,2373): 'T'
+  null
+
+KtNameReferenceExpression(2372,2373): 'T'
+  null
+
+KtTypeReference(2376,2382): 'String'
+  null
+
+KtUserType(2376,2382): 'String'
+  null
+
+KtNameReferenceExpression(2376,2382): 'String'
+  null
+
+KtTypeConstraintList(2389,2425): 'T : SealedInterface, T : SealedClass'
+  null
+
+KtTypeConstraint(2389,2408): 'T : SealedInterface'
+  null
+
+KtNameReferenceExpression(2389,2390): 'T'
+  null
+
+KtTypeReference(2393,2408): 'SealedInterface'
+  null
+
+KtUserType(2393,2408): 'SealedInterface'
+  null
+
+KtNameReferenceExpression(2393,2408): 'SealedInterface'
+  null
+
+KtTypeConstraint(2410,2425): 'T : SealedClass'
+  null
+
+KtNameReferenceExpression(2410,2411): 'T'
+  null
+
+KtTypeReference(2414,2425): 'SealedClass'
+  null
+
+KtUserType(2414,2425): 'SealedClass'
+  null
+
+KtNameReferenceExpression(2414,2425): 'SealedClass'
+  null
+
+KtWhenExpression(2428,2546): 'when(instance) {'
+  null
+
+KtNameReferenceExpression(2433,2441): 'instance'
+  null
+
+KtWhenEntry(2449,2484): 'is NestedInheritor -> instance.prop'
+  null
+
+KtWhenConditionIsPattern(2449,2467): 'is NestedInheritor'
+  null
+
+KtTypeReference(2452,2467): 'NestedInheritor'
+  null
+
+KtUserType(2452,2467): 'NestedInheritor'
+  null
+
+KtNameReferenceExpression(2452,2467): 'NestedInheritor'
+  null
+
+KtDotQualifiedExpression(2471,2484): 'instance.prop'
+  null
+
+KtNameReferenceExpression(2471,2479): 'instance'
+  null
+
+KtNameReferenceExpression(2480,2484): 'prop'
+  null
+
+KtWhenEntry(2489,2526): 'is SealedInheritor1 -> instance.prop1'
+  null
+
+KtWhenConditionIsPattern(2489,2508): 'is SealedInheritor1'
+  null
+
+KtTypeReference(2492,2508): 'SealedInheritor1'
+  null
+
+KtUserType(2492,2508): 'SealedInheritor1'
+  null
+
+KtNameReferenceExpression(2492,2508): 'SealedInheritor1'
+  null
+
+KtDotQualifiedExpression(2512,2526): 'instance.prop1'
+  null
+
+KtNameReferenceExpression(2512,2520): 'instance'
+  null
+
+KtNameReferenceExpression(2521,2526): 'prop1'
+  null
+
+KtWhenEntry(2531,2544): 'else -> "100"'
+  null
+
+KtStringTemplateExpression(2539,2544): '"100"'
+  null
+
+KtLiteralStringTemplateEntry(2540,2543): '100'
+  null
+
+KtNamedFunction(2548,2710): 'fun testFlexible(): Int {'
+  null
+
+KtParameterList(2564,2566): '()'
+  null
+
+KtTypeReference(2568,2571): 'Int'
+  null
+
+KtUserType(2568,2571): 'Int'
+  null
+
+KtNameReferenceExpression(2568,2571): 'Int'
+  null
+
+KtBlockExpression(2572,2710): '{'
+  null
+
+KtReturnExpression(2578,2708): 'return when(val i = JClass.staticProp) {'
+  null
+
+KtWhenExpression(2585,2708): 'when(val i = JClass.staticProp) {'
+  null
+
+KtProperty(2590,2615): 'val i = JClass.staticProp'
+  null
+
+KtDotQualifiedExpression(2598,2615): 'JClass.staticProp'
+  null
+
+KtNameReferenceExpression(2598,2604): 'JClass'
+  null
+
+KtNameReferenceExpression(2605,2615): 'staticProp'
+  null
+
+KtWhenEntry(2627,2650): 'is SCOption1 -> i.prop1'
+  null
+
+KtWhenConditionIsPattern(2627,2639): 'is SCOption1'
+  null
+
+KtTypeReference(2630,2639): 'SCOption1'
+  null
+
+KtUserType(2630,2639): 'SCOption1'
+  null
+
+KtNameReferenceExpression(2630,2639): 'SCOption1'
+  null
+
+KtDotQualifiedExpression(2643,2650): 'i.prop1'
+  null
+
+KtNameReferenceExpression(2643,2644): 'i'
+  null
+
+KtNameReferenceExpression(2645,2650): 'prop1'
+  null
+
+KtWhenEntry(2659,2682): 'is SCOption2 -> i.prop2'
+  null
+
+KtWhenConditionIsPattern(2659,2671): 'is SCOption2'
+  null
+
+KtTypeReference(2662,2671): 'SCOption2'
+  null
+
+KtUserType(2662,2671): 'SCOption2'
+  null
+
+KtNameReferenceExpression(2662,2671): 'SCOption2'
+  null
+
+KtDotQualifiedExpression(2675,2682): 'i.prop2'
+  null
+
+KtNameReferenceExpression(2675,2676): 'i'
+  null
+
+KtNameReferenceExpression(2677,2682): 'prop2'
+  null
+
+KtWhenEntry(2691,2702): 'else -> 101'
+  null
+
+KtConstantExpression(2699,2702): '101'
+  null
+
+KtClass(2712,2773): 'class ITestContravariant2<in T>(val a: @UnsafeVariance T) {'
+  null
+
+KtTypeParameterList(2737,2743): '<in T>'
+  null
+
+KtTypeParameter(2738,2742): 'in T'
+  null
+
+KtDeclarationModifierList(2738,2740): 'in'
+  null
+
+KtPrimaryConstructor(2743,2769): '(val a: @UnsafeVariance T)'
+  null
+
+KtParameterList(2743,2769): '(val a: @UnsafeVariance T)'
+  null
+
+KtParameter(2744,2768): 'val a: @UnsafeVariance T'
+  null
+
+KtTypeReference(2751,2768): '@UnsafeVariance T'
+  null
+
+KtDeclarationModifierList(2751,2766): '@UnsafeVariance'
+  null
+
+KtAnnotationEntry(2751,2766): '@UnsafeVariance'
+  null
+
+KtConstructorCalleeExpression(2752,2766): 'UnsafeVariance'
+  null
+
+KtTypeReference(2752,2766): 'UnsafeVariance'
+  null
+
+KtUserType(2752,2766): 'UnsafeVariance'
+  null
+
+KtNameReferenceExpression(2752,2766): 'UnsafeVariance'
+  null
+
+KtUserType(2767,2768): 'T'
+  null
+
+KtNameReferenceExpression(2767,2768): 'T'
+  null
+
+KtClassBody(2770,2773): '{'
+  null
+
+KtNamedFunction(2775,2936): 'fun test(arg: ITestContravariant2<in SealedClass>): String = when (arg.a) {'
+  null
+
+KtParameterList(2783,2825): '(arg: ITestContravariant2<in SealedClass>)'
+  null
+
+KtParameter(2784,2824): 'arg: ITestContravariant2<in SealedClass>'
+  null
+
+KtTypeReference(2789,2824): 'ITestContravariant2<in SealedClass>'
+  null
+
+KtUserType(2789,2824): 'ITestContravariant2<in SealedClass>'
+  null
+
+KtNameReferenceExpression(2789,2808): 'ITestContravariant2'
+  null
+
+KtTypeArgumentList(2808,2824): '<in SealedClass>'
+  null
+
+KtTypeProjection(2809,2823): 'in SealedClass'
+  null
+
+KtDeclarationModifierList(2809,2811): 'in'
+  null
+
+KtTypeReference(2812,2823): 'SealedClass'
+  null
+
+KtUserType(2812,2823): 'SealedClass'
+  null
+
+KtNameReferenceExpression(2812,2823): 'SealedClass'
+  null
+
+KtTypeReference(2827,2833): 'String'
+  null
+
+KtUserType(2827,2833): 'String'
+  null
+
+KtNameReferenceExpression(2827,2833): 'String'
+  null
+
+KtWhenExpression(2836,2936): 'when (arg.a) {'
+  null
+
+KtDotQualifiedExpression(2842,2847): 'arg.a'
+  null
+
+KtNameReferenceExpression(2842,2845): 'arg'
+  null
+
+KtNameReferenceExpression(2846,2847): 'a'
+  null
+
+KtWhenEntry(2855,2883): 'is SealedInheritor1 -> "100"'
+  null
+
+KtWhenConditionIsPattern(2855,2874): 'is SealedInheritor1'
+  null
+
+KtTypeReference(2858,2874): 'SealedInheritor1'
+  null
+
+KtUserType(2858,2874): 'SealedInheritor1'
+  null
+
+KtNameReferenceExpression(2858,2874): 'SealedInheritor1'
+  null
+
+KtStringTemplateExpression(2878,2883): '"100"'
+  null
+
+KtLiteralStringTemplateEntry(2879,2882): '100'
+  null
+
+KtWhenEntry(2888,2916): 'is SealedInheritor2 -> "201"'
+  null
+
+KtWhenConditionIsPattern(2888,2907): 'is SealedInheritor2'
+  null
+
+KtTypeReference(2891,2907): 'SealedInheritor2'
+  null
+
+KtUserType(2891,2907): 'SealedInheritor2'
+  null
+
+KtNameReferenceExpression(2891,2907): 'SealedInheritor2'
+  null
+
+KtStringTemplateExpression(2911,2916): '"201"'
+  null
+
+KtLiteralStringTemplateEntry(2912,2915): '201'
+  null
+
+KtWhenEntry(2921,2934): 'else -> "301"'
+  null
+
+KtStringTemplateExpression(2929,2934): '"301"'
+  null
+
+KtLiteralStringTemplateEntry(2930,2933): '301'
+  null

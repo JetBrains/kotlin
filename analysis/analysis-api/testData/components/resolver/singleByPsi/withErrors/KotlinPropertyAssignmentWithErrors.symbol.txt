@@ -1,0 +1,11 @@
+<caret_1>:
+  KtNameReferenceExpression(64,73): 'something'
+    null
+
+<caret_2>:
+  KtNameReferenceExpression(82,91): 'something'
+    null
+
+<caret_3>:
+  KtNameReferenceExpression(104,113): 'something'
+    null

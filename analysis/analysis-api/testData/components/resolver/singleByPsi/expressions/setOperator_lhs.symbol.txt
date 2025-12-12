@@ -1,0 +1,2 @@
+KtArrayAccessExpression(93,104): 'variable[0]'
+  null

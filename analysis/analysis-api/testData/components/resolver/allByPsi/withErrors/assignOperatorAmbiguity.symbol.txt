@@ -1,0 +1,527 @@
+KtFile: 'assignOperatorAmbiguity.kt'
+  null
+
+KtPackageDirective(0,0): ''
+  null
+
+KtImportList(0,0): ''
+  null
+
+KtClass(0,10): 'class Test'
+  null
+
+KtNamedFunction(12,55): 'operator fun Test.plus(i: Int): Test = this'
+  null
+
+KtDeclarationModifierList(12,20): 'operator'
+  null
+
+KtTypeReference(25,29): 'Test'
+  null
+
+KtUserType(25,29): 'Test'
+  null
+
+KtNameReferenceExpression(25,29): 'Test'
+  null
+
+KtParameterList(34,42): '(i: Int)'
+  null
+
+KtParameter(35,41): 'i: Int'
+  null
+
+KtTypeReference(38,41): 'Int'
+  null
+
+KtUserType(38,41): 'Int'
+  null
+
+KtNameReferenceExpression(38,41): 'Int'
+  null
+
+KtTypeReference(44,48): 'Test'
+  null
+
+KtUserType(44,48): 'Test'
+  null
+
+KtNameReferenceExpression(44,48): 'Test'
+  null
+
+KtThisExpression(51,55): 'this'
+  null
+
+KtNameReferenceExpression(51,55): 'this'
+  null
+
+KtNamedFunction(56,101): 'operator fun Test.plusAssign(i: Int): Unit {}'
+  null
+
+KtDeclarationModifierList(56,64): 'operator'
+  null
+
+KtTypeReference(69,73): 'Test'
+  null
+
+KtUserType(69,73): 'Test'
+  null
+
+KtNameReferenceExpression(69,73): 'Test'
+  null
+
+KtParameterList(84,92): '(i: Int)'
+  null
+
+KtParameter(85,91): 'i: Int'
+  null
+
+KtTypeReference(88,91): 'Int'
+  null
+
+KtUserType(88,91): 'Int'
+  null
+
+KtNameReferenceExpression(88,91): 'Int'
+  null
+
+KtTypeReference(94,98): 'Unit'
+  null
+
+KtUserType(94,98): 'Unit'
+  null
+
+KtNameReferenceExpression(94,98): 'Unit'
+  null
+
+KtBlockExpression(99,101): '{}'
+  null
+
+KtNamedFunction(103,147): 'operator fun Test.minus(i: Int): Test = this'
+  null
+
+KtDeclarationModifierList(103,111): 'operator'
+  null
+
+KtTypeReference(116,120): 'Test'
+  null
+
+KtUserType(116,120): 'Test'
+  null
+
+KtNameReferenceExpression(116,120): 'Test'
+  null
+
+KtParameterList(126,134): '(i: Int)'
+  null
+
+KtParameter(127,133): 'i: Int'
+  null
+
+KtTypeReference(130,133): 'Int'
+  null
+
+KtUserType(130,133): 'Int'
+  null
+
+KtNameReferenceExpression(130,133): 'Int'
+  null
+
+KtTypeReference(136,140): 'Test'
+  null
+
+KtUserType(136,140): 'Test'
+  null
+
+KtNameReferenceExpression(136,140): 'Test'
+  null
+
+KtThisExpression(143,147): 'this'
+  null
+
+KtNameReferenceExpression(143,147): 'this'
+  null
+
+KtNamedFunction(148,194): 'operator fun Test.minusAssign(i: Int): Unit {}'
+  null
+
+KtDeclarationModifierList(148,156): 'operator'
+  null
+
+KtTypeReference(161,165): 'Test'
+  null
+
+KtUserType(161,165): 'Test'
+  null
+
+KtNameReferenceExpression(161,165): 'Test'
+  null
+
+KtParameterList(177,185): '(i: Int)'
+  null
+
+KtParameter(178,184): 'i: Int'
+  null
+
+KtTypeReference(181,184): 'Int'
+  null
+
+KtUserType(181,184): 'Int'
+  null
+
+KtNameReferenceExpression(181,184): 'Int'
+  null
+
+KtTypeReference(187,191): 'Unit'
+  null
+
+KtUserType(187,191): 'Unit'
+  null
+
+KtNameReferenceExpression(187,191): 'Unit'
+  null
+
+KtBlockExpression(192,194): '{}'
+  null
+
+KtNamedFunction(196,238): 'operator fun Test.div(i: Int): Test = this'
+  null
+
+KtDeclarationModifierList(196,204): 'operator'
+  null
+
+KtTypeReference(209,213): 'Test'
+  null
+
+KtUserType(209,213): 'Test'
+  null
+
+KtNameReferenceExpression(209,213): 'Test'
+  null
+
+KtParameterList(217,225): '(i: Int)'
+  null
+
+KtParameter(218,224): 'i: Int'
+  null
+
+KtTypeReference(221,224): 'Int'
+  null
+
+KtUserType(221,224): 'Int'
+  null
+
+KtNameReferenceExpression(221,224): 'Int'
+  null
+
+KtTypeReference(227,231): 'Test'
+  null
+
+KtUserType(227,231): 'Test'
+  null
+
+KtNameReferenceExpression(227,231): 'Test'
+  null
+
+KtThisExpression(234,238): 'this'
+  null
+
+KtNameReferenceExpression(234,238): 'this'
+  null
+
+KtNamedFunction(239,283): 'operator fun Test.divAssign(i: Int): Unit {}'
+  null
+
+KtDeclarationModifierList(239,247): 'operator'
+  null
+
+KtTypeReference(252,256): 'Test'
+  null
+
+KtUserType(252,256): 'Test'
+  null
+
+KtNameReferenceExpression(252,256): 'Test'
+  null
+
+KtParameterList(266,274): '(i: Int)'
+  null
+
+KtParameter(267,273): 'i: Int'
+  null
+
+KtTypeReference(270,273): 'Int'
+  null
+
+KtUserType(270,273): 'Int'
+  null
+
+KtNameReferenceExpression(270,273): 'Int'
+  null
+
+KtTypeReference(276,280): 'Unit'
+  null
+
+KtUserType(276,280): 'Unit'
+  null
+
+KtNameReferenceExpression(276,280): 'Unit'
+  null
+
+KtBlockExpression(281,283): '{}'
+  null
+
+KtNamedFunction(285,329): 'operator fun Test.times(i: Int): Test = this'
+  null
+
+KtDeclarationModifierList(285,293): 'operator'
+  null
+
+KtTypeReference(298,302): 'Test'
+  null
+
+KtUserType(298,302): 'Test'
+  null
+
+KtNameReferenceExpression(298,302): 'Test'
+  null
+
+KtParameterList(308,316): '(i: Int)'
+  null
+
+KtParameter(309,315): 'i: Int'
+  null
+
+KtTypeReference(312,315): 'Int'
+  null
+
+KtUserType(312,315): 'Int'
+  null
+
+KtNameReferenceExpression(312,315): 'Int'
+  null
+
+KtTypeReference(318,322): 'Test'
+  null
+
+KtUserType(318,322): 'Test'
+  null
+
+KtNameReferenceExpression(318,322): 'Test'
+  null
+
+KtThisExpression(325,329): 'this'
+  null
+
+KtNameReferenceExpression(325,329): 'this'
+  null
+
+KtNamedFunction(330,376): 'operator fun Test.timesAssign(i: Int): Unit {}'
+  null
+
+KtDeclarationModifierList(330,338): 'operator'
+  null
+
+KtTypeReference(343,347): 'Test'
+  null
+
+KtUserType(343,347): 'Test'
+  null
+
+KtNameReferenceExpression(343,347): 'Test'
+  null
+
+KtParameterList(359,367): '(i: Int)'
+  null
+
+KtParameter(360,366): 'i: Int'
+  null
+
+KtTypeReference(363,366): 'Int'
+  null
+
+KtUserType(363,366): 'Int'
+  null
+
+KtNameReferenceExpression(363,366): 'Int'
+  null
+
+KtTypeReference(369,373): 'Unit'
+  null
+
+KtUserType(369,373): 'Unit'
+  null
+
+KtNameReferenceExpression(369,373): 'Unit'
+  null
+
+KtBlockExpression(374,376): '{}'
+  null
+
+KtNamedFunction(378,420): 'operator fun Test.rem(i: Int): Test = this'
+  null
+
+KtDeclarationModifierList(378,386): 'operator'
+  null
+
+KtTypeReference(391,395): 'Test'
+  null
+
+KtUserType(391,395): 'Test'
+  null
+
+KtNameReferenceExpression(391,395): 'Test'
+  null
+
+KtParameterList(399,407): '(i: Int)'
+  null
+
+KtParameter(400,406): 'i: Int'
+  null
+
+KtTypeReference(403,406): 'Int'
+  null
+
+KtUserType(403,406): 'Int'
+  null
+
+KtNameReferenceExpression(403,406): 'Int'
+  null
+
+KtTypeReference(409,413): 'Test'
+  null
+
+KtUserType(409,413): 'Test'
+  null
+
+KtNameReferenceExpression(409,413): 'Test'
+  null
+
+KtThisExpression(416,420): 'this'
+  null
+
+KtNameReferenceExpression(416,420): 'this'
+  null
+
+KtNamedFunction(421,465): 'operator fun Test.remAssign(i: Int): Unit {}'
+  null
+
+KtDeclarationModifierList(421,429): 'operator'
+  null
+
+KtTypeReference(434,438): 'Test'
+  null
+
+KtUserType(434,438): 'Test'
+  null
+
+KtNameReferenceExpression(434,438): 'Test'
+  null
+
+KtParameterList(448,456): '(i: Int)'
+  null
+
+KtParameter(449,455): 'i: Int'
+  null
+
+KtTypeReference(452,455): 'Int'
+  null
+
+KtUserType(452,455): 'Int'
+  null
+
+KtNameReferenceExpression(452,455): 'Int'
+  null
+
+KtTypeReference(458,462): 'Unit'
+  null
+
+KtUserType(458,462): 'Unit'
+  null
+
+KtNameReferenceExpression(458,462): 'Unit'
+  null
+
+KtBlockExpression(463,465): '{}'
+  null
+
+KtNamedFunction(467,567): 'fun test() {'
+  null
+
+KtParameterList(475,477): '()'
+  null
+
+KtBlockExpression(478,567): '{'
+  null
+
+KtProperty(484,500): 'var foo = Test()'
+  null
+
+KtCallExpression(494,500): 'Test()'
+  null
+
+KtNameReferenceExpression(494,498): 'Test'
+  null
+
+KtValueArgumentList(498,500): '()'
+  null
+
+KtBinaryExpression(505,513): 'foo += 1'
+  null
+
+KtNameReferenceExpression(505,508): 'foo'
+  null
+
+KtOperationReferenceExpression(509,511): '+='
+  null
+
+KtConstantExpression(512,513): '1'
+  null
+
+KtBinaryExpression(518,526): 'foo -= 1'
+  null
+
+KtNameReferenceExpression(518,521): 'foo'
+  null
+
+KtOperationReferenceExpression(522,524): '-='
+  null
+
+KtConstantExpression(525,526): '1'
+  null
+
+KtBinaryExpression(531,539): 'foo /= 1'
+  null
+
+KtNameReferenceExpression(531,534): 'foo'
+  null
+
+KtOperationReferenceExpression(535,537): '/='
+  null
+
+KtConstantExpression(538,539): '1'
+  null
+
+KtBinaryExpression(544,552): 'foo *= 1'
+  null
+
+KtNameReferenceExpression(544,547): 'foo'
+  null
+
+KtOperationReferenceExpression(548,550): '*='
+  null
+
+KtConstantExpression(551,552): '1'
+  null
+
+KtBinaryExpression(557,565): 'foo %= 1'
+  null
+
+KtNameReferenceExpression(557,560): 'foo'
+  null
+
+KtOperationReferenceExpression(561,563): '%='
+  null
+
+KtConstantExpression(564,565): '1'
+  null

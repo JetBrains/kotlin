@@ -1,0 +1,2 @@
+KtCollectionLiteralExpression(91,100): '[1, 2, 3]'
+  null

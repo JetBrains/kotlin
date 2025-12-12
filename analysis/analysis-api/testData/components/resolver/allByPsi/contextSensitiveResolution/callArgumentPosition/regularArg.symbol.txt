@@ -1,0 +1,590 @@
+KtFile: 'regularArg.kt'
+  null
+
+KtPackageDirective(0,0): ''
+  null
+
+KtImportList(0,0): ''
+  null
+
+KtClass(93,167): 'open class Super {'
+  null
+
+KtDeclarationModifierList(93,97): 'open'
+  null
+
+KtClassBody(110,167): '{'
+  null
+
+KtProperty(116,142): 'val superProp: String = ""'
+  null
+
+KtTypeReference(131,137): 'String'
+  null
+
+KtUserType(131,137): 'String'
+  null
+
+KtNameReferenceExpression(131,137): 'String'
+  null
+
+KtStringTemplateExpression(140,142): '""'
+  null
+
+KtNamedFunction(147,165): 'fun superFunc() {}'
+  null
+
+KtParameterList(160,162): '()'
+  null
+
+KtBlockExpression(163,165): '{}'
+  null
+
+KtClass(169,774): 'open class MyClass {'
+  null
+
+KtDeclarationModifierList(169,173): 'open'
+  null
+
+KtClassBody(188,774): '{'
+  null
+
+KtObjectDeclaration(194,265): 'object InheritorObject: MyClass() {'
+  null
+
+KtSuperTypeList(218,227): 'MyClass()'
+  null
+
+KtSuperTypeCallEntry(218,227): 'MyClass()'
+  null
+
+KtConstructorCalleeExpression(218,225): 'MyClass'
+  null
+
+KtTypeReference(218,225): 'MyClass'
+  null
+
+KtUserType(218,225): 'MyClass'
+  null
+
+KtNameReferenceExpression(218,225): 'MyClass'
+  null
+
+KtValueArgumentList(225,227): '()'
+  null
+
+KtClassBody(228,265): '{'
+  null
+
+KtProperty(238,259): 'val prop: String = ""'
+  null
+
+KtTypeReference(248,254): 'String'
+  null
+
+KtUserType(248,254): 'String'
+  null
+
+KtNameReferenceExpression(248,254): 'String'
+  null
+
+KtStringTemplateExpression(257,259): '""'
+  null
+
+KtClass(271,340): 'class InheritorClass: MyClass() {'
+  null
+
+KtSuperTypeList(293,302): 'MyClass()'
+  null
+
+KtSuperTypeCallEntry(293,302): 'MyClass()'
+  null
+
+KtConstructorCalleeExpression(293,300): 'MyClass'
+  null
+
+KtTypeReference(293,300): 'MyClass'
+  null
+
+KtUserType(293,300): 'MyClass'
+  null
+
+KtNameReferenceExpression(293,300): 'MyClass'
+  null
+
+KtValueArgumentList(300,302): '()'
+  null
+
+KtClassBody(303,340): '{'
+  null
+
+KtProperty(313,334): 'val prop: String = ""'
+  null
+
+KtTypeReference(323,329): 'String'
+  null
+
+KtUserType(323,329): 'String'
+  null
+
+KtNameReferenceExpression(323,329): 'String'
+  null
+
+KtStringTemplateExpression(332,334): '""'
+  null
+
+KtObjectDeclaration(346,365): 'object NestedObject'
+  null
+
+KtObjectDeclaration(371,772): 'companion object: Super() {'
+  null
+
+KtDeclarationModifierList(371,380): 'companion'
+  null
+
+KtSuperTypeList(389,396): 'Super()'
+  null
+
+KtSuperTypeCallEntry(389,396): 'Super()'
+  null
+
+KtConstructorCalleeExpression(389,394): 'Super'
+  null
+
+KtTypeReference(389,394): 'Super'
+  null
+
+KtUserType(389,394): 'Super'
+  null
+
+KtNameReferenceExpression(389,394): 'Super'
+  null
+
+KtValueArgumentList(394,396): '()'
+  null
+
+KtClassBody(397,772): '{'
+  null
+
+KtProperty(407,440): 'val propMyClass: MyClass = TODO()'
+  null
+
+KtTypeReference(424,431): 'MyClass'
+  null
+
+KtUserType(424,431): 'MyClass'
+  null
+
+KtNameReferenceExpression(424,431): 'MyClass'
+  null
+
+KtCallExpression(434,440): 'TODO()'
+  null
+
+KtNameReferenceExpression(434,438): 'TODO'
+  null
+
+KtValueArgumentList(438,440): '()'
+  null
+
+KtProperty(449,506): 'val propInheritorClass: InheritorClass = InheritorClass()'
+  null
+
+KtTypeReference(473,487): 'InheritorClass'
+  null
+
+KtUserType(473,487): 'InheritorClass'
+  null
+
+KtNameReferenceExpression(473,487): 'InheritorClass'
+  null
+
+KtCallExpression(490,506): 'InheritorClass()'
+  null
+
+KtNameReferenceExpression(490,504): 'InheritorClass'
+  null
+
+KtValueArgumentList(504,506): '()'
+  null
+
+KtProperty(515,573): 'val propInheritorObject: InheritorObject = InheritorObject'
+  null
+
+KtTypeReference(540,555): 'InheritorObject'
+  null
+
+KtUserType(540,555): 'InheritorObject'
+  null
+
+KtNameReferenceExpression(540,555): 'InheritorObject'
+  null
+
+KtNameReferenceExpression(558,573): 'InheritorObject'
+  null
+
+KtProperty(582,603): 'val prop: String = ""'
+  null
+
+KtTypeReference(592,598): 'String'
+  null
+
+KtUserType(592,598): 'String'
+  null
+
+KtNameReferenceExpression(592,598): 'String'
+  null
+
+KtStringTemplateExpression(601,603): '""'
+  null
+
+KtProperty(612,644): 'const val constProp: String = ""'
+  null
+
+KtDeclarationModifierList(612,617): 'const'
+  null
+
+KtTypeReference(633,639): 'String'
+  null
+
+KtUserType(633,639): 'String'
+  null
+
+KtNameReferenceExpression(633,639): 'String'
+  null
+
+KtStringTemplateExpression(642,644): '""'
+  null
+
+KtProperty(653,686): 'val lazyProp: String by lazy {""}'
+  null
+
+KtTypeReference(667,673): 'String'
+  null
+
+KtUserType(667,673): 'String'
+  null
+
+KtNameReferenceExpression(667,673): 'String'
+  null
+
+KtPropertyDelegate(674,686): 'by lazy {""}'
+  null
+
+KtCallExpression(677,686): 'lazy {""}'
+  null
+
+KtNameReferenceExpression(677,681): 'lazy'
+  null
+
+KtLambdaArgument(682,686): '{""}'
+  null
+
+KtLambdaExpression(682,686): '{""}'
+  null
+
+KtFunctionLiteral(682,686): '{""}'
+  null
+
+KtBlockExpression(683,685): '""'
+  null
+
+KtStringTemplateExpression(683,685): '""'
+  null
+
+KtNamedFunction(695,723): 'fun func(): MyClass = TODO()'
+  null
+
+KtParameterList(703,705): '()'
+  null
+
+KtTypeReference(707,714): 'MyClass'
+  null
+
+KtUserType(707,714): 'MyClass'
+  null
+
+KtNameReferenceExpression(707,714): 'MyClass'
+  null
+
+KtCallExpression(717,723): 'TODO()'
+  null
+
+KtNameReferenceExpression(717,721): 'TODO'
+  null
+
+KtValueArgumentList(721,723): '()'
+  null
+
+KtProperty(732,766): 'val lambdaProp = {InheritorObject}'
+  null
+
+KtLambdaExpression(749,766): '{InheritorObject}'
+  null
+
+KtFunctionLiteral(749,766): '{InheritorObject}'
+  null
+
+KtBlockExpression(750,765): 'InheritorObject'
+  null
+
+KtNameReferenceExpression(750,765): 'InheritorObject'
+  null
+
+KtNamedFunction(776,811): 'fun receiveMyClass(arg: MyClass) {}'
+  null
+
+KtParameterList(794,808): '(arg: MyClass)'
+  null
+
+KtParameter(795,807): 'arg: MyClass'
+  null
+
+KtTypeReference(800,807): 'MyClass'
+  null
+
+KtUserType(800,807): 'MyClass'
+  null
+
+KtNameReferenceExpression(800,807): 'MyClass'
+  null
+
+KtBlockExpression(809,811): '{}'
+  null
+
+KtNamedFunction(813,1281): 'fun test0() {'
+  null
+
+KtParameterList(822,824): '()'
+  null
+
+KtBlockExpression(825,1281): '{'
+  null
+
+KtCallExpression(831,862): 'receiveMyClass(InheritorObject)'
+  null
+
+KtNameReferenceExpression(831,845): 'receiveMyClass'
+  null
+
+KtValueArgumentList(845,862): '(InheritorObject)'
+  null
+
+KtValueArgument(846,861): 'InheritorObject'
+  null
+
+KtNameReferenceExpression(846,861): 'InheritorObject'
+  null
+
+KtCallExpression(867,894): 'receiveMyClass(propMyClass)'
+  null
+
+KtNameReferenceExpression(867,881): 'receiveMyClass'
+  null
+
+KtValueArgumentList(881,894): '(propMyClass)'
+  null
+
+KtValueArgument(882,893): 'propMyClass'
+  null
+
+KtNameReferenceExpression(882,893): 'propMyClass'
+  null
+
+KtCallExpression(899,933): 'receiveMyClass(propInheritorClass)'
+  null
+
+KtNameReferenceExpression(899,913): 'receiveMyClass'
+  null
+
+KtValueArgumentList(913,933): '(propInheritorClass)'
+  null
+
+KtValueArgument(914,932): 'propInheritorClass'
+  null
+
+KtNameReferenceExpression(914,932): 'propInheritorClass'
+  null
+
+KtCallExpression(938,973): 'receiveMyClass(propInheritorObject)'
+  null
+
+KtNameReferenceExpression(938,952): 'receiveMyClass'
+  null
+
+KtValueArgumentList(952,973): '(propInheritorObject)'
+  null
+
+KtValueArgument(953,972): 'propInheritorObject'
+  null
+
+KtNameReferenceExpression(953,972): 'propInheritorObject'
+  null
+
+KtCallExpression(979,1007): 'receiveMyClass(NestedObject)'
+  null
+
+KtNameReferenceExpression(979,993): 'receiveMyClass'
+  null
+
+KtValueArgumentList(993,1007): '(NestedObject)'
+  null
+
+KtValueArgument(994,1006): 'NestedObject'
+  null
+
+KtNameReferenceExpression(994,1006): 'NestedObject'
+  null
+
+KtCallExpression(1012,1032): 'receiveMyClass(prop)'
+  null
+
+KtNameReferenceExpression(1012,1026): 'receiveMyClass'
+  null
+
+KtValueArgumentList(1026,1032): '(prop)'
+  null
+
+KtValueArgument(1027,1031): 'prop'
+  null
+
+KtNameReferenceExpression(1027,1031): 'prop'
+  null
+
+KtCallExpression(1037,1062): 'receiveMyClass(superProp)'
+  null
+
+KtNameReferenceExpression(1037,1051): 'receiveMyClass'
+  null
+
+KtValueArgumentList(1051,1062): '(superProp)'
+  null
+
+KtValueArgument(1052,1061): 'superProp'
+  null
+
+KtNameReferenceExpression(1052,1061): 'superProp'
+  null
+
+KtCallExpression(1067,1092): 'receiveMyClass(constProp)'
+  null
+
+KtNameReferenceExpression(1067,1081): 'receiveMyClass'
+  null
+
+KtValueArgumentList(1081,1092): '(constProp)'
+  null
+
+KtValueArgument(1082,1091): 'constProp'
+  null
+
+KtNameReferenceExpression(1082,1091): 'constProp'
+  null
+
+KtCallExpression(1097,1121): 'receiveMyClass(lazyProp)'
+  null
+
+KtNameReferenceExpression(1097,1111): 'receiveMyClass'
+  null
+
+KtValueArgumentList(1111,1121): '(lazyProp)'
+  null
+
+KtValueArgument(1112,1120): 'lazyProp'
+  null
+
+KtNameReferenceExpression(1112,1120): 'lazyProp'
+  null
+
+KtCallExpression(1126,1152): 'receiveMyClass(lambdaProp)'
+  null
+
+KtNameReferenceExpression(1126,1140): 'receiveMyClass'
+  null
+
+KtValueArgumentList(1140,1152): '(lambdaProp)'
+  null
+
+KtValueArgument(1141,1151): 'lambdaProp'
+  null
+
+KtNameReferenceExpression(1141,1151): 'lambdaProp'
+  null
+
+KtCallExpression(1157,1182): 'receiveMyClass(superProp)'
+  null
+
+KtNameReferenceExpression(1157,1171): 'receiveMyClass'
+  null
+
+KtValueArgumentList(1171,1182): '(superProp)'
+  null
+
+KtValueArgument(1172,1181): 'superProp'
+  null
+
+KtNameReferenceExpression(1172,1181): 'superProp'
+  null
+
+KtCallExpression(1188,1220): 'receiveMyClass(InheritorClass())'
+  null
+
+KtNameReferenceExpression(1188,1202): 'receiveMyClass'
+  null
+
+KtValueArgumentList(1202,1220): '(InheritorClass())'
+  null
+
+KtValueArgument(1203,1219): 'InheritorClass()'
+  null
+
+KtCallExpression(1203,1219): 'InheritorClass()'
+  null
+
+KtNameReferenceExpression(1203,1217): 'InheritorClass'
+  null
+
+KtValueArgumentList(1217,1219): '()'
+  null
+
+KtCallExpression(1225,1247): 'receiveMyClass(func())'
+  null
+
+KtNameReferenceExpression(1225,1239): 'receiveMyClass'
+  null
+
+KtValueArgumentList(1239,1247): '(func())'
+  null
+
+KtValueArgument(1240,1246): 'func()'
+  null
+
+KtCallExpression(1240,1246): 'func()'
+  null
+
+KtNameReferenceExpression(1240,1244): 'func'
+  null
+
+KtValueArgumentList(1244,1246): '()'
+  null
+
+KtCallExpression(1252,1279): 'receiveMyClass(superFunc())'
+  null
+
+KtNameReferenceExpression(1252,1266): 'receiveMyClass'
+  null
+
+KtValueArgumentList(1266,1279): '(superFunc())'
+  null
+
+KtValueArgument(1267,1278): 'superFunc()'
+  null
+
+KtCallExpression(1267,1278): 'superFunc()'
+  null
+
+KtNameReferenceExpression(1267,1276): 'superFunc'
+  null
+
+KtValueArgumentList(1276,1278): '()'
+  null

@@ -1,0 +1,2 @@
+KtAnnotationEntry(23,32): '@get:Anno'
+  null

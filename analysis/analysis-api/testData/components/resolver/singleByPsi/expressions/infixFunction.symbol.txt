@@ -1,0 +1,2 @@
+KtBinaryExpression(56,71): '4 infixOp "str"'
+  null

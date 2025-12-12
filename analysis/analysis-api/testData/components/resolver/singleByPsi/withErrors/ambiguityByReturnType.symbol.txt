@@ -1,0 +1,2 @@
+KtCallExpression(208,319): 'sumOf { c ->'
+  null

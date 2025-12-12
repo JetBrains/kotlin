@@ -1,0 +1,2 @@
+KtCallableReferenceExpression(249,257): 'Bar::foo'
+  null

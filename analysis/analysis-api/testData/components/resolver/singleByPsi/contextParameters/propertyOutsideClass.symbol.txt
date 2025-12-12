@@ -1,0 +1,2 @@
+KtNameReferenceExpression(245,259): 'propertyMember'
+  null

@@ -1,0 +1,2 @@
+KtCallExpression(146,220): 'arrayOf(Annotation("v1", "v2"), Annotation(strings = arrayOf("v3", "v4")))'
+  null

@@ -1,0 +1,173 @@
+KtFile: 'operatorOverload.kt'
+  null
+
+KtPackageDirective(0,0): ''
+  null
+
+KtImportList(0,0): ''
+  null
+
+KtClass(78,115): 'enum class MyEnum {'
+  null
+
+KtDeclarationModifierList(78,82): 'enum'
+  null
+
+KtClassBody(96,115): '{'
+  null
+
+KtEnumEntry(102,113): 'EnumValue1;'
+  null
+
+KtClass(117,185): 'open class MyClass {'
+  null
+
+KtDeclarationModifierList(117,121): 'open'
+  null
+
+KtClassBody(136,185): '{'
+  null
+
+KtObjectDeclaration(142,183): 'object InheritorObject: MyClass() {'
+  null
+
+KtSuperTypeList(166,175): 'MyClass()'
+  null
+
+KtSuperTypeCallEntry(166,175): 'MyClass()'
+  null
+
+KtConstructorCalleeExpression(166,173): 'MyClass'
+  null
+
+KtTypeReference(166,173): 'MyClass'
+  null
+
+KtUserType(166,173): 'MyClass'
+  null
+
+KtNameReferenceExpression(166,173): 'MyClass'
+  null
+
+KtValueArgumentList(173,175): '()'
+  null
+
+KtClassBody(176,183): '{'
+  null
+
+KtClass(187,295): 'class OperatorHolder() {'
+  null
+
+KtPrimaryConstructor(207,209): '()'
+  null
+
+KtParameterList(207,209): '()'
+  null
+
+KtClassBody(210,295): '{'
+  null
+
+KtNamedFunction(216,253): 'operator fun plus(enumArg: MyEnum) {}'
+  null
+
+KtDeclarationModifierList(216,224): 'operator'
+  null
+
+KtParameterList(233,250): '(enumArg: MyEnum)'
+  null
+
+KtParameter(234,249): 'enumArg: MyEnum'
+  null
+
+KtTypeReference(243,249): 'MyEnum'
+  null
+
+KtUserType(243,249): 'MyEnum'
+  null
+
+KtNameReferenceExpression(243,249): 'MyEnum'
+  null
+
+KtBlockExpression(251,253): '{}'
+  null
+
+KtNamedFunction(258,293): 'operator fun minus(arg: MyClass) {}'
+  null
+
+KtDeclarationModifierList(258,266): 'operator'
+  null
+
+KtParameterList(276,290): '(arg: MyClass)'
+  null
+
+KtParameter(277,289): 'arg: MyClass'
+  null
+
+KtTypeReference(282,289): 'MyClass'
+  null
+
+KtUserType(282,289): 'MyClass'
+  null
+
+KtNameReferenceExpression(282,289): 'MyClass'
+  null
+
+KtBlockExpression(291,293): '{}'
+  null
+
+KtNamedFunction(297,403): 'fun testOperator(i: OperatorHolder) {'
+  null
+
+KtParameterList(313,332): '(i: OperatorHolder)'
+  null
+
+KtParameter(314,331): 'i: OperatorHolder'
+  null
+
+KtTypeReference(317,331): 'OperatorHolder'
+  null
+
+KtUserType(317,331): 'OperatorHolder'
+  null
+
+KtNameReferenceExpression(317,331): 'OperatorHolder'
+  null
+
+KtBlockExpression(333,403): '{'
+  null
+
+KtBinaryExpression(339,353): 'i + EnumValue1'
+  null
+
+KtNameReferenceExpression(339,340): 'i'
+  null
+
+KtOperationReferenceExpression(341,342): '+'
+  null
+
+KtNameReferenceExpression(343,353): 'EnumValue1'
+  null
+
+KtBinaryExpression(358,377): 'i + InheritorObject'
+  null
+
+KtNameReferenceExpression(358,359): 'i'
+  null
+
+KtOperationReferenceExpression(360,361): '+'
+  null
+
+KtNameReferenceExpression(362,377): 'InheritorObject'
+  null
+
+KtBinaryExpression(382,401): 'i - InheritorObject'
+  null
+
+KtNameReferenceExpression(382,383): 'i'
+  null
+
+KtOperationReferenceExpression(384,385): '-'
+  null
+
+KtNameReferenceExpression(386,401): 'InheritorObject'
+  null

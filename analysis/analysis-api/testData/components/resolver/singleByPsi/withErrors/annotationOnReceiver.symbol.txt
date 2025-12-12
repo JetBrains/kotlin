@@ -1,0 +1,2 @@
+KtAnnotationEntry(23,37): '@receiver:Anno'
+  null

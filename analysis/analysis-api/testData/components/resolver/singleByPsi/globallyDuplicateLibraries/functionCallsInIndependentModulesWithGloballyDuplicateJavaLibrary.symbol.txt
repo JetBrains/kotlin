@@ -1,0 +1,7 @@
+module1 - main1.kt:
+  KtNameReferenceExpression(121,124): 'foo'
+    null
+
+module2 - main2.kt:
+  KtNameReferenceExpression(129,132): 'bar'
+    null

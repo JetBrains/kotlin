@@ -1,0 +1,2 @@
+KtCallExpression(52,57): 'foo()'
+  null

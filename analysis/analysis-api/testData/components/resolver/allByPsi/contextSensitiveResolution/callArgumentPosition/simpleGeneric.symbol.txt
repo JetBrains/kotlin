@@ -1,0 +1,188 @@
+KtFile: 'simpleGeneric.kt'
+  null
+
+KtPackageDirective(0,0): ''
+  null
+
+KtImportList(0,0): ''
+  null
+
+KtClass(78,108): 'enum class MyEnum {'
+  null
+
+KtDeclarationModifierList(78,82): 'enum'
+  null
+
+KtClassBody(96,108): '{'
+  null
+
+KtEnumEntry(102,104): 'X,'
+  null
+
+KtEnumEntry(105,106): 'Y'
+  null
+
+KtNamedFunction(110,131): 'fun foo(a: MyEnum) {}'
+  null
+
+KtParameterList(117,128): '(a: MyEnum)'
+  null
+
+KtParameter(118,127): 'a: MyEnum'
+  null
+
+KtTypeReference(121,127): 'MyEnum'
+  null
+
+KtUserType(121,127): 'MyEnum'
+  null
+
+KtNameReferenceExpression(121,127): 'MyEnum'
+  null
+
+KtBlockExpression(129,131): '{}'
+  null
+
+KtNamedFunction(133,161): 'fun <X> id(x: X): X = TODO()'
+  null
+
+KtTypeParameterList(137,140): '<X>'
+  null
+
+KtTypeParameter(138,139): 'X'
+  null
+
+KtParameterList(143,149): '(x: X)'
+  null
+
+KtParameter(144,148): 'x: X'
+  null
+
+KtTypeReference(147,148): 'X'
+  null
+
+KtUserType(147,148): 'X'
+  null
+
+KtNameReferenceExpression(147,148): 'X'
+  null
+
+KtTypeReference(151,152): 'X'
+  null
+
+KtUserType(151,152): 'X'
+  null
+
+KtNameReferenceExpression(151,152): 'X'
+  null
+
+KtCallExpression(155,161): 'TODO()'
+  null
+
+KtNameReferenceExpression(155,159): 'TODO'
+  null
+
+KtValueArgumentList(159,161): '()'
+  null
+
+KtNamedFunction(163,254): 'fun main() {'
+  null
+
+KtParameterList(171,173): '()'
+  null
+
+KtBlockExpression(174,254): '{'
+  null
+
+KtProperty(181,197): 'val L = MyEnum.X'
+  null
+
+KtDotQualifiedExpression(189,197): 'MyEnum.X'
+  null
+
+KtNameReferenceExpression(189,195): 'MyEnum'
+  null
+
+KtNameReferenceExpression(196,197): 'X'
+  null
+
+KtCallExpression(203,213): 'foo(id(X))'
+  null
+
+KtNameReferenceExpression(203,206): 'foo'
+  null
+
+KtValueArgumentList(206,213): '(id(X))'
+  null
+
+KtValueArgument(207,212): 'id(X)'
+  null
+
+KtCallExpression(207,212): 'id(X)'
+  null
+
+KtNameReferenceExpression(207,209): 'id'
+  null
+
+KtValueArgumentList(209,212): '(X)'
+  null
+
+KtValueArgument(210,211): 'X'
+  null
+
+KtNameReferenceExpression(210,211): 'X'
+  null
+
+KtCallExpression(218,228): 'foo(id(L))'
+  null
+
+KtNameReferenceExpression(218,221): 'foo'
+  null
+
+KtValueArgumentList(221,228): '(id(L))'
+  null
+
+KtValueArgument(222,227): 'id(L)'
+  null
+
+KtCallExpression(222,227): 'id(L)'
+  null
+
+KtNameReferenceExpression(222,224): 'id'
+  null
+
+KtValueArgumentList(224,227): '(L)'
+  null
+
+KtValueArgument(225,226): 'L'
+  null
+
+KtNameReferenceExpression(225,226): 'L'
+  null
+
+KtCallExpression(233,252): 'foo(id(UNRESOLVED))'
+  null
+
+KtNameReferenceExpression(233,236): 'foo'
+  null
+
+KtValueArgumentList(236,252): '(id(UNRESOLVED))'
+  null
+
+KtValueArgument(237,251): 'id(UNRESOLVED)'
+  null
+
+KtCallExpression(237,251): 'id(UNRESOLVED)'
+  null
+
+KtNameReferenceExpression(237,239): 'id'
+  null
+
+KtValueArgumentList(239,251): '(UNRESOLVED)'
+  null
+
+KtValueArgument(240,250): 'UNRESOLVED'
+  null
+
+KtNameReferenceExpression(240,250): 'UNRESOLVED'
+  null

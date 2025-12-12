@@ -1,0 +1,611 @@
+KtFile: 'whenIfLastStatement.kt'
+  null
+
+KtPackageDirective(0,0): ''
+  null
+
+KtImportList(0,0): ''
+  null
+
+KtClass(78,301): 'open class MyClass {'
+  null
+
+KtDeclarationModifierList(78,82): 'open'
+  null
+
+KtClassBody(97,301): '{'
+  null
+
+KtObjectDeclaration(103,137): 'object NestedInheritor : MyClass()'
+  null
+
+KtSuperTypeList(128,137): 'MyClass()'
+  null
+
+KtSuperTypeCallEntry(128,137): 'MyClass()'
+  null
+
+KtConstructorCalleeExpression(128,135): 'MyClass'
+  null
+
+KtTypeReference(128,135): 'MyClass'
+  null
+
+KtUserType(128,135): 'MyClass'
+  null
+
+KtNameReferenceExpression(128,135): 'MyClass'
+  null
+
+KtValueArgumentList(135,137): '()'
+  null
+
+KtObjectDeclaration(143,299): 'companion object {'
+  null
+
+KtDeclarationModifierList(143,152): 'companion'
+  null
+
+KtClassBody(160,299): '{'
+  null
+
+KtProperty(170,206): 'val myClassProp: MyClass = MyClass()'
+  null
+
+KtTypeReference(187,194): 'MyClass'
+  null
+
+KtUserType(187,194): 'MyClass'
+  null
+
+KtNameReferenceExpression(187,194): 'MyClass'
+  null
+
+KtCallExpression(197,206): 'MyClass()'
+  null
+
+KtNameReferenceExpression(197,204): 'MyClass'
+  null
+
+KtValueArgumentList(204,206): '()'
+  null
+
+KtProperty(215,242): 'val stringProp: String = ""'
+  null
+
+KtTypeReference(231,237): 'String'
+  null
+
+KtUserType(231,237): 'String'
+  null
+
+KtNameReferenceExpression(231,237): 'String'
+  null
+
+KtStringTemplateExpression(240,242): '""'
+  null
+
+KtNamedFunction(251,293): 'fun getNestedInheritor() = NestedInheritor'
+  null
+
+KtParameterList(273,275): '()'
+  null
+
+KtNameReferenceExpression(278,293): 'NestedInheritor'
+  null
+
+KtProperty(303,349): 'val ClassMemberAlias = MyClass.NestedInheritor'
+  null
+
+KtDotQualifiedExpression(326,349): 'MyClass.NestedInheritor'
+  null
+
+KtNameReferenceExpression(326,333): 'MyClass'
+  null
+
+KtNameReferenceExpression(334,349): 'NestedInheritor'
+  null
+
+KtNamedFunction(351,374): 'fun <T>receive(e: T) {}'
+  null
+
+KtTypeParameterList(355,358): '<T>'
+  null
+
+KtTypeParameter(356,357): 'T'
+  null
+
+KtParameterList(365,371): '(e: T)'
+  null
+
+KtParameter(366,370): 'e: T'
+  null
+
+KtTypeReference(369,370): 'T'
+  null
+
+KtUserType(369,370): 'T'
+  null
+
+KtNameReferenceExpression(369,370): 'T'
+  null
+
+KtBlockExpression(372,374): '{}'
+  null
+
+KtNamedFunction(375,407): 'fun <T> run(b: () -> T): T = b()'
+  null
+
+KtTypeParameterList(379,382): '<T>'
+  null
+
+KtTypeParameter(380,381): 'T'
+  null
+
+KtParameterList(386,398): '(b: () -> T)'
+  null
+
+KtParameter(387,397): 'b: () -> T'
+  null
+
+KtTypeReference(390,397): '() -> T'
+  null
+
+KtFunctionType(390,397): '() -> T'
+  null
+
+KtParameterList(390,392): '()'
+  null
+
+KtTypeReference(396,397): 'T'
+  null
+
+KtUserType(396,397): 'T'
+  null
+
+KtNameReferenceExpression(396,397): 'T'
+  null
+
+KtTypeReference(400,401): 'T'
+  null
+
+KtUserType(400,401): 'T'
+  null
+
+KtNameReferenceExpression(400,401): 'T'
+  null
+
+KtCallExpression(404,407): 'b()'
+  null
+
+KtNameReferenceExpression(404,405): 'b'
+  null
+
+KtValueArgumentList(405,407): '()'
+  null
+
+KtNamedFunction(409,1557): 'fun testIfElse(i: Int) {'
+  null
+
+KtParameterList(423,431): '(i: Int)'
+  null
+
+KtParameter(424,430): 'i: Int'
+  null
+
+KtTypeReference(427,430): 'Int'
+  null
+
+KtUserType(427,430): 'Int'
+  null
+
+KtNameReferenceExpression(427,430): 'Int'
+  null
+
+KtBlockExpression(432,1557): '{'
+  null
+
+KtProperty(438,657): 'val s: MyClass ='
+  null
+
+KtTypeReference(445,452): 'MyClass'
+  null
+
+KtUserType(445,452): 'MyClass'
+  null
+
+KtNameReferenceExpression(445,452): 'MyClass'
+  null
+
+KtIfExpression(463,657): 'if (i == 0) {'
+  null
+
+KtContainerNode(467,473): 'i == 0'
+  null
+
+KtBinaryExpression(467,473): 'i == 0'
+  null
+
+KtNameReferenceExpression(467,468): 'i'
+  null
+
+KtOperationReferenceExpression(469,471): '=='
+  null
+
+KtConstantExpression(472,473): '0'
+  null
+
+KtContainerNodeForControlStructureBody(475,542): '{'
+  null
+
+KtBlockExpression(475,542): '{'
+  null
+
+KtNameReferenceExpression(489,504): 'NestedInheritor'
+  null
+
+KtNameReferenceExpression(517,532): 'NestedInheritor'
+  null
+
+KtContainerNodeForControlStructureBody(556,657): 'if (i == 1) {'
+  null
+
+KtIfExpression(556,657): 'if (i == 1) {'
+  null
+
+KtContainerNode(560,566): 'i == 1'
+  null
+
+KtBinaryExpression(560,566): 'i == 1'
+  null
+
+KtNameReferenceExpression(560,561): 'i'
+  null
+
+KtOperationReferenceExpression(562,564): '=='
+  null
+
+KtConstantExpression(565,566): '1'
+  null
+
+KtContainerNodeForControlStructureBody(568,627): '{'
+  null
+
+KtBlockExpression(568,627): '{'
+  null
+
+KtNameReferenceExpression(582,593): 'myClassProp'
+  null
+
+KtNameReferenceExpression(606,617): 'myClassProp'
+  null
+
+KtContainerNodeForControlStructureBody(641,657): 'ClassMemberAlias'
+  null
+
+KtNameReferenceExpression(641,657): 'ClassMemberAlias'
+  null
+
+KtProperty(663,788): 'val s2: MyClass ='
+  null
+
+KtTypeReference(671,678): 'MyClass'
+  null
+
+KtUserType(671,678): 'MyClass'
+  null
+
+KtNameReferenceExpression(671,678): 'MyClass'
+  null
+
+KtIfExpression(689,788): 'if (i == 2) {'
+  null
+
+KtContainerNode(693,699): 'i == 2'
+  null
+
+KtBinaryExpression(693,699): 'i == 2'
+  null
+
+KtNameReferenceExpression(693,694): 'i'
+  null
+
+KtOperationReferenceExpression(695,697): '=='
+  null
+
+KtConstantExpression(698,699): '2'
+  null
+
+KtContainerNodeForControlStructureBody(701,758): '{'
+  null
+
+KtBlockExpression(701,758): '{'
+  null
+
+KtNameReferenceExpression(715,725): 'stringProp'
+  null
+
+KtNameReferenceExpression(738,748): 'stringProp'
+  null
+
+KtContainerNodeForControlStructureBody(772,788): 'ClassMemberAlias'
+  null
+
+KtNameReferenceExpression(772,788): 'ClassMemberAlias'
+  null
+
+KtCallExpression(794,1278): 'receive<MyClass>('
+  null
+
+KtNameReferenceExpression(794,801): 'receive'
+  null
+
+KtTypeArgumentList(801,810): '<MyClass>'
+  null
+
+KtTypeProjection(802,809): 'MyClass'
+  null
+
+KtTypeReference(802,809): 'MyClass'
+  null
+
+KtUserType(802,809): 'MyClass'
+  null
+
+KtNameReferenceExpression(802,809): 'MyClass'
+  null
+
+KtValueArgumentList(810,1278): '('
+  null
+
+KtValueArgument(820,1272): 'if (i == 0) {'
+  null
+
+KtIfExpression(820,1272): 'if (i == 0) {'
+  null
+
+KtContainerNode(824,830): 'i == 0'
+  null
+
+KtBinaryExpression(824,830): 'i == 0'
+  null
+
+KtNameReferenceExpression(824,825): 'i'
+  null
+
+KtOperationReferenceExpression(826,828): '=='
+  null
+
+KtConstantExpression(829,830): '0'
+  null
+
+KtContainerNodeForControlStructureBody(832,923): '{'
+  null
+
+KtBlockExpression(832,923): '{'
+  null
+
+KtNameReferenceExpression(846,861): 'NestedInheritor'
+  null
+
+KtNameReferenceExpression(874,889): 'NestedInheritor'
+  null
+
+KtContainerNodeForControlStructureBody(937,1272): 'if (i == 1) {'
+  null
+
+KtIfExpression(937,1272): 'if (i == 1) {'
+  null
+
+KtContainerNode(941,947): 'i == 1'
+  null
+
+KtBinaryExpression(941,947): 'i == 1'
+  null
+
+KtNameReferenceExpression(941,942): 'i'
+  null
+
+KtOperationReferenceExpression(943,945): '=='
+  null
+
+KtConstantExpression(946,947): '1'
+  null
+
+KtContainerNodeForControlStructureBody(949,1032): '{'
+  null
+
+KtBlockExpression(949,1032): '{'
+  null
+
+KtNameReferenceExpression(963,974): 'myClassProp'
+  null
+
+KtNameReferenceExpression(987,998): 'myClassProp'
+  null
+
+KtContainerNodeForControlStructureBody(1046,1272): 'if (i == 2) {'
+  null
+
+KtIfExpression(1046,1272): 'if (i == 2) {'
+  null
+
+KtContainerNode(1050,1056): 'i == 2'
+  null
+
+KtBinaryExpression(1050,1056): 'i == 2'
+  null
+
+KtNameReferenceExpression(1050,1051): 'i'
+  null
+
+KtOperationReferenceExpression(1052,1054): '=='
+  null
+
+KtConstantExpression(1055,1056): '2'
+  null
+
+KtContainerNodeForControlStructureBody(1058,1135): '{'
+  null
+
+KtBlockExpression(1058,1135): '{'
+  null
+
+KtCallExpression(1072,1092): 'getNestedInheritor()'
+  null
+
+KtNameReferenceExpression(1072,1090): 'getNestedInheritor'
+  null
+
+KtValueArgumentList(1090,1092): '()'
+  null
+
+KtCallExpression(1105,1125): 'getNestedInheritor()'
+  null
+
+KtNameReferenceExpression(1105,1123): 'getNestedInheritor'
+  null
+
+KtValueArgumentList(1123,1125): '()'
+  null
+
+KtContainerNodeForControlStructureBody(1149,1272): 'if (i == 3) {'
+  null
+
+KtIfExpression(1149,1272): 'if (i == 3) {'
+  null
+
+KtContainerNode(1153,1159): 'i == 3'
+  null
+
+KtBinaryExpression(1153,1159): 'i == 3'
+  null
+
+KtNameReferenceExpression(1153,1154): 'i'
+  null
+
+KtOperationReferenceExpression(1155,1157): '=='
+  null
+
+KtConstantExpression(1158,1159): '3'
+  null
+
+KtContainerNodeForControlStructureBody(1161,1242): '{'
+  null
+
+KtBlockExpression(1161,1242): '{'
+  null
+
+KtNameReferenceExpression(1175,1185): 'stringProp'
+  null
+
+KtNameReferenceExpression(1198,1208): 'stringProp'
+  null
+
+KtContainerNodeForControlStructureBody(1256,1272): 'ClassMemberAlias'
+  null
+
+KtNameReferenceExpression(1256,1272): 'ClassMemberAlias'
+  null
+
+KtCallExpression(1284,1555): 'run<MyClass> {'
+  null
+
+KtNameReferenceExpression(1284,1287): 'run'
+  null
+
+KtTypeArgumentList(1287,1296): '<MyClass>'
+  null
+
+KtTypeProjection(1288,1295): 'MyClass'
+  null
+
+KtTypeReference(1288,1295): 'MyClass'
+  null
+
+KtUserType(1288,1295): 'MyClass'
+  null
+
+KtNameReferenceExpression(1288,1295): 'MyClass'
+  null
+
+KtLambdaArgument(1297,1555): '{'
+  null
+
+KtLambdaExpression(1297,1555): '{'
+  null
+
+KtFunctionLiteral(1297,1555): '{'
+  null
+
+KtBlockExpression(1307,1549): 'if (i == 0) {'
+  null
+
+KtIfExpression(1307,1549): 'if (i == 0) {'
+  null
+
+KtContainerNode(1311,1317): 'i == 0'
+  null
+
+KtBinaryExpression(1311,1317): 'i == 0'
+  null
+
+KtNameReferenceExpression(1311,1312): 'i'
+  null
+
+KtOperationReferenceExpression(1313,1315): '=='
+  null
+
+KtConstantExpression(1316,1317): '0'
+  null
+
+KtContainerNodeForControlStructureBody(1319,1410): '{'
+  null
+
+KtBlockExpression(1319,1410): '{'
+  null
+
+KtNameReferenceExpression(1333,1348): 'NestedInheritor'
+  null
+
+KtNameReferenceExpression(1361,1376): 'NestedInheritor'
+  null
+
+KtContainerNodeForControlStructureBody(1424,1549): 'if (i == 1) {'
+  null
+
+KtIfExpression(1424,1549): 'if (i == 1) {'
+  null
+
+KtContainerNode(1428,1434): 'i == 1'
+  null
+
+KtBinaryExpression(1428,1434): 'i == 1'
+  null
+
+KtNameReferenceExpression(1428,1429): 'i'
+  null
+
+KtOperationReferenceExpression(1430,1432): '=='
+  null
+
+KtConstantExpression(1433,1434): '1'
+  null
+
+KtContainerNodeForControlStructureBody(1436,1519): '{'
+  null
+
+KtBlockExpression(1436,1519): '{'
+  null
+
+KtNameReferenceExpression(1450,1461): 'myClassProp'
+  null
+
+KtNameReferenceExpression(1474,1485): 'myClassProp'
+  null
+
+KtContainerNodeForControlStructureBody(1533,1549): 'ClassMemberAlias'
+  null
+
+KtNameReferenceExpression(1533,1549): 'ClassMemberAlias'
+  null

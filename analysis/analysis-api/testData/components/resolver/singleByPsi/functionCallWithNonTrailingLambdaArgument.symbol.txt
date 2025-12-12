@@ -1,0 +1,2 @@
+KtCallExpression(66,92): 'function(1, { s -> true })'
+  null
