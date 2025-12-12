@@ -103,6 +103,14 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
                 JsYieldStar(translateCallArguments(call, context).single())
             }
 
+            add(symbols.jsGenerateInterfaceSymbol) { _, context ->
+                if (backendContext.es6mode) {
+                    JsInvocation(JsNameRef("Symbol"))
+                } else {
+                    JsInvocation(context.getNameForStaticFunction(symbols.generateInterfaceId.owner).makeRef())
+                }
+            }
+
             add(symbols.jsObjectCreateSymbol) { call, context ->
                 val classToCreate = call.typeArguments[0]!!.classifierOrFail.owner as IrClass
                 val className = classToCreate.getClassRef(context.staticContext)
@@ -123,10 +131,10 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
             }
 
             add(symbols.isMemberFunctionExists) { call, context ->
-               val dispatchReceiver = call.arguments[0] ?: compilationException(
-                   "Call of the jsIsMemberFunctionExists doesn't contain first argument representing dispatchReceiver",
-                   call
-               )
+                val dispatchReceiver = call.arguments[0] ?: compilationException(
+                    "Call of the jsIsMemberFunctionExists doesn't contain first argument representing dispatchReceiver",
+                    call
+                )
 
                 val rawFunctionReference = call.arguments[1] as? IrRawFunctionReference ?: compilationException(
                     "Second argument is empty or not an instance of IrRawFunctionReference",

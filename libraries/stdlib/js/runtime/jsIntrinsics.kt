@@ -238,6 +238,9 @@ internal fun <T> jsYieldStar(value: T): T
 @JsIntrinsic
 internal fun jsIsMemberFunctionExists(self: Any, rawFunctionReference: dynamic): Boolean
 
+@JsIntrinsic
+internal fun jsGenerateInterfaceSymbol(): dynamic
+
 /**
  * Depending on the target ES edition, calls transforms either
  * to [kotlin.js.internal.boxedLong.longCopyOfRange], or to `arr.slice(fromIndex, toIndex)`
