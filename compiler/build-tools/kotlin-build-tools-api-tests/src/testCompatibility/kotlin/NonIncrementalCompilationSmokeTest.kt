@@ -68,6 +68,7 @@ class NonIncrementalCompilationSmokeTest : BaseCompilationTest() {
                 assertEquals(
                     "Compiler parameter not recognized: X_USE_K2_KAPT. Current compiler version is: ${kotlinToolchain.getCompilerVersion()}, but the argument was introduced in 2.1.0 and removed in 2.3.0",
                     exception.message
+                        ?.replace("}", "") // there was an extra "}" in 2.3.0 by mistake
                 )
             } else if (kotlinToolchain.getCompilerVersion().startsWith("2.0")) {
                 val exception = assertThrows<IllegalStateException> { module1.compile {} }
