@@ -107,7 +107,8 @@ class FirebaseCloudXCTestExecutor(
                 "--device=model=iphone16pro",
                 "--client-details=matrixLabel=$description"
             ),
-            stderr = stderr
+            stderr = stderr,
+            timeout = 5.minutes
         )
         val firebaseResponse = hostExecutor.execute(firebaseRequest)
 
