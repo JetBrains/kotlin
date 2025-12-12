@@ -680,15 +680,21 @@ class ComposeIT : KGPBaseTest() {
                 // validate mapping is present
                 val outputMapping = projectPath.resolve(Path("build/outputs/mapping/release/mapping.txt")).toFile()
                 var hasComposeMapping = false
+                var hasAppFrames = false
                 outputMapping.useLines { lines ->
                     for (line in lines) {
                         if (line == $$"ComposeStackTrace -> \$$compose:") {
                             hasComposeMapping = true
+                        }
+
+                        if (hasComposeMapping && line.contains("org.jetbrains.kotlin.android.example.MainActivityKt")) {
+                            hasAppFrames = true
                             break
                         }
                     }
                 }
                 assertTrue(hasComposeMapping, "Expected compose mapping added to the mapping.txt")
+                assertTrue(hasAppFrames, "Expected app-specific mapping added to the mapping.txt")
 
                 // validate mapping hash recorded in the file
                 var recordedHash = ""
