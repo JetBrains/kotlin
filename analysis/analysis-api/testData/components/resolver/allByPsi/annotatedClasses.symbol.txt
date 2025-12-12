@@ -381,7 +381,8 @@ KtBlockExpression(424,426): '{}'
   null
 
 KtConstructorDelegationCall(427,427): ''
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <constructor>(): kotlin.Any
 
 KtConstructorDelegationReferenceExpression(427,427): ''
   null

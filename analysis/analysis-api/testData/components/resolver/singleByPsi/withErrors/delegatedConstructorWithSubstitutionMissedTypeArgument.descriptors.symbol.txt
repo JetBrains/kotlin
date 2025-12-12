@@ -3,4 +3,4 @@ KtConstructorDelegationCall(106,118): 'super(1, "")'
     candidateSymbols = [
       <constructor>(): kotlin.Any
     ]
-    diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for 'constructor(): Any'.>
+    diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for public constructor Any() defined in kotlin.Any>

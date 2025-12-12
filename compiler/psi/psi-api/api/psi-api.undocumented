@@ -487,7 +487,6 @@ org.jetbrains.kotlin.psi.KtConstructorCalleeExpression:constructor(ASTNode)
 org.jetbrains.kotlin.psi.KtConstructorCalleeExpression:constructor(KotlinPlaceHolderStub<KtConstructorCalleeExpression>)
 org.jetbrains.kotlin.psi.KtConstructorCalleeExpression:getConstructorReferenceExpression()
 org.jetbrains.kotlin.psi.KtConstructorCalleeExpression:getTypeReference()
-org.jetbrains.kotlin.psi.KtConstructorDelegationCall
 org.jetbrains.kotlin.psi.KtConstructorDelegationCall:constructor(ASTNode)
 org.jetbrains.kotlin.psi.KtConstructorDelegationCall:isCallToThis()
 org.jetbrains.kotlin.psi.KtConstructorDelegationReferenceExpression

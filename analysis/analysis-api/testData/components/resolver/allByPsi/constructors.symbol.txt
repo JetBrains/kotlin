@@ -38,7 +38,8 @@ KtNameReferenceExpression(57,60): 'Int'
   null
 
 KtConstructorDelegationCall(61,61): ''
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <constructor>(): kotlin.Any
 
 KtConstructorDelegationReferenceExpression(61,61): ''
   null
@@ -62,7 +63,8 @@ KtNameReferenceExpression(81,87): 'String'
   null
 
 KtConstructorDelegationCall(88,88): ''
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <constructor>(): kotlin.Any
 
 KtConstructorDelegationReferenceExpression(88,88): ''
   null
@@ -116,7 +118,8 @@ KtNameReferenceExpression(163,166): 'Int'
   null
 
 KtConstructorDelegationCall(170,179): 'super(ci)'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <constructor>(i: kotlin.Int): r.BaseClass
 
 KtConstructorDelegationReferenceExpression(170,175): 'super'
   null
@@ -149,7 +152,8 @@ KtNameReferenceExpression(200,206): 'String'
   null
 
 KtConstructorDelegationCall(210,219): 'super(cs)'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <constructor>(s: kotlin.String): r.BaseClass
 
 KtConstructorDelegationReferenceExpression(210,215): 'super'
   null
@@ -249,7 +253,8 @@ KtNameReferenceExpression(329,335): 'String'
   null
 
 KtConstructorDelegationCall(339,345): 'this()'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <constructor>(): r.ChildWithPrimary
 
 KtConstructorDelegationReferenceExpression(339,343): 'this'
   null
@@ -330,7 +335,8 @@ KtParameterList(441,443): '()'
   null
 
 KtConstructorDelegationCall(446,454): 'super(1)'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <constructor>(i: kotlin.Int): r.ClassWithType<T>
 
 KtConstructorDelegationReferenceExpression(446,451): 'super'
   null
