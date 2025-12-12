@@ -89,28 +89,38 @@ internal constructor(
             listOf("./") to listOf(outputDirectory)
         }
 
+        if (isIncremental) {
+            logger.info("$path SWC incremental setup, re-compiling ${filesToTranspile.size} files, deleting ${deletedFiles.size} stale files")
+        } else {
+            logger.info("$path SWC non-incremental setup, re-compiling all files")
+        }
+
         if (deletedFiles.isNotEmpty()) {
             fs.delete { it.delete(deletedFiles) }
         }
 
         if (filesToTranspile.isNotEmpty()) {
+            val args = SwcConfig.getArgumentsWhen(
+                inputDirectoryOrFiles = filesToTranspile,
+                outputDirectory = outputDirectory.get().asFile.absolutePath,
+                configPath = configFile.get().asFile.absolutePath,
+                fileExtension = fileExtension.get(),
+                environmentCode = mode.get().code
+            )
+
+            logger.info("$path running swc with args $args")
+
             execOps.exec { spec ->
                 spec.executable = executable.get()
                 spec.workingDir = inputDirectory.get().asFile
-                spec.args = SwcConfig.getArgumentsWhen(
-                    inputDirectoryOrFiles = filesToTranspile,
-                    outputDirectory = outputDirectory.get().asFile.absolutePath,
-                    configPath = configFile.get().asFile.absolutePath,
-                    fileExtension = fileExtension.get(),
-                    environmentCode = mode.get().code
-                )
+                spec.args = args
             }
         }
 
     }
 
-    companion object {
-        fun register(
+    internal companion object {
+        internal fun register(
             compilation: KotlinJsIrCompilation,
             name: String,
             generateSwcConfigTask: TaskProvider<GenerateSwcConfig>,

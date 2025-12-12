@@ -14,9 +14,6 @@ import org.jetbrains.kotlin.gradle.targets.js.MultiplePluginDeclarationDetector
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.JsPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguator
-import org.jetbrains.kotlin.gradle.tasks.CleanDataTask
-import org.jetbrains.kotlin.gradle.tasks.CleanDataTask.Companion.deprecationMessage
-import org.jetbrains.kotlin.gradle.tasks.internal.CleanableStore
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 
@@ -39,23 +36,6 @@ abstract class SwcPlugin internal constructor() : Plugin<Project> {
                 project.configurations.detachedConfiguration(project.dependencies.create(ivyDependency))
                     .also { conf -> conf.isTransitive = false }
             }
-        }
-
-        project.registerTask<CleanDataTask>(
-            JsPlatformDisambiguator.extensionName(
-                "swc" + CleanDataTask.NAME_SUFFIX,
-                prefix = null,
-            )
-        ) {
-            it.doFirst {
-                it.logger.warn(deprecationMessage(it.path))
-            }
-
-            it.cleanableStoreProvider = spec
-                .installationDirectory
-                .map { CleanableStore.Companion[it.asFile.path] }
-            it.group = TASKS_GROUP_NAME
-            it.description = "Clean unused local swc version"
         }
     }
 

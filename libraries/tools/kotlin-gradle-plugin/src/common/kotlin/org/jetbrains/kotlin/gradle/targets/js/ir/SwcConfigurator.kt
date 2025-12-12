@@ -109,7 +109,7 @@ internal class SwcConfigurator(private val subTarget: KotlinJsIrSubTarget) :
                 .flatMap { swcTask.flatMap(SwcExec::outputDirectory) }
                 .orElse(binary.defaultLinkSyncTaskInput)
 
-            // TODO: think to move this setup to JsIrBinary
+            // TODO(KT-83097): think to move this setup to JsIrBinary
             // Override the 'from' of the linkSync task to consume JS files post-processed by SWC, instead of the files from link task
             task.from.setFrom(swcOrLinkTaskOutputs, binary.linkSyncTaskRegisteredResources)
         }
@@ -129,22 +129,3 @@ internal class SwcConfigurator(private val subTarget: KotlinJsIrSubTarget) :
         internal const val SWC_CONFIG_TASK_NAME = "generateSwcConfig"
     }
 }
-
-
-/**
-swcExec -> swc
-linkTask -> compiler task
-linkSyncTask -> sync compiler output into the configured output directory
-
-swcExec.from(linkTask)      //      linkTask -> swcExec
-linkSyncTask.from(linkTask) //      linkTask -> linkSyncTask
-
-swcExec.from(linkTask)      //      linkTask -> swcExec
-linkSyncTask.from(swcExec)  //      swcExec -> linkSyncTask
-
-
- if
-
-linkTask.flatMap { it.compilerOptions.target }.get() == ES_2015
-
- */
