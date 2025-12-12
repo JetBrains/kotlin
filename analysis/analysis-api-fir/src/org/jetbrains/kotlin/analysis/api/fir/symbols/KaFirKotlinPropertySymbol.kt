@@ -311,7 +311,7 @@ private class KaFirKotlinPropertyKtPropertyBasedSymbol : KaFirKotlinPropertySymb
                     // Green code cannot have those modifiers with other modalities
                     hasModifier(KtTokens.CONST_KEYWORD) -> KaSymbolModality.FINAL
 
-                    else -> null
+                    else -> psiBasedDefaultKaModality(::isOverride)
                 }
             }
         }
@@ -438,7 +438,11 @@ private class KaFirKotlinPropertyKtParameterBasedSymbol : KaFirKotlinPropertySym
         }
 
     override val modalityByPsi: KaSymbolModality?
-        get() = withValidityAssertion { backingPsi?.kaSymbolModalityByModifiers }
+        get() = withValidityAssertion {
+            backingPsi?.run {
+                kaSymbolModalityByModifiers ?: psiBasedDefaultKaModality(::isOverride)
+            }
+        }
 
     override val callableId: CallableId?
         get() = withValidityAssertion {
@@ -531,7 +535,7 @@ private class KaFirKotlinPropertyKtDestructuringDeclarationEntryBasedSymbol : Ka
                 null
         }
 
-    override val modalityByPsi: KaSymbolModality?
+    override val modalityByPsi: KaSymbolModality
         get() = withValidityAssertion { KaSymbolModality.FINAL }
 
     override val compilerVisibilityByPsi: Visibility

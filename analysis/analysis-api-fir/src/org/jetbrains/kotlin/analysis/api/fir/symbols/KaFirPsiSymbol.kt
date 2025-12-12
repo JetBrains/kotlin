@@ -217,6 +217,7 @@ internal fun KtCallableDeclaration.psiBasedDefaultKaModality(
             when {
                 hasModifier(KtTokens.PRIVATE_KEYWORD) -> KaSymbolModality.FINAL
                 this is KtNamedFunction && !hasBody() -> KaSymbolModality.ABSTRACT
+                this is KtProperty && !hasBody() -> KaSymbolModality.ABSTRACT
                 else -> KaSymbolModality.OPEN
             }
         }
