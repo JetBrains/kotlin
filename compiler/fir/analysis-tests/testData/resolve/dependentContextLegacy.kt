@@ -1,7 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // WITH_STDLIB
-// LANGUAGE: +ResolveEqualsRhsInDependentContextWithCompletion
-// DUMP_CFG: FLOW
+// LANGUAGE: -ResolveEqualsRhsInDependentContextWithCompletion
 
 class C(val x: Int)
 

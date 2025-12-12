@@ -1062,10 +1062,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         val rightArgumentTransformed: FirExpression =
             arguments[1].transform(
                 transformer,
-                // For context-sensitive resolution cases like myValue == ENUM_ENTRY we use the type of the LHS.
-                // Potentially, we might just use LHS type just as a regular expected type which would be used both
-                // for inference and context-sensitive resolution but that would be a very big shift in the semantics.
-                ResolutionMode.ContextDependent(hintForContextSensitiveResolution = leftArgumentTransformed.resolvedType)
+                resolutionModeForEqualityOperatorRhs(leftArgumentTransformed)
             )
 
         equalityOperatorCall
@@ -1073,9 +1070,9 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             .replaceArgumentList(buildBinaryArgumentList(leftArgumentTransformed, rightArgumentTransformed))
         equalityOperatorCall.resultType = builtinTypes.booleanType.coneType
 
-        @OptIn(UnresolvedExpressionTypeAccess::class)
-        val result = if (leftArgumentTransformed.coneTypeOrNull?.properArgumentTypeForEqualityOperatorCall() == true &&
-            rightArgumentTransformed.coneTypeOrNull?.properArgumentTypeForEqualityOperatorCall() == true
+        val result = if (LanguageFeature.ResolveEqualsRhsInDependentContextWithCompletion.isDisabled() ||
+            (leftArgumentTransformed.hasProperTypeForEqualityOperatorCallArgument() &&
+                    rightArgumentTransformed.hasProperTypeForEqualityOperatorCallArgument())
         ) {
             equalityOperatorCall
         } else {
@@ -1087,9 +1084,25 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         return result
     }
 
-    private fun ConeKotlinType.properArgumentTypeForEqualityOperatorCall(): Boolean {
-        return !contains { it is ConeTypeVariableType || it is ConeErrorType || it is ConeIntegerLiteralType }
+    @OptIn(UnresolvedExpressionTypeAccess::class)
+    private fun FirExpression.hasProperTypeForEqualityOperatorCallArgument(): Boolean {
+        val coneType = this.coneTypeOrNull ?: return false
+        return !coneType.contains { it is ConeTypeVariableType || it is ConeErrorType || it is ConeIntegerLiteralType }
     }
+
+    private fun resolutionModeForEqualityOperatorRhs(lhsTransformed: FirExpression): ResolutionMode =
+        when (LanguageFeature.ResolveEqualsRhsInDependentContextWithCompletion.isEnabled()) {
+            // For context-sensitive resolution cases like myValue == ENUM_ENTRY we use the type of the LHS.
+            // Potentially, we might just use LHS type just as a regular expected type which would be used both
+            // for inference and context-sensitive resolution but that would be a very big shift in the semantics.
+            true -> ResolutionMode.ContextDependent(
+                hintForContextSensitiveResolution = lhsTransformed.resolvedType
+            )
+            false -> ResolutionMode.WithExpectedType(
+                expectedTypeRef = builtinTypes.nullableAnyType,
+                hintForContextSensitiveResolution = lhsTransformed.resolvedType
+            )
+        }
 
     private fun FirFunctionCall.resolveCandidateForAssignmentOperatorCall(): FirFunctionCall {
         return transformFunctionCallInternal(

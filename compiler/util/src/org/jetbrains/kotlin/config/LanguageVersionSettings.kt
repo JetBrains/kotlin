@@ -491,6 +491,7 @@ enum class LanguageFeature(
     SkipHiddenObjectsInResolution(KOTLIN_2_4, issue = "KT-82555"),
     JvmEnhancedBridges(KOTLIN_2_4, "KT-82900"),
     DiscriminateNothingAsNullabilityConstraintInInference(KOTLIN_2_4, "KT-81948"),
+    ResolveEqualsRhsInDependentContextWithCompletion(KOTLIN_2_4, "KT-81763"),
 
     // 2.5
 

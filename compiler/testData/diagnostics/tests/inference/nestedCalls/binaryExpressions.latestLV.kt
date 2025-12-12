@@ -15,7 +15,7 @@ fun <T> id(t: T): T = t
 infix fun <T> Z.foo(a: A<T>): A<T> = a
 
 fun test(z: Z) {
-    z <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>foo<!> <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>newA<!>()
+    z <!CANNOT_INFER_PARAMETER_TYPE!>foo<!> <!CANNOT_INFER_PARAMETER_TYPE!>newA<!>()
     val a: A<Int> = id(z foo newA())
     val b: A<Int> = id(z.foo(newA()))
     use(a, b)
@@ -25,7 +25,7 @@ fun test(z: Z) {
 operator fun <T> Z.plus(a: A<T>): A<T> = a
 
 fun test1(z: Z) {
-    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>id<!>(z <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>+<!> <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>newA<!>())
+    <!CANNOT_INFER_PARAMETER_TYPE!>id<!>(z <!CANNOT_INFER_PARAMETER_TYPE!>+<!> <!CANNOT_INFER_PARAMETER_TYPE!>newA<!>())
     val a: A<Z> = z + newA()
     val b: A<Z> = z.plus(newA())
     val c: A<Z> = id(z + newA())
@@ -37,27 +37,27 @@ fun test1(z: Z) {
 operator fun <T> Z.compareTo(a: A<T>): Int { use(a); return 1 }
 
 fun test2(z: Z) {
-    val a: Boolean = id(z <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!><<!> <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>newA<!>())
+    val a: Boolean = id(z <!CANNOT_INFER_PARAMETER_TYPE!><<!> <!CANNOT_INFER_PARAMETER_TYPE!>newA<!>())
     val b: Boolean = id(z < newA<Z>())
     use(a, b)
 }
 
 //'equals' operation
-fun Z.<!EXTENSION_SHADOWED_BY_MEMBER!>equals<!>(any: Any): Int { use(any); return 1 }
+fun Z.equals(any: Any): Int { use(any); return 1 }
 
 fun test3(z: Z) {
-    z <!EQUALS_MISSING!>==<!> <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>newA<!>()
+    z == <!CANNOT_INFER_PARAMETER_TYPE!>newA<!>()
     z == newA<Z>()
-    id(z <!EQUALS_MISSING!>==<!> <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>newA<!>())
+    <!CANNOT_INFER_PARAMETER_TYPE, INAPPLICABLE_CANDIDATE!>id<!>(z == <!CANNOT_INFER_PARAMETER_TYPE!>newA<!>())
     id(z == newA<Z>())
 
-    id(z === <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>newA<!>())
+    <!CANNOT_INFER_PARAMETER_TYPE, INAPPLICABLE_CANDIDATE!>id<!>(z === <!CANNOT_INFER_PARAMETER_TYPE!>newA<!>())
     id(z === newA<Z>())
 }
 
 //'in' operation
 fun test4(collection: Collection<A<*>>) {
-    id(<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>newA<!>() in collection)
+    id(<!CANNOT_INFER_PARAMETER_TYPE!>newA<!>() in collection)
     id(newA<Int>() in collection)
 }
 
@@ -65,7 +65,7 @@ fun test4(collection: Collection<A<*>>) {
 fun <T> toBeOrNot(): Boolean = throw Exception()
 
 fun test5() {
-    if (<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>toBeOrNot<!>() && <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>toBeOrNot<!>()) {}
+    if (<!CANNOT_INFER_PARAMETER_TYPE!>toBeOrNot<!>() && <!CANNOT_INFER_PARAMETER_TYPE!>toBeOrNot<!>()) {}
     if (toBeOrNot<Int>() && toBeOrNot<Int>()) {}
 }
 

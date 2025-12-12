@@ -1,9 +1,8 @@
 // RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-81763
-// LANGUAGE: +ResolveEqualsRhsInDependentContextWithCompletion
+// LANGUAGE: -ResolveEqualsRhsInDependentContextWithCompletion
 // DIAGNOSTICS: -ERROR_SUPPRESSION
 // FIR_DUMP
-// DUMP_INFERENCE_LOGS: FIXATION
 
 fun fooElvis(x: Long, y: Long?): Boolean =
     // K of elvis should be inferred to Long, not to Any?

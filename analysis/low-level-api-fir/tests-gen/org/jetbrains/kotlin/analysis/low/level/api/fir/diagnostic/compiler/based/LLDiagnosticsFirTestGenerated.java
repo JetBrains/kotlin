@@ -225,6 +225,12 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
     }
 
     @Test
+    @TestMetadata("dependentContextLegacy.kt")
+    public void testDependentContextLegacy() {
+      runTest("compiler/fir/analysis-tests/testData/resolve/dependentContextLegacy.kt");
+    }
+
+    @Test
     @TestMetadata("derivedClass.kt")
     public void testDerivedClass() {
       runTest("compiler/fir/analysis-tests/testData/resolve/derivedClass.kt");
@@ -6484,6 +6490,12 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
       }
 
       @Test
+      @TestMetadata("elvisAndLongIltLegacy.kt")
+      public void testElvisAndLongIltLegacy() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/inference/elvisAndLongIltLegacy.kt");
+      }
+
+      @Test
       @TestMetadata("elvisAndUnit.kt")
       public void testElvisAndUnit() {
         runTest("compiler/fir/analysis-tests/testData/resolve/inference/elvisAndUnit.kt");
@@ -6493,6 +6505,12 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
       @TestMetadata("elvisWithMaterialize.kt")
       public void testElvisWithMaterialize() {
         runTest("compiler/fir/analysis-tests/testData/resolve/inference/elvisWithMaterialize.kt");
+      }
+
+      @Test
+      @TestMetadata("equalityRhsInDependentContext.kt")
+      public void testEqualityRhsInDependentContext() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/inference/equalityRhsInDependentContext.kt");
       }
 
       @Test
