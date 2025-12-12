@@ -99,11 +99,7 @@ class FirebaseCloudXCTestExecutor(
             executableAbsolutePath = "gcloud",
             workingDirectory = projectDir.toFile(),
             args = mutableListOf(
-                "firebase", "test", "ios", "run",
-                "--test=$testsZip",
-                "--no-record-video",
-                "--device=model=iphone16pro",
-                "--client-details=matrixLabel=$description"
+                "firebase", "test", "ios", "models", "list"
             ),
             stderr = stderr_test,
             timeout = 5.minutes
