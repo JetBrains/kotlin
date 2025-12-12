@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.gradle.dependencyResolutionTests.configureRepositori
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.util.assertContainsDiagnostic
+import org.jetbrains.kotlin.gradle.util.assertContainsNoTaskWithName
 import org.jetbrains.kotlin.gradle.util.assertNoDiagnostics
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.withModifiedSystemProperties
@@ -134,6 +135,18 @@ class UnsupportedKotlinNativeHostTest {
                 multiplatformExtension.linuxX64()
                 evaluate()
                 assertContainsDiagnostic(KotlinToolingDiagnostics.NativeHostNotSupportedError)
+            }
+        }
+    }
+
+    @Test
+    fun `test commonizeNativeDistribution not present on FreeBSD host`() {
+        withModifiedSystemProperties("os.name" to "FreeBSD", "os.arch" to "amd64") {
+            with(buildProjectWithMPP()) {
+                configureRepositoriesForTests()
+                multiplatformExtension.linuxX64()
+                evaluate()
+                assertContainsNoTaskWithName("commonizeNativeDistribution")
             }
         }
     }
