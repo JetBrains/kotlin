@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.config.zipFileSystemAccessor
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.components.irOrFail
 import org.jetbrains.kotlin.library.loader.KlibLoader
 import org.jetbrains.kotlin.library.uniqueName
@@ -83,6 +84,7 @@ class KonanDriver(
                 configuration.get(KonanConfigKeys.MAKE_PER_FILE_CACHE) == true -> {
                     val result = KlibLoader {
                         libraryPaths(libPath)
+                        maxPermittedAbiVersion(KotlinAbiVersion.CURRENT)
                         configuration.zipFileSystemAccessor?.let(::zipFileSystemAccessor)
                     }.load()
                     result.reportLoadingProblemsIfAny(configuration, allAsErrors = true)
