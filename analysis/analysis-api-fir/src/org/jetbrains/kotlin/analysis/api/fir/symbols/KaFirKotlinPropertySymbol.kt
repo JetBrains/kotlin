@@ -298,7 +298,23 @@ private class KaFirKotlinPropertyKtPropertyBasedSymbol : KaFirKotlinPropertySymb
         }
 
     override val modalityByPsi: KaSymbolModality?
-        get() = withValidityAssertion { backingPsi?.kaSymbolModality }
+        get() = withValidityAssertion {
+            backingPsi?.run {
+                val modalityByModifiers = kaSymbolModalityByModifiers
+                when {
+                    modalityByModifiers != null -> when {
+                        // KT-80178: interface members with no body have implicit ABSTRACT modality
+                        modalityByModifiers.isOpenFromInterface && !hasBody() -> KaSymbolModality.ABSTRACT
+                        else -> modalityByModifiers
+                    }
+
+                    // Green code cannot have those modifiers with other modalities
+                    hasModifier(KtTokens.CONST_KEYWORD) -> KaSymbolModality.FINAL
+
+                    else -> null
+                }
+            }
+        }
 
     override val callableId: CallableId?
         get() = withValidityAssertion {

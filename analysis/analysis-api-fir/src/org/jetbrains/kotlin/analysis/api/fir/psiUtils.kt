@@ -128,23 +128,6 @@ internal val KtClassOrObject.kaSymbolModality: KaSymbolModality?
         else -> ifNoStatusCompilerPluginPresent { KaSymbolModality.FINAL }
     }
 
-internal val KtProperty.kaSymbolModality: KaSymbolModality?
-    get() {
-        val modalityByModifiers = kaSymbolModalityByModifiers
-        return when {
-            modalityByModifiers != null -> when {
-                // KT-80178: interface members with no body have implicit ABSTRACT modality
-                modalityByModifiers.isOpenFromInterface && !hasBody() -> KaSymbolModality.ABSTRACT
-                else -> modalityByModifiers
-            }
-
-            // Green code cannot have those modifiers with other modalities
-            hasModifier(KtTokens.CONST_KEYWORD) -> KaSymbolModality.FINAL
-
-            else -> null
-        }
-    }
-
 internal val KtDeclaration.kaSymbolModalityByModifiers: KaSymbolModality?
     get() = when {
         hasModifier(KtTokens.FINAL_KEYWORD) -> KaSymbolModality.FINAL
