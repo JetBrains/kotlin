@@ -17,5 +17,5 @@
 TestKt {
     file: Test.kt
     Test(Ljava/lang/String;Landroidx/compose/runtime/Composer;I)V
-        RestartGroup { key: <key>, line: 4 }
+        Root { key: <key>, line: 4 }
 }

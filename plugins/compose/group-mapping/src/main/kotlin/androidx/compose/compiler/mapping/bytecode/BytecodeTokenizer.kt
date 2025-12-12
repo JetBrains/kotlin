@@ -57,15 +57,8 @@ private class SingleInstructionTokenizer(
 private val GroupTokenizer by lazy {
     CompositeInstructionTokenizer(
         LineTokenizer,
-        LabelTokenizer,
-        JumpTokenizer,
-        ThrowTokenizer,
-        CurrentMarkerTokenizer,
-        EndToMarkerTokenizer,
         StartRestartGroupTokenizer,
-        EndRestartGroupTokenizer,
         StartReplaceGroupTokenizer,
-        EndReplaceGroupTokenizer,
         ComposableLambdaTokenizer
     )
 }
@@ -73,39 +66,6 @@ private val GroupTokenizer by lazy {
 private val LineTokenizer = SingleInstructionTokenizer { instruction ->
     if (instruction is LineNumberNode) {
         LineToken(instruction)
-    } else {
-        null
-    }
-}
-
-private val LabelTokenizer = SingleInstructionTokenizer { instruction ->
-    if (instruction is LabelNode) {
-        LabelToken(instruction)
-    } else {
-        null
-    }
-}
-
-private val JumpTokenizer = SingleInstructionTokenizer { instruction ->
-    when (instruction) {
-        is JumpInsnNode -> {
-            JumpToken(instruction, listOf(instruction.label))
-        }
-        is LookupSwitchInsnNode -> {
-            JumpToken(instruction, instruction.labels)
-        }
-        is TableSwitchInsnNode -> {
-            JumpToken(instruction, instruction.labels)
-        }
-        else -> {
-            null
-        }
-    }
-}
-
-private val ThrowTokenizer = SingleInstructionTokenizer { instruction ->
-    if (instruction is InsnNode && instruction.opcode == Opcodes.ATHROW) {
-        ThrowToken(instruction)
     } else {
         null
     }
@@ -126,17 +86,6 @@ private object StartRestartGroupTokenizer : BytecodeTokenizer {
                 StartRestartGroup(keyValue, listOf(expectedLdc, expectedMethodInsn))
             )
 
-        }
-
-        return null
-    }
-}
-
-private object EndRestartGroupTokenizer : BytecodeTokenizer {
-    override fun nextToken(context: TokenizerContext): Result<BytecodeToken>? {
-        val expectedMethodIns = context[0] as? MethodInsnNode ?: return null
-        if (MethodId(expectedMethodIns) == ComposeIds.Composer.endRestartGroup) {
-            return Result.success(EndRestartGroup(listOf(expectedMethodIns)))
         }
 
         return null
@@ -169,56 +118,6 @@ private object StartReplaceGroupTokenizer : BytecodeTokenizer {
         }
 
         return null
-    }
-}
-
-private object EndReplaceGroupTokenizer : BytecodeTokenizer {
-    override fun nextToken(context: TokenizerContext): Result<BytecodeToken>? {
-        val expectedMethodIns = context[0] as? MethodInsnNode ?: return null
-        val method = MethodId(expectedMethodIns)
-        if (method == ComposeIds.Composer.endReplaceGroup || method == ComposeIds.Composer.endReplaceableGroup) {
-            return Result.success(EndReplaceGroup(listOf(expectedMethodIns)))
-        }
-
-        return null
-    }
-}
-
-private object CurrentMarkerTokenizer : BytecodeTokenizer {
-    override fun nextToken(context: TokenizerContext): Result<BytecodeToken>? {
-        val expectedGetCurrentMarkerInvocation = context[0] ?: return null
-        val expectedIStoreInsn = context[1] ?: return null
-        if (expectedGetCurrentMarkerInvocation !is MethodInsnNode) return null
-        if (MethodId(expectedGetCurrentMarkerInvocation) != ComposeIds.Composer.currentMarker) return null
-        if (expectedIStoreInsn !is VarInsnNode) return null
-        if (expectedIStoreInsn.opcode != Opcodes.ISTORE) return null
-        return Result.success(
-            CurrentMarkerToken(
-                variableIndex = expectedIStoreInsn.`var`,
-                instructions = listOf(expectedGetCurrentMarkerInvocation, expectedIStoreInsn)
-            )
-        )
-    }
-}
-
-private object EndToMarkerTokenizer : BytecodeTokenizer {
-    override fun nextToken(context: TokenizerContext): Result<BytecodeToken>? {
-        val expectedILoadInsn = context[0] ?: return null
-        val expectedEndToMarkerInvocation = context[1] ?: return null
-
-        if (expectedILoadInsn !is VarInsnNode) return null
-        if (expectedEndToMarkerInvocation !is MethodInsnNode) return null
-        if (expectedILoadInsn.opcode != Opcodes.ILOAD) return null
-        if (MethodId(expectedEndToMarkerInvocation) != ComposeIds.Composer.endToMarker) return null
-
-        val jump = context[2]?.takeIf { it.opcode == Opcodes.GOTO }
-
-        return Result.success(
-            EndToMarkerToken(
-                variableIndex = expectedILoadInsn.`var`,
-                instructions = listOfNotNull(expectedILoadInsn, expectedEndToMarkerInvocation, jump)
-            )
-        )
     }
 }
 
