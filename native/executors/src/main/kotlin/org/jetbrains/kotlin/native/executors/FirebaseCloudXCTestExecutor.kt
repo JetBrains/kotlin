@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.util.removeSuffixIfPresent
 import java.io.ByteArrayOutputStream
-import java.io.PrintStream
 import java.nio.file.*
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
@@ -94,6 +93,25 @@ class FirebaseCloudXCTestExecutor(
             )
             abortWithFailureIfNeeded()
         }
+
+        val stderr_test = ByteArrayOutputStream()
+        val firebaseRequest_test = ExecuteRequest(
+            executableAbsolutePath = "gcloud",
+            workingDirectory = projectDir.toFile(),
+            args = mutableListOf(
+                "firebase", "test", "ios", "run",
+                "--test=$testsZip",
+                "--no-record-video",
+                "--device=model=iphone16pro",
+                "--client-details=matrixLabel=$description"
+            ),
+            stderr = stderr_test,
+            timeout = 5.minutes
+        )
+        val firebaseResponse_test = hostExecutor.execute(firebaseRequest_test)
+
+        val firebaseStderrString_test = stderr_test.toString("UTF-8").trim()
+        println("mmaxy_test" + firebaseStderrString_test)
 
         // Execute tests in the Firebase
         val stderr = ByteArrayOutputStream()
