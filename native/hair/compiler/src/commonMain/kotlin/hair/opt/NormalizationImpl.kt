@@ -16,31 +16,30 @@ class NormalizationImpl(val session: Session, nodeBuilder: NodeBuilder, argsUpda
         object : NodeVisitor<Node>() {
             override fun visitNode(node: Node): Node = node
 
-            override fun visitBlockEntry(node: BlockEntry): Node {
-                if (node == session.entry) return node
-                if (node.preds.isEmpty) return session.unreachable
-                val singlePred = node.preds.singleOrNull()
-                if (singlePred is Unreachable) return singlePred
-                // FIXME move to post processing
+//            override fun visitBlockEntry(node: BlockEntry): Node {
+//                if (node == session.entry) return node
+//                if (node.preds.isEmpty) return session.unreachable
+//                val singlePred = node.preds.singleOrNull()
+//                if (singlePred is Unreachable) return singlePred
+//                // FIXME move to post processing ?
 //                if (singlePred is Goto) {
 //                    val replacement = singlePred.control
 //                    singlePred.control = session.unreachable
 //                    return replacement
 //                }
-                // TODO move to post processing
-                //      Can't be done here, cause unaware phies can be attached later
+//                // TODO move to post processing ?
+//                //      Can't be done here, cause unaware phies can be attached later
 //                val unreachablePredIndexes = node.preds.withIndex().filter { it.value is Unreachable }.map { it.index }
 //                if (unreachablePredIndexes.isNotEmpty()) {
 //                    val reachablePreds = node.preds.withIndex().filter { it.index !in unreachablePredIndexes }.map { it.value }.toTypedArray()
-//                    val replacement = BlockEntry(*reachablePreds) as BlockEntry
+//                    val replacement = BlockEntry(*reachablePreds)
 //                    for (phi in node.phies.toList()) {
-//                        val reachingValues = phi.joinedValues.withIndex().filter { it.index !in unreachablePredIndexes }.map { it.value }.toTypedArray()
-//                        phi.replaceValueUsesAndKill(Phi(phi.type)(replacement, *reachingValues))
+//                        phi.replaceValueUsesAndKill(Phi(phi.type, replacement, *phi.inputs0.toTypedArray()))
 //                    }
 //                    return replacement
 //                }
-                return super.visitBlockEntry(node)
-            }
+//                return super.visitBlockEntry(node)
+//            }
 
             override fun visitControlled(node: Controlled): Node {
                 if (node.control is Unreachable) return node.control
@@ -48,21 +47,21 @@ class NormalizationImpl(val session: Session, nodeBuilder: NodeBuilder, argsUpda
             }
 
             override fun visitIfProjection(node: IfProjection): Node {
-                // FIXME cant use owner here
+                // FIXME cant use owner here cause it tries to cast to If
                 if (node.args[0] is Unreachable) return session.unreachable
                 return super.visitIfProjection(node)
             }
-
-            override fun visitGoto(node: Goto): Node {
-                (node.control as? BlockEntry)?.let {
-                    val prevGoto = it.preds.singleOrNull() as? Goto
-                    if (prevGoto != null) {
-                        it.preds[0] = session.unreachable
-                        return prevGoto
-                    }
-                }
-                return super.visitGoto(node)
-            }
+//
+//            override fun visitGoto(node: Goto): Node {
+//                (node.control as? BlockEntry)?.let {
+//                    val prevGoto = it.preds.singleOrNull() as? Goto
+//                    if (prevGoto != null) {
+//                        it.preds[0] = session.unreachable
+//                        return prevGoto
+//                    }
+//                }
+//                return super.visitGoto(node)
+//            }
 
             // Arithmetic
             private fun tryFoldConstant(node: BinaryOp, op: (Int, Int) -> Int): ConstI? { // FIXME Int -> Number?

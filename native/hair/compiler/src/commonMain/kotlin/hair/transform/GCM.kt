@@ -117,7 +117,14 @@ fun performGCM(session: Session): GCMResult {
         for (use in n.uses) {
             scheduleLate(use) // FIXME this brakes on Placeholder nodes creating data-flow cycles
             val useBlocks = when (use) {
-                is Phi -> if (use.block == n) listOf(use.block) else use.inputs.filter { it.first == n }.map { it.second.block }
+                is Phi -> if (use.block == n) {
+                    listOf(use.block)
+                } else {
+                    use.inputs
+                        .filter { it.first == n }
+                        .filter { it.second !is Unreachable } // FIXME should be killed by GCM or normalizations earlier?
+                        .map { it.second.block }
+                }
                 else -> listOf(late[use])
             }
             for (useBlock in useBlocks) {

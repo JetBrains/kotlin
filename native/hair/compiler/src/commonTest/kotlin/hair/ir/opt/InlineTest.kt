@@ -3,9 +3,6 @@ package hair.ir.opt
 import hair.ir.*
 import hair.ir.nodes.*
 import hair.opt.inline
-import hair.sym.HairFunction
-import hair.sym.HairType
-import hair.sym.HairType.*
 import hair.test.Fun
 import hair.utils.printGraphviz
 import kotlin.test.Test

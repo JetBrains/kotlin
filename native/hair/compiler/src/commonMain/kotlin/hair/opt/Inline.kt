@@ -4,6 +4,7 @@ import hair.compilation.Compilation
 import hair.ir.*
 import hair.ir.nodes.*
 import hair.utils.shouldNotReachHere
+import hair.utils.toTypedArray
 
 // FIXME AnyCall
 fun Compilation.inline(call: InvokeStatic) {
@@ -21,15 +22,24 @@ fun Compilation.inline(call: InvokeStatic) {
                 }
             }
 
-            val (returns, returnedValues) = calleeCompilation.session.allNodes<Return>().map {
+            val returns = calleeCompilation.session.allNodes<Return>().map {
                 val control = clones[it.control]!! as Controlling
                 val value = it.resultOrNull?.let { clones[it]!! }
                 Goto(control) to value
-            }.unzip()
+            }.toList()
 
-            val resultBlock = BlockEntry(*returns.toTypedArray()) as BlockEntry // FIXME cast
+            val exits = returns.map { it.first }.toTypedArray()
+            val resultBlock = BlockEntry(*exits)
             call.next.control = resultBlock
-            call.replaceValueUsesAndKill(Phi(call.function.resultHairType)(resultBlock, *returnedValues.toTypedArray()))
+            if (returns.any { it.second != null }) {
+                call.replaceValueUsesAndKill(
+                    Phi(
+                        call.function.resultHairType,
+                        resultBlock,
+                        *returns.map { it.first to it.second!! }.toTypedArray()
+                    )
+                )
+            }
         }
     }
 }
