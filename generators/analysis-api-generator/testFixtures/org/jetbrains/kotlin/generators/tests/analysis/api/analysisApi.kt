@@ -62,6 +62,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeInf
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeProvider.*
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeRelationChecker.*
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.visibilityChecker.AbstractVisibilityCheckerTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.danglingFileAnalysis.AbstractDanglingFileResolutionModeTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.references.AbstractIsReferenceToTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.references.AbstractReferenceImportAliasTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.references.AbstractReferenceShortenerForWholeFileTest
@@ -137,6 +138,10 @@ internal fun AnalysisApiTestGroup.generateAnalysisApiTests() {
 
         test<AbstractNonPhysicalResolveDanglingFileReferenceTest> {
             model("danglingFileReferenceResolve", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
+        }
+
+        test<AbstractDanglingFileResolutionModeTest> {
+            model("analyzeCopyResolutionMode", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
         }
     }
 
