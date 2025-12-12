@@ -12,13 +12,13 @@ repositories {
 }
 
 kotlin.sourceSets {
-    getByName("main") {
+    jsMain {
         dependencies {
             api("org.jetbrains.kotlinx:kotlinx-html-js:0.7.5")
             implementation(kotlin("stdlib-js"))
         }
     }
-    getByName("test") {
+    jsTest {
         dependencies {
             implementation(kotlin("test-js"))
         }

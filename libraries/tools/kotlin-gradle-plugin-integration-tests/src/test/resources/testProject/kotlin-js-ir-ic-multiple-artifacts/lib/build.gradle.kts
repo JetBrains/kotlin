@@ -26,7 +26,7 @@ kotlin {
     }
 
     sourceSets {
-        val main by getting {
+        jsMain {
             kotlin.exclude("**/other/**")
         }
         val other by getting {
