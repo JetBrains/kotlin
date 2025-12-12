@@ -1,4 +1,6 @@
+// FIR_IDENTICAL
 // RUN_PIPELINE_TILL: BACKEND
+// ISSUE: KT-83076
 // MODULE: commonwasm
 // FILE: commonwasm.kt
 

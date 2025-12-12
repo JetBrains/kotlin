@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.analysis.wasm.checkers.hasValidJsCodeBody
 import org.jetbrains.kotlin.fir.analysis.wasm.checkers.isJsExportedDeclaration
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isEffectivelyExternal
+import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
@@ -86,8 +87,12 @@ object FirWasmJsInteropTypesChecker : FirBasicDeclarationChecker(MppCheckerKind.
             // (and their parameter and return types should be checked separately)
             if (isBasicFunctionType(session)) return true
 
+            val classSymbol = this.toRegularClassSymbol() ?: return false
+            // if type is expect then it could be actualized to an acceptable type at the platform
+            if (classSymbol.isExpect) return true
+
             // aside from the aforementioned cases, only external types are supported
-            return this.toRegularClassSymbol()?.isEffectivelyExternal(session) == true
+            return classSymbol.isEffectivelyExternal(session)
         }
 
         fun FirTypeRef.checkSupportInJsInterop(position: Position, fallbackSource: KtSourceElement?) {
