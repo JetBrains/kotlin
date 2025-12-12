@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.getFriendDependencies
+import org.jetbrains.kotlin.test.services.configuration.klibEnvironmentConfigurator
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 import org.jetbrains.kotlin.wasm.config.wasmTarget
 
@@ -58,7 +59,7 @@ class FirWasmKlibSerializerFacade(
             diagnosticReporter.deduplicating(),
             configuration.languageVersionSettings
         )
-        val outputFile = WasmEnvironmentConfigurator.getKlibArtifactFile(testServices, module.name)
+        val outputFile = testServices.klibEnvironmentConfigurator.getKlibArtifactFile(testServices, module.name)
 
         val target = configuration.get(WasmConfigurationKeys.WASM_TARGET, WasmTarget.JS)
 
