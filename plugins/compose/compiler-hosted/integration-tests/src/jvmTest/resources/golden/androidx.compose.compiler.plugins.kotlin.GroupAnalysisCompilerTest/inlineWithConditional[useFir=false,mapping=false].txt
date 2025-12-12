@@ -1,0 +1,47 @@
+//
+// Source
+// ------------------------------------------
+
+@Composable
+inline fun Test(isEnabled: Boolean, crossinline content: @Composable () -> Unit) {
+    if (isEnabled) {
+        A()
+        return
+    }
+    content()
+}
+
+@Composable
+inline fun Test(isEnabled: Boolean, p1: Int, crossinline content: @Composable () -> Unit) {
+    Test(isEnabled, content)
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+========= FunctionMeta: true, OptimizeGroups: true =========
+TestKt {
+    file: Test.kt
+    Test(ZLkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;I)V
+        Root { key: <!DUPLICATED KEY: 1644433716!>, line: 5 }
+        ReplaceGroup { key: <!DUPLICATED KEY: 927950476!>, line: 6 }
+        ReplaceGroup { key: <!DUPLICATED KEY: 927983150!>, line: 9 }
+    Test(ZILkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;I)V
+        Root { key: <key>, line: 15 }
+        ReplaceGroup { key: <!DUPLICATED KEY: 1644433716!>, line: 18 }
+        ReplaceGroup { key: <!DUPLICATED KEY: 927950476!>, line: 19 }
+        ReplaceGroup { key: <!DUPLICATED KEY: 927983150!>, line: 22 }
+}
+
+========= FunctionMeta: true, OptimizeGroups: false =========
+TestKt {
+    file: Test.kt
+    Test(ZLkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;I)V
+        Root { key: <!DUPLICATED KEY: 1644433716!>, line: 5 }
+        ReplaceGroup { key: <!DUPLICATED KEY: -247161243!>, line: 6 }
+    Test(ZILkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;I)V
+        Root { key: <key>, line: 14 }
+        ReplaceGroup { key: <!DUPLICATED KEY: 1644433716!>, line: 18 }
+        ReplaceGroup { key: <!DUPLICATED KEY: -247161243!>, line: 19 }
+}

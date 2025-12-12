@@ -27,9 +27,8 @@ class ComposeMapping(
         val cls = classInfoFromBytecode(keyCache, reporter, bytecode)
         val entries = buildList {
             cls.methods.forEach { method ->
-                method.groups.forEachIndexed { i, group ->
-                    // last closed group is always root
-                    val isRoot = i == method.groups.lastIndex
+                method.groups.forEach { group ->
+                    val isRoot = group.type == GroupType.Root
                     add(Entry(cls, method, group, isRoot))
                 }
             }

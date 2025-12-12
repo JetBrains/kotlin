@@ -8,7 +8,7 @@ package androidx.compose.compiler.mapping.group
 data class GroupInfo(
     var key: Int?,
     val type: GroupType,
-    val line: Int,
+    var line: Int,
 )
 
 enum class GroupType {
