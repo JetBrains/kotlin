@@ -25,6 +25,8 @@ import org.jetbrains.kotlin.js.common.makeValidES5Identifier
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.filterIsInstanceAnd
 
+private const val DEFAULT_IMPLEMENTATIONS_NAMESPACE_NAME = "defaults"
+
 class ExportModelToJsStatements(
     private val staticContext: JsStaticContext,
     private val es6mode: Boolean,
@@ -58,21 +60,9 @@ class ExportModelToJsStatements(
                 for (element in elements) {
                     val newNamespace = "$currentNamespace$$element"
                     val newNameSpaceRef = namespaceToRefMap.getOrPut(newNamespace) {
-                        val varName = JsName(declareNewNamespace(newNamespace), false)
+                        val varName = JsName(declareNewNamespace(newNamespace), true)
                         val namespaceRef = jsElementAccess(element, currentRef)
-                        statements += JsVars(
-                            JsVars.Variant.Var,
-                            JsVars.JsVar(
-                                varName,
-                                JsAstUtils.or(
-                                    namespaceRef,
-                                    jsAssignment(
-                                        namespaceRef,
-                                        JsObjectLiteral()
-                                    )
-                                )
-                            )
-                        )
+                        statements += declareNamespaceVariable(namespaceRef, varName)
                         JsNameRef(varName)
                     }
                     currentRef = newNameSpaceRef
@@ -212,14 +202,20 @@ class ExportModelToJsStatements(
                     .filter { it.ir.isInner }
                     .map { it.generateInnerClassAssignment(name) }
 
-                val defaultsNamespace = runIf(declaration.defaultImplementations.isNotEmpty()) {
-                    ExportedNamespace("defaults", declaration.defaultImplementations)
-                }.let(::listOfNotNull)
-
-                val staticsExport = (staticFunctions + enumEntries + defaultsNamespace + declaration.nestedClasses)
+                val staticsExport = (staticFunctions + enumEntries + declaration.nestedClasses)
                     .flatMap { generateDeclarationExport(it, newNameSpace, esModules, declaration.ir) }
 
-                listOfNotNull(classInitialization, klassExport) + staticsExport + innerClassesAssignments
+                val defaultImplementations = buildList {
+                    if (declaration.defaultImplementations.isEmpty()) return@buildList
+                    val defaultsNamespaceName = JsName(DEFAULT_IMPLEMENTATIONS_NAMESPACE_NAME, true)
+                    val defaultsNamespaceRef = jsElementAccess(DEFAULT_IMPLEMENTATIONS_NAMESPACE_NAME, newNameSpace)
+                    add(declareNamespaceVariable(defaultsNamespaceRef, defaultsNamespaceName))
+                    declaration.defaultImplementations.flatMapTo(this) {
+                        generateDeclarationExport(it, defaultsNamespaceName.makeRef(), esModules)
+                    }
+                }
+
+                listOfNotNull(classInitialization, klassExport) + staticsExport + innerClassesAssignments + defaultImplementations
             }
         }
     }
@@ -302,6 +298,20 @@ class ExportModelToJsStatements(
         }
     }
 
+    private fun declareNamespaceVariable(namespaceRef: JsExpression, namespaceName: JsName): JsStatement =
+        JsVars(
+            JsVars.Variant.Var,
+            JsVars.JsVar(
+                namespaceName,
+                JsAstUtils.or(
+                    namespaceRef,
+                    jsAssignment(
+                        namespaceRef,
+                        JsObjectLiteral()
+                    )
+                )
+            )
+        )
 
     private fun JsExpression.bindToThis(bindTo: JsExpression): JsInvocation {
         return JsInvocation(JsNameRef("bind", this), bindTo, JsThisRef())

@@ -136,6 +136,26 @@ async function testFoo(foo: IFoo<string>, languageImplemented: string): Promise<
     result = await justCallParentAsyncMethod(foo)
     if (result !== "Parent OK") return "Fail: just calling justCallParentAsyncMethod returns unexpected result: " + result
 
+    result = foo.propertyWithDefaultSetter
+    if (result !== "KOTLIN IMPLEMENTATION OK") return "Fail: just calling propertyWithDefaultSetter returns unexpected result: " + result
+
+    foo.propertyWithDefaultSetter = "42"
+
+    result = foo.propertyWithDefaultSetter
+    if (result !== "KOTLIN IMPLEMENTATION OK") return "Fail: just calling propertyWithDefaultSetter returns unexpected result: " + result
+
+    result = foo.propertyWithDefaultGetter
+    if (result !== "KOTLIN IMPLEMENTATION KOTLIN IMPLEMENTATION OK") return "Fail: just calling propertyWithDefaultGetter returns unexpected result: " + result
+
+
+    result = foo.getGetterAndSetterWithJsName()
+    if (result !== "KOTLIN IMPLEMENTATION OK") return "Fail: just calling getGetterAndSetterWithJsName returns unexpected result: " + result
+
+    foo.setGetterAndSetterWithJsName("test")
+
+    result = foo.getGetterAndSetterWithJsName()
+    if (result !== "KOTLIN IMPLEMENTATION OK") return "Fail: just calling getGetterAndSetterWithJsName returns unexpected result: " + result
+
     return "OK"
 }
 
