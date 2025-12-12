@@ -1,0 +1,3 @@
+/suspendMismatches.kt:(165,172): error: Overload of operator 'of' is suspend  while the overload with 'vararg' parameter is not suspend.
+
+/suspendMismatches.kt:(357,359): error: Overload of operator 'of' is not suspend while the overload with 'vararg' parameter is suspend .

@@ -1,11 +1,19 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-80492
 // LANGUAGE: +CollectionLiterals
+// RENDER_DIAGNOSTICS_FULL_TEXT
 
 class MyList<T> {
     companion object {
-        suspend operator fun of(): MyList<Int> = MyList()
+        <!INCONSISTENT_SUSPEND_IN_OF_OVERLOADS!>suspend<!> operator fun of(): MyList<Int> = MyList()
         operator fun of(vararg ints: Int): MyList<Int> = MyList()
+    }
+}
+
+class AnotherList<T> {
+    companion object {
+        operator fun <!INCONSISTENT_SUSPEND_IN_OF_OVERLOADS!>of<!>(): AnotherList<Int> = AnotherList()
+        suspend operator fun of(vararg ints: Int): AnotherList<Int> = AnotherList()
     }
 }
 

@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.processAllDeclarations
 import org.jetbrains.kotlin.fir.declarations.utils.isOperator
+import org.jetbrains.kotlin.fir.declarations.utils.isSuspend
 import org.jetbrains.kotlin.fir.isDisabled
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
@@ -103,6 +104,15 @@ object FirOperatorOfChecker : FirRegularClassChecker(MppCheckerKind.Common) {
         private fun checkStatus(main: FirNamedFunction, overload: FirNamedFunction) {
             if (main.visibility != overload.visibility) {
                 reporter.reportOn(overload.source, FirErrors.INCONSISTENT_VISIBILITY_IN_OF_OVERLOADS, main.visibility)
+            }
+            if (main.isSuspend != overload.isSuspend) {
+                fun FirNamedFunction.suspendString() = if (isSuspend) "suspend " else "not suspend"
+                reporter.reportOn(
+                    overload.source,
+                    FirErrors.INCONSISTENT_SUSPEND_IN_OF_OVERLOADS,
+                    overload.suspendString(),
+                    main.suspendString(),
+                )
             }
         }
 

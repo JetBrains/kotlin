@@ -1810,6 +1810,13 @@ internal class InconsistentVisibilityInOfOverloadsImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtNamedFunction>(firDiagnostic, token), KaFirDiagnostic.InconsistentVisibilityInOfOverloads
 
+internal class InconsistentSuspendInOfOverloadsImpl(
+    override val overloadSuspendability: String,
+    override val mainOverloadSuspendability: String,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtNamedFunction>(firDiagnostic, token), KaFirDiagnostic.InconsistentSuspendInOfOverloads
+
 internal class InconsistentTypeParametersInOfOverloadsImpl(
     override val mainOverload: KaFunctionSymbol,
     firDiagnostic: KtPsiDiagnostic,
