@@ -1,6 +1,7 @@
 import org.gradle.api.tasks.Sync
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.konan.util.DependencyDirectories
 
 plugins {
     kotlin("jvm")
@@ -57,13 +58,21 @@ fun Project.customCompilerTest(
             implicitDependencies("org.jetbrains.kotlin:kotlin-native-prebuilt:${version.rawVersion}:linux-x86_64@tar.gz")
         }
     }
-    val unarchiveDir = layout.buildDirectory.get().asFile.resolve("customCompiler_$version")
+    val konanDataDir = DependencyDirectories.localKonanDir
+    val customCompilerDirName = "kotlin-native-prebuilt-${HostManager.platformName()}-${version.rawVersion}"
+    val customCompilerDir = konanDataDir.resolve(customCompilerDirName)
     val unarchiveTaskName = "unarchiveCustomCompiler_${taskName}_$version"
     val unarchiveCustomCompiler = tasks.register(unarchiveTaskName, Sync::class) {
-        // Maybe download/unarchiving can be done using `NativeCompilerDownloader`, to get it in `~/.konan/kotlin-native-prebuilt-*`?
         val unarchive = { archive: File -> if (HostManager.hostIsMingw) zipTree(archive) else tarTree(archive) }
-        from(unarchive(customCompiler.singleFile))
-        into(unarchiveDir)
+        from(unarchive(customCompiler.singleFile)) {
+            eachFile {
+                // Strip the top-level directory from the archive (e.g., kotlin-native-prebuilt-macos-aarch64-2.0.0/)
+                val segments = relativePath.segments
+                relativePath = RelativePath(true, *segments.drop(1).toTypedArray())
+            }
+            includeEmptyDirs = false
+        }
+        into(customCompilerDir)
     }
     val currentCompilerDist = layout.projectDirectory.asFile.resolve("../../../kotlin-native/dist")
     return projectTests.nativeTestTask(
@@ -79,13 +88,10 @@ fun Project.customCompilerTest(
         dependsOn(unarchiveCustomCompiler)
         inputs.files(unarchiveCustomCompiler.get().outputs)
         doFirst {
-            if (!unarchiveDir.exists()) error ("The folder `$unarchiveDir` must have been created by task `$unarchiveTaskName`")
-            val customCompilerDist = unarchiveDir.walk().maxDepth(1).firstOrNull {
-                it.isDirectory && it.name.startsWith("kotlin-native-prebuilt-")
-            } ?: error("Cannot find K/Native prebuilt compiler dist within $unarchiveDir")
+            if (!customCompilerDir.exists()) error ("The folder `$customCompilerDir` must have been created by task `$unarchiveTaskName`")
 
-            systemProperty("kotlin.internal.native.test.compat.customCompilerDist", customCompilerDist.absolutePath)
-            val konanLibDir = customCompilerDist.resolve("konan/lib")
+            systemProperty("kotlin.internal.native.test.compat.customCompilerDist", customCompilerDir.absolutePath)
+            val konanLibDir = customCompilerDir.resolve("konan/lib")
             val runtimeJars = listOf("kotlin-native-compiler-embeddable.jar", "trove4j.jar")
             systemProperty(
                 "kotlin.internal.native.test.compat.customCompilerClasspath",
