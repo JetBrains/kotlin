@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.gradle.util.assertContainsDiagnostic
 import org.jetbrains.kotlin.gradle.util.assertContainsNoTaskWithName
 import org.jetbrains.kotlin.gradle.util.assertNoDiagnostics
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
+import org.jetbrains.kotlin.gradle.util.enableCInteropCommonization
 import org.jetbrains.kotlin.gradle.util.withModifiedSystemProperties
 import org.junit.Test
 import org.junit.jupiter.api.parallel.Isolated
@@ -144,6 +145,7 @@ class UnsupportedKotlinNativeHostTest {
         withModifiedSystemProperties("os.name" to "FreeBSD", "os.arch" to "amd64") {
             with(buildProjectWithMPP()) {
                 configureRepositoriesForTests()
+                enableCInteropCommonization()
                 multiplatformExtension.linuxX64()
                 evaluate()
                 assertContainsNoTaskWithName("commonizeNativeDistribution")
