@@ -149,7 +149,7 @@ class ConstructAnnotationTest {
             return makeFailureResult(messageCollector.diagnostics)
         }
 
-        val data = getScriptCollectedData(ktFile, configuration, environment.project, null)
+        val data = getScriptCollectedData(ktFile, configuration, null)
         val annotations = data[ScriptCollectedData.collectedAnnotations]?.map { it.annotation } ?: emptyList()
 
         annotations

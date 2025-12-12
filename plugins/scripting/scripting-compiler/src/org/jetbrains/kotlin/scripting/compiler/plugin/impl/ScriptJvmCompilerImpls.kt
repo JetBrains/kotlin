@@ -372,6 +372,7 @@ private fun doCompileWithK2(
     @Suppress("DEPRECATION")
     val scriptDefinitionProviderService = session.scriptDefinitionProviderService
 
+    @Suppress("DEPRECATION")
     scriptDefinitionProviderService?.run {
         definitionProvider = ScriptDefinitionProvider.getInstance(context.environment.project)
         configurationProvider = ScriptConfigurationsProvider.getInstance(context.environment.project)

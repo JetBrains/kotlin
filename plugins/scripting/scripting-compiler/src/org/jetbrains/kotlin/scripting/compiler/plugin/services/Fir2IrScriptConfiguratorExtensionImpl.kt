@@ -20,12 +20,12 @@ import kotlin.script.experimental.host.ScriptingHostConfiguration
 
 class Fir2IrScriptConfiguratorExtensionImpl(
     session: FirSession,
-    @Suppress("UNUSED_PARAMETER") hostConfiguration: ScriptingHostConfiguration
 ) : Fir2IrScriptConfiguratorExtension(session) {
     override fun IrScript.configure(script: FirScript, getIrScriptByFirSymbol: (FirScriptSymbol) -> IrScriptSymbol?) {
         // processing only refined scripts here
         val scriptFile = session.firProvider.getFirScriptContainerFile(script.symbol) ?: return
         val scriptSourceFile = scriptFile.sourceFile?.toSourceCode() ?: return
+
         @Suppress("DEPRECATION")
         val compilationConfiguration = script.scriptCompilationConfiguration
             ?: session.getScriptCompilationConfiguration(scriptSourceFile) { null } ?: return
@@ -42,8 +42,13 @@ class Fir2IrScriptConfiguratorExtensionImpl(
     }
 
     companion object {
+        fun getFactory(): Factory {
+            return Factory { session -> Fir2IrScriptConfiguratorExtensionImpl(session) }
+        }
+
+        @Deprecated("Use other getFactory methods. This one left only for transitional compatibility")
         fun getFactory(hostConfiguration: ScriptingHostConfiguration): Factory {
-            return Factory { session -> Fir2IrScriptConfiguratorExtensionImpl(session, hostConfiguration) }
+            return Factory { session -> Fir2IrScriptConfiguratorExtensionImpl(session) }
         }
     }
 }
