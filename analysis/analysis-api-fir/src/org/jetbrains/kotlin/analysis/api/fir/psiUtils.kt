@@ -14,8 +14,10 @@ import org.jetbrains.kotlin.SuspiciousFakeSourceCheck
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnosticWithPsi
 import org.jetbrains.kotlin.analysis.api.fir.diagnostics.KT_DIAGNOSTIC_CONVERTER
+import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirKtBasedSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirPropertySetterSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSymbol
+import org.jetbrains.kotlin.analysis.api.fir.symbols.ifNoStatusCompilerPluginPresent
 import org.jetbrains.kotlin.analysis.api.fir.symbols.isTypeAliasedConstructor
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolLocation
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolModality
@@ -30,6 +32,7 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.unwrapFakeOverridesOrDelegated
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocLink
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocName
@@ -130,6 +133,7 @@ internal val KtParameter.parameterName: Name
         else -> nameAsSafeName
     }
 
+context(symbol: KaFirSymbol<FirRegularClassSymbol>)
 internal val KtClassOrObject.kaSymbolModality: KaSymbolModality?
     get() = kaSymbolModalityByModifiers ?: when {
         this is KtObjectDeclaration || this is KtEnumEntry -> KaSymbolModality.FINAL
@@ -139,7 +143,9 @@ internal val KtClassOrObject.kaSymbolModality: KaSymbolModality?
 
         // Green code cannot have those modifiers with other modalities
         isValue() || isInline() -> KaSymbolModality.FINAL
-        else -> null
+
+        // No compiler plugins -> final by default
+        else -> ifNoStatusCompilerPluginPresent { KaSymbolModality.FINAL }
     }
 
 internal val KtProperty.kaSymbolModality: KaSymbolModality?
