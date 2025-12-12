@@ -152,8 +152,14 @@ afterEvaluate {
     println("Use $nodeJsLocation location")
 }
 
-dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-js"
+kotlin {
+    sourceSets {
+        jsMain {
+            dependencies {
+                implementation "org.jetbrains.kotlin:kotlin-stdlib-js"
+            }
+        }
+    }
 }
 
 kotlin.target.browser {}
