@@ -353,7 +353,8 @@ KtValueArgument(496,515): 'intArrayOf(7, 8, 9)'
   null
 
 KtCallExpression(496,515): 'intArrayOf(7, 8, 9)'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = kotlin/intArrayOf(vararg elements: kotlin.Int): kotlin.IntArray
 
 KtNameReferenceExpression(496,506): 'intArrayOf'
   null
@@ -510,7 +511,8 @@ KtValueArgument(703,782): 'arrayOf(one.AnnoWithArray([10, 11, 12]), AnnoWithArra
   null
 
 KtCallExpression(703,782): 'arrayOf(one.AnnoWithArray([10, 11, 12]), AnnoWithArray(intArrayOf(13, 14, 15)))'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = kotlin/arrayOf(vararg elements: T): kotlin.Array<T>
 
 KtNameReferenceExpression(703,710): 'arrayOf'
   null
@@ -528,7 +530,8 @@ KtNameReferenceExpression(711,714): 'one'
   null
 
 KtCallExpression(715,742): 'AnnoWithArray([10, 11, 12])'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <constructor>(arr: kotlin.IntArray): one.AnnoWithArray
 
 KtNameReferenceExpression(715,728): 'AnnoWithArray'
   null
@@ -555,7 +558,8 @@ KtValueArgument(744,781): 'AnnoWithArray(intArrayOf(13, 14, 15))'
   null
 
 KtCallExpression(744,781): 'AnnoWithArray(intArrayOf(13, 14, 15))'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <constructor>(arr: kotlin.IntArray): one.AnnoWithArray
 
 KtNameReferenceExpression(744,757): 'AnnoWithArray'
   null
@@ -567,7 +571,8 @@ KtValueArgument(758,780): 'intArrayOf(13, 14, 15)'
   null
 
 KtCallExpression(758,780): 'intArrayOf(13, 14, 15)'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = kotlin/intArrayOf(vararg elements: kotlin.Int): kotlin.IntArray
 
 KtNameReferenceExpression(758,768): 'intArrayOf'
   null

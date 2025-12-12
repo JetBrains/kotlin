@@ -1,0 +1,776 @@
+KtFile: 'notNullAssertion.kt'
+  null
+
+KtPackageDirective(0,0): ''
+  null
+
+KtImportList(93,124): 'import kotlin.reflect.KProperty'
+  null
+
+KtImportDirective(93,124): 'import kotlin.reflect.KProperty'
+  null
+
+KtDotQualifiedExpression(100,124): 'kotlin.reflect.KProperty'
+  null
+
+KtDotQualifiedExpression(100,114): 'kotlin.reflect'
+  null
+
+KtNameReferenceExpression(100,106): 'kotlin'
+  null
+
+KtNameReferenceExpression(107,114): 'reflect'
+  null
+
+KtNameReferenceExpression(115,124): 'KProperty'
+  null
+
+KtClass(126,349): 'open class MyClass {'
+  null
+
+KtDeclarationModifierList(126,130): 'open'
+  null
+
+KtClassBody(145,349): '{'
+  null
+
+KtObjectDeclaration(151,185): 'object NestedInheritor : MyClass()'
+  null
+
+KtSuperTypeList(176,185): 'MyClass()'
+  null
+
+KtSuperTypeCallEntry(176,185): 'MyClass()'
+  KaSingleSymbolResolutionSuccess:
+    symbol = <constructor>(): MyClass
+
+KtConstructorCalleeExpression(176,183): 'MyClass'
+  null
+
+KtTypeReference(176,183): 'MyClass'
+  null
+
+KtUserType(176,183): 'MyClass'
+  null
+
+KtNameReferenceExpression(176,183): 'MyClass'
+  null
+
+KtValueArgumentList(183,185): '()'
+  null
+
+KtObjectDeclaration(191,347): 'companion object {'
+  null
+
+KtDeclarationModifierList(191,200): 'companion'
+  null
+
+KtClassBody(208,347): '{'
+  null
+
+KtProperty(218,254): 'val myClassProp: MyClass = MyClass()'
+  null
+
+KtTypeReference(235,242): 'MyClass'
+  null
+
+KtUserType(235,242): 'MyClass'
+  null
+
+KtNameReferenceExpression(235,242): 'MyClass'
+  null
+
+KtCallExpression(245,254): 'MyClass()'
+  KaSingleSymbolResolutionSuccess:
+    symbol = <constructor>(): MyClass
+
+KtNameReferenceExpression(245,252): 'MyClass'
+  null
+
+KtValueArgumentList(252,254): '()'
+  null
+
+KtProperty(263,290): 'val stringProp: String = ""'
+  null
+
+KtTypeReference(279,285): 'String'
+  null
+
+KtUserType(279,285): 'String'
+  null
+
+KtNameReferenceExpression(279,285): 'String'
+  null
+
+KtStringTemplateExpression(288,290): '""'
+  null
+
+KtNamedFunction(299,341): 'fun getNestedInheritor() = NestedInheritor'
+  null
+
+KtParameterList(321,323): '()'
+  null
+
+KtNameReferenceExpression(326,341): 'NestedInheritor'
+  null
+
+KtNamedFunction(351,374): 'fun <T>receive(e: T) {}'
+  null
+
+KtTypeParameterList(355,358): '<T>'
+  null
+
+KtTypeParameter(356,357): 'T'
+  null
+
+KtParameterList(365,371): '(e: T)'
+  null
+
+KtParameter(366,370): 'e: T'
+  null
+
+KtTypeReference(369,370): 'T'
+  null
+
+KtUserType(369,370): 'T'
+  null
+
+KtNameReferenceExpression(369,370): 'T'
+  null
+
+KtBlockExpression(372,374): '{}'
+  null
+
+KtProperty(375,421): 'val ClassMemberAlias = MyClass.NestedInheritor'
+  null
+
+KtDotQualifiedExpression(398,421): 'MyClass.NestedInheritor'
+  null
+
+KtNameReferenceExpression(398,405): 'MyClass'
+  null
+
+KtNameReferenceExpression(406,421): 'NestedInheritor'
+  null
+
+KtNamedFunction(423,609): 'fun testNotNullAssertion() {'
+  null
+
+KtParameterList(447,449): '()'
+  null
+
+KtBlockExpression(450,609): '{'
+  null
+
+KtCallExpression(456,491): 'receive<MyClass>(NestedInheritor!!)'
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /receive(e: T): kotlin.Unit
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with receive>
+
+KtNameReferenceExpression(456,463): 'receive'
+  null
+
+KtTypeArgumentList(463,472): '<MyClass>'
+  null
+
+KtTypeProjection(464,471): 'MyClass'
+  null
+
+KtTypeReference(464,471): 'MyClass'
+  null
+
+KtUserType(464,471): 'MyClass'
+  null
+
+KtNameReferenceExpression(464,471): 'MyClass'
+  null
+
+KtValueArgumentList(472,491): '(NestedInheritor!!)'
+  null
+
+KtValueArgument(473,490): 'NestedInheritor!!'
+  null
+
+KtPostfixExpression(473,490): 'NestedInheritor!!'
+  null
+
+KtNameReferenceExpression(473,488): 'NestedInheritor'
+  null
+
+KtOperationReferenceExpression(488,490): '!!'
+  null
+
+KtCallExpression(496,527): 'receive<MyClass>(myClassProp!!)'
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /receive(e: T): kotlin.Unit
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with receive>
+
+KtNameReferenceExpression(496,503): 'receive'
+  null
+
+KtTypeArgumentList(503,512): '<MyClass>'
+  null
+
+KtTypeProjection(504,511): 'MyClass'
+  null
+
+KtTypeReference(504,511): 'MyClass'
+  null
+
+KtUserType(504,511): 'MyClass'
+  null
+
+KtNameReferenceExpression(504,511): 'MyClass'
+  null
+
+KtValueArgumentList(512,527): '(myClassProp!!)'
+  null
+
+KtValueArgument(513,526): 'myClassProp!!'
+  null
+
+KtPostfixExpression(513,526): 'myClassProp!!'
+  null
+
+KtNameReferenceExpression(513,524): 'myClassProp'
+  null
+
+KtOperationReferenceExpression(524,526): '!!'
+  null
+
+KtCallExpression(532,562): 'receive<MyClass>(stringProp!!)'
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /receive(e: T): kotlin.Unit
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with receive>
+
+KtNameReferenceExpression(532,539): 'receive'
+  null
+
+KtTypeArgumentList(539,548): '<MyClass>'
+  null
+
+KtTypeProjection(540,547): 'MyClass'
+  null
+
+KtTypeReference(540,547): 'MyClass'
+  null
+
+KtUserType(540,547): 'MyClass'
+  null
+
+KtNameReferenceExpression(540,547): 'MyClass'
+  null
+
+KtValueArgumentList(548,562): '(stringProp!!)'
+  null
+
+KtValueArgument(549,561): 'stringProp!!'
+  null
+
+KtPostfixExpression(549,561): 'stringProp!!'
+  null
+
+KtNameReferenceExpression(549,559): 'stringProp'
+  null
+
+KtOperationReferenceExpression(559,561): '!!'
+  null
+
+KtCallExpression(567,607): 'receive<MyClass>(getNestedInheritor()!!)'
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /receive(e: T): kotlin.Unit
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with receive>
+
+KtNameReferenceExpression(567,574): 'receive'
+  null
+
+KtTypeArgumentList(574,583): '<MyClass>'
+  null
+
+KtTypeProjection(575,582): 'MyClass'
+  null
+
+KtTypeReference(575,582): 'MyClass'
+  null
+
+KtUserType(575,582): 'MyClass'
+  null
+
+KtNameReferenceExpression(575,582): 'MyClass'
+  null
+
+KtValueArgumentList(583,607): '(getNestedInheritor()!!)'
+  null
+
+KtValueArgument(584,606): 'getNestedInheritor()!!'
+  null
+
+KtPostfixExpression(584,606): 'getNestedInheritor()!!'
+  null
+
+KtCallExpression(584,604): 'getNestedInheritor()'
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: getNestedInheritor>
+
+KtNameReferenceExpression(584,602): 'getNestedInheritor'
+  null
+
+KtValueArgumentList(602,604): '()'
+  null
+
+KtOperationReferenceExpression(604,606): '!!'
+  null
+
+KtNamedFunction(611,917): 'fun testIndexAccess(): Int? {'
+  null
+
+KtParameterList(630,632): '()'
+  null
+
+KtTypeReference(634,638): 'Int?'
+  null
+
+KtNullableType(634,638): 'Int?'
+  null
+
+KtUserType(634,637): 'Int'
+  null
+
+KtNameReferenceExpression(634,637): 'Int'
+  null
+
+KtBlockExpression(639,917): '{'
+  null
+
+KtProperty(645,791): 'val map = mapOf<MyClass, Int>(MyClass.myClassProp to 1,  MyClass.stringProp to 2, MyClass.NestedInheritor to 3, MyClass.getNestedInheritor() to 4)'
+  null
+
+KtCallExpression(655,791): 'mapOf<MyClass, Int>(MyClass.myClassProp to 1,  MyClass.stringProp to 2, MyClass.NestedInheritor to 3, MyClass.getNestedInheritor() to 4)'
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      kotlin/collections/mapOf(vararg pairs: kotlin.Pair<K, V>): kotlin.collections.Map<K, V>
+    ]
+    diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is String but MyClass was expected>
+
+KtNameReferenceExpression(655,660): 'mapOf'
+  null
+
+KtTypeArgumentList(660,674): '<MyClass, Int>'
+  null
+
+KtTypeProjection(661,668): 'MyClass'
+  null
+
+KtTypeReference(661,668): 'MyClass'
+  null
+
+KtUserType(661,668): 'MyClass'
+  null
+
+KtNameReferenceExpression(661,668): 'MyClass'
+  null
+
+KtTypeProjection(670,673): 'Int'
+  null
+
+KtTypeReference(670,673): 'Int'
+  null
+
+KtUserType(670,673): 'Int'
+  null
+
+KtNameReferenceExpression(670,673): 'Int'
+  null
+
+KtValueArgumentList(674,791): '(MyClass.myClassProp to 1,  MyClass.stringProp to 2, MyClass.NestedInheritor to 3, MyClass.getNestedInheritor() to 4)'
+  null
+
+KtValueArgument(675,699): 'MyClass.myClassProp to 1'
+  null
+
+KtBinaryExpression(675,699): 'MyClass.myClassProp to 1'
+  null
+
+KtDotQualifiedExpression(675,694): 'MyClass.myClassProp'
+  null
+
+KtNameReferenceExpression(675,682): 'MyClass'
+  null
+
+KtNameReferenceExpression(683,694): 'myClassProp'
+  null
+
+KtOperationReferenceExpression(695,697): 'to'
+  null
+
+KtConstantExpression(698,699): '1'
+  null
+
+KtValueArgument(702,725): 'MyClass.stringProp to 2'
+  null
+
+KtBinaryExpression(702,725): 'MyClass.stringProp to 2'
+  null
+
+KtDotQualifiedExpression(702,720): 'MyClass.stringProp'
+  null
+
+KtNameReferenceExpression(702,709): 'MyClass'
+  null
+
+KtNameReferenceExpression(710,720): 'stringProp'
+  null
+
+KtOperationReferenceExpression(721,723): 'to'
+  null
+
+KtConstantExpression(724,725): '2'
+  null
+
+KtValueArgument(727,755): 'MyClass.NestedInheritor to 3'
+  null
+
+KtBinaryExpression(727,755): 'MyClass.NestedInheritor to 3'
+  null
+
+KtDotQualifiedExpression(727,750): 'MyClass.NestedInheritor'
+  null
+
+KtNameReferenceExpression(727,734): 'MyClass'
+  null
+
+KtNameReferenceExpression(735,750): 'NestedInheritor'
+  null
+
+KtOperationReferenceExpression(751,753): 'to'
+  null
+
+KtConstantExpression(754,755): '3'
+  null
+
+KtValueArgument(757,790): 'MyClass.getNestedInheritor() to 4'
+  null
+
+KtBinaryExpression(757,790): 'MyClass.getNestedInheritor() to 4'
+  null
+
+KtDotQualifiedExpression(757,785): 'MyClass.getNestedInheritor()'
+  null
+
+KtNameReferenceExpression(757,764): 'MyClass'
+  null
+
+KtCallExpression(765,785): 'getNestedInheritor()'
+  KaSingleSymbolResolutionSuccess:
+    symbol = /MyClass.Companion.getNestedInheritor(<dispatch receiver>: MyClass.Companion): MyClass.NestedInheritor
+
+KtNameReferenceExpression(765,783): 'getNestedInheritor'
+  null
+
+KtValueArgumentList(783,785): '()'
+  null
+
+KtOperationReferenceExpression(786,788): 'to'
+  null
+
+KtConstantExpression(789,790): '4'
+  null
+
+KtReturnExpression(796,819): 'return map[myClassProp]'
+  null
+
+KtArrayAccessExpression(803,819): 'map[myClassProp]'
+  null
+
+KtNameReferenceExpression(803,806): 'map'
+  null
+
+KtContainerNode(806,819): '[myClassProp]'
+  null
+
+KtNameReferenceExpression(807,818): 'myClassProp'
+  null
+
+KtReturnExpression(824,846): 'return map[stringProp]'
+  null
+
+KtArrayAccessExpression(831,846): 'map[stringProp]'
+  null
+
+KtNameReferenceExpression(831,834): 'map'
+  null
+
+KtContainerNode(834,846): '[stringProp]'
+  null
+
+KtNameReferenceExpression(835,845): 'stringProp'
+  null
+
+KtReturnExpression(851,878): 'return map[NestedInheritor]'
+  null
+
+KtArrayAccessExpression(858,878): 'map[NestedInheritor]'
+  null
+
+KtNameReferenceExpression(858,861): 'map'
+  null
+
+KtContainerNode(861,878): '[NestedInheritor]'
+  null
+
+KtNameReferenceExpression(862,877): 'NestedInheritor'
+  null
+
+KtReturnExpression(883,915): 'return map[getNestedInheritor()]'
+  null
+
+KtArrayAccessExpression(890,915): 'map[getNestedInheritor()]'
+  null
+
+KtNameReferenceExpression(890,893): 'map'
+  null
+
+KtContainerNode(893,915): '[getNestedInheritor()]'
+  null
+
+KtCallExpression(894,914): 'getNestedInheritor()'
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: getNestedInheritor>
+
+KtNameReferenceExpression(894,912): 'getNestedInheritor'
+  null
+
+KtValueArgumentList(912,914): '()'
+  null
+
+KtNamedFunction(919,999): 'fun testCallableReference() {'
+  null
+
+KtParameterList(944,946): '()'
+  null
+
+KtBlockExpression(947,999): '{'
+  null
+
+KtProperty(953,997): 'val i150: KProperty<MyClass> = ::myClassProp'
+  null
+
+KtTypeReference(963,981): 'KProperty<MyClass>'
+  null
+
+KtUserType(963,981): 'KProperty<MyClass>'
+  null
+
+KtNameReferenceExpression(963,972): 'KProperty'
+  null
+
+KtTypeArgumentList(972,981): '<MyClass>'
+  null
+
+KtTypeProjection(973,980): 'MyClass'
+  null
+
+KtTypeReference(973,980): 'MyClass'
+  null
+
+KtUserType(973,980): 'MyClass'
+  null
+
+KtNameReferenceExpression(973,980): 'MyClass'
+  null
+
+KtCallableReferenceExpression(984,997): '::myClassProp'
+  null
+
+KtNameReferenceExpression(986,997): 'myClassProp'
+  null
+
+KtNamedFunction(1001,1101): 'operator fun MyClass.rangeTo(that: MyClass): ClosedFloatingPointRange<MyClass> {'
+  null
+
+KtDeclarationModifierList(1001,1009): 'operator'
+  null
+
+KtTypeReference(1014,1021): 'MyClass'
+  null
+
+KtUserType(1014,1021): 'MyClass'
+  null
+
+KtNameReferenceExpression(1014,1021): 'MyClass'
+  null
+
+KtParameterList(1029,1044): '(that: MyClass)'
+  null
+
+KtParameter(1030,1043): 'that: MyClass'
+  null
+
+KtTypeReference(1036,1043): 'MyClass'
+  null
+
+KtUserType(1036,1043): 'MyClass'
+  null
+
+KtNameReferenceExpression(1036,1043): 'MyClass'
+  null
+
+KtTypeReference(1046,1079): 'ClosedFloatingPointRange<MyClass>'
+  null
+
+KtUserType(1046,1079): 'ClosedFloatingPointRange<MyClass>'
+  null
+
+KtNameReferenceExpression(1046,1070): 'ClosedFloatingPointRange'
+  null
+
+KtTypeArgumentList(1070,1079): '<MyClass>'
+  null
+
+KtTypeProjection(1071,1078): 'MyClass'
+  null
+
+KtTypeReference(1071,1078): 'MyClass'
+  null
+
+KtUserType(1071,1078): 'MyClass'
+  null
+
+KtNameReferenceExpression(1071,1078): 'MyClass'
+  null
+
+KtBlockExpression(1080,1101): '{'
+  null
+
+KtReturnExpression(1086,1099): 'return null!!'
+  null
+
+KtPostfixExpression(1093,1099): 'null!!'
+  null
+
+KtConstantExpression(1093,1097): 'null'
+  null
+
+KtOperationReferenceExpression(1097,1099): '!!'
+  null
+
+KtNamedFunction(1102,1175): 'operator fun MyClass.contains(that: MyClass): Boolean {'
+  null
+
+KtDeclarationModifierList(1102,1110): 'operator'
+  null
+
+KtTypeReference(1115,1122): 'MyClass'
+  null
+
+KtUserType(1115,1122): 'MyClass'
+  null
+
+KtNameReferenceExpression(1115,1122): 'MyClass'
+  null
+
+KtParameterList(1131,1146): '(that: MyClass)'
+  null
+
+KtParameter(1132,1145): 'that: MyClass'
+  null
+
+KtTypeReference(1138,1145): 'MyClass'
+  null
+
+KtUserType(1138,1145): 'MyClass'
+  null
+
+KtNameReferenceExpression(1138,1145): 'MyClass'
+  null
+
+KtTypeReference(1148,1155): 'Boolean'
+  null
+
+KtUserType(1148,1155): 'Boolean'
+  null
+
+KtNameReferenceExpression(1148,1155): 'Boolean'
+  null
+
+KtBlockExpression(1156,1175): '{'
+  null
+
+KtReturnExpression(1162,1173): 'return true'
+  null
+
+KtConstantExpression(1169,1173): 'true'
+  null
+
+KtNamedFunction(1177,1286): 'fun testOverriden(a: Int) {'
+  null
+
+KtParameterList(1194,1202): '(a: Int)'
+  null
+
+KtParameter(1195,1201): 'a: Int'
+  null
+
+KtTypeReference(1198,1201): 'Int'
+  null
+
+KtUserType(1198,1201): 'Int'
+  null
+
+KtNameReferenceExpression(1198,1201): 'Int'
+  null
+
+KtBlockExpression(1203,1286): '{'
+  null
+
+KtProperty(1209,1237): 'val a: MyClass = myClassProp'
+  null
+
+KtTypeReference(1216,1223): 'MyClass'
+  null
+
+KtUserType(1216,1223): 'MyClass'
+  null
+
+KtNameReferenceExpression(1216,1223): 'MyClass'
+  null
+
+KtNameReferenceExpression(1226,1237): 'myClassProp'
+  null
+
+KtBinaryExpression(1242,1284): 'a !in MyClass.myClassProp..NestedInheritor'
+  null
+
+KtNameReferenceExpression(1242,1243): 'a'
+  null
+
+KtOperationReferenceExpression(1244,1247): '!in'
+  null
+
+KtBinaryExpression(1248,1284): 'MyClass.myClassProp..NestedInheritor'
+  null
+
+KtDotQualifiedExpression(1248,1267): 'MyClass.myClassProp'
+  null
+
+KtNameReferenceExpression(1248,1255): 'MyClass'
+  null
+
+KtNameReferenceExpression(1256,1267): 'myClassProp'
+  null
+
+KtOperationReferenceExpression(1267,1269): '..'
+  null
+
+KtNameReferenceExpression(1269,1284): 'NestedInheritor'
+  null

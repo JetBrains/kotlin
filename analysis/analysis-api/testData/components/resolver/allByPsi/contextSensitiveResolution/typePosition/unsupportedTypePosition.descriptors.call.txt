@@ -871,7 +871,7 @@ KtNameReferenceExpression(1041,1052): 'SealedClass'
   null
 
 KtCallExpression(1055,1073): 'SealedInheritor1()'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: SealedInheritor1>
 
@@ -953,7 +953,7 @@ KtProperty(1209,1245): 'val i = Generic2<SealedInheritor1>()'
   null
 
 KtCallExpression(1217,1245): 'Generic2<SealedInheritor1>()'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         argumentMapping = {}
@@ -1048,7 +1048,7 @@ KtBlockExpression(1312,1353): '{'
   null
 
 KtCallExpression(1318,1351): 'constraintFun<SealedInheritor1>()'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         argumentMapping = {}

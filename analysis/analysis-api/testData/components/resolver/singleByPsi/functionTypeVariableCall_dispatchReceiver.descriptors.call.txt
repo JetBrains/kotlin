@@ -1,23 +1,22 @@
 KtCallExpression(72,75): 'f()'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {}
-      isImplicitInvoke = true
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = f
-          isSafeNavigation = false
-          type = kotlin.Function1<kotlin.String, kotlin.Unit>
-        extensionReceiver = KaExplicitReceiverValue:
-          expression = ""
-          isSafeNavigation = false
-          type = kotlin.String
-        signature = KaFunctionSignature:
-          receiverType = kotlin.String
-          returnType = kotlin.Unit
-          symbol = kotlin/Function1.invoke(<extension receiver>: P1<dispatch receiver>: kotlin.Function1<P1, R>): R
-          valueParameters = []
-          contextParameters = []
-          callableId = kotlin/Function1.invoke
-      typeArgumentsMapping = {}
+  KaSimpleFunctionCall:
+    argumentMapping = {}
+    isImplicitInvoke = true
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = f
+        isSafeNavigation = false
+        type = kotlin.Function1<kotlin.String, kotlin.Unit>
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = ""
+        isSafeNavigation = false
+        type = kotlin.String
+      signature = KaFunctionSignature:
+        receiverType = kotlin.String
+        returnType = kotlin.Unit
+        symbol = kotlin/Function1.invoke(<extension receiver>: P1<dispatch receiver>: kotlin.Function1<P1, R>): R
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/Function1.invoke
+    typeArgumentsMapping = {}

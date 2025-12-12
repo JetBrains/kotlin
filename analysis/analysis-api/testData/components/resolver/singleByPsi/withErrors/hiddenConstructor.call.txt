@@ -1,4 +1,4 @@
 KtCallExpression(17,25): 'Obj(555)'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Obj'.>

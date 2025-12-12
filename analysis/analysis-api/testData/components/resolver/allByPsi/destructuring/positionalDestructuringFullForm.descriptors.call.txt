@@ -410,38 +410,37 @@ KtBlockExpression(433,435): '{}'
   null
 
 KtCallExpression(441,476): 'foo { [val first, val second,] -> }'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {
-        { [val first, val second,] -> } -> (KaVariableSignature:
-          name = f
-          receiverType = null
-          returnType = kotlin.Function1<Tuple, kotlin.Unit>
-          symbol = f: kotlin.Function1<Tuple, kotlin.Unit>
-          contextParameters = []
-          callableId = null)
-      }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = foo(f: kotlin.Function1<Tuple, kotlin.Unit>): kotlin.Unit
-          valueParameters = [
-            KaVariableSignature:
-              name = f
-              receiverType = null
-              returnType = kotlin.Function1<Tuple, kotlin.Unit>
-              symbol = f: kotlin.Function1<Tuple, kotlin.Unit>
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
-      typeArgumentsMapping = {}
+  KaSimpleFunctionCall:
+    argumentMapping = {
+      { [val first, val second,] -> } -> (KaVariableSignature:
+        name = f
+        receiverType = null
+        returnType = kotlin.Function1<Tuple, kotlin.Unit>
+        symbol = f: kotlin.Function1<Tuple, kotlin.Unit>
+        contextParameters = []
+        callableId = null)
+    }
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = foo(f: kotlin.Function1<Tuple, kotlin.Unit>): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = f
+            receiverType = null
+            returnType = kotlin.Function1<Tuple, kotlin.Unit>
+            symbol = f: kotlin.Function1<Tuple, kotlin.Unit>
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+    typeArgumentsMapping = {}
 
 KtNameReferenceExpression(441,444): 'foo'
   KaSuccessCallInfo:
@@ -505,38 +504,37 @@ KtBlockExpression(475,475): ''
   null
 
 KtCallExpression(481,503): 'foo { [val first] -> }'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {
-        { [val first] -> } -> (KaVariableSignature:
-          name = f
-          receiverType = null
-          returnType = kotlin.Function1<Tuple, kotlin.Unit>
-          symbol = f: kotlin.Function1<Tuple, kotlin.Unit>
-          contextParameters = []
-          callableId = null)
-      }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = foo(f: kotlin.Function1<Tuple, kotlin.Unit>): kotlin.Unit
-          valueParameters = [
-            KaVariableSignature:
-              name = f
-              receiverType = null
-              returnType = kotlin.Function1<Tuple, kotlin.Unit>
-              symbol = f: kotlin.Function1<Tuple, kotlin.Unit>
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
-      typeArgumentsMapping = {}
+  KaSimpleFunctionCall:
+    argumentMapping = {
+      { [val first] -> } -> (KaVariableSignature:
+        name = f
+        receiverType = null
+        returnType = kotlin.Function1<Tuple, kotlin.Unit>
+        symbol = f: kotlin.Function1<Tuple, kotlin.Unit>
+        contextParameters = []
+        callableId = null)
+    }
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = foo(f: kotlin.Function1<Tuple, kotlin.Unit>): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = f
+            receiverType = null
+            returnType = kotlin.Function1<Tuple, kotlin.Unit>
+            symbol = f: kotlin.Function1<Tuple, kotlin.Unit>
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+    typeArgumentsMapping = {}
 
 KtNameReferenceExpression(481,484): 'foo'
   KaSuccessCallInfo:
@@ -597,38 +595,37 @@ KtBlockExpression(502,502): ''
   null
 
 KtCallExpression(508,538): 'foo { [val first: String] -> }'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {
-        { [val first: String] -> } -> (KaVariableSignature:
-          name = f
-          receiverType = null
-          returnType = kotlin.Function1<Tuple, kotlin.Unit>
-          symbol = f: kotlin.Function1<Tuple, kotlin.Unit>
-          contextParameters = []
-          callableId = null)
-      }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = foo(f: kotlin.Function1<Tuple, kotlin.Unit>): kotlin.Unit
-          valueParameters = [
-            KaVariableSignature:
-              name = f
-              receiverType = null
-              returnType = kotlin.Function1<Tuple, kotlin.Unit>
-              symbol = f: kotlin.Function1<Tuple, kotlin.Unit>
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
-      typeArgumentsMapping = {}
+  KaSimpleFunctionCall:
+    argumentMapping = {
+      { [val first: String] -> } -> (KaVariableSignature:
+        name = f
+        receiverType = null
+        returnType = kotlin.Function1<Tuple, kotlin.Unit>
+        symbol = f: kotlin.Function1<Tuple, kotlin.Unit>
+        contextParameters = []
+        callableId = null)
+    }
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = foo(f: kotlin.Function1<Tuple, kotlin.Unit>): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = f
+            receiverType = null
+            returnType = kotlin.Function1<Tuple, kotlin.Unit>
+            symbol = f: kotlin.Function1<Tuple, kotlin.Unit>
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+    typeArgumentsMapping = {}
 
 KtNameReferenceExpression(508,511): 'foo'
   KaSuccessCallInfo:

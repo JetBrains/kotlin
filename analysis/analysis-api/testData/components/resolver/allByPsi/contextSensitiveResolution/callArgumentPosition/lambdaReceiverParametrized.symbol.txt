@@ -182,7 +182,8 @@ KtNameReferenceExpression(423,430): 'MyClass'
   null
 
 KtCallExpression(433,439): 'TODO()'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = kotlin/TODO(): kotlin.Nothing
 
 KtNameReferenceExpression(433,437): 'TODO'
   null
@@ -203,7 +204,8 @@ KtNameReferenceExpression(472,486): 'InheritorClass'
   null
 
 KtCallExpression(489,505): 'InheritorClass()'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <constructor>(): MyClass.InheritorClass
 
 KtNameReferenceExpression(489,503): 'InheritorClass'
   null
@@ -275,7 +277,8 @@ KtPropertyDelegate(673,685): 'by lazy {""}'
   null
 
 KtCallExpression(676,685): 'lazy {""}'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = kotlin/lazy(initializer: () -> T): kotlin.Lazy<T>
 
 KtNameReferenceExpression(676,680): 'lazy'
   null
@@ -311,7 +314,8 @@ KtNameReferenceExpression(706,713): 'MyClass'
   null
 
 KtCallExpression(716,722): 'TODO()'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = kotlin/TODO(): kotlin.Nothing
 
 KtNameReferenceExpression(716,720): 'TODO'
   null
@@ -392,7 +396,8 @@ KtBlockExpression(863,1836): '{'
   null
 
 KtCallExpression(869,942): 'receiveParametrizedLambda<MyClass> { i: MyClass -> i == InheritorObject }'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /receiveParametrizedLambda(l: (T) -> kotlin.Unit): kotlin.Unit
 
 KtNameReferenceExpression(869,894): 'receiveParametrizedLambda'
   null
@@ -452,7 +457,8 @@ KtNameReferenceExpression(925,940): 'InheritorObject'
   null
 
 KtCallExpression(947,1016): 'receiveParametrizedLambda<MyClass> { i: MyClass -> i == propMyClass }'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /receiveParametrizedLambda(l: (T) -> kotlin.Unit): kotlin.Unit
 
 KtNameReferenceExpression(947,972): 'receiveParametrizedLambda'
   null
@@ -512,7 +518,8 @@ KtNameReferenceExpression(1003,1014): 'propMyClass'
   null
 
 KtCallExpression(1021,1097): 'receiveParametrizedLambda<MyClass> { i: MyClass -> i == propInheritorClass }'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /receiveParametrizedLambda(l: (T) -> kotlin.Unit): kotlin.Unit
 
 KtNameReferenceExpression(1021,1046): 'receiveParametrizedLambda'
   null
@@ -572,7 +579,8 @@ KtNameReferenceExpression(1077,1095): 'propInheritorClass'
   null
 
 KtCallExpression(1102,1179): 'receiveParametrizedLambda<MyClass> { i: MyClass -> i == propInheritorObject }'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /receiveParametrizedLambda(l: (T) -> kotlin.Unit): kotlin.Unit
 
 KtNameReferenceExpression(1102,1127): 'receiveParametrizedLambda'
   null
@@ -632,7 +640,8 @@ KtNameReferenceExpression(1158,1177): 'propInheritorObject'
   null
 
 KtCallExpression(1185,1247): 'receiveParametrizedLambda<MyClass> { i: MyClass -> i == prop }'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /receiveParametrizedLambda(l: (T) -> kotlin.Unit): kotlin.Unit
 
 KtNameReferenceExpression(1185,1210): 'receiveParametrizedLambda'
   null
@@ -692,7 +701,8 @@ KtNameReferenceExpression(1241,1245): 'prop'
   null
 
 KtCallExpression(1252,1319): 'receiveParametrizedLambda<MyClass> { i: MyClass -> i == superProp }'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /receiveParametrizedLambda(l: (T) -> kotlin.Unit): kotlin.Unit
 
 KtNameReferenceExpression(1252,1277): 'receiveParametrizedLambda'
   null
@@ -752,7 +762,8 @@ KtNameReferenceExpression(1308,1317): 'superProp'
   null
 
 KtCallExpression(1324,1391): 'receiveParametrizedLambda<MyClass> { i: MyClass -> i == constProp }'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /receiveParametrizedLambda(l: (T) -> kotlin.Unit): kotlin.Unit
 
 KtNameReferenceExpression(1324,1349): 'receiveParametrizedLambda'
   null
@@ -812,7 +823,8 @@ KtNameReferenceExpression(1380,1389): 'constProp'
   null
 
 KtCallExpression(1396,1462): 'receiveParametrizedLambda<MyClass> { i: MyClass -> i == lazyProp }'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /receiveParametrizedLambda(l: (T) -> kotlin.Unit): kotlin.Unit
 
 KtNameReferenceExpression(1396,1421): 'receiveParametrizedLambda'
   null
@@ -872,7 +884,8 @@ KtNameReferenceExpression(1452,1460): 'lazyProp'
   null
 
 KtCallExpression(1468,1538): 'receiveParametrizedLambda<MyClass> { i: MyClass -> i == NestedObject }'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /receiveParametrizedLambda(l: (T) -> kotlin.Unit): kotlin.Unit
 
 KtNameReferenceExpression(1468,1493): 'receiveParametrizedLambda'
   null
@@ -932,7 +945,8 @@ KtNameReferenceExpression(1524,1536): 'NestedObject'
   null
 
 KtCallExpression(1543,1611): 'receiveParametrizedLambda<MyClass> { i: MyClass -> i == lambdaProp }'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /receiveParametrizedLambda(l: (T) -> kotlin.Unit): kotlin.Unit
 
 KtNameReferenceExpression(1543,1568): 'receiveParametrizedLambda'
   null
@@ -992,7 +1006,8 @@ KtNameReferenceExpression(1599,1609): 'lambdaProp'
   null
 
 KtCallExpression(1617,1681): 'receiveParametrizedLambda<MyClass> { i: MyClass -> i == func() }'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /receiveParametrizedLambda(l: (T) -> kotlin.Unit): kotlin.Unit
 
 KtNameReferenceExpression(1617,1642): 'receiveParametrizedLambda'
   null
@@ -1049,7 +1064,9 @@ KtOperationReferenceExpression(1670,1672): '=='
   null
 
 KtCallExpression(1673,1679): 'func()'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'func'.>
 
 KtNameReferenceExpression(1673,1677): 'func'
   null
@@ -1058,7 +1075,8 @@ KtValueArgumentList(1677,1679): '()'
   null
 
 KtCallExpression(1686,1755): 'receiveParametrizedLambda<MyClass> { i: MyClass -> i == superFunc() }'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /receiveParametrizedLambda(l: (T) -> kotlin.Unit): kotlin.Unit
 
 KtNameReferenceExpression(1686,1711): 'receiveParametrizedLambda'
   null
@@ -1115,7 +1133,9 @@ KtOperationReferenceExpression(1739,1741): '=='
   null
 
 KtCallExpression(1742,1753): 'superFunc()'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'superFunc'.>
 
 KtNameReferenceExpression(1742,1751): 'superFunc'
   null
@@ -1124,7 +1144,8 @@ KtValueArgumentList(1751,1753): '()'
   null
 
 KtCallExpression(1760,1834): 'receiveParametrizedLambda<MyClass> { i: MyClass -> i == InheritorClass() }'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /receiveParametrizedLambda(l: (T) -> kotlin.Unit): kotlin.Unit
 
 KtNameReferenceExpression(1760,1785): 'receiveParametrizedLambda'
   null
@@ -1181,7 +1202,9 @@ KtOperationReferenceExpression(1813,1815): '=='
   null
 
 KtCallExpression(1816,1832): 'InheritorClass()'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'InheritorClass'.>
 
 KtNameReferenceExpression(1816,1830): 'InheritorClass'
   null

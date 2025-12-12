@@ -458,7 +458,8 @@ KtProperty(484,500): 'var foo = Test()'
   null
 
 KtCallExpression(494,500): 'Test()'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <constructor>(): Test
 
 KtNameReferenceExpression(494,498): 'Test'
   null

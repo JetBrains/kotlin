@@ -119,7 +119,11 @@ KtProperty(133,181): 'val prop = take {'
   null
 
 KtCallExpression(144,181): 'take {'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /take(action: (T) -> kotlin.Unit): kotlin.Unit
+    ]
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is '(??? (Incomplete user type)) -> Unit', but '(uninferred T (of fun <T> take)) -> Unit' was expected.>
 
 KtNameReferenceExpression(144,148): 'take'
   null

@@ -458,22 +458,21 @@ KtProperty(484,500): 'var foo = Test()'
   null
 
 KtCallExpression(494,500): 'Test()'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {}
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = Test
-          symbol = <constructor>(): Test
-          valueParameters = []
-          contextParameters = []
-          callableId = null
-      typeArgumentsMapping = {}
+  KaSimpleFunctionCall:
+    argumentMapping = {}
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Test
+        symbol = <constructor>(): Test
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+    typeArgumentsMapping = {}
 
 KtNameReferenceExpression(494,498): 'Test'
   KaSuccessCallInfo:

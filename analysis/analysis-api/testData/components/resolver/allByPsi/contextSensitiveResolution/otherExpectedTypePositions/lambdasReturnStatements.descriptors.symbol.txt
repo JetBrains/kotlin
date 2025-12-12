@@ -1,0 +1,605 @@
+KtFile: 'lambdasReturnStatements.kt'
+  null
+
+KtPackageDirective(0,0): ''
+  null
+
+KtImportList(0,0): ''
+  null
+
+KtClass(78,108): 'enum class MyEnum {'
+  null
+
+KtDeclarationModifierList(78,82): 'enum'
+  null
+
+KtClassBody(96,108): '{'
+  null
+
+KtEnumEntry(102,104): 'X,'
+  null
+
+KtEnumEntry(105,106): 'Y'
+  null
+
+KtNamedFunction(110,131): 'fun foo(a: MyEnum) {}'
+  null
+
+KtParameterList(117,128): '(a: MyEnum)'
+  null
+
+KtParameter(118,127): 'a: MyEnum'
+  null
+
+KtTypeReference(121,127): 'MyEnum'
+  null
+
+KtUserType(121,127): 'MyEnum'
+  null
+
+KtNameReferenceExpression(121,127): 'MyEnum'
+  null
+
+KtBlockExpression(129,131): '{}'
+  null
+
+KtNamedFunction(133,172): 'fun myRunWithMyEnum(b: () -> MyEnum) {}'
+  null
+
+KtParameterList(152,169): '(b: () -> MyEnum)'
+  null
+
+KtParameter(153,168): 'b: () -> MyEnum'
+  null
+
+KtTypeReference(156,168): '() -> MyEnum'
+  null
+
+KtFunctionType(156,168): '() -> MyEnum'
+  null
+
+KtParameterList(156,158): '()'
+  null
+
+KtTypeReference(162,168): 'MyEnum'
+  null
+
+KtUserType(162,168): 'MyEnum'
+  null
+
+KtNameReferenceExpression(162,168): 'MyEnum'
+  null
+
+KtBlockExpression(170,172): '{}'
+  null
+
+KtNamedFunction(173,210): 'fun <T> myRun(b: () -> T): T = TODO()'
+  null
+
+KtTypeParameterList(177,180): '<T>'
+  null
+
+KtTypeParameter(178,179): 'T'
+  null
+
+KtParameterList(186,198): '(b: () -> T)'
+  null
+
+KtParameter(187,197): 'b: () -> T'
+  null
+
+KtTypeReference(190,197): '() -> T'
+  null
+
+KtFunctionType(190,197): '() -> T'
+  null
+
+KtParameterList(190,192): '()'
+  null
+
+KtTypeReference(196,197): 'T'
+  null
+
+KtUserType(196,197): 'T'
+  null
+
+KtNameReferenceExpression(196,197): 'T'
+  null
+
+KtTypeReference(200,201): 'T'
+  null
+
+KtUserType(200,201): 'T'
+  null
+
+KtNameReferenceExpression(200,201): 'T'
+  null
+
+KtCallExpression(204,210): 'TODO()'
+  KaSingleSymbolResolutionSuccess:
+    symbol = kotlin/TODO(): kotlin.Nothing
+
+KtNameReferenceExpression(204,208): 'TODO'
+  null
+
+KtValueArgumentList(208,210): '()'
+  null
+
+KtNamedFunction(212,240): 'fun <X> id(x: X): X = TODO()'
+  null
+
+KtTypeParameterList(216,219): '<X>'
+  null
+
+KtTypeParameter(217,218): 'X'
+  null
+
+KtParameterList(222,228): '(x: X)'
+  null
+
+KtParameter(223,227): 'x: X'
+  null
+
+KtTypeReference(226,227): 'X'
+  null
+
+KtUserType(226,227): 'X'
+  null
+
+KtNameReferenceExpression(226,227): 'X'
+  null
+
+KtTypeReference(230,231): 'X'
+  null
+
+KtUserType(230,231): 'X'
+  null
+
+KtNameReferenceExpression(230,231): 'X'
+  null
+
+KtCallExpression(234,240): 'TODO()'
+  KaSingleSymbolResolutionSuccess:
+    symbol = kotlin/TODO(): kotlin.Nothing
+
+KtNameReferenceExpression(234,238): 'TODO'
+  null
+
+KtValueArgumentList(238,240): '()'
+  null
+
+KtNamedFunction(242,808): 'fun main(b: Boolean) {'
+  null
+
+KtParameterList(250,262): '(b: Boolean)'
+  null
+
+KtParameter(251,261): 'b: Boolean'
+  null
+
+KtTypeReference(254,261): 'Boolean'
+  null
+
+KtUserType(254,261): 'Boolean'
+  null
+
+KtNameReferenceExpression(254,261): 'Boolean'
+  null
+
+KtBlockExpression(263,808): '{'
+  null
+
+KtProperty(269,285): 'val L = MyEnum.X'
+  null
+
+KtDotQualifiedExpression(277,285): 'MyEnum.X'
+  null
+
+KtNameReferenceExpression(277,283): 'MyEnum'
+  null
+
+KtNameReferenceExpression(284,285): 'X'
+  null
+
+KtCallExpression(291,364): 'myRunWithMyEnum {'
+  KaSingleSymbolResolutionSuccess:
+    symbol = /myRunWithMyEnum(b: kotlin.Function0<MyEnum>): kotlin.Unit
+
+KtNameReferenceExpression(291,306): 'myRunWithMyEnum'
+  null
+
+KtLambdaArgument(307,364): '{'
+  null
+
+KtLambdaExpression(307,364): '{'
+  null
+
+KtFunctionLiteral(307,364): '{'
+  null
+
+KtBlockExpression(317,358): 'if (b) return@myRunWithMyEnum X'
+  null
+
+KtIfExpression(317,348): 'if (b) return@myRunWithMyEnum X'
+  null
+
+KtContainerNode(321,322): 'b'
+  null
+
+KtNameReferenceExpression(321,322): 'b'
+  null
+
+KtContainerNodeForControlStructureBody(324,348): 'return@myRunWithMyEnum X'
+  null
+
+KtReturnExpression(324,348): 'return@myRunWithMyEnum X'
+  null
+
+KtContainerNode(330,346): '@myRunWithMyEnum'
+  null
+
+KtLabelReferenceExpression(330,346): '@myRunWithMyEnum'
+  null
+
+KtNameReferenceExpression(347,348): 'X'
+  null
+
+KtNameReferenceExpression(357,358): 'Y'
+  null
+
+KtCallExpression(370,451): 'myRunWithMyEnum {'
+  KaSingleSymbolResolutionSuccess:
+    symbol = /myRunWithMyEnum(b: kotlin.Function0<MyEnum>): kotlin.Unit
+
+KtNameReferenceExpression(370,385): 'myRunWithMyEnum'
+  null
+
+KtLambdaArgument(386,451): '{'
+  null
+
+KtLambdaExpression(386,451): '{'
+  null
+
+KtFunctionLiteral(386,451): '{'
+  null
+
+KtBlockExpression(396,445): 'if (b) return@myRunWithMyEnum id(X)'
+  null
+
+KtIfExpression(396,431): 'if (b) return@myRunWithMyEnum id(X)'
+  null
+
+KtContainerNode(400,401): 'b'
+  null
+
+KtNameReferenceExpression(400,401): 'b'
+  null
+
+KtContainerNodeForControlStructureBody(403,431): 'return@myRunWithMyEnum id(X)'
+  null
+
+KtReturnExpression(403,431): 'return@myRunWithMyEnum id(X)'
+  null
+
+KtContainerNode(409,425): '@myRunWithMyEnum'
+  null
+
+KtLabelReferenceExpression(409,425): '@myRunWithMyEnum'
+  null
+
+KtCallExpression(426,431): 'id(X)'
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /id(x: X): X
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with id>
+
+KtNameReferenceExpression(426,428): 'id'
+  null
+
+KtValueArgumentList(428,431): '(X)'
+  null
+
+KtValueArgument(429,430): 'X'
+  null
+
+KtNameReferenceExpression(429,430): 'X'
+  null
+
+KtCallExpression(440,445): 'id(Y)'
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /id(x: X): X
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with id>
+
+KtNameReferenceExpression(440,442): 'id'
+  null
+
+KtValueArgumentList(442,445): '(Y)'
+  null
+
+KtValueArgument(443,444): 'Y'
+  null
+
+KtNameReferenceExpression(443,444): 'Y'
+  null
+
+KtCallExpression(457,518): 'myRun<MyEnum> {'
+  KaSingleSymbolResolutionSuccess:
+    symbol = /myRun(b: kotlin.Function0<T>): T
+
+KtNameReferenceExpression(457,462): 'myRun'
+  null
+
+KtTypeArgumentList(462,470): '<MyEnum>'
+  null
+
+KtTypeProjection(463,469): 'MyEnum'
+  null
+
+KtTypeReference(463,469): 'MyEnum'
+  null
+
+KtUserType(463,469): 'MyEnum'
+  null
+
+KtNameReferenceExpression(463,469): 'MyEnum'
+  null
+
+KtLambdaArgument(471,518): '{'
+  null
+
+KtLambdaExpression(471,518): '{'
+  null
+
+KtFunctionLiteral(471,518): '{'
+  null
+
+KtBlockExpression(481,512): 'if (b) return@myRun X'
+  null
+
+KtIfExpression(481,502): 'if (b) return@myRun X'
+  null
+
+KtContainerNode(485,486): 'b'
+  null
+
+KtNameReferenceExpression(485,486): 'b'
+  null
+
+KtContainerNodeForControlStructureBody(488,502): 'return@myRun X'
+  null
+
+KtReturnExpression(488,502): 'return@myRun X'
+  null
+
+KtContainerNode(494,500): '@myRun'
+  null
+
+KtLabelReferenceExpression(494,500): '@myRun'
+  null
+
+KtNameReferenceExpression(501,502): 'X'
+  null
+
+KtNameReferenceExpression(511,512): 'Y'
+  null
+
+KtCallExpression(523,607): 'foo('
+  KaSingleSymbolResolutionSuccess:
+    symbol = /foo(a: MyEnum): kotlin.Unit
+
+KtNameReferenceExpression(523,526): 'foo'
+  null
+
+KtValueArgumentList(526,607): '('
+  null
+
+KtValueArgument(536,601): 'myRun {'
+  null
+
+KtCallExpression(536,601): 'myRun {'
+  KaSingleSymbolResolutionSuccess:
+    symbol = /myRun(b: kotlin.Function0<T>): T
+
+KtNameReferenceExpression(536,541): 'myRun'
+  null
+
+KtLambdaArgument(542,601): '{'
+  null
+
+KtLambdaExpression(542,601): '{'
+  null
+
+KtFunctionLiteral(542,601): '{'
+  null
+
+KtBlockExpression(556,591): 'if (b) return@myRun X'
+  null
+
+KtIfExpression(556,577): 'if (b) return@myRun X'
+  null
+
+KtContainerNode(560,561): 'b'
+  null
+
+KtNameReferenceExpression(560,561): 'b'
+  null
+
+KtContainerNodeForControlStructureBody(563,577): 'return@myRun X'
+  null
+
+KtReturnExpression(563,577): 'return@myRun X'
+  null
+
+KtContainerNode(569,575): '@myRun'
+  null
+
+KtLabelReferenceExpression(569,575): '@myRun'
+  null
+
+KtNameReferenceExpression(576,577): 'X'
+  null
+
+KtNameReferenceExpression(590,591): 'Y'
+  null
+
+KtProperty(613,682): 'val z: MyEnum = myRun {'
+  null
+
+KtTypeReference(620,626): 'MyEnum'
+  null
+
+KtUserType(620,626): 'MyEnum'
+  null
+
+KtNameReferenceExpression(620,626): 'MyEnum'
+  null
+
+KtCallExpression(629,682): 'myRun {'
+  KaSingleSymbolResolutionSuccess:
+    symbol = /myRun(b: kotlin.Function0<T>): T
+
+KtNameReferenceExpression(629,634): 'myRun'
+  null
+
+KtLambdaArgument(635,682): '{'
+  null
+
+KtLambdaExpression(635,682): '{'
+  null
+
+KtFunctionLiteral(635,682): '{'
+  null
+
+KtBlockExpression(645,676): 'if (b) return@myRun X'
+  null
+
+KtIfExpression(645,666): 'if (b) return@myRun X'
+  null
+
+KtContainerNode(649,650): 'b'
+  null
+
+KtNameReferenceExpression(649,650): 'b'
+  null
+
+KtContainerNodeForControlStructureBody(652,666): 'return@myRun X'
+  null
+
+KtReturnExpression(652,666): 'return@myRun X'
+  null
+
+KtContainerNode(658,664): '@myRun'
+  null
+
+KtLabelReferenceExpression(658,664): '@myRun'
+  null
+
+KtNameReferenceExpression(665,666): 'X'
+  null
+
+KtNameReferenceExpression(675,676): 'Y'
+  null
+
+KtCallExpression(688,741): 'myRun {'
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /myRun(b: kotlin.Function0<T>): T
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with myRun>
+
+KtNameReferenceExpression(688,693): 'myRun'
+  null
+
+KtLambdaArgument(694,741): '{'
+  null
+
+KtLambdaExpression(694,741): '{'
+  null
+
+KtFunctionLiteral(694,741): '{'
+  null
+
+KtBlockExpression(704,735): 'if (b) return@myRun X'
+  null
+
+KtIfExpression(704,725): 'if (b) return@myRun X'
+  null
+
+KtContainerNode(708,709): 'b'
+  null
+
+KtNameReferenceExpression(708,709): 'b'
+  null
+
+KtContainerNodeForControlStructureBody(711,725): 'return@myRun X'
+  null
+
+KtReturnExpression(711,725): 'return@myRun X'
+  null
+
+KtContainerNode(717,723): '@myRun'
+  null
+
+KtLabelReferenceExpression(717,723): '@myRun'
+  null
+
+KtNameReferenceExpression(724,725): 'X'
+  null
+
+KtNameReferenceExpression(734,735): 'Y'
+  null
+
+KtCallExpression(746,806): 'myRun {'
+  KaSingleSymbolResolutionSuccess:
+    symbol = /myRun(b: kotlin.Function0<T>): T
+
+KtNameReferenceExpression(746,751): 'myRun'
+  null
+
+KtLambdaArgument(752,806): '{'
+  null
+
+KtLambdaExpression(752,806): '{'
+  null
+
+KtFunctionLiteral(752,806): '{'
+  null
+
+KtBlockExpression(762,800): 'if (b) return@myRun MyEnum.X'
+  null
+
+KtIfExpression(762,790): 'if (b) return@myRun MyEnum.X'
+  null
+
+KtContainerNode(766,767): 'b'
+  null
+
+KtNameReferenceExpression(766,767): 'b'
+  null
+
+KtContainerNodeForControlStructureBody(769,790): 'return@myRun MyEnum.X'
+  null
+
+KtReturnExpression(769,790): 'return@myRun MyEnum.X'
+  null
+
+KtContainerNode(775,781): '@myRun'
+  null
+
+KtLabelReferenceExpression(775,781): '@myRun'
+  null
+
+KtDotQualifiedExpression(782,790): 'MyEnum.X'
+  null
+
+KtNameReferenceExpression(782,788): 'MyEnum'
+  null
+
+KtNameReferenceExpression(789,790): 'X'
+  null
+
+KtNameReferenceExpression(799,800): 'Y'
+  null

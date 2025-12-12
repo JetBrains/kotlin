@@ -116,22 +116,21 @@ KtNameReferenceExpression(152,153): 'T'
   null
 
 KtCallExpression(156,162): 'TODO()'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {}
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Nothing
-          symbol = kotlin/TODO(): kotlin.Nothing
-          valueParameters = []
-          contextParameters = []
-          callableId = kotlin/TODO
-      typeArgumentsMapping = {}
+  KaSimpleFunctionCall:
+    argumentMapping = {}
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Nothing
+        symbol = kotlin/TODO(): kotlin.Nothing
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/TODO
+    typeArgumentsMapping = {}
 
 KtNameReferenceExpression(156,160): 'TODO'
   KaSuccessCallInfo:
@@ -248,22 +247,21 @@ KtNameReferenceExpression(224,225): 'T'
   null
 
 KtCallExpression(228,234): 'TODO()'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {}
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Nothing
-          symbol = kotlin/TODO(): kotlin.Nothing
-          valueParameters = []
-          contextParameters = []
-          callableId = kotlin/TODO
-      typeArgumentsMapping = {}
+  KaSimpleFunctionCall:
+    argumentMapping = {}
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Nothing
+        symbol = kotlin/TODO(): kotlin.Nothing
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/TODO
+    typeArgumentsMapping = {}
 
 KtNameReferenceExpression(228,232): 'TODO'
   KaSuccessCallInfo:

@@ -63,7 +63,8 @@ KtNameReferenceExpression(187,194): 'MyClass'
   null
 
 KtCallExpression(197,206): 'MyClass()'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <constructor>(): MyClass
 
 KtNameReferenceExpression(197,204): 'MyClass'
   null
@@ -177,7 +178,8 @@ KtNameReferenceExpression(400,401): 'T'
   null
 
 KtCallExpression(404,407): 'b()'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = kotlin/Function0.invoke(<dispatch receiver>: () -> R): R
 
 KtNameReferenceExpression(404,405): 'b'
   null
@@ -336,7 +338,8 @@ KtNameReferenceExpression(772,788): 'ClassMemberAlias'
   null
 
 KtCallExpression(794,1278): 'receive<MyClass>('
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /receive(e: T): kotlin.Unit
 
 KtNameReferenceExpression(794,801): 'receive'
   null
@@ -453,7 +456,9 @@ KtBlockExpression(1058,1135): '{'
   null
 
 KtCallExpression(1072,1092): 'getNestedInheritor()'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'getNestedInheritor'.>
 
 KtNameReferenceExpression(1072,1090): 'getNestedInheritor'
   null
@@ -462,7 +467,9 @@ KtValueArgumentList(1090,1092): '()'
   null
 
 KtCallExpression(1105,1125): 'getNestedInheritor()'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'getNestedInheritor'.>
 
 KtNameReferenceExpression(1105,1123): 'getNestedInheritor'
   null
@@ -510,7 +517,8 @@ KtNameReferenceExpression(1256,1272): 'ClassMemberAlias'
   null
 
 KtCallExpression(1284,1555): 'run<MyClass> {'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /run(b: () -> T): T
 
 KtNameReferenceExpression(1284,1287): 'run'
   null

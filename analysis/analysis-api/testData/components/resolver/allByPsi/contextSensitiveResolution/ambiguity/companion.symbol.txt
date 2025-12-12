@@ -44,7 +44,8 @@ KtProperty(180,193): 'val A = Any()'
   null
 
 KtCallExpression(188,193): 'Any()'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <constructor>(): kotlin.Any
 
 KtNameReferenceExpression(188,191): 'Any'
   null

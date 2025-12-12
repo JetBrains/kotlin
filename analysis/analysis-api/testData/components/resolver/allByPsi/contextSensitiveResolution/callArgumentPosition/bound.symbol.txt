@@ -65,7 +65,11 @@ KtBlockExpression(179,210): '{'
   null
 
 KtCallExpression(185,208): 'boundHolder(EnumValue1)'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /boundHolder(arg: T): T
+    ]
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable(INAPPLICABLE): /boundHolder>
 
 KtNameReferenceExpression(185,196): 'boundHolder'
   null
@@ -89,7 +93,8 @@ KtBlockExpression(232,271): '{'
   null
 
 KtCallExpression(238,269): 'boundHolder<MyEnum>(EnumValue1)'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /boundHolder(arg: T): T
 
 KtNameReferenceExpression(238,249): 'boundHolder'
   null

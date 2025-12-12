@@ -80,7 +80,7 @@ KtBlockExpression(179,210): '{'
   null
 
 KtCallExpression(185,208): 'boundHolder(EnumValue1)'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         argumentMapping = {
@@ -178,7 +178,7 @@ KtBlockExpression(232,271): '{'
   null
 
 KtCallExpression(238,269): 'boundHolder<MyEnum>(EnumValue1)'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         argumentMapping = {

@@ -203,7 +203,8 @@ KtOperationReferenceExpression(491,493): '!!'
   null
 
 KtCallExpression(499,525): 'receive<MyEnum>(Option1!!)'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /receive(e: T): kotlin.Unit
 
 KtNameReferenceExpression(499,506): 'receive'
   null
@@ -239,7 +240,8 @@ KtOperationReferenceExpression(522,524): '!!'
   null
 
 KtCallExpression(530,557): 'receive<MyEnum>(enumProp!!)'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /receive(e: T): kotlin.Unit
 
 KtNameReferenceExpression(530,537): 'receive'
   null
@@ -275,7 +277,11 @@ KtOperationReferenceExpression(554,556): '!!'
   null
 
 KtCallExpression(562,591): 'receive<MyEnum>(stringProp!!)'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /receive(e: T): kotlin.Unit
+    ]
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyEnum?' was expected.>
 
 KtNameReferenceExpression(562,569): 'receive'
   null

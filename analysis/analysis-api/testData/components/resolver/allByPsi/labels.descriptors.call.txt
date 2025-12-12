@@ -38,25 +38,24 @@ KtBlockExpression(28,44): '{'
   null
 
 KtCallExpression(34,42): 'action()'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {}
-      isImplicitInvoke = true
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = action
-          isSafeNavigation = false
-          type = kotlin.Function0<kotlin.Unit>
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = kotlin/Function0.invoke(<dispatch receiver>: kotlin.Function0<R>): R
-          valueParameters = []
-          contextParameters = []
-          callableId = kotlin/Function0.invoke
-      typeArgumentsMapping = {}
+  KaSimpleFunctionCall:
+    argumentMapping = {}
+    isImplicitInvoke = true
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = action
+        isSafeNavigation = false
+        type = kotlin.Function0<kotlin.Unit>
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = kotlin/Function0.invoke(<dispatch receiver>: kotlin.Function0<R>): R
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/Function0.invoke
+    typeArgumentsMapping = {}
 
 KtNameReferenceExpression(34,40): 'action'
   KaSuccessCallInfo:
@@ -89,40 +88,39 @@ KtBlockExpression(58,163): '{'
   null
 
 KtCallExpression(64,102): 'foo label@{'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {
-        label@{
-                return@label
-            } -> (KaVariableSignature:
-          name = action
-          receiverType = null
-          returnType = kotlin.Function0<kotlin.Unit>
-          symbol = action: kotlin.Function0<kotlin.Unit>
-          contextParameters = []
-          callableId = null)
-      }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = /foo(action: kotlin.Function0<kotlin.Unit>): kotlin.Unit
-          valueParameters = [
-            KaVariableSignature:
-              name = action
-              receiverType = null
-              returnType = kotlin.Function0<kotlin.Unit>
-              symbol = action: kotlin.Function0<kotlin.Unit>
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /foo
-      typeArgumentsMapping = {}
+  KaSimpleFunctionCall:
+    argumentMapping = {
+      label@{
+              return@label
+          } -> (KaVariableSignature:
+        name = action
+        receiverType = null
+        returnType = kotlin.Function0<kotlin.Unit>
+        symbol = action: kotlin.Function0<kotlin.Unit>
+        contextParameters = []
+        callableId = null)
+    }
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /foo(action: kotlin.Function0<kotlin.Unit>): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = action
+            receiverType = null
+            returnType = kotlin.Function0<kotlin.Unit>
+            symbol = action: kotlin.Function0<kotlin.Unit>
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /foo
+    typeArgumentsMapping = {}
 
 KtNameReferenceExpression(64,67): 'foo'
   KaSuccessCallInfo:

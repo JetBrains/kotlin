@@ -56,22 +56,21 @@ KtNameReferenceExpression(128,129): 'X'
   null
 
 KtCallExpression(132,138): 'TODO()'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {}
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Nothing
-          symbol = kotlin/TODO(): kotlin.Nothing
-          valueParameters = []
-          contextParameters = []
-          callableId = kotlin/TODO
-      typeArgumentsMapping = {}
+  KaSimpleFunctionCall:
+    argumentMapping = {}
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Nothing
+        symbol = kotlin/TODO(): kotlin.Nothing
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/TODO
+    typeArgumentsMapping = {}
 
 KtNameReferenceExpression(132,136): 'TODO'
   KaSuccessCallInfo:
@@ -994,40 +993,39 @@ KtOperationReferenceExpression(697,699): '=='
       typeArgumentsMapping = {}
 
 KtCallExpression(700,705): 'id(X)'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {
-        X -> (KaVariableSignature:
-          name = x
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = x: X
-          contextParameters = []
-          callableId = null)
-      }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = /id(x: X): X
-          valueParameters = [
-            KaVariableSignature:
-              name = x
-              receiverType = null
-              returnType = kotlin.Any?
-              symbol = x: X
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /id
-      typeArgumentsMapping = {
-        X -> (kotlin.Any?)
-      }
+  KaSimpleFunctionCall:
+    argumentMapping = {
+      X -> (KaVariableSignature:
+        name = x
+        receiverType = null
+        returnType = kotlin.Any?
+        symbol = x: X
+        contextParameters = []
+        callableId = null)
+    }
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Any?
+        symbol = /id(x: X): X
+        valueParameters = [
+          KaVariableSignature:
+            name = x
+            receiverType = null
+            returnType = kotlin.Any?
+            symbol = x: X
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /id
+    typeArgumentsMapping = {
+      X -> (kotlin.Any?)
+    }
 
 KtNameReferenceExpression(700,702): 'id'
   KaSuccessCallInfo:
@@ -1181,40 +1179,39 @@ KtOperationReferenceExpression(720,722): '=='
       typeArgumentsMapping = {}
 
 KtCallExpression(723,728): 'id(L)'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {
-        L -> (KaVariableSignature:
-          name = x
-          receiverType = null
-          returnType = MyEnum
-          symbol = x: X
-          contextParameters = []
-          callableId = null)
-      }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = MyEnum
-          symbol = /id(x: X): X
-          valueParameters = [
-            KaVariableSignature:
-              name = x
-              receiverType = null
-              returnType = MyEnum
-              symbol = x: X
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /id
-      typeArgumentsMapping = {
-        X -> (MyEnum)
-      }
+  KaSimpleFunctionCall:
+    argumentMapping = {
+      L -> (KaVariableSignature:
+        name = x
+        receiverType = null
+        returnType = MyEnum
+        symbol = x: X
+        contextParameters = []
+        callableId = null)
+    }
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MyEnum
+        symbol = /id(x: X): X
+        valueParameters = [
+          KaVariableSignature:
+            name = x
+            receiverType = null
+            returnType = MyEnum
+            symbol = x: X
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /id
+    typeArgumentsMapping = {
+      X -> (MyEnum)
+    }
 
 KtNameReferenceExpression(723,725): 'id'
   KaSuccessCallInfo:
@@ -1991,40 +1988,39 @@ KtWhenConditionWithExpression(1004,1009): 'id(X)'
   null
 
 KtCallExpression(1004,1009): 'id(X)'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {
-        X -> (KaVariableSignature:
-          name = x
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = x: X
-          contextParameters = []
-          callableId = null)
-      }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = /id(x: X): X
-          valueParameters = [
-            KaVariableSignature:
-              name = x
-              receiverType = null
-              returnType = kotlin.Any?
-              symbol = x: X
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /id
-      typeArgumentsMapping = {
-        X -> (kotlin.Any?)
-      }
+  KaSimpleFunctionCall:
+    argumentMapping = {
+      X -> (KaVariableSignature:
+        name = x
+        receiverType = null
+        returnType = kotlin.Any?
+        symbol = x: X
+        contextParameters = []
+        callableId = null)
+    }
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Any?
+        symbol = /id(x: X): X
+        valueParameters = [
+          KaVariableSignature:
+            name = x
+            receiverType = null
+            returnType = kotlin.Any?
+            symbol = x: X
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /id
+    typeArgumentsMapping = {
+      X -> (kotlin.Any?)
+    }
 
 KtNameReferenceExpression(1004,1006): 'id'
   KaSuccessCallInfo:
@@ -2083,40 +2079,39 @@ KtWhenConditionWithExpression(1024,1029): 'id(Y)'
   null
 
 KtCallExpression(1024,1029): 'id(Y)'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {
-        Y -> (KaVariableSignature:
-          name = x
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = x: X
-          contextParameters = []
-          callableId = null)
-      }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = /id(x: X): X
-          valueParameters = [
-            KaVariableSignature:
-              name = x
-              receiverType = null
-              returnType = kotlin.Any?
-              symbol = x: X
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /id
-      typeArgumentsMapping = {
-        X -> (kotlin.Any?)
-      }
+  KaSimpleFunctionCall:
+    argumentMapping = {
+      Y -> (KaVariableSignature:
+        name = x
+        receiverType = null
+        returnType = kotlin.Any?
+        symbol = x: X
+        contextParameters = []
+        callableId = null)
+    }
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Any?
+        symbol = /id(x: X): X
+        valueParameters = [
+          KaVariableSignature:
+            name = x
+            receiverType = null
+            returnType = kotlin.Any?
+            symbol = x: X
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /id
+    typeArgumentsMapping = {
+      X -> (kotlin.Any?)
+    }
 
 KtNameReferenceExpression(1024,1026): 'id'
   KaSuccessCallInfo:
@@ -2169,40 +2164,39 @@ KtWhenConditionWithExpression(1031,1036): 'id(L)'
   null
 
 KtCallExpression(1031,1036): 'id(L)'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {
-        L -> (KaVariableSignature:
-          name = x
-          receiverType = null
-          returnType = MyEnum
-          symbol = x: X
-          contextParameters = []
-          callableId = null)
-      }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = MyEnum
-          symbol = /id(x: X): X
-          valueParameters = [
-            KaVariableSignature:
-              name = x
-              receiverType = null
-              returnType = MyEnum
-              symbol = x: X
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /id
-      typeArgumentsMapping = {
-        X -> (MyEnum)
-      }
+  KaSimpleFunctionCall:
+    argumentMapping = {
+      L -> (KaVariableSignature:
+        name = x
+        receiverType = null
+        returnType = MyEnum
+        symbol = x: X
+        contextParameters = []
+        callableId = null)
+    }
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MyEnum
+        symbol = /id(x: X): X
+        valueParameters = [
+          KaVariableSignature:
+            name = x
+            receiverType = null
+            returnType = MyEnum
+            symbol = x: X
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /id
+    typeArgumentsMapping = {
+      X -> (MyEnum)
+    }
 
 KtNameReferenceExpression(1031,1033): 'id'
   KaSuccessCallInfo:
@@ -2304,40 +2298,39 @@ KtWhenConditionWithExpression(1100,1105): 'id(X)'
   null
 
 KtCallExpression(1100,1105): 'id(X)'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {
-        X -> (KaVariableSignature:
-          name = x
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = x: X
-          contextParameters = []
-          callableId = null)
-      }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = /id(x: X): X
-          valueParameters = [
-            KaVariableSignature:
-              name = x
-              receiverType = null
-              returnType = kotlin.Any?
-              symbol = x: X
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /id
-      typeArgumentsMapping = {
-        X -> (kotlin.Any?)
-      }
+  KaSimpleFunctionCall:
+    argumentMapping = {
+      X -> (KaVariableSignature:
+        name = x
+        receiverType = null
+        returnType = kotlin.Any?
+        symbol = x: X
+        contextParameters = []
+        callableId = null)
+    }
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Any?
+        symbol = /id(x: X): X
+        valueParameters = [
+          KaVariableSignature:
+            name = x
+            receiverType = null
+            returnType = kotlin.Any?
+            symbol = x: X
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /id
+    typeArgumentsMapping = {
+      X -> (kotlin.Any?)
+    }
 
 KtNameReferenceExpression(1100,1102): 'id'
   KaSuccessCallInfo:
@@ -2396,40 +2389,39 @@ KtWhenConditionWithExpression(1120,1125): 'id(Y)'
   null
 
 KtCallExpression(1120,1125): 'id(Y)'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {
-        Y -> (KaVariableSignature:
-          name = x
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = x: X
-          contextParameters = []
-          callableId = null)
-      }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Any?
-          symbol = /id(x: X): X
-          valueParameters = [
-            KaVariableSignature:
-              name = x
-              receiverType = null
-              returnType = kotlin.Any?
-              symbol = x: X
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /id
-      typeArgumentsMapping = {
-        X -> (kotlin.Any?)
-      }
+  KaSimpleFunctionCall:
+    argumentMapping = {
+      Y -> (KaVariableSignature:
+        name = x
+        receiverType = null
+        returnType = kotlin.Any?
+        symbol = x: X
+        contextParameters = []
+        callableId = null)
+    }
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Any?
+        symbol = /id(x: X): X
+        valueParameters = [
+          KaVariableSignature:
+            name = x
+            receiverType = null
+            returnType = kotlin.Any?
+            symbol = x: X
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /id
+    typeArgumentsMapping = {
+      X -> (kotlin.Any?)
+    }
 
 KtNameReferenceExpression(1120,1122): 'id'
   KaSuccessCallInfo:
@@ -2482,40 +2474,39 @@ KtWhenConditionWithExpression(1127,1132): 'id(L)'
   null
 
 KtCallExpression(1127,1132): 'id(L)'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {
-        L -> (KaVariableSignature:
-          name = x
-          receiverType = null
-          returnType = MyEnum
-          symbol = x: X
-          contextParameters = []
-          callableId = null)
-      }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = MyEnum
-          symbol = /id(x: X): X
-          valueParameters = [
-            KaVariableSignature:
-              name = x
-              receiverType = null
-              returnType = MyEnum
-              symbol = x: X
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /id
-      typeArgumentsMapping = {
-        X -> (MyEnum)
-      }
+  KaSimpleFunctionCall:
+    argumentMapping = {
+      L -> (KaVariableSignature:
+        name = x
+        receiverType = null
+        returnType = MyEnum
+        symbol = x: X
+        contextParameters = []
+        callableId = null)
+    }
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MyEnum
+        symbol = /id(x: X): X
+        valueParameters = [
+          KaVariableSignature:
+            name = x
+            receiverType = null
+            returnType = MyEnum
+            symbol = x: X
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /id
+    typeArgumentsMapping = {
+      X -> (MyEnum)
+    }
 
 KtNameReferenceExpression(1127,1129): 'id'
   KaSuccessCallInfo:

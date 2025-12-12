@@ -68,7 +68,8 @@ KtNameReferenceExpression(133,140): 'MyAlias'
   null
 
 KtCallExpression(141,151): 'function()'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = test/MyObject.function(<dispatch receiver>: test.MyObject): kotlin.Unit
 
 KtNameReferenceExpression(141,149): 'function'
   null

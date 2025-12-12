@@ -148,7 +148,8 @@ KtNameReferenceExpression(234,238): 'this'
   null
 
 KtCallExpression(239,244): 'baz()'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = baz(<dispatch receiver>: <anonymous>): kotlin.Unit
 
 KtNameReferenceExpression(239,242): 'baz'
   null

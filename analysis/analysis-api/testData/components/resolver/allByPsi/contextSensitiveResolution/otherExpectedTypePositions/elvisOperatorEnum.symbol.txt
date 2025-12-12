@@ -260,7 +260,9 @@ KtBinaryExpression(587,610): 'getOption() ?: enumProp'
   null
 
 KtCallExpression(587,598): 'getOption()'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'getOption'.>
 
 KtNameReferenceExpression(587,596): 'getOption'
   null
@@ -275,7 +277,8 @@ KtNameReferenceExpression(602,610): 'enumProp'
   null
 
 KtCallExpression(616,651): 'receive<MyEnum>(Option1 ?: Option2)'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /receive(e: T): kotlin.Unit
 
 KtNameReferenceExpression(616,623): 'receive'
   null
@@ -314,7 +317,11 @@ KtNameReferenceExpression(643,650): 'Option2'
   null
 
 KtCallExpression(656,695): 'receive<MyEnum>(enumProp ?: stringProp)'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /receive(e: T): kotlin.Unit
+    ]
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyEnum' was expected.>
 
 KtNameReferenceExpression(656,663): 'receive'
   null
@@ -353,7 +360,8 @@ KtNameReferenceExpression(684,694): 'stringProp'
   null
 
 KtCallExpression(700,740): 'receive<MyEnum>(enumProp ?: getOption())'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /receive(e: T): kotlin.Unit
 
 KtNameReferenceExpression(700,707): 'receive'
   null
@@ -389,7 +397,9 @@ KtOperationReferenceExpression(725,727): '?:'
   null
 
 KtCallExpression(728,739): 'getOption()'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'getOption'.>
 
 KtNameReferenceExpression(728,737): 'getOption'
   null

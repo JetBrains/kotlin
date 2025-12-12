@@ -1,2 +1,9 @@
 KtCallExpression(191,224): 'function(1, { s -> true }, "str")'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /function(a: O1, b: (kotlin.Int) -> kotlin.Boolean, c: T1): kotlin.Unit,
+      /function(a: O2, b: (kotlin.String) -> kotlin.Boolean, c: T2): kotlin.Unit
+    ]
+    diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity between candidates:
+    fun <T1, O1> function(a: O1, b: (Int) -> Boolean, c: T1): Unit
+    fun <T2, O2> function(a: O2, b: (String) -> Boolean, c: T2): Unit>

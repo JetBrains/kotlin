@@ -84,7 +84,8 @@ KtNameReferenceExpression(152,153): 'T'
   null
 
 KtCallExpression(156,162): 'TODO()'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = kotlin/TODO(): kotlin.Nothing
 
 KtNameReferenceExpression(156,160): 'TODO'
   null
@@ -154,7 +155,8 @@ KtNameReferenceExpression(224,225): 'T'
   null
 
 KtCallExpression(228,234): 'TODO()'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = kotlin/TODO(): kotlin.Nothing
 
 KtNameReferenceExpression(228,232): 'TODO'
   null

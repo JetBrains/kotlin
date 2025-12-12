@@ -77,22 +77,21 @@ KtNameReferenceExpression(151,152): 'X'
   null
 
 KtCallExpression(155,161): 'TODO()'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {}
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Nothing
-          symbol = kotlin/TODO(): kotlin.Nothing
-          valueParameters = []
-          contextParameters = []
-          callableId = kotlin/TODO
-      typeArgumentsMapping = {}
+  KaSimpleFunctionCall:
+    argumentMapping = {}
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Nothing
+        symbol = kotlin/TODO(): kotlin.Nothing
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/TODO
+    typeArgumentsMapping = {}
 
 KtNameReferenceExpression(155,159): 'TODO'
   KaSuccessCallInfo:
@@ -137,7 +136,7 @@ KtNameReferenceExpression(196,197): 'X'
   null
 
 KtCallExpression(203,213): 'foo(id(X))'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         argumentMapping = {
@@ -217,7 +216,7 @@ KtValueArgument(207,212): 'id(X)'
   null
 
 KtCallExpression(207,212): 'id(X)'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         argumentMapping = {
@@ -306,38 +305,37 @@ KtNameReferenceExpression(210,211): 'X'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: X>
 
 KtCallExpression(218,228): 'foo(id(L))'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {
-        id(L) -> (KaVariableSignature:
-          name = a
-          receiverType = null
-          returnType = MyEnum
-          symbol = a: MyEnum
-          contextParameters = []
-          callableId = null)
-      }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = /foo(a: MyEnum): kotlin.Unit
-          valueParameters = [
-            KaVariableSignature:
-              name = a
-              receiverType = null
-              returnType = MyEnum
-              symbol = a: MyEnum
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /foo
-      typeArgumentsMapping = {}
+  KaSimpleFunctionCall:
+    argumentMapping = {
+      id(L) -> (KaVariableSignature:
+        name = a
+        receiverType = null
+        returnType = MyEnum
+        symbol = a: MyEnum
+        contextParameters = []
+        callableId = null)
+    }
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /foo(a: MyEnum): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = a
+            receiverType = null
+            returnType = MyEnum
+            symbol = a: MyEnum
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /foo
+    typeArgumentsMapping = {}
 
 KtNameReferenceExpression(218,221): 'foo'
   KaSuccessCallInfo:
@@ -380,40 +378,39 @@ KtValueArgument(222,227): 'id(L)'
   null
 
 KtCallExpression(222,227): 'id(L)'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {
-        L -> (KaVariableSignature:
-          name = x
-          receiverType = null
-          returnType = MyEnum
-          symbol = x: X
-          contextParameters = []
-          callableId = null)
-      }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = MyEnum
-          symbol = /id(x: X): X
-          valueParameters = [
-            KaVariableSignature:
-              name = x
-              receiverType = null
-              returnType = MyEnum
-              symbol = x: X
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /id
-      typeArgumentsMapping = {
-        X -> (MyEnum)
-      }
+  KaSimpleFunctionCall:
+    argumentMapping = {
+      L -> (KaVariableSignature:
+        name = x
+        receiverType = null
+        returnType = MyEnum
+        symbol = x: X
+        contextParameters = []
+        callableId = null)
+    }
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MyEnum
+        symbol = /id(x: X): X
+        valueParameters = [
+          KaVariableSignature:
+            name = x
+            receiverType = null
+            returnType = MyEnum
+            symbol = x: X
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /id
+    typeArgumentsMapping = {
+      X -> (MyEnum)
+    }
 
 KtNameReferenceExpression(222,224): 'id'
   KaSuccessCallInfo:
@@ -476,7 +473,7 @@ KtNameReferenceExpression(225,226): 'L'
       typeArgumentsMapping = {}
 
 KtCallExpression(233,252): 'foo(id(UNRESOLVED))'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         argumentMapping = {
@@ -556,7 +553,7 @@ KtValueArgument(237,251): 'id(UNRESOLVED)'
   null
 
 KtCallExpression(237,251): 'id(UNRESOLVED)'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         argumentMapping = {

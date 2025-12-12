@@ -603,22 +603,21 @@ KtNameReferenceExpression(198,205): 'integer'
       typeArgumentsMapping = {}
 
 KtCallExpression(207,214): 'usage()'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {}
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = /usage(): kotlin.Unit
-          valueParameters = []
-          contextParameters = []
-          callableId = /usage
-      typeArgumentsMapping = {}
+  KaSimpleFunctionCall:
+    argumentMapping = {}
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /usage(): kotlin.Unit
+        valueParameters = []
+        contextParameters = []
+        callableId = /usage
+    typeArgumentsMapping = {}
 
 KtNameReferenceExpression(207,212): 'usage'
   KaSuccessCallInfo:
@@ -642,25 +641,24 @@ KtValueArgumentList(212,214): '()'
   null
 
 KtCallExpression(216,226): 'toString()'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {}
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = usage()
-          isSafeNavigation = false
-          type = kotlin.Unit
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.String
-          symbol = kotlin/Unit.toString(<dispatch receiver>: kotlin.Unit): kotlin.String
-          valueParameters = []
-          contextParameters = []
-          callableId = kotlin/Unit.toString
-      typeArgumentsMapping = {}
+  KaSimpleFunctionCall:
+    argumentMapping = {}
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = usage()
+        isSafeNavigation = false
+        type = kotlin.Unit
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.String
+        symbol = kotlin/Unit.toString(<dispatch receiver>: kotlin.Unit): kotlin.String
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/Unit.toString
+    typeArgumentsMapping = {}
 
 KtNameReferenceExpression(216,224): 'toString'
   KaSuccessCallInfo:

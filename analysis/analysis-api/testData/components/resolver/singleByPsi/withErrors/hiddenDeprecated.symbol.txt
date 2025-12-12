@@ -1,2 +1,4 @@
 KtCallExpression(76,79): 'a()'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'a'.>

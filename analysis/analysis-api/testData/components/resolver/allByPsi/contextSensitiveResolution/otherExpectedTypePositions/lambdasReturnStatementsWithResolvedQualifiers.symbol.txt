@@ -166,7 +166,8 @@ KtNameReferenceExpression(263,264): 'T'
   null
 
 KtCallExpression(267,273): 'TODO()'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = kotlin/TODO(): kotlin.Nothing
 
 KtNameReferenceExpression(267,271): 'TODO'
   null
@@ -208,7 +209,8 @@ KtNameReferenceExpression(293,294): 'X'
   null
 
 KtCallExpression(297,303): 'TODO()'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = kotlin/TODO(): kotlin.Nothing
 
 KtNameReferenceExpression(297,301): 'TODO'
   null
@@ -250,7 +252,8 @@ KtNameReferenceExpression(349,350): 'X'
   null
 
 KtCallExpression(356,433): 'myRunWithMySealed {'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /myRunWithMySealed(b: () -> MySealed): kotlin.Unit
 
 KtNameReferenceExpression(356,373): 'myRunWithMySealed'
   null
@@ -295,7 +298,8 @@ KtNameReferenceExpression(426,427): 'Y'
   null
 
 KtCallExpression(439,524): 'myRunWithMySealed {'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /myRunWithMySealed(b: () -> MySealed): kotlin.Unit
 
 KtNameReferenceExpression(439,456): 'myRunWithMySealed'
   null
@@ -334,7 +338,8 @@ KtLabelReferenceExpression(480,498): '@myRunWithMySealed'
   null
 
 KtCallExpression(499,504): 'id(X)'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /id(x: X): X
 
 KtNameReferenceExpression(499,501): 'id'
   null
@@ -349,7 +354,8 @@ KtNameReferenceExpression(502,503): 'X'
   null
 
 KtCallExpression(513,518): 'id(Y)'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /id(x: X): X
 
 KtNameReferenceExpression(513,515): 'id'
   null
@@ -364,7 +370,8 @@ KtNameReferenceExpression(516,517): 'Y'
   null
 
 KtCallExpression(530,593): 'myRun<MySealed> {'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /myRun(b: () -> T): T
 
 KtNameReferenceExpression(530,535): 'myRun'
   null
@@ -424,7 +431,8 @@ KtNameReferenceExpression(586,587): 'Y'
   null
 
 KtCallExpression(598,682): 'foo('
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /foo(a: MySealed): kotlin.Unit
 
 KtNameReferenceExpression(598,601): 'foo'
   null
@@ -436,7 +444,8 @@ KtValueArgument(611,676): 'myRun {'
   null
 
 KtCallExpression(611,676): 'myRun {'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /myRun(b: () -> T): T
 
 KtNameReferenceExpression(611,616): 'myRun'
   null
@@ -493,7 +502,8 @@ KtNameReferenceExpression(695,703): 'MySealed'
   null
 
 KtCallExpression(706,759): 'myRun {'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /myRun(b: () -> T): T
 
 KtNameReferenceExpression(706,711): 'myRun'
   null
@@ -538,7 +548,11 @@ KtNameReferenceExpression(752,753): 'Y'
   null
 
 KtCallExpression(765,818): 'myRun {'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /myRun(b: () -> T): T
+    ]
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable(INAPPLICABLE): /myRun>
 
 KtNameReferenceExpression(765,770): 'myRun'
   null
@@ -583,7 +597,11 @@ KtNameReferenceExpression(811,812): 'Y'
   null
 
 KtCallExpression(823,885): 'myRun {'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /myRun(b: () -> T): T
+    ]
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'MySealed.Y', but 'MySealed.X' was expected.>
 
 KtNameReferenceExpression(823,828): 'myRun'
   null

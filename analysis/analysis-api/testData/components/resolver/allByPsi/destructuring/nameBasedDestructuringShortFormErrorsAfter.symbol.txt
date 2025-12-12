@@ -845,7 +845,8 @@ KtBlockExpression(1095,1097): '{}'
   null
 
 KtCallExpression(1103,1130): 'foo { (first, second,) -> }'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = foo(f: (Tuple) -> kotlin.Unit): kotlin.Unit
 
 KtNameReferenceExpression(1103,1106): 'foo'
   null
@@ -878,7 +879,8 @@ KtBlockExpression(1129,1129): ''
   null
 
 KtCallExpression(1135,1153): 'foo { (first) -> }'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = foo(f: (Tuple) -> kotlin.Unit): kotlin.Unit
 
 KtNameReferenceExpression(1135,1138): 'foo'
   null
@@ -908,7 +910,8 @@ KtBlockExpression(1152,1152): ''
   null
 
 KtCallExpression(1158,1184): 'foo { (first: String) -> }'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = foo(f: (Tuple) -> kotlin.Unit): kotlin.Unit
 
 KtNameReferenceExpression(1158,1161): 'foo'
   null
@@ -947,7 +950,8 @@ KtBlockExpression(1183,1183): ''
   null
 
 KtCallExpression(1189,1219): 'foo { (a: Int, b: String) -> }'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = foo(f: (Tuple) -> kotlin.Unit): kotlin.Unit
 
 KtNameReferenceExpression(1189,1192): 'foo'
   null
@@ -998,7 +1002,8 @@ KtBlockExpression(1218,1218): ''
   null
 
 KtCallExpression(1224,1238): 'foo { (_) -> }'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = foo(f: (Tuple) -> kotlin.Unit): kotlin.Unit
 
 KtNameReferenceExpression(1224,1227): 'foo'
   null
@@ -1028,7 +1033,8 @@ KtBlockExpression(1237,1237): ''
   null
 
 KtCallExpression(1243,1265): 'foo { (_: String) -> }'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = foo(f: (Tuple) -> kotlin.Unit): kotlin.Unit
 
 KtNameReferenceExpression(1243,1246): 'foo'
   null
@@ -1067,7 +1073,8 @@ KtBlockExpression(1264,1264): ''
   null
 
 KtCallExpression(1287,1310): 'foo { (aa = first) -> }'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = foo(f: (Tuple) -> kotlin.Unit): kotlin.Unit
 
 KtNameReferenceExpression(1287,1290): 'foo'
   null
@@ -1100,7 +1107,8 @@ KtBlockExpression(1309,1309): ''
   null
 
 KtCallExpression(1315,1346): 'foo { (aa: String = first) -> }'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = foo(f: (Tuple) -> kotlin.Unit): kotlin.Unit
 
 KtNameReferenceExpression(1315,1318): 'foo'
   null
@@ -1142,7 +1150,8 @@ KtBlockExpression(1345,1345): ''
   null
 
 KtCallExpression(1351,1398): 'foo { (first: Int = a, second: String = b) -> }'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = foo(f: (Tuple) -> kotlin.Unit): kotlin.Unit
 
 KtNameReferenceExpression(1351,1354): 'foo'
   null

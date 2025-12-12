@@ -120,7 +120,8 @@ KtBlockExpression(293,416): '{'
   null
 
 KtCallExpression(299,350): 'with<MyEnum, Unit>(EnumValue1){'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = kotlin/with(receiver: T, block: T.() -> R): R
 
 KtNameReferenceExpression(299,303): 'with'
   null
@@ -174,7 +175,8 @@ KtBlockExpression(339,344): 'foo()'
   null
 
 KtCallExpression(339,344): 'foo()'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /foo(): kotlin.Unit
 
 KtNameReferenceExpression(339,342): 'foo'
   null
@@ -183,7 +185,8 @@ KtValueArgumentList(342,344): '()'
   null
 
 KtCallExpression(356,414): 'with<MySealed, Unit>(InheritorObject){'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = kotlin/with(receiver: T, block: T.() -> R): R
 
 KtNameReferenceExpression(356,360): 'with'
   null
@@ -237,7 +240,8 @@ KtBlockExpression(403,408): 'foo()'
   null
 
 KtCallExpression(403,408): 'foo()'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /foo(): kotlin.Unit
 
 KtNameReferenceExpression(403,406): 'foo'
   null
@@ -303,7 +307,8 @@ KtBlockExpression(501,560): '{'
   null
 
 KtCallExpression(507,558): 'with<MyEnum, Unit>(EnumValue1) {'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = kotlin/with(receiver: T, block: T.() -> R): R
 
 KtNameReferenceExpression(507,511): 'with'
   null

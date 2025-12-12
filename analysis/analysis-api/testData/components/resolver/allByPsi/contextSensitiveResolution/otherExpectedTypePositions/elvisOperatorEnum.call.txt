@@ -506,7 +506,7 @@ KtBinaryExpression(587,610): 'getOption() ?: enumProp'
   null
 
 KtCallExpression(587,598): 'getOption()'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'getOption'.>
 
@@ -543,40 +543,39 @@ KtNameReferenceExpression(602,610): 'enumProp'
       typeArgumentsMapping = {}
 
 KtCallExpression(616,651): 'receive<MyEnum>(Option1 ?: Option2)'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {
-        Option1 ?: Option2 -> (KaVariableSignature:
-          name = e
-          receiverType = null
-          returnType = MyEnum
-          symbol = e: T
-          contextParameters = []
-          callableId = null)
-      }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = /receive(e: T): kotlin.Unit
-          valueParameters = [
-            KaVariableSignature:
-              name = e
-              receiverType = null
-              returnType = MyEnum
-              symbol = e: T
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /receive
-      typeArgumentsMapping = {
-        T -> (MyEnum)
-      }
+  KaSimpleFunctionCall:
+    argumentMapping = {
+      Option1 ?: Option2 -> (KaVariableSignature:
+        name = e
+        receiverType = null
+        returnType = MyEnum
+        symbol = e: T
+        contextParameters = []
+        callableId = null)
+    }
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /receive(e: T): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = e
+            receiverType = null
+            returnType = MyEnum
+            symbol = e: T
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /receive
+    typeArgumentsMapping = {
+      T -> (MyEnum)
+    }
 
 KtNameReferenceExpression(616,623): 'receive'
   KaSuccessCallInfo:
@@ -684,7 +683,7 @@ KtNameReferenceExpression(643,650): 'Option2'
       typeArgumentsMapping = {}
 
 KtCallExpression(656,695): 'receive<MyEnum>(enumProp ?: stringProp)'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         argumentMapping = {
@@ -831,40 +830,39 @@ KtNameReferenceExpression(684,694): 'stringProp'
       typeArgumentsMapping = {}
 
 KtCallExpression(700,740): 'receive<MyEnum>(enumProp ?: getOption())'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {
-        enumProp ?: getOption() -> (KaVariableSignature:
-          name = e
-          receiverType = null
-          returnType = MyEnum
-          symbol = e: T
-          contextParameters = []
-          callableId = null)
-      }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = /receive(e: T): kotlin.Unit
-          valueParameters = [
-            KaVariableSignature:
-              name = e
-              receiverType = null
-              returnType = MyEnum
-              symbol = e: T
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /receive
-      typeArgumentsMapping = {
-        T -> (MyEnum)
-      }
+  KaSimpleFunctionCall:
+    argumentMapping = {
+      enumProp ?: getOption() -> (KaVariableSignature:
+        name = e
+        receiverType = null
+        returnType = MyEnum
+        symbol = e: T
+        contextParameters = []
+        callableId = null)
+    }
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /receive(e: T): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = e
+            receiverType = null
+            returnType = MyEnum
+            symbol = e: T
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /receive
+    typeArgumentsMapping = {
+      T -> (MyEnum)
+    }
 
 KtNameReferenceExpression(700,707): 'receive'
   KaSuccessCallInfo:
@@ -951,7 +949,7 @@ KtOperationReferenceExpression(725,727): '?:'
   null
 
 KtCallExpression(728,739): 'getOption()'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'getOption'.>
 

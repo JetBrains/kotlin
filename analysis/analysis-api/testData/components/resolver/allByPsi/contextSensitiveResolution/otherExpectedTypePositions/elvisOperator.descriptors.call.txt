@@ -106,22 +106,21 @@ KtNameReferenceExpression(187,194): 'MyClass'
   null
 
 KtCallExpression(197,206): 'MyClass()'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {}
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = MyClass
-          symbol = <constructor>(): MyClass
-          valueParameters = []
-          contextParameters = []
-          callableId = null
-      typeArgumentsMapping = {}
+  KaSimpleFunctionCall:
+    argumentMapping = {}
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MyClass
+        symbol = <constructor>(): MyClass
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+    typeArgumentsMapping = {}
 
 KtNameReferenceExpression(197,204): 'MyClass'
   KaSuccessCallInfo:
@@ -296,7 +295,7 @@ KtOperationReferenceExpression(542,544): '?:'
   null
 
 KtCallExpression(545,565): 'getNestedInheritor()'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: getNestedInheritor>
 
@@ -309,7 +308,7 @@ KtValueArgumentList(563,565): '()'
   null
 
 KtCallExpression(571,619): 'receive<MyClass>(NestedInheritor ?: myClassProp)'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         argumentMapping = {
@@ -424,7 +423,7 @@ KtNameReferenceExpression(607,618): 'myClassProp'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: myClassProp>
 
 KtCallExpression(624,671): 'receive<MyClass>(NestedInheritor ?: stringProp)'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         argumentMapping = {
@@ -539,7 +538,7 @@ KtNameReferenceExpression(660,670): 'stringProp'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: stringProp>
 
 KtCallExpression(676,733): 'receive<MyClass>(NestedInheritor ?: getNestedInheritor())'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         argumentMapping = {
@@ -649,7 +648,7 @@ KtOperationReferenceExpression(709,711): '?:'
   null
 
 KtCallExpression(712,732): 'getNestedInheritor()'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: getNestedInheritor>
 

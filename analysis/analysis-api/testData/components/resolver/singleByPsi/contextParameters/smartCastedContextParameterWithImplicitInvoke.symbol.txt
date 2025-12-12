@@ -1,2 +1,3 @@
 KtCallExpression(136,139): 's()'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /invoke(<extension receiver>: kotlin.String): kotlin.Unit

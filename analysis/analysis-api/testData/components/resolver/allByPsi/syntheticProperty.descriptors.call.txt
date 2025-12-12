@@ -38,38 +38,37 @@ KtBlockExpression(72,300): '{'
   null
 
 KtCallExpression(78,104): 'print(javaClass.something)'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {
-        javaClass.something -> (KaVariableSignature:
-          name = message
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = message: kotlin.Int
-          contextParameters = []
-          callableId = null)
-      }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = kotlin/io/print(message: kotlin.Int): kotlin.Unit
-          valueParameters = [
-            KaVariableSignature:
-              name = message
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = message: kotlin.Int
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/io/print
-      typeArgumentsMapping = {}
+  KaSimpleFunctionCall:
+    argumentMapping = {
+      javaClass.something -> (KaVariableSignature:
+        name = message
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = message: kotlin.Int
+        contextParameters = []
+        callableId = null)
+    }
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = kotlin/io/print(message: kotlin.Int): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = message
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = message: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/io/print
+    typeArgumentsMapping = {}
 
 KtNameReferenceExpression(78,83): 'print'
   KaSuccessCallInfo:

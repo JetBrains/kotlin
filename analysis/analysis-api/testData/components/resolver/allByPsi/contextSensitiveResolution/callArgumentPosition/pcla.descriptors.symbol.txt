@@ -1,0 +1,355 @@
+KtFile: 'pcla.kt'
+  null
+
+KtPackageDirective(0,0): ''
+  null
+
+KtImportList(0,0): ''
+  null
+
+KtClass(105,135): 'enum class MyEnum {'
+  null
+
+KtDeclarationModifierList(105,109): 'enum'
+  null
+
+KtClassBody(123,135): '{'
+  null
+
+KtEnumEntry(129,131): 'X,'
+  null
+
+KtEnumEntry(132,133): 'Y'
+  null
+
+KtClass(137,196): 'class Controller<T> {'
+  null
+
+KtTypeParameterList(153,156): '<T>'
+  null
+
+KtTypeParameter(154,155): 'T'
+  null
+
+KtClassBody(157,196): '{'
+  null
+
+KtNamedFunction(163,194): 'fun yield(t: T): Boolean = true'
+  null
+
+KtParameterList(172,178): '(t: T)'
+  null
+
+KtParameter(173,177): 't: T'
+  null
+
+KtTypeReference(176,177): 'T'
+  null
+
+KtUserType(176,177): 'T'
+  null
+
+KtNameReferenceExpression(176,177): 'T'
+  null
+
+KtTypeReference(180,187): 'Boolean'
+  null
+
+KtUserType(180,187): 'Boolean'
+  null
+
+KtNameReferenceExpression(180,187): 'Boolean'
+  null
+
+KtConstantExpression(190,194): 'true'
+  null
+
+KtNamedFunction(198,263): 'fun <S> generate(g: suspend Controller<S>.() -> Unit): S = TODO()'
+  null
+
+KtTypeParameterList(202,205): '<S>'
+  null
+
+KtTypeParameter(203,204): 'S'
+  null
+
+KtParameterList(214,251): '(g: suspend Controller<S>.() -> Unit)'
+  null
+
+KtParameter(215,250): 'g: suspend Controller<S>.() -> Unit'
+  null
+
+KtTypeReference(218,250): 'suspend Controller<S>.() -> Unit'
+  null
+
+KtDeclarationModifierList(218,225): 'suspend'
+  null
+
+KtFunctionType(226,250): 'Controller<S>.() -> Unit'
+  null
+
+KtFunctionTypeReceiver(226,239): 'Controller<S>'
+  null
+
+KtTypeReference(226,239): 'Controller<S>'
+  null
+
+KtUserType(226,239): 'Controller<S>'
+  null
+
+KtNameReferenceExpression(226,236): 'Controller'
+  null
+
+KtTypeArgumentList(236,239): '<S>'
+  null
+
+KtTypeProjection(237,238): 'S'
+  null
+
+KtTypeReference(237,238): 'S'
+  null
+
+KtUserType(237,238): 'S'
+  null
+
+KtNameReferenceExpression(237,238): 'S'
+  null
+
+KtParameterList(240,242): '()'
+  null
+
+KtTypeReference(246,250): 'Unit'
+  null
+
+KtUserType(246,250): 'Unit'
+  null
+
+KtNameReferenceExpression(246,250): 'Unit'
+  null
+
+KtTypeReference(253,254): 'S'
+  null
+
+KtUserType(253,254): 'S'
+  null
+
+KtNameReferenceExpression(253,254): 'S'
+  null
+
+KtCallExpression(257,263): 'TODO()'
+  KaSingleSymbolResolutionSuccess:
+    symbol = kotlin/TODO(): kotlin.Nothing
+
+KtNameReferenceExpression(257,261): 'TODO'
+  null
+
+KtValueArgumentList(261,263): '()'
+  null
+
+KtNamedFunction(265,492): 'fun foo(m: MyEnum) {'
+  null
+
+KtParameterList(272,283): '(m: MyEnum)'
+  null
+
+KtParameter(273,282): 'm: MyEnum'
+  null
+
+KtTypeReference(276,282): 'MyEnum'
+  null
+
+KtUserType(276,282): 'MyEnum'
+  null
+
+KtNameReferenceExpression(276,282): 'MyEnum'
+  null
+
+KtBlockExpression(284,492): '{'
+  null
+
+KtCallExpression(290,340): 'generate {'
+  KaSingleSymbolResolutionSuccess:
+    symbol = /generate(g: kotlin.coroutines.SuspendFunction1<Controller<S>, kotlin.Unit>): S
+
+KtNameReferenceExpression(290,298): 'generate'
+  null
+
+KtLambdaArgument(299,340): '{'
+  null
+
+KtLambdaExpression(299,340): '{'
+  null
+
+KtFunctionLiteral(299,340): '{'
+  null
+
+KtBlockExpression(309,334): 'yield(m)'
+  null
+
+KtCallExpression(309,317): 'yield(m)'
+  KaSingleSymbolResolutionSuccess:
+    symbol = /Controller.yield(<dispatch receiver>: Controller<T>, t: T): kotlin.Boolean
+
+KtNameReferenceExpression(309,314): 'yield'
+  null
+
+KtValueArgumentList(314,317): '(m)'
+  null
+
+KtValueArgument(315,316): 'm'
+  null
+
+KtNameReferenceExpression(315,316): 'm'
+  null
+
+KtCallExpression(326,334): 'yield(X)'
+  KaSingleSymbolResolutionSuccess:
+    symbol = /Controller.yield(<dispatch receiver>: Controller<T>, t: T): kotlin.Boolean
+
+KtNameReferenceExpression(326,331): 'yield'
+  null
+
+KtValueArgumentList(331,334): '(X)'
+  null
+
+KtValueArgument(332,333): 'X'
+  null
+
+KtNameReferenceExpression(332,333): 'X'
+  null
+
+KtCallExpression(346,396): 'generate {'
+  KaSingleSymbolResolutionSuccess:
+    symbol = /generate(g: kotlin.coroutines.SuspendFunction1<Controller<S>, kotlin.Unit>): S
+
+KtNameReferenceExpression(346,354): 'generate'
+  null
+
+KtLambdaArgument(355,396): '{'
+  null
+
+KtLambdaExpression(355,396): '{'
+  null
+
+KtFunctionLiteral(355,396): '{'
+  null
+
+KtBlockExpression(365,390): 'yield(X)'
+  null
+
+KtCallExpression(365,373): 'yield(X)'
+  KaSingleSymbolResolutionSuccess:
+    symbol = /Controller.yield(<dispatch receiver>: Controller<T>, t: T): kotlin.Boolean
+
+KtNameReferenceExpression(365,370): 'yield'
+  null
+
+KtValueArgumentList(370,373): '(X)'
+  null
+
+KtValueArgument(371,372): 'X'
+  null
+
+KtNameReferenceExpression(371,372): 'X'
+  null
+
+KtCallExpression(382,390): 'yield(m)'
+  KaSingleSymbolResolutionSuccess:
+    symbol = /Controller.yield(<dispatch receiver>: Controller<T>, t: T): kotlin.Boolean
+
+KtNameReferenceExpression(382,387): 'yield'
+  null
+
+KtValueArgumentList(387,390): '(m)'
+  null
+
+KtValueArgument(388,389): 'm'
+  null
+
+KtNameReferenceExpression(388,389): 'm'
+  null
+
+KtProperty(402,451): 'val x: MyEnum = generate {'
+  null
+
+KtTypeReference(409,415): 'MyEnum'
+  null
+
+KtUserType(409,415): 'MyEnum'
+  null
+
+KtNameReferenceExpression(409,415): 'MyEnum'
+  null
+
+KtCallExpression(418,451): 'generate {'
+  KaSingleSymbolResolutionSuccess:
+    symbol = /generate(g: kotlin.coroutines.SuspendFunction1<Controller<S>, kotlin.Unit>): S
+
+KtNameReferenceExpression(418,426): 'generate'
+  null
+
+KtLambdaArgument(427,451): '{'
+  null
+
+KtLambdaExpression(427,451): '{'
+  null
+
+KtFunctionLiteral(427,451): '{'
+  null
+
+KtBlockExpression(437,445): 'yield(X)'
+  null
+
+KtCallExpression(437,445): 'yield(X)'
+  KaSingleSymbolResolutionSuccess:
+    symbol = /Controller.yield(<dispatch receiver>: Controller<T>, t: T): kotlin.Boolean
+
+KtNameReferenceExpression(437,442): 'yield'
+  null
+
+KtValueArgumentList(442,445): '(X)'
+  null
+
+KtValueArgument(443,444): 'X'
+  null
+
+KtNameReferenceExpression(443,444): 'X'
+  null
+
+KtCallExpression(457,490): 'generate {'
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /generate(g: kotlin.coroutines.SuspendFunction1<Controller<S>, kotlin.Unit>): S
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with generate>
+
+KtNameReferenceExpression(457,465): 'generate'
+  null
+
+KtLambdaArgument(466,490): '{'
+  null
+
+KtLambdaExpression(466,490): '{'
+  null
+
+KtFunctionLiteral(466,490): '{'
+  null
+
+KtBlockExpression(476,484): 'yield(X)'
+  null
+
+KtCallExpression(476,484): 'yield(X)'
+  KaSingleSymbolResolutionSuccess:
+    symbol = /Controller.yield(<dispatch receiver>: Controller<T>, t: T): kotlin.Boolean
+
+KtNameReferenceExpression(476,481): 'yield'
+  null
+
+KtValueArgumentList(481,484): '(X)'
+  null
+
+KtValueArgument(482,483): 'X'
+  null
+
+KtNameReferenceExpression(482,483): 'X'
+  null

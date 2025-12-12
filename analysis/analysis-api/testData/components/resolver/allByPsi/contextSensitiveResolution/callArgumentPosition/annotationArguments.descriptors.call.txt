@@ -866,7 +866,7 @@ KtValueArgument(371,381): 'arrayOf(X)'
   null
 
 KtCallExpression(371,381): 'arrayOf(X)'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         argumentMapping = {

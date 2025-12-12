@@ -44,7 +44,7 @@ KtBlockExpression(43,60): '{'
   null
 
 KtCallExpression(49,58): 'foo(s = )'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         argumentMapping = {}

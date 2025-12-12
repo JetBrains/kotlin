@@ -116,7 +116,8 @@ KtNameReferenceExpression(200,201): 'T'
   null
 
 KtCallExpression(204,210): 'TODO()'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = kotlin/TODO(): kotlin.Nothing
 
 KtNameReferenceExpression(204,208): 'TODO'
   null
@@ -158,7 +159,8 @@ KtNameReferenceExpression(230,231): 'X'
   null
 
 KtCallExpression(234,240): 'TODO()'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = kotlin/TODO(): kotlin.Nothing
 
 KtNameReferenceExpression(234,238): 'TODO'
   null
@@ -200,7 +202,8 @@ KtNameReferenceExpression(284,285): 'X'
   null
 
 KtCallExpression(291,364): 'myRunWithMyEnum {'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /myRunWithMyEnum(b: () -> MyEnum): kotlin.Unit
 
 KtNameReferenceExpression(291,306): 'myRunWithMyEnum'
   null
@@ -245,7 +248,8 @@ KtNameReferenceExpression(357,358): 'Y'
   null
 
 KtCallExpression(370,451): 'myRunWithMyEnum {'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /myRunWithMyEnum(b: () -> MyEnum): kotlin.Unit
 
 KtNameReferenceExpression(370,385): 'myRunWithMyEnum'
   null
@@ -284,7 +288,8 @@ KtLabelReferenceExpression(409,425): '@myRunWithMyEnum'
   null
 
 KtCallExpression(426,431): 'id(X)'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /id(x: X): X
 
 KtNameReferenceExpression(426,428): 'id'
   null
@@ -299,7 +304,8 @@ KtNameReferenceExpression(429,430): 'X'
   null
 
 KtCallExpression(440,445): 'id(Y)'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /id(x: X): X
 
 KtNameReferenceExpression(440,442): 'id'
   null
@@ -314,7 +320,8 @@ KtNameReferenceExpression(443,444): 'Y'
   null
 
 KtCallExpression(457,518): 'myRun<MyEnum> {'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /myRun(b: () -> T): T
 
 KtNameReferenceExpression(457,462): 'myRun'
   null
@@ -374,7 +381,8 @@ KtNameReferenceExpression(511,512): 'Y'
   null
 
 KtCallExpression(523,607): 'foo('
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /foo(a: MyEnum): kotlin.Unit
 
 KtNameReferenceExpression(523,526): 'foo'
   null
@@ -386,7 +394,8 @@ KtValueArgument(536,601): 'myRun {'
   null
 
 KtCallExpression(536,601): 'myRun {'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /myRun(b: () -> T): T
 
 KtNameReferenceExpression(536,541): 'myRun'
   null
@@ -443,7 +452,8 @@ KtNameReferenceExpression(620,626): 'MyEnum'
   null
 
 KtCallExpression(629,682): 'myRun {'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /myRun(b: () -> T): T
 
 KtNameReferenceExpression(629,634): 'myRun'
   null
@@ -488,7 +498,11 @@ KtNameReferenceExpression(675,676): 'Y'
   null
 
 KtCallExpression(688,741): 'myRun {'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /myRun(b: () -> T): T
+    ]
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable(INAPPLICABLE): /myRun>
 
 KtNameReferenceExpression(688,693): 'myRun'
   null
@@ -533,7 +547,8 @@ KtNameReferenceExpression(734,735): 'Y'
   null
 
 KtCallExpression(746,806): 'myRun {'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /myRun(b: () -> T): T
 
 KtNameReferenceExpression(746,751): 'myRun'
   null

@@ -155,7 +155,8 @@ KtConstantExpression(195,196): '1'
   null
 
 KtCallExpression(202,208): 'foo(3)'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /foo(x: kotlin.Int): kotlin.Unit
 
 KtNameReferenceExpression(202,205): 'foo'
   null
@@ -170,7 +171,8 @@ KtConstantExpression(206,207): '3'
   null
 
 KtCallExpression(213,223): 'foo(((5)))'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /foo(x: kotlin.Int): kotlin.Unit
 
 KtNameReferenceExpression(213,216): 'foo'
   null
@@ -191,7 +193,8 @@ KtConstantExpression(219,220): '5'
   null
 
 KtCallExpression(228,242): 'foo(x = ((5)))'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /foo(x: kotlin.Int): kotlin.Unit
 
 KtNameReferenceExpression(228,231): 'foo'
   null
@@ -218,7 +221,8 @@ KtConstantExpression(238,239): '5'
   null
 
 KtCallExpression(247,266): 'foo((((5 as Int))))'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /foo(x: kotlin.Int): kotlin.Unit
 
 KtNameReferenceExpression(247,250): 'foo'
   null
@@ -257,7 +261,8 @@ KtNameReferenceExpression(259,262): 'Int'
   null
 
 KtCallExpression(271,294): 'foo(x = (((5 as Int))))'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /foo(x: kotlin.Int): kotlin.Unit
 
 KtNameReferenceExpression(271,274): 'foo'
   null
@@ -302,7 +307,8 @@ KtNameReferenceExpression(287,290): 'Int'
   null
 
 KtCallExpression(300,368): 'foo((((when (((value))) {'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /foo(x: kotlin.Int): kotlin.Unit
 
 KtNameReferenceExpression(300,303): 'foo'
   null
@@ -353,7 +359,8 @@ KtConstantExpression(357,358): '2'
   null
 
 KtCallExpression(374,394): 'foo(((((++value)))))'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /foo(x: kotlin.Int): kotlin.Unit
 
 KtNameReferenceExpression(374,377): 'foo'
   null
@@ -386,7 +393,8 @@ KtNameReferenceExpression(384,389): 'value'
   null
 
 KtCallExpression(400,426): 'fooVararg((5), (5 as Int))'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /fooVararg(vararg x: kotlin.Int): kotlin.Unit
 
 KtNameReferenceExpression(400,409): 'fooVararg'
   null
@@ -428,7 +436,8 @@ KtNameReferenceExpression(421,424): 'Int'
   null
 
 KtCallExpression(431,458): 'fooVararg(*(intArrayOf(5)))'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /fooVararg(vararg x: kotlin.Int): kotlin.Unit
 
 KtNameReferenceExpression(431,440): 'fooVararg'
   null
@@ -443,7 +452,8 @@ KtParenthesizedExpression(442,457): '(intArrayOf(5))'
   null
 
 KtCallExpression(443,456): 'intArrayOf(5)'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = kotlin/intArrayOf(vararg elements: kotlin.Int): kotlin.IntArray
 
 KtNameReferenceExpression(443,453): 'intArrayOf'
   null
@@ -458,7 +468,8 @@ KtConstantExpression(454,455): '5'
   null
 
 KtCallExpression(463,493): 'fooVararg(x = (intArrayOf(5)))'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /fooVararg(vararg x: kotlin.Int): kotlin.Unit
 
 KtNameReferenceExpression(463,472): 'fooVararg'
   null
@@ -479,7 +490,8 @@ KtParenthesizedExpression(477,492): '(intArrayOf(5))'
   null
 
 KtCallExpression(478,491): 'intArrayOf(5)'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = kotlin/intArrayOf(vararg elements: kotlin.Int): kotlin.IntArray
 
 KtNameReferenceExpression(478,488): 'intArrayOf'
   null
@@ -494,7 +506,8 @@ KtConstantExpression(489,490): '5'
   null
 
 KtCallExpression(499,523): 'fooLambda((({ _ -> 5})))'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /fooLambda(lambda: (@R|kotlin.ParameterName|(name = String(x))  kotlin.Int) -> kotlin.Int): kotlin.Unit
 
 KtNameReferenceExpression(499,508): 'fooLambda'
   null
@@ -530,7 +543,8 @@ KtConstantExpression(518,519): '5'
   null
 
 KtCallExpression(529,554): 'fooSam((((MySam { 5 }))))'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /fooSam(sam: MySam): kotlin.Unit
 
 KtNameReferenceExpression(529,535): 'fooSam'
   null
@@ -551,7 +565,8 @@ KtParenthesizedExpression(538,551): '(MySam { 5 })'
   null
 
 KtCallExpression(539,550): 'MySam { 5 }'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /MySam(function: () -> kotlin.Int): MySam
 
 KtNameReferenceExpression(539,544): 'MySam'
   null

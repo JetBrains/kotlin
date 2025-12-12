@@ -1,5 +1,5 @@
 KtCallExpression(98,109): 'function(1)'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         argumentMapping = {
@@ -96,12 +96,12 @@ KtCallExpression(98,109): 'function(1)'
         typeArgumentsMapping = {}
     ]
     diagnostic = ERROR<NONE_APPLICABLE: None of the following candidates is applicable:
-
+    
     fun function(a: Char): Unit:
       Argument type mismatch: actual type is 'Int', but 'Char' was expected.
-
+    
     fun function(b: Boolean): Unit:
       Argument type mismatch: actual type is 'Int', but 'Boolean' was expected.
-
+    
     fun function(c: String): Unit:
       Argument type mismatch: actual type is 'Int', but 'String' was expected.>

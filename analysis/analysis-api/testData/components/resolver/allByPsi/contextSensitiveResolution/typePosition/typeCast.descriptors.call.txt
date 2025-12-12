@@ -697,22 +697,21 @@ KtNameReferenceExpression(728,735): 'Nothing'
   null
 
 KtCallExpression(738,744): 'TODO()'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {}
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Nothing
-          symbol = kotlin/TODO(): kotlin.Nothing
-          valueParameters = []
-          contextParameters = []
-          callableId = kotlin/TODO
-      typeArgumentsMapping = {}
+  KaSimpleFunctionCall:
+    argumentMapping = {}
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Nothing
+        symbol = kotlin/TODO(): kotlin.Nothing
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/TODO
+    typeArgumentsMapping = {}
 
 KtNameReferenceExpression(738,742): 'TODO'
   KaSuccessCallInfo:
@@ -1380,7 +1379,7 @@ KtValueArgumentList(1272,1274): '()'
   null
 
 KtCallExpression(1280,1323): 'consume<SealedClass>(i as SealedInheritor1)'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         argumentMapping = {
@@ -1514,7 +1513,7 @@ KtNameReferenceExpression(1306,1322): 'SealedInheritor1'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: SealedInheritor1>
 
 KtCallExpression(1328,1388): 'consume<SealedClass.SealedInheritor1>(i as SealedInheritor1)'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         argumentMapping = {
@@ -2058,7 +2057,7 @@ KtValueArgumentList(1745,1747): '()'
   null
 
 KtCallExpression(1753,1798): 'consume<SealedClass?>(i as? SealedInheritor1)'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         argumentMapping = {
@@ -2195,7 +2194,7 @@ KtNameReferenceExpression(1781,1797): 'SealedInheritor1'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: SealedInheritor1>
 
 KtCallExpression(1803,1865): 'consume<SealedClass.SealedInheritor1?>(i as? SealedInheritor1)'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         argumentMapping = {
@@ -2338,7 +2337,7 @@ KtNameReferenceExpression(1848,1864): 'SealedInheritor1'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: SealedInheritor1>
 
 KtCallExpression(1870,1932): 'consume<SealedClass.SealedInheritor2?>(i as? SealedInheritor2)'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         argumentMapping = {

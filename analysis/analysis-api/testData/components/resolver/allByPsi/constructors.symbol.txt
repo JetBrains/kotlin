@@ -186,7 +186,8 @@ KtNameReferenceExpression(245,250): 'super'
   null
 
 KtCallExpression(251,257): 'call()'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = r/BaseClass.call(<dispatch receiver>: r.BaseClass): kotlin.Unit
 
 KtNameReferenceExpression(251,255): 'call'
   null

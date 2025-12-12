@@ -116,22 +116,21 @@ KtNameReferenceExpression(200,201): 'T'
   null
 
 KtCallExpression(204,210): 'TODO()'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {}
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Nothing
-          symbol = kotlin/TODO(): kotlin.Nothing
-          valueParameters = []
-          contextParameters = []
-          callableId = kotlin/TODO
-      typeArgumentsMapping = {}
+  KaSimpleFunctionCall:
+    argumentMapping = {}
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Nothing
+        symbol = kotlin/TODO(): kotlin.Nothing
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/TODO
+    typeArgumentsMapping = {}
 
 KtNameReferenceExpression(204,208): 'TODO'
   KaSuccessCallInfo:
@@ -188,22 +187,21 @@ KtNameReferenceExpression(230,231): 'X'
   null
 
 KtCallExpression(234,240): 'TODO()'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {}
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Nothing
-          symbol = kotlin/TODO(): kotlin.Nothing
-          valueParameters = []
-          contextParameters = []
-          callableId = kotlin/TODO
-      typeArgumentsMapping = {}
+  KaSimpleFunctionCall:
+    argumentMapping = {}
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Nothing
+        symbol = kotlin/TODO(): kotlin.Nothing
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/TODO
+    typeArgumentsMapping = {}
 
 KtNameReferenceExpression(234,238): 'TODO'
   KaSuccessCallInfo:
@@ -519,44 +517,43 @@ KtNameReferenceExpression(649,650): 'L'
       typeArgumentsMapping = {}
 
 KtCallExpression(662,803): 'foo('
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {
-        try {
-                    X
-                } catch(e: Exception) {
-                    Y
-                } catch (t: Throwable) {
-                    L
-                } -> (KaVariableSignature:
-          name = a
-          receiverType = null
-          returnType = MyEnum
-          symbol = a: MyEnum
-          contextParameters = []
-          callableId = null)
-      }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = /foo(a: MyEnum): kotlin.Unit
-          valueParameters = [
-            KaVariableSignature:
-              name = a
-              receiverType = null
-              returnType = MyEnum
-              symbol = a: MyEnum
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /foo
-      typeArgumentsMapping = {}
+  KaSimpleFunctionCall:
+    argumentMapping = {
+      try {
+                  X
+              } catch(e: Exception) {
+                  Y
+              } catch (t: Throwable) {
+                  L
+              } -> (KaVariableSignature:
+        name = a
+        receiverType = null
+        returnType = MyEnum
+        symbol = a: MyEnum
+        contextParameters = []
+        callableId = null)
+    }
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /foo(a: MyEnum): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = a
+            receiverType = null
+            returnType = MyEnum
+            symbol = a: MyEnum
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /foo
+    typeArgumentsMapping = {}
 
 KtNameReferenceExpression(662,665): 'foo'
   KaSuccessCallInfo:
@@ -681,46 +678,45 @@ KtNameReferenceExpression(786,787): 'L'
       typeArgumentsMapping = {}
 
 KtCallExpression(809,963): 'myRunWithMyEnum {'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {
-        {
-                try {
-                    X
-                } catch(e: Exception) {
-                    Y
-                } catch (t: Throwable) {
-                    L
-                }
-            } -> (KaVariableSignature:
-          name = b
-          receiverType = null
-          returnType = kotlin.Function0<MyEnum>
-          symbol = b: kotlin.Function0<MyEnum>
-          contextParameters = []
-          callableId = null)
-      }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = /myRunWithMyEnum(b: kotlin.Function0<MyEnum>): kotlin.Unit
-          valueParameters = [
-            KaVariableSignature:
-              name = b
-              receiverType = null
-              returnType = kotlin.Function0<MyEnum>
-              symbol = b: kotlin.Function0<MyEnum>
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /myRunWithMyEnum
-      typeArgumentsMapping = {}
+  KaSimpleFunctionCall:
+    argumentMapping = {
+      {
+              try {
+                  X
+              } catch(e: Exception) {
+                  Y
+              } catch (t: Throwable) {
+                  L
+              }
+          } -> (KaVariableSignature:
+        name = b
+        receiverType = null
+        returnType = kotlin.Function0<MyEnum>
+        symbol = b: kotlin.Function0<MyEnum>
+        contextParameters = []
+        callableId = null)
+    }
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /myRunWithMyEnum(b: kotlin.Function0<MyEnum>): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = b
+            receiverType = null
+            returnType = kotlin.Function0<MyEnum>
+            symbol = b: kotlin.Function0<MyEnum>
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /myRunWithMyEnum
+    typeArgumentsMapping = {}
 
 KtNameReferenceExpression(809,824): 'myRunWithMyEnum'
   KaSuccessCallInfo:
@@ -853,48 +849,47 @@ KtNameReferenceExpression(946,947): 'L'
       typeArgumentsMapping = {}
 
 KtCallExpression(969,1121): 'myRun<MyEnum> {'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {
-        {
-                try {
-                    X
-                } catch(e: Exception) {
-                    Y
-                } catch (t: Throwable) {
-                    L
-                }
-            } -> (KaVariableSignature:
-          name = b
-          receiverType = null
-          returnType = kotlin.Function0<MyEnum>
-          symbol = b: kotlin.Function0<T>
-          contextParameters = []
-          callableId = null)
-      }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = MyEnum
-          symbol = /myRun(b: kotlin.Function0<T>): T
-          valueParameters = [
-            KaVariableSignature:
-              name = b
-              receiverType = null
-              returnType = kotlin.Function0<MyEnum>
-              symbol = b: kotlin.Function0<T>
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /myRun
-      typeArgumentsMapping = {
-        T -> (MyEnum)
-      }
+  KaSimpleFunctionCall:
+    argumentMapping = {
+      {
+              try {
+                  X
+              } catch(e: Exception) {
+                  Y
+              } catch (t: Throwable) {
+                  L
+              }
+          } -> (KaVariableSignature:
+        name = b
+        receiverType = null
+        returnType = kotlin.Function0<MyEnum>
+        symbol = b: kotlin.Function0<T>
+        contextParameters = []
+        callableId = null)
+    }
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MyEnum
+        symbol = /myRun(b: kotlin.Function0<T>): T
+        valueParameters = [
+          KaVariableSignature:
+            name = b
+            receiverType = null
+            returnType = kotlin.Function0<MyEnum>
+            symbol = b: kotlin.Function0<T>
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /myRun
+    typeArgumentsMapping = {
+      T -> (MyEnum)
+    }
 
 KtNameReferenceExpression(969,974): 'myRun'
   KaSuccessCallInfo:

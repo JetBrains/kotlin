@@ -56,7 +56,8 @@ KtParameterList(163,165): '()'
   null
 
 KtCallExpression(168,177): 'MyClass()'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <constructor>(): MyClass
 
 KtNameReferenceExpression(168,175): 'MyClass'
   null
@@ -95,7 +96,11 @@ KtBlockExpression(222,259): '{'
   null
 
 KtCallExpression(228,244): 'foo(MyClass.bar)'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /foo(a: MyClass): kotlin.Unit
+    ]
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'MyClass2', but 'MyClass' was expected.>
 
 KtNameReferenceExpression(228,231): 'foo'
   null
@@ -116,7 +121,8 @@ KtNameReferenceExpression(240,243): 'bar'
   null
 
 KtCallExpression(249,257): 'foo(bar)'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /foo(a: MyClass): kotlin.Unit
 
 KtNameReferenceExpression(249,252): 'foo'
   null
@@ -176,7 +182,8 @@ KtParameterList(342,344): '()'
   null
 
 KtCallExpression(347,357): 'MyClass2()'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <constructor>(): MyClass2
 
 KtNameReferenceExpression(347,355): 'MyClass2'
   null
@@ -215,7 +222,8 @@ KtBlockExpression(397,437): '{'
   null
 
 KtCallExpression(403,421): 'foo2(MyClass2.bar)'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /foo2(a: MyClass2): kotlin.Unit
 
 KtNameReferenceExpression(403,407): 'foo2'
   null
@@ -236,7 +244,8 @@ KtNameReferenceExpression(417,420): 'bar'
   null
 
 KtCallExpression(426,435): 'foo2(bar)'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /foo2(a: MyClass2): kotlin.Unit
 
 KtNameReferenceExpression(426,430): 'foo2'
   null

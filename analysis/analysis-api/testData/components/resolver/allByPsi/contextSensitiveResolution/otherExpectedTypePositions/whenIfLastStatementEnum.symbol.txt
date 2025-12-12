@@ -116,7 +116,8 @@ KtNameReferenceExpression(200,201): 'T'
   null
 
 KtCallExpression(204,210): 'TODO()'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = kotlin/TODO(): kotlin.Nothing
 
 KtNameReferenceExpression(204,208): 'TODO'
   null
@@ -158,7 +159,8 @@ KtNameReferenceExpression(230,231): 'X'
   null
 
 KtCallExpression(234,240): 'TODO()'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = kotlin/TODO(): kotlin.Nothing
 
 KtNameReferenceExpression(234,238): 'TODO'
   null
@@ -371,7 +373,8 @@ KtNameReferenceExpression(567,568): 'i'
   null
 
 KtCallExpression(569,579): 'hashCode()'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = kotlin/Any.hashCode(<dispatch receiver>: kotlin.Any): kotlin.Int
 
 KtNameReferenceExpression(569,577): 'hashCode'
   null
@@ -419,7 +422,8 @@ KtNameReferenceExpression(689,690): 'L'
   null
 
 KtCallExpression(702,833): 'foo('
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /foo(a: MyEnum): kotlin.Unit
 
 KtNameReferenceExpression(702,705): 'foo'
   null
@@ -470,7 +474,8 @@ KtNameReferenceExpression(816,817): 'L'
   null
 
 KtCallExpression(839,937): 'foo('
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /foo(a: MyEnum): kotlin.Unit
 
 KtNameReferenceExpression(839,842): 'foo'
   null
@@ -542,7 +547,8 @@ KtNameReferenceExpression(930,931): 'L'
   null
 
 KtCallExpression(943,1087): 'myRunWithMyEnum {'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /myRunWithMyEnum(b: () -> MyEnum): kotlin.Unit
 
 KtNameReferenceExpression(943,958): 'myRunWithMyEnum'
   null
@@ -599,7 +605,8 @@ KtNameReferenceExpression(1070,1071): 'L'
   null
 
 KtCallExpression(1093,1318): 'myRun<MyEnum> {'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /myRun(b: () -> T): T
 
 KtNameReferenceExpression(1093,1098): 'myRun'
   null
@@ -656,7 +663,8 @@ KtNameReferenceExpression(1151,1152): 'i'
   null
 
 KtCallExpression(1153,1163): 'hashCode()'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = kotlin/Any.hashCode(<dispatch receiver>: kotlin.Any): kotlin.Int
 
 KtNameReferenceExpression(1153,1161): 'hashCode'
   null
@@ -704,7 +712,8 @@ KtNameReferenceExpression(1301,1302): 'L'
   null
 
 KtCallExpression(1324,1466): 'myRun<MyEnum> {'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /myRun(b: () -> T): T
 
 KtNameReferenceExpression(1324,1329): 'myRun'
   null
@@ -776,7 +785,8 @@ KtNameReferenceExpression(1449,1450): 'L'
   null
 
 KtCallExpression(1472,1581): 'myRun<MyEnum> {'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /myRun(b: () -> T): T
 
 KtNameReferenceExpression(1472,1477): 'myRun'
   null
@@ -869,7 +879,8 @@ KtNameReferenceExpression(1574,1575): 'L'
   null
 
 KtCallExpression(1587,1696): 'myRun<MyEnum> {'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /myRun(b: () -> T): T
 
 KtNameReferenceExpression(1587,1592): 'myRun'
   null

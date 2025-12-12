@@ -320,7 +320,8 @@ KtBlockExpression(412,414): '{}'
   null
 
 KtCallExpression(420,447): 'foo { [first, second,] -> }'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = foo(f: (Tuple) -> kotlin.Unit): kotlin.Unit
 
 KtNameReferenceExpression(420,423): 'foo'
   null
@@ -353,7 +354,8 @@ KtBlockExpression(446,446): ''
   null
 
 KtCallExpression(452,470): 'foo { [first] -> }'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = foo(f: (Tuple) -> kotlin.Unit): kotlin.Unit
 
 KtNameReferenceExpression(452,455): 'foo'
   null
@@ -383,7 +385,8 @@ KtBlockExpression(469,469): ''
   null
 
 KtCallExpression(475,501): 'foo { [first: String] -> }'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = foo(f: (Tuple) -> kotlin.Unit): kotlin.Unit
 
 KtNameReferenceExpression(475,478): 'foo'
   null

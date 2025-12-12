@@ -952,7 +952,7 @@ public abstract interface class org/jetbrains/kotlin/psi/KtCallElement : org/jet
 	public abstract fun getValueArguments ()Ljava/util/List;
 }
 
-public class org/jetbrains/kotlin/psi/KtCallExpression : org/jetbrains/kotlin/psi/KtExpressionImplStub, org/jetbrains/kotlin/psi/KtCallElement, org/jetbrains/kotlin/psi/KtReferenceExpression {
+public class org/jetbrains/kotlin/psi/KtCallExpression : org/jetbrains/kotlin/psi/KtExpressionImplStub, org/jetbrains/kotlin/psi/KtCallElement, org/jetbrains/kotlin/psi/KtReferenceExpression, org/jetbrains/kotlin/resolution/KtResolvableCall {
 	public fun <init> (Lcom/intellij/lang/ASTNode;)V
 	public fun accept (Lorg/jetbrains/kotlin/psi/KtVisitor;Ljava/lang/Object;)Ljava/lang/Object;
 	public fun getCalleeExpression ()Lorg/jetbrains/kotlin/psi/KtExpression;

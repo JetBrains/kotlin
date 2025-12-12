@@ -105,7 +105,12 @@ KtBlockExpression(271,374): '{'
   null
 
 KtCallExpression(277,297): 'overload(EnumValue1)'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /overload(arg: MyClass): MyClass,
+      /overload(arg: MyEnum): MyEnum
+    ]
+    diagnostic = ERROR<OTHER_ERROR: Ambiguity: overload, [/overload, /overload]>
 
 KtNameReferenceExpression(277,285): 'overload'
   null
@@ -132,7 +137,12 @@ KtNameReferenceExpression(311,317): 'MyEnum'
   null
 
 KtCallExpression(320,340): 'overload(EnumValue1)'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /overload(arg: MyClass): MyClass,
+      /overload(arg: MyEnum): MyEnum
+    ]
+    diagnostic = ERROR<OTHER_ERROR: Ambiguity: overload, [/overload, /overload]>
 
 KtNameReferenceExpression(320,328): 'overload'
   null
@@ -147,7 +157,12 @@ KtNameReferenceExpression(329,339): 'EnumValue1'
   null
 
 KtCallExpression(346,371): 'overload(InheritorObject)'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /overload(arg: MyClass): MyClass,
+      /overload(arg: MyEnum): MyEnum
+    ]
+    diagnostic = ERROR<OTHER_ERROR: Ambiguity: overload, [/overload, /overload]>
 
 KtNameReferenceExpression(346,354): 'overload'
   null
@@ -183,7 +198,8 @@ KtBlockExpression(402,429): '{ println("Enum version") }'
   null
 
 KtCallExpression(404,427): 'println("Enum version")'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = kotlin/io/println(message: kotlin.Any?): kotlin.Unit
 
 KtNameReferenceExpression(404,411): 'println'
   null
@@ -210,7 +226,8 @@ KtBlockExpression(446,486): '{ println("Without arguments version") }'
   null
 
 KtCallExpression(448,484): 'println("Without arguments version")'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = kotlin/io/println(message: kotlin.Any?): kotlin.Unit
 
 KtNameReferenceExpression(448,455): 'println'
   null
@@ -237,7 +254,8 @@ KtBlockExpression(500,529): '{'
   null
 
 KtCallExpression(506,527): 'overload2(EnumValue1)'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /overload2(arg: MyEnum): kotlin.Unit
 
 KtNameReferenceExpression(506,515): 'overload2'
   null
@@ -273,7 +291,8 @@ KtBlockExpression(557,584): '{ println("Enum version") }'
   null
 
 KtCallExpression(559,582): 'println("Enum version")'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = kotlin/io/println(message: kotlin.Any?): kotlin.Unit
 
 KtNameReferenceExpression(559,566): 'println'
   null
@@ -327,7 +346,8 @@ KtBlockExpression(628,659): '{ println("With 2 arguments") }'
   null
 
 KtCallExpression(630,657): 'println("With 2 arguments")'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = kotlin/io/println(message: kotlin.Any?): kotlin.Unit
 
 KtNameReferenceExpression(630,637): 'println'
   null
@@ -354,7 +374,8 @@ KtBlockExpression(673,702): '{'
   null
 
 KtCallExpression(679,700): 'overload3(EnumValue1)'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /overload3(arg: MyEnum): kotlin.Unit
 
 KtNameReferenceExpression(679,688): 'overload3'
   null

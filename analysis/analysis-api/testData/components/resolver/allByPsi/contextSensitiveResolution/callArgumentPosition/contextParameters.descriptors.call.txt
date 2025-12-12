@@ -163,7 +163,7 @@ KtBlockExpression(293,416): '{'
   null
 
 KtCallExpression(299,350): 'with<MyEnum, Unit>(EnumValue1){'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         argumentMapping = {
@@ -325,7 +325,7 @@ KtBlockExpression(339,344): 'foo()'
   null
 
 KtCallExpression(339,344): 'foo()'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         argumentMapping = {}
@@ -404,7 +404,7 @@ KtValueArgumentList(342,344): '()'
   null
 
 KtCallExpression(356,414): 'with<MySealed, Unit>(InheritorObject){'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         argumentMapping = {
@@ -566,7 +566,7 @@ KtBlockExpression(403,408): 'foo()'
   null
 
 KtCallExpression(403,408): 'foo()'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         argumentMapping = {}
@@ -702,7 +702,7 @@ KtBlockExpression(501,560): '{'
   null
 
 KtCallExpression(507,558): 'with<MyEnum, Unit>(EnumValue1) {'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         argumentMapping = {

@@ -63,7 +63,8 @@ KtNameReferenceExpression(187,194): 'MyClass'
   null
 
 KtCallExpression(197,206): 'MyClass()'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <constructor>(): MyClass
 
 KtNameReferenceExpression(197,204): 'MyClass'
   null
@@ -324,7 +325,8 @@ KtNameReferenceExpression(503,504): 'T'
   null
 
 KtCallExpression(507,510): 'b()'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = kotlin/Function0.invoke(<dispatch receiver>: () -> R): R
 
 KtNameReferenceExpression(507,508): 'b'
   null
@@ -429,7 +431,11 @@ KtNameReferenceExpression(1080,1096): 'ClassMemberAlias'
   null
 
 KtCallExpression(1108,1497): 'receive<MyClass>('
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /receive(e: T): kotlin.Unit
+    ]
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
 
 KtNameReferenceExpression(1108,1115): 'receive'
   null
@@ -543,7 +549,9 @@ KtBlockExpression(1365,1442): '{'
   null
 
 KtCallExpression(1379,1399): 'getNestedInheritor()'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'getNestedInheritor'.>
 
 KtNameReferenceExpression(1379,1397): 'getNestedInheritor'
   null
@@ -552,7 +560,9 @@ KtValueArgumentList(1397,1399): '()'
   null
 
 KtCallExpression(1412,1432): 'getNestedInheritor()'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'getNestedInheritor'.>
 
 KtNameReferenceExpression(1412,1430): 'getNestedInheritor'
   null
@@ -570,7 +580,11 @@ KtNameReferenceExpression(1465,1481): 'ClassMemberAlias'
   null
 
 KtCallExpression(1503,1887): 'run<MyClass> {'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /run(b: () -> T): T
+    ]
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
 
 KtNameReferenceExpression(1503,1506): 'run'
   null
@@ -690,7 +704,9 @@ KtBlockExpression(1755,1832): '{'
   null
 
 KtCallExpression(1769,1789): 'getNestedInheritor()'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'getNestedInheritor'.>
 
 KtNameReferenceExpression(1769,1787): 'getNestedInheritor'
   null
@@ -699,7 +715,9 @@ KtValueArgumentList(1787,1789): '()'
   null
 
 KtCallExpression(1802,1822): 'getNestedInheritor()'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'getNestedInheritor'.>
 
 KtNameReferenceExpression(1802,1820): 'getNestedInheritor'
   null

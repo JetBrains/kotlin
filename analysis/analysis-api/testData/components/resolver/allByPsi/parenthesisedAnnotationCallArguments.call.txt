@@ -584,54 +584,53 @@ KtParenthesizedExpression(315,339): '(arrayOf("A", "B", "C"))'
   null
 
 KtCallExpression(316,338): 'arrayOf("A", "B", "C")'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {
-        "A" -> (KaVariableSignature:
-          name = elements
-          receiverType = null
-          returnType = kotlin.String
-          symbol = vararg elements: T
-          contextParameters = []
-          callableId = null),
-        "B" -> (KaVariableSignature:
-          name = elements
-          receiverType = null
-          returnType = kotlin.String
-          symbol = vararg elements: T
-          contextParameters = []
-          callableId = null),
-        "C" -> (KaVariableSignature:
-          name = elements
-          receiverType = null
-          returnType = kotlin.String
-          symbol = vararg elements: T
-          contextParameters = []
-          callableId = null)
-      }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Array<kotlin.String>
-          symbol = kotlin/arrayOf(vararg elements: T): kotlin.Array<T>
-          valueParameters = [
-            KaVariableSignature:
-              name = elements
-              receiverType = null
-              returnType = kotlin.String
-              symbol = vararg elements: T
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/arrayOf
-      typeArgumentsMapping = {
-        T -> (kotlin.String)
-      }
+  KaSimpleFunctionCall:
+    argumentMapping = {
+      "A" -> (KaVariableSignature:
+        name = elements
+        receiverType = null
+        returnType = kotlin.String
+        symbol = vararg elements: T
+        contextParameters = []
+        callableId = null),
+      "B" -> (KaVariableSignature:
+        name = elements
+        receiverType = null
+        returnType = kotlin.String
+        symbol = vararg elements: T
+        contextParameters = []
+        callableId = null),
+      "C" -> (KaVariableSignature:
+        name = elements
+        receiverType = null
+        returnType = kotlin.String
+        symbol = vararg elements: T
+        contextParameters = []
+        callableId = null)
+    }
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Array<kotlin.String>
+        symbol = kotlin/arrayOf(vararg elements: T): kotlin.Array<T>
+        valueParameters = [
+          KaVariableSignature:
+            name = elements
+            receiverType = null
+            returnType = kotlin.String
+            symbol = vararg elements: T
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/arrayOf
+    typeArgumentsMapping = {
+      T -> (kotlin.String)
+    }
 
 KtNameReferenceExpression(316,323): 'arrayOf'
   KaSuccessCallInfo:
@@ -818,47 +817,46 @@ KtParenthesizedExpression(380,401): '(arrayOf(("A"), "B"))'
   null
 
 KtCallExpression(381,400): 'arrayOf(("A"), "B")'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {
-        ("A") -> (KaVariableSignature:
-          name = elements
-          receiverType = null
-          returnType = kotlin.String
-          symbol = vararg elements: T
-          contextParameters = []
-          callableId = null),
-        "B" -> (KaVariableSignature:
-          name = elements
-          receiverType = null
-          returnType = kotlin.String
-          symbol = vararg elements: T
-          contextParameters = []
-          callableId = null)
-      }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Array<kotlin.String>
-          symbol = kotlin/arrayOf(vararg elements: T): kotlin.Array<T>
-          valueParameters = [
-            KaVariableSignature:
-              name = elements
-              receiverType = null
-              returnType = kotlin.String
-              symbol = vararg elements: T
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/arrayOf
-      typeArgumentsMapping = {
-        T -> (kotlin.String)
-      }
+  KaSimpleFunctionCall:
+    argumentMapping = {
+      ("A") -> (KaVariableSignature:
+        name = elements
+        receiverType = null
+        returnType = kotlin.String
+        symbol = vararg elements: T
+        contextParameters = []
+        callableId = null),
+      "B" -> (KaVariableSignature:
+        name = elements
+        receiverType = null
+        returnType = kotlin.String
+        symbol = vararg elements: T
+        contextParameters = []
+        callableId = null)
+    }
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Array<kotlin.String>
+        symbol = kotlin/arrayOf(vararg elements: T): kotlin.Array<T>
+        valueParameters = [
+          KaVariableSignature:
+            name = elements
+            receiverType = null
+            returnType = kotlin.String
+            symbol = vararg elements: T
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/arrayOf
+    typeArgumentsMapping = {
+      T -> (kotlin.String)
+    }
 
 KtNameReferenceExpression(381,388): 'arrayOf'
   KaSuccessCallInfo:

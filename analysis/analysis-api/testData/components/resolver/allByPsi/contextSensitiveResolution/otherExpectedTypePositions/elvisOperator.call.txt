@@ -91,22 +91,21 @@ KtNameReferenceExpression(187,194): 'MyClass'
   null
 
 KtCallExpression(197,206): 'MyClass()'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {}
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = MyClass
-          symbol = <constructor>(): MyClass
-          valueParameters = []
-          contextParameters = []
-          callableId = null
-      typeArgumentsMapping = {}
+  KaSimpleFunctionCall:
+    argumentMapping = {}
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MyClass
+        symbol = <constructor>(): MyClass
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+    typeArgumentsMapping = {}
 
 KtNameReferenceExpression(197,204): 'MyClass'
   KaSuccessCallInfo:
@@ -307,7 +306,7 @@ KtOperationReferenceExpression(542,544): '?:'
   null
 
 KtCallExpression(545,565): 'getNestedInheritor()'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'getNestedInheritor'.>
 
@@ -320,40 +319,39 @@ KtValueArgumentList(563,565): '()'
   null
 
 KtCallExpression(571,619): 'receive<MyClass>(NestedInheritor ?: myClassProp)'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {
-        NestedInheritor ?: myClassProp -> (KaVariableSignature:
-          name = e
-          receiverType = null
-          returnType = MyClass
-          symbol = e: T
-          contextParameters = []
-          callableId = null)
-      }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = /receive(e: T): kotlin.Unit
-          valueParameters = [
-            KaVariableSignature:
-              name = e
-              receiverType = null
-              returnType = MyClass
-              symbol = e: T
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /receive
-      typeArgumentsMapping = {
-        T -> (MyClass)
-      }
+  KaSimpleFunctionCall:
+    argumentMapping = {
+      NestedInheritor ?: myClassProp -> (KaVariableSignature:
+        name = e
+        receiverType = null
+        returnType = MyClass
+        symbol = e: T
+        contextParameters = []
+        callableId = null)
+    }
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /receive(e: T): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = e
+            receiverType = null
+            returnType = MyClass
+            symbol = e: T
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /receive
+    typeArgumentsMapping = {
+      T -> (MyClass)
+    }
 
 KtNameReferenceExpression(571,578): 'receive'
   KaSuccessCallInfo:
@@ -443,7 +441,7 @@ KtNameReferenceExpression(607,618): 'myClassProp'
       typeArgumentsMapping = {}
 
 KtCallExpression(624,671): 'receive<MyClass>(NestedInheritor ?: stringProp)'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         argumentMapping = {
@@ -572,40 +570,39 @@ KtNameReferenceExpression(660,670): 'stringProp'
       typeArgumentsMapping = {}
 
 KtCallExpression(676,733): 'receive<MyClass>(NestedInheritor ?: getNestedInheritor())'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {
-        NestedInheritor ?: getNestedInheritor() -> (KaVariableSignature:
-          name = e
-          receiverType = null
-          returnType = MyClass
-          symbol = e: T
-          contextParameters = []
-          callableId = null)
-      }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = /receive(e: T): kotlin.Unit
-          valueParameters = [
-            KaVariableSignature:
-              name = e
-              receiverType = null
-              returnType = MyClass
-              symbol = e: T
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /receive
-      typeArgumentsMapping = {
-        T -> (MyClass)
-      }
+  KaSimpleFunctionCall:
+    argumentMapping = {
+      NestedInheritor ?: getNestedInheritor() -> (KaVariableSignature:
+        name = e
+        receiverType = null
+        returnType = MyClass
+        symbol = e: T
+        contextParameters = []
+        callableId = null)
+    }
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /receive(e: T): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = e
+            receiverType = null
+            returnType = MyClass
+            symbol = e: T
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /receive
+    typeArgumentsMapping = {
+      T -> (MyClass)
+    }
 
 KtNameReferenceExpression(676,683): 'receive'
   KaSuccessCallInfo:
@@ -674,7 +671,7 @@ KtOperationReferenceExpression(709,711): '?:'
   null
 
 KtCallExpression(712,732): 'getNestedInheritor()'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'getNestedInheritor'.>
 

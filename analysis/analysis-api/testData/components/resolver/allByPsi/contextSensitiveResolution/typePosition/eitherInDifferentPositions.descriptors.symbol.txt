@@ -1,0 +1,475 @@
+KtFile: 'eitherInDifferentPositions.kt'
+  null
+
+KtPackageDirective(0,0): ''
+  null
+
+KtImportList(0,0): ''
+  null
+
+KtClass(78,243): 'sealed interface Either<out E, out A> {'
+  null
+
+KtDeclarationModifierList(78,84): 'sealed'
+  null
+
+KtTypeParameterList(101,115): '<out E, out A>'
+  null
+
+KtTypeParameter(102,107): 'out E'
+  null
+
+KtDeclarationModifierList(102,105): 'out'
+  null
+
+KtTypeParameter(109,114): 'out A'
+  null
+
+KtDeclarationModifierList(109,112): 'out'
+  null
+
+KtClassBody(116,243): '{'
+  null
+
+KtClass(122,179): 'data class  Left<out E>(val error: E): Either<E, Nothing>'
+  null
+
+KtDeclarationModifierList(122,126): 'data'
+  null
+
+KtTypeParameterList(138,145): '<out E>'
+  null
+
+KtTypeParameter(139,144): 'out E'
+  null
+
+KtDeclarationModifierList(139,142): 'out'
+  null
+
+KtPrimaryConstructor(145,159): '(val error: E)'
+  null
+
+KtParameterList(145,159): '(val error: E)'
+  null
+
+KtParameter(146,158): 'val error: E'
+  null
+
+KtTypeReference(157,158): 'E'
+  null
+
+KtUserType(157,158): 'E'
+  null
+
+KtNameReferenceExpression(157,158): 'E'
+  null
+
+KtSuperTypeList(161,179): 'Either<E, Nothing>'
+  null
+
+KtSuperTypeEntry(161,179): 'Either<E, Nothing>'
+  null
+
+KtTypeReference(161,179): 'Either<E, Nothing>'
+  null
+
+KtUserType(161,179): 'Either<E, Nothing>'
+  null
+
+KtNameReferenceExpression(161,167): 'Either'
+  null
+
+KtTypeArgumentList(167,179): '<E, Nothing>'
+  null
+
+KtTypeProjection(168,169): 'E'
+  null
+
+KtTypeReference(168,169): 'E'
+  null
+
+KtUserType(168,169): 'E'
+  null
+
+KtNameReferenceExpression(168,169): 'E'
+  null
+
+KtTypeProjection(171,178): 'Nothing'
+  null
+
+KtTypeReference(171,178): 'Nothing'
+  null
+
+KtUserType(171,178): 'Nothing'
+  null
+
+KtNameReferenceExpression(171,178): 'Nothing'
+  null
+
+KtClass(184,241): 'data class Right<out A>(val value: A): Either<Nothing, A>'
+  null
+
+KtDeclarationModifierList(184,188): 'data'
+  null
+
+KtTypeParameterList(200,207): '<out A>'
+  null
+
+KtTypeParameter(201,206): 'out A'
+  null
+
+KtDeclarationModifierList(201,204): 'out'
+  null
+
+KtPrimaryConstructor(207,221): '(val value: A)'
+  null
+
+KtParameterList(207,221): '(val value: A)'
+  null
+
+KtParameter(208,220): 'val value: A'
+  null
+
+KtTypeReference(219,220): 'A'
+  null
+
+KtUserType(219,220): 'A'
+  null
+
+KtNameReferenceExpression(219,220): 'A'
+  null
+
+KtSuperTypeList(223,241): 'Either<Nothing, A>'
+  null
+
+KtSuperTypeEntry(223,241): 'Either<Nothing, A>'
+  null
+
+KtTypeReference(223,241): 'Either<Nothing, A>'
+  null
+
+KtUserType(223,241): 'Either<Nothing, A>'
+  null
+
+KtNameReferenceExpression(223,229): 'Either'
+  null
+
+KtTypeArgumentList(229,241): '<Nothing, A>'
+  null
+
+KtTypeProjection(230,237): 'Nothing'
+  null
+
+KtTypeReference(230,237): 'Nothing'
+  null
+
+KtUserType(230,237): 'Nothing'
+  null
+
+KtNameReferenceExpression(230,237): 'Nothing'
+  null
+
+KtTypeProjection(239,240): 'A'
+  null
+
+KtTypeReference(239,240): 'A'
+  null
+
+KtUserType(239,240): 'A'
+  null
+
+KtNameReferenceExpression(239,240): 'A'
+  null
+
+KtNamedFunction(245,529): 'fun foo(s: Either<String, Int>) {'
+  null
+
+KtParameterList(252,276): '(s: Either<String, Int>)'
+  null
+
+KtParameter(253,275): 's: Either<String, Int>'
+  null
+
+KtTypeReference(256,275): 'Either<String, Int>'
+  null
+
+KtUserType(256,275): 'Either<String, Int>'
+  null
+
+KtNameReferenceExpression(256,262): 'Either'
+  null
+
+KtTypeArgumentList(262,275): '<String, Int>'
+  null
+
+KtTypeProjection(263,269): 'String'
+  null
+
+KtTypeReference(263,269): 'String'
+  null
+
+KtUserType(263,269): 'String'
+  null
+
+KtNameReferenceExpression(263,269): 'String'
+  null
+
+KtTypeProjection(271,274): 'Int'
+  null
+
+KtTypeReference(271,274): 'Int'
+  null
+
+KtUserType(271,274): 'Int'
+  null
+
+KtNameReferenceExpression(271,274): 'Int'
+  null
+
+KtBlockExpression(277,529): '{'
+  null
+
+KtWhenExpression(283,365): 'when {'
+  null
+
+KtWhenEntry(298,325): 's is Left -> s.error.length'
+  null
+
+KtWhenConditionWithExpression(298,307): 's is Left'
+  null
+
+KtIsExpression(298,307): 's is Left'
+  null
+
+KtNameReferenceExpression(298,299): 's'
+  null
+
+KtOperationReferenceExpression(300,302): 'is'
+  null
+
+KtTypeReference(303,307): 'Left'
+  null
+
+KtUserType(303,307): 'Left'
+  null
+
+KtNameReferenceExpression(303,307): 'Left'
+  null
+
+KtDotQualifiedExpression(311,325): 's.error.length'
+  null
+
+KtDotQualifiedExpression(311,318): 's.error'
+  null
+
+KtNameReferenceExpression(311,312): 's'
+  null
+
+KtNameReferenceExpression(313,318): 'error'
+  null
+
+KtNameReferenceExpression(319,325): 'length'
+  null
+
+KtWhenEntry(334,359): 's is Right -> s.value * 1'
+  null
+
+KtWhenConditionWithExpression(334,344): 's is Right'
+  null
+
+KtIsExpression(334,344): 's is Right'
+  null
+
+KtNameReferenceExpression(334,335): 's'
+  null
+
+KtOperationReferenceExpression(336,338): 'is'
+  null
+
+KtTypeReference(339,344): 'Right'
+  null
+
+KtUserType(339,344): 'Right'
+  null
+
+KtNameReferenceExpression(339,344): 'Right'
+  null
+
+KtBinaryExpression(348,359): 's.value * 1'
+  null
+
+KtDotQualifiedExpression(348,355): 's.value'
+  null
+
+KtNameReferenceExpression(348,349): 's'
+  null
+
+KtNameReferenceExpression(350,355): 'value'
+  null
+
+KtOperationReferenceExpression(356,357): '*'
+  null
+
+KtConstantExpression(358,359): '1'
+  null
+
+KtIfExpression(371,415): 'if (s !is Left) {'
+  null
+
+KtContainerNode(375,385): 's !is Left'
+  null
+
+KtIsExpression(375,385): 's !is Left'
+  null
+
+KtNameReferenceExpression(375,376): 's'
+  null
+
+KtOperationReferenceExpression(377,380): '!is'
+  null
+
+KtTypeReference(381,385): 'Left'
+  null
+
+KtUserType(381,385): 'Left'
+  null
+
+KtNameReferenceExpression(381,385): 'Left'
+  null
+
+KtContainerNodeForControlStructureBody(387,415): '{'
+  null
+
+KtBlockExpression(387,415): '{'
+  null
+
+KtDotQualifiedExpression(397,409): 's.hashCode()'
+  null
+
+KtNameReferenceExpression(397,398): 's'
+  null
+
+KtCallExpression(399,409): 'hashCode()'
+  KaSingleSymbolResolutionSuccess:
+    symbol = kotlin/Any.hashCode(<dispatch receiver>: kotlin.Any): kotlin.Int
+
+KtNameReferenceExpression(399,407): 'hashCode'
+  null
+
+KtValueArgumentList(407,409): '()'
+  null
+
+KtIfExpression(421,493): 'if (1 == "".hashCode()) {'
+  null
+
+KtContainerNode(425,443): '1 == "".hashCode()'
+  null
+
+KtBinaryExpression(425,443): '1 == "".hashCode()'
+  null
+
+KtConstantExpression(425,426): '1'
+  null
+
+KtOperationReferenceExpression(427,429): '=='
+  null
+
+KtDotQualifiedExpression(430,443): '"".hashCode()'
+  null
+
+KtStringTemplateExpression(430,432): '""'
+  null
+
+KtCallExpression(433,443): 'hashCode()'
+  KaSingleSymbolResolutionSuccess:
+    symbol = kotlin/String.hashCode(<dispatch receiver>: kotlin.Any): kotlin.Int
+
+KtNameReferenceExpression(433,441): 'hashCode'
+  null
+
+KtValueArgumentList(441,443): '()'
+  null
+
+KtContainerNodeForControlStructureBody(445,493): '{'
+  null
+
+KtBlockExpression(445,493): '{'
+  null
+
+KtBinaryExpressionWithTypeRHS(455,464): 's as Left'
+  null
+
+KtNameReferenceExpression(455,456): 's'
+  null
+
+KtOperationReferenceExpression(457,459): 'as'
+  null
+
+KtTypeReference(460,464): 'Left'
+  null
+
+KtUserType(460,464): 'Left'
+  null
+
+KtNameReferenceExpression(460,464): 'Left'
+  null
+
+KtDotQualifiedExpression(473,487): 's.error.length'
+  null
+
+KtDotQualifiedExpression(473,480): 's.error'
+  null
+
+KtNameReferenceExpression(473,474): 's'
+  null
+
+KtNameReferenceExpression(475,480): 'error'
+  null
+
+KtNameReferenceExpression(481,487): 'length'
+  null
+
+KtSafeQualifiedExpression(499,527): '(s as? Right)?.value?.div(1)'
+  null
+
+KtSafeQualifiedExpression(499,519): '(s as? Right)?.value'
+  null
+
+KtParenthesizedExpression(499,512): '(s as? Right)'
+  null
+
+KtBinaryExpressionWithTypeRHS(500,511): 's as? Right'
+  null
+
+KtNameReferenceExpression(500,501): 's'
+  null
+
+KtOperationReferenceExpression(502,505): 'as?'
+  null
+
+KtTypeReference(506,511): 'Right'
+  null
+
+KtUserType(506,511): 'Right'
+  null
+
+KtNameReferenceExpression(506,511): 'Right'
+  null
+
+KtNameReferenceExpression(514,519): 'value'
+  null
+
+KtCallExpression(521,527): 'div(1)'
+  null
+
+KtNameReferenceExpression(521,524): 'div'
+  null
+
+KtValueArgumentList(524,527): '(1)'
+  null
+
+KtValueArgument(525,526): '1'
+  null
+
+KtConstantExpression(525,526): '1'
+  null

@@ -365,25 +365,24 @@ KtNameReferenceExpression(234,238): 'this'
   null
 
 KtCallExpression(239,244): 'baz()'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {}
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = this
-          isSafeNavigation = false
-          type = EnumWithoutConstructor.EntryWithBody
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = baz(<dispatch receiver>: EnumWithoutConstructor.EntryWithBody): kotlin.Unit
-          valueParameters = []
-          contextParameters = []
-          callableId = null
-      typeArgumentsMapping = {}
+  KaSimpleFunctionCall:
+    argumentMapping = {}
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = this
+        isSafeNavigation = false
+        type = EnumWithoutConstructor.EntryWithBody
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = baz(<dispatch receiver>: EnumWithoutConstructor.EntryWithBody): kotlin.Unit
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+    typeArgumentsMapping = {}
 
 KtNameReferenceExpression(239,242): 'baz'
   KaSuccessCallInfo:

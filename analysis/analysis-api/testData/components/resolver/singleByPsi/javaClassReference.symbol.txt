@@ -1,2 +1,6 @@
 KtCallExpression(31,44): 'Array<String>'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      <constructor>(size: kotlin.Int, init: (kotlin.Int) -> T): kotlin.Array<T>
+    ]
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>

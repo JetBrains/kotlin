@@ -95,7 +95,8 @@ KtBlockExpression(270,317): '{'
   null
 
 KtCallExpression(276,293): 'lEnum(EnumValue1)'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = kotlin/Function1.invoke(<dispatch receiver>: (P1) -> R, p1: P1): R
 
 KtNameReferenceExpression(276,281): 'lEnum'
   null
@@ -110,7 +111,8 @@ KtNameReferenceExpression(282,292): 'EnumValue1'
   null
 
 KtCallExpression(298,315): 'lEnum(EnumValue2)'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = kotlin/Function1.invoke(<dispatch receiver>: (P1) -> R, p1: P1): R
 
 KtNameReferenceExpression(298,303): 'lEnum'
   null
@@ -170,7 +172,8 @@ KtBlockExpression(381,501): '{'
   null
 
 KtCallExpression(387,423): 'receiveLambda<MyEnum> { EnumValue1 }'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /receiveLambda(l: () -> T): kotlin.Unit
 
 KtNameReferenceExpression(387,400): 'receiveLambda'
   null
@@ -206,7 +209,8 @@ KtNameReferenceExpression(411,421): 'EnumValue1'
   null
 
 KtCallExpression(428,464): 'receiveLambda<MyEnum> { EnumValue3 }'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /receiveLambda(l: () -> T): kotlin.Unit
 
 KtNameReferenceExpression(428,441): 'receiveLambda'
   null
@@ -242,7 +246,11 @@ KtNameReferenceExpression(452,462): 'EnumValue3'
   null
 
 KtCallExpression(469,499): 'receiveLambda<MyEnum> { prop }'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /receiveLambda(l: () -> T): kotlin.Unit
+    ]
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyEnum' was expected.>
 
 KtNameReferenceExpression(469,482): 'receiveLambda'
   null

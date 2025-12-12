@@ -183,7 +183,8 @@ KtNameReferenceExpression(198,205): 'integer'
   null
 
 KtCallExpression(207,214): 'usage()'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /usage(): kotlin.Unit
 
 KtNameReferenceExpression(207,212): 'usage'
   null
@@ -192,7 +193,8 @@ KtValueArgumentList(212,214): '()'
   null
 
 KtCallExpression(216,226): 'toString()'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = kotlin/Unit.toString(<dispatch receiver>: kotlin.Unit): kotlin.String
 
 KtNameReferenceExpression(216,224): 'toString'
   null

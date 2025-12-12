@@ -509,7 +509,8 @@ KtNameReferenceExpression(434,438): 'prop'
   null
 
 KtCallExpression(446,462): 'Pair(null, null)'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <constructor>(a: @R|util.Anno|(str = <strcat>(String(a type ), R|util.constant|))  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(a nested type ), R|util.constant|))  kotlin.collections.Collection<@R|util.Anno|(str = <strcat>(String(a nested nested type ), R|util.constant|))  kotlin.String>>?, b: @R|util.Anno|(str = <strcat>(String(b type ), R|util.constant|))  kotlin.Array<@R|util.Anno|(str = <strcat>(String(b nested type ), R|util.constant|))  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(b nested nested type ), R|util.constant|))  kotlin.Int>>?): util.Pair
 
 KtNameReferenceExpression(446,450): 'Pair'
   null
@@ -650,7 +651,8 @@ KtNameReferenceExpression(522,526): 'prop'
   null
 
 KtCallExpression(534,550): 'Pair(null, null)'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <constructor>(a: @R|util.Anno|(str = <strcat>(String(a type ), R|util.constant|))  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(a nested type ), R|util.constant|))  kotlin.collections.Collection<@R|util.Anno|(str = <strcat>(String(a nested nested type ), R|util.constant|))  kotlin.String>>?, b: @R|util.Anno|(str = <strcat>(String(b type ), R|util.constant|))  kotlin.Array<@R|util.Anno|(str = <strcat>(String(b nested type ), R|util.constant|))  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(b nested nested type ), R|util.constant|))  kotlin.Int>>?): util.Pair
 
 KtNameReferenceExpression(534,538): 'Pair'
   null

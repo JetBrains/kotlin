@@ -223,38 +223,37 @@ KtContainerNodeForControlStructureBody(331,344): 'work("Basic")'
   null
 
 KtCallExpression(331,344): 'work("Basic")'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {
-        "Basic" -> (KaVariableSignature:
-          name = message
-          receiverType = null
-          returnType = kotlin.String
-          symbol = message: kotlin.String
-          contextParameters = []
-          callableId = null)
-      }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = /work(message: kotlin.String): kotlin.Unit
-          valueParameters = [
-            KaVariableSignature:
-              name = message
-              receiverType = null
-              returnType = kotlin.String
-              symbol = message: kotlin.String
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /work
-      typeArgumentsMapping = {}
+  KaSimpleFunctionCall:
+    argumentMapping = {
+      "Basic" -> (KaVariableSignature:
+        name = message
+        receiverType = null
+        returnType = kotlin.String
+        symbol = message: kotlin.String
+        contextParameters = []
+        callableId = null)
+    }
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /work(message: kotlin.String): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = message
+            receiverType = null
+            returnType = kotlin.String
+            symbol = message: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /work
+    typeArgumentsMapping = {}
 
 KtNameReferenceExpression(331,335): 'work'
   KaSuccessCallInfo:
@@ -407,38 +406,37 @@ KtContainerNodeForControlStructureBody(389,405): 'work("Specific")'
   null
 
 KtCallExpression(389,405): 'work("Specific")'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {
-        "Specific" -> (KaVariableSignature:
-          name = message
-          receiverType = null
-          returnType = kotlin.String
-          symbol = message: kotlin.String
-          contextParameters = []
-          callableId = null)
-      }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = /work(message: kotlin.String): kotlin.Unit
-          valueParameters = [
-            KaVariableSignature:
-              name = message
-              receiverType = null
-              returnType = kotlin.String
-              symbol = message: kotlin.String
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /work
-      typeArgumentsMapping = {}
+  KaSimpleFunctionCall:
+    argumentMapping = {
+      "Specific" -> (KaVariableSignature:
+        name = message
+        receiverType = null
+        returnType = kotlin.String
+        symbol = message: kotlin.String
+        contextParameters = []
+        callableId = null)
+    }
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /work(message: kotlin.String): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = message
+            receiverType = null
+            returnType = kotlin.String
+            symbol = message: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /work
+    typeArgumentsMapping = {}
 
 KtNameReferenceExpression(389,393): 'work'
   KaSuccessCallInfo:
@@ -597,38 +595,37 @@ KtContainerNodeForControlStructureBody(458,474): 'work("Specific")'
   null
 
 KtCallExpression(458,474): 'work("Specific")'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {
-        "Specific" -> (KaVariableSignature:
-          name = message
-          receiverType = null
-          returnType = kotlin.String
-          symbol = message: kotlin.String
-          contextParameters = []
-          callableId = null)
-      }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = /work(message: kotlin.String): kotlin.Unit
-          valueParameters = [
-            KaVariableSignature:
-              name = message
-              receiverType = null
-              returnType = kotlin.String
-              symbol = message: kotlin.String
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /work
-      typeArgumentsMapping = {}
+  KaSimpleFunctionCall:
+    argumentMapping = {
+      "Specific" -> (KaVariableSignature:
+        name = message
+        receiverType = null
+        returnType = kotlin.String
+        symbol = message: kotlin.String
+        contextParameters = []
+        callableId = null)
+    }
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /work(message: kotlin.String): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = message
+            receiverType = null
+            returnType = kotlin.String
+            symbol = message: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /work
+    typeArgumentsMapping = {}
 
 KtNameReferenceExpression(458,462): 'work'
   KaSuccessCallInfo:
@@ -941,38 +938,37 @@ KtContainerNodeForControlStructureBody(738,751): 'work("Basic")'
   null
 
 KtCallExpression(738,751): 'work("Basic")'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {
-        "Basic" -> (KaVariableSignature:
-          name = message
-          receiverType = null
-          returnType = kotlin.String
-          symbol = message: kotlin.String
-          contextParameters = []
-          callableId = null)
-      }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = /work(message: kotlin.String): kotlin.Unit
-          valueParameters = [
-            KaVariableSignature:
-              name = message
-              receiverType = null
-              returnType = kotlin.String
-              symbol = message: kotlin.String
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /work
-      typeArgumentsMapping = {}
+  KaSimpleFunctionCall:
+    argumentMapping = {
+      "Basic" -> (KaVariableSignature:
+        name = message
+        receiverType = null
+        returnType = kotlin.String
+        symbol = message: kotlin.String
+        contextParameters = []
+        callableId = null)
+    }
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /work(message: kotlin.String): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = message
+            receiverType = null
+            returnType = kotlin.String
+            symbol = message: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /work
+    typeArgumentsMapping = {}
 
 KtNameReferenceExpression(738,742): 'work'
   KaSuccessCallInfo:
@@ -1127,38 +1123,37 @@ KtContainerNodeForControlStructureBody(800,816): 'work("Specific")'
   null
 
 KtCallExpression(800,816): 'work("Specific")'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {
-        "Specific" -> (KaVariableSignature:
-          name = message
-          receiverType = null
-          returnType = kotlin.String
-          symbol = message: kotlin.String
-          contextParameters = []
-          callableId = null)
-      }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = /work(message: kotlin.String): kotlin.Unit
-          valueParameters = [
-            KaVariableSignature:
-              name = message
-              receiverType = null
-              returnType = kotlin.String
-              symbol = message: kotlin.String
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /work
-      typeArgumentsMapping = {}
+  KaSimpleFunctionCall:
+    argumentMapping = {
+      "Specific" -> (KaVariableSignature:
+        name = message
+        receiverType = null
+        returnType = kotlin.String
+        symbol = message: kotlin.String
+        contextParameters = []
+        callableId = null)
+    }
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /work(message: kotlin.String): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = message
+            receiverType = null
+            returnType = kotlin.String
+            symbol = message: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /work
+    typeArgumentsMapping = {}
 
 KtNameReferenceExpression(800,804): 'work'
   KaSuccessCallInfo:
@@ -1317,38 +1312,37 @@ KtContainerNodeForControlStructureBody(877,893): 'work("Specific")'
   null
 
 KtCallExpression(877,893): 'work("Specific")'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {
-        "Specific" -> (KaVariableSignature:
-          name = message
-          receiverType = null
-          returnType = kotlin.String
-          symbol = message: kotlin.String
-          contextParameters = []
-          callableId = null)
-      }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = /work(message: kotlin.String): kotlin.Unit
-          valueParameters = [
-            KaVariableSignature:
-              name = message
-              receiverType = null
-              returnType = kotlin.String
-              symbol = message: kotlin.String
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /work
-      typeArgumentsMapping = {}
+  KaSimpleFunctionCall:
+    argumentMapping = {
+      "Specific" -> (KaVariableSignature:
+        name = message
+        receiverType = null
+        returnType = kotlin.String
+        symbol = message: kotlin.String
+        contextParameters = []
+        callableId = null)
+    }
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /work(message: kotlin.String): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = message
+            receiverType = null
+            returnType = kotlin.String
+            symbol = message: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /work
+    typeArgumentsMapping = {}
 
 KtNameReferenceExpression(877,881): 'work'
   KaSuccessCallInfo:

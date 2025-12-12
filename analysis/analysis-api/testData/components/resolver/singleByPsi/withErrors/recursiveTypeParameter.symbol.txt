@@ -1,2 +1,3 @@
 KtCallExpression(96,130): 'install(CoroutineModule.builder())'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /AbstractModule.install(<dispatch receiver>: AbstractModule, builder: AbstractModule.Builder<*>!): kotlin.Unit

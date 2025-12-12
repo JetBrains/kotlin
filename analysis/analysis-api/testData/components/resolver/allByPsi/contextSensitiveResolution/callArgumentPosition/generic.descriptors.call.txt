@@ -272,22 +272,21 @@ KtNameReferenceExpression(335,342): 'MyClass'
   null
 
 KtCallExpression(345,351): 'TODO()'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {}
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Nothing
-          symbol = kotlin/TODO(): kotlin.Nothing
-          valueParameters = []
-          contextParameters = []
-          callableId = kotlin/TODO
-      typeArgumentsMapping = {}
+  KaSimpleFunctionCall:
+    argumentMapping = {}
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Nothing
+        symbol = kotlin/TODO(): kotlin.Nothing
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/TODO
+    typeArgumentsMapping = {}
 
 KtNameReferenceExpression(345,349): 'TODO'
   KaSuccessCallInfo:
@@ -323,22 +322,21 @@ KtNameReferenceExpression(384,398): 'InheritorClass'
   null
 
 KtCallExpression(401,417): 'InheritorClass()'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {}
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = MyClass.InheritorClass
-          symbol = <constructor>(): MyClass.InheritorClass
-          valueParameters = []
-          contextParameters = []
-          callableId = null
-      typeArgumentsMapping = {}
+  KaSimpleFunctionCall:
+    argumentMapping = {}
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MyClass.InheritorClass
+        symbol = <constructor>(): MyClass.InheritorClass
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+    typeArgumentsMapping = {}
 
 KtNameReferenceExpression(401,415): 'InheritorClass'
   KaSuccessCallInfo:
@@ -407,22 +405,21 @@ KtNameReferenceExpression(535,542): 'MyClass'
   null
 
 KtCallExpression(545,551): 'TODO()'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {}
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Nothing
-          symbol = kotlin/TODO(): kotlin.Nothing
-          valueParameters = []
-          contextParameters = []
-          callableId = kotlin/TODO
-      typeArgumentsMapping = {}
+  KaSimpleFunctionCall:
+    argumentMapping = {}
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Nothing
+        symbol = kotlin/TODO(): kotlin.Nothing
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/TODO
+    typeArgumentsMapping = {}
 
 KtNameReferenceExpression(545,549): 'TODO'
   KaSuccessCallInfo:
@@ -461,40 +458,39 @@ KtPropertyDelegate(581,593): 'by lazy {""}'
   null
 
 KtCallExpression(584,593): 'lazy {""}'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {
-        {""} -> (KaVariableSignature:
-          name = initializer
-          receiverType = null
-          returnType = kotlin.Function0<kotlin.String>
-          symbol = initializer: kotlin.Function0<T>
-          contextParameters = []
-          callableId = null)
-      }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Lazy<kotlin.String>
-          symbol = kotlin/lazy(initializer: kotlin.Function0<T>): kotlin.Lazy<T>
-          valueParameters = [
-            KaVariableSignature:
-              name = initializer
-              receiverType = null
-              returnType = kotlin.Function0<kotlin.String>
-              symbol = initializer: kotlin.Function0<T>
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/lazy
-      typeArgumentsMapping = {
-        T -> (kotlin.String)
-      }
+  KaSimpleFunctionCall:
+    argumentMapping = {
+      {""} -> (KaVariableSignature:
+        name = initializer
+        receiverType = null
+        returnType = kotlin.Function0<kotlin.String>
+        symbol = initializer: kotlin.Function0<T>
+        contextParameters = []
+        callableId = null)
+    }
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Lazy<kotlin.String>
+        symbol = kotlin/lazy(initializer: kotlin.Function0<T>): kotlin.Lazy<T>
+        valueParameters = [
+          KaVariableSignature:
+            name = initializer
+            receiverType = null
+            returnType = kotlin.Function0<kotlin.String>
+            symbol = initializer: kotlin.Function0<T>
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/lazy
+    typeArgumentsMapping = {
+      T -> (kotlin.String)
+    }
 
 KtNameReferenceExpression(584,588): 'lazy'
   KaSuccessCallInfo:
@@ -644,7 +640,7 @@ KtBlockExpression(732,1163): '{'
   null
 
 KtCallExpression(738,775): 'consumeMyClass(test(InheritorObject))'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         argumentMapping = {
@@ -724,7 +720,7 @@ KtValueArgument(753,774): 'test(InheritorObject)'
   null
 
 KtCallExpression(753,774): 'test(InheritorObject)'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         argumentMapping = {
@@ -813,7 +809,7 @@ KtNameReferenceExpression(758,773): 'InheritorObject'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: InheritorObject>
 
 KtCallExpression(781,814): 'consumeMyClass(test(propMyClass))'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         argumentMapping = {
@@ -893,7 +889,7 @@ KtValueArgument(796,813): 'test(propMyClass)'
   null
 
 KtCallExpression(796,813): 'test(propMyClass)'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         argumentMapping = {
@@ -982,7 +978,7 @@ KtNameReferenceExpression(801,812): 'propMyClass'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: propMyClass>
 
 KtCallExpression(819,859): 'consumeMyClass(test(propInheritorClass))'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         argumentMapping = {
@@ -1062,7 +1058,7 @@ KtValueArgument(834,858): 'test(propInheritorClass)'
   null
 
 KtCallExpression(834,858): 'test(propInheritorClass)'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         argumentMapping = {
@@ -1151,7 +1147,7 @@ KtNameReferenceExpression(839,857): 'propInheritorClass'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: propInheritorClass>
 
 KtCallExpression(864,905): 'consumeMyClass(test(propInheritorObject))'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         argumentMapping = {
@@ -1231,7 +1227,7 @@ KtValueArgument(879,904): 'test(propInheritorObject)'
   null
 
 KtCallExpression(879,904): 'test(propInheritorObject)'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         argumentMapping = {
@@ -1320,7 +1316,7 @@ KtNameReferenceExpression(884,903): 'propInheritorObject'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: propInheritorObject>
 
 KtCallExpression(911,945): 'consumeMyClass(test(NestedObject))'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         argumentMapping = {
@@ -1400,7 +1396,7 @@ KtValueArgument(926,944): 'test(NestedObject)'
   null
 
 KtCallExpression(926,944): 'test(NestedObject)'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         argumentMapping = {
@@ -1489,7 +1485,7 @@ KtNameReferenceExpression(931,943): 'NestedObject'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: NestedObject>
 
 KtCallExpression(950,976): 'consumeMyClass(test(prop))'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         argumentMapping = {
@@ -1569,7 +1565,7 @@ KtValueArgument(965,975): 'test(prop)'
   null
 
 KtCallExpression(965,975): 'test(prop)'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         argumentMapping = {
@@ -1658,7 +1654,7 @@ KtNameReferenceExpression(970,974): 'prop'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: prop>
 
 KtCallExpression(981,1012): 'consumeMyClass(test(superProp))'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         argumentMapping = {
@@ -1738,7 +1734,7 @@ KtValueArgument(996,1011): 'test(superProp)'
   null
 
 KtCallExpression(996,1011): 'test(superProp)'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         argumentMapping = {
@@ -1827,7 +1823,7 @@ KtNameReferenceExpression(1001,1010): 'superProp'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: superProp>
 
 KtCallExpression(1017,1047): 'consumeMyClass(test(lazyProp))'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         argumentMapping = {
@@ -1907,7 +1903,7 @@ KtValueArgument(1032,1046): 'test(lazyProp)'
   null
 
 KtCallExpression(1032,1046): 'test(lazyProp)'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         argumentMapping = {
@@ -1996,7 +1992,7 @@ KtNameReferenceExpression(1037,1045): 'lazyProp'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: lazyProp>
 
 KtCallExpression(1052,1084): 'consumeMyClass(test(lambdaProp))'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         argumentMapping = {
@@ -2076,7 +2072,7 @@ KtValueArgument(1067,1083): 'test(lambdaProp)'
   null
 
 KtCallExpression(1067,1083): 'test(lambdaProp)'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         argumentMapping = {
@@ -2165,7 +2161,7 @@ KtNameReferenceExpression(1072,1082): 'lambdaProp'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: lambdaProp>
 
 KtCallExpression(1090,1128): 'consumeMyClass(test(InheritorClass()))'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         argumentMapping = {
@@ -2245,7 +2241,7 @@ KtValueArgument(1105,1127): 'test(InheritorClass())'
   null
 
 KtCallExpression(1105,1127): 'test(InheritorClass())'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         argumentMapping = {
@@ -2329,7 +2325,7 @@ KtValueArgument(1110,1126): 'InheritorClass()'
   null
 
 KtCallExpression(1110,1126): 'InheritorClass()'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: InheritorClass>
 
@@ -2342,7 +2338,7 @@ KtValueArgumentList(1124,1126): '()'
   null
 
 KtCallExpression(1133,1161): 'consumeMyClass(test(func()))'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         argumentMapping = {
@@ -2422,7 +2418,7 @@ KtValueArgument(1148,1160): 'test(func())'
   null
 
 KtCallExpression(1148,1160): 'test(func())'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         argumentMapping = {
@@ -2506,7 +2502,7 @@ KtValueArgument(1153,1159): 'func()'
   null
 
 KtCallExpression(1153,1159): 'func()'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: func>
 

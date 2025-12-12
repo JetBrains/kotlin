@@ -266,7 +266,8 @@ KtConstantExpression(531,532): '3'
   null
 
 KtCallExpression(577,582): 'baz()'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = baz(): kotlin.Int
 
 KtNameReferenceExpression(577,580): 'baz'
   null

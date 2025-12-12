@@ -74,22 +74,21 @@ KtNameReferenceExpression(114,121): 'MyClass'
   null
 
 KtCallExpression(124,133): 'MyClass()'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {}
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = r.MyClass
-          symbol = <constructor>(): r.MyClass
-          valueParameters = []
-          contextParameters = []
-          callableId = null
-      typeArgumentsMapping = {}
+  KaSimpleFunctionCall:
+    argumentMapping = {}
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = r.MyClass
+        symbol = <constructor>(): r.MyClass
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+    typeArgumentsMapping = {}
 
 KtNameReferenceExpression(124,131): 'MyClass'
   KaSuccessCallInfo:
@@ -122,22 +121,21 @@ KtParameterList(151,153): '()'
   null
 
 KtCallExpression(156,165): 'MyClass()'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {}
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = r.MyClass
-          symbol = <constructor>(): r.MyClass
-          valueParameters = []
-          contextParameters = []
-          callableId = null
-      typeArgumentsMapping = {}
+  KaSimpleFunctionCall:
+    argumentMapping = {}
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = r.MyClass
+        symbol = <constructor>(): r.MyClass
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+    typeArgumentsMapping = {}
 
 KtNameReferenceExpression(156,163): 'MyClass'
   KaSuccessCallInfo:
@@ -170,22 +168,21 @@ KtBlockExpression(180,260): '{'
   null
 
 KtCallExpression(186,191): 'foo()'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {}
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = r/foo(): kotlin.Int
-          valueParameters = []
-          contextParameters = []
-          callableId = r/foo
-      typeArgumentsMapping = {}
+  KaSimpleFunctionCall:
+    argumentMapping = {}
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = r/foo(): kotlin.Int
+        valueParameters = []
+        contextParameters = []
+        callableId = r/foo
+    typeArgumentsMapping = {}
 
 KtNameReferenceExpression(186,189): 'foo'
   KaSuccessCallInfo:
@@ -251,49 +248,47 @@ KtParenthesizedExpression(204,217): '(((foo)())())'
   null
 
 KtCallExpression(205,216): '((foo)())()'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {}
-      isImplicitInvoke = true
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = ((foo)())
-          isSafeNavigation = false
-          type = r.MyClass
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = r.MyClass
-          symbol = r/MyClass.invoke(<dispatch receiver>: r.MyClass): r.MyClass
-          valueParameters = []
-          contextParameters = []
-          callableId = r/MyClass.invoke
-      typeArgumentsMapping = {}
+  KaSimpleFunctionCall:
+    argumentMapping = {}
+    isImplicitInvoke = true
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = ((foo)())
+        isSafeNavigation = false
+        type = r.MyClass
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = r.MyClass
+        symbol = r/MyClass.invoke(<dispatch receiver>: r.MyClass): r.MyClass
+        valueParameters = []
+        contextParameters = []
+        callableId = r/MyClass.invoke
+    typeArgumentsMapping = {}
 
 KtParenthesizedExpression(205,214): '((foo)())'
   null
 
 KtCallExpression(206,213): '(foo)()'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {}
-      isImplicitInvoke = true
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = (foo)
-          isSafeNavigation = false
-          type = r.MyClass
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = r.MyClass
-          symbol = r/MyClass.invoke(<dispatch receiver>: r.MyClass): r.MyClass
-          valueParameters = []
-          contextParameters = []
-          callableId = r/MyClass.invoke
-      typeArgumentsMapping = {}
+  KaSimpleFunctionCall:
+    argumentMapping = {}
+    isImplicitInvoke = true
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = (foo)
+        isSafeNavigation = false
+        type = r.MyClass
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = r.MyClass
+        symbol = r/MyClass.invoke(<dispatch receiver>: r.MyClass): r.MyClass
+        valueParameters = []
+        contextParameters = []
+        callableId = r/MyClass.invoke
+    typeArgumentsMapping = {}
 
 KtParenthesizedExpression(206,211): '(foo)'
   null
@@ -323,25 +318,24 @@ KtValueArgumentList(214,216): '()'
   null
 
 KtCallExpression(218,226): 'invoke()'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {}
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = (((foo)())())
-          isSafeNavigation = false
-          type = r.MyClass
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = r.MyClass
-          symbol = r/MyClass.invoke(<dispatch receiver>: r.MyClass): r.MyClass
-          valueParameters = []
-          contextParameters = []
-          callableId = r/MyClass.invoke
-      typeArgumentsMapping = {}
+  KaSimpleFunctionCall:
+    argumentMapping = {}
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = (((foo)())())
+        isSafeNavigation = false
+        type = r.MyClass
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = r.MyClass
+        symbol = r/MyClass.invoke(<dispatch receiver>: r.MyClass): r.MyClass
+        valueParameters = []
+        contextParameters = []
+        callableId = r/MyClass.invoke
+    typeArgumentsMapping = {}
 
 KtNameReferenceExpression(218,224): 'invoke'
   KaSuccessCallInfo:
@@ -407,25 +401,24 @@ KtNameReferenceExpression(231,234): 'foo'
       typeArgumentsMapping = {}
 
 KtCallExpression(235,243): 'invoke()'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {}
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = foo
-          isSafeNavigation = false
-          type = r.MyClass
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = r.MyClass
-          symbol = r/MyClass.invoke(<dispatch receiver>: r.MyClass): r.MyClass
-          valueParameters = []
-          contextParameters = []
-          callableId = r/MyClass.invoke
-      typeArgumentsMapping = {}
+  KaSimpleFunctionCall:
+    argumentMapping = {}
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = foo
+        isSafeNavigation = false
+        type = r.MyClass
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = r.MyClass
+        symbol = r/MyClass.invoke(<dispatch receiver>: r.MyClass): r.MyClass
+        valueParameters = []
+        contextParameters = []
+        callableId = r/MyClass.invoke
+    typeArgumentsMapping = {}
 
 KtNameReferenceExpression(235,241): 'invoke'
   KaSuccessCallInfo:
@@ -452,25 +445,24 @@ KtValueArgumentList(241,243): '()'
   null
 
 KtCallExpression(248,258): 'property()'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {}
-      isImplicitInvoke = true
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = property
-          isSafeNavigation = false
-          type = r.MyClass
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = r.MyClass
-          symbol = r/MyClass.invoke(<dispatch receiver>: r.MyClass): r.MyClass
-          valueParameters = []
-          contextParameters = []
-          callableId = r/MyClass.invoke
-      typeArgumentsMapping = {}
+  KaSimpleFunctionCall:
+    argumentMapping = {}
+    isImplicitInvoke = true
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = property
+        isSafeNavigation = false
+        type = r.MyClass
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = r.MyClass
+        symbol = r/MyClass.invoke(<dispatch receiver>: r.MyClass): r.MyClass
+        valueParameters = []
+        contextParameters = []
+        callableId = r/MyClass.invoke
+    typeArgumentsMapping = {}
 
 KtNameReferenceExpression(248,256): 'property'
   KaSuccessCallInfo:

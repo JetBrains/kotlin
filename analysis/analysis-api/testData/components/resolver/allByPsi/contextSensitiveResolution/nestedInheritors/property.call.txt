@@ -163,41 +163,40 @@ KtBlockExpression(366,534): '{'
   null
 
 KtCallExpression(372,532): 'receiveMyClass('
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {
-        if (i == 0) NestedInheritor
-                else if (i == 1) myClassProp
-                else if (i == 2) stringProp
-                else ClassMemberAlias -> (KaVariableSignature:
-          name = m
-          receiverType = null
-          returnType = MyClass
-          symbol = m: MyClass
-          contextParameters = []
-          callableId = null)
-      }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = /receiveMyClass(m: MyClass): kotlin.Unit
-          valueParameters = [
-            KaVariableSignature:
-              name = m
-              receiverType = null
-              returnType = MyClass
-              symbol = m: MyClass
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /receiveMyClass
-      typeArgumentsMapping = {}
+  KaSimpleFunctionCall:
+    argumentMapping = {
+      if (i == 0) NestedInheritor
+              else if (i == 1) myClassProp
+              else if (i == 2) stringProp
+              else ClassMemberAlias -> (KaVariableSignature:
+        name = m
+        receiverType = null
+        returnType = MyClass
+        symbol = m: MyClass
+        contextParameters = []
+        callableId = null)
+    }
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /receiveMyClass(m: MyClass): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = m
+            receiverType = null
+            returnType = MyClass
+            symbol = m: MyClass
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /receiveMyClass
+    typeArgumentsMapping = {}
 
 KtNameReferenceExpression(372,386): 'receiveMyClass'
   KaSuccessCallInfo:

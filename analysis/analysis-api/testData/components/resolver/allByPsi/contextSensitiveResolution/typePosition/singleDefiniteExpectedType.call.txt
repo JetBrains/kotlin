@@ -737,25 +737,24 @@ KtNameReferenceExpression(709,714): 'prop2'
       typeArgumentsMapping = {}
 
 KtCallExpression(715,725): 'toString()'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {}
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = instance.prop2
-          isSafeNavigation = false
-          type = kotlin.Int
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.String
-          symbol = kotlin/Int.toString(<dispatch receiver>: kotlin.Int): kotlin.String
-          valueParameters = []
-          contextParameters = []
-          callableId = kotlin/Int.toString
-      typeArgumentsMapping = {}
+  KaSimpleFunctionCall:
+    argumentMapping = {}
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = instance.prop2
+        isSafeNavigation = false
+        type = kotlin.Int
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.String
+        symbol = kotlin/Int.toString(<dispatch receiver>: kotlin.Int): kotlin.String
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/Int.toString
+    typeArgumentsMapping = {}
 
 KtNameReferenceExpression(715,723): 'toString'
   KaSuccessCallInfo:
@@ -1030,25 +1029,24 @@ KtNameReferenceExpression(973,978): 'prop2'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop2'.>
 
 KtCallExpression(979,989): 'toString()'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {}
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = KaExplicitReceiverValue:
-          expression = instance.prop2
-          isSafeNavigation = false
-          type = ERROR CLASS: Unresolved name: prop2
-        signature = KaFunctionSignature:
-          receiverType = kotlin.Any?
-          returnType = kotlin.String
-          symbol = kotlin/toString(<extension receiver>: kotlin.Any?): kotlin.String
-          valueParameters = []
-          contextParameters = []
-          callableId = kotlin/toString
-      typeArgumentsMapping = {}
+  KaSimpleFunctionCall:
+    argumentMapping = {}
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = instance.prop2
+        isSafeNavigation = false
+        type = ERROR CLASS: Unresolved name: prop2
+      signature = KaFunctionSignature:
+        receiverType = kotlin.Any?
+        returnType = kotlin.String
+        symbol = kotlin/toString(<extension receiver>: kotlin.Any?): kotlin.String
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/toString
+    typeArgumentsMapping = {}
 
 KtNameReferenceExpression(979,987): 'toString'
   KaSuccessCallInfo:
@@ -1314,25 +1312,24 @@ KtNameReferenceExpression(1157,1162): 'prop2'
       typeArgumentsMapping = {}
 
 KtCallExpression(1163,1173): 'toString()'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {}
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = instance.prop2
-          isSafeNavigation = false
-          type = kotlin.Int
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.String
-          symbol = kotlin/Int.toString(<dispatch receiver>: kotlin.Int): kotlin.String
-          valueParameters = []
-          contextParameters = []
-          callableId = kotlin/Int.toString
-      typeArgumentsMapping = {}
+  KaSimpleFunctionCall:
+    argumentMapping = {}
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = instance.prop2
+        isSafeNavigation = false
+        type = kotlin.Int
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.String
+        symbol = kotlin/Int.toString(<dispatch receiver>: kotlin.Int): kotlin.String
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/Int.toString
+    typeArgumentsMapping = {}
 
 KtNameReferenceExpression(1163,1171): 'toString'
   KaSuccessCallInfo:
@@ -1805,25 +1802,24 @@ KtNameReferenceExpression(1648,1653): 'prop2'
       typeArgumentsMapping = {}
 
 KtCallExpression(1654,1664): 'toString()'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {}
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = instance.prop2
-          isSafeNavigation = false
-          type = kotlin.Int
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.String
-          symbol = kotlin/Int.toString(<dispatch receiver>: kotlin.Int): kotlin.String
-          valueParameters = []
-          contextParameters = []
-          callableId = kotlin/Int.toString
-      typeArgumentsMapping = {}
+  KaSimpleFunctionCall:
+    argumentMapping = {}
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = instance.prop2
+        isSafeNavigation = false
+        type = kotlin.Int
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.String
+        symbol = kotlin/Int.toString(<dispatch receiver>: kotlin.Int): kotlin.String
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/Int.toString
+    typeArgumentsMapping = {}
 
 KtNameReferenceExpression(1654,1662): 'toString'
   KaSuccessCallInfo:

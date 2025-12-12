@@ -298,7 +298,8 @@ KtNameReferenceExpression(506,520): 'memberFunction'
   null
 
 KtCallExpression(521,538): 'invoke(MyClass())'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = kotlin/reflect/KFunction1.invoke(<dispatch receiver>: kotlin.reflect.KFunction1<P1, R>, p1: P1): R
 
 KtNameReferenceExpression(521,527): 'invoke'
   null
@@ -310,7 +311,8 @@ KtValueArgument(528,537): 'MyClass()'
   null
 
 KtCallExpression(528,537): 'MyClass()'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <constructor>(): pack.MyClass
 
 KtNameReferenceExpression(528,535): 'MyClass'
   null
@@ -346,7 +348,8 @@ KtNameReferenceExpression(584,598): 'memberFunction'
   null
 
 KtCallExpression(599,614): 'invoke(Child())'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = kotlin/reflect/KFunction1.invoke(<dispatch receiver>: kotlin.reflect.KFunction1<P1, R>, p1: P1): R
 
 KtNameReferenceExpression(599,605): 'invoke'
   null
@@ -358,7 +361,8 @@ KtValueArgument(606,613): 'Child()'
   null
 
 KtCallExpression(606,613): 'Child()'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <constructor>(): pack.Child
 
 KtNameReferenceExpression(606,611): 'Child'
   null
@@ -469,7 +473,8 @@ KtNameReferenceExpression(873,889): 'propertyWithType'
   null
 
 KtCallExpression(890,913): 'invoke(ChildWithType())'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = kotlin/reflect/KMutableProperty1.invoke(<dispatch receiver>: kotlin.reflect.KMutableProperty1<T, V>, p1: T): V
 
 KtNameReferenceExpression(890,896): 'invoke'
   null
@@ -481,7 +486,8 @@ KtValueArgument(897,912): 'ChildWithType()'
   null
 
 KtCallExpression(897,912): 'ChildWithType()'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <constructor>(): pack.ChildWithType
 
 KtNameReferenceExpression(897,910): 'ChildWithType'
   null

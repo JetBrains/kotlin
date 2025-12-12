@@ -280,7 +280,7 @@ KtBinaryExpression(587,610): 'getOption() ?: enumProp'
   null
 
 KtCallExpression(587,598): 'getOption()'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: getOption>
 
@@ -301,7 +301,7 @@ KtNameReferenceExpression(602,610): 'enumProp'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: enumProp>
 
 KtCallExpression(616,651): 'receive<MyEnum>(Option1 ?: Option2)'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         argumentMapping = {
@@ -416,7 +416,7 @@ KtNameReferenceExpression(643,650): 'Option2'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: Option2>
 
 KtCallExpression(656,695): 'receive<MyEnum>(enumProp ?: stringProp)'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         argumentMapping = {
@@ -531,7 +531,7 @@ KtNameReferenceExpression(684,694): 'stringProp'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: stringProp>
 
 KtCallExpression(700,740): 'receive<MyEnum>(enumProp ?: getOption())'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         argumentMapping = {
@@ -641,7 +641,7 @@ KtOperationReferenceExpression(725,727): '?:'
   null
 
 KtCallExpression(728,739): 'getOption()'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: getOption>
 

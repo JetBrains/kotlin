@@ -38,7 +38,9 @@ KtWhenConditionWithExpression(84,91): 'first()'
   null
 
 KtCallExpression(84,91): 'first()'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'first'.>
 
 KtNameReferenceExpression(84,89): 'first'
   null

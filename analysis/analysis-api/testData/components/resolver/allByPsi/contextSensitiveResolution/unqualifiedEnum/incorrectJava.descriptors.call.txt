@@ -53,7 +53,7 @@ KtWhenConditionWithExpression(84,91): 'first()'
   null
 
 KtCallExpression(84,91): 'first()'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: first>
 

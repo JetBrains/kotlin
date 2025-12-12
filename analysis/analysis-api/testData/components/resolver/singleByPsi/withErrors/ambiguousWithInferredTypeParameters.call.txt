@@ -1,5 +1,5 @@
 KtCallExpression(128,139): 'function(1)'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         argumentMapping = {
@@ -117,12 +117,12 @@ KtCallExpression(128,139): 'function(1)'
         typeArgumentsMapping = {}
     ]
     diagnostic = ERROR<NONE_APPLICABLE: None of the following candidates is applicable:
-
+    
     fun <T> function(t: T, a: Char): Unit:
       No value passed for parameter 'a'.
-
+    
     fun <U> function(u: U, b: Boolean): Unit:
       No value passed for parameter 'b'.
-
+    
     fun <V> function(v: V, c: String): Unit:
       No value passed for parameter 'c'.>

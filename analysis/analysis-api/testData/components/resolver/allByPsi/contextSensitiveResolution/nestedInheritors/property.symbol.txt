@@ -135,7 +135,8 @@ KtBlockExpression(366,534): '{'
   null
 
 KtCallExpression(372,532): 'receiveMyClass('
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /receiveMyClass(m: MyClass): kotlin.Unit
 
 KtNameReferenceExpression(372,386): 'receiveMyClass'
   null

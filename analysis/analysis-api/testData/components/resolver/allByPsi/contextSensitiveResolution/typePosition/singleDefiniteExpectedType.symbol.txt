@@ -459,7 +459,8 @@ KtNameReferenceExpression(709,714): 'prop2'
   null
 
 KtCallExpression(715,725): 'toString()'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = kotlin/Int.toString(<dispatch receiver>: kotlin.Int): kotlin.String
 
 KtNameReferenceExpression(715,723): 'toString'
   null
@@ -624,7 +625,8 @@ KtNameReferenceExpression(973,978): 'prop2'
   null
 
 KtCallExpression(979,989): 'toString()'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = kotlin/toString(<extension receiver>: kotlin.Any?): kotlin.String
 
 KtNameReferenceExpression(979,987): 'toString'
   null
@@ -729,7 +731,8 @@ KtNameReferenceExpression(1157,1162): 'prop2'
   null
 
 KtCallExpression(1163,1173): 'toString()'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = kotlin/Int.toString(<dispatch receiver>: kotlin.Int): kotlin.String
 
 KtNameReferenceExpression(1163,1171): 'toString'
   null
@@ -1026,7 +1029,8 @@ KtNameReferenceExpression(1648,1653): 'prop2'
   null
 
 KtCallExpression(1654,1664): 'toString()'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = kotlin/Int.toString(<dispatch receiver>: kotlin.Int): kotlin.String
 
 KtNameReferenceExpression(1654,1662): 'toString'
   null

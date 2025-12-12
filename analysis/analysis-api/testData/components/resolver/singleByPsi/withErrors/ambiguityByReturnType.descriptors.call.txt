@@ -1,5 +1,5 @@
 KtCallExpression(208,319): 'sumOf { c ->'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         argumentMapping = {
@@ -76,6 +76,6 @@ KtCallExpression(208,319): 'sumOf { c ->'
             callableId = kotlin/collections/sumOf
         typeArgumentsMapping = {}
     ]
-    diagnostic = ERROR<NONE_APPLICABLE: None of the following functions can be called with the arguments supplied:
+    diagnostic = ERROR<NONE_APPLICABLE: None of the following functions can be called with the arguments supplied: 
     public inline fun <T> Iterable<TypeVariable(T)>.sumOf(selector: (TypeVariable(T)) -> Int): Int defined in kotlin.collections
     public inline fun <T> Iterable<TypeVariable(T)>.sumOf(selector: (TypeVariable(T)) -> UInt): UInt defined in kotlin.collections>

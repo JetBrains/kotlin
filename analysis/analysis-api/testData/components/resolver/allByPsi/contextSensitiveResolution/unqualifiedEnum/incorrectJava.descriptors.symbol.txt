@@ -1,0 +1,64 @@
+KtFile: 'test.kt'
+  null
+
+KtPackageDirective(0,0): ''
+  null
+
+KtImportList(0,0): ''
+  null
+
+KtNamedFunction(32,114): 'fun foo(javaEnum: JavaEnum) = when (javaEnum) {'
+  null
+
+KtParameterList(39,59): '(javaEnum: JavaEnum)'
+  null
+
+KtParameter(40,58): 'javaEnum: JavaEnum'
+  null
+
+KtTypeReference(50,58): 'JavaEnum'
+  null
+
+KtUserType(50,58): 'JavaEnum'
+  null
+
+KtNameReferenceExpression(50,58): 'JavaEnum'
+  null
+
+KtWhenExpression(62,114): 'when (javaEnum) {'
+  null
+
+KtNameReferenceExpression(68,76): 'javaEnum'
+  null
+
+KtWhenEntry(84,96): 'first() -> 1'
+  null
+
+KtWhenConditionWithExpression(84,91): 'first()'
+  null
+
+KtCallExpression(84,91): 'first()'
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: first>
+
+KtNameReferenceExpression(84,89): 'first'
+  null
+
+KtValueArgumentList(89,91): '()'
+  null
+
+KtConstantExpression(95,96): '1'
+  null
+
+KtWhenEntry(101,112): 'second -> 2'
+  null
+
+KtWhenConditionWithExpression(101,107): 'second'
+  null
+
+KtNameReferenceExpression(101,107): 'second'
+  null
+
+KtConstantExpression(111,112): '2'
+  null

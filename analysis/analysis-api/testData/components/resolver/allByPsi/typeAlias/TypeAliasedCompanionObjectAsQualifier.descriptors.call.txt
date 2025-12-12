@@ -95,25 +95,24 @@ KtNameReferenceExpression(167,174): 'MyAlias'
   null
 
 KtCallExpression(175,185): 'function()'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {}
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = MyAlias
-          isSafeNavigation = false
-          type = test.MyClass.Companion
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = test/MyClass.Companion.function(<dispatch receiver>: test.MyClass.Companion): kotlin.Unit
-          valueParameters = []
-          contextParameters = []
-          callableId = test/MyClass.Companion.function
-      typeArgumentsMapping = {}
+  KaSimpleFunctionCall:
+    argumentMapping = {}
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = MyAlias
+        isSafeNavigation = false
+        type = test.MyClass.Companion
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = test/MyClass.Companion.function(<dispatch receiver>: test.MyClass.Companion): kotlin.Unit
+        valueParameters = []
+        contextParameters = []
+        callableId = test/MyClass.Companion.function
+    typeArgumentsMapping = {}
 
 KtNameReferenceExpression(175,183): 'function'
   KaSuccessCallInfo:

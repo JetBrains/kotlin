@@ -115,7 +115,8 @@ KtNameReferenceExpression(210,211): 'X'
   null
 
 KtCallExpression(214,220): 'TODO()'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = kotlin/TODO(): kotlin.Nothing
 
 KtNameReferenceExpression(214,218): 'TODO'
   null
@@ -427,7 +428,8 @@ KtIsExpression(485,501): 'id(a) is Derived'
   null
 
 KtCallExpression(485,490): 'id(a)'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /id(x: X): X
 
 KtNameReferenceExpression(485,487): 'id'
   null
@@ -523,7 +525,8 @@ KtOperationReferenceExpression(915,917): '=='
   null
 
 KtCallExpression(918,923): 'id(X)'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /id(x: X): X
 
 KtNameReferenceExpression(918,920): 'id'
   null
@@ -559,7 +562,8 @@ KtOperationReferenceExpression(938,940): '=='
   null
 
 KtCallExpression(941,946): 'id(L)'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /id(x: X): X
 
 KtNameReferenceExpression(941,943): 'id'
   null
@@ -841,7 +845,8 @@ KtWhenConditionWithExpression(1316,1321): 'id(X)'
   null
 
 KtCallExpression(1316,1321): 'id(X)'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /id(x: X): X
 
 KtNameReferenceExpression(1316,1318): 'id'
   null
@@ -865,7 +870,8 @@ KtWhenConditionWithExpression(1336,1341): 'id(Y)'
   null
 
 KtCallExpression(1336,1341): 'id(Y)'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /id(x: X): X
 
 KtNameReferenceExpression(1336,1338): 'id'
   null
@@ -883,7 +889,8 @@ KtWhenConditionWithExpression(1343,1348): 'id(L)'
   null
 
 KtCallExpression(1343,1348): 'id(L)'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /id(x: X): X
 
 KtNameReferenceExpression(1343,1345): 'id'
   null
@@ -922,7 +929,8 @@ KtWhenConditionWithExpression(1412,1417): 'id(X)'
   null
 
 KtCallExpression(1412,1417): 'id(X)'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /id(x: X): X
 
 KtNameReferenceExpression(1412,1414): 'id'
   null
@@ -946,7 +954,8 @@ KtWhenConditionWithExpression(1432,1437): 'id(Y)'
   null
 
 KtCallExpression(1432,1437): 'id(Y)'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /id(x: X): X
 
 KtNameReferenceExpression(1432,1434): 'id'
   null
@@ -964,7 +973,8 @@ KtWhenConditionWithExpression(1439,1444): 'id(L)'
   null
 
 KtCallExpression(1439,1444): 'id(L)'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /id(x: X): X
 
 KtNameReferenceExpression(1439,1441): 'id'
   null

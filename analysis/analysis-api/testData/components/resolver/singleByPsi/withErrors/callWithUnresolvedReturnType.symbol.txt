@@ -1,2 +1,6 @@
 KtCallExpression(81,87): 'foo(x)'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /foo(x: kotlin.Int): ERROR CLASS: Symbol not found for Unresolved
+    ]
+    diagnostic = ERROR<OTHER_ERROR: CS errors: /foo>

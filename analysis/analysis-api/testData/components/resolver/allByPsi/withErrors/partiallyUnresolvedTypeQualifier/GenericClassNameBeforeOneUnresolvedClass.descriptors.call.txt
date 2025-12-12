@@ -123,7 +123,7 @@ KtProperty(134,181): 'val prop = take {'
   null
 
 KtCallExpression(145,181): 'take {'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         argumentMapping = {

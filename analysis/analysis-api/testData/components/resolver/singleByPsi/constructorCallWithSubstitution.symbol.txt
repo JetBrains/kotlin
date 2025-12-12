@@ -1,2 +1,3 @@
 KtCallExpression(45,63): 'Foo<String>("str")'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <constructor>(x: T): Foo<T>

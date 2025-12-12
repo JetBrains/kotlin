@@ -319,22 +319,21 @@ KtNameReferenceExpression(423,430): 'MyClass'
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
 KtCallExpression(433,439): 'TODO()'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {}
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Nothing
-          symbol = kotlin/TODO(): kotlin.Nothing
-          valueParameters = []
-          contextParameters = []
-          callableId = kotlin/TODO
-      typeArgumentsMapping = {}
+  KaSimpleFunctionCall:
+    argumentMapping = {}
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Nothing
+        symbol = kotlin/TODO(): kotlin.Nothing
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/TODO
+    typeArgumentsMapping = {}
 
 KtNameReferenceExpression(433,437): 'TODO'
   KaSuccessCallInfo:
@@ -372,22 +371,21 @@ KtNameReferenceExpression(472,486): 'InheritorClass'
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
 KtCallExpression(489,505): 'InheritorClass()'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {}
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = MyClass.InheritorClass
-          symbol = <constructor>(): MyClass.InheritorClass
-          valueParameters = []
-          contextParameters = []
-          callableId = null
-      typeArgumentsMapping = {}
+  KaSimpleFunctionCall:
+    argumentMapping = {}
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MyClass.InheritorClass
+        symbol = <constructor>(): MyClass.InheritorClass
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+    typeArgumentsMapping = {}
 
 KtNameReferenceExpression(489,503): 'InheritorClass'
   KaSuccessCallInfo:
@@ -484,40 +482,39 @@ KtPropertyDelegate(676,688): 'by lazy {""}'
   null
 
 KtCallExpression(679,688): 'lazy {""}'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {
-        {""} -> (KaVariableSignature:
-          name = initializer
-          receiverType = null
-          returnType = kotlin.Function0<kotlin.String>
-          symbol = initializer: kotlin.Function0<T>
-          contextParameters = []
-          callableId = null)
-      }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Lazy<kotlin.String>
-          symbol = kotlin/lazy(initializer: kotlin.Function0<T>): kotlin.Lazy<T>
-          valueParameters = [
-            KaVariableSignature:
-              name = initializer
-              receiverType = null
-              returnType = kotlin.Function0<kotlin.String>
-              symbol = initializer: kotlin.Function0<T>
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/lazy
-      typeArgumentsMapping = {
-        T -> (kotlin.String)
-      }
+  KaSimpleFunctionCall:
+    argumentMapping = {
+      {""} -> (KaVariableSignature:
+        name = initializer
+        receiverType = null
+        returnType = kotlin.Function0<kotlin.String>
+        symbol = initializer: kotlin.Function0<T>
+        contextParameters = []
+        callableId = null)
+    }
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Lazy<kotlin.String>
+        symbol = kotlin/lazy(initializer: kotlin.Function0<T>): kotlin.Lazy<T>
+        valueParameters = [
+          KaVariableSignature:
+            name = initializer
+            receiverType = null
+            returnType = kotlin.Function0<kotlin.String>
+            symbol = initializer: kotlin.Function0<T>
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/lazy
+    typeArgumentsMapping = {
+      T -> (kotlin.String)
+    }
 
 KtNameReferenceExpression(679,683): 'lazy'
   KaSuccessCallInfo:
@@ -588,22 +585,21 @@ KtNameReferenceExpression(710,717): 'MyClass'
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
 KtCallExpression(720,726): 'TODO()'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {}
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Nothing
-          symbol = kotlin/TODO(): kotlin.Nothing
-          valueParameters = []
-          contextParameters = []
-          callableId = kotlin/TODO
-      typeArgumentsMapping = {}
+  KaSimpleFunctionCall:
+    argumentMapping = {}
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Nothing
+        symbol = kotlin/TODO(): kotlin.Nothing
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/TODO
+    typeArgumentsMapping = {}
 
 KtNameReferenceExpression(720,724): 'TODO'
   KaSuccessCallInfo:
@@ -691,7 +687,7 @@ KtBlockExpression(841,1409): '{'
   null
 
 KtCallExpression(847,889): 'receiveLambda<MyClass> { InheritorObject }'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         argumentMapping = {
@@ -803,7 +799,7 @@ KtNameReferenceExpression(872,887): 'InheritorObject'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: InheritorObject>
 
 KtCallExpression(894,932): 'receiveLambda<MyClass> { propMyClass }'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         argumentMapping = {
@@ -915,7 +911,7 @@ KtNameReferenceExpression(919,930): 'propMyClass'
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
 KtCallExpression(937,982): 'receiveLambda<MyClass> { propInheritorClass }'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         argumentMapping = {
@@ -1027,7 +1023,7 @@ KtNameReferenceExpression(962,980): 'propInheritorClass'
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
 KtCallExpression(987,1033): 'receiveLambda<MyClass> { propInheritorObject }'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         argumentMapping = {
@@ -1139,7 +1135,7 @@ KtNameReferenceExpression(1012,1031): 'propInheritorObject'
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
 KtCallExpression(1039,1070): 'receiveLambda<MyClass> { prop }'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         argumentMapping = {
@@ -1251,7 +1247,7 @@ KtNameReferenceExpression(1064,1068): 'prop'
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
 KtCallExpression(1075,1111): 'receiveLambda<MyClass> { superProp }'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         argumentMapping = {
@@ -1363,7 +1359,7 @@ KtNameReferenceExpression(1100,1109): 'superProp'
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
 KtCallExpression(1116,1152): 'receiveLambda<MyClass> { constProp }'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         argumentMapping = {
@@ -1475,7 +1471,7 @@ KtNameReferenceExpression(1141,1150): 'constProp'
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
 KtCallExpression(1157,1194): 'receiveLambda<MyClass> { lambdaProp }'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         argumentMapping = {
@@ -1587,7 +1583,7 @@ KtNameReferenceExpression(1182,1192): 'lambdaProp'
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
 KtCallExpression(1199,1234): 'receiveLambda<MyClass> { lazyProp }'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         argumentMapping = {
@@ -1699,7 +1695,7 @@ KtNameReferenceExpression(1224,1232): 'lazyProp'
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
 KtCallExpression(1239,1277): 'receiveLambda<MyClass> { NestedObject}'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         argumentMapping = {
@@ -1811,7 +1807,7 @@ KtNameReferenceExpression(1264,1276): 'NestedObject'
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
 KtCallExpression(1283,1316): 'receiveLambda<MyClass> { func() }'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         argumentMapping = {
@@ -1918,7 +1914,7 @@ KtBlockExpression(1308,1314): 'func()'
   null
 
 KtCallExpression(1308,1314): 'func()'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
@@ -1931,7 +1927,7 @@ KtValueArgumentList(1312,1314): '()'
   null
 
 KtCallExpression(1321,1364): 'receiveLambda<MyClass> { InheritorClass() }'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         argumentMapping = {
@@ -2038,7 +2034,7 @@ KtBlockExpression(1346,1362): 'InheritorClass()'
   null
 
 KtCallExpression(1346,1362): 'InheritorClass()'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 
@@ -2051,7 +2047,7 @@ KtValueArgumentList(1360,1362): '()'
   null
 
 KtCallExpression(1369,1407): 'receiveLambda<MyClass> { superFunc() }'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         argumentMapping = {
@@ -2158,7 +2154,7 @@ KtBlockExpression(1394,1405): 'superFunc()'
   null
 
 KtCallExpression(1394,1405): 'superFunc()'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
 

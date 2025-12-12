@@ -326,25 +326,24 @@ KtNameReferenceExpression(403,412): 'JavaClass'
   null
 
 KtCallExpression(413,418): 'foo()'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {}
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = JavaClass
-          isSafeNavigation = false
-          type = kotlin.Unit
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = MySealed!
-          symbol = /JavaClass.foo(): MySealed!
-          valueParameters = []
-          contextParameters = []
-          callableId = /JavaClass.foo
-      typeArgumentsMapping = {}
+  KaSimpleFunctionCall:
+    argumentMapping = {}
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = JavaClass
+        isSafeNavigation = false
+        type = kotlin.Unit
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MySealed!
+        symbol = /JavaClass.foo(): MySealed!
+        valueParameters = []
+        contextParameters = []
+        callableId = /JavaClass.foo
+    typeArgumentsMapping = {}
 
 KtNameReferenceExpression(413,416): 'foo'
   KaSuccessCallInfo:

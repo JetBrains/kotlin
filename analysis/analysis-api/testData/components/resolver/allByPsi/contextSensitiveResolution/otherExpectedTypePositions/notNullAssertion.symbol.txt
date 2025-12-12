@@ -81,7 +81,8 @@ KtNameReferenceExpression(235,242): 'MyClass'
   null
 
 KtCallExpression(245,254): 'MyClass()'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <constructor>(): MyClass
 
 KtNameReferenceExpression(245,252): 'MyClass'
   null
@@ -162,7 +163,8 @@ KtBlockExpression(450,609): '{'
   null
 
 KtCallExpression(456,491): 'receive<MyClass>(NestedInheritor!!)'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /receive(e: T): kotlin.Unit
 
 KtNameReferenceExpression(456,463): 'receive'
   null
@@ -198,7 +200,8 @@ KtOperationReferenceExpression(488,490): '!!'
   null
 
 KtCallExpression(496,527): 'receive<MyClass>(myClassProp!!)'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /receive(e: T): kotlin.Unit
 
 KtNameReferenceExpression(496,503): 'receive'
   null
@@ -234,7 +237,11 @@ KtOperationReferenceExpression(524,526): '!!'
   null
 
 KtCallExpression(532,562): 'receive<MyClass>(stringProp!!)'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /receive(e: T): kotlin.Unit
+    ]
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass?' was expected.>
 
 KtNameReferenceExpression(532,539): 'receive'
   null
@@ -270,7 +277,8 @@ KtOperationReferenceExpression(559,561): '!!'
   null
 
 KtCallExpression(567,607): 'receive<MyClass>(getNestedInheritor()!!)'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /receive(e: T): kotlin.Unit
 
 KtNameReferenceExpression(567,574): 'receive'
   null
@@ -300,7 +308,9 @@ KtPostfixExpression(584,606): 'getNestedInheritor()!!'
   null
 
 KtCallExpression(584,604): 'getNestedInheritor()'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'getNestedInheritor'.>
 
 KtNameReferenceExpression(584,602): 'getNestedInheritor'
   null
@@ -336,7 +346,11 @@ KtProperty(645,791): 'val map = mapOf<MyClass, Int>(MyClass.myClassProp to 1,  M
   null
 
 KtCallExpression(655,791): 'mapOf<MyClass, Int>(MyClass.myClassProp to 1,  MyClass.stringProp to 2, MyClass.NestedInheritor to 3, MyClass.getNestedInheritor() to 4)'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      kotlin/collections/mapOf(vararg pairs: kotlin.Pair<K, V>): kotlin.collections.Map<K, V>
+    ]
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Pair<String, Int>', but 'Pair<MyClass, Int>' was expected.>
 
 KtNameReferenceExpression(655,660): 'mapOf'
   null
@@ -447,7 +461,8 @@ KtNameReferenceExpression(757,764): 'MyClass'
   null
 
 KtCallExpression(765,785): 'getNestedInheritor()'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /MyClass.Companion.getNestedInheritor(<dispatch receiver>: MyClass.Companion): MyClass.NestedInheritor
 
 KtNameReferenceExpression(765,783): 'getNestedInheritor'
   null
@@ -519,7 +534,9 @@ KtContainerNode(893,915): '[getNestedInheritor()]'
   null
 
 KtCallExpression(894,914): 'getNestedInheritor()'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'getNestedInheritor'.>
 
 KtNameReferenceExpression(894,912): 'getNestedInheritor'
   null

@@ -96,7 +96,8 @@ KtBlockExpression(220,335): '{'
   null
 
 KtCallExpression(226,333): 'receiveMyClass('
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /receiveMyClass(m: MyClass): kotlin.Unit
 
 KtNameReferenceExpression(226,240): 'receiveMyClass'
   null
@@ -168,7 +169,8 @@ KtBlockExpression(396,512): '{'
   null
 
 KtCallExpression(402,510): 'receiveMyClass('
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /receiveMyClass(m: MyClass): kotlin.Unit
 
 KtNameReferenceExpression(402,416): 'receiveMyClass'
   null
@@ -252,7 +254,8 @@ KtBlockExpression(587,737): '{'
   null
 
 KtCallExpression(593,735): 'receiveMyClass('
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /receiveMyClass(m: MyClass): kotlin.Unit
 
 KtNameReferenceExpression(593,607): 'receiveMyClass'
   null
@@ -499,7 +502,8 @@ KtBlockExpression(1006,1141): '{'
   null
 
 KtCallExpression(1012,1139): 'receiveOtherClass('
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /receiveOtherClass(m: OtherClass): kotlin.Unit
 
 KtNameReferenceExpression(1012,1029): 'receiveOtherClass'
   null
@@ -632,7 +636,8 @@ KtBlockExpression(1304,1434): '{'
   null
 
 KtCallExpression(1310,1432): 'receiveOpenClass('
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /receiveOpenClass(m: OpenClass): kotlin.Unit
 
 KtNameReferenceExpression(1310,1326): 'receiveOpenClass'
   null
@@ -704,7 +709,8 @@ KtBlockExpression(1506,1635): '{'
   null
 
 KtCallExpression(1512,1633): 'receiveOpenClass('
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /receiveOpenClass(m: OpenClass): kotlin.Unit
 
 KtNameReferenceExpression(1512,1528): 'receiveOpenClass'
   null

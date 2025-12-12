@@ -350,7 +350,8 @@ KtNameReferenceExpression(397,398): 's'
   null
 
 KtCallExpression(399,409): 'hashCode()'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = kotlin/Any.hashCode(<dispatch receiver>: kotlin.Any): kotlin.Int
 
 KtNameReferenceExpression(399,407): 'hashCode'
   null
@@ -380,7 +381,8 @@ KtStringTemplateExpression(430,432): '""'
   null
 
 KtCallExpression(433,443): 'hashCode()'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = kotlin/Any.hashCode(<dispatch receiver>: kotlin.Any): kotlin.Int
 
 KtNameReferenceExpression(433,441): 'hashCode'
   null
@@ -458,7 +460,8 @@ KtNameReferenceExpression(514,519): 'value'
   null
 
 KtCallExpression(521,527): 'div(1)'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = kotlin/Int.div(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
 
 KtNameReferenceExpression(521,524): 'div'
   null

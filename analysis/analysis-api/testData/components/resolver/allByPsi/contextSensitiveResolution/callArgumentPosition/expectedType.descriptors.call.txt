@@ -268,22 +268,21 @@ KtNameReferenceExpression(377,383): 'String'
   null
 
 KtCallExpression(386,392): 'TODO()'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {}
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Nothing
-          symbol = kotlin/TODO(): kotlin.Nothing
-          valueParameters = []
-          contextParameters = []
-          callableId = kotlin/TODO
-      typeArgumentsMapping = {}
+  KaSimpleFunctionCall:
+    argumentMapping = {}
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Nothing
+        symbol = kotlin/TODO(): kotlin.Nothing
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/TODO
+    typeArgumentsMapping = {}
 
 KtNameReferenceExpression(386,390): 'TODO'
   KaSuccessCallInfo:
@@ -376,22 +375,21 @@ KtNameReferenceExpression(494,500): 'OtherI'
   null
 
 KtCallExpression(503,509): 'TODO()'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {}
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Nothing
-          symbol = kotlin/TODO(): kotlin.Nothing
-          valueParameters = []
-          contextParameters = []
-          callableId = kotlin/TODO
-      typeArgumentsMapping = {}
+  KaSimpleFunctionCall:
+    argumentMapping = {}
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Nothing
+        symbol = kotlin/TODO(): kotlin.Nothing
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/TODO
+    typeArgumentsMapping = {}
 
 KtNameReferenceExpression(503,507): 'TODO'
   KaSuccessCallInfo:
@@ -445,22 +443,21 @@ KtNameReferenceExpression(549,555): 'String'
   null
 
 KtCallExpression(558,564): 'TODO()'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {}
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Nothing
-          symbol = kotlin/TODO(): kotlin.Nothing
-          valueParameters = []
-          contextParameters = []
-          callableId = kotlin/TODO
-      typeArgumentsMapping = {}
+  KaSimpleFunctionCall:
+    argumentMapping = {}
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Nothing
+        symbol = kotlin/TODO(): kotlin.Nothing
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/TODO
+    typeArgumentsMapping = {}
 
 KtNameReferenceExpression(558,562): 'TODO'
   KaSuccessCallInfo:
@@ -544,22 +541,21 @@ KtNameReferenceExpression(637,643): 'String'
   null
 
 KtCallExpression(646,652): 'TODO()'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {}
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Nothing
-          symbol = kotlin/TODO(): kotlin.Nothing
-          valueParameters = []
-          contextParameters = []
-          callableId = kotlin/TODO
-      typeArgumentsMapping = {}
+  KaSimpleFunctionCall:
+    argumentMapping = {}
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Nothing
+        symbol = kotlin/TODO(): kotlin.Nothing
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/TODO
+    typeArgumentsMapping = {}
 
 KtNameReferenceExpression(646,650): 'TODO'
   KaSuccessCallInfo:
@@ -655,22 +651,21 @@ KtNameReferenceExpression(750,765): 'NestedInheritor'
   null
 
 KtCallExpression(768,774): 'TODO()'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {}
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Nothing
-          symbol = kotlin/TODO(): kotlin.Nothing
-          valueParameters = []
-          contextParameters = []
-          callableId = kotlin/TODO
-      typeArgumentsMapping = {}
+  KaSimpleFunctionCall:
+    argumentMapping = {}
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Nothing
+        symbol = kotlin/TODO(): kotlin.Nothing
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/TODO
+    typeArgumentsMapping = {}
 
 KtNameReferenceExpression(768,772): 'TODO'
   KaSuccessCallInfo:
@@ -766,22 +761,21 @@ KtNameReferenceExpression(879,894): 'SealedInterface'
   null
 
 KtCallExpression(897,903): 'TODO()'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {}
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Nothing
-          symbol = kotlin/TODO(): kotlin.Nothing
-          valueParameters = []
-          contextParameters = []
-          callableId = kotlin/TODO
-      typeArgumentsMapping = {}
+  KaSimpleFunctionCall:
+    argumentMapping = {}
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Nothing
+        symbol = kotlin/TODO(): kotlin.Nothing
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/TODO
+    typeArgumentsMapping = {}
 
 KtNameReferenceExpression(897,901): 'TODO'
   KaSuccessCallInfo:
@@ -871,22 +865,21 @@ KtNameReferenceExpression(988,995): 'MyClass'
   null
 
 KtCallExpression(998,1004): 'TODO()'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {}
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Nothing
-          symbol = kotlin/TODO(): kotlin.Nothing
-          valueParameters = []
-          contextParameters = []
-          callableId = kotlin/TODO
-      typeArgumentsMapping = {}
+  KaSimpleFunctionCall:
+    argumentMapping = {}
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Nothing
+        symbol = kotlin/TODO(): kotlin.Nothing
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/TODO
+    typeArgumentsMapping = {}
 
 KtNameReferenceExpression(998,1002): 'TODO'
   KaSuccessCallInfo:
@@ -931,7 +924,7 @@ KtNameReferenceExpression(1043,1049): 'MyEnum'
   null
 
 KtCallExpression(1052,1066): 'id(EnumValue1)'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         argumentMapping = {
@@ -1032,7 +1025,7 @@ KtNameReferenceExpression(1079,1086): 'MyClass'
   null
 
 KtCallExpression(1089,1108): 'id(InheritorObject)'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         argumentMapping = {
@@ -1121,7 +1114,7 @@ KtNameReferenceExpression(1092,1107): 'InheritorObject'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: InheritorObject>
 
 KtCallExpression(1114,1145): 'receive<MyEnum>(id(EnumValue1))'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         argumentMapping = {
@@ -1220,7 +1213,7 @@ KtValueArgument(1130,1144): 'id(EnumValue1)'
   null
 
 KtCallExpression(1130,1144): 'id(EnumValue1)'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         argumentMapping = {
@@ -1309,7 +1302,7 @@ KtNameReferenceExpression(1133,1143): 'EnumValue1'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: EnumValue1>
 
 KtCallExpression(1150,1187): 'receive<MyClass>(id(InheritorObject))'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         argumentMapping = {
@@ -1408,7 +1401,7 @@ KtValueArgument(1167,1186): 'id(InheritorObject)'
   null
 
 KtCallExpression(1167,1186): 'id(InheritorObject)'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         argumentMapping = {
@@ -1497,38 +1490,37 @@ KtNameReferenceExpression(1170,1185): 'InheritorObject'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: InheritorObject>
 
 KtCallExpression(1193,1222): 'testNullable(InheritorObject)'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {
-        InheritorObject -> (KaVariableSignature:
-          name = instance
-          receiverType = null
-          returnType = MyClass?
-          symbol = instance: MyClass?
-          contextParameters = []
-          callableId = null)
-      }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.String
-          symbol = /testNullable(instance: MyClass?): kotlin.String
-          valueParameters = [
-            KaVariableSignature:
-              name = instance
-              receiverType = null
-              returnType = MyClass?
-              symbol = instance: MyClass?
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /testNullable
-      typeArgumentsMapping = {}
+  KaSimpleFunctionCall:
+    argumentMapping = {
+      InheritorObject -> (KaVariableSignature:
+        name = instance
+        receiverType = null
+        returnType = MyClass?
+        symbol = instance: MyClass?
+        contextParameters = []
+        callableId = null)
+    }
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.String
+        symbol = /testNullable(instance: MyClass?): kotlin.String
+        valueParameters = [
+          KaVariableSignature:
+            name = instance
+            receiverType = null
+            returnType = MyClass?
+            symbol = instance: MyClass?
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /testNullable
+    typeArgumentsMapping = {}
 
 KtNameReferenceExpression(1193,1205): 'testNullable'
   KaSuccessCallInfo:
@@ -1576,7 +1568,7 @@ KtNameReferenceExpression(1206,1221): 'InheritorObject'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: InheritorObject>
 
 KtCallExpression(1227,1266): 'testTypeParam<MyClass>(InheritorObject)'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         argumentMapping = {
@@ -1680,7 +1672,7 @@ KtNameReferenceExpression(1250,1265): 'InheritorObject'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: InheritorObject>
 
 KtCallExpression(1272,1302): 'testTypeParam(InheritorObject)'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         argumentMapping = {
@@ -1769,7 +1761,7 @@ KtNameReferenceExpression(1286,1301): 'InheritorObject'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: InheritorObject>
 
 KtCallExpression(1307,1354): 'testTypeParamWithMultipleBound(InheritorObject)'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         argumentMapping = {
@@ -1858,7 +1850,7 @@ KtNameReferenceExpression(1338,1353): 'InheritorObject'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: InheritorObject>
 
 KtCallExpression(1359,1409): 'testDefinitelyNotNullIntersection(InheritorObject)'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         argumentMapping = {
@@ -1947,7 +1939,7 @@ KtNameReferenceExpression(1393,1408): 'InheritorObject'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: InheritorObject>
 
 KtCallExpression(1414,1451): 'testFakeIntersection(InheritorObject)'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         argumentMapping = {
@@ -2036,7 +2028,7 @@ KtNameReferenceExpression(1435,1450): 'InheritorObject'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: InheritorObject>
 
 KtCallExpression(1456,1500): 'testReverseFakeIntersection(InheritorObject)'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         argumentMapping = {
@@ -2125,7 +2117,7 @@ KtNameReferenceExpression(1484,1499): 'InheritorObject'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: InheritorObject>
 
 KtCallExpression(1505,1545): 'testRegularIntersection(InheritorObject)'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         argumentMapping = {

@@ -65,38 +65,37 @@ KtBlockExpression(116,152): '{'
   null
 
 KtCallExpression(122,128): 'foo(X)'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {
-        X -> (KaVariableSignature:
-          name = a
-          receiverType = null
-          returnType = b.MyEnum
-          symbol = a: b.MyEnum
-          contextParameters = []
-          callableId = null)
-      }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = b/foo(a: b.MyEnum): kotlin.Unit
-          valueParameters = [
-            KaVariableSignature:
-              name = a
-              receiverType = null
-              returnType = b.MyEnum
-              symbol = a: b.MyEnum
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = b/foo
-      typeArgumentsMapping = {}
+  KaSimpleFunctionCall:
+    argumentMapping = {
+      X -> (KaVariableSignature:
+        name = a
+        receiverType = null
+        returnType = b.MyEnum
+        symbol = a: b.MyEnum
+        contextParameters = []
+        callableId = null)
+    }
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = b/foo(a: b.MyEnum): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = a
+            receiverType = null
+            returnType = b.MyEnum
+            symbol = a: b.MyEnum
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = b/foo
+    typeArgumentsMapping = {}
 
 KtNameReferenceExpression(122,125): 'foo'
   KaSuccessCallInfo:
@@ -160,7 +159,7 @@ KtNameReferenceExpression(126,127): 'X'
     diagnostic = ERROR<INVISIBLE_MEMBER: Cannot access 'X': it is private in file>
 
 KtCallExpression(133,139): 'foo(Y)'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         argumentMapping = {
@@ -261,38 +260,37 @@ KtNameReferenceExpression(137,138): 'Y'
     diagnostic = ERROR<INVISIBLE_MEMBER: Cannot access 'Y': it is private in file>
 
 KtCallExpression(144,150): 'foo(Z)'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {
-        Z -> (KaVariableSignature:
-          name = a
-          receiverType = null
-          returnType = b.MyEnum
-          symbol = a: b.MyEnum
-          contextParameters = []
-          callableId = null)
-      }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = b/foo(a: b.MyEnum): kotlin.Unit
-          valueParameters = [
-            KaVariableSignature:
-              name = a
-              receiverType = null
-              returnType = b.MyEnum
-              symbol = a: b.MyEnum
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = b/foo
-      typeArgumentsMapping = {}
+  KaSimpleFunctionCall:
+    argumentMapping = {
+      Z -> (KaVariableSignature:
+        name = a
+        receiverType = null
+        returnType = b.MyEnum
+        symbol = a: b.MyEnum
+        contextParameters = []
+        callableId = null)
+    }
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = b/foo(a: b.MyEnum): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = a
+            receiverType = null
+            returnType = b.MyEnum
+            symbol = a: b.MyEnum
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = b/foo
+    typeArgumentsMapping = {}
 
 KtNameReferenceExpression(144,147): 'foo'
   KaSuccessCallInfo:

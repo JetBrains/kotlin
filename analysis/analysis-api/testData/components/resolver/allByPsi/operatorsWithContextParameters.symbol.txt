@@ -632,7 +632,8 @@ KtProperty(797,808): 'var a = A()'
   null
 
 KtCallExpression(805,808): 'A()'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <constructor>(): A
 
 KtNameReferenceExpression(805,806): 'A'
   null
@@ -644,7 +645,8 @@ KtProperty(813,838): 'var b = SimpleOperators()'
   null
 
 KtCallExpression(821,838): 'SimpleOperators()'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <constructor>(): SimpleOperators
 
 KtNameReferenceExpression(821,836): 'SimpleOperators'
   null
@@ -653,7 +655,8 @@ KtValueArgumentList(836,838): '()'
   null
 
 KtCallExpression(843,1229): 'with(A()){'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = kotlin/with(receiver: T, block: T.() -> R): R
 
 KtNameReferenceExpression(843,847): 'with'
   null
@@ -665,7 +668,8 @@ KtValueArgument(848,851): 'A()'
   null
 
 KtCallExpression(848,851): 'A()'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <constructor>(): A
 
 KtNameReferenceExpression(848,849): 'A'
   null
@@ -779,7 +783,8 @@ KtOperationReferenceExpression(999,1000): '='
   null
 
 KtCallExpression(1001,1004): 'A()'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <constructor>(): A
 
 KtNameReferenceExpression(1001,1002): 'A'
   null
@@ -806,7 +811,8 @@ KtOperationReferenceExpression(1018,1019): '='
   null
 
 KtCallExpression(1020,1023): 'A()'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <constructor>(): A
 
 KtNameReferenceExpression(1020,1021): 'A'
   null
@@ -815,7 +821,8 @@ KtValueArgumentList(1021,1023): '()'
   null
 
 KtCallExpression(1032,1042): 'thisProp()'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /invoke(<extension receiver>: A): kotlin.Unit
 
 KtNameReferenceExpression(1032,1040): 'thisProp'
   null
@@ -824,7 +831,8 @@ KtValueArgumentList(1040,1042): '()'
   null
 
 KtCallExpression(1051,1054): 'a()'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /invoke(<extension receiver>: A): kotlin.Unit
 
 KtNameReferenceExpression(1051,1052): 'a'
   null
@@ -935,7 +943,8 @@ KtOperationReferenceExpression(1179,1180): '='
   null
 
 KtCallExpression(1181,1184): 'A()'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <constructor>(): A
 
 KtNameReferenceExpression(1181,1182): 'A'
   null
@@ -944,7 +953,8 @@ KtValueArgumentList(1182,1184): '()'
   null
 
 KtCallExpression(1193,1196): 'b()'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /SimpleOperators.invoke(<dispatch receiver>: SimpleOperators): kotlin.Unit
 
 KtNameReferenceExpression(1193,1194): 'b'
   null
@@ -986,7 +996,8 @@ KtProperty(1260,1271): 'var a = A()'
   null
 
 KtCallExpression(1268,1271): 'A()'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <constructor>(): A
 
 KtNameReferenceExpression(1268,1269): 'A'
   null
@@ -998,7 +1009,8 @@ KtProperty(1276,1301): 'var b = SimpleOperators()'
   null
 
 KtCallExpression(1284,1301): 'SimpleOperators()'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <constructor>(): SimpleOperators
 
 KtNameReferenceExpression(1284,1299): 'SimpleOperators'
   null
@@ -1058,7 +1070,8 @@ KtOperationReferenceExpression(1338,1339): '='
   null
 
 KtCallExpression(1340,1343): 'A()'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <constructor>(): A
 
 KtNameReferenceExpression(1340,1341): 'A'
   null
@@ -1067,7 +1080,11 @@ KtValueArgumentList(1341,1343): '()'
   null
 
 KtCallExpression(1348,1351): 'a()'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /invoke(<extension receiver>: A): kotlin.Unit
+    ]
+    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'a: A' found.>
 
 KtNameReferenceExpression(1348,1349): 'a'
   null
@@ -1148,7 +1165,8 @@ KtOperationReferenceExpression(1407,1408): '='
   null
 
 KtCallExpression(1409,1412): 'A()'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <constructor>(): A
 
 KtNameReferenceExpression(1409,1410): 'A'
   null
@@ -1157,7 +1175,11 @@ KtValueArgumentList(1410,1412): '()'
   null
 
 KtCallExpression(1417,1420): 'b()'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /SimpleOperators.invoke(<dispatch receiver>: SimpleOperators): kotlin.Unit
+    ]
+    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'a: A' found.>
 
 KtNameReferenceExpression(1417,1418): 'b'
   null

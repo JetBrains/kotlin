@@ -471,7 +471,9 @@ KtNameReferenceExpression(1041,1052): 'SealedClass'
   null
 
 KtCallExpression(1055,1073): 'SealedInheritor1()'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'SealedInheritor1'.>
 
 KtNameReferenceExpression(1055,1071): 'SealedInheritor1'
   null
@@ -545,7 +547,11 @@ KtProperty(1209,1245): 'val i = Generic2<SealedInheritor1>()'
   null
 
 KtCallExpression(1217,1245): 'Generic2<SealedInheritor1>()'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      <constructor>(): Generic2<T>
+    ]
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable(INAPPLICABLE): /Generic2.Generic2>
 
 KtNameReferenceExpression(1217,1225): 'Generic2'
   null
@@ -602,7 +608,11 @@ KtBlockExpression(1312,1353): '{'
   null
 
 KtCallExpression(1318,1351): 'constraintFun<SealedInheritor1>()'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /constraintFun(): kotlin.Unit
+    ]
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable(INAPPLICABLE): /constraintFun>
 
 KtNameReferenceExpression(1318,1331): 'constraintFun'
   null

@@ -71,7 +71,8 @@ KtBlockExpression(134,170): '{'
   null
 
 KtCallExpression(140,146): 'foo(X)'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = b/foo(a: b.MyEnum): kotlin.Unit
 
 KtNameReferenceExpression(140,143): 'foo'
   null
@@ -86,7 +87,8 @@ KtNameReferenceExpression(144,145): 'X'
   null
 
 KtCallExpression(151,157): 'foo(Y)'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = b/foo(a: b.MyEnum): kotlin.Unit
 
 KtNameReferenceExpression(151,154): 'foo'
   null
@@ -101,7 +103,8 @@ KtNameReferenceExpression(155,156): 'Y'
   null
 
 KtCallExpression(162,168): 'foo(Z)'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = b/foo(a: b.MyEnum): kotlin.Unit
 
 KtNameReferenceExpression(162,165): 'foo'
   null

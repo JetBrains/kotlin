@@ -1,2 +1,6 @@
 KtCallExpression(96,101): 'foo()'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /foo(): kotlin.Unit
+    ]
+    diagnostic = ERROR<AMBIGUOUS_CONTEXT_ARGUMENT: Multiple potential context arguments for 'string: String' in scope.>

@@ -1,2 +1,4 @@
 KtCallExpression(36,48): 'List<String>'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>

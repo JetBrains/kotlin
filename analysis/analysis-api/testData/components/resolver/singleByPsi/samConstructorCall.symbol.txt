@@ -1,2 +1,3 @@
 KtCallExpression(8,40): 'Comparator {x: Int, y: Int -> 1}'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = kotlin/Comparator(function: (T!, T!) -> kotlin.Int): {kotlin.Comparator<T>=} java.util.Comparator<T>

@@ -1,0 +1,165 @@
+KtFile: 'ClassNameBeforeOneUnsresolvedClassWithDot.kt'
+  null
+
+KtPackageDirective(0,0): ''
+  null
+
+KtImportList(0,0): ''
+  null
+
+KtClass(1,10): 'class Foo'
+  null
+
+KtClass(12,46): 'class C {'
+  null
+
+KtClassBody(20,46): '{'
+  null
+
+KtProperty(26,44): 'val prop: Foo.Bar.'
+  null
+
+KtTypeReference(36,44): 'Foo.Bar.'
+  null
+
+KtUserType(36,44): 'Foo.Bar.'
+  null
+
+KtUserType(36,43): 'Foo.Bar'
+  null
+
+KtUserType(36,39): 'Foo'
+  null
+
+KtNameReferenceExpression(36,39): 'Foo'
+  null
+
+KtNameReferenceExpression(40,43): 'Bar'
+  null
+
+KtNamedFunction(48,93): 'fun testFun() {'
+  null
+
+KtParameterList(59,61): '()'
+  null
+
+KtBlockExpression(62,93): '{'
+  null
+
+KtProperty(68,91): 'val localProp: Foo.Bar.'
+  null
+
+KtTypeReference(83,91): 'Foo.Bar.'
+  null
+
+KtUserType(83,91): 'Foo.Bar.'
+  null
+
+KtUserType(83,90): 'Foo.Bar'
+  null
+
+KtUserType(83,86): 'Foo'
+  null
+
+KtNameReferenceExpression(83,86): 'Foo'
+  null
+
+KtNameReferenceExpression(87,90): 'Bar'
+  null
+
+KtNamedFunction(95,131): 'fun <T> take(action: (T) -> Unit) {}'
+  null
+
+KtTypeParameterList(99,102): '<T>'
+  null
+
+KtTypeParameter(100,101): 'T'
+  null
+
+KtParameterList(107,128): '(action: (T) -> Unit)'
+  null
+
+KtParameter(108,127): 'action: (T) -> Unit'
+  null
+
+KtTypeReference(116,127): '(T) -> Unit'
+  null
+
+KtFunctionType(116,127): '(T) -> Unit'
+  null
+
+KtParameterList(116,119): '(T)'
+  null
+
+KtParameter(117,118): 'T'
+  null
+
+KtTypeReference(117,118): 'T'
+  null
+
+KtUserType(117,118): 'T'
+  null
+
+KtNameReferenceExpression(117,118): 'T'
+  null
+
+KtTypeReference(123,127): 'Unit'
+  null
+
+KtUserType(123,127): 'Unit'
+  null
+
+KtNameReferenceExpression(123,127): 'Unit'
+  null
+
+KtBlockExpression(129,131): '{}'
+  null
+
+KtProperty(133,181): 'val prop = take {'
+  null
+
+KtCallExpression(144,181): 'take {'
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /take(action: kotlin.Function1<T, kotlin.Unit>): kotlin.Unit
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with take>
+
+KtNameReferenceExpression(144,148): 'take'
+  null
+
+KtLambdaArgument(149,181): '{'
+  null
+
+KtLambdaExpression(149,181): '{'
+  null
+
+KtFunctionLiteral(149,181): '{'
+  null
+
+KtParameterList(155,176): 'lambdaParam: Foo.Bar.'
+  null
+
+KtParameter(155,176): 'lambdaParam: Foo.Bar.'
+  null
+
+KtTypeReference(168,176): 'Foo.Bar.'
+  null
+
+KtUserType(168,176): 'Foo.Bar.'
+  null
+
+KtUserType(168,175): 'Foo.Bar'
+  null
+
+KtUserType(168,171): 'Foo'
+  null
+
+KtNameReferenceExpression(168,171): 'Foo'
+  null
+
+KtNameReferenceExpression(172,175): 'Bar'
+  null
+
+KtBlockExpression(180,180): ''
+  null

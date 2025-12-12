@@ -1,0 +1,6 @@
+KtCallExpression(39,64): 'generic<String, String>()'
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /generic(): kotlin.Unit
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with generic>

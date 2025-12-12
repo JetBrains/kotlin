@@ -1,5 +1,5 @@
 KtCallExpression(208,319): 'sumOf { c ->'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         argumentMapping = {

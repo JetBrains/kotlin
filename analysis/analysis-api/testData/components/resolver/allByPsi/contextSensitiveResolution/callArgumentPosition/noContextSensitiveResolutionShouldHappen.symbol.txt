@@ -68,7 +68,8 @@ KtBlockExpression(178,213): '{'
   null
 
 KtCallExpression(184,190): 'foo(X)'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /foo(a: MyEnum): kotlin.Unit
 
 KtNameReferenceExpression(184,187): 'foo'
   null
@@ -83,7 +84,8 @@ KtNameReferenceExpression(188,189): 'X'
   null
 
 KtCallExpression(195,211): 'foo(WrongEnum.X)'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /foo(a: MyEnum): kotlin.Unit
 
 KtNameReferenceExpression(195,198): 'foo'
   null
@@ -236,7 +238,11 @@ KtBlockExpression(340,362): '{'
   null
 
 KtCallExpression(350,356): 'foo(X)'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /foo(a: MyEnum): kotlin.Unit
+    ]
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyEnum' was expected.>
 
 KtNameReferenceExpression(350,353): 'foo'
   null

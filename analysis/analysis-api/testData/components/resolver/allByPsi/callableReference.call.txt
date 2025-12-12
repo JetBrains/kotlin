@@ -407,41 +407,40 @@ KtNameReferenceExpression(506,520): 'memberFunction'
   null
 
 KtCallExpression(521,538): 'invoke(MyClass())'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {
-        MyClass() -> (KaVariableSignature:
-          name = p1
-          receiverType = null
-          returnType = pack.MyClass
-          symbol = p1: P1
-          contextParameters = []
-          callableId = null)
-      }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = MyClass::memberFunction
-          isSafeNavigation = false
-          type = kotlin.reflect.KFunction1<pack.MyClass, kotlin.Int>
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = kotlin/reflect/KFunction1.invoke(<dispatch receiver>: kotlin.reflect.KFunction1<P1, R>, p1: P1): R
-          valueParameters = [
-            KaVariableSignature:
-              name = p1
-              receiverType = null
-              returnType = pack.MyClass
-              symbol = p1: P1
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/reflect/KFunction1.invoke
-      typeArgumentsMapping = {}
+  KaSimpleFunctionCall:
+    argumentMapping = {
+      MyClass() -> (KaVariableSignature:
+        name = p1
+        receiverType = null
+        returnType = pack.MyClass
+        symbol = p1: P1
+        contextParameters = []
+        callableId = null)
+    }
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = MyClass::memberFunction
+        isSafeNavigation = false
+        type = kotlin.reflect.KFunction1<pack.MyClass, kotlin.Int>
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = kotlin/reflect/KFunction1.invoke(<dispatch receiver>: kotlin.reflect.KFunction1<P1, R>, p1: P1): R
+        valueParameters = [
+          KaVariableSignature:
+            name = p1
+            receiverType = null
+            returnType = pack.MyClass
+            symbol = p1: P1
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/reflect/KFunction1.invoke
+    typeArgumentsMapping = {}
 
 KtNameReferenceExpression(521,527): 'invoke'
   KaSuccessCallInfo:
@@ -487,22 +486,21 @@ KtValueArgument(528,537): 'MyClass()'
   null
 
 KtCallExpression(528,537): 'MyClass()'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {}
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = pack.MyClass
-          symbol = <constructor>(): pack.MyClass
-          valueParameters = []
-          contextParameters = []
-          callableId = null
-      typeArgumentsMapping = {}
+  KaSimpleFunctionCall:
+    argumentMapping = {}
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = pack.MyClass
+        symbol = <constructor>(): pack.MyClass
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+    typeArgumentsMapping = {}
 
 KtNameReferenceExpression(528,535): 'MyClass'
   KaSuccessCallInfo:
@@ -653,41 +651,40 @@ KtNameReferenceExpression(584,598): 'memberFunction'
   null
 
 KtCallExpression(599,614): 'invoke(Child())'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {
-        Child() -> (KaVariableSignature:
-          name = p1
-          receiverType = null
-          returnType = pack.Child
-          symbol = p1: P1
-          contextParameters = []
-          callableId = null)
-      }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = Child::memberFunction
-          isSafeNavigation = false
-          type = kotlin.reflect.KFunction1<pack.Child, kotlin.Int>
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = kotlin/reflect/KFunction1.invoke(<dispatch receiver>: kotlin.reflect.KFunction1<P1, R>, p1: P1): R
-          valueParameters = [
-            KaVariableSignature:
-              name = p1
-              receiverType = null
-              returnType = pack.Child
-              symbol = p1: P1
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/reflect/KFunction1.invoke
-      typeArgumentsMapping = {}
+  KaSimpleFunctionCall:
+    argumentMapping = {
+      Child() -> (KaVariableSignature:
+        name = p1
+        receiverType = null
+        returnType = pack.Child
+        symbol = p1: P1
+        contextParameters = []
+        callableId = null)
+    }
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = Child::memberFunction
+        isSafeNavigation = false
+        type = kotlin.reflect.KFunction1<pack.Child, kotlin.Int>
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = kotlin/reflect/KFunction1.invoke(<dispatch receiver>: kotlin.reflect.KFunction1<P1, R>, p1: P1): R
+        valueParameters = [
+          KaVariableSignature:
+            name = p1
+            receiverType = null
+            returnType = pack.Child
+            symbol = p1: P1
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/reflect/KFunction1.invoke
+    typeArgumentsMapping = {}
 
 KtNameReferenceExpression(599,605): 'invoke'
   KaSuccessCallInfo:
@@ -733,22 +730,21 @@ KtValueArgument(606,613): 'Child()'
   null
 
 KtCallExpression(606,613): 'Child()'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {}
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = pack.Child
-          symbol = <constructor>(): pack.Child
-          valueParameters = []
-          contextParameters = []
-          callableId = null
-      typeArgumentsMapping = {}
+  KaSimpleFunctionCall:
+    argumentMapping = {}
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = pack.Child
+        symbol = <constructor>(): pack.Child
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+    typeArgumentsMapping = {}
 
 KtNameReferenceExpression(606,611): 'Child'
   KaSuccessCallInfo:
@@ -1085,41 +1081,40 @@ KtNameReferenceExpression(873,889): 'propertyWithType'
   null
 
 KtCallExpression(890,913): 'invoke(ChildWithType())'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {
-        ChildWithType() -> (KaVariableSignature:
-          name = p1
-          receiverType = null
-          returnType = pack.ChildWithType
-          symbol = p1: T
-          contextParameters = []
-          callableId = null)
-      }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = ChildWithType::propertyWithType
-          isSafeNavigation = false
-          type = kotlin.reflect.KMutableProperty1<pack.ChildWithType, pack.MyClass?>
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = pack.MyClass?
-          symbol = kotlin/reflect/KMutableProperty1.invoke(<dispatch receiver>: kotlin.reflect.KMutableProperty1<T, V>, p1: T): V
-          valueParameters = [
-            KaVariableSignature:
-              name = p1
-              receiverType = null
-              returnType = pack.ChildWithType
-              symbol = p1: T
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/reflect/KMutableProperty1.invoke
-      typeArgumentsMapping = {}
+  KaSimpleFunctionCall:
+    argumentMapping = {
+      ChildWithType() -> (KaVariableSignature:
+        name = p1
+        receiverType = null
+        returnType = pack.ChildWithType
+        symbol = p1: T
+        contextParameters = []
+        callableId = null)
+    }
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = ChildWithType::propertyWithType
+        isSafeNavigation = false
+        type = kotlin.reflect.KMutableProperty1<pack.ChildWithType, pack.MyClass?>
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = pack.MyClass?
+        symbol = kotlin/reflect/KMutableProperty1.invoke(<dispatch receiver>: kotlin.reflect.KMutableProperty1<T, V>, p1: T): V
+        valueParameters = [
+          KaVariableSignature:
+            name = p1
+            receiverType = null
+            returnType = pack.ChildWithType
+            symbol = p1: T
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/reflect/KMutableProperty1.invoke
+    typeArgumentsMapping = {}
 
 KtNameReferenceExpression(890,896): 'invoke'
   KaSuccessCallInfo:
@@ -1165,22 +1160,21 @@ KtValueArgument(897,912): 'ChildWithType()'
   null
 
 KtCallExpression(897,912): 'ChildWithType()'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {}
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = pack.ChildWithType
-          symbol = <constructor>(): pack.ChildWithType
-          valueParameters = []
-          contextParameters = []
-          callableId = null
-      typeArgumentsMapping = {}
+  KaSimpleFunctionCall:
+    argumentMapping = {}
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = pack.ChildWithType
+        symbol = <constructor>(): pack.ChildWithType
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+    typeArgumentsMapping = {}
 
 KtNameReferenceExpression(897,910): 'ChildWithType'
   KaSuccessCallInfo:

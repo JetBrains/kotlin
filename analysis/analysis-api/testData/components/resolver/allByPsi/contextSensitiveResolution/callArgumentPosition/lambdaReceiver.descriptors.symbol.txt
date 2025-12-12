@@ -1,0 +1,928 @@
+KtFile: 'lambdaReceiver.kt'
+  null
+
+KtPackageDirective(0,0): ''
+  null
+
+KtImportList(0,0): ''
+  null
+
+KtClass(0,166): '// ISSUE: KT-75315'
+  null
+
+KtDeclarationModifierList(92,96): 'open'
+  null
+
+KtClassBody(109,166): '{'
+  null
+
+KtProperty(115,141): 'val superProp: String = ""'
+  null
+
+KtTypeReference(130,136): 'String'
+  null
+
+KtUserType(130,136): 'String'
+  null
+
+KtNameReferenceExpression(130,136): 'String'
+  null
+
+KtStringTemplateExpression(139,141): '""'
+  null
+
+KtNamedFunction(146,164): 'fun superFunc() {}'
+  null
+
+KtParameterList(159,161): '()'
+  null
+
+KtBlockExpression(162,164): '{}'
+  null
+
+KtClass(168,778): 'open class MyClass {'
+  null
+
+KtDeclarationModifierList(168,172): 'open'
+  null
+
+KtClassBody(187,778): '{'
+  null
+
+KtObjectDeclaration(193,264): 'object InheritorObject: MyClass() {'
+  null
+
+KtSuperTypeList(217,226): 'MyClass()'
+  null
+
+KtSuperTypeCallEntry(217,226): 'MyClass()'
+  KaSingleSymbolResolutionSuccess:
+    symbol = <constructor>(): MyClass
+
+KtConstructorCalleeExpression(217,224): 'MyClass'
+  null
+
+KtTypeReference(217,224): 'MyClass'
+  null
+
+KtUserType(217,224): 'MyClass'
+  null
+
+KtNameReferenceExpression(217,224): 'MyClass'
+  null
+
+KtValueArgumentList(224,226): '()'
+  null
+
+KtClassBody(227,264): '{'
+  null
+
+KtProperty(237,258): 'val prop: String = ""'
+  null
+
+KtTypeReference(247,253): 'String'
+  null
+
+KtUserType(247,253): 'String'
+  null
+
+KtNameReferenceExpression(247,253): 'String'
+  null
+
+KtStringTemplateExpression(256,258): '""'
+  null
+
+KtClass(270,339): 'class InheritorClass: MyClass() {'
+  null
+
+KtSuperTypeList(292,301): 'MyClass()'
+  null
+
+KtSuperTypeCallEntry(292,301): 'MyClass()'
+  KaSingleSymbolResolutionSuccess:
+    symbol = <constructor>(): MyClass
+
+KtConstructorCalleeExpression(292,299): 'MyClass'
+  null
+
+KtTypeReference(292,299): 'MyClass'
+  null
+
+KtUserType(292,299): 'MyClass'
+  null
+
+KtNameReferenceExpression(292,299): 'MyClass'
+  null
+
+KtValueArgumentList(299,301): '()'
+  null
+
+KtClassBody(302,339): '{'
+  null
+
+KtProperty(312,333): 'val prop: String = ""'
+  null
+
+KtTypeReference(322,328): 'String'
+  null
+
+KtUserType(322,328): 'String'
+  null
+
+KtNameReferenceExpression(322,328): 'String'
+  null
+
+KtStringTemplateExpression(331,333): '""'
+  null
+
+KtObjectDeclaration(345,364): 'object NestedObject'
+  null
+
+KtObjectDeclaration(370,776): 'companion object: Super() {'
+  null
+
+KtDeclarationModifierList(370,379): 'companion'
+  null
+
+KtSuperTypeList(388,395): 'Super()'
+  null
+
+KtSuperTypeCallEntry(388,395): 'Super()'
+  KaSingleSymbolResolutionSuccess:
+    symbol = <constructor>(): Super
+
+KtConstructorCalleeExpression(388,393): 'Super'
+  null
+
+KtTypeReference(388,393): 'Super'
+  null
+
+KtUserType(388,393): 'Super'
+  null
+
+KtNameReferenceExpression(388,393): 'Super'
+  null
+
+KtValueArgumentList(393,395): '()'
+  null
+
+KtClassBody(396,776): '{'
+  null
+
+KtProperty(406,439): 'val propMyClass: MyClass = TODO()'
+  null
+
+KtTypeReference(423,430): 'MyClass'
+  null
+
+KtUserType(423,430): 'MyClass'
+  null
+
+KtNameReferenceExpression(423,430): 'MyClass'
+  null
+
+KtCallExpression(433,439): 'TODO()'
+  KaSingleSymbolResolutionSuccess:
+    symbol = kotlin/TODO(): kotlin.Nothing
+
+KtNameReferenceExpression(433,437): 'TODO'
+  null
+
+KtValueArgumentList(437,439): '()'
+  null
+
+KtProperty(448,505): 'val propInheritorClass: InheritorClass = InheritorClass()'
+  null
+
+KtTypeReference(472,486): 'InheritorClass'
+  null
+
+KtUserType(472,486): 'InheritorClass'
+  null
+
+KtNameReferenceExpression(472,486): 'InheritorClass'
+  null
+
+KtCallExpression(489,505): 'InheritorClass()'
+  KaSingleSymbolResolutionSuccess:
+    symbol = <constructor>(): MyClass.InheritorClass
+
+KtNameReferenceExpression(489,503): 'InheritorClass'
+  null
+
+KtValueArgumentList(503,505): '()'
+  null
+
+KtProperty(514,572): 'val propInheritorObject: InheritorObject = InheritorObject'
+  null
+
+KtTypeReference(539,554): 'InheritorObject'
+  null
+
+KtUserType(539,554): 'InheritorObject'
+  null
+
+KtNameReferenceExpression(539,554): 'InheritorObject'
+  null
+
+KtNameReferenceExpression(557,572): 'InheritorObject'
+  null
+
+KtProperty(582,603): 'val prop: String = ""'
+  null
+
+KtTypeReference(592,598): 'String'
+  null
+
+KtUserType(592,598): 'String'
+  null
+
+KtNameReferenceExpression(592,598): 'String'
+  null
+
+KtStringTemplateExpression(601,603): '""'
+  null
+
+KtProperty(613,645): 'const val constProp: String = ""'
+  null
+
+KtDeclarationModifierList(613,618): 'const'
+  null
+
+KtTypeReference(634,640): 'String'
+  null
+
+KtUserType(634,640): 'String'
+  null
+
+KtNameReferenceExpression(634,640): 'String'
+  null
+
+KtStringTemplateExpression(643,645): '""'
+  null
+
+KtProperty(655,688): 'val lazyProp: String by lazy {""}'
+  null
+
+KtTypeReference(669,675): 'String'
+  null
+
+KtUserType(669,675): 'String'
+  null
+
+KtNameReferenceExpression(669,675): 'String'
+  null
+
+KtPropertyDelegate(676,688): 'by lazy {""}'
+  null
+
+KtCallExpression(679,688): 'lazy {""}'
+  KaSingleSymbolResolutionSuccess:
+    symbol = kotlin/lazy(initializer: kotlin.Function0<T>): kotlin.Lazy<T>
+
+KtNameReferenceExpression(679,683): 'lazy'
+  null
+
+KtLambdaArgument(684,688): '{""}'
+  null
+
+KtLambdaExpression(684,688): '{""}'
+  null
+
+KtFunctionLiteral(684,688): '{""}'
+  null
+
+KtBlockExpression(685,687): '""'
+  null
+
+KtStringTemplateExpression(685,687): '""'
+  null
+
+KtNamedFunction(698,726): 'fun func(): MyClass = TODO()'
+  null
+
+KtParameterList(706,708): '()'
+  null
+
+KtTypeReference(710,717): 'MyClass'
+  null
+
+KtUserType(710,717): 'MyClass'
+  null
+
+KtNameReferenceExpression(710,717): 'MyClass'
+  null
+
+KtCallExpression(720,726): 'TODO()'
+  KaSingleSymbolResolutionSuccess:
+    symbol = kotlin/TODO(): kotlin.Nothing
+
+KtNameReferenceExpression(720,724): 'TODO'
+  null
+
+KtValueArgumentList(724,726): '()'
+  null
+
+KtProperty(736,770): 'val lambdaProp = {InheritorObject}'
+  null
+
+KtLambdaExpression(753,770): '{InheritorObject}'
+  null
+
+KtFunctionLiteral(753,770): '{InheritorObject}'
+  null
+
+KtBlockExpression(754,769): 'InheritorObject'
+  null
+
+KtNameReferenceExpression(754,769): 'InheritorObject'
+  null
+
+KtNamedFunction(779,814): 'fun <T>receiveLambda(l: () -> T) {}'
+  null
+
+KtTypeParameterList(783,786): '<T>'
+  null
+
+KtTypeParameter(784,785): 'T'
+  null
+
+KtParameterList(799,811): '(l: () -> T)'
+  null
+
+KtParameter(800,810): 'l: () -> T'
+  null
+
+KtTypeReference(803,810): '() -> T'
+  null
+
+KtFunctionType(803,810): '() -> T'
+  null
+
+KtParameterList(803,805): '()'
+  null
+
+KtTypeReference(809,810): 'T'
+  null
+
+KtUserType(809,810): 'T'
+  null
+
+KtNameReferenceExpression(809,810): 'T'
+  null
+
+KtBlockExpression(812,814): '{}'
+  null
+
+KtNamedFunction(816,1409): 'fun testReceivedLambda() {'
+  null
+
+KtParameterList(838,840): '()'
+  null
+
+KtBlockExpression(841,1409): '{'
+  null
+
+KtCallExpression(847,889): 'receiveLambda<MyClass> { InheritorObject }'
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /receiveLambda(l: kotlin.Function0<T>): kotlin.Unit
+    ]
+    diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
+
+KtNameReferenceExpression(847,860): 'receiveLambda'
+  null
+
+KtTypeArgumentList(860,869): '<MyClass>'
+  null
+
+KtTypeProjection(861,868): 'MyClass'
+  null
+
+KtTypeReference(861,868): 'MyClass'
+  null
+
+KtUserType(861,868): 'MyClass'
+  null
+
+KtNameReferenceExpression(861,868): 'MyClass'
+  null
+
+KtLambdaArgument(870,889): '{ InheritorObject }'
+  null
+
+KtLambdaExpression(870,889): '{ InheritorObject }'
+  null
+
+KtFunctionLiteral(870,889): '{ InheritorObject }'
+  null
+
+KtBlockExpression(872,887): 'InheritorObject'
+  null
+
+KtNameReferenceExpression(872,887): 'InheritorObject'
+  null
+
+KtCallExpression(894,932): 'receiveLambda<MyClass> { propMyClass }'
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /receiveLambda(l: kotlin.Function0<T>): kotlin.Unit
+    ]
+    diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
+
+KtNameReferenceExpression(894,907): 'receiveLambda'
+  null
+
+KtTypeArgumentList(907,916): '<MyClass>'
+  null
+
+KtTypeProjection(908,915): 'MyClass'
+  null
+
+KtTypeReference(908,915): 'MyClass'
+  null
+
+KtUserType(908,915): 'MyClass'
+  null
+
+KtNameReferenceExpression(908,915): 'MyClass'
+  null
+
+KtLambdaArgument(917,932): '{ propMyClass }'
+  null
+
+KtLambdaExpression(917,932): '{ propMyClass }'
+  null
+
+KtFunctionLiteral(917,932): '{ propMyClass }'
+  null
+
+KtBlockExpression(919,930): 'propMyClass'
+  null
+
+KtNameReferenceExpression(919,930): 'propMyClass'
+  null
+
+KtCallExpression(937,982): 'receiveLambda<MyClass> { propInheritorClass }'
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /receiveLambda(l: kotlin.Function0<T>): kotlin.Unit
+    ]
+    diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
+
+KtNameReferenceExpression(937,950): 'receiveLambda'
+  null
+
+KtTypeArgumentList(950,959): '<MyClass>'
+  null
+
+KtTypeProjection(951,958): 'MyClass'
+  null
+
+KtTypeReference(951,958): 'MyClass'
+  null
+
+KtUserType(951,958): 'MyClass'
+  null
+
+KtNameReferenceExpression(951,958): 'MyClass'
+  null
+
+KtLambdaArgument(960,982): '{ propInheritorClass }'
+  null
+
+KtLambdaExpression(960,982): '{ propInheritorClass }'
+  null
+
+KtFunctionLiteral(960,982): '{ propInheritorClass }'
+  null
+
+KtBlockExpression(962,980): 'propInheritorClass'
+  null
+
+KtNameReferenceExpression(962,980): 'propInheritorClass'
+  null
+
+KtCallExpression(987,1033): 'receiveLambda<MyClass> { propInheritorObject }'
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /receiveLambda(l: kotlin.Function0<T>): kotlin.Unit
+    ]
+    diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
+
+KtNameReferenceExpression(987,1000): 'receiveLambda'
+  null
+
+KtTypeArgumentList(1000,1009): '<MyClass>'
+  null
+
+KtTypeProjection(1001,1008): 'MyClass'
+  null
+
+KtTypeReference(1001,1008): 'MyClass'
+  null
+
+KtUserType(1001,1008): 'MyClass'
+  null
+
+KtNameReferenceExpression(1001,1008): 'MyClass'
+  null
+
+KtLambdaArgument(1010,1033): '{ propInheritorObject }'
+  null
+
+KtLambdaExpression(1010,1033): '{ propInheritorObject }'
+  null
+
+KtFunctionLiteral(1010,1033): '{ propInheritorObject }'
+  null
+
+KtBlockExpression(1012,1031): 'propInheritorObject'
+  null
+
+KtNameReferenceExpression(1012,1031): 'propInheritorObject'
+  null
+
+KtCallExpression(1039,1070): 'receiveLambda<MyClass> { prop }'
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /receiveLambda(l: kotlin.Function0<T>): kotlin.Unit
+    ]
+    diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
+
+KtNameReferenceExpression(1039,1052): 'receiveLambda'
+  null
+
+KtTypeArgumentList(1052,1061): '<MyClass>'
+  null
+
+KtTypeProjection(1053,1060): 'MyClass'
+  null
+
+KtTypeReference(1053,1060): 'MyClass'
+  null
+
+KtUserType(1053,1060): 'MyClass'
+  null
+
+KtNameReferenceExpression(1053,1060): 'MyClass'
+  null
+
+KtLambdaArgument(1062,1070): '{ prop }'
+  null
+
+KtLambdaExpression(1062,1070): '{ prop }'
+  null
+
+KtFunctionLiteral(1062,1070): '{ prop }'
+  null
+
+KtBlockExpression(1064,1068): 'prop'
+  null
+
+KtNameReferenceExpression(1064,1068): 'prop'
+  null
+
+KtCallExpression(1075,1111): 'receiveLambda<MyClass> { superProp }'
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /receiveLambda(l: kotlin.Function0<T>): kotlin.Unit
+    ]
+    diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
+
+KtNameReferenceExpression(1075,1088): 'receiveLambda'
+  null
+
+KtTypeArgumentList(1088,1097): '<MyClass>'
+  null
+
+KtTypeProjection(1089,1096): 'MyClass'
+  null
+
+KtTypeReference(1089,1096): 'MyClass'
+  null
+
+KtUserType(1089,1096): 'MyClass'
+  null
+
+KtNameReferenceExpression(1089,1096): 'MyClass'
+  null
+
+KtLambdaArgument(1098,1111): '{ superProp }'
+  null
+
+KtLambdaExpression(1098,1111): '{ superProp }'
+  null
+
+KtFunctionLiteral(1098,1111): '{ superProp }'
+  null
+
+KtBlockExpression(1100,1109): 'superProp'
+  null
+
+KtNameReferenceExpression(1100,1109): 'superProp'
+  null
+
+KtCallExpression(1116,1152): 'receiveLambda<MyClass> { constProp }'
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /receiveLambda(l: kotlin.Function0<T>): kotlin.Unit
+    ]
+    diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
+
+KtNameReferenceExpression(1116,1129): 'receiveLambda'
+  null
+
+KtTypeArgumentList(1129,1138): '<MyClass>'
+  null
+
+KtTypeProjection(1130,1137): 'MyClass'
+  null
+
+KtTypeReference(1130,1137): 'MyClass'
+  null
+
+KtUserType(1130,1137): 'MyClass'
+  null
+
+KtNameReferenceExpression(1130,1137): 'MyClass'
+  null
+
+KtLambdaArgument(1139,1152): '{ constProp }'
+  null
+
+KtLambdaExpression(1139,1152): '{ constProp }'
+  null
+
+KtFunctionLiteral(1139,1152): '{ constProp }'
+  null
+
+KtBlockExpression(1141,1150): 'constProp'
+  null
+
+KtNameReferenceExpression(1141,1150): 'constProp'
+  null
+
+KtCallExpression(1157,1194): 'receiveLambda<MyClass> { lambdaProp }'
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /receiveLambda(l: kotlin.Function0<T>): kotlin.Unit
+    ]
+    diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
+
+KtNameReferenceExpression(1157,1170): 'receiveLambda'
+  null
+
+KtTypeArgumentList(1170,1179): '<MyClass>'
+  null
+
+KtTypeProjection(1171,1178): 'MyClass'
+  null
+
+KtTypeReference(1171,1178): 'MyClass'
+  null
+
+KtUserType(1171,1178): 'MyClass'
+  null
+
+KtNameReferenceExpression(1171,1178): 'MyClass'
+  null
+
+KtLambdaArgument(1180,1194): '{ lambdaProp }'
+  null
+
+KtLambdaExpression(1180,1194): '{ lambdaProp }'
+  null
+
+KtFunctionLiteral(1180,1194): '{ lambdaProp }'
+  null
+
+KtBlockExpression(1182,1192): 'lambdaProp'
+  null
+
+KtNameReferenceExpression(1182,1192): 'lambdaProp'
+  null
+
+KtCallExpression(1199,1234): 'receiveLambda<MyClass> { lazyProp }'
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /receiveLambda(l: kotlin.Function0<T>): kotlin.Unit
+    ]
+    diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
+
+KtNameReferenceExpression(1199,1212): 'receiveLambda'
+  null
+
+KtTypeArgumentList(1212,1221): '<MyClass>'
+  null
+
+KtTypeProjection(1213,1220): 'MyClass'
+  null
+
+KtTypeReference(1213,1220): 'MyClass'
+  null
+
+KtUserType(1213,1220): 'MyClass'
+  null
+
+KtNameReferenceExpression(1213,1220): 'MyClass'
+  null
+
+KtLambdaArgument(1222,1234): '{ lazyProp }'
+  null
+
+KtLambdaExpression(1222,1234): '{ lazyProp }'
+  null
+
+KtFunctionLiteral(1222,1234): '{ lazyProp }'
+  null
+
+KtBlockExpression(1224,1232): 'lazyProp'
+  null
+
+KtNameReferenceExpression(1224,1232): 'lazyProp'
+  null
+
+KtCallExpression(1239,1277): 'receiveLambda<MyClass> { NestedObject}'
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /receiveLambda(l: kotlin.Function0<T>): kotlin.Unit
+    ]
+    diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
+
+KtNameReferenceExpression(1239,1252): 'receiveLambda'
+  null
+
+KtTypeArgumentList(1252,1261): '<MyClass>'
+  null
+
+KtTypeProjection(1253,1260): 'MyClass'
+  null
+
+KtTypeReference(1253,1260): 'MyClass'
+  null
+
+KtUserType(1253,1260): 'MyClass'
+  null
+
+KtNameReferenceExpression(1253,1260): 'MyClass'
+  null
+
+KtLambdaArgument(1262,1277): '{ NestedObject}'
+  null
+
+KtLambdaExpression(1262,1277): '{ NestedObject}'
+  null
+
+KtFunctionLiteral(1262,1277): '{ NestedObject}'
+  null
+
+KtBlockExpression(1264,1276): 'NestedObject'
+  null
+
+KtNameReferenceExpression(1264,1276): 'NestedObject'
+  null
+
+KtCallExpression(1283,1316): 'receiveLambda<MyClass> { func() }'
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /receiveLambda(l: kotlin.Function0<T>): kotlin.Unit
+    ]
+    diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
+
+KtNameReferenceExpression(1283,1296): 'receiveLambda'
+  null
+
+KtTypeArgumentList(1296,1305): '<MyClass>'
+  null
+
+KtTypeProjection(1297,1304): 'MyClass'
+  null
+
+KtTypeReference(1297,1304): 'MyClass'
+  null
+
+KtUserType(1297,1304): 'MyClass'
+  null
+
+KtNameReferenceExpression(1297,1304): 'MyClass'
+  null
+
+KtLambdaArgument(1306,1316): '{ func() }'
+  null
+
+KtLambdaExpression(1306,1316): '{ func() }'
+  null
+
+KtFunctionLiteral(1306,1316): '{ func() }'
+  null
+
+KtBlockExpression(1308,1314): 'func()'
+  null
+
+KtCallExpression(1308,1314): 'func()'
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
+
+KtNameReferenceExpression(1308,1312): 'func'
+  null
+
+KtValueArgumentList(1312,1314): '()'
+  null
+
+KtCallExpression(1321,1364): 'receiveLambda<MyClass> { InheritorClass() }'
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /receiveLambda(l: kotlin.Function0<T>): kotlin.Unit
+    ]
+    diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
+
+KtNameReferenceExpression(1321,1334): 'receiveLambda'
+  null
+
+KtTypeArgumentList(1334,1343): '<MyClass>'
+  null
+
+KtTypeProjection(1335,1342): 'MyClass'
+  null
+
+KtTypeReference(1335,1342): 'MyClass'
+  null
+
+KtUserType(1335,1342): 'MyClass'
+  null
+
+KtNameReferenceExpression(1335,1342): 'MyClass'
+  null
+
+KtLambdaArgument(1344,1364): '{ InheritorClass() }'
+  null
+
+KtLambdaExpression(1344,1364): '{ InheritorClass() }'
+  null
+
+KtFunctionLiteral(1344,1364): '{ InheritorClass() }'
+  null
+
+KtBlockExpression(1346,1362): 'InheritorClass()'
+  null
+
+KtCallExpression(1346,1362): 'InheritorClass()'
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
+
+KtNameReferenceExpression(1346,1360): 'InheritorClass'
+  null
+
+KtValueArgumentList(1360,1362): '()'
+  null
+
+KtCallExpression(1369,1407): 'receiveLambda<MyClass> { superFunc() }'
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /receiveLambda(l: kotlin.Function0<T>): kotlin.Unit
+    ]
+    diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
+
+KtNameReferenceExpression(1369,1382): 'receiveLambda'
+  null
+
+KtTypeArgumentList(1382,1391): '<MyClass>'
+  null
+
+KtTypeProjection(1383,1390): 'MyClass'
+  null
+
+KtTypeReference(1383,1390): 'MyClass'
+  null
+
+KtUserType(1383,1390): 'MyClass'
+  null
+
+KtNameReferenceExpression(1383,1390): 'MyClass'
+  null
+
+KtLambdaArgument(1392,1407): '{ superFunc() }'
+  null
+
+KtLambdaExpression(1392,1407): '{ superFunc() }'
+  null
+
+KtFunctionLiteral(1392,1407): '{ superFunc() }'
+  null
+
+KtBlockExpression(1394,1405): 'superFunc()'
+  null
+
+KtCallExpression(1394,1405): 'superFunc()'
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is Unit but MyClass was expected>
+
+KtNameReferenceExpression(1394,1403): 'superFunc'
+  null
+
+KtValueArgumentList(1403,1405): '()'
+  null

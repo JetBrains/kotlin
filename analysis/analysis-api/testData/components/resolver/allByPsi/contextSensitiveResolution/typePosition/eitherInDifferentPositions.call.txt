@@ -642,25 +642,24 @@ KtNameReferenceExpression(397,398): 's'
       typeArgumentsMapping = {}
 
 KtCallExpression(399,409): 'hashCode()'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {}
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = s
-          isSafeNavigation = false
-          type = Either<kotlin.String, kotlin.Int>
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = kotlin/Any.hashCode(<dispatch receiver>: kotlin.Any): kotlin.Int
-          valueParameters = []
-          contextParameters = []
-          callableId = kotlin/Any.hashCode
-      typeArgumentsMapping = {}
+  KaSimpleFunctionCall:
+    argumentMapping = {}
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = s
+        isSafeNavigation = false
+        type = Either<kotlin.String, kotlin.Int>
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = kotlin/Any.hashCode(<dispatch receiver>: kotlin.Any): kotlin.Int
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/Any.hashCode
+    typeArgumentsMapping = {}
 
 KtNameReferenceExpression(399,407): 'hashCode'
   KaSuccessCallInfo:
@@ -794,25 +793,24 @@ KtStringTemplateExpression(430,432): '""'
   null
 
 KtCallExpression(433,443): 'hashCode()'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {}
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = ""
-          isSafeNavigation = false
-          type = kotlin.String
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = kotlin/Any.hashCode(<dispatch receiver>: kotlin.Any): kotlin.Int
-          valueParameters = []
-          contextParameters = []
-          callableId = kotlin/Any.hashCode
-      typeArgumentsMapping = {}
+  KaSimpleFunctionCall:
+    argumentMapping = {}
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = ""
+        isSafeNavigation = false
+        type = kotlin.String
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = kotlin/Any.hashCode(<dispatch receiver>: kotlin.Any): kotlin.Int
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/Any.hashCode
+    typeArgumentsMapping = {}
 
 KtNameReferenceExpression(433,441): 'hashCode'
   KaSuccessCallInfo:
@@ -1099,41 +1097,40 @@ KtNameReferenceExpression(514,519): 'value'
       typeArgumentsMapping = {}
 
 KtCallExpression(521,527): 'div(1)'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {
-        1 -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = other: kotlin.Int
-          contextParameters = []
-          callableId = null)
-      }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = (s as? Right)?.value
-          isSafeNavigation = true
-          type = kotlin.Int
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = kotlin/Int.div(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
-          valueParameters = [
-            KaVariableSignature:
-              name = other
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = other: kotlin.Int
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/Int.div
-      typeArgumentsMapping = {}
+  KaSimpleFunctionCall:
+    argumentMapping = {
+      1 -> (KaVariableSignature:
+        name = other
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = other: kotlin.Int
+        contextParameters = []
+        callableId = null)
+    }
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = (s as? Right)?.value
+        isSafeNavigation = true
+        type = kotlin.Int
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = kotlin/Int.div(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+        valueParameters = [
+          KaVariableSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = other: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/Int.div
+    typeArgumentsMapping = {}
 
 KtNameReferenceExpression(521,524): 'div'
   KaSuccessCallInfo:

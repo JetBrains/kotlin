@@ -1,2 +1,3 @@
 KtCallExpression(205,216): 'funMember()'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /Base.funMember(<dispatch receiver>: Base): kotlin.Unit

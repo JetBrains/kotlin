@@ -143,7 +143,8 @@ KtNameReferenceExpression(335,342): 'MyClass'
   null
 
 KtCallExpression(345,351): 'TODO()'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = kotlin/TODO(): kotlin.Nothing
 
 KtNameReferenceExpression(345,349): 'TODO'
   null
@@ -164,7 +165,8 @@ KtNameReferenceExpression(384,398): 'InheritorClass'
   null
 
 KtCallExpression(401,417): 'InheritorClass()'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <constructor>(): MyClass.InheritorClass
 
 KtNameReferenceExpression(401,415): 'InheritorClass'
   null
@@ -218,7 +220,8 @@ KtNameReferenceExpression(535,542): 'MyClass'
   null
 
 KtCallExpression(545,551): 'TODO()'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = kotlin/TODO(): kotlin.Nothing
 
 KtNameReferenceExpression(545,549): 'TODO'
   null
@@ -242,7 +245,8 @@ KtPropertyDelegate(581,593): 'by lazy {""}'
   null
 
 KtCallExpression(584,593): 'lazy {""}'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = kotlin/lazy(initializer: () -> T): kotlin.Lazy<T>
 
 KtNameReferenceExpression(584,588): 'lazy'
   null
@@ -344,7 +348,8 @@ KtBlockExpression(732,1163): '{'
   null
 
 KtCallExpression(738,775): 'consumeMyClass(test(InheritorObject))'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /consumeMyClass(arg: MyClass): kotlin.Unit
 
 KtNameReferenceExpression(738,752): 'consumeMyClass'
   null
@@ -356,7 +361,8 @@ KtValueArgument(753,774): 'test(InheritorObject)'
   null
 
 KtCallExpression(753,774): 'test(InheritorObject)'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /test(arg: T): T
 
 KtNameReferenceExpression(753,757): 'test'
   null
@@ -371,7 +377,8 @@ KtNameReferenceExpression(758,773): 'InheritorObject'
   null
 
 KtCallExpression(781,814): 'consumeMyClass(test(propMyClass))'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /consumeMyClass(arg: MyClass): kotlin.Unit
 
 KtNameReferenceExpression(781,795): 'consumeMyClass'
   null
@@ -383,7 +390,8 @@ KtValueArgument(796,813): 'test(propMyClass)'
   null
 
 KtCallExpression(796,813): 'test(propMyClass)'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /test(arg: T): T
 
 KtNameReferenceExpression(796,800): 'test'
   null
@@ -398,7 +406,8 @@ KtNameReferenceExpression(801,812): 'propMyClass'
   null
 
 KtCallExpression(819,859): 'consumeMyClass(test(propInheritorClass))'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /consumeMyClass(arg: MyClass): kotlin.Unit
 
 KtNameReferenceExpression(819,833): 'consumeMyClass'
   null
@@ -410,7 +419,8 @@ KtValueArgument(834,858): 'test(propInheritorClass)'
   null
 
 KtCallExpression(834,858): 'test(propInheritorClass)'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /test(arg: T): T
 
 KtNameReferenceExpression(834,838): 'test'
   null
@@ -425,7 +435,8 @@ KtNameReferenceExpression(839,857): 'propInheritorClass'
   null
 
 KtCallExpression(864,905): 'consumeMyClass(test(propInheritorObject))'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /consumeMyClass(arg: MyClass): kotlin.Unit
 
 KtNameReferenceExpression(864,878): 'consumeMyClass'
   null
@@ -437,7 +448,8 @@ KtValueArgument(879,904): 'test(propInheritorObject)'
   null
 
 KtCallExpression(879,904): 'test(propInheritorObject)'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /test(arg: T): T
 
 KtNameReferenceExpression(879,883): 'test'
   null
@@ -452,7 +464,11 @@ KtNameReferenceExpression(884,903): 'propInheritorObject'
   null
 
 KtCallExpression(911,945): 'consumeMyClass(test(NestedObject))'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /consumeMyClass(arg: MyClass): kotlin.Unit
+    ]
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'MyClass.NestedObject', but 'MyClass' was expected.>
 
 KtNameReferenceExpression(911,925): 'consumeMyClass'
   null
@@ -464,7 +480,8 @@ KtValueArgument(926,944): 'test(NestedObject)'
   null
 
 KtCallExpression(926,944): 'test(NestedObject)'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /test(arg: T): T
 
 KtNameReferenceExpression(926,930): 'test'
   null
@@ -479,7 +496,11 @@ KtNameReferenceExpression(931,943): 'NestedObject'
   null
 
 KtCallExpression(950,976): 'consumeMyClass(test(prop))'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /consumeMyClass(arg: MyClass): kotlin.Unit
+    ]
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
 
 KtNameReferenceExpression(950,964): 'consumeMyClass'
   null
@@ -491,7 +512,8 @@ KtValueArgument(965,975): 'test(prop)'
   null
 
 KtCallExpression(965,975): 'test(prop)'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /test(arg: T): T
 
 KtNameReferenceExpression(965,969): 'test'
   null
@@ -506,7 +528,11 @@ KtNameReferenceExpression(970,974): 'prop'
   null
 
 KtCallExpression(981,1012): 'consumeMyClass(test(superProp))'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /consumeMyClass(arg: MyClass): kotlin.Unit
+    ]
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
 
 KtNameReferenceExpression(981,995): 'consumeMyClass'
   null
@@ -518,7 +544,8 @@ KtValueArgument(996,1011): 'test(superProp)'
   null
 
 KtCallExpression(996,1011): 'test(superProp)'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /test(arg: T): T
 
 KtNameReferenceExpression(996,1000): 'test'
   null
@@ -533,7 +560,11 @@ KtNameReferenceExpression(1001,1010): 'superProp'
   null
 
 KtCallExpression(1017,1047): 'consumeMyClass(test(lazyProp))'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /consumeMyClass(arg: MyClass): kotlin.Unit
+    ]
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
 
 KtNameReferenceExpression(1017,1031): 'consumeMyClass'
   null
@@ -545,7 +576,8 @@ KtValueArgument(1032,1046): 'test(lazyProp)'
   null
 
 KtCallExpression(1032,1046): 'test(lazyProp)'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /test(arg: T): T
 
 KtNameReferenceExpression(1032,1036): 'test'
   null
@@ -560,7 +592,11 @@ KtNameReferenceExpression(1037,1045): 'lazyProp'
   null
 
 KtCallExpression(1052,1084): 'consumeMyClass(test(lambdaProp))'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /consumeMyClass(arg: MyClass): kotlin.Unit
+    ]
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is '() -> MyClass.InheritorObject', but 'MyClass' was expected.>
 
 KtNameReferenceExpression(1052,1066): 'consumeMyClass'
   null
@@ -572,7 +608,8 @@ KtValueArgument(1067,1083): 'test(lambdaProp)'
   null
 
 KtCallExpression(1067,1083): 'test(lambdaProp)'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /test(arg: T): T
 
 KtNameReferenceExpression(1067,1071): 'test'
   null
@@ -587,7 +624,8 @@ KtNameReferenceExpression(1072,1082): 'lambdaProp'
   null
 
 KtCallExpression(1090,1128): 'consumeMyClass(test(InheritorClass()))'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /consumeMyClass(arg: MyClass): kotlin.Unit
 
 KtNameReferenceExpression(1090,1104): 'consumeMyClass'
   null
@@ -599,7 +637,11 @@ KtValueArgument(1105,1127): 'test(InheritorClass())'
   null
 
 KtCallExpression(1105,1127): 'test(InheritorClass())'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /test(arg: T): T
+    ]
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable(INAPPLICABLE): /test>
 
 KtNameReferenceExpression(1105,1109): 'test'
   null
@@ -611,7 +653,9 @@ KtValueArgument(1110,1126): 'InheritorClass()'
   null
 
 KtCallExpression(1110,1126): 'InheritorClass()'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'InheritorClass'.>
 
 KtNameReferenceExpression(1110,1124): 'InheritorClass'
   null
@@ -620,7 +664,8 @@ KtValueArgumentList(1124,1126): '()'
   null
 
 KtCallExpression(1133,1161): 'consumeMyClass(test(func()))'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /consumeMyClass(arg: MyClass): kotlin.Unit
 
 KtNameReferenceExpression(1133,1147): 'consumeMyClass'
   null
@@ -632,7 +677,11 @@ KtValueArgument(1148,1160): 'test(func())'
   null
 
 KtCallExpression(1148,1160): 'test(func())'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /test(arg: T): T
+    ]
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable(INAPPLICABLE): /test>
 
 KtNameReferenceExpression(1148,1152): 'test'
   null
@@ -644,7 +693,9 @@ KtValueArgument(1153,1159): 'func()'
   null
 
 KtCallExpression(1153,1159): 'func()'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'func'.>
 
 KtNameReferenceExpression(1153,1157): 'func'
   null

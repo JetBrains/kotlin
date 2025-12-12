@@ -1,0 +1,749 @@
+KtFile: 'generic.kt'
+  null
+
+KtPackageDirective(0,0): ''
+  null
+
+KtImportList(0,0): ''
+  null
+
+KtClass(93,146): 'open class MySuper {'
+  null
+
+KtDeclarationModifierList(93,97): 'open'
+  null
+
+KtClassBody(112,146): '{'
+  null
+
+KtProperty(118,144): 'val superProp: String = ""'
+  null
+
+KtTypeReference(133,139): 'String'
+  null
+
+KtUserType(133,139): 'String'
+  null
+
+KtNameReferenceExpression(133,139): 'String'
+  null
+
+KtStringTemplateExpression(142,144): '""'
+  null
+
+KtClass(148,644): 'open class MyClass {'
+  null
+
+KtDeclarationModifierList(148,152): 'open'
+  null
+
+KtClassBody(167,644): '{'
+  null
+
+KtObjectDeclaration(173,209): 'object InheritorObject: MyClass() {}'
+  null
+
+KtSuperTypeList(197,206): 'MyClass()'
+  null
+
+KtSuperTypeCallEntry(197,206): 'MyClass()'
+  KaSingleSymbolResolutionSuccess:
+    symbol = <constructor>(): MyClass
+
+KtConstructorCalleeExpression(197,204): 'MyClass'
+  null
+
+KtTypeReference(197,204): 'MyClass'
+  null
+
+KtUserType(197,204): 'MyClass'
+  null
+
+KtNameReferenceExpression(197,204): 'MyClass'
+  null
+
+KtValueArgumentList(204,206): '()'
+  null
+
+KtClassBody(207,209): '{}'
+  null
+
+KtClass(215,249): 'class InheritorClass: MyClass() {}'
+  null
+
+KtSuperTypeList(237,246): 'MyClass()'
+  null
+
+KtSuperTypeCallEntry(237,246): 'MyClass()'
+  KaSingleSymbolResolutionSuccess:
+    symbol = <constructor>(): MyClass
+
+KtConstructorCalleeExpression(237,244): 'MyClass'
+  null
+
+KtTypeReference(237,244): 'MyClass'
+  null
+
+KtUserType(237,244): 'MyClass'
+  null
+
+KtNameReferenceExpression(237,244): 'MyClass'
+  null
+
+KtValueArgumentList(244,246): '()'
+  null
+
+KtClassBody(247,249): '{}'
+  null
+
+KtObjectDeclaration(255,274): 'object NestedObject'
+  null
+
+KtObjectDeclaration(280,642): 'companion object: MySuper() {'
+  null
+
+KtDeclarationModifierList(280,289): 'companion'
+  null
+
+KtSuperTypeList(298,307): 'MySuper()'
+  null
+
+KtSuperTypeCallEntry(298,307): 'MySuper()'
+  KaSingleSymbolResolutionSuccess:
+    symbol = <constructor>(): MySuper
+
+KtConstructorCalleeExpression(298,305): 'MySuper'
+  null
+
+KtTypeReference(298,305): 'MySuper'
+  null
+
+KtUserType(298,305): 'MySuper'
+  null
+
+KtNameReferenceExpression(298,305): 'MySuper'
+  null
+
+KtValueArgumentList(305,307): '()'
+  null
+
+KtClassBody(308,642): '{'
+  null
+
+KtProperty(318,351): 'val propMyClass: MyClass = TODO()'
+  null
+
+KtTypeReference(335,342): 'MyClass'
+  null
+
+KtUserType(335,342): 'MyClass'
+  null
+
+KtNameReferenceExpression(335,342): 'MyClass'
+  null
+
+KtCallExpression(345,351): 'TODO()'
+  KaSingleSymbolResolutionSuccess:
+    symbol = kotlin/TODO(): kotlin.Nothing
+
+KtNameReferenceExpression(345,349): 'TODO'
+  null
+
+KtValueArgumentList(349,351): '()'
+  null
+
+KtProperty(360,417): 'val propInheritorClass: InheritorClass = InheritorClass()'
+  null
+
+KtTypeReference(384,398): 'InheritorClass'
+  null
+
+KtUserType(384,398): 'InheritorClass'
+  null
+
+KtNameReferenceExpression(384,398): 'InheritorClass'
+  null
+
+KtCallExpression(401,417): 'InheritorClass()'
+  KaSingleSymbolResolutionSuccess:
+    symbol = <constructor>(): MyClass.InheritorClass
+
+KtNameReferenceExpression(401,415): 'InheritorClass'
+  null
+
+KtValueArgumentList(415,417): '()'
+  null
+
+KtProperty(426,484): 'val propInheritorObject: InheritorObject = InheritorObject'
+  null
+
+KtTypeReference(451,466): 'InheritorObject'
+  null
+
+KtUserType(451,466): 'InheritorObject'
+  null
+
+KtNameReferenceExpression(451,466): 'InheritorObject'
+  null
+
+KtNameReferenceExpression(469,484): 'InheritorObject'
+  null
+
+KtProperty(493,514): 'val prop: String = ""'
+  null
+
+KtTypeReference(503,509): 'String'
+  null
+
+KtUserType(503,509): 'String'
+  null
+
+KtNameReferenceExpression(503,509): 'String'
+  null
+
+KtStringTemplateExpression(512,514): '""'
+  null
+
+KtNamedFunction(523,551): 'fun func(): MyClass = TODO()'
+  null
+
+KtParameterList(531,533): '()'
+  null
+
+KtTypeReference(535,542): 'MyClass'
+  null
+
+KtUserType(535,542): 'MyClass'
+  null
+
+KtNameReferenceExpression(535,542): 'MyClass'
+  null
+
+KtCallExpression(545,551): 'TODO()'
+  KaSingleSymbolResolutionSuccess:
+    symbol = kotlin/TODO(): kotlin.Nothing
+
+KtNameReferenceExpression(545,549): 'TODO'
+  null
+
+KtValueArgumentList(549,551): '()'
+  null
+
+KtProperty(560,593): 'val lazyProp: String by lazy {""}'
+  null
+
+KtTypeReference(574,580): 'String'
+  null
+
+KtUserType(574,580): 'String'
+  null
+
+KtNameReferenceExpression(574,580): 'String'
+  null
+
+KtPropertyDelegate(581,593): 'by lazy {""}'
+  null
+
+KtCallExpression(584,593): 'lazy {""}'
+  KaSingleSymbolResolutionSuccess:
+    symbol = kotlin/lazy(initializer: kotlin.Function0<T>): kotlin.Lazy<T>
+
+KtNameReferenceExpression(584,588): 'lazy'
+  null
+
+KtLambdaArgument(589,593): '{""}'
+  null
+
+KtLambdaExpression(589,593): '{""}'
+  null
+
+KtFunctionLiteral(589,593): '{""}'
+  null
+
+KtBlockExpression(590,592): '""'
+  null
+
+KtStringTemplateExpression(590,592): '""'
+  null
+
+KtProperty(602,636): 'val lambdaProp = {InheritorObject}'
+  null
+
+KtLambdaExpression(619,636): '{InheritorObject}'
+  null
+
+KtFunctionLiteral(619,636): '{InheritorObject}'
+  null
+
+KtBlockExpression(620,635): 'InheritorObject'
+  null
+
+KtNameReferenceExpression(620,635): 'InheritorObject'
+  null
+
+KtNamedFunction(646,681): 'fun consumeMyClass(arg: MyClass) {}'
+  null
+
+KtParameterList(664,678): '(arg: MyClass)'
+  null
+
+KtParameter(665,677): 'arg: MyClass'
+  null
+
+KtTypeReference(670,677): 'MyClass'
+  null
+
+KtUserType(670,677): 'MyClass'
+  null
+
+KtNameReferenceExpression(670,677): 'MyClass'
+  null
+
+KtBlockExpression(679,681): '{}'
+  null
+
+KtNamedFunction(683,712): 'fun <T> test(arg: T): T = arg'
+  null
+
+KtTypeParameterList(687,690): '<T>'
+  null
+
+KtTypeParameter(688,689): 'T'
+  null
+
+KtParameterList(695,703): '(arg: T)'
+  null
+
+KtParameter(696,702): 'arg: T'
+  null
+
+KtTypeReference(701,702): 'T'
+  null
+
+KtUserType(701,702): 'T'
+  null
+
+KtNameReferenceExpression(701,702): 'T'
+  null
+
+KtTypeReference(705,706): 'T'
+  null
+
+KtUserType(705,706): 'T'
+  null
+
+KtNameReferenceExpression(705,706): 'T'
+  null
+
+KtNameReferenceExpression(709,712): 'arg'
+  null
+
+KtNamedFunction(714,1163): 'fun testGeneric() {'
+  null
+
+KtParameterList(729,731): '()'
+  null
+
+KtBlockExpression(732,1163): '{'
+  null
+
+KtCallExpression(738,775): 'consumeMyClass(test(InheritorObject))'
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /consumeMyClass(arg: MyClass): kotlin.Unit
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with consumeMyClass>
+
+KtNameReferenceExpression(738,752): 'consumeMyClass'
+  null
+
+KtValueArgumentList(752,775): '(test(InheritorObject))'
+  null
+
+KtValueArgument(753,774): 'test(InheritorObject)'
+  null
+
+KtCallExpression(753,774): 'test(InheritorObject)'
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /test(arg: T): T
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with test>
+
+KtNameReferenceExpression(753,757): 'test'
+  null
+
+KtValueArgumentList(757,774): '(InheritorObject)'
+  null
+
+KtValueArgument(758,773): 'InheritorObject'
+  null
+
+KtNameReferenceExpression(758,773): 'InheritorObject'
+  null
+
+KtCallExpression(781,814): 'consumeMyClass(test(propMyClass))'
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /consumeMyClass(arg: MyClass): kotlin.Unit
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with consumeMyClass>
+
+KtNameReferenceExpression(781,795): 'consumeMyClass'
+  null
+
+KtValueArgumentList(795,814): '(test(propMyClass))'
+  null
+
+KtValueArgument(796,813): 'test(propMyClass)'
+  null
+
+KtCallExpression(796,813): 'test(propMyClass)'
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /test(arg: T): T
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with test>
+
+KtNameReferenceExpression(796,800): 'test'
+  null
+
+KtValueArgumentList(800,813): '(propMyClass)'
+  null
+
+KtValueArgument(801,812): 'propMyClass'
+  null
+
+KtNameReferenceExpression(801,812): 'propMyClass'
+  null
+
+KtCallExpression(819,859): 'consumeMyClass(test(propInheritorClass))'
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /consumeMyClass(arg: MyClass): kotlin.Unit
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with consumeMyClass>
+
+KtNameReferenceExpression(819,833): 'consumeMyClass'
+  null
+
+KtValueArgumentList(833,859): '(test(propInheritorClass))'
+  null
+
+KtValueArgument(834,858): 'test(propInheritorClass)'
+  null
+
+KtCallExpression(834,858): 'test(propInheritorClass)'
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /test(arg: T): T
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with test>
+
+KtNameReferenceExpression(834,838): 'test'
+  null
+
+KtValueArgumentList(838,858): '(propInheritorClass)'
+  null
+
+KtValueArgument(839,857): 'propInheritorClass'
+  null
+
+KtNameReferenceExpression(839,857): 'propInheritorClass'
+  null
+
+KtCallExpression(864,905): 'consumeMyClass(test(propInheritorObject))'
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /consumeMyClass(arg: MyClass): kotlin.Unit
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with consumeMyClass>
+
+KtNameReferenceExpression(864,878): 'consumeMyClass'
+  null
+
+KtValueArgumentList(878,905): '(test(propInheritorObject))'
+  null
+
+KtValueArgument(879,904): 'test(propInheritorObject)'
+  null
+
+KtCallExpression(879,904): 'test(propInheritorObject)'
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /test(arg: T): T
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with test>
+
+KtNameReferenceExpression(879,883): 'test'
+  null
+
+KtValueArgumentList(883,904): '(propInheritorObject)'
+  null
+
+KtValueArgument(884,903): 'propInheritorObject'
+  null
+
+KtNameReferenceExpression(884,903): 'propInheritorObject'
+  null
+
+KtCallExpression(911,945): 'consumeMyClass(test(NestedObject))'
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /consumeMyClass(arg: MyClass): kotlin.Unit
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with consumeMyClass>
+
+KtNameReferenceExpression(911,925): 'consumeMyClass'
+  null
+
+KtValueArgumentList(925,945): '(test(NestedObject))'
+  null
+
+KtValueArgument(926,944): 'test(NestedObject)'
+  null
+
+KtCallExpression(926,944): 'test(NestedObject)'
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /test(arg: T): T
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with test>
+
+KtNameReferenceExpression(926,930): 'test'
+  null
+
+KtValueArgumentList(930,944): '(NestedObject)'
+  null
+
+KtValueArgument(931,943): 'NestedObject'
+  null
+
+KtNameReferenceExpression(931,943): 'NestedObject'
+  null
+
+KtCallExpression(950,976): 'consumeMyClass(test(prop))'
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /consumeMyClass(arg: MyClass): kotlin.Unit
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with consumeMyClass>
+
+KtNameReferenceExpression(950,964): 'consumeMyClass'
+  null
+
+KtValueArgumentList(964,976): '(test(prop))'
+  null
+
+KtValueArgument(965,975): 'test(prop)'
+  null
+
+KtCallExpression(965,975): 'test(prop)'
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /test(arg: T): T
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with test>
+
+KtNameReferenceExpression(965,969): 'test'
+  null
+
+KtValueArgumentList(969,975): '(prop)'
+  null
+
+KtValueArgument(970,974): 'prop'
+  null
+
+KtNameReferenceExpression(970,974): 'prop'
+  null
+
+KtCallExpression(981,1012): 'consumeMyClass(test(superProp))'
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /consumeMyClass(arg: MyClass): kotlin.Unit
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with consumeMyClass>
+
+KtNameReferenceExpression(981,995): 'consumeMyClass'
+  null
+
+KtValueArgumentList(995,1012): '(test(superProp))'
+  null
+
+KtValueArgument(996,1011): 'test(superProp)'
+  null
+
+KtCallExpression(996,1011): 'test(superProp)'
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /test(arg: T): T
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with test>
+
+KtNameReferenceExpression(996,1000): 'test'
+  null
+
+KtValueArgumentList(1000,1011): '(superProp)'
+  null
+
+KtValueArgument(1001,1010): 'superProp'
+  null
+
+KtNameReferenceExpression(1001,1010): 'superProp'
+  null
+
+KtCallExpression(1017,1047): 'consumeMyClass(test(lazyProp))'
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /consumeMyClass(arg: MyClass): kotlin.Unit
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with consumeMyClass>
+
+KtNameReferenceExpression(1017,1031): 'consumeMyClass'
+  null
+
+KtValueArgumentList(1031,1047): '(test(lazyProp))'
+  null
+
+KtValueArgument(1032,1046): 'test(lazyProp)'
+  null
+
+KtCallExpression(1032,1046): 'test(lazyProp)'
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /test(arg: T): T
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with test>
+
+KtNameReferenceExpression(1032,1036): 'test'
+  null
+
+KtValueArgumentList(1036,1046): '(lazyProp)'
+  null
+
+KtValueArgument(1037,1045): 'lazyProp'
+  null
+
+KtNameReferenceExpression(1037,1045): 'lazyProp'
+  null
+
+KtCallExpression(1052,1084): 'consumeMyClass(test(lambdaProp))'
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /consumeMyClass(arg: MyClass): kotlin.Unit
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with consumeMyClass>
+
+KtNameReferenceExpression(1052,1066): 'consumeMyClass'
+  null
+
+KtValueArgumentList(1066,1084): '(test(lambdaProp))'
+  null
+
+KtValueArgument(1067,1083): 'test(lambdaProp)'
+  null
+
+KtCallExpression(1067,1083): 'test(lambdaProp)'
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /test(arg: T): T
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with test>
+
+KtNameReferenceExpression(1067,1071): 'test'
+  null
+
+KtValueArgumentList(1071,1083): '(lambdaProp)'
+  null
+
+KtValueArgument(1072,1082): 'lambdaProp'
+  null
+
+KtNameReferenceExpression(1072,1082): 'lambdaProp'
+  null
+
+KtCallExpression(1090,1128): 'consumeMyClass(test(InheritorClass()))'
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /consumeMyClass(arg: MyClass): kotlin.Unit
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with consumeMyClass>
+
+KtNameReferenceExpression(1090,1104): 'consumeMyClass'
+  null
+
+KtValueArgumentList(1104,1128): '(test(InheritorClass()))'
+  null
+
+KtValueArgument(1105,1127): 'test(InheritorClass())'
+  null
+
+KtCallExpression(1105,1127): 'test(InheritorClass())'
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /test(arg: T): T
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with test>
+
+KtNameReferenceExpression(1105,1109): 'test'
+  null
+
+KtValueArgumentList(1109,1127): '(InheritorClass())'
+  null
+
+KtValueArgument(1110,1126): 'InheritorClass()'
+  null
+
+KtCallExpression(1110,1126): 'InheritorClass()'
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: InheritorClass>
+
+KtNameReferenceExpression(1110,1124): 'InheritorClass'
+  null
+
+KtValueArgumentList(1124,1126): '()'
+  null
+
+KtCallExpression(1133,1161): 'consumeMyClass(test(func()))'
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /consumeMyClass(arg: MyClass): kotlin.Unit
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with consumeMyClass>
+
+KtNameReferenceExpression(1133,1147): 'consumeMyClass'
+  null
+
+KtValueArgumentList(1147,1161): '(test(func()))'
+  null
+
+KtValueArgument(1148,1160): 'test(func())'
+  null
+
+KtCallExpression(1148,1160): 'test(func())'
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /test(arg: T): T
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with test>
+
+KtNameReferenceExpression(1148,1152): 'test'
+  null
+
+KtValueArgumentList(1152,1160): '(func())'
+  null
+
+KtValueArgument(1153,1159): 'func()'
+  null
+
+KtCallExpression(1153,1159): 'func()'
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: func>
+
+KtNameReferenceExpression(1153,1157): 'func'
+  null
+
+KtValueArgumentList(1157,1159): '()'
+  null

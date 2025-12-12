@@ -304,7 +304,8 @@ KtValueArgument(371,381): 'arrayOf(X)'
   null
 
 KtCallExpression(371,381): 'arrayOf(X)'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = kotlin/arrayOf(vararg elements: T): kotlin.Array<T>
 
 KtNameReferenceExpression(371,378): 'arrayOf'
   null

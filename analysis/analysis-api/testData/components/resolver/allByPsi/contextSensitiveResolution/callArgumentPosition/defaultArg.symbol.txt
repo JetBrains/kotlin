@@ -78,7 +78,8 @@ KtNameReferenceExpression(220,227): 'MyClass'
   null
 
 KtCallExpression(230,236): 'TODO()'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = kotlin/TODO(): kotlin.Nothing
 
 KtNameReferenceExpression(230,234): 'TODO'
   null
@@ -135,7 +136,9 @@ KtNameReferenceExpression(361,368): 'MyClass'
   null
 
 KtCallExpression(371,377): 'func()'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'func'.>
 
 KtNameReferenceExpression(371,375): 'func'
   null

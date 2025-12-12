@@ -1,0 +1,9 @@
+KtCallExpression(208,319): 'sumOf { c ->'
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      kotlin/collections/sumOf(<extension receiver>: kotlin.collections.Iterable<T>, selector: kotlin.Function1<T, kotlin.Int>): kotlin.Int,
+      kotlin/collections/sumOf(<extension receiver>: kotlin.collections.Iterable<T>, selector: kotlin.Function1<T, kotlin.UInt>): kotlin.UInt
+    ]
+    diagnostic = ERROR<NONE_APPLICABLE: None of the following functions can be called with the arguments supplied: 
+    public inline fun <T> Iterable<TypeVariable(T)>.sumOf(selector: (TypeVariable(T)) -> Int): Int defined in kotlin.collections
+    public inline fun <T> Iterable<TypeVariable(T)>.sumOf(selector: (TypeVariable(T)) -> UInt): UInt defined in kotlin.collections>

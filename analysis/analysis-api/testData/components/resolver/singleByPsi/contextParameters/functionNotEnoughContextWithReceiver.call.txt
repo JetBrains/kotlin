@@ -1,5 +1,5 @@
 KtCallExpression(72,77): 'foo()'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         argumentMapping = {}

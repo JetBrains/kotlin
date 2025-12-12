@@ -86,25 +86,24 @@ KtNameReferenceExpression(133,140): 'MyAlias'
   null
 
 KtCallExpression(141,151): 'function()'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {}
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = MyAlias
-          isSafeNavigation = false
-          type = test.MyObject
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = test/MyObject.function(<dispatch receiver>: test.MyObject): kotlin.Unit
-          valueParameters = []
-          contextParameters = []
-          callableId = test/MyObject.function
-      typeArgumentsMapping = {}
+  KaSimpleFunctionCall:
+    argumentMapping = {}
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = MyAlias
+        isSafeNavigation = false
+        type = test.MyObject
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = test/MyObject.function(<dispatch receiver>: test.MyObject): kotlin.Unit
+        valueParameters = []
+        contextParameters = []
+        callableId = test/MyObject.function
+    typeArgumentsMapping = {}
 
 KtNameReferenceExpression(141,149): 'function'
   KaSuccessCallInfo:

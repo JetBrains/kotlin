@@ -311,22 +311,21 @@ KtNameReferenceExpression(423,430): 'MyClass'
   null
 
 KtCallExpression(433,439): 'TODO()'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {}
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Nothing
-          symbol = kotlin/TODO(): kotlin.Nothing
-          valueParameters = []
-          contextParameters = []
-          callableId = kotlin/TODO
-      typeArgumentsMapping = {}
+  KaSimpleFunctionCall:
+    argumentMapping = {}
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Nothing
+        symbol = kotlin/TODO(): kotlin.Nothing
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/TODO
+    typeArgumentsMapping = {}
 
 KtNameReferenceExpression(433,437): 'TODO'
   KaSuccessCallInfo:
@@ -362,22 +361,21 @@ KtNameReferenceExpression(472,486): 'InheritorClass'
   null
 
 KtCallExpression(489,505): 'InheritorClass()'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {}
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = MyClass.InheritorClass
-          symbol = <constructor>(): MyClass.InheritorClass
-          valueParameters = []
-          contextParameters = []
-          callableId = null
-      typeArgumentsMapping = {}
+  KaSimpleFunctionCall:
+    argumentMapping = {}
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MyClass.InheritorClass
+        symbol = <constructor>(): MyClass.InheritorClass
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+    typeArgumentsMapping = {}
 
 KtNameReferenceExpression(489,503): 'InheritorClass'
   KaSuccessCallInfo:
@@ -464,40 +462,39 @@ KtPropertyDelegate(673,685): 'by lazy {""}'
   null
 
 KtCallExpression(676,685): 'lazy {""}'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {
-        {""} -> (KaVariableSignature:
-          name = initializer
-          receiverType = null
-          returnType = kotlin.Function0<kotlin.String>
-          symbol = initializer: kotlin.Function0<T>
-          contextParameters = []
-          callableId = null)
-      }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Lazy<kotlin.String>
-          symbol = kotlin/lazy(initializer: kotlin.Function0<T>): kotlin.Lazy<T>
-          valueParameters = [
-            KaVariableSignature:
-              name = initializer
-              receiverType = null
-              returnType = kotlin.Function0<kotlin.String>
-              symbol = initializer: kotlin.Function0<T>
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/lazy
-      typeArgumentsMapping = {
-        T -> (kotlin.String)
-      }
+  KaSimpleFunctionCall:
+    argumentMapping = {
+      {""} -> (KaVariableSignature:
+        name = initializer
+        receiverType = null
+        returnType = kotlin.Function0<kotlin.String>
+        symbol = initializer: kotlin.Function0<T>
+        contextParameters = []
+        callableId = null)
+    }
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Lazy<kotlin.String>
+        symbol = kotlin/lazy(initializer: kotlin.Function0<T>): kotlin.Lazy<T>
+        valueParameters = [
+          KaVariableSignature:
+            name = initializer
+            receiverType = null
+            returnType = kotlin.Function0<kotlin.String>
+            symbol = initializer: kotlin.Function0<T>
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/lazy
+    typeArgumentsMapping = {
+      T -> (kotlin.String)
+    }
 
 KtNameReferenceExpression(676,680): 'lazy'
   KaSuccessCallInfo:
@@ -581,22 +578,21 @@ KtNameReferenceExpression(749,756): 'MyClass'
   null
 
 KtCallExpression(759,765): 'TODO()'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {}
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Nothing
-          symbol = kotlin/TODO(): kotlin.Nothing
-          valueParameters = []
-          contextParameters = []
-          callableId = kotlin/TODO
-      typeArgumentsMapping = {}
+  KaSimpleFunctionCall:
+    argumentMapping = {}
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Nothing
+        symbol = kotlin/TODO(): kotlin.Nothing
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/TODO
+    typeArgumentsMapping = {}
 
 KtNameReferenceExpression(759,763): 'TODO'
   KaSuccessCallInfo:
@@ -662,41 +658,40 @@ KtBlockExpression(824,1172): '{'
   null
 
 KtCallExpression(830,855): 'lMyClass(InheritorObject)'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {
-        InheritorObject -> (KaVariableSignature:
-          name = arg
-          receiverType = null
-          returnType = @R|kotlin.ParameterName|(name = String(arg))  MyClass
-          symbol = p1: P1
-          contextParameters = []
-          callableId = null)
-      }
-      isImplicitInvoke = true
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = lMyClass
-          isSafeNavigation = false
-          type = kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
-          valueParameters = [
-            KaVariableSignature:
-              name = arg
-              receiverType = null
-              returnType = @R|kotlin.ParameterName|(name = String(arg))  MyClass
-              symbol = p1: P1
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/Function1.invoke
-      typeArgumentsMapping = {}
+  KaSimpleFunctionCall:
+    argumentMapping = {
+      InheritorObject -> (KaVariableSignature:
+        name = arg
+        receiverType = null
+        returnType = @R|kotlin.ParameterName|(name = String(arg))  MyClass
+        symbol = p1: P1
+        contextParameters = []
+        callableId = null)
+    }
+    isImplicitInvoke = true
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = lMyClass
+        isSafeNavigation = false
+        type = kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
+        valueParameters = [
+          KaVariableSignature:
+            name = arg
+            receiverType = null
+            returnType = @R|kotlin.ParameterName|(name = String(arg))  MyClass
+            symbol = p1: P1
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/Function1.invoke
+    typeArgumentsMapping = {}
 
 KtNameReferenceExpression(830,838): 'lMyClass'
   KaSuccessCallInfo:
@@ -728,41 +723,40 @@ KtNameReferenceExpression(839,854): 'InheritorObject'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: InheritorObject>
 
 KtCallExpression(860,881): 'lMyClass(propMyClass)'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {
-        propMyClass -> (KaVariableSignature:
-          name = arg
-          receiverType = null
-          returnType = @R|kotlin.ParameterName|(name = String(arg))  MyClass
-          symbol = p1: P1
-          contextParameters = []
-          callableId = null)
-      }
-      isImplicitInvoke = true
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = lMyClass
-          isSafeNavigation = false
-          type = kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
-          valueParameters = [
-            KaVariableSignature:
-              name = arg
-              receiverType = null
-              returnType = @R|kotlin.ParameterName|(name = String(arg))  MyClass
-              symbol = p1: P1
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/Function1.invoke
-      typeArgumentsMapping = {}
+  KaSimpleFunctionCall:
+    argumentMapping = {
+      propMyClass -> (KaVariableSignature:
+        name = arg
+        receiverType = null
+        returnType = @R|kotlin.ParameterName|(name = String(arg))  MyClass
+        symbol = p1: P1
+        contextParameters = []
+        callableId = null)
+    }
+    isImplicitInvoke = true
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = lMyClass
+        isSafeNavigation = false
+        type = kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
+        valueParameters = [
+          KaVariableSignature:
+            name = arg
+            receiverType = null
+            returnType = @R|kotlin.ParameterName|(name = String(arg))  MyClass
+            symbol = p1: P1
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/Function1.invoke
+    typeArgumentsMapping = {}
 
 KtNameReferenceExpression(860,868): 'lMyClass'
   KaSuccessCallInfo:
@@ -794,41 +788,40 @@ KtNameReferenceExpression(869,880): 'propMyClass'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: propMyClass>
 
 KtCallExpression(886,914): 'lMyClass(propInheritorClass)'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {
-        propInheritorClass -> (KaVariableSignature:
-          name = arg
-          receiverType = null
-          returnType = @R|kotlin.ParameterName|(name = String(arg))  MyClass
-          symbol = p1: P1
-          contextParameters = []
-          callableId = null)
-      }
-      isImplicitInvoke = true
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = lMyClass
-          isSafeNavigation = false
-          type = kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
-          valueParameters = [
-            KaVariableSignature:
-              name = arg
-              receiverType = null
-              returnType = @R|kotlin.ParameterName|(name = String(arg))  MyClass
-              symbol = p1: P1
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/Function1.invoke
-      typeArgumentsMapping = {}
+  KaSimpleFunctionCall:
+    argumentMapping = {
+      propInheritorClass -> (KaVariableSignature:
+        name = arg
+        receiverType = null
+        returnType = @R|kotlin.ParameterName|(name = String(arg))  MyClass
+        symbol = p1: P1
+        contextParameters = []
+        callableId = null)
+    }
+    isImplicitInvoke = true
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = lMyClass
+        isSafeNavigation = false
+        type = kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
+        valueParameters = [
+          KaVariableSignature:
+            name = arg
+            receiverType = null
+            returnType = @R|kotlin.ParameterName|(name = String(arg))  MyClass
+            symbol = p1: P1
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/Function1.invoke
+    typeArgumentsMapping = {}
 
 KtNameReferenceExpression(886,894): 'lMyClass'
   KaSuccessCallInfo:
@@ -860,41 +853,40 @@ KtNameReferenceExpression(895,913): 'propInheritorClass'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: propInheritorClass>
 
 KtCallExpression(919,948): 'lMyClass(propInheritorObject)'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {
-        propInheritorObject -> (KaVariableSignature:
-          name = arg
-          receiverType = null
-          returnType = @R|kotlin.ParameterName|(name = String(arg))  MyClass
-          symbol = p1: P1
-          contextParameters = []
-          callableId = null)
-      }
-      isImplicitInvoke = true
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = lMyClass
-          isSafeNavigation = false
-          type = kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
-          valueParameters = [
-            KaVariableSignature:
-              name = arg
-              receiverType = null
-              returnType = @R|kotlin.ParameterName|(name = String(arg))  MyClass
-              symbol = p1: P1
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/Function1.invoke
-      typeArgumentsMapping = {}
+  KaSimpleFunctionCall:
+    argumentMapping = {
+      propInheritorObject -> (KaVariableSignature:
+        name = arg
+        receiverType = null
+        returnType = @R|kotlin.ParameterName|(name = String(arg))  MyClass
+        symbol = p1: P1
+        contextParameters = []
+        callableId = null)
+    }
+    isImplicitInvoke = true
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = lMyClass
+        isSafeNavigation = false
+        type = kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
+        valueParameters = [
+          KaVariableSignature:
+            name = arg
+            receiverType = null
+            returnType = @R|kotlin.ParameterName|(name = String(arg))  MyClass
+            symbol = p1: P1
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/Function1.invoke
+    typeArgumentsMapping = {}
 
 KtNameReferenceExpression(919,927): 'lMyClass'
   KaSuccessCallInfo:
@@ -926,41 +918,40 @@ KtNameReferenceExpression(928,947): 'propInheritorObject'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: propInheritorObject>
 
 KtCallExpression(954,976): 'lMyClass(NestedObject)'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {
-        NestedObject -> (KaVariableSignature:
-          name = arg
-          receiverType = null
-          returnType = @R|kotlin.ParameterName|(name = String(arg))  MyClass
-          symbol = p1: P1
-          contextParameters = []
-          callableId = null)
-      }
-      isImplicitInvoke = true
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = lMyClass
-          isSafeNavigation = false
-          type = kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
-          valueParameters = [
-            KaVariableSignature:
-              name = arg
-              receiverType = null
-              returnType = @R|kotlin.ParameterName|(name = String(arg))  MyClass
-              symbol = p1: P1
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/Function1.invoke
-      typeArgumentsMapping = {}
+  KaSimpleFunctionCall:
+    argumentMapping = {
+      NestedObject -> (KaVariableSignature:
+        name = arg
+        receiverType = null
+        returnType = @R|kotlin.ParameterName|(name = String(arg))  MyClass
+        symbol = p1: P1
+        contextParameters = []
+        callableId = null)
+    }
+    isImplicitInvoke = true
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = lMyClass
+        isSafeNavigation = false
+        type = kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
+        valueParameters = [
+          KaVariableSignature:
+            name = arg
+            receiverType = null
+            returnType = @R|kotlin.ParameterName|(name = String(arg))  MyClass
+            symbol = p1: P1
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/Function1.invoke
+    typeArgumentsMapping = {}
 
 KtNameReferenceExpression(954,962): 'lMyClass'
   KaSuccessCallInfo:
@@ -992,41 +983,40 @@ KtNameReferenceExpression(963,975): 'NestedObject'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: NestedObject>
 
 KtCallExpression(981,995): 'lMyClass(prop)'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {
-        prop -> (KaVariableSignature:
-          name = arg
-          receiverType = null
-          returnType = @R|kotlin.ParameterName|(name = String(arg))  MyClass
-          symbol = p1: P1
-          contextParameters = []
-          callableId = null)
-      }
-      isImplicitInvoke = true
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = lMyClass
-          isSafeNavigation = false
-          type = kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
-          valueParameters = [
-            KaVariableSignature:
-              name = arg
-              receiverType = null
-              returnType = @R|kotlin.ParameterName|(name = String(arg))  MyClass
-              symbol = p1: P1
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/Function1.invoke
-      typeArgumentsMapping = {}
+  KaSimpleFunctionCall:
+    argumentMapping = {
+      prop -> (KaVariableSignature:
+        name = arg
+        receiverType = null
+        returnType = @R|kotlin.ParameterName|(name = String(arg))  MyClass
+        symbol = p1: P1
+        contextParameters = []
+        callableId = null)
+    }
+    isImplicitInvoke = true
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = lMyClass
+        isSafeNavigation = false
+        type = kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
+        valueParameters = [
+          KaVariableSignature:
+            name = arg
+            receiverType = null
+            returnType = @R|kotlin.ParameterName|(name = String(arg))  MyClass
+            symbol = p1: P1
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/Function1.invoke
+    typeArgumentsMapping = {}
 
 KtNameReferenceExpression(981,989): 'lMyClass'
   KaSuccessCallInfo:
@@ -1058,41 +1048,40 @@ KtNameReferenceExpression(990,994): 'prop'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: prop>
 
 KtCallExpression(1000,1019): 'lMyClass(superProp)'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {
-        superProp -> (KaVariableSignature:
-          name = arg
-          receiverType = null
-          returnType = @R|kotlin.ParameterName|(name = String(arg))  MyClass
-          symbol = p1: P1
-          contextParameters = []
-          callableId = null)
-      }
-      isImplicitInvoke = true
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = lMyClass
-          isSafeNavigation = false
-          type = kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
-          valueParameters = [
-            KaVariableSignature:
-              name = arg
-              receiverType = null
-              returnType = @R|kotlin.ParameterName|(name = String(arg))  MyClass
-              symbol = p1: P1
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/Function1.invoke
-      typeArgumentsMapping = {}
+  KaSimpleFunctionCall:
+    argumentMapping = {
+      superProp -> (KaVariableSignature:
+        name = arg
+        receiverType = null
+        returnType = @R|kotlin.ParameterName|(name = String(arg))  MyClass
+        symbol = p1: P1
+        contextParameters = []
+        callableId = null)
+    }
+    isImplicitInvoke = true
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = lMyClass
+        isSafeNavigation = false
+        type = kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
+        valueParameters = [
+          KaVariableSignature:
+            name = arg
+            receiverType = null
+            returnType = @R|kotlin.ParameterName|(name = String(arg))  MyClass
+            symbol = p1: P1
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/Function1.invoke
+    typeArgumentsMapping = {}
 
 KtNameReferenceExpression(1000,1008): 'lMyClass'
   KaSuccessCallInfo:
@@ -1124,41 +1113,40 @@ KtNameReferenceExpression(1009,1018): 'superProp'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: superProp>
 
 KtCallExpression(1024,1043): 'lMyClass(constProp)'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {
-        constProp -> (KaVariableSignature:
-          name = arg
-          receiverType = null
-          returnType = @R|kotlin.ParameterName|(name = String(arg))  MyClass
-          symbol = p1: P1
-          contextParameters = []
-          callableId = null)
-      }
-      isImplicitInvoke = true
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = lMyClass
-          isSafeNavigation = false
-          type = kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
-          valueParameters = [
-            KaVariableSignature:
-              name = arg
-              receiverType = null
-              returnType = @R|kotlin.ParameterName|(name = String(arg))  MyClass
-              symbol = p1: P1
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/Function1.invoke
-      typeArgumentsMapping = {}
+  KaSimpleFunctionCall:
+    argumentMapping = {
+      constProp -> (KaVariableSignature:
+        name = arg
+        receiverType = null
+        returnType = @R|kotlin.ParameterName|(name = String(arg))  MyClass
+        symbol = p1: P1
+        contextParameters = []
+        callableId = null)
+    }
+    isImplicitInvoke = true
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = lMyClass
+        isSafeNavigation = false
+        type = kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
+        valueParameters = [
+          KaVariableSignature:
+            name = arg
+            receiverType = null
+            returnType = @R|kotlin.ParameterName|(name = String(arg))  MyClass
+            symbol = p1: P1
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/Function1.invoke
+    typeArgumentsMapping = {}
 
 KtNameReferenceExpression(1024,1032): 'lMyClass'
   KaSuccessCallInfo:
@@ -1190,41 +1178,40 @@ KtNameReferenceExpression(1033,1042): 'constProp'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: constProp>
 
 KtCallExpression(1048,1066): 'lMyClass(lazyProp)'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {
-        lazyProp -> (KaVariableSignature:
-          name = arg
-          receiverType = null
-          returnType = @R|kotlin.ParameterName|(name = String(arg))  MyClass
-          symbol = p1: P1
-          contextParameters = []
-          callableId = null)
-      }
-      isImplicitInvoke = true
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = lMyClass
-          isSafeNavigation = false
-          type = kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
-          valueParameters = [
-            KaVariableSignature:
-              name = arg
-              receiverType = null
-              returnType = @R|kotlin.ParameterName|(name = String(arg))  MyClass
-              symbol = p1: P1
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/Function1.invoke
-      typeArgumentsMapping = {}
+  KaSimpleFunctionCall:
+    argumentMapping = {
+      lazyProp -> (KaVariableSignature:
+        name = arg
+        receiverType = null
+        returnType = @R|kotlin.ParameterName|(name = String(arg))  MyClass
+        symbol = p1: P1
+        contextParameters = []
+        callableId = null)
+    }
+    isImplicitInvoke = true
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = lMyClass
+        isSafeNavigation = false
+        type = kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
+        valueParameters = [
+          KaVariableSignature:
+            name = arg
+            receiverType = null
+            returnType = @R|kotlin.ParameterName|(name = String(arg))  MyClass
+            symbol = p1: P1
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/Function1.invoke
+    typeArgumentsMapping = {}
 
 KtNameReferenceExpression(1048,1056): 'lMyClass'
   KaSuccessCallInfo:
@@ -1256,41 +1243,40 @@ KtNameReferenceExpression(1057,1065): 'lazyProp'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: lazyProp>
 
 KtCallExpression(1071,1091): 'lMyClass(lambdaProp)'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {
-        lambdaProp -> (KaVariableSignature:
-          name = arg
-          receiverType = null
-          returnType = @R|kotlin.ParameterName|(name = String(arg))  MyClass
-          symbol = p1: P1
-          contextParameters = []
-          callableId = null)
-      }
-      isImplicitInvoke = true
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = lMyClass
-          isSafeNavigation = false
-          type = kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
-          valueParameters = [
-            KaVariableSignature:
-              name = arg
-              receiverType = null
-              returnType = @R|kotlin.ParameterName|(name = String(arg))  MyClass
-              symbol = p1: P1
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/Function1.invoke
-      typeArgumentsMapping = {}
+  KaSimpleFunctionCall:
+    argumentMapping = {
+      lambdaProp -> (KaVariableSignature:
+        name = arg
+        receiverType = null
+        returnType = @R|kotlin.ParameterName|(name = String(arg))  MyClass
+        symbol = p1: P1
+        contextParameters = []
+        callableId = null)
+    }
+    isImplicitInvoke = true
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = lMyClass
+        isSafeNavigation = false
+        type = kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
+        valueParameters = [
+          KaVariableSignature:
+            name = arg
+            receiverType = null
+            returnType = @R|kotlin.ParameterName|(name = String(arg))  MyClass
+            symbol = p1: P1
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/Function1.invoke
+    typeArgumentsMapping = {}
 
 KtNameReferenceExpression(1071,1079): 'lMyClass'
   KaSuccessCallInfo:
@@ -1322,41 +1308,40 @@ KtNameReferenceExpression(1080,1090): 'lambdaProp'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: lambdaProp>
 
 KtCallExpression(1097,1123): 'lMyClass(InheritorClass())'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {
-        InheritorClass() -> (KaVariableSignature:
-          name = arg
-          receiverType = null
-          returnType = @R|kotlin.ParameterName|(name = String(arg))  MyClass
-          symbol = p1: P1
-          contextParameters = []
-          callableId = null)
-      }
-      isImplicitInvoke = true
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = lMyClass
-          isSafeNavigation = false
-          type = kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
-          valueParameters = [
-            KaVariableSignature:
-              name = arg
-              receiverType = null
-              returnType = @R|kotlin.ParameterName|(name = String(arg))  MyClass
-              symbol = p1: P1
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/Function1.invoke
-      typeArgumentsMapping = {}
+  KaSimpleFunctionCall:
+    argumentMapping = {
+      InheritorClass() -> (KaVariableSignature:
+        name = arg
+        receiverType = null
+        returnType = @R|kotlin.ParameterName|(name = String(arg))  MyClass
+        symbol = p1: P1
+        contextParameters = []
+        callableId = null)
+    }
+    isImplicitInvoke = true
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = lMyClass
+        isSafeNavigation = false
+        type = kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
+        valueParameters = [
+          KaVariableSignature:
+            name = arg
+            receiverType = null
+            returnType = @R|kotlin.ParameterName|(name = String(arg))  MyClass
+            symbol = p1: P1
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/Function1.invoke
+    typeArgumentsMapping = {}
 
 KtNameReferenceExpression(1097,1105): 'lMyClass'
   KaSuccessCallInfo:
@@ -1383,7 +1368,7 @@ KtValueArgument(1106,1122): 'InheritorClass()'
   null
 
 KtCallExpression(1106,1122): 'InheritorClass()'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: InheritorClass>
 
@@ -1396,41 +1381,40 @@ KtValueArgumentList(1120,1122): '()'
   null
 
 KtCallExpression(1128,1144): 'lMyClass(func())'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {
-        func() -> (KaVariableSignature:
-          name = arg
-          receiverType = null
-          returnType = @R|kotlin.ParameterName|(name = String(arg))  MyClass
-          symbol = p1: P1
-          contextParameters = []
-          callableId = null)
-      }
-      isImplicitInvoke = true
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = lMyClass
-          isSafeNavigation = false
-          type = kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
-          valueParameters = [
-            KaVariableSignature:
-              name = arg
-              receiverType = null
-              returnType = @R|kotlin.ParameterName|(name = String(arg))  MyClass
-              symbol = p1: P1
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/Function1.invoke
-      typeArgumentsMapping = {}
+  KaSimpleFunctionCall:
+    argumentMapping = {
+      func() -> (KaVariableSignature:
+        name = arg
+        receiverType = null
+        returnType = @R|kotlin.ParameterName|(name = String(arg))  MyClass
+        symbol = p1: P1
+        contextParameters = []
+        callableId = null)
+    }
+    isImplicitInvoke = true
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = lMyClass
+        isSafeNavigation = false
+        type = kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
+        valueParameters = [
+          KaVariableSignature:
+            name = arg
+            receiverType = null
+            returnType = @R|kotlin.ParameterName|(name = String(arg))  MyClass
+            symbol = p1: P1
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/Function1.invoke
+    typeArgumentsMapping = {}
 
 KtNameReferenceExpression(1128,1136): 'lMyClass'
   KaSuccessCallInfo:
@@ -1457,7 +1441,7 @@ KtValueArgument(1137,1143): 'func()'
   null
 
 KtCallExpression(1137,1143): 'func()'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: func>
 
@@ -1470,41 +1454,40 @@ KtValueArgumentList(1141,1143): '()'
   null
 
 KtCallExpression(1149,1170): 'lMyClass(superFunc())'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {
-        superFunc() -> (KaVariableSignature:
-          name = arg
-          receiverType = null
-          returnType = @R|kotlin.ParameterName|(name = String(arg))  MyClass
-          symbol = p1: P1
-          contextParameters = []
-          callableId = null)
-      }
-      isImplicitInvoke = true
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = lMyClass
-          isSafeNavigation = false
-          type = kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
-          valueParameters = [
-            KaVariableSignature:
-              name = arg
-              receiverType = null
-              returnType = @R|kotlin.ParameterName|(name = String(arg))  MyClass
-              symbol = p1: P1
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/Function1.invoke
-      typeArgumentsMapping = {}
+  KaSimpleFunctionCall:
+    argumentMapping = {
+      superFunc() -> (KaVariableSignature:
+        name = arg
+        receiverType = null
+        returnType = @R|kotlin.ParameterName|(name = String(arg))  MyClass
+        symbol = p1: P1
+        contextParameters = []
+        callableId = null)
+    }
+    isImplicitInvoke = true
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = lMyClass
+        isSafeNavigation = false
+        type = kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
+        valueParameters = [
+          KaVariableSignature:
+            name = arg
+            receiverType = null
+            returnType = @R|kotlin.ParameterName|(name = String(arg))  MyClass
+            symbol = p1: P1
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/Function1.invoke
+    typeArgumentsMapping = {}
 
 KtNameReferenceExpression(1149,1157): 'lMyClass'
   KaSuccessCallInfo:
@@ -1531,7 +1514,7 @@ KtValueArgument(1158,1169): 'superFunc()'
   null
 
 KtCallExpression(1158,1169): 'superFunc()'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: superFunc>
 

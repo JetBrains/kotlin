@@ -176,7 +176,8 @@ KtNameReferenceExpression(476,483): 'MyClass'
   null
 
 KtCallExpression(486,492): 'TODO()'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = kotlin/TODO(): kotlin.Nothing
 
 KtNameReferenceExpression(486,490): 'TODO'
   null
@@ -197,7 +198,8 @@ KtNameReferenceExpression(525,539): 'InheritorClass'
   null
 
 KtCallExpression(542,558): 'InheritorClass()'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <constructor>(): MyClass.InheritorClass
 
 KtNameReferenceExpression(542,556): 'InheritorClass'
   null
@@ -251,7 +253,8 @@ KtNameReferenceExpression(676,683): 'MyClass'
   null
 
 KtCallExpression(686,692): 'TODO()'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = kotlin/TODO(): kotlin.Nothing
 
 KtNameReferenceExpression(686,690): 'TODO'
   null
@@ -275,7 +278,8 @@ KtPropertyDelegate(722,734): 'by lazy {""}'
   null
 
 KtCallExpression(725,734): 'lazy {""}'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = kotlin/lazy(initializer: () -> T): kotlin.Lazy<T>
 
 KtNameReferenceExpression(725,729): 'lazy'
   null
@@ -374,7 +378,8 @@ KtBlockExpression(908,1287): '{'
   null
 
 KtCallExpression(914,1001): 'namedArgumentsHolder('
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /namedArgumentsHolder(enumArg: MyEnum, arg: MyClass): kotlin.Unit
 
 KtNameReferenceExpression(914,934): 'namedArgumentsHolder'
   null
@@ -407,7 +412,8 @@ KtNameReferenceExpression(985,995): 'EnumValue1'
   null
 
 KtCallExpression(1006,1087): 'namedArgumentsHolder('
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /namedArgumentsHolder(enumArg: MyEnum, arg: MyClass): kotlin.Unit
 
 KtNameReferenceExpression(1006,1026): 'namedArgumentsHolder'
   null
@@ -440,7 +446,11 @@ KtNameReferenceExpression(1072,1081): 'propClass'
   null
 
 KtCallExpression(1092,1123): 'namedArgumentHolder(arg = prop)'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /namedArgumentHolder(arg: MyClass): kotlin.Unit
+    ]
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
 
 KtNameReferenceExpression(1092,1111): 'namedArgumentHolder'
   null
@@ -461,7 +471,11 @@ KtNameReferenceExpression(1118,1122): 'prop'
   null
 
 KtCallExpression(1128,1164): 'namedArgumentHolder(arg = superProp)'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /namedArgumentHolder(arg: MyClass): kotlin.Unit
+    ]
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
 
 KtNameReferenceExpression(1128,1147): 'namedArgumentHolder'
   null
@@ -482,7 +496,8 @@ KtNameReferenceExpression(1154,1163): 'superProp'
   null
 
 KtCallExpression(1169,1202): 'namedArgumentHolder(arg = func())'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /namedArgumentHolder(arg: MyClass): kotlin.Unit
 
 KtNameReferenceExpression(1169,1188): 'namedArgumentHolder'
   null
@@ -500,7 +515,9 @@ KtNameReferenceExpression(1189,1192): 'arg'
   null
 
 KtCallExpression(1195,1201): 'func()'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'func'.>
 
 KtNameReferenceExpression(1195,1199): 'func'
   null
@@ -509,7 +526,8 @@ KtValueArgumentList(1199,1201): '()'
   null
 
 KtCallExpression(1207,1245): 'namedArgumentHolder(arg = superFunc())'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /namedArgumentHolder(arg: MyClass): kotlin.Unit
 
 KtNameReferenceExpression(1207,1226): 'namedArgumentHolder'
   null
@@ -527,7 +545,9 @@ KtNameReferenceExpression(1227,1230): 'arg'
   null
 
 KtCallExpression(1233,1244): 'superFunc()'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'superFunc'.>
 
 KtNameReferenceExpression(1233,1242): 'superFunc'
   null
@@ -536,7 +556,11 @@ KtValueArgumentList(1242,1244): '()'
   null
 
 KtCallExpression(1250,1285): 'namedArgumentHolder(arg = lazyProp)'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /namedArgumentHolder(arg: MyClass): kotlin.Unit
+    ]
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
 
 KtNameReferenceExpression(1250,1269): 'namedArgumentHolder'
   null

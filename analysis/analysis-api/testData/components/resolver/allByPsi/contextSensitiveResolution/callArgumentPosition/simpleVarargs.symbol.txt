@@ -56,7 +56,8 @@ KtBlockExpression(151,168): '{'
   null
 
 KtCallExpression(157,166): 'foo(X, Y)'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /foo(vararg a: MyEnum): kotlin.Unit
 
 KtNameReferenceExpression(157,160): 'foo'
   null

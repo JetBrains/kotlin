@@ -1,0 +1,817 @@
+KtFile: 'varargs.kt'
+  null
+
+KtPackageDirective(0,0): ''
+  null
+
+KtImportList(0,0): ''
+  null
+
+KtClass(93,167): 'open class Super {'
+  null
+
+KtDeclarationModifierList(93,97): 'open'
+  null
+
+KtClassBody(110,167): '{'
+  null
+
+KtProperty(116,142): 'val superProp: String = ""'
+  null
+
+KtTypeReference(131,137): 'String'
+  null
+
+KtUserType(131,137): 'String'
+  null
+
+KtNameReferenceExpression(131,137): 'String'
+  null
+
+KtStringTemplateExpression(140,142): '""'
+  null
+
+KtNamedFunction(147,165): 'fun superFunc() {}'
+  null
+
+KtParameterList(160,162): '()'
+  null
+
+KtBlockExpression(163,165): '{}'
+  null
+
+KtClass(169,774): 'open class MyClass {'
+  null
+
+KtDeclarationModifierList(169,173): 'open'
+  null
+
+KtClassBody(188,774): '{'
+  null
+
+KtObjectDeclaration(194,265): 'object InheritorObject: MyClass() {'
+  null
+
+KtSuperTypeList(218,227): 'MyClass()'
+  null
+
+KtSuperTypeCallEntry(218,227): 'MyClass()'
+  KaSingleSymbolResolutionSuccess:
+    symbol = <constructor>(): MyClass
+
+KtConstructorCalleeExpression(218,225): 'MyClass'
+  null
+
+KtTypeReference(218,225): 'MyClass'
+  null
+
+KtUserType(218,225): 'MyClass'
+  null
+
+KtNameReferenceExpression(218,225): 'MyClass'
+  null
+
+KtValueArgumentList(225,227): '()'
+  null
+
+KtClassBody(228,265): '{'
+  null
+
+KtProperty(238,259): 'val prop: String = ""'
+  null
+
+KtTypeReference(248,254): 'String'
+  null
+
+KtUserType(248,254): 'String'
+  null
+
+KtNameReferenceExpression(248,254): 'String'
+  null
+
+KtStringTemplateExpression(257,259): '""'
+  null
+
+KtClass(271,340): 'class InheritorClass: MyClass() {'
+  null
+
+KtSuperTypeList(293,302): 'MyClass()'
+  null
+
+KtSuperTypeCallEntry(293,302): 'MyClass()'
+  KaSingleSymbolResolutionSuccess:
+    symbol = <constructor>(): MyClass
+
+KtConstructorCalleeExpression(293,300): 'MyClass'
+  null
+
+KtTypeReference(293,300): 'MyClass'
+  null
+
+KtUserType(293,300): 'MyClass'
+  null
+
+KtNameReferenceExpression(293,300): 'MyClass'
+  null
+
+KtValueArgumentList(300,302): '()'
+  null
+
+KtClassBody(303,340): '{'
+  null
+
+KtProperty(313,334): 'val prop: String = ""'
+  null
+
+KtTypeReference(323,329): 'String'
+  null
+
+KtUserType(323,329): 'String'
+  null
+
+KtNameReferenceExpression(323,329): 'String'
+  null
+
+KtStringTemplateExpression(332,334): '""'
+  null
+
+KtObjectDeclaration(346,365): 'object NestedObject'
+  null
+
+KtObjectDeclaration(371,772): 'companion object: Super() {'
+  null
+
+KtDeclarationModifierList(371,380): 'companion'
+  null
+
+KtSuperTypeList(389,396): 'Super()'
+  null
+
+KtSuperTypeCallEntry(389,396): 'Super()'
+  KaSingleSymbolResolutionSuccess:
+    symbol = <constructor>(): Super
+
+KtConstructorCalleeExpression(389,394): 'Super'
+  null
+
+KtTypeReference(389,394): 'Super'
+  null
+
+KtUserType(389,394): 'Super'
+  null
+
+KtNameReferenceExpression(389,394): 'Super'
+  null
+
+KtValueArgumentList(394,396): '()'
+  null
+
+KtClassBody(397,772): '{'
+  null
+
+KtProperty(407,440): 'val propMyClass: MyClass = TODO()'
+  null
+
+KtTypeReference(424,431): 'MyClass'
+  null
+
+KtUserType(424,431): 'MyClass'
+  null
+
+KtNameReferenceExpression(424,431): 'MyClass'
+  null
+
+KtCallExpression(434,440): 'TODO()'
+  KaSingleSymbolResolutionSuccess:
+    symbol = kotlin/TODO(): kotlin.Nothing
+
+KtNameReferenceExpression(434,438): 'TODO'
+  null
+
+KtValueArgumentList(438,440): '()'
+  null
+
+KtProperty(449,506): 'val propInheritorClass: InheritorClass = InheritorClass()'
+  null
+
+KtTypeReference(473,487): 'InheritorClass'
+  null
+
+KtUserType(473,487): 'InheritorClass'
+  null
+
+KtNameReferenceExpression(473,487): 'InheritorClass'
+  null
+
+KtCallExpression(490,506): 'InheritorClass()'
+  KaSingleSymbolResolutionSuccess:
+    symbol = <constructor>(): MyClass.InheritorClass
+
+KtNameReferenceExpression(490,504): 'InheritorClass'
+  null
+
+KtValueArgumentList(504,506): '()'
+  null
+
+KtProperty(515,573): 'val propInheritorObject: InheritorObject = InheritorObject'
+  null
+
+KtTypeReference(540,555): 'InheritorObject'
+  null
+
+KtUserType(540,555): 'InheritorObject'
+  null
+
+KtNameReferenceExpression(540,555): 'InheritorObject'
+  null
+
+KtNameReferenceExpression(558,573): 'InheritorObject'
+  null
+
+KtProperty(582,603): 'val prop: String = ""'
+  null
+
+KtTypeReference(592,598): 'String'
+  null
+
+KtUserType(592,598): 'String'
+  null
+
+KtNameReferenceExpression(592,598): 'String'
+  null
+
+KtStringTemplateExpression(601,603): '""'
+  null
+
+KtProperty(612,644): 'const val constProp: String = ""'
+  null
+
+KtDeclarationModifierList(612,617): 'const'
+  null
+
+KtTypeReference(633,639): 'String'
+  null
+
+KtUserType(633,639): 'String'
+  null
+
+KtNameReferenceExpression(633,639): 'String'
+  null
+
+KtStringTemplateExpression(642,644): '""'
+  null
+
+KtProperty(653,686): 'val lazyProp: String by lazy {""}'
+  null
+
+KtTypeReference(667,673): 'String'
+  null
+
+KtUserType(667,673): 'String'
+  null
+
+KtNameReferenceExpression(667,673): 'String'
+  null
+
+KtPropertyDelegate(674,686): 'by lazy {""}'
+  null
+
+KtCallExpression(677,686): 'lazy {""}'
+  KaSingleSymbolResolutionSuccess:
+    symbol = kotlin/lazy(initializer: kotlin.Function0<T>): kotlin.Lazy<T>
+
+KtNameReferenceExpression(677,681): 'lazy'
+  null
+
+KtLambdaArgument(682,686): '{""}'
+  null
+
+KtLambdaExpression(682,686): '{""}'
+  null
+
+KtFunctionLiteral(682,686): '{""}'
+  null
+
+KtBlockExpression(683,685): '""'
+  null
+
+KtStringTemplateExpression(683,685): '""'
+  null
+
+KtNamedFunction(695,723): 'fun func(): MyClass = TODO()'
+  null
+
+KtParameterList(703,705): '()'
+  null
+
+KtTypeReference(707,714): 'MyClass'
+  null
+
+KtUserType(707,714): 'MyClass'
+  null
+
+KtNameReferenceExpression(707,714): 'MyClass'
+  null
+
+KtCallExpression(717,723): 'TODO()'
+  KaSingleSymbolResolutionSuccess:
+    symbol = kotlin/TODO(): kotlin.Nothing
+
+KtNameReferenceExpression(717,721): 'TODO'
+  null
+
+KtValueArgumentList(721,723): '()'
+  null
+
+KtProperty(732,766): 'val lambdaProp = {InheritorObject}'
+  null
+
+KtLambdaExpression(749,766): '{InheritorObject}'
+  null
+
+KtFunctionLiteral(749,766): '{InheritorObject}'
+  null
+
+KtBlockExpression(750,765): 'InheritorObject'
+  null
+
+KtNameReferenceExpression(750,765): 'InheritorObject'
+  null
+
+KtNamedFunction(776,818): 'fun <T>receiverVarArg(vararg arg: T) = arg'
+  null
+
+KtTypeParameterList(780,783): '<T>'
+  null
+
+KtTypeParameter(781,782): 'T'
+  null
+
+KtParameterList(797,812): '(vararg arg: T)'
+  null
+
+KtParameter(798,811): 'vararg arg: T'
+  null
+
+KtDeclarationModifierList(798,804): 'vararg'
+  null
+
+KtTypeReference(810,811): 'T'
+  null
+
+KtUserType(810,811): 'T'
+  null
+
+KtNameReferenceExpression(810,811): 'T'
+  null
+
+KtNameReferenceExpression(815,818): 'arg'
+  null
+
+KtNamedFunction(820,1348): 'fun testVarArg(i: MyClass.InheritorClass) {'
+  null
+
+KtParameterList(834,861): '(i: MyClass.InheritorClass)'
+  null
+
+KtParameter(835,860): 'i: MyClass.InheritorClass'
+  null
+
+KtTypeReference(838,860): 'MyClass.InheritorClass'
+  null
+
+KtUserType(838,860): 'MyClass.InheritorClass'
+  null
+
+KtUserType(838,845): 'MyClass'
+  null
+
+KtNameReferenceExpression(838,845): 'MyClass'
+  null
+
+KtNameReferenceExpression(846,860): 'InheritorClass'
+  null
+
+KtBlockExpression(862,1348): '{'
+  null
+
+KtCallExpression(868,908): 'receiverVarArg<MyClass>(InheritorObject)'
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /receiverVarArg(vararg arg: T): kotlin.Array<out T>
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with receiverVarArg>
+
+KtNameReferenceExpression(868,882): 'receiverVarArg'
+  null
+
+KtTypeArgumentList(882,891): '<MyClass>'
+  null
+
+KtTypeProjection(883,890): 'MyClass'
+  null
+
+KtTypeReference(883,890): 'MyClass'
+  null
+
+KtUserType(883,890): 'MyClass'
+  null
+
+KtNameReferenceExpression(883,890): 'MyClass'
+  null
+
+KtValueArgumentList(891,908): '(InheritorObject)'
+  null
+
+KtValueArgument(892,907): 'InheritorObject'
+  null
+
+KtNameReferenceExpression(892,907): 'InheritorObject'
+  null
+
+KtCallExpression(913,939): 'receiverVarArg<MyClass>(i)'
+  KaSingleSymbolResolutionSuccess:
+    symbol = /receiverVarArg(vararg arg: T): kotlin.Array<out T>
+
+KtNameReferenceExpression(913,927): 'receiverVarArg'
+  null
+
+KtTypeArgumentList(927,936): '<MyClass>'
+  null
+
+KtTypeProjection(928,935): 'MyClass'
+  null
+
+KtTypeReference(928,935): 'MyClass'
+  null
+
+KtUserType(928,935): 'MyClass'
+  null
+
+KtNameReferenceExpression(928,935): 'MyClass'
+  null
+
+KtValueArgumentList(936,939): '(i)'
+  null
+
+KtValueArgument(937,938): 'i'
+  null
+
+KtNameReferenceExpression(937,938): 'i'
+  null
+
+KtCallExpression(944,980): 'receiverVarArg<MyClass>(propMyClass)'
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /receiverVarArg(vararg arg: T): kotlin.Array<out T>
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with receiverVarArg>
+
+KtNameReferenceExpression(944,958): 'receiverVarArg'
+  null
+
+KtTypeArgumentList(958,967): '<MyClass>'
+  null
+
+KtTypeProjection(959,966): 'MyClass'
+  null
+
+KtTypeReference(959,966): 'MyClass'
+  null
+
+KtUserType(959,966): 'MyClass'
+  null
+
+KtNameReferenceExpression(959,966): 'MyClass'
+  null
+
+KtValueArgumentList(967,980): '(propMyClass)'
+  null
+
+KtValueArgument(968,979): 'propMyClass'
+  null
+
+KtNameReferenceExpression(968,979): 'propMyClass'
+  null
+
+KtCallExpression(985,1028): 'receiverVarArg<MyClass>(propInheritorClass)'
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /receiverVarArg(vararg arg: T): kotlin.Array<out T>
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with receiverVarArg>
+
+KtNameReferenceExpression(985,999): 'receiverVarArg'
+  null
+
+KtTypeArgumentList(999,1008): '<MyClass>'
+  null
+
+KtTypeProjection(1000,1007): 'MyClass'
+  null
+
+KtTypeReference(1000,1007): 'MyClass'
+  null
+
+KtUserType(1000,1007): 'MyClass'
+  null
+
+KtNameReferenceExpression(1000,1007): 'MyClass'
+  null
+
+KtValueArgumentList(1008,1028): '(propInheritorClass)'
+  null
+
+KtValueArgument(1009,1027): 'propInheritorClass'
+  null
+
+KtNameReferenceExpression(1009,1027): 'propInheritorClass'
+  null
+
+KtCallExpression(1033,1077): 'receiverVarArg<MyClass>(propInheritorObject)'
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /receiverVarArg(vararg arg: T): kotlin.Array<out T>
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with receiverVarArg>
+
+KtNameReferenceExpression(1033,1047): 'receiverVarArg'
+  null
+
+KtTypeArgumentList(1047,1056): '<MyClass>'
+  null
+
+KtTypeProjection(1048,1055): 'MyClass'
+  null
+
+KtTypeReference(1048,1055): 'MyClass'
+  null
+
+KtUserType(1048,1055): 'MyClass'
+  null
+
+KtNameReferenceExpression(1048,1055): 'MyClass'
+  null
+
+KtValueArgumentList(1056,1077): '(propInheritorObject)'
+  null
+
+KtValueArgument(1057,1076): 'propInheritorObject'
+  null
+
+KtNameReferenceExpression(1057,1076): 'propInheritorObject'
+  null
+
+KtCallExpression(1083,1112): 'receiverVarArg<MyClass>(prop)'
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /receiverVarArg(vararg arg: T): kotlin.Array<out T>
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with receiverVarArg>
+
+KtNameReferenceExpression(1083,1097): 'receiverVarArg'
+  null
+
+KtTypeArgumentList(1097,1106): '<MyClass>'
+  null
+
+KtTypeProjection(1098,1105): 'MyClass'
+  null
+
+KtTypeReference(1098,1105): 'MyClass'
+  null
+
+KtUserType(1098,1105): 'MyClass'
+  null
+
+KtNameReferenceExpression(1098,1105): 'MyClass'
+  null
+
+KtValueArgumentList(1106,1112): '(prop)'
+  null
+
+KtValueArgument(1107,1111): 'prop'
+  null
+
+KtNameReferenceExpression(1107,1111): 'prop'
+  null
+
+KtCallExpression(1117,1151): 'receiverVarArg<MyClass>(constProp)'
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /receiverVarArg(vararg arg: T): kotlin.Array<out T>
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with receiverVarArg>
+
+KtNameReferenceExpression(1117,1131): 'receiverVarArg'
+  null
+
+KtTypeArgumentList(1131,1140): '<MyClass>'
+  null
+
+KtTypeProjection(1132,1139): 'MyClass'
+  null
+
+KtTypeReference(1132,1139): 'MyClass'
+  null
+
+KtUserType(1132,1139): 'MyClass'
+  null
+
+KtNameReferenceExpression(1132,1139): 'MyClass'
+  null
+
+KtValueArgumentList(1140,1151): '(constProp)'
+  null
+
+KtValueArgument(1141,1150): 'constProp'
+  null
+
+KtNameReferenceExpression(1141,1150): 'constProp'
+  null
+
+KtCallExpression(1156,1189): 'receiverVarArg<MyClass>(lazyProp)'
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /receiverVarArg(vararg arg: T): kotlin.Array<out T>
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with receiverVarArg>
+
+KtNameReferenceExpression(1156,1170): 'receiverVarArg'
+  null
+
+KtTypeArgumentList(1170,1179): '<MyClass>'
+  null
+
+KtTypeProjection(1171,1178): 'MyClass'
+  null
+
+KtTypeReference(1171,1178): 'MyClass'
+  null
+
+KtUserType(1171,1178): 'MyClass'
+  null
+
+KtNameReferenceExpression(1171,1178): 'MyClass'
+  null
+
+KtValueArgumentList(1179,1189): '(lazyProp)'
+  null
+
+KtValueArgument(1180,1188): 'lazyProp'
+  null
+
+KtNameReferenceExpression(1180,1188): 'lazyProp'
+  null
+
+KtCallExpression(1194,1229): 'receiverVarArg<MyClass>(lambdaProp)'
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /receiverVarArg(vararg arg: T): kotlin.Array<out T>
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with receiverVarArg>
+
+KtNameReferenceExpression(1194,1208): 'receiverVarArg'
+  null
+
+KtTypeArgumentList(1208,1217): '<MyClass>'
+  null
+
+KtTypeProjection(1209,1216): 'MyClass'
+  null
+
+KtTypeReference(1209,1216): 'MyClass'
+  null
+
+KtUserType(1209,1216): 'MyClass'
+  null
+
+KtNameReferenceExpression(1209,1216): 'MyClass'
+  null
+
+KtValueArgumentList(1217,1229): '(lambdaProp)'
+  null
+
+KtValueArgument(1218,1228): 'lambdaProp'
+  null
+
+KtNameReferenceExpression(1218,1228): 'lambdaProp'
+  null
+
+KtCallExpression(1234,1268): 'receiverVarArg<MyClass>(superProp)'
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /receiverVarArg(vararg arg: T): kotlin.Array<out T>
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with receiverVarArg>
+
+KtNameReferenceExpression(1234,1248): 'receiverVarArg'
+  null
+
+KtTypeArgumentList(1248,1257): '<MyClass>'
+  null
+
+KtTypeProjection(1249,1256): 'MyClass'
+  null
+
+KtTypeReference(1249,1256): 'MyClass'
+  null
+
+KtUserType(1249,1256): 'MyClass'
+  null
+
+KtNameReferenceExpression(1249,1256): 'MyClass'
+  null
+
+KtValueArgumentList(1257,1268): '(superProp)'
+  null
+
+KtValueArgument(1258,1267): 'superProp'
+  null
+
+KtNameReferenceExpression(1258,1267): 'superProp'
+  null
+
+KtCallExpression(1274,1305): 'receiverVarArg<MyClass>(func())'
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /receiverVarArg(vararg arg: T): kotlin.Array<out T>
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with receiverVarArg>
+
+KtNameReferenceExpression(1274,1288): 'receiverVarArg'
+  null
+
+KtTypeArgumentList(1288,1297): '<MyClass>'
+  null
+
+KtTypeProjection(1289,1296): 'MyClass'
+  null
+
+KtTypeReference(1289,1296): 'MyClass'
+  null
+
+KtUserType(1289,1296): 'MyClass'
+  null
+
+KtNameReferenceExpression(1289,1296): 'MyClass'
+  null
+
+KtValueArgumentList(1297,1305): '(func())'
+  null
+
+KtValueArgument(1298,1304): 'func()'
+  null
+
+KtCallExpression(1298,1304): 'func()'
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: func>
+
+KtNameReferenceExpression(1298,1302): 'func'
+  null
+
+KtValueArgumentList(1302,1304): '()'
+  null
+
+KtCallExpression(1310,1346): 'receiverVarArg<MyClass>(superFunc())'
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /receiverVarArg(vararg arg: T): kotlin.Array<out T>
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with receiverVarArg>
+
+KtNameReferenceExpression(1310,1324): 'receiverVarArg'
+  null
+
+KtTypeArgumentList(1324,1333): '<MyClass>'
+  null
+
+KtTypeProjection(1325,1332): 'MyClass'
+  null
+
+KtTypeReference(1325,1332): 'MyClass'
+  null
+
+KtUserType(1325,1332): 'MyClass'
+  null
+
+KtNameReferenceExpression(1325,1332): 'MyClass'
+  null
+
+KtValueArgumentList(1333,1346): '(superFunc())'
+  null
+
+KtValueArgument(1334,1345): 'superFunc()'
+  null
+
+KtCallExpression(1334,1345): 'superFunc()'
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: superFunc>
+
+KtNameReferenceExpression(1334,1343): 'superFunc'
+  null
+
+KtValueArgumentList(1343,1345): '()'
+  null

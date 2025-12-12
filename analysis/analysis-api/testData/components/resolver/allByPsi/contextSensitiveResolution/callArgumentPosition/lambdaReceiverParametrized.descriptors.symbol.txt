@@ -1,0 +1,1213 @@
+KtFile: 'lambdaReceiverParametrized.kt'
+  null
+
+KtPackageDirective(0,0): ''
+  null
+
+KtImportList(0,0): ''
+  null
+
+KtClass(0,166): '// ISSUE: KT-75315'
+  null
+
+KtDeclarationModifierList(92,96): 'open'
+  null
+
+KtClassBody(109,166): '{'
+  null
+
+KtProperty(115,141): 'val superProp: String = ""'
+  null
+
+KtTypeReference(130,136): 'String'
+  null
+
+KtUserType(130,136): 'String'
+  null
+
+KtNameReferenceExpression(130,136): 'String'
+  null
+
+KtStringTemplateExpression(139,141): '""'
+  null
+
+KtNamedFunction(146,164): 'fun superFunc() {}'
+  null
+
+KtParameterList(159,161): '()'
+  null
+
+KtBlockExpression(162,164): '{}'
+  null
+
+KtClass(168,773): 'open class MyClass {'
+  null
+
+KtDeclarationModifierList(168,172): 'open'
+  null
+
+KtClassBody(187,773): '{'
+  null
+
+KtObjectDeclaration(193,264): 'object InheritorObject: MyClass() {'
+  null
+
+KtSuperTypeList(217,226): 'MyClass()'
+  null
+
+KtSuperTypeCallEntry(217,226): 'MyClass()'
+  KaSingleSymbolResolutionSuccess:
+    symbol = <constructor>(): MyClass
+
+KtConstructorCalleeExpression(217,224): 'MyClass'
+  null
+
+KtTypeReference(217,224): 'MyClass'
+  null
+
+KtUserType(217,224): 'MyClass'
+  null
+
+KtNameReferenceExpression(217,224): 'MyClass'
+  null
+
+KtValueArgumentList(224,226): '()'
+  null
+
+KtClassBody(227,264): '{'
+  null
+
+KtProperty(237,258): 'val prop: String = ""'
+  null
+
+KtTypeReference(247,253): 'String'
+  null
+
+KtUserType(247,253): 'String'
+  null
+
+KtNameReferenceExpression(247,253): 'String'
+  null
+
+KtStringTemplateExpression(256,258): '""'
+  null
+
+KtClass(270,339): 'class InheritorClass: MyClass() {'
+  null
+
+KtSuperTypeList(292,301): 'MyClass()'
+  null
+
+KtSuperTypeCallEntry(292,301): 'MyClass()'
+  KaSingleSymbolResolutionSuccess:
+    symbol = <constructor>(): MyClass
+
+KtConstructorCalleeExpression(292,299): 'MyClass'
+  null
+
+KtTypeReference(292,299): 'MyClass'
+  null
+
+KtUserType(292,299): 'MyClass'
+  null
+
+KtNameReferenceExpression(292,299): 'MyClass'
+  null
+
+KtValueArgumentList(299,301): '()'
+  null
+
+KtClassBody(302,339): '{'
+  null
+
+KtProperty(312,333): 'val prop: String = ""'
+  null
+
+KtTypeReference(322,328): 'String'
+  null
+
+KtUserType(322,328): 'String'
+  null
+
+KtNameReferenceExpression(322,328): 'String'
+  null
+
+KtStringTemplateExpression(331,333): '""'
+  null
+
+KtObjectDeclaration(345,364): 'object NestedObject'
+  null
+
+KtObjectDeclaration(370,771): 'companion object: Super() {'
+  null
+
+KtDeclarationModifierList(370,379): 'companion'
+  null
+
+KtSuperTypeList(388,395): 'Super()'
+  null
+
+KtSuperTypeCallEntry(388,395): 'Super()'
+  KaSingleSymbolResolutionSuccess:
+    symbol = <constructor>(): Super
+
+KtConstructorCalleeExpression(388,393): 'Super'
+  null
+
+KtTypeReference(388,393): 'Super'
+  null
+
+KtUserType(388,393): 'Super'
+  null
+
+KtNameReferenceExpression(388,393): 'Super'
+  null
+
+KtValueArgumentList(393,395): '()'
+  null
+
+KtClassBody(396,771): '{'
+  null
+
+KtProperty(406,439): 'val propMyClass: MyClass = TODO()'
+  null
+
+KtTypeReference(423,430): 'MyClass'
+  null
+
+KtUserType(423,430): 'MyClass'
+  null
+
+KtNameReferenceExpression(423,430): 'MyClass'
+  null
+
+KtCallExpression(433,439): 'TODO()'
+  KaSingleSymbolResolutionSuccess:
+    symbol = kotlin/TODO(): kotlin.Nothing
+
+KtNameReferenceExpression(433,437): 'TODO'
+  null
+
+KtValueArgumentList(437,439): '()'
+  null
+
+KtProperty(448,505): 'val propInheritorClass: InheritorClass = InheritorClass()'
+  null
+
+KtTypeReference(472,486): 'InheritorClass'
+  null
+
+KtUserType(472,486): 'InheritorClass'
+  null
+
+KtNameReferenceExpression(472,486): 'InheritorClass'
+  null
+
+KtCallExpression(489,505): 'InheritorClass()'
+  KaSingleSymbolResolutionSuccess:
+    symbol = <constructor>(): MyClass.InheritorClass
+
+KtNameReferenceExpression(489,503): 'InheritorClass'
+  null
+
+KtValueArgumentList(503,505): '()'
+  null
+
+KtProperty(514,572): 'val propInheritorObject: InheritorObject = InheritorObject'
+  null
+
+KtTypeReference(539,554): 'InheritorObject'
+  null
+
+KtUserType(539,554): 'InheritorObject'
+  null
+
+KtNameReferenceExpression(539,554): 'InheritorObject'
+  null
+
+KtNameReferenceExpression(557,572): 'InheritorObject'
+  null
+
+KtProperty(581,602): 'val prop: String = ""'
+  null
+
+KtTypeReference(591,597): 'String'
+  null
+
+KtUserType(591,597): 'String'
+  null
+
+KtNameReferenceExpression(591,597): 'String'
+  null
+
+KtStringTemplateExpression(600,602): '""'
+  null
+
+KtProperty(611,643): 'const val constProp: String = ""'
+  null
+
+KtDeclarationModifierList(611,616): 'const'
+  null
+
+KtTypeReference(632,638): 'String'
+  null
+
+KtUserType(632,638): 'String'
+  null
+
+KtNameReferenceExpression(632,638): 'String'
+  null
+
+KtStringTemplateExpression(641,643): '""'
+  null
+
+KtProperty(652,685): 'val lazyProp: String by lazy {""}'
+  null
+
+KtTypeReference(666,672): 'String'
+  null
+
+KtUserType(666,672): 'String'
+  null
+
+KtNameReferenceExpression(666,672): 'String'
+  null
+
+KtPropertyDelegate(673,685): 'by lazy {""}'
+  null
+
+KtCallExpression(676,685): 'lazy {""}'
+  KaSingleSymbolResolutionSuccess:
+    symbol = kotlin/lazy(initializer: kotlin.Function0<T>): kotlin.Lazy<T>
+
+KtNameReferenceExpression(676,680): 'lazy'
+  null
+
+KtLambdaArgument(681,685): '{""}'
+  null
+
+KtLambdaExpression(681,685): '{""}'
+  null
+
+KtFunctionLiteral(681,685): '{""}'
+  null
+
+KtBlockExpression(682,684): '""'
+  null
+
+KtStringTemplateExpression(682,684): '""'
+  null
+
+KtNamedFunction(694,722): 'fun func(): MyClass = TODO()'
+  null
+
+KtParameterList(702,704): '()'
+  null
+
+KtTypeReference(706,713): 'MyClass'
+  null
+
+KtUserType(706,713): 'MyClass'
+  null
+
+KtNameReferenceExpression(706,713): 'MyClass'
+  null
+
+KtCallExpression(716,722): 'TODO()'
+  KaSingleSymbolResolutionSuccess:
+    symbol = kotlin/TODO(): kotlin.Nothing
+
+KtNameReferenceExpression(716,720): 'TODO'
+  null
+
+KtValueArgumentList(720,722): '()'
+  null
+
+KtProperty(731,765): 'val lambdaProp = {InheritorObject}'
+  null
+
+KtLambdaExpression(748,765): '{InheritorObject}'
+  null
+
+KtFunctionLiteral(748,765): '{InheritorObject}'
+  null
+
+KtBlockExpression(749,764): 'InheritorObject'
+  null
+
+KtNameReferenceExpression(749,764): 'InheritorObject'
+  null
+
+KtNamedFunction(775,825): 'fun <T>receiveParametrizedLambda(l: (T)->Unit) { }'
+  null
+
+KtTypeParameterList(779,782): '<T>'
+  null
+
+KtTypeParameter(780,781): 'T'
+  null
+
+KtParameterList(807,821): '(l: (T)->Unit)'
+  null
+
+KtParameter(808,820): 'l: (T)->Unit'
+  null
+
+KtTypeReference(811,820): '(T)->Unit'
+  null
+
+KtFunctionType(811,820): '(T)->Unit'
+  null
+
+KtParameterList(811,814): '(T)'
+  null
+
+KtParameter(812,813): 'T'
+  null
+
+KtTypeReference(812,813): 'T'
+  null
+
+KtUserType(812,813): 'T'
+  null
+
+KtNameReferenceExpression(812,813): 'T'
+  null
+
+KtTypeReference(816,820): 'Unit'
+  null
+
+KtUserType(816,820): 'Unit'
+  null
+
+KtNameReferenceExpression(816,820): 'Unit'
+  null
+
+KtBlockExpression(822,825): '{ }'
+  null
+
+KtNamedFunction(827,1836): 'fun testReceiveParametrizedLambda() {'
+  null
+
+KtParameterList(860,862): '()'
+  null
+
+KtBlockExpression(863,1836): '{'
+  null
+
+KtCallExpression(869,942): 'receiveParametrizedLambda<MyClass> { i: MyClass -> i == InheritorObject }'
+  KaSingleSymbolResolutionSuccess:
+    symbol = /receiveParametrizedLambda(l: kotlin.Function1<T, kotlin.Unit>): kotlin.Unit
+
+KtNameReferenceExpression(869,894): 'receiveParametrizedLambda'
+  null
+
+KtTypeArgumentList(894,903): '<MyClass>'
+  null
+
+KtTypeProjection(895,902): 'MyClass'
+  null
+
+KtTypeReference(895,902): 'MyClass'
+  null
+
+KtUserType(895,902): 'MyClass'
+  null
+
+KtNameReferenceExpression(895,902): 'MyClass'
+  null
+
+KtLambdaArgument(904,942): '{ i: MyClass -> i == InheritorObject }'
+  null
+
+KtLambdaExpression(904,942): '{ i: MyClass -> i == InheritorObject }'
+  null
+
+KtFunctionLiteral(904,942): '{ i: MyClass -> i == InheritorObject }'
+  null
+
+KtParameterList(906,916): 'i: MyClass'
+  null
+
+KtParameter(906,916): 'i: MyClass'
+  null
+
+KtTypeReference(909,916): 'MyClass'
+  null
+
+KtUserType(909,916): 'MyClass'
+  null
+
+KtNameReferenceExpression(909,916): 'MyClass'
+  null
+
+KtBlockExpression(920,940): 'i == InheritorObject'
+  null
+
+KtBinaryExpression(920,940): 'i == InheritorObject'
+  null
+
+KtNameReferenceExpression(920,921): 'i'
+  null
+
+KtOperationReferenceExpression(922,924): '=='
+  null
+
+KtNameReferenceExpression(925,940): 'InheritorObject'
+  null
+
+KtCallExpression(947,1016): 'receiveParametrizedLambda<MyClass> { i: MyClass -> i == propMyClass }'
+  KaSingleSymbolResolutionSuccess:
+    symbol = /receiveParametrizedLambda(l: kotlin.Function1<T, kotlin.Unit>): kotlin.Unit
+
+KtNameReferenceExpression(947,972): 'receiveParametrizedLambda'
+  null
+
+KtTypeArgumentList(972,981): '<MyClass>'
+  null
+
+KtTypeProjection(973,980): 'MyClass'
+  null
+
+KtTypeReference(973,980): 'MyClass'
+  null
+
+KtUserType(973,980): 'MyClass'
+  null
+
+KtNameReferenceExpression(973,980): 'MyClass'
+  null
+
+KtLambdaArgument(982,1016): '{ i: MyClass -> i == propMyClass }'
+  null
+
+KtLambdaExpression(982,1016): '{ i: MyClass -> i == propMyClass }'
+  null
+
+KtFunctionLiteral(982,1016): '{ i: MyClass -> i == propMyClass }'
+  null
+
+KtParameterList(984,994): 'i: MyClass'
+  null
+
+KtParameter(984,994): 'i: MyClass'
+  null
+
+KtTypeReference(987,994): 'MyClass'
+  null
+
+KtUserType(987,994): 'MyClass'
+  null
+
+KtNameReferenceExpression(987,994): 'MyClass'
+  null
+
+KtBlockExpression(998,1014): 'i == propMyClass'
+  null
+
+KtBinaryExpression(998,1014): 'i == propMyClass'
+  null
+
+KtNameReferenceExpression(998,999): 'i'
+  null
+
+KtOperationReferenceExpression(1000,1002): '=='
+  null
+
+KtNameReferenceExpression(1003,1014): 'propMyClass'
+  null
+
+KtCallExpression(1021,1097): 'receiveParametrizedLambda<MyClass> { i: MyClass -> i == propInheritorClass }'
+  KaSingleSymbolResolutionSuccess:
+    symbol = /receiveParametrizedLambda(l: kotlin.Function1<T, kotlin.Unit>): kotlin.Unit
+
+KtNameReferenceExpression(1021,1046): 'receiveParametrizedLambda'
+  null
+
+KtTypeArgumentList(1046,1055): '<MyClass>'
+  null
+
+KtTypeProjection(1047,1054): 'MyClass'
+  null
+
+KtTypeReference(1047,1054): 'MyClass'
+  null
+
+KtUserType(1047,1054): 'MyClass'
+  null
+
+KtNameReferenceExpression(1047,1054): 'MyClass'
+  null
+
+KtLambdaArgument(1056,1097): '{ i: MyClass -> i == propInheritorClass }'
+  null
+
+KtLambdaExpression(1056,1097): '{ i: MyClass -> i == propInheritorClass }'
+  null
+
+KtFunctionLiteral(1056,1097): '{ i: MyClass -> i == propInheritorClass }'
+  null
+
+KtParameterList(1058,1068): 'i: MyClass'
+  null
+
+KtParameter(1058,1068): 'i: MyClass'
+  null
+
+KtTypeReference(1061,1068): 'MyClass'
+  null
+
+KtUserType(1061,1068): 'MyClass'
+  null
+
+KtNameReferenceExpression(1061,1068): 'MyClass'
+  null
+
+KtBlockExpression(1072,1095): 'i == propInheritorClass'
+  null
+
+KtBinaryExpression(1072,1095): 'i == propInheritorClass'
+  null
+
+KtNameReferenceExpression(1072,1073): 'i'
+  null
+
+KtOperationReferenceExpression(1074,1076): '=='
+  null
+
+KtNameReferenceExpression(1077,1095): 'propInheritorClass'
+  null
+
+KtCallExpression(1102,1179): 'receiveParametrizedLambda<MyClass> { i: MyClass -> i == propInheritorObject }'
+  KaSingleSymbolResolutionSuccess:
+    symbol = /receiveParametrizedLambda(l: kotlin.Function1<T, kotlin.Unit>): kotlin.Unit
+
+KtNameReferenceExpression(1102,1127): 'receiveParametrizedLambda'
+  null
+
+KtTypeArgumentList(1127,1136): '<MyClass>'
+  null
+
+KtTypeProjection(1128,1135): 'MyClass'
+  null
+
+KtTypeReference(1128,1135): 'MyClass'
+  null
+
+KtUserType(1128,1135): 'MyClass'
+  null
+
+KtNameReferenceExpression(1128,1135): 'MyClass'
+  null
+
+KtLambdaArgument(1137,1179): '{ i: MyClass -> i == propInheritorObject }'
+  null
+
+KtLambdaExpression(1137,1179): '{ i: MyClass -> i == propInheritorObject }'
+  null
+
+KtFunctionLiteral(1137,1179): '{ i: MyClass -> i == propInheritorObject }'
+  null
+
+KtParameterList(1139,1149): 'i: MyClass'
+  null
+
+KtParameter(1139,1149): 'i: MyClass'
+  null
+
+KtTypeReference(1142,1149): 'MyClass'
+  null
+
+KtUserType(1142,1149): 'MyClass'
+  null
+
+KtNameReferenceExpression(1142,1149): 'MyClass'
+  null
+
+KtBlockExpression(1153,1177): 'i == propInheritorObject'
+  null
+
+KtBinaryExpression(1153,1177): 'i == propInheritorObject'
+  null
+
+KtNameReferenceExpression(1153,1154): 'i'
+  null
+
+KtOperationReferenceExpression(1155,1157): '=='
+  null
+
+KtNameReferenceExpression(1158,1177): 'propInheritorObject'
+  null
+
+KtCallExpression(1185,1247): 'receiveParametrizedLambda<MyClass> { i: MyClass -> i == prop }'
+  KaSingleSymbolResolutionSuccess:
+    symbol = /receiveParametrizedLambda(l: kotlin.Function1<T, kotlin.Unit>): kotlin.Unit
+
+KtNameReferenceExpression(1185,1210): 'receiveParametrizedLambda'
+  null
+
+KtTypeArgumentList(1210,1219): '<MyClass>'
+  null
+
+KtTypeProjection(1211,1218): 'MyClass'
+  null
+
+KtTypeReference(1211,1218): 'MyClass'
+  null
+
+KtUserType(1211,1218): 'MyClass'
+  null
+
+KtNameReferenceExpression(1211,1218): 'MyClass'
+  null
+
+KtLambdaArgument(1220,1247): '{ i: MyClass -> i == prop }'
+  null
+
+KtLambdaExpression(1220,1247): '{ i: MyClass -> i == prop }'
+  null
+
+KtFunctionLiteral(1220,1247): '{ i: MyClass -> i == prop }'
+  null
+
+KtParameterList(1222,1232): 'i: MyClass'
+  null
+
+KtParameter(1222,1232): 'i: MyClass'
+  null
+
+KtTypeReference(1225,1232): 'MyClass'
+  null
+
+KtUserType(1225,1232): 'MyClass'
+  null
+
+KtNameReferenceExpression(1225,1232): 'MyClass'
+  null
+
+KtBlockExpression(1236,1245): 'i == prop'
+  null
+
+KtBinaryExpression(1236,1245): 'i == prop'
+  null
+
+KtNameReferenceExpression(1236,1237): 'i'
+  null
+
+KtOperationReferenceExpression(1238,1240): '=='
+  null
+
+KtNameReferenceExpression(1241,1245): 'prop'
+  null
+
+KtCallExpression(1252,1319): 'receiveParametrizedLambda<MyClass> { i: MyClass -> i == superProp }'
+  KaSingleSymbolResolutionSuccess:
+    symbol = /receiveParametrizedLambda(l: kotlin.Function1<T, kotlin.Unit>): kotlin.Unit
+
+KtNameReferenceExpression(1252,1277): 'receiveParametrizedLambda'
+  null
+
+KtTypeArgumentList(1277,1286): '<MyClass>'
+  null
+
+KtTypeProjection(1278,1285): 'MyClass'
+  null
+
+KtTypeReference(1278,1285): 'MyClass'
+  null
+
+KtUserType(1278,1285): 'MyClass'
+  null
+
+KtNameReferenceExpression(1278,1285): 'MyClass'
+  null
+
+KtLambdaArgument(1287,1319): '{ i: MyClass -> i == superProp }'
+  null
+
+KtLambdaExpression(1287,1319): '{ i: MyClass -> i == superProp }'
+  null
+
+KtFunctionLiteral(1287,1319): '{ i: MyClass -> i == superProp }'
+  null
+
+KtParameterList(1289,1299): 'i: MyClass'
+  null
+
+KtParameter(1289,1299): 'i: MyClass'
+  null
+
+KtTypeReference(1292,1299): 'MyClass'
+  null
+
+KtUserType(1292,1299): 'MyClass'
+  null
+
+KtNameReferenceExpression(1292,1299): 'MyClass'
+  null
+
+KtBlockExpression(1303,1317): 'i == superProp'
+  null
+
+KtBinaryExpression(1303,1317): 'i == superProp'
+  null
+
+KtNameReferenceExpression(1303,1304): 'i'
+  null
+
+KtOperationReferenceExpression(1305,1307): '=='
+  null
+
+KtNameReferenceExpression(1308,1317): 'superProp'
+  null
+
+KtCallExpression(1324,1391): 'receiveParametrizedLambda<MyClass> { i: MyClass -> i == constProp }'
+  KaSingleSymbolResolutionSuccess:
+    symbol = /receiveParametrizedLambda(l: kotlin.Function1<T, kotlin.Unit>): kotlin.Unit
+
+KtNameReferenceExpression(1324,1349): 'receiveParametrizedLambda'
+  null
+
+KtTypeArgumentList(1349,1358): '<MyClass>'
+  null
+
+KtTypeProjection(1350,1357): 'MyClass'
+  null
+
+KtTypeReference(1350,1357): 'MyClass'
+  null
+
+KtUserType(1350,1357): 'MyClass'
+  null
+
+KtNameReferenceExpression(1350,1357): 'MyClass'
+  null
+
+KtLambdaArgument(1359,1391): '{ i: MyClass -> i == constProp }'
+  null
+
+KtLambdaExpression(1359,1391): '{ i: MyClass -> i == constProp }'
+  null
+
+KtFunctionLiteral(1359,1391): '{ i: MyClass -> i == constProp }'
+  null
+
+KtParameterList(1361,1371): 'i: MyClass'
+  null
+
+KtParameter(1361,1371): 'i: MyClass'
+  null
+
+KtTypeReference(1364,1371): 'MyClass'
+  null
+
+KtUserType(1364,1371): 'MyClass'
+  null
+
+KtNameReferenceExpression(1364,1371): 'MyClass'
+  null
+
+KtBlockExpression(1375,1389): 'i == constProp'
+  null
+
+KtBinaryExpression(1375,1389): 'i == constProp'
+  null
+
+KtNameReferenceExpression(1375,1376): 'i'
+  null
+
+KtOperationReferenceExpression(1377,1379): '=='
+  null
+
+KtNameReferenceExpression(1380,1389): 'constProp'
+  null
+
+KtCallExpression(1396,1462): 'receiveParametrizedLambda<MyClass> { i: MyClass -> i == lazyProp }'
+  KaSingleSymbolResolutionSuccess:
+    symbol = /receiveParametrizedLambda(l: kotlin.Function1<T, kotlin.Unit>): kotlin.Unit
+
+KtNameReferenceExpression(1396,1421): 'receiveParametrizedLambda'
+  null
+
+KtTypeArgumentList(1421,1430): '<MyClass>'
+  null
+
+KtTypeProjection(1422,1429): 'MyClass'
+  null
+
+KtTypeReference(1422,1429): 'MyClass'
+  null
+
+KtUserType(1422,1429): 'MyClass'
+  null
+
+KtNameReferenceExpression(1422,1429): 'MyClass'
+  null
+
+KtLambdaArgument(1431,1462): '{ i: MyClass -> i == lazyProp }'
+  null
+
+KtLambdaExpression(1431,1462): '{ i: MyClass -> i == lazyProp }'
+  null
+
+KtFunctionLiteral(1431,1462): '{ i: MyClass -> i == lazyProp }'
+  null
+
+KtParameterList(1433,1443): 'i: MyClass'
+  null
+
+KtParameter(1433,1443): 'i: MyClass'
+  null
+
+KtTypeReference(1436,1443): 'MyClass'
+  null
+
+KtUserType(1436,1443): 'MyClass'
+  null
+
+KtNameReferenceExpression(1436,1443): 'MyClass'
+  null
+
+KtBlockExpression(1447,1460): 'i == lazyProp'
+  null
+
+KtBinaryExpression(1447,1460): 'i == lazyProp'
+  null
+
+KtNameReferenceExpression(1447,1448): 'i'
+  null
+
+KtOperationReferenceExpression(1449,1451): '=='
+  null
+
+KtNameReferenceExpression(1452,1460): 'lazyProp'
+  null
+
+KtCallExpression(1468,1538): 'receiveParametrizedLambda<MyClass> { i: MyClass -> i == NestedObject }'
+  KaSingleSymbolResolutionSuccess:
+    symbol = /receiveParametrizedLambda(l: kotlin.Function1<T, kotlin.Unit>): kotlin.Unit
+
+KtNameReferenceExpression(1468,1493): 'receiveParametrizedLambda'
+  null
+
+KtTypeArgumentList(1493,1502): '<MyClass>'
+  null
+
+KtTypeProjection(1494,1501): 'MyClass'
+  null
+
+KtTypeReference(1494,1501): 'MyClass'
+  null
+
+KtUserType(1494,1501): 'MyClass'
+  null
+
+KtNameReferenceExpression(1494,1501): 'MyClass'
+  null
+
+KtLambdaArgument(1503,1538): '{ i: MyClass -> i == NestedObject }'
+  null
+
+KtLambdaExpression(1503,1538): '{ i: MyClass -> i == NestedObject }'
+  null
+
+KtFunctionLiteral(1503,1538): '{ i: MyClass -> i == NestedObject }'
+  null
+
+KtParameterList(1505,1515): 'i: MyClass'
+  null
+
+KtParameter(1505,1515): 'i: MyClass'
+  null
+
+KtTypeReference(1508,1515): 'MyClass'
+  null
+
+KtUserType(1508,1515): 'MyClass'
+  null
+
+KtNameReferenceExpression(1508,1515): 'MyClass'
+  null
+
+KtBlockExpression(1519,1536): 'i == NestedObject'
+  null
+
+KtBinaryExpression(1519,1536): 'i == NestedObject'
+  null
+
+KtNameReferenceExpression(1519,1520): 'i'
+  null
+
+KtOperationReferenceExpression(1521,1523): '=='
+  null
+
+KtNameReferenceExpression(1524,1536): 'NestedObject'
+  null
+
+KtCallExpression(1543,1611): 'receiveParametrizedLambda<MyClass> { i: MyClass -> i == lambdaProp }'
+  KaSingleSymbolResolutionSuccess:
+    symbol = /receiveParametrizedLambda(l: kotlin.Function1<T, kotlin.Unit>): kotlin.Unit
+
+KtNameReferenceExpression(1543,1568): 'receiveParametrizedLambda'
+  null
+
+KtTypeArgumentList(1568,1577): '<MyClass>'
+  null
+
+KtTypeProjection(1569,1576): 'MyClass'
+  null
+
+KtTypeReference(1569,1576): 'MyClass'
+  null
+
+KtUserType(1569,1576): 'MyClass'
+  null
+
+KtNameReferenceExpression(1569,1576): 'MyClass'
+  null
+
+KtLambdaArgument(1578,1611): '{ i: MyClass -> i == lambdaProp }'
+  null
+
+KtLambdaExpression(1578,1611): '{ i: MyClass -> i == lambdaProp }'
+  null
+
+KtFunctionLiteral(1578,1611): '{ i: MyClass -> i == lambdaProp }'
+  null
+
+KtParameterList(1580,1590): 'i: MyClass'
+  null
+
+KtParameter(1580,1590): 'i: MyClass'
+  null
+
+KtTypeReference(1583,1590): 'MyClass'
+  null
+
+KtUserType(1583,1590): 'MyClass'
+  null
+
+KtNameReferenceExpression(1583,1590): 'MyClass'
+  null
+
+KtBlockExpression(1594,1609): 'i == lambdaProp'
+  null
+
+KtBinaryExpression(1594,1609): 'i == lambdaProp'
+  null
+
+KtNameReferenceExpression(1594,1595): 'i'
+  null
+
+KtOperationReferenceExpression(1596,1598): '=='
+  null
+
+KtNameReferenceExpression(1599,1609): 'lambdaProp'
+  null
+
+KtCallExpression(1617,1681): 'receiveParametrizedLambda<MyClass> { i: MyClass -> i == func() }'
+  KaSingleSymbolResolutionSuccess:
+    symbol = /receiveParametrizedLambda(l: kotlin.Function1<T, kotlin.Unit>): kotlin.Unit
+
+KtNameReferenceExpression(1617,1642): 'receiveParametrizedLambda'
+  null
+
+KtTypeArgumentList(1642,1651): '<MyClass>'
+  null
+
+KtTypeProjection(1643,1650): 'MyClass'
+  null
+
+KtTypeReference(1643,1650): 'MyClass'
+  null
+
+KtUserType(1643,1650): 'MyClass'
+  null
+
+KtNameReferenceExpression(1643,1650): 'MyClass'
+  null
+
+KtLambdaArgument(1652,1681): '{ i: MyClass -> i == func() }'
+  null
+
+KtLambdaExpression(1652,1681): '{ i: MyClass -> i == func() }'
+  null
+
+KtFunctionLiteral(1652,1681): '{ i: MyClass -> i == func() }'
+  null
+
+KtParameterList(1654,1664): 'i: MyClass'
+  null
+
+KtParameter(1654,1664): 'i: MyClass'
+  null
+
+KtTypeReference(1657,1664): 'MyClass'
+  null
+
+KtUserType(1657,1664): 'MyClass'
+  null
+
+KtNameReferenceExpression(1657,1664): 'MyClass'
+  null
+
+KtBlockExpression(1668,1679): 'i == func()'
+  null
+
+KtBinaryExpression(1668,1679): 'i == func()'
+  null
+
+KtNameReferenceExpression(1668,1669): 'i'
+  null
+
+KtOperationReferenceExpression(1670,1672): '=='
+  null
+
+KtCallExpression(1673,1679): 'func()'
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: func>
+
+KtNameReferenceExpression(1673,1677): 'func'
+  null
+
+KtValueArgumentList(1677,1679): '()'
+  null
+
+KtCallExpression(1686,1755): 'receiveParametrizedLambda<MyClass> { i: MyClass -> i == superFunc() }'
+  KaSingleSymbolResolutionSuccess:
+    symbol = /receiveParametrizedLambda(l: kotlin.Function1<T, kotlin.Unit>): kotlin.Unit
+
+KtNameReferenceExpression(1686,1711): 'receiveParametrizedLambda'
+  null
+
+KtTypeArgumentList(1711,1720): '<MyClass>'
+  null
+
+KtTypeProjection(1712,1719): 'MyClass'
+  null
+
+KtTypeReference(1712,1719): 'MyClass'
+  null
+
+KtUserType(1712,1719): 'MyClass'
+  null
+
+KtNameReferenceExpression(1712,1719): 'MyClass'
+  null
+
+KtLambdaArgument(1721,1755): '{ i: MyClass -> i == superFunc() }'
+  null
+
+KtLambdaExpression(1721,1755): '{ i: MyClass -> i == superFunc() }'
+  null
+
+KtFunctionLiteral(1721,1755): '{ i: MyClass -> i == superFunc() }'
+  null
+
+KtParameterList(1723,1733): 'i: MyClass'
+  null
+
+KtParameter(1723,1733): 'i: MyClass'
+  null
+
+KtTypeReference(1726,1733): 'MyClass'
+  null
+
+KtUserType(1726,1733): 'MyClass'
+  null
+
+KtNameReferenceExpression(1726,1733): 'MyClass'
+  null
+
+KtBlockExpression(1737,1753): 'i == superFunc()'
+  null
+
+KtBinaryExpression(1737,1753): 'i == superFunc()'
+  null
+
+KtNameReferenceExpression(1737,1738): 'i'
+  null
+
+KtOperationReferenceExpression(1739,1741): '=='
+  null
+
+KtCallExpression(1742,1753): 'superFunc()'
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: superFunc>
+
+KtNameReferenceExpression(1742,1751): 'superFunc'
+  null
+
+KtValueArgumentList(1751,1753): '()'
+  null
+
+KtCallExpression(1760,1834): 'receiveParametrizedLambda<MyClass> { i: MyClass -> i == InheritorClass() }'
+  KaSingleSymbolResolutionSuccess:
+    symbol = /receiveParametrizedLambda(l: kotlin.Function1<T, kotlin.Unit>): kotlin.Unit
+
+KtNameReferenceExpression(1760,1785): 'receiveParametrizedLambda'
+  null
+
+KtTypeArgumentList(1785,1794): '<MyClass>'
+  null
+
+KtTypeProjection(1786,1793): 'MyClass'
+  null
+
+KtTypeReference(1786,1793): 'MyClass'
+  null
+
+KtUserType(1786,1793): 'MyClass'
+  null
+
+KtNameReferenceExpression(1786,1793): 'MyClass'
+  null
+
+KtLambdaArgument(1795,1834): '{ i: MyClass -> i == InheritorClass() }'
+  null
+
+KtLambdaExpression(1795,1834): '{ i: MyClass -> i == InheritorClass() }'
+  null
+
+KtFunctionLiteral(1795,1834): '{ i: MyClass -> i == InheritorClass() }'
+  null
+
+KtParameterList(1797,1807): 'i: MyClass'
+  null
+
+KtParameter(1797,1807): 'i: MyClass'
+  null
+
+KtTypeReference(1800,1807): 'MyClass'
+  null
+
+KtUserType(1800,1807): 'MyClass'
+  null
+
+KtNameReferenceExpression(1800,1807): 'MyClass'
+  null
+
+KtBlockExpression(1811,1832): 'i == InheritorClass()'
+  null
+
+KtBinaryExpression(1811,1832): 'i == InheritorClass()'
+  null
+
+KtNameReferenceExpression(1811,1812): 'i'
+  null
+
+KtOperationReferenceExpression(1813,1815): '=='
+  null
+
+KtCallExpression(1816,1832): 'InheritorClass()'
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: InheritorClass>
+
+KtNameReferenceExpression(1816,1830): 'InheritorClass'
+  null
+
+KtValueArgumentList(1830,1832): '()'
+  null

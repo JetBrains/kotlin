@@ -35,7 +35,8 @@ KtNameReferenceExpression(132,139): 'MyClass'
   null
 
 KtCallExpression(142,151): 'MyClass()'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <constructor>(): MyClass
 
 KtNameReferenceExpression(142,149): 'MyClass'
   null

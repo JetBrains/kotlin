@@ -182,7 +182,8 @@ KtNameReferenceExpression(424,431): 'MyClass'
   null
 
 KtCallExpression(434,440): 'TODO()'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = kotlin/TODO(): kotlin.Nothing
 
 KtNameReferenceExpression(434,438): 'TODO'
   null
@@ -203,7 +204,8 @@ KtNameReferenceExpression(473,487): 'InheritorClass'
   null
 
 KtCallExpression(490,506): 'InheritorClass()'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <constructor>(): MyClass.InheritorClass
 
 KtNameReferenceExpression(490,504): 'InheritorClass'
   null
@@ -275,7 +277,8 @@ KtPropertyDelegate(674,686): 'by lazy {""}'
   null
 
 KtCallExpression(677,686): 'lazy {""}'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = kotlin/lazy(initializer: () -> T): kotlin.Lazy<T>
 
 KtNameReferenceExpression(677,681): 'lazy'
   null
@@ -311,7 +314,8 @@ KtNameReferenceExpression(707,714): 'MyClass'
   null
 
 KtCallExpression(717,723): 'TODO()'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = kotlin/TODO(): kotlin.Nothing
 
 KtNameReferenceExpression(717,721): 'TODO'
   null
@@ -392,7 +396,8 @@ KtBlockExpression(862,1348): '{'
   null
 
 KtCallExpression(868,908): 'receiverVarArg<MyClass>(InheritorObject)'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /receiverVarArg(vararg arg: T): kotlin.Array<out T>
 
 KtNameReferenceExpression(868,882): 'receiverVarArg'
   null
@@ -422,7 +427,8 @@ KtNameReferenceExpression(892,907): 'InheritorObject'
   null
 
 KtCallExpression(913,939): 'receiverVarArg<MyClass>(i)'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /receiverVarArg(vararg arg: T): kotlin.Array<out T>
 
 KtNameReferenceExpression(913,927): 'receiverVarArg'
   null
@@ -452,7 +458,8 @@ KtNameReferenceExpression(937,938): 'i'
   null
 
 KtCallExpression(944,980): 'receiverVarArg<MyClass>(propMyClass)'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /receiverVarArg(vararg arg: T): kotlin.Array<out T>
 
 KtNameReferenceExpression(944,958): 'receiverVarArg'
   null
@@ -482,7 +489,8 @@ KtNameReferenceExpression(968,979): 'propMyClass'
   null
 
 KtCallExpression(985,1028): 'receiverVarArg<MyClass>(propInheritorClass)'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /receiverVarArg(vararg arg: T): kotlin.Array<out T>
 
 KtNameReferenceExpression(985,999): 'receiverVarArg'
   null
@@ -512,7 +520,8 @@ KtNameReferenceExpression(1009,1027): 'propInheritorClass'
   null
 
 KtCallExpression(1033,1077): 'receiverVarArg<MyClass>(propInheritorObject)'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /receiverVarArg(vararg arg: T): kotlin.Array<out T>
 
 KtNameReferenceExpression(1033,1047): 'receiverVarArg'
   null
@@ -542,7 +551,11 @@ KtNameReferenceExpression(1057,1076): 'propInheritorObject'
   null
 
 KtCallExpression(1083,1112): 'receiverVarArg<MyClass>(prop)'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /receiverVarArg(vararg arg: T): kotlin.Array<out T>
+    ]
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
 
 KtNameReferenceExpression(1083,1097): 'receiverVarArg'
   null
@@ -572,7 +585,11 @@ KtNameReferenceExpression(1107,1111): 'prop'
   null
 
 KtCallExpression(1117,1151): 'receiverVarArg<MyClass>(constProp)'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /receiverVarArg(vararg arg: T): kotlin.Array<out T>
+    ]
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
 
 KtNameReferenceExpression(1117,1131): 'receiverVarArg'
   null
@@ -602,7 +619,11 @@ KtNameReferenceExpression(1141,1150): 'constProp'
   null
 
 KtCallExpression(1156,1189): 'receiverVarArg<MyClass>(lazyProp)'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /receiverVarArg(vararg arg: T): kotlin.Array<out T>
+    ]
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
 
 KtNameReferenceExpression(1156,1170): 'receiverVarArg'
   null
@@ -632,7 +653,11 @@ KtNameReferenceExpression(1180,1188): 'lazyProp'
   null
 
 KtCallExpression(1194,1229): 'receiverVarArg<MyClass>(lambdaProp)'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /receiverVarArg(vararg arg: T): kotlin.Array<out T>
+    ]
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is '() -> MyClass.InheritorObject', but 'MyClass' was expected.>
 
 KtNameReferenceExpression(1194,1208): 'receiverVarArg'
   null
@@ -662,7 +687,11 @@ KtNameReferenceExpression(1218,1228): 'lambdaProp'
   null
 
 KtCallExpression(1234,1268): 'receiverVarArg<MyClass>(superProp)'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /receiverVarArg(vararg arg: T): kotlin.Array<out T>
+    ]
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
 
 KtNameReferenceExpression(1234,1248): 'receiverVarArg'
   null
@@ -692,7 +721,11 @@ KtNameReferenceExpression(1258,1267): 'superProp'
   null
 
 KtCallExpression(1274,1305): 'receiverVarArg<MyClass>(func())'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /receiverVarArg(vararg arg: T): kotlin.Array<out T>
+    ]
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable(INAPPLICABLE): /receiverVarArg>
 
 KtNameReferenceExpression(1274,1288): 'receiverVarArg'
   null
@@ -719,7 +752,9 @@ KtValueArgument(1298,1304): 'func()'
   null
 
 KtCallExpression(1298,1304): 'func()'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'func'.>
 
 KtNameReferenceExpression(1298,1302): 'func'
   null
@@ -728,7 +763,11 @@ KtValueArgumentList(1302,1304): '()'
   null
 
 KtCallExpression(1310,1346): 'receiverVarArg<MyClass>(superFunc())'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      /receiverVarArg(vararg arg: T): kotlin.Array<out T>
+    ]
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable(INAPPLICABLE): /receiverVarArg>
 
 KtNameReferenceExpression(1310,1324): 'receiverVarArg'
   null
@@ -755,7 +794,9 @@ KtValueArgument(1334,1345): 'superFunc()'
   null
 
 KtCallExpression(1334,1345): 'superFunc()'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'superFunc'.>
 
 KtNameReferenceExpression(1334,1343): 'superFunc'
   null

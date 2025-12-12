@@ -80,7 +80,7 @@ KtBlockExpression(179,210): '{'
   null
 
 KtCallExpression(185,208): 'boundHolder(EnumValue1)'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         argumentMapping = {
@@ -178,40 +178,39 @@ KtBlockExpression(232,271): '{'
   null
 
 KtCallExpression(238,269): 'boundHolder<MyEnum>(EnumValue1)'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {
-        EnumValue1 -> (KaVariableSignature:
-          name = arg
-          receiverType = null
-          returnType = MyEnum
-          symbol = arg: T
-          contextParameters = []
-          callableId = null)
-      }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = MyEnum
-          symbol = /boundHolder(arg: T): T
-          valueParameters = [
-            KaVariableSignature:
-              name = arg
-              receiverType = null
-              returnType = MyEnum
-              symbol = arg: T
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /boundHolder
-      typeArgumentsMapping = {
-        T -> (MyEnum)
-      }
+  KaSimpleFunctionCall:
+    argumentMapping = {
+      EnumValue1 -> (KaVariableSignature:
+        name = arg
+        receiverType = null
+        returnType = MyEnum
+        symbol = arg: T
+        contextParameters = []
+        callableId = null)
+    }
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MyEnum
+        symbol = /boundHolder(arg: T): T
+        valueParameters = [
+          KaVariableSignature:
+            name = arg
+            receiverType = null
+            returnType = MyEnum
+            symbol = arg: T
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /boundHolder
+    typeArgumentsMapping = {
+      T -> (MyEnum)
+    }
 
 KtNameReferenceExpression(238,249): 'boundHolder'
   KaSuccessCallInfo:
