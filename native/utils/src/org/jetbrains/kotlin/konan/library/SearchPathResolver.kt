@@ -51,6 +51,7 @@ class KonanLibraryProperResolver(
             libraryPaths(Paths.get(file.absolutePath).normalize())
             zipFileSystemAccessor?.let(::zipFileSystemAccessor)
             platformChecker(KlibPlatformChecker.NativeMetadata(target.name))
+            manifestTransformer(KlibNativeManifestTransformer(target))
         }.load().librariesStdlibFirst
 
     override val distPlatformHead: File?
