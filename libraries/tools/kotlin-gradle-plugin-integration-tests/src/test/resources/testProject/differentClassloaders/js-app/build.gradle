@@ -1,7 +1,7 @@
 plugins {
     id "maven-publish"
     id "org.jetbrains.kotlin.plugin.serialization"
-    id "org.jetbrains.kotlin.js"
+    id "org.jetbrains.kotlin.multiplatform"
 }
 
 group = "com.example"

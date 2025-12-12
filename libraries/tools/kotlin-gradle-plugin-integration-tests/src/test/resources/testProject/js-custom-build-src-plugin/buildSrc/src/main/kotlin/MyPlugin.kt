@@ -5,7 +5,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinJsProjectExtension
 
 open class MyPlugin : Plugin<Project> {
     override fun apply(target: Project) {
-        target.plugins.apply("org.jetbrains.kotlin.js")
+        target.plugins.apply("org.jetbrains.kotlin.multiplatform")
 
         target.configure<KotlinJsProjectExtension> {
             js(IR) { browser { } }

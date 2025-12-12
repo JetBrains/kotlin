@@ -13,7 +13,7 @@ repositories {
 }
 
 subprojects {
-    apply(plugin = "org.jetbrains.kotlin.js")
+    apply(plugin = "org.jetbrains.kotlin.multiplatform")
 
     repositories {
         mavenLocal()

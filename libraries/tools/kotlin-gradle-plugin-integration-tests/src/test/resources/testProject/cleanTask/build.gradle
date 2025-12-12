@@ -3,7 +3,7 @@ import java.time.ZoneId
 import java.util.concurrent.TimeUnit
 
 plugins {
-    id "org.jetbrains.kotlin.js"
+    id "org.jetbrains.kotlin.multiplatform"
 }
 
 String nodeJsVersion

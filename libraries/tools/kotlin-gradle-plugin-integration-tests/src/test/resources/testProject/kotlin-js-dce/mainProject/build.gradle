@@ -2,7 +2,7 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProjectKt
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProjectModules
 
 plugins {
-    id("org.jetbrains.kotlin.js")
+    id("org.jetbrains.kotlin.multiplatform")
 }
 
 repositories {

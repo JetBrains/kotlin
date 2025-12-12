@@ -1,4 +1,4 @@
-apply plugin: 'org.jetbrains.kotlin.js'
+apply plugin: 'org.jetbrains.kotlin.multiplatform'
 
 dependencies {
     // do not remove until KT-25488 is fixed
