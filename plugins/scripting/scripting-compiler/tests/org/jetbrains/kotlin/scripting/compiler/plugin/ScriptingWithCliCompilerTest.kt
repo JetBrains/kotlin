@@ -270,7 +270,7 @@ class ScriptingWithCliCompilerTest {
                             getMainKtsClassPath().joinToString(File.pathSeparator),
                             K2JVMCompilerArguments::destination.cliArgument,
                             tmpdir.path,
-                            K2JVMCompilerArguments::useFirLT.cliArgument("false"),
+//                            K2JVMCompilerArguments::useFirLT.cliArgument("false"),
                             K2JVMCompilerArguments::allowAnyScriptsInSourceRoots.cliArgument,
                             K2JVMCompilerArguments::verbose.cliArgument,
                             fileArg

@@ -140,10 +140,11 @@ class ScriptJvmK2CompilerImpl(
             jvmTarget = selectJvmTarget(scriptRefinedCompilationConfiguration, reportingCtx.messageCollector)
         }
 
-        state.hostConfiguration[ScriptingHostConfiguration.scriptRefinedCompilationConfigurationsCache]!!.storeRefinedCompilationConfiguration(
-            script,
-            scriptRefinedCompilationConfiguration.asSuccess()
-        )
+        state.hostConfiguration[ScriptingHostConfiguration.scriptRefinedCompilationConfigurationsCache]
+            ?.storeRefinedCompilationConfiguration(
+                script,
+                scriptRefinedCompilationConfiguration.asSuccess()
+            )
 
         val allSourceFiles = mutableListOf(script)
         val (classpath, newSources, sourceDependencies) =

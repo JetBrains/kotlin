@@ -25,32 +25,7 @@ class FirScriptingCompilerExtensionRegistrar(
     override fun ExtensionRegistrarContext.configurePlugin() {
         if (compilerConfiguration.getBoolean(ScriptingConfigurationKeys.DISABLE_SCRIPTING_PLUGIN_OPTION)) return
 
-        +FirScriptDefinitionProviderService.getFactory(
-            getDefaultHostConfiguration = {
-                (compilerConfiguration.scriptingHostConfiguration as? ScriptingHostConfiguration)
-                    ?: defaultJvmScriptingHostConfiguration.with {
-                        configureScriptDefinitions(
-                            compilerConfiguration,
-                            defaultJvmScriptingHostConfiguration,
-                            compilerConfiguration::class.java.classLoader
-                        )
-                        val definitionSources = compilerConfiguration.getList(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS_SOURCES)
-                        val definitions = compilerConfiguration.getList(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS)
-                        if (definitionSources.isNotEmpty() || definitions.isNotEmpty()) {
-                            val scriptDefinitionProvider = CliScriptDefinitionProvider().also {
-                                it.setScriptDefinitionsSources(definitionSources)
-                                it.setScriptDefinitions(definitions)
-                            }
-                            scriptCompilationConfigurationProvider(
-                                ScriptCompilationConfigurationProviderOverDefinitionProvider(scriptDefinitionProvider)
-                            )
-                            scriptRefinedCompilationConfigurationsCache(ScriptRefinedCompilationConfigurationCacheImpl())
-                        }
-                    }
-
-            }
-        )
-
+        +FirScriptDefinitionProviderService.getFactory(compilerConfiguration)
         +FirScriptConfiguratorExtensionImpl.getFactory()
         +FirScriptResolutionConfigurationExtensionImpl.getFactory()
         +Fir2IrScriptConfiguratorExtensionImpl.getFactory()

@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.scripting.compiler.plugin.fir.scriptCompilationConfi
 import org.jetbrains.kotlin.scripting.resolve.resolvedImportScripts
 import org.jetbrains.kotlin.scripting.resolve.toSourceCode
 import kotlin.script.experimental.api.ScriptCompilationConfiguration
+import kotlin.script.experimental.host.ScriptingHostConfiguration
 
 class Fir2IrScriptConfiguratorExtensionImpl(
     session: FirSession,
@@ -42,6 +43,11 @@ class Fir2IrScriptConfiguratorExtensionImpl(
 
     companion object {
         fun getFactory(): Factory {
+            return Factory { session -> Fir2IrScriptConfiguratorExtensionImpl(session) }
+        }
+
+        @Deprecated("Use other getFactory methods. This one left only for transitional compatibility")
+        fun getFactory(hostConfiguration: ScriptingHostConfiguration): Factory {
             return Factory { session -> Fir2IrScriptConfiguratorExtensionImpl(session) }
         }
     }

@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.scripting.compiler.plugin.services
 
+import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.scriptingHostConfiguration
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.extensions.FirExtensionSessionComponent
 import org.jetbrains.kotlin.fir.lightTree.LightTree2Fir
@@ -12,22 +15,30 @@ import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirProviderImpl
 import org.jetbrains.kotlin.fir.scopes.kotlinScopeProvider
 import org.jetbrains.kotlin.fir.session.sourcesToPathsMapper
+import org.jetbrains.kotlin.scripting.compiler.plugin.configureScriptDefinitions
+import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.CliScriptDefinitionProvider
 import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.ScriptCompilationConfigurationProvider
+import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.ScriptCompilationConfigurationProviderOverDefinitionProvider
 import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.ScriptRefinedCompilationConfigurationCache
+import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.ScriptRefinedCompilationConfigurationCacheImpl
 import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.scriptCompilationConfigurationProvider
 import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.scriptRefinedCompilationConfigurationsCache
 import org.jetbrains.kotlin.scripting.compiler.plugin.fir.scriptCompilationComponent
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.collectAndResolveScriptAnnotationsViaFir
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.refineAllForK2
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.toKtSourceFile
+import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
 import org.jetbrains.kotlin.scripting.definitions.ScriptConfigurationsProvider
+import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionProvider
 import org.jetbrains.kotlin.scripting.resolve.KtFileScriptSource
 import org.jetbrains.kotlin.scripting.resolve.getScriptCollectedData
 import org.jetbrains.kotlin.toSourceLinesMapping
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.ScriptingHostConfiguration
+import kotlin.script.experimental.host.with
 import kotlin.script.experimental.jvm.baseClassLoader
+import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 import kotlin.script.experimental.jvm.jvm
 
 class FirScriptDefinitionProviderService(
@@ -133,6 +144,52 @@ class FirScriptDefinitionProviderService(
         ): Factory {
             return Factory { session -> FirScriptDefinitionProviderService(session, getDefaultHostConfiguration) }
         }
+
+        fun getFactory(compilerConfiguration: CompilerConfiguration): Factory = getFactory {
+            (compilerConfiguration.scriptingHostConfiguration as? ScriptingHostConfiguration)
+                ?: defaultJvmScriptingHostConfiguration.with {
+                    configureScriptDefinitions(
+                        compilerConfiguration,
+                        defaultJvmScriptingHostConfiguration,
+                        compilerConfiguration::class.java.classLoader
+                    )
+                    val definitionSources = compilerConfiguration.getList(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS_SOURCES)
+                    val definitions = compilerConfiguration.getList(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS)
+                    if (definitionSources.isNotEmpty() || definitions.isNotEmpty()) {
+                        // TODO: rewrite to direct implementation of ScriptCompilationConfigurationProvider
+                        val scriptDefinitionProvider = CliScriptDefinitionProvider().also {
+                            it.setScriptDefinitionsSources(definitionSources)
+                            it.setScriptDefinitions(definitions)
+                        }
+                        scriptCompilationConfigurationProvider(
+                            ScriptCompilationConfigurationProviderOverDefinitionProvider(scriptDefinitionProvider)
+                        )
+                        scriptRefinedCompilationConfigurationsCache(ScriptRefinedCompilationConfigurationCacheImpl())
+                    }
+                }
+        }
+
+        @Deprecated("Use other getFactory methods. This one left only for transitional compatibility")
+        fun getFactory(
+            definitions: List<ScriptDefinition>,
+            @Suppress("DEPRECATION") //KT-82551
+            definitionSources: List<org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionsSource>,
+            definitionProvider: ScriptDefinitionProvider? = null,
+            configurationProvider: ScriptConfigurationsProvider? = null,
+        ): Factory = getFactory {
+            defaultJvmScriptingHostConfiguration.with {
+                val scriptDefinitionProvider = definitionProvider
+                    ?: CliScriptDefinitionProvider().also {
+                        it.setScriptDefinitionsSources(definitionSources)
+                        it.setScriptDefinitions(definitions)
+                    }
+                scriptCompilationConfigurationProvider(
+                    ScriptCompilationConfigurationProviderOverDefinitionProvider(scriptDefinitionProvider)
+                )
+                scriptRefinedCompilationConfigurationsCache(ScriptRefinedCompilationConfigurationCacheImpl())
+            }
+        }
+
     }
 }
 

@@ -8,14 +8,15 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.sessions
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
+import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.*
 import org.jetbrains.kotlin.scripting.compiler.plugin.services.FirScriptConfiguratorExtensionImpl
 import org.jetbrains.kotlin.scripting.compiler.plugin.services.FirScriptDefinitionProviderService
 import org.jetbrains.kotlin.scripting.compiler.plugin.services.FirScriptResolutionConfigurationExtensionImpl
 import org.jetbrains.kotlin.scripting.definitions.K1SpecificScriptingServiceAccessor
-import org.jetbrains.kotlin.scripting.definitions.ScriptConfigurationsProvider
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionProvider
 import kotlin.script.experimental.host.ScriptingHostConfiguration
+import kotlin.script.experimental.host.with
 
 /**
  * The class is a copy of [org.jetbrains.kotlin.scripting.compiler.plugin.FirScriptingCompilerExtensionRegistrar] adapted for the usage
@@ -30,19 +31,25 @@ internal class FirScriptingCompilerExtensionIdeRegistrar(
     private val scriptDefinitions: List<ScriptDefinition>,
 ) : FirExtensionRegistrar() {
 
-    @OptIn(K1SpecificScriptingServiceAccessor::class)
     override fun ExtensionRegistrarContext.configurePlugin() {
-        val definitionSources = scriptDefinitionSources
-        val definitions = scriptDefinitions
-        if (definitionSources.isNotEmpty() || definitions.isNotEmpty()) {
-            +FirScriptDefinitionProviderService.getFactory(
-                definitions, definitionSources,
-                ScriptDefinitionProvider.getInstance(project),
-                ScriptConfigurationsProvider.getInstance(project)
-            )
+        val legacyDefinitionsProvider = ScriptDefinitionProvider.getInstance(project) ?: run {
+            if (scriptDefinitionSources.isNotEmpty() || scriptDefinitions.isNotEmpty()) {
+                CliScriptDefinitionProvider().also {
+                    it.setScriptDefinitionsSources(scriptDefinitionSources)
+                    it.setScriptDefinitions(scriptDefinitions)
+                }
+            } else return
+        }
+        +FirScriptDefinitionProviderService.getFactory {
+            hostConfiguration.with {
+                scriptCompilationConfigurationProvider(
+                    ScriptCompilationConfigurationProviderOverDefinitionProvider(legacyDefinitionsProvider)
+                )
+                scriptRefinedCompilationConfigurationsCache(ScriptRefinedCompilationConfigurationCacheImpl())
+            }
         }
 
-        +FirScriptConfiguratorExtensionImpl.getFactory(hostConfiguration)
-        +FirScriptResolutionConfigurationExtensionImpl.getFactory(hostConfiguration)
+        +FirScriptConfiguratorExtensionImpl.getFactory()
+        +FirScriptResolutionConfigurationExtensionImpl.getFactory()
     }
 }
