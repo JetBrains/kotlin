@@ -1,4 +1,0 @@
-expression: DESTRUCTURING_DECLARATION_ENTRY
-text: i
-isUsedAsExpression: false
-isUsedAsResultOfLambda: false

@@ -1,4 +1,0 @@
-compiler/testData/cli/jvm/selfUpperBoundInference.kt:40:25: warning: unchecked cast of 'WriterAppender.Builder1<B (of class Builder1<B : WriterAppender.Builder1<B>>)>' to 'B (of class Builder1<B : WriterAppender.Builder1<B>>)'.
-            return this as B
-                        ^^^^
-OK

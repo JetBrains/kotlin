@@ -1,6 +1,0 @@
-package
-
-public val n: kotlin.Nothing
-public fun foo1(): kotlin.Unit
-public fun </*0*/ T : kotlin.Any> fooT22(): T?
-public fun </*0*/ T : kotlin.Any> T?.sure(): T

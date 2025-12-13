@@ -1,4 +1,0 @@
-public final class cases/file/FileFacade2Kt {
-	public static final fun function2 ()V
-}
-

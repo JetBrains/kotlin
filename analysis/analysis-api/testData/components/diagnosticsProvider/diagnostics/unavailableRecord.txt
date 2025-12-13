@@ -1,7 +1,0 @@
-Diagnostics from file:
-  for PSI element of type KtClass at (3,1) - (4,36)
-    MISSING_DEPENDENCY_SUPERCLASS      text ranges: [(32,50)]
-      PSI: KtClass at (3,1) - (4,36)
-  for PSI element of type KtParameter at (4,25-35)
-    MISSING_DEPENDENCY_SUPERCLASS      text ranges: [(51,61)]
-      PSI: KtParameter at (4,25-35)

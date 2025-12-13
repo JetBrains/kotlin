@@ -1,7 +1,0 @@
-FILE[kind=Facade[packageFqName=foobar, facadeFqName=foobar.PackageBlockFirstKt]]
-  facadeFqName: foobar.PackageBlockFirstKt
-  partSimpleName: "PackageBlockFirstKt"
-  PACKAGE_DIRECTIVE
-    REFERENCE_EXPRESSION[referencedName=foobar]
-  IMPORT_LIST
-  FUN[fqName=foobar.<no name provided>, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=null]

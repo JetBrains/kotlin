@@ -1,2 +1,0 @@
-@kotlin.OptIn(markerClass = [kotlin.contracts.ExperimentalContracts::class])
-fun boolenExprContract(foo: kotlin.Any?, bar: kotlin.Any?): kotlin.Boolean

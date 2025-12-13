@@ -1,5 +1,0 @@
-expression: "The answer to ${QUESTION} is ${ANSWER}."
-constant: "The answer to the ultimate question of life, the universe, and everything is 42."
-constantValueKind: StringValue
-constantValueSource: STRING_TEMPLATE
-constantValueSourceText: "The answer to ${QUESTION} is ${ANSWER}."

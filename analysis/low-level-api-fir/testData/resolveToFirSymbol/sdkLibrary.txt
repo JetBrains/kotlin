@@ -1,7 +1,0 @@
-KtClass 'A' in 'main.jar!/library/A.class':
-  public final class A : R|kotlin/Any| {
-      public constructor(): R|library/A| {
-          super<R|kotlin/Any|>()
-      }
-
-  }

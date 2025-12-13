@@ -1,2 +1,0 @@
-KtNameReferenceExpression(42,49): 'Generic'
-  NO_CANDIDATES

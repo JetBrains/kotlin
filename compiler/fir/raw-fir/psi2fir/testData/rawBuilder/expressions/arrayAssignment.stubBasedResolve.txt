@@ -1,4 +1,0 @@
-FILE: [ResolvedTo(BODY_RESOLVE)] arrayAssignment.kt
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun test(): R|kotlin/Unit| { LAZY_BLOCK }
-    public final [ResolvedTo(CONTRACTS)] fun foo(): <implicit> { LAZY_BLOCK }
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun test2(): R|kotlin/Unit| { LAZY_BLOCK }

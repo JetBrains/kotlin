@@ -1,7 +1,0 @@
-expression: WHEN
-text: when(b) {
-        true -> 5
-        else -> 0
-    }
-isUsedAsExpression: false
-isUsedAsResultOfLambda: false

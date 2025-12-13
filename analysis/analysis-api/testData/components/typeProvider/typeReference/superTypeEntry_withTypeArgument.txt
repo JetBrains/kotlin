@@ -1,2 +1,0 @@
-KtTypeReference: Base<String>
-KaType: Base<kotlin.String>

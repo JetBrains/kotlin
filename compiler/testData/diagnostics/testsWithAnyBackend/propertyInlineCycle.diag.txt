@@ -1,1 +1,0 @@
-/propertyInlineCycle.kt:6:13: error: The '<get-foo>' invocation is a part of inline cycle

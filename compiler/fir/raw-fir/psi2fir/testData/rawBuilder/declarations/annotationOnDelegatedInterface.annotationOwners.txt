@@ -1,7 +1,0 @@
-@Target(AnnotationTarget#.EXPRESSION#)
-owner -> FirRegularClassSymbol Some
-context -> FirRegularClassSymbol Some
-
-@Some(String(Anything))
-owner -> FirFieldSymbol /Derived.$$delegate_0
-context -> FirFieldSymbol /Derived.$$delegate_0

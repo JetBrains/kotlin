@@ -1,4 +1,0 @@
-public open class MyException : R|kotlin/Any| {
-    public constructor(message: R|kotlin/String!|, cause: R|kotlin/Throwable!|): R|test/MyException|
-
-}

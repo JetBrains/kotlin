@@ -1,5 +1,0 @@
-Invalidated sessions:
-fragment1.kt
-unrelatedLibrary
-unrelatedLibrary (resolvable session)
-unrelatedModule

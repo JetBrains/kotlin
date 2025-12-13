@@ -1,7 +1,0 @@
-depends = CFCGTypes CFNetwork CoreFoundation CoreFoundationBase CoreGraphics CoreImage CoreText CoreVideo EAGL FileProvider Foundation GLKit IOSurface ImageIO Metal ModelIO OpenGLES2 OpenGLESCommon QuartzCore Security Symbols UIKit UIUtilities UserNotifications darwin posix
-language = Objective-C
-package = platform.SceneKit
-modules = SceneKit
-
-compilerOpts = -framework SceneKit
-linkerOpts = -framework SceneKit

@@ -1,2 +1,0 @@
-FILE: multiDeclarations.kt
-    public? final? fun foo(): Int { LAZY_BLOCK }

@@ -1,2 +1,0 @@
-KtProperty(0,37): '// WITH_STDLIB'
-  null

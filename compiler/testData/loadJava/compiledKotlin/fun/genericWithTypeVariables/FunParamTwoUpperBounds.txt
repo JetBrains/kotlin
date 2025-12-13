@@ -1,9 +1,0 @@
-package test
-
-public fun </*0*/ T : test.Foo> foo(): kotlin.Unit where T : test.Bar
-
-public interface Bar {
-}
-
-public interface Foo {
-}

@@ -1,7 +1,0 @@
-language = Objective-C
-package = platform.RealityFoundation
-
-modules = RealityFoundation
-compilerOpts = -framework RealityFoundation
-linkerOpts = -framework RealityFoundation
-#Disabled: Unavailable

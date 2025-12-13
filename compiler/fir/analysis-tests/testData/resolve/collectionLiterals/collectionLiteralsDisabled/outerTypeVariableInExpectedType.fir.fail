@@ -1,4 +1,0 @@
-Caused by: java.lang.IllegalStateException: anonymous function takeGenericArray@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
-    ^@takeGenericArray Unit
-}
- not analyzed

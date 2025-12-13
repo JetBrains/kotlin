@@ -1,5 +1,0 @@
-# In Apple frameworks methods are sometimes moved from class declaration into a protocol and the class conforms to the protocol in an extension
-# This is a binary incompatible change in cinterop klibs
-language = Objective-C
-modules=dependency4
-objcClassesIncludingCategories = MyClass

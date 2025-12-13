@@ -1,4 +1,0 @@
-FILE: Sequence.kt
-    public final fun test(s: R|kotlin/sequences/Sequence<kotlin/Int>|): R|kotlin/Unit| {
-        lval foo: R|kotlin/sequences/Sequence<kotlin/Int>| = R|<local>/s|.R|kotlin/sequences/orEmpty|<R|kotlin/Int|>()
-    }

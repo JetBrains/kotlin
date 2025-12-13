@@ -1,1 +1,0 @@
-external val property: kotlin.String

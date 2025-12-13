@@ -1,3 +1,0 @@
-expect var variable: kotlin.Int
-  expect get()
-  expect set(value: kotlin.Int)

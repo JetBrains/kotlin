@@ -1,8 +1,0 @@
-MODULE_FRAGMENT name:<class.kt>
-  FILE fqName:test fileName:class.kt
-    CLASS CLASS name:A signature:test/A|null[0] modality:FINAL visibility:public superTypes:[kotlin.Any]
-      thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:test.A
-      CONSTRUCTOR signature:test/A.<init>|<init>(){}[0] visibility:public returnType:test.A [primary]
-        BLOCK_BODY
-          DELEGATING_CONSTRUCTOR_CALL 'kotlin/Any.<init>|<init>(){}[0]'
-          INSTANCE_INITIALIZER_CALL classDescriptor='test/A|null[0]' type=kotlin.Unit

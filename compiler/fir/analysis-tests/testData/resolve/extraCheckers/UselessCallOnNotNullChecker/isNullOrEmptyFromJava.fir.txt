@@ -1,6 +1,0 @@
-FILE: main.kt
-    public abstract interface Foo : R|kotlin/Any| {
-    }
-    public final fun test(p: R|Foo|): R|kotlin/Unit| {
-        Q|SomeUtil|.R|/SomeUtil.isNullOrEmpty*s|(R|<local>/p|)
-    }

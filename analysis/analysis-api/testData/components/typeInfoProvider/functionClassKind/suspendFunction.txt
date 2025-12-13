@@ -1,3 +1,0 @@
-expression: xy
-expected type: suspend () -> kotlin.Unit
-functionClassKind: kotlin.coroutines.SuspendFunctionN

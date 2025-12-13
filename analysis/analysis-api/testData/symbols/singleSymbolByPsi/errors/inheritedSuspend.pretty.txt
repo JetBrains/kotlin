@@ -1,1 +1,0 @@
-override fun bar(): kotlin.String

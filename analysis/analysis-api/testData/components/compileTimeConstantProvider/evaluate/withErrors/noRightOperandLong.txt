@@ -1,5 +1,0 @@
-expression: 2147483648
-constant: 2147483648
-constantValueKind: LongValue
-constantValueSource: INTEGER_CONSTANT
-constantValueSourceText: 2147483648

@@ -1,7 +1,0 @@
-language = Objective-C
-package = platform.FoundationModels
-
-modules = FoundationModels
-compilerOpts = -framework FoundationModels
-linkerOpts = -framework FoundationModels
-#Disabled: Swift-only framework

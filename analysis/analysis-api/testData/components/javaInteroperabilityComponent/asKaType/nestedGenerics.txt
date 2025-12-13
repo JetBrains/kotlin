@@ -1,2 +1,0 @@
-PsiType: java.util.List<java.lang.String>
-KaType: kotlin.collections.(Mutable)List<kotlin.String!>!

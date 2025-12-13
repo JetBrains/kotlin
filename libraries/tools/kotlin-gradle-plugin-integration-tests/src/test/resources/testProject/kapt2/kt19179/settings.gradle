@@ -1,4 +1,0 @@
-rootProject.name = 'kapt3-issues'
-include ':app'
-include ':api'
-include ':processor'

@@ -1,2 +1,0 @@
-expression: privateFunc()
-type: Invariant<in kotlin.Number>

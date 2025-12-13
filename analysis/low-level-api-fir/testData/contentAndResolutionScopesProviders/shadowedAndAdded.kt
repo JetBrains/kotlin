@@ -1,7 +1,0 @@
-// MODULE: MAIN
-// FILE: a.kt
-
-// MODULE: MAIN_REFINER
-// FILE: a.kt
-// SHADOWED
-// ADDED

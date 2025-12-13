@@ -1,3 +1,0 @@
-<component name="DependencyValidationManager">
-  <scope name="All except testData" pattern="!file[*]:*//testData//*&amp;&amp;!file[*]:testData//*&amp;&amp;!ext:*/" />
-</component>

@@ -1,3 +1,0 @@
-override val foo: kotlin.Int
-
-private constructor()

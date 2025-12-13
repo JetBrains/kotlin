@@ -1,9 +1,0 @@
-================ Step #1 =================
-
-Compiling files:
-  src/Foo.kt
-  src/FooImpl.kt
-  src/TypeAlias.kt
-End of files
-Exit code: OK
-------------------------------------------

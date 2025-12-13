@@ -1,7 +1,0 @@
-language = Objective-C
-package = platform.PDFKit
-
-modules = PDFKit
-compilerOpts = -framework PDFKit
-linkerOpts = -framework PDFKit
-#Disabled: Not officially available for tvos

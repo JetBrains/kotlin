@@ -1,6 +1,0 @@
-language = Objective-C
-package = platform.Combine
-modules = Combine
-compilerOpts = -framework Combine
-linkerOpts = -framework Combine
-#Disabled: Swift-only framework

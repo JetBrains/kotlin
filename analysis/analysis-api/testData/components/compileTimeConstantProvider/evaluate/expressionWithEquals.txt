@@ -1,5 +1,0 @@
-expression: 4 == 8 || (true != false) || (4 + 5 < 0)
-constant: true
-constantValueKind: BooleanValue
-constantValueSource: BINARY_EXPRESSION
-constantValueSourceText: 4 == 8 || (true != false) || (4 + 5 < 0)

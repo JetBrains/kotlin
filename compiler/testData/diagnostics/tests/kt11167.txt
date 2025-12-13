@@ -1,3 +1,0 @@
-package
-
-public fun foo(/*0*/ s: java.util.stream.IntStream): kotlin.Unit

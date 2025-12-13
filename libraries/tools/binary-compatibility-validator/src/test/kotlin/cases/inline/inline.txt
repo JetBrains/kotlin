@@ -1,9 +1,0 @@
-public final class cases/inline/InlineExposedKt {
-	public static final fun exposedForInline ()V
-}
-
-public final class cases/inline/InternalClassExposed {
-	public fun <init> ()V
-	public final fun funExposed ()V
-}
-

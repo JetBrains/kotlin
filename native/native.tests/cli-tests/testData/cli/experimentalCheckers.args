@@ -1,6 +1,0 @@
-$TESTDATA_DIR$/experimentalCheckers.kt
--o
-$TEMP_DIR$/simple
--p
-library
--Xuse-fir-experimental-checkers

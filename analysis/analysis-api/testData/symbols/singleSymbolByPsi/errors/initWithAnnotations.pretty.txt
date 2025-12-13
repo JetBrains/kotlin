@@ -1,4 +1,0 @@
-@low.Anno(position = "init annotation: 0")
-init {
-
-}

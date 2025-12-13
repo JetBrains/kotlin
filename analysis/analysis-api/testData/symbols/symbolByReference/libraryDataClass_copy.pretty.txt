@@ -1,1 +1,0 @@
-fun copy(name: kotlin.String): one.DataClass

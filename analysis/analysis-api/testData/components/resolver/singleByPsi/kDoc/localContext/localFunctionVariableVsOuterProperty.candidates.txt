@@ -1,2 +1,0 @@
-KtProperty(75,104): '/** [pp] */'
-  NO_CANDIDATES

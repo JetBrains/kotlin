@@ -1,4 +1,0 @@
-public open class ConstructorGenericDeep : R|kotlin/Any| {
-    public constructor<P : R|kotlin/Any!|>(cl: R|java/lang/Class<P!>!|): R|test/ConstructorGenericDeep|
-
-}

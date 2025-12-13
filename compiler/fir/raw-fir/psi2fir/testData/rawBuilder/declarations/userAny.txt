@@ -1,7 +1,0 @@
-FILE: userAny.kt
-    public open class Any : R|kotlin/Any| {
-        public? [ContainingClassKey=Any] constructor(): R|user/Any| {
-            super<R|kotlin/Any|>()
-        }
-
-    }

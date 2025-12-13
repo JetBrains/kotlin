@@ -1,5 +1,0 @@
-var constructorVariableWithAnnotations: kotlin.Long
-  @one.Anno
-  get()
-  @one.Anno
-  set(@one.Anno value: kotlin.Long)

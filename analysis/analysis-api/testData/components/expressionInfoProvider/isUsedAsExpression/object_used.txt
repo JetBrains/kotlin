@@ -1,6 +1,0 @@
-expression: OBJECT_LITERAL
-text: object {
-        fun getBool(): Boolean = b
-    }
-isUsedAsExpression: true
-isUsedAsResultOfLambda: false

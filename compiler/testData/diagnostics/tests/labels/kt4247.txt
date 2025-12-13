@@ -1,3 +1,0 @@
-package
-
-public fun foo(/*0*/ bar1: (kotlin.String.() -> kotlin.Int) -> kotlin.Int): kotlin.Unit

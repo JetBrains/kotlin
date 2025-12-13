@@ -1,3 +1,0 @@
-/a.kt:10:5: error: The 'inlineFun2' invocation is a part of inline cycle
-
-/b.kt:16:5: error: The 'inlineFun1' invocation is a part of inline cycle

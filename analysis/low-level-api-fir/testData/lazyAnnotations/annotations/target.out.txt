@@ -1,2 +1,0 @@
-kotlin/annotation/Target(allowedTargets = [kotlin.annotation.AnnotationTarget.FIELD])
-  psi: KtAnnotationEntry

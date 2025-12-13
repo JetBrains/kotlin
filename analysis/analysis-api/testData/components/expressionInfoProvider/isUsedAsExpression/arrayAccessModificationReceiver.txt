@@ -1,4 +1,0 @@
-expression: ARRAY_ACCESS_EXPRESSION
-text: a[0]
-isUsedAsExpression: true
-isUsedAsResultOfLambda: false

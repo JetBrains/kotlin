@@ -1,7 +1,0 @@
-depends = ApplicationServices CFCGTypes CFNetwork CoreAudio CoreAudioTypes CoreFoundation CoreFoundationBase CoreGraphics CoreServices CoreText CoreVideo DiskArbitration Foundation IOKit IOSurface ImageIO Metal OpenGLCommon Security cups darwin libkern osx posix
-language = Objective-C
-package = platform.CoreMedia
-modules = CoreMedia
-
-compilerOpts = -framework CoreMedia
-linkerOpts = -framework CoreMedia

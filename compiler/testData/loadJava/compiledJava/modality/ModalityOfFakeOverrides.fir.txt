@@ -1,6 +1,0 @@
-public open class ModalityOfFakeOverrides : R|java/util/AbstractList<kotlin/String!>| {
-    @R|java/lang/Override|() @R|org/jetbrains/annotations/NotNull|() public open operator fun get(index: R|kotlin/Int|): R|@EnhancedNullability kotlin/String|
-
-    public constructor(): R|test/ModalityOfFakeOverrides|
-
-}

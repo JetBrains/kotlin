@@ -1,1 +1,0 @@
-val x = <expr>intArrayOf(1,2,3)</expr>

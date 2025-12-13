@@ -1,5 +1,0 @@
----Message:
-assertFalse(1 == 1, "Message:")
-              |
-              true
----

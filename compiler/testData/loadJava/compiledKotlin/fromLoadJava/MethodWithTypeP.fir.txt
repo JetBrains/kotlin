@@ -1,6 +1,0 @@
-public final class MethodWithTypeP : R|kotlin/Any| {
-    public final fun <P> f(): R|kotlin/Unit|
-
-    public constructor(): R|test/MethodWithTypeP|
-
-}

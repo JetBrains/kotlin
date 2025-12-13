@@ -1,5 +1,0 @@
-expression: "Analysis API".toString()
-constant: "Analysis API"
-constantValueKind: StringValue
-constantValueSource: DOT_QUALIFIED_EXPRESSION
-constantValueSourceText: "Analysis API".toString()

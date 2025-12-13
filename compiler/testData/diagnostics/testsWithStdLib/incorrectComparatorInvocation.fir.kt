@@ -1,8 +1,0 @@
-// RUN_PIPELINE_TILL: FRONTEND
-// ISSUE: KT-54874
-
-fun main(args: Array<String>) {
-    val comparator = <!NO_COMPANION_OBJECT!>Comparator<Long?><!>
-}
-
-/* GENERATED_FIR_TAGS: functionDeclaration, localProperty, nullableType, propertyDeclaration */

@@ -1,7 +1,0 @@
-FILE: [ResolvedTo(BODY_RESOLVE)] uncompletedTypRefInPrimaryConstructorWithVararg.kt
-    public final [ResolvedTo(BODY_RESOLVE)] class X : R|kotlin/Any| {
-        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=X] constructor([ResolvedTo(BODY_RESOLVE)] vararg x: R|kotlin/Array<out ERROR CLASS: Incomplete code>|): R|X| {
-            super<R|kotlin/Any|>()
-        }
-
-    }

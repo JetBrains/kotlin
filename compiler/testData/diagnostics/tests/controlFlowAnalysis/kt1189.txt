@@ -1,6 +1,0 @@
-package
-
-package kt1189 {
-    public fun foo(): kotlin.Unit
-    public inline fun </*0*/ T> java.util.concurrent.locks.ReentrantReadWriteLock.write(/*0*/ action: () -> T): T
-}

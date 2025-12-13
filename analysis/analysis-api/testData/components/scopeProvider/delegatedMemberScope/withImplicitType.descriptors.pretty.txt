@@ -1,3 +1,0 @@
-fun foo(): kotlin.Int
-
-fun bar(): kotlin.Int

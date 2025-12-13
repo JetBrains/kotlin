@@ -1,2 +1,0 @@
-KtNameReferenceExpression(65,69): 'From'
-  null

@@ -1,6 +1,0 @@
-inline fun calculate(): Int {
-    class Calc {
-        val item = 42
-    }
-    return Calc().item
-}

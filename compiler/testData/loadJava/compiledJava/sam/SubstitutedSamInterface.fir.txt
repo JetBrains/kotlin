@@ -1,2 +1,0 @@
-public abstract interface SubstitutedSamInterface : R|java/util/Comparator<kotlin/String!>| {
-}

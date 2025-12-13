@@ -1,7 +1,0 @@
-language = Objective-C
-package = platform.AccessorySetupKit
-
-modules = AccessorySetupKit
-compilerOpts = -framework AccessorySetupKit
-linkerOpts = -framework AccessorySetupKit
-#Disabled: Not officially available for osx

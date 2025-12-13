@@ -1,5 +1,0 @@
-test1: ---
-assert(run { getFalse() })
-       |
-       false
----

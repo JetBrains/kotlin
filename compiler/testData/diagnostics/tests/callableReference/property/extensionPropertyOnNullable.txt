@@ -1,4 +1,0 @@
-package
-
-public val kotlin.Any?.meaning: kotlin.Int
-public fun test(): kotlin.Unit

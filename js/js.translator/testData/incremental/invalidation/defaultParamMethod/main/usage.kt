@@ -1,1 +1,0 @@
-internal fun usage(a: B) = a.f()

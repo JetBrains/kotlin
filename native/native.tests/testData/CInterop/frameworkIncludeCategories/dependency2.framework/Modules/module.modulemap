@@ -1,6 +1,0 @@
-framework module dependency2 {
-  umbrella header "dependency2.h"
-
-  export *
-  module * { export * }
-}

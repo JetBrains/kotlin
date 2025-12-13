@@ -1,2 +1,0 @@
-KtCallExpression(71,80): 'Test<Bar>'
-  NO_CANDIDATES

@@ -1,7 +1,0 @@
-depends = CFCGTypes CFNetwork CoreFoundation CoreFoundationBase CoreGraphics CoreServices DiskArbitration Foundation IOKit Network Security darwin libkern osx posix
-language = Objective-C
-package = platform.NetworkExtension
-modules = NetworkExtension
-
-compilerOpts = -framework NetworkExtension
-linkerOpts = -framework NetworkExtension

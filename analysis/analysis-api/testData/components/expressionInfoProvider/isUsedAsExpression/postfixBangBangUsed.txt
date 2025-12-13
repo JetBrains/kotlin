@@ -1,4 +1,0 @@
-expression: POSTFIX_EXPRESSION
-text: b!!
-isUsedAsExpression: true
-isUsedAsResultOfLambda: false

@@ -1,4 +1,0 @@
-expression: CALLABLE_REFERENCE_EXPRESSION
-text: String::length
-isUsedAsExpression: true
-isUsedAsResultOfLambda: false

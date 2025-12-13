@@ -1,4 +1,0 @@
-package includedLib
-
-class CommonMain {
-}

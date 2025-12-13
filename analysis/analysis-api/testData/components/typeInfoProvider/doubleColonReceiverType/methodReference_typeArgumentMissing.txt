@@ -1,2 +1,0 @@
-expression: MyInterface::sam
-receiver:: type: MyInterface

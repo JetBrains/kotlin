@@ -1,4 +1,0 @@
-FILE: [ResolvedTo(BODY_RESOLVE)] functionTypes.kt
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun <[ResolvedTo(ANNOTATION_ARGUMENTS)] T> simpleRun([ResolvedTo(ANNOTATION_ARGUMENTS)] f: R|() -> T|): R|T| { LAZY_BLOCK }
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun <[ResolvedTo(ANNOTATION_ARGUMENTS)] T, [ResolvedTo(ANNOTATION_ARGUMENTS)] R> [ResolvedTo(ANNOTATION_ARGUMENTS)] R|kotlin/collections/List<T>|.simpleMap([ResolvedTo(ANNOTATION_ARGUMENTS)] f: R|(T) -> R|): R|R| { LAZY_BLOCK }
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun <[ResolvedTo(ANNOTATION_ARGUMENTS)] T> simpleWith([ResolvedTo(ANNOTATION_ARGUMENTS)] t: R|T|, [ResolvedTo(ANNOTATION_ARGUMENTS)] f: R|T.() -> kotlin/Unit|): R|kotlin/Unit| { LAZY_BLOCK }

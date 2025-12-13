@@ -1,4 +1,0 @@
-expression: PROPERTY
-text: val h = v.hashCode()
-isUsedAsExpression: false
-isUsedAsResultOfLambda: false

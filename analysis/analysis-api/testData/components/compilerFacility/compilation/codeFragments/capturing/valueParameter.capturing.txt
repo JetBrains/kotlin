@@ -1,5 +1,0 @@
-Captured values:
-Local[name: foo; isMutated: false; displayText: foo]
-    foo: R|Foo?|
-    R|Foo?|
-No captured files

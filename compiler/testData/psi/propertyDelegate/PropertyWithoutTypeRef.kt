@@ -1,3 +1,0 @@
-// COMPILATION_ERRORS
-
-val p by A()

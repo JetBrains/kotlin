@@ -1,3 +1,0 @@
-STEP 0:
-    dependencies: stdlib, lib1
-    arguments: -XXLanguage:-IrRichCallableReferencesInKlibs -Xklib-ir-inliner=disabled

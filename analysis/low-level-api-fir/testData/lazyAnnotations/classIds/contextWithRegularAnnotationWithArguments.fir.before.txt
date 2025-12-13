@@ -1,1 +1,0 @@
-[ResolvedTo(RAW_FIR)] @MyAnno[Unresolved](LAZY_EXPRESSION) variable: String

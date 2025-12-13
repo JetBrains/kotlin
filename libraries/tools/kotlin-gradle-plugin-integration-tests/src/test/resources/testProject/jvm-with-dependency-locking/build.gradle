@@ -1,7 +1,0 @@
-plugins {
-    id("org.jetbrains.kotlin.jvm")
-}
-
-configurations.configureEach {
-    resolutionStrategy.activateDependencyLocking()
-}

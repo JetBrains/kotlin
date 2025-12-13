@@ -1,5 +1,0 @@
-FILE: fileAnnotations.kt
-    @FILE:FileAnnotation(LAZY_EXPRESSION)
-    @FILE:Annotation1(LAZY_EXPRESSION)
-    @FILE:Annotation2()
-    @WithouTarget(LAZY_EXPRESSION)

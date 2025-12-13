@@ -1,2 +1,0 @@
-expression: function::apply
-type: kotlin.reflect.KFunction1<T, kotlin.Unit>

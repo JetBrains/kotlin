@@ -1,4 +1,0 @@
-expression: THIS_EXPRESSION
-text: this
-isUsedAsExpression: true
-isUsedAsResultOfLambda: false

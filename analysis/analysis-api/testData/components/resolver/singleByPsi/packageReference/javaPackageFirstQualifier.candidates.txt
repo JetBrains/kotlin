@@ -1,2 +1,0 @@
-KtNameReferenceExpression(22,26): 'java'
-  NO_CANDIDATES

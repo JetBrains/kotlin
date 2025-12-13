@@ -1,5 +1,0 @@
-$TESTDATA_DIR$/simple.kt
--o
-$TEMP_DIR$/out
--Xsave-llvm-ir-after=Codegen
--Xsave-llvm-ir-directory=$TEMP_DIR$/no/such/dir

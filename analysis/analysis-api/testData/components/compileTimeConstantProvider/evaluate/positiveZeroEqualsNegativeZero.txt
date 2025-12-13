@@ -1,5 +1,0 @@
-expression: +0.0f == -0.0f
-constant: false
-constantValueKind: BooleanValue
-constantValueSource: BINARY_EXPRESSION
-constantValueSourceText: +0.0f == -0.0f

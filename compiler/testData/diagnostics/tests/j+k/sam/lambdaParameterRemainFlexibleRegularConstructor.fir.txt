@@ -1,7 +1,0 @@
-FILE: main.kt
-    public final fun main(): R|kotlin/Unit| {
-        R|/J.J|<R|ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(coneType=kotlin/String?, relevantFeature=null) kotlin/String!|>(<L> = SAM(J@fun <anonymous>(x: R|ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(coneType=kotlin/String?, relevantFeature=DontMakeExplicitJavaTypeArgumentsFlexible) kotlin/String!|): R|kotlin/Unit| <inline=NoInline>  {
-            R|<local>/x|.R|kotlin/String.length|
-        }
-        ))
-    }

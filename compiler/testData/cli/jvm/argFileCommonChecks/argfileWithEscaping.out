@@ -1,3 +1,0 @@
-warning: flag is not supported by this version of the compiler: -Xdouble ' quote ' escaped " sequence /
-warning: flag is not supported by this version of the compiler: -Xsingle " quote " escaped ' sequence /
-OK

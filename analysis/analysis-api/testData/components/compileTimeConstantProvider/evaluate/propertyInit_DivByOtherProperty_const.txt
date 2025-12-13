@@ -1,5 +1,0 @@
-expression: 42 / d
-constant: 42
-constantValueKind: IntValue
-constantValueSource: BINARY_EXPRESSION
-constantValueSourceText: 42 / d

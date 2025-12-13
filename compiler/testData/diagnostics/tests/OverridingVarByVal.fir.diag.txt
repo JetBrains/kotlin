@@ -1,1 +1,0 @@
-/OverridingVarByVal.kt:(198,201): error: 'var' property 'var v: Int' defined in 'Var' cannot be overridden by 'val' property 'val v: Int'.

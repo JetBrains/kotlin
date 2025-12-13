@@ -1,4 +1,0 @@
-expression: TYPEALIAS
-text: typealias Alias<T> = List<T>
-isUsedAsExpression: false
-isUsedAsResultOfLambda: false

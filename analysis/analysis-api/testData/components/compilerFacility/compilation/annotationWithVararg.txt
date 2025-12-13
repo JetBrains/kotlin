@@ -1,5 +1,0 @@
-public final class MainKt {
-    // source: 'main.kt'
-    public final static method foo(): int
-    public final static method test(): void
-}

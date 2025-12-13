@@ -1,2 +1,0 @@
-KtTypeParameter: reified T
-KaType: T

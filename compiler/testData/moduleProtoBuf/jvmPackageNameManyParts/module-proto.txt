@@ -1,4 +1,0 @@
-foo
-  foo/jvm/Foo1Kt
-  foo/jvm/Foo2Kt
-  foo/jvm/Foo3Kt

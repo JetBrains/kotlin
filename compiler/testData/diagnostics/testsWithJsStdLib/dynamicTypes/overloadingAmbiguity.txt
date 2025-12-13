@@ -1,5 +1,0 @@
-package
-
-public fun test(/*0*/ d: dynamic): kotlin.Unit
-public fun dynamic.foo(/*0*/ s: kotlin.Any, /*1*/ a: kotlin.String): kotlin.Unit
-public fun dynamic.foo(/*0*/ s: kotlin.String, /*1*/ a: kotlin.Any): kotlin.Unit

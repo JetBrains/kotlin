@@ -1,7 +1,0 @@
-expression: IF
-text: if (n == 1)
-        return "one"
-    else
-        return "two"
-isUsedAsExpression: false
-isUsedAsResultOfLambda: false

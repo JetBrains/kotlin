@@ -1,5 +1,0 @@
-expression: "a".compareTo("b")
-constant: -1
-constantValueKind: IntValue
-constantValueSource: DOT_QUALIFIED_EXPRESSION
-constantValueSourceText: "a".compareTo("b")

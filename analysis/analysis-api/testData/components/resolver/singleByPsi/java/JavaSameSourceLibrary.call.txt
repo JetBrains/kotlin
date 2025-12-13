@@ -1,2 +1,0 @@
-KtNameReferenceExpression(51,60): 'JavaClass'
-  null

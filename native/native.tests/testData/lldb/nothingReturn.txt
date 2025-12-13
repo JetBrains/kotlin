@@ -1,5 +1,0 @@
-> b main.kt:7
-> r
-> im loo -n kfun:#test(){}kotlin.Nothing -v
-FuncType: [..], compiler_type = "void (void)"
-> q

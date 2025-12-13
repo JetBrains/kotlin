@@ -1,3 +1,0 @@
-package klass
-
-class Klass

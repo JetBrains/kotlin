@@ -1,5 +1,0 @@
-expression: fdfd
-expected type: KaUsualClassType:
-  annotations: []
-  typeArguments: []
-  type: kotlin/Boolean

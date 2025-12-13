@@ -1,7 +1,0 @@
-package=cinterop.lib.b
----
-
-static int b() {
-    return 1;
-}
-

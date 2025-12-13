@@ -1,6 +1,0 @@
-package
-
-package g {
-    public fun </*0*/ T, /*1*/ C : kotlin.collections.Collection<T>> convert(/*0*/ src: kotlin.collections.Collection<T>, /*1*/ dest: C): C
-    public fun test(/*0*/ l: kotlin.collections.List<kotlin.Int>): kotlin.Unit
-}

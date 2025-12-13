@@ -1,2 +1,0 @@
-FILE: destructuringInsideCallChain.kt
-    public? final? fun main(args: Array<String>): R|kotlin/Unit| { LAZY_BLOCK }

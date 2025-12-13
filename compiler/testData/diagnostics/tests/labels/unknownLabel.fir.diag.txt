@@ -1,3 +1,0 @@
-/unknownLabel.fir.kt:(169,173): error: Unresolved label.
-
-/unknownLabel.fir.kt:(232,236): error: Unresolved label.

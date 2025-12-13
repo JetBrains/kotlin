@@ -1,5 +1,0 @@
-package
-
-public fun foo(/*0*/ x: kotlin.Any, /*1*/ y: kotlin.Int): kotlin.Int
-public fun foo(/*0*/ x: kotlin.Int, /*1*/ y: kotlin.Any): kotlin.Int
-public fun main(): kotlin.Unit

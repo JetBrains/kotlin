@@ -1,9 +1,0 @@
-FILE: annotationArgumentLocalDeclarations.kt
-    public final? class TopLevelClass : R|kotlin/Any| {
-        public? constructor(): R|TopLevelClass| {
-            LAZY_super<R|kotlin/Any|>
-        }
-
-        @ClassLevel1(LAZY_EXPRESSION) @ClassLevel2(LAZY_EXPRESSION) @ClassLevel3(LAZY_EXPRESSION) @ClassLevel4(LAZY_EXPRESSION) <DANGLING MODIFIER: Top level declaration expected>
-    }
-    @FileLevel1(LAZY_EXPRESSION) @FileLevel2(LAZY_EXPRESSION) @FileLevel3(LAZY_EXPRESSION) @FileLevel4(LAZY_EXPRESSION) <DANGLING MODIFIER: Top level declaration expected>

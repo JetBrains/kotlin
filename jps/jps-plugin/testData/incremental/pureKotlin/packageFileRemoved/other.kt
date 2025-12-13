@@ -1,3 +1,0 @@
-package other
-
-fun imInOtherPackage() = ":)"

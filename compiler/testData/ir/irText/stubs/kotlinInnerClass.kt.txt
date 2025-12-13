@@ -1,3 +1,0 @@
-fun test(inner: Inner) {
-  return inner.foo()
-}

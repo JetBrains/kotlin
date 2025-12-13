@@ -1,4 +1,0 @@
-DEFAULT TYPE:
-pack.one.Foo<K>
-DEFAULT TYPE WITH STAR PROJECTIONS:
-pack.one.Foo<*>

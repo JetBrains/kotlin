@@ -1,2 +1,0 @@
-@JsExport
-class Bar

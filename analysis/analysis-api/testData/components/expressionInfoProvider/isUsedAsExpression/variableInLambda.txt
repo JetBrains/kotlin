@@ -1,4 +1,0 @@
-expression: DOT_QUALIFIED_EXPRESSION
-text: x.size
-isUsedAsExpression: true
-isUsedAsResultOfLambda: true

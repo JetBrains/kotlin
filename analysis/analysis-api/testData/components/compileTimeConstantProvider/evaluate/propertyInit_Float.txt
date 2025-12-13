@@ -1,5 +1,0 @@
-expression: 3.14f
-constant: 3.14f
-constantValueKind: FloatValue
-constantValueSource: FLOAT_CONSTANT
-constantValueSourceText: 3.14f

@@ -1,4 +1,0 @@
-headers = mylib.h
-headerFilter = mylib.h
-libraryPaths = ../../../libs/ios/device
-linkerOpts = -L../../../libs/ios/device -lmylib_ios_arm64

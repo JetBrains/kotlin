@@ -1,2 +1,0 @@
-warning: cannot dump LLVM IR to non-existent location: $TMP_DIR$/no/such/dir
-OK

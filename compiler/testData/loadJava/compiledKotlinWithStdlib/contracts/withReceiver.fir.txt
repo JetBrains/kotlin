@@ -1,5 +1,0 @@
-public final fun R|kotlin/Any?|.isNotNull(): R|kotlin/Boolean|
-    [R|Contract description]
-     <
-        Returns(TRUE) -> this != null
-    >

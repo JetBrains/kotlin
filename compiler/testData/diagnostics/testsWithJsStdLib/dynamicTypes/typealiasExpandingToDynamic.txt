@@ -1,7 +1,0 @@
-package
-
-public typealias Dyn = [Error type: Dynamic type in a not allowed context]
-public typealias Dyn2 = Dyn
-public typealias Dyn3 = Dyn2
-public typealias Dyn4 = Type<Dyn>
-public typealias Type</*0*/ T> = T

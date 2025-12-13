@@ -1,2 +1,0 @@
-expression: IntMath::factorial
-receiver:: type: my.math.IntMath

@@ -1,9 +1,0 @@
-<root>
-  <item
-      name='com.intellij.platform.ProjectTemplatesFactory com.intellij.platform.ProjectTemplate[] createTemplates(java.lang.String, com.intellij.ide.util.projectWizard.WizardContext) 0'>
-    <annotation name='org.jetbrains.annotations.NotNull'/>
-  </item>
-  <item name='com.intellij.platform.ProjectTemplatesFactory javax.swing.Icon getGroupIcon(java.lang.String) 0'>
-    <annotation name='org.jetbrains.annotations.NotNull'/>
-  </item>
-</root>

@@ -1,8 +1,0 @@
-$TEMP_DIR$
--Xir-produce-klib-dir
--libraries
-$STDLIB_JS$
--ir-output-dir
-$TEMP_DIR$
--ir-output-name
-out

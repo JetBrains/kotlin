@@ -1,4 +1,0 @@
-ARRAY_TYPE
-   KaType: kotlin.Array<kotlin.Boolean>
-VARARG_ARRAY_TYPE
-   KaType: kotlin.BooleanArray

@@ -1,3 +1,0 @@
-CAN_BE_CALLED_AS_EXTENSION_ON: true
-CALLABLE: fun <T : BaseAlias<T>> Base<T>.ext()
-TYPE: ChildGenericAlias

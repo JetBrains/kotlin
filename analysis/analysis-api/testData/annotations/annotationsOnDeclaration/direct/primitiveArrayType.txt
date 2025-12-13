@@ -1,5 +1,0 @@
-KtDeclaration: KtClass Foo
-annotations: [
-  Anno(value = kotlin.IntArray::class)
-    psi: KtAnnotationEntry
-]

@@ -1,3 +1,0 @@
-FILE: [ResolvedTo(BODY_RESOLVE)] cascadeIf.kt
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun foo([ResolvedTo(ANNOTATION_ARGUMENTS)] first: R|kotlin/Boolean|, [ResolvedTo(ANNOTATION_ARGUMENTS)] second: R|kotlin/Boolean|, [ResolvedTo(ANNOTATION_ARGUMENTS)] third: R|kotlin/Boolean|): R|kotlin/Int| { LAZY_BLOCK }
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun example(): R|kotlin/Unit| { LAZY_BLOCK }

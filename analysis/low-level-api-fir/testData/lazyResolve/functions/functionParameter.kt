@@ -1,1 +1,0 @@
-fun foo(par<caret>am: Int) = "boo"

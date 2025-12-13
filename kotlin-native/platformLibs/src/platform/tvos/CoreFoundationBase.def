@@ -1,8 +1,0 @@
-depends = darwin posix
-language = Objective-C
-package = platform.CoreFoundation
-headers = CoreFoundation/CFBase.h CoreFoundation/CFAvailability.h
-headerFilter = CoreFoundation/CFBase.h CoreFoundation/CFAvailability.h
-
-compilerOpts = -framework CoreFoundation
-linkerOpts = -framework CoreFoundation

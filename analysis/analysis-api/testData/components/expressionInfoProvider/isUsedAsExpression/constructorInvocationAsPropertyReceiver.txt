@@ -1,4 +1,0 @@
-expression: CALL_EXPRESSION
-text: C()
-isUsedAsExpression: true
-isUsedAsResultOfLambda: false

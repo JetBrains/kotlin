@@ -1,4 +1,0 @@
-compiler/testData/cli/jvm/diagnosticTests/firDfa.kt:3:10: warning: unnecessary non-null assertion (!!) on a non-null receiver of type 'String'.
-        x!!.length
-         ^^
-OK

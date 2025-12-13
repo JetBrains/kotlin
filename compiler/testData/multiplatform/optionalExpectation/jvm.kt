@@ -1,1 +1,0 @@
-actual annotation class A

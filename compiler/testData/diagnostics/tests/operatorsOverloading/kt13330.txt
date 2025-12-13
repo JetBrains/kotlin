@@ -1,3 +1,0 @@
-package
-
-public fun foo(/*0*/ exec: (kotlin.String.() -> kotlin.Unit)?): kotlin.Unit

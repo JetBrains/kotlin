@@ -1,7 +1,0 @@
-depends = CFCGTypes CoreFoundation CoreFoundationBase IOKit darwin libkern posix
-language = Objective-C
-package = platform.DiskArbitration
-modules = DiskArbitration
-
-compilerOpts = -framework DiskArbitration
-linkerOpts = -framework DiskArbitration

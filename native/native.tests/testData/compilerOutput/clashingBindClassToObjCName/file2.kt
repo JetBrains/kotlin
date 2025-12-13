@@ -1,1 +1,0 @@
-@file:kotlin.native.internal.objc.BindClassToObjCName(MyClass::class, "MyClassObjC2")

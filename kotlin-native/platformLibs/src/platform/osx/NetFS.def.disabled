@@ -1,6 +1,0 @@
-language = Objective-C
-package = platform.NetFS
-modules = NetFS
-compilerOpts = -framework NetFS
-linkerOpts = -framework NetFS
-#Disabled: Unavailable

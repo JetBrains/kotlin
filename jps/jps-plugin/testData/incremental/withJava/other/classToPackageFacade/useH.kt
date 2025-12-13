@@ -1,3 +1,0 @@
-fun useH() {
-    getA().h()
-}

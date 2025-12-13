@@ -1,4 +1,0 @@
-expression: DOT_QUALIFIED_EXPRESSION
-text: b.hashCode()
-isUsedAsExpression: true
-isUsedAsResultOfLambda: false

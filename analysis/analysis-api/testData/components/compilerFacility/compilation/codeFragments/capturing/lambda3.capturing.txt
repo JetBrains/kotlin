@@ -1,5 +1,0 @@
-Captured values:
-ContainingClass[name: <this>; isMutated: false; displayText: this@EnumClass]
-    enum class EnumClass : R|kotlin/Enum<EnumClass>|
-    R|EnumClass|
-No captured files

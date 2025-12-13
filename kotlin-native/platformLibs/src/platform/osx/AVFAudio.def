@@ -1,7 +1,0 @@
-depends = ApplicationServices AudioToolbox CFCGTypes CFNetwork CoreAudio CoreAudioTypes CoreFoundation CoreFoundationBase CoreGraphics CoreMIDI CoreMedia CoreServices CoreText CoreVideo DiskArbitration Foundation IOKit IOSurface ImageIO Metal OpenGLCommon Security cups darwin libkern osx posix
-language = Objective-C
-package = platform.AVFAudio
-
-modules = AVFAudio
-compilerOpts = -framework AVFAudio
-linkerOpts = -framework AVFAudio

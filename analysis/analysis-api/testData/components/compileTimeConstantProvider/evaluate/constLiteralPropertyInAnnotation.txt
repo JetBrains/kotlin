@@ -1,5 +1,0 @@
-expression: Something.VALUE
-constant: 5
-constantValueKind: IntValue
-constantValueSource: DOT_QUALIFIED_EXPRESSION
-constantValueSourceText: Something.VALUE

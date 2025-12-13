@@ -1,6 +1,0 @@
-KtNameReferenceExpression(84,90): 'Nested'
-  KtSimpleNameReference:
-    isImplicitReferenceToCompanion: true
-    usesContextSensitiveResolution: false
-    symbols:
-      (in AA.Nested) companion object

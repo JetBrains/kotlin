@@ -1,1 +1,0 @@
-fun useAChild(a: AChild) {}

@@ -1,8 +1,0 @@
-Captured values:
-Local[name: ctx2; isMutated: false; displayText: ctx2]
-    ctx2: R|Ctx2|
-    R|Ctx2|
-Local[name: x; isMutated: false; displayText: x]
-    x: R|kotlin/Int|
-    R|kotlin/Int|
-No captured files

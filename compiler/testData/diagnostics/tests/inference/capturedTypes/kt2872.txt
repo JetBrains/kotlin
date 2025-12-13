@@ -1,4 +1,0 @@
-package
-
-public fun test(/*0*/ array: kotlin.Array<out kotlin.Int>): kotlin.Unit
-public fun </*0*/ T> kotlin.Array<T>.foo(): kotlin.Unit

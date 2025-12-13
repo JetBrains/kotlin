@@ -1,3 +1,0 @@
-expression: xy
-expected type: kotlin.reflect.KFunction1<kotlin.Int, kotlin.String>
-functionClassKind: kotlin.reflect.KFunctionN

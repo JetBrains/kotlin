@@ -1,5 +1,0 @@
-package
-
-public val x: [Error type: Return type for property x cannot be resolved]
-public val y: kotlin.Int
-

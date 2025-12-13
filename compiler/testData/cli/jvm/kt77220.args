@@ -1,7 +1,0 @@
-$TESTDATA_DIR$/kt77220.kt
--d
-$TEMP_DIR$
--Xfragment-refines=jvmMain\:commonMain
--Xfragment-sources=commonMain\:$TESTDATA_DIR$/kt77220.kt
--Xfragments=jvmMain,commonMain
--Xmulti-platform

@@ -1,5 +1,0 @@
-expression: 9.5f + 1.5f == 11.0f
-constant: true
-constantValueKind: BooleanValue
-constantValueSource: BINARY_EXPRESSION
-constantValueSourceText: 9.5f + 1.5f == 11.0f

@@ -1,6 +1,0 @@
-KT element: KtNamedFunction
-FIR element: FirNamedFunctionImpl
-FIR source kind: KtRealSourceElementKind
-
-FIR element rendered:
-public final [ResolvedTo(BODY_RESOLVE)] fun <[ResolvedTo(BODY_RESOLVE)] T> [ResolvedTo(RAW_FIR)] R|kotlin/Array<out kotlin/Array<out T>>|.flatten(): R|kotlin/collections/List<T>|

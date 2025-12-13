@@ -1,4 +1,0 @@
-public final class ClassWithTypeP<P : R|kotlin/Any!|> : R|kotlin/Any| {
-    public constructor<P : R|kotlin/Any!|>(): R|test/ClassWithTypeP<P>|
-
-}

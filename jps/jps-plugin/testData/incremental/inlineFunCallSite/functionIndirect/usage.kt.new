@@ -1,7 +1,0 @@
-package usage
-
-internal class Usage {
-    private val inlined = inline.test()
-
-    private val check = inline.same::class.java == inlined::class.java
-}

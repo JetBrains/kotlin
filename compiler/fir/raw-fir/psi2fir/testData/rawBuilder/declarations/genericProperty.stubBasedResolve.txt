@@ -1,4 +1,0 @@
-FILE: [ResolvedTo(BODY_RESOLVE)] genericProperty.kt
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun <[ResolvedTo(ANNOTATION_ARGUMENTS)] T> genericFoo(): R|T| { LAZY_BLOCK }
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val <[ResolvedTo(ANNOTATION_ARGUMENTS)] T> [ResolvedTo(ANNOTATION_ARGUMENTS)] R|T|.generic: R|T|
-        public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|T| { LAZY_BLOCK }

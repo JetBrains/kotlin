@@ -1,4 +1,0 @@
-Declaration: private fun foo(p: kotlin.Int)
-At usage site: println()
-Is visible: true
-Receiver expression: null

@@ -1,9 +1,0 @@
-[ExperimentalFeatureWarning_94215491 | WARNING] Experimental Feature Notice
-My feature A is an experimental feature and subject to change in any future releases.
-It may not function as you expect and you may encounter bugs. Use it at your own risk.
-Thank you for your understanding. We would appreciate your feedback on this feature in YouTrack https://kotl.in/feature-a.
-----
-[ExperimentalFeatureWarning_86dc7630 | WARNING] Experimental Feature Notice
-My feature B is an experimental feature and subject to change in any future releases.
-It may not function as you expect and you may encounter bugs. Use it at your own risk.
-Thank you for your understanding. We would appreciate your feedback on this feature in YouTrack https://kotl.in/feature-b.

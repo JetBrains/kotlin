@@ -1,9 +1,0 @@
-FILE: classLevelDestructuringWithAnnotation.kt
-    public final? class Foo : R|kotlin/Any| {
-        public? constructor(): R|util/Foo| {
-            LAZY_super<R|kotlin/Any|>
-        }
-
-        public final val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = LAZY_EXPRESSION
-
-    }

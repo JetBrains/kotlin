@@ -1,6 +1,0 @@
-package
-
-public fun foo1(/*0*/ x: kotlin.Number, /*1*/ cond: kotlin.Boolean): kotlin.Boolean
-public fun foo2(/*0*/ x: kotlin.Number, /*1*/ cond: kotlin.Boolean): kotlin.Boolean
-public fun foo3(/*0*/ x: kotlin.Number, /*1*/ cond: kotlin.Boolean): kotlin.Boolean
-public fun foo4(/*0*/ x: kotlin.Number, /*1*/ cond: kotlin.Boolean): kotlin.Boolean

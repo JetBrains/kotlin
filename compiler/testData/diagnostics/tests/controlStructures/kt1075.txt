@@ -1,5 +1,0 @@
-package
-
-package kt1075 {
-    public fun foo(/*0*/ b: kotlin.String): kotlin.Unit
-}

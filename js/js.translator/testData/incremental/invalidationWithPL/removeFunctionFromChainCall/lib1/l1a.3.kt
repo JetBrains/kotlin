@@ -1,1 +1,0 @@
-fun makeKlass() = Klass()

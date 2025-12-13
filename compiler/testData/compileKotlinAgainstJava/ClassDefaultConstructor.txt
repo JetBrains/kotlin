@@ -1,7 +1,0 @@
-package test
-
-public fun useClassDefaultConstructor(): test.ClassDefaultConstructor
-
-public open class ClassDefaultConstructor {
-    public constructor ClassDefaultConstructor()
-}

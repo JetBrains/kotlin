@@ -1,1 +1,0 @@
-fun foo(x<caret>x: Int) {}

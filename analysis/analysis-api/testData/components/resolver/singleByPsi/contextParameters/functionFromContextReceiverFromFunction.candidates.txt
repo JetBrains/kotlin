@@ -1,2 +1,0 @@
-KtCallExpression(94,97): 'c()'
-  NO_CANDIDATES

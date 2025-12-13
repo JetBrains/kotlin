@@ -1,3 +1,0 @@
-/typeMismatchOnUninferred.fir.kt:(142,147): error: Cannot infer type for type parameter 'T1'. Specify it explicitly.
-
-/typeMismatchOnUninferred.fir.kt:(148,149): error: Argument type mismatch: actual type is 'T (of fun <T> bar)', but 'uninferred T1 (of fun <T1> foo22)' was expected.

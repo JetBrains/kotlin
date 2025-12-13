@@ -1,9 +1,0 @@
-================ Step #1 =================
-
-Compiling files:
-  src/X.kt
-  src/commonX.kt
-  src/utilsActual.kt
-  src/utilsNoActual.kt
-End of files
-Exit code: OK

@@ -1,6 +1,0 @@
-FILE: functionWithBothOldAndNewSyntaxContractDescription.kt
-    public? final? fun test1(s: String?): R|kotlin/Unit|
-        [Contract description] <
-            LAZY_EXPRESSION
-        >
-     { LAZY_BLOCK }

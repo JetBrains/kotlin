@@ -1,5 +1,0 @@
-expression: 5 > 4.toLong()
-constant: true
-constantValueKind: BooleanValue
-constantValueSource: BINARY_EXPRESSION
-constantValueSourceText: 5 > 4.toLong()

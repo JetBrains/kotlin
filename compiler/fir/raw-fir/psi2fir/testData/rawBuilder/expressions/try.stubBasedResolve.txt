@@ -1,2 +1,0 @@
-FILE: [ResolvedTo(BODY_RESOLVE)] try.kt
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun some(): R|kotlin/Unit| { LAZY_BLOCK }

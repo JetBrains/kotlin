@@ -1,5 +1,0 @@
-KtDeclaration: KtNamedFunction foo
-annotations: [
-  A(a = 1, c = UNRESOLVED_CLASS::class)
-    psi: KtAnnotationEntry
-]

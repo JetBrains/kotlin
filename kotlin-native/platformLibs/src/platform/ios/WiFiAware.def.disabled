@@ -1,7 +1,0 @@
-language = Objective-C
-package = platform.WiFiAware
-
-modules = WiFiAware
-compilerOpts = -framework WiFiAware
-linkerOpts = -framework WiFiAware
-#Disabled: Swift-only framework

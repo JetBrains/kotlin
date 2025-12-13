@@ -1,6 +1,0 @@
-KtNameReferenceExpression(97,100): 'baz'
-  KtSimpleNameReference:
-    isImplicitReferenceToCompanion: false
-    usesContextSensitiveResolution: false
-    symbols:
-      package foo.bar.baz

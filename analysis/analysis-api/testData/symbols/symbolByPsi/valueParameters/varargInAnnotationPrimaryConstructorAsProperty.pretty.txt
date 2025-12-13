@@ -1,3 +1,0 @@
-annotation class Foo(vararg ints: kotlin.Int) {
-  val ints: kotlin.IntArray
-}

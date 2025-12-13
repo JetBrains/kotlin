@@ -1,3 +1,0 @@
-package
-
-public fun foo(/*0*/ map: kotlin.collections.MutableMap<kotlin.Int, kotlin.String>): kotlin.Unit

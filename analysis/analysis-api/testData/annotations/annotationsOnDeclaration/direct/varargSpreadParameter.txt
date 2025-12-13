@@ -1,5 +1,0 @@
-KtDeclaration: KtClass Foo
-annotations: [
-  A(strings = ["foo", "bar", "baz", "quux"])
-    psi: KtAnnotationEntry
-]

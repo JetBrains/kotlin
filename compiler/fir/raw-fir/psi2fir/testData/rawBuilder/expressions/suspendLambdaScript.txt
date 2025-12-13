@@ -1,9 +1,0 @@
-FILE: suspendLambdaScript.kts
-    SCRIPT: <script-suspendLambdaScript.kts>
-
-        [ScriptTopLevelDeclaration=true] init {
-            suspend fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
-                ^ Unit
-            }
-
-        }

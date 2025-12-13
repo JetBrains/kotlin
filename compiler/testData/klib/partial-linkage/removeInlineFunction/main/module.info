@@ -1,3 +1,0 @@
-STEP 0:
-    arguments: -Xcontext-parameters -Xklib-ir-inliner=full
-    dependencies: stdlib, lib1

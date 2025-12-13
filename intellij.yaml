@@ -1,5 +1,0 @@
-versionControl:
-  git:
-    coreFsMonitor: "true"
-    coreUntrackedCache: "true"
-    featureManyFiles: "true"

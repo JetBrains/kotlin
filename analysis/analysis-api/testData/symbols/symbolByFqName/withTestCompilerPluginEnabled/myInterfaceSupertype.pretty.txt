@@ -1,2 +1,0 @@
-@org.jetbrains.kotlin.plugin.sandbox.MyInterfaceSupertype
-class MyClass : foo.MyInterface

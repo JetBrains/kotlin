@@ -1,8 +1,0 @@
-FILE: main.kt
-    public final fun main(j: R|JavaClass|): R|kotlin/Unit| {
-         {
-            lval <receiver>: R|JavaClass| = R|<local>/j|
-            R|<local>/<receiver>|.R|/JavaClass.foo| = R|<local>/<receiver>|.R|/JavaClass.foo|.R|kotlin/String.plus|(String(OK))
-        }
-
-    }

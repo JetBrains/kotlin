@@ -1,6 +1,0 @@
-@Suppress("MUST_BE_INITIALIZED")
-val foo: Int
-
-val bar: String
-
-// SUPPRESS_INDIVIDUAL_DIAGNOSTICS_CHECK: KT-63221

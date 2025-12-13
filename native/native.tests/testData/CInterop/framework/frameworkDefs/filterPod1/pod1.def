@@ -1,4 +1,0 @@
-language = C
-headers=pod1/pod1-umbrella.h
-
-headerFilter=pod1/pod1.h

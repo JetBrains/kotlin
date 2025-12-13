@@ -1,4 +1,0 @@
-expression: REFERENCE_EXPRESSION
-text: i
-isUsedAsExpression: true
-isUsedAsResultOfLambda: false

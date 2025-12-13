@@ -1,4 +1,0 @@
-expression: INTEGER_CONSTANT
-text: 5
-isUsedAsExpression: false
-isUsedAsResultOfLambda: false

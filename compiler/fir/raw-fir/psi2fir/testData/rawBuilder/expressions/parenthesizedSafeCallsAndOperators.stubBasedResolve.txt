@@ -1,2 +1,0 @@
-FILE: [ResolvedTo(BODY_RESOLVE)] parenthesizedSafeCallsAndOperators.kt
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }

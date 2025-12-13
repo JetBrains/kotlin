@@ -1,3 +1,0 @@
-// RUNTIME
-
-// class: kotlin/Any

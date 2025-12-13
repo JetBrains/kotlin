@@ -1,5 +1,0 @@
-$TESTDATA_DIR$/dfaWarningExampleK2.kt
--language-version
-2.3
--d
-$TEMP_DIR$

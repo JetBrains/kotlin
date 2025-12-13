@@ -1,5 +1,0 @@
-<root>
-    <item name='org.jetbrains.jps.cmdline.ProjectDescriptor dataManager'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-</root>

@@ -1,3 +1,0 @@
-IsTypeCheckIsMissing - Foo.A
-IsTypeCheckIsMissing - is Foo.B
-NullIsMissing - null

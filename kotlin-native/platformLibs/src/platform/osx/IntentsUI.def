@@ -1,7 +1,0 @@
-depends = AppKit ApplicationServices CFCGTypes CFNetwork CloudKit CoreData CoreFoundation CoreFoundationBase CoreGraphics CoreImage CoreLocation CoreServices CoreText CoreVideo DiskArbitration Foundation IOKit IOSurface ImageIO Intents Metal OpenGLCommon QuartzCore Security Symbols UserNotifications _LocationEssentials cups darwin libkern osx posix
-language = Objective-C
-package = platform.IntentsUI
-
-modules = IntentsUI
-compilerOpts = -framework IntentsUI
-linkerOpts = -framework IntentsUI

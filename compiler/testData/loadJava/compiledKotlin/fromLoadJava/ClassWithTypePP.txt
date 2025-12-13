@@ -1,5 +1,0 @@
-package test
-
-public final class ClassWithTypePP</*0*/ P, /*1*/ Q : P> {
-    /*primary*/ public constructor ClassWithTypePP</*0*/ P, /*1*/ Q : P>()
-}

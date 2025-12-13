@@ -1,5 +1,0 @@
-subClass: one.MyAnnotationClass, superClass: java.lang.annotation.Annotation, deepSearch: false -> true
-subClass: one.MyAnnotationClass, superClass: java.lang.annotation.Annotation, deepSearch: true -> true
-subClass: one.MyAnnotationClass, superClass: java.lang.Object, deepSearch: false -> true
-subClass: one.MyAnnotationClass, superClass: java.lang.Object, deepSearch: true -> true
-subClass: one.MyAnnotationClass, superClass: java.util.Collection, deepSearch: true -> false

@@ -1,8 +1,0 @@
-FILE: noParameterTypRefInCatch.kt
-    public? final? fun foo(): R|kotlin/Unit| {
-        try {
-        }
-        catch ([IsCatchParameterProperty=true] e: <ERROR TYPE REF: No type for parameter>) {
-        }
-
-    }

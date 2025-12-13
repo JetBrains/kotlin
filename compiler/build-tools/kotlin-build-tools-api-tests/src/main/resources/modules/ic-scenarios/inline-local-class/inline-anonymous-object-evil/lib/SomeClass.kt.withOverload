@@ -1,4 +1,0 @@
-open class SomeClass {
-    fun call(item: BaseType) = 42
-    fun call(item: InheritedType) = 42 + 3
-}

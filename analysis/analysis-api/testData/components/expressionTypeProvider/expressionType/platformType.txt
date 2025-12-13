@@ -1,2 +1,0 @@
-expression: java.lang.String.valueOf(1)
-type: kotlin.String!

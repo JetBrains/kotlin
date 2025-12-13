@@ -1,4 +1,0 @@
-package
-
-public fun </*0*/ T : kotlin.Any, /*1*/ INDIRECT : T> notNullUpperBound(/*0*/ t: T, /*1*/ ind: INDIRECT): kotlin.Unit
-public fun </*0*/ T, /*1*/ INDIRECT : T> nullableUpperBound(/*0*/ t: T, /*1*/ ind: INDIRECT): kotlin.Unit

@@ -1,2 +1,0 @@
-expression: object: A() {}
-type: `<anonymous>`

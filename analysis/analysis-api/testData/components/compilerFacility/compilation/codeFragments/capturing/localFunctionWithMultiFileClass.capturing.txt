@@ -1,3 +1,0 @@
-No captured values
-Captured files:
-context1.kt

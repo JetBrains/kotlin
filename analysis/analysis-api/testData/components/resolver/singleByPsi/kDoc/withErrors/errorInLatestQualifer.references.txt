@@ -1,6 +1,0 @@
-KDocName(8,12): 'A.BB'
-  KDocReference:
-    isImplicitReferenceToCompanion: false
-    usesContextSensitiveResolution: false
-    symbols:
-      (in A) class BB

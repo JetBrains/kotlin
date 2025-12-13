@@ -1,4 +1,0 @@
-FILE: explicitBackingFieldUnsupported.kt
-    public final val that: R|kotlin/Number|
-        private final backing field field: R|kotlin/Int| = Int(4)
-        public get(): R|kotlin/Number|

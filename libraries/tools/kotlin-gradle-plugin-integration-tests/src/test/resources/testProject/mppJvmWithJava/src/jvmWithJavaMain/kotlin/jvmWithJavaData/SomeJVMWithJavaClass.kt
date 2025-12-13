@@ -1,4 +1,0 @@
-package jvmWithJavaData
-
-class SomeJVMWithJavaClass {
-}

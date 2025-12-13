@@ -1,5 +1,0 @@
-expression: nullable
-constant: 123
-constantValueKind: IntValue
-constantValueSource: REFERENCE_EXPRESSION
-constantValueSourceText: nullable

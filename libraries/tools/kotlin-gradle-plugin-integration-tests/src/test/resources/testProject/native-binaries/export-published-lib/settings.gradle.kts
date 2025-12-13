@@ -1,2 +1,0 @@
-include("lib")
-include("shared")

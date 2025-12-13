@@ -1,7 +1,0 @@
-framework module childImport {
-  umbrella header "umbrella.h"
-
-  export *
-  module * { export * }
-}
-

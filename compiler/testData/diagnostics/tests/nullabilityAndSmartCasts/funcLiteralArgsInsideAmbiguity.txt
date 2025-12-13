@@ -1,7 +1,0 @@
-package
-
-package d {
-    public fun bar(): kotlin.Unit
-    public fun doSmth1(/*0*/ f: () -> kotlin.Unit): kotlin.Unit
-    public fun doSmth1(/*0*/ g: (kotlin.Int) -> kotlin.Unit): kotlin.Unit
-}

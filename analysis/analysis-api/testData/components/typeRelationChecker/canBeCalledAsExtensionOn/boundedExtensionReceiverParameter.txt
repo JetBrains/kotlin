@@ -1,3 +1,0 @@
-CAN_BE_CALLED_AS_EXTENSION_ON: true
-CALLABLE: fun <T : X, X : R, R : kotlin.Number> MyClass<T>.ext()
-TYPE: MyClass<kotlin.Int>

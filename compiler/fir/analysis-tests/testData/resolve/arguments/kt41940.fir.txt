@@ -1,4 +1,0 @@
-FILE: main.kt
-    public final fun test(list: R|kotlin/collections/List<kotlin/String>|, string: R|kotlin/String|): R|kotlin/Unit| {
-        Q|Matchers|.R|/Matchers.assertThat*s|<R|kotlin/collections/List<kotlin/String>!|>(R|<local>/list|, Q|Matchers|.R|/Matchers.hasItem*s|<R|kotlin/String!|>(R|<local>/string|))
-    }

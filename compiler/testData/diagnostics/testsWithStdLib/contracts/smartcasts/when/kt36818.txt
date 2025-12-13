@@ -1,3 +1,0 @@
-package
-
-public fun main(/*0*/ x1: kotlin.Double?, /*1*/ range: kotlin.ranges.ClosedRange<kotlin.Double>): kotlin.Unit

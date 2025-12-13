@@ -1,9 +1,0 @@
-/main.kt:22:13: error: cannot infer a type for this parameter. Please specify it explicitly.
-    A.foo { a ->
-            ^
-/main.kt:34:13: error: cannot infer a type for this parameter. Please specify it explicitly.
-    A.bar { a, b ->
-            ^
-/main.kt:34:16: error: cannot infer a type for this parameter. Please specify it explicitly.
-    A.bar { a, b ->
-               ^

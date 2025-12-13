@@ -1,6 +1,0 @@
-expression: FUN
-text: fun String.(): Int {
-        return 56
-    }
-isUsedAsExpression: true
-isUsedAsResultOfLambda: false

@@ -1,5 +1,0 @@
-expression: "na" + "na" + "na" + "na" + "na" + "na" + "na" + "na " + "batman"
-constant: "nananananananana batman"
-constantValueKind: StringValue
-constantValueSource: NOT_EVALUATED
-constantValueSourceText: NOT_EVALUATED

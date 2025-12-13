@@ -1,9 +1,0 @@
-depends = CFCGTypes CFNetwork CoreFoundation CoreFoundationBase CoreGraphics CoreVideo Foundation IOSurface ImageIO Metal OpenGLESCommon Security darwin posix
-language = Objective-C
-package = platform.CoreML
-modules = CoreML
-
-compilerOpts = -framework CoreML
-linkerOpts = -framework CoreML
-
-excludedFunctions = MLModelCollectionDidChangeNotification

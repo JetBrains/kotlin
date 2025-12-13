@@ -1,6 +1,0 @@
-public open class WrongValueParameterStructure1 : R|kotlin/Any| {
-    public open fun foo(a: R|kotlin/String!|, b: R|ft<kotlin/collections/MutableList<ft<kotlin/collections/MutableMap.MutableEntry<kotlin/String!, kotlin/String!>, kotlin/collections/Map.Entry<kotlin/String!, kotlin/String!>?>>, kotlin/collections/List<ft<kotlin/collections/MutableMap.MutableEntry<kotlin/String!, kotlin/String!>, kotlin/collections/Map.Entry<kotlin/String!, kotlin/String!>?>>?>|): R|kotlin/String!|
-
-    public constructor(): R|test/WrongValueParameterStructure1|
-
-}

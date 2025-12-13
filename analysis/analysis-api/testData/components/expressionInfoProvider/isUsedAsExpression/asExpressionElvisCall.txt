@@ -1,4 +1,0 @@
-expression: SAFE_ACCESS_EXPRESSION
-text: (v as String)?.length
-isUsedAsExpression: false
-isUsedAsResultOfLambda: false

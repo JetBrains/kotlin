@@ -1,5 +1,0 @@
-FILE: [ResolvedTo(BODY_RESOLVE)] fileAnnotations.kt
-    @FILE:<ERROR TYPE REF: Symbol not found for FileAnnotation>[Types]()
-    @FILE:<ERROR TYPE REF: Symbol not found for Annotation1>[Types]()
-    @FILE:<ERROR TYPE REF: Symbol not found for Annotation2>[Types]()
-    @<ERROR TYPE REF: Symbol not found for WithouTarget>[Types]()

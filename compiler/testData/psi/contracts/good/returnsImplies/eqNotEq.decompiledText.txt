@@ -1,6 +1,0 @@
-// IntelliJ API Decompiler stub source generated from a class file
-// Implementation of methods is not available
-
-public fun checkNotNull(x: kotlin.Any?): kotlin.Boolean { contract { /* compiled contract */ }; /* compiled code */ }
-
-public fun trickyRequireNotNull(x: kotlin.Any?): kotlin.Unit { contract { /* compiled contract */ }; /* compiled code */ }

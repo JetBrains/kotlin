@@ -1,1 +1,0 @@
-actual val sourceSetsAfterIosMain: String = "iosSimulatorArm64Main"

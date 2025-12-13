@@ -1,6 +1,0 @@
-package test
-
-public open class ProtectedPackageFun {
-    public constructor ProtectedPackageFun()
-    protected/*protected and package*/ open fun foo(): kotlin.Unit
-}

@@ -1,7 +1,0 @@
-language = Objective-C
-package = platform.Assignables
-
-modules = Assignables
-compilerOpts = -framework Assignables
-linkerOpts = -framework Assignables
-#Disabled: Swift-only framework

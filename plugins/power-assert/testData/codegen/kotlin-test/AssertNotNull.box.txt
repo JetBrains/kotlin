@@ -1,5 +1,0 @@
----
-assertNotNull(name)
-              |
-              null
-. Expected value to be not null.---

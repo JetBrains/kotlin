@@ -1,5 +1,0 @@
-expression: "Hello, world".length
-constant: 12
-constantValueKind: IntValue
-constantValueSource: DOT_QUALIFIED_EXPRESSION
-constantValueSourceText: "Hello, world".length

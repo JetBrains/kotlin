@@ -1,5 +1,0 @@
-package test
-
-public final class A {
-    /*primary*/ public constructor A(/*0*/ vararg a: kotlin.Int /*kotlin.IntArray*/)
-}

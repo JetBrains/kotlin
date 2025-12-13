@@ -1,3 +1,0 @@
-language = Objective-C
-headerFilter = **/kt42172.h
-linkerOpts = -lkt42172

@@ -1,2 +1,0 @@
-expression: Int?::foo
-receiver:: type: kotlin.Int?

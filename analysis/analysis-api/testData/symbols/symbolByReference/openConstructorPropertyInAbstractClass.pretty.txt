@@ -1,1 +1,0 @@
-open var prop: kotlin.Int

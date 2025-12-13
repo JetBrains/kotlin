@@ -1,7 +1,0 @@
-package
-
-package a {
-    public fun doWithList(/*0*/ list: kotlin.collections.List<kotlin.Int>): kotlin.collections.List<kotlin.Int>
-    public fun </*0*/ T> emptyList(): kotlin.collections.List<T>?
-    public fun foo(): kotlin.Unit
-}

@@ -1,8 +1,0 @@
-// IntelliJ API Decompiler stub source generated from a class file
-// Implementation of methods is not available
-
-public fun getCondition(): kotlin.Boolean { /* compiled code */ }
-
-public fun test_2(f: () -> kotlin.Unit): kotlin.Unit { contract { /* compiled contract */ }; /* compiled code */ }
-
-public fun test_4(f: () -> kotlin.Unit): kotlin.Unit { contract { /* compiled contract */ }; /* compiled code */ }

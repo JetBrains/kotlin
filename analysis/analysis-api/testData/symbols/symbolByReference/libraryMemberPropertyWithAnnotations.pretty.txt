@@ -1,4 +1,0 @@
-@one.Anno
-val memberPropertyWithAnnotations: kotlin.Short
-  @one.Anno
-  get()

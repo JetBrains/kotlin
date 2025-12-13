@@ -1,5 +1,0 @@
-// FIR_IDENTICAL
-// DUMP_EXTERNAL_CLASS: kotlin/Int
-// TARGET_BACKEND: JVM_IR
-
-val test = Int.MIN_VALUE

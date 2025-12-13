@@ -1,7 +1,0 @@
-depends = CFCGTypes CFNetwork CoreFoundation CoreFoundationBase CoreGraphics CoreLocation CoreServices DiskArbitration Foundation IOKit Security _LocationEssentials darwin libkern osx posix
-language = Objective-C
-package = platform.CoreMotion
-modules = CoreMotion
-
-compilerOpts = -framework CoreMotion
-linkerOpts = -framework CoreMotion

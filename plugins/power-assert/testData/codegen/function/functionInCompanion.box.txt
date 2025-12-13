@@ -1,5 +1,0 @@
----
-assert(B.foo())
-         |
-         false
----

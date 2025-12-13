@@ -1,4 +1,0 @@
-expression: LAMBDA_EXPRESSION
-text: { 54 }
-isUsedAsExpression: true
-isUsedAsResultOfLambda: false

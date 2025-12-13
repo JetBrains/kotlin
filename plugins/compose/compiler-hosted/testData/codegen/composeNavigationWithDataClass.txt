@@ -1,8 +1,0 @@
-public final class home/MainKt {
-    // source: 'main.kt'
-    private final static method ReplyNavHost$lambda$0$0$0(p0: com.example.reply.ui.ReplyHomeUIState, p1: androidx.compose.animation.AnimatedContentScope, p2: androidx.navigation.NavBackStackEntry, p3: androidx.compose.runtime.Composer, p4: int): kotlin.Unit
-    private final static method ReplyNavHost$lambda$0$0(p0: java.lang.String, p1: com.example.reply.ui.ReplyHomeUIState, p2: androidx.navigation.NavGraphBuilder): kotlin.Unit
-    private final static method ReplyNavHost$lambda$1(p0: androidx.navigation.NavHostController, p1: com.example.reply.ui.ReplyHomeUIState, p2: java.lang.String, p3: androidx.compose.ui.Modifier, p4: int, p5: int, p6: androidx.compose.runtime.Composer, p7: int): kotlin.Unit
-    private final static method ReplyNavHost(p0: androidx.navigation.NavHostController, p1: com.example.reply.ui.ReplyHomeUIState, p2: java.lang.String, p3: androidx.compose.ui.Modifier, p4: androidx.compose.runtime.Composer, p5: int, p6: int): void
-    public final inner class androidx/compose/ui/Modifier$Companion
-}

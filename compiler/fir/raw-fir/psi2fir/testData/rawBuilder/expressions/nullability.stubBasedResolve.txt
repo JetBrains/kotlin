@@ -1,3 +1,0 @@
-FILE: [ResolvedTo(BODY_RESOLVE)] nullability.kt
-    public final [ResolvedTo(CONTRACTS)] fun orFourtyTwo([ResolvedTo(CONTRACTS)] arg: R|kotlin/Int?|): <implicit> { LAZY_BLOCK }
-    public final [ResolvedTo(CONTRACTS)] fun bang([ResolvedTo(CONTRACTS)] arg: R|kotlin/Int?|): <implicit> { LAZY_BLOCK }

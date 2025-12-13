@@ -1,1 +1,0 @@
-val x = <expr>arrayOf<Int>()</expr>

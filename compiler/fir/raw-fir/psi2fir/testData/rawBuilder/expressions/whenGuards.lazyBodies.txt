@@ -1,4 +1,0 @@
-FILE: whenGuards.kt
-    public? final? fun GuardMustHaveExpression(x: Any): R|kotlin/Unit| { LAZY_BLOCK }
-    public? final? fun GuardNewlines(x: Any): R|kotlin/Unit| { LAZY_BLOCK }
-    public? final? fun IfExpressionNotGuard(x: Any): R|kotlin/Unit| { LAZY_BLOCK }

@@ -1,1 +1,0 @@
-val a = <expr>Any()</expr>

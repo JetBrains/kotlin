@@ -1,7 +1,0 @@
-depends = CFCGTypes CFNetwork CoreFoundation CoreFoundationBase CoreGraphics CoreImage CoreText CoreVideo EAGL FileProvider Foundation IOSurface ImageIO Metal OpenGLESCommon QuartzCore Security SharedWithYouCore Symbols UIKit UIUtilities UniformTypeIdentifiers UserNotifications darwin posix
-language = Objective-C
-package = platform.SharedWithYou
-
-modules = SharedWithYou
-compilerOpts = -framework SharedWithYou
-linkerOpts = -framework SharedWithYou

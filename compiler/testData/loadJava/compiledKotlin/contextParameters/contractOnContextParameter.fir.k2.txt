@@ -1,6 +1,0 @@
-context(a: R|kotlin/String?|)
-public final fun validate(): R|kotlin/Unit|
-    [R|Contract description]
-     <
-        Returns(WILDCARD) -> a != null
-    >

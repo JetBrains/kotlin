@@ -1,6 +1,0 @@
-language = Objective-C
-package = platform.Message
-modules = Message
-compilerOpts = -framework Message
-linkerOpts = -framework Message
-#Disabled: Unavailable

@@ -1,8 +1,0 @@
-Classifier names:
-
-Callable names:
-  <init>
-  equals
-  foo
-  hashCode
-  toString

@@ -1,5 +1,0 @@
-package test
-
-public final class ClassWithConstructorWithValueParamWithDefaultValue {
-    /*primary*/ public constructor ClassWithConstructorWithValueParamWithDefaultValue(/*0*/ p: kotlin.Int = ...)
-}

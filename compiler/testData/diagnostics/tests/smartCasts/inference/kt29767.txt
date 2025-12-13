@@ -1,3 +1,0 @@
-package
-
-public fun test(/*0*/ a: kotlin.collections.MutableList<out kotlin.Int?>?): kotlin.Unit

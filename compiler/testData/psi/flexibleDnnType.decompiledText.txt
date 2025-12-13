@@ -1,8 +1,0 @@
-// IntelliJ API Decompiler stub source generated from a class file
-// Implementation of methods is not available
-
-public abstract class FlexibleDnnType<T> public constructor() {
-    public abstract val block: () -> T
-
-    public final val propertyWithFlexibleDnnImplicitType: java.util.function.Function<kotlin.String /* platform type */, T /* platform type */ & kotlin.Any> /* platform type */ /* compiled code */
-}

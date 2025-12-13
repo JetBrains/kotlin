@@ -1,9 +1,0 @@
-Declaration: fun foo()
-At usage site: foo
-Is visible: true
-Receiver expression: null
-
-Declaration: fun foo()
-At usage site: foo
-Is visible: true
-Receiver expression: this@scope

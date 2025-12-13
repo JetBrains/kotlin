@@ -1,1 +1,0 @@
-fun publicFun() = "hello"

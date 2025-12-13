@@ -1,4 +1,0 @@
-FILE: subtyping.kt
-    context(<unused var>: R|kotlin/String|, <unused var>: R|kotlin/Any|)
-    public final fun subtyping(): R|kotlin/Unit| {
-    }

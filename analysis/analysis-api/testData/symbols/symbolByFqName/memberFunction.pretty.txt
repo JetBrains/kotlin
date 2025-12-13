@@ -1,1 +1,0 @@
-operator fun get(index: kotlin.Int): E

@@ -1,4 +1,0 @@
-expression: CONSTRUCTOR_CALLEE
-text: OptIn
-isUsedAsExpression: false
-isUsedAsResultOfLambda: false

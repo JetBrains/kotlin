@@ -1,1 +1,0 @@
-@R|kotlin/Deprecated|(message = String(Deprecated in Java)) public/*package*/ [ResolvedTo(BODY_RESOLVE)] field str: R|kotlin/String!|

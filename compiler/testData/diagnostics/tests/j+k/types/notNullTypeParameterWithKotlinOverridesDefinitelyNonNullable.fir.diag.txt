@@ -1,5 +1,0 @@
-/main.kt:(73,81): error: 'takeV' overrides nothing. Potential signatures for overriding:
-fun takeV(value: X & Any): Unit
-
-/main.kt:(138,146): error: 'takeVList' overrides nothing. Potential signatures for overriding:
-fun takeVList(value: (Mutable)List<X & Any>): Unit

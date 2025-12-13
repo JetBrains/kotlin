@@ -1,6 +1,0 @@
-KDocName(89,111): 'ClassWithCompanion.foo'
-  KDocReference:
-    isImplicitReferenceToCompanion: false
-    usesContextSensitiveResolution: false
-    symbols:
-      (in ClassWithCompanion.Companion) fun foo()

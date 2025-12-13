@@ -1,6 +1,0 @@
-language = Objective-C
-package = platform.AGL
-modules = AGL
-compilerOpts = -framework AGL
-linkerOpts = -framework AGL
-#Disabled: Deprecated.

@@ -1,2 +1,0 @@
-java.lang.ExceptionInInitializerError
-_8Kt.box(8.kt:18)

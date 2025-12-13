@@ -1,9 +1,0 @@
-Classifier names:
-
-Callable names:
-  <init>
-  equals
-  field
-  field2
-  hashCode
-  toString

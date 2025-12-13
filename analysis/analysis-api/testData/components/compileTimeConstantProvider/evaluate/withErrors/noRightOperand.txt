@@ -1,5 +1,0 @@
-expression: 1
-constant: 1
-constantValueKind: IntValue
-constantValueSource: INTEGER_CONSTANT
-constantValueSourceText: 1

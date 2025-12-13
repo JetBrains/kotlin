@@ -1,4 +1,0 @@
-MODULES: lib, main
-
-STEP 0:
-    libs: lib, main

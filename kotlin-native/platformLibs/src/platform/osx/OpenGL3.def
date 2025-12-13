@@ -1,9 +1,0 @@
-depends = OpenGLCommon darwin posix
-language = Objective-C
-package = platform.OpenGL3
-headers = OpenGL/gl3.h OpenGL/gl3ext.h
-
-headerFilter = OpenGL/gl3.h OpenGL/gl3ext.h
-
-compilerOpts = -framework OpenGL
-linkerOpts = -framework OpenGL

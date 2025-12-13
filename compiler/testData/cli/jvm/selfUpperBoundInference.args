@@ -1,3 +1,0 @@
-$TESTDATA_DIR$/selfUpperBoundInference.kt
--d
-$TEMP_DIR$

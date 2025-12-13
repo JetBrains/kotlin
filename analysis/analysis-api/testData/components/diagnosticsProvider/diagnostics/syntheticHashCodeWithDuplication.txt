@@ -1,7 +1,0 @@
-Diagnostics from file:
-  for PSI element of type KtClass at (6,5-65)
-    REDECLARATION      text ranges: [(93,98)]
-      PSI: KtClass at (6,5-65)
-  for PSI element of type KtTypeAlias at (5,5-29)
-    REDECLARATION      text ranges: [(63,68)]
-      PSI: KtTypeAlias at (5,5-29)

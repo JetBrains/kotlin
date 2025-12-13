@@ -1,6 +1,0 @@
-public final class Child {
-    // source: 'main.kt'
-    public method <init>(): void
-    private final method bar(): void
-    protected method onCreate(): void
-}

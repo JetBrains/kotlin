@@ -1,7 +1,0 @@
-# before
--Kapt-option=a:b
-
-# after
--P
-plugin:org.jetbrains.kotlin.kapt3:aptMode=stubsAndApt
--Kapt-option=a:b

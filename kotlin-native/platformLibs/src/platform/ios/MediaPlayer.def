@@ -1,9 +1,0 @@
-depends = AVFAudio AVFoundation AVRouting AudioToolbox CFCGTypes CFNetwork CoreAudio CoreAudioTypes CoreFoundation CoreFoundationBase CoreGraphics CoreImage CoreMIDI CoreMedia CoreText CoreVideo EAGL FileProvider Foundation IOSurface ImageIO MediaToolbox Metal Network OpenGLESCommon QuartzCore Security Symbols UIKit UIUtilities UniformTypeIdentifiers UserNotifications darwin posix
-language = Objective-C
-package = platform.MediaPlayer
-headers = MediaPlayer/MediaPlayer.h
-
-headerFilter = MediaPlayer/**
-
-compilerOpts = -framework MediaPlayer
-linkerOpts = -framework MediaPlayer

@@ -1,2 +1,0 @@
-expression: pair
-type: ERROR_TYPE(Unresolved name: Pair)

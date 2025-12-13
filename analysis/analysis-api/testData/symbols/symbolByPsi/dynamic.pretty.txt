@@ -1,5 +1,0 @@
-class Foo {
-  val p: dynamic
-
-  fun f(p: dynamic): dynamic
-}

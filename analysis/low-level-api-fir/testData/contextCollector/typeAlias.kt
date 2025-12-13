@@ -1,1 +1,0 @@
-<expr>typealias Foo = String</expr>

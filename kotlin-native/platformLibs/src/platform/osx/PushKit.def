@@ -1,7 +1,0 @@
-depends = CFCGTypes CFNetwork CoreFoundation CoreFoundationBase CoreGraphics CoreServices DiskArbitration Foundation IOKit Security darwin libkern osx posix
-language = Objective-C
-package = platform.PushKit
-modules = PushKit
-
-compilerOpts = -framework PushKit
-linkerOpts = -framework PushKit

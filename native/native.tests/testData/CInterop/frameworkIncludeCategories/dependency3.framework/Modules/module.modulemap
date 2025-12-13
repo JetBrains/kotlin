@@ -1,6 +1,0 @@
-framework module dependency3 {
-  umbrella header "dependency3.h"
-
-  export *
-  module * { export * }
-}

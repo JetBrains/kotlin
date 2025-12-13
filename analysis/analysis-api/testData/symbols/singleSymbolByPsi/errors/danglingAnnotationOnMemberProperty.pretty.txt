@@ -1,2 +1,0 @@
-@Ann
-val localVal: kotlin.Int

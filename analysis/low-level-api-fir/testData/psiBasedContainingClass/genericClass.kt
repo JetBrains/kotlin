@@ -1,1 +1,0 @@
-class MyPair<A, B>(val first: A, val second: B)

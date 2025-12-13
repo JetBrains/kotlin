@@ -1,6 +1,0 @@
--o
-$TEMP_DIR$/out
--p
-program
--l
-$TESTDATA_DIR$/unpackedExampleKlib

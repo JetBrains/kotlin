@@ -1,7 +1,0 @@
--d
-$TEMP_DIR$
--Xcompiler-plugin=dist/kotlinc/lib/lombok-compiler-plugin.jar
-$TESTDATA_DIR$/lombok.kt
--Xwarning-level=COMPILER_PLUGIN_ARG_IS_EXPERIMENTAL\:disabled
--Xwarning-level=LOMBOK_PLUGIN_IS_EXPERIMENTAL\:disabled
--Werror

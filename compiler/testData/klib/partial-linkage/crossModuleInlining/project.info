@@ -1,7 +1,0 @@
-MODULES: full, intraModule, disabled, main
-
-STEP 0:
-    libs: full, intraModule, disabled, main
-
-STEP 1:
-    libs: full, intraModule, disabled

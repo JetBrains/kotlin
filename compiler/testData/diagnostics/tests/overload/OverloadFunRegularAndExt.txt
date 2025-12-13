@@ -1,6 +1,0 @@
-package
-
-package extensionAndRegular {
-    public fun who(): kotlin.Int
-    public fun kotlin.Int.who(): kotlin.Int
-}

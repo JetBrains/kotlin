@@ -1,5 +1,0 @@
-public final class com/example/home/MainKt {
-    // source: 'main.kt'
-    private final static method foo$lambda$0(p0: com.example.interfaces.I, p1: int, p2: androidx.compose.runtime.Composer, p3: int): kotlin.Unit
-    public final static method foo(p0: com.example.interfaces.I, p1: androidx.compose.runtime.Composer, p2: int): void
-}

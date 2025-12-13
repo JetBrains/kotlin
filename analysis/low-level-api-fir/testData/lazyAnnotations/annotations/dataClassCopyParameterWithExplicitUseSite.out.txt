@@ -1,2 +1,0 @@
-pack/Anno(value = 42)
-  psi: KtAnnotationEntry

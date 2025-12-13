@@ -1,1 +1,0 @@
-lateinit val something: A

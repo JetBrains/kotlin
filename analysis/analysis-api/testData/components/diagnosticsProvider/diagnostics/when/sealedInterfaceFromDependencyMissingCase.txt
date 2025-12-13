@@ -1,7 +1,0 @@
-Diagnostics from MySealedInterface.kt:
-  <NO DIAGNOSTICS>
-
-Diagnostics from main.kt:
-  for PSI element of type KtWhenExpression at (14,12) - (16,6)
-    NO_ELSE_IN_WHEN      text ranges: [(113,117)]
-      PSI: KtWhenExpression at (14,12) - (16,6)

@@ -1,6 +1,0 @@
-package test
-
-public final class Example {
-    /*primary*/ public constructor Example()
-    public final infix fun test(/*0*/ other: test.Example): kotlin.Unit
-}

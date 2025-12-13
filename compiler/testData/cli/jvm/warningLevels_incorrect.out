@@ -1,3 +1,0 @@
-error: [ERROR_SEVERITY_CHANGED] Diagnostic "CONFLICTING_PROJECTION" is an error. Changing the severity of errors is prohibited
-error: [MISSING_DIAGNOSTIC_NAME] Warning with name "NON_EXISTING_DIAGNOSTIC" does not exist
-COMPILATION_ERROR

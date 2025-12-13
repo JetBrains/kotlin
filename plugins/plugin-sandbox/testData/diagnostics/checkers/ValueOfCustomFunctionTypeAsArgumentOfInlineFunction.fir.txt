@@ -1,4 +1,0 @@
-FILE: ValueOfCustomFunctionTypeAsArgumentOfInlineFunction.kt
-    @R|org/jetbrains/kotlin/plugin/sandbox/MyInlineable|() public final inline fun <T> inlineFunction(block: R|@R|org/jetbrains/kotlin/plugin/sandbox/MyInlineable|()  some/MyInlineableFunction0<T>|): R|T| {
-        ^inlineFunction R|<local>/block|.R|SubstitutionOverride<some/MyInlineableFunction0.invoke: R|T|>|()
-    }

@@ -1,9 +1,0 @@
-Substitutor: <map substitutor: {S = T}>
-Substituted callables:
-  context(T) foo(): T
-
-  T.foo2(): T
-
-  context(T) bar: T
-
-  T.bar2: T

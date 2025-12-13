@@ -1,8 +1,0 @@
-depends = CFCGTypes CFNetwork CoreFoundation CoreFoundationBase CoreGraphics CoreServices DiskArbitration Foundation IOKit IOSurface Security darwin libkern osx posix
-language = Objective-C
-package = platform.Metal
-modules = Metal
-
-excludedFunctions = MTLRenderPipelineErrorDomain
-compilerOpts = -framework Metal
-linkerOpts = -framework Metal

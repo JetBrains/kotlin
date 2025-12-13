@@ -1,1 +1,0 @@
-Most FIR enhancement tests use compiler/testData/loadJava/compiledJava

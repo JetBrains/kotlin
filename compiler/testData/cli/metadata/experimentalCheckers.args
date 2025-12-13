@@ -1,7 +1,0 @@
-$TESTDATA_DIR$/experimentalCheckers.kt
--Xuse-fir-experimental-checkers
--d
-$TEMP_DIR$
--Xtarget-platform=JVM,JS,WasmJs,WasmWasi,Native
--cp
-$TESTDATA_DIR$/../../../../dist/common/kotlin-stdlib-common.klib

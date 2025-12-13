@@ -1,2 +1,0 @@
-expression: s[2, -2]
-type: kotlin.String

@@ -1,4 +1,0 @@
-package test
-
-public interface RecursiveWildcardUpperBound</*0*/ T : test.RecursiveWildcardUpperBound<(raw) test.RecursiveWildcardUpperBound<*>>!> {
-}

@@ -1,9 +1,0 @@
-package test
-
-public abstract class Aaa {
-    /*primary*/ public constructor Aaa()
-}
-
-public final class Bbb : test.Aaa {
-    /*primary*/ public constructor Bbb()
-}

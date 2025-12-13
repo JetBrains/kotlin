@@ -1,7 +1,0 @@
-depends = ApplicationServices CFCGTypes CFNetwork CoreFoundation CoreFoundationBase CoreGraphics CoreServices CoreText CoreVideo DiskArbitration Foundation IOKit IOSurface ImageIO Metal OpenGLCommon Security cups darwin libkern osx posix
-language = Objective-C
-package = platform.CoreImage
-modules = CoreImage
-
-compilerOpts = -framework CoreImage
-linkerOpts = -framework CoreImage

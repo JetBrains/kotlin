@@ -1,3 +1,0 @@
-language = Objective-C
-headers = cinterop.h
-linkerOpts = -framework AppKit -lcinterop

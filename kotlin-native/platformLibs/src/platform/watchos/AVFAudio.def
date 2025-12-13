@@ -1,7 +1,0 @@
-depends = CFCGTypes CoreAudio CoreAudioTypes CoreFoundation CoreFoundationBase CoreGraphics CoreMIDI CoreMedia CoreVideo Foundation Security darwin posix
-language = Objective-C
-package = platform.AVFAudio
-
-modules = AVFAudio
-compilerOpts = -framework AVFAudio
-linkerOpts = -framework AVFAudio

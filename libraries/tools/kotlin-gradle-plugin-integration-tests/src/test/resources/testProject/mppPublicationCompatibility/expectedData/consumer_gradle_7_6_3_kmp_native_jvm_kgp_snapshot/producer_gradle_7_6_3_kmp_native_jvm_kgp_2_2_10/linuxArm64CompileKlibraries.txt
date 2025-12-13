@@ -1,3 +1,0 @@
-project : => [linuxArm64CompileKlibraries]
-sample.gradle_7_6_3:kmp_native_jvm_kgp_2_2_10-linuxarm64:1.0 => [linuxArm64ApiElements-published]
-sample.gradle_7_6_3:kmp_native_jvm_kgp_2_2_10:1.0 => [linuxArm64ApiElements-published]

@@ -1,2 +1,0 @@
-expression: super
-type: kotlin.Any

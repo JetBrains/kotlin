@@ -1,5 +1,0 @@
-kotlinProject/
-  kotlinProject/
-    root-package.kjsm
-  kotlinProject.js
-  kotlinProject.meta.js

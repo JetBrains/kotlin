@@ -1,3 +1,0 @@
-STEP 0:
-    arguments: -Xklib-ir-inliner=intra-module
-    dependencies: stdlib, lib1

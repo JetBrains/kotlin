@@ -1,4 +1,0 @@
-expression: DOT_QUALIFIED_EXPRESSION
-text: c.property
-isUsedAsExpression: true
-isUsedAsResultOfLambda: false

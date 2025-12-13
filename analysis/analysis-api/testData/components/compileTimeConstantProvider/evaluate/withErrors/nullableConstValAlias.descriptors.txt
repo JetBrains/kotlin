@@ -1,5 +1,0 @@
-expression: nullable == 123
-constant: true
-constantValueKind: BooleanValue
-constantValueSource: NOT_EVALUATED
-constantValueSourceText: NOT_EVALUATED

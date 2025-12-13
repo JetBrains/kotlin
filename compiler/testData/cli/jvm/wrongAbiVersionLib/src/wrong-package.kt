@@ -1,3 +1,0 @@
-package wrong
-
-fun bar() {}

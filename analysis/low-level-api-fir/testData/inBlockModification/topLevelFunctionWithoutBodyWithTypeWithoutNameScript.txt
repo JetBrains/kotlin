@@ -1,7 +1,0 @@
-BEFORE MODIFICATION:
-public final [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] fun <no name provided>(): R|kotlin/Int| {
-    ^<no name provided> R|/doSmth|(String(str))
-}
-
-AFTER MODIFICATION:
-public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ScriptTopLevelDeclaration=true] fun <no name provided>(): R|kotlin/Int| { LAZY_BLOCK }

@@ -1,2 +1,0 @@
-KtNameReferenceExpression(45,49): 'Ann0'
-  null

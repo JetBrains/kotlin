@@ -1,3 +1,0 @@
-foo@(1,1) : kotlin.Int
-  intParameter@(1,9) : kotlin.Int
-  stringParameter@(1,28) : kotlin.String

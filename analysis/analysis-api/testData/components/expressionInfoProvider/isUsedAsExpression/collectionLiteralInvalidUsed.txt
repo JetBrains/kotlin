@@ -1,4 +1,0 @@
-expression: COLLECTION_LITERAL_EXPRESSION
-text: [1, 2, 3]
-isUsedAsExpression: true
-isUsedAsResultOfLambda: false

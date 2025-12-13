@@ -1,7 +1,0 @@
-depends = AVFAudio AVFoundation AVRouting AudioToolbox CFCGTypes CFNetwork CoreAudio CoreAudioTypes CoreFoundation CoreFoundationBase CoreGraphics CoreImage CoreLocation CoreMIDI CoreML CoreMedia CoreText CoreVideo EAGL FileProvider Foundation GLKit IOSurface ImageIO MediaToolbox Metal ModelIO Network OpenGLES2 OpenGLESCommon QuartzCore SceneKit Security SpriteKit Symbols UIKit UIUtilities UniformTypeIdentifiers UserNotifications Vision _LocationEssentials darwin posix
-language = Objective-C
-package = platform.ARKit
-modules = ARKit
-
-compilerOpts = -framework ARKit
-linkerOpts = -framework ARKit

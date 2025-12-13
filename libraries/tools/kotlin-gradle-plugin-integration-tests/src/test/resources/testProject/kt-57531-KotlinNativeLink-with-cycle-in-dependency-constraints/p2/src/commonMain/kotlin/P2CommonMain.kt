@@ -1,2 +1,0 @@
-object P2CommonMain {
-}

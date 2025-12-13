@@ -1,3 +1,0 @@
-language = Objective-C
-modules=dependency2
-objcClassesIncludingCategories = MyClass

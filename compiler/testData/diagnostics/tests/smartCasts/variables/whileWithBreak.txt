@@ -1,4 +1,0 @@
-package
-
-public fun list(/*0*/ start: kotlin.String): kotlin.Unit
-public fun kotlin.String.next(): kotlin.String

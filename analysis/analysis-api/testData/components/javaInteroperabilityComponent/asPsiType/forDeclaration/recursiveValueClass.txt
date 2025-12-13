@@ -1,2 +1,0 @@
-KaType: pack.ValueClass
-PsiType: @org.jetbrains.annotations.NotNull() pack.OriginalClass

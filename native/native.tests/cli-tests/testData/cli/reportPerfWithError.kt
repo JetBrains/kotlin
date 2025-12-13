@@ -1,1 +1,0 @@
-val str: String = 42

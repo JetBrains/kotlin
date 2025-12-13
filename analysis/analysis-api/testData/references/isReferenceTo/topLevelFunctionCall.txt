@@ -1,2 +1,0 @@
-Resolved to:
-    (in <root>) (psi: fun calculateX() = 0)

@@ -1,3 +1,0 @@
-package test
-
-public fun kotlin.Int.shuffle(): kotlin.Int

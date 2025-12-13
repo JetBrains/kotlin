@@ -1,5 +1,0 @@
-@test.RegularAnno
-val property: @test.TypeAnno kotlin.String
-
-@test.RegularAnno
-fun function(@test.RegularAnno argument: @test.TypeAnno kotlin.Int): @test.TypeAnno kotlin.Int

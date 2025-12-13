@@ -1,6 +1,0 @@
-/test.kt:11:10: error: none of the following functions can be called with the arguments supplied:
-public open fun createWrap(type: Int, wrapFirstElement: Boolean): Unit defined in Wrap
-public open fun createWrap(type: String!, wrapFirstElement: Boolean): Unit defined in Wrap
-    Wrap.createWrap(1, wrapFirstElement = false)
-         ^^^^^^^^^^
-

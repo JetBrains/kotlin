@@ -1,6 +1,0 @@
-framework module podImportsQuoteQuote {
-  umbrella header "podImportsQuoteQuote-umbrella.h"
-
-  export *
-  module * { export * }
-}

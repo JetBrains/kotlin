@@ -1,3 +1,0 @@
-inner class InnerClassInB
-
-constructor()

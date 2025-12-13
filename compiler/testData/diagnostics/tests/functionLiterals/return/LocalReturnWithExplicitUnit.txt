@@ -1,6 +1,0 @@
-package
-
-public val a: () -> kotlin.Any
-public val b: () -> kotlin.Any
-public val c: () -> kotlin.Unit
-public val flag: kotlin.Boolean = true

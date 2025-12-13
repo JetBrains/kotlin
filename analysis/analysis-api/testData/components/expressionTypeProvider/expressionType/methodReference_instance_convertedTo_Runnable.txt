@@ -1,2 +1,0 @@
-expression: GenericClass<String>()::foo
-type: () -> kotlin.Unit

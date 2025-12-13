@@ -1,2 +1,0 @@
-KtNameReferenceExpression(16,20): 'this'
-  null

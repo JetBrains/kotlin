@@ -1,5 +1,0 @@
-MODULE_FRAGMENT
-  FILE fqName:home fileName:main.kt
-    FUN name:preview visibility:public modality:FINAL returnType:kotlin.Unit
-      VALUE_PARAMETER kind:Regular name:foo index:0 type:test.ClassWithDelegatedProperty
-      BLOCK_BODY

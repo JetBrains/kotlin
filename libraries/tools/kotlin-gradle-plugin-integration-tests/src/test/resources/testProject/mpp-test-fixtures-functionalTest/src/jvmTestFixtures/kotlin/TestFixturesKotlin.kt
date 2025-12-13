@@ -1,2 +1,0 @@
-class TestFixturesKotlin
-internal class TestFixturesKotlinInternal

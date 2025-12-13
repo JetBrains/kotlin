@@ -1,1 +1,0 @@
-fun libNativePlatformUtil(unused: Boolean = true): Int = 800

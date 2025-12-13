@@ -1,2 +1,0 @@
-KaType: kotlin.collections.(Mutable)List<kotlin.String!>
-PsiType: @org.jetbrains.annotations.NotNull() java.util.List<? extends java.lang.String>

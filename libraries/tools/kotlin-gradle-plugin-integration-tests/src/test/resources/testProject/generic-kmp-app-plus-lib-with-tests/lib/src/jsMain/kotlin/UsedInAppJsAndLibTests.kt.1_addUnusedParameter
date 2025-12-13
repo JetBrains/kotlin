@@ -1,1 +1,0 @@
-fun libJsPlatformUtil(unused: Boolean = true): Int = 0

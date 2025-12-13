@@ -1,2 +1,0 @@
-FILE: [ResolvedTo(TYPES)] suppress_fileTrue.kt
-    @FILE:R|kotlin/Suppress|[Types](LAZY_EXPRESSION)

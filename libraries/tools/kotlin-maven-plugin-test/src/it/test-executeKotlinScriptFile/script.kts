@@ -1,1 +1,0 @@
-println("Hello from Kotlin script file!")

@@ -1,8 +1,0 @@
-open class Base<T>(x: T) {
-  val x: T
-}
-
-class Derived<T : Any>(x: T) : Base<T>()
-
-fun <T : Any> create(x: T): Derived<T>
-

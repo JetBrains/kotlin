@@ -1,7 +1,0 @@
-depends = CFCGTypes CFNetwork CoreFoundation CoreFoundationBase CoreGraphics CoreVideo Foundation IOSurface Metal OpenGLESCommon Security darwin posix
-language = Objective-C
-package = platform.Accelerate
-modules = Accelerate
-
-compilerOpts = -framework Accelerate
-linkerOpts = -framework Accelerate

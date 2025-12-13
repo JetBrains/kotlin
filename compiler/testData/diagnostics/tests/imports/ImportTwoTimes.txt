@@ -1,9 +1,0 @@
-package
-
-package myApp {
-    public fun needUmbrella(): kotlin.Boolean
-}
-
-package weatherForecast {
-    public fun weatherToday(): kotlin.String
-}

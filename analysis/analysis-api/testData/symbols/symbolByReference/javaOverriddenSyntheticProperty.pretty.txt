@@ -1,3 +1,0 @@
-open val kotlin.String.foo: kotlin.Int
-  @java.lang.Override
-  get()

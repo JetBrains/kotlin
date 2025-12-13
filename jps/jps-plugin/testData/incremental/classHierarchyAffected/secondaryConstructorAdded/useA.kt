@@ -1,1 +1,0 @@
-fun useA(a: A) {}

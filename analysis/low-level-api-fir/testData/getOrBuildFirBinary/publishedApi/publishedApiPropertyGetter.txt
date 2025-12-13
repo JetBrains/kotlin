@@ -1,8 +1,0 @@
-KT element: KtPropertyAccessor
-KT element text:
-internal final get() { /* compiled code */ }
-FIR element: FirPropertyAccessorImpl
-FIR source kind: KtRealSourceElementKind
-
-FIR element rendered:
-internal [ResolvedTo(BODY_RESOLVE)] [LazyPublishedApiEffectiveVisibilityKey=public] get(): R|kotlin/String|

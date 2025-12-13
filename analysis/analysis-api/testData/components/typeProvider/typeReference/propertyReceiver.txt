@@ -1,2 +1,0 @@
-KtTypeReference: Foo
-KaType: Foo

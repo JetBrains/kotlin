@@ -1,3 +1,0 @@
-public? final? [ResolvedTo(RAW_FIR)] var variable: Int
-    public? [ResolvedTo(RAW_FIR)] get(): Int
-    public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit|

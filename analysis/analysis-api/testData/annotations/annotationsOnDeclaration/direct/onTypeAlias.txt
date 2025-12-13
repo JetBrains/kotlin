@@ -1,5 +1,0 @@
-KtDeclaration: KtTypeAlias Foo
-annotations: [
-  A(a = 1, c = kotlin.Int::class)
-    psi: KtAnnotationEntry
-]

@@ -1,8 +1,0 @@
-ORIGINAL KDOC:
-/**foo*/
-
-asdfas
-CONTENT:
-/**foo*/
-
-asdfas

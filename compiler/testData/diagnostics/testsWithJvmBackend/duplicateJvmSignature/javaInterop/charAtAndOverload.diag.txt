@@ -1,3 +1,0 @@
-/main.kt:22:14: error: Accidental override: The following declarations have the same JVM signature (get(I)C):
-    fun get(index: Int): Char defined in KA
-    fun get(index: Int): Char defined in KA

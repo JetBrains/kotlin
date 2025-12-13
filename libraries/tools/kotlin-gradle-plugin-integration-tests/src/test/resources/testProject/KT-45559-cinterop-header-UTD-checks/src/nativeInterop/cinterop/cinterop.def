@@ -1,2 +1,0 @@
-headers = dummyFromCompilerOption.h dummyFromIncludeDirs.h
-compilerOpts = -IcompilerOptionIncludeDir

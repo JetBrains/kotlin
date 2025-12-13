@@ -1,3 +1,0 @@
-annotation class Anno(vararg value: kotlin.Int) {
-  val value: kotlin.IntArray
-}

@@ -1,1 +1,0 @@
-Uncaught Kotlin exception: kotlin\.RuntimeException: Example.*

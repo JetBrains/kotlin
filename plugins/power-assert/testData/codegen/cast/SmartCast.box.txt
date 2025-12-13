@@ -1,9 +1,0 @@
----
-assert(greeting is String && greeting.length == 2)
-       |        |            |        |      |
-       |        |            |        |      false
-       |        |            |        5
-       |        |            hello
-       |        true
-       hello
----

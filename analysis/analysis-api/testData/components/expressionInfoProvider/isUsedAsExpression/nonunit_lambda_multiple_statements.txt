@@ -1,4 +1,0 @@
-expression: CALL_EXPRESSION
-text: intFunction()
-isUsedAsExpression: false
-isUsedAsResultOfLambda: false

@@ -1,5 +1,0 @@
-Invalidated sessions:
-A
-C
-F
-L1 (resolvable session)

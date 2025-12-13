@@ -1,9 +1,0 @@
-STEP 0:
-    modifications:
-        U : callJsFunCall.0.kt -> callJsFunCall.kt
-    added file: jsFunCall.kt, callJsFunCall.kt, m.kt, jsFun.kt
-STEP 1:
-    modifications:
-        U : callJsFunCall.1.kt -> callJsFunCall.kt
-    modified ir: callJsFunCall.kt
-    updated exports: jsFunCall.kt

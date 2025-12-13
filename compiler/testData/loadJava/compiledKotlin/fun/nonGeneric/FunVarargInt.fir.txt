@@ -1,1 +1,0 @@
-public final fun varargInt(a: R|kotlin/Int|, vararg b: R|kotlin/IntArray|): R|kotlin/Int|

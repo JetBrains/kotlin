@@ -1,3 +1,0 @@
-package
-
-public fun </*0*/ T> foo(): kotlin.Unit

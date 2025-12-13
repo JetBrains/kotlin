@@ -1,9 +1,0 @@
-# We use the category in the def file to add back the method
-language = Objective-C
-modules=dependency4
-objcClassesIncludingCategories = MyClass
-allowIncludingObjCCategoriesFromDefFile = true
----
-@interface MyClass (K)
--(void) wasInMyClass;
-@end

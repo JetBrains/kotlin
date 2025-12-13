@@ -1,1 +1,0 @@
-fun libCommonFunForAppCommon(unused: Any? = null) = Double.NaN

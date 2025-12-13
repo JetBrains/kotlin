@@ -1,6 +1,0 @@
-package test
-
-public interface JavaBeanAbstractGetter {
-    public abstract fun getBlue(): kotlin.Int
-    public abstract fun getRed(): kotlin.Int
-}

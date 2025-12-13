@@ -1,4 +1,0 @@
-expression: PARENTHESIZED
-text: (!b)
-isUsedAsExpression: true
-isUsedAsResultOfLambda: false

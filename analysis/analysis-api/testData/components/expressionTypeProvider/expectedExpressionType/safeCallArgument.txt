@@ -1,5 +1,0 @@
-expression: arg
-expected type: KaUsualClassType:
-  annotations: []
-  typeArguments: []
-  type: kotlin/String

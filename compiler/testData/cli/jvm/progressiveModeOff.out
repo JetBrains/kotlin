@@ -1,4 +1,0 @@
-compiler/testData/cli/jvm/progressive/progressiveTest.kt:3:10: warning: 'public' generic exposes its 'internal' parameter bound type 'Foo'. This will be prohibited in the future.
-fun <T : Foo> foo(x: T?) = x
-         ^^^
-OK

@@ -1,4 +1,0 @@
-FILE: destructuringInsideCallChain.kt
-    public? final? fun main(args: Array<String>): R|kotlin/Unit| {
-        ERROR_EXPR(Qualified expression with unexpected selector)String(hello).ERROR_EXPR(The expression cannot be a selector (occur after a dot)).println#
-    }

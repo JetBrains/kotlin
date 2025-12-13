@@ -1,4 +1,0 @@
-expression: OPERATION_REFERENCE
-text: is
-isUsedAsExpression: false
-isUsedAsResultOfLambda: false

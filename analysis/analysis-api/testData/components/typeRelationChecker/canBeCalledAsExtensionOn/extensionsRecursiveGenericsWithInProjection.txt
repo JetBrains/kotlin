@@ -1,3 +1,0 @@
-CAN_BE_CALLED_AS_EXTENSION_ON: true
-CALLABLE: fun <T : GenericFooIn<T>> GenericFooIn<T>.ext()
-TYPE: SomeClassIn

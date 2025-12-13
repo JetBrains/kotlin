@@ -1,3 +1,0 @@
-headers = dependency.h
-headerFilter = dependency.h
-language = Objective-C

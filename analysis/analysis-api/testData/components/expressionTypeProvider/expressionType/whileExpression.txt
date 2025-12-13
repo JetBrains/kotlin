@@ -1,2 +1,0 @@
-expression: while(true) {}
-type: kotlin.Unit

@@ -1,9 +1,0 @@
-depends = ApplicationServices CFCGTypes CFNetwork CoreFoundation CoreFoundationBase CoreGraphics CoreServices CoreText CoreVideo DiskArbitration Foundation IOKit IOSurface ImageIO Metal OpenGLCommon Security cups darwin libkern osx posix
-language = Objective-C
-package = platform.CoreML
-modules = CoreML
-
-compilerOpts = -framework CoreML
-linkerOpts = -framework CoreML
-
-excludedFunctions = MLModelCollectionDidChangeNotification

@@ -1,2 +1,0 @@
-IS_SUBCLASS: false
-IS_DIRECT_SUBCLASS: false

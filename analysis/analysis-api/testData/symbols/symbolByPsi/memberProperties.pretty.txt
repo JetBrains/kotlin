@@ -1,6 +1,0 @@
-class A {
-  val x: kotlin.Int
-
-  val kotlin.Int.y: kotlin.Int
-    get()
-}

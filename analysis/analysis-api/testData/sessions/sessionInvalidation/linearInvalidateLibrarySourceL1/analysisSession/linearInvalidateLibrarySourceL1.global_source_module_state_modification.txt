@@ -1,7 +1,0 @@
-Invalidated sessions:
-A
-B
-C
-D
-E
-L1

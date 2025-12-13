@@ -1,2 +1,0 @@
-@kotlin.OptIn(markerClass = [kotlin.contracts.ExperimentalContracts::class])
-fun returnsNotNullContract(foo: kotlin.Any?): kotlin.Any?

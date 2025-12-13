@@ -1,2 +1,0 @@
-KtConstantExpression(25,26): '1'
-  NO_CANDIDATES

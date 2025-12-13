@@ -1,6 +1,0 @@
-/ComplexGenericTypeMismatchInGenericLambdaReturnPosition.fir.kt:(324,332): error: Argument type mismatch: actual type is 'Owner<Box<Interface>>', but 'Owner<Pack<uninferred U (of fun <U> Owner<Pack<U>>.unpack)>>' was expected.
-
-/ComplexGenericTypeMismatchInGenericLambdaReturnPosition.fir.kt:(333,339): error: Cannot infer type for type parameter 'U'. Specify it explicitly.
-
-/ComplexGenericTypeMismatchInGenericLambdaReturnPosition.fir.kt:(333,339): error: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
-fun <U> Owner<Pack<U>>.unpack(): U

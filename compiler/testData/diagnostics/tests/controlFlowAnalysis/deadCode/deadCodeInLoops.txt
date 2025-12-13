@@ -1,7 +1,0 @@
-package
-
-public fun bar(): kotlin.Unit
-public fun testDoWhile(): kotlin.Unit
-public fun testFor(): kotlin.Unit
-public fun testWhile(): kotlin.Unit
-public fun todo(): kotlin.Nothing

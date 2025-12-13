@@ -1,5 +1,0 @@
-package
-
-public fun doWhileLoop(/*0*/ x: kotlin.Int?): kotlin.Unit
-public fun whileLoop(/*0*/ x: kotlin.Int?): kotlin.Unit
-public fun whileLoopContinueInnerOuter(/*0*/ x: kotlin.Int?): kotlin.Unit

@@ -1,3 +1,0 @@
-enum class E {
-    UNCHANGED1, REMOVED, UNCHANGED2
-}

@@ -1,9 +1,0 @@
-class W : Y, Z, X() {
-    override val bar: String
-        get() = "from base class"
-    override val qux: String
-        get() = "from interface Y"
-    override val sep: String
-        get() = "from interface Z"
-}
-

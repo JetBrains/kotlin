@@ -1,2 +1,0 @@
-headers = sqlite3.h sqlite3ext.h
-compilerOpts = -Ilibs/

@@ -1,5 +1,0 @@
-object ConsumerACommon {
-    init {
-        ProducerACommon
-    }
-}

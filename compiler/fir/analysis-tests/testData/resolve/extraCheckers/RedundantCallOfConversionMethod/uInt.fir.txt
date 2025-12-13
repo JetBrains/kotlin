@@ -1,4 +1,0 @@
-FILE: uInt.kt
-    public final fun test(i: R|kotlin/UInt|): R|kotlin/Unit| {
-        lval foo: R|kotlin/UInt| = R|<local>/i|.R|kotlin/UInt.toUInt|()
-    }

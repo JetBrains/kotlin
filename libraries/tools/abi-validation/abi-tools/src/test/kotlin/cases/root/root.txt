@@ -1,5 +1,0 @@
-public final class RootClass2 {
-	public fun <init> ()V
-	public final fun hello ()V
-}
-

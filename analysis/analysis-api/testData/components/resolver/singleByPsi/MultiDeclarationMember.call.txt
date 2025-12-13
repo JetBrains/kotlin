@@ -1,2 +1,0 @@
-KtDestructuringDeclarationEntry(162,163): 'b'
-  null

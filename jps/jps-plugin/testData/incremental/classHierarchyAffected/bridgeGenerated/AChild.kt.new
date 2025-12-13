@@ -1,5 +1,0 @@
-package foo
-
-class AChild : A<Int>() {
-    override fun f(x: Int) {}
-}

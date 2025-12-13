@@ -1,7 +1,0 @@
-depends = CFCGTypes CFNetwork CoreFoundation CoreFoundationBase Foundation Security darwin posix
-language = Objective-C
-package = platform.BackgroundAssets
-
-modules = BackgroundAssets
-compilerOpts = -framework BackgroundAssets
-linkerOpts = -framework BackgroundAssets

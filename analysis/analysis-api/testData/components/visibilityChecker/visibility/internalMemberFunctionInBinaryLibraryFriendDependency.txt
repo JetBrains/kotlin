@@ -1,4 +1,0 @@
-Declaration: internal fun bar()
-At usage site: println
-Is visible: true
-Receiver expression: null

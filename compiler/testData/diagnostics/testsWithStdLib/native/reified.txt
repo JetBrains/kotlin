@@ -1,4 +1,0 @@
-package
-
-public external inline fun </*0*/ reified T> bar(): kotlin.Unit
-public external fun </*0*/ reified T> foo(): kotlin.Unit

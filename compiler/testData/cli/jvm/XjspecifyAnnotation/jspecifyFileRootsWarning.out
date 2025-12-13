@@ -1,7 +1,0 @@
-compiler/testData/cli/jvm/XjspecifyAnnotation/jspecifyUsage.kt:4:11: warning: Java type mismatch: inferred type is 'Nothing?', but 'String' was expected.
-    a.foo(null)
-          ^^^^
-compiler/testData/cli/jvm/XjspecifyAnnotation/jspecifyUsage.kt:5:12: error: only safe (?.) or non-null asserted (!!.) calls are allowed on a nullable receiver of type 'String?'.
-    a.bar().length
-           ^
-COMPILATION_ERROR

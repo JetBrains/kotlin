@@ -1,7 +1,0 @@
-# before
--help-kotlinc
-
-# after
--P
-plugin:org.jetbrains.kotlin.kapt3:aptMode=stubsAndApt
--help-kotlinc

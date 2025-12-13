@@ -1,8 +1,0 @@
-// IntelliJ API Decompiler stub source generated from a class file
-// Implementation of methods is not available
-
-public final enum class My private constructor() : kotlin.Enum<My> {
-    FIRST;
-
-    public final inline fun foo(): kotlin.Unit { /* compiled code */ }
-}

@@ -1,2 +1,0 @@
-struct IncludedUsed;
-struct IncludedUnused;

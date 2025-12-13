@@ -1,4 +1,0 @@
-package
-
-public fun foo(): kotlin.Unit
-public fun </*0*/ T : kotlin.Any> T?.npe(): T

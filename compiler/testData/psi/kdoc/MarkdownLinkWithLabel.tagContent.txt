@@ -1,4 +1,0 @@
-ORIGINAL KDOC:
-* [foo][bar]
-CONTENT:
-[foo][bar]

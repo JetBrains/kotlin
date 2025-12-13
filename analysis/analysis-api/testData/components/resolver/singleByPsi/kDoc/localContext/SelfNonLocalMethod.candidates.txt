@@ -1,2 +1,0 @@
-KtNamedFunction(14,52): '/**'
-  NO_CANDIDATES

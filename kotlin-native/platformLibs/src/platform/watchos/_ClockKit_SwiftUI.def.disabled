@@ -1,6 +1,0 @@
-language = Objective-C
-package = platform._ClockKit_SwiftUI
-modules = _ClockKit_SwiftUI
-compilerOpts = -framework _ClockKit_SwiftUI
-linkerOpts = -framework _ClockKit_SwiftUI
-#Disabled: Unavailable

@@ -1,7 +1,0 @@
--- Common --
-Exit code: OK
-Output:
-
--- JVM --
-Exit code: OK
-Output:

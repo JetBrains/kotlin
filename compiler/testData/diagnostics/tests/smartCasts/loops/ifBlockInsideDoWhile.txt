@@ -1,3 +1,0 @@
-package
-
-public fun foo(/*0*/ p: kotlin.String?, /*1*/ y: kotlin.String?): kotlin.Int

@@ -1,3 +1,0 @@
-MyRecord:
-  [Enhancement]: public open fun x(): R|kotlin/String!| from Java enhancement scope for /MyRecord [id: 0]
-

@@ -1,7 +1,0 @@
-Invalidated sessions:
-library1
-library1 (resolvable session)
-library2 (resolvable session)
-librarySource
-sourceModule
-unrelatedLibrary (resolvable session)

@@ -1,5 +1,0 @@
-class A {
-  constructor(x: kotlin.Int)
-
-  constructor(y: kotlin.Int, z: kotlin.String)
-}

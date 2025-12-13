@@ -1,4 +1,0 @@
-expression: CLASS_LITERAL_EXPRESSION
-text: Deprecated::class
-isUsedAsExpression: true
-isUsedAsResultOfLambda: false

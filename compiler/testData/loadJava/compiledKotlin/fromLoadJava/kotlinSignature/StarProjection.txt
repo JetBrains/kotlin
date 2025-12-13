@@ -1,9 +1,0 @@
-package test
-
-public final class StarProjection {
-    /*primary*/ public constructor StarProjection()
-    public final fun foo(): test.StarProjection.MyClass<*>
-
-    public interface MyClass</*0*/ T : kotlin.CharSequence?> {
-    }
-}

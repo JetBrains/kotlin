@@ -1,5 +1,0 @@
-expression: 2 > 1 && true || true || (3 + 3 <= 10)
-constant: true
-constantValueKind: BooleanValue
-constantValueSource: BINARY_EXPRESSION
-constantValueSourceText: 2 > 1 && true || true || (3 + 3 <= 10)

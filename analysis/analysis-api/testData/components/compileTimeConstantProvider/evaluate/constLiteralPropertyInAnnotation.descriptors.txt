@@ -1,5 +1,0 @@
-expression: Something.VALUE
-constant: 5
-constantValueKind: IntValue
-constantValueSource: NOT_EVALUATED
-constantValueSourceText: NOT_EVALUATED

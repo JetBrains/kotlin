@@ -1,5 +1,0 @@
-Captured values:
-ContainingClass[name: <this>; isMutated: false; displayText: this@Test]
-    class Test : R|kotlin/Any|
-    R|Test|
-No captured files

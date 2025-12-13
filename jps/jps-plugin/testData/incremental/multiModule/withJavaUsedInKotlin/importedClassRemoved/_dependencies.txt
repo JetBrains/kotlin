@@ -1,4 +1,0 @@
-baseModule
-dependentModule
-
-dependentModule->baseModule

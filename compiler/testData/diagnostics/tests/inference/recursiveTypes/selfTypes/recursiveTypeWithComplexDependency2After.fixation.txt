@@ -1,9 +1,0 @@
-CHOSEN for fixation: TypeVariable(T) --- READY_FOR_FIXATION_LOWER
-     >: kotlin/String
-     = kotlin/String (inferred during fixation)
-    FIXED TO: kotlin/String
-TypeVariable(Id) --- WITHOUT_PROPER_ARGUMENT_CONSTRAINT
-********************************
-CHOSEN for fixation: TypeVariable(Id) --- WITHOUT_PROPER_ARGUMENT_CONSTRAINT
-    FIXED TO: ERROR CLASS: Cannot infer argument for type parameter Id
-********************************

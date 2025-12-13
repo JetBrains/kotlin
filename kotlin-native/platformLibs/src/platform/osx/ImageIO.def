@@ -1,7 +1,0 @@
-depends = CFCGTypes CoreFoundation CoreFoundationBase CoreGraphics IOKit darwin libkern posix
-language = Objective-C
-package = platform.ImageIO
-modules = ImageIO
-
-compilerOpts = -framework ImageIO
-linkerOpts = -framework ImageIO

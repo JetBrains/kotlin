@@ -1,1 +1,0 @@
-class Foo<T>(val t: T, val i: Int)

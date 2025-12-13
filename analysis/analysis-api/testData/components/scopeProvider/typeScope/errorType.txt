@@ -1,8 +1,0 @@
-Expression: o
-KaType: AAA
-
-KaTypeScope:
-NO_SCOPE
-
-Declaration Scope:
-NO_SCOPE

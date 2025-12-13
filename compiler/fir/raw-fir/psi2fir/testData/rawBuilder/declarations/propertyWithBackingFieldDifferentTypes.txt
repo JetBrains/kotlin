@@ -1,9 +1,0 @@
-FILE: propertyWithBackingFieldDifferentTypes.kt
-    public? final? fun resolveMe(): R|kotlin/Unit| {
-        receive#(property#)
-    }
-    public? final? val property: Number
-        private final? backing field field: Int = IntegerLiteral(10)
-        public? get(): Number
-    public? final? fun receive(s: Int): R|kotlin/Unit| {
-    }

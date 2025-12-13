@@ -1,6 +1,0 @@
-module Bar {
-  header "bar.h"
-}
-module Foo {
-  header "foo.h"
-}

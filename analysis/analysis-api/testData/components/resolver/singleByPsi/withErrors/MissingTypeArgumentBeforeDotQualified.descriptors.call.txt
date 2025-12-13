@@ -1,2 +1,0 @@
-KtNameReferenceExpression(61,68): 'Generic'
-  null

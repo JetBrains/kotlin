@@ -1,1 +1,0 @@
-val x = <expr>"string ${1 + 2} template"</expr>

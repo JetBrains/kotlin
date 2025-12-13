@@ -1,2 +1,0 @@
-expression: xfd
-expected type: null

@@ -1,4 +1,0 @@
-$TESTDATA_DIR$/annotationDefaultTarget.kt
--Xannotation-default-target=first-only
--d
-$TEMP_DIR$

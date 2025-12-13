@@ -1,2 +1,0 @@
-expression: suspend {}
-type: suspend () -> kotlin.Unit

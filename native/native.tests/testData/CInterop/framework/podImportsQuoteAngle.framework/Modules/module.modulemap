@@ -1,6 +1,0 @@
-framework module podImportsQuoteAngle {
-  umbrella header "podImportsQuoteAngle-umbrella.h"
-
-  export *
-  module * { export * }
-}

@@ -1,7 +1,0 @@
-depends = CFCGTypes CoreFoundation CoreFoundationBase darwin posix
-language = Objective-C
-package = platform.GSS
-modules = GSS
-
-compilerOpts = -framework GSS
-linkerOpts = -framework GSS

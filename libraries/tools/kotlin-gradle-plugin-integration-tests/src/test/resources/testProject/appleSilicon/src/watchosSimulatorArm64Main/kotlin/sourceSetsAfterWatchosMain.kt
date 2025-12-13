@@ -1,1 +1,0 @@
-actual val sourceSetsAfterWatchosMain: String = "watchosSimulatorArm64Main"

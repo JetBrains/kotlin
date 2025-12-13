@@ -1,5 +1,0 @@
-// RUN_PIPELINE_TILL: BACKEND
-// WITH_STDLIB
-val foo = 'a'.<!REDUNDANT_CALL_OF_CONVERSION_METHOD!>toChar()<!>
-
-/* GENERATED_FIR_TAGS: propertyDeclaration */

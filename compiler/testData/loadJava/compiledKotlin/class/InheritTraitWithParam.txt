@@ -1,8 +1,0 @@
-package test
-
-public interface Aaa</*0*/ P> {
-}
-
-public final class Bbb : test.Aaa<java.util.Random> {
-    /*primary*/ public constructor Bbb()
-}

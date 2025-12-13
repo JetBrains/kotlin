@@ -1,4 +1,0 @@
--Xexplicit-backing-fields
-$TESTDATA_DIR$/explicitBackingFields.kt
--d
-$TEMP_DIR$

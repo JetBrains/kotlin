@@ -1,3 +1,0 @@
-package
-
-public val x: kotlin.Char = \u0032 ('2')

@@ -1,3 +1,0 @@
-package test
-
-public fun obj(): java.lang.Object

@@ -1,2 +1,0 @@
-headers = dep/dependency.h
-compilerOpts = -Ilibs/include

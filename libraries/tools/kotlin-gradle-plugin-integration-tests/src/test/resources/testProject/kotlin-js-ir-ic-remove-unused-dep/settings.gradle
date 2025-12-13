@@ -1,4 +1,0 @@
-rootProject.name = "kotlin-js-ir-ic-remove-unused-dep"
-
-include("lib")
-include("app")

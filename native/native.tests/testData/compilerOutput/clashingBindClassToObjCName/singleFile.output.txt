@@ -1,2 +1,0 @@
-$TESTDATA_DIR$/clashingBindClassToObjCName/file*.kt:1:1: error: cannot bind ObjC class `MyClassObjC*` to MyClass: another ObjC class is already bound
-COMPILATION_ERROR

@@ -1,1 +1,0 @@
-inline fun inlineGlobalValWrapper() =  inlineGlobalVal

@@ -1,3 +1,0 @@
-fun listIterator(): kotlin.collections.ListIterator<E>
-
-fun listIterator(index: kotlin.Int): kotlin.collections.ListIterator<E>

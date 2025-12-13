@@ -1,7 +1,0 @@
-package test
-
-public open class AmbiguousAdapters {
-    public constructor AmbiguousAdapters()
-    public open fun foo(/*0*/ p0: java.io.Closeable!): kotlin.Unit
-    public open fun foo(/*0*/ p0: java.lang.Runnable!): kotlin.Unit
-}

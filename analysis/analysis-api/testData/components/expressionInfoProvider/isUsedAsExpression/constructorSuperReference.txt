@@ -1,4 +1,0 @@
-expression: CONSTRUCTOR_DELEGATION_REFERENCE
-text: super
-isUsedAsExpression: false
-isUsedAsResultOfLambda: false

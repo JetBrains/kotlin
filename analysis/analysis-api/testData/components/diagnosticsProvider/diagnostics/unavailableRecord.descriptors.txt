@@ -1,4 +1,0 @@
-Diagnostics from file:
-  for PSI element of type KtAnnotationEntry at (3,1-11)
-    JVM_RECORD_REQUIRES_JDK15      text ranges: [(16,26)]
-      PSI: KtAnnotationEntry at (3,1-11)

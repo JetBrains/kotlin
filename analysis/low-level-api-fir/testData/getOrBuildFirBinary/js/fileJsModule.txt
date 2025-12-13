@@ -1,8 +1,0 @@
-KT element: KtNamedFunction
-KT element text:
-public external fun foo(): kotlin.Unit { /* compiled code */ }
-FIR element: FirNamedFunctionImpl
-FIR source kind: KtRealSourceElementKind
-
-FIR element rendered:
-public final external [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit|

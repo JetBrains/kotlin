@@ -1,1 +1,0 @@
-val bar = <expr>args.size</expr>

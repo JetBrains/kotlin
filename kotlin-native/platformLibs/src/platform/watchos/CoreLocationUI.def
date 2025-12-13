@@ -1,7 +1,0 @@
-depends = CFCGTypes CoreFoundation CoreFoundationBase CoreGraphics CoreText CoreVideo Foundation QuartzCore Security Symbols UIKit UIUtilities UserNotifications darwin posix
-language = Objective-C
-package = platform.CoreLocationUI
-
-modules = CoreLocationUI
-compilerOpts = -framework CoreLocationUI
-linkerOpts = -framework CoreLocationUI

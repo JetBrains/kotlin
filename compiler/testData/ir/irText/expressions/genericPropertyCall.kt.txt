@@ -1,9 +1,0 @@
-val test: String
-  field = <get-id><String>(/* <this> = "abc" */)
-  get
-
-val <T : Any?> T.id: T
-  get(): T {
-    return <this>
-  }
-

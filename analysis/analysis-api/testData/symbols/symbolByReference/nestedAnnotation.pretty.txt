@@ -1,2 +1,0 @@
-@kotlin.Deprecated(message = "Use 'bar() instead", replaceWith = kotlin/ReplaceWith(expression = "bar()", , imports = [], ))
-fun foo()

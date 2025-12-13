@@ -1,7 +1,0 @@
-FILE: conflictedExpectedType.kt
-    public final fun <T : R|kotlin/Any|> foo(): R|kotlin/collections/MutableList<T>| {
-        ^foo R|kotlin/TODO|()
-    }
-    public final fun main(): R|kotlin/Unit| {
-        lval x: R|kotlin/collections/MutableList<kotlin/String?>| = R|/foo<CS errors: /foo>#|<<ERROR TYPE REF: Cannot infer argument for type parameter T>>()
-    }

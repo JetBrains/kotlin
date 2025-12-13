@@ -1,5 +1,0 @@
-ALL:
-  /B.p: String
-DIRECT:
-  /B.p: String
-INTERSECTION:

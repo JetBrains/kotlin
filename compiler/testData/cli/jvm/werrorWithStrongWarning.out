@@ -1,3 +1,0 @@
-warning: classpath entry points to a non-existent location: non-existing-path.jar
-error: warnings found and -Werror specified
-COMPILATION_ERROR

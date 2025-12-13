@@ -1,3 +1,0 @@
-package app
-
-fun ios() {}

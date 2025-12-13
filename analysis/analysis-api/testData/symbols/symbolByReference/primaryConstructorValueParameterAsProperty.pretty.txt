@@ -1,1 +1,0 @@
-val abc: kotlin.Int

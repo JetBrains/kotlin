@@ -1,5 +1,0 @@
-package test
-
-public interface GenericInterfaceParameterWithSelfBound</*0*/ T : test.GenericInterfaceParameterWithSelfBound<T!>!> {
-    public abstract fun method(/*0*/ p0: T!): T!
-}

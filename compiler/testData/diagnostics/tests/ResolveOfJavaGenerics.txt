@@ -1,7 +1,0 @@
-package
-
-public fun test(): kotlin.Unit
-public fun test(/*0*/ a: java.lang.Class<kotlin.Int>): kotlin.Unit
-public fun test(/*0*/ a: java.lang.Comparable<kotlin.Int>): kotlin.Unit
-public fun test(/*0*/ a: java.lang.annotation.RetentionPolicy): kotlin.Unit
-public fun test(/*0*/ a: java.util.ArrayList<kotlin.Int>): kotlin.Unit

@@ -1,2 +1,0 @@
-KtTypeReference: MyUnknownException
-KaType: MyUnknownException: Symbol not found for MyUnknownException

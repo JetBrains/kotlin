@@ -1,9 +1,0 @@
-class X<T>
-
-typealias TopLevelAlias = X<kotlin.Int>
-
-class A {
-  fun check()
-
-  typealias NestedLevelAlias = X<kotlin.String>
-}

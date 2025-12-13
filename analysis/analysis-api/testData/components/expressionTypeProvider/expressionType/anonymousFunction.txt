@@ -1,2 +1,0 @@
-expression: fun(it: String) {}
-type: (kotlin.String) -> kotlin.Unit

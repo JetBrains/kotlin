@@ -1,3 +1,0 @@
-package
-
-public fun foo(): [Error type: Return type for foo cannot be resolved]

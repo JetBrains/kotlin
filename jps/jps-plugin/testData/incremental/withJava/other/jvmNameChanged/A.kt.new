@@ -1,6 +1,0 @@
-package foo
-
-open class A {
-    @JvmName("h")
-    fun f() {}
-}

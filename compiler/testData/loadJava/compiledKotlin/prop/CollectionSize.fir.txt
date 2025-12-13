@@ -1,3 +1,0 @@
-public final val R|kotlin/collections/Collection<*>|.anotherSize: R|kotlin/Int|
-    public get(): R|kotlin/Int|
-

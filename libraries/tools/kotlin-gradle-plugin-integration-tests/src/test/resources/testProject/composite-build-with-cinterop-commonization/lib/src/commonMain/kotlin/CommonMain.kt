@@ -1,4 +1,0 @@
-package lib
-
-class CommonMain {
-}

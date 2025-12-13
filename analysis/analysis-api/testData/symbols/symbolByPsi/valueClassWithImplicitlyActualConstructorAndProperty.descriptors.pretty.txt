@@ -1,7 +1,0 @@
-actual inline class A(name: kotlin.String) {
-  val name: kotlin.String
-}
-
-actual inline class B(s: kotlin.String) {
-  val s: kotlin.String
-}

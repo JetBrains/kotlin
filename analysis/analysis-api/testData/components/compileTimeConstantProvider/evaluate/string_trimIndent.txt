@@ -1,7 +1,0 @@
-expression: """
-   const val CODE = "const val CODE = ..."
-""".trimIndent()
-constant: NOT_EVALUATED
-constantValueKind: NOT_EVALUATED
-constantValueSource: NOT_EVALUATED
-constantValueSourceText: NOT_EVALUATED

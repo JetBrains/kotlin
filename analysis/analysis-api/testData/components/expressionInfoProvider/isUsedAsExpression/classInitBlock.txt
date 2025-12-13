@@ -1,6 +1,0 @@
-expression: BLOCK
-text: {
-        "value"
-    }
-isUsedAsExpression: false
-isUsedAsResultOfLambda: false

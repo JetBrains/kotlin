@@ -1,9 +1,0 @@
-package test
-
-fun callBuiltinFunctions(a: Int, b: Int) {
-  a.plus(other = b) /*~> Unit */
-  a.or(other = b) /*~> Unit */
-  a.and(other = b) /*~> Unit */
-  a.inv() /*~> Unit */
-  a.shl(bitCount = b) /*~> Unit */
-}

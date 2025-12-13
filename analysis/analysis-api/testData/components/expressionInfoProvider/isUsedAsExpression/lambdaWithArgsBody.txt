@@ -1,4 +1,0 @@
-expression: BINARY_EXPRESSION
-text: x + y
-isUsedAsExpression: true
-isUsedAsResultOfLambda: true

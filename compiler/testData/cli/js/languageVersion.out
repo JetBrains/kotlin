@@ -1,4 +1,0 @@
-compiler/testData/cli/js/languageVersion.kt:6:13: error: the feature "break continue in inline lambdas" is only available since language version 2.2
-            break
-            ^^^^^
-COMPILATION_ERROR

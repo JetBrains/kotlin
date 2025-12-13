@@ -1,9 +1,0 @@
-public abstract class Aaa : R|kotlin/Any| {
-    public constructor(): R|test/Aaa|
-
-}
-
-public final class Bbb : R|test/Aaa| {
-    public constructor(): R|test/Bbb|
-
-}

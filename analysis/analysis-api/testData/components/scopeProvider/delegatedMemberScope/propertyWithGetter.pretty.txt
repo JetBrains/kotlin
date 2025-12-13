@@ -1,2 +1,0 @@
-override val foo: kotlin.Int
-  get()

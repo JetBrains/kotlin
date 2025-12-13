@@ -1,2 +1,0 @@
-include(":composeApp")
-include(":library")

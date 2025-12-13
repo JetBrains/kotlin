@@ -1,3 +1,0 @@
-function createWrongObject() {
-    return null
-}

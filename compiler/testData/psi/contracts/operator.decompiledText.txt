@@ -1,4 +1,0 @@
-// IntelliJ API Decompiler stub source generated from a class file
-// Implementation of methods is not available
-
-public operator fun kotlin.Boolean.plus(x: kotlin.Boolean): kotlin.Boolean { contract { /* compiled contract */ }; /* compiled code */ }

@@ -1,7 +1,0 @@
-language = Objective-C
-package = platform._GameController_SwiftUI
-
-modules = _GameController_SwiftUI
-compilerOpts = -framework _GameController_SwiftUI
-linkerOpts = -framework _GameController_SwiftUI
-#Disabled: Unavailable

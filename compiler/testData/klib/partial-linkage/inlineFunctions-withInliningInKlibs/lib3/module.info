@@ -1,3 +1,0 @@
-STEP 0:
-    dependencies: stdlib, lib1, lib2
-    arguments: -Xklib-ir-inliner=full

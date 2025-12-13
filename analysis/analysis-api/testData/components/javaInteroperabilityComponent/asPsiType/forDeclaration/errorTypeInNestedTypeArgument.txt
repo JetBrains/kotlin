@@ -1,2 +1,0 @@
-KaType: B<kotlin.String, A<Unknown>>
-PsiType: null

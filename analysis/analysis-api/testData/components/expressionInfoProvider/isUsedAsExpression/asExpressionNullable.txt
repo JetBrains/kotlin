@@ -1,4 +1,0 @@
-expression: PARENTHESIZED
-text: (v as? String)
-isUsedAsExpression: true
-isUsedAsResultOfLambda: false

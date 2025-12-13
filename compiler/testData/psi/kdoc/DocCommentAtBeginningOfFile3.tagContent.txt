@@ -1,4 +1,0 @@
-ORIGINAL KDOC:
-fooo
-CONTENT:
-fooo

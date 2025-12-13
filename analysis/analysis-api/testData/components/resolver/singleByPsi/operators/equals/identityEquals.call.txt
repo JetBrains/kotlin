@@ -1,2 +1,0 @@
-KtOperationReferenceExpression(62,65): '==='
-  null

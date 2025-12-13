@@ -1,3 +1,0 @@
-package
-
-public fun baz(/*0*/ s: kotlin.String?): kotlin.String

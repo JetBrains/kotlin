@@ -1,2 +1,0 @@
-pack/MyAnno(count = 0)
-  psi: KtAnnotationEntry

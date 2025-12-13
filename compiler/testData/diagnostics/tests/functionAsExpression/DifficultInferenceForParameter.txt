@@ -1,4 +1,0 @@
-package
-
-public fun </*0*/ T> foo(/*0*/ f: (T) -> T): T
-public fun test(): kotlin.Unit

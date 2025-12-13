@@ -1,3 +1,0 @@
-field:@R|kotlin/jvm/JvmField|[Types]() public? final? [ResolvedTo(TYPES)] var variable: R|kotlin/Int|
-    public? [ResolvedTo(TYPES)] get(): R|kotlin/Int|
-    public? [ResolvedTo(TYPES)] set([ResolvedTo(TYPES)] value: R|kotlin/Int|): R|kotlin/Unit|

@@ -1,5 +1,0 @@
-public? final? fun test/classes/Outer.Inner.foo(): R|kotlin/Unit| {
-    lval <local>/outer: <implicit> = Outer#()
-    lval <local>/inner: <implicit> = outer#.Inner#()
-    inner#.bar#()
-}

@@ -1,3 +1,0 @@
-fun foo() {
-  val x: JavaEnum = JavaEnum.FOO
-}

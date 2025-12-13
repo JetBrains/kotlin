@@ -1,7 +1,0 @@
-depends = AppKit ApplicationServices BackgroundAssets CFCGTypes CFNetwork CloudKit CoreData CoreFoundation CoreFoundationBase CoreGraphics CoreImage CoreLocation CoreServices CoreText CoreVideo DiskArbitration Foundation IOKit IOSurface ImageIO Metal OpenGLCommon QuartzCore Security Symbols _LocationEssentials cups darwin libkern osx posix
-language = Objective-C
-package = platform.StoreKit
-modules = StoreKit
-
-compilerOpts = -framework StoreKit
-linkerOpts = -framework StoreKit

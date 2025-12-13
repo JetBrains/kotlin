@@ -1,3 +1,0 @@
-package
-
-public fun f(/*0*/ a: kotlin.collections.MutableList<in kotlin.String>): kotlin.Boolean

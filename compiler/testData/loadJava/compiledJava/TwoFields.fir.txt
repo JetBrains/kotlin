@@ -1,8 +1,0 @@
-public final class TwoFields : R|kotlin/Any| {
-    public field a: R|kotlin/Int|
-
-    public field b: R|kotlin/Short|
-
-    public constructor(): R|test/TwoFields|
-
-}

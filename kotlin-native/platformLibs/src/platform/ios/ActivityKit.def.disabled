@@ -1,7 +1,0 @@
-language = Objective-C
-package = platform.ActivityKit
-
-modules = ActivityKit
-compilerOpts = -framework ActivityKit
-linkerOpts = -framework ActivityKit
-#Disabled: Swift-only framework

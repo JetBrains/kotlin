@@ -1,7 +1,0 @@
-depends = CFCGTypes CFNetwork CoreFoundation CoreFoundationBase CoreGraphics CoreServices DiskArbitration Foundation IOKit IOSurface Metal MetalPerformanceShaders Security darwin libkern osx posix
-language = Objective-C
-package = platform.MetalPerformanceShadersGraph
-
-modules = MetalPerformanceShadersGraph
-compilerOpts = -framework MetalPerformanceShadersGraph
-linkerOpts = -framework MetalPerformanceShadersGraph

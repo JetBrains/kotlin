@@ -1,2 +1,0 @@
-KtTypeParameter: T
-KaType: T

@@ -1,1 +1,0 @@
-fun inlineChildProxy() = InlineChild().inlineMethod()

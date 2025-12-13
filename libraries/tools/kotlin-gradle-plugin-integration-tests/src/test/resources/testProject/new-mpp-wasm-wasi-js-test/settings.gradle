@@ -1,4 +1,0 @@
-rootProject.name = "kotlin-wasm"
-
-include("lib")
-include("app")

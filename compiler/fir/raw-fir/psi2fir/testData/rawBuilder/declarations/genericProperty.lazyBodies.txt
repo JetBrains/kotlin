@@ -1,4 +1,0 @@
-FILE: genericProperty.kt
-    public? final? fun <T> genericFoo(): T { LAZY_BLOCK }
-    public? final? val <T> T.generic: T
-        public? get(): T { LAZY_BLOCK }

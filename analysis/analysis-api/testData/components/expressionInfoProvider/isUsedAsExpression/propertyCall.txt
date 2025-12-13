@@ -1,4 +1,0 @@
-expression: CALL_EXPRESSION
-text: hashKode()
-isUsedAsExpression: true
-isUsedAsResultOfLambda: false

@@ -1,3 +1,0 @@
-headers = cinterop.h
-headerFilter = cinterop.h
-language = Objective-C

@@ -1,6 +1,0 @@
-BEFORE MODIFICATION:
-public final [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] fun doo(): R|kotlin/Unit| {
-}
-
-AFTER MODIFICATION:
-public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ScriptTopLevelDeclaration=true] fun doo(): R|kotlin/Unit| { LAZY_BLOCK }

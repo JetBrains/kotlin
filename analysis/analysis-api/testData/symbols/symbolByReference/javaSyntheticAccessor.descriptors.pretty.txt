@@ -1,2 +1,0 @@
-val JavaClass.foo: kotlin.Int
-  get()

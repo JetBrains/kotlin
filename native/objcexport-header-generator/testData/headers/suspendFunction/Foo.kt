@@ -1,1 +1,0 @@
-suspend fun foo() = Unit

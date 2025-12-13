@@ -1,8 +1,0 @@
->>> arrayOf(1, 2)[0] // KT-5622
-1
->>> arrayOf(1, 2)[1]
-2
->>> arrayOf(1, 2).get(0)
-1
->>> intArrayOf(1)[0]
-1

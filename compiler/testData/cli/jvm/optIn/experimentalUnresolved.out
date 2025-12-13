@@ -1,3 +1,0 @@
-warning: opt-in requirement marker 'org.test.Unresolved1' is unresolved. Make sure it's present in the module dependencies.
-warning: opt-in requirement marker 'org.test.Unresolved2' is unresolved. Make sure it's present in the module dependencies.
-OK

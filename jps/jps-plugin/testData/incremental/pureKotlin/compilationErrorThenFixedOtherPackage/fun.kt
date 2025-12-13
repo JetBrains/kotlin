@@ -1,4 +1,0 @@
-package f
-
-fun f() {
-}

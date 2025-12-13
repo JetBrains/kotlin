@@ -1,4 +1,0 @@
-expression: PARENTHESIZED
-text: (::callee)
-isUsedAsExpression: true
-isUsedAsResultOfLambda: false

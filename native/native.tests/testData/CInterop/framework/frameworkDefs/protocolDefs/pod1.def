@@ -1,3 +1,0 @@
-language = Objective-C
-headers = protocol/protocol.h
-package = objcinterop

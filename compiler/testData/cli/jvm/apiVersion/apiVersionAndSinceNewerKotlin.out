@@ -1,4 +1,0 @@
-compiler/testData/cli/jvm/apiVersion/apiVersionAndSinceNewerKotlin.kt:4:14: warning: the version is greater than the specified API version 2.1.
-@SinceKotlin("255.255")
-             ^^^^^^^^^
-OK

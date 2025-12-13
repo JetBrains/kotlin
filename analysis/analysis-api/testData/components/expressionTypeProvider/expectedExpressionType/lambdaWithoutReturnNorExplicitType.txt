@@ -1,5 +1,0 @@
-expression: { a: Int ->
-    val b = 1
-    a + b
-}
-expected type: null

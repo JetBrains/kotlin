@@ -1,9 +1,0 @@
-depends = CFCGTypes CoreFoundation CoreFoundationBase darwin libkern posix
-language = Objective-C
-package = platform.IOKit
-modules = IOKit
-
-compilerOpts = -framework IOKit
-linkerOpts = -framework IOKit
-# IORPCMessageFromMach is from DriverKit that we don't support.
-excludedFunctions = IOURLWriteDataAndPropertiesToResource IORPCMessageFromMach

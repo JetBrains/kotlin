@@ -1,9 +1,0 @@
-// RUN_PIPELINE_TILL: FRONTEND
-// ISSUE: KT-47567
-
-fun test(x: Int)  {
-    while (true)
-        <!UNREACHABLE_CODE!><!VAL_REASSIGNMENT!>x<!> =<!> break
-}
-
-/* GENERATED_FIR_TAGS: assignment, break, functionDeclaration, whileLoop */

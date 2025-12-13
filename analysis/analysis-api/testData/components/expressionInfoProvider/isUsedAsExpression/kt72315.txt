@@ -1,4 +1,0 @@
-expression: BINARY_EXPRESSION
-text: status.info.isEmpty() || true
-isUsedAsExpression: true
-isUsedAsResultOfLambda: false

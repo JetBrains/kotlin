@@ -1,7 +1,0 @@
-$TESTDATA_DIR$/werror.kt
--Xdisable-default-scripting-plugin
--d
-$TEMP_DIR$
--Werror
--cp
-non-existing-path.jar

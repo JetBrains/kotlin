@@ -1,1 +1,0 @@
-fun foo(@ParameterAnnotation("param") param1: @ParameterTypeAnnotation("$prop") List<@NestedParameterTypeAnnotation("nested $prop") Collection<@NestedNestedParameterTypeAnnotation("nested nested $prop") String>> = @DefaultValueAnnotation fun(i: @Anno("anonymousFunction parameter type $prop") Int): @Anno("anonymousFunction return type $prop") Int {}) = param1

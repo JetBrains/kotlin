@@ -1,4 +1,0 @@
-expression: CALL_EXPRESSION
-text: (::callee)()
-isUsedAsExpression: true
-isUsedAsResultOfLambda: false

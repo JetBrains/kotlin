@@ -1,3 +1,0 @@
-KtDeclaration: KtClass KotlinAnnotation
-java/lang/annotation/Target(value = [java.lang.annotation.ElementType.PACKAGE, java.lang.annotation.ElementType.FIELD])
-  psi: KtAnnotationEntry

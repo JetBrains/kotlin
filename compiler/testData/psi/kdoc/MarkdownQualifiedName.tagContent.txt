@@ -1,8 +1,0 @@
-ORIGINAL KDOC:
-* [A.B.C]
- * [[System.out]]
- * [System.in]
-CONTENT:
-[A.B.C]
-[[System.out]]
-[System.in]

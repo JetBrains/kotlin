@@ -1,3 +1,0 @@
-File base.kt
-File lib.kt
-File main.kt

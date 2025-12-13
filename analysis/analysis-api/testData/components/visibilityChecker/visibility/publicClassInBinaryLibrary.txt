@@ -1,4 +1,0 @@
-Declaration: class Declaration
-At usage site: println
-Is visible: true
-Receiver expression: null

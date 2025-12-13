@@ -1,4 +1,0 @@
-public open class ConstructorGenericSimple : R|kotlin/Any| {
-    public constructor<P : R|kotlin/Any!|>(p: R|P!|): R|test/ConstructorGenericSimple|
-
-}

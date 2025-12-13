@@ -1,1 +1,0 @@
-val globalVal = 2

@@ -1,3 +1,0 @@
-fun foo(action: () -> kotlin.Int)
-
-val `$$result`: kotlin.Unit

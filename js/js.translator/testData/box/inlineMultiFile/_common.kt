@@ -1,1 +1,0 @@
-external public fun parseInt(s: String, radix: Int = definedExternally): Int = definedExternally

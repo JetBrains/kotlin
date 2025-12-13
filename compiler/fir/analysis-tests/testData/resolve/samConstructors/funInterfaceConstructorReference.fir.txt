@@ -1,7 +1,0 @@
-FILE: funInterfaceConstructorReference.kt
-    public abstract fun interface Test : R|kotlin/Any| {
-        public abstract fun foo(): R|kotlin/Unit|
-
-    }
-    public final val f: R|kotlin/reflect/KFunction1<() -> kotlin/Unit, Test>| = ::R|/Test|
-        public get(): R|kotlin/reflect/KFunction1<() -> kotlin/Unit, Test>|

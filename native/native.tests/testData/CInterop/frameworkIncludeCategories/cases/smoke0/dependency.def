@@ -1,3 +1,0 @@
-# Check that we don't add category contents to classes by default
-language = Objective-C
-modules=dependency1

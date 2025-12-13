@@ -1,2 +1,0 @@
-KtProperty(0,19): 'val x: Int by Foo()'
-  NO_CANDIDATES

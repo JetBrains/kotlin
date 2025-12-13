@@ -1,7 +1,0 @@
--Xsupport-compatqual-checker-framework-annotations=enable
-$TESTDATA_DIR$/compatqualUsage.kt
-$TESTDATA_DIR$/compatqual
-$FOREIGN_ANNOTATIONS_DIR$
-$JSR_305_DECLARATIONS$
--d
-$TEMP_DIR$

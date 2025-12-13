@@ -1,7 +1,0 @@
-package foo
-
-import bar.A
-
-fun useA(a: A) {
-    a.f()
-}

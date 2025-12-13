@@ -1,2 +1,0 @@
--Xccall-mode
-direct

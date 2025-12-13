@@ -1,2 +1,0 @@
-@`<Error class: unknown class>`
-open class JavaClass

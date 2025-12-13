@@ -1,5 +1,0 @@
-/* anchor --> */var x: Int = 2
-    /* anchor --> */set(/* anchor --> */resolveMe/* <-- */) = Unit/* <-- */
-    /* anchor --> */get() {
-
-    }/* <-- *//* <-- */

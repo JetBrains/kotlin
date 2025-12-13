@@ -1,9 +1,0 @@
-FILE[kind=Facade[packageFqName=<root>, facadeFqName=IfKeywordRBraceKt]]
-  facadeFqName: IfKeywordRBraceKt
-  partSimpleName: "IfKeywordRBraceKt"
-  PACKAGE_DIRECTIVE
-  IMPORT_LIST
-  FUN[fqName=foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
-    VALUE_PARAMETER_LIST
-  FUN[fqName=bar, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=bar]
-    VALUE_PARAMETER_LIST

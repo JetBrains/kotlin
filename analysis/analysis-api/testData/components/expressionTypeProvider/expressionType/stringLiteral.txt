@@ -1,2 +1,0 @@
-expression: "abc"
-type: kotlin.String

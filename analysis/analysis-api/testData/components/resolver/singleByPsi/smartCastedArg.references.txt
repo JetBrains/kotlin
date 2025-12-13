@@ -1,6 +1,0 @@
-KtNameReferenceExpression(108,116): 'processB'
-  KtSimpleNameReference:
-    isImplicitReferenceToCompanion: false
-    usesContextSensitiveResolution: false
-    symbols:
-      (in ROOT) private fun processB(b: B): kotlin.Int

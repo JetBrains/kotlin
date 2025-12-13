@@ -1,4 +1,0 @@
-expression: RETURN
-text: return 54
-isUsedAsExpression: false
-isUsedAsResultOfLambda: false

@@ -1,3 +1,0 @@
-expression: xy
-expected type: (T) -> R
-functionClassKind: kotlin.FunctionN

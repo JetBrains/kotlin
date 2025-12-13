@@ -1,3 +1,0 @@
-class ClassInB
-
-inner class InnerClassInB

@@ -1,4 +1,0 @@
-package
-
-public fun calc(/*0*/ x: kotlin.String?): kotlin.Unit
-public fun kotlin.String.foo(/*0*/ arg: kotlin.Int): kotlin.Char

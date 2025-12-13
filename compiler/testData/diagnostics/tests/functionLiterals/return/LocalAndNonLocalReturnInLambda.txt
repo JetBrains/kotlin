@@ -1,4 +1,0 @@
-package
-
-public fun </*0*/ T> run(/*0*/ f: () -> T): T
-public fun test2(/*0*/ a: kotlin.Int): kotlin.Unit

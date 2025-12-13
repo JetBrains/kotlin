@@ -1,5 +1,0 @@
-Diagnostics from MySealedClass.kt:
-  <NO DIAGNOSTICS>
-
-Diagnostics from main.kt:
-  <NO DIAGNOSTICS>

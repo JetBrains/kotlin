@@ -1,1 +1,0 @@
-val x = tr<caret_type>ue

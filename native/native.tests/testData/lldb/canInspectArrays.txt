@@ -1,7 +1,0 @@
-> b main.kt:10
-> r
-> fr var
-(ObjHeader *) args = []
-(ObjHeader *) xs = [1, 2, 3]
-(ObjHeader *) ys = [Point(x=1, y=2), null]
-> q

@@ -1,4 +1,0 @@
--d
-$TEMP_DIR$
--Xcompiler-plugin=dist/kotlinc/lib/allopen-compiler-plugin.jar=annotation=foo.AllOpen
-$TESTDATA_DIR$/firAllOpenPlugin.kt

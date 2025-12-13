@@ -1,4 +1,0 @@
-$TESTDATA_DIR$/simple.kt
--Xbinary=sanitizer=THREAD
--o
-$TEMP_DIR$/simple

@@ -1,4 +1,0 @@
-public abstract interface Comparator<T : R|kotlin/Any!|> : R|kotlin/Any| {
-    public abstract fun compare(o1: R|T!|, o2: R|T!|): R|kotlin/Int|
-
-}

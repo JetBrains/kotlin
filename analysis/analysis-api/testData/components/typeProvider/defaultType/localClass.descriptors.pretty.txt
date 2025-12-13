@@ -1,4 +1,0 @@
-DEFAULT TYPE:
-foo.LocalClass<A>
-DEFAULT TYPE WITH STAR PROJECTIONS:
-foo.LocalClass<*>

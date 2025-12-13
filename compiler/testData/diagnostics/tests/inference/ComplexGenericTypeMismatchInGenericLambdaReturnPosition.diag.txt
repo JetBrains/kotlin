@@ -1,7 +1,0 @@
-/ComplexGenericTypeMismatchInGenericLambdaReturnPosition.kt:15:23: error: type mismatch: inferred type is Unit but Interface was expected
-    create<Interface> {
-                      ^
-/ComplexGenericTypeMismatchInGenericLambdaReturnPosition.kt:16:18: error: unresolved reference. None of the following candidates is applicable because of receiver type mismatch:
-public fun <U> Owner<Pack<TypeVariable(U)>>.unpack(): TypeVariable(U) defined in root package in file ComplexGenericTypeMismatchInGenericLambdaReturnPosition.kt
-        boxOwner.unpack()
-                 ^^^^^^

@@ -1,7 +1,0 @@
-language = Objective-C
-package = platform.CarKey
-
-modules = CarKey
-compilerOpts = -framework CarKey
-linkerOpts = -framework CarKey
-#Disabled: Not officially available for osx

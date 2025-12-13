@@ -1,6 +1,0 @@
-language = Objective-C
-package = platform.USBDriverKit
-modules = USBDriverKit
-compilerOpts = -framework USBDriverKit
-linkerOpts = -framework USBDriverKit
-#Disabled: part of DriverKit

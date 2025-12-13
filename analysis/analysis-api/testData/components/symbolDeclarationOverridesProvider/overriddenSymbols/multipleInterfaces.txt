@@ -1,9 +1,0 @@
-ALL:
-  /B.foo(x: String): Unit
-  /C.foo(x: String): Unit
-  /D.foo(x: String): Unit
-DIRECT:
-  /B.foo(x: String): Unit
-  /C.foo(x: String): Unit
-  /D.foo(x: String): Unit
-INTERSECTION:

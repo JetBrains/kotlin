@@ -1,6 +1,0 @@
-package
-
-package f {
-    public fun box(): kotlin.Int
-    public fun main(): kotlin.Unit
-}

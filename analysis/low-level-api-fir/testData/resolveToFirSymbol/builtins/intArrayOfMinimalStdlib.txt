@@ -1,6 +1,0 @@
-KtNamedFunction 'intArrayOf' in 'fallback builtins':
-  public final fun intArrayOf(vararg elements: R|kotlin/IntArray|): R|kotlin/IntArray|
-
-
-KtNamedFunction 'intArrayOf' in 'kotlin-stdlib-jvm-minimal-for-test.jar!/kotlin/kotlin.kotlin_builtins':
-  public final fun intArrayOf(vararg elements: R|kotlin/IntArray|): R|kotlin/IntArray|

@@ -1,6 +1,0 @@
-KtNameReferenceExpression(86,93): 'arrayOf'
-  KtSimpleNameReference:
-    isImplicitReferenceToCompanion: false
-    usesContextSensitiveResolution: false
-    symbols:
-      Nothing (Unresolved reference)

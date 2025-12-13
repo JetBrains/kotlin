@@ -1,7 +1,0 @@
-Classifier names:
-  C
-  I
-
-Callable names:
-  test
-  testVal

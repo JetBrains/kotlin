@@ -1,3 +1,0 @@
-(Full dump is not available: Parent of element (TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:true) is not initialized.
-Please assign it explicitly or use utility such as IrElement.patchDeclarationParents().)
-MODULE_FRAGMENT

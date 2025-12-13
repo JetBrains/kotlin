@@ -1,3 +1,0 @@
-fun x(): kotlin.Int
-
-fun y()

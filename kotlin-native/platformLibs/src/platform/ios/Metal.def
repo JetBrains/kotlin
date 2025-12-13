@@ -1,9 +1,0 @@
-depends = CFCGTypes CFNetwork CoreFoundation CoreFoundationBase Foundation IOSurface Security darwin posix
-language = Objective-C
-package = platform.Metal
-modules = Metal
-
-compilerOpts = -framework Metal
-linkerOpts = -framework Metal
-
-excludedFunctions = MTLCommandBufferErrorDomain

@@ -1,9 +1,0 @@
-depends = CFCGTypes CFNetwork CoreFoundation CoreFoundationBase CoreGraphics CoreLocation CoreServices DiskArbitration Foundation IOKit Security _LocationEssentials darwin libkern osx posix
-language = Objective-C
-package = platform.CloudKit
-modules = CloudKit
-
-compilerOpts = -framework CloudKit
-linkerOpts = -framework CloudKit
-
-objcClassesIncludingCategories = CKNotification

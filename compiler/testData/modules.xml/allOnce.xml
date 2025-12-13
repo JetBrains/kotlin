@@ -1,6 +1,0 @@
-<modules>
-  <module name="name" outputDir="out" type="java-production">
-    <sources path="foo"/>
-    <classpath path="bar"/>
-  </module>
-</modules>

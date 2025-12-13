@@ -1,6 +1,0 @@
-expression: FUN
-text: fun function () {
-
-    }
-isUsedAsExpression: false
-isUsedAsResultOfLambda: false

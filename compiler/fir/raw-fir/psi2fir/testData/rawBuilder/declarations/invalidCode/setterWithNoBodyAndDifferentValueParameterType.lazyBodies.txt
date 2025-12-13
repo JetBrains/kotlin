@@ -1,4 +1,0 @@
-FILE: setterWithNoBodyAndDifferentValueParameterType.kt
-    public? final? var prop: String = LAZY_EXPRESSION
-        public? get(): String
-        public? set(value: CharSequence): R|kotlin/Unit|

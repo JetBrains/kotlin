@@ -1,3 +1,0 @@
-local final? fun test/locals/Owner.bar(): R|kotlin/Unit| {
-    baz#(i#, x#)
-}

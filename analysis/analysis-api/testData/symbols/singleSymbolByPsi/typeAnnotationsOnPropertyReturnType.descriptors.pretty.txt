@@ -1,1 +1,0 @@
-val foo: @Anno3 @Anno2 @Anno1 BaseInterface

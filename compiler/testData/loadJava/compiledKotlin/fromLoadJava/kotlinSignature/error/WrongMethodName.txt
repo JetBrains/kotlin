@@ -1,6 +1,0 @@
-package test
-
-public open class WrongMethodName {
-    /*primary*/ public constructor WrongMethodName()
-    public open fun foo(): kotlin.String?
-}

@@ -1,9 +1,0 @@
-$TESTDATA_DIR$/compilationWarningPublicAccessorExplicitAPIMode.kt
--ir-output-dir
-$TEMP_DIR$
--ir-output-name
-out
--libraries
-libraries/stdlib/build/classes/kotlin/js/main
--Xklib-ir-inliner=intra-module
--Xexplicit-api=disable

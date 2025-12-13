@@ -1,3 +1,0 @@
-
-include(":producer")
-include(":consumer")

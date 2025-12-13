@@ -1,1 +1,0 @@
-typealias Alias<<expr>T</expr>> = List<T>

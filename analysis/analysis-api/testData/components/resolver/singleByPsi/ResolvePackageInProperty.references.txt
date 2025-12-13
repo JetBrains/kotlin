@@ -1,6 +1,0 @@
-KtNameReferenceExpression(46,51): 'test1'
-  KtSimpleNameReference:
-    isImplicitReferenceToCompanion: false
-    usesContextSensitiveResolution: false
-    symbols:
-      package test1

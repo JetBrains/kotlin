@@ -1,4 +1,0 @@
-headers = mylib.h
-headerFilter = mylib.h
-libraryPaths = ../../../libs/mac
-linkerOpts = -L../../../libs/mac -lmylib

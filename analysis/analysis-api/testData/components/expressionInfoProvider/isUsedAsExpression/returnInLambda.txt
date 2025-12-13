@@ -1,4 +1,0 @@
-expression: RETURN
-text: return@call text
-isUsedAsExpression: false
-isUsedAsResultOfLambda: false

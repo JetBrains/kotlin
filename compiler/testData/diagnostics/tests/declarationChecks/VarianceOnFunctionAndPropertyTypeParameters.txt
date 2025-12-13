@@ -1,7 +1,0 @@
-package
-
-public val </*0*/ out T> T.x: kotlin.Int
-public val </*0*/ in T> T.y: kotlin.Int
-public fun </*0*/ in T> f(): kotlin.Unit
-public fun </*0*/ out T> g(): kotlin.Unit
-public fun </*0*/ out T, /*1*/ in X, /*2*/ Y> h(): kotlin.Unit

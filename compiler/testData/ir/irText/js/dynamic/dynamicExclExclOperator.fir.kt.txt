@@ -1,3 +1,0 @@
-fun test(d: dynamic): dynamic {
-  return CHECK_NOT_NULL<dynamic>(arg0 = d)
-}

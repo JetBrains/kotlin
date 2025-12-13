@@ -1,2 +1,0 @@
-expression: functionWithGeneric
-type: ERROR(Cannot infer argument for type parameter T)

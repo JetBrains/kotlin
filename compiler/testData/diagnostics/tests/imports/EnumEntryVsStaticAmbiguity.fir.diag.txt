@@ -1,3 +1,0 @@
-/test.kt:(155,159): error: Overload resolution ambiguity between candidates:
-static field SOME: String
-static enum entry SOME: SomeEnum

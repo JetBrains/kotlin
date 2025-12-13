@@ -1,8 +1,0 @@
-package test
-
-public interface TheTrait {
-
-    public companion object Companion {
-        /*primary*/ private constructor Companion()
-    }
-}

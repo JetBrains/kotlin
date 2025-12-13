@@ -1,7 +1,0 @@
-expression: {
-        return@label makeCloseMe()
-    }
-expected type: KaUsualClassType:
-  annotations: []
-  typeArguments: []
-  type: test/pkg/ResourceFactory

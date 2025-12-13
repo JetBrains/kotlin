@@ -1,5 +1,0 @@
-expression: "nananananananana " + "batman"
-constant: "nananananananana batman"
-constantValueKind: StringValue
-constantValueSource: BINARY_EXPRESSION
-constantValueSourceText: "nananananananana " + "batman"

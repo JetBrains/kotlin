@@ -1,7 +1,0 @@
-FILE: [ResolvedTo(BODY_RESOLVE)] primaryConstructorWithoutConstructorKeyword.kt
-    public final [ResolvedTo(BODY_RESOLVE)] class Foo : R|kotlin/Any| {
-        private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo] constructor(): R|Foo| {
-            super<R|kotlin/Any|>()
-        }
-
-    }

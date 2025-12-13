@@ -1,6 +1,0 @@
-KDocName(8,10): 'aa'
-  KDocReference:
-    isImplicitReferenceToCompanion: false
-    usesContextSensitiveResolution: false
-    symbols:
-      aa: kotlin.Int

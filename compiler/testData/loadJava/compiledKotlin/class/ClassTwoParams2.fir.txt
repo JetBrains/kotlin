@@ -1,4 +1,0 @@
-public final class ClassTwoParams<out P, Q> : R|kotlin/Any| {
-    public constructor<out P, Q>(): R|test/ClassTwoParams<P, Q>|
-
-}

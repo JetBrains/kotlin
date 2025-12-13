@@ -1,4 +1,0 @@
-public final class InternalConstructor : R|kotlin/Any| {
-    internal constructor(): R|test/InternalConstructor|
-
-}

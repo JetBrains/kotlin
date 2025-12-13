@@ -1,3 +1,0 @@
-/B.kt:(134,135): error: Smart cast to 'String' is impossible, because 'x' is a public API property declared in different module.
-
-/B.kt:(266,269): error: Smart cast to 'String' is impossible, because 'x' is a public API property declared in different module.

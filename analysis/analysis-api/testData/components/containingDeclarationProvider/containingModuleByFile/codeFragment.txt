@@ -1,2 +1,0 @@
-File: fragment.kt
-Module: Temporary file (KaDanglingFileModuleImpl)

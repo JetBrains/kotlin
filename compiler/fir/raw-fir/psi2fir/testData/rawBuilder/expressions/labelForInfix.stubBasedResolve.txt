@@ -1,2 +1,0 @@
-FILE: [ResolvedTo(BODY_RESOLVE)] labelForInfix.kt
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun main(): R|kotlin/Unit| { LAZY_BLOCK }

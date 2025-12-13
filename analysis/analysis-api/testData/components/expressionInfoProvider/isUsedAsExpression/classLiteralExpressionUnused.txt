@@ -1,4 +1,0 @@
-expression: CLASS_LITERAL_EXPRESSION
-text: String::class
-isUsedAsExpression: false
-isUsedAsResultOfLambda: false

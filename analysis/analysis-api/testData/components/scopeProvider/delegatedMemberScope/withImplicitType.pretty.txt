@@ -1,3 +1,0 @@
-override fun foo(): kotlin.Int
-
-override fun bar(): kotlin.Int

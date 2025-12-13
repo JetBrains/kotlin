@@ -1,1 +1,0 @@
-val x = 308<caret_type>0806

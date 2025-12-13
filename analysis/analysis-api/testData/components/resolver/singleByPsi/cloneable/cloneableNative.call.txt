@@ -1,4 +1,0 @@
-KtNameReferenceExpression(69,78): 'Cloneable'
-  KaErrorCallInfo:
-    candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Cloneable'.>

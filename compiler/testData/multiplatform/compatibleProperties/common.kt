@@ -1,2 +1,0 @@
-expect val bar: String
-

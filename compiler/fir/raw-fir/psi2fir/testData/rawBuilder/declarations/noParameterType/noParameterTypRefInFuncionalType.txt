@@ -1,3 +1,0 @@
-FILE: noParameterTypRefInFuncionalType.kt
-    public? final? fun x(p: ( (a) -> Int )): R|kotlin/Unit| {
-    }

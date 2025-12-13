@@ -1,3 +1,0 @@
-class A(a: kotlin.Int, b: kotlin.String) {
-  val a: kotlin.Int
-}

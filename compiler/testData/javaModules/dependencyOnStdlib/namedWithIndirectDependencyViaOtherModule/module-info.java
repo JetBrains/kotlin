@@ -1,3 +1,0 @@
-module namedWithIndirectDependencyViaOtherModule {
-    requires namedWithExplicitDependency;
-}

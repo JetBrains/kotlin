@@ -1,5 +1,0 @@
-class SimpleClass
-
-val classloader: ClassLoader?
-
-val obj: KClass<out Any>?

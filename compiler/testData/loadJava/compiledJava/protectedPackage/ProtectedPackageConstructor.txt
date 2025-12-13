@@ -1,9 +1,0 @@
-package test
-
-public open class ProtectedPackageConstructor {
-    public constructor ProtectedPackageConstructor()
-
-    protected/*protected static*/ open class Foo {
-        protected/*protected and package*/ constructor Foo()
-    }
-}

@@ -1,7 +1,0 @@
-public final class MainKt {
-    // source: 'main.kt'
-    private final static method ArticleScreenContent$lambda$0$0(p0: java.lang.String): kotlin.Unit
-    private final static method ArticleScreenContent$lambda$0(p0: java.lang.String): kotlin.jvm.functions.Function0
-    private final static method ArticleScreenContent(p0: java.lang.String): void
-    private final static method TopAppBar(p0: java.lang.String): void
-}

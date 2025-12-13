@@ -1,6 +1,0 @@
-KtNameReferenceExpression(74,77): 'Foo'
-  KtSimpleNameReference:
-    isImplicitReferenceToCompanion: false
-    usesContextSensitiveResolution: false
-    symbols:
-      (in Foo) constructor <T : MyClass>(x: T)

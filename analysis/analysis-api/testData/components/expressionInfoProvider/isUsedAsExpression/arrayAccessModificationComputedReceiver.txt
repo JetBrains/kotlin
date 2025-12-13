@@ -1,4 +1,0 @@
-expression: POSTFIX_EXPRESSION
-text: (a + a)[0]++
-isUsedAsExpression: false
-isUsedAsResultOfLambda: false

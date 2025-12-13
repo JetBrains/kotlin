@@ -1,2 +1,0 @@
-KtNameReferenceExpression(156,164): 'FooAlias'
-  null

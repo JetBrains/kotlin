@@ -1,2 +1,0 @@
-@PackageAnnotation
-package annotated;

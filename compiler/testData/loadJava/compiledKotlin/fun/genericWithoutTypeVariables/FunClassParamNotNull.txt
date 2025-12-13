@@ -1,3 +1,0 @@
-package test
-
-public fun ff(/*0*/ p: kotlin.collections.List<kotlin.CharSequence>): kotlin.Int

@@ -1,7 +1,0 @@
-language = Objective-C
-package = platform.CompositorServices
-
-modules = CompositorServices
-compilerOpts = -framework CompositorServices
-linkerOpts = -framework CompositorServices
-#Disabled: Not officially available for osx

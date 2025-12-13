@@ -1,9 +1,0 @@
-$TESTDATA_DIR$/firMultiplatformCompilationWithError/common.kt
-$TESTDATA_DIR$/firMultiplatformCompilationWithError/jvm.kt
--Xcommon-sources
-$TESTDATA_DIR$/firMultiplatformCompilationWithError/common.kt
--cp
-.
--d
-$TEMP_DIR$
--XXLanguage\:+MultiPlatformProjects

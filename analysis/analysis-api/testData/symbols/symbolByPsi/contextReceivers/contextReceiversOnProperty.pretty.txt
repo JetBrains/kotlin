@@ -1,3 +1,0 @@
-context(Int@kotlin.Int, s@kotlin.String)
-val y: kotlin.Int
-  get()

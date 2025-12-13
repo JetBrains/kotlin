@@ -1,3 +1,0 @@
-package
-
-public fun test(/*0*/ x: kotlin.Any?, /*1*/ y: kotlin.Any?): kotlin.Any

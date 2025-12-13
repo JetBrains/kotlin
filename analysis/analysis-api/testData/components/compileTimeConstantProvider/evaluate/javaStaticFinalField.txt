@@ -1,5 +1,0 @@
-expression: Build.VERSION_CODES.CUPCAKE
-constant: 3
-constantValueKind: IntValue
-constantValueSource: DOT_QUALIFIED_EXPRESSION
-constantValueSourceText: Build.VERSION_CODES.CUPCAKE

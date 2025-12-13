@@ -1,2 +1,0 @@
-FILE: try.kt
-    public? final? fun some(): R|kotlin/Unit| { LAZY_BLOCK }

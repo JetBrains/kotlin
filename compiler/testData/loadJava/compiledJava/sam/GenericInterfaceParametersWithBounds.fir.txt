@@ -1,4 +1,0 @@
-public abstract interface GenericInterfaceParametersWithBounds<A : R|kotlin/Comparable<A!>!|, R|kotlin/Cloneable!|, B : R|ft<kotlin/collections/MutableList<A!>, kotlin/collections/List<A!>?>|> : R|kotlin/Any| {
-    public abstract fun method(a: R|ft<kotlin/Array<A!>, kotlin/Array<out A!>?>|, b: R|B!|): R|kotlin/Unit|
-
-}

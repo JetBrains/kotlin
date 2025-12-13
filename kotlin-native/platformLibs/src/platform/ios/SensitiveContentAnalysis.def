@@ -1,7 +1,0 @@
-depends = CFCGTypes CFNetwork CoreAudio CoreAudioTypes CoreFoundation CoreFoundationBase CoreGraphics CoreMedia CoreVideo Foundation IOSurface ImageIO Metal OpenGLESCommon Security VideoToolbox darwin posix
-language = Objective-C
-package = platform.SensitiveContentAnalysis
-
-modules = SensitiveContentAnalysis
-compilerOpts = -framework SensitiveContentAnalysis
-linkerOpts = -framework SensitiveContentAnalysis

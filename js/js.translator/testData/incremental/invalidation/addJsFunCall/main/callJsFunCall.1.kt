@@ -1,1 +1,0 @@
-fun callJsFunCall(): String = callJsFun()

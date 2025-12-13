@@ -1,4 +1,0 @@
-expression: THROW
-text: throw Exception()
-isUsedAsExpression: false
-isUsedAsResultOfLambda: false

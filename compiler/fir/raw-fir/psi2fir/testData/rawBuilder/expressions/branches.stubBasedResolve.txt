@@ -1,5 +1,0 @@
-FILE: [ResolvedTo(BODY_RESOLVE)] branches.kt
-    public final [ResolvedTo(CONTRACTS)] fun foo([ResolvedTo(CONTRACTS)] a: R|kotlin/Int|, [ResolvedTo(CONTRACTS)] b: R|kotlin/Int|): <implicit> { LAZY_BLOCK }
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun bar([ResolvedTo(ANNOTATION_ARGUMENTS)] a: R|kotlin/Double|, [ResolvedTo(ANNOTATION_ARGUMENTS)] b: R|kotlin/Double|): R|kotlin/Double| { LAZY_BLOCK }
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun baz([ResolvedTo(ANNOTATION_ARGUMENTS)] a: R|kotlin/Long|, [ResolvedTo(ANNOTATION_ARGUMENTS)] b: R|kotlin/Long|): R|kotlin/Long| { LAZY_BLOCK }
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun grade([ResolvedTo(ANNOTATION_ARGUMENTS)] g: R|kotlin/Int|): R|kotlin/String| { LAZY_BLOCK }

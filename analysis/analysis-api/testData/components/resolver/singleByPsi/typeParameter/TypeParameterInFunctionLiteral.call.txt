@@ -1,2 +1,0 @@
-KtNameReferenceExpression(44,50): 'String'
-  null

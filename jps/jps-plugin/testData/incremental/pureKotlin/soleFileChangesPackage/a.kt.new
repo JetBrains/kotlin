@@ -1,4 +1,0 @@
-package bar
-
-fun a() = "a"
-fun aa() = "aa"

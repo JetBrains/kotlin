@@ -1,5 +1,0 @@
-KtDeclaration: KtNamedFunction foo
-annotations: [
-  A(a = 1)
-    psi: KtAnnotationEntry
-]

@@ -1,2 +1,0 @@
-FILE: [ResolvedTo(BODY_RESOLVE)] localTypeAliasInsideLocalClass.kt
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun f(): R|kotlin/Unit| { LAZY_BLOCK }

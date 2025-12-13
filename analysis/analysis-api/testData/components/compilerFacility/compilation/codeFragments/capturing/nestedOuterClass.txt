@@ -1,6 +1,0 @@
-public final class CodeFragment {
-    // source: 'fragment.kt'
-    public method <init>(): void
-    public final static method run(p0: Foo, p1: Foo$Bar): int
-    public final inner class Foo$Bar
-}

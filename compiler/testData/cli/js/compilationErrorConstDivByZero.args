@@ -1,7 +1,0 @@
-$TESTDATA_DIR$/compilationErrorConstDivByZero.kt
--ir-output-dir
-$TEMP_DIR$
--ir-output-name
-compilationErrorConstDivByZero.kt
--libraries
-libraries/stdlib/build/classes/kotlin/js/main

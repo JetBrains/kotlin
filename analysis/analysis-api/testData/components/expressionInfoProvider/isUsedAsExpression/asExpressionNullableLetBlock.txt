@@ -1,6 +1,0 @@
-expression: LAMBDA_EXPRESSION
-text: {
-        it.length
-    }
-isUsedAsExpression: true
-isUsedAsResultOfLambda: false

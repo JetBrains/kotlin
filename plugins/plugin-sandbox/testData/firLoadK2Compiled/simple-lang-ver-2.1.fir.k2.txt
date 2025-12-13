@@ -1,1 +1,0 @@
-public final fun runInlineable(block: R|@R|org/jetbrains/kotlin/plugin/sandbox/MyInlineable|()  some/MyInlineableFunction0<kotlin/Unit>|): R|kotlin/Unit|

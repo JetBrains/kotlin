@@ -1,6 +1,0 @@
-KtAnnotationEntry: @A
-
-Resolved annotation symbol:
-class A
-
-Applicable targets: <null>

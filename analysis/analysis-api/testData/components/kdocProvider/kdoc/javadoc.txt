@@ -1,6 +1,0 @@
-----------/foo(): kotlin.Unit---------------------------------------------------
-null
-
-----------/JavaClass.get(): ft<kotlin.collections.MutableList<kotlin.String!>, kotlin.collections.List<kotlin.String!>?>
-null
-

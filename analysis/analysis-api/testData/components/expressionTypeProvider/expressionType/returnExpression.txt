@@ -1,2 +1,0 @@
-expression: return 1
-type: kotlin.Nothing

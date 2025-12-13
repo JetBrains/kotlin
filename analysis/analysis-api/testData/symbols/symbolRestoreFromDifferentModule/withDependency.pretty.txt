@@ -1,5 +1,0 @@
-Inital from Sources of main:
-fun foo()
-
-Restored in Sources of restoreInContextOf:
-fun foo()

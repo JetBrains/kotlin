@@ -1,5 +1,0 @@
-package
-
-public suspend fun baz(): kotlin.Int
-public suspend fun foo(): kotlin.Unit
-public suspend fun unit(): kotlin.Unit

@@ -1,4 +1,0 @@
-expression: DOT_QUALIFIED_EXPRESSION
-text: kotlin.String
-isUsedAsExpression: false
-isUsedAsResultOfLambda: false

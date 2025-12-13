@@ -1,5 +1,0 @@
-FILE: branches.kt
-    public? final? fun foo(a: Int, b: Int): <implicit> { LAZY_BLOCK }
-    public? final? fun bar(a: Double, b: Double): Double { LAZY_BLOCK }
-    public? final? fun baz(a: Long, b: Long): Long { LAZY_BLOCK }
-    public? final? fun grade(g: Int): String { LAZY_BLOCK }

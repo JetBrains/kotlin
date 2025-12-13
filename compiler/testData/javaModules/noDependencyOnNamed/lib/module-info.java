@@ -1,3 +1,0 @@
-module lib {
-    exports foo;
-}

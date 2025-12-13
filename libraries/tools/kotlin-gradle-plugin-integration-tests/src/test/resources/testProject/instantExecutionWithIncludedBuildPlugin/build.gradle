@@ -1,9 +1,0 @@
-plugins {
-    id("foo-plugin")
-    id "org.jetbrains.kotlin.jvm"
-}
-
-repositories {
-    mavenLocal()
-    mavenCentral()
-}

@@ -1,3 +1,0 @@
-class AnonymousContainer {
-  val anonymousObject: java.lang.Runnable
-}

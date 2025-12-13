@@ -1,4 +1,0 @@
-expression: ARRAY_ACCESS_EXPRESSION
-text: args[i + i]
-isUsedAsExpression: true
-isUsedAsResultOfLambda: false

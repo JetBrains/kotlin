@@ -1,8 +1,0 @@
-$TESTDATA_DIR$/withLib.kt
--Xir-produce-klib-dir
--libraries
-$STDLIB_JS$:$TESTDATA_DIR$/folderAsLib
--ir-output-dir
-$TEMP_DIR$
--ir-output-name
-out

@@ -1,7 +1,0 @@
-// IntelliJ API Decompiler stub source generated from a class file
-// Implementation of methods is not available
-
-public final class Outer public constructor() {
-    public final inner class Inner public constructor() {
-    }
-}

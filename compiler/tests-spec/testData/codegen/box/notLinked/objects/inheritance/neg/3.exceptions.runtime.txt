@@ -1,2 +1,0 @@
-java.lang.ExceptionInInitializerError
-_3Kt.box(3.kt:20)

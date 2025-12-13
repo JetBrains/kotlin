@@ -1,8 +1,0 @@
-fun foo()
-
-@kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.TYPE, kotlin.annotation.AnnotationTarget.VALUE_PARAMETER])
-annotation class Anno(position: kotlin.String) {
-  val position: kotlin.String
-}
-
-class Foo

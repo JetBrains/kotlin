@@ -1,7 +1,0 @@
-depends = AVFAudio AVFoundation AVRouting AudioToolbox CFCGTypes CFNetwork Contacts CoreAudio CoreAudioTypes CoreFoundation CoreFoundationBase CoreGraphics CoreImage CoreMIDI CoreMedia CoreText CoreVideo EAGL FileProvider Foundation GLKit GameController GameplayKit IOSurface ImageIO MediaToolbox Metal MetalKit ModelIO Network OpenGLES2 OpenGLESCommon QuartzCore ReplayKit SceneKit Security SpriteKit Symbols UIKit UIUtilities UniformTypeIdentifiers UserNotifications darwin posix
-language = Objective-C
-package = platform.GameKit
-modules = GameKit
-
-compilerOpts = -framework GameKit
-linkerOpts = -framework GameKit

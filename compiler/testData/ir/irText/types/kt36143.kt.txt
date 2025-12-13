@@ -1,4 +1,0 @@
-fun Array<out String>.test(): Int {
-  return <this>.<get-size>()
-}
-

@@ -1,6 +1,0 @@
-FILE: test.kt
-    package test
-
-    public final fun test(): R|kotlin/Unit| {
-        Q|first/Some|.R|first/Some.foo*s|()
-    }

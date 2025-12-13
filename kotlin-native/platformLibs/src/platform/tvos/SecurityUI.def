@@ -1,7 +1,0 @@
-depends = CFCGTypes CFNetwork CoreFoundation CoreFoundationBase Foundation Security darwin posix
-language = Objective-C
-package = platform.SecurityUI
-
-modules = SecurityUI
-compilerOpts = -framework SecurityUI
-linkerOpts = -framework SecurityUI

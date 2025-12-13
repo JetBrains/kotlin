@@ -1,5 +1,0 @@
-FILE: [ResolvedTo(BODY_RESOLVE)] noParameterTypRefInSecondaryConstructor.kt
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class C : R|kotlin/Any| {
-        public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=C] constructor([ResolvedTo(ANNOTATION_ARGUMENTS)] x: <ERROR TYPE REF: No type for parameter>): R|C| { LAZY_BLOCK }
-
-    }

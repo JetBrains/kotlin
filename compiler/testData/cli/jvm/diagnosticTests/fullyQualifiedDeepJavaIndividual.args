@@ -1,4 +1,0 @@
-$TESTDATA_DIR$/fullyQualifiedDeepJava/test.kt
-$TESTDATA_DIR$/fullyQualifiedDeepJava/foo/bar/J.java
--d
-$TEMP_DIR$

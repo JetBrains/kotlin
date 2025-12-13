@@ -1,6 +1,0 @@
-package test
-
-public open class WrongValueParametersCount {
-    /*primary*/ public constructor WrongValueParametersCount()
-    public open fun foo(): kotlin.Int?
-}

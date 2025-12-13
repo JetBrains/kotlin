@@ -1,7 +1,0 @@
-depends = CFCGTypes CFNetwork CoreAudio CoreAudioTypes CoreFoundation CoreFoundationBase CoreGraphics CoreServices DiskArbitration Foundation IOKit Security darwin libkern osx posix
-language = Objective-C
-package = platform.IOBluetooth
-modules = IOBluetooth
-
-compilerOpts = -framework IOBluetooth
-linkerOpts = -framework IOBluetooth

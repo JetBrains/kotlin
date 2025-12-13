@@ -1,4 +1,0 @@
-$TESTDATA_DIR$/contextSensitiveResolution.kt
--d
-$TEMP_DIR$
--Xcontext-sensitive-resolution

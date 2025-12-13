@@ -1,8 +1,0 @@
-val x: kotlin.Int
-
-val kotlin.Int.y: kotlin.Int
-  get()
-
-var kotlin.Short.get: kotlin.Long
-  get()
-  set(value: kotlin.Long)

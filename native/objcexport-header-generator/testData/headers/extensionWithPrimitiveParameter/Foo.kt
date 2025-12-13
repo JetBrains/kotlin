@@ -1,1 +1,0 @@
-fun String.foo(int: Int) = Unit

@@ -1,9 +1,0 @@
-package
-
-public fun </*0*/ T> array(/*0*/ vararg elements: T /*kotlin.Array<out T>*/): kotlin.Array<out T>
-public fun array(/*0*/ vararg elements: kotlin.Int /*kotlin.IntArray*/): kotlin.IntArray
-public fun </*0*/ T> foo(/*0*/ vararg t: T /*kotlin.Array<out T>*/): kotlin.Array<out T>
-public fun foo(/*0*/ vararg a: kotlin.Int /*kotlin.IntArray*/): kotlin.IntArray
-public fun foo(/*0*/ vararg a: kotlin.Long /*kotlin.LongArray*/): kotlin.LongArray
-public fun test(): kotlin.Unit
-public fun test1(): kotlin.Unit

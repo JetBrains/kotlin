@@ -1,8 +1,0 @@
-abi_version=1.201.0
-builtins_platform=NATIVE
-compiler_version=2.3.255-SNAPSHOT
-depends=stdlib
-ir_signature_versions=1,2
-metadata_version=1.4.1
-native_targets=android_x64 android_x86 android_arm32 android_arm64 ios_arm64 ios_x64 ios_simulator_arm64 watchos_arm32 watchos_arm64 watchos_x64 watchos_simulator_arm64 watchos_device_arm64 tvos_arm64 tvos_x64 tvos_simulator_arm64 linux_x64 mingw_x64 macos_x64 macos_arm64 linux_arm64 linux_arm32_hfp
-unique_name=unpackedExampleKlib

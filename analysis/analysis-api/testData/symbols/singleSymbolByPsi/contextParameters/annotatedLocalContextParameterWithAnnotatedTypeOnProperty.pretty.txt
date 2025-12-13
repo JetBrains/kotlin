@@ -1,1 +1,0 @@
-@Anno(s = "par") par: @Anno(s = "foo") kotlin.String

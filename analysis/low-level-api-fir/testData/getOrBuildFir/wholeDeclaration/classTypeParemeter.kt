@@ -1,1 +1,0 @@
-class X< <expr>T</expr> >()

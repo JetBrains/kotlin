@@ -1,2 +1,0 @@
-KtNameReferenceExpression(146,163): 'NestedInCompanion'
-  null

@@ -1,9 +1,0 @@
-$TESTDATA_DIR$/../reportPerf.kt
--ir-output-dir
-$TEMP_DIR$
--ir-output-name
-reportPerfK2
--libraries
-libraries/stdlib/build/classes/kotlin/js/main
--Xreport-perf=true
--Xklib-ir-inliner=full

@@ -1,5 +1,0 @@
-# before
--Kapt-verbose=blah
-
-# after
-error: Invalid option format, should be -Kapt-verbose=true/false

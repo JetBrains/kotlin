@@ -1,8 +1,0 @@
-FILE: typeParameterInBoundsLocalFunction.kt
-    package test
-
-    public final fun f(): R|kotlin/Unit| {
-        local final fun <A, B : R|A|> f1(): R|kotlin/Unit| {
-        }
-
-    }

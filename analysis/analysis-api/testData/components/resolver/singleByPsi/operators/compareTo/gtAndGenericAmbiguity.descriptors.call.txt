@@ -1,2 +1,0 @@
-KtOperationReferenceExpression(97,98): '>'
-  null

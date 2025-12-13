@@ -1,5 +1,0 @@
-package test
-
-val x = 1
-
-class function

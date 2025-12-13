@@ -1,7 +1,0 @@
-plugins {
-}
-
-repositories {
-    mavenLocal()
-    mavenCentral()
-}

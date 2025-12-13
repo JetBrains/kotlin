@@ -1,5 +1,0 @@
-package
-
-public inline fun </*0*/ R> doCall(/*0*/ p: () -> R): kotlin.Unit
-public inline fun </*0*/ R> inlineFun(/*0*/ p: () -> R): kotlin.Unit
-public inline fun </*0*/ R> inlineFunOnlyLocal(/*0*/ crossinline p: () -> R): kotlin.Unit

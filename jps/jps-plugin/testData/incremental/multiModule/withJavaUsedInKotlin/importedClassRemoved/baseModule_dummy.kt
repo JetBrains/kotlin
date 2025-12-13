@@ -1,3 +1,0 @@
-package packageInBase
-
-fun dummy() {}

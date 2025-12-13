@@ -1,7 +1,0 @@
-/main.kt:(63,64): error: Cannot infer type for type parameter 'A'. Specify it explicitly.
-
-/main.kt:(117,139): error: Cannot infer type for type parameter 'A'. Specify it explicitly.
-
-/main.kt:(170,171): error: Cannot infer type for type parameter 'A'. Specify it explicitly.
-
-/main.kt:(173,174): error: Cannot infer type for type parameter 'B'. Specify it explicitly.

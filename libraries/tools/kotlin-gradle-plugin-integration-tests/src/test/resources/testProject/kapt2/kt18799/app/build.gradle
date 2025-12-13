@@ -1,9 +1,0 @@
-plugins {
-    id 'org.jetbrains.kotlin.jvm'
-    id 'org.jetbrains.kotlin.kapt'
-}
-
-dependencies {
-    implementation 'com.google.dagger:dagger:2.52'
-    kapt 'com.google.dagger:dagger-compiler:2.52'
-}

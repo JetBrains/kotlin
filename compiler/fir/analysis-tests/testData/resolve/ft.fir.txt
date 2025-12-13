@@ -1,5 +1,0 @@
-FILE: ft.kt
-    public abstract interface KMutableProperty1<T> : R|KProperty1<T>| {
-    }
-    public abstract interface KProperty1<T> : R|(T) -> kotlin/Int| {
-    }

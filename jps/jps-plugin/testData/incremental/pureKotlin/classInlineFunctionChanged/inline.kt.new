@@ -1,8 +1,0 @@
-package inline
-
-class Klass {
-    inline fun f(body: () -> Unit) {
-        body()
-        println("i'm inline function")
-    }
-}

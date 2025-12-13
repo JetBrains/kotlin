@@ -1,9 +1,0 @@
-@file:JvmName(name = "FileWithAnnotations")
-
-val bar: Int
-  field = 42
-  get
-
-fun foo() {
-}
-

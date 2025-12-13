@@ -1,6 +1,0 @@
-package
-
-package kt455 {
-    public fun doSmth(/*0*/ i: kotlin.Int): kotlin.Unit
-    public fun foo(): kotlin.Unit
-}

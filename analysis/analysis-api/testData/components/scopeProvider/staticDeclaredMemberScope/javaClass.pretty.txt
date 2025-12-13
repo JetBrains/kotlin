@@ -1,7 +1,0 @@
-var foo: kotlin.Int
-
-open fun bar(): kotlin.String!
-
-open class NestedClass
-
-open inner class InnerClass

@@ -1,4 +1,0 @@
-Declaration: T
-At usage site: println
-Is visible: true
-Receiver expression: null

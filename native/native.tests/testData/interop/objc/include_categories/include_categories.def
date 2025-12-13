@@ -1,4 +1,0 @@
-language = Objective-C
-headerFilter = **/include_categories.h
-linkerOpts = -linclude_categories
-objcClassesIncludingCategories = BaseClass DerivedClass

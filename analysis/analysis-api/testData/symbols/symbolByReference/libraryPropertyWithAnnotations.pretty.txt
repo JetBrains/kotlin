@@ -1,4 +1,0 @@
-@one.Anno
-val topLevelPropertyWithAnnotations: kotlin.Short
-  @one.Anno
-  get()

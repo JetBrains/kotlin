@@ -1,7 +1,0 @@
-// RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: +ContextParameters
-// ISSUE: KT-76758
-// FILE: Example.kt
-context(s:<!CONTEXT_PARAMETER_WITHOUT_NAME, SYNTAX, SYNTAX!><!>val<!SYNTAX!><!>
-
-/* GENERATED_FIR_TAGS: propertyDeclaration, propertyDeclarationWithContext */

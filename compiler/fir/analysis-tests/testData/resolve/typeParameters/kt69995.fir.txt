@@ -1,4 +1,0 @@
-FILE: main.kt
-    public final fun check(b: R|Builder<*, *, *, *>|): R|kotlin/Unit| {
-        R|<local>/b|.R|SubstitutionOverride</Builder.add: R|ft<CapturedType(*), CapturedType(*)?>|>|(String(1)).R|SubstitutionOverride</Builder.add: R|ft<CapturedType(*), CapturedType(*)?>|>|(String(2)).R|SubstitutionOverride</Builder.build: R|ft<CapturedType(*), CapturedType(*)?>|>|()
-    }

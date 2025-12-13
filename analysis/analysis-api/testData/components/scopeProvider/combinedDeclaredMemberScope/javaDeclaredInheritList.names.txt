@@ -1,5 +1,0 @@
-Classifier names:
-
-Callable names:
-  add
-  removeAt

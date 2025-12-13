@@ -1,1 +1,0 @@
-include ":protobuf-lite", ":protobuf-relocated", ":protobuf-patches"

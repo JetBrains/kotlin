@@ -1,4 +1,0 @@
-expression: INTEGER_CONSTANT
-text: 90
-isUsedAsExpression: false
-isUsedAsResultOfLambda: false

@@ -1,5 +1,0 @@
-Diagnostics from import.kts:
-  <NO DIAGNOSTICS>
-
-Diagnostics from main.kts:
-  <NO DIAGNOSTICS>

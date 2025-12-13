@@ -1,3 +1,0 @@
-class E {
-    constructor() { }
-}

@@ -1,3 +1,0 @@
-fun foo(t: Throwable) {
-  t.setStackTrace(p0 = t.getStackTrace())
-}

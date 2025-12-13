@@ -1,8 +1,0 @@
-STEP 0:
-    dependencies: stdlib
-    arguments: -Xklib-ir-inliner=full
-STEP 1:
-    dependencies: stdlib
-    modifications:
-        U : l1.kt.1 -> l1.kt
-    arguments: -Xklib-ir-inliner=full

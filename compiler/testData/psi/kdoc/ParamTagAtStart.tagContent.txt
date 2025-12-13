@@ -1,8 +1,0 @@
-ORIGINAL KDOC:
-@param a this is a
-CONTENT:
-this is a
-
-ORIGINAL KDOC:
- @param a this is a
-CONTENT:

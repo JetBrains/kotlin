@@ -1,5 +1,0 @@
-expression: +1
-constant: 1
-constantValueKind: IntValue
-constantValueSource: PREFIX_EXPRESSION
-constantValueSourceText: +1

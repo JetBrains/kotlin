@@ -1,3 +1,0 @@
-module unrelated {
-    exports unrelated;
-}

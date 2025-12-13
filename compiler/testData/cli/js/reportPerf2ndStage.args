@@ -1,8 +1,0 @@
--Xinclude=$TESTDATA_DIR$/lib/LibraryExample.klib
--ir-output-name
-reportPerf2ndStage
--ir-output-dir
-$TEMP_DIR$
--libraries
-$STDLIB_JS$
--Xreport-perf=true

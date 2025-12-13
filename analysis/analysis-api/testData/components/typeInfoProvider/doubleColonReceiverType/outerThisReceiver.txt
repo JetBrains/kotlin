@@ -1,2 +1,0 @@
-expression: this@Test::bar
-receiver:: type: Test

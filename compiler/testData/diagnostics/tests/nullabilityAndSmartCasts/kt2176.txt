@@ -1,9 +1,0 @@
-package
-
-package kt2176 {
-    public fun f1(/*0*/ a: kotlin.String?): kotlin.Unit
-    public fun f2(/*0*/ a: kotlin.String): kotlin.Unit
-    public fun f3(/*0*/ a: kotlin.Any?): kotlin.Unit
-    public fun f4(/*0*/ a: kotlin.Any): kotlin.Unit
-    public fun f5(/*0*/ a: kotlin.String): kotlin.Unit
-}

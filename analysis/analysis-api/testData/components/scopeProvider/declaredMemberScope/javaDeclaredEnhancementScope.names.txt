@@ -1,6 +1,0 @@
-Classifier names:
-
-Callable names:
-  field
-  field2
-  foo

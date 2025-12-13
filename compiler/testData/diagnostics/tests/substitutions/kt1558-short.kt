@@ -1,9 +1,0 @@
-// RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
-fun <E> List<*>.toArray(ar: Array<E>): Array<E> = ar
-
-fun testArrays(ci : List<Int>) {
-    ci.toArray<Int>(<!UNRESOLVED_REFERENCE!>x<!>)
-}
-
-/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, nullableType, starProjection, typeParameter */

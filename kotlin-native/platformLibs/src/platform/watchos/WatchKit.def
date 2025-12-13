@@ -1,7 +1,0 @@
-depends = CFCGTypes CoreFoundation CoreFoundationBase CoreGraphics CoreLocation CoreText CoreVideo Foundation HomeKit MapKit QuartzCore SceneKit Security Symbols UIKit UIUtilities UserNotifications _LocationEssentials darwin posix
-language = Objective-C
-package = platform.WatchKit
-modules = WatchKit
-
-compilerOpts = -framework WatchKit
-linkerOpts = -framework WatchKit

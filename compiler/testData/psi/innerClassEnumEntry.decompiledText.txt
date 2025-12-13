@@ -1,6 +1,0 @@
-// IntelliJ API Decompiler stub source generated from a class file
-// Implementation of methods is not available
-
-public final enum class InnerClassEnumEntry private constructor() : kotlin.Enum<InnerClassEnumEntry> {
-    ENTRY;
-}

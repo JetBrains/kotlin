@@ -1,4 +1,0 @@
-expression: CALL_EXPRESSION
-text: nonunitFunction()
-isUsedAsExpression: false
-isUsedAsResultOfLambda: false

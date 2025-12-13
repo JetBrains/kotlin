@@ -1,6 +1,0 @@
-package test
-
-public open class ProtectedPackageProperty {
-    public constructor ProtectedPackageProperty()
-    protected/*protected and package*/ final var foo: kotlin.Int
-}

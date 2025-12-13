@@ -1,7 +1,0 @@
-language = Objective-C
-package = platform._Intents_TipKit
-
-modules = _Intents_TipKit
-compilerOpts = -framework _Intents_TipKit
-linkerOpts = -framework _Intents_TipKit
-#Disabled: Unavailable

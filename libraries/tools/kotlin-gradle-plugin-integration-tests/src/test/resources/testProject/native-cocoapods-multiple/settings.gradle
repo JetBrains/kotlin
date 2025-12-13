@@ -1,4 +1,0 @@
-// We move the actual library in a subproject to test accessing gradle wrapper from Xcode.
-rootProject.name = "cocoapods"
-include 'kotlin-library'
-include 'second-library'

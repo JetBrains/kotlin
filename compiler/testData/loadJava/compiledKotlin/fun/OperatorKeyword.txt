@@ -1,6 +1,0 @@
-package test
-
-public final class Example {
-    /*primary*/ public constructor Example()
-    public final operator fun plus(/*0*/ other: test.Example): kotlin.Unit
-}

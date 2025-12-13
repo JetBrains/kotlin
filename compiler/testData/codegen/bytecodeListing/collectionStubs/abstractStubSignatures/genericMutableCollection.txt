@@ -1,9 +1,0 @@
-@kotlin.Metadata
-public abstract class<<T:Ljava/lang/Object;>Ljava/lang/Object;Ljava/util/Collection<TT;>;Lkotlin/jvm/internal/markers/KMutableCollection;>  GenericMutableCollection {
-    // source: 'genericMutableCollection.kt'
-    public <<T:Ljava/lang/Object;>([TT;)[TT;> method toArray(p0: java.lang.Object[]): java.lang.Object[]
-    public <null> method <init>(): void
-    public abstract <null> method getSize(): int
-    public bridge final <null> method size(): int
-    public <null> method toArray(): java.lang.Object[]
-}

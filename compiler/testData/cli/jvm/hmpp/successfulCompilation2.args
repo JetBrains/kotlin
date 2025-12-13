@@ -1,9 +1,0 @@
-$TESTDATA_DIR$/src/a.kt
-$TESTDATA_DIR$/src/b.kt
-$TESTDATA_DIR$/src/c.kt
--d
-$TEMP_DIR$
--XXLanguage\:+MultiPlatformProjects
--Xfragments=a,b,c
--Xfragment-sources=a\:$TESTDATA_DIR$/src/a.kt,b\:$TESTDATA_DIR$/src/b.kt,c\:$TESTDATA_DIR$/src/c.kt
--Xfragment-refines=b\:a,c\:b

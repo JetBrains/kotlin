@@ -1,2 +1,0 @@
-KaType: kotlin.Int
-PsiType: int

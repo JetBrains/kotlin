@@ -1,3 +1,0 @@
-public? final? var test/foo: Int = IntegerLiteral(0)
-    public? get(): Int
-    public? set(value: Int): R|kotlin/Unit|

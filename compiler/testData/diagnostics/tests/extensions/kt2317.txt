@@ -1,8 +1,0 @@
-package
-
-package kt2317 {
-    public fun foo(/*0*/ l: kotlin.Long?): kotlin.Int?
-    public fun quux(/*0*/ x: kotlin.Int?): kotlin.Unit
-    public fun kotlin.Any?.bar(): kotlin.Unit
-    public fun kotlin.Any?.baz(): kotlin.Int
-}

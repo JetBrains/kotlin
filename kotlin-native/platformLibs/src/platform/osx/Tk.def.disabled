@@ -1,6 +1,0 @@
-language = Objective-C
-package = platform.Tk
-modules = Tk
-compilerOpts = -framework Tk
-linkerOpts = -framework Tk
-#Disabled: Unavailable

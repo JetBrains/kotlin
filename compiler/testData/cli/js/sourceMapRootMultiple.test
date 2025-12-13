@@ -1,3 +1,0 @@
-// EXISTS: out.js
-// CONTAINS: out.js.map, "file1.kt"
-// CONTAINS: out.js.map, "file2.kt"

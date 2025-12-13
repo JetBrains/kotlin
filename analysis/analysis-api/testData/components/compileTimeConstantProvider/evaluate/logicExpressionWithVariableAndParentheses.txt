@@ -1,5 +1,0 @@
-expression: x != x && (2 < 1 || false)
-constant: false
-constantValueKind: BooleanValue
-constantValueSource: BINARY_EXPRESSION
-constantValueSourceText: x != x && (2 < 1 || false)

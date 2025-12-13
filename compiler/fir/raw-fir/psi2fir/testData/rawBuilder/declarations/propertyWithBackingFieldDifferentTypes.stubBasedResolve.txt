@@ -1,6 +1,0 @@
-FILE: [ResolvedTo(ANNOTATION_ARGUMENTS)] propertyWithBackingFieldDifferentTypes.kt
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val property: R|kotlin/Number|
-        private final [ResolvedTo(ANNOTATION_ARGUMENTS)] backing field field: R|kotlin/Int| = LAZY_EXPRESSION
-        public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/Number|
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun receive([ResolvedTo(ANNOTATION_ARGUMENTS)] s: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }

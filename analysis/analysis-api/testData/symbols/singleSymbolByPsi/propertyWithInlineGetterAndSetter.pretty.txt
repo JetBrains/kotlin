@@ -1,3 +1,0 @@
-var somehing: kotlin.Int
-  get()
-  set(value: kotlin.Int)

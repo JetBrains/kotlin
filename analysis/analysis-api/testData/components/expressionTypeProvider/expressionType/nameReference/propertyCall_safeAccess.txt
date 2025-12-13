@@ -1,2 +1,0 @@
-expression: foo
-type: kotlin.String?

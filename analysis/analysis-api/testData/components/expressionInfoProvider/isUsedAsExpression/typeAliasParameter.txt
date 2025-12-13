@@ -1,4 +1,0 @@
-expression: TYPE_PARAMETER
-text: T
-isUsedAsExpression: false
-isUsedAsResultOfLambda: false

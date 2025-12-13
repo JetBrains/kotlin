@@ -1,5 +1,0 @@
-package
-
-package test {
-    public val c: java.util.concurrent.TimeUnit
-}

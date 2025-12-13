@@ -1,3 +1,0 @@
-fun foo()
-
-private inline fun bar(lmbd: (kotlin.Int) -> kotlin.Int)

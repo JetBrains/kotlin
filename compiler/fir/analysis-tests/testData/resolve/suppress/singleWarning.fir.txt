@@ -1,3 +1,0 @@
-FILE: singleWarning.kt
-    @R|kotlin/Suppress|(names = vararg(String(REDUNDANT_VISIBILITY_MODIFIER))) public final fun foo(): R|kotlin/Unit| {
-    }

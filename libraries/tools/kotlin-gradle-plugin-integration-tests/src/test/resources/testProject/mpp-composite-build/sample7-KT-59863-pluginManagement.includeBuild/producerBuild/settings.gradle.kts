@@ -1,1 +1,0 @@
-include("example-gradle-plugin", "multiplatform-subproject")

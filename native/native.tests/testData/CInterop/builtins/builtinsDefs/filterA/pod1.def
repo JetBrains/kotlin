@@ -1,3 +1,0 @@
-language = C
-headers = A.h
-headerFilter = A.h

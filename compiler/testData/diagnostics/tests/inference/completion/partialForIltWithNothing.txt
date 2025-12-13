@@ -1,3 +1,0 @@
-package
-
-public fun test(/*0*/ boolean: kotlin.Boolean): kotlin.Unit

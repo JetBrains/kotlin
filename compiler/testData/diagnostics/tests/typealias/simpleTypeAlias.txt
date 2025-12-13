@@ -1,9 +1,0 @@
-package
-
-public val s1: SSS /* = kotlin.String */ = ""
-public val s2: SSS? /* = kotlin.String? */ = null
-public val s3: kotlin.collections.List<SSS /* = kotlin.String */>? = null
-public val s4: kotlin.collections.List<kotlin.collections.List<SSS /* = kotlin.String */>?>? = null
-public typealias S = kotlin.String
-public typealias SS = S
-public typealias SSS = SS

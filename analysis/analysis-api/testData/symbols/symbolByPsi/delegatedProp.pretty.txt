@@ -1,3 +1,0 @@
-var delegatedProp: kotlin.String
-  get()
-  set(`<set-?>`: kotlin.String)

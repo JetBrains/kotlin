@@ -1,9 +1,0 @@
-/kt59590WithContextReceiver.fir.kt:7:1: error: Platform declaration clash: The following declarations have the same JVM signature (INSTANCELO;):
-    context(O) val INSTANCE: O? defined in O
-    val INSTANCE: O defined in O
-
-/kt59590WithContextReceiver.fir.kt:8:5: error: The feature "context parameters" is experimental and should be enabled explicitly. This can be done by supplying the compiler argument '-Xcontext-parameters', but note that no stability guarantees are provided.
-
-/kt59590WithContextReceiver.fir.kt:10:5: error: Platform declaration clash: The following declarations have the same JVM signature (INSTANCELO;):
-    context(O) val INSTANCE: O? defined in O
-    val INSTANCE: O defined in O

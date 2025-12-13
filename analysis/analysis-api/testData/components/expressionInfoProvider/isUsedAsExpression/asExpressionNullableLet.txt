@@ -1,6 +1,0 @@
-expression: CALL_EXPRESSION
-text: let {
-        it.length
-    }
-isUsedAsExpression: false
-isUsedAsResultOfLambda: false

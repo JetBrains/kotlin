@@ -1,4 +1,0 @@
-native/native.tests/cli-tests/testData/cli/reportPerfWithError.kt:1:17: error: initializer type mismatch: expected 'String', actual 'Int'.
-val str: String = 42
-                ^
-COMPILATION_ERROR

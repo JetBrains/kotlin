@@ -1,3 +1,0 @@
-annotation class Anno(value: kotlin.Int) {
-  val value: kotlin.Int
-}

@@ -1,9 +1,0 @@
-depends = AppKit ApplicationServices CFCGTypes CFNetwork CloudKit Cocoa CoreData CoreFoundation CoreFoundationBase CoreGraphics CoreImage CoreLocation CoreServices CoreText CoreVideo DiskArbitration Foundation IOKit IOSurface ImageIO Metal OpenGLCommon QuartzCore Security Symbols _LocationEssentials cups darwin libkern osx posix
-language = Objective-C
-package = platform.PDFKit
-headers = PDFKit/PDFKit.h
-
-headerFilter = PDFKit/**
-
-compilerOpts = -framework PDFKit
-linkerOpts = -framework PDFKit

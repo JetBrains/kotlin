@@ -1,5 +1,0 @@
-package
-
-public fun testSuspendConversionInVarargElementsAll(/*0*/ f1: () -> kotlin.Unit, /*1*/ f2: () -> kotlin.Unit, /*2*/ f3: () -> kotlin.Unit): kotlin.Unit
-public fun testSuspendConversionInVarargElementsSome(/*0*/ sf1: suspend () -> kotlin.Unit, /*1*/ f2: () -> kotlin.Unit, /*2*/ sf3: suspend () -> kotlin.Unit): kotlin.Unit
-public fun useSuspendVararg(/*0*/ vararg sfn: suspend () -> kotlin.Unit /*kotlin.Array<out suspend () -> kotlin.Unit>*/): kotlin.Unit

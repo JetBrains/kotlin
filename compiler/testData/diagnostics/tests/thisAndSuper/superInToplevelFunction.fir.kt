@@ -1,8 +1,0 @@
-// RUN_PIPELINE_TILL: FRONTEND
-fun foo() {
-    <!SUPER_IS_NOT_AN_EXPRESSION!>super<!>
-    <!SUPER_NOT_AVAILABLE!>super<!>.foo()
-    <!SUPER_NOT_AVAILABLE!>super<Nothing><!>.foo()
-}
-
-/* GENERATED_FIR_TAGS: functionDeclaration */

@@ -1,8 +1,0 @@
-KT element: KtNamedFunction
-KT element text:
-public inline fun <T, R> myContext(with: T, block: context(T) () -> R): R { /* compiled code */ }
-FIR element: FirNamedFunctionImpl
-FIR source kind: KtRealSourceElementKind
-
-FIR element rendered:
-public final inline [ResolvedTo(BODY_RESOLVE)] fun <[ResolvedTo(BODY_RESOLVE)] T, [ResolvedTo(BODY_RESOLVE)] R> myContext([ResolvedTo(BODY_RESOLVE)] with: R|T|, [ResolvedTo(BODY_RESOLVE)] block: R|@ContextFunctionTypeParams(1) context(T) () -> R|): R|R|

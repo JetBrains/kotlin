@@ -1,3 +1,0 @@
-// RESTRICTED: true
-// ALLOWED: false
-// EXPECT_REJECTION

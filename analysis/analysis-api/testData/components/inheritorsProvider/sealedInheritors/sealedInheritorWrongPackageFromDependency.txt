@@ -1,2 +1,0 @@
-foo/bar/Inheritor1
-class Inheritor1 : foo.bar.MySealedClass()

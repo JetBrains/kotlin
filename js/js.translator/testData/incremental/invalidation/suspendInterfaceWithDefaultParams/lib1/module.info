@@ -1,9 +1,0 @@
-STEP 0:
-    modifications:
-        U : l1I.0.kt -> l1I.kt
-        U : l1A.0.kt -> l1A.kt
-    added file: l1I.kt, l1A.kt
-STEP 1:
-    modifications:
-        U : l1I.1.kt -> l1I.kt
-    modified ir: l1I.kt

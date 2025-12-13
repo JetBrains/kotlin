@@ -1,3 +1,0 @@
-pack/MyAnno
-
-kotlin/jvm/JvmName

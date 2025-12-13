@@ -1,2 +1,0 @@
-KtNameReferenceExpression(99,104): 'coreR'
-  NO_CANDIDATES

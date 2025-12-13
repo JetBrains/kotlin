@@ -1,6 +1,0 @@
-language = Objective-C
-package = platform.ICADevices
-modules = ICADevices
-compilerOpts = -framework ICADevices
-linkerOpts = -framework ICADevices
-#Disabled: Unavailable

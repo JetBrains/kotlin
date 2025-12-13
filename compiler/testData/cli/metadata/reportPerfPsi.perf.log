@@ -1,7 +1,0 @@
-Kotlin to Metadata compiler performance report
-                INIT        $UINT>>$ ms
-             ANALYZE        $UINT>>$ ms            $REAL>>$ loc/s
-        KLIB WRITING        $UINT>>$ ms            $REAL>>$ loc/s
-GC time for PS MarkSweep is $UINT$ ms, $UINT$ collections
-GC time for PS Scavenge is $UINT$ ms, $UINT$ collections
-JIT time is $UINT$ ms

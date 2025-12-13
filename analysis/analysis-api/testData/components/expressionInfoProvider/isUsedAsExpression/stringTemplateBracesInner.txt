@@ -1,4 +1,0 @@
-expression: BINARY_EXPRESSION
-text: i + 5
-isUsedAsExpression: true
-isUsedAsResultOfLambda: false

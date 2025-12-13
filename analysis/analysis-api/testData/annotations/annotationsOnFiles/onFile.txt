@@ -1,4 +1,0 @@
-annotations: [
-  kotlin/Suppress(names = ["SUPRESSED"])
-    psi: KtAnnotationEntry
-]

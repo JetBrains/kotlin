@@ -1,7 +1,0 @@
-language = Objective-C
-package = platform.ProximityReaderStub
-
-modules = ProximityReaderStub
-compilerOpts = -framework ProximityReaderStub
-linkerOpts = -framework ProximityReaderStub
-# The framework is empty

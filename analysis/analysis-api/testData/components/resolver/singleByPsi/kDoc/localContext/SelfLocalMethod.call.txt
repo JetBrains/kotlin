@@ -1,2 +1,0 @@
-KtNamedFunction(32,83): '/**'
-  null

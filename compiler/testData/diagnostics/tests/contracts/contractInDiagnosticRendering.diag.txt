@@ -1,6 +1,0 @@
-/contractInDiagnosticRendering.kt:24:5: error: none of the following functions can be called with the arguments supplied: 
-public fun foo(i: Int, f: () -> Unit): Unit defined in root package in file contractInDiagnosticRendering.kt
-public fun foo(s: String, f: () -> Unit): Unit defined in root package in file contractInDiagnosticRendering.kt
-    foo(Any()) {}
-    ^^^
-

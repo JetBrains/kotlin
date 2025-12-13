@@ -1,8 +1,0 @@
-fun foo()
-
-fun kotlin.String.foo(): kotlin.Int
-
-val x: kotlin.Int
-
-val kotlin.Int.y: kotlin.Int
-  get()

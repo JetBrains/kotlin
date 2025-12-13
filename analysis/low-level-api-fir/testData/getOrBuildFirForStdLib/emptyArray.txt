@@ -1,6 +1,0 @@
-KT element: KtNamedFunction
-FIR element: FirNamedFunctionImpl
-FIR source kind: KtRealSourceElementKind
-
-FIR element rendered:
-public final inline [ResolvedTo(BODY_RESOLVE)] fun <reified [ResolvedTo(BODY_RESOLVE)] T> emptyArray(): R|kotlin/Array<T>|

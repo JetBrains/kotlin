@@ -1,3 +1,0 @@
-private final val topLevelVal: R|kotlin/Int|
-    private get(): R|kotlin/Int|
-

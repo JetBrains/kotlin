@@ -1,1 +1,0 @@
-.*input was not 42.*

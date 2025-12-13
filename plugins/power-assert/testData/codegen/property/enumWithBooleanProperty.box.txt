@@ -1,6 +1,0 @@
----
-assert(Status.INACTIVE.isActive)
-              |        |
-              |        false
-              INACTIVE
----

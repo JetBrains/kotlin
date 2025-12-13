@@ -1,3 +1,0 @@
-FILE: [ResolvedTo(BODY_RESOLVE)] namedArgument.kt
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun foo([ResolvedTo(ANNOTATION_ARGUMENTS)] first: R|kotlin/String| = LAZY_EXPRESSION, [ResolvedTo(ANNOTATION_ARGUMENTS)] second: R|kotlin/Boolean| = LAZY_EXPRESSION, [ResolvedTo(ANNOTATION_ARGUMENTS)] third: R|kotlin/Double| = LAZY_EXPRESSION): R|kotlin/Unit| { LAZY_BLOCK }
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun test(): R|kotlin/Unit| { LAZY_BLOCK }

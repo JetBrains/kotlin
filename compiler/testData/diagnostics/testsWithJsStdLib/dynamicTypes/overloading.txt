@@ -1,8 +1,0 @@
-package
-
-public fun dyn(/*0*/ d: dynamic): kotlin.Unit
-public fun foo(/*0*/ d: dynamic): kotlin.String
-public fun foo(/*0*/ d: kotlin.Int): kotlin.Int
-public fun nothing(/*0*/ d: dynamic): kotlin.Int
-public fun nothing(/*0*/ d: kotlin.Nothing): kotlin.String
-public fun test(/*0*/ d: dynamic): kotlin.Unit

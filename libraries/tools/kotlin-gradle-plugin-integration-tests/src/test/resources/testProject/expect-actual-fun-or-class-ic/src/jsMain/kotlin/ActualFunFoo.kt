@@ -1,1 +1,0 @@
-actual fun foo(): Any = "fooJs"

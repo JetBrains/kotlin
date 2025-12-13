@@ -1,3 +1,0 @@
-class A {
-  constructor(i: kotlin.Int)
-}

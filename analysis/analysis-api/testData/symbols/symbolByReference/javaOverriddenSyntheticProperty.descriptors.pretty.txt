@@ -1,1 +1,0 @@
-abstract val kotlin.String.foo: kotlin.Int

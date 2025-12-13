@@ -1,5 +1,0 @@
-Captured values:
-ExtensionReceiver[name: apply; isMutated: false; displayText: this@apply]
-    <explicit receiver parameter>: R|Foo|
-    R|Foo|
-No captured files

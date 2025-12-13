@@ -1,6 +1,0 @@
-public final class org/different/pack/BuildConfig {
-	public fun <init> ()V
-	public final fun f1 ()I
-	public final fun getP1 ()I
-}
-

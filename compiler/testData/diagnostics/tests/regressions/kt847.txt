@@ -1,3 +1,0 @@
-package
-
-public fun </*0*/ T> T.mustBe(/*0*/ t: T): kotlin.Unit

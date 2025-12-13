@@ -1,4 +1,0 @@
-expression: { println("hello1") }
-expected type: KaFlexibleType:
-  annotations: []
-  type: java/lang/Runnable!

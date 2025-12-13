@@ -1,8 +1,0 @@
-framework module explicitpod1  {
-  export *
-
-  explicit module explicitSubmodule {
-    header "explicitSubmodule.h"
-    export *
-  }
-}

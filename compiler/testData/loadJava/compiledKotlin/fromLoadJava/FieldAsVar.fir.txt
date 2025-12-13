@@ -1,8 +1,0 @@
-public final class FieldAsVar : R|kotlin/Any| {
-    public final var f: R|kotlin/Int|
-        public get(): R|kotlin/Int|
-        public set(value: R|kotlin/Int|): R|kotlin/Unit|
-
-    public constructor(): R|test/FieldAsVar|
-
-}

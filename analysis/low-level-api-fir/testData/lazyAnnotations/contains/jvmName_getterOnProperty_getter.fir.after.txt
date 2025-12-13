@@ -1,1 +1,0 @@
-@PROPERTY_GETTER:R|kotlin/jvm/JvmName|[CompilerRequiredAnnotations](String(getter)) public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] get(): Int

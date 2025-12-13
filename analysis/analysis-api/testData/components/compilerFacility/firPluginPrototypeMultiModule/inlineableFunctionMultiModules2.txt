@@ -1,7 +1,0 @@
-public final class MainKt {
-    // source: 'main.kt'
-    public final static method Greeting(p0: java.lang.String): void
-    public final static method show(p0: java.lang.String): void
-    private final static method test$lambda$0(): kotlin.Unit
-    public final static method test(): int
-}

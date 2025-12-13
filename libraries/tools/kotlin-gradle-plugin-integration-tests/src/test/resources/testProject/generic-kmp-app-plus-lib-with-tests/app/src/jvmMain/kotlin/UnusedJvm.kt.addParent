@@ -1,3 +1,0 @@
-class AppJvmUnusedClass : AppCommonUnusedClass() {
-    fun doBar() = 2
-}

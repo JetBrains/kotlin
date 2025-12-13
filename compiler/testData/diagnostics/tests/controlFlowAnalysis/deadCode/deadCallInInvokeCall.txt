@@ -1,5 +1,0 @@
-package
-
-public fun testInvoke(): kotlin.Unit
-public fun testInvokeWithLambda(): kotlin.Unit
-public fun todo(): kotlin.Nothing

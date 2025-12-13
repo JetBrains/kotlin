@@ -1,9 +1,0 @@
-package test
-
-fun commonFun() {}
-
-private val addedVal: Int = 20
-
-private fun addedFun(): Int = 50
-
-private fun changedFun(arg: String) {}

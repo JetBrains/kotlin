@@ -1,4 +1,0 @@
-DEFAULT TYPE:
-pack.Foo.NestedClass
-DEFAULT TYPE WITH STAR PROJECTIONS:
-pack.Foo.NestedClass

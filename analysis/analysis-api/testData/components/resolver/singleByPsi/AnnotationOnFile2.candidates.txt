@@ -1,2 +1,0 @@
-KtNameReferenceExpression(13,21): 'Suppress'
-  NO_CANDIDATES

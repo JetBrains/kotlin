@@ -1,7 +1,0 @@
-depends = CFCGTypes CFNetwork CoreFoundation CoreFoundationBase Foundation IOSurface Metal Security darwin posix
-language = Objective-C
-package = platform.MLCompute
-
-modules.tvos_arm64 = MLCompute
-compilerOpts.tvos_arm64 = -framework MLCompute
-linkerOpts.tvos_arm64 = -framework MLCompute

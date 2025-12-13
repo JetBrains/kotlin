@@ -1,2 +1,0 @@
-KaType: pack.Foo1
-PsiType: @org.jetbrains.annotations.NotNull() pack.Foo1

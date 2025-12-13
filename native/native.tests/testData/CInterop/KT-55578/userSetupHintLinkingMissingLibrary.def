@@ -1,5 +1,0 @@
-headerFilter = **/userSetupHint.h
-userSetupHint = <<HINT_MISSING_LIBRARY>>
-linkerOpts = -lNonExistant
----
-void test() { }

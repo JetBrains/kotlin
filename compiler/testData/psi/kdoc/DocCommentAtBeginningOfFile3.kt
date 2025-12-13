@@ -1,5 +1,0 @@
-// COMPILATION_ERRORS
-
-/**
-
-fooo

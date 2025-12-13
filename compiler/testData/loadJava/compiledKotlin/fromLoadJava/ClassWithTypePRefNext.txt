@@ -1,5 +1,0 @@
-package test
-
-public open class ClassWithTypePRefNext</*0*/ R : kotlin.collections.Iterable<P>?, /*1*/ P> {
-    /*primary*/ public constructor ClassWithTypePRefNext</*0*/ R : kotlin.collections.Iterable<P>?, /*1*/ P>()
-}

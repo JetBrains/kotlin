@@ -1,2 +1,0 @@
-parameter.java:3:1:compiler.err.annotation.type.not.applicable
-parameter.java:5:5:compiler.err.annotation.type.not.applicable

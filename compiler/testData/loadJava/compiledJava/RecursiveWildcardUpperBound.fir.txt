@@ -1,2 +1,0 @@
-public abstract interface RecursiveWildcardUpperBound<T : R|ft<Raw type test/RecursiveWildcardUpperBound<ft<Raw type test/RecursiveWildcardUpperBound<*>, test/RecursiveWildcardUpperBound<*>?>>, test/RecursiveWildcardUpperBound<*>?>|> : R|kotlin/Any| {
-}

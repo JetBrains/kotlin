@@ -1,3 +1,0 @@
-expression: xy
-expected type: kotlin.reflect.KSuspendFunction0<kotlin.Unit>
-functionClassKind: kotlin.reflect.KSuspendFunctionN

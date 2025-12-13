@@ -1,4 +1,0 @@
-expression: LABEL
-text: @C
-isUsedAsExpression: false
-isUsedAsResultOfLambda: false

@@ -1,7 +1,0 @@
-depends = CFCGTypes CFNetwork CoreFoundation CoreFoundationBase Foundation Security darwin posix
-language = Objective-C
-package = platform.CoreTelephony
-modules = CoreTelephony
-
-compilerOpts = -framework CoreTelephony
-linkerOpts = -framework CoreTelephony

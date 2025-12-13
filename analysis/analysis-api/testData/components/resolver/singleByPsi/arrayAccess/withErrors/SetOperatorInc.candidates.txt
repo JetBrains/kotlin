@@ -1,2 +1,0 @@
-KtArrayAccessExpression(119,123): 'a[2]'
-  NO_CANDIDATES

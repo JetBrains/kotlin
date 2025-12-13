@@ -1,6 +1,0 @@
-depends = CFCGTypes CoreFoundation CoreFoundationBase Foundation Security darwin posix
-language = Objective-C
-package = platform.AVKit
-modules = AVKit
-compilerOpts = -framework AVKit
-linkerOpts = -framework AVKit

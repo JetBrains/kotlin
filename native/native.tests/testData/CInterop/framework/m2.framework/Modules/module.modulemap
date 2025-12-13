@@ -1,7 +1,0 @@
-framework module m2 {
-  umbrella header "m2.h"
-
-  export *
-  module * { export * }
-}
-

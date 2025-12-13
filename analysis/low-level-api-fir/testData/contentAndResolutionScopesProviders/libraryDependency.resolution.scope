@@ -1,8 +1,0 @@
-Resulting Resolution Scope:
-Module LIBRARY:
-    a.class
-    x.class
-Module MAIN:
-    main.kt
-    a.class
-    x.class

@@ -1,1 +1,0 @@
-par: ERROR(Type is unavailable for declaration VALUE_PARAMETER)

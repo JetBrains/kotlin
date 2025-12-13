@@ -1,7 +1,0 @@
-FILE: [ResolvedTo(BODY_RESOLVE)] constructorWithAnnotations.kt
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class A : R|kotlin/Any| {
-        public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=A] constructor([ResolvedTo(ANNOTATION_ARGUMENTS)] param: R|@<ERROR TYPE REF: Symbol not found for Anno>()  kotlin/collections/List<@<ERROR TYPE REF: Symbol not found for Anno>()  kotlin/collections/Collection<@<ERROR TYPE REF: Symbol not found for Anno>()  kotlin/String>>| = LAZY_EXPRESSION): R|A| {
-            LAZY_super<R|kotlin/Any|>
-        }
-
-    }

@@ -1,4 +1,0 @@
-expression: BINARY_EXPRESSION
-text: n %= 45
-isUsedAsExpression: false
-isUsedAsResultOfLambda: false

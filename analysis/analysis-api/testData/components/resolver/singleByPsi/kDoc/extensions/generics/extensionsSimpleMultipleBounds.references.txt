@@ -1,6 +1,0 @@
-KDocName(230,243): 'SomeClass.ext'
-  KDocReference:
-    isImplicitReferenceToCompanion: false
-    usesContextSensitiveResolution: false
-    symbols:
-      (in ROOT) fun <T : A> GenericFooOut<T>.ext()

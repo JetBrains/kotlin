@@ -1,5 +1,0 @@
-package
-
-public fun test11(): kotlin.Unit
-public fun test12(): kotlin.Unit
-public fun todo(): kotlin.Nothing

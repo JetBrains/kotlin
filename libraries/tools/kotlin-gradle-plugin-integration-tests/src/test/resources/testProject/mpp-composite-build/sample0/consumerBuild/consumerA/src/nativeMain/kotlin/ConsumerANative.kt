@@ -1,5 +1,0 @@
-object ConsumerANative {
-    init {
-        ProducerANative
-    }
-}

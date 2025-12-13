@@ -1,3 +1,0 @@
-val common: library.Common
-
-val value: kotlin.String!

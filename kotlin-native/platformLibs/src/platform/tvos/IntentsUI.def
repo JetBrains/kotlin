@@ -1,6 +1,0 @@
-depends = CFCGTypes CFNetwork CoreFoundation CoreFoundationBase CoreGraphics CoreImage CoreLocation CoreText CoreVideo EAGL Foundation IOSurface ImageIO Intents Metal OpenGLESCommon QuartzCore Security Symbols UIKit UIUtilities UserNotifications _LocationEssentials darwin posix
-language = Objective-C
-package = platform.IntentsUI
-modules = IntentsUI
-compilerOpts = -framework IntentsUI
-linkerOpts = -framework IntentsUI

@@ -1,2 +1,0 @@
-public enum flattened {
-}

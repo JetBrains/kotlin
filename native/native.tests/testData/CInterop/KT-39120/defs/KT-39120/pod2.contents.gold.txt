@@ -1,2 +1,0 @@
-      public final var pod2VersionNumber: kotlin/Double
-      public final val pod2VersionString: kotlinx/cinterop/CPointer<kotlinx/cinterop/UByteVarOf<kotlin/UByte> /* = kotlinx/cinterop/UByteVar^ */> /* = kotlinx/cinterop/CArrayPointer^<kotlinx/cinterop/UByteVarOf<kotlin/UByte> /* = kotlinx/cinterop/UByteVar^ */> */

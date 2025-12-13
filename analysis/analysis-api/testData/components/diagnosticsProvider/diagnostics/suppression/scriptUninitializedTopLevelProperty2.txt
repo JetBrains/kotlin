@@ -1,7 +1,0 @@
-Diagnostics from file:
-  for PSI element of type KtStringTemplateExpression at (1,11-32)
-    ERROR_SUPPRESSION      text ranges: [(10,31)]
-      PSI: KtStringTemplateExpression at (1,11-32)
-  for PSI element of type KtProperty at (4,1-16)
-    MUST_BE_INITIALIZED      text ranges: [(47,62)]
-      PSI: KtProperty at (4,1-16)

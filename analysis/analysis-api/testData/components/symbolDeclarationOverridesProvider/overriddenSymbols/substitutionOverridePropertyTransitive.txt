@@ -1,5 +1,0 @@
-ALL:
-  test/A.x: T
-DIRECT:
-  test/A.x: T
-INTERSECTION:

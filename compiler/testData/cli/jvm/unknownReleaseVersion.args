@@ -1,5 +1,0 @@
-$TESTDATA_DIR$/unknownReleaseVersion.kt
--d
-$TEMP_DIR$
--Xjdk-release=5
-Go

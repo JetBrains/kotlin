@@ -1,2 +1,0 @@
-expression: Number::toInt
-receiver:: type: kotlin.Number

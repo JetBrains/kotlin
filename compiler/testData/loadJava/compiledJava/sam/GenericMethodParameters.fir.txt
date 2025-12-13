@@ -1,4 +1,0 @@
-public abstract interface GenericMethodParameters : R|kotlin/Any| {
-    public abstract fun <A : R|kotlin/CharSequence!|, B : R|ft<kotlin/collections/MutableList<A!>, kotlin/collections/List<A!>?>|> method(a: R|ft<kotlin/Array<A!>, kotlin/Array<out A!>?>|, b: R|B!|): R|kotlin/Unit|
-
-}

@@ -1,2 +1,0 @@
-expression: bar
-type: kotlin.Int

@@ -1,1 +1,0 @@
-fun <T> foo(vararg x<caret>x: T) {}

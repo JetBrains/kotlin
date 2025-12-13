@@ -1,7 +1,0 @@
-language = Objective-C
-package = platform.MarketplaceKit
-
-modules = MarketplaceKit
-compilerOpts = -framework MarketplaceKit
-linkerOpts = -framework MarketplaceKit
-#Disabled: Swift-only framework

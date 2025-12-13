@@ -1,9 +1,0 @@
-depends = CFCGTypes CoreFoundation CoreFoundationBase CoreGraphics CoreText CoreVideo Foundation QuartzCore Security Symbols UIUtilities UserNotifications darwin posix
-language = Objective-C
-package = platform.UIKit
-modules = UIKit
-
-compilerOpts = -framework UIKit
-linkerOpts = -framework UIKit
-
-objcClassesIncludingCategories = NSMutableParagraphStyle NSParagraphStyle NSTextContainer NSTextTab

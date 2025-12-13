@@ -1,7 +1,0 @@
-depends = CFCGTypes Contacts CoreFoundation CoreFoundationBase CoreGraphics CoreText CoreVideo Foundation QuartzCore SceneKit Security SpriteKit Symbols UIKit UIUtilities UserNotifications darwin posix
-language = Objective-C
-package = platform.GameKit
-modules = GameKit
-
-compilerOpts = -framework GameKit
-linkerOpts = -framework GameKit

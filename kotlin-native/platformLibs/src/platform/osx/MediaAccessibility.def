@@ -1,7 +1,0 @@
-depends = CFCGTypes CFNetwork CoreFoundation CoreFoundationBase CoreGraphics CoreServices CoreText DiskArbitration Foundation IOKit IOSurface Security darwin libkern osx posix
-language = Objective-C
-package = platform.MediaAccessibility
-modules = MediaAccessibility
-
-compilerOpts = -framework MediaAccessibility
-linkerOpts = -framework MediaAccessibility

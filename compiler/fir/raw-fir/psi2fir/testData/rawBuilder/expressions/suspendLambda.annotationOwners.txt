@@ -1,7 +1,0 @@
-@Ann()
-owner -> FirNamedFunctionSymbol /testPositive
-context -> FirAnonymousFunctionSymbol special/anonymous from FirLocalPropertySymbol <local>/x from FirNamedFunctionSymbol /testPositive
-
-@Ann()
-owner -> FirNamedFunctionSymbol /testPositive
-context -> FirAnonymousFunctionSymbol special/anonymous from FirNamedFunctionSymbol /testPositive

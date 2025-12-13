@@ -1,7 +1,0 @@
-actual inline class Aactual constructor(name: kotlin.String) {
-  val name: kotlin.String
-}
-
-actual inline class Bactual constructor(s: kotlin.String) {
-  val s: kotlin.String
-}

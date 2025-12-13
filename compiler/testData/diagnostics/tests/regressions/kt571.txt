@@ -1,4 +1,0 @@
-package
-
-private fun double(/*0*/ d: kotlin.Int): kotlin.Int
-public fun </*0*/ T, /*1*/ R> let(/*0*/ t: T, /*1*/ body: (T) -> R): R

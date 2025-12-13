@@ -1,1 +1,0 @@
-val x = <expr>Int::class</expr>

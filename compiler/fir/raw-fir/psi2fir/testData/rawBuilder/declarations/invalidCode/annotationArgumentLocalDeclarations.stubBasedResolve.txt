@@ -1,9 +1,0 @@
-FILE: [ResolvedTo(BODY_RESOLVE)] annotationArgumentLocalDeclarations.kt
-    public final [ResolvedTo(BODY_RESOLVE)] class TopLevelClass : R|kotlin/Any| {
-        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|TopLevelClass| {
-            super<R|kotlin/Any|>()
-        }
-
-        [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=TopLevelClass] @<ERROR TYPE REF: Symbol not found for ClassLevel1>[Types](LAZY_EXPRESSION) @<ERROR TYPE REF: Symbol not found for ClassLevel2>[Types](LAZY_EXPRESSION) @<ERROR TYPE REF: Symbol not found for ClassLevel3>[Types](LAZY_EXPRESSION) @<ERROR TYPE REF: Symbol not found for ClassLevel4>[Types](LAZY_EXPRESSION) <DANGLING MODIFIER: Top level declaration expected>
-    }
-    [ResolvedTo(CONSTANT_EVALUATION)] @<ERROR TYPE REF: Symbol not found for FileLevel1>[Types](LAZY_EXPRESSION) @<ERROR TYPE REF: Symbol not found for FileLevel2>[Types](LAZY_EXPRESSION) @<ERROR TYPE REF: Symbol not found for FileLevel3>[Types](LAZY_EXPRESSION) @<ERROR TYPE REF: Symbol not found for FileLevel4>[Types](LAZY_EXPRESSION) <DANGLING MODIFIER: Top level declaration expected>

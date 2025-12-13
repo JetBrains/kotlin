@@ -1,7 +1,0 @@
-language = Objective-C
-package = platform.ImagePlayground
-
-modules = ImagePlayground
-compilerOpts = -framework ImagePlayground
-linkerOpts = -framework ImagePlayground
-#Disabled: Swift-only framework

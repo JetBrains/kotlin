@@ -1,4 +1,0 @@
-package
-
-public val a1: kotlin.Int = 1694498816
-public val a2: kotlin.Int = 0

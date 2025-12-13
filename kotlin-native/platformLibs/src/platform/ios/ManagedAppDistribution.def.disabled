@@ -1,7 +1,0 @@
-language = Objective-C
-package = platform.ManagedAppDistribution
-
-modules = ManagedAppDistribution
-compilerOpts = -framework ManagedAppDistribution
-linkerOpts = -framework ManagedAppDistribution
-#Disabled: Swift-only framework

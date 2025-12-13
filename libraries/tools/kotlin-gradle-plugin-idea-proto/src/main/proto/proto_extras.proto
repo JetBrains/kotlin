@@ -1,8 +1,0 @@
-syntax = "proto3";
-
-package org.jetbrains.kotlin.gradle.idea.proto.generated;
-option java_multiple_files = true;
-
-message IdeaExtrasProto {
-  map<string, bytes> values = 1;
-}

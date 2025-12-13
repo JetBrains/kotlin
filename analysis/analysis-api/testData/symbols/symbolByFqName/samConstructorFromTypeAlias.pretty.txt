@@ -1,1 +1,0 @@
-MyAlias(function: () -> kotlin.Unit): one.MyAlias /* = one.MyInterface */

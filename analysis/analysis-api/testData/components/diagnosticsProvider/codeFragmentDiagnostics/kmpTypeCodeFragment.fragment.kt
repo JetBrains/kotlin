@@ -1,2 +1,0 @@
-// CODE_FRAGMENT_KIND: TYPE
-String

@@ -1,4 +1,0 @@
-DEFAULT TYPE:
-foo.`<anonymous>`
-DEFAULT TYPE WITH STAR PROJECTIONS:
-foo.`<anonymous>`

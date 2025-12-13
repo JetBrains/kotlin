@@ -1,4 +1,0 @@
-expression: av
-expected type: KaTypeParameterType:
-  annotations: []
-  type: T

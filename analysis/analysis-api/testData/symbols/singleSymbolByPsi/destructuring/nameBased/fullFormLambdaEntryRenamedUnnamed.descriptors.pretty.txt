@@ -1,1 +1,0 @@
-val `<unused var>`: ERROR(component1() return type)

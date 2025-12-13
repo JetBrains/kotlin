@@ -1,4 +1,0 @@
-expression: CALL_EXPRESSION
-text: Exception()
-isUsedAsExpression: true
-isUsedAsResultOfLambda: false

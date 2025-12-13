@@ -1,2 +1,0 @@
-KtProperty(14,57): '/**'
-  NO_CANDIDATES

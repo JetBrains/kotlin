@@ -1,6 +1,0 @@
-package test
-
-public open class Max {
-    /*primary*/ public constructor Max()
-    public open fun </*0*/ T> max(/*0*/ p0: kotlin.collections.Collection<T>?): T? where T : kotlin.Comparable<T>?
-}

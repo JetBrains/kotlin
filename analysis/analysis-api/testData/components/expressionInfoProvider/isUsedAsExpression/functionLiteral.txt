@@ -1,6 +1,0 @@
-expression: FUN
-text: fun(): Int {
-        return 54
-    }
-isUsedAsExpression: true
-isUsedAsResultOfLambda: false

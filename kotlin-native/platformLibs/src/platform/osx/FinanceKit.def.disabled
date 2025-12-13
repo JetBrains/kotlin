@@ -1,7 +1,0 @@
-language = Objective-C
-package = platform.FinanceKit
-
-modules = FinanceKit
-compilerOpts = -framework FinanceKit
-linkerOpts = -framework FinanceKit
-#Disabled: Not officially available for osx

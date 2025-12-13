@@ -1,4 +1,0 @@
-$TESTDATA_DIR$/headerMode.kt
--Xheader-mode
--d
-$TEMP_DIR$

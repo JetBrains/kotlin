@@ -1,1 +1,0 @@
-java.lang.IllegalStateException: VAL_REASSIGNMENT: Val cannot be reassigned (31,5) in /10.2.kt

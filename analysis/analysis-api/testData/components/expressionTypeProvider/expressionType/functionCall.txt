@@ -1,2 +1,0 @@
-expression: 12.toByte()
-type: kotlin.Byte

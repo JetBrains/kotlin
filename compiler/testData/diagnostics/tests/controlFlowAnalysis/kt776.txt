@@ -1,7 +1,0 @@
-package
-
-package kt776 {
-    public fun doSmth(): kotlin.Unit
-    public fun test1(): kotlin.Int
-    public fun test5(): kotlin.Int
-}

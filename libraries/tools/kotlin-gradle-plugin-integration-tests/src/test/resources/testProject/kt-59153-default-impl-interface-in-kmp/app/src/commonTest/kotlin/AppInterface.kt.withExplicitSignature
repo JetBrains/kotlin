@@ -1,4 +1,0 @@
-interface AppInterface {
-    // fun test(f: () -> String) = "foo".run { f() }
-    fun test(f: Any.() -> String) = "foo".run { f() }
-}

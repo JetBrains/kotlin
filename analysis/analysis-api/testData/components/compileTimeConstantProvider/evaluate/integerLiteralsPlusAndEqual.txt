@@ -1,5 +1,0 @@
-expression: 2 + 4 == 6
-constant: true
-constantValueKind: BooleanValue
-constantValueSource: BINARY_EXPRESSION
-constantValueSourceText: 2 + 4 == 6

@@ -1,7 +1,0 @@
-package
-
-package d {
-    public fun main(): kotlin.Unit
-    public fun println(/*0*/ message: kotlin.Any?): kotlin.Unit
-    public inline fun </*0*/ K, /*1*/ V1, /*2*/ V : V1> kotlin.collections.Map<K, V>.getOrElse1(/*0*/ key: K, /*1*/ defaultValue: () -> V1): V1
-}

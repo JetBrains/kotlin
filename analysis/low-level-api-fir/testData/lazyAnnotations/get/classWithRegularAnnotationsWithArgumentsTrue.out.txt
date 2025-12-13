@@ -1,2 +1,0 @@
-MyAnno(v = "12")
-  psi: KtAnnotationEntry

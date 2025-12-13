@@ -1,1 +1,0 @@
-/lambdaAgainstSimpleTypeMismatch.fir.kt:(102,121): error: Argument type mismatch: actual type is '(String) -> Int', but 'Int' was expected.

@@ -1,5 +1,0 @@
-/kt47986_3.fir.kt:(211,219): error: Cannot infer type for type parameter 'K'. Specify it explicitly.
-
-/kt47986_3.fir.kt:(230,233): error: Cannot infer type for type parameter 'K'. Specify it explicitly.
-
-/kt47986_3.fir.kt:(230,233): error: Cannot infer type for type parameter 'N'. Specify it explicitly.

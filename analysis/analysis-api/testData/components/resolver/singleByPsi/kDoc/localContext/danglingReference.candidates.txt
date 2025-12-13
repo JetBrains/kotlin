@@ -1,2 +1,0 @@
-KtBlockExpression(19,92): '{'
-  NO_CANDIDATES

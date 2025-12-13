@@ -1,7 +1,0 @@
-depends = CFCGTypes CFNetwork CoreFoundation CoreFoundationBase Foundation Security darwin posix
-language = Objective-C
-package = platform.BrowserEngineCore
-
-modules = BrowserEngineCore
-compilerOpts = -framework BrowserEngineCore
-linkerOpts = -framework BrowserEngineCore

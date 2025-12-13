@@ -1,4 +1,0 @@
-FILE: companionLoad.kt
-    public final fun main(): R|kotlin/Unit| {
-        lval y: R|kotlin/Int| = Q|kotlin/Int|.R|kotlin/Int.Companion.MAX_VALUE|
-    }

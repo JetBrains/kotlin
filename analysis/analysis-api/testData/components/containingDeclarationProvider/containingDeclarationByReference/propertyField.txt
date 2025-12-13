@@ -1,3 +1,0 @@
-field
-/Foo.foo
-/Foo

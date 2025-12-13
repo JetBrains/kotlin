@@ -1,7 +1,0 @@
-depends = CFCGTypes CFNetwork CoreFoundation CoreFoundationBase CoreGraphics CoreImage CoreText CoreVideo EAGL FileProvider Foundation HealthKit IOSurface ImageIO Metal OpenGLESCommon QuartzCore Security Symbols UIKit UIUtilities UniformTypeIdentifiers UserNotifications darwin posix
-language = Objective-C
-package = platform.HealthKitUI
-modules = HealthKitUI
-
-compilerOpts = -framework HealthKitUI
-linkerOpts = -framework HealthKitUI

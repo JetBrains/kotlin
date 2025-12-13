@@ -1,2 +1,0 @@
-KtTypeReference: String
-KaType: kotlin.String

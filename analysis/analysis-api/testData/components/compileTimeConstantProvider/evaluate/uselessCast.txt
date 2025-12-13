@@ -1,5 +1,0 @@
-expression: x as Int
-constant: 5
-constantValueKind: IntValue
-constantValueSource: REFERENCE_EXPRESSION
-constantValueSourceText: x

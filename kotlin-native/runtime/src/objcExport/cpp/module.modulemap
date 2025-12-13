@@ -1,4 +1,0 @@
-module KotlinRuntime {
-    header "KotlinBase.h"
-    export *
-}

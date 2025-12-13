@@ -1,5 +1,0 @@
-expression: 3.14
-constant: 3.14
-constantValueKind: DoubleValue
-constantValueSource: FLOAT_CONSTANT
-constantValueSourceText: 3.14

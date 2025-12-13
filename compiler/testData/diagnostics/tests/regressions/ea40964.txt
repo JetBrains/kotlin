@@ -1,5 +1,0 @@
-package
-
-package checkFiles {
-    public fun main(): kotlin.Unit
-}

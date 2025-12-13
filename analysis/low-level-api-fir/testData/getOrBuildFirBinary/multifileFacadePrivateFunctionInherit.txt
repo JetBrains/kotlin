@@ -1,8 +1,0 @@
-KT element: KtNamedFunction
-KT element text:
-private fun privateFunction1(): kotlin.Unit { /* compiled code */ }
-FIR element: FirNamedFunctionImpl
-FIR source kind: KtRealSourceElementKind
-
-FIR element rendered:
-private final [ResolvedTo(BODY_RESOLVE)] fun privateFunction1(): R|kotlin/Unit|

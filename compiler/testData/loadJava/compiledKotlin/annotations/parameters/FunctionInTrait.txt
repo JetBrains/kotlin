@@ -1,9 +1,0 @@
-package test
-
-public final annotation class Anno : kotlin.Annotation {
-    /*primary*/ public constructor Anno()
-}
-
-public interface Trait {
-    public open fun foo(/*0*/ @test.Anno x: kotlin.String): kotlin.Int
-}

@@ -1,4 +1,0 @@
-expression: PREFIX_EXPRESSION
-text: !b
-isUsedAsExpression: true
-isUsedAsResultOfLambda: false

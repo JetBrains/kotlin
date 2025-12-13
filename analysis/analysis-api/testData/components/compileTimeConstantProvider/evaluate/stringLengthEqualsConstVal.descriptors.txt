@@ -1,5 +1,0 @@
-expression: "hello".length == x
-constant: true
-constantValueKind: BooleanValue
-constantValueSource: NOT_EVALUATED
-constantValueSourceText: NOT_EVALUATED

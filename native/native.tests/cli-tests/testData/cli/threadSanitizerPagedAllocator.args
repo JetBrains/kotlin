@@ -1,5 +1,0 @@
-$TESTDATA_DIR$/simple.kt
--Xbinary=sanitizer=THREAD
--Xbinary=pagedAllocator=true
--o
-$TEMP_DIR$/simple

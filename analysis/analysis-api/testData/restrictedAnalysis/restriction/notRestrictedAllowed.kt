@@ -1,2 +1,0 @@
-// RESTRICTED: false
-// ALLOWED: true

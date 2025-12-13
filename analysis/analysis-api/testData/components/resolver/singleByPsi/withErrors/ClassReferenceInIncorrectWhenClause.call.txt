@@ -1,2 +1,0 @@
-KtNameReferenceExpression(60,69): 'SomeClass'
-  null

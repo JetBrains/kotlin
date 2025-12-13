@@ -1,6 +1,0 @@
-package test
-
-public open class NativeMethod {
-    public constructor NativeMethod()
-    public open external fun foo(): kotlin.Unit
-}

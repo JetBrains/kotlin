@@ -1,4 +1,0 @@
-package test
-
-val prop1 = 1
-val prop2 = 2

@@ -1,3 +1,0 @@
-KtDeclaration: KtProperty foo
-annotations: [
-]

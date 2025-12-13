@@ -1,7 +1,0 @@
-language = Objective-C
-package = platform.StickerFoundation
-
-modules = StickerFoundation
-compilerOpts = -framework StickerFoundation
-linkerOpts = -framework StickerFoundation
-#Disabled: Unavailable

@@ -1,4 +1,0 @@
-expression: DOT_QUALIFIED_EXPRESSION
-text: super.test(x * 2)
-isUsedAsExpression: true
-isUsedAsResultOfLambda: false

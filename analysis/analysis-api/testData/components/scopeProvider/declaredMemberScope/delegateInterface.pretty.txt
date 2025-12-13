@@ -1,3 +1,0 @@
-private val p: A
-
-constructor(p: A)

@@ -1,2 +1,0 @@
-expect class ClassWithImplByExtension
-expect val ClassWithImplByExtension.extensionVal: Int

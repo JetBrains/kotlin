@@ -1,5 +1,0 @@
-FILE: [ResolvedTo(BODY_RESOLVE)] fileAnnotationsWithoutPackage.kt
-    @FILE:<ERROR TYPE REF: Symbol not found for FileAnnotation>[Types]()
-    @FILE:<ERROR TYPE REF: Symbol not found for Annotation1>[Types]()
-    @FILE:<ERROR TYPE REF: Symbol not found for Annotation2>[Types]()
-    [ResolvedTo(BODY_RESOLVE)] @<ERROR TYPE REF: Symbol not found for WithouTarget>[Types]() <DANGLING MODIFIER: Top level declaration expected>

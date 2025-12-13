@@ -1,1 +1,0 @@
-fun <T> f<caret>oo(x: List<T>, y: Map<T, String>, k: String): Int

@@ -1,3 +1,0 @@
-package
-
-public inline fun </*0*/ T : java.io.Closeable, /*1*/ R> T.use(/*0*/ block: (T) -> R): R

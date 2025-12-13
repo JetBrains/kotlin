@@ -1,9 +1,0 @@
-inline fun calculate(): Int {
-    val smallNumber = {
-        3
-    }
-    val bigNumber = {
-        40
-    }
-    return smallNumber() + bigNumber() + smallNumber()
-}

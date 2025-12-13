@@ -1,7 +1,0 @@
-STEP 0:
-    dependencies: lib1
-    modifications:
-        U : l2A.0.kt -> l2A.kt
-    added file: l2A.kt
-STEP 1:
-    dependencies: lib1

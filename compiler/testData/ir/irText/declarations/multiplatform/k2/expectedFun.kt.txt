@@ -1,8 +1,0 @@
-// FILE: common.kt
-
-// FILE: platform.kt
-
-fun f(): String {
-  return "OK"
-}
-

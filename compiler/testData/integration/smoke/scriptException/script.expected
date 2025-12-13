@@ -1,8 +1,0 @@
-
-ERR:
-java.lang.IllegalStateException: my error
-	at Script.main(script.kts:2)
-	at Script.a(script.kts:6)
-	at Script.<init>(script.kts:9)
-
-Return code: 3

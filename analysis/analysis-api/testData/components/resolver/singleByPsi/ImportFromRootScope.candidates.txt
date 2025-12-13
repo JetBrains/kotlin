@@ -1,2 +1,0 @@
-KtNameReferenceExpression(38,43): 'Klass'
-  NO_CANDIDATES

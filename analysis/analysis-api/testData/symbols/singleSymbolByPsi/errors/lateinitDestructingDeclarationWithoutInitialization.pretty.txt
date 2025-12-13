@@ -1,1 +1,0 @@
-var something1: ERROR_TYPE(Unresolved name: component1)

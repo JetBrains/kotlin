@@ -1,4 +1,0 @@
-rootProject.name = "kotlin-js-with-friend-paths"
-
-include("lib")
-include("app")

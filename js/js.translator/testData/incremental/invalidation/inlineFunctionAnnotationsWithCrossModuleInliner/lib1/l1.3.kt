@@ -1,5 +1,0 @@
-@JsExport
-class MyClassA {
-    @JsName("baz")
-    inline fun foo() = 42
-}

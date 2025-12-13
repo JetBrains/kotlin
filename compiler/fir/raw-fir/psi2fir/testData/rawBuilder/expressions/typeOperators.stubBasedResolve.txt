@@ -1,7 +1,0 @@
-FILE: [ResolvedTo(BODY_RESOLVE)] typeOperators.kt
-    public abstract [ResolvedTo(BODY_RESOLVE)] interface IThing : R|kotlin/Any| {
-    }
-    public final [ResolvedTo(CONTRACTS)] fun test1([ResolvedTo(CONTRACTS)] x: R|kotlin/Any|): <implicit> { LAZY_BLOCK }
-    public final [ResolvedTo(CONTRACTS)] fun test2([ResolvedTo(CONTRACTS)] x: R|kotlin/Any|): <implicit> { LAZY_BLOCK }
-    public final [ResolvedTo(CONTRACTS)] fun test3([ResolvedTo(CONTRACTS)] x: R|kotlin/Any|): <implicit> { LAZY_BLOCK }
-    public final [ResolvedTo(CONTRACTS)] fun test4([ResolvedTo(CONTRACTS)] x: R|kotlin/Any|): <implicit> { LAZY_BLOCK }

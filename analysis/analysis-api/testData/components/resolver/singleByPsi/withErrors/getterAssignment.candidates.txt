@@ -1,2 +1,0 @@
-KtCallExpression(30,35): 'get()'
-  NO_CANDIDATES

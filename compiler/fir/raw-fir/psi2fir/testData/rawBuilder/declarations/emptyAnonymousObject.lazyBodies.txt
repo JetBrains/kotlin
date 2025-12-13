@@ -1,2 +1,0 @@
-FILE: emptyAnonymousObject.kt
-    public? final? fun test(): R|kotlin/Unit| { LAZY_BLOCK }

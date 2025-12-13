@@ -1,8 +1,0 @@
-package
-
-public fun bar(/*0*/ a: kotlin.Any): kotlin.Unit
-public fun todo(): kotlin.Nothing
-public fun unreachable0(): kotlin.Unit
-public fun unreachable2(): kotlin.Unit
-public fun unreachable3(): kotlin.Unit
-public fun unreachable4(/*0*/ array: kotlin.Array<kotlin.Any>): kotlin.Unit

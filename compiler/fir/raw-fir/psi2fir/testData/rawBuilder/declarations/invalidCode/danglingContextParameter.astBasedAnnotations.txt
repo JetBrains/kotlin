@@ -1,9 +1,0 @@
-Annotations from the list below require AST loading to calculate arguments.
-It is expected for invalid code, but valid arguments should be calculated via stubs for performance reasons.
-See KT-71787 for reference.
-
-context -> FirValueParameterSymbol <local>/parameter1 from FirDanglingModifierSymbol from FirRegularClassSymbol Foo
-@Anno(LAZY_EXPRESSION)
-
-context -> FirValueParameterSymbol <local>/parameter1 from FirDanglingModifierSymbol from FirFileSymbol danglingContextParameter.kt
-@Anno(LAZY_EXPRESSION)

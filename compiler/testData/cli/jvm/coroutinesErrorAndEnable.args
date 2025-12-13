@@ -1,5 +1,0 @@
-$TESTDATA_DIR$/simple.kt
--Xcoroutines=error
--Xcoroutines=enable
--d
-$TEMP_DIR$

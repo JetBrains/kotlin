@@ -1,9 +1,0 @@
-{
-  "exclude": [ "**/*.aa.d.ts", "**/*.aa.d.mts" ],
-  "compilerOptions": {
-    "target": "es5",
-    "strict": true,
-    "newLine": "lf",
-    "lib": ["es2015", "dom"]
-  }
-}

@@ -1,5 +1,0 @@
-KtDeclaration: KtParameter bar
-annotations: [
-  A(a = 1, c = kotlin.Int::class)
-    psi: KtAnnotationEntry
-]

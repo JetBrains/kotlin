@@ -1,2 +1,0 @@
-error: per-file compilation can't be used with any `moduleKind` except `es` (ECMAScript Modules)
-COMPILATION_ERROR

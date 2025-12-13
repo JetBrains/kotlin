@@ -1,1 +1,0 @@
-/ReifiedTypeAliasDisabled.fir.kt:(167,174): warning: Applying reified modifier to a type parameter of a type alias makes no sense. This will become an error in language version 2.2. See https://youtrack.jetbrains.com/issue/KT-70163.

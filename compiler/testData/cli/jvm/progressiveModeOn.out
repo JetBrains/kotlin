@@ -1,4 +1,0 @@
-compiler/testData/cli/jvm/progressive/progressiveTest.kt:3:10: error: 'public' generic exposes its 'internal' parameter bound type 'Foo'.
-fun <T : Foo> foo(x: T?) = x
-         ^^^
-COMPILATION_ERROR

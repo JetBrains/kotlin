@@ -1,4 +1,0 @@
-public abstract interface SamSubinterfaceOverridding : R|java/lang/Runnable| {
-    public abstract fun run(): R|kotlin/Unit|
-
-}

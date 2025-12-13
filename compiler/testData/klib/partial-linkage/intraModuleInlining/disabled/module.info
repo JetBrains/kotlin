@@ -1,8 +1,0 @@
-STEP 0:
-    arguments: -Xklib-ir-inliner=disabled -Xcontext-parameters
-    dependencies: stdlib
-STEP 1:
-    arguments: -Xklib-ir-inliner=disabled -Xcontext-parameters
-    dependencies: stdlib
-    modifications:
-        U : disabled.kt.1 -> disabled.kt

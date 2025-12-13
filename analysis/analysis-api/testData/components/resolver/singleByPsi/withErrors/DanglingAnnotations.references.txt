@@ -1,6 +1,0 @@
-KtNameReferenceExpression(63,67): 'Ann0'
-  KtSimpleNameReference:
-    isImplicitReferenceToCompanion: false
-    usesContextSensitiveResolution: false
-    symbols:
-      Nothing (Unresolved reference)

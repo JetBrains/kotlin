@@ -1,4 +1,0 @@
-public open class ConstructorWithSeveralParams : R|kotlin/Any| {
-    public constructor(integer: R|kotlin/Int!|, intBasic: R|kotlin/Int|, collection: R|java/util/ArrayList<kotlin/String!>!|): R|test/ConstructorWithSeveralParams|
-
-}

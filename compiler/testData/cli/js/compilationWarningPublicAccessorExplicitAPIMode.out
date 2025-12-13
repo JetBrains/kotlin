@@ -1,2 +1,0 @@
-compiler/testData/cli/js/compilationWarningPublicAccessorExplicitAPIMode.kt:3:5: warning: public synthetic accessor 'access$<outer-this-0>' was generated in explicit API mode. This accessor is a part of the library ABI now. It became possible because function '<outer-this-0>', which is not a part of the library ABI, is exposed through an inline function so it can be used in other libraries. Please, modify the source code to avoid exposure of function '<outer-this-0>' and generation of the accessor.
-OK

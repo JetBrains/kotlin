@@ -1,4 +1,0 @@
-KaUsualClassType:
-  annotations: []
-  typeArguments: []
-  type: kotlin/UIntArray

@@ -1,4 +1,0 @@
-source(new File(basedir, "../../../verify-common.bsh").getAbsolutePath());
-
-assertBuildLogHasLine("[INFO] BUILD FAILURE");
-assertBuildLogHasLineThatContains("Unknown -jvm-target value: 1.4");

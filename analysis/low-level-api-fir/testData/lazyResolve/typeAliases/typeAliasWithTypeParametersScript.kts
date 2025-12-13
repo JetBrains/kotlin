@@ -1,1 +1,0 @@
-typealias Resolve<caret>Me<T : Int, K> = Map<T, K>

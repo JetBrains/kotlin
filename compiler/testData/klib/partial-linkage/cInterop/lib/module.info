@@ -1,6 +1,0 @@
-STEP 0:
-    dependencies: stdlib
-STEP 1:
-    dependencies: stdlib
-    modifications:
-        U : l.def.1 -> l.def

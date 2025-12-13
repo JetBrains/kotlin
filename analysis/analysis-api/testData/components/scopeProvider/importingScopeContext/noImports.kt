@@ -1,3 +1,0 @@
-// RENDER_DEFAULT_IMPORTING_SCOPE
-
-val a = 5

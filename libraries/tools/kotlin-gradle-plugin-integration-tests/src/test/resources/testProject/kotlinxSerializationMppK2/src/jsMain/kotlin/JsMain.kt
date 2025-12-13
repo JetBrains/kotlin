@@ -1,3 +1,0 @@
-fun someSerializerCall() {
-    ValidateViolation.serializer()
-}

@@ -1,4 +1,0 @@
-FILE: main.kt
-    public final fun <T> test(executor: R|BuildActionExecuter<T>|, modelType: R|java/lang/Class<T>|, env: R|kotlin/collections/Map<kotlin/String, kotlin/String>|): R|kotlin/Unit| {
-        lval model: R|BuildActionExecuter<T!>!| = R|<local>/executor|.R|SubstitutionOverride</BuildActionExecuter.setEnvironmentVariables: R|BuildActionExecuter<T!>!|>|(R|<local>/env|)
-    }

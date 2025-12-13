@@ -1,2 +1,0 @@
-KtOperationReferenceExpression(38,40): '?:'
-  NO_CANDIDATES

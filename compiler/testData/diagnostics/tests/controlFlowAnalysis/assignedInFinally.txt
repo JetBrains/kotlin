@@ -1,3 +1,0 @@
-package
-
-public fun test5(): kotlin.Unit

@@ -1,3 +1,0 @@
-class AppNativeUnusedClass : AppCommonUnusedClass() {
-    fun queueSomething() = Unit
-}

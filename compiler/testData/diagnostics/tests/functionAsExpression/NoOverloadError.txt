@@ -1,7 +1,0 @@
-package
-
-public val bar: () -> kotlin.Unit
-public val bas: () -> kotlin.Unit
-public fun gar(/*0*/ p: kotlin.Any?): () -> kotlin.Unit
-public fun gas(/*0*/ p: kotlin.Any?): () -> kotlin.Unit
-public fun outer(): kotlin.Unit

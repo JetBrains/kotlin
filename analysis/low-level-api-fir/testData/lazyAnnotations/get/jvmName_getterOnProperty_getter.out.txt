@@ -1,2 +1,0 @@
-kotlin/jvm/JvmName(name = "getter")
-  psi: KtAnnotationEntry

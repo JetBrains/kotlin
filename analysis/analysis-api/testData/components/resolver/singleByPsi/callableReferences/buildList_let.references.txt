@@ -1,6 +1,0 @@
-KtCallExpression(242,252): 'let(::add)'
-  KtInvokeFunctionReference:
-    isImplicitReferenceToCompanion: false
-    usesContextSensitiveResolution: false
-    symbols:
-      Nothing (Unresolved reference)

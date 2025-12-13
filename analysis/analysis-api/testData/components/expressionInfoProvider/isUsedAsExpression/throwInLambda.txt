@@ -1,4 +1,0 @@
-expression: THROW
-text: throw IllegalArgumentException("Text is empty!")
-isUsedAsExpression: false
-isUsedAsResultOfLambda: false

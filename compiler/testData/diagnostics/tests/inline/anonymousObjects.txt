@@ -1,3 +1,0 @@
-package
-
-public inline fun </*0*/ R> inlineFun(/*0*/ p: () -> R): kotlin.Unit

@@ -1,3 +1,0 @@
-class Foo {
-  constructor(vararg ints: ERROR(No type specified for unknown element))
-}

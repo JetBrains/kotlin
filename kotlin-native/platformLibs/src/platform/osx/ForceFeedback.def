@@ -1,7 +1,0 @@
-depends = CFCGTypes CoreFoundation CoreFoundationBase IOKit darwin libkern posix
-language = Objective-C
-package = platform.ForceFeedback
-modules = ForceFeedback
-
-compilerOpts = -framework ForceFeedback
-linkerOpts = -framework ForceFeedback

@@ -1,2 +1,0 @@
-context(String@kotlin.String, List@kotlin.collections.List<@Anno(position = "str") kotlin.Int>)
-class Foo

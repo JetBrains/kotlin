@@ -1,7 +1,0 @@
-public open class Super {
-    public fun x() {
-    }
-
-    public fun y() {
-    }
-}

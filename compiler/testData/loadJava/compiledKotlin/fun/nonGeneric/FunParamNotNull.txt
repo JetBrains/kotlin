@@ -1,3 +1,0 @@
-package test
-
-public fun fff(/*0*/ a: java.lang.Integer): kotlin.Int

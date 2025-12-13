@@ -1,2 +1,0 @@
-java.lang.NullPointerException: Parameter specified as non-null is null: method Foo.<init>, parameter x
-Foo.<init>(12.kt)

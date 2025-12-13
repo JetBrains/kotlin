@@ -1,5 +1,0 @@
-expression: 42
-constant: 42
-constantValueKind: ByteValue
-constantValueSource: INTEGER_CONSTANT
-constantValueSourceText: 42

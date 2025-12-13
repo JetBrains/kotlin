@@ -1,2 +1,0 @@
-public abstract interface RawUpperBound<T : R|ft<Raw type test/RawUpperBound<ft<Raw type test/RawUpperBound<*>, test/RawUpperBound<*>?>>, test/RawUpperBound<*>?>|> : R|kotlin/Any| {
-}

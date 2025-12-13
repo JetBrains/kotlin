@@ -1,2 +1,0 @@
-File: simple.kt
-Module: Sources of main (KaSourceModuleImpl)

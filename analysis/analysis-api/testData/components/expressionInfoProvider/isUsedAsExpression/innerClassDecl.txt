@@ -1,6 +1,0 @@
-expression: CLASS
-text: inner class B() {
-
-    }
-isUsedAsExpression: false
-isUsedAsResultOfLambda: false

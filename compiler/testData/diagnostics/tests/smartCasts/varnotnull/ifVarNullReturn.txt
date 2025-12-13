@@ -1,4 +1,0 @@
-package
-
-public fun foo(): kotlin.Unit
-public fun fooNotNull(/*0*/ s: kotlin.String): kotlin.Unit

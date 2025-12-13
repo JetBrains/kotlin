@@ -1,8 +1,0 @@
-FILE: danglingAnnotationOnTopLevelClass.kt
-    public final? annotation class Ann : R|kotlin/Annotation| {
-        public? constructor(): R|Ann| {
-            LAZY_super<R|kotlin/Any|>
-        }
-
-    }
-    @Ann(LAZY_EXPRESSION) <DANGLING MODIFIER: Top level declaration expected>

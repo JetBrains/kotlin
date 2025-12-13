@@ -1,3 +1,0 @@
-override var something: kotlin.String
-  get()
-  set(s: kotlin.String)
