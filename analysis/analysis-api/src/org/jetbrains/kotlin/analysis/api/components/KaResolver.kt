@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.idea.references.KtReference
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtExperimentalApi
+import org.jetbrains.kotlin.psi.KtSuperTypeCallEntry
 import org.jetbrains.kotlin.resolution.KtResolvable
 import org.jetbrains.kotlin.resolution.KtResolvableCall
 
@@ -85,6 +86,29 @@ public interface KaResolver : KaSessionComponent {
     public fun KtAnnotationEntry.resolveSymbol(): KaConstructorSymbol?
 
     /**
+     * Resolves the constructor symbol by the given [KtSuperTypeCallEntry].
+     *
+     * #### Example
+     *
+     * ```kotlin
+     * open class Base(i: Int)
+     *
+     * class Derived : Base(1)
+     * //              ^^^^^^^
+     * ```
+     *
+     * Calling `resolveSymbol()` on the [KtSuperTypeCallEntry] (`Base(1)`) returns the [KaConstructorSymbol] of `Base`'s
+     * constructor if resolution succeeds; otherwise, it returns `null` (e.g., when unresolved or ambiguous).
+     *
+     * This is a specialized counterpart of [KtResolvable.resolveSymbol] focused specifically on supertype constructor calls
+     *
+     * @see tryResolveSymbol
+     * @see KtResolvable.resolveSymbol
+     */
+    @KaExperimentalApi
+    public fun KtSuperTypeCallEntry.resolveSymbol(): KaConstructorSymbol?
+
+    /**
      * Attempts to resolve the call for the given [KtResolvableCall].
      *
      * ### Usage Example:
@@ -147,6 +171,29 @@ public interface KaResolver : KaSessionComponent {
      */
     @KaExperimentalApi
     public fun KtAnnotationEntry.resolveCall(): KaAnnotationCall?
+
+    /**
+     * Resolves the given [KtSuperTypeCallEntry] to a constructor call of the referenced supertype.
+     *
+     * #### Example
+     *
+     * ```kotlin
+     * open class Base(i: Int)
+     *
+     * class Derived : Base(1)
+     * //              ^^^^^^^
+     * ```
+     *
+     * Returns the corresponding [KaFunctionCall] if resolution succeeds;
+     * otherwise, it returns `null` (e.g., when unresolved or ambiguous).
+     *
+     * This is a specialized counterpart of [KtResolvableCall.resolveCall] focused specifically on supertype constructor calls
+     *
+     * @see tryResolveCall
+     * @see KtResolvableCall.resolveCall
+     */
+    @KaExperimentalApi
+    public fun KtSuperTypeCallEntry.resolveCall(): KaFunctionCall<KaConstructorSymbol>?
 
     /**
      * Returns all candidates considered during [overload resolution](https://kotlinlang.org/spec/overload-resolution.html)
@@ -330,6 +377,36 @@ public fun KtAnnotationEntry.resolveSymbol(): KaConstructorSymbol? {
 }
 
 /**
+ * Resolves the constructor symbol by the given [KtSuperTypeCallEntry].
+ *
+ * #### Example
+ *
+ * ```kotlin
+ * open class Base(i: Int)
+ *
+ * class Derived : Base(1)
+ * //              ^^^^^^^
+ * ```
+ *
+ * Calling `resolveSymbol()` on the [KtSuperTypeCallEntry] (`Base(1)`) returns the [KaConstructorSymbol] of `Base`'s
+ * constructor if resolution succeeds; otherwise, it returns `null` (e.g., when unresolved or ambiguous).
+ *
+ * This is a specialized counterpart of [KtResolvable.resolveSymbol] focused specifically on supertype constructor calls
+ *
+ * @see tryResolveSymbol
+ * @see KtResolvable.resolveSymbol
+ */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
+@KaExperimentalApi
+@KaContextParameterApi
+context(s: KaSession)
+public fun KtSuperTypeCallEntry.resolveSymbol(): KaConstructorSymbol? {
+    return with(s) {
+        resolveSymbol()
+    }
+}
+
+/**
  * Attempts to resolve the call for the given [KtResolvableCall].
  *
  * ### Usage Example:
@@ -409,6 +486,36 @@ public fun KtResolvableCall.resolveCall(): KaCall? {
 @KaContextParameterApi
 context(s: KaSession)
 public fun KtAnnotationEntry.resolveCall(): KaAnnotationCall? {
+    return with(s) {
+        resolveCall()
+    }
+}
+
+/**
+ * Resolves the given [KtSuperTypeCallEntry] to a constructor call of the referenced supertype.
+ *
+ * #### Example
+ *
+ * ```kotlin
+ * open class Base(i: Int)
+ *
+ * class Derived : Base(1)
+ * //              ^^^^^^^
+ * ```
+ *
+ * Returns the corresponding [KaFunctionCall] if resolution succeeds;
+ * otherwise, it returns `null` (e.g., when unresolved or ambiguous).
+ *
+ * This is a specialized counterpart of [KtResolvableCall.resolveCall] focused specifically on supertype constructor calls
+ *
+ * @see tryResolveCall
+ * @see KtResolvableCall.resolveCall
+ */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
+@KaExperimentalApi
+@KaContextParameterApi
+context(s: KaSession)
+public fun KtSuperTypeCallEntry.resolveCall(): KaFunctionCall<KaConstructorSymbol>? {
     return with(s) {
         resolveCall()
     }
