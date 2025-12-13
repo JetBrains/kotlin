@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseExplicitRece
 import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseSuccessCallInfo
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.resolution.*
+import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
@@ -55,6 +56,10 @@ abstract class KaBaseResolver<T : KaSession> : KaBaseSessionComponent<T>(), KaRe
         }
     }
 
+    private inline fun <reified R : KaSymbol> KtResolvable.resolveSymbolSafe(): R? = resolveSymbol() as? R
+
+    final override fun KtAnnotationEntry.resolveSymbol(): KaConstructorSymbol? = resolveSymbolSafe()
+
     final override fun KtReference.resolveToSymbol(): KaSymbol? = withPsiValidityAssertion(element) {
         return resolveToSymbols().singleOrNull()
     }
@@ -76,6 +81,10 @@ abstract class KaBaseResolver<T : KaSession> : KaBaseSessionComponent<T>(), KaRe
     }
 
     final override fun KtResolvableCall.resolveCall(): KaCall? = tryResolveCall() as? KaCall
+
+    private inline fun <reified R : KaCall> KtResolvableCall.resolveCallSafe(): R? = resolveCall() as? R
+
+    final override fun KtAnnotationEntry.resolveCall(): KaAnnotationCall? = resolveCallSafe()
 
     final override fun KtElement.resolveToCall(): KaCallInfo? = withPsiValidityAssertion {
         when (val attempt = tryResolveCallImpl()) {

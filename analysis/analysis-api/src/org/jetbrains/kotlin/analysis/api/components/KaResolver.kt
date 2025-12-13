@@ -7,9 +7,11 @@ package org.jetbrains.kotlin.analysis.api.components
 
 import org.jetbrains.kotlin.analysis.api.*
 import org.jetbrains.kotlin.analysis.api.resolution.*
+import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.idea.references.KDocReference
 import org.jetbrains.kotlin.idea.references.KtReference
+import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtExperimentalApi
 import org.jetbrains.kotlin.resolution.KtResolvable
@@ -60,6 +62,29 @@ public interface KaResolver : KaSessionComponent {
     public fun KtResolvable.resolveSymbol(): KaSymbol?
 
     /**
+     * Resolves the constructor symbol of the annotation referenced by the given [KtAnnotationEntry].
+     *
+     * #### Example
+     *
+     * ```kotlin
+     * annotation class Anno(val x: Int)
+     *
+     * @Anno(42)
+     * fun foo() {}
+     * ```
+     *
+     * Calling `resolveSymbol()` on the [KtAnnotationEntry] (`@Anno(42)`) returns the [KaConstructorSymbol] of `Anno`'s
+     * annotation constructor if resolution succeeds; otherwise, it returns `null` (e.g., when unresolved or ambiguous).
+     *
+     * This is a specialized counterpart of [KtResolvable.resolveSymbol] focused specifically on annotation entries
+     *
+     * @see tryResolveSymbol
+     * @see KtResolvable.resolveSymbol
+     */
+    @KaExperimentalApi
+    public fun KtAnnotationEntry.resolveSymbol(): KaConstructorSymbol?
+
+    /**
      * Attempts to resolve the call for the given [KtResolvableCall].
      *
      * ### Usage Example:
@@ -99,6 +124,29 @@ public interface KaResolver : KaSessionComponent {
     @KaExperimentalApi
     @OptIn(KtExperimentalApi::class)
     public fun KtResolvableCall.resolveCall(): KaCall?
+
+    /**
+     * Resolves the given [KtAnnotationEntry] to an annotation constructor call.
+     *
+     * #### Example
+     *
+     * ```kotlin
+     * annotation class Anno(val x: Int)
+     *
+     * @Anno(42)
+     * fun foo() {}
+     * ```
+     *
+     * Returns the corresponding [KaAnnotationCall] if resolution succeeds; otherwise, it returns `null` (e.g., when unresolved or ambiguous).
+     *
+     * This is a specialized counterpart of [KtResolvableCall.resolveCall] focused specifically on annotation entries.
+     * Use [collectCallCandidates] to inspect all candidates considered during overload resolution
+     *
+     * @see tryResolveCall
+     * @see KtResolvableCall.resolveCall
+     */
+    @KaExperimentalApi
+    public fun KtAnnotationEntry.resolveCall(): KaAnnotationCall?
 
     /**
      * Returns all candidates considered during [overload resolution](https://kotlinlang.org/spec/overload-resolution.html)
@@ -252,6 +300,36 @@ public fun KtResolvable.resolveSymbol(): KaSymbol? {
 }
 
 /**
+ * Resolves the constructor symbol of the annotation referenced by the given [KtAnnotationEntry].
+ *
+ * #### Example
+ *
+ * ```kotlin
+ * annotation class Anno(val x: Int)
+ *
+ * @Anno(42)
+ * fun foo() {}
+ * ```
+ *
+ * Calling `resolveSymbol()` on the [KtAnnotationEntry] (`@Anno(42)`) returns the [KaConstructorSymbol] of `Anno`'s
+ * annotation constructor if resolution succeeds; otherwise, it returns `null` (e.g., when unresolved or ambiguous).
+ *
+ * This is a specialized counterpart of [KtResolvable.resolveSymbol] focused specifically on annotation entries
+ *
+ * @see tryResolveSymbol
+ * @see KtResolvable.resolveSymbol
+ */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
+@KaExperimentalApi
+@KaContextParameterApi
+context(s: KaSession)
+public fun KtAnnotationEntry.resolveSymbol(): KaConstructorSymbol? {
+    return with(s) {
+        resolveSymbol()
+    }
+}
+
+/**
  * Attempts to resolve the call for the given [KtResolvableCall].
  *
  * ### Usage Example:
@@ -301,6 +379,36 @@ public fun KtResolvableCall.tryResolveCall(): KaCallResolutionAttempt? {
 @KaContextParameterApi
 context(s: KaSession)
 public fun KtResolvableCall.resolveCall(): KaCall? {
+    return with(s) {
+        resolveCall()
+    }
+}
+
+/**
+ * Resolves the given [KtAnnotationEntry] to an annotation constructor call.
+ *
+ * #### Example
+ *
+ * ```kotlin
+ * annotation class Anno(val x: Int)
+ *
+ * @Anno(42)
+ * fun foo() {}
+ * ```
+ *
+ * Returns the corresponding [KaAnnotationCall] if resolution succeeds; otherwise, it returns `null` (e.g., when unresolved or ambiguous).
+ *
+ * This is a specialized counterpart of [KtResolvableCall.resolveCall] focused specifically on annotation entries.
+ * Use [collectCallCandidates] to inspect all candidates considered during overload resolution
+ *
+ * @see tryResolveCall
+ * @see KtResolvableCall.resolveCall
+ */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
+@KaExperimentalApi
+@KaContextParameterApi
+context(s: KaSession)
+public fun KtAnnotationEntry.resolveCall(): KaAnnotationCall? {
     return with(s) {
         resolveCall()
     }

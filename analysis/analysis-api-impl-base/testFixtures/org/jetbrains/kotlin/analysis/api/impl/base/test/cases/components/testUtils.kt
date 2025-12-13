@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.components.KaResolver
 import org.jetbrains.kotlin.analysis.api.components.containingDeclaration
 import org.jetbrains.kotlin.analysis.api.components.dispatchReceiverType
 import org.jetbrains.kotlin.analysis.api.components.render
@@ -35,11 +36,12 @@ import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
+import kotlin.reflect.KClass
+import kotlin.reflect.KFunction
 import kotlin.reflect.KProperty1
 import kotlin.reflect.KVisibility
-import kotlin.reflect.full.hasAnnotation
-import kotlin.reflect.full.isSuperclassOf
-import kotlin.reflect.full.memberProperties
+import kotlin.reflect.full.*
+import kotlin.reflect.jvm.jvmErasure
 
 @OptIn(KtNonPublicApi::class)
 context(_: KaSession)
@@ -373,6 +375,17 @@ internal fun assertStableResult(
     val symbolsFromCall = sortedSymbols(callResolutionAttempt.calls.map { (it as KaCallableMemberCall<*, *>).symbol })
     assertions.assertEquals(expected = symbolsFromCall, actual = symbols)
 }
+
+/**
+ * The function returns a non-empty list of functions with the specified [functionName] and [receiverClass].
+ */
+internal fun KClass<KaResolver>.findSpecializedResolveFunctions(
+    functionName: String,
+    receiverClass: KClass<*>,
+): List<KFunction<*>> = declaredFunctions.filter {
+    it.name == functionName && it.extensionReceiverParameter?.type?.jvmErasure?.isSuperclassOf(receiverClass) == true
+}.ifEmpty { error("No '$functionName' function found for ${receiverClass.simpleName}") }
+
 
 context(_: KaSession)
 internal fun assertStableResult(testServices: TestServices, firstInfo: KaCallInfo?, secondInfo: KaCallInfo?) {
