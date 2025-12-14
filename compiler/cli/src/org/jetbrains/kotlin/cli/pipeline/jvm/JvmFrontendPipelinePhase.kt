@@ -211,7 +211,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
                     EnvironmentConfigFiles.JVM_CONFIG_FILES,
                     messageCollector
                 )
-                val sources = { collectSources(configuration, environment.project, messageCollector) }
+                val sources = { collectSources(configuration, environment, messageCollector) }
                 EnvironmentAndSources(environment, sources)
             }
             false -> {

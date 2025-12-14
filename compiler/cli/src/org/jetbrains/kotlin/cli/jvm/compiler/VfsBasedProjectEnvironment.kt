@@ -227,7 +227,7 @@ inline fun <reified T : PsiElementFinder> ExtensionPoint<PsiElementFinder>.unreg
     }
 }
 
-private fun List<VirtualFileSystem>.findFileByPath(
+internal fun List<VirtualFileSystem>.findFileByPath(
     path: String,
     protocolFilter: String? = StandardFileSystems.FILE_PROTOCOL
 ): VirtualFile? =

@@ -30,7 +30,7 @@ fun CompilerConfiguration.report(severity: CompilerMessageSeverity, message: Str
     messageCollector.report(severity, message, location)
 }
 
-class SourceFileWithModule<T>(val sourceFile: T, val isCommon: Boolean, val moduleName: String?)
+class SourceFileWithModule<T>(val sourceFiles: Iterable<T>, val isCommon: Boolean, val moduleName: String?)
 
 fun List<KotlinSourceRoot>.forAllFiles(
     configuration: CompilerConfiguration,
@@ -53,32 +53,37 @@ fun List<KotlinSourceRoot>.forAllFiles(
         }
     }
 
-    allFilesSequence(
+    allSourceFilesSequence(
         configuration,
         reportLocation,
         findVirtualFile = { localFileSystem.findFileByPath(it.path) },
-        isKotlinSource = { virtualFile ->
+        accept = { virtualFile, isExplicit ->
             if (virtualFile.extension != KotlinFileType.EXTENSION)
                 ensurePluginsConfigured()
-            virtualFile.extension == KotlinFileType.EXTENSION || virtualFile.fileType == KotlinFileType.INSTANCE
+            val isKotlin = virtualFile.extension == KotlinFileType.EXTENSION || virtualFile.fileType == KotlinFileType.INSTANCE
+            if (isExplicit && !isKotlin)
+                configuration.report(CompilerMessageSeverity.ERROR, "Source entry is not a Kotlin file: ${virtualFile.path}", reportLocation)
+            isKotlin
         },
-        convertToSourceFile = virtualFileCreator::create
-    ).forEach {
-        body(it.sourceFile, it.isCommon, it.moduleName)
+        convertToSourceFiles = { listOf(virtualFileCreator.create(it)) }
+    ).forEach { filesInfo ->
+        filesInfo.sourceFiles.forEach {
+            body(it, filesInfo.isCommon, filesInfo.moduleName)
+        }
     }
 }
 
-fun <VirtualFile, Source> List<KotlinSourceRoot>.allFilesSequence(
+fun <VirtualFile, Source> List<KotlinSourceRoot>.allSourceFilesSequence(
     configuration: CompilerConfiguration,
     reportLocation: CompilerMessageLocation? = null,
     findVirtualFile: (File) -> VirtualFile?,
-    isKotlinSource: (VirtualFile) -> Boolean,
-    convertToSourceFile: (VirtualFile) -> Source,
+    accept: (VirtualFile, /*isExplicit: */Boolean) -> Boolean,
+    convertToSourceFiles: (VirtualFile) -> Iterable<Source>,
 ) : Sequence<SourceFileWithModule<Source>> = sequence {
 
     val processedFiles = hashSetOf<VirtualFile>()
 
-    for ((sourceRootPath, isCommon, hmppModuleName) in this@allFilesSequence) {
+    for ((sourceRootPath, isCommon, hmppModuleName) in this@allSourceFilesSequence) {
         val sourceRoot = File(sourceRootPath)
         val vFile = findVirtualFile(sourceRoot.absoluteFile.normalize())
         if (vFile == null) {
@@ -94,22 +99,19 @@ fun <VirtualFile, Source> List<KotlinSourceRoot>.allFilesSequence(
             continue
         }
 
-        if (!sourceRoot.isDirectory && !isKotlinSource(vFile)) {
-            configuration.report(CompilerMessageSeverity.ERROR, "Source entry is not a Kotlin file: $sourceRootPath", reportLocation)
-            continue
-        }
+        if (!sourceRoot.isDirectory && !accept(vFile, true)) continue
 
         for (file in sourceRoot.walkTopDown()) {
             if (!file.isFile) continue
 
             val virtualFile = if (file == sourceRoot) vFile else findVirtualFile(file.absoluteFile.normalize())
             if (virtualFile != null && processedFiles.add(virtualFile)) {
-                if (isKotlinSource(virtualFile))
-                    yield(SourceFileWithModule(convertToSourceFile(virtualFile), isCommon, hmppModuleName))
-                }
+                if (accept(virtualFile, false))
+                    yield(SourceFileWithModule(convertToSourceFiles(virtualFile), isCommon, hmppModuleName))
             }
         }
     }
+}
 
 fun createSourceFilesFromSourceRoots(
     configuration: CompilerConfiguration,

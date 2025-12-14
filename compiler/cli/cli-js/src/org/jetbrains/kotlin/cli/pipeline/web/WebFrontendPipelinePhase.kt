@@ -67,7 +67,13 @@ object WebFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, W
 
         val kotlinPackageUsageIsFine: Boolean
         val analyzedOutput = if (configuration.useLightTree) {
-            val groupedSources = collectSources(configuration, environmentForJS.project, messageCollector)
+            val groupedSources =
+                collectSources(
+                    configuration,
+                    environmentForJS.project,
+                    listOf(environmentForJS.projectEnvironment.environment.localFileSystem),
+                    messageCollector
+                )
 
             if (
                 groupedSources.isEmpty() &&
