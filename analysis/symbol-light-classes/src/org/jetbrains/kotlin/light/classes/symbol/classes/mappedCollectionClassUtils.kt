@@ -65,7 +65,7 @@ private val ERASED_COLLECTION_METHOD_NAMES: Set<String> = buildSet {
  * @param containingClass The light class being constructed
  * @param callableDeclarations All callable symbols (functions, properties) declared in the class
  * @param allSupertypes All supertypes of the containing class
- * @param result Mutable list where generated bridge methods are added
+ * @param lightMethodConsumer Mutable list where generated bridge methods are added
  * @return Filtered sequence of callable symbols that should be processed normally by the caller.
  *         Functions that were fully replaced by bridge methods are excluded from this sequence.
  *
@@ -75,7 +75,7 @@ internal fun KaSession.processOwnDeclarationsMappedCollectionMethodsAware(
     containingClass: SymbolLightClassForClassOrObject,
     callableDeclarations: Sequence<KaCallableSymbol>,
     allSupertypes: List<KaClassType>,
-    result: MutableList<PsiMethod>,
+    lightMethodConsumer: MutableList<PsiMethod>,
 ): Sequence<KaCallableSymbol> {
     if (!hasCollectionSupertype(allSupertypes)) {
         return callableDeclarations
@@ -95,7 +95,7 @@ internal fun KaSession.processOwnDeclarationsMappedCollectionMethodsAware(
                     ownFunction = callableSymbol,
                     kotlinCollectionFunction = kotlinCollectionFunction,
                     allSupertypes = allSupertypes,
-                    result = result,
+                    lightMethodConsumer = lightMethodConsumer,
                     originKind = JvmDeclarationOriginKind.OTHER
                 )
                 if (shouldCreateRegularDeclaration) {
@@ -143,7 +143,7 @@ internal fun hasCollectionSupertype(allSupertypes: List<KaClassType>): Boolean =
  * @param ownFunction The Kotlin function symbol to process
  * @param kotlinCollectionFunction The overridden symbol from Kotlin collections
  * @param allSupertypes All supertypes of the containing class
- * @param result Mutable list where generated PSI methods are added
+ * @param lightMethodConsumer Mutable list where generated PSI methods are added
  * @param originKind The origin kind of the original Kotlin function symbol
  * @return `true` if the caller should generate the original Kotlin method, `false` if it should be skipped
  *
@@ -154,7 +154,7 @@ internal fun KaSession.processPossiblyMappedCollectionMethod(
     ownFunction: KaNamedFunctionSymbol,
     kotlinCollectionFunction: KaNamedFunctionSymbol,
     allSupertypes: List<KaClassType>,
-    result: MutableList<PsiMethod>,
+    lightMethodConsumer: MutableList<PsiMethod>,
     originKind: JvmDeclarationOriginKind,
 ): Boolean {
     val javaMethod = tryToMapKotlinCollectionMethodToJavaMethod(kotlinCollectionFunction, allSupertypes) ?: return true
@@ -175,7 +175,7 @@ internal fun KaSession.processPossiblyMappedCollectionMethod(
         makeFinal = !isErasedSignature
     )
 
-    result.add(wrappedMethod)
+    lightMethodConsumer.add(wrappedMethod)
     return !isErasedSignature
 }
 
@@ -224,7 +224,7 @@ internal fun KaSession.processPossiblyMappedCollectionMethod(
  * with appropriate type substitution (`Object` → `String`).
  *
  * @param containingClass The containing light class
- * @param result Mutable list where generated stub methods are added
+ * @param lightMethodConsumer Mutable list where generated stub methods are added
  * @param classSymbol The class symbol being processed
  * @param allSupertypes All supertypes of the class, used to find the closest mapped collection type
  *
@@ -235,7 +235,7 @@ internal fun KaSession.generateJavaCollectionMethodStubsIfNeeded(
     containingClass: SymbolLightClassForClassOrObject,
     classSymbol: KaNamedClassSymbol,
     allSupertypes: List<KaClassType>,
-    result: MutableList<PsiMethod>,
+    lightMethodConsumer: MutableList<PsiMethod>,
 ) {
     val closestMappedSupertype = allSupertypes.find { mapKotlinCollectionClassToJava(it.classId) != null } ?: return
     if (!isFirstNonInterfaceSubtypeOfCollection(classSymbol)) return
@@ -246,7 +246,7 @@ internal fun KaSession.generateJavaCollectionMethodStubsIfNeeded(
     val javaCollectionPsiClass = javaCollectionSymbol.psi as? PsiClass ?: return
     val substitutor = createPsiSubstitutor(javaCollectionPsiClass, closestMappedSupertype, containingClass)
 
-    generateJavaCollectionMethodStubs(containingClass, javaCollectionPsiClass, kotlinCollectionSymbol, substitutor, result)
+    generateJavaCollectionMethodStubs(containingClass, javaCollectionPsiClass, kotlinCollectionSymbol, substitutor, lightMethodConsumer)
 }
 
 private fun KaSession.isFirstNonInterfaceSubtypeOfCollection(classSymbol: KaClassSymbol): Boolean {
@@ -287,7 +287,7 @@ private fun KaSession.generateJavaCollectionMethodStubs(
     javaCollectionPsiClass: PsiClass,
     kotlinCollectionSymbol: KaClassSymbol,
     substitutor: PsiSubstitutor,
-    result: MutableList<PsiMethod>,
+    lightMethodConsumer: MutableList<PsiMethod>,
 ) {
     val kotlinNames = kotlinCollectionSymbol.memberScope.callables
         .filter { it is KaNamedFunctionSymbol }
@@ -302,8 +302,8 @@ private fun KaSession.generateJavaCollectionMethodStubs(
     val candidateMethods = javaMethods.flatMap { method ->
         createWrappersForJavaCollectionMethod(containingClass, method, javaCollectionPsiClass, kotlinNames, substitutor)
     }
-    val existingSignatures = result.mapTo(HashSet()) { it.getSignature(substitutor) }
-    result += candidateMethods.filter { candidateMethod ->
+    val existingSignatures = lightMethodConsumer.mapTo(HashSet()) { it.getSignature(substitutor) }
+    lightMethodConsumer += candidateMethods.filter { candidateMethod ->
         candidateMethod.getSignature(substitutor) !in existingSignatures
     }
 }

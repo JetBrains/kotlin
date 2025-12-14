@@ -266,7 +266,7 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
                         ownFunction = callableSymbol,
                         kotlinCollectionFunction = kotlinCollectionFunction,
                         allSupertypes = allSupertypes,
-                        result = result,
+                        lightMethodConsumer = result,
                         originKind = JvmDeclarationOriginKind.DELEGATION
                     )
                     if (shouldCreateRegularDelegate) {
