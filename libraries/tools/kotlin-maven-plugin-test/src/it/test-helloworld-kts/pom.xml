@@ -61,7 +61,6 @@
                         <configuration>
                             <args>
                                 <arg>-Xallow-any-scripts-in-source-roots</arg>
-                                <arg>-Xuse-fir-lt=false</arg>
                             </args>
                         </configuration>
                     </execution>
