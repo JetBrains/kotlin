@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.cli.extensionsStorage
 import org.jetbrains.kotlin.cli.js.platformChecker
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.cli.jvm.compiler.toVfsBasedProjectEnvironment
 import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors
 import org.jetbrains.kotlin.cli.pipeline.ConfigurationPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.PerformanceNotifications
@@ -74,7 +75,12 @@ object WebFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, W
 
         val kotlinPackageUsageIsFine: Boolean
         val analyzedOutput = if (configuration.useLightTree) {
-            val groupedSources = collectSources(configuration, environmentForJS.project, messageCollector)
+            val groupedSources =
+                collectSources(
+                    configuration,
+                    environmentForJS.toVfsBasedProjectEnvironment(),
+                    messageCollector
+                )
 
             if (
                 groupedSources.isEmpty() &&
