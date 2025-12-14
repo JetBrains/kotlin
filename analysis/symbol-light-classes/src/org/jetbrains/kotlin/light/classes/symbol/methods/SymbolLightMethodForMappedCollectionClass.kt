@@ -8,9 +8,10 @@ package org.jetbrains.kotlin.light.classes.symbol.methods
 import com.intellij.navigation.ItemPresentation
 import com.intellij.psi.*
 import com.intellij.psi.impl.light.LightIdentifier
-import com.intellij.psi.impl.light.LightModifierList
 import com.intellij.psi.impl.light.LightParameter
 import com.intellij.psi.impl.light.LightParameterListBuilder
+import com.intellij.psi.impl.light.LightTypeParameterBuilder
+import com.intellij.psi.impl.light.LightTypeParameterListBuilder
 import com.intellij.psi.javadoc.PsiDocComment
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.classes.METHOD_INDEX_BASE
@@ -18,8 +19,11 @@ import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.light.classes.symbol.cachedValue
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForClassOrObject
+import org.jetbrains.kotlin.light.classes.symbol.annotations.ComputeAllAtOnceAnnotationsBox
 import org.jetbrains.kotlin.light.classes.symbol.annotations.SymbolLightSimpleAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.classes.isTypeParameter
+import org.jetbrains.kotlin.light.classes.symbol.modifierLists.GranularModifiersBox
+import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightMemberModifierList
 import org.jetbrains.kotlin.psi.KtDeclaration
 import javax.swing.Icon
 
@@ -61,7 +65,10 @@ internal class SymbolLightMethodForMappedCollectionClass(
     }
 
     override fun getParameterList(): PsiParameterList = cachedValue {
-        LightParameterListBuilder(manager, KotlinLanguage.INSTANCE).apply {
+        object : LightParameterListBuilder(manager, KotlinLanguage.INSTANCE) {
+            override fun getParent(): PsiElement = this@SymbolLightMethodForMappedCollectionClass
+            override fun getElementIcon(flags: Int): Icon? = null
+        }.apply {
             javaMethod.parameterList.parameters.forEachIndexed { index, paramFromJava ->
                 val typeFromJava = paramFromJava.type
                 val providedType = providedSignature?.parameterTypes?.get(index)
@@ -72,13 +79,15 @@ internal class SymbolLightMethodForMappedCollectionClass(
                 val type = if (shouldTryToUnbox) candidateType.unboxedOrSelf() else candidateType
 
                 addParameter(
-                    LightParameter(
+                    object : LightParameter(
                         paramFromJava.name,
                         type,
                         this@SymbolLightMethodForMappedCollectionClass,
                         KotlinLanguage.INSTANCE,
                         paramFromJava.isVarArgs
-                    )
+                    ) {
+                        override fun getParent(): PsiElement = this@apply
+                    }
                 )
             }
         }
@@ -104,9 +113,32 @@ internal class SymbolLightMethodForMappedCollectionClass(
     override fun getReturnType(): PsiType? =
         providedSignature?.returnType ?: javaMethod.returnType?.let { substituteType(it) }
 
-    override fun getTypeParameters(): Array<PsiTypeParameter> = javaMethod.typeParameters
+    private val _typeParameterList: PsiTypeParameterList? by lazyPub {
+        if (javaMethod.typeParameters.isEmpty()) {
+            null
+        } else {
+            object : LightTypeParameterListBuilder(manager, KotlinLanguage.INSTANCE) {
+                override fun getParent(): PsiElement = this@SymbolLightMethodForMappedCollectionClass
+                override fun getElementIcon(flags: Int): Icon? = null
+            }.apply {
+                javaMethod.typeParameters.forEach { typeParam ->
+                    val builder = object : LightTypeParameterBuilder(
+                        typeParam.name ?: "",
+                        this@SymbolLightMethodForMappedCollectionClass,
+                        typeParam.index
+                    ) {
+                        override fun getParent(): PsiElement = this@apply
+                        override fun getElementIcon(flags: Int): Icon? = null
+                    }
+                    addParameter(builder)
+                }
+            }
+        }
+    }
 
-    override fun getTypeParameterList(): PsiTypeParameterList? = javaMethod.typeParameterList
+    override fun getTypeParameters(): Array<PsiTypeParameter> = _typeParameterList?.typeParameters ?: PsiTypeParameter.EMPTY_ARRAY
+
+    override fun getTypeParameterList(): PsiTypeParameterList? = _typeParameterList
 
     override fun getThrowsList(): PsiReferenceList = javaMethod.throwsList
 
@@ -124,32 +156,17 @@ internal class SymbolLightMethodForMappedCollectionClass(
 
     override fun getDocComment(): PsiDocComment? = javaMethod.docComment
 
-    private val _modifierList: PsiModifierList by lazyPub {
-        object : LightModifierList(manager, language) {
-            override fun getParent(): PsiElement = this@SymbolLightMethodForMappedCollectionClass
-
-            private val overrideAnnotation by lazy {
-                SymbolLightSimpleAnnotation(fqName = CommonClassNames.JAVA_LANG_OVERRIDE, parent = this)
-            }
-
-            private val allAnnotations: Array<PsiAnnotation> by lazy { arrayOf(overrideAnnotation) }
-
-            override fun hasModifierProperty(name: String): Boolean =
-                this@SymbolLightMethodForMappedCollectionClass.hasModifierProperty(name)
-
-            override fun hasExplicitModifier(name: String): Boolean = hasModifierProperty(name)
-
-            override fun getAnnotations(): Array<PsiAnnotation> = allAnnotations
-
-            override fun findAnnotation(qualifiedName: String): PsiAnnotation? =
-                if (qualifiedName == CommonClassNames.JAVA_LANG_OVERRIDE) overrideAnnotation else null
-
-            override fun hasAnnotation(qualifiedName: String): Boolean =
-                qualifiedName == CommonClassNames.JAVA_LANG_OVERRIDE
-        }
+    override fun getModifierList(): PsiModifierList = cachedValue {
+        SymbolLightMemberModifierList(
+            containingDeclaration = this,
+            modifiersBox = GranularModifiersBox { modifier ->
+                mapOf(modifier to hasModifierProperty(modifier))
+            },
+            annotationsBox = ComputeAllAtOnceAnnotationsBox { parent ->
+                listOf(SymbolLightSimpleAnnotation(fqName = CommonClassNames.JAVA_LANG_OVERRIDE, parent = parent))
+            },
+        )
     }
-
-    override fun getModifierList(): PsiModifierList = _modifierList
 
     override fun isDeprecated(): Boolean = javaMethod.isDeprecated
 
