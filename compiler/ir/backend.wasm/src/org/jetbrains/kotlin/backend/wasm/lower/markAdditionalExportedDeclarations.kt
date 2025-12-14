@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.backend.wasm.lower
 
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
-import org.jetbrains.kotlin.ir.builders.irCallConstructor
+import org.jetbrains.kotlin.ir.builders.irAnnotation
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
@@ -26,7 +26,7 @@ fun markExportedDeclarations(context: WasmBackendContext, irFile: IrFile, export
         if (declaration is IrFunction && declaration.fqNameWhenAvailable in exportedFqNames) {
             val builder = context.createIrBuilder(irFile.symbol)
             declaration.annotations +=
-                builder.irCallConstructor(exportConstructor, typeArguments = emptyList())
+                builder.irAnnotation(exportConstructor, typeArguments = emptyList())
         }
     }
 }

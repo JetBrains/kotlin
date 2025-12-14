@@ -92,7 +92,7 @@ class JvmCachedDeclarations(
                            filterOutAnnotations(
                                DeprecationResolver.JAVA_DEPRECATED,
                                oldField.annotations
-                           ) + irCall(irSymbols.javaLangDeprecatedConstructorWithDeprecatedFlag)
+                           ) + irAnnotation(irSymbols.javaLangDeprecatedConstructorWithDeprecatedFlag)
                        }
                    } else {
                        oldField.annotations
@@ -233,7 +233,7 @@ class JvmCachedDeclarations(
                     context.createJvmIrBuilder(it.symbol).run {
                         it.annotations = it.annotations
                             .filterNot { it.symbol.owner.constructedClass.hasEqualFqName(DeprecationResolver.JAVA_DEPRECATED) }
-                            .plus(irCall(irSymbols.javaLangDeprecatedConstructorWithDeprecatedFlag))
+                            .plus(irAnnotation(irSymbols.javaLangDeprecatedConstructorWithDeprecatedFlag))
                     }
                 }
 
@@ -353,7 +353,7 @@ class JvmCachedDeclarations(
                             it.isAnnotationWithEqualFqName(JvmAnnotationNames.INHERITED_ANNOTATION)
                 }
                 .map { it.deepCopyWithSymbols(containerClass) } +
-                    context.createJvmIrBuilder(containerClass.symbol).irCall(context.symbols.repeatableContainer.constructors.single())
+                    context.createJvmIrBuilder(containerClass.symbol).irAnnotation(context.symbols.repeatableContainer.constructors.single())
 
             containerClass
         }

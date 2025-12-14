@@ -216,7 +216,7 @@ class JsDefaultArgumentStubGenerator(context: JsIrBackendContext) :
         val builder = context.createIrBuilder(symbol, startOffset, endOffset)
 
         return with(context) {
-            builder.irCall(symbols.jsNameAnnotationSymbol.constructors.single())
+            builder.irAnnotation(symbols.jsNameAnnotationSymbol.constructors.single())
                 .apply {
                     arguments[0] = IrConstImpl.string(UNDEFINED_OFFSET, UNDEFINED_OFFSET, irBuiltIns.stringType, name.identifier)
                 }

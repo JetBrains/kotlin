@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
-import org.jetbrains.kotlin.ir.builders.irCallConstructor
+import org.jetbrains.kotlin.ir.builders.irAnnotation
 import org.jetbrains.kotlin.ir.builders.irString
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
@@ -472,7 +472,7 @@ fun createExternalJsFunction(
         isExternal = true
     }
     val builder = context.createIrBuilder(res.symbol)
-    res.annotations += builder.irCallConstructor(context.wasmSymbols.jsRelatedSymbols.jsFunConstructor, typeArguments = emptyList()).also {
+    res.annotations += builder.irAnnotation(context.wasmSymbols.jsRelatedSymbols.jsFunConstructor, typeArguments = emptyList()).also {
         it.arguments[0] = builder.irString(jsCode)
     }
     return res

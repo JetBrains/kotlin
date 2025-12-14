@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
 import org.jetbrains.kotlin.backend.jvm.ir.replaceThisByStaticReference
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.builders.declarations.addField
-import org.jetbrains.kotlin.ir.builders.irCall
+import org.jetbrains.kotlin.ir.builders.irAnnotation
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -111,7 +111,7 @@ internal class MoveOrCopyCompanionObjectFieldsLowering(val context: JvmBackendCo
             if (oldProperty.parentAsClass.visibility == DescriptorVisibilities.PRIVATE) {
                 context.createJvmIrBuilder(this.symbol).run {
                     annotations = filterOutAnnotations(DeprecationResolver.JAVA_DEPRECATED, annotations) +
-                            irCall(irSymbols.javaLangDeprecatedConstructorWithDeprecatedFlag)
+                            irAnnotation(irSymbols.javaLangDeprecatedConstructorWithDeprecatedFlag)
                 }
             }
         }

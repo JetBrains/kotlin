@@ -230,6 +230,19 @@ fun IrBuilder.irCall(
         }
     }
 
+fun IrBuilder.irAnnotation(callee: IrConstructorSymbol, typeArguments: List<IrType>): IrAnnotation =
+    IrAnnotationImpl.fromSymbolOwner(
+        startOffset,
+        endOffset,
+        callee.owner.returnType,
+        callee,
+        typeArguments.size - callee.owner.typeParameters.size
+    ).apply {
+        typeArguments.forEachIndexed { index, irType ->
+            this.typeArguments[index] = irType
+        }
+    }
+
 fun IrBuilder.irCallConstructor(callee: IrConstructorSymbol, typeArguments: List<IrType>): IrConstructorCall =
     IrConstructorCallImpl.fromSymbolOwner(
         startOffset,
@@ -255,6 +268,20 @@ fun IrBuilder.irCall(
         origin = origin
     )
 
+fun IrBuilder.irAnnotation(
+    callee: IrConstructorSymbol,
+    type: IrType,
+    constructedClass: IrClass = callee.owner.parentAsClass,
+): IrAnnotation =
+    IrAnnotationImpl(
+        startOffset,
+        endOffset,
+        type,
+        callee,
+        typeArgumentsCount = callee.owner.typeParameters.size + constructedClass.typeParameters.size,
+        constructorTypeArgumentsCount = callee.owner.typeParameters.size
+    )
+
 fun IrBuilder.irCall(
     callee: IrConstructorSymbol,
     type: IrType,
@@ -274,6 +301,9 @@ fun IrBuilder.irCall(callee: IrFunctionSymbol, type: IrType): IrFunctionAccessEx
 
 fun IrBuilder.irCall(callee: IrSimpleFunctionSymbol): IrCall =
     irCall(callee, callee.owner.returnType)
+
+fun IrBuilder.irAnnotation(callee: IrConstructorSymbol): IrAnnotation =
+    irAnnotation(callee, callee.owner.returnType)
 
 fun IrBuilder.irCall(callee: IrConstructorSymbol): IrConstructorCall =
     irCall(callee, callee.owner.returnType)
