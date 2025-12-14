@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.cli.jvm.compiler.toVfsBasedProjectEnvironment
 import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
 import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
@@ -116,7 +117,12 @@ fun PhaseContext.firFrontendWithLightTree(input: KotlinCoreEnvironment): FirOutp
     val messageCollector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
     // FIR
 
-    val groupedSources = collectSources(configuration, input.project, messageCollector)
+    val groupedSources =
+        collectSources(
+            configuration,
+            input.toVfsBasedProjectEnvironment(),
+            messageCollector
+        )
 
     val ktSourceFiles = mutableListOf<KtSourceFile>().apply {
         addAll(groupedSources.commonSources)

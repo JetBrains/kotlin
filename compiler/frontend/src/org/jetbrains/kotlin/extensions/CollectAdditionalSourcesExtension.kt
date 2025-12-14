@@ -9,6 +9,7 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.psi.KtFile
 
+// replaced with CollectAdditionalSourceFilesExtension in the new CLI pipeline
 interface CollectAdditionalSourcesExtension {
     companion object : ProjectExtensionDescriptor<CollectAdditionalSourcesExtension>(
         "org.jetbrains.kotlin.collectAdditionalSourcesExtension",

@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.scripting.compiler.plugin.dependencies
 
+import com.intellij.openapi.vfs.originalFile
+import org.jetbrains.kotlin.scripting.resolve.VirtualFileScriptSource
 import org.jetbrains.kotlin.scripting.resolve.resolvedImportScripts
 import org.jetbrains.kotlin.utils.topologicalSort
 import java.io.File
@@ -14,8 +16,8 @@ import kotlin.script.experimental.api.ScriptDiagnostic
 import kotlin.script.experimental.api.SourceCode
 import kotlin.script.experimental.api.asSuccess
 import kotlin.script.experimental.api.dependencies
-import kotlin.script.experimental.api.importScripts
 import kotlin.script.experimental.api.valueOrNull
+import kotlin.script.experimental.host.FileScriptSource
 import kotlin.script.experimental.jvm.util.toClassPathOrEmpty
 
 data class ScriptsCompilationDependencies(
@@ -111,7 +113,6 @@ fun collectScriptsCompilationDependenciesRecursively(
 
                     refinedConfiguration.value.let {
                         it[ScriptCompilationConfiguration.resolvedImportScripts]
-                            ?: it[ScriptCompilationConfiguration.importScripts]
                     }?.takeIf { it.isNotEmpty() }?.let { sourceDependencies ->
                         collectedSourceDependencies.add(
                             ScriptsCompilationDependencies.SourceDependencies(
@@ -120,11 +121,11 @@ fun collectScriptsCompilationDependenciesRecursively(
                             )
                         )
 
-                        val newSources = sourceDependencies.filterNot { knownSourcePaths.contains(it.locationId) }
+                        val newSources = sourceDependencies.filterNot { knownSourcePaths.contains(it.uniqueLocationId()) }
                         for (newSource in newSources) {
                             collectedSources.add(newSource)
                             newRemainingSources.add(newSource)
-                            knownSourcePaths.add(newSource.locationId!!)
+                            knownSourcePaths.add(newSource.uniqueLocationId())
                         }
                     }
                 }
@@ -162,3 +163,12 @@ fun collectScriptsCompilationDependenciesRecursively(
         ).asSuccess(diagnostics)
     }
 }
+
+private fun SourceCode.uniqueLocationId(): String =
+    when (this) {
+        is FileScriptSource -> file.normalize().absolutePath.toSystemIndependentScriptPath()
+        is VirtualFileScriptSource -> (virtualFile.originalFile() ?: virtualFile).path.toSystemIndependentScriptPath()
+        else -> locationId ?: "\$${text.hashCode().toHexString()}"
+    }
+
+private fun String.toSystemIndependentScriptPath(): String = replace('\\', '/')

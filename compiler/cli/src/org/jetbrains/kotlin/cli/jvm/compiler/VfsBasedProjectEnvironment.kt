@@ -250,7 +250,7 @@ inline fun <reified T : PsiElementFinder> ExtensionPoint<PsiElementFinder>.unreg
     }
 }
 
-private fun List<VirtualFileSystem>.findFileByPath(
+internal fun List<VirtualFileSystem>.findFileByPath(
     path: String,
     protocolFilter: String? = StandardFileSystems.FILE_PROTOCOL
 ): VirtualFile? =
@@ -258,3 +258,5 @@ private fun List<VirtualFileSystem>.findFileByPath(
         if (protocolFilter != null && it.protocol != protocolFilter) null
         else it.findFileByPath(path)
     }
+
+fun VfsBasedProjectEnvironment.findFileByPath(path: String): VirtualFile? = knownFileSystems.findFileByPath(path)
