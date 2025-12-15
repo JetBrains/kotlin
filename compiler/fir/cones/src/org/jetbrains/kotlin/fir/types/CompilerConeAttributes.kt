@@ -54,6 +54,9 @@ object CompilerConeAttributes {
         override val key: KClass<out EnhancedNullability> = EnhancedNullability::class
         override val keepInInferredDeclarationType: Boolean get() = true
 
+        override val implementsEquality: Boolean
+            get() = true
+
         override fun toString(): String = "@EnhancedNullability"
     }
 
