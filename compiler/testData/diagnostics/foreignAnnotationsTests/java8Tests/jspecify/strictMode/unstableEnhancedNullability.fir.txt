@@ -1,0 +1,40 @@
+FILE: C.kt
+    public final class C : R|kotlin/Any| {
+        public constructor(): R|C| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun g(): R|kotlin/Unit| {
+            (this@R|/C|.R|/C.r|() as R|kotlin/String|)
+             {
+                lval <iterator>: R|kotlin/collections/Iterator<kotlin/String>| = Q|P|.R|/P.f*s|().R|SubstitutionOverride<kotlin/Array.iterator: R|kotlin/collections/Iterator<kotlin/String>|>|()
+                while(R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/Iterator.hasNext: R|kotlin/Boolean|>|()) {
+                    lval p: R|kotlin/String| = R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/Iterator.next: R|kotlin/String|>|()
+                     {
+                        R|<local>/p|.R|kotlin/String.length|
+                    }
+
+                }
+
+            }
+
+        }
+
+        public final fun r(): R|kotlin/String| {
+            ^r String()
+        }
+
+    }
+FILE: B.kt
+    public final class B : R|kotlin/Any| {
+        public constructor(): R|B| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val c: R|kotlin/Array<kotlin/String>| = R|kotlin/arrayOf|<R|kotlin/String|>(vararg(String()))
+            public get(): R|kotlin/Array<kotlin/String>|
+
+        public final val t: R|kotlin/Int| = this@R|/B|.R|/B.c|.R|SubstitutionOverride<kotlin/Array.size: R|kotlin/Int|>|
+            public get(): R|kotlin/Int|
+
+    }
