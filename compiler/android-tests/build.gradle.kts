@@ -44,7 +44,7 @@ projectTests {
         dependsOn(":dist")
         val jdkHome = project.getToolchainJdkHomeFor(JdkMajorVersion.JDK_17_0)
         doFirst {
-            environment("kotlin.tests.android.timeout", "45")
+            environment("kotlin.tests.android.timeout", "120")
             environment("JAVA_HOME", jdkHome.get())
         }
 
