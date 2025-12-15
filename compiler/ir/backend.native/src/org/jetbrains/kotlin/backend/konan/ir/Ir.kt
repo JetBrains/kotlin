@@ -254,13 +254,55 @@ private fun CompilerConfiguration.getMainCallableId() : CallableId? {
     }
 }
 
+// Symbols needed just for Fir2IR compilation.
+interface BaseKonanSymbols : PreSerializationNativeSymbols {
+    val throwNullPointerException: IrSimpleFunctionSymbol
+    val signedIntegerClasses: Set<IrClassSymbol>
+    val unsignedIntegerClasses: Set<IrClassSymbol>
+    val allIntegerClasses: Set<IrClassSymbol>
+    val nativePointed: IrClassSymbol
+    val initInstance: IrSimpleFunctionSymbol
+    val reinterpret: IrSimpleFunctionSymbol
+    val createEmptyString: IrSimpleFunctionSymbol
+    val interopCValue: IrClassSymbol
+    val interopCPointer: IrClassSymbol
+    val interopCValuesRef: IrClassSymbol
+    val interopCEnumVar: IrClassSymbol
+    val createUninitializedArray: IrSimpleFunctionSymbol
+    val createUninitializedInstance: IrSimpleFunctionSymbol
+    val immutableBlobOf: IrSimpleFunctionSymbol
+    val createCleaner: IrSimpleFunctionSymbol
+
+    open class Impl(irBuiltIns: IrBuiltIns) : PreSerializationNativeSymbols.Impl(irBuiltIns), BaseKonanSymbols {
+        override val throwNullPointerException = CallableIds.throwNullPointerException.functionSymbol()
+        override val nativePointed = ClassIds.nativePointed.classSymbol()
+        override val signedIntegerClasses = setOf(irBuiltIns.byteClass, irBuiltIns.shortClass, irBuiltIns.intClass, irBuiltIns.longClass)
+        override val unsignedIntegerClasses =
+            setOf(irBuiltIns.ubyteClass!!, irBuiltIns.ushortClass!!, irBuiltIns.uintClass!!, irBuiltIns.ulongClass!!)
+
+        override val allIntegerClasses = signedIntegerClasses + unsignedIntegerClasses
+        override val createCleaner = CallableIds.createCleaner.functionSymbol()
+        override val immutableBlobOf = CallableIds.immutableBlobOf.functionSymbol()
+        override val interopCValue = ClassIds.interopCValue.classSymbol()
+        override val interopCValuesRef = ClassIds.interopCValuesRef.classSymbol()
+        override val interopCPointer = ClassIds.interopCPointer.classSymbol()
+        override val interopCEnumVar = ClassIds.interopCEnumVar.classSymbol()
+        override val createUninitializedInstance = CallableIds.createUninitializedInstance.functionSymbol()
+        override val createUninitializedArray = CallableIds.createUninitializedArray.functionSymbol()
+
+        override val createEmptyString = CallableIds.createEmptyString.functionSymbol()
+        override val reinterpret = CallableIds.reinterpret.functionSymbol()
+        override val initInstance = CallableIds.initInstance.functionSymbol()
+    }
+}
+
 // TODO KT-77388 rename to `BackendNativeSymbolsImpl`
 @OptIn(InternalSymbolFinderAPI::class, InternalKotlinNativeApi::class)
 class KonanSymbols(
-        context: ErrorReportingContext,
-        irBuiltIns: IrBuiltIns,
-        config: CompilerConfiguration,
-) : PreSerializationNativeSymbols by PreSerializationNativeSymbols.Impl(irBuiltIns), KlibSymbols(irBuiltIns) {
+    context: ErrorReportingContext,
+    irBuiltIns: IrBuiltIns,
+    config: CompilerConfiguration,
+) : KlibSymbols(irBuiltIns), BaseKonanSymbols by BaseKonanSymbols.Impl(irBuiltIns) {
     val entryPoint by run {
         val mainCallableId = config.getMainCallableId()
         val unfilteredCandidates = mainCallableId?.functionSymbols()
@@ -273,12 +315,14 @@ class KonanSymbols(
                 if (argument !is IrTypeProjection) return false
                 return argument.type.classOrNull == irBuiltIns.stringClass
             }
+
             fun IrSimpleFunction.isArrayStringMain() = hasShape(
                 dispatchReceiver = false,
                 extensionReceiver = false,
                 contextParameters = 0,
                 regularParameters = 1,
             ) && parameters[0].type.isArrayMaybeOutString()
+
             fun IrSimpleFunction.isNoArgsMain() = hasShape(
                 dispatchReceiver = false,
                 extensionReceiver = false,
@@ -299,16 +343,9 @@ class KonanSymbols(
     }
 
     private val nativePtr = ClassIds.nativePtr.classSymbol()
-    val nativePointed = ClassIds.nativePointed.classSymbol()
     val nativePtrType = nativePtr.typeWith(arguments = emptyList())
 
-    val immutableBlobOf = CallableIds.immutableBlobOf.functionSymbol()
     val immutableBlobOfImpl = CallableIds.immutableBlobOfImpl.functionSymbol()
-
-    val signedIntegerClasses = setOf(irBuiltIns.byteClass, irBuiltIns.shortClass, irBuiltIns.intClass, irBuiltIns.longClass)
-    val unsignedIntegerClasses = setOf(irBuiltIns.ubyteClass!!, irBuiltIns.ushortClass!!, irBuiltIns.uintClass!!, irBuiltIns.ulongClass!!)
-
-    val allIntegerClasses = signedIntegerClasses + unsignedIntegerClasses
 
     val unsignedToSignedOfSameBitWidth = unsignedIntegerClasses.associateWith {
         when (it) {
@@ -369,15 +406,12 @@ class KonanSymbols(
         it.extensionReceiverClass == nativePointed
     }
 
-    val interopCPointer = ClassIds.interopCPointer.classSymbol()
     val interopCPointed = ClassIds.interopCPointed.classSymbol()
     val interopCVariable = ClassIds.interopCVariable.classSymbol()
     val interopCstr by CallableIds.cstrProperty.getterSymbol(extensionReceiverClass = irBuiltIns.stringClass)
     val interopWcstr by CallableIds.wcstrProperty.getterSymbol(extensionReceiverClass = irBuiltIns.stringClass)
     val interopMemScope = ClassIds.interopMemScope.classSymbol()
-    val interopCValue = ClassIds.interopCValue.classSymbol()
     val interopCValues = ClassIds.interopCValues.classSymbol()
-    val interopCValuesRef = ClassIds.interopCValuesRef.classSymbol()
     val interopCValueWrite by CallableIds.cValueWrite.functionSymbol {
         it.extensionReceiverClass == interopCValue
     }
@@ -444,8 +478,6 @@ class KonanSymbols(
 
     val createForeignException = CallableIds.createForeignException.functionSymbol()
 
-    val interopCEnumVar = ClassIds.interopCEnumVar.classSymbol()
-
     val nativeMemUtils = ClassIds.nativeMemUtils.classSymbol()
     val nativeHeap = ClassIds.nativeHeap.classSymbol()
 
@@ -474,7 +506,6 @@ class KonanSymbols(
     val immutableBlob = ClassIds.immutableBlob.classSymbol()
 
     val executeImpl = CallableIds.executeImpl.functionSymbol()
-    val createCleaner = CallableIds.createCleaner.functionSymbol()
 
     val areEqualByValueFunctions = CallableIds.areEqualByValue.functionSymbols()
 
@@ -487,8 +518,6 @@ class KonanSymbols(
         }
     }
 
-    val reinterpret = CallableIds.reinterpret.functionSymbol()
-
     val theUnitInstance = CallableIds.theUnitInstance.functionSymbol()
 
     val ieee754Equals = CallableIds.ieee754Equals.functionSymbols()
@@ -498,8 +527,6 @@ class KonanSymbols(
     val throwArithmeticException = CallableIds.throwArithmeticException.functionSymbol()
 
     val throwIndexOutOfBoundsException = CallableIds.throwIndexOutOfBoundsException.functionSymbol()
-
-    override val throwNullPointerException = CallableIds.throwNullPointerException.functionSymbol()
 
     val throwNoWhenBranchMatchedException = CallableIds.throwNoWhenBranchMatchedException.functionSymbol()
     val throwIrLinkageError = CallableIds.throwIrLinkageError.functionSymbol()
@@ -561,14 +588,6 @@ class KonanSymbols(
     }
 
     val enumEntriesInterface = ClassIds.enumEntries.classSymbol()
-
-    val createUninitializedInstance = CallableIds.createUninitializedInstance.functionSymbol()
-
-    val createUninitializedArray = CallableIds.createUninitializedArray.functionSymbol()
-
-    val createEmptyString = CallableIds.createEmptyString.functionSymbol()
-
-    val initInstance = CallableIds.initInstance.functionSymbol()
 
     val isSubtype = CallableIds.isSubtype.functionSymbol()
 
