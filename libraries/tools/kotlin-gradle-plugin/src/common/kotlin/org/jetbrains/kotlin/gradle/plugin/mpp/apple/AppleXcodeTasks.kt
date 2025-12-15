@@ -249,16 +249,12 @@ internal fun Project.registerEmbedAndSignAppleFrameworkTask(framework: Framework
     }
 
     val sandBoxTask = checkSandboxAndWriteProtectionTask(environment, environment.userScriptSandboxingEnabled)
-    val regenerateSyntheticLinkageProject = regenerateLinkageImportProjectTask(swiftPMDependenciesMetadataClasspath())
+    val regenerateSyntheticLinkageProject = regenerateLinkageImportProjectTask()
 
     val xcodeProjectPathForKmpIJPlugin = swiftPMDependenciesExtension().xcodeProjectPathForKmpIJPlugin
-    val envProjectPath = project.providers.environmentVariable("PROJECT_FILE_PATH")
+    val envProjectPath = project.providers.environmentVariable(PROJECT_FILE_PATH_ENV)
 
-    val projectPath = envProjectPath.orElse(
-        xcodeProjectPathForKmpIJPlugin.map {
-            it.asFile.path
-        }
-    )
+    val projectPath = callingProjectPathProvider()
     regenerateSyntheticLinkageProject.configure {
         it.doFirst {
             if (!envProjectPath.isPresent && !xcodeProjectPathForKmpIJPlugin.isPresent) {
@@ -428,11 +424,6 @@ fun checkIfTheLinkageProjectIsConnectedToTheXcodeProject(
     val hasSyntheticImportProjectReference = linkageProducts.isNotEmpty()
     if (!hasSyntheticImportProjectReference) {
         // FIXME: Find a proper way to get to wrapper
-        fun searchForGradlew(path: File): File? {
-            path.listFiles().firstOrNull { it.name == "gradlew" }?.let { return it }
-            return searchForGradlew(path.parentFile)
-        }
-
         val taskCall = if (gradleProjectPath == ":") {
             ":${IntegrateLinkagePackageIntoXcodeProject.TASK_NAME}"
         } else "${gradleProjectPath}:${IntegrateLinkagePackageIntoXcodeProject.TASK_NAME}"
@@ -442,7 +433,7 @@ fun checkIfTheLinkageProjectIsConnectedToTheXcodeProject(
             "You have SwiftPM dependencies with embedAndSign integration.",
             "Please integrate with synthetic import linkage project by",
             "running the following command:",
-            "${IntegrateLinkagePackageIntoXcodeProject.PROJECT_PATH_ENV}='${xcodeProjectThatCalledEmbedAndSign.path}' '${gradlew?.path}' -p '${rootProjectDir}' '${taskCall}' -i"
+            "${PROJECT_PATH_ENV}='${xcodeProjectThatCalledEmbedAndSign.path}' '${gradlew?.path}' -p '${rootProjectDir}' '${taskCall}' -i"
         )
         messageLines.forEach {
             println("error: $it")
@@ -519,16 +510,11 @@ private fun Project.checkSandboxAndWriteProtectionTask(
 private fun Project.checkSyntheticImportProjectIsCorrectlyIntegrated(
     expectLinkagePackageProductInCopyingPhase: Provider<Boolean>,
 ): TaskProvider<*> {
-    val swiftPMDependencies = swiftPMDependenciesMetadataClasspath()
-    val hasDirectlyDeclaredSwiftPMDependencies = provider { swiftPMDependenciesExtension().spmDependencies.isNotEmpty() }
-    val xcodeProjectPathForKmpIJPlugin = swiftPMDependenciesExtension().xcodeProjectPathForKmpIJPlugin
-    val envProjectPath = project.providers.environmentVariable("PROJECT_FILE_PATH")
+    val hasDirectOrTransitiveSwiftPMDependencies = hasDirectOrTransitiveSwiftPMDependencies()
 
-    val projectPath = envProjectPath.orElse(
-        xcodeProjectPathForKmpIJPlugin.map {
-            it.asFile.path
-        }
-    )
+    val xcodeProjectPathForKmpIJPlugin = swiftPMDependenciesExtension().xcodeProjectPathForKmpIJPlugin
+    val envProjectPath = project.providers.environmentVariable(PROJECT_FILE_PATH_ENV)
+    val projectPath = callingProjectPathProvider()
 
     return locateOrRegisterTask<DefaultTask>("checkSyntheticImportProjectIsCorrectlyIntegrated") { task ->
         task.group = BasePlugin.BUILD_GROUP
@@ -536,9 +522,9 @@ private fun Project.checkSyntheticImportProjectIsCorrectlyIntegrated(
         val execOps = project.serviceOf<ExecOperations>()
         val gradleProjectPath = project.path
         val rootProjectDir = rootProject.projectDir
-        task.dependsOn(swiftPMDependencies)
         task.enabled = !kotlinPropertiesProvider.suppressXcodeIntegrationCheck
-        task.onlyIf { swiftPMDependencies.get().any { it.value.dependencies.isNotEmpty() } || hasDirectlyDeclaredSwiftPMDependencies.get() }
+        task.dependsOn(hasDirectOrTransitiveSwiftPMDependencies)
+        task.onlyIf { hasDirectOrTransitiveSwiftPMDependencies.get() }
         task.doFirst {
             if (!envProjectPath.isPresent && !xcodeProjectPathForKmpIJPlugin.isPresent) {
                 error("Please specify Xcode project path in \"swiftPMDependencies { xcodeProjectPathForKmpIJPlugin.set(...) }\"")
