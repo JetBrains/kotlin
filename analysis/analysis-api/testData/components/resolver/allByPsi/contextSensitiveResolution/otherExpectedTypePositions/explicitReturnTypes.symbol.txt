@@ -224,13 +224,15 @@ KtContainerNodeForControlStructureBody(554,568): 'return Option1'
   null
 
 KtReturnExpression(554,568): 'return Option1'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /fun4(b: kotlin.Boolean): MyEnum
 
 KtNameReferenceExpression(561,568): 'Option1'
   null
 
 KtReturnExpression(573,587): 'return Option2'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /fun4(b: kotlin.Boolean): MyEnum
 
 KtNameReferenceExpression(580,587): 'Option2'
   null

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.components
 
+import com.intellij.psi.util.parents
 import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisFacade.AnalysisMode
 import org.jetbrains.kotlin.analysis.api.descriptors.KaFe10Session
@@ -112,11 +113,9 @@ internal class KaFe10Resolver(
             }
         }
 
-        if (psi is KtLabelReferenceExpression) {
-            val labeledDeclaration = bindingContext[BindingContext.LABEL_TARGET, psi] ?: return null
-            val descriptor = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, labeledDeclaration] ?: return null
-            val symbol = descriptor.toKtSymbol(analysisContext) ?: return null
-            return KaBaseSingleSymbolResolutionSuccess(symbol)
+        when (psi) {
+            is KtLabelReferenceExpression -> return psi.toKaSymbolResolutionAttempt(bindingContext)
+            is KtReturnExpression -> return psi.toKaSymbolResolutionAttempt(bindingContext)
         }
 
         val errors = getResolveErrors(bindingContext, psi) ?: return null
@@ -126,6 +125,26 @@ internal class KaFe10Resolver(
             backingDiagnostic = diagnostic,
             backingCandidateSymbols = candidateSymbols,
         )
+    }
+
+    private fun KtReferenceExpression.toKaSymbolResolutionAttempt(bindingContext: BindingContext): KaSymbolResolutionAttempt? {
+        val labeledDeclaration = bindingContext[BindingContext.LABEL_TARGET, this] ?: return null
+        val descriptor = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, labeledDeclaration] ?: return null
+        val symbol = descriptor.toKtSymbol(analysisContext) ?: return null
+        return KaBaseSingleSymbolResolutionSuccess(symbol)
+    }
+
+    private fun KtReturnExpression.toKaSymbolResolutionAttempt(bindingContext: BindingContext): KaSymbolResolutionAttempt? {
+        getTargetLabel()?.let {
+            return it.toKaSymbolResolutionAttempt(bindingContext)
+        }
+
+        val function = parents(withSelf = false).find {
+            it is KtNamedFunction || it is KtSecondaryConstructor || it is KtPropertyAccessor
+        } ?: return null
+
+        val symbol = with(analysisSession) { (function as KtDeclaration).symbol }
+        return KaBaseSingleSymbolResolutionSuccess(symbol)
     }
 
     override fun KtReference.resolveToSymbols(): Collection<KaSymbol> = withPsiValidityAssertion(element) {

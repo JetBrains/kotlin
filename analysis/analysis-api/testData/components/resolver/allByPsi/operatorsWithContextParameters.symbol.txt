@@ -332,7 +332,8 @@ KtBlockExpression(328,343): '{ return this }'
   null
 
 KtReturnExpression(330,341): 'return this'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /inc(<extension receiver>: A): A
 
 KtThisExpression(337,341): 'this'
   null
@@ -605,7 +606,8 @@ KtBlockExpression(744,775): '{ return this@SimpleOperators }'
   null
 
 KtReturnExpression(746,773): 'return this@SimpleOperators'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /SimpleOperators.inc(<dispatch receiver>: SimpleOperators): SimpleOperators
 
 KtThisExpression(753,773): 'this@SimpleOperators'
   null

@@ -262,7 +262,8 @@ KtBlockExpression(369,407): '{'
   null
 
 KtReturnExpression(379,401): 'return instance1.prop1'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /testTypeParams(instance1: SealedGeneric<*>, instance2: SealedGeneric<out kotlin.CharSequence>): kotlin.Int
 
 KtDotQualifiedExpression(386,401): 'instance1.prop1'
   null
@@ -310,7 +311,8 @@ KtBlockExpression(443,481): '{'
   null
 
 KtReturnExpression(453,475): 'return instance1.prop1'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /testTypeParams(instance1: SealedGeneric<*>, instance2: SealedGeneric<out kotlin.CharSequence>): kotlin.Int
 
 KtDotQualifiedExpression(460,475): 'instance1.prop1'
   null
@@ -367,7 +369,8 @@ KtBlockExpression(528,566): '{'
   null
 
 KtReturnExpression(538,560): 'return instance2.prop2'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /testTypeParams(instance1: SealedGeneric<*>, instance2: SealedGeneric<out kotlin.CharSequence>): kotlin.Int
 
 KtDotQualifiedExpression(545,560): 'instance2.prop2'
   null
@@ -427,7 +430,8 @@ KtBlockExpression(616,654): '{'
   null
 
 KtReturnExpression(626,648): 'return instance2.prop2'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /testTypeParams(instance1: SealedGeneric<*>, instance2: SealedGeneric<out kotlin.CharSequence>): kotlin.Int
 
 KtDotQualifiedExpression(633,648): 'instance2.prop2'
   null
@@ -487,7 +491,8 @@ KtBlockExpression(705,743): '{'
   null
 
 KtReturnExpression(715,737): 'return instance2.prop2'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /testTypeParams(instance1: SealedGeneric<*>, instance2: SealedGeneric<out kotlin.CharSequence>): kotlin.Int
 
 KtDotQualifiedExpression(722,737): 'instance2.prop2'
   null
@@ -499,7 +504,8 @@ KtNameReferenceExpression(732,737): 'prop2'
   null
 
 KtReturnExpression(748,756): 'return 0'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /testTypeParams(instance1: SealedGeneric<*>, instance2: SealedGeneric<out kotlin.CharSequence>): kotlin.Int
 
 KtConstantExpression(755,756): '0'
   null

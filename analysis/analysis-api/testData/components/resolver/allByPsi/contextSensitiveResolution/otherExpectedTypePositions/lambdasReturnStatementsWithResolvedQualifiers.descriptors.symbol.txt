@@ -283,7 +283,8 @@ KtContainerNodeForControlStructureBody(391,417): 'return@myRunWithMySealed X'
   null
 
 KtReturnExpression(391,417): 'return@myRunWithMySealed X'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <anonymous function>(): MySealed
 
 KtContainerNode(397,415): '@myRunWithMySealed'
   null
@@ -330,7 +331,8 @@ KtContainerNodeForControlStructureBody(474,504): 'return@myRunWithMySealed id(X)
   null
 
 KtReturnExpression(474,504): 'return@myRunWithMySealed id(X)'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <anonymous function>(): MySealed
 
 KtContainerNode(480,498): '@myRunWithMySealed'
   null
@@ -424,7 +426,8 @@ KtContainerNodeForControlStructureBody(563,577): 'return@myRun X'
   null
 
 KtReturnExpression(563,577): 'return@myRun X'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <anonymous function>(): MySealed
 
 KtContainerNode(569,575): '@myRun'
   null
@@ -484,7 +487,8 @@ KtContainerNodeForControlStructureBody(638,652): 'return@myRun X'
   null
 
 KtReturnExpression(638,652): 'return@myRun X'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <anonymous function>(): MySealed
 
 KtContainerNode(644,650): '@myRun'
   null
@@ -543,7 +547,8 @@ KtContainerNodeForControlStructureBody(729,743): 'return@myRun X'
   null
 
 KtReturnExpression(729,743): 'return@myRun X'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <anonymous function>(): MySealed
 
 KtContainerNode(735,741): '@myRun'
   null
@@ -593,7 +598,8 @@ KtContainerNodeForControlStructureBody(788,802): 'return@myRun X'
   null
 
 KtReturnExpression(788,802): 'return@myRun X'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <anonymous function>(): ERROR_TYPE
 
 KtContainerNode(794,800): '@myRun'
   null
@@ -640,7 +646,8 @@ KtContainerNodeForControlStructureBody(846,869): 'return@myRun MySealed.X'
   null
 
 KtReturnExpression(846,869): 'return@myRun MySealed.X'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <anonymous function>(): MySealed.X
 
 KtContainerNode(852,858): '@myRun'
   null

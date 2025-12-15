@@ -50,7 +50,8 @@ KtBlockExpression(62,104): '{'
   null
 
 KtReturnExpression(72,98): 'return super.equals(other)'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /MyClass.equals(<dispatch receiver>: MyClass, other: kotlin.Any?): kotlin.Boolean
 
 KtDotQualifiedExpression(79,98): 'super.equals(other)'
   null
@@ -148,7 +149,8 @@ KtBlockExpression(200,242): '{'
   null
 
 KtReturnExpression(210,236): 'return super.equals(other)'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /Child.equals(<dispatch receiver>: Child, other: kotlin.Any?): kotlin.Boolean
 
 KtDotQualifiedExpression(217,236): 'super.equals(other)'
   null

@@ -319,7 +319,8 @@ KtConstantExpression(469,470): '0'
   null
 
 KtReturnExpression(476,617): 'return when (s) {'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = foo/test(s: foo.Sealed): kotlin.Int
 
 KtWhenExpression(483,617): 'when (s) {'
   null
@@ -460,7 +461,8 @@ KtConstantExpression(692,693): '0'
   null
 
 KtReturnExpression(699,875): 'return when (s) {'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = foo/testSealed(s: foo.Sealed): kotlin.Int
 
 KtWhenExpression(706,875): 'when (s) {'
   null
@@ -643,7 +645,8 @@ KtBlockExpression(998,1230): '{'
   null
 
 KtReturnExpression(1008,1224): 'return when (s) {'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = foo/Test.test(<dispatch receiver>: foo.Test, s: foo.Sealed): kotlin.Int
 
 KtWhenExpression(1015,1224): 'when (s) {'
   null
@@ -790,7 +793,8 @@ KtBlockExpression(1266,1539): '{'
   null
 
 KtReturnExpression(1276,1533): 'return when (s) {'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = foo/Test.testClass(<dispatch receiver>: foo.Test, s: foo.Sealed): kotlin.Int
 
 KtWhenExpression(1283,1533): 'when (s) {'
   null
@@ -982,7 +986,8 @@ KtBlockExpression(1576,1857): '{'
   null
 
 KtReturnExpression(1586,1851): 'return when (s) {'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = foo/Test.testSealed(<dispatch receiver>: foo.Test, s: foo.Sealed): kotlin.Int
 
 KtWhenExpression(1593,1851): 'when (s) {'
   null

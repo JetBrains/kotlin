@@ -2529,7 +2529,7 @@ public abstract interface class org/jetbrains/kotlin/psi/KtQualifiedExpression :
 public abstract interface class org/jetbrains/kotlin/psi/KtReferenceExpression : org/jetbrains/kotlin/psi/KtExpression {
 }
 
-public class org/jetbrains/kotlin/psi/KtReturnExpression : org/jetbrains/kotlin/psi/KtExpressionWithLabel, org/jetbrains/kotlin/psi/KtStatementExpression {
+public class org/jetbrains/kotlin/psi/KtReturnExpression : org/jetbrains/kotlin/psi/KtExpressionWithLabel, org/jetbrains/kotlin/psi/KtStatementExpression, org/jetbrains/kotlin/resolution/KtResolvable {
 	public fun <init> (Lcom/intellij/lang/ASTNode;)V
 	public fun accept (Lorg/jetbrains/kotlin/psi/KtVisitor;Ljava/lang/Object;)Ljava/lang/Object;
 	public fun getLabeledExpression ()Lcom/intellij/psi/PsiElement;

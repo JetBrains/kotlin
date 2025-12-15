@@ -462,7 +462,8 @@ KtBlockExpression(872,917): '{'
   null
 
 KtReturnExpression(878,915): 'return if (arg) enumProp else Option1'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <anonymous function>(arg: kotlin.Boolean): MyEnum
 
 KtIfExpression(885,915): 'if (arg) enumProp else Option1'
   null

@@ -327,13 +327,15 @@ KtContainerNodeForControlStructureBody(559,567): 'return X'
   null
 
 KtReturnExpression(559,567): 'return X'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /bar(b: kotlin.Boolean): MyClass
 
 KtNameReferenceExpression(566,567): 'X'
   null
 
 KtReturnExpression(572,580): 'return Y'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /bar(b: kotlin.Boolean): MyClass
 
 KtNameReferenceExpression(579,580): 'Y'
   null

@@ -304,7 +304,8 @@ KtBlockExpression(561,598): '{'
   null
 
 KtReturnExpression(571,592): 'return instance.prop1'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /testIsInIf(instance: SealedClass): kotlin.String
 
 KtDotQualifiedExpression(578,592): 'instance.prop1'
   null
@@ -346,7 +347,8 @@ KtBlockExpression(645,682): '{'
   null
 
 KtReturnExpression(655,676): 'return instance.prop1'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /testIsInIf(instance: SealedClass): kotlin.String
 
 KtDotQualifiedExpression(662,676): 'instance.prop1'
   null
@@ -388,7 +390,8 @@ KtBlockExpression(711,752): '{'
   null
 
 KtReturnExpression(721,746): 'return instance.innerProp'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /testIsInIf(instance: SealedClass): kotlin.String
 
 KtDotQualifiedExpression(728,746): 'instance.innerProp'
   null
@@ -484,7 +487,8 @@ KtBlockExpression(876,921): '{'
   null
 
 KtReturnExpression(890,911): 'return instance.prop2'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /testIsInIf(instance: SealedClass): kotlin.String
 
 KtDotQualifiedExpression(897,911): 'instance.prop2'
   null
@@ -526,7 +530,8 @@ KtBlockExpression(973,1010): '{'
   null
 
 KtReturnExpression(983,1004): 'return instance.prop3'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /testIsInIf(instance: SealedClass): kotlin.String
 
 KtDotQualifiedExpression(990,1004): 'instance.prop3'
   null
@@ -568,7 +573,8 @@ KtBlockExpression(1041,1073): '{'
   null
 
 KtReturnExpression(1051,1067): 'return "nested1"'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /testIsInIf(instance: SealedClass): kotlin.String
 
 KtStringTemplateExpression(1058,1067): '"nested1"'
   null
@@ -577,7 +583,8 @@ KtLiteralStringTemplateEntry(1059,1066): 'nested1'
   null
 
 KtReturnExpression(1079,1088): 'return ""'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /testIsInIf(instance: SealedClass): kotlin.String
 
 KtStringTemplateExpression(1086,1088): '""'
   null

@@ -143,7 +143,8 @@ KtBlockExpression(229,264): '{'
   null
 
 KtReturnExpression(239,258): 'return MyDelegate()'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = myPack/ResourceID.provideDelegate(<dispatch receiver>: myPack.ResourceID<T>, thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): kotlin.properties.ReadOnlyProperty<kotlin.Any?, T>
 
 KtCallExpression(246,258): 'MyDelegate()'
   KaSingleSymbolResolutionSuccess:
@@ -267,7 +268,8 @@ KtBlockExpression(386,418): '{'
   null
 
 KtReturnExpression(396,412): 'return null as T'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = myPack/MyDelegate.getValue(<dispatch receiver>: myPack.MyDelegate<T>, thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): T
 
 KtBinaryExpressionWithTypeRHS(403,412): 'null as T'
   null

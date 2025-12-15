@@ -85,7 +85,8 @@ KtBlockExpression(84,96): 'return@label'
   null
 
 KtReturnExpression(84,96): 'return@label'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <anonymous function>(): kotlin.Unit
 
 KtContainerNode(90,96): '@label'
   null

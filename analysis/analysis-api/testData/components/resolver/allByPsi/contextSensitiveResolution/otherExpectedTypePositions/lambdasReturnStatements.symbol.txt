@@ -233,7 +233,8 @@ KtContainerNodeForControlStructureBody(324,348): 'return@myRunWithMyEnum X'
   null
 
 KtReturnExpression(324,348): 'return@myRunWithMyEnum X'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <anonymous function>(): MyEnum
 
 KtContainerNode(330,346): '@myRunWithMyEnum'
   null
@@ -280,7 +281,8 @@ KtContainerNodeForControlStructureBody(403,431): 'return@myRunWithMyEnum id(X)'
   null
 
 KtReturnExpression(403,431): 'return@myRunWithMyEnum id(X)'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <anonymous function>(): MyEnum
 
 KtContainerNode(409,425): '@myRunWithMyEnum'
   null
@@ -368,7 +370,8 @@ KtContainerNodeForControlStructureBody(488,502): 'return@myRun X'
   null
 
 KtReturnExpression(488,502): 'return@myRun X'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <anonymous function>(): MyEnum
 
 KtContainerNode(494,500): '@myRun'
   null
@@ -428,7 +431,8 @@ KtContainerNodeForControlStructureBody(563,577): 'return@myRun X'
   null
 
 KtReturnExpression(563,577): 'return@myRun X'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <anonymous function>(): MyEnum
 
 KtContainerNode(569,575): '@myRun'
   null
@@ -487,7 +491,8 @@ KtContainerNodeForControlStructureBody(652,666): 'return@myRun X'
   null
 
 KtReturnExpression(652,666): 'return@myRun X'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <anonymous function>(): MyEnum
 
 KtContainerNode(658,664): '@myRun'
   null
@@ -537,7 +542,8 @@ KtContainerNodeForControlStructureBody(711,725): 'return@myRun X'
   null
 
 KtReturnExpression(711,725): 'return@myRun X'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <anonymous function>(): ERROR CLASS: CST(ERROR CLASS: Unresolved name: X, ERROR CLASS: Unresolved name: Y
 
 KtContainerNode(717,723): '@myRun'
   null
@@ -584,7 +590,8 @@ KtContainerNodeForControlStructureBody(769,790): 'return@myRun MyEnum.X'
   null
 
 KtReturnExpression(769,790): 'return@myRun MyEnum.X'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <anonymous function>(): MyEnum
 
 KtContainerNode(775,781): '@myRun'
   null

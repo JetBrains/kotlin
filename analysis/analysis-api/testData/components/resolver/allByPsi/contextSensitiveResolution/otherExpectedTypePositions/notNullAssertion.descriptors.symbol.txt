@@ -486,7 +486,8 @@ KtConstantExpression(789,790): '4'
   null
 
 KtReturnExpression(796,819): 'return map[myClassProp]'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /testIndexAccess(): kotlin.Int?
 
 KtArrayAccessExpression(803,819): 'map[myClassProp]'
   KaSingleSymbolResolutionSuccess:
@@ -502,7 +503,8 @@ KtNameReferenceExpression(807,818): 'myClassProp'
   null
 
 KtReturnExpression(824,846): 'return map[stringProp]'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /testIndexAccess(): kotlin.Int?
 
 KtArrayAccessExpression(831,846): 'map[stringProp]'
   KaSingleSymbolResolutionSuccess:
@@ -518,7 +520,8 @@ KtNameReferenceExpression(835,845): 'stringProp'
   null
 
 KtReturnExpression(851,878): 'return map[NestedInheritor]'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /testIndexAccess(): kotlin.Int?
 
 KtArrayAccessExpression(858,878): 'map[NestedInheritor]'
   KaSingleSymbolResolutionSuccess:
@@ -534,7 +537,8 @@ KtNameReferenceExpression(862,877): 'NestedInheritor'
   null
 
 KtReturnExpression(883,915): 'return map[getNestedInheritor()]'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /testIndexAccess(): kotlin.Int?
 
 KtArrayAccessExpression(890,915): 'map[getNestedInheritor()]'
   KaSingleSymbolResolutionSuccess:
@@ -659,7 +663,8 @@ KtBlockExpression(1080,1101): '{'
   null
 
 KtReturnExpression(1086,1099): 'return null!!'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /rangeTo(<extension receiver>: MyClass, that: MyClass): kotlin.ranges.ClosedFloatingPointRange<MyClass>
 
 KtPostfixExpression(1093,1099): 'null!!'
   null
@@ -713,7 +718,8 @@ KtBlockExpression(1156,1175): '{'
   null
 
 KtReturnExpression(1162,1173): 'return true'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /contains(<extension receiver>: MyClass, that: MyClass): kotlin.Boolean
 
 KtConstantExpression(1169,1173): 'true'
   null

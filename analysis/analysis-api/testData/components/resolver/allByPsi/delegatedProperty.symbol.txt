@@ -105,7 +105,8 @@ KtBlockExpression(179,204): '{'
   null
 
 KtReturnExpression(189,198): 'return ""'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = myPack/Delegate.getValue(<dispatch receiver>: myPack.Delegate, thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): kotlin.String
 
 KtStringTemplateExpression(196,198): '""'
   null

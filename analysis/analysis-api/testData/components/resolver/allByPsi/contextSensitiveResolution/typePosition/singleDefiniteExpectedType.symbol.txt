@@ -1138,7 +1138,8 @@ KtBlockExpression(1821,2004): '{'
   null
 
 KtReturnExpression(1831,1998): 'return when(instance) {'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /testFakeIntersection2(instance: kotlin.Any): kotlin.String
 
 KtWhenExpression(1838,1998): 'when(instance) {'
   null
@@ -1204,7 +1205,8 @@ KtLiteralStringTemplateEntry(1984,1987): '100'
   null
 
 KtReturnExpression(2009,2021): 'return "100"'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /testFakeIntersection2(instance: kotlin.Any): kotlin.String
 
 KtStringTemplateExpression(2016,2021): '"100"'
   null
@@ -1297,7 +1299,8 @@ KtBlockExpression(2127,2310): '{'
   null
 
 KtReturnExpression(2137,2304): 'return when(instance) {'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /testIntersection(instance: kotlin.Any): kotlin.String
 
 KtWhenExpression(2144,2304): 'when(instance) {'
   null
@@ -1363,7 +1366,8 @@ KtLiteralStringTemplateEntry(2290,2293): '100'
   null
 
 KtReturnExpression(2315,2327): 'return "100"'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /testIntersection(instance: kotlin.Any): kotlin.String
 
 KtStringTemplateExpression(2322,2327): '"100"'
   null
@@ -1519,7 +1523,8 @@ KtBlockExpression(2572,2710): '{'
   null
 
 KtReturnExpression(2578,2708): 'return when(val i = JClass.staticProp) {'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /testFlexible(): kotlin.Int
 
 KtWhenExpression(2585,2708): 'when(val i = JClass.staticProp) {'
   null

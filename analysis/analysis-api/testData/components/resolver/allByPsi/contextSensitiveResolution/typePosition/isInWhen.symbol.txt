@@ -271,7 +271,8 @@ KtBlockExpression(505,819): '{'
   null
 
 KtReturnExpression(511,817): 'return when {'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /testIsInWhen(instance: SealedClass): kotlin.String
 
 KtWhenExpression(518,817): 'when {'
   null
@@ -475,7 +476,8 @@ KtBlockExpression(880,1160): '{'
   null
 
 KtReturnExpression(886,1158): 'return when (instance) {'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /testIsInWhenWithSubject(instance: SealedClass): kotlin.String
 
 KtWhenExpression(893,1158): 'when (instance) {'
   null
@@ -637,7 +639,8 @@ KtBlockExpression(1215,1623): '{'
   null
 
 KtReturnExpression(1221,1621): 'return when (instance) {'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /testIsInWhenGuard(instance: SealedClass): kotlin.String
 
 KtWhenExpression(1228,1621): 'when (instance) {'
   null

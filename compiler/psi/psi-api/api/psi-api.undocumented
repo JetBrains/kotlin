@@ -1116,7 +1116,6 @@ org.jetbrains.kotlin.psi.KtQualifiedExpression.operationTokenNode
 org.jetbrains.kotlin.psi.KtQualifiedExpression.receiverExpression
 org.jetbrains.kotlin.psi.KtQualifiedExpression.selectorExpression
 org.jetbrains.kotlin.psi.KtReferenceExpression
-org.jetbrains.kotlin.psi.KtReturnExpression
 org.jetbrains.kotlin.psi.KtReturnExpression:constructor(ASTNode)
 org.jetbrains.kotlin.psi.KtReturnExpression:getLabeledExpression()
 org.jetbrains.kotlin.psi.KtReturnExpression:getReturnKeyword()

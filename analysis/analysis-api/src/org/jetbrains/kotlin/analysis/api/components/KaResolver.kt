@@ -328,6 +328,37 @@ public interface KaResolver : KaSessionComponent {
     public fun KtLabelReferenceExpression.resolveSymbol(): KaDeclarationSymbol?
 
     /**
+     * Resolves the function symbol targeted by the given [KtReturnExpression].
+     *
+     * #### Example
+     *
+     * ```kotlin
+     * fun foo() {
+     *     return
+     * //  ^^^^^^ resolves to `foo`
+     * }
+     *
+     * fun main() {
+     *     listOf(1).forEach label@{
+     *         if (it == 0) return@label
+     * //                   ^^^^^^^^^^^^ resolves to the anonymous function of this lambda
+     *     }
+     * }
+     * ```
+     *
+     * Calling `resolveSymbol()` on a [KtReturnExpression] (`return` or `return@label`) returns the [KaFunctionSymbol] of the enclosing function
+     * (for unlabeled returns) or of the labeled target (for `return@label`) if resolution succeeds; otherwise, it returns
+     * `null` (e.g., when unresolved or ambiguous).
+     *
+     * This is a specialized counterpart of [KtResolvable.resolveSymbol] focused specifically on return expressions
+     *
+     * @see tryResolveSymbol
+     * @see KtResolvable.resolveSymbol
+     */
+    @KaExperimentalApi
+    public fun KtReturnExpression.resolveSymbol(): KaFunctionSymbol?
+
+    /**
      * Attempts to resolve the call for the given [KtResolvableCall].
      *
      * ### Usage Example:
@@ -1090,6 +1121,44 @@ public fun KtEnumEntrySuperclassReferenceExpression.resolveSymbol(): KaConstruct
 @KaContextParameterApi
 context(s: KaSession)
 public fun KtLabelReferenceExpression.resolveSymbol(): KaDeclarationSymbol? {
+    return with(s) {
+        resolveSymbol()
+    }
+}
+
+/**
+ * Resolves the function symbol targeted by the given [KtReturnExpression].
+ *
+ * #### Example
+ *
+ * ```kotlin
+ * fun foo() {
+ *     return
+ * //  ^^^^^^ resolves to `foo`
+ * }
+ *
+ * fun main() {
+ *     listOf(1).forEach label@{
+ *         if (it == 0) return@label
+ * //                   ^^^^^^^^^^^^ resolves to the anonymous function of this lambda
+ *     }
+ * }
+ * ```
+ *
+ * Calling `resolveSymbol()` on a [KtReturnExpression] (`return` or `return@label`) returns the [KaFunctionSymbol] of the enclosing function
+ * (for unlabeled returns) or of the labeled target (for `return@label`) if resolution succeeds; otherwise, it returns
+ * `null` (e.g., when unresolved or ambiguous).
+ *
+ * This is a specialized counterpart of [KtResolvable.resolveSymbol] focused specifically on return expressions
+ *
+ * @see tryResolveSymbol
+ * @see KtResolvable.resolveSymbol
+ */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
+@KaExperimentalApi
+@KaContextParameterApi
+context(s: KaSession)
+public fun KtReturnExpression.resolveSymbol(): KaFunctionSymbol? {
     return with(s) {
         resolveSymbol()
     }

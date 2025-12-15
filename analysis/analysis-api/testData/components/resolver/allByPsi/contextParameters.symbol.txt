@@ -44,7 +44,8 @@ KtBlockExpression(41,65): '{'
   null
 
 KtReturnExpression(51,59): 'return a'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /A.foo(<dispatch receiver>: A, a: kotlin.String): kotlin.String
 
 KtNameReferenceExpression(58,59): 'a'
   null
@@ -182,7 +183,8 @@ KtValueArgumentList(251,253): '()'
   null
 
 KtReturnExpression(266,282): 'return a.foo("")'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <getter>(): kotlin.String
 
 KtDotQualifiedExpression(273,282): 'a.foo("")'
   null

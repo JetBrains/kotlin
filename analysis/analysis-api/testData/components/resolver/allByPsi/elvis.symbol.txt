@@ -50,7 +50,8 @@ KtBlockExpression(62,113): '{'
   null
 
 KtReturnExpression(72,107): 'return other?.equals(this) ?: false'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /MyClass.equals(<dispatch receiver>: MyClass, other: kotlin.Any?): kotlin.Boolean
 
 KtBinaryExpression(79,107): 'other?.equals(this) ?: false'
   null
