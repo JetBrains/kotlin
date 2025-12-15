@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.util.get
 import org.jetbrains.kotlin.test.Directives
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
+import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.directives.model.StringDirective
 import org.jetbrains.kotlin.test.directives.model.ValueDirective
@@ -102,6 +103,8 @@ private fun Settings.isIgnoredWithIGNORE_BACKEND(listValues: (ValueDirective<Tar
     return false
 }
 
+internal fun Settings.isSelectedWithTARGET_BACKEND(registeredDirectives: RegisteredDirectives): Boolean =
+    registeredDirectives[ConfigurationDirectives.TARGET_BACKEND].let { it.isEmpty() || it.containsNativeOrAny }
 
 // Evaluation of conjunction of boolean expressions like `property1=value1 && property2=value2`.
 // Any null element makes whole result as `true`.
