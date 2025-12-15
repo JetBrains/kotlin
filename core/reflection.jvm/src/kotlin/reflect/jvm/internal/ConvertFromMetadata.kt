@@ -190,7 +190,14 @@ private fun KmClassifier.toClassifier(
     is KmClassifier.TypeAlias ->
         KTypeAliasImpl(name.toClassId().asSingleFqName())
     is KmClassifier.TypeParameter ->
-        typeParameterTable[id] ?: throw KotlinReflectionInternalError("Type parameter not found: $id")
+        typeParameterTable[id] ?: run {
+            // Do not throw exception here until KT-47030 is supported.
+            ErrorTypeParameter(id)
+        }
+}
+
+private class ErrorTypeParameter(private val id: Int) : KClassifier {
+    override fun toString(): String = "[Error type parameter $id]"
 }
 
 private fun KmTypeProjection.toKTypeProjection(
