@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.components
 
 import org.jetbrains.kotlin.analysis.api.*
 import org.jetbrains.kotlin.analysis.api.resolution.*
+import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.idea.references.KDocReference
@@ -135,6 +136,31 @@ public interface KaResolver : KaSessionComponent {
     public fun KtConstructorDelegationCall.resolveSymbol(): KaConstructorSymbol?
 
     /**
+     * Resolves the callable symbol targeted by the given [KtCallElement].
+     *
+     * #### Example
+     *
+     * ```kotlin
+     * fun foo(x: Int) {}
+     *
+     * fun test() {
+     *     foo(42)
+     * //  ^^^^^^^
+     * }
+     * ```
+     *
+     * Calling `resolveSymbol()` on the [KtCallElement] (`foo(42)`) returns the [KaCallableSymbol] of `foo`
+     * if resolution succeeds; otherwise, it returns `null` (e.g., when unresolved or ambiguous).
+     *
+     * This is a specialized counterpart of [KtResolvable.resolveSymbol] focused specifically on call elements
+     *
+     * @see tryResolveSymbol
+     * @see KtResolvable.resolveSymbol
+     */
+    @KaExperimentalApi
+    public fun KtCallElement.resolveSymbol(): KaCallableSymbol?
+
+    /**
      * Attempts to resolve the call for the given [KtResolvableCall].
      *
      * ### Usage Example:
@@ -248,6 +274,31 @@ public interface KaResolver : KaSessionComponent {
      */
     @KaExperimentalApi
     public fun KtConstructorDelegationCall.resolveCall(): KaDelegatedConstructorCall?
+
+    /**
+     * Resolves the given [KtCallElement] to a callable member call.
+     *
+     * #### Example
+     *
+     * ```kotlin
+     * fun foo(x: Int) {}
+     *
+     * fun test() {
+     *     foo(42)
+     * //  ^^^^^^^
+     * }
+     * ```
+     *
+     * Returns the corresponding [KaCallableMemberCall] if resolution succeeds;
+     * otherwise, it returns `null` (e.g., when unresolved or ambiguous).
+     *
+     * This is a specialized counterpart of [KtResolvableCall.resolveCall] focused specifically on call elements
+     *
+     * @see tryResolveCall
+     * @see KtResolvableCall.resolveCall
+     */
+    @KaExperimentalApi
+    public fun KtCallElement.resolveCall(): KaCallableMemberCall<*, *>?
 
     /**
      * Returns all candidates considered during [overload resolution](https://kotlinlang.org/spec/overload-resolution.html)
@@ -497,6 +548,38 @@ public fun KtConstructorDelegationCall.resolveSymbol(): KaConstructorSymbol? {
 }
 
 /**
+ * Resolves the callable symbol targeted by the given [KtCallElement].
+ *
+ * #### Example
+ *
+ * ```kotlin
+ * fun foo(x: Int) {}
+ *
+ * fun test() {
+ *     foo(42)
+ * //  ^^^^^^^
+ * }
+ * ```
+ *
+ * Calling `resolveSymbol()` on the [KtCallElement] (`foo(42)`) returns the [KaCallableSymbol] of `foo`
+ * if resolution succeeds; otherwise, it returns `null` (e.g., when unresolved or ambiguous).
+ *
+ * This is a specialized counterpart of [KtResolvable.resolveSymbol] focused specifically on call elements
+ *
+ * @see tryResolveSymbol
+ * @see KtResolvable.resolveSymbol
+ */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
+@KaExperimentalApi
+@KaContextParameterApi
+context(s: KaSession)
+public fun KtCallElement.resolveSymbol(): KaCallableSymbol? {
+    return with(s) {
+        resolveSymbol()
+    }
+}
+
+/**
  * Attempts to resolve the call for the given [KtResolvableCall].
  *
  * ### Usage Example:
@@ -641,6 +724,38 @@ public fun KtSuperTypeCallEntry.resolveCall(): KaFunctionCall<KaConstructorSymbo
 @KaContextParameterApi
 context(s: KaSession)
 public fun KtConstructorDelegationCall.resolveCall(): KaDelegatedConstructorCall? {
+    return with(s) {
+        resolveCall()
+    }
+}
+
+/**
+ * Resolves the given [KtCallElement] to a callable member call.
+ *
+ * #### Example
+ *
+ * ```kotlin
+ * fun foo(x: Int) {}
+ *
+ * fun test() {
+ *     foo(42)
+ * //  ^^^^^^^
+ * }
+ * ```
+ *
+ * Returns the corresponding [KaCallableMemberCall] if resolution succeeds;
+ * otherwise, it returns `null` (e.g., when unresolved or ambiguous).
+ *
+ * This is a specialized counterpart of [KtResolvableCall.resolveCall] focused specifically on call elements
+ *
+ * @see tryResolveCall
+ * @see KtResolvableCall.resolveCall
+ */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
+@KaExperimentalApi
+@KaContextParameterApi
+context(s: KaSession)
+public fun KtCallElement.resolveCall(): KaCallableMemberCall<*, *>? {
     return with(s) {
         resolveCall()
     }
