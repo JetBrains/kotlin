@@ -98,6 +98,8 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
 
         perfManager?.notifyPhaseFinished(PhaseType.Initialization)
 
+        if (messageCollector.hasErrors()) return null
+
         if (
             allSources.isEmpty() &&
             !configuration.allowNoSourceFiles &&
