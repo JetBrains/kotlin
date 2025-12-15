@@ -88,7 +88,7 @@ object MetadataKlibFileWriterPhase : PipelinePhase<MetadataInMemorySerialization
         val destDir = input.configuration.metadataDestinationDirectory!!
         buildKotlinMetadataLibrary(input.configuration, input.metadata, destDir)
 
-        File(destDir.absolutePath).loadSizeInfo()?.flatten()?.let { stats ->
+        loadSizeInfo(File(destDir.absolutePath))?.flatten()?.let { stats ->
             input.configuration.perfManager?.registerKlibElementStats(stats)
         }
 

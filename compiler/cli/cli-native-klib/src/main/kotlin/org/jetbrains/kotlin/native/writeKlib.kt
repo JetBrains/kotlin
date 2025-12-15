@@ -79,7 +79,7 @@ fun PhaseContext.writeKlib(input: KlibWriterInput, klibOutputFileName: String, s
         manifestProperties = manifestProperties,
     )
 
-    File(klibOutputFileName).loadSizeInfo()?.flatten()?.let { stats ->
+    loadSizeInfo(File(klibOutputFileName))?.flatten()?.let { stats ->
         performanceManager?.registerKlibElementStats(stats)
     }
 }

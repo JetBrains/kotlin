@@ -57,7 +57,7 @@ object WebKlibSerializationPipelinePhase : PipelinePhase<JsFir2IrPipelineArtifac
             performanceManager = moduleStructure.compilerConfiguration.perfManager,
         )
 
-        File(outputKlibPath).loadSizeInfo()?.flatten()?.let { stats ->
+        loadSizeInfo(File(outputKlibPath))?.flatten()?.let { stats ->
             configuration.perfManager?.registerKlibElementStats(stats)
         }
 
