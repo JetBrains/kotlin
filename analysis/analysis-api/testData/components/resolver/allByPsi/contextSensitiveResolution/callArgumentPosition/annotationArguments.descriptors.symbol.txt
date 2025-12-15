@@ -182,7 +182,11 @@ KtValueArgument(263,270): '*[X, Y]'
   null
 
 KtCollectionLiteralExpression(264,270): '[X, Y]'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      kotlin/arrayOf(vararg elements: T): kotlin.Array<T>
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with arrayOf>
 
 KtNameReferenceExpression(265,266): 'X'
   null
@@ -264,7 +268,11 @@ KtValueArgument(346,349): '[X]'
   null
 
 KtCollectionLiteralExpression(346,349): '[X]'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      kotlin/arrayOf(vararg elements: T): kotlin.Array<T>
+    ]
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with arrayOf>
 
 KtNameReferenceExpression(347,348): 'X'
   null

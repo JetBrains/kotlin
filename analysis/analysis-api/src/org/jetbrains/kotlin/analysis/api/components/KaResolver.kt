@@ -224,6 +224,31 @@ public interface KaResolver : KaSessionComponent {
     public fun KtArrayAccessExpression.resolveSymbol(): KaNamedFunctionSymbol?
 
     /**
+     * Resolves the function symbol targeted by the given [KtCollectionLiteralExpression].
+     *
+     * #### Example
+     *
+     * ```kotlin
+     * annotation class Anno(val arr: IntArray)
+     *
+     * @Anno([1, 2, 3])
+     * //    ^^^^^^^^^ resolves to the `intArrayOf` function
+     * fun use() {}
+     * ```
+     *
+     * Calling `resolveSymbol()` on a [KtCollectionLiteralExpression] (`[1, 2, 3]`) returns the [KaNamedFunctionSymbol]
+     * of the corresponding array factory (e.g., `arrayOf`, `intArrayOf`) if resolution succeeds; otherwise, it returns `null`
+     * (e.g., when unresolved or ambiguous).
+     *
+     * This is a specialized counterpart of [KtResolvable.resolveSymbol] focused specifically on collection literal expressions
+     *
+     * @see tryResolveSymbol
+     * @see KtResolvable.resolveSymbol
+     */
+    @KaExperimentalApi
+    public fun KtCollectionLiteralExpression.resolveSymbol(): KaNamedFunctionSymbol?
+
+    /**
      * Attempts to resolve the call for the given [KtResolvableCall].
      *
      * ### Usage Example:
@@ -424,6 +449,31 @@ public interface KaResolver : KaSessionComponent {
      */
     @KaExperimentalApi
     public fun KtArrayAccessExpression.resolveCall(): KaSimpleFunctionCall?
+
+    /**
+     * Resolves the given [KtCollectionLiteralExpression] to a simple function call representing the corresponding
+     * array factory invocation.
+     *
+     * #### Example
+     *
+     * ```kotlin
+     * annotation class Anno(val arr: IntArray)
+     *
+     * @Anno([1, 2, 3])
+     * //    ^^^^^^^^^ resolves to a call of `intArrayOf`
+     * fun use() {}
+     * ```
+     *
+     * Returns the corresponding [KaSimpleFunctionCall] if resolution succeeds; otherwise, it returns `null`
+     * (e.g., when unresolved or ambiguous).
+     *
+     * This is a specialized counterpart of [KtResolvableCall.resolveCall] focused specifically on collection literal expressions
+     *
+     * @see tryResolveCall
+     * @see KtResolvableCall.resolveCall
+     */
+    @KaExperimentalApi
+    public fun KtCollectionLiteralExpression.resolveCall(): KaSimpleFunctionCall?
 
     /**
      * Returns all candidates considered during [overload resolution](https://kotlinlang.org/spec/overload-resolution.html)
@@ -781,6 +831,38 @@ public fun KtArrayAccessExpression.resolveSymbol(): KaNamedFunctionSymbol? {
 }
 
 /**
+ * Resolves the function symbol targeted by the given [KtCollectionLiteralExpression].
+ *
+ * #### Example
+ *
+ * ```kotlin
+ * annotation class Anno(val arr: IntArray)
+ *
+ * @Anno([1, 2, 3])
+ * //    ^^^^^^^^^ resolves to the `intArrayOf` function
+ * fun use() {}
+ * ```
+ *
+ * Calling `resolveSymbol()` on a [KtCollectionLiteralExpression] (`[1, 2, 3]`) returns the [KaNamedFunctionSymbol]
+ * of the corresponding array factory (e.g., `arrayOf`, `intArrayOf`) if resolution succeeds; otherwise, it returns `null`
+ * (e.g., when unresolved or ambiguous).
+ *
+ * This is a specialized counterpart of [KtResolvable.resolveSymbol] focused specifically on collection literal expressions
+ *
+ * @see tryResolveSymbol
+ * @see KtResolvable.resolveSymbol
+ */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
+@KaExperimentalApi
+@KaContextParameterApi
+context(s: KaSession)
+public fun KtCollectionLiteralExpression.resolveSymbol(): KaNamedFunctionSymbol? {
+    return with(s) {
+        resolveSymbol()
+    }
+}
+
+/**
  * Attempts to resolve the call for the given [KtResolvableCall].
  *
  * ### Usage Example:
@@ -1033,6 +1115,38 @@ public fun KtCallableReferenceExpression.resolveCall(): KaCallableMemberCall<*, 
 @KaContextParameterApi
 context(s: KaSession)
 public fun KtArrayAccessExpression.resolveCall(): KaSimpleFunctionCall? {
+    return with(s) {
+        resolveCall()
+    }
+}
+
+/**
+ * Resolves the given [KtCollectionLiteralExpression] to a simple function call representing the corresponding
+ * array factory invocation.
+ *
+ * #### Example
+ *
+ * ```kotlin
+ * annotation class Anno(val arr: IntArray)
+ *
+ * @Anno([1, 2, 3])
+ * //    ^^^^^^^^^ resolves to a call of `intArrayOf`
+ * fun use() {}
+ * ```
+ *
+ * Returns the corresponding [KaSimpleFunctionCall] if resolution succeeds; otherwise, it returns `null`
+ * (e.g., when unresolved or ambiguous).
+ *
+ * This is a specialized counterpart of [KtResolvableCall.resolveCall] focused specifically on collection literal expressions
+ *
+ * @see tryResolveCall
+ * @see KtResolvableCall.resolveCall
+ */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
+@KaExperimentalApi
+@KaContextParameterApi
+context(s: KaSession)
+public fun KtCollectionLiteralExpression.resolveCall(): KaSimpleFunctionCall? {
     return with(s) {
         resolveCall()
     }

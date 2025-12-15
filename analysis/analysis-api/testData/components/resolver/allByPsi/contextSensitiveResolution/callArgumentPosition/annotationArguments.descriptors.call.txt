@@ -473,7 +473,7 @@ KtValueArgument(263,270): '*[X, Y]'
   null
 
 KtCollectionLiteralExpression(264,270): '[X, Y]'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         argumentMapping = {
@@ -690,7 +690,7 @@ KtValueArgument(346,349): '[X]'
   null
 
 KtCollectionLiteralExpression(346,349): '[X]'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         argumentMapping = {

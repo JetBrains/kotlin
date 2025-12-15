@@ -182,7 +182,8 @@ KtValueArgument(263,270): '*[X, Y]'
   null
 
 KtCollectionLiteralExpression(264,270): '[X, Y]'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = kotlin/arrayOf(vararg elements: T): kotlin.Array<T>
 
 KtNameReferenceExpression(265,266): 'X'
   null
@@ -264,7 +265,8 @@ KtValueArgument(346,349): '[X]'
   null
 
 KtCollectionLiteralExpression(346,349): '[X]'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = kotlin/arrayOf(vararg elements: T): kotlin.Array<T>
 
 KtNameReferenceExpression(347,348): 'X'
   null

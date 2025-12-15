@@ -424,47 +424,46 @@ KtValueArgument(263,270): '*[X, Y]'
   null
 
 KtCollectionLiteralExpression(264,270): '[X, Y]'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {
-        X -> (KaVariableSignature:
-          name = elements
-          receiverType = null
-          returnType = MyEnum
-          symbol = vararg elements: T
-          contextParameters = []
-          callableId = null),
-        Y -> (KaVariableSignature:
-          name = elements
-          receiverType = null
-          returnType = MyEnum
-          symbol = vararg elements: T
-          contextParameters = []
-          callableId = null)
-      }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Array<MyEnum>
-          symbol = kotlin/arrayOf(vararg elements: T): kotlin.Array<T>
-          valueParameters = [
-            KaVariableSignature:
-              name = elements
-              receiverType = null
-              returnType = MyEnum
-              symbol = vararg elements: T
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/arrayOf
-      typeArgumentsMapping = {
-        T -> (MyEnum)
-      }
+  KaSimpleFunctionCall:
+    argumentMapping = {
+      X -> (KaVariableSignature:
+        name = elements
+        receiverType = null
+        returnType = MyEnum
+        symbol = vararg elements: T
+        contextParameters = []
+        callableId = null),
+      Y -> (KaVariableSignature:
+        name = elements
+        receiverType = null
+        returnType = MyEnum
+        symbol = vararg elements: T
+        contextParameters = []
+        callableId = null)
+    }
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Array<MyEnum>
+        symbol = kotlin/arrayOf(vararg elements: T): kotlin.Array<T>
+        valueParameters = [
+          KaVariableSignature:
+            name = elements
+            receiverType = null
+            returnType = MyEnum
+            symbol = vararg elements: T
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/arrayOf
+    typeArgumentsMapping = {
+      T -> (MyEnum)
+    }
 
 KtNameReferenceExpression(265,266): 'X'
   KaSuccessCallInfo:
@@ -640,40 +639,39 @@ KtValueArgument(346,349): '[X]'
   null
 
 KtCollectionLiteralExpression(346,349): '[X]'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {
-        X -> (KaVariableSignature:
-          name = elements
-          receiverType = null
-          returnType = MyEnum
-          symbol = vararg elements: T
-          contextParameters = []
-          callableId = null)
-      }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Array<MyEnum>
-          symbol = kotlin/arrayOf(vararg elements: T): kotlin.Array<T>
-          valueParameters = [
-            KaVariableSignature:
-              name = elements
-              receiverType = null
-              returnType = MyEnum
-              symbol = vararg elements: T
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/arrayOf
-      typeArgumentsMapping = {
-        T -> (MyEnum)
-      }
+  KaSimpleFunctionCall:
+    argumentMapping = {
+      X -> (KaVariableSignature:
+        name = elements
+        receiverType = null
+        returnType = MyEnum
+        symbol = vararg elements: T
+        contextParameters = []
+        callableId = null)
+    }
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Array<MyEnum>
+        symbol = kotlin/arrayOf(vararg elements: T): kotlin.Array<T>
+        valueParameters = [
+          KaVariableSignature:
+            name = elements
+            receiverType = null
+            returnType = MyEnum
+            symbol = vararg elements: T
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/arrayOf
+    typeArgumentsMapping = {
+      T -> (MyEnum)
+    }
 
 KtNameReferenceExpression(347,348): 'X'
   KaSuccessCallInfo:

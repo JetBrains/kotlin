@@ -1,49 +1,48 @@
 KtCollectionLiteralExpression(10,19): '[1, 2, 3]'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {
-        1 -> (KaVariableSignature:
-          name = elements
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = vararg elements: T
-          contextParameters = []
-          callableId = null),
-        2 -> (KaVariableSignature:
-          name = elements
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = vararg elements: T
-          contextParameters = []
-          callableId = null),
-        3 -> (KaVariableSignature:
-          name = elements
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = vararg elements: T
-          contextParameters = []
-          callableId = null)
-      }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Array<kotlin.Int>
-          symbol = kotlin/arrayOf(vararg elements: T): kotlin.Array<T>
-          valueParameters = [
-            KaVariableSignature:
-              name = elements
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = vararg elements: T
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/arrayOf
-      typeArgumentsMapping = {
-        T -> (kotlin.Int)
-      }
+  KaSimpleFunctionCall:
+    argumentMapping = {
+      1 -> (KaVariableSignature:
+        name = elements
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = vararg elements: T
+        contextParameters = []
+        callableId = null),
+      2 -> (KaVariableSignature:
+        name = elements
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = vararg elements: T
+        contextParameters = []
+        callableId = null),
+      3 -> (KaVariableSignature:
+        name = elements
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = vararg elements: T
+        contextParameters = []
+        callableId = null)
+    }
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Array<kotlin.Int>
+        symbol = kotlin/arrayOf(vararg elements: T): kotlin.Array<T>
+        valueParameters = [
+          KaVariableSignature:
+            name = elements
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = vararg elements: T
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/arrayOf
+    typeArgumentsMapping = {
+      T -> (kotlin.Int)
+    }
