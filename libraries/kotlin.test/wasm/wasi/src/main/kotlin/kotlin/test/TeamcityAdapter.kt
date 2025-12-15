@@ -9,22 +9,31 @@ import kotlin.wasm.WasmImport
 import kotlin.wasm.ExperimentalWasmInterop
 import kotlin.wasm.unsafe.*
 
-private fun wasiRawArgsGet(
+/**
+ * Read command-line argument data. The size of the array should match that returned by
+ * `args_sizes_get`. Each argument is expected to be `\0` terminated.
+ */
+@ExperimentalWasmInterop
+@WasmImport("ssw_util", "args_get")
+private external fun rawArgsGet(
     argvPtr: Int,
     argvBuf: Int,
-): Int = throw UnsupportedOperationException("Arguments not supported in Wasm Spec")
+): Int
 
 
-private fun wasiRawArgsSizesGet(
+/** Return command-line argument data sizes. */
+@ExperimentalWasmInterop
+@WasmImport("ssw_util", "args_sizes_get")
+private external fun rawArgsSizesGet(
     argumentNumberPtr: Int,
     argumentStringSizePtr: Int,
-): Int = throw UnsupportedOperationException("Arguments not supported in Wasm Spec")
+): Int
 
 @OptIn(UnsafeWasmMemoryApi::class, ExperimentalWasmInterop::class)
 internal actual fun getArguments(): List<String> = withScopedMemoryAllocator { allocator ->
     val numberOfArgumentsPtr = allocator.allocate(4)
     val sizeOfArgumentStringPtr = allocator.allocate(4)
-    val argNumRes = wasiRawArgsSizesGet(
+    val argNumRes = rawArgsSizesGet(
         argumentNumberPtr = numberOfArgumentsPtr.address.toInt(),
         argumentStringSizePtr = sizeOfArgumentStringPtr.address.toInt()
     )
@@ -40,7 +49,7 @@ internal actual fun getArguments(): List<String> = withScopedMemoryAllocator { a
 
     val argvPtr = allocator.allocate(argumentNumber * Int.SIZE_BYTES)
 
-    val argRes = wasiRawArgsGet(argvPtr.address.toInt(), stringBufferPtr.address.toInt())
+    val argRes = rawArgsGet(argvPtr.address.toInt(), stringBufferPtr.address.toInt())
     if (argRes != 0) {
         throw IllegalStateException("Wasi error code $argNumRes")
     }
