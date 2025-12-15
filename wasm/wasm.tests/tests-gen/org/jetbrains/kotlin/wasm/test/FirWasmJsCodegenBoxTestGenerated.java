@@ -55844,6 +55844,12 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
       }
 
       @Test
+      @TestMetadata("anonymousClassUsingOuterTypeParameter.kt")
+      public void testAnonymousClassUsingOuterTypeParameter() {
+        runTest("compiler/testData/codegen/box/reflection/supertypes/anonymousClassUsingOuterTypeParameter.kt");
+      }
+
+      @Test
       @TestMetadata("arrayClassifier.kt")
       public void testArrayClassifier() {
         runTest("compiler/testData/codegen/box/reflection/supertypes/arrayClassifier.kt");
