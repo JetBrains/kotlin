@@ -7,6 +7,7 @@ package test.collections
 
 import kotlin.test.*
 import test.*
+import test.collections.behaviors.equalityBehavior
 import test.collections.js.linkedStringMapOf
 import test.collections.js.stringMapOf
 import kotlin.math.pow
@@ -127,7 +128,7 @@ class MapTest {
 
         // static types test
         assertStaticTypeIs<HashMap<String, String>>(
-                hashMapOf("a" to "b").onEach {  }
+            hashMapOf("a" to "b").onEach { }
         )
     }
 
@@ -403,13 +404,6 @@ class MapTest {
         assertEquals(3, filteredByValue["b"])
     }
 
-    class SimpleEntry<out K, out V>(override val key: K, override val value: V) : Map.Entry<K, V> {
-        override fun toString(): String = "$key=$value"
-        override fun hashCode(): Int = key.hashCode() xor value.hashCode()
-        override fun equals(other: Any?): Boolean =
-            other is Map.Entry<*, *> && key == other.key && value == other.value
-    }
-
     @Test
     fun entriesCovariantContains() {
         // Based on https://youtrack.jetbrains.com/issue/KT-42428.
@@ -422,8 +416,8 @@ class MapTest {
             // map.entries can in fact be `MutableSet<MutableMap.MutableEntry>`,
             // which [contains] method takes [MutableEntry], so the compiler may generate special bridge
             // returning false for values that aren't [MutableEntry] (including [SimpleEntry]).
-            assertTrue(map.entries.contains(SimpleEntry(key, value)), mapDescription)
-            assertTrue(map.entries.toSet().contains(SimpleEntry(key, value)), "$mapDescription: reference")
+            assertTrue(map.entries.contains(mapEntryOf(key, value)), mapDescription)
+            assertTrue(map.entries.toSet().contains(mapEntryOf(key, value)), "$mapDescription: reference")
 
             assertFalse(map.entries.contains(null as Any?), "$mapDescription: contains null")
             assertFalse(map.entries.contains("not an entry" as Any?), "$mapDescription: contains not an entry")
@@ -450,8 +444,8 @@ class MapTest {
         fun doTest(implName: String, map: MutableMap<String, Int>, key: String, value: Int) {
             val mapDescription = "$implName: ${map::class}"
 
-            assertTrue(map.entries.toMutableSet().remove(SimpleEntry(key, value) as Map.Entry<*, *>), "$mapDescription: reference")
-            assertTrue(map.entries.remove(SimpleEntry(key, value) as Map.Entry<*, *>), mapDescription)
+            assertTrue(map.entries.toMutableSet().remove(mapEntryOf(key, value) as Map.Entry<*, *>), "$mapDescription: reference")
+            assertTrue(map.entries.remove(mapEntryOf(key, value) as Map.Entry<*, *>), mapDescription)
 
             assertFalse(map.entries.remove(null as Any?), "$mapDescription: remove null")
             assertFalse(map.entries.remove("not an entry" as Any?), "$mapDescription: remove not an entry")
@@ -483,7 +477,7 @@ class MapTest {
             assertTrue(map.containsValue(value), "$mapDescription: containsValue")
             assertTrue(map.keys.contains(key), "$mapDescription: keys.contains")
             assertTrue(map.values.contains(value), "$mapDescription: values.contains")
-            assertTrue(map.entries.contains(SimpleEntry(key, value) as Map.Entry<*, *>), "$mapDescription: entries.contains")
+            assertTrue(map.entries.contains(mapEntryOf(key, value) as Map.Entry<*, *>), "$mapDescription: entries.contains")
 
             assertEquals(value, map.remove(key), "$mapDescription: remove")
 
@@ -494,7 +488,7 @@ class MapTest {
             assertTrue(map.values.remove(value), "$mapDescription: values.remove")
 
             map[key] = value
-            assertTrue(map.entries.remove(SimpleEntry(key, value) as Map.Entry<*, *>), "$mapDescription: entries.remove")
+            assertTrue(map.entries.remove(mapEntryOf(key, value) as Map.Entry<*, *>), "$mapDescription: entries.remove")
         }
 
         val mapLetterToIndex = ('a'..'z').mapIndexed { i, c -> "$c" to i }.toMap()
@@ -531,7 +525,7 @@ class MapTest {
             assertFailsWith<ConcurrentModificationException>(mapLabel) { entry.setValue(200) }
             assertFailsWith<ConcurrentModificationException>(mapLabel) { entry.hashCode() }
             assertFailsWith<ConcurrentModificationException>(mapLabel) { entry.toString() }
-            assertFailsWith<ConcurrentModificationException>(mapLabel) { entry.equals(SimpleEntry("b", 20)) }
+            assertFailsWith<ConcurrentModificationException>(mapLabel) { entry.equals(mapEntryOf("b", 20)) }
         }
 
         testExceptOn(TestPlatform.Jvm) {
@@ -794,7 +788,7 @@ class MapTest {
 
         expectMinMaxOf("a=1", "a=1", maps[0], { it.toString() })
         expectMinMaxOf("a=1", "bcd=3", maps[1], { it.toString() })
-        expectMinMaxOf("Ef=2", "bcd=3",  maps[2], { it.toString() })
+        expectMinMaxOf("Ef=2", "bcd=3", maps[2], { it.toString() })
     }
 
     @Test
@@ -977,5 +971,34 @@ class MapTest {
         assertEquals(kclasses[Nothing::class], 27)
         assertEquals(kclasses[A::class], 28)
         assertEquals(kclasses[B::class], 29)
+    }
+
+    @Test
+    fun mapEntryCopy() {
+        fun testDetachedCopyBehavior(map: MutableMap<String, Int>) {
+            val copiedEntries = map.entries.map { it.copy() }
+            val copiedKeyValues = map.entries.map { it.toPair() }
+            map.entries.forEachIndexed { index, entry ->
+                compare(entry, copiedEntries[index]) {
+                    equalityBehavior()
+                }
+            }
+            map.entries.removeAll(copiedEntries)
+            assertEquals(0, map.size)
+
+            copiedKeyValues.zip(copiedEntries) { pair, entry ->
+                assertEquals(pair, entry.toPair())
+            }
+
+            copiedEntries.forEach { entry ->
+                assertSame(entry, entry.copy())
+            }
+        }
+
+        testDetachedCopyBehavior(mutableMapOf("a" to 1, "b" to 2))
+        buildMap {
+            put("a", 1); put("b", 2)
+            testDetachedCopyBehavior(this)
+        }
     }
 }

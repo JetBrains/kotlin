@@ -541,7 +541,7 @@ public actual interface MutableSet<E> : Set<E>, MutableCollection<E> {
  *   hash codes corresponding to a key and a value:
  *   ```kotlin
  *   var hashCode: Int = 0
- *   for ((k, v) in entries) hashCode += (k?.hashCode() ?: 0) ^ (v?.hashCode() ?: 0)
+ *   for ((k, v) in entries) hashCode += k.hashCode() xor v.hashCode()
  *   ```
  *
  * Functions in this interface support only read-only access to the map; read-write access is supported through
@@ -634,8 +634,21 @@ public actual interface Map<K, out V> {
     /**
      * Represents a key/value pair held by a [Map].
      *
-     * Map entries are not supposed to be stored separately or used long after they are obtained.
+     * Map entries obtained from the iteration of [Map.entries] set are not supposed to be stored separately or
+     * used long after they are obtained.
      * The behavior of an entry is unspecified if the backing map has been modified after the entry was obtained.
+     *
+     * To create an immutable entry not connected to any map, one can use [Map.Entry.copy] function.
+     *
+     * [Entry] implementations must override [Any.toString], [Any.equals] and [Any.hashCode] functions
+     * and provide implementations such that:
+     * - [Entry.toString] should return a string representation of the key-value pair in form of `key=value`.
+     * - [Entry.equals] should consider any two instances of [Entry] equal if their keys are equal and values are equal.
+     * - [Entry.hashCode] should be computed as exclusive or (XOR) of
+     *   hash codes corresponding to a key and a value: `key.hashCode() xor value.hashCode()`
+     *
+     * @param K the type of the entry key. The entry is covariant in its key type.
+     * @param V the type of the entry value. The entry is covariant in its value type.
      */
     public actual interface Entry<out K, out V> {
         /**
@@ -745,8 +758,15 @@ public actual interface MutableMap<K, V> : Map<K, V> {
     /**
      * Represents a key/value pair held by a [MutableMap].
      *
-     * Map entries are not supposed to be stored separately or used long after they are obtained.
-     * The behavior of an entry is unspecified if the backing map has been modified after the entry was obtained.
+     * Map entries obtained from the iteration of [MutableMap.entries] set are not supposed to be stored separately or
+     * used long after they are obtained.
+     * The behavior of an entry is unspecified if the backing map has been modified after the entry was obtained,
+     * except when the map was modified through the [setValue] method.
+     *
+     * To create an immutable entry not connected to any map, one can use [Map.Entry.copy] function.
+     *
+     * @param K the type of the entry key. The entry is invariant in its key type.
+     * @param V the type of the entry value. The entry is invariant in its value type.
      */
     public actual interface MutableEntry<K, V> : Map.Entry<K, V> {
         /**
