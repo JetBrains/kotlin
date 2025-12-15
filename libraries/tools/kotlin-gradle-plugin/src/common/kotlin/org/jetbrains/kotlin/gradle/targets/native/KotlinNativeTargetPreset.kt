@@ -157,3 +157,16 @@ internal val KotlinNativeTarget.publishableWithFallback: Boolean
 
 internal val KonanTarget.enabledOnCurrentHostForBinariesCompilation
     get() = if (HostManager.hostOrNull != null) HostManager().isEnabled(this) else false
+
+internal val HostManager.supportedHosts: List<String> get() = enabledByHost.keys.map { it.formatedHostName }
+
+private val KonanTarget.formatedHostName: String
+    get() = when (this) {
+        KonanTarget.LINUX_X64 -> "Linux (x86_64)"
+        KonanTarget.LINUX_ARM64 -> "Linux (aarch64)"
+        KonanTarget.MINGW_X64 -> "Windows (x86_64)"
+        KonanTarget.MACOS_X64 -> "macOS (x86_64)"
+        KonanTarget.MACOS_ARM64 -> "macOS (arm64)"
+        // Fallback for any future hosts, though the 'when' should be exhaustive
+        else -> visibleName
+    }
