@@ -110,7 +110,9 @@ open class AbstractReplViaApiDiagnosticsTest : AbstractKotlinCompilerTest() {
     }
 }
 
-open class AbstractReplWithTestExtensionsCodegenTest : AbstractFirScriptAndReplCodegenTest(::FirReplFrontendFacade) {
+open class AbstractReplWithTestExtensionsCodegenTest :
+    AbstractFirScriptAndReplCodegenTest(FirParser.Psi, ::FirReplFrontendFacade)
+{
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         with(builder) {

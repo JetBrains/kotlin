@@ -171,12 +171,18 @@ fun runWithK2JVMCompiler(
     expectedOutPatterns: List<String> = emptyList(),
     expectedExitCode: Int = 0,
     classpath: List<File> = emptyList(),
+    skipScriptArgument: Boolean = false,
     disableScriptCompilationCache: Boolean = true,
 ) {
     val args = arrayListOf(K2JVMCompilerArguments::kotlinHome.cliArgument, "dist/kotlinc").apply {
         if (classpath.isNotEmpty()) {
             add(K2JVMCompilerArguments::classpath.cliArgument)
             add(classpath.joinToString(File.pathSeparator))
+        }
+        if (!skipScriptArgument) {
+            add(K2JVMCompilerArguments::script.cliArgument)
+        } else {
+            add(CommonCompilerArguments::allowAnyScriptsInSourceRoots.cliArgument)
         }
         if (disableScriptCompilationCache) {
             add("-P")

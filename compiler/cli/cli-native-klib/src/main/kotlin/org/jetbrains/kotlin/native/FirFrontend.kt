@@ -117,12 +117,11 @@ fun PhaseContext.firFrontendWithLightTree(input: KotlinCoreEnvironment): FirOutp
     val messageCollector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
     // FIR
 
-    val groupedSources =
-        collectSources(
-            configuration,
-            input.toVfsBasedProjectEnvironment(),
-            messageCollector
-        )
+    val groupedSources = collectSources(
+          configuration,
+          input.toVfsBasedProjectEnvironment(),
+          messageCollector
+      )
 
     val ktSourceFiles = mutableListOf<KtSourceFile>().apply {
         addAll(groupedSources.commonSources)
