@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -36,7 +36,7 @@ abstract class AbstractReturnTargetSymbolTest : AbstractAnalysisApiBasedTest() {
                         expression.returnKeyword.accept(this)
                         expression.labeledExpression?.accept(this)
 
-                        val target = expression.targetSymbol
+                        val target = expression.resolveSymbol()
                         append("/* " + target?.getNameWithPositionString() + " */")
 
                         expression.returnedExpression?.accept(this)

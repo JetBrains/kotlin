@@ -16,8 +16,6 @@ import org.jetbrains.kotlin.analysis.api.resolution.KaSuccessCallInfo
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirSafe
 import org.jetbrains.kotlin.diagnostics.WhenMissingCase
-import org.jetbrains.kotlin.fir.declarations.FirErrorFunction
-import org.jetbrains.kotlin.fir.expressions.FirReturnExpression
 import org.jetbrains.kotlin.fir.expressions.FirWhenExpression
 import org.jetbrains.kotlin.fir.resolve.transformers.FirWhenExhaustivenessComputer
 import org.jetbrains.kotlin.idea.references.mainReference
@@ -29,13 +27,9 @@ import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 internal class KaFirExpressionInformationProvider(
     override val analysisSessionProvider: () -> KaFirSession,
 ) : KaBaseSessionComponent<KaFirSession>(), KaExpressionInformationProvider, KaFirSessionComponent {
+    @Deprecated("The API is obsolete. Use `resolveSymbol()` instead.", replaceWith = ReplaceWith("resolveSymbol()"))
     override val KtReturnExpression.targetSymbol: KaCallableSymbol?
-        get() = withPsiValidityAssertion {
-            val fir = getOrBuildFirSafe<FirReturnExpression>(resolutionFacade) ?: return null
-            val firTargetSymbol = fir.target.labeledElement
-            if (firTargetSymbol is FirErrorFunction) return null
-            return firSymbolBuilder.callableBuilder.buildCallableSymbol(firTargetSymbol.symbol)
-        }
+        get() = with(analysisSession) { resolveSymbol() }
 
     override fun KtWhenExpression.computeMissingCases(): List<WhenMissingCase> = withPsiValidityAssertion {
         val firWhenExpression = getOrBuildFirSafe<FirWhenExpression>(analysisSession.resolutionFacade) ?: return emptyList()

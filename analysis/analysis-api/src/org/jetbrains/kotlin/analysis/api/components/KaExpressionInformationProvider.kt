@@ -21,6 +21,7 @@ public interface KaExpressionInformationProvider : KaSessionComponent {
     /**
      * The [symbol][KaCallableSymbol] of the callable which the given [KtReturnExpression] returns from.
      */
+    @Deprecated("The API is obsolete. Use `resolveSymbol()` instead.", ReplaceWith("resolveSymbol()"))
     @KaIdeApi
     public val KtReturnExpression.targetSymbol: KaCallableSymbol?
 
@@ -111,10 +112,12 @@ public interface KaExpressionInformationProvider : KaSessionComponent {
  * The [symbol][KaCallableSymbol] of the callable which the given [KtReturnExpression] returns from.
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
+@Deprecated("The API is obsolete. Use `resolveSymbol()` instead.", ReplaceWith("resolveSymbol()"))
 @KaIdeApi
 @KaContextParameterApi
 context(s: KaSession)
 public val KtReturnExpression.targetSymbol: KaCallableSymbol?
+    @Suppress("DEPRECATION")
     get() = with(s) { targetSymbol }
 
 /**
