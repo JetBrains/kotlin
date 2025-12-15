@@ -105,7 +105,7 @@ abstract class AbstractAtomicfuIrBuilder(
     protected fun irVolatileField(
         name: String,
         valueType: IrType,
-        annotations: List<IrConstructorCall>,
+        annotations: List<IrAnnotation>,
         parentContainer: IrDeclarationContainer,
     ): IrField {
         return context.irFactory.buildField {
@@ -145,7 +145,7 @@ abstract class AbstractAtomicfuIrBuilder(
     abstract fun buildVolatileFieldOfType(
         name: String,
         valueType: IrType,
-        annotations: List<IrConstructorCall>,
+        annotations: List<IrAnnotation>,
         initExpr: IrExpression?,
         parentContainer: IrDeclarationContainer,
     ): IrField

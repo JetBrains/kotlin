@@ -68,13 +68,13 @@ open class StubGeneratorExtensions {
 
     open val irDeserializationEnabled: Boolean = false
 
-    open fun generateFlexibleNullabilityAnnotationCall(): IrAnnotation? = null
+    open fun generateFlexibleNullabilityAnnotation(): IrAnnotation? = null
 
-    open fun generateFlexibleMutabilityAnnotationCall(): IrAnnotation? = null
+    open fun generateFlexibleMutabilityAnnotation(): IrAnnotation? = null
 
-    open fun generateEnhancedNullabilityAnnotationCall(): IrAnnotation? = null
+    open fun generateEnhancedNullabilityAnnotation(): IrAnnotation? = null
 
-    open fun generateRawTypeAnnotationCall(): IrAnnotation? = null
+    open fun generateRawTypeAnnotation(): IrAnnotation? = null
 
     companion object {
         @JvmField

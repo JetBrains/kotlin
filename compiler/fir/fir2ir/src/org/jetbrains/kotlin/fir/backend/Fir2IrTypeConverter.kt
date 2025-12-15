@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.*
 import org.jetbrains.kotlin.ir.expressions.IrAnnotation
-import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.*
@@ -128,19 +127,19 @@ class Fir2IrTypeConverter(
                 val specialAnnotationsProvider = specialAnnotationsProvider
                 if (specialAnnotationsProvider != null) {
                     if (type.hasEnhancedNullability) {
-                        typeAnnotations += specialAnnotationsProvider.generateEnhancedNullabilityAnnotationCall()
+                        typeAnnotations += specialAnnotationsProvider.generateEnhancedNullabilityAnnotation()
                     }
                     if (hasFlexibleNullability) {
-                        typeAnnotations += specialAnnotationsProvider.generateFlexibleNullabilityAnnotationCall()
+                        typeAnnotations += specialAnnotationsProvider.generateFlexibleNullabilityAnnotation()
                     }
                     if (hasFlexibleMutability) {
-                        typeAnnotations += specialAnnotationsProvider.generateFlexibleMutabilityAnnotationCall()
+                        typeAnnotations += specialAnnotationsProvider.generateFlexibleMutabilityAnnotation()
                     }
                     if (hasFlexibleArrayElementVariance) {
-                        typeAnnotations += specialAnnotationsProvider.generateFlexibleArrayElementVarianceAnnotationCall()
+                        typeAnnotations += specialAnnotationsProvider.generateFlexibleArrayElementVarianceAnnotation()
                     }
                     if (addRawTypeAnnotation) {
-                        typeAnnotations += specialAnnotationsProvider.generateRawTypeAnnotationCall()
+                        typeAnnotations += specialAnnotationsProvider.generateRawTypeAnnotation()
                     }
                 }
 

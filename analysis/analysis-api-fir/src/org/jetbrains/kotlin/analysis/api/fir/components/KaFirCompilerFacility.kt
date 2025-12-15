@@ -1308,7 +1308,7 @@ internal class KaFirCompilerFacility(
     private class CompilerFacilityJvmGeneratorExtensions(
         private val delegate: JvmGeneratorExtensions
     ) : StubGeneratorExtensions(), JvmGeneratorExtensions by delegate {
-        override fun generateRawTypeAnnotationCall(): IrAnnotation? = delegate.generateRawTypeAnnotationCall()
+        override fun generateRawTypeAnnotation(): IrAnnotation? = delegate.generateRawTypeAnnotation()
 
         /**
          * This method is used from `org.jetbrains.kotlin.backend.jvm.lower.SpecialAccessLowering.visitCall`

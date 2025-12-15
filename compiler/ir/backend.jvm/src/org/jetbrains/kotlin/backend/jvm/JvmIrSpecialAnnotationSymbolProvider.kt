@@ -44,11 +44,11 @@ object JvmIrSpecialAnnotationSymbolProvider : IrSpecialAnnotationsProvider() {
     private val rawTypeAnnotationInfo: AnnotationInfo = RawTypeAnnotation.getAnnotationInfo(kotlinInternalIrPackage)
     private val flexibleArrayElementVarianceAnnotationInfo: AnnotationInfo = FlexibleArrayElementVariance.getAnnotationInfo(kotlinInternalIrPackage)
 
-    override fun generateEnhancedNullabilityAnnotationCall(): IrAnnotation = enhancedNullabilityAnnotationInfo.toAnnotation()
-    override fun generateFlexibleNullabilityAnnotationCall(): IrAnnotation = flexibleNullabilityAnnotationInfo.toAnnotation()
-    override fun generateFlexibleMutabilityAnnotationCall(): IrAnnotation = flexibleMutabilityAnnotationInfo.toAnnotation()
-    override fun generateRawTypeAnnotationCall(): IrAnnotation = rawTypeAnnotationInfo.toAnnotation()
-    override fun generateFlexibleArrayElementVarianceAnnotationCall(): IrAnnotation =
+    override fun generateEnhancedNullabilityAnnotation(): IrAnnotation = enhancedNullabilityAnnotationInfo.toAnnotation()
+    override fun generateFlexibleNullabilityAnnotation(): IrAnnotation = flexibleNullabilityAnnotationInfo.toAnnotation()
+    override fun generateFlexibleMutabilityAnnotation(): IrAnnotation = flexibleMutabilityAnnotationInfo.toAnnotation()
+    override fun generateRawTypeAnnotation(): IrAnnotation = rawTypeAnnotationInfo.toAnnotation()
+    override fun generateFlexibleArrayElementVarianceAnnotation(): IrAnnotation =
         flexibleArrayElementVarianceAnnotationInfo.toAnnotation()
 
     private fun AnnotationInfo.toAnnotation(): IrAnnotationImpl {

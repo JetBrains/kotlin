@@ -285,7 +285,7 @@ val IrDeclaration.isStaticValueClassReplacement: Boolean
 
 // On the IR backend we represent raw types as star projected types with a special synthetic annotation.
 // See `TypeTranslator.translateTypeAnnotations`.
-private fun JvmBackendContext.makeRawTypeAnnotation() = generatorExtensions.generateRawTypeAnnotationCall()!!
+private fun JvmBackendContext.makeRawTypeAnnotation() = generatorExtensions.generateRawTypeAnnotation()!!
 
 fun IrClass.rawType(context: JvmBackendContext): IrType =
     defaultType.addAnnotations(listOf(context.makeRawTypeAnnotation()))

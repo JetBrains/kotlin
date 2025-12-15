@@ -248,18 +248,18 @@ abstract class TypeTranslator(
         // EnhancedNullability annotation is not present in 'annotations', see 'EnhancedTypeAnnotations::iterator()'.
         // Also, EnhancedTypeAnnotationDescriptor is not a "real" annotation descriptor, there's no corresponding ClassDescriptor, etc.
         if (extensions.enhancedNullability.hasEnhancedNullability(kotlinType)) {
-            irAnnotations.addIfNotNull(extensions.generateEnhancedNullabilityAnnotationCall())
+            irAnnotations.addIfNotNull(extensions.generateEnhancedNullabilityAnnotation())
         }
 
         if (flexibleType.isNullabilityFlexible()) {
-            irAnnotations.addIfNotNull(extensions.generateFlexibleNullabilityAnnotationCall())
+            irAnnotations.addIfNotNull(extensions.generateFlexibleNullabilityAnnotation())
         }
         if (flexibleType.isMutabilityFlexible()) {
-            irAnnotations.addIfNotNull(extensions.generateFlexibleMutabilityAnnotationCall())
+            irAnnotations.addIfNotNull(extensions.generateFlexibleMutabilityAnnotation())
         }
 
         if (flexibleType is RawType) {
-            irAnnotations.addIfNotNull(extensions.generateRawTypeAnnotationCall())
+            irAnnotations.addIfNotNull(extensions.generateRawTypeAnnotation())
         }
 
         return irAnnotations
