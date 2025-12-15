@@ -239,7 +239,8 @@ KtContainerNode(330,346): '@myRunWithMyEnum'
   null
 
 KtLabelReferenceExpression(330,346): '@myRunWithMyEnum'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <anonymous function>(): MyEnum
 
 KtNameReferenceExpression(347,348): 'X'
   null
@@ -285,7 +286,8 @@ KtContainerNode(409,425): '@myRunWithMyEnum'
   null
 
 KtLabelReferenceExpression(409,425): '@myRunWithMyEnum'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <anonymous function>(): MyEnum
 
 KtCallExpression(426,431): 'id(X)'
   KaSingleSymbolResolutionSuccess:
@@ -372,7 +374,8 @@ KtContainerNode(494,500): '@myRun'
   null
 
 KtLabelReferenceExpression(494,500): '@myRun'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <anonymous function>(): MyEnum
 
 KtNameReferenceExpression(501,502): 'X'
   null
@@ -431,7 +434,8 @@ KtContainerNode(569,575): '@myRun'
   null
 
 KtLabelReferenceExpression(569,575): '@myRun'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <anonymous function>(): MyEnum
 
 KtNameReferenceExpression(576,577): 'X'
   null
@@ -489,7 +493,8 @@ KtContainerNode(658,664): '@myRun'
   null
 
 KtLabelReferenceExpression(658,664): '@myRun'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <anonymous function>(): MyEnum
 
 KtNameReferenceExpression(665,666): 'X'
   null
@@ -538,7 +543,8 @@ KtContainerNode(717,723): '@myRun'
   null
 
 KtLabelReferenceExpression(717,723): '@myRun'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <anonymous function>(): ERROR CLASS: CST(ERROR CLASS: Unresolved name: X, ERROR CLASS: Unresolved name: Y
 
 KtNameReferenceExpression(724,725): 'X'
   null
@@ -584,7 +590,8 @@ KtContainerNode(775,781): '@myRun'
   null
 
 KtLabelReferenceExpression(775,781): '@myRun'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <anonymous function>(): MyEnum
 
 KtDotQualifiedExpression(782,790): 'MyEnum.X'
   null

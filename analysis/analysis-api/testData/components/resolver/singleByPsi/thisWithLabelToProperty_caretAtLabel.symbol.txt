@@ -1,2 +1,22 @@
 KtLabelReferenceExpression(68,72): '@foo'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = KaReceiverParameterSymbol:
+      annotations: []
+      callableId: null
+      compilerVisibility: Public
+      contextReceivers: []
+      isActual: false
+      isExpect: false
+      isExtension: false
+      isVal: true
+      location: LOCAL
+      modality: FINAL
+      name: <receiver>
+      origin: SOURCE
+      owningCallableSymbol: KaKotlinPropertySymbol(/Foo.foo)
+      receiverParameter: null
+      returnType: KaUsualClassType:
+        annotations: []
+        typeArguments: []
+        type: kotlin/String
+      visibility: PUBLIC

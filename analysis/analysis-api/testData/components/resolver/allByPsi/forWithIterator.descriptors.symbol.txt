@@ -117,26 +117,7 @@ KtContainerNode(151,160): '@iterator'
 
 KtLabelReferenceExpression(151,160): '@iterator'
   KaSingleSymbolResolutionSuccess:
-    symbol = KaReceiverParameterSymbol:
-      annotations: []
-      callableId: null
-      compilerVisibility: Public
-      contextReceivers: []
-      isActual: false
-      isExpect: false
-      isExtension: false
-      isVal: true
-      location: LOCAL
-      modality: FINAL
-      name: <receiver>
-      origin: SOURCE
-      owningCallableSymbol: KaNamedFunctionSymbol(f/iterator)
-      receiverParameter: null
-      returnType: KaUsualClassType:
-        annotations: []
-        typeArguments: []
-        type: f/IntProgression
-      visibility: PUBLIC
+    symbol = f/iterator(<extension receiver>: f.IntProgression): kotlin.collections.Iterator<kotlin.Int>
 
 KtNameReferenceExpression(161,166): 'start'
   null
@@ -173,26 +154,7 @@ KtContainerNode(211,220): '@iterator'
 
 KtLabelReferenceExpression(211,220): '@iterator'
   KaSingleSymbolResolutionSuccess:
-    symbol = KaReceiverParameterSymbol:
-      annotations: []
-      callableId: null
-      compilerVisibility: Public
-      contextReceivers: []
-      isActual: false
-      isExpect: false
-      isExtension: false
-      isVal: true
-      location: LOCAL
-      modality: FINAL
-      name: <receiver>
-      origin: SOURCE
-      owningCallableSymbol: KaNamedFunctionSymbol(f/iterator)
-      receiverParameter: null
-      returnType: KaUsualClassType:
-        annotations: []
-        typeArguments: []
-        type: f/IntProgression
-      visibility: PUBLIC
+    symbol = f/iterator(<extension receiver>: f.IntProgression): kotlin.collections.Iterator<kotlin.Int>
 
 KtNameReferenceExpression(221,224): 'end'
   null

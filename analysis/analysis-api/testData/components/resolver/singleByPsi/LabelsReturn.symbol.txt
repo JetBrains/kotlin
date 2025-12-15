@@ -1,2 +1,3 @@
 KtLabelReferenceExpression(22,26): '@foo'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /foo(): kotlin.Unit

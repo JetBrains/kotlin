@@ -1818,7 +1818,7 @@ public class org/jetbrains/kotlin/psi/KtIsExpression : org/jetbrains/kotlin/psi/
 	public fun isNegated ()Z
 }
 
-public final class org/jetbrains/kotlin/psi/KtLabelReferenceExpression : org/jetbrains/kotlin/psi/KtSimpleNameExpressionImpl {
+public final class org/jetbrains/kotlin/psi/KtLabelReferenceExpression : org/jetbrains/kotlin/psi/KtSimpleNameExpressionImpl, org/jetbrains/kotlin/resolution/KtResolvable {
 	public fun <init> (Lcom/intellij/lang/ASTNode;)V
 	public fun getReferencedNameElement ()Lcom/intellij/psi/PsiElement;
 }

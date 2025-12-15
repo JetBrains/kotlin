@@ -7,10 +7,7 @@ package org.jetbrains.kotlin.analysis.api.components
 
 import org.jetbrains.kotlin.analysis.api.*
 import org.jetbrains.kotlin.analysis.api.resolution.*
-import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.idea.references.KDocReference
 import org.jetbrains.kotlin.idea.references.KtReference
 import org.jetbrains.kotlin.psi.*
@@ -300,6 +297,35 @@ public interface KaResolver : KaSessionComponent {
      */
     @KaExperimentalApi
     public fun KtEnumEntrySuperclassReferenceExpression.resolveSymbol(): KaConstructorSymbol?
+
+    /**
+     * Resolves the declaration symbol targeted by the given [KtLabelReferenceExpression].
+     *
+     * #### Example
+     *
+     * ```kotlin
+     * fun myAction(action: () -> Unit) {
+     *     action {
+     *         return@action // resolves to the anonymous function
+     * //            ^^^^^^^
+     *     }
+     *
+     *     return@main
+     * //        ^^^^^
+     * }
+     * ```
+     *
+     * Calling `resolveSymbol()` on a [KtLabelReferenceExpression] (`@action` and `@main`) returns the corresponding [KaDeclarationSymbol]
+     * of the labeled declaration if resolution succeeds; otherwise, it returns `null` (e.g., when unresolved or
+     * ambiguous).
+     *
+     * This is a specialized counterpart of [KtResolvable.resolveSymbol] focused specifically on label references
+     *
+     * @see tryResolveSymbol
+     * @see KtResolvable.resolveSymbol
+     */
+    @KaExperimentalApi
+    public fun KtLabelReferenceExpression.resolveSymbol(): KaDeclarationSymbol?
 
     /**
      * Attempts to resolve the call for the given [KtResolvableCall].
@@ -1028,6 +1054,42 @@ public fun KtCollectionLiteralExpression.resolveSymbol(): KaNamedFunctionSymbol?
 @KaContextParameterApi
 context(s: KaSession)
 public fun KtEnumEntrySuperclassReferenceExpression.resolveSymbol(): KaConstructorSymbol? {
+    return with(s) {
+        resolveSymbol()
+    }
+}
+
+/**
+ * Resolves the declaration symbol targeted by the given [KtLabelReferenceExpression].
+ *
+ * #### Example
+ *
+ * ```kotlin
+ * fun myAction(action: () -> Unit) {
+ *     action {
+ *         return@action // resolves to the anonymous function
+ * //            ^^^^^^^
+ *     }
+ *
+ *     return@main
+ * //        ^^^^^
+ * }
+ * ```
+ *
+ * Calling `resolveSymbol()` on a [KtLabelReferenceExpression] (`@action` and `@main`) returns the corresponding [KaDeclarationSymbol]
+ * of the labeled declaration if resolution succeeds; otherwise, it returns `null` (e.g., when unresolved or
+ * ambiguous).
+ *
+ * This is a specialized counterpart of [KtResolvable.resolveSymbol] focused specifically on label references
+ *
+ * @see tryResolveSymbol
+ * @see KtResolvable.resolveSymbol
+ */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
+@KaExperimentalApi
+@KaContextParameterApi
+context(s: KaSession)
+public fun KtLabelReferenceExpression.resolveSymbol(): KaDeclarationSymbol? {
     return with(s) {
         resolveSymbol()
     }

@@ -289,7 +289,8 @@ KtContainerNode(397,415): '@myRunWithMySealed'
   null
 
 KtLabelReferenceExpression(397,415): '@myRunWithMySealed'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <anonymous function>(): MySealed
 
 KtNameReferenceExpression(416,417): 'X'
   null
@@ -335,7 +336,8 @@ KtContainerNode(480,498): '@myRunWithMySealed'
   null
 
 KtLabelReferenceExpression(480,498): '@myRunWithMySealed'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <anonymous function>(): MySealed
 
 KtCallExpression(499,504): 'id(X)'
   KaSymbolResolutionError:
@@ -428,7 +430,8 @@ KtContainerNode(569,575): '@myRun'
   null
 
 KtLabelReferenceExpression(569,575): '@myRun'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <anonymous function>(): MySealed
 
 KtNameReferenceExpression(576,577): 'X'
   null
@@ -487,7 +490,8 @@ KtContainerNode(644,650): '@myRun'
   null
 
 KtLabelReferenceExpression(644,650): '@myRun'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <anonymous function>(): MySealed
 
 KtNameReferenceExpression(651,652): 'X'
   null
@@ -545,7 +549,8 @@ KtContainerNode(735,741): '@myRun'
   null
 
 KtLabelReferenceExpression(735,741): '@myRun'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <anonymous function>(): MySealed
 
 KtNameReferenceExpression(742,743): 'X'
   null
@@ -594,7 +599,8 @@ KtContainerNode(794,800): '@myRun'
   null
 
 KtLabelReferenceExpression(794,800): '@myRun'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <anonymous function>(): ERROR_TYPE
 
 KtNameReferenceExpression(801,802): 'X'
   null
@@ -640,7 +646,8 @@ KtContainerNode(852,858): '@myRun'
   null
 
 KtLabelReferenceExpression(852,858): '@myRun'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <anonymous function>(): MySealed.X
 
 KtDotQualifiedExpression(859,869): 'MySealed.X'
   null

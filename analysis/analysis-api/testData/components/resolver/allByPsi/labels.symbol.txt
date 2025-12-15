@@ -91,7 +91,8 @@ KtContainerNode(90,96): '@label'
   null
 
 KtLabelReferenceExpression(90,96): '@label'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <anonymous function>(): kotlin.Unit
 
 KtLabeledExpression(108,161): 'myFor@ for (i in 0..1) {'
   null

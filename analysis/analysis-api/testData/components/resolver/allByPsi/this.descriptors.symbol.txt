@@ -73,7 +73,8 @@ KtContainerNode(103,111): '@MyClass'
   null
 
 KtLabelReferenceExpression(103,111): '@MyClass'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = one/MyClass
 
 KtCallExpression(112,117): 'foo()'
   KaSingleSymbolResolutionSuccess:
@@ -151,7 +152,8 @@ KtContainerNode(248,259): '@InnerOuter'
   null
 
 KtLabelReferenceExpression(248,259): '@InnerOuter'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = one/MyClass.InnerOuter
 
 KtCallExpression(260,265): 'foo()'
   KaSingleSymbolResolutionSuccess:
@@ -176,7 +178,8 @@ KtContainerNode(282,290): '@MyClass'
   null
 
 KtLabelReferenceExpression(282,290): '@MyClass'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = one/MyClass
 
 KtCallExpression(291,296): 'foo()'
   KaSingleSymbolResolutionSuccess:
@@ -254,7 +257,8 @@ KtContainerNode(456,468): '@InnerNested'
   null
 
 KtLabelReferenceExpression(456,468): '@InnerNested'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = one/MyClass.InnerOuter.InnerNested
 
 KtCallExpression(469,474): 'foo()'
   KaSingleSymbolResolutionSuccess:
@@ -279,7 +283,8 @@ KtContainerNode(495,506): '@InnerOuter'
   null
 
 KtLabelReferenceExpression(495,506): '@InnerOuter'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = one/MyClass.InnerOuter
 
 KtCallExpression(507,512): 'foo()'
   KaSingleSymbolResolutionSuccess:
@@ -304,7 +309,8 @@ KtContainerNode(533,541): '@MyClass'
   null
 
 KtLabelReferenceExpression(533,541): '@MyClass'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = one/MyClass
 
 KtCallExpression(542,547): 'foo()'
   KaSingleSymbolResolutionSuccess:
@@ -400,7 +406,8 @@ KtContainerNode(686,691): '@anon'
   null
 
 KtLabelReferenceExpression(686,691): '@anon'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <no name provided>(<extension receiver>: one.MyClass, s: kotlin.String): kotlin.Unit
 
 KtCallExpression(692,697): 'foo()'
   KaSingleSymbolResolutionSuccess:
@@ -425,7 +432,8 @@ KtContainerNode(722,734): '@InnerNested'
   null
 
 KtLabelReferenceExpression(722,734): '@InnerNested'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = one/MyClass.InnerOuter.InnerNested
 
 KtCallExpression(735,740): 'foo()'
   KaSingleSymbolResolutionSuccess:
@@ -450,7 +458,8 @@ KtContainerNode(765,776): '@InnerOuter'
   null
 
 KtLabelReferenceExpression(765,776): '@InnerOuter'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = one/MyClass.InnerOuter
 
 KtCallExpression(777,782): 'foo()'
   KaSingleSymbolResolutionSuccess:
@@ -475,7 +484,8 @@ KtContainerNode(807,815): '@MyClass'
   null
 
 KtLabelReferenceExpression(807,815): '@MyClass'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = one/MyClass
 
 KtCallExpression(816,821): 'foo()'
   KaSingleSymbolResolutionSuccess:
@@ -554,7 +564,8 @@ KtContainerNode(952,959): '@myWith'
   null
 
 KtLabelReferenceExpression(952,959): '@myWith'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <anonymous function>(t: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
 
 KtCallExpression(960,965): 'foo()'
   KaSingleSymbolResolutionSuccess:
@@ -579,7 +590,8 @@ KtContainerNode(990,1002): '@InnerNested'
   null
 
 KtLabelReferenceExpression(990,1002): '@InnerNested'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = one/MyClass.InnerOuter.InnerNested
 
 KtCallExpression(1003,1008): 'foo()'
   KaSingleSymbolResolutionSuccess:
@@ -604,7 +616,8 @@ KtContainerNode(1033,1044): '@InnerOuter'
   null
 
 KtLabelReferenceExpression(1033,1044): '@InnerOuter'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = one/MyClass.InnerOuter
 
 KtCallExpression(1045,1050): 'foo()'
   KaSingleSymbolResolutionSuccess:
@@ -629,7 +642,8 @@ KtContainerNode(1075,1083): '@MyClass'
   null
 
 KtLabelReferenceExpression(1075,1083): '@MyClass'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = one/MyClass
 
 KtCallExpression(1084,1089): 'foo()'
   KaSingleSymbolResolutionSuccess:
@@ -682,7 +696,8 @@ KtContainerNode(1164,1170): '@label'
   null
 
 KtLabelReferenceExpression(1164,1170): '@label'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <anonymous function>(it: one.MyClass.InnerOuter.InnerNested): kotlin.Unit
 
 KtCallExpression(1171,1176): 'foo()'
   KaSingleSymbolResolutionSuccess:

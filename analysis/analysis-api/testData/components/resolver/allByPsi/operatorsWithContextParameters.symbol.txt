@@ -617,7 +617,8 @@ KtContainerNode(757,773): '@SimpleOperators'
   null
 
 KtLabelReferenceExpression(757,773): '@SimpleOperators'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /SimpleOperators
 
 KtNamedFunction(779,1231): 'fun usage() {'
   null

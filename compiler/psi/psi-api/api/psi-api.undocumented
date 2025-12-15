@@ -701,7 +701,6 @@ org.jetbrains.kotlin.psi.KtIsExpression:constructor(ASTNode)
 org.jetbrains.kotlin.psi.KtIsExpression:getLeftHandSide()
 org.jetbrains.kotlin.psi.KtIsExpression:getTypeReference()
 org.jetbrains.kotlin.psi.KtIsExpression:isNegated()
-org.jetbrains.kotlin.psi.KtLabelReferenceExpression
 org.jetbrains.kotlin.psi.KtLabeledExpression
 org.jetbrains.kotlin.psi.KtLabeledExpression.baseExpression
 org.jetbrains.kotlin.psi.KtLambdaArgument

@@ -179,11 +179,12 @@ internal class KaFirResolver(
     private fun resolveSymbol(psi: KtElement): KaSymbolResolutionAttempt? {
         val originalFir = psi.getOrBuildFir(resolutionFacade) ?: return null
         return when (val unwrappedFir = originalFir.unwrapSafeCall()) {
-            is FirResolvable -> unwrappedFir.calleeReference.toKaSymbolResolutionAttempt(psi)
+            is FirResolvable -> unwrappedFir.toKaSymbolResolutionAttempt(psi)
             is FirCollectionLiteral -> unwrappedFir.toKaSymbolResolutionAttempt()
             is FirVariableAssignment -> unwrappedFir.calleeReference?.toKaSymbolResolutionAttempt(psi)
             is FirResolvedQualifier -> unwrappedFir.toKaSymbolResolutionAttempt(psi)
             is FirReference -> unwrappedFir.toKaSymbolResolutionAttempt(psi)
+            is FirReturnExpression -> unwrappedFir.toKaSymbolResolutionAttempt(psi)
             else -> null
         }
     }
@@ -250,6 +251,31 @@ internal class KaFirResolver(
         )
     }
 
+    private fun FirResolvable.toKaSymbolResolutionAttempt(psi: KtElement): KaSymbolResolutionAttempt? {
+        val calleeReference = when {
+            /**
+             * FIR doesn't have a dedicated element for label in `super@Foo.something()` statement
+             *
+             * ```kotlin
+             * interface A { fun a() {} }
+             *
+             * class Foo : A {
+             *     fun foo() {
+             *         super@F<caret>oo.a()
+             *     }
+             * }
+             * ```
+             */
+            psi is KtLabelReferenceExpression && calleeReference is FirSuperReference && this is FirQualifiedAccessExpression -> {
+                (dispatchReceiver as? FirThisReceiverExpression)?.calleeReference
+            }
+
+            else -> calleeReference
+        }
+
+        return calleeReference?.toKaSymbolResolutionAttempt(psi)
+    }
+
     private fun FirReference.toKaSymbolResolutionAttempt(psi: KtElement): KaSymbolResolutionAttempt? {
         if (this is FirDiagnosticHolder) {
             val kaDiagnostic = createKaDiagnostic(psi)
@@ -287,6 +313,20 @@ internal class KaFirResolver(
             backingDiagnostic = inapplicableCandidateDiagnostic(),
             backingCandidateSymbols = constructors.map(firSymbolBuilder.functionBuilder::buildConstructorSymbol),
         )
+    }
+
+    private fun FirReturnExpression.toKaSymbolResolutionAttempt(
+        psi: KtElement,
+    ): KaSymbolResolutionAttempt = when (val firFunctionSymbol = target.labeledElement.symbol) {
+        is FirErrorFunctionSymbol -> {
+            val diagnostic = firFunctionSymbol.fir.createKaDiagnostic(psi)
+            KaBaseSymbolResolutionError(backingCandidateSymbols = emptyList(), backingDiagnostic = diagnostic)
+        }
+
+        else -> {
+            val kaSymbol = firFunctionSymbol.buildSymbol(firSymbolBuilder)
+            KaBaseSingleSymbolResolutionSuccess(kaSymbol)
+        }
     }
 
     private val equalsSymbolInAny: FirNamedFunctionSymbol? by lazy(LazyThreadSafetyMode.PUBLICATION) {

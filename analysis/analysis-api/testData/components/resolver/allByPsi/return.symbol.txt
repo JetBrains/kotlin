@@ -240,7 +240,8 @@ KtContainerNode(295,300): '@foo3'
   null
 
 KtLabelReferenceExpression(295,300): '@foo3'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <anonymous function>(it: kotlin.Boolean): kotlin.Unit
 
 KtReturnExpression(325,336): 'return@foo2'
   null
@@ -249,7 +250,8 @@ KtContainerNode(331,336): '@foo2'
   null
 
 KtLabelReferenceExpression(331,336): '@foo2'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <anonymous function>(it: kotlin.String): kotlin.Unit
 
 KtReturnExpression(361,372): 'return@foo1'
   null
@@ -258,7 +260,8 @@ KtContainerNode(367,372): '@foo1'
   null
 
 KtLabelReferenceExpression(367,372): '@foo1'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <anonymous function>(it: kotlin.Int): kotlin.Unit
 
 KtCallExpression(431,634): 'foo2(label@ fun(s: String) {'
   KaSingleSymbolResolutionSuccess:
@@ -313,7 +316,8 @@ KtContainerNode(513,519): '@label'
   null
 
 KtLabelReferenceExpression(513,519): '@label'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <anonymous function>(s: kotlin.String): kotlin.Unit
 
 KtReturnExpression(540,551): 'return@foo3'
   null
@@ -322,7 +326,8 @@ KtContainerNode(546,551): '@foo3'
   null
 
 KtLabelReferenceExpression(546,551): '@foo3'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <anonymous function>(it: kotlin.Boolean): kotlin.Unit
 
 KtReturnExpression(572,583): 'return@foo2'
   null
@@ -331,7 +336,8 @@ KtContainerNode(578,583): '@foo2'
   null
 
 KtLabelReferenceExpression(578,583): '@foo2'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <anonymous function>(it: kotlin.String): kotlin.Unit
 
 KtReturnExpression(604,615): 'return@foo1'
   null
@@ -340,7 +346,8 @@ KtContainerNode(610,615): '@foo1'
   null
 
 KtLabelReferenceExpression(610,615): '@foo1'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <anonymous function>(it: kotlin.Int): kotlin.Unit
 
 KtReturnExpression(652,663): 'return@foo3'
   null
@@ -349,7 +356,8 @@ KtContainerNode(658,663): '@foo3'
   null
 
 KtLabelReferenceExpression(658,663): '@foo3'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <anonymous function>(it: kotlin.Boolean): kotlin.Unit
 
 KtReturnExpression(680,691): 'return@foo2'
   null
@@ -358,7 +366,8 @@ KtContainerNode(686,691): '@foo2'
   null
 
 KtLabelReferenceExpression(686,691): '@foo2'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <anonymous function>(it: kotlin.String): kotlin.Unit
 
 KtReturnExpression(708,719): 'return@foo1'
   null
@@ -367,7 +376,8 @@ KtContainerNode(714,719): '@foo1'
   null
 
 KtLabelReferenceExpression(714,719): '@foo1'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <anonymous function>(it: kotlin.Int): kotlin.Unit
 
 KtReturnExpression(755,761): 'return'
   null
