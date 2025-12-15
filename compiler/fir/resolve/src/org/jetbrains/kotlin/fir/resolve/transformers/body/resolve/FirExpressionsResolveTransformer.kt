@@ -1071,8 +1071,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         equalityOperatorCall.resultType = builtinTypes.booleanType.coneType
 
         val result = if (LanguageFeature.ResolveEqualsRhsInDependentContextWithCompletion.isDisabled() ||
-            (leftArgumentTransformed.hasProperTypeForEqualityOperatorCallArgument() &&
-                    rightArgumentTransformed.hasProperTypeForEqualityOperatorCallArgument())
+            rightArgumentTransformed.hasProperTypeForEqualityOperatorCallArgument()
         ) {
             equalityOperatorCall
         } else {
