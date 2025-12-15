@@ -15,10 +15,13 @@ import org.gradle.api.publish.maven.internal.publication.MavenPublicationInterna
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.tooling.buildKotlinToolingMetadataTask
 import org.jetbrains.kotlin.gradle.utils.*
+import org.jetbrains.kotlin.konan.target.HostManager
 
 private val Project.kotlinMultiplatformRootPublicationImpl: CompletableFuture<MavenPublication?>
         by projectStoredProperty { CompletableFuture() }
@@ -28,18 +31,60 @@ internal val Project.kotlinMultiplatformRootPublication: Future<MavenPublication
 
 internal val MultiplatformPublishingSetupAction = KotlinProjectSetupCoroutine {
     if (isPluginApplied("maven-publish")) {
-        if (project.kotlinPropertiesProvider.createDefaultMultiplatformPublications) {
-            project.extensions.configure(PublishingExtension::class.java) { publishing ->
-                createRootPublication(project, publishing).also(kotlinMultiplatformRootPublicationImpl::complete)
-                createTargetPublications(project, publishing)
-            }
-        } else {
+        if (project.shouldDisablePublishingDueToIncompatibleHost()) {
             kotlinMultiplatformRootPublicationImpl.complete(null)
+        } else {
+            setupMultiplatformPublishing()
         }
         project.components.add(project.multiplatformExtension.rootSoftwareComponent)
     } else {
         kotlinMultiplatformRootPublicationImpl.complete(null)
     }
+}
+
+/**
+ * Configures the Multiplatform publications.
+ * Can be called immediately or deferred depending on host compatibility checks.
+ */
+private fun Project.setupMultiplatformPublishing() {
+    if (project.kotlinPropertiesProvider.createDefaultMultiplatformPublications) {
+        project.extensions.configure(PublishingExtension::class.java) { publishing ->
+            createRootPublication(project, publishing).also(project.kotlinMultiplatformRootPublicationImpl::complete)
+            createTargetPublications(project, publishing)
+        }
+    } else {
+        kotlinMultiplatformRootPublicationImpl.complete(null)
+    }
+}
+
+/**
+ * Checks if the current host environment is incompatible with the project's targets.
+ *
+ * @return `true` if publishing should be disabled.
+ */
+private suspend fun Project.shouldDisablePublishingDueToIncompatibleHost(): Boolean {
+    // 1. Check for kotlin.internal.mpp.allowMultiplatformPublicationsOnUnsupportedHost property to allow partial publishing
+    if (project.kotlinPropertiesProvider.allowMultiplatformPublicationsOnUnsupportedHost) return false
+
+    // 2. Check if the current host is supported
+    if (HostManager.hostOrNull != null) return false
+
+    // 3. Host is unsupported. Check if the project actually uses any Native targets.
+    // If the project is pure JVM/JS/Wasm, we shouldn't block publishing just because the OS is exotic (e.g., FreeBSD).
+    val hasNativeTargets = project.multiplatformExtension.awaitTargets().any { it is KotlinNativeTarget }
+
+    if (hasNativeTargets) {
+        project.reportDiagnostic(
+            KotlinToolingDiagnostics.PublishingDisabledOnUnsupportedHost(
+                name,
+                HostManager.platformName(),
+                HostManager().supportedHosts
+            )
+        )
+        return true
+    }
+
+    return false
 }
 
 /**

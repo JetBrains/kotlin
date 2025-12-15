@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.KOTLIN_SUPPRESS_GRADLE_PLUGIN_WARNINGS_PROPERTY
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_INTERNAL_ALLOW_MULTIPLATFORM_PUBLICATIONS_ON_UNSUPPORTED_HOST
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_APPLY_DEFAULT_HIERARCHY_TEMPLATE
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_ENABLE_KLIBS_CROSSCOMPILATION
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_IGNORE_DISABLED_TARGETS
@@ -204,6 +205,34 @@ internal object KotlinToolingDiagnostics {
 
         val extendedDetailsLogInInfo: String
             get() = "Run the build with '--info' for more details."
+    }
+
+    internal object PublishingDisabledOnUnsupportedHost : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
+        operator fun invoke(projectName: String, hostName: String, supportedHosts: List<String>) =
+            build {
+                val supportedHostsList = supportedHosts
+                    .sorted()
+                    .joinToString(separator = "\n* ", prefix = "* ")
+
+                title("Kotlin Multiplatform publishing is disabled")
+                    .description(
+                        """
+                        |The Kotlin/Native compiler does not support your current host platform: $hostName.
+                        |Consequently, publishing for project '$projectName' has been disabled to prevent incomplete artifacts.
+                        |
+                        |Compilation and publication of Kotlin/Native targets is only possible on the following host platforms:
+                        |$supportedHostsList
+                        """.trimMargin()
+                    )
+                    .solutions {
+                        listOf(
+                            "Run the publish task on one of the supported host platforms (listed above).",
+                            "If using a CI/CD service, ensure the agent runs a supported OS (e.g., a Linux x86_64 agent).",
+                            "To force publishing (only for non-native targets), add '$KOTLIN_INTERNAL_ALLOW_MULTIPLATFORM_PUBLICATIONS_ON_UNSUPPORTED_HOST=true' to your Gradle properties."
+                        )
+                    }
+                    .documentationLink(URI("https://kotlinlang.org/docs/native-target-support.html"))
+            }
     }
 
     internal object NativeHostNotSupportedError : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
