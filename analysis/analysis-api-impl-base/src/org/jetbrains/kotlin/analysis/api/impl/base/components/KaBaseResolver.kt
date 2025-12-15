@@ -63,6 +63,7 @@ abstract class KaBaseResolver<T : KaSession> : KaBaseSessionComponent<T>(), KaRe
     final override fun KtSuperTypeCallEntry.resolveSymbol(): KaConstructorSymbol? = resolveSymbolSafe()
     final override fun KtConstructorDelegationCall.resolveSymbol(): KaConstructorSymbol? = resolveSymbolSafe()
     final override fun KtCallElement.resolveSymbol(): KaCallableSymbol? = resolveSymbolSafe()
+    final override fun KtCallableReferenceExpression.resolveSymbol(): KaCallableSymbol? = resolveSymbolSafe()
 
     final override fun KtReference.resolveToSymbol(): KaSymbol? = withPsiValidityAssertion(element) {
         return resolveToSymbols().singleOrNull()
@@ -92,6 +93,7 @@ abstract class KaBaseResolver<T : KaSession> : KaBaseSessionComponent<T>(), KaRe
     final override fun KtSuperTypeCallEntry.resolveCall(): KaFunctionCall<KaConstructorSymbol>? = resolveCallSafe()
     final override fun KtConstructorDelegationCall.resolveCall(): KaDelegatedConstructorCall? = resolveCallSafe()
     final override fun KtCallElement.resolveCall(): KaCallableMemberCall<*, *>? = resolveCallSafe()
+    final override fun KtCallableReferenceExpression.resolveCall(): KaCallableMemberCall<*, *>? = resolveCallSafe()
 
     final override fun KtElement.resolveToCall(): KaCallInfo? = withPsiValidityAssertion {
         when (val attempt = tryResolveCallImpl()) {

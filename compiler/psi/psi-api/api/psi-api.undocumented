@@ -381,7 +381,6 @@ org.jetbrains.kotlin.psi.KtCallableDeclaration:getReceiverTypeReference()
 org.jetbrains.kotlin.psi.KtCallableDeclaration:getValueParameterList()
 org.jetbrains.kotlin.psi.KtCallableDeclaration:getValueParameters()
 org.jetbrains.kotlin.psi.KtCallableDeclaration:setTypeReference(KtTypeReference)
-org.jetbrains.kotlin.psi.KtCallableReferenceExpression
 org.jetbrains.kotlin.psi.KtCallableReferenceExpression:constructor(ASTNode)
 org.jetbrains.kotlin.psi.KtCallableReferenceExpression:getCallableReference()
 org.jetbrains.kotlin.psi.KtCatchClause

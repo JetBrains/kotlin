@@ -581,7 +581,9 @@ KtNameReferenceExpression(973,980): 'MyClass'
   null
 
 KtCallableReferenceExpression(984,997): '::myClassProp'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'myClassProp'.>
 
 KtNameReferenceExpression(986,997): 'myClassProp'
   null

@@ -161,6 +161,29 @@ public interface KaResolver : KaSessionComponent {
     public fun KtCallElement.resolveSymbol(): KaCallableSymbol?
 
     /**
+     * Resolves the callable symbol targeted by the given [KtCallableReferenceExpression].
+     *
+     * #### Example
+     *
+     * ```kotlin
+     * fun foo(x: Int) {}
+     *
+     * val ref = ::foo
+     * //        ^^^^^
+     * ```
+     *
+     * Calling `resolveSymbol()` on the [KtCallableReferenceExpression] (`::foo`) returns the [KaCallableSymbol] of `foo`
+     * if resolution succeeds; otherwise, it returns `null` (e.g., when unresolved or ambiguous).
+     *
+     * This is a specialized counterpart of [KtResolvable.resolveSymbol] focused specifically on callable reference expressions
+     *
+     * @see tryResolveSymbol
+     * @see KtResolvable.resolveSymbol
+     */
+    @KaExperimentalApi
+    public fun KtCallableReferenceExpression.resolveSymbol(): KaCallableSymbol?
+
+    /**
      * Attempts to resolve the call for the given [KtResolvableCall].
      *
      * ### Usage Example:
@@ -299,6 +322,29 @@ public interface KaResolver : KaSessionComponent {
      */
     @KaExperimentalApi
     public fun KtCallElement.resolveCall(): KaCallableMemberCall<*, *>?
+
+    /**
+     * Resolves the given [KtCallableReferenceExpression] to a callable member call.
+     *
+     * #### Example
+     *
+     * ```kotlin
+     * class A { fun foo() {} }
+     *
+     * val ref = A::foo
+     * //        ^^^^^^
+     * ```
+     *
+     * Returns the corresponding [KaCallableMemberCall] if resolution succeeds;
+     * otherwise, it returns `null` (e.g., when unresolved or ambiguous).
+     *
+     * This is a specialized counterpart of [KtResolvableCall.resolveCall] focused specifically on callable reference expressions
+     *
+     * @see tryResolveCall
+     * @see KtResolvableCall.resolveCall
+     */
+    @KaExperimentalApi
+    public fun KtCallableReferenceExpression.resolveCall(): KaCallableMemberCall<*, *>?
 
     /**
      * Returns all candidates considered during [overload resolution](https://kotlinlang.org/spec/overload-resolution.html)
@@ -580,6 +626,36 @@ public fun KtCallElement.resolveSymbol(): KaCallableSymbol? {
 }
 
 /**
+ * Resolves the callable symbol targeted by the given [KtCallableReferenceExpression].
+ *
+ * #### Example
+ *
+ * ```kotlin
+ * fun foo(x: Int) {}
+ *
+ * val ref = ::foo
+ * //        ^^^^^
+ * ```
+ *
+ * Calling `resolveSymbol()` on the [KtCallableReferenceExpression] (`::foo`) returns the [KaCallableSymbol] of `foo`
+ * if resolution succeeds; otherwise, it returns `null` (e.g., when unresolved or ambiguous).
+ *
+ * This is a specialized counterpart of [KtResolvable.resolveSymbol] focused specifically on callable reference expressions
+ *
+ * @see tryResolveSymbol
+ * @see KtResolvable.resolveSymbol
+ */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
+@KaExperimentalApi
+@KaContextParameterApi
+context(s: KaSession)
+public fun KtCallableReferenceExpression.resolveSymbol(): KaCallableSymbol? {
+    return with(s) {
+        resolveSymbol()
+    }
+}
+
+/**
  * Attempts to resolve the call for the given [KtResolvableCall].
  *
  * ### Usage Example:
@@ -756,6 +832,36 @@ public fun KtConstructorDelegationCall.resolveCall(): KaDelegatedConstructorCall
 @KaContextParameterApi
 context(s: KaSession)
 public fun KtCallElement.resolveCall(): KaCallableMemberCall<*, *>? {
+    return with(s) {
+        resolveCall()
+    }
+}
+
+/**
+ * Resolves the given [KtCallableReferenceExpression] to a callable member call.
+ *
+ * #### Example
+ *
+ * ```kotlin
+ * class A { fun foo() {} }
+ *
+ * val ref = A::foo
+ * //        ^^^^^^
+ * ```
+ *
+ * Returns the corresponding [KaCallableMemberCall] if resolution succeeds;
+ * otherwise, it returns `null` (e.g., when unresolved or ambiguous).
+ *
+ * This is a specialized counterpart of [KtResolvableCall.resolveCall] focused specifically on callable reference expressions
+ *
+ * @see tryResolveCall
+ * @see KtResolvableCall.resolveCall
+ */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
+@KaExperimentalApi
+@KaContextParameterApi
+context(s: KaSession)
+public fun KtCallableReferenceExpression.resolveCall(): KaCallableMemberCall<*, *>? {
     return with(s) {
         resolveCall()
     }
