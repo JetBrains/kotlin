@@ -28,18 +28,24 @@ import org.jetbrains.kotlin.gradle.plugin.ide.ideaImportDependsOn
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.FrameworkCopy.Companion.dsymFile
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.CheckCocoaPodsHasNoSwiftPMDependencies
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.PROJECT_FILE_PATH_ENV
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.callingProjectPathProvider
 import org.jetbrains.kotlin.gradle.targets.native.cocoapods.CocoapodsPluginDiagnostics
 import org.jetbrains.kotlin.gradle.targets.native.cocoapods.KotlinArtifactsPodspecExtension
 import org.jetbrains.kotlin.gradle.targets.native.cocoapods.kotlinArtifactsPodspecExtension
 import org.jetbrains.kotlin.gradle.targets.native.tasks.*
 import org.jetbrains.kotlin.gradle.targets.native.tasks.artifact.kotlinArtifactsExtension
 import org.jetbrains.kotlin.gradle.tasks.*
+import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import org.jetbrains.kotlin.utils.addToStdlib.cast
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.swiftPMDependenciesExtension
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.swiftPMDependenciesMetadataClasspath
 import java.io.File
 
 
@@ -152,14 +158,37 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
     private fun Project.createCopyFrameworkTask(
         frameworkFile: Provider<File>,
         buildingTask: TaskProvider<*>,
-    ) = registerTask<FrameworkCopy>(SYNC_TASK_NAME) { task ->
-        task.group = TASK_GROUP
-        task.description = "Copies a framework for given platform and build type into the CocoaPods build directory"
+    ): TaskProvider<FrameworkCopy> {
+        val checkHasNoSwiftPMDependencies = checkHasNoSwiftPMDependencies()
+        return registerTask<FrameworkCopy>(SYNC_TASK_NAME) { task ->
+            task.group = TASK_GROUP
+            task.description = "Copies a framework for given platform and build type into the CocoaPods build directory"
+            task.dependsOn(checkHasNoSwiftPMDependencies)
 
-        task.sourceFramework.fileProvider(frameworkFile)
-        task.sourceDsym.fileProvider(dsymFile(frameworkFile))
-        task.dependsOn(buildingTask)
-        task.destinationDirectory.set(layout.cocoapodsBuildDirs.framework)
+            task.sourceFramework.fileProvider(frameworkFile)
+            task.sourceDsym.fileProvider(dsymFile(frameworkFile))
+            task.dependsOn(buildingTask)
+            task.destinationDirectory.set(layout.cocoapodsBuildDirs.framework)
+        }
+    }
+
+    private fun Project.checkHasNoSwiftPMDependencies(): TaskProvider<*> {
+        val existingTask = locateTask<DefaultTask>(CHECK_SWIFT_PM_DEPENDENCIES_TASK_NAME)
+        if (existingTask != null) return existingTask
+        val swiftPMImportExtension = swiftPMDependenciesExtension()
+        val directSwiftPMDependencies = provider { swiftPMImportExtension.spmDependencies }
+        val transitiveSwiftPMDependencies = swiftPMDependenciesMetadataClasspath()
+
+        return registerTask<CheckCocoaPodsHasNoSwiftPMDependencies>(CHECK_SWIFT_PM_DEPENDENCIES_TASK_NAME) { task ->
+            task.group = TASK_GROUP
+            task.description = "Check for SwiftPM dependencies and fail the build if these are present"
+            task.directSwiftPMDependencies.set(directSwiftPMDependencies)
+            task.transitiveSwiftPMDependencies.set(transitiveSwiftPMDependencies)
+            task.workspacePath.set(project.providers.environmentVariable("WORKSPACE_DIR"))
+            task.gradleProjectPath.set(project.path)
+            task.projectPath.set(project.projectDir)
+            task.rootProjectDir.set(rootProject.projectDir)
+        }
     }
 
     private fun createSyncForFatFramework(
@@ -843,6 +872,7 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
         const val TASK_GROUP = "CocoaPods"
         const val POD_FRAMEWORK_PREFIX = "pod"
         const val SYNC_TASK_NAME = "syncFramework"
+        const val CHECK_SWIFT_PM_DEPENDENCIES_TASK_NAME = "checkSwiftPMDependencies"
         const val POD_SPEC_TASK_NAME = "podspec"
         const val DUMMY_FRAMEWORK_TASK_NAME = "generateDummyFramework"
         const val POD_INSTALL_TASK_NAME = "podInstall"

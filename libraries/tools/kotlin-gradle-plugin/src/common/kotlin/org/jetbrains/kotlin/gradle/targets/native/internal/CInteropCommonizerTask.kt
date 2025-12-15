@@ -223,7 +223,7 @@ internal abstract class CInteropCommonizerTask
 
     }
 
-    @TaskAction
+    override fun parallelWork() = commonizeCInteropLibraries()
     protected fun commonizeCInteropLibraries() {
         val metricReporter = metrics.get()
 
