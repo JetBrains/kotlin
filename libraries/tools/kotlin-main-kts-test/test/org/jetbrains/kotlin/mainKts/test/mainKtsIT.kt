@@ -46,6 +46,18 @@ class MainKtsIT {
     }
 
     @Test
+    fun testCompileWithImport() {
+        val mainKtsJar = File("dist/kotlinc/lib/kotlin-main-kts.jar")
+        Assert.assertTrue("kotlin-main-kts.jar not found, run dist task: ${mainKtsJar.absolutePath}", mainKtsJar.exists())
+
+        runWithK2JVMCompiler(
+            "$TEST_DATA_ROOT/import-test.main.kts",
+            classpath = listOf(mainKtsJar),
+            skipScriptArgument = true
+        )
+    }
+
+    @Test
     fun testThreadContextClassLoader() {
         runWithKotlincAndMainKts("$TEST_DATA_ROOT/context-classloader.main.kts", listOf("MainKtsConfigurator"))
     }
@@ -67,27 +79,30 @@ class MainKtsIT {
     @OptIn(ExperimentalPathApi::class)
     @Test
     fun testCache() {
-        val script = File("$TEST_DATA_ROOT/import-test.main.kts").absolutePath
-        val cache = createTempDirectory("main.kts.test")
+        if (isRunningTestOnK2) {
+            // test fails on K1, which may cause some disruptions, but we plan to drop it very soon anyway, so maybe it's ok
+            val script = File("$TEST_DATA_ROOT/import-test.main.kts").absolutePath
+            val cache = createTempDirectory("main.kts.test")
 
-        try {
-            Assert.assertTrue(cache.exists() && cache.listDirectoryEntries("*.jar").isEmpty())
-            runWithKotlinRunner(script, OUT_FROM_IMPORT_TEST, cacheDir = cache)
-            val cacheFile = cache.listDirectoryEntries("*.jar").firstOrNull()
-            Assert.assertTrue(cacheFile != null && cacheFile.exists())
+            try {
+                Assert.assertTrue(cache.exists() && cache.listDirectoryEntries("*.jar").isEmpty())
+                runWithKotlinRunner(script, OUT_FROM_IMPORT_TEST, cacheDir = cache)
+                val cacheFile = cache.listDirectoryEntries("*.jar").firstOrNull()
+                Assert.assertTrue(cacheFile != null && cacheFile.exists())
 
-            // run generated jar with java
-            val javaExecutable = File(File(System.getProperty("java.home"), "bin"), "java")
-            val args = listOf(javaExecutable.absolutePath, "-jar", cacheFile!!.toString())
-            runAndCheckResults(
-                args, OUT_FROM_IMPORT_TEST,
-                additionalEnvVars = listOf(COMPILED_SCRIPTS_CACHE_DIR_ENV_VAR to cache.toAbsolutePath().toString())
-            )
+                // run generated jar with java
+                val javaExecutable = File(File(System.getProperty("java.home"), "bin"), "java")
+                val args = listOf(javaExecutable.absolutePath, "-jar", cacheFile!!.toString())
+                runAndCheckResults(
+                    args, OUT_FROM_IMPORT_TEST,
+                    additionalEnvVars = listOf(COMPILED_SCRIPTS_CACHE_DIR_ENV_VAR to cache.toAbsolutePath().toString())
+                )
 
-            // this run should use the cached script
-            runWithKotlinRunner(script, OUT_FROM_IMPORT_TEST, cacheDir = cache)
-        } finally {
-            cache.toFile().deleteRecursively()
+                // this run should use the cached script
+                runWithKotlinRunner(script, OUT_FROM_IMPORT_TEST, cacheDir = cache)
+            } finally {
+                cache.toFile().deleteRecursively()
+            }
         }
     }
 

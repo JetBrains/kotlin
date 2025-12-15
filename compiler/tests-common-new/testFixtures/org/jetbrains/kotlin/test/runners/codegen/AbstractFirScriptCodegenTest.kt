@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.codegen.GeneratedClassLoader
 import org.jetbrains.kotlin.compiler.plugin.*
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.Constructor
@@ -44,12 +45,15 @@ import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurat
 import org.jetbrains.kotlin.test.services.standardLibrariesPathProvider
 import java.net.URLClassLoader
 
-open class AbstractFirScriptAndReplCodegenTest(val frontendFacade: Constructor<FrontendFacade<FirOutputArtifact>> = ::FirFrontendFacade) :
+open class AbstractFirScriptAndReplCodegenTest(
+    val parser: FirParser,
+    val frontendFacade: Constructor<FrontendFacade<FirOutputArtifact>> = ::FirFrontendFacade
+) :
     AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.JVM_IR)
 {
 
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
-        configureFirParser(FirParser.Psi)
+        configureFirParser(parser)
 
         globalDefaults {
             frontend = FrontendKinds.FIR
@@ -95,7 +99,7 @@ open class AbstractFirScriptAndReplCodegenTest(val frontendFacade: Constructor<F
     }
 }
 
-open class AbstractFirScriptCodegenTest : AbstractFirScriptAndReplCodegenTest() {
+open class AbstractFirScriptCodegenTest(parser: FirParser = FirParser.LightTree) : AbstractFirScriptAndReplCodegenTest(parser) {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         with(builder) {
@@ -120,12 +124,22 @@ class FirJvmScriptRunChecker(testServices: TestServices) : JvmBinaryArtifactHand
                 when (val sourceFile = fileInfo.sourceFile) {
                     is KtPsiSourceFile -> (sourceFile.psiFile as? KtFile)?.let { ktFile ->
                         ktFile.script?.fqName?.let { scriptFqName ->
-                            runAndCheckScript(ktFile, scriptFqName, classLoader)
+                            runAndCheckScript(ktFile.text, scriptFqName, classLoader)
                             scriptProcessed = true
                         }
                     }
                     else -> {
-                        assertions.fail { "Only PSI scripts are supported so far" }
+                        fileInfo.sourceFile.getContentsAsStream().reader(Charsets.UTF_8).use { reader ->
+                            runAndCheckScript(
+                                reader.readText(),
+                                // TODO: implement more robust script FQName extraction (KT-83955)
+                                fileInfo.info.fileClassFqName.let {
+                                    it.parent().child(Name.identifier(it.shortName().asString().removeSuffix("Kt")))
+                                },
+                                classLoader
+                            )
+                            scriptProcessed = true
+                        }
                     }
                 }
             }
@@ -135,18 +149,18 @@ class FirJvmScriptRunChecker(testServices: TestServices) : JvmBinaryArtifactHand
     }
 
     private fun runAndCheckScript(
-        ktFile: KtFile,
+        scriptText: String,
         scriptFqName: FqName,
         classLoader: GeneratedClassLoader,
     ) {
-        val expected = Regex("// expected: (\\S+): (.*)").findAll(ktFile.text).map {
+        val expected = Regex("// expected: (\\S+): (.*)").findAll(scriptText).map {
             it.groups[1]!!.value to it.groups[2]!!.value
         }
 
         val scriptClass = classLoader.loadClass(scriptFqName.asString())
         val ctor = scriptClass.constructors.single()
         val args: Array<String> =
-            Regex("param: (\\S.*)").find(ktFile.text)?.let { it.groups[1]?.value?.split(" ") }
+            Regex("param: (\\S.*)").find(scriptText)?.let { it.groups[1]?.value?.split(" ") }
                 .orEmpty().toTypedArray()
         val scriptInstance = ctor.newInstance(args)
         for ((fieldName, expectedValue) in expected) {
