@@ -126,15 +126,15 @@ class Fir2IrBuiltinSymbolsContainer(
     val throwableClass: IrClassSymbol by lazy { loadClass(StandardClassIds.Throwable) }
     val throwableType: IrType get() = throwableClass.defaultTypeWithoutArguments
 
-    val extensionFunctionTypeAnnotationCall: IrAnnotation? by lazy {
-        generateAnnotationCall(StandardClassIds.Annotations.ExtensionFunctionType)
+    val extensionFunctionTypeAnnotation: IrAnnotation? by lazy {
+        generateAnnotation(StandardClassIds.Annotations.ExtensionFunctionType)
     }
 
-    val noInferAnnotationCall: IrAnnotation? by lazy {
-        generateAnnotationCall(StandardClassIds.Annotations.NoInfer)
+    val noInferAnnotation: IrAnnotation? by lazy {
+        generateAnnotation(StandardClassIds.Annotations.NoInfer)
     }
 
-    private fun generateAnnotationCall(classId: ClassId): IrAnnotationImpl? {
+    private fun generateAnnotation(classId: ClassId): IrAnnotationImpl? {
         val firSymbol =
             session.symbolProvider.getClassLikeSymbolByClassId(classId) as? FirRegularClassSymbol
                 ?: return null

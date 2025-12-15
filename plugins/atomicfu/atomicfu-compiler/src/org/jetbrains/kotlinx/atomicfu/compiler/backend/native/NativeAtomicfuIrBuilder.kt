@@ -87,7 +87,7 @@ class NativeAtomicfuIrBuilder(
     override fun buildVolatileFieldOfType(
         name: String,
         valueType: IrType,
-        annotations: List<IrConstructorCall>,
+        annotations: List<IrAnnotation>,
         initExpr: IrExpression?,
         parentContainer: IrDeclarationContainer
     ): IrField =
