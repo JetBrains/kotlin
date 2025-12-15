@@ -47,7 +47,7 @@
 
         <junit-version>4.13.1</junit-version>
         <pegdown.version>1.1.0</pegdown.version>
-        <surefire-version>2.16</surefire-version>
+        <surefire-version>3.5.4</surefire-version>
         <exec-maven-plugin.version>1.2.1</exec-maven-plugin.version>
         <selenium.version>2.53.1</selenium.version>
         <htmlunit.version>2.24</htmlunit.version>
@@ -178,7 +178,6 @@
                 <version>${surefire-version}</version>
                 <configuration>
                     <forkMode>once</forkMode>
-                    <jvm>${jdk_1_8}/bin/java</jvm>
                     <useSystemClassLoader>false</useSystemClassLoader>
                     <useManifestOnlyJar>false</useManifestOnlyJar>
                     <failIfNoTests>false</failIfNoTests>
