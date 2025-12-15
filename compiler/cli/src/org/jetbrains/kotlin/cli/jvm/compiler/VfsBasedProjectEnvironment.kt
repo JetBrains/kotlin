@@ -235,3 +235,5 @@ internal fun List<VirtualFileSystem>.findFileByPath(
         if (protocolFilter != null && it.protocol != protocolFilter) null
         else it.findFileByPath(path)
     }
+
+fun VfsBasedProjectEnvironment.findFileByPath(path: String): VirtualFile? = knownFileSystems.findFileByPath(path)

@@ -40,18 +40,6 @@ data class GroupedKtSources(
 val GroupedKtSources.allFiles: List<KtSourceFile>
     get() = platformSources + commonSources
 
-fun collectSources(
-    compilerConfiguration: CompilerConfiguration,
-    projectEnvironment: VfsBasedProjectEnvironment,
-    messageCollector: MessageCollector
-): GroupedKtSources =
-    collectSources(
-        compilerConfiguration,
-        projectEnvironment.project,
-        projectEnvironment.knownFileSystems,
-        messageCollector
-    )
-
 private val ktSourceFileComparator = Comparator<KtSourceFile> { o1, o2 ->
     val path1 = o1.path ?: error("Expected a file with a well-defined path")
     val path2 = o2.path ?: error("Expected a file with a well-defined path")
@@ -60,8 +48,7 @@ private val ktSourceFileComparator = Comparator<KtSourceFile> { o1, o2 ->
 
 fun collectSources(
     compilerConfiguration: CompilerConfiguration,
-    project: Project,
-    fileSystems: List<VirtualFileSystem>,
+    projectEnvironment: VfsBasedProjectEnvironment,
     messageCollector: MessageCollector
 ): GroupedKtSources {
     fun createSet(): MutableSet<KtSourceFile> = if (compilerConfiguration.dontSortSourceFiles) {
@@ -74,12 +61,12 @@ fun collectSources(
     val commonSources = createSet()
     val sourcesByModuleName = mutableMapOf<String, MutableSet<KtSourceFile>>()
 
-    val virtualFileCreator = PreprocessedFileCreator(project)
+    val virtualFileCreator = PreprocessedFileCreator(projectEnvironment.project)
 
     var pluginsConfigured = false
     fun ensurePluginsConfigured() {
         if (!pluginsConfigured) {
-            for (extension in CompilerConfigurationExtension.getInstances(project)) {
+            for (extension in CompilerConfigurationExtension.getInstances(projectEnvironment.project)) {
                 extension.updateFileRegistry()
             }
             pluginsConfigured = true
@@ -89,7 +76,7 @@ fun collectSources(
         .allSourceFilesSequence(
             compilerConfiguration,
             reportLocation = null,
-            findVirtualFile = { fileSystems.findFileByPath(it.path, StandardFileSystems.FILE_PROTOCOL) },
+            findVirtualFile = { projectEnvironment.knownFileSystems.findFileByPath(it.path, StandardFileSystems.FILE_PROTOCOL) },
             accept = { virtualFile, isExplicit ->
                 when (virtualFile.extension) {
                     JavaFileType.DEFAULT_EXTENSION -> false
@@ -111,7 +98,9 @@ fun collectSources(
                 if (it.extension == KotlinFileType.EXTENSION) sources
                 else {
                     // currently applying the extension only to non-kt files, e.g. scripts
-                    FirProcessSourcesBeforeCompilingExtension.processSources(project, compilerConfiguration, sources) ?: sources
+                    FirProcessSourcesBeforeCompilingExtension.processSources(
+                        projectEnvironment.project, projectEnvironment, compilerConfiguration, sources
+                    ) ?: sources
                 }
             }
         ).forEach { fileInfo ->

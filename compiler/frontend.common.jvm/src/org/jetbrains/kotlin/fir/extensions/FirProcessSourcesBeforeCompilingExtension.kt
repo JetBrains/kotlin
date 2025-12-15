@@ -26,11 +26,14 @@ abstract class FirProcessSourcesBeforeCompilingExtension {
          * @see FirProcessSourcesBeforeCompilingExtension.doProcessSources
          */
         fun processSources(
-            project: Project, configuration: CompilerConfiguration, sources: Iterable<KtSourceFile>
+            project: Project,
+            environment: Any, // TODO: actually the VfsBasedProjectEnvironment is needed here, so we need to refactor dependencies to allow it
+            configuration: CompilerConfiguration,
+            sources: Iterable<KtSourceFile>
         ): Iterable<KtSourceFile>? {
             val extensions = getInstances(project).filter { it.isApplicable(configuration) }
             return if (extensions.isEmpty()) sources
-            else extensions.fold(sources) { res, ext -> ext.doProcessSources(project, configuration, res) }
+            else extensions.fold(sources) { res, ext -> ext.doProcessSources(environment, configuration, res) }
         }
     }
 
@@ -43,12 +46,13 @@ abstract class FirProcessSourcesBeforeCompilingExtension {
 
     /**
      * Process sources potentially converting, adding, or removing initial ones
-     * @param project the project that sources belong to
      * @param configuration compiler configuration
      * @param sources sources to process
      * @return null if no applicable extensions were found or no processing was performed, otherwise returns processed sources
      */
     abstract fun doProcessSources(
-        project: Project, configuration: CompilerConfiguration, sources: Iterable<KtSourceFile>
+        environment: Any, // see the comment to [processSources] above
+        configuration: CompilerConfiguration,
+        sources: Iterable<KtSourceFile>,
     ): Iterable<KtSourceFile>
 }

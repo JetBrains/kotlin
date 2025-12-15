@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.cli.jvm.compiler.toVfsBasedProjectEnvironment
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
@@ -117,8 +118,7 @@ fun PhaseContext.firFrontendWithLightTree(input: KotlinCoreEnvironment): FirOutp
     val groupedSources =
         collectSources(
             configuration,
-            input.project,
-            listOf(input.projectEnvironment.environment.localFileSystem),
+            input.toVfsBasedProjectEnvironment(),
             messageCollector
         )
 

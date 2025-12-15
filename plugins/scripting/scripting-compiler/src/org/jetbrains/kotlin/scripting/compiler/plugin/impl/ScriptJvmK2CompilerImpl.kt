@@ -275,17 +275,18 @@ fun createK2ScriptCompilerWithLightTree(
             scriptCompilationConfiguration,
             scriptCompilationConfiguration[ScriptCompilationConfiguration.hostConfiguration] ?: defaultJvmScriptingHostConfiguration
         )
-    return ScriptJvmK2CompilerImpl(state) { session, diagnosticsReporter ->
-        val sourcesToPathsMapper = session.sourcesToPathsMapper
-        val builder = LightTree2Fir(session, session.kotlinScopeProvider, diagnosticsReporter)
-        val linesMapping = text.toSourceLinesMapping()
-        builder.buildFirFile(text, toKtSourceFile(), linesMapping).also { firFile ->
-            (session.firProvider as FirProviderImpl).recordFile(firFile)
-            sourcesToPathsMapper.registerFileSource(firFile.source!!, locationId ?: name!!)
-        }
-    }
+    return ScriptJvmK2CompilerImpl(state, SourceCode::convertToFirViaLightTree)
 }
 
+fun SourceCode.convertToFirViaLightTree(session: FirSession, diagnosticsReporter: BaseDiagnosticsCollector): FirFile {
+    val sourcesToPathsMapper = session.sourcesToPathsMapper
+    val builder = LightTree2Fir(session, session.kotlinScopeProvider, diagnosticsReporter)
+    val linesMapping = text.toSourceLinesMapping()
+    return builder.buildFirFile(text, toKtSourceFile(), linesMapping).also { firFile ->
+        (session.firProvider as FirProviderImpl).recordFile(firFile)
+        sourcesToPathsMapper.registerFileSource(firFile.source!!, locationId ?: name!!)
+    }
+}
 
 @SessionConfiguration
 private fun K2ScriptingCompilerEnvironmentInternal.getOrCreateSessionForAnnotationResolution(): FirSession =

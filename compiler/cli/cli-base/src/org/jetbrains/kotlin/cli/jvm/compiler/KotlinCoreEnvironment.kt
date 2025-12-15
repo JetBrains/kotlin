@@ -73,6 +73,7 @@ import org.jetbrains.kotlin.extensions.internal.InternalNonStableExtensionPoints
 import org.jetbrains.kotlin.extensions.internal.TypeResolutionInterceptor
 import org.jetbrains.kotlin.fir.extensions.FirAnalysisHandlerExtension
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
+import org.jetbrains.kotlin.fir.extensions.FirProcessSourcesBeforeCompilingExtension
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.load.java.structure.impl.source.JavaElementSourceFactory
 import org.jetbrains.kotlin.load.java.structure.impl.source.JavaFixedElementSourceFactory
@@ -769,6 +770,7 @@ class KotlinCoreEnvironment private constructor(
             TypeAttributeTranslatorExtension.registerExtensionPoint(project)
             AssignResolutionAltererExtension.registerExtensionPoint(project)
             FirAnalysisHandlerExtension.registerExtensionPoint(project)
+            FirProcessSourcesBeforeCompilingExtension.registerExtensionPoint(project)
             DiagnosticSuppressor.registerExtensionPoint(project)
         }
 
