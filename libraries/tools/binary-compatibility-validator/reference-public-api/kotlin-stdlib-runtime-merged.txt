@@ -2546,6 +2546,7 @@ public final class kotlin/collections/MapsKt {
 	public static final fun any (Ljava/util/Map;Lkotlin/jvm/functions/Function1;)Z
 	public static final fun asSequence (Ljava/util/Map;)Lkotlin/sequences/Sequence;
 	public static final fun build (Ljava/util/Map;)Ljava/util/Map;
+	public static final fun copy (Ljava/util/Map$Entry;)Ljava/util/Map$Entry;
 	public static final fun count (Ljava/util/Map;Lkotlin/jvm/functions/Function1;)I
 	public static final fun createMapBuilder ()Ljava/util/Map;
 	public static final fun createMapBuilder (I)Ljava/util/Map;

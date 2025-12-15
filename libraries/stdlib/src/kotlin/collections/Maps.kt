@@ -325,10 +325,37 @@ public inline operator fun <K, V> Map.Entry<K, V>.component1(): K = key
 public inline operator fun <K, V> Map.Entry<K, V>.component2(): V = value
 
 /**
- * Converts entry to [Pair] with key being first component and value being second.
+ * Converts this map entry to a [Pair] with its key being the first component and its value being the second.
  */
 @kotlin.internal.InlineOnly
 public inline fun <K, V> Map.Entry<K, V>.toPair(): Pair<K, V> = Pair(key, value)
+
+/**
+ * Returns an immutable copy of this [map entry][Map.Entry] with the same key and value.
+ *
+ * The returned entry is not connected to the map this entry was obtained from.
+ * The key and value of the returned entry remain the same even after the map the original entry was obtained from was modified.
+ *
+ * @return An immutable entry that is equal to `this` entry but not connected to any map.
+ * The function may return the same entry if `this` entry was obtained from the call to [copy].
+ * The returned entry, while still implementing [Map.Entry] interface, may not be an instance of the same class as the original entry.
+ *
+ * @sample samples.collections.Maps.CoreApi.entryCopy
+ */
+@SinceKotlin("2.3")
+@ExperimentalStdlibApi
+public fun <K, V> Map.Entry<K, V>.copy(): Map.Entry<K, V> {
+    return (this as? DetachedMapEntry) ?: mapEntryOf(this.key, this.value)
+}
+
+// TODO: Decide about exposing this function as Map.Companion.Entry(k, v) or Map.Entry.Companion.invoke/of(k, v) once companion becomes available
+internal fun <K, V> mapEntryOf(key: K, value: V): Map.Entry<K, V> = DetachedMapEntry(key, value)
+
+private class DetachedMapEntry<out K, out V>(override val key: K, override val value: V) : Map.Entry<K, V> {
+    override fun equals(other: Any?): Boolean = AbstractMap.entryEquals(this, other)
+    override fun hashCode(): Int = AbstractMap.entryHashCode(this)
+    override fun toString(): String = AbstractMap.entryToString(this)
+}
 
 /**
  * Returns the value for the given [key] if the value is present and not `null`.
