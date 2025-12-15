@@ -53,6 +53,7 @@
         <htmlunit.version>2.24</htmlunit.version>
         <maven.version>3.9.9</maven.version>
         <maven-plugin-annotations.version>3.7.0</maven-plugin-annotations.version>
+        <intellijSdk.version>251.27812.49</intellijSdk.version>
 
         <kotlin-dist>${project-root}/dist</kotlin-dist>
         <kotlin-sdk>${kotlin-dist}/kotlinc</kotlin-sdk>

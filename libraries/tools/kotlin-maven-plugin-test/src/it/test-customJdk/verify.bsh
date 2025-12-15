@@ -1,4 +1,4 @@
-source(new File(basedir, "../../../verify-common.bsh").getAbsolutePath());
+source(new File(basedir, "verify-common.bsh").getAbsolutePath());
 
 boolean isJava9OrNewer() {
     String version = System.getProperty("java.version");
