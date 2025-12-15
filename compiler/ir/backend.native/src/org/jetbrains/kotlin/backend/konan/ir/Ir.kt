@@ -82,9 +82,7 @@ private object ClassIds {
     val interopCPointed = InteropFqNames.cPointedName.interopClassId
     val interopCVariable = InteropFqNames.cVariableName.interopClassId
     val interopMemScope = InteropFqNames.memScopeName.interopClassId
-    val interopCValue = InteropFqNames.cValueName.interopClassId
     val interopCValues = InteropFqNames.cValuesName.interopClassId
-    val interopCValuesRef = InteropFqNames.cValuesRefName.interopClassId
     val interopCOpaque = InteropFqNames.cOpaqueName.interopClassId
     val interopObjCObject = InteropFqNames.objCObjectName.interopClassId
     val interopObjCObjectBase = InteropFqNames.objCObjectBaseName.interopClassId
@@ -135,7 +133,6 @@ private object CallableIds {
     private val String.nativeCallableId get() = CallableId(KonanFqNames.packageName, Name.identifier(this))
     val processUnhandledException = "processUnhandledException".nativeCallableId
     val terminateWithUnhandledException = "terminateWithUnhandledException".nativeCallableId
-    val immutableBlobOf = "immutableBlobOf".nativeCallableId
 
     // Internal functions
     private val String.internalCallableId get() = CallableId(RuntimeNames.kotlinNativeInternalPackageName, Name.identifier(this))
@@ -229,7 +226,6 @@ private object CallableIds {
     val enumEntries = CallableId(FqName("kotlin.enums"), Name.identifier("enumEntries"))
     val println = CallableId(FqName("kotlin.io"), Name.identifier("println"))
     val executeImpl = CallableId(KonanFqNames.packageName.child(Name.identifier("concurrent")), Name.identifier("executeImpl"))
-    val createCleaner = CallableId(KonanFqNames.packageName.child(Name.identifier("ref")), Name.identifier("createCleaner"))
     val coroutineSuspended = CallableId(StandardNames.COROUTINES_INTRINSICS_PACKAGE_FQ_NAME, StandardNames.COROUTINE_SUSPENDED_NAME)
     val invokeSuspend = CallableId(ClassIds.baseContinuationImpl, Name.identifier("invokeSuspend"))
     val anyEquals = CallableId(StandardClassIds.Any, StandardNames.EQUALS_NAME)
@@ -304,16 +300,9 @@ class BackendNativeSymbols(
     }
 
     private val nativePtr = ClassIds.nativePtr.classSymbol()
-    val nativePointed = ClassIds.nativePointed.classSymbol()
     val nativePtrType = nativePtr.typeWith(arguments = emptyList())
 
-    val immutableBlobOf = CallableIds.immutableBlobOf.functionSymbol()
     val immutableBlobOfImpl = CallableIds.immutableBlobOfImpl.functionSymbol()
-
-    val signedIntegerClasses = setOf(irBuiltIns.byteClass, irBuiltIns.shortClass, irBuiltIns.intClass, irBuiltIns.longClass)
-    val unsignedIntegerClasses = setOf(irBuiltIns.ubyteClass!!, irBuiltIns.ushortClass!!, irBuiltIns.uintClass!!, irBuiltIns.ulongClass!!)
-
-    val allIntegerClasses = signedIntegerClasses + unsignedIntegerClasses
 
     val unsignedToSignedOfSameBitWidth = unsignedIntegerClasses.associateWith {
         when (it) {
@@ -374,15 +363,12 @@ class BackendNativeSymbols(
         it.extensionReceiverClass == nativePointed
     }
 
-    val interopCPointer = ClassIds.interopCPointer.classSymbol()
     val interopCPointed = ClassIds.interopCPointed.classSymbol()
     val interopCVariable = ClassIds.interopCVariable.classSymbol()
     val interopCstr by CallableIds.cstrProperty.getterSymbol(extensionReceiverClass = irBuiltIns.stringClass)
     val interopWcstr by CallableIds.wcstrProperty.getterSymbol(extensionReceiverClass = irBuiltIns.stringClass)
     val interopMemScope = ClassIds.interopMemScope.classSymbol()
-    val interopCValue = ClassIds.interopCValue.classSymbol()
     val interopCValues = ClassIds.interopCValues.classSymbol()
-    val interopCValuesRef = ClassIds.interopCValuesRef.classSymbol()
     val interopCValueWrite by CallableIds.cValueWrite.functionSymbol {
         it.extensionReceiverClass == interopCValue
     }
@@ -449,8 +435,6 @@ class BackendNativeSymbols(
 
     val createForeignException = CallableIds.createForeignException.functionSymbol()
 
-    val interopCEnumVar = ClassIds.interopCEnumVar.classSymbol()
-
     val nativeMemUtils = ClassIds.nativeMemUtils.classSymbol()
     val nativeHeap = ClassIds.nativeHeap.classSymbol()
 
@@ -479,7 +463,6 @@ class BackendNativeSymbols(
     val immutableBlob = ClassIds.immutableBlob.classSymbol()
 
     val executeImpl = CallableIds.executeImpl.functionSymbol()
-    val createCleaner = CallableIds.createCleaner.functionSymbol()
 
     val areEqualByValueFunctions = CallableIds.areEqualByValue.functionSymbols()
 

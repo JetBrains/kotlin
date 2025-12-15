@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.native
 
 import org.jetbrains.kotlin.analyzer.CompilationErrorException
 import org.jetbrains.kotlin.backend.konan.driver.NativePhaseContext
-import org.jetbrains.kotlin.backend.konan.ir.BackendNativeSymbols
+import org.jetbrains.kotlin.backend.common.ir.PreSerializationNativeSymbols
 import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerIr
 import org.jetbrains.kotlin.fir.backend.DelicateDeclarationStorageApi
 import org.jetbrains.kotlin.name.NativeForwardDeclarationKind
@@ -105,7 +105,7 @@ fun NativeFirstStagePhaseContext.fir2Ir(
         }
     }
 
-    val symbols = createKonanSymbols(actualizedResult.irBuiltIns)
+    val symbols = PreSerializationNativeSymbols.Impl(actualizedResult.irBuiltIns)
 
     val renderDiagnosticNames = configuration.renderDiagnosticInternalName
     FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(diagnosticsReporter, messageCollector, renderDiagnosticNames)
@@ -115,10 +115,4 @@ fun NativeFirstStagePhaseContext.fir2Ir(
     }
 
     return Fir2IrOutput(input, symbols, actualizedResult, usedLibraries)
-}
-
-private fun NativePhaseContext.createKonanSymbols(
-        irBuiltIns: IrBuiltIns,
-): BackendNativeSymbols {
-    return BackendNativeSymbols(this, irBuiltIns, this.config.configuration)
 }

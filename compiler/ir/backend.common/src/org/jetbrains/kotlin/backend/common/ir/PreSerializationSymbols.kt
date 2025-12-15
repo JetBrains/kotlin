@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.common.ir
 
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.name.NativeStandardInteropNames
 import org.jetbrains.kotlin.builtins.StandardNames.COROUTINES_PACKAGE_FQ_NAME
 import org.jetbrains.kotlin.builtins.StandardNames.KOTLIN_REFLECT_FQ_NAME
 import org.jetbrains.kotlin.ir.InternalSymbolFinderAPI
@@ -322,6 +323,17 @@ interface PreSerializationNativeSymbols : PreSerializationKlibSymbols {
     val baseClassSuite: IrClassSymbol
     val testFunctionKind: IrClassSymbol
 
+    val signedIntegerClasses: Set<IrClassSymbol>
+    val unsignedIntegerClasses: Set<IrClassSymbol>
+    val allIntegerClasses: Set<IrClassSymbol>
+    val nativePointed: IrClassSymbol
+    val interopCValue: IrClassSymbol
+    val interopCPointer: IrClassSymbol
+    val interopCValuesRef: IrClassSymbol
+    val interopCEnumVar: IrClassSymbol
+    val immutableBlobOf: IrSimpleFunctionSymbol
+    val createCleaner: IrSimpleFunctionSymbol
+
     open class Impl(irBuiltIns: IrBuiltIns) : PreSerializationNativeSymbols, PreSerializationKlibSymbols.Impl(irBuiltIns) {
         override val asserts: Iterable<IrSimpleFunctionSymbol> = CallableIds.asserts.functionSymbols()
 
@@ -335,6 +347,19 @@ interface PreSerializationNativeSymbols : PreSerializationKlibSymbols {
         override val baseClassSuite = ClassIds.baseClassSuite.classSymbol()
         override val testFunctionKind = ClassIds.testFunctionKind.classSymbol()
 
+        override val signedIntegerClasses = setOf(irBuiltIns.byteClass, irBuiltIns.shortClass, irBuiltIns.intClass, irBuiltIns.longClass)
+        override val unsignedIntegerClasses =
+            setOf(irBuiltIns.ubyteClass!!, irBuiltIns.ushortClass!!, irBuiltIns.uintClass!!, irBuiltIns.ulongClass!!)
+        override val allIntegerClasses = signedIntegerClasses + unsignedIntegerClasses
+
+        override val nativePointed = ClassIds.nativePointed.classSymbol()
+        override val interopCValue = ClassIds.interopCValue.classSymbol()
+        override val interopCPointer = ClassIds.interopCPointer.classSymbol()
+        override val interopCValuesRef = ClassIds.interopCValuesRef.classSymbol()
+        override val interopCEnumVar = ClassIds.interopCEnumVar.classSymbol()
+        override val immutableBlobOf = CallableIds.immutableBlobOf.functionSymbol()
+        override val createCleaner = CallableIds.createCleaner.functionSymbol()
+
         override val coroutineContextGetter: IrSimpleFunctionSymbol by CallableIds.coroutineContext.getterSymbol()
         override val suspendCoroutineUninterceptedOrReturn: IrSimpleFunctionSymbol =
             CallableIds.suspendCoroutineUninterceptedOrReturn.functionSymbol()
@@ -343,6 +368,7 @@ interface PreSerializationNativeSymbols : PreSerializationKlibSymbols {
         companion object {
             private const val COROUTINE_SUSPEND_OR_RETURN_NAME = "suspendCoroutineUninterceptedOrReturn"
             private val kotlinNativeInternalPackageName: FqName = FqName.fromSegments(listOf("kotlin", "native", "internal"))
+            private val kotlinNativePackageName: FqName = FqName.fromSegments(listOf("kotlin", "native"))
 
             private object CallableIds {
                 // Internal functions
@@ -360,6 +386,12 @@ interface PreSerializationNativeSymbols : PreSerializationKlibSymbols {
                     get() = CallableId(StandardNames.BUILT_INS_PACKAGE_FQ_NAME, Name.identifier(this))
                 val asserts: CallableId = "assert".builtInsCallableId
                 val isAssertionArgumentEvaluationEnabled: CallableId = "isAssertionArgumentEvaluationEnabled".builtInsCallableId
+
+                private val String.nativeCallableId get() = CallableId(kotlinNativePackageName, Name.identifier(this))
+
+                val immutableBlobOf = "immutableBlobOf".nativeCallableId
+
+                val createCleaner = CallableId(kotlinNativePackageName.child(Name.identifier("ref")), Name.identifier("createCleaner"))
             }
 
             private object ClassIds {
@@ -372,6 +404,15 @@ interface PreSerializationNativeSymbols : PreSerializationKlibSymbols {
                 val baseClassSuite = "BaseClassSuite".internalTestClassId
                 val topLevelSuite = "TopLevelSuite".internalTestClassId
                 val testFunctionKind = "TestFunctionKind".internalTestClassId
+
+                private val String.interopClassId
+                    get() = ClassId(NativeStandardInteropNames.cInteropPackage, Name.identifier(this))
+
+                val nativePointed = NativeStandardInteropNames.nativePointed.interopClassId
+                val interopCValue = NativeStandardInteropNames.cValue.interopClassId
+                val interopCValuesRef = NativeStandardInteropNames.cValuesRef.interopClassId
+                val interopCPointer = NativeStandardInteropNames.cPointer.interopClassId
+                val interopCEnumVar = NativeStandardInteropNames.cEnumVar.interopClassId
             }
         }
     }
