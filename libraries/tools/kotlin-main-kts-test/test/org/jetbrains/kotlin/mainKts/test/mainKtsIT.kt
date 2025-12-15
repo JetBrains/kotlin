@@ -46,6 +46,18 @@ class MainKtsIT {
     }
 
     @Test
+    fun testCompileWithImport() {
+        val mainKtsJar = File("dist/kotlinc/lib/kotlin-main-kts.jar")
+        Assert.assertTrue("kotlin-main-kts.jar not found, run dist task: ${mainKtsJar.absolutePath}", mainKtsJar.exists())
+
+        runWithK2JVMCompiler(
+            "$TEST_DATA_ROOT/import-test.main.kts",
+            classpath = listOf(mainKtsJar),
+            skipScriptArgument = true
+        )
+    }
+
+    @Test
     fun testThreadContextClassLoader() {
         runWithKotlincAndMainKts("$TEST_DATA_ROOT/context-classloader.main.kts", listOf("MainKtsConfigurator"))
     }
