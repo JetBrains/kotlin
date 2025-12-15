@@ -158,7 +158,7 @@ public class TestFiles {
                     firstFileProcessed = true;
                     if (!moduleHasDeclaredFile) break;
                     if (!nextFileExists && !nextModuleExists) break;
-                    if (nextModuleExists && fileMatcher.start() > moduleMatcher.start()) break;
+                    if (nextModuleExists && (!nextFileExists || fileMatcher.start() > moduleMatcher.start())) break;
                 }
                 if (!nextModuleExists) break;
             }
