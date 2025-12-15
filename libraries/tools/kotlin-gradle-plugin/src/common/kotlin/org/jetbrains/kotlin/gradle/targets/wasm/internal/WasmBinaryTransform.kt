@@ -103,7 +103,7 @@ abstract class WasmBinaryTransform : TransformAction<WasmBinaryTransform.Paramet
             this.outputDir = outputDir.absolutePath
             moduleName = inputFile.nameWithoutExtension
             includes = inputFile.absolutePath
-            libraries = dependencies.files.plus(inputFile).joinToString(File.pathSeparator) { it.absolutePath }
+            libraries = (parameters.classpath.files + inputFile).joinToString(File.pathSeparator) { it.absolutePath }
         }
 
         args.freeArgs += parameters.enhancedFreeCompilerArgs.get()
