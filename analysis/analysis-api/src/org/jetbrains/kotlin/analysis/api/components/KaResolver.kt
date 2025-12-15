@@ -137,6 +137,35 @@ public interface KaResolver : KaSessionComponent {
     public fun KtConstructorDelegationCall.resolveSymbol(): KaConstructorSymbol?
 
     /**
+     * Resolves the constructor symbol referenced by the given [KtConstructorDelegationReferenceExpression].
+     *
+     * #### Example
+     *
+     * ```kotlin
+     * open class Base(val i: Int)
+     *
+     * class Derived : Base {
+     *     constructor() : this(0)
+     *     //              ^^^^
+     *
+     *     constructor(x: Int) : super(x)
+     *     //                    ^^^^^
+     * }
+     * ```
+     *
+     * Calling `resolveSymbol()` on a [KtConstructorDelegationReferenceExpression] (either `this` or `super`) returns the
+     * [KaConstructorSymbol] of the target constructor if resolution succeeds; otherwise, it returns `null`
+     * (e.g., when unresolved or ambiguous).
+     *
+     * This is a specialized counterpart of [KtResolvable.resolveSymbol] focused specifically on constructor delegation calls
+     *
+     * @see tryResolveSymbol
+     * @see KtResolvable.resolveSymbol
+     */
+    @KaExperimentalApi
+    public fun KtConstructorDelegationReferenceExpression.resolveSymbol(): KaConstructorSymbol?
+
+    /**
      * Resolves the callable symbol targeted by the given [KtCallElement].
      *
      * #### Example
@@ -362,6 +391,34 @@ public interface KaResolver : KaSessionComponent {
      */
     @KaExperimentalApi
     public fun KtConstructorDelegationCall.resolveCall(): KaDelegatedConstructorCall?
+
+    /**
+     * Resolves the given [KtConstructorDelegationReferenceExpression] to a delegated constructor call.
+     *
+     * #### Example
+     *
+     * ```kotlin
+     * open class Base(val i: Int)
+     *
+     * class Derived : Base {
+     *     constructor() : this(0)
+     *     //              ^^^^
+     *
+     *     constructor(x: Int) : super(x)
+     *     //                    ^^^^^
+     * }
+     * ```
+     *
+     * Returns the corresponding [KaDelegatedConstructorCall] if resolution succeeds;
+     * otherwise, it returns `null` (e.g., when unresolved or ambiguous).
+     *
+     * This is a specialized counterpart of [KtResolvableCall.resolveCall] focused specifically on constructor delegation calls
+     *
+     * @see tryResolveCall
+     * @see KtResolvableCall.resolveCall
+     */
+    @KaExperimentalApi
+    public fun KtConstructorDelegationReferenceExpression.resolveCall(): KaDelegatedConstructorCall?
 
     /**
      * Resolves the given [KtCallElement] to a callable member call.
@@ -723,6 +780,42 @@ public fun KtConstructorDelegationCall.resolveSymbol(): KaConstructorSymbol? {
 }
 
 /**
+ * Resolves the constructor symbol referenced by the given [KtConstructorDelegationReferenceExpression].
+ *
+ * #### Example
+ *
+ * ```kotlin
+ * open class Base(val i: Int)
+ *
+ * class Derived : Base {
+ *     constructor() : this(0)
+ *     //              ^^^^
+ *
+ *     constructor(x: Int) : super(x)
+ *     //                    ^^^^^
+ * }
+ * ```
+ *
+ * Calling `resolveSymbol()` on a [KtConstructorDelegationReferenceExpression] (either `this` or `super`) returns the
+ * [KaConstructorSymbol] of the target constructor if resolution succeeds; otherwise, it returns `null`
+ * (e.g., when unresolved or ambiguous).
+ *
+ * This is a specialized counterpart of [KtResolvable.resolveSymbol] focused specifically on constructor delegation calls
+ *
+ * @see tryResolveSymbol
+ * @see KtResolvable.resolveSymbol
+ */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
+@KaExperimentalApi
+@KaContextParameterApi
+context(s: KaSession)
+public fun KtConstructorDelegationReferenceExpression.resolveSymbol(): KaConstructorSymbol? {
+    return with(s) {
+        resolveSymbol()
+    }
+}
+
+/**
  * Resolves the callable symbol targeted by the given [KtCallElement].
  *
  * #### Example
@@ -1007,6 +1100,41 @@ public fun KtSuperTypeCallEntry.resolveCall(): KaFunctionCall<KaConstructorSymbo
 @KaContextParameterApi
 context(s: KaSession)
 public fun KtConstructorDelegationCall.resolveCall(): KaDelegatedConstructorCall? {
+    return with(s) {
+        resolveCall()
+    }
+}
+
+/**
+ * Resolves the given [KtConstructorDelegationReferenceExpression] to a delegated constructor call.
+ *
+ * #### Example
+ *
+ * ```kotlin
+ * open class Base(val i: Int)
+ *
+ * class Derived : Base {
+ *     constructor() : this(0)
+ *     //              ^^^^
+ *
+ *     constructor(x: Int) : super(x)
+ *     //                    ^^^^^
+ * }
+ * ```
+ *
+ * Returns the corresponding [KaDelegatedConstructorCall] if resolution succeeds;
+ * otherwise, it returns `null` (e.g., when unresolved or ambiguous).
+ *
+ * This is a specialized counterpart of [KtResolvableCall.resolveCall] focused specifically on constructor delegation calls
+ *
+ * @see tryResolveCall
+ * @see KtResolvableCall.resolveCall
+ */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
+@KaExperimentalApi
+@KaContextParameterApi
+context(s: KaSession)
+public fun KtConstructorDelegationReferenceExpression.resolveCall(): KaDelegatedConstructorCall? {
     return with(s) {
         resolveCall()
     }

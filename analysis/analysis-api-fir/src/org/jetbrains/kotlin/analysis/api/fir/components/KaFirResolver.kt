@@ -183,6 +183,7 @@ internal class KaFirResolver(
             is FirCollectionLiteral -> unwrappedFir.toKaSymbolResolutionAttempt()
             is FirVariableAssignment -> unwrappedFir.calleeReference?.toKaSymbolResolutionAttempt(psi)
             is FirResolvedQualifier -> unwrappedFir.toKaSymbolResolutionAttempt(psi)
+            is FirReference -> unwrappedFir.toKaSymbolResolutionAttempt(psi)
             else -> null
         }
     }

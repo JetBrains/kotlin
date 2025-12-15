@@ -51,7 +51,8 @@ KtConstructorDelegationCall(70,78): 'this(10)'
     symbol = <constructor>(x: kotlin.Int): r.A.B
 
 KtConstructorDelegationReferenceExpression(70,74): 'this'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <constructor>(x: kotlin.Int): r.A.B
 
 KtValueArgumentList(74,78): '(10)'
   null
