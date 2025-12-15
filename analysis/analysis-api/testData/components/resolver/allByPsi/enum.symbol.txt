@@ -54,7 +54,8 @@ KtUserType(54,54): ''
   null
 
 KtEnumEntrySuperclassReferenceExpression(54,54): ''
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <constructor>(i: kotlin.Int): EnumWithConstructor
 
 KtValueArgumentList(54,57): '(1)'
   null
@@ -85,7 +86,8 @@ KtUserType(76,76): ''
   null
 
 KtEnumEntrySuperclassReferenceExpression(76,76): ''
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = <constructor>(i: kotlin.Int): EnumWithConstructor
 
 KtValueArgumentList(76,79): '(2)'
   null

@@ -584,7 +584,6 @@ org.jetbrains.kotlin.psi.KtEnumEntry:constructor(ASTNode)
 org.jetbrains.kotlin.psi.KtEnumEntry:constructor(KotlinClassStub)
 org.jetbrains.kotlin.psi.KtEnumEntry:getInitializerList()
 org.jetbrains.kotlin.psi.KtEnumEntry:hasInitializer()
-org.jetbrains.kotlin.psi.KtEnumEntrySuperclassReferenceExpression
 org.jetbrains.kotlin.psi.KtEnumEntrySuperclassReferenceExpression:constructor(ASTNode)
 org.jetbrains.kotlin.psi.KtEnumEntrySuperclassReferenceExpression:constructor(KotlinEnumEntrySuperclassReferenceExpressionStub)
 org.jetbrains.kotlin.psi.KtEscapeStringTemplateEntry

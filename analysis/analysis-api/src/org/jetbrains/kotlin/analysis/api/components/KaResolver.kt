@@ -278,6 +278,30 @@ public interface KaResolver : KaSessionComponent {
     public fun KtCollectionLiteralExpression.resolveSymbol(): KaNamedFunctionSymbol?
 
     /**
+     * Resolves the constructor symbol referenced by the given [KtEnumEntrySuperclassReferenceExpression].
+     *
+     * #### Example
+     *
+     * ```kotlin
+     * enum class EnumWithConstructor(val x: Int) {
+     *     Entry(1)
+     * //      ^ resolves to the constructor of `EnumWithConstructor`
+     * }
+     * ```
+     *
+     * Calling `resolveSymbol()` on a [KtEnumEntrySuperclassReferenceExpression] (``) returns the
+     * [KaConstructorSymbol] of the enum class constructor if resolution succeeds; otherwise, it returns `null`
+     * (e.g., when unresolved or ambiguous).
+     *
+     * This is a specialized counterpart of [KtResolvable.resolveSymbol] focused specifically on enum entry superclass constructor calls
+     *
+     * @see tryResolveSymbol
+     * @see KtResolvable.resolveSymbol
+     */
+    @KaExperimentalApi
+    public fun KtEnumEntrySuperclassReferenceExpression.resolveSymbol(): KaConstructorSymbol?
+
+    /**
      * Attempts to resolve the call for the given [KtResolvableCall].
      *
      * ### Usage Example:
@@ -531,6 +555,29 @@ public interface KaResolver : KaSessionComponent {
      */
     @KaExperimentalApi
     public fun KtCollectionLiteralExpression.resolveCall(): KaSimpleFunctionCall?
+
+    /**
+     * Resolves the given [KtEnumEntrySuperclassReferenceExpression] to a delegated constructor call.
+     *
+     * #### Example
+     *
+     * ```kotlin
+     * enum class EnumWithConstructor(val x: Int) {
+     *     Entry(1)
+     * //      ^ resolves to the constructor of `EnumWithConstructor`
+     * }
+     * ```
+     *
+     * Returns the corresponding [KaDelegatedConstructorCall] if resolution succeeds;
+     * otherwise, it returns `null` (e.g., when unresolved or ambiguous).
+     *
+     * This is a specialized counterpart of [KtResolvableCall.resolveCall] focused specifically on enum entry superclass constructor calls
+     *
+     * @see tryResolveCall
+     * @see KtResolvableCall.resolveCall
+     */
+    @KaExperimentalApi
+    public fun KtEnumEntrySuperclassReferenceExpression.resolveCall(): KaDelegatedConstructorCall?
 
     /**
      * Returns all candidates considered during [overload resolution](https://kotlinlang.org/spec/overload-resolution.html)
@@ -956,6 +1003,37 @@ public fun KtCollectionLiteralExpression.resolveSymbol(): KaNamedFunctionSymbol?
 }
 
 /**
+ * Resolves the constructor symbol referenced by the given [KtEnumEntrySuperclassReferenceExpression].
+ *
+ * #### Example
+ *
+ * ```kotlin
+ * enum class EnumWithConstructor(val x: Int) {
+ *     Entry(1)
+ * //      ^ resolves to the constructor of `EnumWithConstructor`
+ * }
+ * ```
+ *
+ * Calling `resolveSymbol()` on a [KtEnumEntrySuperclassReferenceExpression] (``) returns the
+ * [KaConstructorSymbol] of the enum class constructor if resolution succeeds; otherwise, it returns `null`
+ * (e.g., when unresolved or ambiguous).
+ *
+ * This is a specialized counterpart of [KtResolvable.resolveSymbol] focused specifically on enum entry superclass constructor calls
+ *
+ * @see tryResolveSymbol
+ * @see KtResolvable.resolveSymbol
+ */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
+@KaExperimentalApi
+@KaContextParameterApi
+context(s: KaSession)
+public fun KtEnumEntrySuperclassReferenceExpression.resolveSymbol(): KaConstructorSymbol? {
+    return with(s) {
+        resolveSymbol()
+    }
+}
+
+/**
  * Attempts to resolve the call for the given [KtResolvableCall].
  *
  * ### Usage Example:
@@ -1275,6 +1353,36 @@ public fun KtArrayAccessExpression.resolveCall(): KaSimpleFunctionCall? {
 @KaContextParameterApi
 context(s: KaSession)
 public fun KtCollectionLiteralExpression.resolveCall(): KaSimpleFunctionCall? {
+    return with(s) {
+        resolveCall()
+    }
+}
+
+/**
+ * Resolves the given [KtEnumEntrySuperclassReferenceExpression] to a delegated constructor call.
+ *
+ * #### Example
+ *
+ * ```kotlin
+ * enum class EnumWithConstructor(val x: Int) {
+ *     Entry(1)
+ * //      ^ resolves to the constructor of `EnumWithConstructor`
+ * }
+ * ```
+ *
+ * Returns the corresponding [KaDelegatedConstructorCall] if resolution succeeds;
+ * otherwise, it returns `null` (e.g., when unresolved or ambiguous).
+ *
+ * This is a specialized counterpart of [KtResolvableCall.resolveCall] focused specifically on enum entry superclass constructor calls
+ *
+ * @see tryResolveCall
+ * @see KtResolvableCall.resolveCall
+ */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
+@KaExperimentalApi
+@KaContextParameterApi
+context(s: KaSession)
+public fun KtEnumEntrySuperclassReferenceExpression.resolveCall(): KaDelegatedConstructorCall? {
     return with(s) {
         resolveCall()
     }
