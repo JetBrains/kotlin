@@ -22,6 +22,7 @@ import kotlin.native.internal.ref.disposeExternalRCRef
 import kotlin.native.internal.ref.releaseExternalRCRef
 
 @ExportForCppRuntime
+@PublishedApi
 @UsedFromCompilerGeneratedCode
 internal fun ThrowNullPointerException(): Nothing {
     throw NullPointerException()
@@ -201,6 +202,7 @@ public external fun initInstance(thiz: Any, constructorCall: Any): Unit
 @InternalForKotlinNative
 public external fun <T> createUninitializedArray(size: Int): T
 
+@PublishedApi
 @UsedFromCompilerGeneratedCode
 @TypedIntrinsic(IntrinsicType.CREATE_EMPTY_STRING)
 @InternalForKotlinNative
