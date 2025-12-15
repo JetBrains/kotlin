@@ -12,6 +12,9 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunChecks
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.*
+import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
+import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
+import org.jetbrains.kotlin.test.directives.model.ComposedDirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.Directive
 import org.jetbrains.kotlin.test.directives.model.DirectiveApplicability
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
@@ -84,7 +87,10 @@ internal class StandardTestCaseGroupProvider : TestCaseGroupProvider {
         var currentTestFileName: String? = null
         val currentTestFileText = StringBuilder()
 
-        val directivesParser = RegisteredDirectivesParser(TestDirectives, JUnit5Assertions)
+        val directivesParser = RegisteredDirectivesParser(
+            ComposedDirectivesContainer(TestDirectives, ConfigurationDirectives, CodegenTestDirectives),
+            JUnit5Assertions
+        )
         var lastParsedDirective: Directive? = null
 
         fun switchTestModule(newTestModule: TestModule.Exclusive, location: Location): TestModule.Exclusive {
@@ -204,7 +210,7 @@ internal class StandardTestCaseGroupProvider : TestCaseGroupProvider {
 
         val registeredDirectives = directivesParser.build()
 
-        if (settings.isDisabledNative(registeredDirectives))
+        if (settings.isDisabledNative(registeredDirectives) || !settings.isSelectedWithTARGET_BACKEND(registeredDirectives))
             return null
 
         if (testModules.values.any {
