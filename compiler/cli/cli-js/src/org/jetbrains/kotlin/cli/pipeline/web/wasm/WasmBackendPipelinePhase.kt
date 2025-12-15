@@ -356,18 +356,23 @@ fun compileWasmLoweredFragmentsForSingleModule(
     }
 
     val dependencyModules = loweredIrFragments.filterNot { it == mainModuleFragment }
-    dependencyModules.mapTo(wasmCompiledFileFragments) {
-        val dependencyName = it.name.asString()
-        val initialOutputFileName = it.outputFileName
+    dependencyModules.mapTo(wasmCompiledFileFragments) { irFragment ->
+        val dependencyName = irFragment.name.asString()
 
-        dependencyImports.add(
-            WasmModuleDependencyImport(
-                dependencyName,
-                dependencyResolutionMap[dependencyName]
-                    ?: initialOutputFileName
+        val (wasmFragment, isImported) =
+            codeGenerator.generateModuleAsSingleFileFragmentWithModuleImport(irFragment, dependencyName, referencedDeclarations)
+
+        if (isImported) {
+            dependencyImports.add(
+                WasmModuleDependencyImport(
+                    dependencyName,
+                    dependencyResolutionMap[dependencyName]
+                        ?: irFragment.outputFileName
+                )
             )
-        )
-        codeGenerator.generateModuleAsSingleFileFragmentWithModuleImport(it, dependencyName, referencedDeclarations)
+        }
+
+        wasmFragment
     }
     wasmCompiledFileFragments.add(mainModuleFileFragment)
 
