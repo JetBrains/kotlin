@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.ir.backend.js.getSerializedData
 import org.jetbrains.kotlin.ir.backend.js.serializeModuleIntoKlib
 import org.jetbrains.kotlin.js.config.*
 import org.jetbrains.kotlin.konan.file.File
-import org.jetbrains.kotlin.library.flatten
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
 import org.jetbrains.kotlin.library.loadSizeInfo
 import org.jetbrains.kotlin.wasm.config.wasmTarget

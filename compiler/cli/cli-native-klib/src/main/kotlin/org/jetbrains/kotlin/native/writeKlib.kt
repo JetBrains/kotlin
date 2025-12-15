@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.impl.buildLibrary
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_HEADER
 import org.jetbrains.kotlin.library.KotlinLibraryVersioning
-import org.jetbrains.kotlin.library.flatten
 import org.jetbrains.kotlin.library.loadSizeInfo
 import org.jetbrains.kotlin.util.klibMetadataVersionOrDefault
 import java.util.Properties

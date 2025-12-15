@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.fir.serialization.FirKLibSerializerExtension
 import org.jetbrains.kotlin.fir.serialization.serializeSingleFirFile
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.library.SerializedMetadata
-import org.jetbrains.kotlin.library.flatten
 import org.jetbrains.kotlin.library.loadSizeInfo
 import org.jetbrains.kotlin.library.metadata.KlibMetadataHeaderFlags
 import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
