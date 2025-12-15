@@ -1624,7 +1624,6 @@ org.jetbrains.kotlin.psi.KtVisitorVoidWithParameter:visitWhenExpressionVoid(KtWh
 org.jetbrains.kotlin.psi.KtVisitorVoidWithParameter:visitWhileExpressionVoid(KtWhileExpression, P)
 org.jetbrains.kotlin.psi.KtWhenCondition
 org.jetbrains.kotlin.psi.KtWhenCondition:constructor(ASTNode)
-org.jetbrains.kotlin.psi.KtWhenConditionInRange
 org.jetbrains.kotlin.psi.KtWhenConditionInRange:constructor(ASTNode)
 org.jetbrains.kotlin.psi.KtWhenConditionInRange:getOperationReference()
 org.jetbrains.kotlin.psi.KtWhenConditionInRange:getRangeExpression()

@@ -93,6 +93,7 @@ internal class KaFe10Resolver(
     override fun performSymbolResolution(psi: KtElement): KaSymbolResolutionAttempt? {
         when (psi) {
             is KtCallableReferenceExpression -> return performSymbolResolution(psi.callableReference)
+            is KtWhenConditionInRange -> return performSymbolResolution(psi.operationReference)
         }
 
         val bindingContext = analysisContext.analyze(psi, AnalysisMode.PARTIAL_WITH_DIAGNOSTICS)

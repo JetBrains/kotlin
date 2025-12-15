@@ -182,7 +182,8 @@ KtWhenEntry(211,231): 'in MyClass() -> true'
   null
 
 KtWhenConditionInRange(211,223): 'in MyClass()'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /contains(<extension receiver>: T, int: kotlin.Int): kotlin.Boolean
 
 KtOperationReferenceExpression(211,213): 'in'
   null
@@ -213,7 +214,8 @@ KtWhenEntry(270,292): '!in MyClass() -> false'
   null
 
 KtWhenConditionInRange(270,283): '!in MyClass()'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /contains(<extension receiver>: T, int: kotlin.Int): kotlin.Boolean
 
 KtOperationReferenceExpression(270,273): '!in'
   null

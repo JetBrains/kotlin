@@ -359,6 +359,35 @@ public interface KaResolver : KaSessionComponent {
     public fun KtReturnExpression.resolveSymbol(): KaFunctionSymbol?
 
     /**
+     * Resolves the operator function symbol targeted by the given [KtWhenConditionInRange].
+     *
+     * #### Example
+     *
+     * ```kotlin
+     * fun test(x: Int) {
+     *     when (x) {
+     *         in 1..10 -> {}
+     * //      ^^^^^^^^ resolves to a call of `IntRange.contains`
+     *
+     *         !in setOf(1, 2, 3) -> {}
+     * //      ^^^^^^^^^^^^^^^^^^ resolves to a call of `Set<Int>.contains`
+     *     }
+     * }
+     * ```
+     *
+     * Calling `resolveSymbol()` on a [KtWhenConditionInRange] (`in 1..10` or `!in setOf(1, 2, 3)`) returns the [KaNamedFunctionSymbol]
+     * of the labeled declaration if resolution succeeds; otherwise, it returns `null` (e.g., when unresolved or ambiguous).
+     *
+     * This is a specialized counterpart of [KtResolvable.resolveSymbol] focused specifically on `in`/`!in`
+     * range conditions inside `when` entries
+     *
+     * @see tryResolveSymbol
+     * @see KtResolvable.resolveSymbol
+     */
+    @KaExperimentalApi
+    public fun KtWhenConditionInRange.resolveSymbol(): KaNamedFunctionSymbol?
+
+    /**
      * Attempts to resolve the call for the given [KtResolvableCall].
      *
      * ### Usage Example:
@@ -635,6 +664,36 @@ public interface KaResolver : KaSessionComponent {
      */
     @KaExperimentalApi
     public fun KtEnumEntrySuperclassReferenceExpression.resolveCall(): KaDelegatedConstructorCall?
+
+    /**
+     * Resolves the given [KtWhenConditionInRange] to a simple function call representing the corresponding
+     * `contains` operator invocation used by the `in`/`!in` branch condition.
+     *
+     * #### Example
+     *
+     * ```kotlin
+     * fun test(x: Int) {
+     *     when (x) {
+     *         in 1..10 -> {}
+     * //      ^^^^^^^^ resolves to a call of `IntRange.contains`
+     *
+     *         !in setOf(1, 2, 3) -> {}
+     * //      ^^^^^^^^^^^^^^^^^^ resolves to a call of `Set<Int>.contains`
+     *     }
+     * }
+     * ```
+     *
+     * Returns the corresponding [KaSimpleFunctionCall] if resolution succeeds; otherwise, it returns `null`
+     * (e.g., when unresolved or ambiguous).
+     *
+     * This is a specialized counterpart of [KtResolvableCall.resolveCall] focused specifically on `in`/`!in`
+     * range conditions inside `when` entries
+     *
+     * @see tryResolveCall
+     * @see KtResolvableCall.resolveCall
+     */
+    @KaExperimentalApi
+    public fun KtWhenConditionInRange.resolveCall(): KaSimpleFunctionCall?
 
     /**
      * Returns all candidates considered during [overload resolution](https://kotlinlang.org/spec/overload-resolution.html)
@@ -1165,6 +1224,42 @@ public fun KtReturnExpression.resolveSymbol(): KaFunctionSymbol? {
 }
 
 /**
+ * Resolves the operator function symbol targeted by the given [KtWhenConditionInRange].
+ *
+ * #### Example
+ *
+ * ```kotlin
+ * fun test(x: Int) {
+ *     when (x) {
+ *         in 1..10 -> {}
+ * //      ^^^^^^^^ resolves to a call of `IntRange.contains`
+ *
+ *         !in setOf(1, 2, 3) -> {}
+ * //      ^^^^^^^^^^^^^^^^^^ resolves to a call of `Set<Int>.contains`
+ *     }
+ * }
+ * ```
+ *
+ * Calling `resolveSymbol()` on a [KtWhenConditionInRange] (`in 1..10` or `!in setOf(1, 2, 3)`) returns the [KaNamedFunctionSymbol]
+ * of the labeled declaration if resolution succeeds; otherwise, it returns `null` (e.g., when unresolved or ambiguous).
+ *
+ * This is a specialized counterpart of [KtResolvable.resolveSymbol] focused specifically on `in`/`!in`
+ * range conditions inside `when` entries
+ *
+ * @see tryResolveSymbol
+ * @see KtResolvable.resolveSymbol
+ */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
+@KaExperimentalApi
+@KaContextParameterApi
+context(s: KaSession)
+public fun KtWhenConditionInRange.resolveSymbol(): KaNamedFunctionSymbol? {
+    return with(s) {
+        resolveSymbol()
+    }
+}
+
+/**
  * Attempts to resolve the call for the given [KtResolvableCall].
  *
  * ### Usage Example:
@@ -1514,6 +1609,43 @@ public fun KtCollectionLiteralExpression.resolveCall(): KaSimpleFunctionCall? {
 @KaContextParameterApi
 context(s: KaSession)
 public fun KtEnumEntrySuperclassReferenceExpression.resolveCall(): KaDelegatedConstructorCall? {
+    return with(s) {
+        resolveCall()
+    }
+}
+
+/**
+ * Resolves the given [KtWhenConditionInRange] to a simple function call representing the corresponding
+ * `contains` operator invocation used by the `in`/`!in` branch condition.
+ *
+ * #### Example
+ *
+ * ```kotlin
+ * fun test(x: Int) {
+ *     when (x) {
+ *         in 1..10 -> {}
+ * //      ^^^^^^^^ resolves to a call of `IntRange.contains`
+ *
+ *         !in setOf(1, 2, 3) -> {}
+ * //      ^^^^^^^^^^^^^^^^^^ resolves to a call of `Set<Int>.contains`
+ *     }
+ * }
+ * ```
+ *
+ * Returns the corresponding [KaSimpleFunctionCall] if resolution succeeds; otherwise, it returns `null`
+ * (e.g., when unresolved or ambiguous).
+ *
+ * This is a specialized counterpart of [KtResolvableCall.resolveCall] focused specifically on `in`/`!in`
+ * range conditions inside `when` entries
+ *
+ * @see tryResolveCall
+ * @see KtResolvableCall.resolveCall
+ */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
+@KaExperimentalApi
+@KaContextParameterApi
+context(s: KaSession)
+public fun KtWhenConditionInRange.resolveCall(): KaSimpleFunctionCall? {
     return with(s) {
         resolveCall()
     }
