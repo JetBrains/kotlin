@@ -1370,41 +1370,40 @@ KtReturnExpression(796,819): 'return map[myClassProp]'
   null
 
 KtArrayAccessExpression(803,819): 'map[myClassProp]'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {
-        myClassProp -> (KaVariableSignature:
-          name = key
-          receiverType = null
-          returnType = MyClass
-          symbol = key: K
-          contextParameters = []
-          callableId = null)
-      }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = map
-          isSafeNavigation = false
-          type = kotlin.collections.Map<MyClass, kotlin.Int>
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Int?
-          symbol = kotlin/collections/Map.get(<dispatch receiver>: kotlin.collections.Map<K, V>, key: K): V?
-          valueParameters = [
-            KaVariableSignature:
-              name = key
-              receiverType = null
-              returnType = MyClass
-              symbol = key: K
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/collections/Map.get
-      typeArgumentsMapping = {}
+  KaSimpleFunctionCall:
+    argumentMapping = {
+      myClassProp -> (KaVariableSignature:
+        name = key
+        receiverType = null
+        returnType = MyClass
+        symbol = key: K
+        contextParameters = []
+        callableId = null)
+    }
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = map
+        isSafeNavigation = false
+        type = kotlin.collections.Map<MyClass, kotlin.Int>
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Int?
+        symbol = kotlin/collections/Map.get(<dispatch receiver>: kotlin.collections.Map<K, V>, key: K): V?
+        valueParameters = [
+          KaVariableSignature:
+            name = key
+            receiverType = null
+            returnType = MyClass
+            symbol = key: K
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/collections/Map.get
+    typeArgumentsMapping = {}
 
 KtNameReferenceExpression(803,806): 'map'
   KaSuccessCallInfo:
@@ -1452,7 +1451,7 @@ KtReturnExpression(824,846): 'return map[stringProp]'
   null
 
 KtArrayAccessExpression(831,846): 'map[stringProp]'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
         argumentMapping = {
@@ -1537,41 +1536,40 @@ KtReturnExpression(851,878): 'return map[NestedInheritor]'
   null
 
 KtArrayAccessExpression(858,878): 'map[NestedInheritor]'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {
-        NestedInheritor -> (KaVariableSignature:
-          name = key
-          receiverType = null
-          returnType = MyClass
-          symbol = key: K
-          contextParameters = []
-          callableId = null)
-      }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = map
-          isSafeNavigation = false
-          type = kotlin.collections.Map<MyClass, kotlin.Int>
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Int?
-          symbol = kotlin/collections/Map.get(<dispatch receiver>: kotlin.collections.Map<K, V>, key: K): V?
-          valueParameters = [
-            KaVariableSignature:
-              name = key
-              receiverType = null
-              returnType = MyClass
-              symbol = key: K
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/collections/Map.get
-      typeArgumentsMapping = {}
+  KaSimpleFunctionCall:
+    argumentMapping = {
+      NestedInheritor -> (KaVariableSignature:
+        name = key
+        receiverType = null
+        returnType = MyClass
+        symbol = key: K
+        contextParameters = []
+        callableId = null)
+    }
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = map
+        isSafeNavigation = false
+        type = kotlin.collections.Map<MyClass, kotlin.Int>
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Int?
+        symbol = kotlin/collections/Map.get(<dispatch receiver>: kotlin.collections.Map<K, V>, key: K): V?
+        valueParameters = [
+          KaVariableSignature:
+            name = key
+            receiverType = null
+            returnType = MyClass
+            symbol = key: K
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/collections/Map.get
+    typeArgumentsMapping = {}
 
 KtNameReferenceExpression(858,861): 'map'
   KaSuccessCallInfo:
@@ -1601,41 +1599,40 @@ KtReturnExpression(883,915): 'return map[getNestedInheritor()]'
   null
 
 KtArrayAccessExpression(890,915): 'map[getNestedInheritor()]'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {
-        getNestedInheritor() -> (KaVariableSignature:
-          name = key
-          receiverType = null
-          returnType = MyClass
-          symbol = key: K
-          contextParameters = []
-          callableId = null)
-      }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = map
-          isSafeNavigation = false
-          type = kotlin.collections.Map<MyClass, kotlin.Int>
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Int?
-          symbol = kotlin/collections/Map.get(<dispatch receiver>: kotlin.collections.Map<K, V>, key: K): V?
-          valueParameters = [
-            KaVariableSignature:
-              name = key
-              receiverType = null
-              returnType = MyClass
-              symbol = key: K
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/collections/Map.get
-      typeArgumentsMapping = {}
+  KaSimpleFunctionCall:
+    argumentMapping = {
+      getNestedInheritor() -> (KaVariableSignature:
+        name = key
+        receiverType = null
+        returnType = MyClass
+        symbol = key: K
+        contextParameters = []
+        callableId = null)
+    }
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = map
+        isSafeNavigation = false
+        type = kotlin.collections.Map<MyClass, kotlin.Int>
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Int?
+        symbol = kotlin/collections/Map.get(<dispatch receiver>: kotlin.collections.Map<K, V>, key: K): V?
+        valueParameters = [
+          KaVariableSignature:
+            name = key
+            receiverType = null
+            returnType = MyClass
+            symbol = key: K
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/collections/Map.get
+    typeArgumentsMapping = {}
 
 KtNameReferenceExpression(890,893): 'map'
   KaSuccessCallInfo:

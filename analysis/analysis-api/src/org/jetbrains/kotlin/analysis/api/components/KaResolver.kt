@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.analysis.api.*
 import org.jetbrains.kotlin.analysis.api.resolution.*
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.idea.references.KDocReference
 import org.jetbrains.kotlin.idea.references.KtReference
@@ -184,6 +185,45 @@ public interface KaResolver : KaSessionComponent {
     public fun KtCallableReferenceExpression.resolveSymbol(): KaCallableSymbol?
 
     /**
+     * Resolves the operator function symbol targeted by the given [KtArrayAccessExpression].
+     *
+     * #### Example
+     *
+     * ```kotlin
+     * class A {
+     *     operator fun get(i: Int): Int = i
+     *     operator fun set(i: Int, value: Int) {}
+     * }
+     *
+     * fun test(a: A) {
+     *     a[0]
+     * //  ^^^^  resolves to `get`
+     *     a[0] = 1
+     * //  ^^^^ resolves to `set`
+     * }
+     * ```
+     *
+     * Calling `resolveSymbol()` on a [KtArrayAccessExpression] (`a[0]`) returns the [KaNamedFunctionSymbol] of the corresponding
+     * `get`/`set` operator if resolution succeeds; otherwise, it returns `null` (e.g., when unresolved or ambiguous).
+     *
+     * This is a specialized counterpart of [KtResolvable.resolveSymbol] focused specifically on array access operations.
+     *
+     * **Note**: the `get` call is prefered in the case of a compound assignent
+     *
+     * ```kotlin
+     * fun test(m: MyMap<String, Int>) {
+     *     m["a"] += 1
+     * //  ^^^^^^
+     * }
+     * ```
+     *
+     * @see tryResolveSymbol
+     * @see KtResolvable.resolveSymbol
+     */
+    @KaExperimentalApi
+    public fun KtArrayAccessExpression.resolveSymbol(): KaNamedFunctionSymbol?
+
+    /**
      * Attempts to resolve the call for the given [KtResolvableCall].
      *
      * ### Usage Example:
@@ -345,6 +385,45 @@ public interface KaResolver : KaSessionComponent {
      */
     @KaExperimentalApi
     public fun KtCallableReferenceExpression.resolveCall(): KaCallableMemberCall<*, *>?
+
+    /**
+     * Resolves the given [KtArrayAccessExpression] to a simple function call representing `get`/`set` operator invocation.
+     *
+     * #### Example
+     *
+     * ```kotlin
+     * class A {
+     *     operator fun get(i: Int): Int = i
+     *     operator fun set(i: Int, value: Int) {}
+     * }
+     *
+     * fun test(a: A) {
+     *     a[0]
+     * //  ^^^^  resolves to `get`
+     *     a[0] = 1
+     * //  ^^^^ resolves to `set`
+     * }
+     * ```
+     *
+     * Returns the corresponding [KaSimpleFunctionCall] if resolution succeeds; otherwise, it returns `null`
+     * (e.g., when unresolved or ambiguous).
+     *
+     * This is a specialized counterpart of [KtResolvableCall.resolveCall] focused specifically on array access operations.
+     *
+     * **Note**: the `get` call is prefered in the case of a compound assignent
+     *
+     * ```kotlin
+     * fun test(m: MyMap<String, Int>) {
+     *     m["a"] += 1
+     * //  ^^^^^^
+     * }
+     * ```
+     *
+     * @see tryResolveCall
+     * @see KtResolvableCall.resolveCall
+     */
+    @KaExperimentalApi
+    public fun KtArrayAccessExpression.resolveCall(): KaSimpleFunctionCall?
 
     /**
      * Returns all candidates considered during [overload resolution](https://kotlinlang.org/spec/overload-resolution.html)
@@ -656,6 +735,52 @@ public fun KtCallableReferenceExpression.resolveSymbol(): KaCallableSymbol? {
 }
 
 /**
+ * Resolves the operator function symbol targeted by the given [KtArrayAccessExpression].
+ *
+ * #### Example
+ *
+ * ```kotlin
+ * class A {
+ *     operator fun get(i: Int): Int = i
+ *     operator fun set(i: Int, value: Int) {}
+ * }
+ *
+ * fun test(a: A) {
+ *     a[0]
+ * //  ^^^^  resolves to `get`
+ *     a[0] = 1
+ * //  ^^^^ resolves to `set`
+ * }
+ * ```
+ *
+ * Calling `resolveSymbol()` on a [KtArrayAccessExpression] (`a[0]`) returns the [KaNamedFunctionSymbol] of the corresponding
+ * `get`/`set` operator if resolution succeeds; otherwise, it returns `null` (e.g., when unresolved or ambiguous).
+ *
+ * This is a specialized counterpart of [KtResolvable.resolveSymbol] focused specifically on array access operations.
+ *
+ * **Note**: the `get` call is prefered in the case of a compound assignent
+ *
+ * ```kotlin
+ * fun test(m: MyMap<String, Int>) {
+ *     m["a"] += 1
+ * //  ^^^^^^
+ * }
+ * ```
+ *
+ * @see tryResolveSymbol
+ * @see KtResolvable.resolveSymbol
+ */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
+@KaExperimentalApi
+@KaContextParameterApi
+context(s: KaSession)
+public fun KtArrayAccessExpression.resolveSymbol(): KaNamedFunctionSymbol? {
+    return with(s) {
+        resolveSymbol()
+    }
+}
+
+/**
  * Attempts to resolve the call for the given [KtResolvableCall].
  *
  * ### Usage Example:
@@ -862,6 +987,52 @@ public fun KtCallElement.resolveCall(): KaCallableMemberCall<*, *>? {
 @KaContextParameterApi
 context(s: KaSession)
 public fun KtCallableReferenceExpression.resolveCall(): KaCallableMemberCall<*, *>? {
+    return with(s) {
+        resolveCall()
+    }
+}
+
+/**
+ * Resolves the given [KtArrayAccessExpression] to a simple function call representing `get`/`set` operator invocation.
+ *
+ * #### Example
+ *
+ * ```kotlin
+ * class A {
+ *     operator fun get(i: Int): Int = i
+ *     operator fun set(i: Int, value: Int) {}
+ * }
+ *
+ * fun test(a: A) {
+ *     a[0]
+ * //  ^^^^  resolves to `get`
+ *     a[0] = 1
+ * //  ^^^^ resolves to `set`
+ * }
+ * ```
+ *
+ * Returns the corresponding [KaSimpleFunctionCall] if resolution succeeds; otherwise, it returns `null`
+ * (e.g., when unresolved or ambiguous).
+ *
+ * This is a specialized counterpart of [KtResolvableCall.resolveCall] focused specifically on array access operations.
+ *
+ * **Note**: the `get` call is prefered in the case of a compound assignent
+ *
+ * ```kotlin
+ * fun test(m: MyMap<String, Int>) {
+ *     m["a"] += 1
+ * //  ^^^^^^
+ * }
+ * ```
+ *
+ * @see tryResolveCall
+ * @see KtResolvableCall.resolveCall
+ */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
+@KaExperimentalApi
+@KaContextParameterApi
+context(s: KaSession)
+public fun KtArrayAccessExpression.resolveCall(): KaSimpleFunctionCall? {
     return with(s) {
         resolveCall()
     }

@@ -324,7 +324,6 @@ org.jetbrains.kotlin.psi.KtAnnotationUseSiteTarget:constructor(KotlinAnnotationU
 org.jetbrains.kotlin.psi.KtAnonymousInitializer
 org.jetbrains.kotlin.psi.KtAnonymousInitializer.body
 org.jetbrains.kotlin.psi.KtAnonymousInitializer.containingDeclaration
-org.jetbrains.kotlin.psi.KtArrayAccessExpression
 org.jetbrains.kotlin.psi.KtArrayAccessExpression:constructor(ASTNode)
 org.jetbrains.kotlin.psi.KtArrayAccessExpression:getArrayExpression()
 org.jetbrains.kotlin.psi.KtArrayAccessExpression:getBracketRanges()

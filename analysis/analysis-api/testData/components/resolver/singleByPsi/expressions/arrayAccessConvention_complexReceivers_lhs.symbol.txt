@@ -1,2 +1,3 @@
 KtArrayAccessExpression(182,188): 'm["a"]'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = /MyMap.get(<dispatch receiver>: MyMap<K1, V1>, k: K1): V1

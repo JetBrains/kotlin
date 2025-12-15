@@ -489,7 +489,8 @@ KtReturnExpression(796,819): 'return map[myClassProp]'
   null
 
 KtArrayAccessExpression(803,819): 'map[myClassProp]'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = kotlin/collections/Map.get(<dispatch receiver>: kotlin.collections.Map<K, V>, key: K): V?
 
 KtNameReferenceExpression(803,806): 'map'
   null
@@ -504,7 +505,8 @@ KtReturnExpression(824,846): 'return map[stringProp]'
   null
 
 KtArrayAccessExpression(831,846): 'map[stringProp]'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = kotlin/collections/Map.get(<dispatch receiver>: kotlin.collections.Map<K, V>, key: K): V?
 
 KtNameReferenceExpression(831,834): 'map'
   null
@@ -519,7 +521,8 @@ KtReturnExpression(851,878): 'return map[NestedInheritor]'
   null
 
 KtArrayAccessExpression(858,878): 'map[NestedInheritor]'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = kotlin/collections/Map.get(<dispatch receiver>: kotlin.collections.Map<K, V>, key: K): V?
 
 KtNameReferenceExpression(858,861): 'map'
   null
@@ -534,7 +537,8 @@ KtReturnExpression(883,915): 'return map[getNestedInheritor()]'
   null
 
 KtArrayAccessExpression(890,915): 'map[getNestedInheritor()]'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = kotlin/collections/Map.get(<dispatch receiver>: kotlin.collections.Map<K, V>, key: K): V?
 
 KtNameReferenceExpression(890,893): 'map'
   null

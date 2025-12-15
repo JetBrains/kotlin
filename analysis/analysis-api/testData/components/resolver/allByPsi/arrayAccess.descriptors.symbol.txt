@@ -59,7 +59,8 @@ KtProperty(54,81): 'val implicitIndex = list[0]'
   null
 
 KtArrayAccessExpression(74,81): 'list[0]'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = kotlin/collections/MutableList.get(<dispatch receiver>: kotlin.collections.List<E>, index: kotlin.Int): E
 
 KtNameReferenceExpression(74,78): 'list'
   null
@@ -133,7 +134,8 @@ KtLiteralStringTemplateEntry(146,156): 'SOME_ERROR'
   null
 
 KtArrayAccessExpression(159,166): 'list[1]'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = kotlin/collections/MutableList.get(<dispatch receiver>: kotlin.collections.List<E>, index: kotlin.Int): E
 
 KtNameReferenceExpression(159,163): 'list'
   null
@@ -157,7 +159,8 @@ KtParenthesizedExpression(177,186): '(list[2])'
   null
 
 KtArrayAccessExpression(178,185): 'list[2]'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = kotlin/collections/MutableList.get(<dispatch receiver>: kotlin.collections.List<E>, index: kotlin.Int): E
 
 KtNameReferenceExpression(178,182): 'list'
   null
@@ -242,7 +245,8 @@ KtOperationReferenceExpression(245,247): '--'
   null
 
 KtArrayAccessExpression(247,254): 'list[i]'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = kotlin/collections/MutableList.get(<dispatch receiver>: kotlin.collections.List<E>, index: kotlin.Int): E
 
 KtNameReferenceExpression(247,251): 'list'
   null
@@ -269,7 +273,8 @@ KtParenthesizedExpression(268,277): '(list[2])'
   null
 
 KtArrayAccessExpression(269,276): 'list[2]'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = kotlin/collections/MutableList.get(<dispatch receiver>: kotlin.collections.List<E>, index: kotlin.Int): E
 
 KtNameReferenceExpression(269,273): 'list'
   null

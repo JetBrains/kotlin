@@ -59,7 +59,8 @@ KtProperty(54,81): 'val implicitIndex = list[0]'
   null
 
 KtArrayAccessExpression(74,81): 'list[0]'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = kotlin/collections/MutableList.get(<dispatch receiver>: kotlin.collections.MutableList<E>, index: kotlin.Int): E
 
 KtNameReferenceExpression(74,78): 'list'
   null
@@ -242,7 +243,8 @@ KtOperationReferenceExpression(245,247): '--'
   null
 
 KtArrayAccessExpression(247,254): 'list[i]'
-  null
+  KaSingleSymbolResolutionSuccess:
+    symbol = kotlin/collections/MutableList.get(<dispatch receiver>: kotlin.collections.MutableList<E>, index: kotlin.Int): E
 
 KtNameReferenceExpression(247,251): 'list'
   null
