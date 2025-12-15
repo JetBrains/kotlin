@@ -55,5 +55,3 @@ fun box() {
 // Continuation.kt:... resumeWith
 // test.kt:13 builder
 // test.kt:24 box
-
-// EXPECTATIONS WASM
