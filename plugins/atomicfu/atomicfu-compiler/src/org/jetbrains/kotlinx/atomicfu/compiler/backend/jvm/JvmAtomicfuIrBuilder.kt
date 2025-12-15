@@ -11,8 +11,8 @@ import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.irExprBody
 import org.jetbrains.kotlin.ir.builders.irString
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.expressions.IrAnnotation
 import org.jetbrains.kotlin.ir.expressions.IrCall
-import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
@@ -74,7 +74,7 @@ class JvmAtomicfuIrBuilder(
     override fun buildVolatileFieldOfType(
         name: String,
         valueType: IrType,
-        annotations: List<IrConstructorCall>,
+        annotations: List<IrAnnotation>,
         initExpr: IrExpression?,
         parentContainer: IrDeclarationContainer
     ): IrField {

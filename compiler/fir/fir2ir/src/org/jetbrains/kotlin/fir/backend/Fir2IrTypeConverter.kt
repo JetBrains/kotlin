@@ -144,13 +144,13 @@ class Fir2IrTypeConverter(
                 }
 
                 if (type.isExtensionFunctionType && annotations.getAnnotationsByClassId(ExtensionFunctionType, session).isEmpty()) {
-                    builtins.extensionFunctionTypeAnnotationCall?.let {
+                    builtins.extensionFunctionTypeAnnotation?.let {
                         typeAnnotations += it
                     }
                 }
 
                 if (type.hasNoInfer && annotations.getAnnotationsByClassId(NoInfer, session).isEmpty()) {
-                    builtins.noInferAnnotationCall?.let {
+                    builtins.noInferAnnotation?.let {
                         typeAnnotations += it
                     }
                 }
