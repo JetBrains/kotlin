@@ -56,10 +56,6 @@ class ShallowNodeCloner(val nodeBuilder: NodeBuilder): NodeVisitor<Node>() {
 
     override fun visitConstD(node: ConstD): ConstD = context(nodeBuilder, NoControlFlowBuilder) { ConstD(node.value) }
 
-    override fun visitTrue(node: True): True = context(nodeBuilder, NoControlFlowBuilder) { True() }
-
-    override fun visitFalse(node: False): False = context(nodeBuilder, NoControlFlowBuilder) { False() }
-
     override fun visitNull(node: Null): Null = context(nodeBuilder, NoControlFlowBuilder) { Null() }
 
     override fun visitAdd(node: Add): Add = context(nodeBuilder, NoControlFlowBuilder) { Add(node.type)(null, null) } as Add
@@ -84,6 +80,8 @@ class ShallowNodeCloner(val nodeBuilder: NodeBuilder): NodeVisitor<Node>() {
 
     override fun visitUshr(node: Ushr): Ushr = context(nodeBuilder, NoControlFlowBuilder) { Ushr(node.type)(null, null) } as Ushr
 
+    override fun visitNeg(node: Neg): Neg = context(nodeBuilder, NoControlFlowBuilder) { Neg(null) } as Neg
+
     override fun visitCmp(node: Cmp): Cmp = context(nodeBuilder, NoControlFlowBuilder) { Cmp(node.type, node.op)(null, null) } as Cmp
 
     override fun visitNot(node: Not): Not = context(nodeBuilder, NoControlFlowBuilder) { Not(null) } as Not
@@ -103,6 +101,10 @@ class ShallowNodeCloner(val nodeBuilder: NodeBuilder): NodeVisitor<Node>() {
     override fun visitIsInstanceOf(node: IsInstanceOf): IsInstanceOf = context(nodeBuilder, NoControlFlowBuilder) { IsInstanceOf(node.targetType)(null) } as IsInstanceOf
 
     override fun visitCheckCast(node: CheckCast): CheckCast = context(nodeBuilder, NoControlFlowBuilder) { CheckCast(node.targetType)(null) } as CheckCast
+
+    override fun visitTypeInfo(node: TypeInfo): TypeInfo = context(nodeBuilder, NoControlFlowBuilder) { TypeInfo(null) } as TypeInfo
+
+    override fun visitConstTypeInfo(node: ConstTypeInfo): ConstTypeInfo = context(nodeBuilder, NoControlFlowBuilder) { ConstTypeInfo(node.type) }
 
     override fun visitLoad(node: Load): Load = context(nodeBuilder, NoControlFlowBuilder) { Load(node.type)(null) } as Load
 

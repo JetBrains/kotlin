@@ -63,12 +63,14 @@ class NormalizationTest : IrTest {
         lateinit var expected: Node
 
         buildInitialIR {
-            use = Use(Add(INT)(ConstI(a), Param(0))) as Use
+            use = Use(Add(INT)(Param(0), ConstI(a))) as Use
             expected = ConstI(a + b)
             Return(expected)
         }
         modifyIR {
-            (use.value as Add).rhs = ConstI(b)
+            val add = use.value as Add
+            assertTrue(add.rhs is ConstI) // make sure normalization has not messed things up
+            add.lhs = ConstI(b)
         }
         assertEquals(expected, use.value)
     }

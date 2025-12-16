@@ -5,6 +5,7 @@
 
 package hair.compilation
 
+import hair.sym.HairFunction
 import hair.transform.withGCM
 import hair.utils.generateGraphviz
 
@@ -19,12 +20,12 @@ abstract class HairDumper {
                 generateGraphviz() to true
             }
             dumpImpl(
-                unitName = compilation.function.name,
+                f = compilation.function,
                 title = title + if (withGCM) "" else "_NO_GCM",
                 contents = dump
             )
         }
     }
 
-    abstract fun dumpImpl(unitName: String, title: String, contents: String)
+    abstract fun dumpImpl(f: HairFunction, title: String, contents: String)
 }

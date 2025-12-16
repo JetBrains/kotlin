@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.backend.common.*
 import hair.compilation.*
 import hair.ir.*
 import hair.ir.nodes.*
-import hair.sym.ArithmeticType.*
+import hair.opt.optimize
 import hair.sym.CmpOp
 import hair.sym.HairType
 import hair.utils.*
@@ -41,7 +41,6 @@ import org.jetbrains.kotlin.ir.util.fileOrNull
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.isOverridable
 import org.jetbrains.kotlin.ir.util.isReal
-import org.jetbrains.kotlin.ir.util.render
 
 
 internal fun IrSimpleFunction.shouldGenerateBody(): Boolean = modality != Modality.ABSTRACT && !isExternal
@@ -79,6 +78,8 @@ internal class HairGenerator(val context: Context, val module: IrModuleFragment)
             try {
                 funCompilations[container] = generateHair(container)
                 context.log { "# Successfully generated HaIR for ${container.computeFullName()}" }
+            } catch (e: HairNotImplementedYet) {
+                context.reportWarning("Failed to generate HaIR for ${container.computeFullName()}: $e", container.fileOrNull, container)
             } catch (e: Throwable) {
                 println("# Failed with $e")
                 context.reportWarning("Failed to generate HaIR for ${container.computeFullName()}: $e\n${e.stackTraceToString()}", container.fileOrNull, container)
@@ -116,7 +117,7 @@ internal class HairGenerator(val context: Context, val module: IrModuleFragment)
                 }
                 f.body?.accept(object : IrVisitor<Node, Unit>() {
                     override fun visitElement(element: IrElement, data: Unit): Node {
-                        return error("Should not reach here $element")
+                        error("Should not reach here $element")
                     }
 
                     override fun visitExpressionBody(body: IrExpressionBody, data: Unit): Node {
@@ -165,12 +166,11 @@ internal class HairGenerator(val context: Context, val module: IrModuleFragment)
                             IrConstKind.Float -> ConstF(expression.value as Float)
                             IrConstKind.Double -> ConstD(expression.value as Double)
                             IrConstKind.Null -> Null()
-                            IrConstKind.String -> TODO("String literals")
+                            IrConstKind.String -> notImplemented(HairTODO.STRING_LITERALS)
                         }
                     }
 
                     override fun visitCall(expression: IrCall, data: Unit): Node {
-                        println("generating ${expression.render()} nodes: ${allNodes().toList()}")
                         val resultType = expression.type.asHairType()
                         val args = expression.arguments.map { it?.accept(this, Unit) }
 
@@ -183,8 +183,10 @@ internal class HairGenerator(val context: Context, val module: IrModuleFragment)
                             function.origin == DECLARATION_ORIGIN_STATIC_GLOBAL_INITIALIZER -> GlobalInit()
                             function.origin == DECLARATION_ORIGIN_STATIC_THREAD_LOCAL_INITIALIZER -> ThreadLocalInit()
                             function.origin == DECLARATION_ORIGIN_STATIC_STANDALONE_THREAD_LOCAL_INITIALIZER -> StandaloneThreadLocalInit()
-                            !function.isReal -> TODO(expression.render())
-                            else -> if (expression.isVirtual()) TODO("InvokeVirtual ${expression.render()}") else {
+                            !function.isReal -> notImplemented(HairTODO.FAKE_OVERRIDE_CALL)
+                            else -> if (expression.isVirtual()) {
+                                notImplemented(HairTODO.VIRTUAL_CALLS)
+                            } else {
                                 val call = InvokeStatic(HairFunctionImpl(function))(callArgs = args.toTypedArray())
                                 // TODO insert Halt if function returns Notihing ?
                                 if (function.returnType.isUnit()) UnitValue() else call
@@ -221,6 +223,9 @@ internal class HairGenerator(val context: Context, val module: IrModuleFragment)
 
                         IntrinsicType.INC -> Add(resType)(args[0]!!, Const(resType, 1))
                         IntrinsicType.DEC -> Sub(resType)(args[0]!!, Const(resType, 1))
+
+                        IntrinsicType.ARE_EQUAL_BY_VALUE -> notImplemented(HairTODO.ARE_EQUAL_BY_VALUE)
+                        IntrinsicType.FLOAT_TRUNCATE -> notImplemented(HairTODO.FLOAT_TRUNCATE)
 
                         else -> TODO("Intrinsic: $iType")
                     }
@@ -363,14 +368,14 @@ internal class HairGenerator(val context: Context, val module: IrModuleFragment)
                     override fun visitBreak(jump: IrBreak, data: Unit): Node {
                         val goto = Goto()
                         loopBreaks.getOrPut(jump.loop) { mutableListOf() } += goto
-                        Unreachable()
+                        unreachable()
                         return NoValue()
                     }
 
                     override fun visitContinue(jump: IrContinue, data: Unit): Node {
                         val goto = Goto()
                         loopContinues.getOrPut(jump.loop) { mutableListOf() } += goto
-                        Unreachable()
+                        unreachable()
                         return NoValue()
                     }
 
@@ -386,7 +391,7 @@ internal class HairGenerator(val context: Context, val module: IrModuleFragment)
                             // FIXME what if return Unit?
                             Return(value)
                         }
-                        Unreachable()
+                        unreachable()
                         return NoValue()
                     }
 
@@ -407,18 +412,17 @@ internal class HairGenerator(val context: Context, val module: IrModuleFragment)
                             IrTypeOperator.CAST -> {
                                 CheckCast(cls!!)(arg)
                                 arg
+                                notImplemented(HairTODO.CAST)
                             }
                             IrTypeOperator.IMPLICIT_CAST -> {
-                                // FIXME shouuld we generate it?
-                                CheckCast(cls!!)(arg)
+                                // FIXME should we generate it?
                                 arg
                             }
-                            IrTypeOperator.IMPLICIT_NOTNULL -> TODO()
+//                            IrTypeOperator.IMPLICIT_NOTNULL -> TODO()
                             IrTypeOperator.IMPLICIT_COERCION_TO_UNIT -> {
-                                arg
                                 UnitValue()
                             }
-                            IrTypeOperator.IMPLICIT_INTEGER_COERCION -> TODO()
+//                            IrTypeOperator.IMPLICIT_INTEGER_COERCION -> TODO()
                             IrTypeOperator.INSTANCEOF -> IsInstanceOf(cls!!)(arg)
                             IrTypeOperator.NOT_INSTANCEOF -> Not(IsInstanceOf(cls!!)(arg))
 
@@ -427,12 +431,14 @@ internal class HairGenerator(val context: Context, val module: IrModuleFragment)
                             IrTypeOperator.SAM_CONVERSION -> error("Should not be here ${expression.operator}")
                             IrTypeOperator.IMPLICIT_DYNAMIC_CAST -> error("Should not be here ${expression.operator}")
                             IrTypeOperator.REINTERPRET_CAST -> error("Should not be here ${expression.operator}")
+
+                            else -> TODO(expression.operator.toString())
                         }
                     }
 
                     override fun visitGetField(expression: IrGetField, data: Unit): Node {
                         val field = expression.symbol.owner
-                        if (field.hasAnnotation(KonanFqNames.volatile)) TODO("Volatile field access")
+                        if (field.hasAnnotation(KonanFqNames.volatile)) notImplemented(HairTODO.VOLATILE)
                         return if (field.isStatic) {
                             // FIXME global vs field?
                             LoadGlobal(HairGlobalImpl(field))
@@ -444,7 +450,7 @@ internal class HairGenerator(val context: Context, val module: IrModuleFragment)
 
                     override fun visitSetField(expression: IrSetField, data: Unit): Node {
                         val field = expression.symbol.owner
-                        if (field.hasAnnotation(KonanFqNames.volatile)) TODO("Volatile field access")
+                        if (field.hasAnnotation(KonanFqNames.volatile)) notImplemented(HairTODO.VOLATILE)
                         val value = expression.value.accept(this, Unit)
                         return if (field.isStatic) {
                             // FIXME global vs field?
@@ -454,19 +460,33 @@ internal class HairGenerator(val context: Context, val module: IrModuleFragment)
                             StoreField(HairFieldImpl(field))(obj, value)
                         }
                     }
+
+                    override fun visitTry(aTry: IrTry, data: Unit): Node {
+                        notImplemented(HairTODO.EXCEPTIONS)
+                    }
+
+                    override fun visitThrow(expression: IrThrow, data: Unit): Node {
+                        notImplemented(HairTODO.EXCEPTIONS)
+                    }
                 }, Unit)
             }
 
-
-            funCompilation.dumpHair("initial_ir_before_SSA")
+            funCompilation.dumpHair("initial_ir")
 
             buildSSA {
                 it as IrValueSymbol
                 it.owner.type.asHairType()
             }
-
             funCompilation.dumpHair("initial_ir_after_SSA")
+
+            optimize()
+            // TODO log IR in optimize after each iteration
+            funCompilation.dumpHair("after_optimize")
+
+            lower()
+            funCompilation.dumpHair("after_lowering")
         }
+
         return funCompilation
     }
 }
