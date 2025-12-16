@@ -88,7 +88,7 @@ class FirScriptDefinitionProviderService(
                 it.configuration?.asSuccess() ?: return null
             }
         else {
-            // if the cache is not configured, returns
+            // if the cache is not configured, returns base configuration. This is used for accessing configuration during refinement, see collectAndResolveScriptAnnotationsViaFir
             val hostBasedCache = refinedCompilationConfigurationCache ?: return getBaseConfiguration(sourceCode)
             hostBasedCache.getRefinedCompilationConfiguration(sourceCode) ?: run {
                 getBaseConfiguration(sourceCode)?.onSuccess {
