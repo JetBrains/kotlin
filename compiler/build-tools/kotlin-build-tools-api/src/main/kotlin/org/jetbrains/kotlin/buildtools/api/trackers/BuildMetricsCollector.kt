@@ -24,7 +24,12 @@ public interface BuildMetricsCollector {
     }
 
     /**
-     * Callback for when the compiler reports a metric.
+     * Callback for when the build operation reports a metric.
+     *
+     * Note the build operation may report the same metric multiple times if the same measured action repeats multiple times.
+     * In this case, the reported value should be the sum of all reported values for that metric.
+     *
+     * The metric name represents a hierarchical structure, e.g. "Run compilation -> Shrink and save current classpath snapshot after compilation -> Save shrunk current classpath snapshot"
      *
      * @param name the name for the reported metric
      * @param type what the metric represents (the unit)
