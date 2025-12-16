@@ -142,12 +142,13 @@ customFirstStageTest("1.9.20", addWritePermissionsForAllProperties = true)
 customFirstStageTest("2.0.0", addWritePermissionsForAllProperties = true)
 customFirstStageTest("2.1.0", addWritePermissionsForAllProperties = true)
 customFirstStageTest("2.2.0")
+customFirstStageTest("2.3.0")
 // TODO: Add a new task for the "custom-first-stage" test here.
 
 /* Custom-second-stage test task for the two compiler major versions: previous one and the latest one . */
 // TODO: Keep updating two following compiler versions to be the previous and latest ones.
 customSecondStageTest("2.2.0")
-customSecondStageTest("2.3.0-Beta2")
+customSecondStageTest("2.3.0")
 
 tasks.test {
     // The default test task does not resolve the necessary dependencies and does not set up the environment.
