@@ -34,12 +34,10 @@ object AnalysisApiFe10TestServiceRegistrar : AnalysisApiTestServiceRegistrar() {
 
     override fun registerProjectExtensionPoints(project: MockProject, testServices: TestServices) {
         AnalysisHandlerExtension.registerExtensionPoint(project)
-        PluginStructureProvider.registerProjectExtensionPoints(project, PLUGIN_RELATIVE_PATH)
     }
 
     override fun registerProjectServices(project: MockProject, testServices: TestServices) {
         PluginStructureProvider.registerProjectServices(project, PLUGIN_RELATIVE_PATH)
-        PluginStructureProvider.registerProjectListeners(project, PLUGIN_RELATIVE_PATH)
     }
 
     @OptIn(TestInfrastructureInternals::class)
@@ -55,6 +53,5 @@ object AnalysisApiFe10TestServiceRegistrar : AnalysisApiTestServiceRegistrar() {
         }
 
         KotlinCoreEnvironment.registerKotlinLightClassSupport(project)
-        PluginStructureProvider.registerProjectExtensionPointImplementations(project, PLUGIN_RELATIVE_PATH)
     }
 }
