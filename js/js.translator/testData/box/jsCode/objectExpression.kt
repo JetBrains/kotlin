@@ -21,5 +21,10 @@ fun box(): String {
     if (b.foo != 23) return "fail: b.foo == ${b.foo}"
     if (b.bar != 42) return "fail: b.bar == ${b.bar}"
 
+    val c = js("{ [(() => 'foo')()]: 'bar' }")
+    if (!isOrdinaryObject(c)) return "fail: c is not an object"
+    if (Object.keys(c).size != 1) return "fail: c should have one property"
+    if (c["foo"] != "bar") return "fail: c['foo'] == ${c["foo"]}"
+
     return "OK"
 }

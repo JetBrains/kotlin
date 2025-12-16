@@ -353,7 +353,7 @@ arrayElement
 
 propertyAssignment
     : propertyName ':' singleExpression                                  # PropertyExpressionAssignment
-    | '[' singleExpression ']' ':' singleExpression                      # ComputedPropertyExpressionAssignment
+    | '[' label=singleExpression ']' ':' value=singleExpression          # ComputedPropertyExpressionAssignment
     | Async? '*'? propertyName '(' formalParameterList? ')' functionBody # FunctionProperty
     | getter '(' ')' functionBody                                        # PropertyGetter
     | setter '(' formalParameterArg ')' functionBody                     # PropertySetter

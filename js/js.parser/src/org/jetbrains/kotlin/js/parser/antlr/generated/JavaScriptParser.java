@@ -5605,15 +5605,17 @@ public class JavaScriptParser extends JavaScriptParserBase {
 	}
 	@SuppressWarnings("CheckReturnValue")
 	public static class ComputedPropertyExpressionAssignmentContext extends PropertyAssignmentContext {
+		public SingleExpressionContext label;
+		public SingleExpressionContext value;
 		public TerminalNode OpenBracket() { return getToken(JavaScriptParser.OpenBracket, 0); }
+		public TerminalNode CloseBracket() { return getToken(JavaScriptParser.CloseBracket, 0); }
+		public TerminalNode Colon() { return getToken(JavaScriptParser.Colon, 0); }
 		public List<SingleExpressionContext> singleExpression() {
 			return getRuleContexts(SingleExpressionContext.class);
 		}
 		public SingleExpressionContext singleExpression(int i) {
 			return getRuleContext(SingleExpressionContext.class,i);
 		}
-		public TerminalNode CloseBracket() { return getToken(JavaScriptParser.CloseBracket, 0); }
-		public TerminalNode Colon() { return getToken(JavaScriptParser.Colon, 0); }
 		public ComputedPropertyExpressionAssignmentContext(PropertyAssignmentContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -5761,13 +5763,13 @@ public class JavaScriptParser extends JavaScriptParserBase {
 				setState(746);
 				match(OpenBracket);
 				setState(747);
-				singleExpression();
+				((ComputedPropertyExpressionAssignmentContext)_localctx).label = singleExpression();
 				setState(748);
 				match(CloseBracket);
 				setState(749);
 				match(Colon);
 				setState(750);
-				singleExpression();
+				((ComputedPropertyExpressionAssignmentContext)_localctx).value = singleExpression();
 				}
 				break;
 			case 3:
