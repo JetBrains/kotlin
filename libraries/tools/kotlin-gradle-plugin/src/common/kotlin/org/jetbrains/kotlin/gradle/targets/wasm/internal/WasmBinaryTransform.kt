@@ -82,13 +82,7 @@ abstract class WasmBinaryTransform : TransformAction<WasmBinaryTransform.Paramet
         val inputFile = inputArtifact.get().asFile
         val outputDir = outputs.dir(inputFile.name.replace(".klib", "-transformed"))
 
-        val isKotlinLibrary = parameters.libraryFilterCacheService.get().getOrCompute(
-            LibraryFilterCachingService.LibraryFilterCacheKey(
-                inputFile
-            )
-        ) {
-            KlibLoader { libraryPaths(it.absolutePath) }.load().librariesStdlibFirst.isNotEmpty()
-        }
+        val isKotlinLibrary = isKotlinLibrary(inputFile)
 
         if (!isKotlinLibrary) {
             fs.copy {
@@ -103,7 +97,7 @@ abstract class WasmBinaryTransform : TransformAction<WasmBinaryTransform.Paramet
             this.outputDir = outputDir.absolutePath
             moduleName = inputFile.nameWithoutExtension
             includes = inputFile.absolutePath
-            libraries = (parameters.classpath.files + inputFile).joinToString(File.pathSeparator) { it.absolutePath }
+            libraries = (parameters.classpath.files.filter { isKotlinLibrary(it) } + inputFile).joinToString(File.pathSeparator) { it.absolutePath }
         }
 
         args.freeArgs += parameters.enhancedFreeCompilerArgs.get()
@@ -149,6 +143,16 @@ abstract class WasmBinaryTransform : TransformAction<WasmBinaryTransform.Paramet
         GradleKotlinCompilerWork(
             workArgs
         ).run()
+    }
+
+    private fun isKotlinLibrary(file: File): Boolean {
+        return parameters.libraryFilterCacheService.get().getOrCompute(
+            LibraryFilterCachingService.LibraryFilterCacheKey(
+                file
+            )
+        ) {
+            KlibLoader { libraryPaths(it.absolutePath) }.load().librariesStdlibFirst.isNotEmpty()
+        }
     }
 }
 
