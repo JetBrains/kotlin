@@ -357,7 +357,8 @@ propertyAssignment
     | Async? '*'? propertyName '(' formalParameterList? ')' functionBody # FunctionProperty
     | getter '(' ')' functionBody                                        # PropertyGetter
     | setter '(' formalParameterArg ')' functionBody                     # PropertySetter
-    | Ellipsis? singleExpression                                         # PropertyShorthand
+    | Ellipsis singleExpression                                          # SpreadProperty
+    | identifierName                                                     # PropertyShorthand
     ;
 
 propertyName

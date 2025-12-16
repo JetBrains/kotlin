@@ -8,12 +8,12 @@ package org.jetbrains.kotlin.js.backend.ast
  */
 open class JsPropertyInitializer(
     labelExpr: JsExpression,
-    valueExpr: JsExpression
+    valueExpr: JsExpression,
 ) : SourceInfoAwareJsNode() {
     var labelExpr: JsExpression = labelExpr
-        protected set
+        private set
     var valueExpr: JsExpression = valueExpr
-        protected set
+        private set
 
     override fun accept(v: JsVisitor) {
         v.visitPropertyInitializer(this)
