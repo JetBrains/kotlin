@@ -502,7 +502,9 @@ class Fir2IrConverter(
                 processMemberDeclaration(declaration.snippetClass, containingClass, parent, delegateFieldToPropertyMap)
             }
             is FirNamedFunction -> {
-                declarationStorage.createAndCacheIrFunction(declaration, parent, isLocal = isInLocalClass)
+                if (containingClass != null || declarationStorage.getCachedIrFunctionSymbol(declaration) == null) {
+                    declarationStorage.createAndCacheIrFunction(declaration, parent, isLocal = isInLocalClass)
+                }
             }
             is FirProperty -> {
                 if (
