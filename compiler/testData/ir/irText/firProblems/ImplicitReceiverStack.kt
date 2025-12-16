@@ -3,9 +3,6 @@
 // FULL_JDK
 // JVM_TARGET: 1.8
 
-// Variance mismatch (will fix in the next commit)
-// KOTLIN_REFLECT_DUMP_MISMATCH
-
 interface SymbolOwner<E : SymbolOwner<E>>
 
 interface Symbol<E : SymbolOwner<E>>
