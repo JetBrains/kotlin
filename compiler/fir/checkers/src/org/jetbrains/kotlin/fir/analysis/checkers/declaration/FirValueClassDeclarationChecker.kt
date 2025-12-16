@@ -207,17 +207,6 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
                         FirErrors.VALUE_CLASS_CONSTRUCTOR_NOT_FINAL_READ_ONLY_PARAMETER
                     )
 
-                !LanguageFeature.GenericInlineClassParameter.isEnabled() &&
-                        parameterTypeRef.coneType.let {
-                            it is ConeTypeParameterType || it.isGenericArrayOfTypeParameter()
-                        } -> {
-                    reporter.reportOn(
-                        parameterTypeRef.source,
-                        FirErrors.UNSUPPORTED_FEATURE,
-                        LanguageFeature.GenericInlineClassParameter to context.languageVersionSettings
-                    )
-                }
-
                 parameterTypeRef.isInapplicableParameterType(context.session) -> {
                     reporter.reportOn(
                         parameterTypeRef.source,

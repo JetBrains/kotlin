@@ -47808,12 +47808,6 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
       }
 
       @Test
-      @TestMetadata("valueClassWithGenericUnderlyingTypeNoFeature.kt")
-      public void testValueClassWithGenericUnderlyingTypeNoFeature() {
-        runTest("compiler/testData/diagnostics/tests/valueClasses/valueClassWithGenericUnderlyingTypeNoFeature.kt");
-      }
-
-      @Test
       @TestMetadata("valueClassesInsideAnnotations.kt")
       public void testValueClassesInsideAnnotations() {
         runTest("compiler/testData/diagnostics/tests/valueClasses/valueClassesInsideAnnotations.kt");
