@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
 import org.jetbrains.kotlin.build.report.metrics.BuildTimeMetric
 import org.jetbrains.kotlin.build.report.metrics.endMeasureGc
 import org.jetbrains.kotlin.build.report.metrics.startMeasureGc
+import org.jetbrains.kotlin.build.report.reportPerformanceData
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
 import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.arguments.*
@@ -346,7 +347,7 @@ abstract class CompileServiceImplBase(
         createMessageCollector: (ServicesFacadeT, CompilationOptions) -> MessageCollector,
         createReporter: (ServicesFacadeT, CompilationOptions) -> DaemonMessageReporter,
         createServices: (JpsServicesFacadeT, EventManager, Profiler) -> Services,
-        getICReporter: (ServicesFacadeT, CompilationResultsT?, IncrementalCompilationOptions) -> RemoteBuildReporter<BuildTimeMetric, BuildPerformanceMetric>,
+        getICReporter: (ServicesFacadeT, CompilationResultsT?, CompilationOptions) -> RemoteBuildReporter<BuildTimeMetric, BuildPerformanceMetric>,
         compilationId: Int? = null,
     ) = kotlin.run {
         maybeWaitForTestStart()
@@ -392,13 +393,16 @@ abstract class CompileServiceImplBase(
                 }
             }
             CompilerMode.NON_INCREMENTAL_COMPILER -> {
-                doCompile(sessionId, daemonReporter, tracer = null, compilationId = compilationId) { _, _, compilationCanceled ->
+                doCompile(sessionId, daemonReporter, tracer = null, compilationId) { _, _, compilationCanceled ->
+                    val icReporter = getICReporter(servicesFacade, compilationResults, compilationOptions)
+                    icReporter.startMeasureGc()
                     val exitCode = compiler.exec(
                         messageCollector,
                         compilationCanceled?.let { Services.Builder().register(CompilationCanceledStatus::class.java, it).build() }
                             ?: Services.EMPTY,
                         k2PlatformArgs
                     )
+                    icReporter.reportPerformanceData(compiler.defaultPerformanceManager.unitStats)
                     val perfString = compiler.defaultPerformanceManager.createPerformanceReport(dumpFormat = DumpFormat.PlainText)
                     compilationResults?.also {
                         (it as CompilationResults).add(
@@ -406,7 +410,8 @@ abstract class CompileServiceImplBase(
                             arrayListOf(perfString)
                         )
                     }
-
+                    icReporter.endMeasureGc()
+                    icReporter.flush()
                     exitCode
                 }
             }
