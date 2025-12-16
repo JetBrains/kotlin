@@ -1,0 +1,83 @@
+open class Base {
+  open var propertyGetterCovariantOverrideInJava: Number
+    field = 1
+    open get
+    open set
+
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  open fun character(a: Char) {
+    return Unit
+  }
+
+  open fun <T : Any?> eraseGenericInJava(t: T) {
+    return Unit
+  }
+
+  open fun integer(a: Int) {
+    return Unit
+  }
+
+  open fun nullableInteger(a: Int) {
+    return Unit
+  }
+
+  open val <T : Any?> T.propertyEraseGenericInJava: Any
+    open get(): Any {
+      return Unit
+    }
+
+}
+
+class Final : Base {
+  constructor() /* primary */ {
+    super/*Base*/()
+    /* <init>() */
+
+  }
+
+}
+
+class FinalWithOverride : Middle {
+  override var propertyGetterCovariantOverrideInJava: Number
+    field = 1
+    override get
+    override set
+
+  constructor() /* primary */ {
+    super/*Middle*/()
+    /* <init>() */
+
+  }
+
+  override fun character(a: Char) {
+    return Unit
+  }
+
+  override fun eraseGenericInJava(t: Any) {
+    return Unit
+  }
+
+  override fun getPropertyGetterCovariantOverrideInJava(): Int? {
+    return 1
+  }
+
+  override fun integer(a: Int) {
+    return Unit
+  }
+
+  override fun nullableInteger(a: Int?) {
+    return Unit
+  }
+
+  override val Any.propertyEraseGenericInJava: Any
+    override get(): Any {
+      return Unit
+    }
+
+}
+

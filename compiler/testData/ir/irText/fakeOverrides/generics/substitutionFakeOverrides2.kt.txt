@@ -1,0 +1,41 @@
+interface A1 : I1<String>, J1 {
+}
+
+interface A2 : I2<String>, J2 {
+}
+
+interface A3 : I3<String>, J3 {
+}
+
+interface I1<T : Any?> {
+  abstract fun foo(a: T)
+
+}
+
+interface I2<T : Any?> {
+  abstract fun foo(a: T)
+
+  abstract fun foo(a: String)
+
+}
+
+interface I3<T : Any?> {
+  abstract fun foo(a: T)
+
+  abstract fun foo(a: String)
+
+}
+
+interface J1 {
+  abstract fun foo(a: String)
+
+}
+
+interface J2 {
+}
+
+interface J3 {
+  fun foo(unrelated: Int) {
+  }
+
+}

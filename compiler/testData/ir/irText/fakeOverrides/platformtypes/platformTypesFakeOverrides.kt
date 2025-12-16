@@ -1,0 +1,35 @@
+// FIR_IDENTICAL
+
+// FILE: main.kt
+open class Base {
+    open fun integer(a: Int) = Unit
+    open fun nullableInteger(a: Int) = Unit
+    open fun character(a: Char) = Unit
+    open fun <T> eraseGenericInJava(t: T) = Unit
+    open var propertyGetterCovariantOverrideInJava: Number = 1
+    open val <T> T.propertyEraseGenericInJava: Any get() = Unit
+}
+
+class FinalWithOverride : Middle() {
+    override fun integer(a: Int) = Unit
+    override fun nullableInteger(a: Int?) = Unit
+    override fun character(a: Char) = Unit
+    override fun eraseGenericInJava(t: Any) = Unit
+
+    override var propertyGetterCovariantOverrideInJava: Number = 1
+    override fun getPropertyGetterCovariantOverrideInJava(): Int? = 1
+
+    override val Any.propertyEraseGenericInJava: Any get() = Unit
+}
+
+class Final : Base()
+
+// FILE: Middle.java
+public class Middle extends Base {
+    public void integer(Integer x) {}
+    public void nullableInteger(Integer a) {}
+    public void character(Character c) {}
+    @Override public void eraseGenericInJava(Object t) {}
+    @Override public Integer getPropertyGetterCovariantOverrideInJava() {return 1;}
+    @Override public Object getPropertyEraseGenericInJava(Object $this$prop) {return null;}
+}

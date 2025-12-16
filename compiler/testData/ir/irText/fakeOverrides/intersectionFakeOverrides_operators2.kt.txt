@@ -1,0 +1,66 @@
+class A1 : B, C, D {
+  constructor() /* primary */ {
+    super/*B*/()
+    /* <init>() */
+
+  }
+
+}
+
+class A2 : B, C, D {
+  constructor() /* primary */ {
+    super/*B*/()
+    /* <init>() */
+
+  }
+
+}
+
+class A3 : B, C {
+  constructor() /* primary */ {
+    super/*B*/()
+    /* <init>() */
+
+  }
+
+}
+
+class A4 : B, D {
+  constructor() /* primary */ {
+    super/*B*/()
+    /* <init>() */
+
+  }
+
+}
+
+open class B {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  fun infixFun(a: Any): String {
+    return ""
+  }
+
+  fun plus(a: Any): String {
+    return ""
+  }
+
+}
+
+interface C {
+  abstract fun infixFun(a: Any): CharSequence
+
+  abstract fun plus(a: Any): CharSequence
+
+}
+
+interface D {
+  abstract infix fun infixFun(a: Any): Any
+
+  abstract operator fun plus(a: Any): Any
+
+}

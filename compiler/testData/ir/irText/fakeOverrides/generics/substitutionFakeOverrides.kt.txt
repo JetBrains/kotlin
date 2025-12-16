@@ -1,0 +1,82 @@
+class A : Jaba<Int?>, I2 {
+  constructor() /* primary */ {
+    super/*Jaba*/<Int?>()
+    /* <init>() */
+
+  }
+
+}
+
+class B : Jaba<Int>, I2 {
+  constructor() /* primary */ {
+    super/*Jaba*/<Int>()
+    /* <init>() */
+
+  }
+
+}
+
+class C : Jaba<String>, KotlinInterface {
+  constructor() /* primary */ {
+    super/*Jaba*/<String>()
+    /* <init>() */
+
+  }
+
+}
+
+abstract class D : Jaba<String>, KotlinInterface {
+  constructor() /* primary */ {
+    super/*Jaba*/<String>()
+    /* <init>() */
+
+  }
+
+}
+
+abstract class E : Jaba<String?>, KotlinInterface {
+  constructor() /* primary */ {
+    super/*Jaba*/<String?>()
+    /* <init>() */
+
+  }
+
+}
+
+class F : Jaba<String?>, KotlinInterface2 {
+  constructor() /* primary */ {
+    super/*Jaba*/<String?>()
+    /* <init>() */
+
+  }
+
+}
+
+class G : Jaba<String?>, KotlinInterface2 {
+  constructor() /* primary */ {
+    super/*Jaba*/<String?>()
+    /* <init>() */
+
+  }
+
+  override fun foo(t: String) {
+  }
+
+}
+
+interface I2 {
+  fun foo(f: Int) {
+  }
+
+}
+
+interface KotlinInterface {
+  abstract fun foo(t: String)
+
+}
+
+interface KotlinInterface2 {
+  fun foo(t: String) {
+  }
+
+}
