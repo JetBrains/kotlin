@@ -9964,6 +9964,12 @@ public class LLReversedDiagnosticsFe10TestGenerated extends AbstractLLReversedDi
       }
 
       @Test
+      @TestMetadata("contracts.kt")
+      public void testContracts() {
+        runTest("compiler/testData/diagnostics/tests/crv/contracts.kt");
+      }
+
+      @Test
       @TestMetadata("controlFlow.kt")
       public void testControlFlow() {
         runTest("compiler/testData/diagnostics/tests/crv/controlFlow.kt");

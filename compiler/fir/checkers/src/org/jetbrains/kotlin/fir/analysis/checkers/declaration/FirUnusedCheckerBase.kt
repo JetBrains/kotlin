@@ -44,6 +44,7 @@ abstract class FirUnusedCheckerBase : FirBasicDeclarationChecker(MppCheckerKind.
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirDeclaration) {
         if (!isEnabled()) return
+        if (context.isContractBody) return
         val visitor = createVisitor()
         when (declaration) {
             // A "used" FirBlock is one that uses the last statement as an implicit return.
@@ -120,8 +121,6 @@ abstract class FirUnusedCheckerBase : FirBasicDeclarationChecker(MppCheckerKind.
         override fun visitBlock(block: FirBlock, data: UsageState) {
             // Increment and decrement operators are always considered used (because they have a side effect).
             if (block.source?.kind is KtFakeSourceElementKind.DesugaredIncrementOrDecrement) return
-            // Function contract blocks can be ignored.
-            if (block is FirContractCallBlock) return
 
             val statements = block.statements
             val lastIndex = statements.lastIndex
