@@ -1,0 +1,23 @@
+FILE: nullableExpectedTypes.kt
+    @FILE:R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/ExperimentalUnsignedTypes|)))
+    public final fun test(): R|kotlin/Unit| {
+        lval a: R|kotlin/Array<kotlin/Int?>?| = Q|kotlin|.R|kotlin/arrayOf|<R|kotlin/Int?|>(vararg(Int(1), Null(null), Int(3)))
+        lval b: R|kotlin/Array<kotlin/Any>?| = Q|kotlin|.R|kotlin/arrayOf|<R|kotlin/Any|>(vararg(Int(1), Int(2), Int(3)))
+        lval c: R|kotlin/IntArray?| = Q|kotlin|.R|kotlin/intArrayOf|(vararg(Int(1), Int(2), Int(3)))
+        lval d: R|kotlin/LongArray?| = Q|kotlin|.R|kotlin/longArrayOf|(vararg(Long(1), Long(2), Long(3)))
+        lval e: R|kotlin/ByteArray?| = Q|kotlin|.R|kotlin/byteArrayOf|(vararg(Byte(1), Byte(2), Byte(3)))
+        lval f: R|kotlin/ShortArray?| = Q|kotlin|.R|kotlin/shortArrayOf|(vararg(Short(1), Short(2), Short(3)))
+        lval g: R|kotlin/UIntArray?| = Q|kotlin|.R|kotlin/uintArrayOf|(vararg(UInt(1), UInt(2), UInt(3)))
+        lval h: R|kotlin/ULongArray?| = Q|kotlin|.R|kotlin/ulongArrayOf|()
+        lval i: R|kotlin/UByteArray?| = Q|kotlin|.R|kotlin/ubyteArrayOf|()
+        lval j: R|kotlin/UShortArray?| = Q|kotlin|.R|kotlin/ushortArrayOf|()
+        lval k: R|kotlin/CharArray?| = Q|kotlin|.R|kotlin/charArrayOf|(vararg(Char(1), Char(2), Char(3)))
+        lval l: R|kotlin/collections/List<*>?| = Q|kotlin/collections|.R|kotlin/collections/listOf|<R|() -> kotlin/Unit|>(fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            ^ Unit
+        }
+        )
+        lval m: R|kotlin/collections/MutableList<*>?| = Q|kotlin/collections|.R|kotlin/collections/mutableListOf|<R|kotlin/reflect/KFunction0<kotlin/Unit>|>(vararg(::R|/test|))
+        lval n: R|kotlin/collections/Set<*>?| = Q|kotlin/collections|.R|kotlin/collections/setOf|<R|kotlin/Int|>(Int(42))
+        lval o: R|kotlin/collections/MutableSet<kotlin/CharSequence>?| = Q|kotlin/collections|.R|kotlin/collections/mutableSetOf|<R|kotlin/CharSequence|>(vararg(String(42)))
+        lval p: R|kotlin/sequences/Sequence<*>?| = Q|kotlin/sequences|.R|kotlin/sequences/sequenceOf|<R|kotlin/Int|>(vararg(Int(1), Int(2), Int(3)))
+    }

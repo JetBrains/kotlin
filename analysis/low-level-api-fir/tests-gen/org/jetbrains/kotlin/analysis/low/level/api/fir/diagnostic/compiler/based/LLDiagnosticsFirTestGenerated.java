@@ -2389,6 +2389,12 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
         }
 
         @Test
+        @TestMetadata("nullableExpectedTypes.kt")
+        public void testNullableExpectedTypes() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/stdlibTypes/nullableExpectedTypes.kt");
+        }
+
+        @Test
         @TestMetadata("primitiveArraysOperatorOf.kt")
         public void testPrimitiveArraysOperatorOf() {
           runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/stdlibTypes/primitiveArraysOperatorOf.kt");
