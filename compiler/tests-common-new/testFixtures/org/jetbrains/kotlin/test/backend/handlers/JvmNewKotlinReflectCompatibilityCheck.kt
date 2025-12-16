@@ -150,7 +150,7 @@ class JvmNewKotlinReflectCompatibilityCheck(testServices: TestServices) : JvmBin
         private fun getNewKotlinReflectDumper(testServices: TestServices): AlienInstance {
             newKotlinReflectDumper.get()?.let { return it }
             return RunInAlienClassLoader::class.java
-                .newInstanceInNewClassloader(testServices.standardLibrariesPathProvider.getRuntimeAndReflectJarClassLoader())
+                .newInstanceInNewClassloader(testServices.standardLibrariesPathProvider.getRuntimeAndReflectWithNewFakeOverrridesJarClassLoader())
                 .also { newKotlinReflectDumper = SoftReference(it) }
         }
     }
