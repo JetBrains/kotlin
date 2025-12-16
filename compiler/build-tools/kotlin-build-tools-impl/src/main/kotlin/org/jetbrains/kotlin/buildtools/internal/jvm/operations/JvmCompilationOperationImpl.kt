@@ -364,7 +364,9 @@ internal class JvmCompilationOperationImpl private constructor(
         val metricsReporter = getMetricsReporter()
         val buildReporter = BuildReporter(
             icReporter = BuildToolsApiBuildICReporter(
-                loggerAdapter.kotlinLogger, projectDir
+                kotlinLogger = loggerAdapter.kotlinLogger,
+                rootProjectDir = projectDir,
+                buildMetricsReporter = metricsReporter,
             ), buildMetricsReporter = metricsReporter
         )
         val verifiedPreciseJavaTracking =

@@ -184,8 +184,8 @@ internal object CompilationServiceImpl : CompilationService {
                 val classpathChanges =
                     (aggregatedIcConfiguration as AggregatedIcConfiguration<ClasspathSnapshotBasedIncrementalCompilationApproachParameters>).classpathChanges
                 val buildReporter = BuildReporter(
-                    icReporter = BuildToolsApiBuildICReporter(loggerAdapter.kotlinLogger, options.rootProjectDir),
-                    buildMetricsReporter = DoNothingBuildMetricsReporter
+                    icReporter = BuildToolsApiBuildICReporter(loggerAdapter.kotlinLogger, options.rootProjectDir, null),
+                    buildMetricsReporter = DoNothingBuildMetricsReporter,
                 )
                 val verifiedPreciseJavaTracking = parsedArguments.disablePreciseJavaTrackingIfK2(usePreciseJavaTrackingByDefault = options.preciseJavaTrackingEnabled)
                 val icFeatures = options.extractIncrementalCompilationFeatures().copy(
