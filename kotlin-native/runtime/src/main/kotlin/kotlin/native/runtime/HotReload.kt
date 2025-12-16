@@ -9,17 +9,14 @@ import kotlin.native.internal.ExportForCppRuntime
 import kotlin.native.internal.GCUnsafeCall
 import kotlin.native.internal.escapeAnalysis.Escapes
 
-public typealias ReloadSuccessHandler = () -> Unit
-
 /**
  * Internal function invoked by the C++ runtime when hot-code reload completes successfully.
- * It is not intended for public or internal use from the Kotlin's side.
- *
- * @param handler User-defined callback to be executed upon successful hot-code reload.
+ * It is not intended for public or internal use from the Kotlin's side.*
  */
+@OptIn(NativeRuntimeApi::class)
 @ExportForCppRuntime("Kotlin_native_internal_HotReload_invokeSuccessCallback")
-internal fun invokeReloadSuccessHandler(handler: ReloadSuccessHandler) {
-    handler.invoke()
+internal fun invokeReloadSuccessHandler() {
+    HotReload.registeredSuccessHandlers.forEach { it.invoke() }
 }
 
 /**
@@ -90,13 +87,32 @@ private class HotReloadStatsBuilder(
 public object HotReload {
 
     /**
-     * Register a callback that will be executed when hot-code reload performs successfully.
-     * Note that the callbacks are executed in the same order they were registered to.
-     * Also, the callback is executed only once per successful reload event.
+     * A type alias representing a function that takes no arguments and returns no value.
+     * It can be used to handle reload success events or similar callbacks.
      */
-    @GCUnsafeCall("Kotlin_native_internal_HotReload_registerSuccessCallback")
-    @Escapes.Nothing
-    public external fun setReloadSuccessHandler(handler: ReloadSuccessHandler)
+    public typealias ReloadSuccessHandler = () -> Unit
+
+    internal val registeredSuccessHandlers: LinkedHashSet<ReloadSuccessHandler> = LinkedHashSet()
+
+    /**
+     * Registers a handler to be invoked after a successful reload operation.
+     * Note that handles are invoked in the same order they were registered to.
+     * Also, the callback is executed only once per successful reload event.
+     *
+     * @param reloadSuccessHandler The handler to be executed when the reload completes successfully.
+     */
+    public fun addReloadSuccessHandler(reloadSuccessHandler: ReloadSuccessHandler) {
+        registeredSuccessHandlers.add(reloadSuccessHandler)
+    }
+
+    /**
+     * Removes the specified reload success handler from the collection of registered success handlers.
+     *
+     * @param reloadSuccessHandler The reload success handler to be removed.
+     */
+    public fun removeReloadSuccessHandler(reloadSuccessHandler: ReloadSuccessHandler) {
+        registeredSuccessHandlers.remove(reloadSuccessHandler)
+    }
 
     /**
      * Collect statistics about the latest hot-code reload event.

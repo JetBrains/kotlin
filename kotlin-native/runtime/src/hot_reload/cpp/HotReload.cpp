@@ -218,10 +218,9 @@ void HotReloader::reload(const std::string& dylibPath) noexcept {
         perform(*currentThreadData, parsedDynamicLib);
         statsCollector.registerEnd(static_cast<int64_t>(utility::getCurrentEpoch()));
         statsCollector.registerSuccessful(true);
-        mm::ResumeThreads();
-
         HRLogDebug("Invoking HotReload Success Handlers...");
         Kotlin_native_internal_HotReload_invokeSuccessCallback();
+        mm::ResumeThreads();
     } catch (const std::exception& e) {
         HRLogError("Hot-reload failed with exception: %s", e.what());
         statsCollector.registerEnd(static_cast<int64_t>(utility::getCurrentEpoch()));

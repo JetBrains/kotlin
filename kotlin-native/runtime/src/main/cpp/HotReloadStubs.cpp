@@ -9,11 +9,6 @@ RUNTIME_WEAK void Kotlin_native_internal_HotReload_HotReloadStatsBuilder_fill(KR
     throw std::runtime_error{"Hot-Reload is available only on macOS and iOS."};
 }
 
-// Weak stub for HotReload.setReloadSuccessHandler()
-RUNTIME_WEAK void Kotlin_native_internal_HotReload_registerSuccessCallback(KRef thiz, KRef handler) {
-    throw std::runtime_error{"Hot-Reload is available only on macOS and iOS."};
-}
-
 // Weak stub for HotReload.perform()
 RUNTIME_WEAK void Kotlin_native_internal_HotReload_perform(KRef thiz, KConstRef dylibPath) {
     throw std::runtime_error{"Hot-Reload is available only on macOS and iOS."};
