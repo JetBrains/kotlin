@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.analysis.api.fir.components
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.parents
-import org.jetbrains.kotlin.analysis.api.components.DebuggerExtension
+import org.jetbrains.kotlin.analysis.api.components.KaDebuggerExtension
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLResolutionFacade
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
 import org.jetbrains.kotlin.analysis.low.level.api.fir.compile.InlineLambdaArgument
@@ -39,7 +39,7 @@ class InlineStackData(
 internal fun retrieveInlineStackData(
     file: FirFile,
     resolutionFacade: LLResolutionFacade,
-    debuggerExtension: DebuggerExtension?,
+    debuggerExtension: KaDebuggerExtension?,
 ): InlineStackData {
 
     if (debuggerExtension == null) return InlineStackData(emptyMap(), emptyMap(), null)

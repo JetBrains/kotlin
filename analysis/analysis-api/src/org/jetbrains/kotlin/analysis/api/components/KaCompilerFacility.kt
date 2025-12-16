@@ -150,7 +150,7 @@ public sealed class KaCompilerTarget {
     public class Jvm(
         public val isTestMode: Boolean,
         public val compiledClassHandler: KaCompiledClassHandler?,
-        public val debuggerExtension: DebuggerExtension?,
+        public val debuggerExtension: KaDebuggerExtension?,
     ) : KaCompilerTarget()
 }
 
@@ -189,7 +189,7 @@ public class KaCodeCompilationException(cause: Throwable) : RuntimeException(cau
  * listed from the top to the bottom.
  */
 @KaExperimentalApi
-public class DebuggerExtension(public val stack: Sequence<PsiElement?>)
+public class KaDebuggerExtension(public val stack: Sequence<PsiElement?>)
 
 /**
  * Compiles the given [file] in-memory (without dumping the compiled binaries to the disk).
