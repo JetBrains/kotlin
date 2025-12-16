@@ -515,8 +515,15 @@ internal class JsAstMapperVisitor(
         reportError("Property setters are not supported yet", ctx)
     }
 
-    override fun visitPropertyShorthand(ctx: JavaScriptParser.PropertyShorthandContext): JsNode? {
-        reportError("Property shorthands are not supported yet", ctx)
+    override fun visitSpreadProperty(ctx: JavaScriptParser.SpreadPropertyContext): JsNode? {
+        reportError("Spread properties are not supported yet", ctx)
+    }
+
+    override fun visitPropertyShorthand(ctx: JavaScriptParser.PropertyShorthandContext): JsPropertyInitializer {
+        return JsPropertyInitializer(
+            JsStringLiteral(ctx.text),
+            makeRefNode(ctx.text)
+        ).applyLocation(ctx)
     }
 
     override fun visitPropertyName(ctx: JavaScriptParser.PropertyNameContext): JsExpression {

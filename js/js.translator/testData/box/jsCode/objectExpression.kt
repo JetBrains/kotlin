@@ -26,5 +26,12 @@ fun box(): String {
     if (Object.keys(c).size != 1) return "fail: c should have one property"
     if (c["foo"] != "bar") return "fail: c['foo'] == ${c["foo"]}"
 
+    val d = js("{ a, b, c }")
+    if (!isOrdinaryObject(d)) return "fail: d is not an object"
+    if (Object.keys(d).size != 3) return "fail: d should have three properties"
+    if (d.a != a) return "fail: d.a == ${d.a}"
+    if (d.b != b) return "fail: d.b == ${d.b}"
+    if (d.c != c) return "fail: d.c == ${d.c}"
+
     return "OK"
 }

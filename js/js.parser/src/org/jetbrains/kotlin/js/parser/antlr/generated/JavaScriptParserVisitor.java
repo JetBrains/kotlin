@@ -477,6 +477,13 @@ public interface JavaScriptParserVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitPropertySetter(JavaScriptParser.PropertySetterContext ctx);
 	/**
+	 * Visit a parse tree produced by the {@code SpreadProperty}
+	 * labeled alternative in {@link JavaScriptParser#propertyAssignment}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitSpreadProperty(JavaScriptParser.SpreadPropertyContext ctx);
+	/**
 	 * Visit a parse tree produced by the {@code PropertyShorthand}
 	 * labeled alternative in {@link JavaScriptParser#propertyAssignment}.
 	 * @param ctx the parse tree

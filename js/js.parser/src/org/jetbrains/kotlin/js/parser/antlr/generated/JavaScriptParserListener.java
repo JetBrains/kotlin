@@ -786,6 +786,18 @@ public interface JavaScriptParserListener extends ParseTreeListener {
 	 */
 	void exitPropertySetter(JavaScriptParser.PropertySetterContext ctx);
 	/**
+	 * Enter a parse tree produced by the {@code SpreadProperty}
+	 * labeled alternative in {@link JavaScriptParser#propertyAssignment}.
+	 * @param ctx the parse tree
+	 */
+	void enterSpreadProperty(JavaScriptParser.SpreadPropertyContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code SpreadProperty}
+	 * labeled alternative in {@link JavaScriptParser#propertyAssignment}.
+	 * @param ctx the parse tree
+	 */
+	void exitSpreadProperty(JavaScriptParser.SpreadPropertyContext ctx);
+	/**
 	 * Enter a parse tree produced by the {@code PropertyShorthand}
 	 * labeled alternative in {@link JavaScriptParser#propertyAssignment}.
 	 * @param ctx the parse tree
