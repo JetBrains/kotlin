@@ -22,9 +22,10 @@ kotlin {
             "org.jetbrains.kotlin.gradle.ComposeKotlinGradlePluginApi",
             "kotlin.io.path.ExperimentalPathApi",
         )
-        freeCompilerArgs.add(
+        freeCompilerArgs.addAll(
             // Avoid having to use JvmSerializableLambda in build script injections
-            "-Xlambdas=class"
+            "-Xlambdas=class",
+            "-Xmulti-dollar-interpolation",
         )
     }
 }

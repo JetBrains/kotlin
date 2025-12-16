@@ -27,7 +27,6 @@ sourceSets {
 }
 
 tasks.withType<KotlinJvmCompile> {
-    compilerOptions.freeCompilerArgs.add("-Xinline-classes")
     compilerOptions.freeCompilerArgs.add("-Xconsistent-data-class-copy-visibility")
 }
 
