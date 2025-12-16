@@ -67,11 +67,7 @@ class Phi internal constructor(form: Form, block: BlockEntry?, vararg joinedValu
     class Form internal constructor(metaForm: MetaForm, val type: HairType) : MetaForm.ParametrisedValueForm<Form>(metaForm) {
         override val args = listOf<Any>(type)
     }
-
-    init {
-        require(joinedValues.size == block!!.preds.size)
-    }
-
+    
     val type: HairType by form::type
     val block: BlockEntry
         get() = args[0] as BlockEntry
@@ -80,10 +76,7 @@ class Phi internal constructor(form: Form, block: BlockEntry?, vararg joinedValu
     context(_: ArgsUpdater)
      var block: BlockEntry
         get() = args[0] as BlockEntry
-        set(value) {
-            args[0] = value
-            require(joinedValues.size == value.preds.size)
-        }
+        set(value) { args[0] = value }
     context(_: ArgsUpdater)
      var blockOrNull: BlockEntry?
         get() = args.getOrNull(0)?.let { it as BlockEntry }

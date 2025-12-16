@@ -31,4 +31,13 @@ object Object : ModelDSL() {
 
     val checkCast by node(typeCheck)
 
+    val typeInfo by node {
+        param("obj")
+    }
+
+    val constTypeInfo by node {
+        interfaces(Arithmetics.constAny)
+        formParam("type", HairClass::class)
+    }
+
 }

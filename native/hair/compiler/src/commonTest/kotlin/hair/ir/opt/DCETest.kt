@@ -1,6 +1,7 @@
 package hair.ir.opt
 
 import hair.ir.*
+import hair.opt.optimize
 import hair.test.Fun
 import hair.utils.printGraphviz
 import kotlin.test.*
@@ -30,6 +31,8 @@ class DCETest : IrTest {
                 Use(ConstI(37))
             })
         }
+        // FIXME maybe just DCE?
+        optimize()
         printGraphviz()
     }
 }
