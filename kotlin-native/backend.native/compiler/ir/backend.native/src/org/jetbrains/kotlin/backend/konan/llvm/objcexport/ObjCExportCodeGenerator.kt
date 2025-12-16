@@ -794,7 +794,17 @@ private fun ObjCExportCodeGenerator.generateObjCImp(
 ) = if (target == null) {
     generateAbstractObjCImp(methodBridge, baseMethod)
 } else {
-    generateObjCImp(
+    if (baseMethod.isFakeOverride && baseMethod.parentClassOrNull?.isFinalClass == true) {
+        // This method actually cannot be called from ObjC (all fake overrides are filtered out, see ObjCExportTranslatorImpl.translateClassMembers)
+        // So here we just throw an error.
+        generateObjCImpBy(
+                methodBridge,
+                debugInfo = false,
+                suffix = baseMethod.computeSymbolName(),
+        ) {
+            callFromBridge(codegen.llvmFunction(symbols.throwIllegalStateException.owner), emptyList())
+        }
+    } else generateObjCImp(
             methodBridge,
             baseMethod = baseMethod,
             bridgeSuffix = customBridgeSuffix ?: ((if (isVirtual) "virtual_" else "") + target.computeSymbolName())
