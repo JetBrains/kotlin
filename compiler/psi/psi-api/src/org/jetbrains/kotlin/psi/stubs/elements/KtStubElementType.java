@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.psi.stubs.elements;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.psi.stubs.IndexSink;
 import com.intellij.psi.stubs.StubElement;
@@ -19,7 +18,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.KotlinLanguage;
 import org.jetbrains.kotlin.psi.KtElementImplStub;
 import org.jetbrains.kotlin.psi.KtExpression;
-import org.jetbrains.kotlin.psi.KtFunction;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
@@ -75,11 +73,6 @@ public abstract class KtStubElementType<StubT extends StubElement<?>, PsiT exten
 
     @Override
     public boolean shouldCreateStub(ASTNode node) {
-        PsiElement psi = node.getPsi();
-        if (psi instanceof KtFunction) {
-            return true;
-        }
-
         return createStubDependingOnParent(node);
     }
 

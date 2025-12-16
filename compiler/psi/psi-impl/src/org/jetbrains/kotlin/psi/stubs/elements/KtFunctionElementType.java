@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.psi.stubs.elements;
 
+import com.intellij.lang.ASTNode;
 import com.intellij.psi.stubs.IndexSink;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.psi.stubs.StubInputStream;
@@ -29,6 +30,14 @@ public class KtFunctionElementType extends KtStubElementType<KotlinFunctionStubI
 
     public KtFunctionElementType(@NotNull @NonNls String debugName) {
         super(debugName, KtNamedFunction.class, KotlinFunctionStub.class);
+    }
+
+    /**
+     * Functions always stubbed since we want to index even local ones
+     */
+    @Override
+    public boolean shouldCreateStub(ASTNode node) {
+        return true;
     }
 
     @NotNull
