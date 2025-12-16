@@ -323,7 +323,7 @@ fun validateArguments(errors: ArgumentParseErrors?): List<String> {
     if (errors == null) return emptyList()
     return buildList {
         errors.argumentsWithoutValue.forEach {
-            add("No value passed for argument $it")
+            add("No value passed for argument '$it'.")
         }
         errors.booleanArgumentsWithIncorrectValue.forEach { arg ->
             add("Incorrect value for boolean argument '${arg.substringBefore('=')}'. Allowed values are only 'true' or 'false'.")
@@ -336,7 +336,7 @@ fun validateArguments(errors: ArgumentParseErrors?): List<String> {
             )
         }
         errors.unknownArgs.forEach {
-            add("Invalid argument: $it")
+            add("Invalid argument: '$it'.")
         }
     }
 }

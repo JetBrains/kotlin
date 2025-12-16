@@ -1,4 +1,4 @@
-error: no value passed for argument -Xname-based-destructuring
+error: no value passed for argument '-Xname-based-destructuring'.
 error: no value expected for boolean argument '-Xwhen-guards' that changes language features. Remove the '=asdf'.
 error: no value expected for boolean argument '-Xnested-type-aliases' that changes language features. Remove the '=qwerty'.
 info: use -help for more information
