@@ -118,7 +118,7 @@ internal class Kotlin230AndBelowWrapper(
         private inner class JvmClasspathSnapshottingOperationWrapper(
             private val base: JvmClasspathSnapshottingOperation,
             private val toolchain: JvmPlatformToolchainWrapper,
-            private val classpathEntry: Path,
+            override val classpathEntry: Path,
         ) : BuildOperationWrapper<ClasspathEntrySnapshot>(base), JvmClasspathSnapshottingOperation by base,
             JvmClasspathSnapshottingOperation.Builder {
             override fun toBuilder(): JvmClasspathSnapshottingOperation.Builder {
@@ -151,8 +151,8 @@ internal class Kotlin230AndBelowWrapper(
         private inner class JvmCompilationOperationWrapper(
             private val base: JvmCompilationOperation,
             private val toolchain: JvmPlatformToolchainWrapper,
-            private val sources: List<Path>,
-            private val destinationDirectory: Path,
+            override val sources: List<Path>,
+            override val destinationDirectory: Path,
             override val compilerArguments: JvmCompilerArgumentsWrapper = JvmCompilerArgumentsWrapper(
                 base.compilerArguments,
                 argumentsFactory = {

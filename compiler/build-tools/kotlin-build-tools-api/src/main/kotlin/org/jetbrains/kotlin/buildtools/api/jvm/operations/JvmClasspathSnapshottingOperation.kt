@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity
 import org.jetbrains.kotlin.buildtools.api.jvm.ClasspathEntrySnapshot
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmClasspathSnapshottingOperation.Companion.GRANULARITY
+import java.nio.file.Path
 
 /**
  * Calculates a JVM classpath snapshot used for detecting changes in incremental compilation with specified [GRANULARITY].
@@ -39,11 +40,25 @@ import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmClasspathSnapshotti
 public interface JvmClasspathSnapshottingOperation : BuildOperation<ClasspathEntrySnapshot> {
 
     /**
+     * Path to an existing classpath entry.
+     *
+     * @since 2.3.20
+     */
+    public val classpathEntry: Path
+
+    /**
      * A builder for configuring and instantiating the [JvmCompilationOperation].
      *
      * @since 2.3.20
      */
     public interface Builder : BuildOperation.Builder {
+        /**
+         * Path to an existing classpath entry.
+         *
+         * @since 2.3.20
+         */
+        public val classpathEntry: Path
+
         /**
          * Get the value for option specified by [key] if it was previously [set] or if it has a default value.
          *

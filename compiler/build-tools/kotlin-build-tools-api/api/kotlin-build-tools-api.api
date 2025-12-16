@@ -728,6 +728,7 @@ public abstract interface class org/jetbrains/kotlin/buildtools/api/jvm/operatio
 	public static final field GRANULARITY Lorg/jetbrains/kotlin/buildtools/api/jvm/operations/JvmClasspathSnapshottingOperation$Option;
 	public static final field PARSE_INLINED_LOCAL_CLASSES Lorg/jetbrains/kotlin/buildtools/api/jvm/operations/JvmClasspathSnapshottingOperation$Option;
 	public abstract fun get (Lorg/jetbrains/kotlin/buildtools/api/jvm/operations/JvmClasspathSnapshottingOperation$Option;)Ljava/lang/Object;
+	public abstract fun getClasspathEntry ()Ljava/nio/file/Path;
 	public abstract fun set (Lorg/jetbrains/kotlin/buildtools/api/jvm/operations/JvmClasspathSnapshottingOperation$Option;Ljava/lang/Object;)V
 	public abstract fun toBuilder ()Lorg/jetbrains/kotlin/buildtools/api/jvm/operations/JvmClasspathSnapshottingOperation$Builder;
 }
@@ -735,6 +736,7 @@ public abstract interface class org/jetbrains/kotlin/buildtools/api/jvm/operatio
 public abstract interface class org/jetbrains/kotlin/buildtools/api/jvm/operations/JvmClasspathSnapshottingOperation$Builder : org/jetbrains/kotlin/buildtools/api/BuildOperation$Builder {
 	public abstract fun build ()Lorg/jetbrains/kotlin/buildtools/api/jvm/operations/JvmClasspathSnapshottingOperation;
 	public abstract fun get (Lorg/jetbrains/kotlin/buildtools/api/jvm/operations/JvmClasspathSnapshottingOperation$Option;)Ljava/lang/Object;
+	public abstract fun getClasspathEntry ()Ljava/nio/file/Path;
 	public abstract fun set (Lorg/jetbrains/kotlin/buildtools/api/jvm/operations/JvmClasspathSnapshottingOperation$Option;Ljava/lang/Object;)V
 }
 
@@ -754,6 +756,8 @@ public abstract interface class org/jetbrains/kotlin/buildtools/api/jvm/operatio
 	public abstract fun createSnapshotBasedIcOptions ()Lorg/jetbrains/kotlin/buildtools/api/jvm/JvmSnapshotBasedIncrementalCompilationOptions;
 	public abstract fun get (Lorg/jetbrains/kotlin/buildtools/api/jvm/operations/JvmCompilationOperation$Option;)Ljava/lang/Object;
 	public abstract fun getCompilerArguments ()Lorg/jetbrains/kotlin/buildtools/api/arguments/JvmCompilerArguments;
+	public abstract fun getDestinationDirectory ()Ljava/nio/file/Path;
+	public abstract fun getSources ()Ljava/util/List;
 	public abstract fun set (Lorg/jetbrains/kotlin/buildtools/api/jvm/operations/JvmCompilationOperation$Option;Ljava/lang/Object;)V
 	public abstract fun toBuilder ()Lorg/jetbrains/kotlin/buildtools/api/jvm/operations/JvmCompilationOperation$Builder;
 }
@@ -762,6 +766,8 @@ public abstract interface class org/jetbrains/kotlin/buildtools/api/jvm/operatio
 	public abstract fun build ()Lorg/jetbrains/kotlin/buildtools/api/jvm/operations/JvmCompilationOperation;
 	public abstract fun get (Lorg/jetbrains/kotlin/buildtools/api/jvm/operations/JvmCompilationOperation$Option;)Ljava/lang/Object;
 	public abstract fun getCompilerArguments ()Lorg/jetbrains/kotlin/buildtools/api/arguments/JvmCompilerArguments$Builder;
+	public abstract fun getDestinationDirectory ()Ljava/nio/file/Path;
+	public abstract fun getSources ()Ljava/util/List;
 	public abstract fun set (Lorg/jetbrains/kotlin/buildtools/api/jvm/operations/JvmCompilationOperation$Option;Ljava/lang/Object;)V
 	public abstract fun snapshotBasedIcConfigurationBuilder (Ljava/nio/file/Path;Lorg/jetbrains/kotlin/buildtools/api/SourcesChanges;Ljava/util/List;Ljava/nio/file/Path;)Lorg/jetbrains/kotlin/buildtools/api/jvm/JvmSnapshotBasedIncrementalCompilationConfiguration$Builder;
 }

@@ -104,7 +104,7 @@ public class KotlinToolchainsV1Adapter(
 private class JvmClasspathSnapshottingOperationV1Adapter private constructor(
     override val options: Options = Options(JvmClasspathSnapshottingOperation::class),
     @Suppress("DEPRECATION") val compilationService: CompilationService,
-    val classpathEntry: Path,
+    override val classpathEntry: Path,
 ) : BuildOperationImpl<ClasspathEntrySnapshot>(), JvmClasspathSnapshottingOperation, JvmClasspathSnapshottingOperation.Builder,
     DeepCopyable<JvmClasspathSnapshottingOperationV1Adapter> {
 
@@ -158,8 +158,8 @@ private class JvmClasspathSnapshottingOperationV1Adapter private constructor(
 private class JvmCompilationOperationV1Adapter private constructor(
     override val options: Options = Options(JvmCompilationOperation::class),
     @Suppress("DEPRECATION") val compilationService: CompilationService,
-    val kotlinSources: List<Path>,
-    val destinationDirectory: Path,
+    override val sources: List<Path>,
+    override val destinationDirectory: Path,
     override val compilerArguments: JvmCompilerArgumentsImpl,
 ) : BuildOperationImpl<CompilationResult>(), JvmCompilationOperation, JvmCompilationOperation.Builder,
     DeepCopyable<JvmCompilationOperationV1Adapter> {
@@ -184,7 +184,7 @@ private class JvmCompilationOperationV1Adapter private constructor(
         return JvmCompilationOperationV1Adapter(
             options.deepCopy(),
             compilationService,
-            kotlinSources,
+            sources,
             destinationDirectory,
             JvmCompilerArgumentsImpl().also { it.applyArgumentStrings(compilerArguments.toArgumentStrings()) })
     }
@@ -259,7 +259,7 @@ private class JvmCompilationOperationV1Adapter private constructor(
             )
         }
 
-        val javaSources = kotlinSources.filter { it.toFile().isJavaFile() }.map { it.absolutePathString() }
+        val javaSources = sources.filter { it.toFile().isJavaFile() }.map { it.absolutePathString() }
         val compilerArguments = compilerArguments.toArgumentStrings().fixForFirCheck() + listOf(
             "-d",
             destinationDirectory.absolutePathString()
@@ -268,7 +268,7 @@ private class JvmCompilationOperationV1Adapter private constructor(
             projectId,
             executionPolicy.strategyConfiguration,
             config,
-            kotlinSources.map { it.toFile() },
+            sources.map { it.toFile() },
             if (compilationService.treatsJavaSourcesProperly()) compilerArguments else compilerArguments + javaSources,
         )
     }

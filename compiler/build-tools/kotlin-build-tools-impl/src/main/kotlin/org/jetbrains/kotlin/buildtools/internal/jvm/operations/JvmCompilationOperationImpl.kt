@@ -62,20 +62,20 @@ import kotlin.io.path.absolutePathString
 
 internal class JvmCompilationOperationImpl private constructor(
     override val options: Options = Options(JvmCompilationOperation::class),
-    private val kotlinSources: List<Path>,
-    private val destinationDirectory: Path,
+    override val sources: List<Path>,
+    override val destinationDirectory: Path,
     override val compilerArguments: JvmCompilerArgumentsImpl = JvmCompilerArgumentsImpl(),
     private val buildIdToSessionFlagFile: MutableMap<ProjectId, File>,
 ) : CancellableBuildOperationImpl<CompilationResult>(), JvmCompilationOperation, JvmCompilationOperation.Builder,
     DeepCopyable<JvmCompilationOperationImpl> {
     constructor(
-        kotlinSources: List<Path>,
+        sources: List<Path>,
         destinationDirectory: Path,
         compilerArguments: JvmCompilerArgumentsImpl = JvmCompilerArgumentsImpl(),
         buildIdToSessionFlagFile: MutableMap<ProjectId, File>,
     ) : this(
         options = Options(JvmCompilationOperation::class),
-        kotlinSources = kotlinSources,
+        sources = sources,
         destinationDirectory = destinationDirectory,
         compilerArguments = compilerArguments,
         buildIdToSessionFlagFile = buildIdToSessionFlagFile
@@ -86,7 +86,7 @@ internal class JvmCompilationOperationImpl private constructor(
     override fun deepCopy(): JvmCompilationOperationImpl {
         return JvmCompilationOperationImpl(
             options.deepCopy(),
-            kotlinSources,
+            sources,
             destinationDirectory,
             compilerArguments.deepCopy(),
             buildIdToSessionFlagFile
@@ -268,7 +268,7 @@ internal class JvmCompilationOperationImpl private constructor(
             checkJvmFirRequirements(compilerArguments)
         }
         val arguments = compilerArguments.toCompilerArguments()
-        arguments.freeArgs += kotlinSources.map { it.absolutePathString() } // TODO: pass the sources explicitly KT-62759
+        arguments.freeArgs += sources.map { it.absolutePathString() } // TODO: pass the sources explicitly KT-62759
         arguments.destination = destinationDirectory.absolutePathString()
         val aggregatedIcConfiguration = get(INCREMENTAL_COMPILATION) as? JvmSnapshotBasedIncrementalCompilationConfiguration
         val aggregatedIcConfigurationOptions = aggregatedIcConfiguration?.toOptions()
@@ -334,7 +334,7 @@ internal class JvmCompilationOperationImpl private constructor(
         loggerAdapter: KotlinLoggerMessageCollectorAdapter,
     ): CompilationResult {
         val compiler = K2JVMCompiler()
-        arguments.freeArgs += kotlinSources.map { it.absolutePathString() }
+        arguments.freeArgs += sources.map { it.absolutePathString() }
         val services = Services.Builder().apply {
             register(CompilationCanceledStatus::class.java, cancellationHandle)
             get(LOOKUP_TRACKER)?.let { tracker: CompilerLookupTracker ->
@@ -350,7 +350,7 @@ internal class JvmCompilationOperationImpl private constructor(
         loggerAdapter: KotlinLoggerMessageCollectorAdapter,
         kotlinFilenameExtensions: Set<String>,
     ): CompilationResult {
-        arguments.freeArgs += kotlinSources.filter { it.toFile().isJavaFile() }.map { it.absolutePathString() }
+        arguments.freeArgs += sources.filter { it.toFile().isJavaFile() }.map { it.absolutePathString() }
 
         val aggregatedIcConfigurationOptions = toOptions()
         val projectDir = aggregatedIcConfigurationOptions[ROOT_PROJECT_DIR]?.toFile()
@@ -358,7 +358,7 @@ internal class JvmCompilationOperationImpl private constructor(
 
         @Suppress("DEPRECATION") val kotlinSources = extractKotlinSourcesFromFreeCompilerArguments(
             arguments, DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS, includeJavaSources = true
-        ) + kotlinSources.map { it.toFile() }
+        ) + sources.map { it.toFile() }
 
         val classpathChanges = classpathChanges
         val metricsReporter = getMetricsReporter()
