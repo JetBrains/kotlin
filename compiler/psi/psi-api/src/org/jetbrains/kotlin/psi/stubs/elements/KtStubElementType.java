@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -17,7 +17,10 @@ import com.intellij.util.ReflectionUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.KotlinLanguage;
-import org.jetbrains.kotlin.psi.*;
+import org.jetbrains.kotlin.psi.KtElementImplStub;
+import org.jetbrains.kotlin.psi.KtExpression;
+import org.jetbrains.kotlin.psi.KtFunction;
+import org.jetbrains.kotlin.psi.KtProperty;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
@@ -74,7 +77,7 @@ public abstract class KtStubElementType<StubT extends StubElement<?>, PsiT exten
     @Override
     public boolean shouldCreateStub(ASTNode node) {
         PsiElement psi = node.getPsi();
-        if (psi instanceof KtClassOrObject || psi instanceof KtFunction) {
+        if (psi instanceof KtFunction) {
             return true;
         }
         if (psi instanceof KtProperty) {
