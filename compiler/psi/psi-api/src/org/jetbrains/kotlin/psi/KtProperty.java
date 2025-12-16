@@ -55,6 +55,11 @@ public class KtProperty extends KtTypeParameterListOwnerStub<KotlinPropertyStub>
         return getNode().findChildByType(KtTokens.VAR_KEYWORD) != null;
     }
 
+    /**
+     * Whether the property is local.
+     * <p>
+     * <b>Note</b>: a member property of a local class is not local
+     */
     public boolean isLocal() {
         return !isTopLevel() && !isMember();
     }
