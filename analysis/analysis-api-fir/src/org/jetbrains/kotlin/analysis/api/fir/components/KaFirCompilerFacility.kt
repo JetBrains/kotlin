@@ -13,7 +13,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiErrorElement
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.KtRealPsiSourceElement
-import org.jetbrains.kotlin.analysis.api.compile.CodeFragmentCapturedValue
+import org.jetbrains.kotlin.analysis.api.compile.KaCodeFragmentCapturedValue
 import org.jetbrains.kotlin.analysis.api.components.*
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnostic
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnosticWithPsi
@@ -1116,7 +1116,7 @@ internal class KaFirCompilerFacility(
     }
 
     @OptIn(UnsafeDuringIrConstructionAPI::class)
-    private fun computeAdditionalCodeFragmentMapping(descriptor: IrBasedDeclarationDescriptor<*>): CodeFragmentCapturedValue? {
+    private fun computeAdditionalCodeFragmentMapping(descriptor: IrBasedDeclarationDescriptor<*>): KaCodeFragmentCapturedValue? {
         val owner = descriptor.owner
 
         if (descriptor is IrBasedReceiverParameterDescriptor && owner is IrValueParameter) {
@@ -1127,7 +1127,7 @@ internal class KaFirCompilerFacility(
             if (receiverClassId != null && parent is IrFunction) {
                 when (owner.kind) {
                     IrParameterKind.DispatchReceiver -> {
-                        return CodeFragmentCapturedValue.ContainingClass(
+                        return KaCodeFragmentCapturedValue.ContainingClass(
                             receiverClassId,
                             isCrossingInlineBounds = true,
                             depthRelativeToCurrentFrame = 0
@@ -1138,7 +1138,7 @@ internal class KaFirCompilerFacility(
                             .subList(0, owner.indexInParameters)
                             .count { it.kind == IrParameterKind.Context }
                         val labelName = receiverClassId.shortClassName
-                        return CodeFragmentCapturedValue.ContextReceiver(
+                        return KaCodeFragmentCapturedValue.ContextReceiver(
                             contextParameterIndex,
                             labelName,
                             isCrossingInlineBounds = true,
@@ -1146,7 +1146,7 @@ internal class KaFirCompilerFacility(
                         )
                     }
                     IrParameterKind.ExtensionReceiver -> {
-                        return CodeFragmentCapturedValue.ExtensionReceiver(
+                        return KaCodeFragmentCapturedValue.ExtensionReceiver(
                             parent.name.asString(),
                             isCrossingInlineBounds = true,
                             depthRelativeToCurrentFrame = 0
@@ -1162,7 +1162,7 @@ internal class KaFirCompilerFacility(
             val isMutated = false // TODO capture the usage somehow
 
             if (owner.origin == IrDeclarationOrigin.PROPERTY_DELEGATE) {
-                return CodeFragmentCapturedValue.LocalDelegate(
+                return KaCodeFragmentCapturedValue.LocalDelegate(
                     name,
                     isMutated,
                     isCrossingInlineBounds = true,
@@ -1170,12 +1170,12 @@ internal class KaFirCompilerFacility(
                 )
             }
 
-            return CodeFragmentCapturedValue.Local(name, isMutated, isCrossingInlineBounds = true, depthRelativeToCurrentFrame = 0)
+            return KaCodeFragmentCapturedValue.Local(name, isMutated, isCrossingInlineBounds = true, depthRelativeToCurrentFrame = 0)
         }
 
         if (descriptor is IrBasedValueParameterDescriptor && owner is IrValueParameter) {
             val name = owner.name
-            return CodeFragmentCapturedValue.Local(name, isMutated = false, isCrossingInlineBounds = true, depthRelativeToCurrentFrame = 0)
+            return KaCodeFragmentCapturedValue.Local(name, isMutated = false, isCrossingInlineBounds = true, depthRelativeToCurrentFrame = 0)
         }
 
         return null
@@ -1231,7 +1231,7 @@ internal class KaFirCompilerFacility(
      * [inlineLambdaParametersMapping]
      */
     private class CodeFragmentMappings(
-        val capturedValues: List<CodeFragmentCapturedValue>,
+        val capturedValues: List<KaCodeFragmentCapturedValue>,
         val capturedFiles: List<KtFile>,
         val injectedValues: List<InjectedValue>,
         val conversionData: CodeFragmentConversionData,

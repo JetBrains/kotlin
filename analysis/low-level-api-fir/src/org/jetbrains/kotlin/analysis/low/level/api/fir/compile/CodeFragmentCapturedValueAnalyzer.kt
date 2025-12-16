@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,7 +9,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
-import org.jetbrains.kotlin.analysis.api.compile.CodeFragmentCapturedValue
+import org.jetbrains.kotlin.analysis.api.compile.KaCodeFragmentCapturedValue
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLResolutionFacade
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.containingKtFileIfAny
@@ -48,7 +48,7 @@ import java.util.*
 
 @KaImplementationDetail
 class CodeFragmentCapturedSymbol(
-    val value: CodeFragmentCapturedValue,
+    val value: KaCodeFragmentCapturedValue,
     val symbol: FirBasedSymbol<*>,
     val typeRef: FirTypeRef,
 )
@@ -161,7 +161,7 @@ private class CodeFragmentCapturedValueVisitor(
                 val symbol = (element.superTypeRef as? FirResolvedTypeRef)?.toRegularClassSymbol(session)
                 if (symbol != null && symbol !in selfSymbols) {
                     val isCrossingInlineBounds = isCrossingInlineBounds(element, symbol)
-                    val capturedValue = CodeFragmentCapturedValue.SuperClass(symbol.classId, isCrossingInlineBounds, depth)
+                    val capturedValue = KaCodeFragmentCapturedValue.SuperClass(symbol.classId, isCrossingInlineBounds, depth)
                     register(CodeFragmentCapturedSymbol(capturedValue, symbol, element.superTypeRef))
                 }
             }
@@ -171,7 +171,7 @@ private class CodeFragmentCapturedValueVisitor(
                     fun registerClassSymbolIfNotObject(classSymbol: FirClassSymbol<*>) {
                         if (classSymbol.classKind != ClassKind.OBJECT) {
                             val isCrossingInlineBounds = isCrossingInlineBounds(element, classSymbol)
-                            val capturedValue = CodeFragmentCapturedValue.ContainingClass(classSymbol.classId, isCrossingInlineBounds, depth)
+                            val capturedValue = KaCodeFragmentCapturedValue.ContainingClass(classSymbol.classId, isCrossingInlineBounds, depth)
                             val typeRef = buildResolvedTypeRef { coneType = classSymbol.defaultType() }
                             register(CodeFragmentCapturedSymbol(capturedValue, classSymbol, typeRef))
                         }
@@ -190,7 +190,7 @@ private class CodeFragmentCapturedValueVisitor(
 
                                 val typeRef = receiverParameter.typeRef
                                 val isCrossingInlineBounds = isCrossingInlineBounds(element, symbol)
-                                val capturedValue = CodeFragmentCapturedValue.ExtensionReceiver(labelName, isCrossingInlineBounds, depth)
+                                val capturedValue = KaCodeFragmentCapturedValue.ExtensionReceiver(labelName, isCrossingInlineBounds, depth)
                                 register(
                                     CodeFragmentCapturedSymbol(capturedValue, receiverParameter.symbol, typeRef)
                                 )
@@ -223,15 +223,15 @@ private class CodeFragmentCapturedValueVisitor(
             is FirValueParameterSymbol -> {
                 val isCrossingInlineBounds = isCrossingInlineBounds(element, symbol)
                 val name = symbol.generatedContextParameterName ?: symbol.name
-                val capturedValue = CodeFragmentCapturedValue.Local(name, isMutated, isCrossingInlineBounds, depth)
+                val capturedValue = KaCodeFragmentCapturedValue.Local(name, isMutated, isCrossingInlineBounds, depth)
                 register(CodeFragmentCapturedSymbol(capturedValue, symbol, symbol.resolvedReturnTypeRef))
             }
             is FirLocalPropertySymbol -> {
                 val isCrossingInlineBounds = isCrossingInlineBounds(element, symbol)
                 val capturedValue = when {
-                    symbol.isForeignValue -> CodeFragmentCapturedValue.ForeignValue(symbol.name, isCrossingInlineBounds, depth)
-                    symbol.hasDelegate -> CodeFragmentCapturedValue.LocalDelegate(symbol.name, isMutated, isCrossingInlineBounds, depth)
-                    else -> CodeFragmentCapturedValue.Local(symbol.name, isMutated, isCrossingInlineBounds, depth)
+                    symbol.isForeignValue -> KaCodeFragmentCapturedValue.ForeignValue(symbol.name, isCrossingInlineBounds, depth)
+                    symbol.hasDelegate -> KaCodeFragmentCapturedValue.LocalDelegate(symbol.name, isMutated, isCrossingInlineBounds, depth)
+                    else -> KaCodeFragmentCapturedValue.Local(symbol.name, isMutated, isCrossingInlineBounds, depth)
                 }
                 register(CodeFragmentCapturedSymbol(capturedValue, symbol, symbol.resolvedReturnTypeRef))
             }
@@ -243,7 +243,7 @@ private class CodeFragmentCapturedValueVisitor(
             is FirBackingFieldSymbol -> {
                 val propertyName = symbol.propertySymbol.name
                 val isCrossingInlineBounds = isCrossingInlineBounds(element, symbol)
-                val capturedValue = CodeFragmentCapturedValue.BackingField(propertyName, isMutated, isCrossingInlineBounds, depth)
+                val capturedValue = KaCodeFragmentCapturedValue.BackingField(propertyName, isMutated, isCrossingInlineBounds, depth)
                 register(CodeFragmentCapturedSymbol(capturedValue, symbol, symbol.resolvedReturnTypeRef))
             }
             is FirNamedFunctionSymbol -> {
@@ -253,7 +253,7 @@ private class CodeFragmentCapturedValueVisitor(
 
         if (symbol.callableId == StandardClassIds.Callables.coroutineContext) {
             val isCrossingInlineBounds = isCrossingInlineBounds(element, symbol)
-            val capturedValue = CodeFragmentCapturedValue.CoroutineContext(isCrossingInlineBounds,depth)
+            val capturedValue = KaCodeFragmentCapturedValue.CoroutineContext(isCrossingInlineBounds, depth)
             register(CodeFragmentCapturedSymbol(capturedValue, symbol, symbol.resolvedReturnTypeRef))
         }
     }

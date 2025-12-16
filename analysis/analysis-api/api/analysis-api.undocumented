@@ -1,8 +1,6 @@
 org.jetbrains.kotlin.analysis.api.base.KaConstantValue.ErrorValue.errorMessage
-org.jetbrains.kotlin.analysis.api.compile.CodeFragmentCapturedValue
-org.jetbrains.kotlin.analysis.api.compile.CodeFragmentCapturedValue.ContextReceiver
-org.jetbrains.kotlin.analysis.api.compile.CodeFragmentCapturedValue.ExtensionReceiver
-org.jetbrains.kotlin.analysis.api.compile.CodeFragmentCapturedValue.displayText
+org.jetbrains.kotlin.analysis.api.compile.KaCodeFragmentCapturedValue
+org.jetbrains.kotlin.analysis.api.compile.KaCodeFragmentCapturedValue.displayText
 org.jetbrains.kotlin.analysis.api.components.DefaultTypeClassIds
 org.jetbrains.kotlin.analysis.api.components.KaAnalysisScopeProvider
 org.jetbrains.kotlin.analysis.api.components.KaBuiltinTypes

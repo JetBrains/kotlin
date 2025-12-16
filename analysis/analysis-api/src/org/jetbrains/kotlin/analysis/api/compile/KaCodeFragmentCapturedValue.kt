@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 
 @KaExperimentalApi
-public sealed class CodeFragmentCapturedValue(
+public sealed class KaCodeFragmentCapturedValue(
     public val name: String,
     public val isMutated: Boolean,
     public val isCrossingInlineBounds: Boolean,
@@ -30,7 +30,7 @@ public sealed class CodeFragmentCapturedValue(
         isMutated: Boolean,
         isCrossingInlineBounds: Boolean,
         depthRelativeToCurrentFrame: Int
-    ) : CodeFragmentCapturedValue(name.asString(), isMutated, isCrossingInlineBounds, depthRelativeToCurrentFrame)
+    ) : KaCodeFragmentCapturedValue(name.asString(), isMutated, isCrossingInlineBounds, depthRelativeToCurrentFrame)
 
     /** Represents a delegated local variable (`val local by...`). */
     @KaExperimentalApi
@@ -39,9 +39,9 @@ public sealed class CodeFragmentCapturedValue(
         isMutated: Boolean,
         isCrossingInlineBounds: Boolean,
         depthRelativeToCurrentFrame: Int
-    ) : CodeFragmentCapturedValue(name.asString(), isMutated, isCrossingInlineBounds, depthRelativeToCurrentFrame) {
+    ) : KaCodeFragmentCapturedValue(name.asString(), isMutated, isCrossingInlineBounds, depthRelativeToCurrentFrame) {
         override val displayText: String
-            get() = "$name\$delegate"
+            get() = $$"$$name$delegate"
     }
 
     /** Represents a backing field (a `field` variable inside a property accessor). */
@@ -51,7 +51,7 @@ public sealed class CodeFragmentCapturedValue(
         isMutated: Boolean,
         isCrossingInlineBounds: Boolean,
         depthRelativeToCurrentFrame: Int
-    ) : CodeFragmentCapturedValue(name.asString(), isMutated, isCrossingInlineBounds, depthRelativeToCurrentFrame) {
+    ) : KaCodeFragmentCapturedValue(name.asString(), isMutated, isCrossingInlineBounds, depthRelativeToCurrentFrame) {
         override val displayText: String
             get() = "field"
     }
@@ -62,7 +62,7 @@ public sealed class CodeFragmentCapturedValue(
         private val classId: ClassId,
         isCrossingInlineBounds: Boolean,
         depthRelativeToCurrentFrame: Int
-    ) : CodeFragmentCapturedValue("<this>", isMutated = false, isCrossingInlineBounds, depthRelativeToCurrentFrame) {
+    ) : KaCodeFragmentCapturedValue("<this>", isMutated = false, isCrossingInlineBounds, depthRelativeToCurrentFrame) {
         override val displayText: String
             get() {
                 val simpleName = classId.shortClassName
@@ -76,28 +76,30 @@ public sealed class CodeFragmentCapturedValue(
         private val classId: ClassId,
         isCrossingInlineBounds: Boolean,
         depthRelativeToCurrentFrame: Int
-    ) : CodeFragmentCapturedValue("<super>", isMutated = false, isCrossingInlineBounds, depthRelativeToCurrentFrame) {
+    ) : KaCodeFragmentCapturedValue("<super>", isMutated = false, isCrossingInlineBounds, depthRelativeToCurrentFrame) {
         override val displayText: String
             get() = "super@" + classId.shortClassName.asString()
     }
 
+    /** Represents an extension receiver. */
     @KaExperimentalApi
     public class ExtensionReceiver(
         labelName: String,
         isCrossingInlineBounds: Boolean,
         depthRelativeToCurrentFrame: Int
-    ) : CodeFragmentCapturedValue(labelName, isMutated = false, isCrossingInlineBounds, depthRelativeToCurrentFrame) {
+    ) : KaCodeFragmentCapturedValue(labelName, isMutated = false, isCrossingInlineBounds, depthRelativeToCurrentFrame) {
         override val displayText: String
             get() = "this@$name"
     }
 
+    /** Represents a context receiver. */
     @KaExperimentalApi
     public class ContextReceiver(
         public val index: Int,
         labelName: Name,
         isCrossingInlineBounds: Boolean,
         depthRelativeToCurrentFrame: Int
-    ) : CodeFragmentCapturedValue(labelName.asString(), isMutated = false, isCrossingInlineBounds, depthRelativeToCurrentFrame) {
+    ) : KaCodeFragmentCapturedValue(labelName.asString(), isMutated = false, isCrossingInlineBounds, depthRelativeToCurrentFrame) {
         override val displayText: String
             get() = "this@$name"
     }
@@ -108,12 +110,12 @@ public sealed class CodeFragmentCapturedValue(
         name: Name,
         isCrossingInlineBounds: Boolean,
         depthRelativeToCurrentFrame: Int
-    ) : CodeFragmentCapturedValue(name.asString(), isMutated = false, isCrossingInlineBounds, depthRelativeToCurrentFrame)
+    ) : KaCodeFragmentCapturedValue(name.asString(), isMutated = false, isCrossingInlineBounds, depthRelativeToCurrentFrame)
 
     /** Represents a `coroutineContext` call. */
     @KaExperimentalApi
     public class CoroutineContext(
         isCrossingInlineBounds: Boolean,
         depthRelativeToCurrentFrame: Int
-    ) : CodeFragmentCapturedValue("coroutineContext", isMutated = false, isCrossingInlineBounds, depthRelativeToCurrentFrame)
+    ) : KaCodeFragmentCapturedValue("coroutineContext", isMutated = false, isCrossingInlineBounds, depthRelativeToCurrentFrame)
 }

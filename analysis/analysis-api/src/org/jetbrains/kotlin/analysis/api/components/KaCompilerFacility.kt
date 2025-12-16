@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.api.components
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.analysis.api.*
-import org.jetbrains.kotlin.analysis.api.compile.CodeFragmentCapturedValue
+import org.jetbrains.kotlin.analysis.api.compile.KaCodeFragmentCapturedValue
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnostic
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -92,7 +92,7 @@ public sealed class KaCompilationResult(
     @KaExperimentalApi
     public class Success(
         public val output: List<KaCompiledFile>,
-        public val capturedValues: List<CodeFragmentCapturedValue>,
+        public val capturedValues: List<KaCodeFragmentCapturedValue>,
         public var canBeCached: Boolean,
         mutedExceptions: List<Throwable> = emptyList(),
     ) : KaCompilationResult(mutedExceptions)
