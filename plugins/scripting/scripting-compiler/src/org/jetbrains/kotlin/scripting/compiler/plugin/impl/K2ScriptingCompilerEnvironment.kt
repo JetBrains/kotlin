@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.FirBinaryDependenciesModuleData
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSourceModuleData
+import org.jetbrains.kotlin.fir.deserialization.LibraryPathFilter
 import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.session.FirJvmSessionFactory
@@ -82,13 +83,10 @@ open class ScriptingModuleDataProvider(private val baseName: String, baseLibrary
 
     private fun makeLibraryModuleData(name: Name): FirModuleData = FirBinaryDependenciesModuleData(name)
 
-    protected val pathToModuleData: MutableMap<Path, FirModuleData> = mutableMapOf()
-    protected val moduleDataHistory: MutableList<FirModuleData> = mutableListOf()
+    protected val moduleDataWithFilters: MutableMap<FirModuleData, LibraryPathFilter> =
+        mutableMapOf(baseDependenciesModuleData to LibraryPathFilter.LibraryList(baseLibraryPaths.toSet()))
 
-    init {
-        baseLibraryPaths.associateWithTo(pathToModuleData) { baseDependenciesModuleData }
-        moduleDataHistory.add(baseDependenciesModuleData)
-    }
+    protected val moduleDataHistory: MutableList<FirModuleData> = mutableListOf(baseDependenciesModuleData)
 
     override val allModuleData: Collection<FirModuleData>
         get() = moduleDataHistory
@@ -97,22 +95,23 @@ open class ScriptingModuleDataProvider(private val baseName: String, baseLibrary
         get() = baseDependenciesModuleData
 
     override fun getModuleDataPaths(moduleData: FirModuleData): Set<Path>? =
-        pathToModuleData.entries.mapNotNullTo(mutableSetOf()) { if (it.value == moduleData) it.key else null }.takeIf { it.isNotEmpty() }
+        (moduleDataWithFilters[moduleData] as? LibraryPathFilter.LibraryList)?.libs
 
     override fun getModuleData(path: Path?): FirModuleData? {
-        val normalizedPath = path?.normalize() ?: return null
-        pathToModuleData[normalizedPath]?.let { return it }
-        for ((libPath, moduleData) in pathToModuleData) {
-            if (normalizedPath.startsWith(libPath)) return moduleData
+        val normalizedPath = path?.normalize()
+        for ((moduleData, filter) in moduleDataWithFilters.entries) {
+            if (filter.accepts(normalizedPath)) {
+                return moduleData
+            }
         }
         return null
     }
 
     fun addNewLibraryModuleDataIfNeeded(libraryPaths: List<Path>): Pair<FirModuleData?, List<Path>> {
-        val newLibraryPaths = libraryPaths.filter { it !in pathToModuleData }
+        val newLibraryPaths = libraryPaths.filter { getModuleData(it) == null }
         if (newLibraryPaths.isEmpty()) return null to emptyList()
         val newDependenciesModuleData = makeLibraryModuleData(Name.special("<$baseName-lib-${moduleDataHistory.size + 1}>"))
-        newLibraryPaths.associateWithTo(pathToModuleData) { newDependenciesModuleData }
+        moduleDataWithFilters[newDependenciesModuleData] = LibraryPathFilter.LibraryList(newLibraryPaths.toSet())
         moduleDataHistory.add(newDependenciesModuleData)
         return newDependenciesModuleData to newLibraryPaths
     }
