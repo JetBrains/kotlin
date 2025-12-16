@@ -3526,6 +3526,12 @@ public class FirIdeNormalAnalysisSourceModuleResolveCallTestGenerated extends Ab
     @TestDataPath("$PROJECT_ROOT")
     public class BlockTags {
       @Test
+      @TestMetadata("actualConstructor.kt")
+      public void testActualConstructor() {
+        runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/blockTags/actualConstructor.kt");
+      }
+
+      @Test
       public void testAllFilesPresentInBlockTags() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/blockTags"), Pattern.compile("^(.+)\\.kt$"), null, true);
       }
@@ -4128,6 +4134,12 @@ public class FirIdeNormalAnalysisSourceModuleResolveCallTestGenerated extends Ab
       @TestMetadata("deprecatedDeclarations.kt")
       public void testDeprecatedDeclarations() {
         runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/localContext/deprecatedDeclarations.kt");
+      }
+
+      @Test
+      @TestMetadata("docInsidePrimaryConstructor.kt")
+      public void testDocInsidePrimaryConstructor() {
+        runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/localContext/docInsidePrimaryConstructor.kt");
       }
 
       @Test
