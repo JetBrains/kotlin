@@ -95,7 +95,9 @@ data class ArgumentParseErrors(
 
     var argumentsWithoutValue: MutableList<String> = SmartList(),
 
-    var booleanArgumentsWithValue: MutableList<String> = SmartList(),
+    var booleanArgumentsWithIncorrectValue: MutableList<String> = SmartList(),
+
+    var booleanLangFeatureArgumentsWithValue: MutableList<String> = SmartList(),
 
     val argfileErrors: MutableList<String> = SmartList(),
 
@@ -131,7 +133,7 @@ fun <A : CommonToolArguments> parseCommandLineArgumentsFromEnvironment(arguments
     parseCommandLineArguments(settingsFromEnvironment, arguments, overrideArguments = true)
 }
 
-private data class ArgumentField(val getter: Method, val setter: Method, val argument: Argument)
+private data class ArgumentField(val getter: Method, val setter: Method, val argument: Argument, val changesLangFeatures: Boolean)
 
 private val argumentsCache = ConcurrentHashMap<Class<*>, Map<String, ArgumentField>>()
 
@@ -143,7 +145,9 @@ private fun getArguments(klass: Class<*>): Map<String, ArgumentField> = argument
             field.getAnnotation(Argument::class.java)?.let { argument ->
                 val getter = klass.getMethod(JvmAbi.getterName(field.name))
                 val setter = klass.getMethod(JvmAbi.setterName(field.name), field.type)
-                val argumentField = ArgumentField(getter, setter, argument)
+                val changesLangFeatures = field.getAnnotationsByType(Enables::class.java).isNotEmpty() ||
+                        field.getAnnotationsByType(Disables::class.java).isNotEmpty()
+                val argumentField = ArgumentField(getter, setter, argument, changesLangFeatures)
                 for (key in listOf(argument.value, argument.shortName, argument.deprecatedName)) {
                     if (key.isNotEmpty()) put(key, argumentField)
                 }
@@ -195,7 +199,7 @@ private fun <A : CommonToolArguments> parsePreprocessedCommandLineArguments(
             continue
         }
 
-        val (getter, setter, argument) = argumentField
+        val (getter, setter, argument, changesLangFeatures) = argumentField
 
         // Tests for -shortName=value, which isn't currently allowed.
         if (key != arg && key == argument.shortName) {
@@ -222,11 +226,18 @@ private fun <A : CommonToolArguments> parsePreprocessedCommandLineArguments(
         val value: Any = when {
             getter.returnType.kotlin == Boolean::class -> {
                 if (arg.startsWith(argument.value + delimiter)) {
-                    // Can't use toBooleanStrict yet because this part of the compiler is used in Gradle and needs API version 1.4.
                     when (arg.substring(argument.value.length + 1)) {
                         "true" -> true
                         "false" -> false
-                        else -> true.also { errors.value.booleanArgumentsWithValue.add(arg) }
+                        else -> true.also {
+                            if (!changesLangFeatures) {
+                                errors.value.booleanArgumentsWithIncorrectValue.add(arg)
+                            }
+                        }
+                    }.also {
+                        if (changesLangFeatures) {
+                            errors.value.booleanLangFeatureArgumentsWithValue.add(arg)
+                        }
                     }
                 } else true
             }
@@ -314,8 +325,15 @@ fun validateArguments(errors: ArgumentParseErrors?): List<String> {
         errors.argumentsWithoutValue.forEach {
             add("No value passed for argument $it")
         }
-        errors.booleanArgumentsWithValue.forEach {
-            add("No value expected for boolean argument ${it.substringBefore('=')}. Please remove the value: $it")
+        errors.booleanArgumentsWithIncorrectValue.forEach { arg ->
+            add("Incorrect value for boolean argument '${arg.substringBefore('=')}'. Allowed values are only 'true' or 'false'.")
+        }
+        errors.booleanLangFeatureArgumentsWithValue.forEach { arg ->
+            val equalsIndex = arg.indexOf('=')
+            add(
+                "No value expected for boolean argument '${arg.substring(0, equalsIndex)}' that changes language features. " +
+                        "Remove the '${arg.substring(equalsIndex)}'."
+            )
         }
         errors.unknownArgs.forEach {
             add("Invalid argument: $it")
