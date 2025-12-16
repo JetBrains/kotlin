@@ -10,11 +10,9 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.declaredMemberScope
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.FirValueParameter
-import org.jetbrains.kotlin.fir.declarations.processAllDeclarations
 import org.jetbrains.kotlin.fir.declarations.utils.isOperator
 import org.jetbrains.kotlin.fir.declarations.utils.isSuspend
 import org.jetbrains.kotlin.fir.isDisabled
@@ -24,37 +22,37 @@ import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.impl.FirStandardOverrideChecker
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.toFirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.arrayElementType
-import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 
-@OptIn(SymbolInternals::class)
 object FirOperatorOfChecker : FirRegularClassChecker(MppCheckerKind.Common) {
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirRegularClass) {
         if (LanguageFeature.CollectionLiterals.isDisabled()) return
-        val companion = declaration.companionObjectSymbol?.fir ?: return
+        val companion = declaration.companionObjectSymbol ?: return
 
         CheckerImpl(companion).check()
     }
 
     private class CheckerImpl(
-        val companion: FirRegularClass,
+        val companion: FirRegularClassSymbol,
     ) {
-        open class OfOverload(val function: FirNamedFunction)
+        open class OfOverload(val function: FirNamedFunctionSymbol)
 
-        class MainOfOverload(function: FirNamedFunction, val mainParameter: FirValueParameter) : OfOverload(function) {
+        class MainOfOverload(function: FirNamedFunctionSymbol, val mainParameter: FirValueParameterSymbol) : OfOverload(function) {
             val mainParameterElementType: ConeKotlinType?
-                get() = mainParameter.returnTypeRef.coneType.arrayElementType()
+                get() = mainParameter.resolvedReturnType.arrayElementType()
         }
 
         context(overrideChecker: FirStandardOverrideChecker)
         private fun MainOfOverload.isMatchingParameter(
-            valueParameter: FirValueParameter,
+            valueParameter: FirValueParameterSymbol,
             substitutor: ConeSubstitutor,
         ): Boolean {
             if (mainParameter === valueParameter) return true
@@ -62,22 +60,24 @@ object FirOperatorOfChecker : FirRegularClassChecker(MppCheckerKind.Common) {
             val mainParameterElementTypeRef = mainParameterElementType?.toFirResolvedTypeRef() ?: return true
             return overrideChecker.isEqualTypes(
                 mainParameterElementTypeRef,
-                valueParameter.returnTypeRef,
+                valueParameter.resolvedReturnTypeRef,
                 substitutor,
             )
         }
 
         context(overrideChecker: FirStandardOverrideChecker, context: CheckerContext, reporter: DiagnosticReporter)
-        private fun MainOfOverload.checkOverload(overload: FirNamedFunction) {
+        private fun MainOfOverload.checkOverload(overload: FirNamedFunctionSymbol) {
             // mainOverload -> overload because order is not important for checks while we can get better error messages with this direction
-            val substitutor = overrideChecker.buildTypeParametersSubstitutorIfCompatible(function, overload, checkReifiednessIsSame = true)
+            @OptIn(SymbolInternals::class)
+            val substitutor =
+                overrideChecker.buildTypeParametersSubstitutorIfCompatible(function.fir, overload.fir, checkReifiednessIsSame = true)
 
             if (substitutor == null) {
-                reporter.reportOn(overload.source, FirErrors.INCONSISTENT_TYPE_PARAMETERS_IN_OF_OVERLOADS, function.symbol)
+                reporter.reportOn(overload.source, FirErrors.INCONSISTENT_TYPE_PARAMETERS_IN_OF_OVERLOADS, function)
                 return
             }
 
-            for (valueParameter in overload.valueParameters) {
+            for (valueParameter in overload.valueParameterSymbols) {
                 if (!isMatchingParameter(valueParameter, substitutor)) {
                     reporter.reportOn(
                         valueParameter.source,
@@ -89,11 +89,11 @@ object FirOperatorOfChecker : FirRegularClassChecker(MppCheckerKind.Common) {
 
             if (function === overload) return
 
-            if (!overrideChecker.isEqualTypes(function.returnTypeRef, overload.returnTypeRef, substitutor)) {
+            if (!overrideChecker.isEqualTypes(function.resolvedReturnTypeRef, overload.resolvedReturnTypeRef, substitutor)) {
                 reporter.reportOn(
                     overload.source,
                     FirErrors.INCONSISTENT_RETURN_TYPES_IN_OF_OVERLOADS,
-                    substitutor.substituteOrSelf(function.returnTypeRef.coneType.fullyExpandedType()),
+                    substitutor.substituteOrSelf(function.resolvedReturnType.fullyExpandedType()),
                 )
             }
 
@@ -101,12 +101,12 @@ object FirOperatorOfChecker : FirRegularClassChecker(MppCheckerKind.Common) {
         }
 
         context(context: CheckerContext, reporter: DiagnosticReporter)
-        private fun checkStatus(main: FirNamedFunction, overload: FirNamedFunction) {
+        private fun checkStatus(main: FirNamedFunctionSymbol, overload: FirNamedFunctionSymbol) {
             if (main.visibility != overload.visibility) {
                 reporter.reportOn(overload.source, FirErrors.INCONSISTENT_VISIBILITY_IN_OF_OVERLOADS, main.visibility)
             }
             if (main.isSuspend != overload.isSuspend) {
-                fun FirNamedFunction.suspendString() = if (isSuspend) "suspend " else "not suspend"
+                fun FirNamedFunctionSymbol.suspendString() = if (isSuspend) "suspend " else "not suspend"
                 reporter.reportOn(
                     overload.source,
                     FirErrors.INCONSISTENT_SUSPEND_IN_OF_OVERLOADS,
@@ -141,18 +141,16 @@ object FirOperatorOfChecker : FirRegularClassChecker(MppCheckerKind.Common) {
         context(context: CheckerContext, reporter: DiagnosticReporter)
         fun check() {
             val allOverloads = buildList {
-                companion.processAllDeclarations(context.session) { functionSymbol ->
-                    if (functionSymbol !is FirNamedFunctionSymbol) return@processAllDeclarations
-                    if (!functionSymbol.isOperator || functionSymbol.name != OperatorNameConventions.OF) return@processAllDeclarations
+                companion.declaredMemberScope().processFunctionsByName(OperatorNameConventions.OF) { functionSymbol ->
+                    // TODO: filter out deprecated declarations correctly (KT-83165)
+                    if (!functionSymbol.isOperator) return@processFunctionsByName
 
-                    val function = functionSymbol.fir
-
-                    val mainParameter: FirValueParameter? = function.valueParameters.firstOrNull { it.isVararg }
+                    val mainParameter: FirValueParameterSymbol? = functionSymbol.valueParameterSymbols.firstOrNull { it.isVararg }
 
                     if (mainParameter != null) {
-                        add(MainOfOverload(function, mainParameter))
+                        add(MainOfOverload(functionSymbol, mainParameter))
                     } else {
-                        add(OfOverload(function))
+                        add(OfOverload(functionSymbol))
                     }
                 }
             }
