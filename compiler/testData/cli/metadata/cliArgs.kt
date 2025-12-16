@@ -1,3 +1,11 @@
+class A
+
+class C {
+    typealias TA = A
+
+    fun test(): TA = TA()
+}
+
 enum class Problem {
     CONNECTION, AUTHENTICATION, UNKNOWN
 }
