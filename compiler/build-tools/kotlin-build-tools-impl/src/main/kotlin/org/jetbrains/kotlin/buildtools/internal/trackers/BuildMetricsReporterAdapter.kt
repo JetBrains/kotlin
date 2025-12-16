@@ -103,11 +103,19 @@ internal fun BuildOperationImpl<*>.getMetricsReporter(): BuildMetricsReporter<Bu
         DoNothingBuildMetricsReporter
     }
 
+private val droppedHierarchyElements = setOf(
+    GRADLE_TASK_ACTION, // we are not in the context of Gradle
+    RUN_COMPILATION_IN_WORKER, // we are not in the context of Gradle
+    INCREMENTAL_COMPILATION_DAEMON, // reports metrics unrelated to IC and daemon
+)
+
 private fun BuildPerformanceMetric.hierarchicalReadableName(): String {
     var node: BuildPerformanceMetric? = this
     return buildList {
         while (node != null) {
-            add(node.readableString)
+            if (node !in droppedHierarchyElements) {
+                add(node.readableString)
+            }
             node = node.parent
         }
     }.asReversed().joinToString(" -> ")
