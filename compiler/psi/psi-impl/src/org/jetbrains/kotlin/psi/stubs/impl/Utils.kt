@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.psi.stubs.impl
 
 import com.intellij.psi.PsiElement
+import com.intellij.psi.stubs.ObjectStubBase
 import com.intellij.psi.stubs.StubElement
 import com.intellij.util.io.StringRef
 import org.jetbrains.kotlin.psi.KtImplementationDetail
@@ -40,6 +41,10 @@ private fun <T : PsiElement> copyStubRecursively(
     }
 
     val stubCopy = originalStub.copyInto(newParentStub)
+    if (originalStub is ObjectStubBase<*> && originalStub.isDangling) {
+        (stubCopy as ObjectStubBase<*>).markDangling()
+    }
+
     checkWithAttachment(
         originalStub::class == stubCopy::class,
         { "${originalStub::class.simpleName} is expected, but ${stubCopy::class.simpleName} is found" },
