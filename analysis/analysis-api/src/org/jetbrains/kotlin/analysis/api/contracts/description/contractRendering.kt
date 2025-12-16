@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.contracts.description.KaContractReturnsContractEffectDeclaration.*
 import org.jetbrains.kotlin.analysis.api.contracts.description.booleans.*
-import org.jetbrains.kotlin.analysis.api.symbols.DebugSymbolRenderer
+import org.jetbrains.kotlin.analysis.api.symbols.KaDebugRenderer
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.utils.getApiKClassOf
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
@@ -92,7 +92,7 @@ private fun Context.renderKaParameterSymbol(value: KaSymbol, endWithNewLine: Boo
 }
 
 @KaNonPublicApi
-internal data class Context(val session: KaSession, val printer: PrettyPrinter, val symbolRenderer: DebugSymbolRenderer)
+internal data class Context(val session: KaSession, val printer: PrettyPrinter, val symbolRenderer: KaDebugRenderer)
 
 @OptIn(KaImplementationDetail::class)
 private fun PrettyPrinter.appendHeader(value: Any, body: PrettyPrinter.() -> Unit) {

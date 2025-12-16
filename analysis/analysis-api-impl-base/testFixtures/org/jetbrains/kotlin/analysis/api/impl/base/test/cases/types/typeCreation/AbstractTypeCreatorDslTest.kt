@@ -9,8 +9,8 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.base.KaContextReceiver
 import org.jetbrains.kotlin.analysis.api.renderer.types.impl.KaTypeRendererForSource
 import org.jetbrains.kotlin.analysis.api.renderer.types.renderers.KaCapturedTypeRenderer
-import org.jetbrains.kotlin.analysis.api.symbols.DebugSymbolRenderer
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaDebugRenderer
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
@@ -72,7 +72,7 @@ abstract class AbstractTypeCreatorDslTest : AbstractAnalysisApiBasedTest() {
             when (value) {
                 is KaType -> {
                     appendLine("KaType")
-                    appendLine(DebugSymbolRenderer(renderTypeByProperties = true).renderType(useSiteSession, value))
+                    appendLine(KaDebugRenderer(renderTypeByProperties = true).renderType(useSiteSession, value))
                     appendLine()
                     appendLine("Rendered type:")
                     appendLine(value.render(renderer, position = Variance.INVARIANT))
@@ -80,7 +80,7 @@ abstract class AbstractTypeCreatorDslTest : AbstractAnalysisApiBasedTest() {
                 is KaTypeArgumentWithVariance -> {
                     appendLine("KaTypeArgumentWithVariance")
                     appendLine("Variance: ${value.variance.name}")
-                    appendLine("Type: ${DebugSymbolRenderer(renderTypeByProperties = true).renderType(useSiteSession, value.type)}")
+                    appendLine("Type: ${KaDebugRenderer(renderTypeByProperties = true).renderType(useSiteSession, value.type)}")
                     appendLine()
                     appendLine("Rendered type argument:")
                     appendLine("${value.variance.name} ${value.type.render(renderer, position = Variance.INVARIANT)}")
@@ -88,7 +88,7 @@ abstract class AbstractTypeCreatorDslTest : AbstractAnalysisApiBasedTest() {
                 is KaContextReceiver -> {
                     appendLine("KaContextReceiver")
                     appendLine("Label: ${value.label}")
-                    appendLine("Type: ${DebugSymbolRenderer(renderTypeByProperties = true).renderType(useSiteSession, value.type)}")
+                    appendLine("Type: ${KaDebugRenderer(renderTypeByProperties = true).renderType(useSiteSession, value.type)}")
                     appendLine()
                     appendLine("Rendered context receiver:")
                     appendLine("${value.label}: ${value.type.render(renderer, position = Variance.INVARIANT)}")
@@ -96,7 +96,7 @@ abstract class AbstractTypeCreatorDslTest : AbstractAnalysisApiBasedTest() {
                 is KaFunctionValueParameter -> {
                     appendLine("KaFunctionValueParameter")
                     appendLine("Name: ${value.name}")
-                    appendLine("Type: ${DebugSymbolRenderer(renderTypeByProperties = true).renderType(useSiteSession, value.type)}")
+                    appendLine("Type: ${KaDebugRenderer(renderTypeByProperties = true).renderType(useSiteSession, value.type)}")
                     appendLine()
                     appendLine("Rendered function value parameter:")
                     appendLine("${value.name}: ${value.type.render(renderer, position = Variance.INVARIANT)}")

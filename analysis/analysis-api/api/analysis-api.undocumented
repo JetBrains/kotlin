@@ -579,14 +579,14 @@ org.jetbrains.kotlin.analysis.api.session.KaSessionProvider.getAnalysisSession(K
 org.jetbrains.kotlin.analysis.api.session.KaSessionProvider.getAnalysisSession(KtElement)
 org.jetbrains.kotlin.analysis.api.symbols.AdditionalKDocResolutionProvider.Companion.EP_NAME
 org.jetbrains.kotlin.analysis.api.symbols.AdditionalKDocResolutionProvider.Companion.resolveKdocFqName(KaSession, FqName, KtElement)
-org.jetbrains.kotlin.analysis.api.symbols.DebugSymbolRenderer
-org.jetbrains.kotlin.analysis.api.symbols.DebugSymbolRenderer.render(KaSession, KaSymbol)
-org.jetbrains.kotlin.analysis.api.symbols.DebugSymbolRenderer.renderAnnotationApplication(KaSession, KaAnnotation)
-org.jetbrains.kotlin.analysis.api.symbols.DebugSymbolRenderer.renderForSubstitutionOverrideUnwrappingTest(KaSession, KaSymbol)
-org.jetbrains.kotlin.analysis.api.symbols.DebugSymbolRenderer.renderType(KaSession, KaType)
 org.jetbrains.kotlin.analysis.api.symbols.KaClassKind.isClass
 org.jetbrains.kotlin.analysis.api.symbols.KaClassKind.isObject
 org.jetbrains.kotlin.analysis.api.symbols.KaClassifierSymbol.name
+org.jetbrains.kotlin.analysis.api.symbols.KaDebugRenderer
+org.jetbrains.kotlin.analysis.api.symbols.KaDebugRenderer.render(KaSession, KaSymbol)
+org.jetbrains.kotlin.analysis.api.symbols.KaDebugRenderer.renderAnnotationApplication(KaSession, KaAnnotation)
+org.jetbrains.kotlin.analysis.api.symbols.KaDebugRenderer.renderForSubstitutionOverrideUnwrappingTest(KaSession, KaSymbol)
+org.jetbrains.kotlin.analysis.api.symbols.KaDebugRenderer.renderType(KaSession, KaType)
 org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol.compilerVisibility
 org.jetbrains.kotlin.analysis.api.symbols.markers.KaTypeParameterOwnerSymbol.typeParameters
 org.jetbrains.kotlin.analysis.api.symbols.pointers.symbolPointer((KaSession) -> S?)

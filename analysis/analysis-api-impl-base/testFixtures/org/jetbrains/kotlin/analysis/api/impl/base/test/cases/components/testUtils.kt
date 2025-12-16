@@ -75,14 +75,14 @@ internal fun stringRepresentation(any: Any?): String = with(any) {
         }
         is KaValueParameterSymbol -> "${if (isVararg) "vararg " else ""}$name: ${returnType.render()}"
         // Receiver parameter should be rendered as it is because it is hard to cover it with tests overwise
-        is KaReceiverParameterSymbol -> DebugSymbolRenderer().render(useSiteSession, this)
+        is KaReceiverParameterSymbol -> KaDebugRenderer().render(useSiteSession, this)
         is KaParameterSymbol -> "$name: ${returnType.render()}"
         is KaTypeParameterSymbol -> this.nameOrAnonymous.asString()
         is KaEnumEntrySymbol -> callableId?.toString() ?: name.asString()
         is KaVariableSymbol -> "${if (isVal) "val" else "var"} $name: ${returnType.render()}"
         is KaClassLikeSymbol -> classId?.toString() ?: nameOrAnonymous.asString()
         is KaPackageSymbol -> fqName.toString()
-        is KaSymbol -> DebugSymbolRenderer().render(useSiteSession, this)
+        is KaSymbol -> KaDebugRenderer().render(useSiteSession, this)
         is Boolean -> toString()
         is Map<*, *> -> if (isEmpty()) "{}" else entries.joinToString(
             separator = ",\n  ",

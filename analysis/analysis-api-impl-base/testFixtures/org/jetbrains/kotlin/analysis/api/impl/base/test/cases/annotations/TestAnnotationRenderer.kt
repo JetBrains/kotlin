@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.annotations
 
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
-import org.jetbrains.kotlin.analysis.api.symbols.DebugSymbolRenderer
+import org.jetbrains.kotlin.analysis.api.symbols.KaDebugRenderer
 import org.jetbrains.kotlin.analysis.test.framework.utils.indented
 import org.jetbrains.kotlin.name.ClassId
 
@@ -28,7 +28,7 @@ object TestAnnotationRenderer {
     ) {
         appendLine("annotations: [".indented(indent))
         for (annotation in annotations) {
-            appendLine(DebugSymbolRenderer().renderAnnotationApplication(analysisSession, annotation).indented(indent = indent + 2))
+            appendLine(KaDebugRenderer().renderAnnotationApplication(analysisSession, annotation).indented(indent = indent + 2))
             if (currentMetaAnnotations != null) {
                 val classId = annotation.classId ?: continue
                 if (classId in currentMetaAnnotations) {

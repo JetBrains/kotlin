@@ -1,14 +1,13 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols
 
-import org.jetbrains.kotlin.analysis.api.renderer.declarations.impl.KaDeclarationRendererForDebug
-import org.jetbrains.kotlin.analysis.api.symbols.DebugSymbolRenderer
-import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
+import org.jetbrains.kotlin.analysis.api.renderer.declarations.impl.KaDeclarationRendererForDebug
+import org.jetbrains.kotlin.analysis.api.symbols.KaDebugRenderer
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
@@ -37,13 +36,13 @@ abstract class AbstractSymbolRestoreFromDifferentModuleTest : AbstractAnalysisAp
         val (debugRendered, prettyRendered, pointer) = analyzeForTest(declaration) {
             val symbol = declaration.symbol
             val pointer = symbol.createPointer()
-            Triple(DebugSymbolRenderer().render(useSiteSession, symbol), symbol.render(defaultRenderer), pointer)
+            Triple(KaDebugRenderer().render(useSiteSession, symbol), symbol.render(defaultRenderer), pointer)
         }
         configurator.doGlobalModuleStateModification(project)
 
         val (debugRenderedRestored, prettyRenderedRestored) = analyzeForTest(restoreAt) {
             val symbol = pointer.restoreSymbol()
-            symbol?.let { DebugSymbolRenderer().render(useSiteSession, it) } to symbol?.render(defaultRenderer)
+            symbol?.let { KaDebugRenderer().render(useSiteSession, it) } to symbol?.render(defaultRenderer)
         }
 
         val actualDebug = prettyPrint {

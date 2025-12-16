@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.analysis.api.renderer.declarations.modifiers.rendere
 import org.jetbrains.kotlin.analysis.api.scopes.KaScope
 import org.jetbrains.kotlin.analysis.api.scopes.KaScopeLike
 import org.jetbrains.kotlin.analysis.api.scopes.KaTypeScope
-import org.jetbrains.kotlin.analysis.api.symbols.DebugSymbolRenderer
+import org.jetbrains.kotlin.analysis.api.symbols.KaDebugRenderer
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.api.useSiteSession
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
@@ -101,7 +101,7 @@ abstract class AbstractTypeScopeTest : AbstractAnalysisApiBasedTest() {
         val callables = scope.callables.toList()
         return prettyPrint {
             callables.forEach {
-                appendLine(DebugSymbolRenderer().render(useSiteSession, it))
+                appendLine(KaDebugRenderer().render(useSiteSession, it))
             }
         }
     }

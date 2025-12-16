@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.resolveToCall
 import org.jetbrains.kotlin.analysis.api.resolution.singleFunctionCallOrNull
 import org.jetbrains.kotlin.analysis.api.resolution.symbol
-import org.jetbrains.kotlin.analysis.api.symbols.DebugSymbolRenderer
+import org.jetbrains.kotlin.analysis.api.symbols.KaDebugRenderer
 import org.jetbrains.kotlin.analysis.api.symbols.KaSamConstructorSymbol
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.test.services.assertions
 abstract class AbstractSamClassBySamConstructorTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         val actual = executeOnPooledThreadInReadAction {
-            val symbolRenderer = DebugSymbolRenderer(renderExtra = true, renderTypeByProperties = true, renderExpandedTypes = true)
+            val symbolRenderer = KaDebugRenderer(renderExtra = true, renderTypeByProperties = true, renderExpandedTypes = true)
             copyAwareAnalyzeForTest(mainFile) { contextFile ->
                 val samConstructorSymbol = getSamConstructorSymbol(contextFile, testServices)
                 val constructedClass = samConstructorSymbol?.constructedClass

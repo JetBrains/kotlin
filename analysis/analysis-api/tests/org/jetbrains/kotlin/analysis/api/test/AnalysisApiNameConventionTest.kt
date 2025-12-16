@@ -55,8 +55,6 @@ class AnalysisApiNameConventionTest : AbstractAnalysisApiSurfaceCodebaseValidati
             "org.jetbrains.kotlin.analysis.api.components.ShortenCommand",
 
             "org.jetbrains.kotlin.analysis.api.symbols.AdditionalKDocResolutionProvider", // KT-82442
-
-            "org.jetbrains.kotlin.analysis.api.symbols.DebugSymbolRenderer", // KT-82443
         )
     }
 }
