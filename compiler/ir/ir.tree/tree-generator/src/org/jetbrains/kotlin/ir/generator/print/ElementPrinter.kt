@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.generators.tree.printer.*
 import org.jetbrains.kotlin.generators.util.printBlock
 import org.jetbrains.kotlin.ir.generator.BASE_PACKAGE
 import org.jetbrains.kotlin.ir.generator.irTransformerType
+import org.jetbrains.kotlin.ir.generator.irVisitorVoidType
 import org.jetbrains.kotlin.ir.generator.irVisitorType
 import org.jetbrains.kotlin.ir.generator.model.Element
 import org.jetbrains.kotlin.ir.generator.model.Field
@@ -44,6 +45,13 @@ internal class ElementPrinter(printer: ImportCollectingPrinter) : AbstractElemen
         printAcceptMethod(
             element = element,
             visitorClass = irVisitorType,
+            hasImplementation = !element.isRootElement,
+            treeName = "IR",
+        )
+
+        printAcceptVoidMethod(
+            element = element,
+            visitorClass = irVisitorVoidType,
             hasImplementation = !element.isRootElement,
             treeName = "IR",
         )

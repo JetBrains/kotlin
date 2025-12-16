@@ -11,6 +11,7 @@ package org.jetbrains.kotlin.ir.expressions
 import org.jetbrains.kotlin.ir.IrElementBase
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.spreadElement]
@@ -20,6 +21,9 @@ abstract class IrSpreadElement : IrElementBase(), IrVarargElement {
 
     override fun <R, D> accept(visitor: IrVisitor<R, D>, data: D): R =
         visitor.visitSpreadElement(this, data)
+
+    override fun acceptVoid(visitor: IrVisitorVoid) =
+        visitor.visitSpreadElement(this)
 
     override fun <D> transform(transformer: IrTransformer<D>, data: D): IrSpreadElement =
         accept(transformer, data) as IrSpreadElement

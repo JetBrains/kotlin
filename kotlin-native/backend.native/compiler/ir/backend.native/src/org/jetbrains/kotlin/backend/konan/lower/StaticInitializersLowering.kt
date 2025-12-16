@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
-import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.name.Name
 
 internal val DECLARATION_ORIGIN_STATIC_GLOBAL_INITIALIZER = IrDeclarationOriginImpl("STATIC_GLOBAL_INITIALIZER")

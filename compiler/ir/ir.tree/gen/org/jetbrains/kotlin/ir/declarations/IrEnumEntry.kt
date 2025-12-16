@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.IrEnumEntrySymbol
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.enumEntry]
@@ -30,6 +31,9 @@ abstract class IrEnumEntry : IrDeclarationBase(), IrDeclarationWithName {
 
     override fun <R, D> accept(visitor: IrVisitor<R, D>, data: D): R =
         visitor.visitEnumEntry(this, data)
+
+    override fun acceptVoid(visitor: IrVisitorVoid) =
+        visitor.visitEnumEntry(this)
 
     override fun <D> acceptChildren(visitor: IrVisitor<Unit, D>, data: D) {
         initializerExpression?.accept(visitor, data)

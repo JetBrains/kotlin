@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.ir.symbols.IrReplSnippetSymbol
 import org.jetbrains.kotlin.ir.util.transformIfNeeded
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 
 /**
  * Represents a REPL snippet entity that corresponds to the analogous FIR entity.
@@ -43,6 +44,9 @@ abstract class IrReplSnippet : IrDeclarationBase(), IrDeclarationWithName, IrDec
 
     override fun <R, D> accept(visitor: IrVisitor<R, D>, data: D): R =
         visitor.visitReplSnippet(this, data)
+
+    override fun acceptVoid(visitor: IrVisitorVoid) =
+        visitor.visitReplSnippet(this)
 
     override fun <D> acceptChildren(visitor: IrVisitor<Unit, D>, data: D) {
         receiverParameters.forEach { it.accept(visitor, data) }
