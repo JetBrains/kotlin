@@ -4,6 +4,9 @@
 // The test primarily tests reflect dumps (k1 vs new reflect), we don't need kt dumps
 // SKIP_KT_DUMP
 
+// Skip because it's a compiler bug KT-82502, there should be only one `foo` function
+// KOTLIN_REFLECT_DUMP_MISMATCH
+
 // FILE: A.java
 public class A {
     public void foo(String a) {}

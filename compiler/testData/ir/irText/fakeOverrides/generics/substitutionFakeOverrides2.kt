@@ -4,6 +4,9 @@
 // The test primarily tests reflect dumps (k1 vs new reflect), we don't need kt dumps
 // SKIP_KT_DUMP
 
+// Skip the check because K1 is wrong (the optimization in the compiler is incorrect: KT-65504 and KT-42020)
+// KOTLIN_REFLECT_DUMP_MISMATCH
+
 interface A1 : I1<String>, J1
 interface I1<T> { fun foo(a: T) }
 interface J1 { fun foo(a: String) }

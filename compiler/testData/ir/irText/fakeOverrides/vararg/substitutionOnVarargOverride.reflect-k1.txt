@@ -1,0 +1,25 @@
+KClass: class A : Java1
+  members:
+    open PUBLIC operator fun A.equals(kotlin.Any?): kotlin.Boolean
+    open PUBLIC fun A.foo(kotlin.Array<(out) kotlin.Int!>!): kotlin.Unit
+    open PUBLIC fun A.hashCode(): kotlin.Int
+    open PUBLIC fun A.toString(): kotlin.String
+  declaredMembers:
+KClass: class B : Java1
+  members:
+    open PUBLIC operator fun B.equals(kotlin.Any?): kotlin.Boolean
+    open PUBLIC fun B.foo(kotlin.Array<out kotlin.Any>): kotlin.Unit
+    open PUBLIC fun B.hashCode(): kotlin.Int
+    open PUBLIC fun B.toString(): kotlin.String
+  declaredMembers:
+    open PUBLIC fun B.foo(kotlin.Array<out kotlin.Any>): kotlin.Unit
+KClass: class Java1 : Any
+  members:
+    open PUBLIC operator fun Java1<T>.equals(kotlin.Any?): kotlin.Boolean
+    open PUBLIC fun Java1<T>.foo(kotlin.Array<(out) T!>!): kotlin.Unit
+    open PUBLIC fun Java1<T>.hashCode(): kotlin.Int
+    open PUBLIC fun Java1<T>.toString(): kotlin.String
+  declaredMembers:
+    open PUBLIC fun Java1<T>.foo(kotlin.Array<(out) T!>!): kotlin.Unit
+KPackage: _1Kt
+  final PUBLIC fun test(A, B): kotlin.Unit

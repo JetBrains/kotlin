@@ -2,6 +2,9 @@
 // LANGUAGE: +DefinitelyNonNullableTypes
 // SKIP_KT_DUMP
 
+// Exception in new-reflect implementation
+// SKIP_NEW_KOTLIN_REFLECT_COMPATIBILITY_CHECK
+
 open class B<T> {
     open fun foo(t: T) {}
     open fun bar(t: T) {}

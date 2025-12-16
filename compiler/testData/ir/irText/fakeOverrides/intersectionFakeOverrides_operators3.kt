@@ -3,6 +3,11 @@
 // The test primarily tests reflect dumps (k1 vs new reflect), we don't need kt dumps
 // SKIP_KT_DUMP
 
+// K1 and new kotlin reflect mismatch in:
+// 1. isInline/isExternal. Compiler bug: KT-82842. New reflect is correct
+// 2. Minor flexible types mismatches
+// KOTLIN_REFLECT_DUMP_MISMATCH
+
 // FILE: JavaIntermediate.java
 public class JavaIntermediate extends A<String> {
     public native void javaNativeMethod();

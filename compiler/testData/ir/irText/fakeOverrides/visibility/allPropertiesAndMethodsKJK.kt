@@ -2,6 +2,16 @@
 // TARGET_BACKEND: JVM
 // LANGUAGE: +ProperFieldAccessGenerationForFieldAccessShadowedByKotlinProperty
 
+// K1 kotlin-reflect behavior is incorrect
+// In 'Java12' class:
+//     'protected void foo()' doesn't override 'internal fun foo()'
+// In 'Java7', 'L' classes:
+//     'public void foo()' doesn't override 'internal open fun foo'
+// In 'Java16' class:
+//     'private void foo' doesn't override 'internal open fun foo'
+// etc.
+// KOTLIN_REFLECT_DUMP_MISMATCH
+
 // FILE: Java1.java
 public class Java1 extends PublicVisibility { }
 

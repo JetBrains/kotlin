@@ -1,0 +1,20 @@
+KClass: class JEnum : Enum
+  members:
+    final PROTECTED fun JEnum.clone(): kotlin.Any
+    final PUBLIC operator fun JEnum.compareTo(JEnum!): kotlin.Int
+    final PUBLIC operator fun JEnum.equals(kotlin.Any?): kotlin.Boolean
+    final fun JEnum.finalize(): kotlin.Unit
+    final PUBLIC fun JEnum.getDeclaringClass(): java.lang.Class<JEnum!>!
+    final PUBLIC fun JEnum.hashCode(): kotlin.Int
+    open PUBLIC fun JEnum.toString(): kotlin.String
+    final PUBLIC fun valueOf(kotlin.String): JEnum
+    final PUBLIC fun values(): kotlin.Array<JEnum>
+    final PUBLIC val JEnum.name: kotlin.String
+    final PUBLIC val JEnum.ordinal: kotlin.Int
+    final PUBLIC val entries: kotlin.enums.EnumEntries<JEnum>
+  declaredMembers:
+    final PUBLIC fun valueOf(kotlin.String): JEnum
+    final PUBLIC fun values(): kotlin.Array<JEnum>
+    final PUBLIC val entries: kotlin.enums.EnumEntries<JEnum>
+KPackage: JavaEnumKt
+  final PUBLIC val test: JEnum

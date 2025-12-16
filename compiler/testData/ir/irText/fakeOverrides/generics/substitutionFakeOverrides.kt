@@ -3,6 +3,9 @@
 // The test primarily tests reflect dumps (k1 vs new reflect), we don't need kt dumps
 // SKIP_KT_DUMP
 
+// Skip kotlin-reflect because K1 is wrong: KT-82502
+// KOTLIN_REFLECT_DUMP_MISMATCH
+
 // FILE: Jaba.java
 public class Jaba<T> {
     public void foo(T f) {}

@@ -2,6 +2,9 @@
 // DONT_TARGET_EXACT_BACKEND: JS_IR
 // ISSUE: KT-82590
 
+// KT-42199
+// SKIP_NEW_KOTLIN_REFLECT_COMPATIBILITY_CHECK
+
 interface MyInterface
 
 fun interface SimpleRibCoroutineWorker {

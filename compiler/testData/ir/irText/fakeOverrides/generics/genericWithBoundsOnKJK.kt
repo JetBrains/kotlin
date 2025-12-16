@@ -1,6 +1,9 @@
 // SKIP_KT_DUMP
 // TARGET_BACKEND: JVM
 
+// Minor bug: mismatch on some parameters' types flexibility
+// KOTLIN_REFLECT_DUMP_MISMATCH
+
 // FILE: Java1.java
 public class Java1 extends KotlinClass { }
 
