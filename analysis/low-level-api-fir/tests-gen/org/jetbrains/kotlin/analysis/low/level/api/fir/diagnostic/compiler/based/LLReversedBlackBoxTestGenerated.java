@@ -65583,6 +65583,22 @@ public class LLReversedBlackBoxTestGenerated extends AbstractLLReversedBlackBoxT
   }
 
   @Nested
+  @TestMetadata("compiler/testData/codegen/box/wasm-ir-checks")
+  @TestDataPath("$PROJECT_ROOT")
+  public class Wasm_ir_checks {
+    @Test
+    public void testAllFilesPresentInWasm_ir_checks() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/wasm-ir-checks"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("wasmIrCheckForWhens.kt")
+    public void testWasmIrCheckForWhens() {
+      runTest("compiler/testData/codegen/box/wasm-ir-checks/wasmIrCheckForWhens.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("compiler/testData/codegen/box/wasm-new-exception-handling")
   @TestDataPath("$PROJECT_ROOT")
   public class Wasm_new_exception_handling {
