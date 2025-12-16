@@ -158,8 +158,7 @@ tasks.test {
 
 projectTests {
     testGenerator("org.jetbrains.kotlin.generators.tests.GenerateJsKlibCompatibilityTestsKt", generateTestsInBuildDirectory = true)
-    testData(project(":compiler").isolated, "testData/codegen/box")
-    testData(project(":compiler").isolated, "testData/codegen/boxInline")
+    testData(project(":compiler").isolated, "testData/codegen")
     testData(project(":compiler").isolated, "testData/klib/klib-compatibility/sanity")
     testData(project(":js:js.translator").isolated, "testData/_commonFiles")
 

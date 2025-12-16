@@ -6,11 +6,10 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.opentest4j.TestAbortedException
 import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
 @Tag("sanity")
-class CustomJsCompilerFirstStageSanity : AbstractCustomJsCompilerFirstStageTest() {
-    private val testDataRoot = "compiler/testData/klib/klib-compatibility/sanity/"
+class CustomJsCompilerFirstStageSanity :
+    AbstractCustomJsCompilerFirstStageTest(testDataRoot = "compiler/testData/klib/klib-compatibility/sanity/") {
 
     @Test
     fun checkPassed() {

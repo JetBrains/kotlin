@@ -27,7 +27,9 @@ import org.jetbrains.kotlin.utils.bind
 import org.junit.jupiter.api.Tag
 
 @Tag("custom-first-stage")
-open class AbstractCustomJsCompilerFirstStageTest : AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.JS_IR) {
+open class AbstractCustomJsCompilerFirstStageTest(val testDataRoot: String = "compiler/testData/codegen/") :
+    AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.JS_IR) {
+
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         globalDefaults {
             // Note: Need to specify the concrete FE kind because this affects the choice of IGNORE_BACKEND_* directive.
@@ -69,7 +71,7 @@ open class AbstractCustomJsCompilerFirstStageTest : AbstractKotlinCompilerWithTa
         )
 
         commonConfigurationForJsBackendSecondStageTest(
-            pathToTestDir = "compiler/testData/codegen/box/",
+            pathToTestDir = testDataRoot,
             testGroupOutputDirPrefix = "customJsCompilerFirstStageTest/",
             backendFacades = JsBackendFacades.WithRecompilation
         )
