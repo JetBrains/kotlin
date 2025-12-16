@@ -92,6 +92,7 @@ val businessLogicTestSuits = setOf(
     "testFirRunner",
     "testCriToolchain",
     "testCompilerPlugins",
+    "testBuildMetrics",
 )
 
 testing {
