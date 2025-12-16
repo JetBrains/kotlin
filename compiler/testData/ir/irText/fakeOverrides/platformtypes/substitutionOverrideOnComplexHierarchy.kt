@@ -2,6 +2,9 @@
 // TARGET_BACKEND: JVM
 // FULL_JDK
 
+// Minor parmeter types' flexibility mismatch
+// KOTLIN_REFLECT_DUMP_MISMATCH
+
 // FILE: Java1.java
 
 public interface Java1<T> extends A<T> { }

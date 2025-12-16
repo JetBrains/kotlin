@@ -56,6 +56,7 @@ import kotlin.metadata.internal.toKmClass
 import kotlin.metadata.jvm.KotlinClassMetadata
 import kotlin.metadata.jvm.localDelegatedProperties
 import kotlin.reflect.*
+import kotlin.reflect.full.isSubclassOf
 import kotlin.reflect.jvm.internal.KClassImpl.MemberBelonginess.DECLARED
 import kotlin.reflect.jvm.internal.KClassImpl.MemberBelonginess.INHERITED
 import kotlin.reflect.jvm.internal.types.DescriptorKType
@@ -371,23 +372,48 @@ internal class KClassImpl<T : Any>(
             }
         }
 
+        private fun useK1ImplementationForFakeOverrides() =
+            !newFakeOverridesImplementation || useK1Implementation ||
+                // Collections are hard to support because of https://youtrack.jetbrains.com/issue/KT-11754
+                isSubclassOf(Collection::class) ||
+                isSubclassOf(Map::class) ||
+                isSubclassOf(CharSequence::class) ||
+                isSubclassOf(Number::class)
+
         val declaredNonStaticMembers: Collection<DescriptorKCallable<*>>
-                by ReflectProperties.lazySoft { getMembers(memberScope, DECLARED) }
+            by ReflectProperties.lazySoft { getMembers(memberScope, DECLARED) }
         private val declaredStaticMembers: Collection<DescriptorKCallable<*>>
-                by ReflectProperties.lazySoft { getMembers(staticScope, DECLARED) }
-        private val inheritedNonStaticMembers: Collection<DescriptorKCallable<*>>
-                by ReflectProperties.lazySoft { getMembers(memberScope, INHERITED) }
-        private val inheritedStaticMembers: Collection<DescriptorKCallable<*>>
-                by ReflectProperties.lazySoft { getMembers(staticScope, INHERITED) }
+            by ReflectProperties.lazySoft { getMembers(staticScope, DECLARED) }
+        private val inheritedNonStaticMembers_k1Impl: Collection<DescriptorKCallable<*>>
+            by ReflectProperties.lazySoft { getMembers(memberScope, INHERITED) }
+        private val inheritedStaticMembers_k1Impl: Collection<DescriptorKCallable<*>>
+            by ReflectProperties.lazySoft { getMembers(staticScope, INHERITED) }
 
         val allNonStaticMembers: Collection<DescriptorKCallable<*>>
-                by ReflectProperties.lazySoft { declaredNonStaticMembers + inheritedNonStaticMembers }
+            by ReflectProperties.lazySoft {
+                when (useK1ImplementationForFakeOverrides()) {
+                    true -> declaredNonStaticMembers + inheritedNonStaticMembers_k1Impl
+                    false -> allMembers.filter { !it.isStatic }
+                }
+            }
         val allStaticMembers: Collection<DescriptorKCallable<*>>
-                by ReflectProperties.lazySoft { declaredStaticMembers + inheritedStaticMembers }
+            by ReflectProperties.lazySoft {
+                when (useK1ImplementationForFakeOverrides()) {
+                    true -> declaredStaticMembers + inheritedStaticMembers_k1Impl
+                    false -> allMembers.filter { it.isStatic }
+                }
+            }
         val declaredMembers: Collection<DescriptorKCallable<*>>
-                by ReflectProperties.lazySoft { declaredNonStaticMembers + declaredStaticMembers }
+            by ReflectProperties.lazySoft { declaredNonStaticMembers + declaredStaticMembers }
         val allMembers: Collection<DescriptorKCallable<*>>
-                by ReflectProperties.lazySoft { allNonStaticMembers + allStaticMembers }
+            by ReflectProperties.lazySoft {
+                when (useK1ImplementationForFakeOverrides()) {
+                    true -> allNonStaticMembers + allStaticMembers
+                    false -> getAllMembers_newKotlinReflectImpl(this@KClassImpl)
+                }
+            }
+        internal val fakeOverrideMembers: FakeOverrideMembers
+            by ReflectProperties.lazySoft { computeFakeOverrideMembers(this@KClassImpl) }
     }
 
     val data = lazy(PUBLICATION) { Data() }
@@ -613,5 +639,3 @@ internal class KClassImpl<T : Any>(
         }
     }
 }
-
-internal fun starProjectionSupertypesAreNotPossible(): Nothing = error("Star projection supertypes are not possible")

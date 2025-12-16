@@ -1,0 +1,35 @@
+KClass: class A : Java1
+  members:
+    open PUBLIC operator fun A.equals(kotlin.Any?): kotlin.Boolean
+    open PUBLIC operator fun A.get(kotlin.Int?): kotlin.Int?
+    open PUBLIC fun A.hashCode(): kotlin.Int
+    open PUBLIC operator fun A.invoke(): kotlin.Unit
+    open PUBLIC operator fun A.plus(kotlin.Int?): Java1<(raw) kotlin.Any!>
+    open PUBLIC fun A.toString(): kotlin.String
+  declaredMembers:
+KClass: class B : Java1
+  members:
+    open PUBLIC operator fun B.equals(kotlin.Any?): kotlin.Boolean
+    open PUBLIC operator fun B.get(kotlin.Any?): kotlin.Any
+    open PUBLIC fun B.hashCode(): kotlin.Int
+    open PUBLIC operator fun B.invoke(): kotlin.Unit
+    open PUBLIC operator fun B.plus(kotlin.Any?): Java1<kotlin.Any>
+    open PUBLIC fun B.toString(): kotlin.String
+  declaredMembers:
+    open PUBLIC operator fun B.get(kotlin.Any?): kotlin.Any
+    open PUBLIC operator fun B.invoke(): kotlin.Unit
+    open PUBLIC operator fun B.plus(kotlin.Any?): Java1<kotlin.Any>
+KClass: class Java1 : Any
+  members:
+    open PUBLIC operator fun Java1<T>.equals(kotlin.Any?): kotlin.Boolean
+    open PUBLIC operator fun Java1<T>.get(T!): T!
+    open PUBLIC fun Java1<T>.hashCode(): kotlin.Int
+    open PUBLIC operator fun Java1<T>.invoke(): kotlin.Unit
+    open PUBLIC operator fun Java1<T>.plus(T!): Java1<(raw) kotlin.Any!>
+    open PUBLIC fun Java1<T>.toString(): kotlin.String
+  declaredMembers:
+    open PUBLIC operator fun Java1<T>.get(T!): T!
+    open PUBLIC operator fun Java1<T>.invoke(): kotlin.Unit
+    open PUBLIC operator fun Java1<T>.plus(T!): Java1<(raw) kotlin.Any!>
+KPackage: _1Kt
+  final PUBLIC fun test(A, B): kotlin.Unit

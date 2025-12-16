@@ -1,0 +1,26 @@
+KClass: class JavaEnum : Enum
+  members:
+    final PROTECTED fun JavaEnum.clone(): kotlin.Any
+    final PUBLIC operator fun JavaEnum.compareTo(JavaEnum): kotlin.Int
+    final PUBLIC operator fun JavaEnum.equals(kotlin.Any?): kotlin.Boolean
+    final fun JavaEnum.finalize(): kotlin.Unit
+    final PUBLIC fun JavaEnum.getDeclaringClass(): java.lang.Class<JavaEnum!>!
+    final PUBLIC fun JavaEnum.hashCode(): kotlin.Int
+    open PUBLIC fun JavaEnum.toString(): kotlin.String
+    final PUBLIC fun valueOf(kotlin.String): JavaEnum
+    final PUBLIC fun values(): kotlin.Array<JavaEnum>
+    final PUBLIC val JavaEnum.name: kotlin.String
+    final PUBLIC val JavaEnum.ordinal: kotlin.Int
+    final PUBLIC val entries: kotlin.enums.EnumEntries<JavaEnum>
+  declaredMembers:
+    final PUBLIC fun valueOf(kotlin.String): JavaEnum
+    final PUBLIC fun values(): kotlin.Array<JavaEnum>
+    final PUBLIC val entries: kotlin.enums.EnumEntries<JavaEnum>
+KClass: interface JavaPropertyAnnotation : Annotation, Any
+  members:
+    open PUBLIC operator fun JavaPropertyAnnotation.equals(kotlin.Any?): kotlin.Boolean
+    open PUBLIC fun JavaPropertyAnnotation.hashCode(): kotlin.Int
+    open PUBLIC fun JavaPropertyAnnotation.toString(): kotlin.String
+  declaredMembers:
+KPackage: TestKt
+  final PUBLIC fun foo(): kotlin.Unit

@@ -2,6 +2,10 @@
 // TARGET_BACKEND: JVM
 // WITH_STDLIB
 
+// Mute the check because the code is sort of invalid. It's not possible to implement abstract class D,
+// because different bar's collide
+// KOTLIN_REFLECT_DUMP_MISMATCH
+
 // FILE: Java1.java
 public class Java1 {
     public <T> void foo(T a) { }

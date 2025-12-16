@@ -1,0 +1,59 @@
+KClass: abstract class ImplicitReceiverStack : Iterable, Any
+  members:
+    open PUBLIC operator fun ImplicitReceiverStack.equals(kotlin.Any?): kotlin.Boolean
+    open PUBLIC fun ImplicitReceiverStack.forEach(java.util.function.Consumer<ImplicitReceiverValue<*>!>!): kotlin.Unit
+    abstract PUBLIC operator fun ImplicitReceiverStack.get(kotlin.String?): ImplicitReceiverValue<*>?
+    open PUBLIC fun ImplicitReceiverStack.hashCode(): kotlin.Int
+    abstract PUBLIC operator fun ImplicitReceiverStack.iterator(): kotlin.collections.Iterator<ImplicitReceiverValue<*>>
+    open PUBLIC fun ImplicitReceiverStack.spliterator(): java.util.Spliterator<ImplicitReceiverValue<*>>
+    open PUBLIC fun ImplicitReceiverStack.toString(): kotlin.String
+  declaredMembers:
+    abstract PUBLIC operator fun ImplicitReceiverStack.get(kotlin.String?): ImplicitReceiverValue<*>?
+KPackage: ImplicitReceiverStackKt
+  final PUBLIC fun bar(kotlin.String): kotlin.Unit
+  final PUBLIC fun box(): kotlin.String
+  final PUBLIC fun foo(PersistentImplicitReceiverStack): kotlin.Unit
+KClass: class ImplicitReceiverValue : ReceiverValue, Any
+  members:
+    open PUBLIC operator fun ImplicitReceiverValue<S>.equals(kotlin.Any?): kotlin.Boolean
+    open PUBLIC fun ImplicitReceiverValue<S>.hashCode(): kotlin.Int
+    open PUBLIC fun ImplicitReceiverValue<S>.toString(): kotlin.String
+    final PUBLIC val ImplicitReceiverValue<S>.boundSymbol: S?
+    open PUBLIC val ImplicitReceiverValue<S>.type: kotlin.String
+  declaredMembers:
+    final PUBLIC val ImplicitReceiverValue<S>.boundSymbol: S?
+    open PUBLIC val ImplicitReceiverValue<S>.type: kotlin.String
+KClass: class PersistentImplicitReceiverStack : ImplicitReceiverStack, Iterable
+  members:
+    open PUBLIC operator fun PersistentImplicitReceiverStack.equals(kotlin.Any?): kotlin.Boolean
+    open PUBLIC fun PersistentImplicitReceiverStack.forEach(java.util.function.Consumer<ImplicitReceiverValue<*>!>!): kotlin.Unit
+    open PUBLIC operator fun PersistentImplicitReceiverStack.get(kotlin.String?): ImplicitReceiverValue<*>?
+    open PUBLIC fun PersistentImplicitReceiverStack.hashCode(): kotlin.Int
+    open PUBLIC operator fun PersistentImplicitReceiverStack.iterator(): kotlin.collections.Iterator<ImplicitReceiverValue<*>>
+    open PUBLIC fun PersistentImplicitReceiverStack.spliterator(): java.util.Spliterator<ImplicitReceiverValue<*>>
+    open PUBLIC fun PersistentImplicitReceiverStack.toString(): kotlin.String
+    final PRIVATE val PersistentImplicitReceiverStack.stack: kotlin.collections.List<ImplicitReceiverValue<*>>
+  declaredMembers:
+    open PUBLIC operator fun PersistentImplicitReceiverStack.get(kotlin.String?): ImplicitReceiverValue<*>?
+    open PUBLIC operator fun PersistentImplicitReceiverStack.iterator(): kotlin.collections.Iterator<ImplicitReceiverValue<*>>
+    final PRIVATE val PersistentImplicitReceiverStack.stack: kotlin.collections.List<ImplicitReceiverValue<*>>
+KClass: abstract interface ReceiverValue : Any
+  members:
+    open PUBLIC operator fun ReceiverValue.equals(kotlin.Any?): kotlin.Boolean
+    open PUBLIC fun ReceiverValue.hashCode(): kotlin.Int
+    open PUBLIC fun ReceiverValue.toString(): kotlin.String
+    abstract PUBLIC val ReceiverValue.type: kotlin.String
+  declaredMembers:
+    abstract PUBLIC val ReceiverValue.type: kotlin.String
+KClass: abstract interface Symbol : Any
+  members:
+    open PUBLIC operator fun Symbol<E>.equals(kotlin.Any?): kotlin.Boolean
+    open PUBLIC fun Symbol<E>.hashCode(): kotlin.Int
+    open PUBLIC fun Symbol<E>.toString(): kotlin.String
+  declaredMembers:
+KClass: abstract interface SymbolOwner : Any
+  members:
+    open PUBLIC operator fun SymbolOwner<E>.equals(kotlin.Any?): kotlin.Boolean
+    open PUBLIC fun SymbolOwner<E>.hashCode(): kotlin.Int
+    open PUBLIC fun SymbolOwner<E>.toString(): kotlin.String
+  declaredMembers:

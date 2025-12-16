@@ -48,6 +48,21 @@ internal class KTypeSubstitutor(private val substitution: Map<KTypeParameter, KT
         return result
     }
 
+    fun combinedWith(other: KTypeSubstitutor): KTypeSubstitutor {
+        // Optimizations
+        if (this.substitution.isEmpty()) return other
+        if (other.substitution.isEmpty()) return this
+
+        val map = substitution.mapValues { (_, typeProjection) ->
+            val type = typeProjection.type
+            when {
+                type != null -> other.substitute(type)
+                else -> typeProjection
+            }
+        }
+        return KTypeSubstitutor(map)
+    }
+
     // TODO (KT-77700): also keep annotations of 'other'
     private fun KType.withNullabilityOf(other: KType): KType {
         val thiz = this as RigidTypeMarker
