@@ -48508,12 +48508,6 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
       }
 
       @Test
-      @TestMetadata("deprecatedSyntaxInConditions_before.kt")
-      public void testDeprecatedSyntaxInConditions_before() {
-        runTest("compiler/testData/diagnostics/tests/when/deprecatedSyntaxInConditions_before.kt");
-      }
-
-      @Test
       @TestMetadata("DuplicatedLabels.kt")
       public void testDuplicatedLabels() {
         runTest("compiler/testData/diagnostics/tests/when/DuplicatedLabels.kt");

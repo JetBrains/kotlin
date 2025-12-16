@@ -3835,10 +3835,6 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = ConfusingBranchConditionError::class
     }
 
-    interface ConfusingBranchConditionWarning : KaFirDiagnostic<PsiElement> {
-        override val diagnosticClass get() = ConfusingBranchConditionWarning::class
-    }
-
     interface WrongConditionSuggestGuard : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = WrongConditionSuggestGuard::class
     }

@@ -4599,11 +4599,6 @@ internal class ConfusingBranchConditionErrorImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.ConfusingBranchConditionError
 
-internal class ConfusingBranchConditionWarningImpl(
-    firDiagnostic: KtPsiDiagnostic,
-    token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.ConfusingBranchConditionWarning
-
 internal class WrongConditionSuggestGuardImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,

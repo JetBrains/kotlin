@@ -137,7 +137,7 @@ object FirConfusingWhenBranchSyntaxChecker : FirExpressionSyntaxChecker<FirWhenE
             }
 
             val Generic: ConfusingWhenBranchReporter = ConfusingWhenBranchReporter { reporter, source ->
-                reporter.reportOn(source, FirErrors.CONFUSING_BRANCH_CONDITION)
+                reporter.reportOn(source, FirErrors.CONFUSING_BRANCH_CONDITION_ERROR)
             }
 
             val GuardSuggestion: ConfusingWhenBranchReporter = ConfusingWhenBranchReporter { reporter, source ->
