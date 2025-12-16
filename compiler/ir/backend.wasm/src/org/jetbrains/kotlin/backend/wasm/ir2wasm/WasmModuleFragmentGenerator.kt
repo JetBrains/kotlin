@@ -36,11 +36,11 @@ class WasmModuleFragmentGenerator(
         irModuleFragment: IrModuleFragment,
         moduleName: String,
         importDeclarations: Set<IdSignature>,
-    ): WasmCompiledFileFragment {
+    ): Pair<WasmCompiledFileFragment, Boolean> {
         val wasmFileFragment = WasmCompiledFileFragment(fragmentTag = null)
         val wasmFileCodegenContext = WasmFileCodegenContextWithImport(wasmFileFragment, idSignatureRetriever, moduleName, importDeclarations)
         generate(irModuleFragment, wasmFileCodegenContext)
-        return wasmFileFragment
+        return wasmFileFragment to wasmFileCodegenContext.hasImport
     }
 
     fun generateModuleAsSingleFileFragmentWithModuleExport(

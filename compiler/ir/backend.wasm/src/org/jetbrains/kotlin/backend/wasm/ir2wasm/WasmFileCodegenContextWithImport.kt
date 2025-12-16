@@ -18,6 +18,11 @@ class WasmFileCodegenContextWithImport(
     private val moduleName: String,
     private val importDeclarations: Set<IdSignature>,
 ) : WasmFileCodegenContext(wasmFileFragment, idSignatureRetriever) {
+
+    var hasImport: Boolean = false
+        get
+        private set
+
     override fun handleFunctionWithImport(declaration: IrFunctionSymbol): Boolean {
         val signature = idSignatureRetriever.declarationSignature(declaration.owner)
         if (signature !in importDeclarations) return true
@@ -30,6 +35,7 @@ class WasmFileCodegenContextWithImport(
                 importPair = WasmImportDescriptor(moduleName, WasmSymbol("${WasmServiceImportExportKind.FUNC.prefix}$signature"))
             )
         )
+        hasImport = true
         return true
     }
 
@@ -44,6 +50,7 @@ class WasmFileCodegenContextWithImport(
             importPair = WasmImportDescriptor(moduleName, WasmSymbol("${WasmServiceImportExportKind.VTABLE.prefix}$signature"))
         )
         defineGlobalVTable(irClass = declaration, wasmGlobal = global)
+        hasImport = true
         return true
     }
 
@@ -58,6 +65,7 @@ class WasmFileCodegenContextWithImport(
             importPair = WasmImportDescriptor(moduleName, WasmSymbol("${WasmServiceImportExportKind.ITABLE.prefix}$signature"))
         )
         defineGlobalClassITable(irClass = declaration, wasmGlobal = global)
+        hasImport = true
         return true
     }
 
@@ -72,6 +80,7 @@ class WasmFileCodegenContextWithImport(
             importPair = WasmImportDescriptor(moduleName, WasmSymbol("${WasmServiceImportExportKind.RTTI.prefix}$signature"))
         )
         defineRttiGlobal(global = rttiGlobal, irClass = declaration, irSuperClass = superType)
+        hasImport = true
         return true
     }
 }
