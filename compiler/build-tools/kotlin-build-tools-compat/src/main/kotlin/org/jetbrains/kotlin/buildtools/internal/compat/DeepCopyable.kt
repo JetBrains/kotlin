@@ -5,6 +5,6 @@
 
 package org.jetbrains.kotlin.buildtools.internal.compat
 
-public interface DeepCopyable<T> {
-    public fun deepCopy(): T
+internal interface DeepCopyable<T> {
+    fun deepCopy(): T
 }
