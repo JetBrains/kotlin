@@ -9,9 +9,8 @@ package org.jetbrains.kotlin.buildtools.internal.jvm.operations
 
 import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
 import org.jetbrains.kotlin.build.report.BuildReporter
-import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporterImpl
-import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
-import org.jetbrains.kotlin.build.report.metrics.BuildTimeMetric
+import org.jetbrains.kotlin.build.report.metrics.*
+import org.jetbrains.kotlin.build.report.reportPerformanceData
 import org.jetbrains.kotlin.buildtools.api.CompilationResult
 import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.KotlinLogger
@@ -124,15 +123,17 @@ internal class JvmCompilationOperationImpl(
         }
         val generateCompilerRefIndex = get(GENERATE_COMPILER_REF_INDEX)
         val aggregatedIcConfiguration: JvmIncrementalCompilationConfiguration? = get(INCREMENTAL_COMPILATION)
+
+        val requestedCompilationResults = listOfNotNull(
+            CompilationResultCategory.IC_COMPILE_ITERATION.code,
+            CompilationResultCategory.BUILD_METRICS.code.takeIf { this[METRICS_COLLECTOR] != null || this[XX_KGP_METRICS_COLLECTOR] },
+        ).toTypedArray()
+
         return when (aggregatedIcConfiguration) {
             is JvmSnapshotBasedIncrementalCompilationConfiguration -> {
                 val aggregatedIcConfigurationOptions =
                     aggregatedIcConfiguration.options as JvmSnapshotBasedIncrementalCompilationOptionsImpl
                 val sourcesChanges = aggregatedIcConfiguration.sourcesChanges
-                val requestedCompilationResults = listOfNotNull(
-                    CompilationResultCategory.IC_COMPILE_ITERATION.code,
-                    CompilationResultCategory.BUILD_METRICS.code.takeIf { this[XX_KGP_METRICS_COLLECTOR] },
-                ).toTypedArray()
                 val classpathChanges = aggregatedIcConfiguration.classpathChanges
                 IncrementalCompilationOptions(
                     sourcesChanges,
@@ -160,7 +161,7 @@ internal class JvmCompilationOperationImpl(
                 targetPlatform = CompileService.TargetPlatform.JVM,
                 reportCategories = reportCategories,
                 reportSeverity = reportSeverity,
-                requestedCompilationResults = emptyArray(),
+                requestedCompilationResults = requestedCompilationResults,
                 kotlinScriptExtensions = ktsExtensionsAsArray,
                 generateCompilerRefIndex = generateCompilerRefIndex,
             )
@@ -303,7 +304,13 @@ internal class JvmCompilationOperationImpl(
             }
         }.build()
         logCompilerArguments(loggerAdapter, arguments, get(COMPILER_ARGUMENTS_LOG_LEVEL))
-        return compiler.exec(loggerAdapter, services, arguments).asCompilationResult
+        val metricsReporter = getMetricsReporter()
+        metricsReporter.startMeasureGc()
+        val compilationResult = compiler.exec(loggerAdapter, services, arguments).asCompilationResult
+        metricsReporter.reportPerformanceData(compiler.defaultPerformanceManager.unitStats)
+        metricsReporter.addMetric(COMPILE_ITERATION, 1) // in non-IC case there's always 1 iteration
+        metricsReporter.endMeasureGc()
+        return compilationResult
     }
 
     private fun JvmSnapshotBasedIncrementalCompilationConfiguration.compileInProcess(
@@ -323,6 +330,7 @@ internal class JvmCompilationOperationImpl(
 
         val classpathChanges = classpathChanges
         val metricsReporter = getMetricsReporter()
+        metricsReporter.startMeasureGc()
         val buildReporter = BuildReporter(
             icReporter = BuildToolsApiBuildICReporter(
                 kotlinLogger = loggerAdapter.kotlinLogger,
@@ -351,15 +359,19 @@ internal class JvmCompilationOperationImpl(
         val fileLocations = if (projectDir != null && buildDir != null) {
             FileLocations(projectDir, buildDir)
         } else null
-        return incrementalCompiler.compile(
+        val compilationResult = incrementalCompiler.compile(
             kotlinSources, arguments, loggerAdapter, sourcesChanges.asChangedFiles, fileLocations
-        ).asCompilationResult.also {
-            if (this@JvmCompilationOperationImpl[XX_KGP_METRICS_COLLECTOR] && metricsReporter is BuildMetricsReporterImpl) {
-                this@JvmCompilationOperationImpl[XX_KGP_METRICS_COLLECTOR_OUT] = ByteArrayOutputStream().apply {
-                    ObjectOutputStream(this).writeObject(metricsReporter)
-                }.toByteArray()
-            }
+        ).asCompilationResult
+
+        if (this@JvmCompilationOperationImpl[XX_KGP_METRICS_COLLECTOR] && metricsReporter is BuildMetricsReporterImpl) {
+            this@JvmCompilationOperationImpl[XX_KGP_METRICS_COLLECTOR_OUT] = ByteArrayOutputStream().apply {
+                ObjectOutputStream(this).writeObject(metricsReporter)
+            }.toByteArray()
         }
+
+        metricsReporter.endMeasureGc()
+
+        return compilationResult
     }
 
     private fun JvmCompilationOperationImpl.getNonFirRunner(
