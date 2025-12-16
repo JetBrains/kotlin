@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.build.report.metrics
 
 import java.lang.management.ManagementFactory
 
-interface BuildMetricsReporter<B : BuildTimeMetric, P : BuildPerformanceMetric> {
+interface BuildMetricsReporter<in B : BuildTimeMetric, P : BuildPerformanceMetric> {
     fun startMeasure(time: B)
     fun endMeasure(time: B)
     fun addTimeMetricNs(time: B, durationNs: Long)
@@ -25,7 +25,7 @@ interface BuildMetricsReporter<B : BuildTimeMetric, P : BuildPerformanceMetric> 
 
     fun addAttribute(attribute: BuildAttribute)
 
-    fun getMetrics(): BuildMetrics<B, P>
+    fun getMetrics(): BuildMetrics<in B, P>
     fun addMetrics(metrics: BuildMetrics<out B, out P>)
 }
 

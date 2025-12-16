@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
 import org.jetbrains.kotlin.build.report.RemoteBuildReporter
 import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
 import org.jetbrains.kotlin.build.report.metrics.BuildTimeMetric
+import org.jetbrains.kotlin.build.report.metrics.COMPILE_ITERATION
 import org.jetbrains.kotlin.build.report.metrics.endMeasureGc
 import org.jetbrains.kotlin.build.report.metrics.startMeasureGc
 import org.jetbrains.kotlin.build.report.reportPerformanceData
@@ -410,6 +411,7 @@ abstract class CompileServiceImplBase(
                             arrayListOf(perfString)
                         )
                     }
+                    icReporter.addMetric(COMPILE_ITERATION, 1) // in non-IC case there's always 1 iteration
                     icReporter.endMeasureGc()
                     icReporter.flush()
                     exitCode
