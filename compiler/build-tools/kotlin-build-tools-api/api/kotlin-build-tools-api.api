@@ -655,6 +655,11 @@ public final class org/jetbrains/kotlin/buildtools/api/jvm/JvmPlatformToolchain$
 	public final fun from (Lorg/jetbrains/kotlin/buildtools/api/KotlinToolchains;)Lorg/jetbrains/kotlin/buildtools/api/jvm/JvmPlatformToolchain;
 }
 
+public final class org/jetbrains/kotlin/buildtools/api/jvm/JvmPlatformToolchainKt {
+	public static final fun classpathSnapshottingOperation (Lorg/jetbrains/kotlin/buildtools/api/jvm/JvmPlatformToolchain;Ljava/nio/file/Path;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/buildtools/api/jvm/operations/JvmClasspathSnapshottingOperation;
+	public static final fun jvmCompilationOperation (Lorg/jetbrains/kotlin/buildtools/api/jvm/JvmPlatformToolchain;Ljava/util/List;Ljava/nio/file/Path;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/buildtools/api/jvm/operations/JvmCompilationOperation;
+}
+
 public class org/jetbrains/kotlin/buildtools/api/jvm/JvmSnapshotBasedIncrementalCompilationConfiguration : org/jetbrains/kotlin/buildtools/api/jvm/JvmIncrementalCompilationConfiguration {
 	public static final field ASSURED_NO_CLASSPATH_SNAPSHOT_CHANGES Lorg/jetbrains/kotlin/buildtools/api/jvm/JvmSnapshotBasedIncrementalCompilationConfiguration$Option;
 	public static final field BACKUP_CLASSES Lorg/jetbrains/kotlin/buildtools/api/jvm/JvmSnapshotBasedIncrementalCompilationConfiguration$Option;
@@ -774,6 +779,10 @@ public final class org/jetbrains/kotlin/buildtools/api/jvm/operations/JvmCompila
 }
 
 public final class org/jetbrains/kotlin/buildtools/api/jvm/operations/JvmCompilationOperation$Option : org/jetbrains/kotlin/buildtools/api/internal/BaseOption {
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/jvm/operations/JvmCompilationOperationKt {
+	public static final fun snapshotBasedIcConfiguration (Lorg/jetbrains/kotlin/buildtools/api/jvm/operations/JvmCompilationOperation$Builder;Ljava/nio/file/Path;Lorg/jetbrains/kotlin/buildtools/api/SourcesChanges;Ljava/util/List;Ljava/nio/file/Path;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/buildtools/api/jvm/JvmSnapshotBasedIncrementalCompilationConfiguration;
 }
 
 public abstract interface class org/jetbrains/kotlin/buildtools/api/trackers/BuildMetricsCollector {
