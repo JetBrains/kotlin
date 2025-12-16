@@ -5,15 +5,12 @@
 
 package org.jetbrains.kotlin.analysis.api.symbols
 
-import com.intellij.openapi.extensions.ExtensionPointName
 import org.jetbrains.kotlin.analysis.api.KaExtensibleApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtElement
 
 /**
- * The entry point is deprecated. Use [KaAdditionalKDocResolutionProvider] instead.
- *
  * An extension point to provide additional symbols for a KDoc reference. KDoc link resolution will use symbols returned by this extension
  * point only if the real resolution was unsuccessful.
  *
@@ -34,27 +31,19 @@ import org.jetbrains.kotlin.psi.KtElement
  *
  * You can create the following provider:
  *
- * ```
- * class AdditionalKDocResolutionProviderBasedOnNameMatch : AdditionalKDocResolutionProvider {
+ * ```kotlin
+ * class KaAdditionalKDocResolutionProviderBasedOnNameMatch : KaAdditionalKDocResolutionProvider {
  *   override fun resolveKdocFqName(analysisSession: KaSession, fqName: FqName, contextElement: KtElement): Collection<KaSymbol> =
  *     contextElement.containingKtFile.declarations.filter { it.name == fqName.shortName().asString() }.map { it.getSymbol() }
  * }
  * ```
+ *
+ * The extension point name is `org.jetbrains.kotlin.analysis.kaAdditionalKDocResolutionProvider`.
  */
-@Deprecated("Use `KaAdditionalKDocResolutionProvider` instead")
 @KaExtensibleApi
-public interface AdditionalKDocResolutionProvider {
+public interface KaAdditionalKDocResolutionProvider {
     /**
      * Returns additional symbols for the given [contextElement] in KDoc.
      */
     public fun resolveKdocFqName(analysisSession: KaSession, fqName: FqName, contextElement: KtElement): Collection<KaSymbol>
-
-    public companion object {
-        @Suppress("DEPRECATION")
-        public val EP_NAME: ExtensionPointName<AdditionalKDocResolutionProvider> =
-            ExtensionPointName("org.jetbrains.kotlin.analysis.additionalKDocResolutionProvider")
-
-        public fun resolveKdocFqName(analysisSession: KaSession, fqName: FqName, contextElement: KtElement): Collection<KaSymbol> =
-            EP_NAME.extensions.flatMap { it.resolveKdocFqName(analysisSession, fqName, contextElement) }
-    }
 }

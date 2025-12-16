@@ -53,8 +53,6 @@ class AnalysisApiNameConventionTest : AbstractAnalysisApiSurfaceCodebaseValidati
             "org.jetbrains.kotlin.analysis.api.components.QualifierToShortenInfo",
             "org.jetbrains.kotlin.analysis.api.components.ThisLabelToShortenInfo",
             "org.jetbrains.kotlin.analysis.api.components.ShortenCommand",
-
-            "org.jetbrains.kotlin.analysis.api.symbols.AdditionalKDocResolutionProvider", // KT-82442
         )
     }
 }

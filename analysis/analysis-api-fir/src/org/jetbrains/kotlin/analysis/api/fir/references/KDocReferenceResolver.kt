@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.references
 
+import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.KaScopeKind
@@ -41,6 +42,18 @@ import org.jetbrains.kotlin.utils.yieldIfNotNull
 
 @Suppress("DuplicatedCode")
 internal object KDocReferenceResolver {
+    private val EP_NAME: ExtensionPointName<KaAdditionalKDocResolutionProvider> = ExtensionPointName(
+        "org.jetbrains.kotlin.kaAdditionalKDocResolutionProvider"
+    )
+
+    fun resolveKdocFqName(
+        analysisSession: KaSession,
+        fqName: FqName,
+        contextElement: KtElement,
+    ): Collection<KaSymbol> = EP_NAME.extensions.flatMap {
+        it.resolveKdocFqName(analysisSession, fqName, contextElement)
+    }
+
     /**
      * [symbol] is the symbol referenced by this resolve result.
      *
@@ -225,7 +238,7 @@ internal object KDocReferenceResolver {
      * Then, if no symbols were found on previous stages, the following symbol categories are searched:
      * 1. Type qualified extensions
      * 2. Packages
-     * 3. Symbols provided via [AdditionalKDocResolutionProvider] extension point
+     * 3. Symbols provided via [KaAdditionalKDocResolutionProvider] extension point
      *
      * This resolution algorithm is implemented according to KEEP-0389 "Streamline ambiguous KDoc links".
      */
@@ -480,7 +493,7 @@ internal object KDocReferenceResolver {
                     .ifNotEmpty { return this.toResolveResults() }
 
                 // Search for symbols provided via `AdditionalKDocResolutionProvider` extension point
-                AdditionalKDocResolutionProvider.resolveKdocFqName(useSiteSession, fqName, contextElement).getThrowableSymbols()
+                resolveKdocFqName(useSiteSession, fqName, contextElement).getThrowableSymbols()
                     .ifNotEmpty { return this.toResolveResults() }
             }
 
@@ -519,7 +532,7 @@ internal object KDocReferenceResolver {
         }
 
         // Search for symbols provided via `AdditionalKDocResolutionProvider` extension point
-        AdditionalKDocResolutionProvider.resolveKdocFqName(useSiteSession, fqName, contextElement)
+        resolveKdocFqName(useSiteSession, fqName, contextElement)
             .ifNotEmpty { return this.toResolveResults() }
 
         return emptyList()

@@ -91,6 +91,8 @@
     <psiReferenceProvider implementation="org.jetbrains.kotlin.analysis.api.fir.references.KaFirCollectionLiteralReference$Provider"/>
     <psiReferenceProvider implementation="org.jetbrains.kotlin.analysis.api.fir.references.KaFirKDocReference$Provider"/>
     <psiReferenceProvider implementation="org.jetbrains.kotlin.analysis.api.fir.references.KaFirSimpleNameReference$Provider"/>
+
+    <kaAdditionalKDocResolutionProvider implementation="org.jetbrains.kotlin.analysis.api.fir.references.KaAdditionalKDocResolutionProviderAdapter"/>
   </extensions>
 
   <projectListeners>
