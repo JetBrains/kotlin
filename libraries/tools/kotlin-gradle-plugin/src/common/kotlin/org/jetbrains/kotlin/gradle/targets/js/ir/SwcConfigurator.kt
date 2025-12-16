@@ -6,8 +6,6 @@
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.gradle.api.Action
-import org.gradle.api.file.Directory
-import org.gradle.api.file.DuplicatesStrategy
 import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants.ES_2015
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompilerOptions
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider

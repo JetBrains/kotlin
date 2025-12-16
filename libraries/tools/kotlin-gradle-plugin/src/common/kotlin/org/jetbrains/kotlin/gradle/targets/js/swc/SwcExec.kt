@@ -91,8 +91,6 @@ internal constructor(
 
         if (isIncremental) {
             logger.info("$path SWC incremental setup, re-compiling ${filesToTranspile.size} files, deleting ${deletedFiles.size} stale files")
-        } else {
-            logger.info("$path SWC non-incremental setup, re-compiling all files")
         }
 
         if (deletedFiles.isNotEmpty()) {
@@ -107,8 +105,6 @@ internal constructor(
                 fileExtension = fileExtension.get(),
                 environmentCode = mode.get().code
             )
-
-            logger.info("$path running swc with args $args")
 
             execOps.exec { spec ->
                 spec.executable = executable.get()

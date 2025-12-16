@@ -14,7 +14,7 @@ import java.io.File
 import javax.inject.Inject
 
 @DisableCachingByDefault
-abstract class SwcSetupTask
+internal abstract class SwcSetupTask
 @Inject
 internal constructor(
     settings: SwcEnvSpec,

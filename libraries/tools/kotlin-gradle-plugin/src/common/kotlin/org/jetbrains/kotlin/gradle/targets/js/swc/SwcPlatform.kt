@@ -12,7 +12,6 @@ internal data class SwcPlatform(
     val name: String,
     val arch: String,
 ) {
-    // TODO: Add support of Alpine Linux
     val cStdlib: String?
         get() = when (name) {
             LINUX -> GNU_LIB
@@ -42,24 +41,23 @@ internal data class SwcPlatform(
         const val X32 = "ia32"
         const val ARM = "arm64"
 
-        // TODO: use this cStdlib to add support of Alpine Linux
-        const val LIBC = "musl"
         const val GNU_LIB = "gnu"
         const val MSVC = "msvc"
 
-        internal fun parseSwcPlatform(name: String, arch: String): SwcPlatform? {
-            return parseOsName(name.lowercase(java.util.Locale.ROOT))?.let {
-                SwcPlatform(it, parseOsArch(arch.lowercase(java.util.Locale.ROOT)))
-            }
+        internal fun parseSwcPlatform(name: String, arch: String): SwcPlatform {
+            return SwcPlatform(
+                parseOsName(name.lowercase(java.util.Locale.ROOT)),
+                parseOsArch(arch.lowercase(java.util.Locale.ROOT))
+            )
         }
 
-        private fun parseOsName(name: String): String? {
+        private fun parseOsName(name: String): String {
             return when {
                 name.contains("windows") -> WIN
                 name.contains("mac") -> DARWIN
                 name.contains("linux") -> LINUX
                 name.contains("freebsd") -> LINUX
-                else -> null
+                else -> error("Unsupported platform: $name")
             }
         }
 

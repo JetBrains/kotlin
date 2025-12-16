@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.gradle.utils.getFile
 /**
  * Specification for executing Swc, a transpilation tool for JS files.
  */
-abstract class SwcEnvSpec : EnvSpec<SwcEnv>() {
+internal abstract class SwcEnvSpec : EnvSpec<SwcEnv>() {
     /**
      * Specify Swc platform information, with name and architecture.
      */

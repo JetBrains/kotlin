@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 
-abstract class SwcPlugin internal constructor() : Plugin<Project> {
+internal abstract class SwcPlugin internal constructor() : Plugin<Project> {
     override fun apply(project: Project) {
         MultiplePluginDeclarationDetector.detect(project)
 

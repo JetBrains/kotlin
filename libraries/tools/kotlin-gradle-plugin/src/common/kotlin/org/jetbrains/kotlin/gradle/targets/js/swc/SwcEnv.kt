@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.gradle.targets.js.swc
 import org.jetbrains.kotlin.gradle.targets.js.AbstractEnv
 import java.io.File
 
-class SwcEnv(
+internal class SwcEnv(
     override val download: Boolean,
     override val downloadBaseUrl: String?,
     override val allowInsecureProtocol: Boolean,
