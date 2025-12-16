@@ -4,8 +4,7 @@
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
       symbols:
-        0: (in ROOT) class AA(abc: kotlin.String)
-        1: (in AA) constructor(abc: kotlin.String)
+        (in ROOT) class AA(abc: kotlin.String)
 
 <caret_2>:
   KDocName(29,32): 'abc'
@@ -29,8 +28,7 @@
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
       symbols:
-        0: (in ROOT) class AA(abc: kotlin.String)
-        1: (in AA) constructor(abc: kotlin.String)
+        (in ROOT) class AA(abc: kotlin.String)
 
 <caret_5>:
   KDocName(101,104): 'abc'
