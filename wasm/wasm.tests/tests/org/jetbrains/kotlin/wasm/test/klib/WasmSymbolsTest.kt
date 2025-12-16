@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.test.backend.ir.IrPreSerializationWasmSymbolValidati
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.frontend.fir.Fir2IrResultsConverter
 import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
-import org.jetbrains.kotlin.test.klib.AbstractPreSerializationSymbolsTest
+import org.jetbrains.kotlin.test.klib.AbstractSymbolsValidationTest
 import org.jetbrains.kotlin.test.services.configuration.WasmFirstStageEnvironmentConfigurator
 import org.jetbrains.kotlin.utils.bind
 import org.jetbrains.kotlin.wasm.test.converters.FirWasmKlibSerializerFacade
@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.wasm.test.converters.WasmDeserializerFacade
 import org.jetbrains.kotlin.wasm.test.converters.WasmPreSerializationLoweringFacade
 
 @Suppress("JUnitTestCaseWithNoTests")
-class WasmPreSerializationSymbolsTest : AbstractPreSerializationSymbolsTest(
+class WasmSymbolsTest : AbstractSymbolsValidationTest(
     TargetBackend.WASM,
     WasmPlatforms.unspecifiedWasmPlatform,
     ::FirFrontendFacade,
