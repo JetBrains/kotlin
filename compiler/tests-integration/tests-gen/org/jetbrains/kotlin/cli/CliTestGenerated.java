@@ -1701,11 +1701,6 @@ public class CliTestGenerated extends AbstractCliTest {
       runTest("compiler/testData/cli/jvm/nameBasedDestructuringWithoutCompilerArgument.args");
     }
 
-    @TestMetadata("nestedTypeAliasesEnabled.args")
-    public void testNestedTypeAliasesEnabled() {
-      runTest("compiler/testData/cli/jvm/nestedTypeAliasesEnabled.args");
-    }
-
     @TestMetadata("noJdkAvoidFailure.args")
     public void testNoJdkAvoidFailure() {
       runTest("compiler/testData/cli/jvm/noJdkAvoidFailure.args");
@@ -1879,11 +1874,6 @@ public class CliTestGenerated extends AbstractCliTest {
     @TestMetadata("werrorWithStrongWarning.args")
     public void testWerrorWithStrongWarning() {
       runTest("compiler/testData/cli/jvm/werrorWithStrongWarning.args");
-    }
-
-    @TestMetadata("whenGuardsEnable.args")
-    public void testWhenGuardsEnable() {
-      runTest("compiler/testData/cli/jvm/whenGuardsEnable.args");
     }
 
     @TestMetadata("wrongAbiVersion.args")
@@ -2263,6 +2253,21 @@ public class CliTestGenerated extends AbstractCliTest {
     @TestMetadata("anonymousObjectType.args")
     public void testAnonymousObjectType() {
       runTest("compiler/testData/cli/metadata/anonymousObjectType.args");
+    }
+
+    @TestMetadata("cliArgsNotRedundant.args")
+    public void testCliArgsNotRedundant() {
+      runTest("compiler/testData/cli/metadata/cliArgsNotRedundant.args");
+    }
+
+    @TestMetadata("cliArgsRedundant.args")
+    public void testCliArgsRedundant() {
+      runTest("compiler/testData/cli/metadata/cliArgsRedundant.args");
+    }
+
+    @TestMetadata("cliArgsRedundantButSuppressed.args")
+    public void testCliArgsRedundantButSuppressed() {
+      runTest("compiler/testData/cli/metadata/cliArgsRedundantButSuppressed.args");
     }
 
     @TestMetadata("complexAnnotationArgument.args")
