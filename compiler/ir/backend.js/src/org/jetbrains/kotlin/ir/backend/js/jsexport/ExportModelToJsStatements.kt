@@ -169,15 +169,6 @@ class ExportModelToJsStatements(
                     .filter { it is ExportedFunction && it.isStatic && !it.ir.isEs6ConstructorReplacement }
                     .takeIf { !declaration.ir.isInner }.orEmpty()
 
-                if (
-                    declaration.isInterface &&
-                    staticFunctions.isEmpty() &&
-                    declaration.nestedClasses.isEmpty() &&
-                    declaration.defaultImplementations.isEmpty()
-                ) {
-                    return emptyList()
-                }
-
                 val (name, classInitialization) = declaration.getNameAndInitialization()
                 val newNameSpace = when {
                     namespace != null -> jsElementAccess(declaration.name, namespace)
@@ -288,8 +279,7 @@ class ExportModelToJsStatements(
     }
 
     private fun ExportedClass.getNameAndInitialization(): Pair<JsName, JsStatement?> {
-        val classRef = if (this is ExportedRegularClass && isInterface) JsObjectLiteral() else ir.getClassRef(staticContext)
-        return when (classRef) {
+        return when (val classRef = ir.getClassRef(staticContext)) {
             is JsNameRef -> classRef.name!! to null
             else -> {
                 val stableName = JsName(makeValidES5Identifier(name), true)

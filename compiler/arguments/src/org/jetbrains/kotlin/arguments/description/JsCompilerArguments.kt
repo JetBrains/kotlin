@@ -485,6 +485,18 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
     }
 
     compilerArgument {
+        name = "Xenable-implementable-interfaces-exporting"
+        compilerName = "allowImplementableInterfacesExporting"
+        description = "Enable exporting of Kotlin interfaces to implement them from JavaScript/TypeScript.".asReleaseDependent()
+        valueType = BooleanType.defaultFalse
+        additionalAnnotations(Enables(LanguageFeature.JsExportInterfacesInImplementableWay))
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_3_20,
+        )
+    }
+
+    compilerArgument {
         name = "Xfake-override-validator"
         description = "Enable the IR fake override validator.".asReleaseDependent()
         valueType = BooleanType.defaultFalse

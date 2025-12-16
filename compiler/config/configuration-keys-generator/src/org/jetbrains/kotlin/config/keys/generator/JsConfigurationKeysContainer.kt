@@ -70,6 +70,8 @@ object JsConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.js.con
 
     val COMPILE_LONG_AS_BIGINT by key<Boolean>("compile Long as BigInt")
 
+    val COMPILE_INTERFACES_TO_BE_IMPLEMENTABLE by key<Boolean>("for d.ts files introduce interfaces that can be implemented from TypeScript")
+
     val GENERATE_REGION_COMMENTS by key<Boolean>(
         "generate special comments at the start and the end of each file block, it allows to fold them and navigate to them in the IDEA"
     )

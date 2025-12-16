@@ -85,6 +85,10 @@ declare namespace JS_TESTS {
                 readonly "foo.InterfaceWithDefaultArguments": unique symbol;
             };
         }
+        namespace InterfaceWithDefaultArguments {
+            function foo($this: foo.InterfaceWithDefaultArguments, x?: number): number;
+            function bar($this: foo.InterfaceWithDefaultArguments, x?: number): number;
+        }
         class ImplementorOfInterfaceWithDefaultArguments implements foo.InterfaceWithDefaultArguments {
             constructor();
             bar(x?: number): number;

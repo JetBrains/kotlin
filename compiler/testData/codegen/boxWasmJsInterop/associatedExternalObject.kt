@@ -1,5 +1,3 @@
-// TARGET_BACKEND: WASM
-
 // FILE: findAssociatedExternalObject.js
 
 const JS_OBJECT = {}

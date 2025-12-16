@@ -1,7 +1,7 @@
 // CHECK_TYPESCRIPT_DECLARATIONS
 // RUN_PLAIN_BOX_FUNCTION
 // SKIP_NODE_JS
-// LANGUAGE: +JsStaticInInterface +JsAllowExportingSuspendFunctions
+// LANGUAGE: +JsStaticInInterface +JsAllowExportingSuspendFunctions +JsExportInterfacesInImplementableWay
 // INFER_MAIN_MODULE
 // WITH_STDLIB
 // MODULE: JS_TESTS

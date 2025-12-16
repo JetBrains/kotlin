@@ -105,6 +105,9 @@ object JSConfigurationKeys {
     val COMPILE_LONG_AS_BIGINT = CompilerConfigurationKey.create<Boolean>("compile Long as BigInt")
 
     @JvmField
+    val COMPILE_INTERFACES_TO_BE_IMPLEMENTABLE = CompilerConfigurationKey.create<Boolean>("for d.ts files introduce interfaces that can be implemented from TypeScript")
+
+    @JvmField
     val GENERATE_REGION_COMMENTS = CompilerConfigurationKey.create<Boolean>("generate special comments at the start and the end of each file block, it allows to fold them and navigate to them in the IDEA")
 
     @JvmField
@@ -289,6 +292,10 @@ var CompilerConfiguration.compileLambdasAsEs6ArrowFunctions: Boolean
 var CompilerConfiguration.compileLongAsBigint: Boolean
     get() = getBoolean(JSConfigurationKeys.COMPILE_LONG_AS_BIGINT)
     set(value) { put(JSConfigurationKeys.COMPILE_LONG_AS_BIGINT, value) }
+
+var CompilerConfiguration.compileInterfacesToBeImplementable: Boolean
+    get() = getBoolean(JSConfigurationKeys.COMPILE_INTERFACES_TO_BE_IMPLEMENTABLE)
+    set(value) { put(JSConfigurationKeys.COMPILE_INTERFACES_TO_BE_IMPLEMENTABLE, value) }
 
 var CompilerConfiguration.generateRegionComments: Boolean
     get() = getBoolean(JSConfigurationKeys.GENERATE_REGION_COMMENTS)

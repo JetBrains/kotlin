@@ -31,21 +31,33 @@ public class ExportedNamespace(
     public val isPrivate: Boolean = false
 ) : ExportedDeclaration()
 
-public sealed interface ExportedFunctionName {
-    public class Identifier(public val value: String) : ExportedFunctionName
-    public class WellKnownSymbol(public val value: String) : ExportedFunctionName
+public sealed interface ExportedMember {
+    public val name: ExportedMemberName
+    public val isMember: Boolean
+    public val isStatic: Boolean
+}
+
+public sealed interface ExportedMemberName {
+    public class Identifier(override val value: String) : ExportedMemberName
+    public class SymbolReference(override val value: String) : ExportedMemberName
+
+    public val value: String
+
+    public companion object {
+        public fun WellKnownSymbol(value: String): SymbolReference = SymbolReference("Symbol.$value")
+    }
 }
 
 public data class ExportedFunction(
-    val name: ExportedFunctionName,
+    override val name: ExportedMemberName,
     val returnType: ExportedType,
     val parameters: List<ExportedParameter>,
     val typeParameters: List<ExportedTypeParameter> = emptyList(),
-    val isMember: Boolean = false,
-    val isStatic: Boolean = false,
+    override val isMember: Boolean = false,
+    override val isStatic: Boolean = false,
     val isAbstract: Boolean = false,
     override val isProtected: Boolean,
-) : ExportedDeclaration()
+) : ExportedDeclaration(), ExportedMember
 
 public data class ExportedConstructor(
     val parameters: List<ExportedParameter>,
@@ -63,18 +75,18 @@ public data class ExportedConstructSignature(
 ) : ExportedDeclaration()
 
 public data class ExportedProperty(
-    val name: String,
+    override val name: ExportedMemberName,
     val type: ExportedType,
     val mutable: Boolean = true,
-    val isMember: Boolean = false,
-    val isStatic: Boolean = false,
+    override val isMember: Boolean = false,
+    override val isStatic: Boolean = false,
     val isAbstract: Boolean = false,
     override val isProtected: Boolean = false,
     val isField: Boolean = false,
     val isObjectGetter: Boolean = false,
     val isOptional: Boolean = false,
     val isQualified: Boolean = false,
-) : ExportedDeclaration()
+) : ExportedDeclaration(), ExportedMember
 
 // TODO: Cover all cases with frontend and disable error declarations
 public class ErrorDeclaration(public val message: String) : ExportedDeclaration()
@@ -158,6 +170,7 @@ public sealed class ExportedType {
     public sealed class LiteralType<T : Any>(public val value: T) : ExportedType() {
         public class StringLiteralType(value: String) : LiteralType<String>(value)
         public class NumberLiteralType(value: Number) : LiteralType<Number>(value)
+        public class BooleanLiteralType(value: Boolean) : LiteralType<Boolean>(value)
     }
 
     public data class Array(val elementType: ExportedType) : ExportedType() {

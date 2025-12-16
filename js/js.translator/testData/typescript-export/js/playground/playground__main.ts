@@ -13,6 +13,9 @@ import justCallAsyncFoo = JS_TESTS.foo.justCallAsyncFoo;
 import KotlinFooImpl = JS_TESTS.foo.KotlinFooImpl;
 
 class TsFooImpl implements IFoo<string> {
+    readonly [IFoo.Symbol] = true
+    readonly [ExportedParent.Symbol] = true
+
     foo(): string { return "OK" }
 
     async asyncFoo(): Promise<string> { return "OK" }
@@ -66,9 +69,11 @@ class TsFooImpl implements IFoo<string> {
 
 /**
  * Not-solved but has a good-enough solution:
- * - Check is interface (P2)
  *
  * Solved problems
+ * - Problem: Check is interface (P2)
+ *   Solution: We stopped on the solution with Symbol field
+ *
  * - Problem: It's possible to export interface with a not-exported parent (P1)
  *   Solution: It would be a new frontend check the same as we have for interface visibility.
  *
@@ -116,7 +121,7 @@ async function testFoo(foo: IFoo<string>, languageImplemented: string): Promise<
     if (result !== `${languageImplemented}: KOTLIN SIDE`) return "Fail: just calling callingWithBridge returns unexpected result: " + result
 
     // TODO: uncomment when is checks will work
-    // if (!checkIsInterface(foo)) return "Fail: foo failed `is`-check on IFoo on the Kotlin side"
+    if (!checkIsInterface(foo)) return "Fail: foo failed `is`-check on IFoo on the Kotlin side"
 
     result = foo.withDefaultImplementation()
     if (result !== "KOTLIN IMPLEMENTATION: OK") return "Fail: just calling withDefaultImplementation method returns unexpected result: " + result

@@ -11,6 +11,10 @@ internal fun MutableMap<LanguageFeature, LanguageFeature.State>.configureJsLangu
         put(LanguageFeature.JsEnableExtensionFunctionInExternals, LanguageFeature.State.ENABLED)
     }
 
+    if (arguments.allowImplementableInterfacesExporting) {
+        put(LanguageFeature.JsExportInterfacesInImplementableWay, LanguageFeature.State.ENABLED)
+    }
+
     if (arguments.allowExportingSuspendFunctions) {
         put(LanguageFeature.JsAllowExportingSuspendFunctions, LanguageFeature.State.ENABLED)
     }

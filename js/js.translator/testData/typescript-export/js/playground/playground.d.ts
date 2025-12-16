@@ -4,6 +4,9 @@ declare namespace JS_TESTS {
     namespace kotlin.collections {
         interface KtList<E> /* extends kotlin.collections.Collection<E> */ {
             asJsReadonlyArrayView(): ReadonlyArray<E>;
+            readonly __doNotUseOrImplementIt: {
+                readonly "kotlin.collections.KtList": unique symbol;
+            };
         }
         namespace KtList {
             function fromJsArray<E>(array: ReadonlyArray<E>): kotlin.collections.KtList<E>;
@@ -17,8 +20,10 @@ declare namespace JS_TESTS {
             propertyWithDefaultSetter: string;
             setGetterAndSetterWithJsName(value: string): void;
             getGetterAndSetterWithJsName(): string;
+            readonly [foo.ExportedParent.Symbol]: true;
         }
         namespace ExportedParent {
+            const Symbol: unique symbol;
             namespace defaults {
                 function withDefaultImplementation($this: foo.ExportedParent): string;
                 const propertyWithDefaultSetter: {
@@ -36,8 +41,10 @@ declare namespace JS_TESTS {
             withBridge(x: T): T;
             suspendWithDefaultImplementation(): Promise<string>;
             readonly propertyWithDefaultGetter: string;
+            readonly [foo.IFoo.Symbol]: true;
         }
         namespace IFoo {
+            const Symbol: unique symbol;
             namespace defaults {
                 function suspendWithDefaultImplementation<T extends unknown/* kotlin.Comparable<T> */>($this: foo.IFoo<T>): Promise<string>;
                 const propertyWithDefaultGetter: {
@@ -69,6 +76,8 @@ declare namespace JS_TESTS {
             set propertyWithDefaultSetter(value: string);
             setGetterAndSetterWithJsName(value: string): void;
             getGetterAndSetterWithJsName(): string;
+            readonly [foo.IFoo.Symbol]: true;
+            readonly [foo.ExportedParent.Symbol]: true;
         }
         namespace KotlinFooImpl {
             /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */

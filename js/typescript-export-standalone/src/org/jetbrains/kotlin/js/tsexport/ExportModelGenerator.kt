@@ -98,8 +98,8 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
                     exportType(function.returnType)
                 }
                 ExportedFunction(
-                    name = function.getJsSymbolForOverriddenDeclaration()?.let(ExportedFunctionName::WellKnownSymbol)
-                        ?: ExportedFunctionName.Identifier(function.getExportedIdentifier()),
+                    name = function.getJsSymbolForOverriddenDeclaration()?.let(ExportedMemberName::WellKnownSymbol)
+                        ?: ExportedMemberName.Identifier(function.getExportedIdentifier()),
                     returnType = returnType,
                     parameters = exportFunctionParameters(function),
                     typeParameters = function.typeParameters.memoryOptimizedMap { exportTypeParameter(it) },
@@ -148,7 +148,7 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
         val parentClass = parent as? KaClassSymbol
         val isOptional = property.isExternal && parentClass != null && property.returnType.isNullable
         return ExportedProperty(
-            name = property.getExportedIdentifier(),
+            name = ExportedMemberName.Identifier(property.getExportedIdentifier()),
             type = exportType(property.returnType),
             mutable = !property.isVal,
             isMember = parentClass != null,

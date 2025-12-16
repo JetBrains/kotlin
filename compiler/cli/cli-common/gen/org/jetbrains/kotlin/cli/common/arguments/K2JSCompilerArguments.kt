@@ -35,6 +35,17 @@ class K2JSCompilerArguments : K2WasmCompilerArguments() {
         }
 
     @Argument(
+        value = "-Xenable-implementable-interfaces-exporting",
+        description = "Enable exporting of Kotlin interfaces to implement them from JavaScript/TypeScript.",
+    )
+    @Enables(LanguageFeature.JsExportInterfacesInImplementableWay)
+    var allowImplementableInterfacesExporting: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
         value = "-Xenable-suspend-function-exporting",
         description = "Enable exporting suspend functions to JavaScript/TypeScript.",
     )

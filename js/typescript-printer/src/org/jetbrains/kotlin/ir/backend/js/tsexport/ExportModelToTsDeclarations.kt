@@ -141,8 +141,11 @@ public class ExportModelToTsDeclarations(private val moduleKind: ModuleKind) {
     private fun ExportedProperty.generateTypeScriptString(indent: String, prefix: String): String {
         val extraIndent = "$indent    "
         val optional = if (isOptional) "?" else ""
-        val containsUnresolvedChar = !name.isValidES5Identifier()
-        val memberName = if (containsUnresolvedChar) "\"$name\"" else name
+        val memberName = when (val propertyName = name) {
+            is ExportedMemberName.SymbolReference -> "[${propertyName.value}]"
+            is ExportedMemberName.Identifier if !propertyName.value.isValidES5Identifier() -> "\"${propertyName.value}\""
+            else -> propertyName.value
+        }
 
         val typeToTypeScript = type.toTypeScript(if (!isMember && isEsModules && isObjectGetter) extraIndent else indent)
 
@@ -161,14 +164,14 @@ public class ExportModelToTsDeclarations(private val moduleKind: ModuleKind) {
             }
         } else {
             when {
-                containsUnresolvedChar -> ""
+                memberName != name.value -> ""
                 isEsModules && !isQualified -> {
                     if (isObjectGetter) {
                         "${prefix}const $name: {\n${extraIndent}getInstance(): $typeToTypeScript;\n};"
                     } else {
                         val getter = "get(): $typeToTypeScript;"
                         val setter = runIf(mutable) { " set(value: $typeToTypeScript): void;" }
-                        "${prefix}const $name: { $getter${setter.orEmpty()} };${generateDefaultExportIfNeed(name, indent)}"
+                        "${prefix}const $name: { $getter${setter.orEmpty()} };${generateDefaultExportIfNeed(name.value, indent)}"
                     }
                 }
 
@@ -208,13 +211,13 @@ public class ExportModelToTsDeclarations(private val moduleKind: ModuleKind) {
 
         val renderedReturnType = returnType.toTypeScript(indent)
         val containsUnresolvedChar = when (val exportedName = name) {
-            is ExportedFunctionName.Identifier -> !exportedName.value.isValidES5Identifier()
-            is ExportedFunctionName.WellKnownSymbol -> true
+            is ExportedMemberName.Identifier -> !exportedName.value.isValidES5Identifier()
+            is ExportedMemberName.SymbolReference -> true
         }
 
         val escapedName = when (val exportedName = name) {
-            is ExportedFunctionName.WellKnownSymbol -> "[Symbol.${exportedName.value}]"
-            is ExportedFunctionName.Identifier -> when {
+            is ExportedMemberName.SymbolReference -> "[${exportedName.value}]"
+            is ExportedMemberName.Identifier -> when {
                 isMember && !exportedName.value.isValidES5Identifier() -> "\"${exportedName.value}\""
                 else -> exportedName.value
             }
@@ -289,7 +292,7 @@ public class ExportModelToTsDeclarations(private val moduleKind: ModuleKind) {
                 superClasses = emptyList(),
                 members = listOf(
                     ExportedProperty(
-                        name = getInstance,
+                        name = ExportedMemberName.Identifier(getInstance),
                         type = ExportedType.Function(
                             emptyList(),
                             ExportedType.TypeOf(ExportedType.ClassType("$name.$Metadata.$MetadataType", emptyList()))
@@ -321,8 +324,14 @@ public class ExportModelToTsDeclarations(private val moduleKind: ModuleKind) {
         val superClassClause = superClasses.toExtendsClause(indent)
         val superInterfacesClause = superInterfaces.toImplementsClause(superInterfacesKeyword, indent)
 
-        val (membersForNamespace, classMembers) = members.partition { isInterface && it is ExportedFunction && it.isStatic }
-        val namespaceMembers = membersForNamespace.map { (it as ExportedFunction).copy(isMember = false) }
+        val (membersForNamespace, classMembers) = members.partition { isInterface && it is ExportedMember && it.isStatic }
+        val namespaceMembers = membersForNamespace.map {
+            when (it) {
+                is ExportedFunction -> it.copy(isMember = false)
+                is ExportedProperty -> it.copy(isMember = false)
+                else -> it
+            }
+        }
         val membersString = classMembers
             .joinToString("") { it.toTypeScript("$indent    ") + "\n" }
 
@@ -345,7 +354,7 @@ public class ExportModelToTsDeclarations(private val moduleKind: ModuleKind) {
 
         val metadataNamespace = runIf(requireMetadata) {
             val constructorProperty = ExportedProperty(
-                name = MetadataConstructor,
+                name = ExportedMemberName.Identifier(MetadataConstructor),
                 type = ExportedType.ConstructorType(
                     typeParameters,
                     ExportedType.ClassType(
@@ -476,7 +485,7 @@ public class ExportModelToTsDeclarations(private val moduleKind: ModuleKind) {
         }
 
         is ExportedType.LiteralType.StringLiteralType -> "\"$value\""
-        is ExportedType.LiteralType.NumberLiteralType -> value.toString()
+        is ExportedType.LiteralType.NumberLiteralType, is ExportedType.LiteralType.BooleanLiteralType -> value.toString()
         is ExportedType.ImplicitlyExportedType -> {
             val typeString = type.toTypeScript("", true)
             if (isInCommentContext) {
