@@ -855,7 +855,7 @@ class NewConstraintSystemImpl(
         checkState(State.BUILDING, State.COMPLETION, State.FREEZED)
         val constraints = storage.notFixedTypeVariables[type.typeConstructor()]?.constraints ?: return false
         return constraints.any {
-            (it.kind == ConstraintKind.UPPER || it.kind == ConstraintKind.EQUALITY) &&
+            (it.kind == ConstraintKind.UPPER || it.kind == ConstraintKind.EQUALITY) && !it.isNoInfer &&
                     it.type.lowerBoundIfFlexible().isUnit()
         }
     }
