@@ -1,0 +1,11 @@
+open class C : J1, J2 {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  override fun foo(a: Int?) {
+  }
+
+}

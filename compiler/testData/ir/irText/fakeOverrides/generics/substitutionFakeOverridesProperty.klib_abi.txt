@@ -1,0 +1,18 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+abstract interface /A { // /A|null[0]
+    open var foo // /A.foo|{}foo[0]
+        open fun <get-foo>(): kotlin/Int // /A.foo.<get-foo>|<get-foo>(){}[0]
+        open fun <set-foo>(kotlin/Int) // /A.foo.<set-foo>|<set-foo>(kotlin.Int){}[0]
+}
+abstract interface <#A: kotlin/Any?> /B { // /B|null[0]
+    abstract val foo // /B.foo|{}foo[0]
+        abstract fun <get-foo>(): #A // /B.foo.<get-foo>|<get-foo>(){}[0]
+}
+final class /C : /A, /B<kotlin/Int> { // /C|null[0]
+    constructor <init>() // /C.<init>|<init>(){}[0]
+}

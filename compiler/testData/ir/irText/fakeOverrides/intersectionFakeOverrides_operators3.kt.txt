@@ -1,0 +1,109 @@
+open class A<T : Any?> {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  external fun externalFun(): T
+
+  external fun externalFunSpecialized(): String
+
+  infix fun infixFun(a: Any): T {
+    return CHECK_NOT_NULL<Nothing>(arg0 = null)
+  }
+
+  infix fun infixFunSpecialized(a: Any): String {
+    return CHECK_NOT_NULL<Nothing>(arg0 = null)
+  }
+
+  inline fun inlineFun(): T {
+    return CHECK_NOT_NULL<Nothing>(arg0 = null)
+  }
+
+  inline fun inlineFunSpecialized(): String {
+    return CHECK_NOT_NULL<Nothing>(arg0 = null)
+  }
+
+  operator fun minus(a: Any): String {
+    return CHECK_NOT_NULL<Nothing>(arg0 = null)
+  }
+
+  operator fun plus(a: Any): T {
+    return CHECK_NOT_NULL<Nothing>(arg0 = null)
+  }
+
+}
+
+class C1 : JavaIntermediate, I {
+  constructor() /* primary */ {
+    super/*JavaIntermediate*/()
+    /* <init>() */
+
+  }
+
+}
+
+class C2 : KotlinIntermediate, I {
+  constructor() /* primary */ {
+    super/*KotlinIntermediate*/()
+    /* <init>() */
+
+  }
+
+}
+
+class D : A<String>, I {
+  constructor() /* primary */ {
+    super/*A*/<String>()
+    /* <init>() */
+
+  }
+
+}
+
+class E1 : JavaIntermediate {
+  constructor() /* primary */ {
+    super/*JavaIntermediate*/()
+    /* <init>() */
+
+  }
+
+}
+
+class E2 : KotlinIntermediate {
+  constructor() /* primary */ {
+    super/*KotlinIntermediate*/()
+    /* <init>() */
+
+  }
+
+}
+
+open class KotlinIntermediate : A<String> {
+  constructor() /* primary */ {
+    super/*A*/<String>()
+    /* <init>() */
+
+  }
+
+}
+
+interface I {
+  abstract fun externalFun(): String
+
+  abstract fun externalFunSpecialized(): String
+
+  abstract fun infixFun(a: Any): String
+
+  abstract fun infixFunSpecialized(a: Any): String
+
+  abstract fun inlineFun(): String
+
+  abstract fun inlineFunSpecialized(): String
+
+  abstract operator fun minus(a: Any): String
+
+  abstract operator fun plus(a: Any): String
+
+}

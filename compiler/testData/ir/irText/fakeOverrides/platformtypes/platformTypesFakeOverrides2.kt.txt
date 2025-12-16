@@ -1,0 +1,28 @@
+class C : I1, I2 {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+class CWithOverride : I1, I2 {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  override fun foo(a: Int) {
+    return Unit
+  }
+
+}
+
+interface I1 {
+  fun foo(a: Int) {
+    return Unit
+  }
+
+}

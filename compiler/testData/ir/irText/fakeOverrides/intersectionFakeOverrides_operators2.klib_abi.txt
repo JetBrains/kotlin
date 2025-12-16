@@ -1,0 +1,31 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final class /A1 : /B, /C, /D { // /A1|null[0]
+    constructor <init>() // /A1.<init>|<init>(){}[0]
+}
+final class /A2 : /B, /C, /D { // /A2|null[0]
+    constructor <init>() // /A2.<init>|<init>(){}[0]
+}
+final class /A3 : /B, /C { // /A3|null[0]
+    constructor <init>() // /A3.<init>|<init>(){}[0]
+}
+final class /A4 : /B, /D { // /A4|null[0]
+    constructor <init>() // /A4.<init>|<init>(){}[0]
+}
+open class /B { // /B|null[0]
+    constructor <init>() // /B.<init>|<init>(){}[0]
+    final fun infixFun(kotlin/Any): kotlin/String // /B.infixFun|infixFun(kotlin.Any){}[0]
+    final fun plus(kotlin/Any): kotlin/String // /B.plus|plus(kotlin.Any){}[0]
+}
+abstract interface /C { // /C|null[0]
+    abstract fun infixFun(kotlin/Any): kotlin/CharSequence // /C.infixFun|infixFun(kotlin.Any){}[0]
+    abstract fun plus(kotlin/Any): kotlin/CharSequence // /C.plus|plus(kotlin.Any){}[0]
+}
+abstract interface /D { // /D|null[0]
+    abstract fun infixFun(kotlin/Any): kotlin/Any // /D.infixFun|infixFun(kotlin.Any){}[0]
+    abstract fun plus(kotlin/Any): kotlin/Any // /D.plus|plus(kotlin.Any){}[0]
+}
