@@ -1,0 +1,71 @@
+class A {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  @JvmName(name = "bar1")
+  fun <T> bar(t: T) where T : I1, T : I2 {
+    return Unit
+  }
+
+  @JvmName(name = "bar2")
+  fun <T> bar(t: T) where T : I1, T : I3 {
+    return Unit
+  }
+
+  fun <T : Number> baz(t: T) {
+    return Unit
+  }
+
+  fun <T : CharSequence> baz(t: T) {
+    return Unit
+  }
+
+  @JvmName(name = "foo1")
+  fun <T : I1, I1 : Any?> foo() {
+    return Unit
+  }
+
+  @JvmName(name = "foo2")
+  fun <T : I1> foo() {
+    return Unit
+  }
+
+}
+
+class B : Base<I1> {
+  constructor() /* primary */ {
+    super/*Base*/<I1>()
+    /* <init>() */
+
+  }
+
+}
+
+open class Base<R : Any?> {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  fun <T : I1> foo(t: T) {
+    return Unit
+  }
+
+  fun <T : R> foo(t: T) {
+    return Unit
+  }
+
+}
+
+interface I1 {
+}
+
+interface I2 {
+}
+
+interface I3 {
+}

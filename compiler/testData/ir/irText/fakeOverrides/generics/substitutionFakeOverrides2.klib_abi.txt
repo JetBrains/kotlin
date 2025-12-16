@@ -1,0 +1,27 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+abstract interface /A1 : /I1<kotlin/String>, /J1 // /A1|null[0]
+abstract interface /A2 : /I2<kotlin/String>, /J2 // /A2|null[0]
+abstract interface /A3 : /I3<kotlin/String>, /J3 // /A3|null[0]
+abstract interface <#A: kotlin/Any?> /I1 { // /I1|null[0]
+    abstract fun foo(#A) // /I1.foo|foo(1:0){}[0]
+}
+abstract interface <#A: kotlin/Any?> /I2 { // /I2|null[0]
+    abstract fun foo(#A) // /I2.foo|foo(1:0){}[0]
+    abstract fun foo(kotlin/String) // /I2.foo|foo(kotlin.String){}[0]
+}
+abstract interface <#A: kotlin/Any?> /I3 { // /I3|null[0]
+    abstract fun foo(#A) // /I3.foo|foo(1:0){}[0]
+    abstract fun foo(kotlin/String) // /I3.foo|foo(kotlin.String){}[0]
+}
+abstract interface /J1 { // /J1|null[0]
+    abstract fun foo(kotlin/String) // /J1.foo|foo(kotlin.String){}[0]
+}
+abstract interface /J2 // /J2|null[0]
+abstract interface /J3 { // /J3|null[0]
+    open fun foo(kotlin/Int) // /J3.foo|foo(kotlin.Int){}[0]
+}

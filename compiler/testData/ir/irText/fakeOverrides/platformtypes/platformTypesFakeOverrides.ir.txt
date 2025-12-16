@@ -1,0 +1,239 @@
+FILE fqName:<root> fileName:/main.kt
+  CLASS CLASS name:Base modality:OPEN visibility:public superTypes:[kotlin.Any]
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.Base
+    PROPERTY name:propertyGetterCovariantOverrideInJava visibility:public modality:OPEN [var]
+      FIELD PROPERTY_BACKING_FIELD name:propertyGetterCovariantOverrideInJava type:kotlin.Number visibility:private
+        EXPRESSION_BODY
+          CONST Int type=kotlin.Int value=1
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-propertyGetterCovariantOverrideInJava> visibility:public modality:OPEN returnType:kotlin.Number
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Base
+        correspondingProperty: PROPERTY name:propertyGetterCovariantOverrideInJava visibility:public modality:OPEN [var]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public open fun <get-propertyGetterCovariantOverrideInJava> (): kotlin.Number declared in <root>.Base'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:propertyGetterCovariantOverrideInJava type:kotlin.Number visibility:private' type=kotlin.Number origin=null
+              receiver: GET_VAR '<this>: <root>.Base declared in <root>.Base.<get-propertyGetterCovariantOverrideInJava>' type=<root>.Base origin=null
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-propertyGetterCovariantOverrideInJava> visibility:public modality:OPEN returnType:kotlin.Unit
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Base
+        VALUE_PARAMETER kind:Regular name:<set-?> index:1 type:kotlin.Number
+        correspondingProperty: PROPERTY name:propertyGetterCovariantOverrideInJava visibility:public modality:OPEN [var]
+        BLOCK_BODY
+          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:propertyGetterCovariantOverrideInJava type:kotlin.Number visibility:private' type=kotlin.Unit origin=null
+            receiver: GET_VAR '<this>: <root>.Base declared in <root>.Base.<set-propertyGetterCovariantOverrideInJava>' type=<root>.Base origin=null
+            value: GET_VAR '<set-?>: kotlin.Number declared in <root>.Base.<set-propertyGetterCovariantOverrideInJava>' type=kotlin.Number origin=null
+    CONSTRUCTOR visibility:public returnType:<root>.Base [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Base modality:OPEN visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+    FUN name:character visibility:public modality:OPEN returnType:kotlin.Unit
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Base
+      VALUE_PARAMETER kind:Regular name:a index:1 type:kotlin.Char
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun character (a: kotlin.Char): kotlin.Unit declared in <root>.Base'
+          GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+    FUN name:eraseGenericInJava visibility:public modality:OPEN returnType:kotlin.Unit
+      TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Base
+      VALUE_PARAMETER kind:Regular name:t index:1 type:T of <root>.Base.eraseGenericInJava
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun eraseGenericInJava <T> (t: T of <root>.Base.eraseGenericInJava): kotlin.Unit declared in <root>.Base'
+          GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+    FUN name:integer visibility:public modality:OPEN returnType:kotlin.Unit
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Base
+      VALUE_PARAMETER kind:Regular name:a index:1 type:kotlin.Int
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun integer (a: kotlin.Int): kotlin.Unit declared in <root>.Base'
+          GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+    FUN name:nullableInteger visibility:public modality:OPEN returnType:kotlin.Unit
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Base
+      VALUE_PARAMETER kind:Regular name:a index:1 type:kotlin.Int
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun nullableInteger (a: kotlin.Int): kotlin.Unit declared in <root>.Base'
+          GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+    PROPERTY name:propertyEraseGenericInJava visibility:public modality:OPEN [val]
+      FUN name:<get-propertyEraseGenericInJava> visibility:public modality:OPEN returnType:kotlin.Any
+        TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Base
+        VALUE_PARAMETER kind:ExtensionReceiver name:<this> index:1 type:T of <root>.Base.<get-propertyEraseGenericInJava>
+        correspondingProperty: PROPERTY name:propertyEraseGenericInJava visibility:public modality:OPEN [val]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public open fun <get-propertyEraseGenericInJava> <T> (<this>: T of <root>.Base.<get-propertyEraseGenericInJava>): kotlin.Any declared in <root>.Base'
+            GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+  CLASS CLASS name:Final modality:FINAL visibility:public superTypes:[<root>.Base]
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.Final
+    CONSTRUCTOR visibility:public returnType:<root>.Final [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Base'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Final modality:FINAL visibility:public superTypes:[<root>.Base]' type=kotlin.Unit
+    FUN FAKE_OVERRIDE name:character visibility:public modality:OPEN returnType:kotlin.Unit [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Base
+      VALUE_PARAMETER kind:Regular name:a index:1 type:kotlin.Char
+      overridden:
+        public open fun character (a: kotlin.Char): kotlin.Unit declared in <root>.Base
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Base
+    FUN FAKE_OVERRIDE name:eraseGenericInJava visibility:public modality:OPEN returnType:kotlin.Unit [fake_override]
+      TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Base
+      VALUE_PARAMETER kind:Regular name:t index:1 type:T of <root>.Final.eraseGenericInJava
+      overridden:
+        public open fun eraseGenericInJava <T> (t: T of <root>.Base.eraseGenericInJava): kotlin.Unit declared in <root>.Base
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in <root>.Base
+    FUN FAKE_OVERRIDE name:integer visibility:public modality:OPEN returnType:kotlin.Unit [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Base
+      VALUE_PARAMETER kind:Regular name:a index:1 type:kotlin.Int
+      overridden:
+        public open fun integer (a: kotlin.Int): kotlin.Unit declared in <root>.Base
+    FUN FAKE_OVERRIDE name:nullableInteger visibility:public modality:OPEN returnType:kotlin.Unit [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Base
+      VALUE_PARAMETER kind:Regular name:a index:1 type:kotlin.Int
+      overridden:
+        public open fun nullableInteger (a: kotlin.Int): kotlin.Unit declared in <root>.Base
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun toString (): kotlin.String declared in <root>.Base
+    PROPERTY FAKE_OVERRIDE name:propertyEraseGenericInJava visibility:public modality:OPEN [fake_override,val]
+      overridden:
+        public open propertyEraseGenericInJava: kotlin.Any declared in <root>.Base
+      FUN FAKE_OVERRIDE name:<get-propertyEraseGenericInJava> visibility:public modality:OPEN returnType:kotlin.Any [fake_override]
+        TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Base
+        VALUE_PARAMETER kind:ExtensionReceiver name:<this> index:1 type:T of <root>.Final.<get-propertyEraseGenericInJava>
+        correspondingProperty: PROPERTY FAKE_OVERRIDE name:propertyEraseGenericInJava visibility:public modality:OPEN [fake_override,val]
+        overridden:
+          public open fun <get-propertyEraseGenericInJava> <T> (<this>: T of <root>.Base.<get-propertyEraseGenericInJava>): kotlin.Any declared in <root>.Base
+    PROPERTY FAKE_OVERRIDE name:propertyGetterCovariantOverrideInJava visibility:public modality:OPEN [fake_override,var]
+      overridden:
+        public open propertyGetterCovariantOverrideInJava: kotlin.Number declared in <root>.Base
+      FUN FAKE_OVERRIDE name:<get-propertyGetterCovariantOverrideInJava> visibility:public modality:OPEN returnType:kotlin.Number [fake_override]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Base
+        correspondingProperty: PROPERTY FAKE_OVERRIDE name:propertyGetterCovariantOverrideInJava visibility:public modality:OPEN [fake_override,var]
+        overridden:
+          public open fun <get-propertyGetterCovariantOverrideInJava> (): kotlin.Number declared in <root>.Base
+      FUN FAKE_OVERRIDE name:<set-propertyGetterCovariantOverrideInJava> visibility:public modality:OPEN returnType:kotlin.Unit [fake_override]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Base
+        VALUE_PARAMETER kind:Regular name:<set-?> index:1 type:kotlin.Number
+        correspondingProperty: PROPERTY FAKE_OVERRIDE name:propertyGetterCovariantOverrideInJava visibility:public modality:OPEN [fake_override,var]
+        overridden:
+          public open fun <set-propertyGetterCovariantOverrideInJava> (<set-?>: kotlin.Number): kotlin.Unit declared in <root>.Base
+  CLASS CLASS name:FinalWithOverride modality:FINAL visibility:public superTypes:[<root>.Middle]
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.FinalWithOverride
+    PROPERTY name:propertyGetterCovariantOverrideInJava visibility:public modality:OPEN [var]
+      overridden:
+        public open propertyGetterCovariantOverrideInJava: kotlin.Number declared in <root>.Middle
+      FIELD PROPERTY_BACKING_FIELD name:propertyGetterCovariantOverrideInJava type:kotlin.Number visibility:private
+        EXPRESSION_BODY
+          CONST Int type=kotlin.Int value=1
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-propertyGetterCovariantOverrideInJava> visibility:public modality:OPEN returnType:kotlin.Number
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.FinalWithOverride
+        correspondingProperty: PROPERTY name:propertyGetterCovariantOverrideInJava visibility:public modality:OPEN [var]
+        overridden:
+          public open fun <get-propertyGetterCovariantOverrideInJava> (): kotlin.Number declared in <root>.Middle
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public open fun <get-propertyGetterCovariantOverrideInJava> (): kotlin.Number declared in <root>.FinalWithOverride'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:propertyGetterCovariantOverrideInJava type:kotlin.Number visibility:private' type=kotlin.Number origin=null
+              receiver: GET_VAR '<this>: <root>.FinalWithOverride declared in <root>.FinalWithOverride.<get-propertyGetterCovariantOverrideInJava>' type=<root>.FinalWithOverride origin=null
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-propertyGetterCovariantOverrideInJava> visibility:public modality:OPEN returnType:kotlin.Unit
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.FinalWithOverride
+        VALUE_PARAMETER kind:Regular name:<set-?> index:1 type:kotlin.Number
+        correspondingProperty: PROPERTY name:propertyGetterCovariantOverrideInJava visibility:public modality:OPEN [var]
+        overridden:
+          public open fun <set-propertyGetterCovariantOverrideInJava> (<set-?>: kotlin.Number): kotlin.Unit declared in <root>.Middle
+        BLOCK_BODY
+          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:propertyGetterCovariantOverrideInJava type:kotlin.Number visibility:private' type=kotlin.Unit origin=null
+            receiver: GET_VAR '<this>: <root>.FinalWithOverride declared in <root>.FinalWithOverride.<set-propertyGetterCovariantOverrideInJava>' type=<root>.FinalWithOverride origin=null
+            value: GET_VAR '<set-?>: kotlin.Number declared in <root>.FinalWithOverride.<set-propertyGetterCovariantOverrideInJava>' type=kotlin.Number origin=null
+    CONSTRUCTOR visibility:public returnType:<root>.FinalWithOverride [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Middle'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:FinalWithOverride modality:FINAL visibility:public superTypes:[<root>.Middle]' type=kotlin.Unit
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Middle
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in <root>.Middle
+    FUN FAKE_OVERRIDE name:nullableInteger visibility:public modality:OPEN returnType:kotlin.Unit [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Base
+      VALUE_PARAMETER kind:Regular name:a index:1 type:kotlin.Int
+      overridden:
+        public open fun nullableInteger (a: kotlin.Int): kotlin.Unit declared in <root>.Middle
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun toString (): kotlin.String declared in <root>.Middle
+    FUN name:character visibility:public modality:OPEN returnType:kotlin.Unit
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.FinalWithOverride
+      VALUE_PARAMETER kind:Regular name:a index:1 type:kotlin.Char
+      overridden:
+        public open fun character (c: @[FlexibleNullability] kotlin.Char?): kotlin.Unit declared in <root>.Middle
+        public open fun character (a: kotlin.Char): kotlin.Unit declared in <root>.Middle
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun character (a: kotlin.Char): kotlin.Unit declared in <root>.FinalWithOverride'
+          GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+    FUN name:eraseGenericInJava visibility:public modality:OPEN returnType:kotlin.Unit
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.FinalWithOverride
+      VALUE_PARAMETER kind:Regular name:t index:1 type:kotlin.Any
+      overridden:
+        public open fun eraseGenericInJava (t: @[EnhancedNullability] kotlin.Any): kotlin.Unit declared in <root>.Middle
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun eraseGenericInJava (t: kotlin.Any): kotlin.Unit declared in <root>.FinalWithOverride'
+          GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+    FUN name:getPropertyGetterCovariantOverrideInJava visibility:public modality:OPEN returnType:kotlin.Int?
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.FinalWithOverride
+      overridden:
+        public open fun getPropertyGetterCovariantOverrideInJava (): @[FlexibleNullability] kotlin.Int? declared in <root>.Middle
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun getPropertyGetterCovariantOverrideInJava (): kotlin.Int? declared in <root>.FinalWithOverride'
+          CONST Int type=kotlin.Int value=1
+    FUN name:integer visibility:public modality:OPEN returnType:kotlin.Unit
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.FinalWithOverride
+      VALUE_PARAMETER kind:Regular name:a index:1 type:kotlin.Int
+      overridden:
+        public open fun integer (x: @[FlexibleNullability] kotlin.Int?): kotlin.Unit declared in <root>.Middle
+        public open fun integer (a: kotlin.Int): kotlin.Unit declared in <root>.Middle
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun integer (a: kotlin.Int): kotlin.Unit declared in <root>.FinalWithOverride'
+          GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+    FUN name:nullableInteger visibility:public modality:OPEN returnType:kotlin.Unit
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.FinalWithOverride
+      VALUE_PARAMETER kind:Regular name:a index:1 type:kotlin.Int?
+      overridden:
+        public open fun nullableInteger (a: @[FlexibleNullability] kotlin.Int?): kotlin.Unit declared in <root>.Middle
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun nullableInteger (a: kotlin.Int?): kotlin.Unit declared in <root>.FinalWithOverride'
+          GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+    PROPERTY name:propertyEraseGenericInJava visibility:public modality:OPEN [val]
+      overridden:
+        public open propertyEraseGenericInJava: @[EnhancedNullability] kotlin.Any declared in <root>.Middle
+      FUN name:<get-propertyEraseGenericInJava> visibility:public modality:OPEN returnType:kotlin.Any
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.FinalWithOverride
+        VALUE_PARAMETER kind:ExtensionReceiver name:<this> index:1 type:kotlin.Any
+        correspondingProperty: PROPERTY name:propertyEraseGenericInJava visibility:public modality:OPEN [val]
+        overridden:
+          public open fun <get-propertyEraseGenericInJava> (<this>: @[EnhancedNullability] kotlin.Any): @[EnhancedNullability] kotlin.Any declared in <root>.Middle
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public open fun <get-propertyEraseGenericInJava> (<this>: kotlin.Any): kotlin.Any declared in <root>.FinalWithOverride'
+            GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit

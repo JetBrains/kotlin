@@ -1,0 +1,24 @@
+class C : A, B<Int> {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+interface A {
+  var foo: Int
+    get(): Int {
+      return 42
+    }
+    set(value: Int) {
+    }
+
+}
+
+interface B<T : Any?> {
+  abstract val foo: T
+    abstract get
+
+}

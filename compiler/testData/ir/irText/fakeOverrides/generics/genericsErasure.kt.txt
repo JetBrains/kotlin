@@ -1,0 +1,50 @@
+class Foo {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  @JvmName(name = "b1")
+  fun foo1(a: Number) {
+    return Unit
+  }
+
+  @JvmName(name = "a1")
+  fun <A : Number> foo1(a: A) {
+    return Unit
+  }
+
+  @Suppress(names = ["CONFLICTING_OVERLOADS"])
+  fun <A> foo2(a: A) where A : Serializable, A : CharSequence {
+    return Unit
+  }
+
+  @Suppress(names = ["CONFLICTING_OVERLOADS"])
+  fun <A> foo2(a: A) where A : Serializable, A : CharSequence {
+    return Unit
+  }
+
+  @Suppress(names = ["CONFLICTING_OVERLOADS"])
+  @JvmName(name = "a3")
+  fun <A : Any?, B : Any?> foo3(a: A) {
+    return Unit
+  }
+
+  @Suppress(names = ["CONFLICTING_OVERLOADS"])
+  @JvmName(name = "b3")
+  fun <A : Any?, B : Any?> foo3(a: B) {
+    return Unit
+  }
+
+  @JvmName(name = "a4")
+  fun <A : Any?, B : Any?> foo4(a: A) {
+    return Unit
+  }
+
+  @JvmName(name = "b4")
+  fun <B : Any?> foo4(a: B) {
+    return Unit
+  }
+
+}
