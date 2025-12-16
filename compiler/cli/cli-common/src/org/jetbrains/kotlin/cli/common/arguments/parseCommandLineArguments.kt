@@ -93,9 +93,9 @@ data class ArgumentParseErrors(
     // Arguments where [Argument.deprecatedName] was used; the key is the deprecated name, the value is the new name ([Argument.value])
     val deprecatedArguments: MutableMap<String, String> = mutableMapOf(),
 
-    var argumentWithoutValue: String? = null,
+    var argumentsWithoutValue: MutableList<String> = SmartList(),
 
-    var booleanArgumentWithValue: String? = null,
+    var booleanArgumentsWithValue: MutableList<String> = SmartList(),
 
     val argfileErrors: MutableList<String> = SmartList(),
 
@@ -226,7 +226,7 @@ private fun <A : CommonToolArguments> parsePreprocessedCommandLineArguments(
                     when (arg.substring(argument.value.length + 1)) {
                         "true" -> true
                         "false" -> false
-                        else -> true.also { errors.value.booleanArgumentWithValue = arg }
+                        else -> true.also { errors.value.booleanArgumentsWithValue.add(arg) }
                     }
                 } else true
             }
@@ -237,7 +237,7 @@ private fun <A : CommonToolArguments> parsePreprocessedCommandLineArguments(
                 arg.substring(argument.deprecatedName.length + 1)
             }
             i == args.size -> {
-                errors.value.argumentWithoutValue = arg
+                errors.value.argumentsWithoutValue.add(arg)
                 break@loop
             }
             else -> {
@@ -311,10 +311,10 @@ private fun <A : CommonToolArguments> updateField(
 fun validateArguments(errors: ArgumentParseErrors?): List<String> {
     if (errors == null) return emptyList()
     return buildList {
-        errors.argumentWithoutValue?.let {
+        errors.argumentsWithoutValue.forEach {
             add("No value passed for argument $it")
         }
-        errors.booleanArgumentWithValue?.let {
+        errors.booleanArgumentsWithValue.forEach {
             add("No value expected for boolean argument ${it.substringBefore('=')}. Please remove the value: $it")
         }
         errors.unknownArgs.forEach {

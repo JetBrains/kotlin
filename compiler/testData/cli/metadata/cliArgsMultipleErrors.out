@@ -1,4 +1,5 @@
 error: no value passed for argument -Xname-based-destructuring
+error: no value expected for boolean argument -Xwhen-guards. Please remove the value: -Xwhen-guards=asdf
 error: no value expected for boolean argument -Xnested-type-aliases. Please remove the value: -Xnested-type-aliases=qwerty
 info: use -help for more information
 COMPILATION_ERROR
