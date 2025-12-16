@@ -97,7 +97,6 @@ class JvmNewKotlinReflectCompatibilityCheck(testServices: TestServices) : JvmBin
     }
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
-        if (skipAsserts) return
         val k1ReflectDump = k1ReflectStringBuilder.toString()
         val newReflectDump = newReflectStringBuilder.toString()
         val kotlinReflectDumpMismatch =
@@ -107,6 +106,11 @@ class JvmNewKotlinReflectCompatibilityCheck(testServices: TestServices) : JvmBin
         val newReflectFile =
             testServices.moduleStructure.originalTestDataFiles.first().withExtension(".reflect-new.txt")
         if (kotlinReflectDumpMismatch) {
+            assertions.assertFalse(skipAsserts) {
+                "Cannot use both directives: " +
+                    "SKIP_NEW_KOTLIN_REFLECT_COMPATIBILITY_CHECK and KOTLIN_REFLECT_DUMP_MISMATCH. " +
+                    "Pick one"
+            }
             val a = runCatching { assertions.assertEqualsToFile(k1ReflectFile, k1ReflectDump) }
             val b = runCatching { assertions.assertEqualsToFile(newReflectFile, newReflectDump) }
             a.getOrThrow()
@@ -116,6 +120,7 @@ class JvmNewKotlinReflectCompatibilityCheck(testServices: TestServices) : JvmBin
                 "K1 and new kotlin-reflect dumps are the same. Please drop KOTLIN_REFLECT_DUMP_MISMATCH directive"
             }
         } else {
+            if (skipAsserts) return
             k1ReflectFile.delete()
             newReflectFile.delete()
             if (k1ReflectDump != newReflectDump) {
