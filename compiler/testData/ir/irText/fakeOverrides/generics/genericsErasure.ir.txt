@@ -1,0 +1,96 @@
+FILE fqName:<root> fileName:/genericsErasure.kt
+  CLASS CLASS name:Foo modality:FINAL visibility:public superTypes:[kotlin.Any]
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.Foo
+    CONSTRUCTOR visibility:public returnType:<root>.Foo [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Foo modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+    FUN name:foo1 visibility:public modality:FINAL returnType:kotlin.Unit
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Foo
+      VALUE_PARAMETER kind:Regular name:a index:1 type:kotlin.Number
+      annotations:
+        JvmName(name = "b1")
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun foo1 (a: kotlin.Number): kotlin.Unit declared in <root>.Foo'
+          GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+    FUN name:foo1 visibility:public modality:FINAL returnType:kotlin.Unit
+      TYPE_PARAMETER name:A index:0 variance: superTypes:[kotlin.Number] reified:false
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Foo
+      VALUE_PARAMETER kind:Regular name:a index:1 type:A of <root>.Foo.foo1
+      annotations:
+        JvmName(name = "a1")
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun foo1 <A> (a: A of <root>.Foo.foo1): kotlin.Unit declared in <root>.Foo'
+          GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+    FUN name:foo2 visibility:public modality:FINAL returnType:kotlin.Unit
+      TYPE_PARAMETER name:A index:0 variance: superTypes:[java.io.Serializable; kotlin.CharSequence] reified:false
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Foo
+      VALUE_PARAMETER kind:Regular name:a index:1 type:A of <root>.Foo.foo2
+      annotations:
+        Suppress(names = ["CONFLICTING_OVERLOADS"] type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String)
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun foo2 <A> (a: A of <root>.Foo.foo2): kotlin.Unit declared in <root>.Foo'
+          GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+    FUN name:foo2 visibility:public modality:FINAL returnType:kotlin.Unit
+      TYPE_PARAMETER name:A index:0 variance: superTypes:[kotlin.CharSequence; java.io.Serializable] reified:false
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Foo
+      VALUE_PARAMETER kind:Regular name:a index:1 type:A of <root>.Foo.foo2
+      annotations:
+        Suppress(names = ["CONFLICTING_OVERLOADS"] type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String)
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun foo2 <A> (a: A of <root>.Foo.foo2): kotlin.Unit declared in <root>.Foo'
+          GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+    FUN name:foo3 visibility:public modality:FINAL returnType:kotlin.Unit
+      TYPE_PARAMETER name:A index:0 variance: superTypes:[kotlin.Any?] reified:false
+      TYPE_PARAMETER name:B index:1 variance: superTypes:[kotlin.Any?] reified:false
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Foo
+      VALUE_PARAMETER kind:Regular name:a index:1 type:A of <root>.Foo.foo3
+      annotations:
+        Suppress(names = ["CONFLICTING_OVERLOADS"] type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String)
+        JvmName(name = "a3")
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun foo3 <A, B> (a: A of <root>.Foo.foo3): kotlin.Unit declared in <root>.Foo'
+          GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+    FUN name:foo3 visibility:public modality:FINAL returnType:kotlin.Unit
+      TYPE_PARAMETER name:A index:0 variance: superTypes:[kotlin.Any?] reified:false
+      TYPE_PARAMETER name:B index:1 variance: superTypes:[kotlin.Any?] reified:false
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Foo
+      VALUE_PARAMETER kind:Regular name:a index:1 type:B of <root>.Foo.foo3
+      annotations:
+        Suppress(names = ["CONFLICTING_OVERLOADS"] type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String)
+        JvmName(name = "b3")
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun foo3 <A, B> (a: B of <root>.Foo.foo3): kotlin.Unit declared in <root>.Foo'
+          GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+    FUN name:foo4 visibility:public modality:FINAL returnType:kotlin.Unit
+      TYPE_PARAMETER name:A index:0 variance: superTypes:[kotlin.Any?] reified:false
+      TYPE_PARAMETER name:B index:1 variance: superTypes:[kotlin.Any?] reified:false
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Foo
+      VALUE_PARAMETER kind:Regular name:a index:1 type:A of <root>.Foo.foo4
+      annotations:
+        JvmName(name = "a4")
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun foo4 <A, B> (a: A of <root>.Foo.foo4): kotlin.Unit declared in <root>.Foo'
+          GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+    FUN name:foo4 visibility:public modality:FINAL returnType:kotlin.Unit
+      TYPE_PARAMETER name:B index:0 variance: superTypes:[kotlin.Any?] reified:false
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Foo
+      VALUE_PARAMETER kind:Regular name:a index:1 type:B of <root>.Foo.foo4
+      annotations:
+        JvmName(name = "b4")
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun foo4 <B> (a: B of <root>.Foo.foo4): kotlin.Unit declared in <root>.Foo'
+          GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit

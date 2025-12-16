@@ -1,0 +1,479 @@
+FILE fqName:<root> fileName:/main.kt
+  CLASS CLASS name:A modality:OPEN visibility:public superTypes:[kotlin.Any]
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.A<T of <root>.A>
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
+    CONSTRUCTOR visibility:public returnType:<root>.A<T of <root>.A> [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A modality:OPEN visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+    FUN name:externalFun visibility:public modality:FINAL returnType:T of <root>.A [external]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A<T of <root>.A>
+    FUN name:externalFunSpecialized visibility:public modality:FINAL returnType:kotlin.String [external]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A<T of <root>.A>
+    FUN name:infixFun visibility:public modality:FINAL returnType:T of <root>.A [infix]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A<T of <root>.A>
+      VALUE_PARAMETER kind:Regular name:a index:1 type:kotlin.Any
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun infixFun (a: kotlin.Any): T of <root>.A declared in <root>.A'
+          CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=kotlin.Nothing origin=EXCLEXCL
+            TYPE_ARG T0: kotlin.Nothing
+            ARG arg0: CONST Null type=kotlin.Nothing? value=null
+    FUN name:infixFunSpecialized visibility:public modality:FINAL returnType:kotlin.String [infix]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A<T of <root>.A>
+      VALUE_PARAMETER kind:Regular name:a index:1 type:kotlin.Any
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun infixFunSpecialized (a: kotlin.Any): kotlin.String declared in <root>.A'
+          CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=kotlin.Nothing origin=EXCLEXCL
+            TYPE_ARG T0: kotlin.Nothing
+            ARG arg0: CONST Null type=kotlin.Nothing? value=null
+    FUN name:inlineFun visibility:public modality:FINAL returnType:T of <root>.A [inline]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A<T of <root>.A>
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun inlineFun (): T of <root>.A declared in <root>.A'
+          CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=kotlin.Nothing origin=EXCLEXCL
+            TYPE_ARG T0: kotlin.Nothing
+            ARG arg0: CONST Null type=kotlin.Nothing? value=null
+    FUN name:inlineFunSpecialized visibility:public modality:FINAL returnType:kotlin.String [inline]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A<T of <root>.A>
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun inlineFunSpecialized (): kotlin.String declared in <root>.A'
+          CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=kotlin.Nothing origin=EXCLEXCL
+            TYPE_ARG T0: kotlin.Nothing
+            ARG arg0: CONST Null type=kotlin.Nothing? value=null
+    FUN name:minus visibility:public modality:FINAL returnType:kotlin.String [operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A<T of <root>.A>
+      VALUE_PARAMETER kind:Regular name:a index:1 type:kotlin.Any
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun minus (a: kotlin.Any): kotlin.String declared in <root>.A'
+          CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=kotlin.Nothing origin=EXCLEXCL
+            TYPE_ARG T0: kotlin.Nothing
+            ARG arg0: CONST Null type=kotlin.Nothing? value=null
+    FUN name:plus visibility:public modality:FINAL returnType:T of <root>.A [operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A<T of <root>.A>
+      VALUE_PARAMETER kind:Regular name:a index:1 type:kotlin.Any
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun plus (a: kotlin.Any): T of <root>.A declared in <root>.A'
+          CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=kotlin.Nothing origin=EXCLEXCL
+            TYPE_ARG T0: kotlin.Nothing
+            ARG arg0: CONST Null type=kotlin.Nothing? value=null
+  CLASS CLASS name:C1 modality:FINAL visibility:public superTypes:[<root>.JavaIntermediate; <root>.I]
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.C1
+    CONSTRUCTOR visibility:public returnType:<root>.C1 [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.JavaIntermediate'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C1 modality:FINAL visibility:public superTypes:[<root>.JavaIntermediate; <root>.I]' type=kotlin.Unit
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.JavaIntermediate
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.I
+    FUN FAKE_OVERRIDE name:externalFun visibility:public modality:FINAL returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.I
+      overridden:
+        public final fun externalFun (): @[FlexibleNullability] kotlin.String? declared in <root>.JavaIntermediate
+        public abstract fun externalFun (): kotlin.String declared in <root>.I
+    FUN FAKE_OVERRIDE name:externalFunSpecialized visibility:public modality:FINAL returnType:kotlin.String [external,fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A<@[FlexibleNullability] kotlin.String?>
+      overridden:
+        public final fun externalFunSpecialized (): kotlin.String declared in <root>.JavaIntermediate
+        public abstract fun externalFunSpecialized (): kotlin.String declared in <root>.I
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in <root>.JavaIntermediate
+        public open fun hashCode (): kotlin.Int declared in <root>.I
+    FUN FAKE_OVERRIDE name:infixFun visibility:public modality:FINAL returnType:kotlin.String [fake_override,infix]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.I
+      VALUE_PARAMETER kind:Regular name:a index:1 type:kotlin.Any
+      overridden:
+        public final fun infixFun (a: kotlin.Any): @[FlexibleNullability] kotlin.String? declared in <root>.JavaIntermediate
+        public abstract fun infixFun (a: kotlin.Any): kotlin.String declared in <root>.I
+    FUN FAKE_OVERRIDE name:infixFunSpecialized visibility:public modality:FINAL returnType:kotlin.String [fake_override,infix]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A<@[FlexibleNullability] kotlin.String?>
+      VALUE_PARAMETER kind:Regular name:a index:1 type:kotlin.Any
+      overridden:
+        public final fun infixFunSpecialized (a: kotlin.Any): kotlin.String declared in <root>.JavaIntermediate
+        public abstract fun infixFunSpecialized (a: kotlin.Any): kotlin.String declared in <root>.I
+    FUN FAKE_OVERRIDE name:inlineFun visibility:public modality:FINAL returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.I
+      overridden:
+        public final fun inlineFun (): @[FlexibleNullability] kotlin.String? declared in <root>.JavaIntermediate
+        public abstract fun inlineFun (): kotlin.String declared in <root>.I
+    FUN FAKE_OVERRIDE name:inlineFunSpecialized visibility:public modality:FINAL returnType:kotlin.String [inline,fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A<@[FlexibleNullability] kotlin.String?>
+      overridden:
+        public final fun inlineFunSpecialized (): kotlin.String declared in <root>.JavaIntermediate
+        public abstract fun inlineFunSpecialized (): kotlin.String declared in <root>.I
+    FUN FAKE_OVERRIDE name:javaNativeMethod visibility:public modality:OPEN returnType:kotlin.Unit [external,fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.JavaIntermediate
+      overridden:
+        public open fun javaNativeMethod (): kotlin.Unit declared in <root>.JavaIntermediate
+    FUN FAKE_OVERRIDE name:minus visibility:public modality:FINAL returnType:kotlin.String [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A<@[FlexibleNullability] kotlin.String?>
+      VALUE_PARAMETER kind:Regular name:a index:1 type:kotlin.Any
+      overridden:
+        public final fun minus (a: kotlin.Any): kotlin.String declared in <root>.JavaIntermediate
+        public abstract fun minus (a: kotlin.Any): kotlin.String declared in <root>.I
+    FUN FAKE_OVERRIDE name:plus visibility:public modality:FINAL returnType:kotlin.String [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.I
+      VALUE_PARAMETER kind:Regular name:a index:1 type:kotlin.Any
+      overridden:
+        public final fun plus (a: kotlin.Any): @[FlexibleNullability] kotlin.String? declared in <root>.JavaIntermediate
+        public abstract fun plus (a: kotlin.Any): kotlin.String declared in <root>.I
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun toString (): kotlin.String declared in <root>.JavaIntermediate
+        public open fun toString (): kotlin.String declared in <root>.I
+  CLASS CLASS name:C2 modality:FINAL visibility:public superTypes:[<root>.KotlinIntermediate; <root>.I]
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.C2
+    CONSTRUCTOR visibility:public returnType:<root>.C2 [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.KotlinIntermediate'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C2 modality:FINAL visibility:public superTypes:[<root>.KotlinIntermediate; <root>.I]' type=kotlin.Unit
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.KotlinIntermediate
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.I
+    FUN FAKE_OVERRIDE name:externalFun visibility:public modality:FINAL returnType:kotlin.String [external,fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A<kotlin.String>
+      overridden:
+        public final fun externalFun (): kotlin.String declared in <root>.KotlinIntermediate
+        public abstract fun externalFun (): kotlin.String declared in <root>.I
+    FUN FAKE_OVERRIDE name:externalFunSpecialized visibility:public modality:FINAL returnType:kotlin.String [external,fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A<kotlin.String>
+      overridden:
+        public final fun externalFunSpecialized (): kotlin.String declared in <root>.KotlinIntermediate
+        public abstract fun externalFunSpecialized (): kotlin.String declared in <root>.I
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in <root>.KotlinIntermediate
+        public open fun hashCode (): kotlin.Int declared in <root>.I
+    FUN FAKE_OVERRIDE name:infixFun visibility:public modality:FINAL returnType:kotlin.String [fake_override,infix]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A<kotlin.String>
+      VALUE_PARAMETER kind:Regular name:a index:1 type:kotlin.Any
+      overridden:
+        public final fun infixFun (a: kotlin.Any): kotlin.String declared in <root>.KotlinIntermediate
+        public abstract fun infixFun (a: kotlin.Any): kotlin.String declared in <root>.I
+    FUN FAKE_OVERRIDE name:infixFunSpecialized visibility:public modality:FINAL returnType:kotlin.String [fake_override,infix]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A<kotlin.String>
+      VALUE_PARAMETER kind:Regular name:a index:1 type:kotlin.Any
+      overridden:
+        public final fun infixFunSpecialized (a: kotlin.Any): kotlin.String declared in <root>.KotlinIntermediate
+        public abstract fun infixFunSpecialized (a: kotlin.Any): kotlin.String declared in <root>.I
+    FUN FAKE_OVERRIDE name:inlineFun visibility:public modality:FINAL returnType:kotlin.String [inline,fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A<kotlin.String>
+      overridden:
+        public final fun inlineFun (): kotlin.String declared in <root>.KotlinIntermediate
+        public abstract fun inlineFun (): kotlin.String declared in <root>.I
+    FUN FAKE_OVERRIDE name:inlineFunSpecialized visibility:public modality:FINAL returnType:kotlin.String [inline,fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A<kotlin.String>
+      overridden:
+        public final fun inlineFunSpecialized (): kotlin.String declared in <root>.KotlinIntermediate
+        public abstract fun inlineFunSpecialized (): kotlin.String declared in <root>.I
+    FUN FAKE_OVERRIDE name:minus visibility:public modality:FINAL returnType:kotlin.String [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A<kotlin.String>
+      VALUE_PARAMETER kind:Regular name:a index:1 type:kotlin.Any
+      overridden:
+        public final fun minus (a: kotlin.Any): kotlin.String declared in <root>.KotlinIntermediate
+        public abstract fun minus (a: kotlin.Any): kotlin.String declared in <root>.I
+    FUN FAKE_OVERRIDE name:plus visibility:public modality:FINAL returnType:kotlin.String [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A<kotlin.String>
+      VALUE_PARAMETER kind:Regular name:a index:1 type:kotlin.Any
+      overridden:
+        public final fun plus (a: kotlin.Any): kotlin.String declared in <root>.KotlinIntermediate
+        public abstract fun plus (a: kotlin.Any): kotlin.String declared in <root>.I
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun toString (): kotlin.String declared in <root>.KotlinIntermediate
+        public open fun toString (): kotlin.String declared in <root>.I
+  CLASS CLASS name:D modality:FINAL visibility:public superTypes:[<root>.A<kotlin.String>; <root>.I]
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.D
+    CONSTRUCTOR visibility:public returnType:<root>.D [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.A'
+          TYPE_ARG T: kotlin.String
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:D modality:FINAL visibility:public superTypes:[<root>.A<kotlin.String>; <root>.I]' type=kotlin.Unit
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.A
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.I
+    FUN FAKE_OVERRIDE name:externalFun visibility:public modality:FINAL returnType:kotlin.String [external,fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A<kotlin.String>
+      overridden:
+        public final fun externalFun (): T of <root>.A declared in <root>.A
+        public abstract fun externalFun (): kotlin.String declared in <root>.I
+    FUN FAKE_OVERRIDE name:externalFunSpecialized visibility:public modality:FINAL returnType:kotlin.String [external,fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A<kotlin.String>
+      overridden:
+        public final fun externalFunSpecialized (): kotlin.String declared in <root>.A
+        public abstract fun externalFunSpecialized (): kotlin.String declared in <root>.I
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in <root>.A
+        public open fun hashCode (): kotlin.Int declared in <root>.I
+    FUN FAKE_OVERRIDE name:infixFun visibility:public modality:FINAL returnType:kotlin.String [fake_override,infix]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A<kotlin.String>
+      VALUE_PARAMETER kind:Regular name:a index:1 type:kotlin.Any
+      overridden:
+        public final fun infixFun (a: kotlin.Any): T of <root>.A declared in <root>.A
+        public abstract fun infixFun (a: kotlin.Any): kotlin.String declared in <root>.I
+    FUN FAKE_OVERRIDE name:infixFunSpecialized visibility:public modality:FINAL returnType:kotlin.String [fake_override,infix]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A<kotlin.String>
+      VALUE_PARAMETER kind:Regular name:a index:1 type:kotlin.Any
+      overridden:
+        public final fun infixFunSpecialized (a: kotlin.Any): kotlin.String declared in <root>.A
+        public abstract fun infixFunSpecialized (a: kotlin.Any): kotlin.String declared in <root>.I
+    FUN FAKE_OVERRIDE name:inlineFun visibility:public modality:FINAL returnType:kotlin.String [inline,fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A<kotlin.String>
+      overridden:
+        public final fun inlineFun (): T of <root>.A declared in <root>.A
+        public abstract fun inlineFun (): kotlin.String declared in <root>.I
+    FUN FAKE_OVERRIDE name:inlineFunSpecialized visibility:public modality:FINAL returnType:kotlin.String [inline,fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A<kotlin.String>
+      overridden:
+        public final fun inlineFunSpecialized (): kotlin.String declared in <root>.A
+        public abstract fun inlineFunSpecialized (): kotlin.String declared in <root>.I
+    FUN FAKE_OVERRIDE name:minus visibility:public modality:FINAL returnType:kotlin.String [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A<kotlin.String>
+      VALUE_PARAMETER kind:Regular name:a index:1 type:kotlin.Any
+      overridden:
+        public final fun minus (a: kotlin.Any): kotlin.String declared in <root>.A
+        public abstract fun minus (a: kotlin.Any): kotlin.String declared in <root>.I
+    FUN FAKE_OVERRIDE name:plus visibility:public modality:FINAL returnType:kotlin.String [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A<kotlin.String>
+      VALUE_PARAMETER kind:Regular name:a index:1 type:kotlin.Any
+      overridden:
+        public final fun plus (a: kotlin.Any): T of <root>.A declared in <root>.A
+        public abstract fun plus (a: kotlin.Any): kotlin.String declared in <root>.I
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun toString (): kotlin.String declared in <root>.A
+        public open fun toString (): kotlin.String declared in <root>.I
+  CLASS CLASS name:E1 modality:FINAL visibility:public superTypes:[<root>.JavaIntermediate]
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.E1
+    CONSTRUCTOR visibility:public returnType:<root>.E1 [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.JavaIntermediate'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:E1 modality:FINAL visibility:public superTypes:[<root>.JavaIntermediate]' type=kotlin.Unit
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.JavaIntermediate
+    FUN FAKE_OVERRIDE name:externalFun visibility:public modality:FINAL returnType:@[FlexibleNullability] kotlin.String? [external,fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A<@[FlexibleNullability] kotlin.String?>
+      overridden:
+        public final fun externalFun (): @[FlexibleNullability] kotlin.String? declared in <root>.JavaIntermediate
+    FUN FAKE_OVERRIDE name:externalFunSpecialized visibility:public modality:FINAL returnType:kotlin.String [external,fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A<@[FlexibleNullability] kotlin.String?>
+      overridden:
+        public final fun externalFunSpecialized (): kotlin.String declared in <root>.JavaIntermediate
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in <root>.JavaIntermediate
+    FUN FAKE_OVERRIDE name:infixFun visibility:public modality:FINAL returnType:@[FlexibleNullability] kotlin.String? [fake_override,infix]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A<@[FlexibleNullability] kotlin.String?>
+      VALUE_PARAMETER kind:Regular name:a index:1 type:kotlin.Any
+      overridden:
+        public final fun infixFun (a: kotlin.Any): @[FlexibleNullability] kotlin.String? declared in <root>.JavaIntermediate
+    FUN FAKE_OVERRIDE name:infixFunSpecialized visibility:public modality:FINAL returnType:kotlin.String [fake_override,infix]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A<@[FlexibleNullability] kotlin.String?>
+      VALUE_PARAMETER kind:Regular name:a index:1 type:kotlin.Any
+      overridden:
+        public final fun infixFunSpecialized (a: kotlin.Any): kotlin.String declared in <root>.JavaIntermediate
+    FUN FAKE_OVERRIDE name:inlineFun visibility:public modality:FINAL returnType:@[FlexibleNullability] kotlin.String? [inline,fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A<@[FlexibleNullability] kotlin.String?>
+      overridden:
+        public final fun inlineFun (): @[FlexibleNullability] kotlin.String? declared in <root>.JavaIntermediate
+    FUN FAKE_OVERRIDE name:inlineFunSpecialized visibility:public modality:FINAL returnType:kotlin.String [inline,fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A<@[FlexibleNullability] kotlin.String?>
+      overridden:
+        public final fun inlineFunSpecialized (): kotlin.String declared in <root>.JavaIntermediate
+    FUN FAKE_OVERRIDE name:javaNativeMethod visibility:public modality:OPEN returnType:kotlin.Unit [external,fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.JavaIntermediate
+      overridden:
+        public open fun javaNativeMethod (): kotlin.Unit declared in <root>.JavaIntermediate
+    FUN FAKE_OVERRIDE name:minus visibility:public modality:FINAL returnType:kotlin.String [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A<@[FlexibleNullability] kotlin.String?>
+      VALUE_PARAMETER kind:Regular name:a index:1 type:kotlin.Any
+      overridden:
+        public final fun minus (a: kotlin.Any): kotlin.String declared in <root>.JavaIntermediate
+    FUN FAKE_OVERRIDE name:plus visibility:public modality:FINAL returnType:@[FlexibleNullability] kotlin.String? [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A<@[FlexibleNullability] kotlin.String?>
+      VALUE_PARAMETER kind:Regular name:a index:1 type:kotlin.Any
+      overridden:
+        public final fun plus (a: kotlin.Any): @[FlexibleNullability] kotlin.String? declared in <root>.JavaIntermediate
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun toString (): kotlin.String declared in <root>.JavaIntermediate
+  CLASS CLASS name:E2 modality:FINAL visibility:public superTypes:[<root>.KotlinIntermediate]
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.E2
+    CONSTRUCTOR visibility:public returnType:<root>.E2 [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.KotlinIntermediate'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:E2 modality:FINAL visibility:public superTypes:[<root>.KotlinIntermediate]' type=kotlin.Unit
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.KotlinIntermediate
+    FUN FAKE_OVERRIDE name:externalFun visibility:public modality:FINAL returnType:kotlin.String [external,fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A<kotlin.String>
+      overridden:
+        public final fun externalFun (): kotlin.String declared in <root>.KotlinIntermediate
+    FUN FAKE_OVERRIDE name:externalFunSpecialized visibility:public modality:FINAL returnType:kotlin.String [external,fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A<kotlin.String>
+      overridden:
+        public final fun externalFunSpecialized (): kotlin.String declared in <root>.KotlinIntermediate
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in <root>.KotlinIntermediate
+    FUN FAKE_OVERRIDE name:infixFun visibility:public modality:FINAL returnType:kotlin.String [fake_override,infix]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A<kotlin.String>
+      VALUE_PARAMETER kind:Regular name:a index:1 type:kotlin.Any
+      overridden:
+        public final fun infixFun (a: kotlin.Any): kotlin.String declared in <root>.KotlinIntermediate
+    FUN FAKE_OVERRIDE name:infixFunSpecialized visibility:public modality:FINAL returnType:kotlin.String [fake_override,infix]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A<kotlin.String>
+      VALUE_PARAMETER kind:Regular name:a index:1 type:kotlin.Any
+      overridden:
+        public final fun infixFunSpecialized (a: kotlin.Any): kotlin.String declared in <root>.KotlinIntermediate
+    FUN FAKE_OVERRIDE name:inlineFun visibility:public modality:FINAL returnType:kotlin.String [inline,fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A<kotlin.String>
+      overridden:
+        public final fun inlineFun (): kotlin.String declared in <root>.KotlinIntermediate
+    FUN FAKE_OVERRIDE name:inlineFunSpecialized visibility:public modality:FINAL returnType:kotlin.String [inline,fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A<kotlin.String>
+      overridden:
+        public final fun inlineFunSpecialized (): kotlin.String declared in <root>.KotlinIntermediate
+    FUN FAKE_OVERRIDE name:minus visibility:public modality:FINAL returnType:kotlin.String [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A<kotlin.String>
+      VALUE_PARAMETER kind:Regular name:a index:1 type:kotlin.Any
+      overridden:
+        public final fun minus (a: kotlin.Any): kotlin.String declared in <root>.KotlinIntermediate
+    FUN FAKE_OVERRIDE name:plus visibility:public modality:FINAL returnType:kotlin.String [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A<kotlin.String>
+      VALUE_PARAMETER kind:Regular name:a index:1 type:kotlin.Any
+      overridden:
+        public final fun plus (a: kotlin.Any): kotlin.String declared in <root>.KotlinIntermediate
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun toString (): kotlin.String declared in <root>.KotlinIntermediate
+  CLASS CLASS name:KotlinIntermediate modality:OPEN visibility:public superTypes:[<root>.A<kotlin.String>]
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.KotlinIntermediate
+    CONSTRUCTOR visibility:public returnType:<root>.KotlinIntermediate [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.A'
+          TYPE_ARG T: kotlin.String
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:KotlinIntermediate modality:OPEN visibility:public superTypes:[<root>.A<kotlin.String>]' type=kotlin.Unit
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.A
+    FUN FAKE_OVERRIDE name:externalFun visibility:public modality:FINAL returnType:kotlin.String [external,fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A<kotlin.String>
+      overridden:
+        public final fun externalFun (): T of <root>.A declared in <root>.A
+    FUN FAKE_OVERRIDE name:externalFunSpecialized visibility:public modality:FINAL returnType:kotlin.String [external,fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A<kotlin.String>
+      overridden:
+        public final fun externalFunSpecialized (): kotlin.String declared in <root>.A
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in <root>.A
+    FUN FAKE_OVERRIDE name:infixFun visibility:public modality:FINAL returnType:kotlin.String [fake_override,infix]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A<kotlin.String>
+      VALUE_PARAMETER kind:Regular name:a index:1 type:kotlin.Any
+      overridden:
+        public final fun infixFun (a: kotlin.Any): T of <root>.A declared in <root>.A
+    FUN FAKE_OVERRIDE name:infixFunSpecialized visibility:public modality:FINAL returnType:kotlin.String [fake_override,infix]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A<kotlin.String>
+      VALUE_PARAMETER kind:Regular name:a index:1 type:kotlin.Any
+      overridden:
+        public final fun infixFunSpecialized (a: kotlin.Any): kotlin.String declared in <root>.A
+    FUN FAKE_OVERRIDE name:inlineFun visibility:public modality:FINAL returnType:kotlin.String [inline,fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A<kotlin.String>
+      overridden:
+        public final fun inlineFun (): T of <root>.A declared in <root>.A
+    FUN FAKE_OVERRIDE name:inlineFunSpecialized visibility:public modality:FINAL returnType:kotlin.String [inline,fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A<kotlin.String>
+      overridden:
+        public final fun inlineFunSpecialized (): kotlin.String declared in <root>.A
+    FUN FAKE_OVERRIDE name:minus visibility:public modality:FINAL returnType:kotlin.String [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A<kotlin.String>
+      VALUE_PARAMETER kind:Regular name:a index:1 type:kotlin.Any
+      overridden:
+        public final fun minus (a: kotlin.Any): kotlin.String declared in <root>.A
+    FUN FAKE_OVERRIDE name:plus visibility:public modality:FINAL returnType:kotlin.String [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A<kotlin.String>
+      VALUE_PARAMETER kind:Regular name:a index:1 type:kotlin.Any
+      overridden:
+        public final fun plus (a: kotlin.Any): T of <root>.A declared in <root>.A
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun toString (): kotlin.String declared in <root>.A
+  CLASS INTERFACE name:I modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.I
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+    FUN name:externalFun visibility:public modality:ABSTRACT returnType:kotlin.String
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.I
+    FUN name:externalFunSpecialized visibility:public modality:ABSTRACT returnType:kotlin.String
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.I
+    FUN name:infixFun visibility:public modality:ABSTRACT returnType:kotlin.String
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.I
+      VALUE_PARAMETER kind:Regular name:a index:1 type:kotlin.Any
+    FUN name:infixFunSpecialized visibility:public modality:ABSTRACT returnType:kotlin.String
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.I
+      VALUE_PARAMETER kind:Regular name:a index:1 type:kotlin.Any
+    FUN name:inlineFun visibility:public modality:ABSTRACT returnType:kotlin.String
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.I
+    FUN name:inlineFunSpecialized visibility:public modality:ABSTRACT returnType:kotlin.String
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.I
+    FUN name:minus visibility:public modality:ABSTRACT returnType:kotlin.String [operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.I
+      VALUE_PARAMETER kind:Regular name:a index:1 type:kotlin.Any
+    FUN name:plus visibility:public modality:ABSTRACT returnType:kotlin.String [operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.I
+      VALUE_PARAMETER kind:Regular name:a index:1 type:kotlin.Any
