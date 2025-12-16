@@ -1020,7 +1020,6 @@ public final class org/jetbrains/kotlin/psi/KtClassBody : org/jetbrains/kotlin/p
 	public final fun getEnumEntries ()Ljava/util/List;
 	public final fun getFunctions ()Ljava/util/List;
 	public final fun getLBrace ()Lcom/intellij/psi/PsiElement;
-	public fun getParent ()Lcom/intellij/psi/PsiElement;
 	public final fun getProperties ()Ljava/util/List;
 	public final fun getRBrace ()Lcom/intellij/psi/PsiElement;
 }
@@ -1366,7 +1365,6 @@ public abstract class org/jetbrains/kotlin/psi/KtDeclarationStub : org/jetbrains
 	public fun getModificationStamp ()J
 	public fun getNavigationElement ()Lcom/intellij/psi/PsiElement;
 	public fun getOriginalElement ()Lcom/intellij/psi/PsiElement;
-	public fun getParent ()Lcom/intellij/psi/PsiElement;
 	public fun subtreeChanged ()V
 }
 
@@ -1593,7 +1591,6 @@ public abstract class org/jetbrains/kotlin/psi/KtExpressionImplStub : org/jetbra
 	public fun <init> (Lcom/intellij/lang/ASTNode;)V
 	public fun <init> (Lcom/intellij/psi/stubs/StubElement;Lcom/intellij/psi/stubs/IStubElementType;)V
 	public fun accept (Lorg/jetbrains/kotlin/psi/KtVisitor;Ljava/lang/Object;)Ljava/lang/Object;
-	public fun getParent ()Lcom/intellij/psi/PsiElement;
 	public fun rawReplace (Lcom/intellij/psi/PsiElement;)Lcom/intellij/psi/PsiElement;
 	public fun replace (Lcom/intellij/psi/PsiElement;)Lcom/intellij/psi/PsiElement;
 }
@@ -2089,7 +2086,6 @@ public class org/jetbrains/kotlin/psi/KtParameterList : org/jetbrains/kotlin/psi
 	public fun getLeftParenthesis ()Lcom/intellij/psi/PsiElement;
 	public fun getOwnerFunction ()Lorg/jetbrains/kotlin/psi/KtDeclarationWithBody;
 	public fun getParameters ()Ljava/util/List;
-	public fun getParent ()Lcom/intellij/psi/PsiElement;
 	public fun getRightParenthesis ()Lcom/intellij/psi/PsiElement;
 	public fun getTrailingComma ()Lcom/intellij/psi/PsiElement;
 	public fun removeParameter (I)V

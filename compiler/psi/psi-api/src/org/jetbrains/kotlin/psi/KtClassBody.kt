@@ -21,8 +21,6 @@ class KtClassBody : KtElementImplStub<KotlinPlaceHolderStub<KtClassBody>>, KtDec
 
     constructor(stub: KotlinPlaceHolderStub<KtClassBody>) : super(stub, KtStubBasedElementTypes.CLASS_BODY)
 
-    override fun getParent() = parentByStub
-
     override fun getDeclarations() = stub?.getChildrenByType(KtFile.FILE_DECLARATION_TYPES, KtDeclaration.ARRAY_FACTORY)?.toList()
         ?: PsiTreeUtil.getChildrenOfTypeAsList(this, KtDeclaration::class.java)
 
