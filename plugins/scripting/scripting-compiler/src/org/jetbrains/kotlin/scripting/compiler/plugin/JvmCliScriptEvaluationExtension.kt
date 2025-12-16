@@ -16,13 +16,16 @@ import org.jetbrains.kotlin.config.useFir
 import org.jetbrains.kotlin.config.useLightTree
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.ScriptJvmCompilerFromEnvironment
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.ScriptJvmK2CompilerFromEnvironment
+import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
 import kotlin.script.experimental.api.ScriptCompilationConfiguration
 import kotlin.script.experimental.api.ScriptEvaluationConfiguration
 import kotlin.script.experimental.api.ScriptEvaluator
 import kotlin.script.experimental.host.ScriptingHostConfiguration
+import kotlin.script.experimental.host.with
 import kotlin.script.experimental.jvm.BasicJvmScriptEvaluator
 import kotlin.script.experimental.jvm.baseClassLoader
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
+import kotlin.script.experimental.jvm.disableCompilationCache
 import kotlin.script.experimental.jvm.jvm
 
 class JvmCliScriptEvaluationExtension : AbstractScriptEvaluationExtension() {
@@ -61,7 +64,13 @@ class JvmCliScriptEvaluationExtension : AbstractScriptEvaluationExtension() {
         return if (configuration.useFir && configuration.useLightTree) {
             ScriptJvmK2CompilerFromEnvironment(
                 environment,
-                (configuration.scriptingHostConfiguration as? ScriptingHostConfiguration) ?: defaultJvmScriptingHostConfiguration
+                ((configuration.scriptingHostConfiguration as? ScriptingHostConfiguration) ?: defaultJvmScriptingHostConfiguration).with {
+                    jvm {
+                        disableCompilationCache.replaceOnlyDefault(
+                            configuration[ScriptingConfigurationKeys.DISABLE_SCRIPT_COMPILATION_CACHE] ?: false
+                        )
+                    }
+                }
             )
         } else {
             @Suppress("DEPRECATION")

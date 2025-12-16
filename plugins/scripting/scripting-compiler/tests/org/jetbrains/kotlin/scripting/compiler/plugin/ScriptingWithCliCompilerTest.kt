@@ -121,6 +121,8 @@ class ScriptingWithCliCompilerTest {
         runWithK2JVMCompiler(
             arrayOf(
                 K2JVMCompilerArguments::classpath.cliArgument, getMainKtsClassPath().joinToString(File.pathSeparator),
+                "-P",
+                "plugin:kotlin.scripting:disable-script-compilation-cache=true",
                 K2JVMCompilerArguments::script.cliArgument,
                 scriptFile.path
             ),
@@ -133,6 +135,8 @@ class ScriptingWithCliCompilerTest {
             arrayOf(
                 K2JVMCompilerArguments::classpath.cliArgument, getMainKtsClassPath().joinToString(File.pathSeparator),
                 K2JVMCompilerArguments::defaultScriptExtension.cliArgument(".main.kts"),
+                "-P",
+                "plugin:kotlin.scripting:disable-script-compilation-cache=true",
                 K2JVMCompilerArguments::script.cliArgument,
                 scriptFile.path
             ),
@@ -145,6 +149,8 @@ class ScriptingWithCliCompilerTest {
             arrayOf(
                 K2JVMCompilerArguments::classpath.cliArgument, getMainKtsClassPath().joinToString(File.pathSeparator),
                 K2JVMCompilerArguments::defaultScriptExtension.cliArgument("main.kts"),
+                "-P",
+                "plugin:kotlin.scripting:disable-script-compilation-cache=true",
                 K2JVMCompilerArguments::script.cliArgument,
                 scriptFile.path
             ),
