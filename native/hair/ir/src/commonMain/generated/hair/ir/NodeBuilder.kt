@@ -171,12 +171,6 @@ context(nodeBuilder: NodeBuilder)
 fun ConstD(value: Double): ConstD = ConstDForm(value)()
 
 context(nodeBuilder: NodeBuilder)
-fun True(): True = nodeBuilder.onNodeBuilt(True(nodeBuilder.session.trueForm)) as True
-
-context(nodeBuilder: NodeBuilder)
-fun False(): False = nodeBuilder.onNodeBuilt(False(nodeBuilder.session.falseForm)) as False
-
-context(nodeBuilder: NodeBuilder)
 fun Null(): Null = nodeBuilder.onNodeBuilt(Null(nodeBuilder.session.nullForm)) as Null
 
 context(nodeBuilder: NodeBuilder)
@@ -246,6 +240,9 @@ context(nodeBuilder: NodeBuilder)
 operator fun Ushr.Form.invoke(lhs: Node?, rhs: Node?): Node = nodeBuilder.onNodeBuilt(Ushr(this@invoke, lhs, rhs))
 
 context(nodeBuilder: NodeBuilder)
+fun Neg(operand: Node?): Node = nodeBuilder.onNodeBuilt(Neg(nodeBuilder.session.negForm, operand))
+
+context(nodeBuilder: NodeBuilder)
 fun Cmp(type: HairType, op: CmpOp): Cmp.Form = Cmp.Form(nodeBuilder.session.cmpMetaForm, type, op).ensureFormUniq()
 
 context(nodeBuilder: NodeBuilder)
@@ -313,6 +310,18 @@ fun CheckCast(targetType: HairClass): CheckCast.Form = CheckCast.Form(nodeBuilde
 
 context(nodeBuilder: NodeBuilder)
 operator fun CheckCast.Form.invoke(obj: Node?): Node = nodeBuilder.onNodeBuilt(CheckCast(this@invoke, obj))
+
+context(nodeBuilder: NodeBuilder)
+fun TypeInfo(obj: Node?): Node = nodeBuilder.onNodeBuilt(TypeInfo(nodeBuilder.session.typeInfoForm, obj))
+
+context(nodeBuilder: NodeBuilder)
+private fun ConstTypeInfoForm(type: HairClass): ConstTypeInfo.Form = ConstTypeInfo.Form(nodeBuilder.session.constTypeInfoMetaForm, type).ensureFormUniq()
+
+context(nodeBuilder: NodeBuilder)
+operator fun ConstTypeInfo.Form.invoke(): ConstTypeInfo = nodeBuilder.onNodeBuilt(ConstTypeInfo(this@invoke)) as ConstTypeInfo
+
+context(nodeBuilder: NodeBuilder)
+fun ConstTypeInfo(type: HairClass): ConstTypeInfo = ConstTypeInfoForm(type)()
 
 context(nodeBuilder: NodeBuilder)
 fun Load(type: HairType): Load.Form = Load.Form(nodeBuilder.session.loadMetaForm, type).ensureFormUniq()

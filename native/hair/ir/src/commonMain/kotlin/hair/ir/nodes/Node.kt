@@ -60,7 +60,13 @@ sealed class NodeBase(final override val form: Form, args: List<Node?>) : Node {
 
 // FIXME move?
 class ControlFlowBuilder(at: Controlling) {
+    // TODO replace null with unreachable??
     var lastControl: Controlling? = at
+
+    // TODO make scoped?
+    fun at(pos: Controlling) {
+        lastControl = pos
+    }
 
     inline fun <N : Controlling> appendControl(next: () -> N): N = next().also { lastControl = it }
 

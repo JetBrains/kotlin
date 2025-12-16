@@ -19,7 +19,7 @@ class ValueNumberingTest : IrTest {
     }
 
     @Test
-    fun testAfterReplace() = withTestSession{
+    fun testAfterReplace() = withTestSession {
         buildInitialIR {
             val p0 = Param(0)
             val p1 = Param(1)

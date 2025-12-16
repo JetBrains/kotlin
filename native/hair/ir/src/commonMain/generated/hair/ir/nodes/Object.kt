@@ -121,3 +121,48 @@ class CheckCast internal constructor(form: Form, obj: Node?) : TypeCheck(form, l
 }
 
 
+class TypeInfo internal constructor(form: Form, obj: Node?) : NodeBase(form, listOf(obj)) {
+    val obj: Node
+        get() = args[0]
+    val objOrNull: Node?
+        get() = args.getOrNull(0)
+    context(_: ArgsUpdater)
+     var obj: Node
+        get() = args[0]
+        set(value) { args[0] = value }
+    context(_: ArgsUpdater)
+     var objOrNull: Node?
+        get() = args.getOrNull(0)
+        set(value) { args[0] = value }
+    
+    override fun paramName(index: Int): String = when (index) {
+        0 -> "obj"
+        else -> error("Unexpected arg index: $index")
+    }
+    
+    override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitTypeInfo(this)
+    companion object {
+        internal fun form(session: Session) = SimpleValueForm(session, "TypeInfo")
+    }
+}
+
+
+class ConstTypeInfo internal constructor(form: Form) : NodeBase(form, listOf()), ConstAny {
+    class Form internal constructor(metaForm: MetaForm, val type: HairClass) : MetaForm.ParametrisedValueForm<Form>(metaForm) {
+        override val args = listOf<Any>(type)
+    }
+    
+    val type: HairClass by form::type
+    
+    
+    override fun paramName(index: Int): String = when (index) {
+        else -> error("Unexpected arg index: $index")
+    }
+    
+    override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitConstTypeInfo(this)
+    companion object {
+        internal fun metaForm(session: Session) = MetaForm(session, "ConstTypeInfo")
+    }
+}
+
+

@@ -18,12 +18,44 @@ import hair.sym.HairType.*
 import hair.sym.Type
 import hair.utils.ensuring
 
-// return void
 context(nodeBuilder: NodeBuilder)
 fun ReturnVoid(control: Controlling?) = Return(control, UnitValue())
 
 context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
 fun ReturnVoid() = Return(UnitValue())
+
+
+context(nodeBuilder: NodeBuilder)
+fun True() = ConstI(1)
+
+context(nodeBuilder: NodeBuilder)
+fun False() = ConstI(0)
+
+
+context(nodeBuilder: NodeBuilder)
+fun Const(value: Number) = when (value) {
+    is Byte,
+    is Short,
+    is Int -> ConstI(value.toInt())
+    is Long -> ConstL(value)
+    is Float -> ConstF(value)
+    is Double -> ConstD(value)
+    else -> error("Should not reach here $value (${value::class.simpleName})")
+}
+
+context(nodeBuilder: NodeBuilder)
+fun Const(type: HairType, value: Number) = when (type) {
+    INT -> ConstI(value.toInt())
+    LONG -> ConstL(value.toLong())
+    FLOAT -> ConstF(value.toFloat())
+    DOUBLE -> ConstD(value.toDouble())
+    else -> error("Should not reach here $value (${value::class.simpleName})")
+}
+
+// FIXME make Unreachable value-numbered
+context(controlBuilder: ControlFlowBuilder)
+fun Session.unreachable() = controlBuilder.at(unreachable)
+
 
 context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
 fun IfExits(cond: Node): Pair<BlockExit, BlockExit> {
