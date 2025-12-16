@@ -93,7 +93,7 @@ object FirJvmSessionFactory : FirAbstractSessionFactory<FirJvmSessionFactory.Con
                 val moduleData = moduleDataProvider.allModuleData.last()
                 val searchScope = moduleDataProvider.getModuleDataPaths(moduleData)?.let { paths ->
                     projectEnvironment.getSearchScopeByClassPath(paths)
-                } ?: context.librariesScope
+                }?.takeUnless { it.isEmpty } ?: context.librariesScope
                 val kotlinClassFinder = projectEnvironment.getKotlinClassFinder(searchScope)
                 listOfNotNull(
                     JvmClassFileBasedSymbolProvider(

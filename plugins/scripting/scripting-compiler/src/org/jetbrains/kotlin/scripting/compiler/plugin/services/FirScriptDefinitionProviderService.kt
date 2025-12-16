@@ -15,13 +15,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.impl.FirProviderImpl
 import org.jetbrains.kotlin.fir.scopes.kotlinScopeProvider
 import org.jetbrains.kotlin.fir.session.sourcesToPathsMapper
 import org.jetbrains.kotlin.scripting.compiler.plugin.configureScriptDefinitions
-import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.CliScriptDefinitionProvider
-import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.ScriptCompilationConfigurationProvider
-import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.ScriptCompilationConfigurationProviderOverDefinitionProvider
-import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.ScriptRefinedCompilationConfigurationCache
-import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.ScriptRefinedCompilationConfigurationCacheImpl
-import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.scriptCompilationConfigurationProvider
-import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.scriptRefinedCompilationConfigurationsCache
+import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.*
 import org.jetbrains.kotlin.scripting.compiler.plugin.fir.scriptCompilationComponent
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.collectAndResolveScriptAnnotationsViaFir
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.refineAllForK2
@@ -86,14 +80,14 @@ class FirScriptDefinitionProviderService(
             return configurationProvider!!.getScriptCompilationConfiguration(sourceCode)?.onSuccess {
                 it.configuration?.asSuccess() ?: return null
             }
-        val hostBasedCache = refinedCompilationConfigurationCache
-        // if the cache is not configured, performing refinement on every request
-        return hostBasedCache?.getRefinedCompilationConfiguration(sourceCode) ?: run {
+        // if the cache is not configured, returns base configuration. This is used for accessing configuration during refinement, see collectAndResolveScriptAnnotationsViaFir
+        val hostBasedCache = refinedCompilationConfigurationCache ?: return getBaseConfiguration(sourceCode)
+        return hostBasedCache.getRefinedCompilationConfiguration(sourceCode) ?: run {
             getBaseConfiguration(sourceCode)?.onSuccess {
                 (it.refineAllForK2(
                     sourceCode,
                     hostConfiguration
-                ) { source, configuration, hostConfiguration ->
+                ) { source, configuration ->
                     if (source is KtFileScriptSource) {
                         getScriptCollectedData(
                             source.ktFile,
@@ -120,21 +114,11 @@ class FirScriptDefinitionProviderService(
                         )
                     }
                 }).also { refined ->
-                    hostBasedCache?.storeRefinedCompilationConfiguration(sourceCode, refined)
+                    hostBasedCache.storeRefinedCompilationConfiguration(sourceCode, refined)
                 }
             }
         }
     }
-
-    fun storeRefinedConfiguration(
-        sourceCode: SourceCode,
-        configuration: ResultWithDiagnostics<ScriptCompilationConfiguration>
-    ): ResultWithDiagnostics<ScriptCompilationConfiguration>? =
-        refinedCompilationConfigurationCache?.storeRefinedCompilationConfiguration(sourceCode, configuration)
-
-    @Suppress("unused") // left for possible future use in IDE
-    fun clearRefinedConfiguration(sourceCode: SourceCode): ResultWithDiagnostics<ScriptCompilationConfiguration>? =
-        refinedCompilationConfigurationCache?.clearRefinedCompilationConfiguration(sourceCode)
 
     companion object {
         fun getFactory(
@@ -173,7 +157,7 @@ class FirScriptDefinitionProviderService(
             @Suppress("DEPRECATION") //KT-82551
             definitionSources: List<org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionsSource>,
             definitionProvider: ScriptDefinitionProvider? = null,
-            configurationProvider: ScriptConfigurationsProvider? = null,
+            @Suppress("unused") configurationProvider: ScriptConfigurationsProvider? = null,
         ): Factory = getFactory {
             defaultJvmScriptingHostConfiguration.with {
                 val scriptDefinitionProvider = definitionProvider
