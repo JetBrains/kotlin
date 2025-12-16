@@ -131,11 +131,9 @@ class KonanConfig(
         return@takeIf true
     }
 
-    private val defaultGC get() = GC.PARALLEL_MARK_CONCURRENT_SWEEP
+    private val defaultGC get() = GC.CONCURRENT_MARK_AND_SWEEP
     val gc: GC
-        get() = configuration.get(BinaryOptions.gc) ?: run {
-            if (swiftExport) GC.CONCURRENT_MARK_AND_SWEEP else defaultGC
-        }
+        get() = configuration.get(BinaryOptions.gc) ?: defaultGC
     val runtimeAssertsMode: RuntimeAssertsMode get() = configuration.get(BinaryOptions.runtimeAssertionsMode) ?: RuntimeAssertsMode.IGNORE
     val checkStateAtExternalCalls: Boolean get() = configuration.get(BinaryOptions.checkStateAtExternalCalls) ?: false
     private val defaultDisableMmap get() = target.family == Family.MINGW || !pagedAllocator
