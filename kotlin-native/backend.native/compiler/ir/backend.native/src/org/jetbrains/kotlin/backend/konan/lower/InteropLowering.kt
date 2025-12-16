@@ -111,7 +111,7 @@ private abstract class BaseInteropIrTransformer(
         }.block()
         return if (addedDeclarations.isEmpty())
             result
-        else irCall(symbols.interopCallMarker, result.type, listOf(result.type)).apply {
+        else irCall(symbols.interopCallMarker!!, result.type, listOf(result.type)).apply {
             arguments[0] = irBlock {
                 addedDeclarations.forEach {
                     it.transform(this@BaseInteropIrTransformer, null)

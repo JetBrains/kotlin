@@ -356,9 +356,9 @@ class KonanSymbols(
     val filterExceptions = ClassIds.filterExceptions.classSymbol()
     val exportForCppRuntime = ClassIds.exportForCppRuntime.classSymbol()
     val typedIntrinsic = ClassIds.typedIntrinsic.classSymbol()
-    val cToKotlinBridge = ClassIds.cToKotlinBridge.classSymbol()
-    val kotlinToCBridge = ClassIds.kotlinToCBridge.classSymbol()
-    val interopCallMarker = CallableIds.interopCallMarker.functionSymbol()
+    val cToKotlinBridge = ClassIds.cToKotlinBridge.classSymbolOrNull() // KT-83151 Restore non-nullability of symbols available since 2.3
+    val kotlinToCBridge = ClassIds.kotlinToCBridge.classSymbolOrNull() // KT-83151 Restore non-nullability of symbols available since 2.3
+    val interopCallMarker = CallableIds.interopCallMarker.functionSymbolOrNull() // KT-83151 Restore non-nullability of symbols available since 2.3
 
     val objCMethodImp = ClassIds.objCMethodImp.classSymbol()
 
@@ -637,7 +637,7 @@ class KonanSymbols(
     val kObjectiveCKClassImplIntrinsicConstructor by ClassIds.objectiveCKClassImpl.noParametersConstructorSymbol()
     val kClassUnsupportedImpl = ClassIds.kClassUnsupportedImpl.classSymbol()
     val kTypeParameterImpl = ClassIds.kTypeParameterImpl.classSymbol()
-    val kTypeImpl = ClassIds.kTypeImpl.classSymbol()
+    val kTypeImpl = ClassIds.kTypeImpl.classSymbolOrNull() // KT-83151 Restore non-nullability of symbols available since 2.3
     val kTypeImplForTypeParametersWithRecursiveBounds = ClassIds.kTypeImplForTypeParametersWithRecursiveBounds.classSymbol()
     val kTypeProjectionList = ClassIds.kTypeProjectionList.classSymbol()
     val typeOf = CallableIds.typeOfReflection.functionSymbol()
