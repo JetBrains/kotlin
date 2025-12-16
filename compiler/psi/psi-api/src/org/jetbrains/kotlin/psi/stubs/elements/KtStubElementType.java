@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.idea.KotlinLanguage;
 import org.jetbrains.kotlin.psi.KtElementImplStub;
 import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.psi.KtFunction;
-import org.jetbrains.kotlin.psi.KtProperty;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
@@ -80,9 +79,7 @@ public abstract class KtStubElementType<StubT extends StubElement<?>, PsiT exten
         if (psi instanceof KtFunction) {
             return true;
         }
-        if (psi instanceof KtProperty) {
-            return !((KtProperty) psi).isLocal();
-        }
+
         return createStubDependingOnParent(node);
     }
 
