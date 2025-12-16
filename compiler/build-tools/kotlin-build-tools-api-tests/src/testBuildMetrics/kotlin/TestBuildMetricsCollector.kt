@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.buildtools.api.tests
 
 import org.jetbrains.kotlin.buildtools.api.trackers.BuildMetricsCollector
-import java.util.concurrent.CopyOnWriteArrayList
-import java.util.concurrent.atomic.AtomicInteger
+import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.atomic.LongAdder
 
 /**
  * Simple thread-safe implementation of [BuildMetricsCollector] intended for tests.
@@ -20,19 +20,20 @@ class TestBuildMetricsCollector : BuildMetricsCollector {
         val value: Long,
     )
 
-    private val _entries = CopyOnWriteArrayList<Entry>()
+    private data class Key(val name: String, val type: BuildMetricsCollector.ValueType)
+
+    private val counters = ConcurrentHashMap<Key, LongAdder>()
 
     override fun collectMetric(
         name: String,
         type: BuildMetricsCollector.ValueType,
         value: Long,
     ) {
-        _entries += Entry(
-            name = name,
-            type = type,
-            value = value,
-        )
+        counters.computeIfAbsent(Key(name, type)) { LongAdder() }.add(value)
     }
 
-    fun all(): List<Entry> = _entries.toList()
+    fun all(): List<Entry> = counters.entries
+        .map { (key, adder) -> Entry(key.name, key.type, adder.sum()) }
+        // Provide deterministic ordering for stable test assertions.
+        .sortedWith(compareBy<Entry> { it.name }.thenBy { it.type.toString() })
 }

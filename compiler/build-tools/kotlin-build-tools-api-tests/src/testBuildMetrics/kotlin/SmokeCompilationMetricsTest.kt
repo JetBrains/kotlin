@@ -28,7 +28,7 @@ class SmokeCompilationMetricsTest : BaseCompilationTest() {
                 val expectedNames = baseMetricNames
                 val actualNames = metrics.all().map { it.name }.toSet()
                 assertEquals(expectedNames, actualNames) {
-                    "Unexpected set of metric names for module1 incremental build.\n\nMissing: ${expectedNames - actualNames}\nUnexpected: ${actualNames - expectedNames}"
+                    "Unexpected set of metric names for module1 non-incremental build.\n\nMissing: ${expectedNames - actualNames}\nUnexpected: ${actualNames - expectedNames}"
                 }
                 assertOutputs("FooKt.class", "Bar.class", "BazKt.class")
             }
@@ -36,7 +36,7 @@ class SmokeCompilationMetricsTest : BaseCompilationTest() {
                 val expectedNames = baseMetricNames
                 val actualNames = metrics.all().map { it.name }.toSet()
                 assertEquals(expectedNames, actualNames) {
-                    "Unexpected set of metric names for module1 incremental build.\n\nMissing: ${expectedNames - actualNames}\nUnexpected: ${actualNames - expectedNames}"
+                    "Unexpected set of metric names for module2 non-incremental build.\n\nMissing: ${expectedNames - actualNames}\nUnexpected: ${actualNames - expectedNames}"
                 }
                 assertOutputs("AKt.class", "BKt.class")
             }
@@ -63,7 +63,7 @@ class SmokeCompilationMetricsTest : BaseCompilationTest() {
                 val expectedNames = baseMetricNames + incrementalCompilationMetricNames
                 val actualNames = metrics.all().map { it.name }.toSet()
                 assertEquals(expectedNames, actualNames) {
-                    "Unexpected set of metric names for module1 incremental build.\n\nMissing: ${expectedNames - actualNames}\nUnexpected: ${actualNames - expectedNames}"
+                    "Unexpected set of metric names for module2 incremental build.\n\nMissing: ${expectedNames - actualNames}\nUnexpected: ${actualNames - expectedNames}"
                 }
                 assertOutputs("AKt.class", "BKt.class")
             }
