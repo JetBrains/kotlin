@@ -132,7 +132,7 @@ abstract class WasmBinaryTransform : TransformAction<WasmBinaryTransform.Paramet
             compilerExecutionSettings = CompilerExecutionSettings(
                 null,
                 KotlinCompilerExecutionStrategy.DAEMON,
-                false,
+                true,
                 generateCompilerRefIndex = false,
             ),
             errorsFiles = null,
