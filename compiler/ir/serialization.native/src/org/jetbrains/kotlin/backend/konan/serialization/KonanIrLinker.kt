@@ -68,7 +68,8 @@ class KonanIrLinker(
             // In case of intersection override, the usual logic of IrLinkerFakeOverrideBuilderStrategy.postProcessGeneratedFakeOverride()
             // will raise AMBIGUOUS_NON_OVERRIDDEN_CALLABLE_MEMBER, since properties in protocols are non-abstract.
             // So such properties are allowed to form intersection overrides without a partial linkage error. Native backend will handle them correctly.
-            it is IrProperty && it.modality == Modality.FINAL && it.parentAsClass.isObjCClass()
+            // However, this predicate is much wider to cover also other similar usecases.
+            it.parentAsClass.isObjCClass()
         },
     )
 

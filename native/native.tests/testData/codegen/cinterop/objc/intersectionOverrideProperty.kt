@@ -11,10 +11,12 @@ headers = lib.h
 #include <Foundation/NSObject.h>
 
 @protocol Protocol1 <NSObject>
+@optional
 @property NSString* ok;
 @end
 
 @protocol Protocol2 <NSObject>
+@optional
 @property NSString* ok;
 @end
 
