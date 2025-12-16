@@ -45,8 +45,6 @@ class JsPreSerializationSymbolsTest : AbstractPreSerializationSymbolsTest(
 }
 
 private class JsSymbolValidationHandler(testServices: TestServices) : IrSecondPhaseSymbolValidationHandler(testServices) {
-    override val blackList: List<String> = listOf("stringBuilder")
-
     override fun getSymbols(irBuiltIns: IrBuiltIns): List<PreSerializationSymbols> {
         return listOf(
             JsSymbols(irBuiltIns, StageController(), compileLongAsBigint = true),
