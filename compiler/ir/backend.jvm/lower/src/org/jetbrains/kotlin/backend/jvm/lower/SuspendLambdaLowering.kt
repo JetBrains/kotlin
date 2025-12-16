@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.ir.moveBodyTo
 import org.jetbrains.kotlin.backend.common.lower.BOUND_RECEIVER_PARAMETER
 import org.jetbrains.kotlin.backend.common.lower.LocalDeclarationsLowering
+import org.jetbrains.kotlin.backend.common.lower.UNBOUND_RECEIVER_PARAMETER
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.jvm.*
 import org.jetbrains.kotlin.backend.jvm.ir.hasChild
@@ -188,7 +189,7 @@ internal class SuspendLambdaLowering(context: JvmBackendContext) : SuspendLoweri
                     origin = LocalDeclarationsLowering.DECLARATION_ORIGIN_FIELD_FOR_CAPTURED_VALUE
                     isFinal = false
                     visibility =
-                        if (it.origin == BOUND_RECEIVER_PARAMETER) DescriptorVisibilities.PRIVATE
+                        if (it.origin == BOUND_RECEIVER_PARAMETER || it.origin == UNBOUND_RECEIVER_PARAMETER) DescriptorVisibilities.PRIVATE
                         else JavaDescriptorVisibilities.PACKAGE_VISIBILITY
                 } else null
                 ParameterInfo(field, unboxedType, it.type, it.name, it.origin)

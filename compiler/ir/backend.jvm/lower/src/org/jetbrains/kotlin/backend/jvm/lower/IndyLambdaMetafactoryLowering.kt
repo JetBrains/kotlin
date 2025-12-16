@@ -160,7 +160,7 @@ class IndyLambdaMetafactoryLowering(val backendContext: JvmBackendContext): File
 
         val shouldBeSerializable = generatedParameters.shouldBeSerializable
 
-        val samMethod = call.overriddenFunctionSymbol.owner
+        val samMethod = generatedParameters.samMethod
         val instanceMethod = instanceMethodRef.symbol.owner
 
         val dynamicCall = wrapClosureInDynamicCall(samType, samMethod, call, backendContext)

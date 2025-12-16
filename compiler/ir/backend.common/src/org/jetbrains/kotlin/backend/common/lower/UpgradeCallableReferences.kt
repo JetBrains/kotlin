@@ -63,6 +63,8 @@ open class UpgradeCallableReferences(
         val expression: IrExpression,
     )
 
+    open fun selectSAMOverriddenFunction(irClass: IrClass): IrSimpleFunction = irClass.selectSAMOverriddenFunction()
+
     inner class UpgradeTransformer : IrTransformer<IrDeclarationParent>() {
         private fun IrClass?.isRestrictedSuspension(): Boolean {
             if (this == null) return false
@@ -76,10 +78,12 @@ open class UpgradeCallableReferences(
             }
         }
 
-        private fun IrFunction.flattenParameters() {
+        private fun IrFunction.flattenParameters(hasBoundExtensionReceiver: Boolean) {
             for (parameter in parameters) {
                 require(parameter.kind != IrParameterKind.DispatchReceiver) { "No dispatch receiver allowed in wrappers" }
-                if (parameter.kind == IrParameterKind.ExtensionReceiver) parameter.origin = BOUND_RECEIVER_PARAMETER
+                if (parameter.kind == IrParameterKind.ExtensionReceiver) {
+                    parameter.origin = if (hasBoundExtensionReceiver) BOUND_RECEIVER_PARAMETER else UNBOUND_RECEIVER_PARAMETER
+                }
                 parameter.kind = IrParameterKind.Regular
             }
         }
@@ -90,17 +94,19 @@ open class UpgradeCallableReferences(
             expression.transformChildren(this, data)
             if (!upgradeFunctionReferencesAndLambdas) return expression
             val isRestrictedSuspension = expression.function.isRestrictedSuspensionFunction()
-            expression.function.flattenParameters()
+            expression.function.flattenParameters(hasBoundExtensionReceiver = false)
             return IrRichFunctionReferenceImpl(
                 startOffset = expression.startOffset,
                 endOffset = expression.endOffset,
                 type = expression.type,
                 reflectionTargetSymbol = null,
-                overriddenFunctionSymbol = expression.type.classOrFail.owner.selectSAMOverriddenFunction().symbol,
+                overriddenFunctionSymbol = selectSAMOverriddenFunction(expression.type.classOrFail.owner).symbol,
                 invokeFunction = expression.function,
                 origin = expression.origin,
                 isRestrictedSuspension = isRestrictedSuspension,
-            )
+            ).apply {
+                copyNecessaryAttributes(expression, this)
+            }
         }
 
         override fun visitElement(element: IrElement, data: IrDeclarationParent): IrElement {
@@ -188,7 +194,11 @@ open class UpgradeCallableReferences(
             function.visibility = DescriptorVisibilities.LOCAL
             reference.transformChildren(this, data)
             val isRestrictedSuspension = function.isRestrictedSuspensionFunction()
-            function.flattenParameters()
+            function.flattenParameters(
+                function.parameters.any {
+                    it.kind == IrParameterKind.ExtensionReceiver && reference.arguments[it] != null
+                }
+            )
             val (boundParameters, unboundParameters) = function.parameters.partition { reference.arguments[it.indexInParameters] != null }
             function.parameters = boundParameters + unboundParameters
             val reflectionTarget = reference.reflectionTarget.takeUnless { expression.origin.isLambda }
@@ -197,7 +207,7 @@ open class UpgradeCallableReferences(
                 endOffset = expression.endOffset,
                 type = referenceType,
                 reflectionTargetSymbol = reflectionTarget,
-                overriddenFunctionSymbol = referenceType.classOrFail.owner.selectSAMOverriddenFunction().symbol,
+                overriddenFunctionSymbol = selectSAMOverriddenFunction(referenceType.classOrFail.owner).symbol,
                 invokeFunction = function,
                 origin = reference.origin,
                 hasSuspendConversion = reflectionTarget != null && reflectionTarget.isSuspend == false && function.isSuspend,
@@ -231,7 +241,7 @@ open class UpgradeCallableReferences(
                     startOffset = expression.startOffset
                     endOffset = expression.endOffset
                     type = expression.typeOperand
-                    overriddenFunctionSymbol = expression.typeOperand.classOrFail.owner.selectSAMOverriddenFunction().symbol
+                    overriddenFunctionSymbol = selectSAMOverriddenFunction(expression.typeOperand.classOrFail.owner).symbol
                 }
             }
             return super.visitTypeOperator(expression, data)
@@ -245,18 +255,28 @@ open class UpgradeCallableReferences(
             expression.transformChildren(this, data)
             fixCallableReferenceComingFromKlib(expression)
             if (!upgradeFunctionReferencesAndLambdas) return expression
-            val arguments = expression.getCapturedValues()
+            val arguments = if (expression.symbol.owner.hasMissingObjectDispatchReceiver()) {
+                val objectClass = expression.symbol.owner.parentAsClass
+                val dispatchReceiver = IrGetObjectValueImpl(
+                    UNDEFINED_OFFSET, UNDEFINED_OFFSET, objectClass.defaultType, objectClass.symbol
+                )
+                val fakeParameter = CapturedValue(SpecialNames.THIS, objectClass.defaultType, null, dispatchReceiver)
+                listOf(fakeParameter) + expression.getCapturedValues()
+            } else {
+                expression.getCapturedValues()
+            }
             return IrRichFunctionReferenceImpl(
                 startOffset = expression.startOffset,
                 endOffset = expression.endOffset,
                 type = expression.type,
                 reflectionTargetSymbol = (expression.reflectionTarget ?: expression.symbol).takeUnless { expression.origin.isLambda },
-                overriddenFunctionSymbol = expression.type.classOrFail.owner.selectSAMOverriddenFunction().symbol,
+                overriddenFunctionSymbol = selectSAMOverriddenFunction(expression.type.classOrFail.owner).symbol,
                 invokeFunction = expression.wrapFunction(arguments, data, expression.symbol.owner),
                 origin = expression.origin,
                 isRestrictedSuspension = expression.symbol.owner.isRestrictedSuspensionFunction(),
             ).apply {
                 boundValues += arguments.map { it.expression }
+                copyNecessaryAttributes(expression, this)
             }
         }
 
@@ -583,8 +603,11 @@ open class UpgradeCallableReferences(
         }
     }
 
+    protected open fun copyNecessaryAttributes(oldReference: IrFunctionExpression, newReference: IrRichFunctionReference) {}
     protected open fun copyNecessaryAttributes(oldReference: IrFunctionReference, newReference: IrRichFunctionReference) {}
     protected open fun copyNecessaryAttributes(oldReference: IrPropertyReference, newReference: IrRichPropertyReference) {}
     protected open fun copyNecessaryAttributes(oldReference: IrLocalDelegatedPropertyReference, newReference: IrRichPropertyReference) {}
     protected open fun IrDeclaration.hasMissingObjectDispatchReceiver(): Boolean = false
 }
+
+val UNBOUND_RECEIVER_PARAMETER by IrDeclarationOriginImpl.Regular
