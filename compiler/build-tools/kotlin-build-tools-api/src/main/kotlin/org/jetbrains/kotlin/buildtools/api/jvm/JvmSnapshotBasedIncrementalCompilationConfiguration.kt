@@ -115,7 +115,7 @@ public open class JvmSnapshotBasedIncrementalCompilationConfiguration
     }
 
     /**
-     * Base class for [JvmSnapshotBasedIncrementalCompilationConfiguration] options.
+     * An option for configuring a [JvmSnapshotBasedIncrementalCompilationConfiguration].
      *
      * @see get
      * @see set
@@ -248,7 +248,7 @@ public open class JvmSnapshotBasedIncrementalCompilationConfiguration
 @ExperimentalBuildToolsApi
 public interface JvmSnapshotBasedIncrementalCompilationOptions {
     /**
-     * Base class for [JvmSnapshotBasedIncrementalCompilationOptions] options.
+     * An option for configuring a [JvmSnapshotBasedIncrementalCompilationOptions].
      *
      * @see get
      * @see set

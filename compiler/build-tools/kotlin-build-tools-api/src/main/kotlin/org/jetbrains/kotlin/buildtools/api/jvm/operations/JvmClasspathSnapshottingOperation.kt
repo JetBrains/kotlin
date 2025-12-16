@@ -92,7 +92,7 @@ public interface JvmClasspathSnapshottingOperation : BuildOperation<ClasspathEnt
     public fun toBuilder(): Builder
 
     /**
-     * Base class for [JvmClasspathSnapshottingOperation] options.
+     * An option for configuring a [JvmClasspathSnapshottingOperation].
      *
      * @see get
      * @see set

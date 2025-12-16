@@ -140,10 +140,11 @@ public interface JvmCompilationOperation : CancellableBuildOperation<Compilation
     public fun toBuilder(): Builder
 
     /**
-     * Base class for [JvmCompilationOperation] options.
+     * An option for configuring a [JvmCompilationOperation].
      *
      * @see get
      * @see set
+     * @see JvmCompilationOperation.Companion
      */
     public class Option<V> internal constructor(id: String) : BaseOption<V>(id)
 

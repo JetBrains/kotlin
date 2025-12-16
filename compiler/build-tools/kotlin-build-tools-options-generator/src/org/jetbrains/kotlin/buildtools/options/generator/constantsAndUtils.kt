@@ -32,7 +32,7 @@ internal val ANNOTATION_USE_FROM_IMPL_RESTRICTED = ClassName("org.jetbrains.kotl
 
 internal const val KDOC_SINCE_2_3_0 = "@since 2.3.0"
 internal val KDOC_BASE_OPTIONS_CLASS = """
-    Base class for [%T] options.
+    An option for configuring [%T].
 
     @see get
     @see set    
