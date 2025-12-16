@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.CliDiagnostics.NOT_AN_OPT_I
 import org.jetbrains.kotlin.fir.analysis.diagnostics.CliDiagnostics.OPT_IN_REQUIREMENT_MARKER_IS_DEPRECATED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.CliDiagnostics.OPT_IN_REQUIREMENT_MARKER_IS_DEPRECATED_ERROR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.CliDiagnostics.OPT_IN_REQUIREMENT_MARKER_IS_UNRESOLVED
+import org.jetbrains.kotlin.fir.analysis.diagnostics.CliDiagnostics.REDUNDANT_CLI_ARG
 
 object CliDiagnostics : KtDiagnosticsContainer() {
     val COMPILER_PLUGIN_ARG_IS_EXPERIMENTAL: KtSourcelessDiagnosticFactory by warningWithoutSource()
@@ -26,6 +27,7 @@ object CliDiagnostics : KtDiagnosticsContainer() {
     val CONTEXT_PARAMETERS_ARE_DEPRECATED: KtSourcelessDiagnosticFactory by errorWithoutSource()
     val MISSING_DIAGNOSTIC_NAME: KtSourcelessDiagnosticFactory by errorWithoutSource()
     val ERROR_SEVERITY_CHANGED: KtSourcelessDiagnosticFactory by errorWithoutSource()
+    val REDUNDANT_CLI_ARG: KtSourcelessDiagnosticFactory by warningWithoutSource()
 
     override fun getRendererFactory(): BaseDiagnosticRendererFactory = KtDiagnosticMessagesCli
 }
@@ -40,5 +42,6 @@ object KtDiagnosticMessagesCli : BaseSourcelessDiagnosticFactory() {
         map.put(CONTEXT_PARAMETERS_ARE_DEPRECATED, MESSAGE_PLACEHOLDER)
         map.put(MISSING_DIAGNOSTIC_NAME, MESSAGE_PLACEHOLDER)
         map.put(ERROR_SEVERITY_CHANGED, MESSAGE_PLACEHOLDER)
+        map.put(REDUNDANT_CLI_ARG, MESSAGE_PLACEHOLDER)
     }
 }
