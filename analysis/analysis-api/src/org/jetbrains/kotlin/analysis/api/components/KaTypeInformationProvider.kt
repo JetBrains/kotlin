@@ -306,43 +306,43 @@ public interface KaTypeInformationProvider : KaSessionComponent {
  */
 public object KaStandardTypeClassIds {
     /** The [Unit] class ID. */
-    public val UNIT: ClassId = ClassId.topLevel(StandardNames.FqNames.unit.toSafe())
+    public val UNIT: ClassId get() = StandardClassIds.Unit
 
     /** The [Int] class ID. */
-    public val INT: ClassId = ClassId.topLevel(StandardNames.FqNames._int.toSafe())
+    public val INT: ClassId get() = StandardClassIds.Int
 
     /** The [Long] class ID. */
-    public val LONG: ClassId = ClassId.topLevel(StandardNames.FqNames._long.toSafe())
+    public val LONG: ClassId get() = StandardClassIds.Long
 
     /** The [Short] class ID. */
-    public val SHORT: ClassId = ClassId.topLevel(StandardNames.FqNames._short.toSafe())
+    public val SHORT: ClassId get() = StandardClassIds.Short
 
     /** The [Byte] class ID. */
-    public val BYTE: ClassId = ClassId.topLevel(StandardNames.FqNames._byte.toSafe())
+    public val BYTE: ClassId get() = StandardClassIds.Byte
 
     /** The [Float] class ID. */
-    public val FLOAT: ClassId = ClassId.topLevel(StandardNames.FqNames._float.toSafe())
+    public val FLOAT: ClassId get() = StandardClassIds.Float
 
     /** The [Double] class ID. */
-    public val DOUBLE: ClassId = ClassId.topLevel(StandardNames.FqNames._double.toSafe())
+    public val DOUBLE: ClassId get() = StandardClassIds.Double
 
     /** The [Char] class ID. */
-    public val CHAR: ClassId = ClassId.topLevel(StandardNames.FqNames._char.toSafe())
+    public val CHAR: ClassId get() = StandardClassIds.Char
 
     /** The [Boolean] class ID. */
-    public val BOOLEAN: ClassId = ClassId.topLevel(StandardNames.FqNames._boolean.toSafe())
+    public val BOOLEAN: ClassId get() = StandardClassIds.Boolean
 
     /** The [String] class ID. */
-    public val STRING: ClassId = ClassId.topLevel(StandardNames.FqNames.string.toSafe())
+    public val STRING: ClassId get() = StandardClassIds.String
 
     /** The [CharSequence] class ID. */
-    public val CHAR_SEQUENCE: ClassId = ClassId.topLevel(StandardNames.FqNames.charSequence.toSafe())
+    public val CHAR_SEQUENCE: ClassId get() = StandardClassIds.CharSequence
 
     /** The [Any] class ID. */
-    public val ANY: ClassId = ClassId.topLevel(StandardNames.FqNames.any.toSafe())
+    public val ANY: ClassId get() = StandardClassIds.Any
 
     /** The [Nothing] class ID. */
-    public val NOTHING: ClassId = ClassId.topLevel(StandardNames.FqNames.nothing.toSafe())
+    public val NOTHING: ClassId get() = StandardClassIds.Nothing
 
     /** A set of primitive class IDs. */
     public val PRIMITIVES: Set<ClassId> = setOf(INT, LONG, SHORT, BYTE, FLOAT, DOUBLE, CHAR, BOOLEAN)
