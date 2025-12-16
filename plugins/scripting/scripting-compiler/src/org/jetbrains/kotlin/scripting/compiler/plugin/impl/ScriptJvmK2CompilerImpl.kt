@@ -49,6 +49,7 @@ import org.jetbrains.kotlin.scripting.compiler.plugin.fir.FirScriptCompilationCo
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.ScriptingHostConfiguration
+import kotlin.script.experimental.host.withDefaultsFrom
 import kotlin.script.experimental.impl._languageVersion
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 
@@ -81,9 +82,10 @@ class ScriptJvmK2CompilerFromEnvironment(
         scriptCompilationConfiguration: ScriptCompilationConfiguration,
     ): ResultWithDiagnostics<CompiledScript> =
         withMessageCollector(script = script) { messageCollector ->
-            withScriptCompilationCache(script, scriptCompilationConfiguration, messageCollector) {
+            val configWithUpdatedHost = scriptCompilationConfiguration.updateWithHostConfiguration(hostConfiguration)
+            withScriptCompilationCache(script, configWithUpdatedHost, messageCollector) {
                 val compiler = ScriptJvmK2CompilerImpl(
-                    createCompilerStateFromEnvironment(environment, messageCollector, scriptCompilationConfiguration, hostConfiguration),
+                    createCompilerStateFromEnvironment(environment, messageCollector, configWithUpdatedHost, hostConfiguration),
                     SourceCode::convertToFirViaLightTree
                 )
                 if (messageCollector.hasErrors()) failure(messageCollector)
@@ -91,6 +93,14 @@ class ScriptJvmK2CompilerFromEnvironment(
             }
         }
 }
+
+fun ScriptCompilationConfiguration.updateWithHostConfiguration(hostConfiguration: ScriptingHostConfiguration) =
+    with {
+        val providedHostConfiguration = this[ScriptCompilationConfiguration.hostConfiguration] ?: defaultJvmScriptingHostConfiguration
+        hostConfiguration(
+            hostConfiguration.withDefaultsFrom(providedHostConfiguration)
+        )
+    }
 
 class ScriptJvmK2CompilerImpl(
     state: K2ScriptingCompilerEnvironment,

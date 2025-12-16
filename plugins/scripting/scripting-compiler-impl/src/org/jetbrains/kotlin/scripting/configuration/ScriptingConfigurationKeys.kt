@@ -38,4 +38,8 @@ object ScriptingConfigurationKeys {
     // Enable additional IR generation which contains script expressions evaluation info.
     val ENABLE_SCRIPT_EXPLANATION_OPTION: CompilerConfigurationKey<Boolean> =
         CompilerConfigurationKey.create("ENABLE_SCRIPT_EXPLANATION_OPTION")
+
+    // Do not attempt to use script compilation cache, even if provided by the definition
+    val DISABLE_SCRIPT_COMPILATION_CACHE: CompilerConfigurationKey<Boolean> =
+        CompilerConfigurationKey.create("DISABLE_SCRIPT_COMPILATION_CACHE")
 }
