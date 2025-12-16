@@ -44,12 +44,15 @@ import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurat
 import org.jetbrains.kotlin.test.services.standardLibrariesPathProvider
 import java.net.URLClassLoader
 
-open class AbstractFirScriptAndReplCodegenTest(val frontendFacade: Constructor<FrontendFacade<FirOutputArtifact>> = ::FirFrontendFacade) :
+open class AbstractFirScriptAndReplCodegenTest(
+    val parser: FirParser = FirParser.Psi,
+    val frontendFacade: Constructor<FrontendFacade<FirOutputArtifact>> = ::FirFrontendFacade
+) :
     AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.JVM_IR)
 {
 
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
-        configureFirParser(FirParser.Psi)
+        configureFirParser(parser)
 
         globalDefaults {
             frontend = FrontendKinds.FIR
@@ -95,7 +98,7 @@ open class AbstractFirScriptAndReplCodegenTest(val frontendFacade: Constructor<F
     }
 }
 
-open class AbstractFirScriptCodegenTest : AbstractFirScriptAndReplCodegenTest() {
+open class AbstractFirScriptCodegenTest(parser: FirParser = FirParser.Psi) : AbstractFirScriptAndReplCodegenTest(parser) {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         with(builder) {
@@ -125,6 +128,7 @@ class FirJvmScriptRunChecker(testServices: TestServices) : JvmBinaryArtifactHand
                         }
                     }
                     else -> {
+                        // TODO: write LT support here
                         assertions.fail { "Only PSI scripts are supported so far" }
                     }
                 }

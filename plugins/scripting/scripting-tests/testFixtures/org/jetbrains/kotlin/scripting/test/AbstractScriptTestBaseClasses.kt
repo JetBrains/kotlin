@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.WITH_STDLIB
 import org.jetbrains.kotlin.test.runners.AbstractFirDiagnosticTestBase
 import org.jetbrains.kotlin.test.runners.codegen.AbstractFirScriptCodegenTest
 
-open class AbstractScriptWithCustomDefDiagnosticsTestBase : AbstractFirDiagnosticTestBase(FirParser.Psi) {
+open class AbstractScriptWithCustomDefDiagnosticsTestBase : AbstractFirDiagnosticTestBase(FirParser.LightTree) {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         with(builder) {
@@ -20,7 +20,7 @@ open class AbstractScriptWithCustomDefDiagnosticsTestBase : AbstractFirDiagnosti
     }
 }
 
-open class AbstractScriptWithCustomDefBlackBoxCodegenTest : AbstractFirScriptCodegenTest() {
+open class AbstractScriptWithCustomDefBlackBoxCodegenTest : AbstractFirScriptCodegenTest(parser = FirParser.Psi) {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         with(builder) {
