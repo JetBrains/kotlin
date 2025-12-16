@@ -153,6 +153,7 @@ object PluginStructureProvider {
      * The list of extension points that are safe to be registered automatically
      */
     private val allowedExtensionPointNames = listOf(
+        "org.jetbrains.kotlin.analysis.additionalKDocResolutionProvider",
         "org.jetbrains.kotlin.kotlinContentScopeRefiner",
         "org.jetbrains.kotlin.kotlinGlobalSearchScopeMergeStrategy",
         "org.jetbrains.kotlin.psiReferenceProvider",
