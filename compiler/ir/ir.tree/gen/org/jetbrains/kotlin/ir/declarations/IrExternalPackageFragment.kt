@@ -10,6 +10,7 @@ package org.jetbrains.kotlin.ir.declarations
 
 import org.jetbrains.kotlin.ir.symbols.IrExternalPackageFragmentSymbol
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 
 /**
  * This is a root parent element for external declarations (meaning those that come from
@@ -35,4 +36,7 @@ abstract class IrExternalPackageFragment : IrPackageFragment() {
 
     override fun <R, D> accept(visitor: IrVisitor<R, D>, data: D): R =
         visitor.visitExternalPackageFragment(this, data)
+
+    override fun acceptVoid(visitor: IrVisitorVoid) =
+        visitor.visitExternalPackageFragment(this)
 }

@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.ir.symbols.IrDeclarationWithAccessorsSymbol
 import org.jetbrains.kotlin.ir.util.transformInPlace
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 
 /**
  * This node is intended to unify different ways of handling property reference-like objects in IR.
@@ -40,6 +41,9 @@ abstract class IrRichPropertyReference : IrRichCallableReference<IrDeclarationWi
 
     override fun <R, D> accept(visitor: IrVisitor<R, D>, data: D): R =
         visitor.visitRichPropertyReference(this, data)
+
+    override fun acceptVoid(visitor: IrVisitorVoid) =
+        visitor.visitRichPropertyReference(this)
 
     override fun <D> acceptChildren(visitor: IrVisitor<Unit, D>, data: D) {
         boundValues.forEach { it.accept(visitor, data) }

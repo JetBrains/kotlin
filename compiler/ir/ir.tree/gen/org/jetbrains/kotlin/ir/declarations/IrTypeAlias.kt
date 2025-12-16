@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.transformIfNeeded
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.typeAlias]
@@ -31,6 +32,9 @@ abstract class IrTypeAlias : IrDeclarationBase(), IrDeclarationWithName, IrDecla
 
     override fun <R, D> accept(visitor: IrVisitor<R, D>, data: D): R =
         visitor.visitTypeAlias(this, data)
+
+    override fun acceptVoid(visitor: IrVisitorVoid) =
+        visitor.visitTypeAlias(this)
 
     override fun <D> acceptChildren(visitor: IrVisitor<Unit, D>, data: D) {
         typeParameters.forEach { it.accept(visitor, data) }

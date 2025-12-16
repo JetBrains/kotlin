@@ -11,6 +11,7 @@ package org.jetbrains.kotlin.ir.expressions
 import org.jetbrains.kotlin.ir.util.transformInPlace
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.try]
@@ -24,6 +25,9 @@ abstract class IrTry : IrExpression() {
 
     override fun <R, D> accept(visitor: IrVisitor<R, D>, data: D): R =
         visitor.visitTry(this, data)
+
+    override fun acceptVoid(visitor: IrVisitorVoid) =
+        visitor.visitTry(this)
 
     override fun <D> acceptChildren(visitor: IrVisitor<Unit, D>, data: D) {
         tryResult.accept(visitor, data)

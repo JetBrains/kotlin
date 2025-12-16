@@ -350,6 +350,35 @@ fun ImportCollectingPrinter.printAcceptMethod(
     println()
 }
 
+fun ImportCollectingPrinter.printAcceptVoidMethod(
+    element: AbstractElement<*, *, *>,
+    visitorClass: ClassRef<PositionTypeParameterRef>,
+    hasImplementation: Boolean,
+    treeName: String,
+) {
+    if (!element.hasAcceptMethod) return
+    println()
+
+    val visitorParameter = FunctionParameter("visitor", visitorClass)
+    if (element.isRootElement) {
+        printKDoc(acceptMethodKDoc(visitorParameter, null, StandardTypes.unit, treeName))
+    }
+
+    printFunctionDeclaration(
+        name = "acceptVoid",
+        parameters = listOf(visitorParameter),
+        returnType = StandardTypes.unit,
+        override = !element.isRootElement,
+    )
+    if (hasImplementation) {
+        println(" =")
+        withIndent {
+            print(visitorParameter.name, ".", element.visitFunctionName, "(this)")
+        }
+    }
+    println()
+}
+
 private fun transformMethodKDoc(
     transformerParameter: FunctionParameter,
     dataParameter: FunctionParameter?,

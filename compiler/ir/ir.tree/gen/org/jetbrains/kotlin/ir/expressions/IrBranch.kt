@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrElementBase
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.branch]
@@ -23,6 +24,9 @@ abstract class IrBranch : IrElementBase(), IrElement {
 
     override fun <R, D> accept(visitor: IrVisitor<R, D>, data: D): R =
         visitor.visitBranch(this, data)
+
+    override fun acceptVoid(visitor: IrVisitorVoid) =
+        visitor.visitBranch(this)
 
     override fun <D> transform(transformer: IrTransformer<D>, data: D): IrBranch =
         accept(transformer, data) as IrBranch

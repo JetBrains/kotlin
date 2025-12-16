@@ -9,6 +9,7 @@
 package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.model.AnnotationMarker
@@ -23,4 +24,7 @@ abstract class IrAnnotation : IrConstructorCall(), AnnotationMarker {
 
     override fun <R, D> accept(visitor: IrVisitor<R, D>, data: D): R =
         visitor.visitAnnotation(this, data)
+
+    override fun acceptVoid(visitor: IrVisitorVoid) =
+        visitor.visitAnnotation(this)
 }

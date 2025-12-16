@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrOverridableDeclaration
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
-import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
 internal class IrConstDeclarationAnnotationTransformer(context: IrConstEvaluationContext) : IrConstAnnotationTransformer(context) {
     override fun visitAnnotations(element: IrElement) {
