@@ -29,11 +29,13 @@ abstract class FirUnusedCheckerBase : FirBasicDeclarationChecker(MppCheckerKind.
     /**
      * If this function returns true, a corresponding warning should be issued using [reporter].
      * If this function returns false, the visitor continues to visit the children of [expression].
+     * [data] is guaranteed to be either [UsageState.UnusedFromCoercion] or [UsageState.Unused].
      */
     context(context: CheckerContext, reporter: DiagnosticReporter)
-    abstract fun reportUnusedExpressionIfNeeded(
+    protected abstract fun reportUnusedExpressionIfNeeded(
         expression: FirExpression,
         hasSideEffects: Boolean,
+        data: UsageState,
         source: KtSourceElement?,
     ): Boolean
 
@@ -70,6 +72,7 @@ abstract class FirUnusedCheckerBase : FirBasicDeclarationChecker(MppCheckerKind.
     protected enum class UsageState {
         Used,
         Unused,
+        UnusedFromCoercion
     }
 
     protected open inner class UsageVisitorBase(
@@ -81,12 +84,12 @@ abstract class FirUnusedCheckerBase : FirBasicDeclarationChecker(MppCheckerKind.
 
             val source = element.source
             if (
-                data == UsageState.Unused &&
+                data != UsageState.Used &&
                 element is FirExpression &&
                 source != null
             ) {
                 context(context, reporter) {
-                    if (reportUnusedExpressionIfNeeded(element, element.hasSideEffect(), source)) return
+                    if (reportUnusedExpressionIfNeeded(element, element.hasSideEffect(), data, source)) return
                 }
             }
 
@@ -126,8 +129,12 @@ abstract class FirUnusedCheckerBase : FirBasicDeclarationChecker(MppCheckerKind.
             val lastIndex = statements.lastIndex
             for (i in statements.indices) {
                 val statement = statements[i]
-                val isImplicitReturn = i == lastIndex && !block.isUnitCoerced
-                statement.accept(this, if (isImplicitReturn) data else UsageState.Unused)
+                val isUsed = when {
+                    block.isUnitCoerced -> UsageState.UnusedFromCoercion
+                    i == lastIndex -> data // is implicit return
+                    else -> UsageState.Unused
+                }
+                statement.accept(this, isUsed)
             }
         }
 

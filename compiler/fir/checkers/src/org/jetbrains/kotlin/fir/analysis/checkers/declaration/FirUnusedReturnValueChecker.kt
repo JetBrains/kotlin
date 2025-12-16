@@ -103,6 +103,7 @@ object FirUnusedReturnValueChecker : FirUnusedCheckerBase() {
     override fun reportUnusedExpressionIfNeeded(
         expression: FirExpression,
         hasSideEffects: Boolean,
+        data: UsageState,
         source: KtSourceElement?,
     ): Boolean {
         if (!hasSideEffects) return false // Do not report anything FirUnusedExpressionChecker already reported
@@ -117,20 +118,21 @@ object FirUnusedReturnValueChecker : FirUnusedCheckerBase() {
         // Special case for `condition() || throw/return` or `condition() && throw/return`:
         if (expression is FirBooleanOperatorExpression && expression.rightOperand.resolvedType.isIgnorable()) return false
 
-        return reportForSymbol(expression, resolvedSymbol)
+        return reportForSymbol(expression, resolvedSymbol, data)
     }
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun reportForSymbol(
         expression: FirExpression,
         resolvedSymbol: FirCallableSymbol<*>?,
+        data: UsageState,
     ): Boolean {
         if (resolvedSymbol != null && !resolvedSymbol.isSubjectToCheck()) return false
         if (resolvedSymbol?.isExcluded(context.session) == true) return false
         val functionName = resolvedSymbol?.name
         reporter.reportOn(
             expression.source,
-            FirErrors.RETURN_VALUE_NOT_USED,
+            if (data == UsageState.Unused) FirErrors.RETURN_VALUE_NOT_USED else FirErrors.RETURN_VALUE_NOT_USED_COERCION,
             functionName
         )
         return true
@@ -170,7 +172,7 @@ object FirUnusedReturnValueChecker : FirUnusedCheckerBase() {
 
             context(context, reporter) {
                 if (!referencedSymbol.resolvedReturnType.isIgnorable()) // referenceAccess is Unit, referencedSymbol is not => coercion to Unit happened
-                    reportForSymbol(callableReferenceAccess, referencedSymbol)
+                    reportForSymbol(callableReferenceAccess, referencedSymbol, UsageState.UnusedFromCoercion)
             }
             // do not visit deeper in any case because there all reference parts are considered used
         }

@@ -24,7 +24,7 @@ fun main() {
         stringF() // used
     }
     unitLambda {
-        <!RETURN_VALUE_NOT_USED!>stringF<!>()
+        <!RETURN_VALUE_NOT_USED_COERCION!>stringF<!>()
     }
     <!RETURN_VALUE_NOT_USED!>stringLambdaReturns<!> {
         stringF()
