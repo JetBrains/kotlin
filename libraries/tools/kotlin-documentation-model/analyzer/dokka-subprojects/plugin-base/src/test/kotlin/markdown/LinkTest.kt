@@ -4,6 +4,7 @@
 
 package markdown
 
+import org.jetbrains.dokka.ExperimentalDokkaApi
 import org.jetbrains.dokka.analysis.kotlin.markdown.MARKDOWN_ELEMENT_FILE_NAME
 import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
 import org.jetbrains.dokka.links.*
@@ -1464,6 +1465,40 @@ class LinkTest : BaseAbstractTest() {
                         "IllegalTimeZoneException" to DRI("example", "IllegalTimeZoneException"),
                     ),
                     module.getAllLinkDRIFrom("currentSystemDefault")
+                )
+            }
+        }
+    }
+
+    @Test
+    @OnlySymbols("context parameters")
+    fun `should resolve KDoc links to context parameter`() {
+        testInline(
+            """
+            |/src/main/kotlin/Testing.kt
+            |package example
+            |/**
+            | * [s]
+            | */
+            |context(s: String)
+            |fun saveFromResponse()
+        """.trimMargin(),
+            configuration
+        ) {
+            documentablesMergingStage = { module ->
+                assertEquals(
+                    DRI(
+                        "example",
+                        null,
+                        Callable(
+                            "saveFromResponse",
+                            null,
+                            emptyList(),
+                            listOf(TypeConstructor("kotlin.String", emptyList()))
+                        ),
+                        @OptIn(ExperimentalDokkaApi::class) PointingToContextParameters(0)
+                    ),
+                    module.getLinkDRIFrom("saveFromResponse")
                 )
             }
         }
