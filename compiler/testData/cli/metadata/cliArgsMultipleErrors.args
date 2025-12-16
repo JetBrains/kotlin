@@ -1,0 +1,10 @@
+$TESTDATA_DIR$/cliArgs.kt
+-d
+$TEMP_DIR$
+-cp
+$TESTDATA_DIR$/../../../../dist/common/kotlin-stdlib-common.klib
+-Xtarget-platform=JVM,JS,WasmJs,WasmWasi,Native
+
+-Xwhen-guards=asdf
+-Xnested-type-aliases=qwerty
+-Xname-based-destructuring
