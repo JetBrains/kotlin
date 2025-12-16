@@ -419,17 +419,23 @@ internal object KDocReferenceResolver {
         }
 
         if ((contextElement as? KtNamedDeclaration)?.nameAsName == name) {
-            add(contextElement.symbol)
+            if (contextElement is KtConstructor<*>) {
+                /**
+                 * Every constructor has the same name as the class it constructs.
+                 * If a link with a class name is placed on some constructor,
+                 * it's most likely used to point to the class.
+                 * That's why we need to manually add the enclosing class as a context declaration.
+                 */
+                add(contextElement.getContainingClassOrObject().symbol)
+            } else {
+                add(contextElement.symbol)
+            }
         }
 
         collectParametersAndProperties(contextElement)
 
         if (contextElement is KtClassOrObject) {
             val primaryConstructor = contextElement.primaryConstructor ?: return@buildList
-
-            if (contextElement.nameAsName == name) {
-                addIfNotNull(primaryConstructor.symbol)
-            }
 
             collectParametersAndProperties(primaryConstructor)
         }

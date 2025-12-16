@@ -8,8 +8,7 @@ jvm - Jvm.kt:
         isImplicitReferenceToCompanion: false
         usesContextSensitiveResolution: false
         symbols:
-          0: (in ROOT) actual class AAactual constructor(x: kotlin.Int)
-          1: (in AA) actual constructor(x: kotlin.Int)
+          (in ROOT) actual class AAactual constructor(x: kotlin.Int)
 
   <caret_2>:
     KDocName(120,122): 'AA'
@@ -17,5 +16,4 @@ jvm - Jvm.kt:
         isImplicitReferenceToCompanion: false
         usesContextSensitiveResolution: false
         symbols:
-          0: (in ROOT) actual class AAactual constructor(x: kotlin.Int)
-          1: (in AA) actual constructor(x: kotlin.Int)
+          (in ROOT) actual class AAactual constructor(x: kotlin.Int)
