@@ -1,6 +1,19 @@
 // SKIP_KT_DUMP
 // TARGET_BACKEND: JVM
 
+// K1 reflect behavior is wrong.
+// In 'I' class:
+//     'public void foo()' doesn't override 'internal open fun foo()'
+// In 'Java4', 'F' classes:
+//     'private void foo()' doesn't override 'internal open fun foo()'
+// In 'Java2', 'B' classes:
+//     'public void foo()' doesn't override 'internal open fun foo()'
+// In 'Java5', 'G' classes:
+//     'package-private void foo(){}' doesn't override 'internal open fun foo()'
+// In 'Java3', 'D' classes:
+//     'protected void foo' doesn't override 'internal open fun foo()'
+// KOTLIN_REFLECT_DUMP_MISMATCH
+
 // MODULE: separate
 // FILE: KotlinInternal.kt
 open class KotlinInternal {

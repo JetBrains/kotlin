@@ -1,6 +1,9 @@
 // SKIP_KT_DUMP
 // TARGET_BACKEND: JVM
 
+// Minor parmeter types' flexibility mismatch
+// KOTLIN_REFLECT_DUMP_MISMATCH
+
 // FILE: Java1.java
 public class Java1<T> {
     public void invoke(){};

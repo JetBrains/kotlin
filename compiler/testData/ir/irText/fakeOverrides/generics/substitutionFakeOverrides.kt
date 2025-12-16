@@ -1,6 +1,9 @@
 // SKIP_KT_DUMP
 // TARGET_BACKEND: JVM
 
+// Skip kotlin-reflect because K1 is wrong: KT-82502
+// KOTLIN_REFLECT_DUMP_MISMATCH
+
 // FILE: Jaba.java
 public class Jaba<T> {
     public void foo(T f) {}
