@@ -6676,6 +6676,12 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
       }
 
       @Test
+      @TestMetadata("noInferUnit.kt")
+      public void testNoInferUnit() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/inference/noInferUnit.kt");
+      }
+
+      @Test
       @TestMetadata("nullableIntegerLiteralType.kt")
       public void testNullableIntegerLiteralType() {
         runTest("compiler/fir/analysis-tests/testData/resolve/inference/nullableIntegerLiteralType.kt");
