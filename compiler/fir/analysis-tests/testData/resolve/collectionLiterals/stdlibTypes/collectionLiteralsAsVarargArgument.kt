@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-82638
 // LANGUAGE: +CollectionLiterals
 
@@ -21,44 +21,44 @@ fun takeULongs(vararg ulongs: ULong) {}
 fun takeStrings(vararg strs: String) {}
 
 fun test() {
-    takeBytes(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>bytes = <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[]<!><!>)
-    takeBytes(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!><!SPREAD_OF_NULLABLE!>*<!><!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[1, 2, 3]<!><!>)
+    takeBytes(bytes = [])
+    takeBytes(*[1, 2, 3])
 
-    takeShorts(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>shorts = <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[]<!><!>)
-    takeShorts(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!><!SPREAD_OF_NULLABLE!>*<!><!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[1, 2, 3]<!><!>)
+    takeShorts(shorts = [])
+    takeShorts(*[1, 2, 3])
 
-    takeInts(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>ints = <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[]<!><!>)
-    takeInts(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!><!SPREAD_OF_NULLABLE!>*<!><!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[1, 2, 3]<!><!>)
+    takeInts(ints = [])
+    takeInts(*[1, 2, 3])
 
-    takeLongs(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>longs = <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[]<!><!>)
-    takeLongs(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!><!SPREAD_OF_NULLABLE!>*<!><!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[1, 2, 3]<!><!>)
+    takeLongs(longs = [])
+    takeLongs(*[1, 2, 3])
 
-    takeFloats(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>floats = <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[]<!><!>)
-    takeFloats(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!><!SPREAD_OF_NULLABLE!>*<!><!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[1.0f, 2.0f, 3.0f]<!><!>)
+    takeFloats(floats = [])
+    takeFloats(*[1.0f, 2.0f, 3.0f])
 
-    takeDoubles(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>doubles = <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[]<!><!>)
-    takeDoubles(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!><!SPREAD_OF_NULLABLE!>*<!><!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[1.0, 2.0, 3.0]<!><!>)
+    takeDoubles(doubles = [])
+    takeDoubles(*[1.0, 2.0, 3.0])
 
-    takeBooleans(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>booleans = <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[]<!><!>)
-    takeBooleans(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!><!SPREAD_OF_NULLABLE!>*<!><!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[true, false, true]<!><!>)
+    takeBooleans(booleans = [])
+    takeBooleans(*[true, false, true])
 
-    takeChars(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>chars = <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[]<!><!>)
-    takeChars(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!><!SPREAD_OF_NULLABLE!>*<!><!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>['a', 'b', 'c']<!><!>)
+    takeChars(chars = [])
+    takeChars(*['a', 'b', 'c'])
 
-    takeUBytes(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>ubytes = <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[]<!><!>)
-    takeUBytes(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!><!SPREAD_OF_NULLABLE!>*<!><!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[1u, 2u, 3u]<!><!>)
+    takeUBytes(ubytes = [])
+    takeUBytes(*[1u, 2u, 3u])
 
-    takeUShorts(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>ushorts = <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[]<!><!>)
-    takeUShorts(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!><!SPREAD_OF_NULLABLE!>*<!><!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[1u, 2u, 3u]<!><!>)
+    takeUShorts(ushorts = [])
+    takeUShorts(*[1u, 2u, 3u])
 
-    takeUInts(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>uints = <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[]<!><!>)
-    takeUInts(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!><!SPREAD_OF_NULLABLE!>*<!><!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[1u, 2u, 3u]<!><!>)
+    takeUInts(uints = [])
+    takeUInts(*[1u, 2u, 3u])
 
-    takeULongs(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>ulongs = <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[]<!><!>)
-    takeULongs(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!><!SPREAD_OF_NULLABLE!>*<!><!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[1u, 2u, 3u]<!><!>)
+    takeULongs(ulongs = [])
+    takeULongs(*[1u, 2u, 3u])
 
-    takeStrings(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>strs = <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[]<!><!>)
-    takeStrings(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!><!SPREAD_OF_NULLABLE!>*<!><!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>["a", "b", "c"]<!><!>)
+    takeStrings(strs = [])
+    takeStrings(*["a", "b", "c"])
 }
 
 /* GENERATED_FIR_TAGS: annotationUseSiteTargetFile, classReference, functionDeclaration, integerLiteral, unsignedLiteral,

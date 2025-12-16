@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.lookupTracker
 import org.jetbrains.kotlin.fir.recordTypeResolveAsLookup
 import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
+import org.jetbrains.kotlin.fir.resolve.CollectionLiteralResolverForStdlibType
 import org.jetbrains.kotlin.fir.resolve.CollectionLiteralResolverThroughCompanion
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.*
@@ -230,6 +231,7 @@ class PostponedArgumentsAnalyzer(
 
         val newExpression: FirFunctionCall? = sequenceOf(
             ::CollectionLiteralResolverThroughCompanion,
+            ::CollectionLiteralResolverForStdlibType,
         ).firstNotNullOfOrNull { resolver ->
             resolver(resolutionContext).resolveCollectionLiteral(
                 atom,

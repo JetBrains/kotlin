@@ -1,41 +1,33 @@
-/incorrectCollections.kt:(193,205): error: No 'of' operator is defined for the expected type.
+/incorrectCollections.kt:(191,192): error: Initializer type mismatch: expected 'List<Int>', actual 'List<Int?>'.
 
-/incorrectCollections.kt:(236,242): error: No 'of' operator is defined for the expected type.
+/incorrectCollections.kt:(234,235): error: Initializer type mismatch: expected 'MutableList<Any>', actual 'MutableList<Nothing?>'.
 
-/incorrectCollections.kt:(268,271): error: No 'of' operator is defined for the expected type.
+/incorrectCollections.kt:(266,267): error: Initializer type mismatch: expected 'Set<String>', actual 'Set<Int>'.
 
-/incorrectCollections.kt:(304,324): error: No 'of' operator is defined for the expected type.
+/incorrectCollections.kt:(302,303): error: Initializer type mismatch: expected 'MutableSet<String>', actual 'MutableSet<CharSequence>'.
 
-/incorrectCollections.kt:(352,364): error: No 'of' operator is defined for the expected type.
-
-/incorrectCollections.kt:(397,403): error: No 'of' operator is defined for the expected type.
-
-/incorrectCollections.kt:(398,402): error: No 'of' operator is defined for the expected type.
+/incorrectCollections.kt:(350,351): error: Initializer type mismatch: expected 'Sequence<Int>', actual 'Sequence<Long>'.
 
 /incorrectCollections.kt:(399,401): error: No 'of' operator is defined for the expected type.
 
-/incorrectCollections.kt:(426,430): error: No 'of' operator is defined for the expected type.
-
 /incorrectCollections.kt:(427,429): error: No 'of' operator is defined for the expected type.
 
-/incorrectCollections.kt:(454,459): error: No 'of' operator is defined for the expected type.
+/incorrectCollections.kt:(455,458): error: Argument type mismatch: actual type is 'Double', but 'Long' was expected.
 
-/incorrectCollections.kt:(484,499): error: No 'of' operator is defined for the expected type.
+/incorrectCollections.kt:(485,498): error: Argument type mismatch: actual type is 'Int', but 'Short' was expected.
 
-/incorrectCollections.kt:(523,554): error: No 'of' operator is defined for the expected type.
+/incorrectCollections.kt:(582,586): error: Argument type mismatch: actual type is 'Unit', but 'Boolean' was expected.
 
-/incorrectCollections.kt:(581,587): error: No 'of' operator is defined for the expected type.
-
-/incorrectCollections.kt:(612,637): error: No 'of' operator is defined for the expected type.
+/incorrectCollections.kt:(613,636): error: Argument type mismatch: actual type is 'java.lang.Float', but 'kotlin.Float' was expected.
 
 /incorrectCollections.kt:(621,636): warning: This class is not recommended for use in Kotlin. Use 'kotlin.Float' instead.
 
-/incorrectCollections.kt:(663,673): error: No 'of' operator is defined for the expected type.
+/incorrectCollections.kt:(664,666): error: Argument type mismatch: actual type is 'Int', but 'Double' was expected.
 
-/incorrectCollections.kt:(698,702): error: No 'of' operator is defined for the expected type.
+/incorrectCollections.kt:(699,701): error: Argument type mismatch: actual type is 'Int', but 'UInt' was expected.
 
-/incorrectCollections.kt:(727,732): error: No 'of' operator is defined for the expected type.
+/incorrectCollections.kt:(728,731): error: Argument type mismatch: actual type is 'Long', but 'ULong' was expected.
 
-/incorrectCollections.kt:(758,772): error: No 'of' operator is defined for the expected type.
+/incorrectCollections.kt:(759,771): error: Argument type mismatch: actual type is 'Short', but 'UShort' was expected.
 
-/incorrectCollections.kt:(797,801): error: No 'of' operator is defined for the expected type.
+/incorrectCollections.kt:(798,800): error: Argument type mismatch: actual type is '() -> Unit', but 'UByte' was expected.

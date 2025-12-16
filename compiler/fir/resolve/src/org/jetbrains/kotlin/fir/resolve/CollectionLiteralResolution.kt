@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.expressions.FirVarargArgumentsExpression
 import org.jetbrains.kotlin.fir.expressions.arguments
 import org.jetbrains.kotlin.fir.expressions.builder.buildArgumentList
 import org.jetbrains.kotlin.fir.expressions.builder.buildFunctionCall
+import org.jetbrains.kotlin.fir.expressions.builder.buildResolvedQualifier
 import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
 import org.jetbrains.kotlin.fir.resolve.calls.ConeAtomWithCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.ConeCollectionLiteralAtom
@@ -129,6 +130,34 @@ class CollectionLiteralResolverThroughCompanion(context: ResolutionContext) : Co
 
         return functionCall
     }
+}
+
+class CollectionLiteralResolverForStdlibType(context: ResolutionContext) : CollectionLiteralResolver(context) {
+    override fun prepareRawCall(
+        collectionLiteral: FirCollectionLiteral,
+        topLevelCandidate: Candidate,
+        expectedType: ConeKotlinType?,
+    ): FirFunctionCall? {
+        if (expectedType == null) return null
+        val (packageName, functionName) = toCollectionOfFactoryPackageAndName(expectedType, context.session) ?: return null
+
+        return buildFunctionCall {
+            explicitReceiver = buildResolvedQualifier {
+                packageFqName = packageName
+                source = collectionLiteral.source
+                resolvedToCompanionObject = false
+            }.apply {
+                setTypeOfQualifier(components)
+            }
+            source = collectionLiteral.source?.fakeElement(KtFakeSourceElementKind.OperatorOfCall)
+            calleeReference = buildSimpleNamedReference {
+                source = collectionLiteral.source
+                name = functionName
+            }
+            argumentList = collectionLiteral.argumentList
+        }
+    }
+
 }
 
 fun ResolutionContext.runResolutionForDanglingCollectionLiteral(collectionLiteral: FirCollectionLiteral) {

@@ -5,9 +5,9 @@
 fun <T> takeTs(vararg ts: T) { }
 
 fun test() {
-    takeTs<String>(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>ts = <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[]<!><!>)
-    <!CANNOT_INFER_PARAMETER_TYPE!>takeTs<!>(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>ts = <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[]<!><!>)
-    <!CANNOT_INFER_PARAMETER_TYPE!>takeTs<!>(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!><!SPREAD_OF_NULLABLE!>*<!><!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>["a", "b", "c"]<!><!>)
+    takeTs<String>(ts = [])
+    <!CANNOT_INFER_PARAMETER_TYPE!>takeTs<!>(ts = <!CANNOT_INFER_PARAMETER_TYPE, INAPPLICABLE_CANDIDATE!>[]<!>)
+    <!CANNOT_INFER_PARAMETER_TYPE!>takeTs<!>(*<!CANNOT_INFER_PARAMETER_TYPE, INAPPLICABLE_CANDIDATE!>["a", "b", "c"]<!>)
 }
 
 /* GENERATED_FIR_TAGS: annotationUseSiteTargetFile, classReference, functionDeclaration, nullableType, stringLiteral,

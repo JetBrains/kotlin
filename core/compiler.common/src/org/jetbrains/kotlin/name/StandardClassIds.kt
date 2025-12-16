@@ -89,6 +89,8 @@ object StandardClassIds {
     val KCallable = "KCallable".reflectId()
     val KType = "KType".reflectId()
 
+    val Sequence = "Sequence".sequencesId()
+
     val Comparable = "Comparable".baseId()
     val Number = "Number".baseId()
 
@@ -331,6 +333,7 @@ private fun String.coroutinesId() = ClassId(StandardClassIds.BASE_COROUTINES_PAC
 private fun String.enumsId() = ClassId(StandardClassIds.BASE_ENUMS_PACKAGE, Name.identifier(this))
 private fun String.concurrentId() = ClassId(StandardClassIds.BASE_CONCURRENT_PACKAGE, Name.identifier(this))
 private fun String.atomicsId() = ClassId(StandardClassIds.BASE_CONCURRENT_ATOMICS_PACKAGE, Name.identifier(this))
+private fun String.sequencesId() = ClassId(StandardClassIds.BASE_SEQUENCES_PACKAGE, Name.identifier(this))
 
 private fun String.testId() = ClassId(StandardClassIds.BASE_TEST_PACKAGE, Name.identifier(this))
 

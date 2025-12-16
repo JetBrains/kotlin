@@ -5,25 +5,25 @@
 
 @OptIn(ExperimentalUnsignedTypes::class)
 fun test() {
-    val a: List<Int> = <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[1, null, 3]<!>
-    val b: MutableList<Any> = <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[null]<!>
-    val c: Set<String> = <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[1]<!>
-    val d: MutableSet<String> = <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>["" as CharSequence]<!>
-    val e: Sequence<Int> = <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[1L, 2L, 3L]<!>
+    val a: List<Int> <!INITIALIZER_TYPE_MISMATCH!>=<!> [1, null, 3]
+    val b: MutableList<Any> <!INITIALIZER_TYPE_MISMATCH!>=<!> [null]
+    val c: Set<String> <!INITIALIZER_TYPE_MISMATCH!>=<!> [1]
+    val d: MutableSet<String> <!INITIALIZER_TYPE_MISMATCH!>=<!> ["" as CharSequence]
+    val e: Sequence<Int> <!INITIALIZER_TYPE_MISMATCH!>=<!> [1L, 2L, 3L]
 
-    val f: Array<Array<Int>> = <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[]<!>]<!>]<!>
-    val g: IntArray = <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[]<!>]<!>
-    val h: LongArray = <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[0.0]<!>
-    val i: ShortArray = <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[1_000_000_000]<!>
-    val j: ByteArray = <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[if (true) 42.toByte() else 42]<!>
-    val k: BooleanArray = <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[Unit]<!>
-    val l: FloatArray = <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[0.0f as <!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>java.lang.Float<!>]<!>
-    val m: DoubleArray = <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[42, 42.0]<!>
+    val f: Array<Array<Int>> = [[<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[]<!>]]
+    val g: IntArray = [<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[]<!>]
+    val h: LongArray = [<!ARGUMENT_TYPE_MISMATCH!>0.0<!>]
+    val i: ShortArray = [<!ARGUMENT_TYPE_MISMATCH!>1_000_000_000<!>]
+    val j: ByteArray = [if (true) 42.toByte() else 42]
+    val k: BooleanArray = [<!ARGUMENT_TYPE_MISMATCH!>Unit<!>]
+    val l: FloatArray = [<!ARGUMENT_TYPE_MISMATCH!>0.0f as <!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>java.lang.Float<!><!>]
+    val m: DoubleArray = [<!ARGUMENT_TYPE_MISMATCH!>42<!>, 42.0]
 
-    val n: UIntArray = <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[42]<!>
-    val o: ULongArray = <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[42L]<!>
-    val p: UShortArray = <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[42.toShort()]<!>
-    val q: UByteArray = <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[{}]<!>
+    val n: UIntArray = [<!ARGUMENT_TYPE_MISMATCH!>42<!>]
+    val o: ULongArray = [<!ARGUMENT_TYPE_MISMATCH!>42L<!>]
+    val p: UShortArray = [<!ARGUMENT_TYPE_MISMATCH!>42.toShort()<!>]
+    val q: UByteArray = [<!ARGUMENT_TYPE_MISMATCH!>{}<!>]
 }
 
 /* GENERATED_FIR_TAGS: asExpression, classReference, functionDeclaration, integerLiteral, localProperty, nullableType,

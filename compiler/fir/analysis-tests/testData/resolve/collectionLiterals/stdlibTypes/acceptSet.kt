@@ -12,21 +12,21 @@ fun acceptListString(set: Set<List<String>>) {
 }
 
 fun test() {
-    <!CANNOT_INFER_PARAMETER_TYPE!>acceptGeneric<!>(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[]<!>)
-    <!CANNOT_INFER_PARAMETER_TYPE!>acceptGeneric<!>(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[1, 2, 3]<!>)
-    <!CANNOT_INFER_PARAMETER_TYPE!>acceptGeneric<!>(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[42, "42"]<!>)
+    <!CANNOT_INFER_PARAMETER_TYPE!>acceptGeneric<!>(<!CANNOT_INFER_PARAMETER_TYPE, INAPPLICABLE_CANDIDATE!>[]<!>)
+    <!CANNOT_INFER_PARAMETER_TYPE!>acceptGeneric<!>(<!CANNOT_INFER_PARAMETER_TYPE, INAPPLICABLE_CANDIDATE!>[1, 2, 3]<!>)
+    <!CANNOT_INFER_PARAMETER_TYPE!>acceptGeneric<!>(<!CANNOT_INFER_PARAMETER_TYPE, INAPPLICABLE_CANDIDATE!>[42, "42"]<!>)
 
-    acceptString(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[]<!>)
-    acceptString(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[1, 2, 3]<!>)
-    acceptString(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[42, "42"]<!>)
-    acceptString(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>["1", "2", "3"]<!>)
+    acceptString([])
+    acceptString(<!ARGUMENT_TYPE_MISMATCH!>[1, 2, 3]<!>)
+    acceptString(<!ARGUMENT_TYPE_MISMATCH!>[42, "42"]<!>)
+    acceptString(["1", "2", "3"])
 
-    acceptListString(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[]<!>)
-    acceptListString(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[<!CANNOT_INFER_PARAMETER_TYPE!>listOf<!>()]<!>)
-    acceptListString(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[listOf<String>()]<!>)
-    acceptListString(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[listOf<Int>()]<!>)
-    acceptListString(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[listOf(42)]<!>)
-    acceptListString(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[listOf("42")]<!>)
+    acceptListString([])
+    acceptListString([listOf()])
+    acceptListString([listOf<String>()])
+    acceptListString(<!ARGUMENT_TYPE_MISMATCH!>[listOf<Int>()]<!>)
+    acceptListString(<!ARGUMENT_TYPE_MISMATCH!>[listOf(42)]<!>)
+    acceptListString([listOf("42")])
 }
 
 /* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, intersectionType, nullableType, stringLiteral, typeParameter */

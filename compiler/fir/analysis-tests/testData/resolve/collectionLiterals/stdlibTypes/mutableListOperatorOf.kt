@@ -7,9 +7,9 @@ fun test() {
     val b: MutableList<Any?> = MutableList.<!UNRESOLVED_REFERENCE!>of<!>(null)
     val c: MutableList<Int> = MutableList.<!UNRESOLVED_REFERENCE!>of<!>(1, 2, 3)
 
-    val x: MutableList<String> = <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[]<!>
-    val y: MutableList<Any?> = <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[null]<!>
-    val z: MutableList<Int> = <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[1, 2, 3]<!>
+    val x: MutableList<String> = []
+    val y: MutableList<Any?> = [null]
+    val z: MutableList<Int> = [1, 2, 3]
 
     x.add("hello")
 }

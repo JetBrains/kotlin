@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-82638
 // LANGUAGE: +CollectionLiterals
 
@@ -8,19 +8,19 @@ fun <T> take(vararg t: T) {
 }
 
 fun test() {
-    take<IntArray>(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[]<!>, <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[42]<!>, <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[1, 2, 3]<!>)
-    take<LongArray>(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[]<!>, <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[42]<!>, <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[1, 2, 3]<!>)
-    take<ByteArray>(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[]<!>, <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[42]<!>, <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[1, 2, 3]<!>)
-    take<ShortArray>(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[]<!>, <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[42]<!>, <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[1, 2, 3]<!>)
-    take<BooleanArray>(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[]<!>, <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[false]<!>, <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[true, false, true]<!>)
-    take<CharArray>(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[]<!>, <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>['*']<!>, <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>['a', 'b', 'c']<!>)
-    take<DoubleArray>(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[]<!>, <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[42.0]<!>, <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[1.0, 2.0, 3.0]<!>)
-    take<FloatArray>(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[]<!>, <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[42f]<!>, <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[1f, 2f, 3f]<!>)
+    take<IntArray>([], [42], [1, 2, 3])
+    take<LongArray>([], [42], [1, 2, 3])
+    take<ByteArray>([], [42], [1, 2, 3])
+    take<ShortArray>([], [42], [1, 2, 3])
+    take<BooleanArray>([], [false], [true, false, true])
+    take<CharArray>([], ['*'], ['a', 'b', 'c'])
+    take<DoubleArray>([], [42.0], [1.0, 2.0, 3.0])
+    take<FloatArray>([], [42f], [1f, 2f, 3f])
 
-    take<UIntArray>(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[]<!>, <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[42u]<!>, <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[1u, 2u, 3u]<!>)
-    take<ULongArray>(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[]<!>, <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[42uL]<!>, <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[1uL, 2uL, 3uL]<!>)
-    take<UShortArray>(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[]<!>, <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[42.toUShort()]<!>, <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[1.toUShort(), 2.toUShort(), 3.toUShort()]<!>)
-    take<UByteArray>(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[]<!>, <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[42.toUByte()]<!>, <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[1.toUByte(), 2.toUByte(), 3.toUByte()]<!>)
+    take<UIntArray>([], [42u], [1u, 2u, 3u])
+    take<ULongArray>([], [42uL], [1uL, 2uL, 3uL])
+    take<UShortArray>([], [42.toUShort()], [1.toUShort(), 2.toUShort(), 3.toUShort()])
+    take<UByteArray>([], [42.toUByte()], [1.toUByte(), 2.toUByte(), 3.toUByte()])
 }
 
 /* GENERATED_FIR_TAGS: annotationUseSiteTargetFile, classReference, functionDeclaration, integerLiteral, nullableType,

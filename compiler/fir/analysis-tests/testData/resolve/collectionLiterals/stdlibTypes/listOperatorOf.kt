@@ -7,9 +7,9 @@ fun test() {
     val b: List<Any?> = List.<!UNRESOLVED_REFERENCE!>of<!>(null)
     val c: List<Int> = List.<!UNRESOLVED_REFERENCE!>of<!>(1, 2, 3)
 
-    val x: List<String> = <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[]<!>
-    val y: List<Any?> = <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[null]<!>
-    val z: List<Int> = <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[1, 2, 3]<!>
+    val x: List<String> = []
+    val y: List<Any?> = [null]
+    val z: List<Int> = [1, 2, 3]
 }
 
 /* GENERATED_FIR_TAGS: collectionLiteral, functionDeclaration, integerLiteral, localProperty, nullableType,

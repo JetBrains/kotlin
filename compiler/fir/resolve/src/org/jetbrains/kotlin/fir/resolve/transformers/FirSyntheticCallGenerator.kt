@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.fir.resolve.transformers
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.Modality
@@ -242,6 +241,11 @@ class FirSyntheticCallGenerator(
         }
     }
 
+    private fun calculateArrayOfSymbol(expectedType: ConeKotlinType): FirNamedFunctionSymbol? {
+        val arrayCallName = toArrayOfFactoryName(expectedType, session, eagerlyReturnNonPrimitive = true)
+        return arrayCallName?.let { arrayOfSymbolCache.getValue(it) }
+    }
+
     fun generateSyntheticArrayOfCall(
         arrayLiteral: FirCollectionLiteral,
         expectedType: ConeKotlinType,
@@ -275,24 +279,6 @@ class FirSyntheticCallGenerator(
         }
     }
 
-    private fun calculateArrayOfSymbol(expectedType: ConeKotlinType): FirNamedFunctionSymbol? {
-        val coneType = expectedType.fullyExpandedType(session)
-        val arrayCallName = when {
-            coneType.isPrimitiveArray -> {
-                val arrayElementClassId = coneType.arrayElementType()!!.classId
-                val primitiveType = PrimitiveType.getByShortName(arrayElementClassId!!.shortClassName.asString())
-                ArrayFqNames.PRIMITIVE_TYPE_TO_ARRAY[primitiveType]!!
-            }
-            coneType.isUnsignedArray -> {
-                val arrayElementClassId = coneType.arrayElementType()!!.classId
-                ArrayFqNames.UNSIGNED_TYPE_TO_ARRAY[arrayElementClassId!!.asSingleFqName()]!!
-            }
-            else -> {
-                ArrayFqNames.ARRAY_OF_FUNCTION
-            }
-        }
-        return arrayOfSymbolCache.getValue(arrayCallName)
-    }
 
     private fun getArrayOfSymbol(arrayOfName: Name): FirNamedFunctionSymbol? {
         return session.symbolProvider
