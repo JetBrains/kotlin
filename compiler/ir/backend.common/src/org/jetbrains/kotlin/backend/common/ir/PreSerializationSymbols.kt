@@ -137,7 +137,7 @@ abstract class BaseSymbolsImpl(protected val irBuiltIns: IrBuiltIns) {
 }
 
 interface PreSerializationSymbols {
-    val throwUninitializedPropertyAccessException: IrSimpleFunctionSymbol
+    val throwUninitializedPropertyAccessException: IrSimpleFunctionSymbol? // KT-83151 Restore non-nullability of symbols available since 2.3
     val throwUnsupportedOperationException: IrSimpleFunctionSymbol? // KT-83151 Restore non-nullability of symbols available since 2.3
 
     val syntheticConstructorMarker: IrClassSymbol? // KT-83151 Restore non-nullability of symbols available since 2.3
@@ -176,8 +176,8 @@ interface PreSerializationKlibSymbols : PreSerializationSymbols {
     abstract class Impl(irBuiltIns: IrBuiltIns) : PreSerializationKlibSymbols, PreSerializationSymbols.Impl(irBuiltIns) {
         override val genericSharedVariableBox: SharedVariableBoxClassInfo = findSharedVariableBoxClass(null)
         override val syntheticConstructorMarker: IrClassSymbol? = ClassIds.SyntheticConstructorMarker.classSymbolOrNull()
-        override val throwUninitializedPropertyAccessException: IrSimpleFunctionSymbol =
-            THROW_UNINITIALIZED_PROPERTY_ACCESS_NAME.internalCallableId.functionSymbol()
+        override val throwUninitializedPropertyAccessException: IrSimpleFunctionSymbol? =
+            CallableIds.throwUninitializedPropertyAccessException.functionSymbolOrNull()
         override val throwUnsupportedOperationException: IrSimpleFunctionSymbol? =
             CallableIds.throwUnsupportedOperationException.functionSymbolOrNull()
     }
@@ -197,6 +197,7 @@ interface PreSerializationKlibSymbols : PreSerializationSymbols {
         }
 
         private object CallableIds {
+            val throwUninitializedPropertyAccessException = THROW_UNINITIALIZED_PROPERTY_ACCESS_NAME.internalCallableId
             val throwUnsupportedOperationException = THROW_UNSUPPORTED_OPERATION_NAME.internalCallableId
         }
     }
