@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.tasks.configuration
 
 import org.gradle.api.InvalidUserDataException
+import org.gradle.api.artifacts.component.ModuleComponentIdentifier
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.compilerRunner.GradleCompilerRunner
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptionsHelper
@@ -121,7 +122,13 @@ internal open class KotlinJsIrLinkConfig(
                             }
                         )
                         it.enhancedFreeCompilerArgs.set(task.enhancedFreeCompilerArgs)
-                        it.classpath.from(task.libraries)
+                        it.classpath.from(
+                            compilation.configurations.runtimeDependencyConfiguration!!.incoming.artifactView {
+                                it.componentFilter {
+                                    it is ModuleComponentIdentifier
+                                }
+                            }.files
+                        )
                         project.kotlinPropertiesProvider.wasmPerModuleInvalidate?.let { invalidate ->
                             it.invalidate.set(invalidate)
                         }
@@ -175,7 +182,13 @@ internal open class KotlinJsIrLinkConfig(
                             }
                         )
                         it.enhancedFreeCompilerArgs.set(task.enhancedFreeCompilerArgs)
-                        it.classpath.from(task.libraries)
+                        it.classpath.from(
+                            compilation.configurations.runtimeDependencyConfiguration!!.incoming.artifactView {
+                                it.componentFilter {
+                                    it is ModuleComponentIdentifier
+                                }
+                            }.files
+                        )
                         project.kotlinPropertiesProvider.wasmPerModuleInvalidate?.let { invalidate ->
                             it.invalidate.set(invalidate)
                         }
