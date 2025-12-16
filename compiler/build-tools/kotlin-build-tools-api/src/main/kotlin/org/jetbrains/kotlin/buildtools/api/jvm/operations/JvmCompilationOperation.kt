@@ -17,6 +17,9 @@ import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.trackers.CompilerLookupTracker
 import java.nio.file.Path
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 
 /**
  * Compiles Kotlin code targeting JVM platform and using specified options.
@@ -107,6 +110,7 @@ public interface JvmCompilationOperation : CancellableBuildOperation<Compilation
      * @since 2.3.20
      */
     public fun toBuilder(): Builder
+
     /**
      * Base class for [JvmCompilationOperation] options.
      *
@@ -203,4 +207,27 @@ public interface JvmCompilationOperation : CancellableBuildOperation<Compilation
         INFO,
         DEBUG;
     }
+}
+
+/**
+ * Convenience function for creating a [JvmSnapshotBasedIncrementalCompilationConfiguration] with options configured by [builderAction].
+ *
+ * @return an immutable `JvmSnapshotBasedIncrementalCompilationConfiguration`.
+ * @see JvmCompilationOperation.Builder.snapshotBasedIcConfigurationBuilder
+ */
+@OptIn(ExperimentalContracts::class)
+@ExperimentalBuildToolsApi
+public inline fun JvmCompilationOperation.Builder.snapshotBasedIcConfiguration(
+    workingDirectory: Path,
+    sourcesChanges: SourcesChanges,
+    dependenciesSnapshotFiles: List<Path>,
+    shrunkClasspathSnapshot: Path,
+    builderAction: JvmSnapshotBasedIncrementalCompilationConfiguration.Builder.() -> Unit,
+): JvmSnapshotBasedIncrementalCompilationConfiguration {
+    contract {
+        callsInPlace(builderAction, InvocationKind.EXACTLY_ONCE)
+    }
+    return snapshotBasedIcConfigurationBuilder(workingDirectory, sourcesChanges, dependenciesSnapshotFiles, shrunkClasspathSnapshot).apply(
+        builderAction
+    ).build()
 }

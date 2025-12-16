@@ -11,6 +11,9 @@ import org.jetbrains.kotlin.buildtools.api.getToolchain
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmClasspathSnapshottingOperation
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
 import java.nio.file.Path
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 
 /**
  * Allows creating operations that can be used for performing Kotlin/JVM compilations.
@@ -94,3 +97,39 @@ public interface JvmPlatformToolchain : KotlinToolchains.Toolchain {
     }
 }
 
+/**
+ * Convenience function for creating a [JvmCompilationOperation] with options configured by [builderAction].
+ *
+ * @return an immutable `JvmCompilationOperation`.
+ * @see JvmPlatformToolchain.jvmCompilationOperationBuilder
+ */
+@OptIn(ExperimentalContracts::class)
+@ExperimentalBuildToolsApi
+public inline fun JvmPlatformToolchain.jvmCompilationOperation(
+    sources: List<Path>,
+    destinationDirectory: Path,
+    builderAction: JvmCompilationOperation.Builder.() -> Unit,
+): JvmCompilationOperation {
+    contract {
+        callsInPlace(builderAction, InvocationKind.EXACTLY_ONCE)
+    }
+    return jvmCompilationOperationBuilder(sources, destinationDirectory).apply(builderAction).build()
+}
+
+/**
+ * Convenience function for creating a [JvmClasspathSnapshottingOperation] with options configured by [builderAction].
+ *
+ * @return an immutable `JvmClasspathSnapshottingOperation`.
+ * @see JvmPlatformToolchain.classpathSnapshottingOperationBuilder
+ */
+@OptIn(ExperimentalContracts::class)
+@ExperimentalBuildToolsApi
+public inline fun JvmPlatformToolchain.classpathSnapshottingOperation(
+    classpathEntry: Path,
+    builderAction: JvmClasspathSnapshottingOperation.Builder.() -> Unit,
+): JvmClasspathSnapshottingOperation {
+    contract {
+        callsInPlace(builderAction, InvocationKind.EXACTLY_ONCE)
+    }
+    return classpathSnapshottingOperationBuilder(classpathEntry).apply(builderAction).build()
+}
