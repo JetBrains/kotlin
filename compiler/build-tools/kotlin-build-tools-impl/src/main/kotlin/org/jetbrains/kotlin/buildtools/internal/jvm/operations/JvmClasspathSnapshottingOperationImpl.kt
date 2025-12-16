@@ -18,7 +18,7 @@ import java.nio.file.Path
 
 internal class JvmClasspathSnapshottingOperationImpl private constructor(
     override val options: Options = Options(JvmClasspathSnapshottingOperation::class),
-    private val classpathEntry: Path,
+    override val classpathEntry: Path,
 ) : BuildOperationImpl<ClasspathEntrySnapshot>(), JvmClasspathSnapshottingOperation, JvmClasspathSnapshottingOperation.Builder,
     DeepCopyable<JvmClasspathSnapshottingOperation> {
 

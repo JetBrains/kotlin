@@ -42,11 +42,39 @@ import kotlin.contracts.contract
 public interface JvmCompilationOperation : CancellableBuildOperation<CompilationResult> {
 
     /**
+     * All sources of the compilation unit. This includes Java source files.
+     *
+     * @since 2.3.20
+     */
+    public val sources: List<Path>
+
+    /**
+     * Where to put the output of the compilation
+     *
+     * @since 2.3.20
+     */
+    public val destinationDirectory: Path
+
+    /**
      * A builder for configuring and instantiating the [JvmCompilationOperation].
      *
      * @since 2.3.20
      */
     public interface Builder : BuildOperation.Builder {
+        /**
+         * All sources of the compilation unit. This includes Java source files.
+         *
+         * @since 2.3.20
+         */
+        public val sources: List<Path>
+
+        /**
+         * Where to put the output of the compilation
+         *
+         * @since 2.3.20
+         */
+        public val destinationDirectory: Path
+
         /**
          * Kotlin compiler configurable options for JVM platform.
          *
