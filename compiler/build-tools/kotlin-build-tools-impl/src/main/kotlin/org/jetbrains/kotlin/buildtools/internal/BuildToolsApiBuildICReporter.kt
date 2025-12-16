@@ -7,6 +7,10 @@ package org.jetbrains.kotlin.buildtools.internal
 
 import org.jetbrains.kotlin.build.report.ICReporter
 import org.jetbrains.kotlin.build.report.ICReporterBase
+import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
+import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
+import org.jetbrains.kotlin.build.report.metrics.BuildTimeMetric
+import org.jetbrains.kotlin.build.report.metrics.COMPILE_ITERATION
 import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.daemon.common.CompileIterationResult
@@ -15,6 +19,7 @@ import java.io.File
 internal class BuildToolsApiBuildICReporter(
     private val kotlinLogger: KotlinLogger,
     private val rootProjectDir: File?,
+    private val buildMetricsReporter: BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric>?,
 ) : ICReporterBase() {
     override fun report(message: () -> String, severity: ICReporter.ReportSeverity) {
         when (severity) {
@@ -28,5 +33,6 @@ internal class BuildToolsApiBuildICReporter(
 
     override fun reportCompileIteration(incremental: Boolean, sourceFiles: Collection<File>, exitCode: ExitCode) {
         kotlinLogger.debug(CompileIterationResult(sourceFiles, exitCode.toString()), rootProjectDir)
+        buildMetricsReporter?.addMetric(COMPILE_ITERATION, 1)
     }
 }
