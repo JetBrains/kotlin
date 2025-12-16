@@ -395,7 +395,7 @@ class UuidTest {
         }
     }
 
-    @Ignore // temporary ignored, see KTI-2674
+    //@Ignore // temporary ignored, see KTI-2674
     @Test
     fun testV7UuidGenerationForNonMonotonicClock() {
         var clock: NonMonotonicClock
