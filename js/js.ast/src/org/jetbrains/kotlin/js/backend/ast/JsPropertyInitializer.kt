@@ -6,38 +6,68 @@ package org.jetbrains.kotlin.js.backend.ast
 /**
  * Used in object literals to specify properties.
  */
-open class JsPropertyInitializer(
-    labelExpr: JsExpression,
-    valueExpr: JsExpression,
-) : SourceInfoAwareJsNode() {
-    var labelExpr: JsExpression = labelExpr
-        private set
-    var valueExpr: JsExpression = valueExpr
-        private set
+sealed class JsPropertyInitializer : SourceInfoAwareJsNode() {
+    class KeyValue(
+        labelExpr: JsExpression,
+        valueExpr: JsExpression,
+    ) : JsPropertyInitializer() {
+        var labelExpr: JsExpression = labelExpr
+            private set
+        var valueExpr: JsExpression = valueExpr
+            private set
 
-    override fun accept(v: JsVisitor) {
-        v.visitPropertyInitializer(this)
-    }
-
-    override fun acceptChildren(visitor: JsVisitor) {
-        visitor.accept(labelExpr)
-        visitor.accept(valueExpr)
-    }
-
-    override fun traverse(v: JsVisitorWithContext, ctx: JsContext<*>) {
-        if (v.visit(this, ctx)) {
-            labelExpr = v.accept(labelExpr)
-            valueExpr = v.accept(valueExpr)
+        override fun accept(v: JsVisitor) {
+            v.visitKeyValuePropertyInitializer(this)
         }
-        v.endVisit(this, ctx)
+
+        override fun acceptChildren(visitor: JsVisitor) {
+            visitor.accept(labelExpr)
+            visitor.accept(valueExpr)
+        }
+
+        override fun traverse(v: JsVisitorWithContext, ctx: JsContext<*>) {
+            if (v.visit(this, ctx)) {
+                labelExpr = v.accept(labelExpr)
+                valueExpr = v.accept(valueExpr)
+            }
+            v.endVisit(this, ctx)
+        }
+
+        override fun deepCopy(): KeyValue {
+            return KeyValue(
+                labelExpr.deepCopy(),
+                valueExpr.deepCopy()
+            ).withMetadataFrom<KeyValue>(this)
+        }
+
+        override fun toString() = "$labelExpr: $valueExpr"
     }
 
-    override fun deepCopy(): JsPropertyInitializer {
-        return JsPropertyInitializer(
-            labelExpr.deepCopy(),
-            valueExpr.deepCopy()
-        ).withMetadataFrom<JsPropertyInitializer>(this)
-    }
+    class Spread(expression: JsExpression) : JsPropertyInitializer() {
+        var expression: JsExpression = expression
+            private set
 
-    override fun toString() = "$labelExpr: $valueExpr"
+        override fun accept(v: JsVisitor) {
+            v.visitSpreadPropertyInitializer(this)
+        }
+
+        override fun acceptChildren(visitor: JsVisitor) {
+            visitor.accept(expression)
+        }
+
+        override fun traverse(v: JsVisitorWithContext, ctx: JsContext<*>) {
+            if (v.visit(this, ctx)) {
+                expression = v.accept(expression)
+            }
+            v.endVisit(this, ctx)
+        }
+
+        override fun deepCopy(): Spread {
+            return Spread(
+                expression.deepCopy(),
+            ).withMetadataFrom<Spread>(this)
+        }
+
+        override fun toString() = "...$expression"
+    }
 }

@@ -33,5 +33,29 @@ fun box(): String {
     if (d.b != b) return "fail: d.b == ${d.b}"
     if (d.c != c) return "fail: d.c == ${d.c}"
 
+    val e = js("{ ...d }")
+    if (!isOrdinaryObject(e)) return "fail: e is not an object"
+    if (Object.keys(e).size != 3) return "fail: e should have three properties"
+    if (e.a != a) return "fail: e.a == ${e.a}"
+    if (e.b != b) return "fail: e.b == ${e.b}"
+    if (e.c != c) return "fail: e.c == ${e.c}"
+
+    val f = js("{ a, b, c, ...d }")
+    if (!isOrdinaryObject(f)) return "fail: f is not an object"
+    if (Object.keys(f).size != 3) return "fail: f should have three properties"
+    if (f.a != a) return "fail: f.a == ${f.a}"
+    if (f.b != b) return "fail: f.b == ${f.b}"
+    if (f.c != c) return "fail: f.c == ${f.c}"
+
+    val g = js("{ one: a, two: b, ...d, three: c }")
+    if (!isOrdinaryObject(g)) return "fail: g is not an object"
+    if (Object.keys(g).size != 6) return "fail: g should have six properties"
+    if (g.one != a) return "fail: g.one == ${g.one}"
+    if (g.two != b) return "fail: g.two == ${g.two}"
+    if (g.three != c) return "fail: g.three == ${g.three}"
+    if (g.a != a) return "fail: g.a == ${g.a}"
+    if (g.b != b) return "fail: g.b == ${g.b}"
+    if (g.c != c) return "fail: g.c == ${g.c}"
+
     return "OK"
 }

@@ -185,10 +185,12 @@ internal class TemporaryVariableElimination(private val function: JsFunction) {
 
             override fun visitContinue(x: JsContinue) { }
 
-            override fun visitObjectLiteral(x: JsObjectLiteral) {
-                for (initializer in x.propertyInitializers) {
-                    accept(initializer.valueExpr)
-                }
+            override fun visitKeyValuePropertyInitializer(x: JsPropertyInitializer.KeyValue) {
+                accept(x.valueExpr)
+            }
+
+            override fun visitSpreadPropertyInitializer(x: JsPropertyInitializer.Spread) {
+                accept(x.expression)
             }
 
             override fun visitLoop(x: JsLoop) = withNewScope { super.visitLoop(x) }
@@ -303,10 +305,12 @@ internal class TemporaryVariableElimination(private val function: JsFunction) {
                 x.cases.forEach { accept(it); invalidateTemporaries() }
             }
 
-            override fun visitObjectLiteral(x: JsObjectLiteral) {
-                for (initializer in x.propertyInitializers) {
-                    accept(initializer.valueExpr)
-                }
+            override fun visitKeyValuePropertyInitializer(x: JsPropertyInitializer.KeyValue) {
+                accept(x.valueExpr)
+            }
+
+            override fun visitSpreadPropertyInitializer(x: JsPropertyInitializer.Spread) {
+                accept(x.expression)
             }
 
             override fun visitWhile(x: JsWhile) {
@@ -425,10 +429,16 @@ internal class TemporaryVariableElimination(private val function: JsFunction) {
         }
 
         override fun visitObjectLiteral(x: JsObjectLiteral) {
-            for (initializer in x.propertyInitializers) {
-                accept(initializer.valueExpr)
-            }
+            super.visitObjectLiteral(x)
             sideEffectOccurred = true
+        }
+
+        override fun visitKeyValuePropertyInitializer(x: JsPropertyInitializer.KeyValue) {
+            accept(x.valueExpr)
+        }
+
+        override fun visitSpreadPropertyInitializer(x: JsPropertyInitializer.Spread) {
+            accept(x.expression)
         }
 
         override fun visitNew(x: JsNew) {
@@ -574,8 +584,18 @@ internal class TemporaryVariableElimination(private val function: JsFunction) {
 
             override fun visit(x: JsObjectLiteral, ctx: JsContext<*>): Boolean {
                 for (initializer in x.propertyInitializers) {
-                    accept(initializer.valueExpr)
+                    accept(initializer)
                 }
+                return super.visit(x, ctx)
+            }
+
+            override fun visit(x: JsPropertyInitializer.KeyValue, ctx: JsContext<*>): Boolean {
+                accept(x.valueExpr)
+                return super.visit(x, ctx)
+            }
+
+            override fun visit(x: JsPropertyInitializer.Spread, ctx: JsContext<*>): Boolean {
+                accept(x.expression)
                 return super.visit(x, ctx)
             }
 

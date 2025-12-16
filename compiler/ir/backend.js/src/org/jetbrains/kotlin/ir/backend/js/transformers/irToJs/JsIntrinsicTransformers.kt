@@ -275,7 +275,7 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
 
             addAll(sharedVariableBoxConstructors) { call, context ->
                 val arg = translateCallArguments(call, context).single()
-                JsObjectLiteral(listOf(JsPropertyInitializer(JsStringLiteral(Namer.SHARED_BOX_V), arg)))
+                JsObjectLiteral(listOf(JsPropertyInitializer.KeyValue(JsStringLiteral(Namer.SHARED_BOX_V), arg)))
             }
 
             add(symbols.genericSharedVariableBox.load) { call, context: JsGenerationContext ->

@@ -191,6 +191,14 @@ public abstract class JsVisitorWithContext {
     public void endVisit(@NotNull JsPropertyInitializer x, @NotNull JsContext ctx) {
     }
 
+    public void endVisit(@NotNull JsPropertyInitializer.KeyValue x, @NotNull JsContext ctx) {
+        endVisit((JsPropertyInitializer) x, ctx);
+    }
+
+    public void endVisit(@NotNull JsPropertyInitializer.Spread x, @NotNull JsContext ctx) {
+        endVisit((JsPropertyInitializer) x, ctx);
+    }
+
     public void endVisit(@NotNull JsRegExp x, @NotNull JsContext ctx) {
         endVisit((JsExpression) x, ctx);
     }
@@ -390,6 +398,14 @@ public abstract class JsVisitorWithContext {
 
     public boolean visit(@NotNull JsPropertyInitializer x, @NotNull JsContext ctx) {
         return true;
+    }
+
+    public boolean visit(@NotNull JsPropertyInitializer.KeyValue x, @NotNull JsContext ctx) {
+        return visit((JsPropertyInitializer) x, ctx);
+    }
+
+    public boolean visit(@NotNull JsPropertyInitializer.Spread x, @NotNull JsContext ctx) {
+        return visit((JsPropertyInitializer) x, ctx);
     }
 
     public boolean visit(@NotNull JsRegExp x, @NotNull JsContext ctx) {

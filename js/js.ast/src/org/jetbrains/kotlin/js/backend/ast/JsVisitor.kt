@@ -144,6 +144,12 @@ abstract class JsVisitor {
     open fun visitPropertyInitializer(x: JsPropertyInitializer): Unit =
             visitElement(x)
 
+    open fun visitKeyValuePropertyInitializer(x: JsPropertyInitializer.KeyValue): Unit =
+            visitPropertyInitializer(x)
+
+    open fun visitSpreadPropertyInitializer(x: JsPropertyInitializer.Spread): Unit =
+            visitPropertyInitializer(x)
+
     open fun visitRegExp(x: JsRegExp): Unit =
             visitElement(x)
 

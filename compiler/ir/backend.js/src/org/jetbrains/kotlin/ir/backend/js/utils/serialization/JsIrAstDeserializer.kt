@@ -358,7 +358,17 @@ private class JsIrAstDeserializer(private val source: ByteArray) {
                         }
                         OBJECT_LITERAL -> {
                             JsObjectLiteral(
-                                readList { JsPropertyInitializer(readExpression(), readExpression()) },
+                                readList {
+                                    when (readInt()) {
+                                        PropertyInitializerKinds.KEY_VALUE -> {
+                                            JsPropertyInitializer.KeyValue(readExpression(), readExpression())
+                                        }
+                                        PropertyInitializerKinds.SPREAD -> {
+                                            JsPropertyInitializer.Spread(readExpression())
+                                        }
+                                        else -> error("Unknown property initializer kind: $id")
+                                    }
+                                },
                                 readBoolean()
                             )
                         }
