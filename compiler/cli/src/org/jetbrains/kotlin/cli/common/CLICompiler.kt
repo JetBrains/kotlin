@@ -322,9 +322,11 @@ abstract class CLICompiler<A : CommonCompilerArguments> {
 
             errStream.print(messageRenderer.renderPreamble())
 
-            val errorMessage = validateArguments(arguments.errors)
-            if (errorMessage != null) {
-                collector.report(ERROR, errorMessage, null)
+            val errorMessages = validateArguments(arguments.errors)
+            if (errorMessages.isNotEmpty()) {
+                errorMessages.forEach {
+                    collector.report(ERROR, it, null)
+                }
                 collector.report(INFO, "Use -help for more information", null)
                 return COMPILATION_ERROR
             }
@@ -374,9 +376,9 @@ abstract class CLICompiler<A : CommonCompilerArguments> {
     // Used in kotlin-maven-plugin (KotlinCompileMojoBase) and in kotlin-gradle-plugin (KotlinJvmOptionsImpl, KotlinJsOptionsImpl)
     fun parseArguments(args: Array<out String>, arguments: A) {
         parseCommandLineArguments(args.asList(), arguments)
-        val message = validateArguments(arguments.errors)
-        if (message != null) {
-            throw IllegalArgumentException(message)
+        val messages = validateArguments(arguments.errors)
+        if (messages.isNotEmpty()) {
+            throw IllegalArgumentException(messages.joinToString("\n"))
         }
     }
 

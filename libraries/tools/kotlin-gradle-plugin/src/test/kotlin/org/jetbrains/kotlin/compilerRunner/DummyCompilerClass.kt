@@ -21,8 +21,8 @@ class DummyCompilerClass {
             processedArgs.forEach {
                 println("Arg: $it")
             }
-            validateArguments(errors)?.let {
-                println("Errors: $it")
+            validateArguments(errors).takeIf { it.isNotEmpty() }?.let {
+                println("Errors: ${it.joinToString("\n")}")
                 return
             }
             println("OK")

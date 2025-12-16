@@ -182,8 +182,10 @@ internal fun CompilerConfiguration.updateWithCompilerOptions(
     isRefinement: Boolean
 ) {
     updateWithCompilerOptions(compilerOptions) {
-        validateArguments(it.errors)?.let { error ->
-            messageCollector.report(CompilerMessageSeverity.ERROR, error)
+        validateArguments(it.errors).takeIf { it.isNotEmpty() }?.let { errors ->
+            errors.forEach {
+                messageCollector.report(CompilerMessageSeverity.ERROR, it)
+            }
             false
         } ?: run {
             messageCollector.reportArgumentParseProblems(it)
@@ -199,8 +201,10 @@ internal fun CompilerConfiguration.updateWithCompilerOptions(
 
 internal fun CompilerConfiguration.updateWithCompilerOptions(
     compilerOptions: List<String>,
-    validate: (K2JVMCompilerArguments) -> Boolean = {
-        validateArguments(it.errors)?.let { throw Exception("Error parsing arguments: $it") } ?: true
+    validate: (K2JVMCompilerArguments) -> Boolean = { args ->
+        validateArguments(args.errors).takeIf { it.isNotEmpty() }?.let {
+            throw Exception("Error parsing arguments: ${it.joinToString("\n")}")
+        } ?: true
     }
 ) {
     val compilerArguments = makeScriptCompilerArguments(compilerOptions)

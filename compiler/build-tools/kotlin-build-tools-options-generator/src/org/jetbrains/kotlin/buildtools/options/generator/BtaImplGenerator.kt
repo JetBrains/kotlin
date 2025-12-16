@@ -503,7 +503,7 @@ private fun TypeSpec.Builder.maybeAddApplyArgumentStringsFun(
             MemberName("org.jetbrains.kotlin.cli.common.arguments", "parseCommandLineArguments")
         )
         addStatement(
-            "%M(compilerArgs.errors)?.let { throw %M(it) }",
+            """%M(compilerArgs.errors).takeIf { it.isNotEmpty() }?.let { throw %M(it.joinToString("\n")) }""",
             MemberName("org.jetbrains.kotlin.cli.common.arguments", "validateArguments"),
             MemberName("org.jetbrains.kotlin.buildtools.api", "CompilerArgumentsParseException"),
         )

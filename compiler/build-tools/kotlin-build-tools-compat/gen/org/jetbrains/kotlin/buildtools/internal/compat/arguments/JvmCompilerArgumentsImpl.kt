@@ -314,7 +314,7 @@ internal class JvmCompilerArgumentsImpl() : CommonCompilerArgumentsImpl(), JvmCo
 
   override fun applyArgumentStrings(arguments: List<String>) {
     val compilerArgs: K2JVMCompilerArguments = parseCommandLineArguments(arguments)
-    validateArguments(compilerArgs.errors)?.let { throw CompilerArgumentsParseException(it) }
+    validateArguments(compilerArgs.errors).takeIf { it.isNotEmpty() }?.let { throw CompilerArgumentsParseException(it.joinToString("\n")) }
     applyCompilerArguments(compilerArgs)
   }
 

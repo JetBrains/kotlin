@@ -44,9 +44,9 @@ internal fun transformArgs(args: List<String>, messageCollector: MessageCollecto
     val parseErrors = ArgumentParseErrors()
     val kotlincTransformed = preprocessCommandLineArguments(args, lazy { parseErrors })
 
-    val errorMessage = validateArguments(parseErrors)
-    if (errorMessage != null) {
-        messageCollector.report(CompilerMessageSeverity.ERROR, errorMessage)
+    val errorMessages = validateArguments(parseErrors)
+    if (errorMessages.isNotEmpty()) {
+        errorMessages.forEach { messageCollector.report(CompilerMessageSeverity.ERROR, it) }
         return emptyList()
     }
 

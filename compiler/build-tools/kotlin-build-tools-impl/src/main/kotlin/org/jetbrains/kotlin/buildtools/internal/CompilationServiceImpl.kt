@@ -166,8 +166,8 @@ internal object CompilationServiceImpl : CompilationService {
         val compiler = K2JVMCompiler()
         val parsedArguments = compiler.createArguments()
         parseCommandLineArguments(arguments, parsedArguments)
-        validateArguments(parsedArguments.errors)?.let {
-            throw CompilerArgumentsParseException(it)
+        validateArguments(parsedArguments.errors).takeIf { it.isNotEmpty() }?.let {
+            throw CompilerArgumentsParseException(it.joinToString("\n"))
         }
         val aggregatedIcConfiguration = compilationConfiguration.aggregatedIcConfiguration
         return when (val options = aggregatedIcConfiguration?.options) {
