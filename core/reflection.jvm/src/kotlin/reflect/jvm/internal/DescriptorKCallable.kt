@@ -5,11 +5,9 @@
 
 package kotlin.reflect.jvm.internal
 
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
-import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
+import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor
@@ -115,6 +113,9 @@ internal abstract class DescriptorKCallable<out R> : ReflectKCallableImpl<R>() {
 
     override val isFinal: Boolean
         get() = descriptor.modality == Modality.FINAL
+
+    internal val isPackagePrivate: Boolean
+        get() = descriptor.visibility == JavaDescriptorVisibilities.PACKAGE_VISIBILITY
 
     override val isOpen: Boolean
         get() = descriptor.modality == Modality.OPEN
