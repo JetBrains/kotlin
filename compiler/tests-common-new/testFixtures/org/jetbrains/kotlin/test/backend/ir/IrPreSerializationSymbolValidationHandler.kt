@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.StageController
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.util.isAnnotationWithEqualFqName
 import org.jetbrains.kotlin.ir.util.isPublishedApi
 import org.jetbrains.kotlin.ir.util.parentClassOrNull
@@ -69,7 +70,8 @@ abstract class IrSymbolValidationHandler(testServices: TestServices) : AbstractI
                 validateRecursive(result.second, klass)
             }
             is ReflectionSymbols -> validate(result)
-            null, is FqName, is IrType, is PrimitiveType, is Name, is String -> Unit // do nothing
+            is IrType -> validateRecursive(result.classifierOrNull, klass)
+            null, is FqName, is PrimitiveType, is Name, is String -> Unit // do nothing
             else -> error("Unexpected type: ${result::class.qualifiedName}")
         }
     }
