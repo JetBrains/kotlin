@@ -47971,6 +47971,18 @@ public class LLReversedBlackBoxTestGenerated extends AbstractLLReversedBlackBoxT
       }
 
       @Test
+      @TestMetadata("anyPropertyWithValueClassExplicitBackingField.kt")
+      public void testAnyPropertyWithValueClassExplicitBackingField() {
+        runTest("compiler/testData/codegen/box/properties/backingField/anyPropertyWithValueClassExplicitBackingField.kt");
+      }
+
+      @Test
+      @TestMetadata("anySupertypeValueClassAnyMethodsWithExplicitBackingField.kt")
+      public void testAnySupertypeValueClassAnyMethodsWithExplicitBackingField() {
+        runTest("compiler/testData/codegen/box/properties/backingField/anySupertypeValueClassAnyMethodsWithExplicitBackingField.kt");
+      }
+
+      @Test
       @TestMetadata("backingFieldAndPropertyWithTheSameName.kt")
       public void testBackingFieldAndPropertyWithTheSameName() {
         runTest("compiler/testData/codegen/box/properties/backingField/backingFieldAndPropertyWithTheSameName.kt");
@@ -48025,6 +48037,12 @@ public class LLReversedBlackBoxTestGenerated extends AbstractLLReversedBlackBoxT
       }
 
       @Test
+      @TestMetadata("equalsHashCodeWithValueClassExplicitBackingFieldAndSupertype.kt")
+      public void testEqualsHashCodeWithValueClassExplicitBackingFieldAndSupertype() {
+        runTest("compiler/testData/codegen/box/properties/backingField/equalsHashCodeWithValueClassExplicitBackingFieldAndSupertype.kt");
+      }
+
+      @Test
       @TestMetadata("explicitBackingFieldInAnonymous.kt")
       public void testExplicitBackingFieldInAnonymous() {
         runTest("compiler/testData/codegen/box/properties/backingField/explicitBackingFieldInAnonymous.kt");
@@ -48034,6 +48052,12 @@ public class LLReversedBlackBoxTestGenerated extends AbstractLLReversedBlackBoxT
       @TestMetadata("explicitFieldCallableReference.kt")
       public void testExplicitFieldCallableReference() {
         runTest("compiler/testData/codegen/box/properties/backingField/explicitFieldCallableReference.kt");
+      }
+
+      @Test
+      @TestMetadata("genericSupertypeWithValueClassExplicitBackingField.kt")
+      public void testGenericSupertypeWithValueClassExplicitBackingField() {
+        runTest("compiler/testData/codegen/box/properties/backingField/genericSupertypeWithValueClassExplicitBackingField.kt");
       }
 
       @Test
@@ -48055,6 +48079,24 @@ public class LLReversedBlackBoxTestGenerated extends AbstractLLReversedBlackBoxT
       }
 
       @Test
+      @TestMetadata("multipleInterfacesExplicitBackingField.kt")
+      public void testMultipleInterfacesExplicitBackingField() {
+        runTest("compiler/testData/codegen/box/properties/backingField/multipleInterfacesExplicitBackingField.kt");
+      }
+
+      @Test
+      @TestMetadata("nullableAnySupertypeWithValueClassExplicitBackingField.kt")
+      public void testNullableAnySupertypeWithValueClassExplicitBackingField() {
+        runTest("compiler/testData/codegen/box/properties/backingField/nullableAnySupertypeWithValueClassExplicitBackingField.kt");
+      }
+
+      @Test
+      @TestMetadata("nullableSupertypeWithValueClassExplicitBackingField.kt")
+      public void testNullableSupertypeWithValueClassExplicitBackingField() {
+        runTest("compiler/testData/codegen/box/properties/backingField/nullableSupertypeWithValueClassExplicitBackingField.kt");
+      }
+
+      @Test
       @TestMetadata("overriddenPropertiesWithExplicitBackingFields.kt")
       public void testOverriddenPropertiesWithExplicitBackingFields() {
         runTest("compiler/testData/codegen/box/properties/backingField/overriddenPropertiesWithExplicitBackingFields.kt");
@@ -48064,6 +48106,18 @@ public class LLReversedBlackBoxTestGenerated extends AbstractLLReversedBlackBoxT
       @TestMetadata("overrideWithExplicitBackingField.kt")
       public void testOverrideWithExplicitBackingField() {
         runTest("compiler/testData/codegen/box/properties/backingField/overrideWithExplicitBackingField.kt");
+      }
+
+      @Test
+      @TestMetadata("supertypePropertyWithValueClassExplicitBackingField.kt")
+      public void testSupertypePropertyWithValueClassExplicitBackingField() {
+        runTest("compiler/testData/codegen/box/properties/backingField/supertypePropertyWithValueClassExplicitBackingField.kt");
+      }
+
+      @Test
+      @TestMetadata("typeCheckSupertypeWithValueClassExplicitBackingField.kt")
+      public void testTypeCheckSupertypeWithValueClassExplicitBackingField() {
+        runTest("compiler/testData/codegen/box/properties/backingField/typeCheckSupertypeWithValueClassExplicitBackingField.kt");
       }
     }
 
