@@ -18,7 +18,7 @@ import kotlin.js.Promise
  * Because callable references translated with local classes,
  * necessary to call it in special way, not in synamic way
  */
-@Suppress("UNUSED_PARAMETER", "unused")
+@Suppress("UNUSED_PARAMETER")
 @PublishedApi
 @UsedFromCompilerGeneratedCode
 internal fun <T> (suspend () -> T).invokeSuspendSuperType(
@@ -32,7 +32,7 @@ internal fun <T> (suspend () -> T).invokeSuspendSuperType(
  * Because callable references translated with local classes,
  * necessary to call it in special way, not in synamic way
  */
-@Suppress("UNUSED_PARAMETER", "unused")
+@Suppress("UNUSED_PARAMETER")
 @PublishedApi
 @UsedFromCompilerGeneratedCode
 internal fun <R, T> (suspend R.() -> T).invokeSuspendSuperTypeWithReceiver(
@@ -47,7 +47,7 @@ internal fun <R, T> (suspend R.() -> T).invokeSuspendSuperTypeWithReceiver(
  * Because callable references translated with local classes,
  * necessary to call it in special way, not in synamic way
  */
-@Suppress("UNUSED_PARAMETER", "unused")
+@Suppress("UNUSED_PARAMETER")
 @PublishedApi
 @UsedFromCompilerGeneratedCode
 internal fun <R, P, T> (suspend R.(P) -> T).invokeSuspendSuperTypeWithReceiverAndParam(

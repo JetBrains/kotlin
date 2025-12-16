@@ -16,7 +16,6 @@ internal fun <T> getContinuation(): Continuation<T> { throw Exception("Implement
 // Do we really need this intrinsic in JS?
 
 @PublishedApi
-@Suppress("UNCHECKED_CAST")
 @UsedFromCompilerGeneratedCode
 internal suspend fun <T> returnIfSuspended(argument: Any?): T {
     return argument as T
