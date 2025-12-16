@@ -149,7 +149,7 @@ class AnalysisApiContextParametersBridgesTest : AbstractAnalysisApiSurfaceCodeba
         append(signature.trimIndent())
 
         // Original declaration is deprecated -> suppression on the call site is required for compilation
-        val suppressDeprecationStatement = if (hasAnnotation(DEPRECATED_ANNOTATION)) {
+        val suppressDeprecationStatement = if (hasDeprecatedAnnotation()) {
             """@Suppress("DEPRECATION")"""
         } else {
             null
@@ -195,7 +195,6 @@ class AnalysisApiContextParametersBridgesTest : AbstractAnalysisApiSurfaceCodeba
         private val BRIDGE_ANNOTATION_MARKER: String = KaContextParameterApi::class.simpleName!!
         private val CUSTOM_BRIDGE_ANNOTATION_MARKER: String = KaCustomContextParameterBridge::class.simpleName!!
         private val IGNORE_BRIDGE_ANNOTATION_MARKER: String = KaNoContextParameterBridgeRequired::class.simpleName!!
-        private val DEPRECATED_ANNOTATION: String = Deprecated::class.simpleName!!
         private const val BASE_INDENT_SIZE = 4
     }
 }

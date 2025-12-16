@@ -360,6 +360,24 @@ public abstract interface class org/jetbrains/kotlin/analysis/api/components/KaS
 	public abstract fun isStable ()Z
 }
 
+public final class org/jetbrains/kotlin/analysis/api/components/KaStandardTypeClassIds {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/analysis/api/components/KaStandardTypeClassIds;
+	public final fun getANY ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getBOOLEAN ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getBYTE ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getCHAR ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getCHAR_SEQUENCE ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getDOUBLE ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getFLOAT ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getINT ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getLONG ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getNOTHING ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getPRIMITIVES ()Ljava/util/Set;
+	public final fun getSHORT ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getSTRING ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getUNIT ()Lorg/jetbrains/kotlin/name/ClassId;
+}
+
 public final class org/jetbrains/kotlin/analysis/api/components/KaSubtypingErrorTypePolicy : java/lang/Enum {
 	public static final field LENIENT Lorg/jetbrains/kotlin/analysis/api/components/KaSubtypingErrorTypePolicy;
 	public static final field STRICT Lorg/jetbrains/kotlin/analysis/api/components/KaSubtypingErrorTypePolicy;

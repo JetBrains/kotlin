@@ -71,6 +71,8 @@ abstract class AbstractAnalysisApiSurfaceCodebaseValidationTest : AbstractAnalys
         annotation.shortName.toString() == annotationName
     }
 
+    protected fun KtAnnotated.hasDeprecatedAnnotation(): Boolean = hasAnnotation(DEPRECATED_ANNOTATION)
+
     protected val KtClassOrObject.isSessionComponent: Boolean
         get() = superTypeListEntries.any { it.textMatches(KA_SESSION_COMPONENT) } || name == KA_SESSION_CLASS
 
@@ -79,5 +81,7 @@ abstract class AbstractAnalysisApiSurfaceCodebaseValidationTest : AbstractAnalys
         val KA_SESSION_COMPONENT: String = KaSessionComponent::class.simpleName!!
 
         val KA_SESSION_CLASS: String = KaSession::class.simpleName!!
+
+        private val DEPRECATED_ANNOTATION: String = Deprecated::class.simpleName!!
     }
 }
