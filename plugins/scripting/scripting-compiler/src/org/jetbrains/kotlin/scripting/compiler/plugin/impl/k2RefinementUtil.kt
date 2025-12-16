@@ -19,7 +19,7 @@ import kotlin.script.experimental.jvm.util.toClassPathOrEmpty
 fun ScriptCompilationConfiguration.refineAllForK2(
     script: SourceCode,
     hostConfiguration: ScriptingHostConfiguration,
-    collectAnnotationData: (SourceCode, ScriptCompilationConfiguration, ScriptingHostConfiguration) -> ResultWithDiagnostics<ScriptCollectedData>?
+    collectAnnotationData: (SourceCode, ScriptCompilationConfiguration) -> ResultWithDiagnostics<ScriptCollectedData>?
 ): ResultWithDiagnostics<ScriptCompilationConfiguration> =
     with {
         this@with.hostConfiguration.update { it.withDefaultsFrom(hostConfiguration) }
@@ -28,7 +28,7 @@ fun ScriptCompilationConfiguration.refineAllForK2(
         .refineBeforeParsing(script)
         .onSuccess {
             it.refineOnAnnotationsWithLazyDataCollection(script) {
-                collectAnnotationData(script, it, hostConfiguration)
+                collectAnnotationData(script, it)
             }
         }.onSuccess {
             it.refineBeforeCompiling(script)

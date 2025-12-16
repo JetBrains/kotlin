@@ -171,4 +171,4 @@ private fun SourceCode.uniqueLocationId(): String =
         else -> locationId ?: "\$${text.hashCode().toHexString()}"
     }
 
-private fun String.toSystemIndependentScriptPath(): String = replace('\\', '/')
+internal fun String.toSystemIndependentScriptPath(): String = replace('\\', '/')
