@@ -72,29 +72,7 @@ abstract class AbstractSymbolsValidationTextTest(
         useConfigurators(::CommonEnvironmentConfigurator)
         applyConfigurators()
     }
-}
 
-abstract class AbstractPreSerializationSymbolsTest(
-    targetBackend: TargetBackend,
-    targetPlatform: TargetPlatform,
-    frontendFacade: Constructor<FrontendFacade<FirOutputArtifact>>,
-    frontendToIrConverter: Constructor<Frontend2BackendConverter<FirOutputArtifact, IrBackendInput>>,
-    irInliningFacade: Constructor<IrPreSerializationLoweringFacade<IrBackendInput>>,
-    serializerFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.KLib>>,
-    deserializerFacade: Constructor<DeserializerFacade<BinaryArtifacts.KLib, IrBackendInput>>,
-    firstStageHandler: Constructor<IrPreSerializationSymbolValidationHandler>,
-    secondStageHandler: Constructor<IrSecondPhaseSymbolValidationHandler>? = null,
-) : AbstractSymbolsValidationTextTest(
-    targetBackend,
-    targetPlatform,
-    frontendFacade,
-    frontendToIrConverter,
-    irInliningFacade,
-    serializerFacade,
-    deserializerFacade,
-    firstStageHandler,
-    secondStageHandler,
-) {
     @Test
     fun testValidation() {
         val file = Files.createTempFile("validation", ".kt").toFile()
