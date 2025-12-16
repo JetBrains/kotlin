@@ -368,7 +368,6 @@ abstract class Kotlin2JsCompile @Inject constructor(
         )
         processArgsBeforeCompile(args)
 
-        println(ArgumentUtils.convertArgumentsToStringList(args))
         compilerRunner.runJsCompilerAsync(
             args,
             environment,

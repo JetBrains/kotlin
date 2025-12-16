@@ -104,9 +104,6 @@ abstract class WasmBinaryTransform : TransformAction<WasmBinaryTransform.Paramet
 
         args.freeArgs += parameters.enhancedFreeCompilerArgs.get()
 
-        println("TRANSFORMING")
-        println(ArgumentUtils.convertArgumentsToStringList(args))
-
         val workArgs = GradleKotlinCompilerWorkArguments(
             projectFiles = ProjectFilesForCompilation(
                 parameters.projectRootFile.get(),
