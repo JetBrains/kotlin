@@ -16,12 +16,17 @@
 
 package org.jetbrains.kotlin.incremental
 
+import com.intellij.openapi.vfs.impl.ZipHandler
+import com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.build.GeneratedFile
 import org.jetbrains.kotlin.build.GeneratedJvmClass
 import org.jetbrains.kotlin.build.JvmSourceRoot
 import org.jetbrains.kotlin.build.isModuleMappingFile
 import org.jetbrains.kotlin.build.report.ICReporter
 import org.jetbrains.kotlin.build.report.debug
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.cli.jvm.modules.CoreJrtFileSystem
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
@@ -294,3 +299,12 @@ fun withSubtypes(
     return proccessedTypes
 }
 
+fun clearJarCaches() {
+    ZipHandler.clearFileAccessorCache()
+    @OptIn(K1Deprecation::class)
+    KotlinCoreEnvironment.applicationEnvironment?.apply {
+        (jarFileSystem as? CoreJarFileSystem)?.clearHandlersCache()
+        (jrtFileSystem as? CoreJrtFileSystem)?.clearRoots()
+        idleCleanup()
+    }
+}
