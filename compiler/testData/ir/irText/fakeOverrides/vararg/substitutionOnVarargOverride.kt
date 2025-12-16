@@ -1,9 +1,6 @@
 // SKIP_KT_DUMP
 // TARGET_BACKEND: JVM
 
-// Variance mismatch (will fix in the next commit)
-// KOTLIN_REFLECT_DUMP_MISMATCH
-
 // FILE: Java1.java
 public class Java1<T> {
     public void foo(T... a) {}
