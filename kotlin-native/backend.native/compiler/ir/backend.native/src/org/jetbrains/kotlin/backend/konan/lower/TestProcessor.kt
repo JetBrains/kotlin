@@ -641,7 +641,9 @@ internal class TestProcessor(
             }.apply {
                 parent = irFile
                 irFile.declarations.add(this)
-                annotations += buildSimpleAnnotation(context.irBuiltIns, startOffset, endOffset, symbols.testInitializer.owner)
+                symbols.testInitializer?.let { testInitializerSymbol ->
+                    annotations += buildSimpleAnnotation(context.irBuiltIns, startOffset, endOffset, testInitializerSymbol.owner)
+                }
                 body = context.createIrBuilder(symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).irBlockBody {
                     statements.forEach {
                         it.accept(SetDeclarationsParentVisitor, this@apply)

@@ -25,7 +25,9 @@ internal class TestsInitializer(private val context: Context) : FileLoweringPass
     override fun lower(irFile: IrFile) {
         for (idx in irFile.declarations.indices) {
             val function = irFile.declarations[idx] as? IrSimpleFunction ?: continue
-            if (!function.hasAnnotation(symbols.testInitializer)) continue
+            symbols.testInitializer?.let { testInitializerSymbol ->
+                if (!function.hasAnnotation(testInitializerSymbol)) continue
+            }
             irFile.declarations[idx] = context.irFactory.buildField {
                 startOffset = function.startOffset
                 endOffset = function.endOffset
