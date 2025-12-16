@@ -924,7 +924,6 @@ public class org/jetbrains/kotlin/psi/KtBlockExpression : com/intellij/psi/impl/
 	public fun getLBrace ()Lcom/intellij/psi/PsiElement;
 	public fun getLanguage ()Lcom/intellij/lang/Language;
 	public fun getLastBracketRange ()Lcom/intellij/openapi/util/TextRange;
-	public fun getParent ()Lcom/intellij/psi/PsiElement;
 	public fun getPsiOrParent ()Lorg/jetbrains/kotlin/psi/KtElement;
 	public fun getRBrace ()Lcom/intellij/psi/PsiElement;
 	public fun getStatements ()Ljava/util/List;
@@ -1496,7 +1495,6 @@ public class org/jetbrains/kotlin/psi/KtElementImpl : com/intellij/extapi/psi/AS
 	public fun delete ()V
 	public fun getContainingKtFile ()Lorg/jetbrains/kotlin/psi/KtFile;
 	public fun getLanguage ()Lcom/intellij/lang/Language;
-	public fun getParent ()Lcom/intellij/psi/PsiElement;
 	public fun getPsiOrParent ()Lorg/jetbrains/kotlin/psi/KtElement;
 	public fun getReference ()Lcom/intellij/psi/PsiReference;
 	public fun getReferences ()[Lcom/intellij/psi/PsiReference;
@@ -1512,7 +1510,6 @@ public class org/jetbrains/kotlin/psi/KtElementImplStub : com/intellij/extapi/ps
 	public fun delete ()V
 	public fun getContainingKtFile ()Lorg/jetbrains/kotlin/psi/KtFile;
 	public fun getLanguage ()Lcom/intellij/lang/Language;
-	public fun getParent ()Lcom/intellij/psi/PsiElement;
 	public fun getPsiOrParent ()Lorg/jetbrains/kotlin/psi/KtElement;
 	public fun getReference ()Lcom/intellij/psi/PsiReference;
 	public fun getReferences ()[Lcom/intellij/psi/PsiReference;
@@ -1579,6 +1576,7 @@ public abstract class org/jetbrains/kotlin/psi/KtExpressionImpl : org/jetbrains/
 	public fun <init> (Lcom/intellij/lang/ASTNode;)V
 	public fun accept (Lorg/jetbrains/kotlin/psi/KtVisitor;Ljava/lang/Object;)Ljava/lang/Object;
 	protected final fun findExpressionUnder (Lcom/intellij/psi/tree/IElementType;)Lorg/jetbrains/kotlin/psi/KtExpression;
+	public fun getParent ()Lcom/intellij/psi/PsiElement;
 	public fun replace (Lcom/intellij/psi/PsiElement;)Lcom/intellij/psi/PsiElement;
 }
 
@@ -1591,6 +1589,7 @@ public abstract class org/jetbrains/kotlin/psi/KtExpressionImplStub : org/jetbra
 	public fun <init> (Lcom/intellij/lang/ASTNode;)V
 	public fun <init> (Lcom/intellij/psi/stubs/StubElement;Lcom/intellij/psi/stubs/IStubElementType;)V
 	public fun accept (Lorg/jetbrains/kotlin/psi/KtVisitor;Ljava/lang/Object;)Ljava/lang/Object;
+	public fun getParent ()Lcom/intellij/psi/PsiElement;
 	public fun rawReplace (Lcom/intellij/psi/PsiElement;)Lcom/intellij/psi/PsiElement;
 	public fun replace (Lcom/intellij/psi/PsiElement;)Lcom/intellij/psi/PsiElement;
 }

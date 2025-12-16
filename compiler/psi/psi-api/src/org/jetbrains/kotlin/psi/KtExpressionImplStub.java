@@ -11,6 +11,7 @@ import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
 
 public abstract class KtExpressionImplStub<T extends StubElement<?>> extends KtElementImplStub<T> implements KtExpression {
     public KtExpressionImplStub(@NotNull T stub, @NotNull IStubElementType nodeType) {
@@ -35,5 +36,12 @@ public abstract class KtExpressionImplStub<T extends StubElement<?>> extends KtE
     @NotNull
     public PsiElement rawReplace(@NotNull PsiElement newElement) {
         return super.replace(newElement);
+    }
+
+    @Override
+    public PsiElement getParent() {
+        @SuppressWarnings("deprecation")
+        PsiElement substitute = KtPsiUtilKt.getParentSubstitute(this);
+        return substitute != null ? substitute : super.getParent();
     }
 }
