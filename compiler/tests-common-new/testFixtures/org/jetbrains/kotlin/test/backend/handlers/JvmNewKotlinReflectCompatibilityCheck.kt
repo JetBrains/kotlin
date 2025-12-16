@@ -120,9 +120,9 @@ class JvmNewKotlinReflectCompatibilityCheck(testServices: TestServices) : JvmBin
                 "K1 and new kotlin-reflect dumps are the same. Please drop KOTLIN_REFLECT_DUMP_MISMATCH directive"
             }
         } else {
-            if (skipAsserts) return
             k1ReflectFile.delete()
             newReflectFile.delete()
+            if (skipAsserts) return
             if (k1ReflectDump != newReflectDump) {
                 val tip =
                     "// Tip: you can use KOTLIN_REFLECT_DUMP_MISMATCH / SKIP_NEW_KOTLIN_REFLECT_COMPATIBILITY_CHECK directives to suppress the test\n"
