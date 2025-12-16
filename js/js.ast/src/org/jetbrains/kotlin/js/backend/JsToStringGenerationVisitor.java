@@ -58,6 +58,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
     private static final char[] CHARS_LET = "let".toCharArray();
     private static final char[] CHARS_CONST = "const".toCharArray();
     private static final char[] CHARS_WHILE = "while".toCharArray();
+    private static final char[] CHARS_ELLIPSIS = "...".toCharArray();
     private static final char[] HEX_DIGITS = {
             '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
     private static final Map<Character, Integer> COMMON_ESCAPE_MAPPING = createCommonEscapeMapping();
@@ -1097,30 +1098,37 @@ public class JsToStringGenerationVisitor extends JsVisitor {
 
             pushSourceInfo(item.getSource());
 
-            JsExpression labelExpr = item.getLabelExpr();
+            if (item instanceof JsPropertyInitializer.Spread) {
+                JsExpression expression = ((JsPropertyInitializer.Spread)item).getExpression();
+                ellipsis();
+                accept(expression);
+            } else if (item instanceof JsPropertyInitializer.KeyValue) {
+                JsPropertyInitializer.KeyValue keyValue = (JsPropertyInitializer.KeyValue)item;
+                JsExpression labelExpr = keyValue.getLabelExpr();
 
-            if (labelExpr instanceof JsStringLiteral) {
-                JsStringLiteral stringLiteral = (JsStringLiteral) labelExpr;
-                String value = stringLiteral.getValue();
-                if (IdentifierPolicyKt.isValidES5Identifier(value)) {
-                    String escaped = IdentifierPolicyKt.getRESERVED_KEYWORDS().contains(value) ? "'" + value + "'" : value;
-                    labelExpr = new JsNameRef(escaped).withMetadataFrom(stringLiteral);
+                if (labelExpr instanceof JsStringLiteral) {
+                    JsStringLiteral stringLiteral = (JsStringLiteral) labelExpr;
+                    String value = stringLiteral.getValue();
+                    if (IdentifierPolicyKt.isValidES5Identifier(value)) {
+                        String escaped = IdentifierPolicyKt.getRESERVED_KEYWORDS().contains(value) ? "'" + value + "'" : value;
+                        labelExpr = new JsNameRef(escaped).withMetadataFrom(stringLiteral);
+                    }
+                    accept(labelExpr);
+                } else if (labelExpr instanceof JsNumberLiteral || labelExpr instanceof JsBigIntLiteral) {
+                    accept(labelExpr);
+                } else {
+                    leftSquare();
+                    accept(labelExpr);
+                    rightSquare();
                 }
-                accept(labelExpr);
-            } else if (labelExpr instanceof JsNumberLiteral || labelExpr instanceof JsBigIntLiteral) {
-                accept(labelExpr);
-            } else {
-                leftSquare();
-                accept(labelExpr);
-                rightSquare();
-            }
-            _colon();
-            space();
-            JsExpression valueExpr = item.getValueExpr();
-            boolean wasEnclosed = parenPushIfCommaExpression(valueExpr);
-            accept(valueExpr);
-            if (wasEnclosed) {
-                rightParen();
+                _colon();
+                space();
+                JsExpression valueExpr = keyValue.getValueExpr();
+                boolean wasEnclosed = parenPushIfCommaExpression(valueExpr);
+                accept(valueExpr);
+                if (wasEnclosed) {
+                    rightParen();
+                }
             }
 
             popSourceInfo();
@@ -1920,4 +1928,6 @@ public class JsToStringGenerationVisitor extends JsVisitor {
     private void _while() {
         p.print(CHARS_WHILE);
     }
+
+    private void ellipsis() { p.print(CHARS_ELLIPSIS); }
 }

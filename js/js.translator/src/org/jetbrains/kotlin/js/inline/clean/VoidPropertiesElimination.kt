@@ -24,7 +24,7 @@ class VoidPropertiesElimination(private val root: JsBlock, private val voidName:
 
     fun apply(): Boolean {
         val visitor = object : JsVisitorWithContextImpl() {
-            override fun endVisit(x: JsPropertyInitializer, ctx: JsContext<JsNode>) {
+            override fun endVisit(x: JsPropertyInitializer.KeyValue, ctx: JsContext<JsNode>) {
                 super.endVisit(x, ctx)
                 if ((x.valueExpr as? JsNameRef)?.name === voidName) {
                     ctx.removeMe()

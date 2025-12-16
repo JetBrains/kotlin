@@ -220,9 +220,9 @@ class ExportModelToJsStatements(
                         JsLoweredDeclarationOrigin.OBJECT_GET_INSTANCE_FUNCTION -> "getInstance"
                         else -> "get"
                     }
-                    propertyInitializers += JsPropertyInitializer(JsStringLiteral(fieldName), it.makeRef())
+                    propertyInitializers += JsPropertyInitializer.KeyValue(JsStringLiteral(fieldName), it.makeRef())
                 }
-                setter?.let { propertyInitializers += JsPropertyInitializer(JsStringLiteral("set"), it.makeRef()) }
+                setter?.let { propertyInitializers += JsPropertyInitializer.KeyValue(JsStringLiteral("set"), it.makeRef()) }
             }
         )
     }

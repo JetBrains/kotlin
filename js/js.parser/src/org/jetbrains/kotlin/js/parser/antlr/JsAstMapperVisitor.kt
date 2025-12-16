@@ -490,14 +490,14 @@ internal class JsAstMapperVisitor(
     }
 
     override fun visitPropertyExpressionAssignment(ctx: JavaScriptParser.PropertyExpressionAssignmentContext): JsPropertyInitializer {
-        return JsPropertyInitializer(
+        return JsPropertyInitializer.KeyValue(
             visitNode<JsExpression>(ctx.propertyName()),
             visitNode<JsExpression>(ctx.singleExpression())
         ).applyLocation(ctx)
     }
 
     override fun visitComputedPropertyExpressionAssignment(ctx: JavaScriptParser.ComputedPropertyExpressionAssignmentContext): JsNode? {
-        return JsPropertyInitializer(
+        return JsPropertyInitializer.KeyValue(
             visitNode<JsExpression>(ctx.label),
             visitNode<JsExpression>(ctx.value)
         ).applyLocation(ctx)
@@ -516,11 +516,13 @@ internal class JsAstMapperVisitor(
     }
 
     override fun visitSpreadProperty(ctx: JavaScriptParser.SpreadPropertyContext): JsNode? {
-        reportError("Spread properties are not supported yet", ctx)
+        return JsPropertyInitializer.Spread(
+            visitNode<JsExpression>(ctx.singleExpression())
+        ).applyLocation(ctx)
     }
 
     override fun visitPropertyShorthand(ctx: JavaScriptParser.PropertyShorthandContext): JsPropertyInitializer {
-        return JsPropertyInitializer(
+        return JsPropertyInitializer.KeyValue(
             JsStringLiteral(ctx.text),
             makeRefNode(ctx.text)
         ).applyLocation(ctx)

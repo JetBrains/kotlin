@@ -542,7 +542,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
                 JsObjectLiteral(
                     associatedObjects
                         .map { (key, objectGetInstanceFunction) ->
-                            JsPropertyInitializer(JsIntLiteral(key.associatedObjectKey!!), objectGetInstanceFunction)
+                            JsPropertyInitializer.KeyValue(JsIntLiteral(key.associatedObjectKey!!), objectGetInstanceFunction)
                         }
                         .toSmartList()
                 )
@@ -551,7 +551,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
                 JsObjectLiteral(
                     associatedObjects
                         .map { (key, objectGetInstanceFunction) ->
-                            JsPropertyInitializer(
+                            JsPropertyInitializer.KeyValue(
                                 JsInvocation(
                                     context.staticContext.getNameForStaticFunction(backendContext.symbols.getAssociatedObjectId.owner).makeRef(),
                                     key.getClassRef(context.staticContext),
