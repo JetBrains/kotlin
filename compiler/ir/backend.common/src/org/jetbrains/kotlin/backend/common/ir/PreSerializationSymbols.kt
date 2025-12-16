@@ -138,7 +138,7 @@ abstract class BaseSymbolsImpl(protected val irBuiltIns: IrBuiltIns) {
 
 interface PreSerializationSymbols {
     val throwUninitializedPropertyAccessException: IrSimpleFunctionSymbol
-    val throwUnsupportedOperationException: IrSimpleFunctionSymbol
+    val throwUnsupportedOperationException: IrSimpleFunctionSymbol? // KT-83151 Restore non-nullability of symbols available since 2.3
 
     val syntheticConstructorMarker: IrClassSymbol
     val coroutineContextGetter: IrSimpleFunctionSymbol
@@ -179,8 +179,8 @@ interface PreSerializationKlibSymbols : PreSerializationSymbols {
             ClassId(StandardNames.KOTLIN_INTERNAL_FQ_NAME, Name.identifier("SyntheticConstructorMarker")).classSymbol()
         override val throwUninitializedPropertyAccessException: IrSimpleFunctionSymbol =
             THROW_UNINITIALIZED_PROPERTY_ACCESS_NAME.internalCallableId.functionSymbol()
-        override val throwUnsupportedOperationException: IrSimpleFunctionSymbol =
-            THROW_UNSUPPORTED_OPERATION_NAME.internalCallableId.functionSymbol()
+        override val throwUnsupportedOperationException: IrSimpleFunctionSymbol? =
+            CallableIds.throwUnsupportedOperationException.functionSymbolOrNull()
     }
 
     companion object {
@@ -192,6 +192,10 @@ interface PreSerializationKlibSymbols : PreSerializationSymbols {
         private val kotlinInternalPackageFqn = FqName.fromSegments(listOf("kotlin", "internal"))
         private val String.internalCallableId: CallableId
             get() = CallableId(kotlinInternalPackageFqn, Name.identifier(this))
+
+        private object CallableIds {
+            val throwUnsupportedOperationException = THROW_UNSUPPORTED_OPERATION_NAME.internalCallableId
+        }
     }
 }
 

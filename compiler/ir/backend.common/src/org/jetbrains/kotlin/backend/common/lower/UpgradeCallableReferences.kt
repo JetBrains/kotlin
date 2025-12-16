@@ -406,7 +406,7 @@ open class UpgradeCallableReferences(
             isSuspend: Boolean,
             isPropertySetter: Boolean,
         ) = buildWrapperFunction(captured, parent, name, isSuspend, isPropertySetter) { _, _ ->
-            +irCall(this@UpgradeCallableReferences.context.symbols.throwUnsupportedOperationException).apply {
+            +irCall(this@UpgradeCallableReferences.context.symbols.throwUnsupportedOperationException!!).apply {
                 arguments[0] = irString("Not supported for local property reference.")
             }
         }.apply {
