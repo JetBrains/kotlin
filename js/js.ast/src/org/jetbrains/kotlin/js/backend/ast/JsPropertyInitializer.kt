@@ -1,67 +1,43 @@
 // Copyright (c) 2011, the Dart project authors.  Please see the AUTHORS file
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
-
-package org.jetbrains.kotlin.js.backend.ast;
-
-import org.jetbrains.annotations.NotNull;
+package org.jetbrains.kotlin.js.backend.ast
 
 /**
- * Used in object literals to specify property values by name.
+ * Used in object literals to specify properties.
  */
-public class JsPropertyInitializer extends SourceInfoAwareJsNode {
-    @NotNull
-    private JsExpression labelExpr;
-    @NotNull
-    private JsExpression valueExpr;
+open class JsPropertyInitializer(
+    labelExpr: JsExpression,
+    valueExpr: JsExpression
+) : SourceInfoAwareJsNode() {
+    var labelExpr: JsExpression = labelExpr
+        protected set
+    var valueExpr: JsExpression = valueExpr
+        protected set
 
-    public JsPropertyInitializer(@NotNull JsExpression labelExpr, @NotNull JsExpression valueExpr) {
-        this.labelExpr = labelExpr;
-        this.valueExpr = valueExpr;
+    override fun accept(v: JsVisitor) {
+        v.visitPropertyInitializer(this)
     }
 
-    @NotNull
-    public JsExpression getLabelExpr() {
-        return labelExpr;
+    override fun acceptChildren(visitor: JsVisitor) {
+        visitor.accept(labelExpr)
+        visitor.accept(valueExpr)
     }
 
-    @NotNull
-    public JsExpression getValueExpr() {
-        return valueExpr;
-    }
-
-    @Override
-    public void accept(JsVisitor v) {
-        v.visitPropertyInitializer(this);
-    }
-
-    @Override
-    public void acceptChildren(JsVisitor visitor) {
-        visitor.accept(labelExpr);
-        visitor.accept(valueExpr);
-    }
-
-    @Override
-    public void traverse(JsVisitorWithContext v, JsContext ctx) {
+    override fun traverse(v: JsVisitorWithContext, ctx: JsContext<*>) {
         if (v.visit(this, ctx)) {
-            JsExpression newLabel = v.accept(labelExpr);
-            JsExpression newValue = v.accept(valueExpr);
-            assert newLabel != null: "Label cannot be replaced with null";
-            assert newValue != null: "Value cannot be replaced with null";
-            labelExpr = newLabel;
-            valueExpr = newValue;
+            labelExpr = v.accept(labelExpr)
+            valueExpr = v.accept(valueExpr)
         }
-        v.endVisit(this, ctx);
+        v.endVisit(this, ctx)
     }
 
-    @NotNull
-    @Override
-    public JsPropertyInitializer deepCopy() {
-        return new JsPropertyInitializer(labelExpr.deepCopy(), valueExpr.deepCopy()).withMetadataFrom(this);
+    override fun deepCopy(): JsPropertyInitializer {
+        return JsPropertyInitializer(
+            labelExpr.deepCopy(),
+            valueExpr.deepCopy()
+        ).withMetadataFrom<JsPropertyInitializer>(this)
     }
 
-    @Override
-    public String toString() {
-        return labelExpr + ": " + valueExpr;
-    }
+    override fun toString() = "$labelExpr: $valueExpr"
 }
