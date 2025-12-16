@@ -51,7 +51,6 @@ import org.jetbrains.kotlin.ir.interpreter.hasAnnotation
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
 import org.jetbrains.kotlin.ir.util.*
@@ -1319,7 +1318,7 @@ abstract class AbstractComposeLowering(
     private val irEnumOrdinal =
         context.irBuiltIns.enumClass.owner.properties.single { it.name.asString() == "ordinal" }.getter!!
 
-    private val protobufEnumClassId = ClassId.fromString("com/google/protobuf/Internal/EnumLite")
+    private val protobufEnumClassId = ClassId.fromString("com/google/protobuf/Internal.EnumLite")
 
     private fun IrExpression.ordinalIfEnum(): IrExpression {
         val cls = type.classOrNull?.owner
