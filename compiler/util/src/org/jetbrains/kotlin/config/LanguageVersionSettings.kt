@@ -829,5 +829,5 @@ fun LanguageVersionSettings.getCustomizedEffectivelyDisabledLanguageFeatures(): 
     }
 }
 
-private fun LanguageVersionSettings.isEnabledByDefault(languageFeature: LanguageFeature): Boolean =
+fun LanguageVersionSettings.isEnabledByDefault(languageFeature: LanguageFeature): Boolean =
     languageFeature.sinceVersion != null && languageVersion >= languageFeature.sinceVersion && apiVersion >= languageFeature.sinceApiVersion

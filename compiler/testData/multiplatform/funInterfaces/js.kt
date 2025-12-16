@@ -1,5 +1,3 @@
-// ADDITIONAL_COMPILER_ARGUMENTS: -Xnew-inference
-
 package js
 
 fun interface KRunnable {

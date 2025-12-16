@@ -8,12 +8,15 @@ package org.jetbrains.kotlin.cli.common
 import com.intellij.ide.highlighter.JavaFileType
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments
-import org.jetbrains.kotlin.cli.common.arguments.ManualLanguageFeatureSetting
+import org.jetbrains.kotlin.cli.common.arguments.Disables
+import org.jetbrains.kotlin.cli.common.arguments.Enables
+import org.jetbrains.kotlin.cli.common.arguments.argumentAnnotation
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.cli.common.arguments.toLanguageVersionSettings
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.fir.analysis.diagnostics.CliDiagnostics
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.FlexibleTypeImpl
@@ -22,6 +25,9 @@ import org.jetbrains.kotlin.utils.KotlinPaths
 import org.jetbrains.kotlin.utils.KotlinPathsFromHomeDir
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
+import kotlin.reflect.full.memberProperties
+import kotlin.reflect.full.primaryConstructor
+import kotlin.reflect.jvm.javaField
 
 fun CompilerConfiguration.setupCommonArguments(
     arguments: CommonCompilerArguments,
@@ -86,6 +92,9 @@ fun CompilerConfiguration.setupCommonArguments(
 
     setupLanguageVersionSettings(arguments)
 
+    // It should be called after the language version is initialized because the reporting depends on the current language version
+    checkRedundantArguments(arguments, languageVersionSettings, messageCollector)
+
     val usesK2 = languageVersionSettings.languageVersion.usesK2
     put(CommonConfigurationKeys.USE_FIR, usesK2)
     put(CommonConfigurationKeys.USE_LIGHT_TREE, arguments.useFirLT)
@@ -118,6 +127,51 @@ fun CompilerConfiguration.setupMetadataVersion(
 
 fun CompilerConfiguration.setupLanguageVersionSettings(arguments: CommonCompilerArguments) {
     languageVersionSettings = arguments.toLanguageVersionSettings(getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY))
+}
+
+private fun checkRedundantArguments(
+    arguments: CommonCompilerArguments,
+    languageVersionSettings: LanguageVersionSettings,
+    messageCollector: MessageCollector,
+) {
+    val languageVersion = languageVersionSettings.languageVersion
+    val defaultArguments = arguments::class.primaryConstructor!!.callBy(emptyMap())
+
+    propertiesLoop@ for (property in arguments::class.memberProperties) {
+        val propertyValue = property.getter.call(arguments)
+        val defaultPropertyValue = property.getter.call(defaultArguments)
+
+        // Check if a user explicitly sets the value
+        if (propertyValue == defaultPropertyValue) continue
+
+        var hasEnablesDisablesAnnotation = false
+
+        fun checkNecessity(feature: LanguageFeature, ifValueIs: String, state: LanguageFeature.State): Boolean {
+            hasEnablesDisablesAnnotation = true
+            // At first make sure the annotation is relevant and at second check the necessity
+            return (ifValueIs.isEmpty() || ifValueIs == propertyValue.toString()) &&
+                    (state == LanguageFeature.State.ENABLED) != languageVersionSettings.isEnabledByDefault(feature)
+        }
+
+        val javaField = property.javaField!!
+        javaField.getAnnotationsByType(Enables::class.java).forEach {
+            if (checkNecessity(it.feature, it.ifValueIs, LanguageFeature.State.ENABLED)) continue@propertiesLoop
+        }
+        javaField.getAnnotationsByType(Disables::class.java).forEach {
+            if (checkNecessity(it.feature, it.ifValueIs, LanguageFeature.State.DISABLED)) continue@propertiesLoop
+        }
+
+        // The checker currently supports only `Enables`, `Disables` annotations (at least one should be specified)
+        if (!hasEnablesDisablesAnnotation) continue
+
+        val effectiveSeverity = CliDiagnostics.REDUNDANT_CLI_ARG.getEffectiveSeverity(languageVersionSettings) ?: continue
+
+        val argValue = if (propertyValue is String) "=$propertyValue" else ""
+        messageCollector.report(
+            effectiveSeverity.toCompilerMessageSeverity(),
+            "The argument '${property.argumentAnnotation.value}${argValue}' is redundant for the current language version $languageVersion."
+        )
+    }
 }
 
 const val KOTLIN_HOME_PROPERTY = "kotlin.home"
