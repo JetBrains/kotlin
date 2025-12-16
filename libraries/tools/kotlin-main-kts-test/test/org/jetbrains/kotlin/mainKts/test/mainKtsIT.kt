@@ -223,7 +223,8 @@ fun runWithK2JVMCompilerAndMainKts(
                 File("dist/kotlinc/lib/kotlin-main-kts.jar").also {
                     Assert.assertTrue("kotlin-main-kts.jar not found, run dist task: ${it.absolutePath}", it.exists())
                 }
-            )
+            ),
+            disableScriptCompilationCache = cacheDir == null
         )
     }
 }

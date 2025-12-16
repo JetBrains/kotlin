@@ -113,7 +113,10 @@ internal fun withScriptCompilationCache(
     body: () -> ResultWithDiagnostics<CompiledScript>
 ): ResultWithDiagnostics<CompiledScript> {
     val cache = scriptCompilationConfiguration[ScriptCompilationConfiguration.hostConfiguration]
-        ?.get(ScriptingHostConfiguration.jvm.compilationCache)
+        ?.let {
+            if (it[ScriptingHostConfiguration.jvm.disableCompilationCache] == true) null
+            else it[ScriptingHostConfiguration.jvm.compilationCache]
+        }
 
     val cached = cache?.get(script, scriptCompilationConfiguration)
 

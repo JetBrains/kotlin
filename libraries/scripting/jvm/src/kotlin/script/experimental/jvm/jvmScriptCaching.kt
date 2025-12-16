@@ -28,3 +28,5 @@ interface CompiledJvmScriptsCache {
 
 val JvmScriptingHostConfigurationKeys.compilationCache by PropertiesCollection.key<CompiledJvmScriptsCache>(isTransient = true)
 
+val JvmScriptingHostConfigurationKeys.disableCompilationCache by PropertiesCollection.key<Boolean>(false)
+
