@@ -1,5 +1,8 @@
 // FIR_IDENTICAL
 
+// Skip because it's a compiler bug KT-82502, there should be only one `foo` function
+// KOTLIN_REFLECT_DUMP_MISMATCH
+
 // FILE: A.java
 public class A {
     public void foo(String a) {}

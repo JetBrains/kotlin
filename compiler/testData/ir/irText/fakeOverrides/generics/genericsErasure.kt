@@ -1,5 +1,9 @@
 // WITH_STDLIB
 
+// Reflect dumps mismtach because foo2 don't match in new implementation.
+// We don't consider it super valid case because of @Suppress("CONFLICTING_OVERLOADS")
+// KOTLIN_REFLECT_DUMP_MISMATCH
+
 class Foo {
     @JvmName("a1") fun <A> foo1(a: A) where A : Number = Unit
     @JvmName("b1") fun foo1(a: Number) = Unit

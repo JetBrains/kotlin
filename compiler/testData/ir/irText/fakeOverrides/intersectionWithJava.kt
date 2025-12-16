@@ -2,6 +2,10 @@
 // TARGET_BACKEND: JVM
 // ISSUE: KT-65207
 
+// In new kotlin-reflect, when typealias type goes through KTypeSubstitutor, it looses "typealiasness".
+// It's arguably a minor difference between K1 and new implementation
+// KOTLIN_REFLECT_DUMP_MISMATCH
+
 // FILE: Java1.java
 import java.util.ArrayList;
 
