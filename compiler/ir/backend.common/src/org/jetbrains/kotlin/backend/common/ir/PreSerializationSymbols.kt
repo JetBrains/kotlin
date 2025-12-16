@@ -140,7 +140,7 @@ interface PreSerializationSymbols {
     val throwUninitializedPropertyAccessException: IrSimpleFunctionSymbol
     val throwUnsupportedOperationException: IrSimpleFunctionSymbol? // KT-83151 Restore non-nullability of symbols available since 2.3
 
-    val syntheticConstructorMarker: IrClassSymbol
+    val syntheticConstructorMarker: IrClassSymbol? // KT-83151 Restore non-nullability of symbols available since 2.3
     val coroutineContextGetter: IrSimpleFunctionSymbol
     val suspendCoroutineUninterceptedOrReturn: IrSimpleFunctionSymbol
     val coroutineGetContext: IrSimpleFunctionSymbol
@@ -175,8 +175,7 @@ interface PreSerializationKlibSymbols : PreSerializationSymbols {
 
     abstract class Impl(irBuiltIns: IrBuiltIns) : PreSerializationKlibSymbols, PreSerializationSymbols.Impl(irBuiltIns) {
         override val genericSharedVariableBox: SharedVariableBoxClassInfo = findSharedVariableBoxClass(null)
-        override val syntheticConstructorMarker: IrClassSymbol =
-            ClassId(StandardNames.KOTLIN_INTERNAL_FQ_NAME, Name.identifier("SyntheticConstructorMarker")).classSymbol()
+        override val syntheticConstructorMarker: IrClassSymbol? = ClassIds.SyntheticConstructorMarker.classSymbolOrNull()
         override val throwUninitializedPropertyAccessException: IrSimpleFunctionSymbol =
             THROW_UNINITIALIZED_PROPERTY_ACCESS_NAME.internalCallableId.functionSymbol()
         override val throwUnsupportedOperationException: IrSimpleFunctionSymbol? =
@@ -192,6 +191,10 @@ interface PreSerializationKlibSymbols : PreSerializationSymbols {
         private val kotlinInternalPackageFqn = FqName.fromSegments(listOf("kotlin", "internal"))
         private val String.internalCallableId: CallableId
             get() = CallableId(kotlinInternalPackageFqn, Name.identifier(this))
+
+        private object ClassIds {
+            val SyntheticConstructorMarker = ClassId(StandardNames.KOTLIN_INTERNAL_FQ_NAME, Name.identifier("SyntheticConstructorMarker"))
+        }
 
         private object CallableIds {
             val throwUnsupportedOperationException = THROW_UNSUPPORTED_OPERATION_NAME.internalCallableId
