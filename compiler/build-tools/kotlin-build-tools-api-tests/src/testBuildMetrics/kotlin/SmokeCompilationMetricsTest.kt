@@ -13,14 +13,12 @@ import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.project
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Disabled
 
 @DisplayName("Test that verify that only all the expected metrics are reported without checking their values")
 class SmokeCompilationMetricsTest : BaseCompilationTest() {
     @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("Basic non-incremental compilation metrics test")
     @TestMetadata("jvm-module-1")
-    @Disabled("KT-78198")
     fun testNonIncrementalCompilationMetrics(strategyConfig: CompilerExecutionStrategyConfiguration) {
         project(strategyConfig) {
             val module1 = module("jvm-module-1")
@@ -48,7 +46,6 @@ class SmokeCompilationMetricsTest : BaseCompilationTest() {
     @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("Basic incremental compilation metrics test")
     @TestMetadata("jvm-module-1")
-    @Disabled("KT-78198")
     fun testIncrementalCompilationMetrics(strategyConfig: CompilerExecutionStrategyConfiguration) {
         project(strategyConfig) {
             val module1 = module("jvm-module-1")
@@ -77,12 +74,13 @@ class SmokeCompilationMetricsTest : BaseCompilationTest() {
         private val baseMetricNames = setOf(
             "PS MarkSweep",
             "PS Scavenge",
-            "Run compilation -> Incremental compilation -> Sources compilation round -> Compiler time -> Compiler code analysis",
-            "Run compilation -> Incremental compilation -> Sources compilation round -> Compiler time -> Compiler code generation -> Compiler IR lowering",
-            "Run compilation -> Incremental compilation -> Sources compilation round -> Compiler time -> Compiler code generation -> Compiler backend",
-            "Run compilation -> Incremental compilation -> Sources compilation round -> Compiler time -> Compiler code generation",
-            "Run compilation -> Incremental compilation -> Sources compilation round -> Compiler time -> Compiler initialization time",
-            "Run compilation -> Incremental compilation -> Sources compilation round -> Compiler time -> Compiler translation to IR",
+            "Run compilation -> Sources compilation round -> Compiler time -> Compiler code analysis",
+            "Run compilation -> Sources compilation round -> Compiler time -> Compiler code generation -> Compiler IR lowering",
+            "Run compilation -> Sources compilation round -> Compiler time -> Compiler code generation -> Compiler backend",
+            "Run compilation -> Sources compilation round -> Compiler time -> Compiler code generation",
+            "Run compilation -> Sources compilation round -> Compiler time -> Compiler initialization time",
+            "Run compilation -> Sources compilation round -> Compiler time -> Compiler translation to IR",
+            "Total compiler iteration",
             "Total compiler iteration -> Analysis lines per second",
             "Total compiler iteration -> Code generation lines per second",
             "Total compiler iteration -> Number of lines analyzed",
@@ -98,19 +96,18 @@ class SmokeCompilationMetricsTest : BaseCompilationTest() {
             "Number of times classpath snapshot is shrunk and saved after compilation -> Size of shrunk classpath snapshot",
             "Number of times classpath snapshot is shrunk and saved after compilation",
             "Calculate output size",
-            "Run compilation -> Incremental compilation -> Calculate initial dirty sources set",
-            "Run compilation -> Incremental compilation -> Clear outputs on rebuild",
-            "Run compilation -> Incremental compilation -> Generate compiler reference index",
-            "Run compilation -> Incremental compilation -> Shrink and save current classpath snapshot after compilation -> Save shrunk current classpath snapshot",
-            "Run compilation -> Incremental compilation -> Shrink and save current classpath snapshot after compilation -> Shrink current classpath snapshot non-incrementally -> Load current classpath snapshot -> Remove duplicate classes",
-            "Run compilation -> Incremental compilation -> Shrink and save current classpath snapshot after compilation -> Shrink current classpath snapshot non-incrementally -> Load current classpath snapshot",
-            "Run compilation -> Incremental compilation -> Shrink and save current classpath snapshot after compilation -> Shrink current classpath snapshot non-incrementally",
-            "Run compilation -> Incremental compilation -> Shrink and save current classpath snapshot after compilation",
-            "Run compilation -> Incremental compilation -> Sources compilation round",
-            "Run compilation -> Incremental compilation -> Store build info",
-            "Run compilation -> Incremental compilation -> Update caches",
-            "Run compilation -> Incremental compilation",
-            "Total compiler iteration",
+            "Run compilation -> Calculate initial dirty sources set",
+            "Run compilation -> Clear outputs on rebuild",
+            "Run compilation -> Generate compiler reference index",
+            "Run compilation -> Shrink and save current classpath snapshot after compilation -> Save shrunk current classpath snapshot",
+            "Run compilation -> Shrink and save current classpath snapshot after compilation -> Shrink current classpath snapshot non-incrementally -> Load current classpath snapshot -> Remove duplicate classes",
+            "Run compilation -> Shrink and save current classpath snapshot after compilation -> Shrink current classpath snapshot non-incrementally -> Load current classpath snapshot",
+            "Run compilation -> Shrink and save current classpath snapshot after compilation -> Shrink current classpath snapshot non-incrementally",
+            "Run compilation -> Shrink and save current classpath snapshot after compilation",
+            "Run compilation -> Sources compilation round",
+            "Run compilation -> Store build info",
+            "Run compilation -> Update caches",
+            "Run compilation",
             "Total size of the cache directory -> ABI snapshot size",
             "Total size of the cache directory",
         )
