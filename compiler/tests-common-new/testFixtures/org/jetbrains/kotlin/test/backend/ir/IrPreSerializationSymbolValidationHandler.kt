@@ -39,13 +39,13 @@ abstract class IrSymbolValidationHandler(testServices: TestServices) : AbstractI
 
     override fun processModule(module: TestModule, info: IrBackendInput) {
         for (symbols in getSymbols(info.irBuiltIns)) {
-            validate(symbols)
+            validateContainer(symbols)
         }
     }
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {}
 
-    private fun validate(symbolsContainer: Any) {
+    private fun validateContainer(symbolsContainer: Any) {
         val klass = symbolsContainer::class
         klass.members.forEach {
             if (it !is KProperty<*> || (it.visibility != KVisibility.PUBLIC && it.visibility != KVisibility.INTERNAL)) return@forEach
@@ -69,7 +69,7 @@ abstract class IrSymbolValidationHandler(testServices: TestServices) : AbstractI
                 validateRecursive(result.first, klass)
                 validateRecursive(result.second, klass)
             }
-            is ReflectionSymbols -> validate(result)
+            is ReflectionSymbols -> validateContainer(result)
             is IrType -> validateRecursive(result.classifierOrNull, klass)
             null, is FqName, is PrimitiveType, is Name, is String -> Unit // do nothing
             else -> error("Unexpected type: ${result::class.qualifiedName}")
