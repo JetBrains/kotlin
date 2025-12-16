@@ -116,9 +116,3 @@ abstract class IrSecondPhaseSymbolValidationHandler(testServices: TestServices) 
         checkForSpecialAnnotation(owner)
     }
 }
-
-class JsSymbolValidationHandler(testServices: TestServices) : IrSecondPhaseSymbolValidationHandler(testServices) {
-    override fun getSymbols(irBuiltIns: IrBuiltIns): PreSerializationSymbols {
-        return JsSymbols(irBuiltIns, StageController(), compileLongAsBigint = true)
-    }
-}
