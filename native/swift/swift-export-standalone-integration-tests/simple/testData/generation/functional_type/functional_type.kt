@@ -3,7 +3,6 @@
 // EXPORT_TO_SWIFT
 // FILE: simple.kt
 
-fun foo_sus(): suspend ()->Unit = TODO()
 fun foo_1(): ()->Unit = TODO()
 
 fun foo_consume_simple(block: ()->Unit): Unit = TODO()

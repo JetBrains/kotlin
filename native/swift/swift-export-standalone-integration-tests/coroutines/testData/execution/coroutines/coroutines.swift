@@ -134,6 +134,12 @@ func testImmediateThrowing() async {
     }
 }
 
+@Test
+func testCallingKotlinLambdaThatUsesCoroutines() async throws {
+    let block = testPrimitiveProducedLambda()
+    try #expect(await block() == 42)
+}
+
 func ==<T>(_ lhs: Result<T, any Error>, _ rhs: Result<T, any Error>) -> Bool where T: Equatable {
     switch (lhs, rhs) {
     case (.success(let l), .success(let r)): l == r

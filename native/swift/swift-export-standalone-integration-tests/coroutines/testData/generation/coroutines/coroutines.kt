@@ -10,3 +10,6 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 
 fun demo(): Flow<Int> = TODO()
+
+fun demo_ft_produce(): suspend (Int) -> Int = TODO()
+

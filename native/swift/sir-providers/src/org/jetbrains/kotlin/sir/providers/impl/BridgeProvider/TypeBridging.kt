@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.sir.util.isNever
 import org.jetbrains.kotlin.sir.util.isValueType
 import org.jetbrains.kotlin.sir.util.name
 import org.jetbrains.kotlin.sir.util.swiftName
+import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 
 context(session: SirSession)
 internal fun bridgeType(type: SirType): Bridge =
@@ -815,7 +816,7 @@ internal sealed class Bridge(
                     selfParameter = null,
                     extensionReceiverParameter = null,
                     errorParameter = null,
-                    isAsync = false
+                    isAsync = swiftType.isAsync
                 )!!
             )
 
@@ -839,7 +840,7 @@ internal sealed class Bridge(
 
         override val inSwiftSources = object : KotlinToSwiftValueConversion {
             override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String): String {
-                val allArgs = bridgeProxy.argumentsForInvocation()
+                val allArgs = bridgeProxy.argumentsForInvocation().applyIf(swiftType.isAsync) { dropLast(3) }
                 val defineArgs = allArgs
                     .drop(1).takeIf { it.isNotEmpty() }
                     ?.let { " ${it.joinToString()} in" } ?: ""

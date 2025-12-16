@@ -567,7 +567,7 @@ internal class SirAsSwiftSourcesPrinter private constructor(
                     "[${keyType.swiftRender(SirTypeVariance.INVARIANT)}: ${valueType.swiftRender(SirTypeVariance.INVARIANT)}]"
 
                 is SirFunctionalType ->
-                    "(${parameterTypes.render()})${" async".takeIf { isAsync } ?: ""} -> ${returnType.swiftRender(SirTypeVariance.COVARIANT)}"
+                    "(${parameterTypes.render()})${" async throws".takeIf { isAsync } ?: ""} -> ${returnType.swiftRender(SirTypeVariance.COVARIANT)}"
 
                 else -> swiftName
             }

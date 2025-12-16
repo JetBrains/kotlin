@@ -71,9 +71,6 @@ public class SirTypeProviderImpl(
         fun buildRegularType(kaType: KaType): SirType = sirSession.withSessions {
             when (kaType) {
                 is KaUsualClassType -> {
-                    if (kaType.isTypealiasToFunctionalType && kaType.isUnsupportedFunctionalType()) {
-                        return@withSessions SirUnsupportedType
-                    }
                     when {
                         kaType.isNothingType -> SirNominalType(SirSwiftModule.never)
                         kaType.isAnyType -> ctx.anyRepresentativeType()
@@ -100,19 +97,16 @@ public class SirTypeProviderImpl(
                         ?: SirUnsupportedType
                 }
                 is KaFunctionType -> {
-                    if (kaType.isUnsupportedFunctionalType()) {
-                        return@withSessions SirUnsupportedType
-                    } else {
-                        SirFunctionalType(
-                            parameterTypes = listOfNotNull(
-                                kaType.receiverType?.translateType(
-                                    ctx.copy(currentPosition = ctx.currentPosition.flip())
-                                )
-                            ) + kaType.parameterTypes.map { it.translateType(ctx.copy(currentPosition = ctx.currentPosition.flip())) },
-                            returnType = kaType.returnType.translateType(ctx.copy(currentPosition = ctx.currentPosition)),
-                            attributes = listOf(SirAttribute.Escaping),
-                        ).optionalIfNeeded(kaType)
-                    }
+                    SirFunctionalType(
+                        isAsync = kaType.isSuspendFunctionType,
+                        parameterTypes = listOfNotNull(
+                            kaType.receiverType?.translateType(
+                                ctx.copy(currentPosition = ctx.currentPosition.flip())
+                            )
+                        ) + kaType.parameterTypes.map { it.translateType(ctx.copy(currentPosition = ctx.currentPosition.flip())) },
+                        returnType = kaType.returnType.translateType(ctx.copy(currentPosition = ctx.currentPosition)),
+                        attributes = listOf(SirAttribute.Escaping),
+                    ).optionalIfNeeded(kaType)
                 }
                 is KaTypeParameterType -> ctx.translateTypeParameterType(kaType)
                 is KaErrorType
@@ -215,13 +209,5 @@ public class SirTypeProviderImpl(
     context(ka: KaSession)
     private val KaType.isTypealiasToNullableType: Boolean
         get() = (symbol as? KaTypeAliasSymbol)?.expandedType?.isMarkedNullable ?: false
-
-    context(ka: KaSession)
-    private val KaType.isTypealiasToFunctionalType: Boolean
-        get() = (symbol as? KaTypeAliasSymbol)?.expandedType?.isFunctionType ?: false
-
-    context(ka: KaSession)
-    private fun KaType.isUnsupportedFunctionalType(): Boolean =
-        isSuspendFunctionType
 }
 

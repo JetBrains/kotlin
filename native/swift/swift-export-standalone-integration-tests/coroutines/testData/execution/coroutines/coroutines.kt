@@ -10,6 +10,8 @@ import kotlinx.coroutines.*
 
 object Foo
 
+fun testPrimitiveProducedLambda(): suspend ()->Int = ::testPrimitive
+
 suspend fun testPrimitive(): Int {
     delay(33L)
     return 42

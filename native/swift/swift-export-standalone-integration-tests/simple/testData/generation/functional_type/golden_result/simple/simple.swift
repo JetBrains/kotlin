@@ -63,6 +63,3 @@ public func foo_consume_simple(
         return { return originalBlock() }
     }())
 }
-public func foo_sus() -> Swift.Never {
-    fatalError()
-}
