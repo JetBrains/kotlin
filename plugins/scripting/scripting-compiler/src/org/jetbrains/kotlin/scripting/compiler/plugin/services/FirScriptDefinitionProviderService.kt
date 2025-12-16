@@ -88,14 +88,14 @@ class FirScriptDefinitionProviderService(
                 it.configuration?.asSuccess() ?: return null
             }
         else {
-            val hostBasedCache = refinedCompilationConfigurationCache
-            // if the cache is not configured, performing refinement on every request
-            hostBasedCache?.getRefinedCompilationConfiguration(sourceCode) ?: run {
+            // if the cache is not configured, returns
+            val hostBasedCache = refinedCompilationConfigurationCache ?: return getBaseConfiguration(sourceCode)
+            hostBasedCache.getRefinedCompilationConfiguration(sourceCode) ?: run {
                 getBaseConfiguration(sourceCode)?.onSuccess {
                     (it.refineAllForK2(
                         sourceCode,
                         hostConfiguration
-                    ) { source, configuration, hostConfiguration ->
+                    ) { source, configuration ->
                         if (source is KtFileScriptSource) {
                             getScriptCollectedData(
                                 source.ktFile,

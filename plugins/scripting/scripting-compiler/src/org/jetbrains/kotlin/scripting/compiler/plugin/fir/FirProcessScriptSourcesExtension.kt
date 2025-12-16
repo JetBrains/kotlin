@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.scripting.compiler.plugin.fir
 import com.intellij.psi.search.ProjectScope
 import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.KtVirtualFileSourceFile
+import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.jvm.compiler.PsiBasedProjectFileSearchScope
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
@@ -55,14 +56,20 @@ class FirProcessScriptSourcesExtension : FirProcessSourcesBeforeCompilingExtensi
     ): Iterable<KtSourceFile> {
         environment as VfsBasedProjectEnvironment
         val hostConfiguration = ensureUpdatedHostConfiguration(configuration)
-        return sources.flatMap { source ->
-            val script = source.toSourceCode()
+
+        fun SourceCode.collectImports(): List<SourceCode>? {
             val refinedScriptCompilationConfiguration =
-                hostConfiguration.getOrStoreRefinedCompilationConfiguration(script) { script, scriptCompilationConfiguration ->
-                    scriptCompilationConfiguration.refineAllForK2(script, hostConfiguration) { script, scriptCompilationConfiguration, hostConfiguration ->
+                hostConfiguration.getOrStoreRefinedCompilationConfiguration(this) { script, scriptCompilationConfiguration ->
+                    scriptCompilationConfiguration.refineAllForK2(script, hostConfiguration) { script, scriptCompilationConfiguration ->
                         collectAndResolveScriptAnnotationsViaFir(
                             script, scriptCompilationConfiguration, hostConfiguration,
-                            { _, _ -> getOrCreateSessionForAnnotationResolution(hostConfiguration, configuration, environment) },
+                            { _, scriptCompilationConfiguration ->
+                                getOrCreateSessionForAnnotationResolution(
+                                    scriptCompilationConfiguration[ScriptCompilationConfiguration.hostConfiguration] ?: hostConfiguration,
+                                    configuration,
+                                    environment
+                                )
+                            },
                             SourceCode::convertToFirViaLightTree
                         )
                     }
@@ -71,21 +78,30 @@ class FirProcessScriptSourcesExtension : FirProcessSourcesBeforeCompilingExtensi
                         configuration.report(report.severity.toCompilerMessageSeverity(), report.render(withSeverity = false))
                     }
                 }.valueOrNull()
-            refinedScriptCompilationConfiguration?.get(ScriptCompilationConfiguration.importScripts)?.takeIf { it.isNotEmpty() }
-                ?.let { importedSource ->
-                    listOf(source) + importedSource.mapNotNull {
-                        if (it is FileBasedScriptSource)
-                            environment.findFileByPath(it.file.path)?.let { virtualFile -> KtVirtualFileSourceFile(virtualFile) } ?: run {
-                                configuration.report(
-                                    CompilerMessageSeverity.ERROR,
-                                    "Unable to find imported script ${it.file}"
-                                )
-                                null
-                            }
-                        else null // TODO: support non-file sources
-                    }
-                } ?: listOf(source)
+            return refinedScriptCompilationConfiguration?.get(ScriptCompilationConfiguration.importScripts)?.takeIf { it.isNotEmpty() }
         }
+
+        val result = sources.toMutableList()
+        val remainingSources = ArrayList<SourceCode>().also { it.addAll(result.map(KtSourceFile::toSourceCode)) }
+        while (remainingSources.isNotEmpty()) {
+            remainingSources.pop().collectImports()?.let {
+                remainingSources.addAll(it)
+                result.addAll(it.mapNotNull {
+                    if (it is FileBasedScriptSource)
+                        environment.findFileByPath(it.file.path)?.let { virtualFile -> KtVirtualFileSourceFile(virtualFile) } ?: run {
+                            configuration.report(
+                                CompilerMessageSeverity.ERROR,
+                                "Unable to find imported script ${it.file}"
+                            )
+                            null
+                        }
+                    else null // TODO: support non-file sources
+
+                })
+            }
+        }
+
+        return result
     }
 
     private fun ensureUpdatedHostConfiguration(configuration: CompilerConfiguration): ScriptingHostConfiguration {

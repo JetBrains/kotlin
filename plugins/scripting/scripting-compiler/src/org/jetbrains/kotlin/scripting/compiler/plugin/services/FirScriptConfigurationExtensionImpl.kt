@@ -46,8 +46,6 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.getRefinedOrBaseCompilationConfiguration
-import org.jetbrains.kotlin.scripting.compiler.plugin.fir.scriptCompilationComponent
 import org.jetbrains.kotlin.scripting.definitions.annotationsForSamWithReceivers
 import org.jetbrains.kotlin.scripting.resolve.toSourceCode
 import kotlin.script.experimental.api.*
@@ -272,14 +270,9 @@ class FirScriptConfiguratorExtensionImpl(
 
 internal fun getOrLoadConfiguration(session: FirSession, file: KtSourceFile): ResultWithDiagnostics<ScriptCompilationConfiguration>? {
     val sourceCode = file.toSourceCode()
-    val hostConfiguration = session.scriptCompilationComponent?.hostConfiguration
-    return if (hostConfiguration != null) {
-        hostConfiguration.getRefinedOrBaseCompilationConfiguration(sourceCode)
-    } else {
-        session.scriptDefinitionProviderService?.let {
-            it.getRefinedConfiguration(sourceCode)
-                ?: it.getBaseConfiguration(sourceCode)
-        }
+    return session.scriptDefinitionProviderService?.let {
+        it.getRefinedConfiguration(sourceCode)
+            ?: it.getBaseConfiguration(sourceCode)
     }
 }
 

@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirEvaluatorResult
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.SessionConfiguration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.expressions.*
@@ -24,17 +25,22 @@ import org.jetbrains.kotlin.fir.scopes.createImportingScopes
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.withFileAnalysisExceptionWrapping
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.scriptRefinedCompilationConfigurationsCache
+import org.jetbrains.kotlin.scripting.compiler.plugin.fir.FirScriptCompilationComponent
+import org.jetbrains.kotlin.scripting.compiler.plugin.fir.scriptCompilationComponent
 import org.jetbrains.kotlin.utils.tryCreateCallableMappingFromNamedArgs
 import kotlin.reflect.KClass
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.host.getScriptingClass
+import kotlin.script.experimental.host.with
 import kotlin.script.experimental.host.withDefaultsFrom
 import kotlin.script.experimental.jvm.GetScriptingClassByClassLoader
 import kotlin.script.experimental.jvm.baseClassLoader
 import kotlin.script.experimental.jvm.jvm
 import kotlin.script.experimental.jvm.util.toSourceCodePosition
 
+@OptIn(SessionConfiguration::class)
 internal fun collectAndResolveScriptAnnotationsViaFir(
     script: SourceCode,
     compilationConfiguration: ScriptCompilationConfiguration,
@@ -59,6 +65,15 @@ internal fun collectAndResolveScriptAnnotationsViaFir(
     val diagnosticsCollector = DiagnosticReporterFactory.createPendingReporter()
 
     val sessionForAnnotationResolution = getSessionForAnnotationResolution(script, compilationConfiguration)
+    sessionForAnnotationResolution.register(
+        FirScriptCompilationComponent::class,
+        FirScriptCompilationComponent(
+            hostConfiguration.with {
+                reset(scriptRefinedCompilationConfigurationsCache)
+            } ,
+            getSessionForAnnotationResolution = { _, _ -> error("recursive refinement attempted") }
+        )
+    )
 
     val firFile = script.convertToFir(sessionForAnnotationResolution, diagnosticsCollector)
     if (diagnosticsCollector.hasErrors) {
