@@ -38,11 +38,19 @@
                     <id>MavenCentral-JBCached</id>
                     <url>https://cache-redirector.jetbrains.com/maven-central</url>
                 </pluginRepository>
+                <pluginRepository>
+                    <id>KotlinBootstrap-JBCached</id>
+                    <url>https://cache-redirector.jetbrains.com/redirector.kotlinlang.org/maven/bootstrap</url>
+                </pluginRepository>
             </pluginRepositories>
             <repositories>
                 <repository>
                     <id>MavenCentral-JBCached</id>
                     <url>https://cache-redirector.jetbrains.com/maven-central</url>
+                </repository>
+                <repository>
+                    <id>KotlinBootstrap-JBCached</id>
+                    <url>https://cache-redirector.jetbrains.com/redirector.kotlinlang.org/maven/bootstrap</url>
                 </repository>
             </repositories>
         </profile>

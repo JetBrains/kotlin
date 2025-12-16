@@ -57,9 +57,7 @@
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-stdlib</artifactId>
-<!--            <version>2.3.0-RC2</version>-->
-            <!-- FIXME: Doesn't work in IDE KTIJ-36857 Dependency to kotlin-stdlib:${project.version} doesn't work in kotlin.git -->
-            <version>${project.version}</version>
+            <version>${kotlin.bootstrap.version}</version>
         </dependency>
 
         <dependency>
@@ -122,7 +120,7 @@
             <plugin>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-maven-plugin</artifactId>
-                <version>${project.version}</version>
+                <version>${kotlin.bootstrap.version}</version>
                 <extensions>true</extensions>
                 <executions>
                     <execution>
