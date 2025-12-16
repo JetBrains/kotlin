@@ -102,7 +102,7 @@ internal fun MutableMap<LanguageFeature, LanguageFeature.State>.configureCommonL
         put(LanguageFeature.EnableNameBasedDestructuringShortForm, LanguageFeature.State.ENABLED)
     }
 
-    if (arguments.nestedTypeAliases) {
+    if (arguments.nestedTypeAliases == true) {
         put(LanguageFeature.NestedTypeAliases, LanguageFeature.State.ENABLED)
     }
 

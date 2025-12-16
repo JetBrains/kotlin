@@ -990,7 +990,7 @@ The argument should be used only if the new compilation scheme is enabled with -
     compilerArgument {
         name = "Xnested-type-aliases"
         description = "Enable experimental language support for nested type aliases.".asReleaseDependent()
-        valueType = BooleanType.defaultFalse
+        valueType = BooleanType.defaultNull
 
         additionalAnnotations(
             Enables(LanguageFeature.NestedTypeAliases)

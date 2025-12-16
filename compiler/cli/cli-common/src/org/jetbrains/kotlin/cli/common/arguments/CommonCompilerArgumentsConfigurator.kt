@@ -59,6 +59,11 @@ open class CommonCompilerArgumentsConfigurator {
         HashMap<LanguageFeature, LanguageFeature.State>().apply {
             configureCommonLanguageFeatures(arguments)
 
+            // KT-83172: allow explicitly disabling nested type aliases via -Xnested-type-aliases=false
+            if (arguments.nestedTypeAliases == false) {
+                put(LanguageFeature.NestedTypeAliases, LanguageFeature.State.DISABLED)
+            }
+
             if (progressiveMode) {
                 LanguageFeature.entries.filter { it.actuallyEnabledInProgressiveMode }.forEach {
                     // Don't overwrite other settings: users may want to turn off some particular

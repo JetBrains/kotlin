@@ -636,7 +636,7 @@ with bodies.""",
         description = "Enable experimental language support for nested type aliases.",
     )
     @Enables(LanguageFeature.NestedTypeAliases)
-    var nestedTypeAliases: Boolean = false
+    var nestedTypeAliases: Boolean? = null
         set(value) {
             checkFrozen()
             field = value
