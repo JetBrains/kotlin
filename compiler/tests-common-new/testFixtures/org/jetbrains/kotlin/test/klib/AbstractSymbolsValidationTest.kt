@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigu
 import org.junit.jupiter.api.Test
 import java.nio.file.Files
 
-abstract class AbstractSymbolsValidationTextTest(
+abstract class AbstractSymbolsValidationTest(
     targetBackend: TargetBackend,
     private val targetPlatform: TargetPlatform,
     private val frontendFacade: Constructor<FrontendFacade<FirOutputArtifact>>,
@@ -39,8 +39,8 @@ abstract class AbstractSymbolsValidationTextTest(
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         globalDefaults {
             frontend = FrontendKinds.FIR
-            targetPlatform = this@AbstractSymbolsValidationTextTest.targetPlatform
-            targetBackend = this@AbstractSymbolsValidationTextTest.targetBackend
+            targetPlatform = this@AbstractSymbolsValidationTest.targetPlatform
+            targetBackend = this@AbstractSymbolsValidationTest.targetBackend
             artifactKind = ArtifactKind.NoArtifact
             dependencyKind = DependencyKind.Binary
         }
@@ -72,29 +72,7 @@ abstract class AbstractSymbolsValidationTextTest(
         useConfigurators(::CommonEnvironmentConfigurator)
         applyConfigurators()
     }
-}
 
-abstract class AbstractPreSerializationSymbolsTest(
-    targetBackend: TargetBackend,
-    targetPlatform: TargetPlatform,
-    frontendFacade: Constructor<FrontendFacade<FirOutputArtifact>>,
-    frontendToIrConverter: Constructor<Frontend2BackendConverter<FirOutputArtifact, IrBackendInput>>,
-    irInliningFacade: Constructor<IrPreSerializationLoweringFacade<IrBackendInput>>,
-    serializerFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.KLib>>,
-    deserializerFacade: Constructor<DeserializerFacade<BinaryArtifacts.KLib, IrBackendInput>>,
-    firstStageHandler: Constructor<IrPreSerializationSymbolValidationHandler>,
-    secondStageHandler: Constructor<IrSecondPhaseSymbolValidationHandler>? = null,
-) : AbstractSymbolsValidationTextTest(
-    targetBackend,
-    targetPlatform,
-    frontendFacade,
-    frontendToIrConverter,
-    irInliningFacade,
-    serializerFacade,
-    deserializerFacade,
-    firstStageHandler,
-    secondStageHandler,
-) {
     @Test
     fun testValidation() {
         val file = Files.createTempFile("validation", ".kt").toFile()
