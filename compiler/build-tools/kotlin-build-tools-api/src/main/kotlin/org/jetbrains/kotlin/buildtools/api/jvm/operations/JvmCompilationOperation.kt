@@ -108,7 +108,7 @@ public interface JvmCompilationOperation : CancellableBuildOperation<Compilation
 
         /**
          * Creates the configuration object for snapshot-based incremental compilation (IC) in JVM projects.
-         * May be used to observe the defaults, adjust them, and configure incremental compilation as follows:
+         * May be used to configure incremental compilation as follows:
          * ```
          * val icConfig = compilation.snapshotBasedIcConfigurationBuilder(workingDirectory = Paths.get("build/kotlin"),
          *     sourcesChanges = SourcesChanges.ToBeCalculated,
@@ -140,10 +140,11 @@ public interface JvmCompilationOperation : CancellableBuildOperation<Compilation
     public fun toBuilder(): Builder
 
     /**
-     * Base class for [JvmCompilationOperation] options.
+     * An option for configuring a [JvmCompilationOperation].
      *
      * @see get
      * @see set
+     * @see JvmCompilationOperation.Companion
      */
     public class Option<V> internal constructor(id: String) : BaseOption<V>(id)
 
@@ -171,9 +172,9 @@ public interface JvmCompilationOperation : CancellableBuildOperation<Compilation
 
     /**
      * Creates an options set for snapshot-based incremental compilation (IC) in JVM projects.
-     * May be used to observe the defaults, adjust them, and configure incremental compilation as follows:
+     * May be used to configure incremental compilation as follows:
      * ```
-     * val icOptions = compilation.snapshotBasedIcOptionsBuilder()
+     * val icOptions = compilation.snapshotBasedIcConfigurationBuilder()
      *
      * icOptions[JvmIncrementalCompilationOptions.BACKUP_CLASSES] = true
      *

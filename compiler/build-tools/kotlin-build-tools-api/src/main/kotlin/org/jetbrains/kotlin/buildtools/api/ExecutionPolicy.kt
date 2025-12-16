@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.buildtools.api
 
 import org.jetbrains.kotlin.buildtools.api.internal.BaseOption
+import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
 import java.nio.file.Path
 
 /**
@@ -72,7 +73,7 @@ public sealed interface ExecutionPolicy {
         public fun toBuilder(): Builder
 
         /**
-         * Base class for [ExecutionPolicy.WithDaemon] options.
+         * An option for configuring an [ExecutionPolicy.WithDaemon].
          *
          * @see get
          * @see set

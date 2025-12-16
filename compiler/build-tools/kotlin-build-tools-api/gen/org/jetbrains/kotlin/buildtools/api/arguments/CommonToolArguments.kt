@@ -51,7 +51,7 @@ public interface CommonToolArguments {
   public operator fun contains(key: CommonToolArgument<*>): Boolean
 
   /**
-   * Base class for [CommonToolArguments] options.
+   * An option for configuring [CommonToolArguments].
    *
    * @see get
    * @see set    

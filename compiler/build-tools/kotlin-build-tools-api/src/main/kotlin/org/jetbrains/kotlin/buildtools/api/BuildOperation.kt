@@ -49,7 +49,7 @@ public interface BuildOperation<R> {
     }
 
     /**
-     * Base class for [JvmCompilationOperation] options.
+     * An option for configuring a [BuildOperation].
      *
      * @see get
      * @see set

@@ -43,7 +43,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
   public operator fun contains(key: CommonCompilerArgument<*>): Boolean
 
   /**
-   * Base class for [CommonCompilerArguments] options.
+   * An option for configuring [CommonCompilerArguments].
    *
    * @see get
    * @see set    

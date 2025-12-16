@@ -92,7 +92,7 @@ public interface JvmClasspathSnapshottingOperation : BuildOperation<ClasspathEnt
     public fun toBuilder(): Builder
 
     /**
-     * Base class for [JvmClasspathSnapshottingOperation] options.
+     * An option for configuring a [JvmClasspathSnapshottingOperation].
      *
      * @see get
      * @see set
@@ -112,7 +112,7 @@ public interface JvmClasspathSnapshottingOperation : BuildOperation<ClasspathEnt
      */
     @Deprecated(
         "Build operations will become immutable in an upcoming release. " +
-                "Use `JvmPlatformToolchain.snapshotBasedIcOptionsBuilder` to create a mutable builder instead."
+                "Use `JvmPlatformToolchain.classpathSnapshottingOperationBuilder` to create a mutable builder instead."
     )
     public operator fun <V> set(key: Option<V>, value: V)
 
