@@ -6,44 +6,62 @@
 package kotlin.reflect.jvm.internal.types
 
 import org.jetbrains.kotlin.types.model.RigidTypeMarker
-import kotlin.reflect.KClass
-import kotlin.reflect.KType
-import kotlin.reflect.KTypeParameter
-import kotlin.reflect.KTypeProjection
-import kotlin.reflect.KVariance
+import kotlin.reflect.*
 import kotlin.reflect.full.createTypeImpl
 import kotlin.reflect.jvm.internal.types.ReflectTypeSystemContext.withNullability as withNullabilityFromTypeSystem
 
 internal class KTypeSubstitutor(private val substitution: Map<KTypeParameter, KTypeProjection>) {
-    fun substitute(type: KType): KTypeProjection {
+    fun substitute(type: KType, variance: KVariance = KVariance.INVARIANT): KTypeProjection {
         // Small optimization
-        if (substitution.isEmpty()) return KTypeProjection(KVariance.INVARIANT, type)
+        if (substitution.isEmpty()) return KTypeProjection(variance, type)
 
         val lowerBound = (type as? AbstractKType)?.lowerBoundIfFlexible()
         val upperBound = (type as? AbstractKType)?.upperBoundIfFlexible()
         if (lowerBound != null && upperBound != null) {
-            val substitutedLower = substitute(lowerBound).lowerBoundIfFlexible()
-            val substitutedUpper = substitute(upperBound).upperBoundIfFlexible()
-            return KTypeProjection(substitutedLower.variance, createPlatformKType(substitutedLower.type!!, substitutedUpper.type!!))
+            val substitutedLower = substitute(lowerBound, variance).lowerBoundIfFlexible()
+            val substitutedUpper = substitute(upperBound, variance).upperBoundIfFlexible()
+            val substitutedUpperType = substitutedUpper.type
+            val substitutedLowerType = substitutedLower.type
+            return when {
+                substitutedUpperType != null && substitutedLowerType != null -> KTypeProjection(
+                    substitutedLower.variance,
+                    createPlatformKType(substitutedLowerType, substitutedUpperType)
+                )
+                else -> KTypeProjection.STAR
+            }
         }
 
-        val classifier = type.classifier ?: return KTypeProjection.invariant(type)
-        substitution[classifier]?.let { result ->
-            val (variance, resultingType) = result
-            return if (resultingType == null) result else KTypeProjection(
-                variance,
-                resultingType.withNullabilityOf(type),
-            )
+        val classifier = type.classifier ?: return KTypeProjection(variance, type)
+        substitution[classifier]?.let { substitutingProjection ->
+            val substitutingType = substitutingProjection.type
+            val substitutingVariance = substitutingProjection.variance
+            return when {
+                substitutingType != null && substitutingVariance != null -> KTypeProjection(
+                    substitutingVariance.intersectWith(variance),
+                    substitutingType.withNullabilityOf(type),
+                )
+                else -> substitutingProjection
+            }
         }
-        val result = KTypeProjection.invariant(
-            if (type.arguments.isEmpty()) type else classifier.createTypeImpl(
-                type.arguments.map { (_, type) ->
-                    type?.let(::substitute) ?: KTypeProjection.STAR
-                },
-                type.isMarkedNullable,
-                type.annotations,
-                (type as? AbstractKType)?.mutableCollectionClass,
-            )
+        val result = KTypeProjection(
+            variance,
+            when {
+                type.arguments.isEmpty() -> type
+                else -> classifier.createTypeImpl(
+                    type.arguments.map { argumentProjection ->
+                        val argumentVariance = argumentProjection.variance
+                        val argumentType = argumentProjection.type
+                        when {
+                            argumentType != null && argumentVariance != null ->
+                                substitute(argumentType, argumentVariance)
+                            else -> KTypeProjection.STAR
+                        }
+                    },
+                    type.isMarkedNullable,
+                    type.annotations,
+                    (type as? AbstractKType)?.mutableCollectionClass,
+                )
+            }
         )
         return result
     }
@@ -55,8 +73,9 @@ internal class KTypeSubstitutor(private val substitution: Map<KTypeParameter, KT
 
         val map = substitution.mapValues { (_, typeProjection) ->
             val type = typeProjection.type
+            val variance = typeProjection.variance
             when {
-                type != null -> other.substitute(type)
+                type != null && variance != null -> other.substitute(type, variance)
                 else -> typeProjection
             }
         }
@@ -103,4 +122,18 @@ internal class KTypeSubstitutor(private val substitution: Map<KTypeParameter, KT
             return KTypeSubstitutor(typeParameters.zip(arguments).toMap())
         }
     }
+}
+
+/**
+ * - One can use covariant types only in return positions
+ * - One can use contravariant types only in parameter positions
+ * - Invariant types can be used in both positions
+ *
+ * From that perspective, "invariant" concept is a union of "covariant" concept and "contravariant" concepts
+ */
+private fun KVariance.intersectWith(other: KVariance): KVariance = when {
+    this == KVariance.INVARIANT -> other
+    other == KVariance.INVARIANT -> this
+    this != other -> error("CONFLICTING_PROJECTION") // Empty intersection
+    else -> this
 }
