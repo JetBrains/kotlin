@@ -11,15 +11,16 @@ import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.SessionHolder
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.lookupTracker
 import org.jetbrains.kotlin.fir.recordTypeResolveAsLookup
 import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
+import org.jetbrains.kotlin.fir.resolve.CollectionLiteralResolverThroughCompanion
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.*
 import org.jetbrains.kotlin.fir.resolve.calls.stages.ArgumentCheckingProcessor
-import org.jetbrains.kotlin.fir.resolve.companionObjectIfDefinedOperatorOf
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.lastStatement
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedReferenceError
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeLambdaArgumentConstraintPositionWithCoercionToUnit
@@ -27,7 +28,6 @@ import org.jetbrains.kotlin.fir.resolve.isImplicitUnitForEmptyLambda
 import org.jetbrains.kotlin.fir.resolve.lambdaWithExplicitEmptyReturns
 import org.jetbrains.kotlin.fir.resolve.runContextSensitiveResolutionForPropertyAccess
 import org.jetbrains.kotlin.fir.resolve.substitution.asCone
-import org.jetbrains.kotlin.fir.resolve.runCollectionLiteralResolution
 import org.jetbrains.kotlin.fir.resolve.runResolutionForDanglingCollectionLiteral
 import org.jetbrains.kotlin.fir.resolvedTypeFromPrototype
 import org.jetbrains.kotlin.fir.types.*
@@ -228,19 +228,22 @@ class PostponedArgumentsAnalyzer(
     ) {
         val originalExpression = atom.expression
 
-        val companion = with(resolutionContext) { substitutedExpectedType?.companionObjectIfDefinedOperatorOf }
-        if (companion == null) {
+        val newExpression: FirFunctionCall? = sequenceOf(
+            ::CollectionLiteralResolverThroughCompanion,
+        ).firstNotNullOfOrNull { resolver ->
+            resolver(resolutionContext).resolveCollectionLiteral(
+                atom,
+                topLevelCandidate,
+                substitutedExpectedType,
+            )
+        }
+
+        if (newExpression == null) {
             // There may be callable references/lambdas inside collection literal. We need to resolve them somehow.
             // When fallback is implemented, this part likely will become obsolete.
             resolutionContext.runResolutionForDanglingCollectionLiteral(originalExpression)
             return
         }
-        val newExpression =
-            resolutionContext.runCollectionLiteralResolution(
-                atom,
-                companion,
-                topLevelCandidate,
-            )
 
         atom.containingCallCandidate.setUpdatedCollectionLiteral(originalExpression, newExpression)
 
