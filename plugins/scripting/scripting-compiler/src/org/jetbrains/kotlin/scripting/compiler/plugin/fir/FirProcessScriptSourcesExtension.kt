@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.scripting.compiler.plugin.impl.refineAllForK2
 import org.jetbrains.kotlin.scripting.compiler.plugin.toCompilerMessageSeverity
 import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
 import org.jetbrains.kotlin.scripting.resolve.toSourceCode
+import org.jetbrains.kotlin.utils.topologicalSort
 import java.io.File
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.FileBasedScriptSource
@@ -81,27 +82,50 @@ class FirProcessScriptSourcesExtension : FirProcessSourcesBeforeCompilingExtensi
             return refinedScriptCompilationConfiguration?.get(ScriptCompilationConfiguration.importScripts)?.takeIf { it.isNotEmpty() }
         }
 
-        val result = sources.toMutableList()
-        val remainingSources = ArrayList<SourceCode>().also { it.addAll(result.map(KtSourceFile::toSourceCode)) }
-        while (remainingSources.isNotEmpty()) {
-            remainingSources.pop().collectImports()?.let {
-                remainingSources.addAll(it)
-                result.addAll(it.mapNotNull {
-                    if (it is FileBasedScriptSource)
-                        environment.findFileByPath(it.file.path)?.let { virtualFile -> KtVirtualFileSourceFile(virtualFile) } ?: run {
-                            configuration.report(
-                                CompilerMessageSeverity.ERROR,
-                                "Unable to find imported script ${it.file}"
-                            )
-                            null
-                        }
-                    else null // TODO: support non-file sources
+        fun toSourceFile(import: SourceCode): KtVirtualFileSourceFile? =
+            if (import is FileBasedScriptSource)
+                environment.findFileByPath(import.file.path)?.let { virtualFile -> KtVirtualFileSourceFile(virtualFile) } ?: run {
+                    configuration.report(
+                        CompilerMessageSeverity.ERROR,
+                        "Unable to find imported script ${import.file}"
+                    )
+                    null
+                }
+            else null  // TODO: support non-file sources
 
-                })
+
+        val sourcesToFiles = sources.associateByTo(mutableMapOf(), KtSourceFile::toSourceCode)
+        val remainingSources = ArrayList<SourceCode>().also { it.addAll(sourcesToFiles.keys) }
+        val knownSources = sourcesToFiles.keys.mapTo(mutableSetOf()) { it.locationId }
+        val sourceDependencies = mutableMapOf<SourceCode, List<SourceCode>>()
+
+        while (remainingSources.isNotEmpty()) {
+            val sourceCode = remainingSources.pop()
+            sourceCode.collectImports()?.let { imports ->
+                imports.filter { knownSources.add(it.locationId) }.forEach { newImport ->
+                    remainingSources.add(newImport)
+                    toSourceFile(newImport)?.let {
+                        sourcesToFiles[newImport] = it
+                    }
+                }
+                sourceDependencies[sourceCode] = imports
             }
         }
 
-        return result
+        class CycleDetected(val node: SourceCode) : Throwable()
+        return try {
+            topologicalSort(
+                sourcesToFiles.keys, reportCycle = { throw CycleDetected(it) }
+            ) {
+                sourceDependencies[this] ?: emptyList()
+            }.reversed().mapNotNull { sourcesToFiles[it] }
+        } catch (e: CycleDetected) {
+            configuration.report(
+                CompilerMessageSeverity.ERROR,
+                "Unable to handle recursive script dependencies, cycle detected on file ${e.node.name ?: e.node.locationId}",
+            )
+            sourcesToFiles.values
+        }
     }
 
     private fun ensureUpdatedHostConfiguration(configuration: CompilerConfiguration): ScriptingHostConfiguration {
