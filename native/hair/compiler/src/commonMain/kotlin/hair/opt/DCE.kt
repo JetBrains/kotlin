@@ -12,30 +12,39 @@ import hair.ir.spine
 import hair.utils.forEachInWorklist
 import hair.utils.isEmpty
 
-context(_: NodeBuilder, _: ArgsUpdater)
-fun Session.eliminateDeadBlocks() {
-    val alive = dfs(cfg()).toList()
-    val dead = allNodes<BlockEntry>().filter { it !in alive }.toList()
-    for (block in dead) {
-        if (!block.registered) continue
-        block.nextOrNull?.let {
-            it.control = unreachable
-        }
-        block.replaceValueUsesAndKill(NoValue())
-    }
+fun Session.eliminateDead(): Boolean {
+    return eliminateDeadBlocks() || eliminateDeadFoam()
 }
 
-context(_: ArgsUpdater)
-fun Session.eliminateDeadFoam() {
+fun Session.eliminateDeadBlocks(): Boolean {
+    val alive = dfs(cfg()).toList()
+    val dead = allNodes<BlockEntry>().filter { it !in alive }.toList()
+    if (dead.isEmpty()) return false
+    modifyIR {
+        for (block in dead) {
+            if (!block.registered) continue
+            block.nextOrNull?.let {
+                it.control = unreachable
+            }
+            block.replaceValueUsesAndKill(NoValue())
+        }
+    }
+    return true
+}
+
+fun Session.eliminateDeadFoam(): Boolean {
+    var changed = false
     forEachInWorklist(allNodes()) { node ->
         // FIXME what about cyclic dependencies?
         // FIXME maybe find common grounds for control flow handling
         if (node !is ControlFlow && node.uses.isEmpty()) {
             // FIXME fix this registered/deregistered mess
             if (node.registered) {
+                changed = true
                 addAll(node.args.filterNotNull())
                 node.deregister()
             }
         }
     }
+    return changed
 }

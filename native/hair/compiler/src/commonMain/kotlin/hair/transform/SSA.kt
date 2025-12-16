@@ -7,6 +7,7 @@ import hair.ir.nodes.*
 import hair.sym.HairType
 import hair.utils.closure
 import hair.utils.indexOfSingle
+import hair.utils.isEmpty
 import hair.utils.printGraphvizNoGCM
 import kotlin.collections.set
 
@@ -86,9 +87,12 @@ fun Session.buildSSA(variableType: (Any) -> HairType) {
             val type = variableType(placeholder.origin)
             // TODO use Phi builder
             val phi = Phi(type)(placeholder.block, *placeholder.joinedValues.toTypedArray<Node>())
-            placeholder.replaceValueUses(phi)
+            placeholder.replaceValueUsesAndKill(phi)
         }
     }
+
+    require(allNodes().none { it is AssignVar || it is ReadVar })
+    require(allNodes<AssignVar>().isEmpty())
 }
 
 //fun Node.replaceValueUsesByNewVar(varName: String? = null): Var {

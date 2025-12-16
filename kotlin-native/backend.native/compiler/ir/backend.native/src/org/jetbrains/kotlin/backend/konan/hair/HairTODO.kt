@@ -7,10 +7,15 @@ package org.jetbrains.kotlin.backend.konan.hair
 
 enum class HairTODO {
     VIRTUAL_CALLS,
+    FAKE_OVERRIDE_CALL,
     STRING_LITERALS,
     EXCEPTIONS,
     ARE_EQUAL_BY_VALUE,
     FLOAT_TRUNCATE,
-
-
+    VOLATILE,
+    CAST,
 }
+
+data class HairNotImplementedYet(val what: HairTODO) : Exception(what.toString())
+
+fun notImplemented(what: HairTODO): Nothing = throw HairNotImplementedYet(what)

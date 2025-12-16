@@ -38,13 +38,13 @@ class Session: SessionBase() {
 
     internal val catchForm = Catch.form(this).also { register(it) }
 
-    internal val trueForm = True.form(this).also { register(it) }
-
-    internal val falseForm = False.form(this).also { register(it) }
-
     internal val nullForm = Null.form(this).also { register(it) }
 
+    internal val negForm = Neg.form(this).also { register(it) }
+
     internal val notForm = Not.form(this).also { register(it) }
+
+    internal val typeInfoForm = TypeInfo.form(this).also { register(it) }
 
     
 
@@ -107,6 +107,8 @@ class Session: SessionBase() {
     internal val isInstanceOfMetaForm = IsInstanceOf.metaForm(this)
 
     internal val checkCastMetaForm = CheckCast.metaForm(this)
+
+    internal val constTypeInfoMetaForm = ConstTypeInfo.metaForm(this)
 
     internal val loadMetaForm = Load.metaForm(this)
 

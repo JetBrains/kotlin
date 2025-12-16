@@ -61,7 +61,7 @@ fun Session.generateGraphviz(gcm: GCMResult?): String = buildString {
     fun block(gcm: GCMResult, b: BlockEntry) {
         appendLine("subgraph cluster_${b.id} {")
         appendLine("style=filled; color=\"$clusterColor\";")
-        appendLine("label=\"Block ${b.id}\"")
+        //appendLine("label=\"Block ${b.id}\"")
 
         // TODO propper getter
         val blockNodes = gcm.linearOrder(b)

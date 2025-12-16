@@ -30,14 +30,6 @@ object Arithmetics : ModelDSL() {
         formParam("value", Double::class)
     }
 
-    val `true` by node {
-        interfaces(constAny)
-    }
-
-    val `false` by node {
-        interfaces(constAny)
-    }
-
     val `null` by node {
         interfaces(constAny)
     }
@@ -61,6 +53,10 @@ object Arithmetics : ModelDSL() {
     val shl by node(binaryOp)
     val shr by node(binaryOp)
     val ushr by node(binaryOp)
+
+    val Neg by node {
+        param("operand")
+    }
 
     // FIXME not exactly arithmetics:
     val cmp by node(binaryOp) {

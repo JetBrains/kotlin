@@ -2,10 +2,9 @@ package hair.ir
 
 import hair.ir.nodes.*
 import hair.ir.nodes.Node
-import hair.opt.NormalizationImpl
+import hair.opt.Normalization
 import hair.opt.eliminateDeadBlocks
 import hair.opt.eliminateDeadFoam
-import hair.opt.simplify
 import hair.utils.isEmpty
 
 class RawNodeBuilder(override val session: Session) : NodeBuilder {
@@ -23,7 +22,7 @@ object RawArgsUpdater : ArgsUpdater {
 
 open class NormalizingNodeBuilder(override val session: Session) : NodeBuilder {
     // FIXME use proper args updater
-    val normalization = NormalizationImpl(session, this, RawArgsUpdater)
+    val normalization = Normalization(session, this, RawArgsUpdater)
 
     override fun onNodeBuilt(node: Node): Node = normalization.normalize(node).also {
         // node must still be not-GVNed
@@ -43,7 +42,7 @@ class RegisteringNodeBuilder(session: Session) : NormalizingGvnNodeBuilder(sessi
 }
 
 class ArgsUpdaterImpl(val session: Session, nodeBuilder: NodeBuilder) : ArgsUpdater {
-    val normalization = NormalizationImpl(session, nodeBuilder, this)
+    val normalization = Normalization(session, nodeBuilder, this)
     override fun onArgUpdate(node: Node, index: Int, oldValue: Node?, newValue: Node?) {
         require(newValue != oldValue)
         oldValue?.removeUse(node)
@@ -84,10 +83,6 @@ fun <T> Session.buildInitialIR(
         builderAction().also {
             eliminateDeadBlocks()
             eliminateDeadFoam()
-            simplify()
-            // TODO ensure no more dead
-
-            // TODO merge with modifyIR
         }
     }
 }
@@ -96,12 +91,9 @@ fun <T> Session.modifyIR(
     builderAction: context(NodeBuilder, ArgsUpdater, NoControlFlowBuilder) () -> T
 ): T {
     return context(nodeBuilder, argsUpdater, NoControlFlowBuilder) {
-        val result = builderAction()
-
-        eliminateDeadBlocks()
-        eliminateDeadFoam()
-
-        result
+        builderAction().also {
+            eliminateDeadFoam()
+        }
     }
 }
 
@@ -110,7 +102,10 @@ fun <T> Session.modifyControlFlow(
     builderAction: context(NodeBuilder, ArgsUpdater, ControlFlowBuilder) () -> T
 ): T {
     return context(nodeBuilder, argsUpdater, ControlFlowBuilder(at)) {
-        builderAction()
+        builderAction().also {
+            eliminateDeadBlocks()
+            eliminateDeadFoam()
+        }
     }
 }
 
@@ -132,9 +127,7 @@ fun BlockBody.removeFromControl() {
     controlOrNull = null
     next.control = prev
     //eraseControl()
-    require(uses.isEmpty())
-    //require(registered)
-    deregister() // FIXME make node lists concurrent modifiable
+    kill()
 }
 
 context(_: ArgsUpdater)

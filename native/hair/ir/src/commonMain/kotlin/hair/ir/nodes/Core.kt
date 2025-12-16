@@ -6,10 +6,6 @@ import hair.ir.Session
 import hair.utils.isEmpty
 import kotlin.jvm.JvmName
 
-interface Normalization {
-    fun normalize(node: Node): Node
-}
-
 abstract class SessionBase {
     val forms = mutableListOf<Form>()
 
