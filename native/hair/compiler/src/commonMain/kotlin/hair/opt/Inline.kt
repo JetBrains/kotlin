@@ -16,6 +16,8 @@ fun Compilation.inline(call: InvokeStatic) {
             val toClone = calleeCompilation.session.allNodes().filterNot { it is Return }
             val clones = callerSession.cloneNodes(toClone) {
                 when (it) {
+                    // FIXME make Unreachable value-numbered
+                    is Unreachable -> unreachable
                     is Param -> call.callArgs[it.index]
                     calleeCompilation.session.entry -> BlockEntry(Goto(call.control))
                     else -> null

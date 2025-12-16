@@ -6,7 +6,13 @@
 package hair.opt
 
 import hair.ir.*
+import hair.utils.whileChanged
 
 fun Session.optimize() {
+    whileChanged(100) {
+        fun Boolean.trackChange() { if (this) changed() }
 
+        simplify().trackChange()
+        eliminateDead().trackChange()
+    }
 }

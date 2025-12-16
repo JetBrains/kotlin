@@ -36,11 +36,10 @@ internal fun IrType.asHairType(): HairType = when (val binaryType = computePrimi
 }
 
 internal data class HairFunctionImpl(val irFunction: IrSimpleFunction) : HairFunction {
-    override fun toString() = irFunction.name.toString()
+    override fun toString() = irFunction.computeFullName()
 
-    // FIXME I use full name here to provide full names to the IR dumper
     override val name: String
-        get() = irFunction.computeFullName()
+        get() = irFunction.name.toString()
 
     override val resultHairType: HairType
         get() = irFunction.returnType.asHairType()

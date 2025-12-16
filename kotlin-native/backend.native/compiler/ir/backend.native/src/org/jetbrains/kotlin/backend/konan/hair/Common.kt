@@ -8,10 +8,17 @@ package org.jetbrains.kotlin.backend.konan.hair
 import hair.compilation.Compilation
 import hair.compilation.Config
 import hair.compilation.HairDumper
+import hair.sym.HairFunction
 import org.jetbrains.kotlin.backend.common.reportCompilationWarning
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
+import org.jetbrains.kotlin.backend.konan.llvm.computeFullName
+import org.jetbrains.kotlin.backend.konan.llvm.computeFunctionName
+import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
+import org.jetbrains.kotlin.konan.file.File
+import org.jetbrains.kotlin.name.Name
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -33,17 +40,23 @@ private fun createHairDumper(context: Context, module: IrModuleFragment): HairDu
         return null
     }
     return object : HairDumper() {
-        val unitDumpCounters = mutableMapOf<String, Int>()
-        override fun dumpImpl(unitName: String, title: String, contents: String) {
+        val unitDumpCounters = mutableMapOf<IrFunction, Int>()
+        override fun dumpImpl(f: HairFunction, title: String, contents: String) {
             // FIXME mangle some stuff??
-            val unitDumpDir = moduleDumpDir.resolve(unitName)
+            val irFunction = (f as HairFunctionImpl).irFunction;
+            val nameFragments = irFunction.computeFullNameFragments()
+            val unitDumpDir = moduleDumpDir.resolve(nameFragments.joinToString(File.separator))
             unitDumpDir.mkdirs()
             if (unitDumpDir.exists()) {
-                val dumpNumber = unitDumpCounters.getOrPut(unitName) { 0 }
-                unitDumpCounters[unitName] = dumpNumber + 1
+                val dumpNumber = unitDumpCounters.getOrPut(irFunction) { 0 }
+                unitDumpCounters[irFunction] = dumpNumber + 1
                 val dumpTitle = "${dumpNumber}_${title}"
                 unitDumpDir.resolve("$dumpTitle.dot").writeText(contents)
             }
         }
     }
 }
+
+private fun IrFunction.computeFullNameFragments(): List<String> =
+        (parent.fqNameForIrSerialization.asString().split(".") + listOf(computeFunctionName())).filter { it.isNotEmpty() }
+

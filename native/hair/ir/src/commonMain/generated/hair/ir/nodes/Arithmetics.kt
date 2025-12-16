@@ -87,34 +87,6 @@ class ConstD internal constructor(form: Form) : NodeBase(form, listOf()), ConstA
 }
 
 
-class True internal constructor(form: Form, ) : NodeBase(form, listOf()), ConstAny {
-    
-    
-    override fun paramName(index: Int): String = when (index) {
-        else -> error("Unexpected arg index: $index")
-    }
-    
-    override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitTrue(this)
-    companion object {
-        internal fun form(session: Session) = SimpleValueForm(session, "True")
-    }
-}
-
-
-class False internal constructor(form: Form, ) : NodeBase(form, listOf()), ConstAny {
-    
-    
-    override fun paramName(index: Int): String = when (index) {
-        else -> error("Unexpected arg index: $index")
-    }
-    
-    override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitFalse(this)
-    companion object {
-        internal fun form(session: Session) = SimpleValueForm(session, "False")
-    }
-}
-
-
 class Null internal constructor(form: Form, ) : NodeBase(form, listOf()), ConstAny {
     
     
@@ -386,6 +358,32 @@ class Ushr internal constructor(form: Form, lhs: Node?, rhs: Node?) : BinaryOp(f
     override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitUshr(this)
     companion object {
         internal fun metaForm(session: Session) = MetaForm(session, "Ushr")
+    }
+}
+
+
+class Neg internal constructor(form: Form, operand: Node?) : NodeBase(form, listOf(operand)) {
+    val operand: Node
+        get() = args[0]
+    val operandOrNull: Node?
+        get() = args.getOrNull(0)
+    context(_: ArgsUpdater)
+     var operand: Node
+        get() = args[0]
+        set(value) { args[0] = value }
+    context(_: ArgsUpdater)
+     var operandOrNull: Node?
+        get() = args.getOrNull(0)
+        set(value) { args[0] = value }
+    
+    override fun paramName(index: Int): String = when (index) {
+        0 -> "operand"
+        else -> error("Unexpected arg index: $index")
+    }
+    
+    override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitNeg(this)
+    companion object {
+        internal fun form(session: Session) = SimpleValueForm(session, "Neg")
     }
 }
 

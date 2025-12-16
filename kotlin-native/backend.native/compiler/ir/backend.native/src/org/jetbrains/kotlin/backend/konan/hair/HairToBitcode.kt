@@ -11,6 +11,7 @@ import hair.ir.*
 import hair.ir.nodes.*
 import hair.sym.CmpOp
 import hair.sym.HairType
+import hair.sym.RuntimeInterface
 import hair.transform.GCMResult
 import hair.transform.withGCM
 import hair.utils.printGraphviz
@@ -46,7 +47,7 @@ val HairType.isIntegral get() = when (this) {
 }
 
 internal class HairToBitcode(
-        val generationState :NativeGenerationState,
+        val generationState: NativeGenerationState,
         val codegen: CodeGenerator,
 ) {
     private val llvm = generationState.llvm
@@ -137,8 +138,6 @@ internal class HairToBitcode(
                                 is Param -> {
                                     adaptToHair(param(node.index))
                                 }
-                                is True -> llvm.constInt32(1).llvm
-                                is False -> llvm.constInt32(0).llvm
                                 is ConstI -> llvm.constInt32(node.value).llvm
                                 is ConstL -> llvm.constInt64(node.value).llvm
                                 is ConstF -> llvm.constFloat32(node.value).llvm
@@ -229,11 +228,21 @@ internal class HairToBitcode(
                                 }
                                 is IfProjection -> null
                                 is InvokeStatic -> {
-                                    val target = (node.function as HairFunctionImpl).irFunction
-                                    val llvmTarget = codegen.llvmFunction(target)
-                                    // TODO all the stuff around
-                                    val args = node.callArgs.zip(target.parameters).map { (arg, param) ->
-                                        adaptFromHair(nodeValues[arg]!!, param.type.toLLVMType(llvm))
+                                    val hairTarget = node.function
+                                    val llvmTarget = when (hairTarget) {
+                                        is HairFunctionImpl -> codegen.llvmFunction(hairTarget.irFunction)
+                                        RuntimeInterface.isSubtype -> llvm.isSubtypeFunction
+                                        else -> error("Unexpected function $hairTarget")
+                                    }
+                                    // FIXME
+                                    val llvmParamTypes = when (hairTarget) {
+                                        is HairFunctionImpl -> hairTarget.irFunction.parameters.map { it.type.toLLVMType(llvm) }
+                                        RuntimeInterface.isSubtype -> listOf(llvm.voidPtrType, llvm.voidPtrType)
+                                        else -> error("Unexpected function $hairTarget")
+                                    }
+                                    // TODO there are more to do around the function call?
+                                    val args = node.callArgs.zip(llvmParamTypes).map { (arg, paramType) ->
+                                        adaptFromHair(nodeValues[arg]!!, paramType)
                                     }
                                     val res = call(
                                             llvmCallable = llvmTarget,
@@ -242,7 +251,7 @@ internal class HairToBitcode(
                                             exceptionHandler = ExceptionHandler.Caller, // FIXME proper exception handling
                                     )
                                     // TODO what about Unit?
-                                    if (target.returnType.isNothing()) {
+                                    if ((hairTarget as? HairFunctionImpl)?.irFunction?.returnType?.isNothing() == true) {
                                         // FIXME try to avoid dead code as the result of HaIR
                                         unreachable()
                                         codegen.theUnitInstanceRef.llvm
@@ -375,9 +384,8 @@ internal class HairToBitcode(
                                 is ThreadLocalInit -> null // TODO()
                                 is StandaloneThreadLocalInit -> null // TODO()
 
-                                // TODO
-                                is CheckCast -> null
-                                is IsInstanceOf -> llvm.constInt1(true).llvm
+                                is TypeInfo -> loadTypeInfo(nodeValues[node.obj]!!)
+                                is ConstTypeInfo -> codegen.typeInfoValue((node.type as HairClassImpl).irClass)
 
                                 is UnitValue -> codegen.theUnitInstanceRef.llvm
                                 is Unreachable -> unreachable()
