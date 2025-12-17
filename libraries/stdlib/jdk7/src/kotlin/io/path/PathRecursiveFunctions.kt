@@ -71,6 +71,7 @@ import java.nio.file.attribute.BasicFileAttributes
  */
 @ExperimentalPathApi
 @SinceKotlin("1.8")
+@IgnorableReturnValue
 public fun Path.copyToRecursively(
     target: Path,
     onError: (source: Path, target: Path, exception: Exception) -> OnErrorResult = { _, _, exception -> throw exception },
@@ -156,6 +157,7 @@ public fun Path.copyToRecursively(
  */
 @ExperimentalPathApi
 @SinceKotlin("1.8")
+@IgnorableReturnValue
 public fun Path.copyToRecursively(
     target: Path,
     onError: (source: Path, target: Path, exception: Exception) -> OnErrorResult = { _, _, exception -> throw exception },
@@ -406,10 +408,10 @@ private fun SecureDirectoryStream<Path>.handleEntry(name: Path, parent: Path?, c
             // If something went wrong trying to delete the contents of the
             // directory, don't try to delete the directory as it will probably fail.
             if (preEnterTotalExceptions == collector.totalExceptions) {
-                tryIgnoreNoSuchFileException { this.deleteDirectory(name) }
+                val _ = tryIgnoreNoSuchFileException { this.deleteDirectory(name) }
             }
         } else {
-            tryIgnoreNoSuchFileException { this.deleteFile(name) } // deletes symlink itself, not its target
+            val _ = tryIgnoreNoSuchFileException { this.deleteFile(name) } // deletes symlink itself, not its target
         }
     }
 
