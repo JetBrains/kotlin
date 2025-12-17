@@ -91,7 +91,7 @@ class ComposableDefaultParamLowering(
     private val originalToTransformed = mutableMapOf<IrSimpleFunction, IrSimpleFunction>()
 
     override fun lower(irModule: IrModuleFragment) {
-        irModule.transformChildrenVoid()
+        irModule.transformChildrenVoid(this)
     }
 
     override fun visitSimpleFunction(declaration: IrSimpleFunction): IrStatement {
@@ -158,7 +158,7 @@ class ComposableDefaultParamLowering(
         if (this in originalToTransformed) return originalToTransformed[this]!!
 
         // Visit function to ensure that calls in the body are transformed
-        this.transformChildrenVoid()
+        this.transformChildrenVoid(this@ComposableDefaultParamLowering)
 
         val wrapper = makeDefaultParameterWrapper(this)
         originalToTransformed[this] = wrapper
@@ -251,7 +251,7 @@ class ComposableDefaultParamLowering(
         wrapper.copyParametersFrom(source)
 
         wrapper.parameters.forEach {
-            it.defaultValue?.transformChildrenVoid()
+            it.defaultValue?.transformChildrenVoid(this)
         }
 
         wrapper.body = DeclarationIrBuilder(

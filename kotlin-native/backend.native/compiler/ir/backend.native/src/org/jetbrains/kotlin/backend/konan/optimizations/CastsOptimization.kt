@@ -1301,7 +1301,7 @@ internal class CastsOptimization(val context: Context) : BodyLoweringPass {
         val irBuilder = context.createIrBuilder(container.symbol)
         irBody.transformChildrenVoid(object : IrElementTransformerVoid() {
             override fun visitTypeOperator(expression: IrTypeOperatorCall): IrExpression {
-                expression.transformChildrenVoid()
+                expression.transformChildrenVoid(this)
 
                 val typeCheckResult = when (typeCheckResults[expression]) {
                     null, TypeCheckResult.UNKNOWN -> return expression

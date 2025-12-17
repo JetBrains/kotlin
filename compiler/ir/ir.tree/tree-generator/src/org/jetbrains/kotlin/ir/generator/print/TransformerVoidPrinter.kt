@@ -59,19 +59,9 @@ internal class TransformerVoidPrinter(
             visibility = Visibility.PROTECTED,
             isInline = true,
         ) {
-            println("transformChildrenVoid()")
+            println("transformChildrenVoid(this@IrElementTransformerVoid)")
             println("this.body()")
             println("return this")
-        }
-        println()
-        printFunctionWithBlockBody(
-            name = "transformChildrenVoid",
-            parameters = emptyList(),
-            returnType = StandardTypes.unit,
-            extensionReceiver = IrTree.rootElement,
-            visibility = Visibility.PROTECTED,
-        ) {
-            println("transformChildrenVoid(this@", visitorType.simpleName, ")")
         }
     }
 
@@ -106,22 +96,6 @@ internal class TransformerVoidPrinter(
             println(" =")
             withIndent {
                 println(element.visitFunctionName, "(", element.visitorParameterName, ")")
-            }
-        }
-    }
-
-    override fun printVisitor(elements: List<Element>) {
-        super.printVisitor(elements)
-        printer.run {
-            println()
-            val transformerParameter = FunctionParameter("transformer", visitorType)
-            printFunctionWithBlockBody(
-                name = "transformChildrenVoid",
-                parameters = listOf(transformerParameter),
-                returnType = StandardTypes.unit,
-                extensionReceiver = IrTree.rootElement,
-            ) {
-                println("transformChildren(", transformerParameter.name, ", null)")
             }
         }
     }

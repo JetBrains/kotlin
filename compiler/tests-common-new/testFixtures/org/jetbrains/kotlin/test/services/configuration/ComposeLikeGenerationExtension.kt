@@ -46,7 +46,6 @@ import org.jetbrains.kotlin.ir.util.hasDefaultValue
 import org.jetbrains.kotlin.ir.util.hasShape
 import org.jetbrains.kotlin.ir.util.statements
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.test.model.TestModule
@@ -171,7 +170,7 @@ private class ComposeLikeDefaultArgumentRewriter(
             context.irBuiltIns.intType,
             IrDeclarationOrigin.MASK_FOR_DEFAULT_FUNCTION
         )
-        declaration.transformChildrenVoid()
+        declaration.transformChildrenVoid(this)
         val body = declaration.body!!
         val defaultSelection = mutableListOf<IrStatement>()
         declaration.parameters.forEach {

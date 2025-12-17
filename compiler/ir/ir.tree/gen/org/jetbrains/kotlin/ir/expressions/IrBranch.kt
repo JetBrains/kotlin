@@ -49,4 +49,9 @@ abstract class IrBranch : IrElementBase(), IrElement {
         condition = condition.transform(transformer, data)
         result = result.transform(transformer, data)
     }
+
+    override fun transformChildrenVoid(transformer: IrElementTransformerVoid) {
+        condition = condition.transformVoid(transformer)
+        result = result.transformVoid(transformer)
+    }
 }

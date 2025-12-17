@@ -45,7 +45,7 @@ abstract class AbstractVariableRemapper : IrElementTransformerVoid() {
         } ?: expression
 
     override fun visitSetValue(expression: IrSetValue): IrExpression {
-        expression.transformChildrenVoid()
+        expression.transformChildrenVoid(this)
         return remapVariable(expression.symbol.owner)?.let {
             IrSetValueImpl(expression.startOffset, expression.endOffset, expression.type, it.symbol, expression.value, expression.origin)
         } ?: expression

@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
-import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
@@ -137,7 +136,7 @@ internal class PartiallyLinkedIrTreePatcher(
         private val stack = ArrayDeque<DeclarationTransformerContext>()
 
         private fun <T : IrDeclaration> T.transformChildren(): T {
-            transformChildrenVoid()
+            transformChildrenVoid(this@DeclarationTransformer)
             return this
         }
 
@@ -231,7 +230,7 @@ internal class PartiallyLinkedIrTreePatcher(
             }
 
             // Process underlying declarations. Collect declarations to remove.
-            return declaration.withRemovalOfChildren { transformChildrenVoid() }
+            return declaration.withRemovalOfChildren { transformChildrenVoid(this@DeclarationTransformer) }
         }
 
         override fun visitConstructor(declaration: IrConstructor): IrStatement {
@@ -450,11 +449,11 @@ internal class PartiallyLinkedIrTreePatcher(
         }
 
         override fun visitBlockBody(body: IrBlockBody): IrBody {
-            return body.withRemovalOfChildren { transformChildrenVoid() }
+            return body.withRemovalOfChildren { transformChildrenVoid(this@DeclarationTransformer) }
         }
 
         override fun visitContainerExpression(expression: IrContainerExpression): IrExpression {
-            return expression.withRemovalOfChildren { transformChildrenVoid() }
+            return expression.withRemovalOfChildren { transformChildrenVoid(this@DeclarationTransformer) }
         }
 
         private fun <S : IrSymbol> IrOverridableDeclaration<S>.filterOverriddenSymbols() {

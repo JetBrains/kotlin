@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.util.isSuspend
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageSources.File as PLFile
 
@@ -64,7 +63,7 @@ abstract class AbstractAddContinuationToFunctionCallsLowering : BodyLoweringPass
             }
 
             override fun visitCall(expression: IrCall): IrExpression {
-                expression.transformChildrenVoid()
+                expression.transformChildrenVoid(this)
 
                 if (!expression.isSuspend) {
                     if (expression.symbol == context.symbols.getContinuation)

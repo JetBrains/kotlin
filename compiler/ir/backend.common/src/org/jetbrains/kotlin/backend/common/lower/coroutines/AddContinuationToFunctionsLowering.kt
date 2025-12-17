@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.memoryOptimizedPlus
 import kotlin.collections.plusAssign
@@ -52,7 +51,7 @@ class AddContinuationToLocalSuspendFunctionsLowering(val context: CommonBackendC
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         irBody.transformChildrenVoid(object : IrElementTransformerVoid() {
             override fun visitSimpleFunction(declaration: IrSimpleFunction): IrStatement {
-                declaration.transformChildrenVoid()
+                declaration.transformChildrenVoid(this)
                 return if (declaration.isSuspend) {
                     transformSuspendFunction(context, declaration)
                 } else {

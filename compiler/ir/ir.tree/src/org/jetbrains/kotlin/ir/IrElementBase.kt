@@ -49,6 +49,10 @@ abstract class IrElementBase : IrElement {
         // No children by default
     }
 
+    override fun transformChildrenVoid(transformer: IrElementTransformerVoid) {
+        // No children by default
+    }
+
 
     /**
      * Returns a snapshot of all attributes held by this element.

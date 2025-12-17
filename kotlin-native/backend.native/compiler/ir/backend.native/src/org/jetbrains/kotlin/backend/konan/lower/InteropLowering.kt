@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.ir.util.isSubtypeOf
-import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.konan.ForeignExceptionMode
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.name.FqName
@@ -483,7 +482,7 @@ private class InteropTransformerPart1(
     }
 
     override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall): IrExpression {
-        expression.transformChildrenVoid()
+        expression.transformChildrenVoid(this)
 
         builder.at(expression)
 
@@ -582,7 +581,7 @@ private class InteropTransformerPart1(
     }
 
     override fun visitConstructorCall(expression: IrConstructorCall): IrExpression {
-        expression.transformChildrenVoid()
+        expression.transformChildrenVoid(this)
 
         val callee = expression.symbol.owner
         val initMethod = callee.getObjCInitMethod()
@@ -617,7 +616,7 @@ private class InteropTransformerPart1(
             }
 
     override fun visitCall(expression: IrCall): IrExpression {
-        expression.transformChildrenVoid()
+        expression.transformChildrenVoid(this)
 
         val callee = expression.symbol.owner
 
@@ -692,7 +691,7 @@ private class InteropTransformerPart1(
             require(declaration.setter == null) { renderCompilerError(declaration) }
             require(!declaration.isVar) { renderCompilerError(declaration) }
 
-            declaration.transformChildrenVoid()
+            declaration.transformChildrenVoid(this)
             declaration
         } else {
             super.visitProperty(declaration)
@@ -943,7 +942,7 @@ private class InteropTransformerPart2(
             arguments[2] = expression.arguments[2]
             arguments[3] = jobPointer
         }.implicitCastTo(expression.type)
-        executeImplCall.transformChildrenVoid()
+        executeImplCall.transformChildrenVoid(this)
 
         builder.at(expression)
         return if (staticFunctionArgument.defined)

@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
  */
 @PhasePrerequisites(PolymorphicSignatureLowering::class)
 internal class VarargLowering(val context: JvmBackendContext) : FileLoweringPass, IrElementTransformerVoidWithContext() {
-    override fun lower(irFile: IrFile) = irFile.transformChildrenVoid()
+    override fun lower(irFile: IrFile) = irFile.transformChildrenVoid(this)
 
     // Ignore annotations
     override fun visitConstructorCall(expression: IrConstructorCall): IrExpression {
@@ -42,7 +42,7 @@ internal class VarargLowering(val context: JvmBackendContext) : FileLoweringPass
     }
 
     override fun visitFunctionAccess(expression: IrFunctionAccessExpression): IrExpression {
-        expression.transformChildrenVoid()
+        expression.transformChildrenVoid(this)
         val function = expression.symbol
 
         // Replace empty varargs with empty arrays

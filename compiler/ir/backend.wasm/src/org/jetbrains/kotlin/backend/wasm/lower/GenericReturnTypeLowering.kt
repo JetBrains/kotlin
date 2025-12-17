@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.ir.util.erasedUpperBound
 import org.jetbrains.kotlin.ir.util.irCall
 import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.ir.util.isSubtypeOf
-import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
 /**
  * This lowering adds implicit casts in places where erased generic function return type

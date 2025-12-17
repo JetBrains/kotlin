@@ -43,4 +43,8 @@ abstract class IrSpreadElement : IrElementBase(), IrVarargElement {
     override fun <D> transformChildren(transformer: IrTransformer<D>, data: D) {
         expression = expression.transform(transformer, data)
     }
+
+    override fun transformChildrenVoid(transformer: IrElementTransformerVoid) {
+        expression = expression.transformVoid(transformer)
+    }
 }

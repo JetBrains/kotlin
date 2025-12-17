@@ -213,12 +213,12 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
     private var currentClassData: ClassData? = null
 
     override fun lower(irFile: IrFile) =
-        irFile.transformChildrenVoid()
+        irFile.transformChildrenVoid(this)
 
     override fun visitClassNew(declaration: IrClass): IrStatement {
         val data = ClassData(declaration, currentClassData)
         currentClassData = data
-        declaration.transformChildrenVoid()
+        declaration.transformChildrenVoid(this)
         currentClassData = data.parent
 
         // Put the new field at the beginning so that static delegated properties with initializers work correctly.
@@ -286,7 +286,7 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
     }
 
     private fun cachedKProperty(expression: IrRichPropertyReference): IrExpression {
-        expression.transformChildrenVoid()
+        expression.transformChildrenVoid(this)
         return when (expression.origin) {
             REFLECTED_PROPERTY_REFERENCE -> createReflectedKProperty(expression)
             PROPERTY_REFERENCE_FOR_DELEGATE -> createKPropertyReferenceForDelegate(expression)

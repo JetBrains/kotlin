@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 
 
@@ -255,7 +254,7 @@ abstract class AbstractValueUsageTransformer(
     }
 
     override fun visitStringConcatenation(expression: IrStringConcatenation): IrExpression {
-        expression.transformChildrenVoid()
+        expression.transformChildrenVoid(this)
         if (expression is IrStringConcatenationImpl) {
             for ((i, arg) in expression.arguments.withIndex()) {
                 expression.arguments[i] = arg.useAs(irBuiltIns.anyNType)

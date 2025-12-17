@@ -585,6 +585,27 @@ fun ImportCollectingPrinter.printTransformChildrenMethod(
     )
 }
 
+fun ImportCollectingPrinter.printTransformChildrenVoidMethod(
+    element: FieldContainer<*>,
+    transformerClass: ClassRef<PositionTypeParameterRef>,
+    modality: Modality? = null,
+    override: Boolean = false,
+) {
+    if (!element.hasTransformChildrenMethod) return
+    println()
+    val transformerParameter = FunctionParameter("transformer", transformerClass)
+    if (!override) {
+        printKDoc(transformChildrenMethodKDoc(transformerParameter, null, StandardTypes.unit))
+    }
+    printFunctionDeclaration(
+        name = "transformChildrenVoid",
+        parameters = listOf(transformerParameter),
+        returnType = StandardTypes.unit,
+        modality = modality,
+        override = override,
+    )
+}
+
 fun ImportCollectingPrinter.printAcceptVoidMethod(visitorType: ClassRef<*>, treeName: String) {
     val visitorParameter = FunctionParameter("visitor", visitorType)
     val returnType = StandardTypes.unit

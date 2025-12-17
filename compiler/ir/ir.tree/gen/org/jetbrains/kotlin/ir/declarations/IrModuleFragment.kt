@@ -57,4 +57,8 @@ abstract class IrModuleFragment : IrElementBase(), IrElement {
     override fun <D> transformChildren(transformer: IrTransformer<D>, data: D) {
         files.transformInPlace(transformer, data)
     }
+
+    override fun transformChildrenVoid(transformer: IrElementTransformerVoid) {
+        files.transformInPlace(transformer, null)
+    }
 }

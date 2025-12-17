@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrElseBranchImpl
 import org.jetbrains.kotlin.ir.util.isFalseConst
 import org.jetbrains.kotlin.ir.util.isTrueConst
 import org.jetbrains.kotlin.ir.util.toIrConst
-import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
 /**
  * Removes unreachable branches in `when` expressions.
@@ -149,7 +148,7 @@ private class WhenBranchOptimiserTransformer(
     }
 
     override fun visitWhen(expression: IrWhen): IrExpression {
-        expression.transformChildrenVoid()
+        expression.transformChildrenVoid(this)
 
         val iterate = expression.branches.toTypedArray()
         expression.branches.clear()

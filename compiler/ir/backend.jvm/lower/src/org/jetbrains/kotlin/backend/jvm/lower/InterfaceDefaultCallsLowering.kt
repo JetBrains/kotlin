@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.util.hasInterfaceParent
-import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
 /**
  * Redirects interface calls with default arguments to DefaultImpls (except methods compiled to JVM defaults).

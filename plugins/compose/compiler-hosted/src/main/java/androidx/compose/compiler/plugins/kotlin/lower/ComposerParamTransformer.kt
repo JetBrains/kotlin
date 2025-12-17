@@ -222,7 +222,7 @@ class ComposerParamTransformer(
         )
 
         // Transform receiver arguments
-        expression.transformChildrenVoid()
+        expression.transformChildrenVoid(this)
 
         // Adapted function calls created by Kotlin compiler don't copy annotations from the original function
         if (fn.origin == IrDeclarationOrigin.ADAPTER_FOR_CALLABLE_REFERENCE && !fn.hasComposableAnnotation()) {

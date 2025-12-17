@@ -163,7 +163,7 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
 
         irFile.transformChildrenVoid(object : IrElementTransformerVoid() {
             override fun visitConstructorCall(expression: IrConstructorCall): IrExpression {
-                expression.transformChildrenVoid()
+                expression.transformChildrenVoid(this)
                 if (expression.origin != JsStatementOrigins.CALLABLE_REFERENCE_CREATE) return expression
 
                 ctorToFreeFunctionMap[expression.symbol]?.let { liftedLambda ->
@@ -171,9 +171,9 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
                 }
 
                 ctorToFunctionExpressionMap[expression.symbol]?.let { functionExpressionFactory ->
-                    return functionExpressionFactory.createFunctionExpression(expression).apply {
+                    return functionExpressionFactory.createFunctionExpression(expression).also {
                         // Make sure to also apply this transformation to the inlined lambda body.
-                        transformChildrenVoid()
+                        it.transformChildrenVoid(this)
                     }
                 }
 
@@ -296,19 +296,19 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
     ) : IrElementTransformerVoid() {
 
         override fun visitFile(declaration: IrFile): IrFile {
-            declaration.transformChildrenVoid()
+            declaration.transformChildrenVoid(this)
             declaration.transformDeclarationsFlat { it.transformCallableReference() }
             return declaration
         }
 
         override fun visitClass(declaration: IrClass): IrStatement {
-            declaration.transformChildrenVoid()
+            declaration.transformChildrenVoid(this)
             declaration.transformDeclarationsFlat { it.transformCallableReference() }
             return declaration
         }
 
         override fun visitScript(declaration: IrScript): IrStatement {
-            declaration.transformChildrenVoid()
+            declaration.transformChildrenVoid(this)
             declaration.statements.transformFlat { s ->
                 if (s is IrDeclaration) s.transformCallableReference()
                 else null
@@ -385,7 +385,7 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
         // TODO: remap type parameters???
         body.transformChildrenVoid(object : IrElementTransformerVoid() {
             override fun visitGetField(expression: IrGetField): IrExpression {
-                expression.transformChildrenVoid()
+                expression.transformChildrenVoid(this)
 
                 lambdaContextMapping[expression.symbol]?.let {
                     return expression.getValue(it)
@@ -411,14 +411,14 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
             }
 
             override fun visitGetValue(expression: IrGetValue): IrExpression {
-                expression.transformChildrenVoid()
+                expression.transformChildrenVoid(this)
                 val parameterOfLambdaDeclaration = invokeMapping[expression.symbol] ?: return expression
                 val parameterOfInvokeMethod = invokeFun.nonDispatchParameters[parameterOfLambdaDeclaration.owner.indexInParameters]
                 return expression.getCastedValue(parameterOfLambdaDeclaration, parameterOfInvokeMethod.type)
             }
 
             override fun visitReturn(expression: IrReturn): IrExpression {
-                expression.transformChildrenVoid()
+                expression.transformChildrenVoid(this)
                 if (expression.returnTargetSymbol != invokeFun.symbol) return expression
                 return expression.run {
                     IrReturnImpl(startOffset, endOffset, type, lambdaDeclaration.symbol, value)

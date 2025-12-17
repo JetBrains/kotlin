@@ -61,7 +61,7 @@ import java.lang.invoke.LambdaMetafactory
 internal class TypeOperatorLowering(private val backendContext: JvmBackendContext) :
     FileLoweringPass, IrBuildingTransformer(backendContext) {
 
-    override fun lower(irFile: IrFile) = irFile.transformChildrenVoid()
+    override fun lower(irFile: IrFile) = irFile.transformChildrenVoid(this)
 
     private fun lowerInstanceOf(argument: IrExpression, type: IrType) = with(builder) {
         when {
@@ -215,7 +215,7 @@ internal class TypeOperatorLowering(private val backendContext: JvmBackendContex
     override fun visitCall(expression: IrCall): IrExpression {
         return when (expression.symbol) {
             jvmIndyLambdaMetafactoryIntrinsic -> {
-                expression.transformChildrenVoid()
+                expression.transformChildrenVoid(this)
                 rewriteIndyLambdaMetafactoryCall(expression)
             }
             else -> super.visitCall(expression)
@@ -689,7 +689,7 @@ internal class TypeOperatorLowering(private val backendContext: JvmBackendContex
 
             IrTypeOperator.SAFE_CAST ->
                 if (expression.typeOperand.isReifiedTypeParameter) {
-                    expression.transformChildrenVoid()
+                    expression.transformChildrenVoid(this@TypeOperatorLowering)
                     expression
                 } else {
                     irLetS(
@@ -738,7 +738,7 @@ internal class TypeOperatorLowering(private val backendContext: JvmBackendContex
             }
 
             else -> {
-                expression.transformChildrenVoid()
+                expression.transformChildrenVoid(this@TypeOperatorLowering)
                 expression
             }
         }

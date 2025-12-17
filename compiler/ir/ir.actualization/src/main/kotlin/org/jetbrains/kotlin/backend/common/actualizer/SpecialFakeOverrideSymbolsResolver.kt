@@ -212,7 +212,7 @@ class SpecialFakeOverrideSymbolsActualizedByFieldsTransformer(
     private val propertyAccessorsActualizedByFields: Map<IrSimpleFunctionSymbol, IrPropertySymbol>
 ) : IrElementTransformerVoid() {
     override fun visitCall(expression: IrCall): IrExpression {
-        expression.transformChildrenVoid()
+        expression.transformChildrenVoid(this)
 
         val fakeOverrideAccessorSymbol = expression.symbol as? IrFunctionFakeOverrideSymbol ?: return expression
         val originalAccessorSymbol = fakeOverrideAccessorSymbol.originalSymbol

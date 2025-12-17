@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.getArrayElementType
 import org.jetbrains.kotlin.ir.util.isBoxedArray
-import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 internal class WasmVarargExpressionLowering(
@@ -272,7 +271,7 @@ internal class WasmVarargExpressionLowering(
             }
         }
 
-        expression.transformChildrenVoid()
+        expression.transformChildrenVoid(this)
         return expression
     }
 

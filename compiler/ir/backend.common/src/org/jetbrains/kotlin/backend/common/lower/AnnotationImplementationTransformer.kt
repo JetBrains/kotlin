@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.isArray
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.filterIsInstanceAnd
 
@@ -114,7 +113,7 @@ abstract class AnnotationImplementationTransformer(val context: CommonBackendCon
             ctor.symbol,
         )
         moveValueArgumentsUsingNames(expression, newCall)
-        newCall.transformChildrenVoid() // for annotations in annotations
+        newCall.transformChildrenVoid(this) // for annotations in annotations
         return newCall
     }
 

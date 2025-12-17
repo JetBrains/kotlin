@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.util.companionObject
 import org.jetbrains.kotlin.ir.util.render
-import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
 /**
  * These intrinsics must be lowered separately from the interop lowering
@@ -30,7 +29,7 @@ internal class SpecialInteropIntrinsicsLowering(val context: Context) : FileLowe
     override fun lower(irFile: IrFile) {
         irFile.transformChildrenVoid(object : IrBuildingTransformer(context) {
             override fun visitCall(expression: IrCall): IrExpression {
-                expression.transformChildrenVoid()
+                expression.transformChildrenVoid(this)
 
                 val callee = expression.symbol.owner
                 return when (callee.symbol) {

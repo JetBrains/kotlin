@@ -121,7 +121,7 @@ internal class MoveOrCopyCompanionObjectFieldsLowering(val context: JvmBackendCo
  */
 @PhasePrerequisites(JvmPropertiesLowering::class)
 internal class RemapObjectFieldAccesses(val context: JvmBackendContext) : FileLoweringPass, IrElementTransformerVoid() {
-    override fun lower(irFile: IrFile) = irFile.transformChildrenVoid()
+    override fun lower(irFile: IrFile) = irFile.transformChildrenVoid(this)
 
     private fun IrField.remap(): IrField? =
         correspondingPropertySymbol?.owner?.let(context.cachedDeclarations::getStaticBackingField)

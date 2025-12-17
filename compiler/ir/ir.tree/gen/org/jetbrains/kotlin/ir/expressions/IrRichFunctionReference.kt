@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.util.transformInPlace
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
@@ -157,5 +158,10 @@ abstract class IrRichFunctionReference : IrRichCallableReference<IrFunctionSymbo
     override fun <D> transformChildren(transformer: IrTransformer<D>, data: D) {
         boundValues.transformInPlace(transformer, data)
         invokeFunction = invokeFunction.transform(transformer, data) as IrSimpleFunction
+    }
+
+    override fun transformChildrenVoid(transformer: IrElementTransformerVoid) {
+        boundValues.transformInPlace(transformer, null)
+        invokeFunction = invokeFunction.transformVoid(transformer) as IrSimpleFunction
     }
 }
