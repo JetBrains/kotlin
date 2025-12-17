@@ -6,7 +6,7 @@
 fun case() {
     var x: Int? = null
     if (x == try { x = 10; null } finally {} && <!SENSELESS_COMPARISON!>x != null<!>) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>x<!>
     }
 }
 

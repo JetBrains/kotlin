@@ -666,11 +666,15 @@ abstract class FirDataFlowAnalyzer(
         node.mergeIncomingFlow { _, flow ->
             if (leftIsNull || leftConst != null || rightIsNull || rightConst != null) {
                 when {
-                    leftIsNull -> processEqNull(flow, equalityOperatorCall, rightOperand, operation.isEq())
+                    leftIsNull -> processEqNull(flow, equalityOperatorCall, rightOperand, operation.isEq()) { flow, variable ->
+                        logicSystem.isSameValueIn(lhsExitNode.flow, flow, variable)
+                    }
                     leftConst != null -> processEqConst(flow, equalityOperatorCall, rightOperand, leftConst, operation.isEq())
                 }
                 when {
-                    rightIsNull -> processEqNull(flow, equalityOperatorCall, leftOperand, operation.isEq())
+                    rightIsNull -> processEqNull(flow, equalityOperatorCall, leftOperand, operation.isEq()) { flow, variable ->
+                        logicSystem.isSameValueIn(lhsExitNode.flow, flow, variable)
+                    }
                     rightConst != null -> processEqConst(flow, equalityOperatorCall, leftOperand, rightConst, operation.isEq())
                 }
             } else {
@@ -714,8 +718,15 @@ abstract class FirDataFlowAnalyzer(
         }
     }
 
-    private fun processEqNull(flow: MutableFlow, expression: FirExpression, operand: FirExpression, isEq: Boolean) {
+    private fun processEqNull(
+        flow: MutableFlow,
+        expression: FirExpression,
+        operand: FirExpression,
+        isEq: Boolean,
+        isConsistent: (MutableFlow, RealVariable) -> Boolean = { _, _ -> true },
+    ) {
         val operandVariable = flow.getVariableIfUsedOrReal(operand) ?: return
+        if (operandVariable is RealVariable && !isConsistent(flow, operandVariable)) return
         val expressionVariable = SyntheticVariable(expression)
         flow.addImplication((expressionVariable eq isEq) implies (operandVariable eq null))
         flow.addImplication((expressionVariable eq !isEq) implies (operandVariable notEq null))
