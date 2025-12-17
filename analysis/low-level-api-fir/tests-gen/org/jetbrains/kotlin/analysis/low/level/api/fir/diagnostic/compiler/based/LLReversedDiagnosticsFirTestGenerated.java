@@ -5583,12 +5583,6 @@ public class LLReversedDiagnosticsFirTestGenerated extends AbstractLLReversedDia
         }
 
         @Test
-        @TestMetadata("exhaustiveness_enum_report.kt")
-        public void testExhaustiveness_enum_report() {
-          runTest("compiler/fir/analysis-tests/testData/resolve/exhaustiveness/positive/exhaustiveness_enum_report.kt");
-        }
-
-        @Test
         @TestMetadata("exhaustiveness_sealedClass.kt")
         public void testExhaustiveness_sealedClass() {
           runTest("compiler/fir/analysis-tests/testData/resolve/exhaustiveness/positive/exhaustiveness_sealedClass.kt");

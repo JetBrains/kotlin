@@ -26,11 +26,11 @@ fun test(a: A) {
         is A.B.C -> "C"
     }
 
-    val exhaustive = when (a) {
+    val exhaustive = <!WHEN_ON_SEALED_GEEN_ELSE!>when (a) {
         is A.B -> "B"
         is A.B.C -> "C"
         is D -> "D"
-    }
+    }<!>
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, isExpression, localProperty, nestedClass,

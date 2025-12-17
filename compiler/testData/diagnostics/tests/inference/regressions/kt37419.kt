@@ -16,18 +16,18 @@ class SomeClass {
     val e = E.VALUE
 
     val withoutType: LambdaWithReceiver
-        get() = when (e) {
+        get() = <!WHEN_ON_SEALED_GEEN_ELSE!>when (e) {
             E.VALUE -> { param ->
                 method(param)
             }
-        }
+        }<!>
 
     val withExplicitType: LambdaWithReceiver
-        get() = when (e) {
+        get() = <!WHEN_ON_SEALED_GEEN_ELSE!>when (e) {
             E.VALUE -> { param: Parameter ->
                 method(param)
             }
-        }
+        }<!>
 }
 
 class OtherClass {
@@ -39,11 +39,11 @@ class OtherClass {
 
 val e2 = E.VALUE
 val staticWithExplicitType: LambdaWithReceiver
-    get() = when (e2) {
+    get() = <!WHEN_ON_SEALED_GEEN_ELSE!>when (e2) {
         E.VALUE -> { param: Parameter ->
             method(param)
         }
-    }
+    }<!>
 
 /* GENERATED_FIR_TAGS: classDeclaration, enumDeclaration, enumEntry, equalityExpression, funWithExtensionReceiver,
 functionDeclaration, functionalType, getter, interfaceDeclaration, lambdaLiteral, nullableType, propertyDeclaration,

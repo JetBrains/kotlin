@@ -32,12 +32,12 @@ fun guardedAfterIf(e: MySealedInterfaceDataClasses) {
     }
 }
 
-fun negGuard(e: MySealedInterfaceDataClasses) = when (e) {
+fun negGuard(e: MySealedInterfaceDataClasses) = <!WHEN_ON_SEALED_GEEN_ELSE!>when (e) {
     is MySealedInterfaceDataClasses.Num if !(e.n % 2 == 0) -> 0
     is MySealedInterfaceDataClasses.Num -> 1
     is MySealedInterfaceDataClasses.Str -> 2
     MySealedInterfaceDataClasses.Zero -> 0
-}
+}<!>
 
 /* GENERATED_FIR_TAGS: andExpression, classDeclaration, comparisonExpression, data, equalityExpression,
 functionDeclaration, guardCondition, ifExpression, integerLiteral, interfaceDeclaration, isExpression,

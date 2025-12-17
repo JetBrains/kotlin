@@ -7,10 +7,10 @@ enum class A {
     B,
 }
 
-fun test(a: A) = when (a) {
+fun test(a: A) = <!WHEN_ON_SEALED_GEEN_ELSE!>when (a) {
     A.A -> "A"
     A.B -> "B"
-}
+}<!>
 
 /* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, equalityExpression, functionDeclaration, smartcast, stringLiteral,
 whenExpression, whenWithSubject */

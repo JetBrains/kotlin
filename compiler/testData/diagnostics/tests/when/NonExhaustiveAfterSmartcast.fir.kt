@@ -20,20 +20,20 @@ sealed interface ISealed {
 }
 
 fun testDoubleWhen(x: I): Int {
-    val a = when (x) { is I.C -> 1 }
+    val a = <!WHEN_ON_SEALED_GEEN_ELSE!>when (x) { is I.C -> 1 }<!>
     val b = when (x) { <!USELESS_IS_CHECK!>is I.C<!> -> 2 }
     return a + b
 }
 
 fun testDoubleWhen(x: IAbstract): Int {
-    val a = when (x) { is IAbstract.C -> 1 }
+    val a = <!WHEN_ON_SEALED_GEEN_ELSE!>when (x) { is IAbstract.C -> 1 }<!>
     val b = when (x) { <!USELESS_IS_CHECK!>is IAbstract.C<!> -> 2 }
     return a + b
 }
 
 fun testDoubleWhen(x: ISealed): Int {
-    val a = when (x) { is ISealed.C -> 1 }
-    val b = when (x) { <!USELESS_IS_CHECK!>is ISealed.C<!> -> 2 }
+    val a = <!WHEN_ON_SEALED_GEEN_ELSE!>when (x) { is ISealed.C -> 1 }<!>
+    val b = <!WHEN_ON_SEALED_GEEN_ELSE!>when (x) { <!USELESS_IS_CHECK!>is ISealed.C<!> -> 2 }<!>
     return a + b
 }
 

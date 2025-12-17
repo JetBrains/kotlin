@@ -8,10 +8,10 @@ class Left : Either()
 class Right : Either()
 
 fun testSmartcastToSealedInSubjectInitializer1(x: Any?) {
-    val y1 = when (val either = x as Either) {
+    val y1 = <!WHEN_ON_SEALED_GEEN_ELSE!>when (val either = x as Either) {
         is Left -> "L"
         is Right -> "R"
-    }
+    }<!>
 }
 
 fun testSmartcastToSealedInSubjectInitializer2(x: Any?) {

@@ -26,44 +26,44 @@ fun ensureNotA(v: Variants) {
 fun customContract(v: Variants): String {
     ensureNotA(v)
 
-    return when (v) {
+    return <!WHEN_ON_SEALED_GEEN_ELSE!>when (v) {
         is Variants.B -> "B"
-    }
+    }<!>
 }
 
 fun requireContracts(x: MySealedInterface): Int {
     require(x !is MySealedInterface.A)
     if (x is MySealedInterface.C) return 1
-    return when (x) {
+    return <!WHEN_ON_SEALED_GEEN_ELSE!>when (x) {
         MySealedInterface.B -> 3
-    }
+    }<!>
 }
 
 
 fun checkContracts(x: MySealedInterface): Int {
     check(x !is MySealedInterface.A) { "x must not be A" }
     if (x is MySealedInterface.C) return 1
-    return when (x) {
+    return <!WHEN_ON_SEALED_GEEN_ELSE!>when (x) {
         MySealedInterface.B -> 3
-    }
+    }<!>
 }
 
 fun notNullContracts(x: MySealedInterface?): Int {
     requireNotNull(x)
     if (x is MySealedInterface.C) return 1
-    return when (x) {
+    return <!WHEN_ON_SEALED_GEEN_ELSE!>when (x) {
         MySealedInterface.A -> 2
         MySealedInterface.B -> 3
-    }
+    }<!>
 }
 
 fun checkNotNullWhen(x: MySealedInterface?): Int {
     checkNotNull(x)
     if (x is MySealedInterface.C) return 1
-    return when (x) {
+    return <!WHEN_ON_SEALED_GEEN_ELSE!>when (x) {
         MySealedInterface.A -> 2
         MySealedInterface.B -> 3
-    }
+    }<!>
 }
 
 fun assertBool(x: Boolean): Int {

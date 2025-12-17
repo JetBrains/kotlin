@@ -16,11 +16,11 @@ sealed interface MySealedInterface {
 var e: MyEnum = MyEnum.A
 
 fun whenOnVar(): Int {
-    return when (e) {
+    return <!WHEN_ON_SEALED_GEEN_ELSE!>when (e) {
         MyEnum.A -> 1
         MyEnum.B -> 2
         MyEnum.C -> 3
-    }
+    }<!>
 }
 
 open class OpenEnum {
@@ -28,20 +28,20 @@ open class OpenEnum {
 }
 
 fun whenOnOpen(o: OpenEnum): Int {
-    return when (o.e) {
+    return <!WHEN_ON_SEALED_GEEN_ELSE!>when (o.e) {
         MyEnum.A -> 1
         MyEnum.B -> 2
         MyEnum.C -> 3
-    }
+    }<!>
 }
 
 fun simpleVarMutation(initial: MyEnum): Int {
     var x: MyEnum = initial
     if (x == MyEnum.A) return 1
     x = MyEnum.A
-    return when (x) { // KT-78071
+    return <!WHEN_ON_SEALED_GEEN_ELSE!>when (x) { // KT-78071
         MyEnum.A -> 2
-    }
+    }<!>
 }
 
 fun simpleSealedVarMutation(initial: MySealedInterface): Int {

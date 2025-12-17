@@ -11,10 +11,10 @@ enum class SomeEnum {
 // MODULE: main()()(common)
 fun Some.test() {
     if (e == null) return
-    val x = when (e) {
+    val x = <!WHEN_ON_SEALED_GEEN_ELSE!>when (e) {
         SomeEnum.A -> "a"
         SomeEnum.B -> "B"
-    }
+    }<!>
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, enumDeclaration, enumEntry, equalityExpression, funWithExtensionReceiver,

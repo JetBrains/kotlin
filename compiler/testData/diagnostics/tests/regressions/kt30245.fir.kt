@@ -78,10 +78,10 @@ fun test2() { // to extension lambda 1
     val i26: E1 = id { s: String -> this + s.length } // oi- ni+
     val i26a: E1 = id { s -> this + s.length } // oi+ ni+
     val e = E.VALUE
-    val w27 = W2(when (e) { E.VALUE ->  { s: String -> this + s.length } }) // oi- ni+
-    val w27a = W2(when (e) { E.VALUE ->  { s -> this + s.length } }) // oi+ ni+
-    val i27: E1 = when (e) { E.VALUE ->  { s: String -> this + s.length } } // oi+ ni+
-    val i27a: E1 = when (e) { E.VALUE ->  { s -> this + s.length } } // oi+ ni+
+    val w27 = W2(<!WHEN_ON_SEALED_GEEN_ELSE!>when (e) { E.VALUE ->  { s: String -> this + s.length } }<!>) // oi- ni+
+    val w27a = W2(<!WHEN_ON_SEALED_GEEN_ELSE!>when (e) { E.VALUE ->  { s -> this + s.length } }<!>) // oi+ ni+
+    val i27: E1 = <!WHEN_ON_SEALED_GEEN_ELSE!>when (e) { E.VALUE ->  { s: String -> this + s.length } }<!> // oi+ ni+
+    val i27a: E1 = <!WHEN_ON_SEALED_GEEN_ELSE!>when (e) { E.VALUE ->  { s -> this + s.length } }<!> // oi+ ni+
 
     val w28 = W2 <!ARGUMENT_TYPE_MISMATCH!>{ i: Int, <!CANNOT_INFER_VALUE_PARAMETER_TYPE!>s<!> -> i + s.<!UNRESOLVED_REFERENCE!>length<!> }<!> // oi- ni-
     val i28: E1 = id { i: Int, s -> i + s.length } // oi- ni-

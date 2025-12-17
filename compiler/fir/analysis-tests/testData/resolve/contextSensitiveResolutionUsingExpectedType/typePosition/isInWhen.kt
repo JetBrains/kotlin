@@ -37,7 +37,7 @@ fun testIsInWhenWithSubject(instance: SealedClass): String {
 }
 
 fun testIsInWhenGuard(instance: SealedClass): String {
-    return <!RETURN_TYPE_MISMATCH!>when (instance) {
+    return <!RETURN_TYPE_MISMATCH, WHEN_ON_SEALED_WEL_ELSE!>when (instance) {
         is SealedInheritor1 if instance is IndirectSealedInheritor -> instance.prop1
         // KT-75977
         !is SealedInheritor1 if instance is SealedInheritor2 -> instance.prop2

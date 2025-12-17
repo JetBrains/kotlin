@@ -15,26 +15,26 @@ sealed class Sealed {
 object A
 class B
 
-fun sealed(s: Sealed): Int = when (s) {
+fun sealed(s: Sealed): Int = <!WHEN_ON_SEALED_WEL_ELSE!>when (s) {
     <!CONTEXT_SENSITIVE_RESOLUTION_AMBIGUITY!>A<!> -> 1
     <!IMPOSSIBLE_IS_CHECK_ERROR!>is <!CONTEXT_SENSITIVE_RESOLUTION_AMBIGUITY!>B<!><!> -> 2
     C -> 3
     is D -> 4
     <!IMPOSSIBLE_IS_CHECK_ERROR!>is <!CONTEXT_SENSITIVE_RESOLUTION_AMBIGUITY!>String<!><!> -> 5
     else -> 6
-}
+}<!>
 
-fun sealedExplicit(s: Sealed): Int = when (s) {
+fun sealedExplicit(s: Sealed): Int = <!WHEN_ON_SEALED_WEL_ELSE!>when (s) {
     Sealed.A -> 1
     is Sealed.B -> 2
     else -> 6
-}
+}<!>
 
-fun topLevelExplicit(s: Sealed): Int = when (s) {
+fun topLevelExplicit(s: Sealed): Int = <!WHEN_ON_SEALED_WEL_ELSE!>when (s) {
     foo.A -> 1
     <!IMPOSSIBLE_IS_CHECK_ERROR!>is foo.B<!> -> 2
     else -> 6
-}
+}<!>
 
 fun cast1wrong(s: Sealed): Int {
     s <!CAST_NEVER_SUCCEEDS!>as<!> <!CONTEXT_SENSITIVE_RESOLUTION_AMBIGUITY!>A<!>

@@ -27,11 +27,11 @@ fun foo(v: Variants): String {
         return "A"
     }
 
-    return when (v) {
+    return <!WHEN_ON_SEALED_GEEN_ELSE!>when (v) {
         Variants.B -> "B"
         Variants.C -> "C"
         Variants.D -> "D"
-    }
+    }<!>
 }
 
 fun baz(v: Options): String {
@@ -39,9 +39,9 @@ fun baz(v: Options): String {
         return "A"
     }
 
-    return when (v) {
+    return <!WHEN_ON_SEALED_GEEN_ELSE!>when (v) {
         is Options.B -> "B"
-    }
+    }<!>
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, data, equalityExpression, functionDeclaration, ifExpression,

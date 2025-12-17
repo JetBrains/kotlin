@@ -26,10 +26,10 @@ public enum J {
 
 fun foo(): Int {
     // When is exhaustive (count a platform enum as a special case)
-    return when (J.create()) {
+    return <!WHEN_ON_SEALED_GEEN_ELSE!>when (J.create()) {
         J.A -> 1
         J.B -> 2
-    }
+    }<!>
 }
 
 /* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, integerLiteral, javaProperty, javaType, smartcast,

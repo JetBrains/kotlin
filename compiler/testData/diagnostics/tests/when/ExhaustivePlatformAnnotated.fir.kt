@@ -24,26 +24,26 @@ public enum J {
 // FILE: K.kt
 
 fun test_1(): Int {
-    return when (J.getPlatform()) {
+    return <!WHEN_ON_SEALED_GEEN_ELSE!>when (J.getPlatform()) {
         J.A -> 1
         J.B -> 2
-    }
+    }<!>
 }
 
 fun test_2(): Int {
-    return when (J.getPlatform()) {
+    return <!WHEN_ON_SEALED_GEEN_ELSE!>when (J.getPlatform()) {
         J.A -> 1
         J.B -> 2
         null -> 3
-    }
+    }<!>
 }
 
 fun test_3(): Int {
-    return when (J.getPlatform()) {
+    return <!WHEN_ON_SEALED_WEL_ELSE!>when (J.getPlatform()) {
         J.A -> 1
         J.B -> 2
         else -> 3
-    }
+    }<!>
 }
 
 fun test_4(): Int {
@@ -56,18 +56,18 @@ fun test_4(): Int {
 }
 
 fun test_5(): Int {
-    return when (J.getNotNull()) {
+    return <!WHEN_ON_SEALED_GEEN_ELSE!>when (J.getNotNull()) {
         J.A -> 1
         J.B -> 2
-    }
+    }<!>
 }
 
 fun test_6(): Int {
-    return when (J.getNotNull()) {
+    return <!WHEN_ON_SEALED_GEEN_ELSE!>when (J.getNotNull()) {
         J.A -> 1
         J.B -> 2
         <!SENSELESS_NULL_IN_WHEN!>null<!> -> 3
-    }
+    }<!>
 }
 
 fun test_7(): Int {
@@ -96,19 +96,19 @@ fun test_9(): Int {
 }
 
 fun test_10(): Int {
-    return when (J.getNullable()) {
+    return <!WHEN_ON_SEALED_GEEN_ELSE!>when (J.getNullable()) {
         J.A -> 1
         J.B -> 2
         null -> 3
-    }
+    }<!>
 }
 
 fun test_11(): Int {
-    return when (J.getNullable()) {
+    return <!WHEN_ON_SEALED_WEL_ELSE!>when (J.getNullable()) {
         J.A -> 1
         J.B -> 2
         else -> 3
-    }
+    }<!>
 }
 
 fun test_12(): Int {

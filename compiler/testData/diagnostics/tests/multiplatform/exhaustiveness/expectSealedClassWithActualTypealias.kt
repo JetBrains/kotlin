@@ -17,11 +17,11 @@ class Derived2 : SealedClass()
 class Derived3 : MySealedClass()
 
 fun whenForSealed(s: SealedClass): Int {
-    return when (s) { // Should be OK
+    return <!WHEN_ON_SEALED_GEEN_ELSE!>when (s) { // Should be OK
         is Derived1 -> 1
         is Derived2 -> 2
         is Derived3 -> 3
-    }
+    }<!>
 }
 
 /* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, integerLiteral, isExpression,

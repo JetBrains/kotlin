@@ -7,16 +7,16 @@ class C : B()
 class D : B()
 
 fun test(a: A): Any {
-    return when (a) {
+    return <!WHEN_ON_SEALED_GEEN_ELSE!>when (a) {
         is C -> ""
         is D -> ""
-    }
+    }<!>
 }
 
 fun test2(a: A): Any {
-    return when (a) {
+    return <!WHEN_ON_SEALED_GEEN_ELSE!>when (a) {
         is B -> ""
-    }
+    }<!>
 }
 
 fun test3(a: A): Any {

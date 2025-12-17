@@ -1,9 +1,9 @@
 // RUN_PIPELINE_TILL: BACKEND
 
-fun <A, B> Either<A, B>.recover(f: (A) -> B): Either<A, B> = when (this) {
+fun <A, B> Either<A, B>.recover(f: (A) -> B): Either<A, B> = <!WHEN_ON_SEALED_GEEN_ELSE!>when (this) {
     is Either.Left -> f(this.a).right()
     is Either.Right -> this
-}
+}<!>
 
 fun <A> A.right(): Either<Nothing, A> = Either.Right(this)
 

@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.fir.expressions.ExhaustivenessStatus
 import org.jetbrains.kotlin.fir.expressions.FirWhenExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
 import org.jetbrains.kotlin.fir.expressions.isImplicitWhenSubjectVariable
-import org.jetbrains.kotlin.fir.isDisabled
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
@@ -28,7 +27,6 @@ import org.jetbrains.kotlin.fir.types.*
 object FirWhenOnSealedChecker : FirWhenExpressionChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirWhenExpression) {
-        if (LanguageFeature.ReportSealedEnumExhaustiveness.isDisabled()) return
         // only important if we had to be exhaustive
         if (!expression.usedAsExpression || expression.subjectVariable == null) return
         // redundant 'else' and problems are not important here

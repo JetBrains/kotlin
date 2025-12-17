@@ -7,10 +7,10 @@ sealed interface Either<out E, out A> {
     data class Right<out A>(val value: A): Either<Nothing, A>
 }
 
-fun <E, A> Either<E, A>.getOrElse(default: A) = when (this) {
+fun <E, A> Either<E, A>.getOrElse(default: A) = <!WHEN_ON_SEALED_GEEN_ELSE!>when (this) {
     is Left -> default
     is Right -> value
-}
+}<!>
 
 /* GENERATED_FIR_TAGS: classDeclaration, data, funWithExtensionReceiver, functionDeclaration, interfaceDeclaration,
 isExpression, nestedClass, nullableType, out, primaryConstructor, propertyDeclaration, sealed, smartcast, typeParameter,

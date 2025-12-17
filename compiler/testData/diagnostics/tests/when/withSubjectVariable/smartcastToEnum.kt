@@ -6,10 +6,10 @@
 enum class E { FIRST, SECOND }
 
 fun testSmartcastToEnumInSubjectInitializer1(e: E?) {
-    val x1 = when (val ne = e!!) {
+    val x1 = <!WHEN_ON_SEALED_GEEN_ELSE!>when (val ne = e!!) {
         E.FIRST -> "f"
         E.SECOND -> "s"
-    }
+    }<!>
 }
 
 fun testSmartcastToEnumInSubjectInitializer2(e: E?) {

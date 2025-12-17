@@ -9,11 +9,11 @@ sealed class Sealed(val x: Int) {
 }
 
 fun foo(s: Sealed): Int {
-    return when(s) {
+    return <!WHEN_ON_SEALED_GEEN_ELSE!>when(s) {
         !is Sealed.First -> 1
         <!USELESS_IS_CHECK!>!is Sealed.Last<!> -> 0
         // no else required
-    }
+    }<!>
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, isExpression, nestedClass,

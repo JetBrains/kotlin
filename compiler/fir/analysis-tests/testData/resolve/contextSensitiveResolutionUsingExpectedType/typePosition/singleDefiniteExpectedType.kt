@@ -48,21 +48,21 @@ fun <T>testTypeParams(instance: T): String where T : SealedClass, T : OtherI = w
     else -> "100"
 }
 
-fun testNullable(instance: SealedClass?): String = when(instance) {
+fun testNullable(instance: SealedClass?): String = <!WHEN_ON_SEALED_GEEN_ELSE!>when(instance) {
     is SealedInheritor1 -> instance.prop1
     is SealedInheritor2 -> instance.prop2.toString()
     null -> "100"
-}
+}<!>
 
 interface ITestContravariant<in T> {
     fun test(arg: T): String
 }
 
 class TestContravariant: ITestContravariant<SealedClass> {
-    override fun test(arg: SealedClass): String = when (arg) {
+    override fun test(arg: SealedClass): String = <!WHEN_ON_SEALED_GEEN_ELSE!>when (arg) {
         is SealedInheritor1 -> "100"
         is SealedInheritor2 -> "201"
-    }
+    }<!>
 }
 
 fun <T: SealedClass?>testDefinitelyNotNullIntersection(instance: T & Any): String = when(instance) {
@@ -84,11 +84,11 @@ fun testFakeIntersection2(instance: Any): String {
 
 fun testIntersection(instance: Any): String {
     if (instance is SealedInterface && <!USELESS_IS_CHECK!>instance is Any<!>) {
-        return when(instance) {
+        return <!WHEN_ON_SEALED_WEL_ELSE!>when(instance) {
             is NestedInheritor -> instance.<!UNRESOLVED_REFERENCE!>prop<!>
             is <!UNRESOLVED_REFERENCE!>NestedNestedInheritor<!> -> instance.<!UNRESOLVED_REFERENCE!>propNested<!>
             else -> "100"
-        }
+        }<!>
     }
     return "100"
 }
@@ -100,11 +100,11 @@ fun <T>testRegularIntersection(instance: T): String where T : SealedInterface, T
 }
 
 fun testFlexible(): Int {
-    return when(val i = JClass.staticProp) {
+    return <!WHEN_ON_SEALED_WEL_ELSE!>when(val i = JClass.staticProp) {
         is SCOption1 -> i.prop1
         is SCOption2 -> i.prop2
         else -> 101
-    }
+    }<!>
 }
 
 class ITestContravariant2<in T>(val a: @UnsafeVariance T) {

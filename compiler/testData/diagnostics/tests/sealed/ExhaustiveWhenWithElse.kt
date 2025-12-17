@@ -9,10 +9,10 @@ sealed class Sealed(val x: Int) {
 }
 
 fun foo(s: Sealed): Int {
-    return when(s) {
+    return <!WHEN_ON_SEALED_WEL_ELSE!>when(s) {
         is Sealed.NonFirst -> 0
         else -> -1
-    }
+    }<!>
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, isExpression, nestedClass,

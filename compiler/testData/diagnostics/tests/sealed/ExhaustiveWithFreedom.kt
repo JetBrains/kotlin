@@ -25,12 +25,12 @@ class Containter {
 // FILE: main.kt
 
 fun test_OK(base: Base) {
-    val x = when (base) {
+    val x = <!WHEN_ON_SEALED_GEEN_ELSE!>when (base) {
         is Base.A -> 1
         is B -> 2
         is Containter.C -> 3
         is Containter.D -> 4
-    }
+    }<!>
 }
 
 fun test_error_1(base: Base) {

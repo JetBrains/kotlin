@@ -61,11 +61,11 @@ fun foo(e: E): String = when (e) {
     <!REDUNDANT_ELSE_IN_WHEN!>else<!> -> ""
 }
 
-fun bar(e: E?): String = when (e) {
+fun bar(e: E?): String = <!WHEN_ON_SEALED_WEL_ELSE!>when (e) {
     E.A -> "A"
     E.B -> "B"
     else -> "" // no warning
-}
+}<!>
 
 fun foo(b: Boolean) = when (b) {
     true -> 1
@@ -75,10 +75,10 @@ fun foo(b: Boolean) = when (b) {
 
 fun useJava(): String {
     val me = MyEnum.getInstance()
-    return when (me) {
+    return <!WHEN_ON_SEALED_WEL_ELSE!>when (me) {
         MyEnum.SINGLE -> "OK"
         else -> "FAIL" // no warning
-    }
+    }<!>
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, enumDeclaration, enumEntry, equalityExpression, flexibleType,
