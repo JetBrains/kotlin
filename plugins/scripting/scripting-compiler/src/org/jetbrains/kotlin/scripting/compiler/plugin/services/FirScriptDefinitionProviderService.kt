@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.scripting.compiler.plugin.services
 
-import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.scriptingHostConfiguration
 import org.jetbrains.kotlin.fir.FirSession
@@ -16,13 +15,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.impl.FirProviderImpl
 import org.jetbrains.kotlin.fir.scopes.kotlinScopeProvider
 import org.jetbrains.kotlin.fir.session.sourcesToPathsMapper
 import org.jetbrains.kotlin.scripting.compiler.plugin.configureScriptDefinitions
-import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.CliScriptDefinitionProvider
-import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.ScriptCompilationConfigurationProvider
-import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.ScriptCompilationConfigurationProviderOverDefinitionProvider
-import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.ScriptRefinedCompilationConfigurationCache
-import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.ScriptRefinedCompilationConfigurationCacheImpl
-import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.scriptCompilationConfigurationProvider
-import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.scriptRefinedCompilationConfigurationsCache
+import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.*
 import org.jetbrains.kotlin.scripting.compiler.plugin.fir.scriptCompilationComponent
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.collectAndResolveScriptAnnotationsViaFir
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.refineAllForK2
@@ -122,21 +115,12 @@ class FirScriptDefinitionProviderService(
                             )
                         }
                     }).also { refined ->
-                        hostBasedCache?.storeRefinedCompilationConfiguration(sourceCode, refined)
+                        hostBasedCache.storeRefinedCompilationConfiguration(sourceCode, refined)
                     }
                 }
             }
         }
     }
-
-    fun storeRefinedConfiguration(
-        sourceCode: SourceCode,
-        configuration: ResultWithDiagnostics<ScriptCompilationConfiguration>
-    ): ResultWithDiagnostics<ScriptCompilationConfiguration>? =
-        refinedCompilationConfigurationCache?.storeRefinedCompilationConfiguration(sourceCode, configuration)
-
-    fun clearRefinedConfiguration(sourceCode: SourceCode): ResultWithDiagnostics<ScriptCompilationConfiguration>? =
-        refinedCompilationConfigurationCache?.clearRefinedCompilationConfiguration(sourceCode)
 
     companion object {
         fun getFactory(
@@ -175,7 +159,7 @@ class FirScriptDefinitionProviderService(
             @Suppress("DEPRECATION") //KT-82551
             definitionSources: List<org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionsSource>,
             definitionProvider: ScriptDefinitionProvider? = null,
-            configurationProvider: ScriptConfigurationsProvider? = null,
+            @Suppress("unused") configurationProvider: ScriptConfigurationsProvider? = null,
         ): Factory = getFactory {
             defaultJvmScriptingHostConfiguration.with {
                 val scriptDefinitionProvider = definitionProvider
