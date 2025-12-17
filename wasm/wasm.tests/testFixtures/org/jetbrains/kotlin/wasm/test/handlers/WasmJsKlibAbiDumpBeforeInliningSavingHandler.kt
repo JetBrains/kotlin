@@ -51,7 +51,6 @@ class FirWasmJsKlibAbiDumpBeforeInliningSavingHandler(testServices: TestServices
             diagnosticReporter = irDiagnosticReporter,
             metadataSerializer = inputArtifact.metadataSerializer,
             klibPath = outputFile.path,
-            dependencies = emptyList(), // Does not matter.
             moduleFragment = inputArtifact.irModuleFragment,
             irBuiltIns = inputArtifact.irBuiltIns,
             cleanFiles = inputArtifact.icData,

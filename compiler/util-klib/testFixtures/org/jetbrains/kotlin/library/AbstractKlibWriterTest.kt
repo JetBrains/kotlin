@@ -30,7 +30,6 @@ abstract class AbstractKlibWriterTest<P : Parameters>(private val newParameters:
         open var abiVersion: KotlinAbiVersion? = null
         var customManifestProperties: List<Pair<String, String>> = emptyList()
         var nopack: Boolean = true
-        var dependencies: List<KlibDependency> = emptyList()
         open var ir: Collection<SerializedIrFile>? = null
         open var irOfInlinableFunctions: SerializedIrFile? = null
 
@@ -116,13 +115,6 @@ abstract class AbstractKlibWriterTest<P : Parameters>(private val newParameters:
         }
     }
 
-    @Test
-    fun `Writing a klib with dependencies`() {
-        runTestWithParameters {
-            dependencies = listOf(mockKlibDependency("dep1"), mockKlibDependency("dep2"))
-        }
-    }
-
     protected fun runTestWithParameters(initializeParameters: P.() -> Unit) {
         val parameters = newParameters()
         parameters.initializeParameters()
@@ -143,9 +135,6 @@ abstract class AbstractKlibWriterTest<P : Parameters>(private val newParameters:
                     metadataVersion = parameters.metadataVersion,
                 ),
                 other = {
-                    if (parameters.dependencies.isNotEmpty()) {
-                        this[KLIB_PROPERTY_DEPENDS] = parameters.dependencies.joinToString(" ") { it.uniqueName }
-                    }
                     parameters.customManifestProperties.forEach { (key, value) -> this[key] = value }
                     customizeManifestForMockKlib(parameters)
                 }

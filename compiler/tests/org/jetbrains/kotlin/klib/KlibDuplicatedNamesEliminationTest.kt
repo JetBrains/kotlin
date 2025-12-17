@@ -176,7 +176,6 @@ class KlibDuplicatedNamesEliminationTest : TestCaseWithTmpdir() {
 
         // Write a fake library with the required unique name.
         buildKotlinLibrary(
-            linkDependencies = emptyList(),
             metadata = SerializedMetadata(byteArrayOf(), emptyList(), emptyList(), MetadataVersion.INSTANCE.toArray()),
             ir = null,
             versions = KotlinLibraryVersioning(null, null, null, KotlinIrSignatureVersion.CURRENTLY_SUPPORTED_VERSIONS),

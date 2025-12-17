@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.konan.library.components.KlibNativeConstants.KLIB_TA
 import org.jetbrains.kotlin.konan.library.components.KlibNativeIncludedBinariesConstants.KLIB_NATIVE_INCLUDED_BINARIES_FOLDER_NAME
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.AbstractKlibWriterTest
+import org.jetbrains.kotlin.library.KLIB_PROPERTY_DEPENDS
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_NATIVE_TARGETS
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_SHORT_NAME
 import org.jetbrains.kotlin.library.KlibMockDSL
@@ -26,6 +27,7 @@ import kotlin.random.Random
 abstract class AbstractNativeKlibWriterTest<P : NativeParameters>(newParameters: () -> P) : AbstractKlibWriterTest<P>(newParameters) {
     open class NativeParameters : Parameters() {
         var shortName: String? = null
+        var dependencies: List<KlibDependency> = emptyList()
         var target: KonanTarget = KonanTarget.IOS_ARM64
         var bitcodeFiles: List<BinaryFile> = emptyList()
         var nativeIncludedBinaryFiles: List<BinaryFile> = emptyList()
@@ -48,6 +50,13 @@ abstract class AbstractNativeKlibWriterTest<P : NativeParameters>(newParameters:
             runTestWithParameters {
                 this.shortName = shortName
             }
+        }
+    }
+
+    @Test
+    fun `Writing a klib with dependencies`() {
+        runTestWithParameters {
+            dependencies = listOf(mockKlibDependency("dep1"), mockKlibDependency("dep2"))
         }
     }
 
@@ -91,6 +100,9 @@ abstract class AbstractNativeKlibWriterTest<P : NativeParameters>(newParameters:
     override fun customizeManifestForMockKlib(parameters: P) {
         super.customizeManifestForMockKlib(parameters)
         parameters.shortName?.let { shortName -> properties[KLIB_PROPERTY_SHORT_NAME] = shortName }
+        if (parameters.dependencies.isNotEmpty()) {
+            properties[KLIB_PROPERTY_DEPENDS] = parameters.dependencies.joinToString(" ") { it.uniqueName }
+        }
         properties[KLIB_PROPERTY_NATIVE_TARGETS] = parameters.target.visibleName
     }
 

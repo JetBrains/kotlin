@@ -134,7 +134,6 @@ object KlibTestUtil {
         val serializedMetadata = serializer.serializeModule(module)
 
         buildKotlinLibrary(
-            linkDependencies = emptyList(),
             metadata = serializedMetadata,
             ir = null,
             versions = KotlinLibraryVersioning(

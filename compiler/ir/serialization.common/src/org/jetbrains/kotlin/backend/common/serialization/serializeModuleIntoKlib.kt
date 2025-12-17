@@ -58,7 +58,7 @@ class KotlinFileSerializedData private constructor(
 class SerializerOutput<Dependency : KotlinLibrary>(
     val serializedMetadata: SerializedMetadata?,
     val serializedIr: SerializedIrModule?,
-    val neededLibraries: List<Dependency>,
+    val neededLibraries: List<Dependency>, // ???
 )
 
 fun KtSourceFile.toIoFileOrNull(): File? = when (this) {

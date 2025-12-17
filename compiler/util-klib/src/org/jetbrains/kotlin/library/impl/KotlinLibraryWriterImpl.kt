@@ -109,7 +109,6 @@ private class KotlinLibraryWriterImpl(
 ) : BaseWriter by base, KotlinLibraryWriter
 
 fun buildKotlinLibrary(
-    linkDependencies: List<KotlinLibrary>,
     metadata: SerializedMetadata,
     ir: SerializedIrModule?,
     versions: KotlinLibraryVersioning,
@@ -135,7 +134,6 @@ fun buildKotlinLibrary(
     )
 
     manifestProperties?.let { library.addManifestAddend(it) }
-    library.addLinkDependencies(linkDependencies)
 
     val metadataWriter = KlibMetadataWriterImpl(KlibMetadataComponentLayout(unzippedKlibDir))
     metadataWriter.writeMetadata(metadata)

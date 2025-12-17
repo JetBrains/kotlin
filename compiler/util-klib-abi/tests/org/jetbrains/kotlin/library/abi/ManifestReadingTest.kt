@@ -72,7 +72,6 @@ class ManifestReadingTest {
         val libraryFile = buildDir.resolve("$libraryName.klib")
 
         buildKotlinLibrary(
-            linkDependencies = emptyList(),
             metadata = SerializedMetadata(byteArrayOf(), emptyList(), emptyList(), MetadataVersion.INSTANCE.toArray()), // empty
             ir = SerializedIrModule(files = emptyList(), fileWithPreparedInlinableFunctions = null), // empty
             versions = KotlinLibraryVersioning(

@@ -24,7 +24,6 @@ fun buildKotlinMetadataLibrary(configuration: CompilerConfiguration, serializedM
     )
 
     buildKotlinLibrary(
-        emptyList(),
         serializedMetadata,
         null,
         versions,

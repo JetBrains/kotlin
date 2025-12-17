@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.library
 import org.jetbrains.kotlin.library.LegacyKlibWriterTest.LegacyKlibWriterParameters
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
 import org.jetbrains.kotlin.library.impl.buildKotlinLibrary
-import org.jetbrains.kotlin.library.loader.KlibLoader
 import org.junit.jupiter.api.Test
 import java.io.File
 import java.util.Properties
@@ -44,7 +43,6 @@ class LegacyKlibWriterTest : AbstractKlibWriterTest<LegacyKlibWriterParameters>(
 
     override fun writeKlib(parameters: LegacyKlibWriterParameters): File {
         val klibPath = buildKotlinLibrary(
-            linkDependencies = KlibLoader { libraryPaths(parameters.dependencies.map { it.path }) }.load().librariesStdlibFirst,
             metadata = parameters.metadata,
             ir = if (parameters.ir != null || parameters.irOfInlinableFunctions != null) {
                 SerializedIrModule(parameters.ir.orEmpty(), parameters.irOfInlinableFunctions)

@@ -98,7 +98,6 @@ fun generateKLib(
         diagnosticReporter = diagnosticReporter,
         metadataSerializer = KlibMetadataIncrementalSerializer(modulesStructure, moduleFragment),
         klibPath = outputKlibPath,
-        dependencies = modulesStructure.klibs.all,
         moduleFragment = moduleFragment,
         irBuiltIns = irBuiltIns,
         cleanFiles = icData,
@@ -496,7 +495,6 @@ fun serializeModuleIntoKlib(
     diagnosticReporter: IrDiagnosticReporter,
     metadataSerializer: KlibSingleFileMetadataSerializer<*>,
     klibPath: String,
-    dependencies: List<KotlinLibrary>,
     moduleFragment: IrModuleFragment,
     irBuiltIns: IrBuiltIns,
     cleanFiles: List<KotlinFileSerializedData>,
@@ -516,7 +514,7 @@ fun serializeModuleIntoKlib(
             configuration = configuration,
             diagnosticReporter = diagnosticReporter,
             cleanFiles = cleanFiles,
-            dependencies = dependencies,
+            dependencies = emptyList(),
             createModuleSerializer = { irDiagnosticReporter ->
                 JsIrModuleSerializer(
                     settings = IrSerializationSettings(configuration),
@@ -601,7 +599,6 @@ fun serializeModuleIntoKlib(
 
     performanceManager.tryMeasurePhaseTime(PhaseType.KlibWriting) {
         buildKotlinLibrary(
-            linkDependencies = serializerOutput.neededLibraries,
             ir = fullSerializedIr,
             metadata = serializerOutput.serializedMetadata ?: error("expected serialized metadata"),
             manifestProperties = properties,

@@ -34,7 +34,6 @@ private fun writeLibrary(
     libraryDestination: File
 ) {
     buildKotlinLibrary(
-        linkDependencies = emptyList(),
         metadata = metadata,
         ir = null,
         versions = manifestData.versions,
