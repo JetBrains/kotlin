@@ -3911,6 +3911,14 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val syntaxConstructionName: String
     }
 
+    interface WhenOnSealedGeenElse : KaFirDiagnostic<KtWhenExpression> {
+        override val diagnosticClass get() = WhenOnSealedGeenElse::class
+    }
+
+    interface WhenOnSealedWelElse : KaFirDiagnostic<KtWhenExpression> {
+        override val diagnosticClass get() = WhenOnSealedWelElse::class
+    }
+
     interface TypeParameterIsNotAnExpression : KaFirDiagnostic<KtSimpleNameExpression> {
         override val diagnosticClass get() = TypeParameterIsNotAnExpression::class
         val typeParameter: KaTypeParameterSymbol
