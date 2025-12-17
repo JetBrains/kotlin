@@ -48,11 +48,9 @@ internal class KaFirBackingFieldSymbol private constructor(
 
     override val isNotDefault: Boolean
         get() = withValidityAssertion {
-            if (backingPsi != null && !backingPsi.cameFromKotlinLibrary) {
-                return true
-            }
-
-            return firSymbol.fir !is FirDefaultPropertyBackingField
+            // Backing fields aren't visible for properties coming from libraries
+            return ifSource { true }
+                ?: (firSymbol.fir !is FirDefaultPropertyBackingField)
         }
 
     override val origin: KaSymbolOrigin
