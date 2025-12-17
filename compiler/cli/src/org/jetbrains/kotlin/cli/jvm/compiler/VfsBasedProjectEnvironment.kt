@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
 import java.io.File
 import java.nio.file.Path
 import kotlin.io.path.isDirectory
+import kotlin.io.path.isRegularFile
 
 class PsiBasedProjectFileSearchScope(val psiSearchScope: GlobalSearchScope) : AbstractProjectFileSearchScope {
 
@@ -134,8 +135,11 @@ open class VfsBasedProjectEnvironment(
                 .mapNotNull {
                     // this code is somewhat ad hoc, but currently it is exactly the logic of classpath processing that we're using in
                     // the cli compiler
-                    if (it.isDirectory()) knownFileSystems.findFileByPath(it.toFile().absolutePath, StandardFileSystems.FILE_PROTOCOL)
-                    else knownFileSystems.findFileByPath(it.toFile().absolutePath + JAR_SEPARATOR, StandardFileSystems.JAR_PROTOCOL)
+                    when {
+                        it.isDirectory() -> knownFileSystems.findFileByPath(it.toFile().absolutePath, StandardFileSystems.FILE_PROTOCOL)
+                        !it.isRegularFile() -> null
+                        else -> knownFileSystems.findFileByPath(it.toFile().absolutePath + JAR_SEPARATOR, StandardFileSystems.JAR_PROTOCOL)
+                    }
                 }
                 .takeIf { it.isNotEmpty() }
                 ?.let {
