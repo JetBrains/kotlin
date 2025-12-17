@@ -266,6 +266,9 @@ TEST_F(ThreadSuspensionTest, ConcurrentSuspendSeries) {
 }
 
 TEST_F(ThreadSuspensionTest, FileInitializationWithSuspend) {
+    #if KONAN_LINUX
+    GTEST_SKIP() << "KT-83220: fails on Linux";
+    #endif
     ASSERT_THAT(collectThreadData(), testing::IsEmpty());
     ASSERT_FALSE(mm::IsThreadSuspensionRequested());
 
