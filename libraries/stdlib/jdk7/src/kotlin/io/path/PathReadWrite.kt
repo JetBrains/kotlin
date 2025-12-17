@@ -266,6 +266,7 @@ public inline fun Path.readLines(charset: Charset = Charsets.UTF_8): List<String
 @SinceKotlin("1.5")
 @Throws(IOException::class)
 @kotlin.internal.InlineOnly
+@IgnorableReturnValue // KT-72691
 public inline fun <T> Path.useLines(charset: Charset = Charsets.UTF_8, block: (Sequence<String>) -> T): T {
     contract {
         callsInPlace(block, InvocationKind.EXACTLY_ONCE)
@@ -280,10 +281,12 @@ public inline fun <T> Path.useLines(charset: Charset = Charsets.UTF_8, block: (S
  * with [options].
  *
  * @param charset character set to use for writing text, UTF-8 by default.
+ * @return [this] path.
  */
 @SinceKotlin("1.5")
 @Throws(IOException::class)
 @kotlin.internal.InlineOnly
+@IgnorableReturnValue
 public inline fun Path.writeLines(lines: Iterable<CharSequence>, charset: Charset = Charsets.UTF_8, vararg options: OpenOption): Path {
     return Files.write(this, lines, charset, *options)
 }
@@ -295,10 +298,12 @@ public inline fun Path.writeLines(lines: Iterable<CharSequence>, charset: Charse
  * with [options].
  *
  * @param charset character set to use for writing text, UTF-8 by default.
+ * @return [this] path.
  */
 @SinceKotlin("1.5")
 @Throws(IOException::class)
 @kotlin.internal.InlineOnly
+@IgnorableReturnValue
 public inline fun Path.writeLines(lines: Sequence<CharSequence>, charset: Charset = Charsets.UTF_8, vararg options: OpenOption): Path {
     return Files.write(this, lines.asIterable(), charset, *options)
 }
@@ -307,10 +312,12 @@ public inline fun Path.writeLines(lines: Sequence<CharSequence>, charset: Charse
  * Appends the specified collection of char sequences [lines] to a file terminating each one with the platform's line separator.
  *
  * @param charset character set to use for writing text, UTF-8 by default.
+ * @return [this] path.
  */
 @SinceKotlin("1.5")
 @Throws(IOException::class)
 @kotlin.internal.InlineOnly
+@IgnorableReturnValue
 public inline fun Path.appendLines(lines: Iterable<CharSequence>, charset: Charset = Charsets.UTF_8): Path {
     return Files.write(this, lines, charset, StandardOpenOption.APPEND)
 }
@@ -319,12 +326,12 @@ public inline fun Path.appendLines(lines: Iterable<CharSequence>, charset: Chars
  * Appends the specified sequence of char sequences [lines] to a file terminating each one with the platform's line separator.
  *
  * @param charset character set to use for writing text, UTF-8 by default.
+ * @return [this] path.
  */
 @SinceKotlin("1.5")
 @Throws(IOException::class)
 @kotlin.internal.InlineOnly
+@IgnorableReturnValue
 public inline fun Path.appendLines(lines: Sequence<CharSequence>, charset: Charset = Charsets.UTF_8): Path {
     return Files.write(this, lines.asIterable(), charset, StandardOpenOption.APPEND)
 }
-
-
