@@ -56,42 +56,6 @@ fun Node.deregister() {
     session.unregister(this)
 }
 
-//fun <N: Node> N.register(): N {
-//    if (registered) return this // FIXME!!
-//    require(!registered)
-//    val uniq = ensureUnique() as N
-//
-//    if (uniq != this) {
-//        require(uniq.registered)
-//        return uniq
-//    }
-//
-//    for (arg in args) {
-//        arg?.addUse(this)
-//    }
-//
-//    if (!this.registered) {
-//        this as NodeBase
-//        this.id = -this.id
-//        require(this.registered)
-//    }
-//
-//    return this
-//}
-//
-//fun Node.deregister() {
-//    require(registered)
-//    require(uses.isEmpty())
-//    this as NodeBase
-//    id = -id
-//    require(!registered)
-//    form.deregister(this)
-//    for (arg in args) {
-//        // FIXME???
-//        arg?.removeUse(this)
-//    }
-//}
-
 // TODO
 interface NodeBuilder {
     val session: Session
