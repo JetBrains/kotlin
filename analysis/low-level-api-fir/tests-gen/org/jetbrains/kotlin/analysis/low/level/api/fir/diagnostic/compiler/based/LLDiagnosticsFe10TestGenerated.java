@@ -30346,6 +30346,12 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
       }
 
       @Test
+      @TestMetadata("expectInlineProperty.kt")
+      public void testExpectInlineProperty() {
+        runTest("compiler/testData/diagnostics/tests/multiplatform/expectInlineProperty.kt");
+      }
+
+      @Test
       @TestMetadata("expectInterfaceApplicability.kt")
       public void testExpectInterfaceApplicability() {
         runTest("compiler/testData/diagnostics/tests/multiplatform/expectInterfaceApplicability.kt");
