@@ -5,14 +5,19 @@
 
 package org.jetbrains.kotlin.analysis.api.resolve.extensions
 
+import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.extensions.ExtensionPointName
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaExtensibleApi
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
+import org.jetbrains.kotlin.utils.exceptions.rethrowIntellijPlatformExceptionIfNeeded
 
 /**
  * Provides [resolve extensions][KaResolveExtension] for [KaModule]s. Resolve extensions provide additional Kotlin files containing
  * generated declarations, which will be included in the resolution as if they were regular source files in the module.
+ *
+ * The extension point name is `org.jetbrains.kotlin.kaResolveExtensionProvider`.
  */
 @KaExtensibleApi
 @KaExperimentalApi
@@ -34,13 +39,25 @@ public abstract class KaResolveExtensionProvider {
      */
     public abstract fun provideExtensionsFor(module: KaModule): List<KaResolveExtension>
 
-    @KaExperimentalApi
+    @KaImplementationDetail
     public companion object {
-        public val EP_NAME: ExtensionPointName<KaResolveExtensionProvider> =
-            ExtensionPointName<KaResolveExtensionProvider>("org.jetbrains.kotlin.kaResolveExtensionProvider")
+        private val EP_NAME: ExtensionPointName<KaResolveExtensionProvider> = ExtensionPointName(
+            "org.jetbrains.kotlin.kaResolveExtensionProvider",
+        )
 
-        public fun provideExtensionsFor(module: KaModule): List<KaResolveExtension> {
-            return EP_NAME.getExtensionList(module.project).flatMap { it.provideExtensionsFor(module) }
+        @KaImplementationDetail
+        public fun provideExtensionsFor(module: KaModule): List<KaResolveExtension> = buildList {
+            EP_NAME.getExtensionList(module.project).forEach { provider ->
+                runCatching {
+                    provider.provideExtensionsFor(module)
+                }.onSuccess { resolveExtensions ->
+                    addAll(resolveExtensions)
+                }.onFailure { error ->
+                    rethrowIntellijPlatformExceptionIfNeeded(error)
+
+                    logger<KaResolveExtensionProvider>().error(error)
+                }
+            }
         }
     }
 }

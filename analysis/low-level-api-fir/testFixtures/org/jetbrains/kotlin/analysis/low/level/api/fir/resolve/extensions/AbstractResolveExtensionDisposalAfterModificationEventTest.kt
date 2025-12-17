@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,13 +7,13 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.extensions
 
 import com.intellij.mock.MockProject
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.resolve.extensions.KaResolveExtension
 import org.jetbrains.kotlin.analysis.api.resolve.extensions.KaResolveExtensionFile
 import org.jetbrains.kotlin.analysis.api.resolve.extensions.KaResolveExtensionProvider
 import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.AnalysisApiServiceRegistrar
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionCache
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.directives.publishModificationEventByDirective
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
@@ -74,7 +74,10 @@ object ResolveExtensionDisposalTestServiceRegistrar : AnalysisApiTestServiceRegi
         project: MockProject,
         testServices: TestServices,
     ) {
-        val extensionPoint = project.extensionArea.getExtensionPoint(KaResolveExtensionProvider.EP_NAME)
+        val extensionPoint = project.extensionArea.getExtensionPoint<KaResolveExtensionProvider>(
+            "org.jetbrains.kotlin.kaResolveExtensionProvider",
+        )
+
         extensionPoint.registerExtension(KaResolveExtensionWithDisposalTrackerProvider(), project)
     }
 }

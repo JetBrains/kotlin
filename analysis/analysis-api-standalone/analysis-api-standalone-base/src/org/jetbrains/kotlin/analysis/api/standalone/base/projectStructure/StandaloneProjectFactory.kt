@@ -136,7 +136,7 @@ object StandaloneProjectFactory {
         @Suppress("UnstableApiUsage")
         CoreApplicationEnvironment.registerExtensionPoint(
             project.extensionArea,
-            KaResolveExtensionProvider.EP_NAME.name,
+            "org.jetbrains.kotlin.kaResolveExtensionProvider",
             KaResolveExtensionProvider::class.java
         )
     }

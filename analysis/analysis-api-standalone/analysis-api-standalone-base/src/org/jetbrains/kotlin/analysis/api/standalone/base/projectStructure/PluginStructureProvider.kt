@@ -155,6 +155,7 @@ object PluginStructureProvider {
     private val allowedExtensionPointNames = listOf(
         "org.jetbrains.kotlin.analysis.additionalKDocResolutionProvider",
         "org.jetbrains.kotlin.kaAdditionalKDocResolutionProvider",
+        "org.jetbrains.kotlin.kaResolveExtensionProvider",
         "org.jetbrains.kotlin.kotlinContentScopeRefiner",
         "org.jetbrains.kotlin.kotlinGlobalSearchScopeMergeStrategy",
         "org.jetbrains.kotlin.psiReferenceProvider",

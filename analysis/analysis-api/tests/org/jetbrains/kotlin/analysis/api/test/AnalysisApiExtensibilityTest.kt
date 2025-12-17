@@ -9,11 +9,7 @@ import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.analysis.api.KaExtensibleApi
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.psi.KtClass
-import org.jetbrains.kotlin.psi.KtClassOrObject
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtObjectDeclaration
-import org.jetbrains.kotlin.psi.KtProperty
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
 import org.jetbrains.kotlin.test.TestDataAssertions
 import org.junit.jupiter.api.Test
@@ -97,8 +93,6 @@ class AnalysisApiExtensibilityTest : AbstractAnalysisApiSurfaceCodebaseValidatio
         val EXTENSION_POINT_NAME: String = ExtensionPointName::class.simpleName!!
 
         val ignoredExtensionPointUsages: List<String> = listOf(
-            "org.jetbrains.kotlin.analysis.api.resolve.extensions.KaResolveExtensionProvider.Companion.EP_NAME",
-
             // Should be dropped together with deprecated AdditionalKDocResolutionProvider
             "org.jetbrains.kotlin.analysis.api.symbols.AdditionalKDocResolutionProvider.Companion.EP_NAME",
         )
