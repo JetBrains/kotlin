@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.ir.util.fileOrNull
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.isOverridable
 import org.jetbrains.kotlin.ir.util.isReal
+import org.jetbrains.kotlin.ir.util.render
 
 
 internal fun IrSimpleFunction.shouldGenerateBody(): Boolean = modality != Modality.ABSTRACT && !isExternal
@@ -73,16 +74,20 @@ internal class HairGenerator(val context: Context, val module: IrModuleFragment)
     val funCompilations = mutableMapOf<IrFunction, FunctionCompilation>()
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
-        // TODO non-simple functions
-        if (context.config.enableHair && container is IrSimpleFunction) {
-            try {
-                funCompilations[container] = generateHair(container)
-                context.log { "# Successfully generated HaIR for ${container.computeFullName()}" }
-            } catch (e: HairNotImplementedYet) {
-                context.reportWarning("Failed to generate HaIR for ${container.computeFullName()}: $e", container.fileOrNull, container)
-            } catch (e: Throwable) {
-                println("# Failed with $e")
-                context.reportWarning("Failed to generate HaIR for ${container.computeFullName()}: $e\n${e.stackTraceToString()}", container.fileOrNull, container)
+        if (context.config.enableHair) {
+            if (container is IrSimpleFunction) {
+                try {
+                    funCompilations[container] = generateHair(container)
+                    context.log { "# Successfully generated HaIR for ${container.computeFullName()}" }
+                } catch (e: HairNotImplementedYet) {
+                    context.reportWarning("Failed to generate HaIR for ${container.computeFullName()}: $e", container.fileOrNull, container)
+                } catch (e: Throwable) {
+                    println("# Failed with $e")
+                    context.reportWarning("Failed to generate HaIR for ${container.computeFullName()}: $e\n${e.stackTraceToString()}", container.fileOrNull, container)
+                }
+            } else {
+                // TODO non-simple functions ?
+                println("## Non-simple ${container.render()}")
             }
         }
     }
@@ -423,6 +428,9 @@ internal class HairGenerator(val context: Context, val module: IrModuleFragment)
                                 UnitValue()
                             }
 //                            IrTypeOperator.IMPLICIT_INTEGER_COERCION -> TODO()
+
+                            // TODO extract null checks
+                            // TODO drop up-casts (in normalization?) (requires type system interface)
                             IrTypeOperator.INSTANCEOF -> IsInstanceOf(cls!!)(arg)
                             IrTypeOperator.NOT_INSTANCEOF -> Not(IsInstanceOf(cls!!)(arg))
 
@@ -473,10 +481,7 @@ internal class HairGenerator(val context: Context, val module: IrModuleFragment)
 
             funCompilation.dumpHair("initial_ir")
 
-            buildSSA {
-                it as IrValueSymbol
-                it.owner.type.asHairType()
-            }
+            buildSSA { (it as IrValueSymbol).owner.type.asHairType() }
             funCompilation.dumpHair("initial_ir_after_SSA")
 
             optimize()

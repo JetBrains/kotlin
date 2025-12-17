@@ -45,7 +45,8 @@ fun Session.lower() {
                         override fun visitNode(node: Node) = Unit
 
                         override fun visitIsInstanceOf(node: IsInstanceOf) {
-                            contextOf<ControlFlowBuilder>().at(pos(node))
+                            val control = pos(node)
+                            contextOf<ControlFlowBuilder>().at(control)
 
                             // TODO fast type checks
 
@@ -55,6 +56,7 @@ fun Session.lower() {
                                 ConstTypeInfo(node.targetType)
                             )
                             node.replaceValueUsesAndKill(replacement)
+                            control.next.control = replacement
                         }
                     }
 
