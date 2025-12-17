@@ -111,6 +111,7 @@ object CommonExpressionCheckers : ExpressionCheckers() {
         FirConfusingWhenBranchSyntaxChecker,
         FirWhenGuardChecker,
         FirWhenReturnTypeChecker,
+        FirWhenOnSealedChecker,
     )
 
     override val loopExpressionCheckers: Set<FirLoopExpressionChecker> = setOf(
