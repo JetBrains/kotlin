@@ -67,6 +67,10 @@ class KlibIrValidationBeforeLoweringPhase<Context : LoweringContext>(context: Co
                     }
             }
             .withCheckers(IrExpressionBodyInFunctionChecker)
+            .withoutCheckers(IrVisibilityChecker.Strict)
+            .applyIf(context.configuration.enableIrVisibilityChecks) {
+                withCheckers(IrVisibilityChecker.Relaxed)
+            }
 }
 
 class IrValidationAfterInliningOnlyPrivateFunctionsPhase<Context : LoweringContext>(
@@ -77,7 +81,7 @@ class IrValidationAfterInliningOnlyPrivateFunctionsPhase<Context : LoweringConte
         get() = IrValidatorConfig(checkTreeConsistency = true)
             .withBasicChecks()
             .applyIf(context.configuration.enableIrVisibilityChecks) {
-                withCheckers(IrVisibilityChecker.Strict)
+                withCheckers(IrVisibilityChecker.Relaxed)
             }
             .applyIf(context.configuration.enableIrNestedOffsetsChecks) {
                 withCheckers(IrNestedOffsetRangeChecker)
