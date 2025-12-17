@@ -60,7 +60,7 @@ sealed class NodeBase(final override val form: Form, args: List<Node?>) : Node {
 
 // FIXME move?
 class ControlFlowBuilder(at: Controlling) {
-    // TODO replace null with unreachable??
+    // TODO replace null with unreachable?? prob not a good idea. even better - add a reset to null method
     var lastControl: Controlling? = at
 
     // TODO make scoped?
