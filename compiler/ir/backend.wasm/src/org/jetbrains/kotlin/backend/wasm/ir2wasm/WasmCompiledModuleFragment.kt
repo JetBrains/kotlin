@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.backend.wasm.ir2wasm
 
 import com.intellij.util.containers.reverse
 import org.jetbrains.kotlin.backend.common.compilationException
+import org.jetbrains.kotlin.backend.common.serialization.Hash128Bits
+import org.jetbrains.kotlin.backend.common.serialization.cityHash128
 import org.jetbrains.kotlin.backend.common.serialization.cityHash64
 import org.jetbrains.kotlin.backend.wasm.MultimoduleCompileOptions
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
@@ -378,16 +380,26 @@ class WasmCompiledModuleFragment(
             gcTypesReversed[gcType.value] = gcType.key
         }
 
+        val vtTypeReversed = IdentityHashMap<WasmTypeDeclaration, IdSignature>()
+        for (vtableType in definedDeclarations.vTableGcTypes) {
+            vtTypeReversed[vtableType.value] = vtableType.key
+        }
+
+        val vtableSeed = Hash128Bits(0xc3a5c85c97cb3127U, 0xb492b66fbe98f273U)
+        val getStableId: (WasmStructDeclaration) -> Hash128Bits = fun(declaration: WasmStructDeclaration): Hash128Bits {
+            val gcType = gcTypesReversed[declaration]
+            val signatureString = (gcType ?: vtTypeReversed.getValue(declaration)).toString()
+            val signatureHash = cityHash128(signatureString.toByteArray())
+            return if (gcType != null) signatureHash else vtableSeed.combineWith(signatureHash)
+        }
+
         recursiveGroups.forEach { group ->
             val single = group.singleOrNull()
             if (single != null && single !is WasmStructDeclaration) {
                 return@forEach
             }
 
-            if (group.size > 1) {
-                val needStableSort = group.any { it is WasmStructDeclaration }
-                canonicalSort(group, needStableSort, heapTypeResolver)
-            }
+            canonicalStableSort(group, heapTypeResolver, getStableId)
 
             val firstGroupGcTypeSignature = group.firstNotNullOfOrNull {
                 gcTypesReversed[it]
