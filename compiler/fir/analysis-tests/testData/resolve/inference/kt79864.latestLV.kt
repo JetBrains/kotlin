@@ -10,7 +10,7 @@ fun <F : Enum<*>> field(defValue: F) {
     val tmp = defValue::class.myJava
     java.lang.Enum.valueOf(tmp, "str")
 
-    java.lang.Enum.valueOf(<!ARGUMENT_TYPE_MISMATCH!>defValue::class.myJava<!>, "str")
+    java.lang.Enum.valueOf(defValue::class.myJava, "str")
 
     expect {
         val tmp = defValue::class.myJava
@@ -18,7 +18,7 @@ fun <F : Enum<*>> field(defValue: F) {
     }
 
     expect {
-        java.lang.Enum.valueOf(<!ARGUMENT_TYPE_MISMATCH!>defValue::class.myJava<!>, "str")
+        java.lang.Enum.valueOf(defValue::class.myJava, "str")
     }
 }
 

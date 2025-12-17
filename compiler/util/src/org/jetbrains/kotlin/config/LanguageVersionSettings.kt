@@ -456,6 +456,8 @@ enum class LanguageFeature(
     // 2.4
 
     AnnotationsInMetadata(KOTLIN_2_4, "KT-75736"),
+    DontMakeExplicitJavaTypeArgumentsFlexible(KOTLIN_2_4, "KTLC-284"),
+    PreciseSimplificationToFlexibleLowerConstraint(KOTLIN_2_4, "KT-78621"),
     ForbidExposingLessVisibleTypesInInline(KOTLIN_2_4, enabledInProgressiveMode = true, "KTLC-283"),
     ForbidCaptureInlinableLambdasInJsCode(KOTLIN_2_4, enabledInProgressiveMode = true, "KT-69297"),
     ForbidInitializationBeforeDeclarationInAnonymous(KOTLIN_2_4, enabledInProgressiveMode = true, "KTLC-290"),
@@ -547,8 +549,6 @@ enum class LanguageFeature(
     // NB: Currently, leads to regression KT-82132
     DisableSimplificationOfFlexibleUpperConstraintWithDnnLowerBound(sinceVersion = null, "KT-52283"),
 
-    DontMakeExplicitJavaTypeArgumentsFlexible(sinceVersion = null, "KTLC-284"),
-    PreciseSimplificationToFlexibleLowerConstraint(sinceVersion = null, "KT-78621"),
     DiscriminateSuspendInOverloadResolution(sinceVersion = null, "KT-23610"), // Postponed because of KT-82869
 
     // Experimental features

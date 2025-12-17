@@ -4,6 +4,7 @@
 // WITH_STDLIB
 // ISSUE: KT-64802 (K2/PCLA difference)
 // ISSUE: KT-65005 (performance problem)
+// LATEST_LV_DIFFERENCE
 
 // FILE: Test.java
 
