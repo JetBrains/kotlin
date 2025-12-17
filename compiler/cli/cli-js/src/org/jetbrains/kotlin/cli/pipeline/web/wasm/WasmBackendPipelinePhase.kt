@@ -15,11 +15,13 @@ import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmCompiledFileFragment
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmModuleFragmentGenerator
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmModuleMetadataCache
 import org.jetbrains.kotlin.backend.wasm.writeCompilationResult
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.js.IcCachesArtifacts
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.pipeline.web.WasmBackendPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.web.WebBackendPipelinePhase
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.config.moduleName
 import org.jetbrains.kotlin.config.perfManager
 import org.jetbrains.kotlin.ir.backend.js.ModulesStructure
@@ -69,7 +71,7 @@ object WasmBackendPipelinePhase : WebBackendPipelinePhase<WasmBackendPipelineArt
     override fun compileIncrementally(
         icCaches: IcCachesArtifacts,
         configuration: CompilerConfiguration,
-    ): WasmIrModuleConfiguration = compileIncrementally(
+    ): WasmIrModuleConfiguration? = compileIncrementally(
         icCaches = icCaches,
         configuration = configuration,
         moduleName = configuration.moduleName!!,
@@ -89,7 +91,15 @@ object WasmBackendPipelinePhase : WebBackendPipelinePhase<WasmBackendPipelineArt
         wasmDebug: Boolean,
         wasmGenerateWat: Boolean,
         generateDwarf: Boolean
-    ): WasmIrModuleConfiguration {
+    ): WasmIrModuleConfiguration? {
+        if (configuration.getBoolean(WasmConfigurationKeys.WASM_INCLUDED_MODULE_ONLY)) {
+            configuration.messageCollector.report(
+                CompilerMessageSeverity.ERROR,
+                "Incremental compilation not supported for single module mode"
+            )
+            return null
+        }
+
         val wasmArtifacts = icCaches.artifacts
             .filterIsInstance<WasmModuleArtifact>()
             .flatMap { it.fileArtifacts }
