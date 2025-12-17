@@ -31,6 +31,10 @@ abstract class IrWhen : IrExpression() {
         branches.forEach { it.accept(visitor, data) }
     }
 
+    override fun acceptChildrenVoid(visitor: IrVisitorVoid) {
+        branches.forEach { it.acceptVoid(visitor) }
+    }
+
     override fun <D> transformChildren(transformer: IrTransformer<D>, data: D) {
         branches.transformInPlace(transformer, data)
     }

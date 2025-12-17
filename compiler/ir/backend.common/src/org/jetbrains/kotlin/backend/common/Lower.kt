@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.ir.util.transformFlat
 import org.jetbrains.kotlin.ir.util.transformSubsetFlat
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
-import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
 
 interface ModuleLoweringPass {

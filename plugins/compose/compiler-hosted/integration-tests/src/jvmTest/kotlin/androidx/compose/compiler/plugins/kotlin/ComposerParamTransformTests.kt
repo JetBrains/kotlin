@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.classFqName
 import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
-import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.junit.Assert.assertEquals
 import org.junit.Test
 

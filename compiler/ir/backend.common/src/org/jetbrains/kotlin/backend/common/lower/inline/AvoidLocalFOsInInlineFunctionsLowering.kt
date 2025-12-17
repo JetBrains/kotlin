@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.ir.util.getAllSubstitutedSupertypes
 import org.jetbrains.kotlin.ir.util.isLocal
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
-import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 
 /**
  * KLIB based backends have a problem linking a reference to fake override member of local class, if the class happened to be inlined (KT-72296).

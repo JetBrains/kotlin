@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.generators.tree.AbstractElementPrinter
 import org.jetbrains.kotlin.generators.tree.AbstractFieldPrinter
 import org.jetbrains.kotlin.generators.tree.StandardTypes
 import org.jetbrains.kotlin.generators.tree.imports.ArbitraryImportable
-import org.jetbrains.kotlin.generators.tree.nullable
 import org.jetbrains.kotlin.generators.tree.printer.*
 import org.jetbrains.kotlin.generators.util.printBlock
 import org.jetbrains.kotlin.ir.generator.BASE_PACKAGE
@@ -71,26 +70,14 @@ internal class ElementPrinter(printer: ImportCollectingPrinter) : AbstractElemen
                 visitorResultType = StandardTypes.unit,
                 override = !element.isRootElement,
             )
+            printAcceptChildrenBody(element)
 
-            if (!element.isRootElement) {
-                printBlock {
-                    for (child in element.walkableChildren) {
-                        print(child.name, child.call())
-                        when (child) {
-                            is SimpleField -> println("accept(visitor, data)")
-                            is ListField -> {
-                                print("forEach { it")
-                                if (child.baseType.nullable) {
-                                    print("?")
-                                }
-                                println(".accept(visitor, data) }")
-                            }
-                        }
-                    }
-                }
-            } else {
-                println()
-            }
+            printAcceptChildrenVoidMethod(
+                element = element,
+                visitorClass = irVisitorVoidType,
+                override = !element.isRootElement,
+            )
+            printAcceptChildrenBody(element, isVoid = true)
         }
 
         if (element.hasTransformChildrenMethod) {

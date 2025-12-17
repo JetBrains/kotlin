@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
-import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import java.util.*
 
 private fun BitSet.withBit(bit: Int) = if (get(bit)) this else copy().also { it.set(bit) }

@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.ir.util.preparedInlineFunctionCopies
 import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.ir.util.originalOfPreparedInlineFunctionCopy
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
-import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 
 @PhasePrerequisites(FunctionInlining::class)
 class InlineFunctionSerializationPreProcessing(

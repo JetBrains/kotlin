@@ -136,6 +136,10 @@ abstract class IrValueParameter : IrDeclarationBase(), IrValueDeclaration {
         defaultValue?.accept(visitor, data)
     }
 
+    override fun acceptChildrenVoid(visitor: IrVisitorVoid) {
+        defaultValue?.acceptVoid(visitor)
+    }
+
     override fun <D> transformChildren(transformer: IrTransformer<D>, data: D) {
         defaultValue = defaultValue?.transform(transformer, data)
     }

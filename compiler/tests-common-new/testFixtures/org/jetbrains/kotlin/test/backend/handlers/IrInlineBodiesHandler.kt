@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
 import org.jetbrains.kotlin.ir.util.deserializedIr
 import org.jetbrains.kotlin.ir.util.resolveFakeOverrideOrFail
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
-import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.frontend.fir.Fir2IrCliBasedOutputArtifact
 import org.jetbrains.kotlin.test.model.FrontendKinds

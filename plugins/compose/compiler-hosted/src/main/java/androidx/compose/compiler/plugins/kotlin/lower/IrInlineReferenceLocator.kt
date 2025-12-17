@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
-import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 
 class ComposeInlineLambdaLocator(private val context: IrPluginContext) {
     private val inlineLambdaToParameter = mutableMapOf<IrFunctionSymbol, IrValueParameter>()

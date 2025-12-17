@@ -31,6 +31,10 @@ abstract class IrFunctionExpression : IrExpression() {
         function.accept(visitor, data)
     }
 
+    override fun acceptChildrenVoid(visitor: IrVisitorVoid) {
+        function.acceptVoid(visitor)
+    }
+
     override fun <D> transformChildren(transformer: IrTransformer<D>, data: D) {
         function = function.transform(transformer, data) as IrSimpleFunction
     }

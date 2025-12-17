@@ -481,6 +481,27 @@ fun ImportCollectingPrinter.printAcceptChildrenMethod(
     )
 }
 
+fun ImportCollectingPrinter.printAcceptChildrenVoidMethod(
+    element: FieldContainer<*>,
+    visitorClass: ClassRef<PositionTypeParameterRef>,
+    modality: Modality? = null,
+    override: Boolean = false,
+) {
+    if (!element.hasAcceptChildrenMethod) return
+    println()
+    val visitorParameter = FunctionParameter("visitor", visitorClass)
+    if (!override) {
+        printKDoc(acceptChildrenKDoc(visitorParameter, null))
+    }
+    printFunctionDeclaration(
+        name = "acceptChildrenVoid",
+        parameters = listOf(visitorParameter),
+        returnType = StandardTypes.unit,
+        modality = modality,
+        override = override,
+    )
+}
+
 private fun transformChildrenMethodKDoc(transformerParameter: FunctionParameter, dataParameter: FunctionParameter?, returnType: TypeRef) =
     buildString {
         append("Recursively transforms this node's children *in place* using [")

@@ -34,6 +34,11 @@ abstract class IrDynamicOperatorExpression : IrDynamicExpression() {
         arguments.forEach { it.accept(visitor, data) }
     }
 
+    override fun acceptChildrenVoid(visitor: IrVisitorVoid) {
+        receiver.acceptVoid(visitor)
+        arguments.forEach { it.acceptVoid(visitor) }
+    }
+
     override fun <D> transformChildren(transformer: IrTransformer<D>, data: D) {
         receiver = receiver.transform(transformer, data)
         arguments.transformInPlace(transformer, data)

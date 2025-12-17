@@ -149,6 +149,11 @@ abstract class IrRichFunctionReference : IrRichCallableReference<IrFunctionSymbo
         invokeFunction.accept(visitor, data)
     }
 
+    override fun acceptChildrenVoid(visitor: IrVisitorVoid) {
+        boundValues.forEach { it.acceptVoid(visitor) }
+        invokeFunction.acceptVoid(visitor)
+    }
+
     override fun <D> transformChildren(transformer: IrTransformer<D>, data: D) {
         boundValues.transformInPlace(transformer, data)
         invokeFunction = invokeFunction.transform(transformer, data) as IrSimpleFunction

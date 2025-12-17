@@ -32,6 +32,11 @@ abstract class IrErrorCallExpression : IrErrorExpression() {
         arguments.forEach { it.accept(visitor, data) }
     }
 
+    override fun acceptChildrenVoid(visitor: IrVisitorVoid) {
+        explicitReceiver?.acceptVoid(visitor)
+        arguments.forEach { it.acceptVoid(visitor) }
+    }
+
     override fun <D> transformChildren(transformer: IrTransformer<D>, data: D) {
         explicitReceiver = explicitReceiver?.transform(transformer, data)
         arguments.transformInPlace(transformer, data)

@@ -52,6 +52,10 @@ abstract class IrReplSnippet : IrDeclarationBase(), IrDeclarationWithName, IrDec
         receiverParameters.forEach { it.accept(visitor, data) }
     }
 
+    override fun acceptChildrenVoid(visitor: IrVisitorVoid) {
+        receiverParameters.forEach { it.acceptVoid(visitor) }
+    }
+
     override fun <D> transformChildren(transformer: IrTransformer<D>, data: D) {
         receiverParameters = receiverParameters.transformIfNeeded(transformer, data)
     }

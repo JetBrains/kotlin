@@ -33,6 +33,10 @@ abstract class IrTypeOperatorCall : IrExpression() {
         argument.accept(visitor, data)
     }
 
+    override fun acceptChildrenVoid(visitor: IrVisitorVoid) {
+        argument.acceptVoid(visitor)
+    }
+
     override fun <D> transformChildren(transformer: IrTransformer<D>, data: D) {
         argument = argument.transform(transformer, data)
     }

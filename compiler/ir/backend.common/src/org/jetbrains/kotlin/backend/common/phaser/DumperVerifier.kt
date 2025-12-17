@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.ir.validation.validateIr
 import org.jetbrains.kotlin.ir.validation.withBasicChecks
 import org.jetbrains.kotlin.ir.validation.withTypeChecks
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
-import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf

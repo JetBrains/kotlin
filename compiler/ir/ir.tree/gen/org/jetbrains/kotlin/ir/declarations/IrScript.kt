@@ -78,6 +78,15 @@ abstract class IrScript : IrDeclarationBase(), IrDeclarationWithName, IrDeclarat
         earlierScriptsParameter?.accept(visitor, data)
     }
 
+    override fun acceptChildrenVoid(visitor: IrVisitorVoid) {
+        statements.forEach { it.acceptVoid(visitor) }
+        thisReceiver?.acceptVoid(visitor)
+        explicitCallParameters.forEach { it.acceptVoid(visitor) }
+        implicitReceiversParameters.forEach { it.acceptVoid(visitor) }
+        providedPropertiesParameters.forEach { it.acceptVoid(visitor) }
+        earlierScriptsParameter?.acceptVoid(visitor)
+    }
+
     override fun <D> transformChildren(transformer: IrTransformer<D>, data: D) {
         statements.transformInPlace(transformer, data)
         thisReceiver = thisReceiver?.transform(transformer, data)

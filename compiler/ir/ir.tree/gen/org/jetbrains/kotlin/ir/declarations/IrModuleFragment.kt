@@ -46,6 +46,10 @@ abstract class IrModuleFragment : IrElementBase(), IrElement {
         files.forEach { it.accept(visitor, data) }
     }
 
+    override fun acceptChildrenVoid(visitor: IrVisitorVoid) {
+        files.forEach { it.acceptVoid(visitor) }
+    }
+
     override fun <D> transformChildren(transformer: IrTransformer<D>, data: D) {
         files.transformInPlace(transformer, data)
     }

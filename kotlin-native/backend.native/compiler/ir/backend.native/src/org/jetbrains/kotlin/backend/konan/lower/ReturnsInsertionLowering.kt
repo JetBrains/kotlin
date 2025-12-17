@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.ir.types.isNullableNothing
 import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.ir.util.innerInlinedBlockOrThis
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
-import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 
 /**
  * Generates [IrReturn]s for `Unit`-returning functions.

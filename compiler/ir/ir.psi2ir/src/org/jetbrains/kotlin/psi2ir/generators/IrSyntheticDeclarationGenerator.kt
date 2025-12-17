@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.util.withScope
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
-import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 
 internal class IrSyntheticDeclarationGenerator(context: GeneratorContext) : IrVisitorVoid() {

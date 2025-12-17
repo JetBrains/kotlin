@@ -82,6 +82,17 @@ interface IrElement {
     fun <D> acceptChildren(visitor: IrVisitor<Unit, D>, data: D)
 
     /**
+     * Runs the provided [visitor] on subtrees with roots in this node's children.
+     *
+     * Basically, calls `accept(visitor)` on each child of this node.
+     *
+     * Does **not** run [visitor] on this node itself.
+     *
+     * @param visitor The visitor for children to accept.
+     */
+    fun acceptChildrenVoid(visitor: IrVisitorVoid)
+
+    /**
      * Recursively transforms this node's children *in place* using [transformer].
      *
      * Basically, executes `this.child = this.child.transform(transformer, data)` for each child of this node.

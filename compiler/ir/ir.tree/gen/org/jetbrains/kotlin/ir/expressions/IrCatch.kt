@@ -39,6 +39,11 @@ abstract class IrCatch : IrElementBase(), IrElement {
         result.accept(visitor, data)
     }
 
+    override fun acceptChildrenVoid(visitor: IrVisitorVoid) {
+        catchParameter.acceptVoid(visitor)
+        result.acceptVoid(visitor)
+    }
+
     override fun <D> transformChildren(transformer: IrTransformer<D>, data: D) {
         catchParameter = catchParameter.transform(transformer, data) as IrVariable
         result = result.transform(transformer, data)
