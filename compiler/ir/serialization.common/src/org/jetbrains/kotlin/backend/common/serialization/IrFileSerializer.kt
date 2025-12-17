@@ -112,7 +112,7 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.MemberAccessCommo
 import org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression as ProtoNullableIrExpression
 
 open class IrFileSerializer(
-    private val settings: IrSerializationSettings,
+    protected val settings: IrSerializationSettings,
     private val declarationTable: DeclarationTable<*>,
 ) {
     private val loopIndex = hashMapOf<IrLoop, Int>()
