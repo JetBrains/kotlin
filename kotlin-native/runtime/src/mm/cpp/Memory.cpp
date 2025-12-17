@@ -76,11 +76,6 @@ void ObjHeader::destroyMetaObject(ObjHeader* object) {
     alloc::destroyExtraObjectData(extraObject);
 }
 
-extern "C" MemoryState* InitMemory() {
-    mm::waitGlobalDataInitialized();
-    return mm::ToMemoryState(mm::ThreadRegistry::Instance().RegisterCurrentThread());
-}
-
 void kotlin::initGlobalMemory() noexcept {
     mm::GlobalData::init();
 }

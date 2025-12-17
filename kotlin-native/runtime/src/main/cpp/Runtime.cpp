@@ -3,23 +3,26 @@
  * that can be found in the LICENSE file.
  */
 
-#include "std_support/Atomic.hpp"
+#include <cstdint>
+#include <cstdlib>
+#include <thread>
+
 #include "CompilerConstants.hpp"
+#include "CrashHandler.hpp"
 #include "Exceptions.h"
+#include "GlobalData.hpp"
 #include "KAssert.h"
-#include "Memory.h"
+#include "KString.h"
 #include "Logging.hpp"
+#include "Memory.h"
+#include "MemoryPrivate.hpp"
 #include "ObjCExportInit.h"
 #include "Porting.h"
 #include "Runtime.h"
 #include "RuntimePrivate.hpp"
+#include "ThreadRegistry.hpp"
 #include "Worker.h"
-#include "KString.h"
-#include "CrashHandler.hpp"
-#include <atomic>
-#include <cstdint>
-#include <cstdlib>
-#include <thread>
+#include "std_support/Atomic.hpp"
 
 using namespace kotlin;
 
@@ -94,7 +97,8 @@ NO_INLINE RuntimeState* initRuntime() {
   ++aliveRuntimesCount;
 
   bool firstRuntime = initializeGlobalRuntimeIfNeeded();
-  result->memoryState = InitMemory();
+  mm::waitGlobalDataInitialized();
+  result->memoryState = mm::ToMemoryState(mm::ThreadRegistry::Instance().RegisterCurrentThread());
   // Switch thread state because worker and globals inits require the runnable state.
   // This call may block if GC requested suspending threads.
   ThreadStateGuard stateGuard(result->memoryState, kotlin::ThreadState::kRunnable);

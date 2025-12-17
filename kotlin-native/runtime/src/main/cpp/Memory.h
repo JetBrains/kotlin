@@ -160,7 +160,6 @@ extern "C" {
 
 struct MemoryState;
 
-MemoryState* InitMemory();
 void DeinitMemory(MemoryState*);
 void ClearMemoryForTests(MemoryState*);
 
