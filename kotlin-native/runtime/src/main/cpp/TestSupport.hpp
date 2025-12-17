@@ -38,7 +38,7 @@ public:
     ~ScopedMemoryInit() {
         // ClearForTests must not be done concurrently with GC
         SwitchThreadState(memoryState(), ThreadState::kRunnable, /* reentrant = */ true);
-        ClearMemoryForTests(memoryState());
+        memoryState()->GetThreadData()->ClearForTests();
         // Ensure that memory deinit is performed in the native state.
         SwitchThreadState(memoryState(), ThreadState::kNative);
         mm::ThreadRegistry::Instance().Unregister(mm::FromMemoryState(memoryState()));

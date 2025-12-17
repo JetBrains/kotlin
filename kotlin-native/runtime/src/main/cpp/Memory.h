@@ -160,8 +160,6 @@ extern "C" {
 
 struct MemoryState;
 
-void ClearMemoryForTests(MemoryState*);
-
 //
 // Object allocation.
 //
