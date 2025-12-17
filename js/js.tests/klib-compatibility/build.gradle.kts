@@ -43,18 +43,6 @@ sourceSets {
 
 testsJar {}
 
-fun Test.setUpJsBoxTests(tag: String) {
-    with(d8KotlinBuild) {
-        setupV8()
-    }
-    jvmArgumentProviders += objects.newInstance<SystemPropertyClasspathProvider>().apply {
-        classpath.from(rootDir.resolve("js/js.tests/testFixtures/org/jetbrains/kotlin/js/engine/repl.js"))
-        property.set("javascript.engine.path.repl")
-    }
-    systemProperty("kotlin.js.test.root.out.dir", "${node.nodeProjectDir.get().asFile}/")
-    useJUnitPlatform { includeTags(tag) }
-}
-
 data class CustomCompilerVersion(val rawVersion: String) {
     val sanitizedVersion = rawVersion.replace('.', '_').replace('-', '_')
     override fun toString() = sanitizedVersion
@@ -101,8 +89,7 @@ fun Project.customCompilerTest(
         }
     }
 
-    return projectTests.testTask(taskName, jUnitMode = JUnitMode.JUnit5, skipInLocalBuild = false) {
-        setUpJsBoxTests(tag)
+    return projectTests.jsTestTask(taskName, tag) {
         addClasspathProperty(customCompiler, "kotlin.internal.js.test.compat.customCompilerClasspath")
         addClasspathProperty(runtimeDependencies, "kotlin.internal.js.test.compat.runtimeDependencies")
         systemProperty("kotlin.internal.js.test.compat.customCompilerVersion", version.rawVersion)

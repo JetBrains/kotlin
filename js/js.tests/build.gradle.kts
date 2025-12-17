@@ -101,26 +101,18 @@ sourceSets {
 
 val testDataDir = project(":js:js.translator").projectDir.resolve("testData")
 
-fun Test.setUpJsBoxTests(tags: String?) {
-    with(d8KotlinBuild) {
-        setupV8()
-    }
+fun Test.setUpJsBoxTests() {
     with(nodeJsKotlinBuild) {
         setupNodeJs(nodejsVersion)
     }
 
     dependsOn(npmInstall)
 
-    jvmArgumentProviders += objects.newInstance<SystemPropertyClasspathProvider>().apply {
-        classpath.from(rootDir.resolve("js/js.tests/testFixtures/org/jetbrains/kotlin/js/engine/repl.js"))
-        property.set("javascript.engine.path.repl")
-    }
+    systemProperty(
+        "overwrite.output", project.providers.gradleProperty("overwrite.output").orNull ?: "false"
+    )
 
-    useJUnitPlatform {
-        tags?.let { includeTags(it) }
-    }
-
-    setUpBoxTests()
+    forwardProperties()
 }
 
 fun Test.forwardProperties() {
@@ -140,26 +132,17 @@ fun Test.forwardProperties() {
     }
 }
 
-fun Test.setUpBoxTests() {
-    systemProperty("kotlin.js.test.root.out.dir", "${node.nodeProjectDir.get().asFile}/")
-    systemProperty(
-        "overwrite.output", project.providers.gradleProperty("overwrite.output").orNull ?: "false"
-    )
-
-    forwardProperties()
-}
-
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit5) {
-        setUpJsBoxTests(null)
+    jsTestTask {
+        setUpJsBoxTests()
     }
 
-    testTask("jsTest", jUnitMode = JUnitMode.JUnit5, skipInLocalBuild = true) {
-        setUpJsBoxTests("!es6")
+    jsTestTask(taskName = "jsTest", tag = "!es6", skipInLocalBuild = true) {
+        setUpJsBoxTests()
     }
 
-    testTask("jsES6Test", jUnitMode = JUnitMode.JUnit5, skipInLocalBuild = true) {
-        setUpJsBoxTests("es6")
+    jsTestTask(taskName = "jsES6Test", tag = "es6", skipInLocalBuild = true) {
+        setUpJsBoxTests()
     }
 
     testTask("invalidationTest", jUnitMode = JUnitMode.JUnit5, skipInLocalBuild = true) {
