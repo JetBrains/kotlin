@@ -5,7 +5,7 @@ KtForExpression(23,37): 'for(i in f) {}'
     attempt: KaCompoundSymbolResolutionError
       attempts[0]: KaSymbolResolutionSuccess
       attempts[1]: KaSymbolResolutionError
-        diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'next'.>
+        diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'next' on receiver of type 'Iterator'.>
     symbols:
       0: (in Foo) operator fun iterator(): Iterator
       1: (in Iterator) operator fun hasNext(): kotlin.Boolean

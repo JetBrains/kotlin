@@ -1,14 +1,14 @@
-/otherOperators.kt:(456,458): error: Unresolved reference 'plusAssign'.
+/otherOperators.kt:(456,458): error: Unresolved reference 'plusAssign' on receiver of type 'StringProperty'.
 
-/otherOperators.kt:(502,504): error: Unresolved reference 'plusAssign'.
+/otherOperators.kt:(502,504): error: Unresolved reference 'plusAssign' on receiver of type 'StringProperty'.
 
-/otherOperators.kt:(560,562): error: Unresolved reference 'compareTo'.
+/otherOperators.kt:(560,562): error: Unresolved reference 'compareTo' on receiver of type 'StringProperty'.
 
-/otherOperators.kt:(606,608): error: Unresolved reference 'compareTo'.
+/otherOperators.kt:(606,608): error: Unresolved reference 'compareTo' on receiver of type 'StringProperty?'.
 
-/otherOperators.kt:(664,666): error: Unresolved reference 'compareTo'.
+/otherOperators.kt:(664,666): error: Unresolved reference 'compareTo' on receiver of type 'StringProperty'.
 
-/otherOperators.kt:(710,712): error: Unresolved reference 'compareTo'.
+/otherOperators.kt:(710,712): error: Unresolved reference 'compareTo' on receiver of type 'StringProperty?'.
 
 /otherOperators.kt:(769,772): error: No 'set' operator method providing array access.
 

@@ -2,25 +2,25 @@
 
 /labelClashes.kt:(180,185): warning: There is more than one label with such a name in this scope.
 
-/labelClashes.kt:(186,189): error: Unresolved reference 'inc'.
+/labelClashes.kt:(186,189): error: Unresolved reference 'inc' on receiver of type 'String'.
 
 /labelClashes.kt:(221,225): error: Cannot infer type for type parameter 'R'. Specify it explicitly.
 
 /labelClashes.kt:(248,252): warning: There is more than one label with such a name in this scope.
 
-/labelClashes.kt:(253,256): error: Unresolved reference 'inc'.
+/labelClashes.kt:(253,256): error: Unresolved reference 'inc' on receiver of type 'String'.
 
 /labelClashes.kt:(337,341): error: Cannot infer type for type parameter 'R'. Specify it explicitly.
 
 /labelClashes.kt:(364,369): warning: There is more than one label with such a name in this scope.
 
-/labelClashes.kt:(370,373): error: Unresolved reference 'foo'.
+/labelClashes.kt:(370,373): error: Unresolved reference 'foo' on receiver of type 'String'.
 
 /labelClashes.kt:(395,399): error: Cannot infer type for type parameter 'R'. Specify it explicitly.
 
 /labelClashes.kt:(427,432): warning: There is more than one label with such a name in this scope.
 
-/labelClashes.kt:(433,436): error: Unresolved reference 'foo'.
+/labelClashes.kt:(433,436): error: Unresolved reference 'foo' on receiver of type 'String'.
 
 /labelClashes.kt:(744,748): error: Cannot infer type for type parameter 'R'. Specify it explicitly.
 
@@ -32,7 +32,7 @@
 
 /labelClashes.kt:(833,838): warning: There is more than one label with such a name in this scope.
 
-/labelClashes.kt:(839,842): error: Unresolved reference 'inc'.
+/labelClashes.kt:(839,842): error: Unresolved reference 'inc' on receiver of type 'String'.
 
 /labelClashes.kt:(941,946): warning: There is more than one label with such a name in this scope.
 

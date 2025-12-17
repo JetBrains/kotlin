@@ -225,6 +225,14 @@ internal object FirToKtConversionCreator {
                 "org.jetbrains.kotlin.KtPsiSourceElement"
             )
         ),
+        ConeKotlinType::class to HLFunctionCallConversion(
+            "{0}?.let { firSymbolBuilder.typeBuilder.buildKtType(it) }",
+            KaType::class.createType(nullable = true)
+        ),
+        FirTypeRef::class to HLFunctionCallConversion(
+            "{0}?.let { firSymbolBuilder.typeBuilder.buildKtType(it) }",
+            KaType::class.createType(nullable = true)
+        ),
     )
 
     private val typeMapping: Map<KClass<*>, HLFunctionCallConversion> = mapOf(

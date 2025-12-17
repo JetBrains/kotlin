@@ -962,7 +962,11 @@ class FirCallResolver(
                         when {
                             classLikeBySuperRef?.isInterface == true -> ConeNoConstructorError
                             classLikeBySuperRef?.isExpect == true -> ConeNoImplicitDefaultConstructorOnExpectClass
-                            else -> ConeUnresolvedNameError(name, operatorToken, explicitReceiver?.resolvedType)
+                            else -> ConeUnresolvedNameError(
+                                name,
+                                operatorToken,
+                                explicitReceiver?.takeIf { it !is FirResolvedQualifier }?.resolvedType.takeIf { it is ConeClassLikeType },
+                                )
                         }
                     }
                 }
