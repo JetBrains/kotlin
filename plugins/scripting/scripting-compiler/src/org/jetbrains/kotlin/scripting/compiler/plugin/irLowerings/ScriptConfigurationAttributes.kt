@@ -6,9 +6,11 @@
 package org.jetbrains.kotlin.scripting.compiler.plugin.irLowerings
 
 import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrScript
 import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import kotlin.script.experimental.api.ScriptCompilationConfiguration
 
 data class ScriptResultFieldData(
     val scriptClassName: FqName,
@@ -17,3 +19,5 @@ data class ScriptResultFieldData(
 )
 
 var IrClass.scriptResultFieldDataAttr: ScriptResultFieldData? by irAttribute(copyByDefault = true)
+
+var IrScript.scriptCompilationConfiguration: ScriptCompilationConfiguration? by irAttribute(copyByDefault = true)
