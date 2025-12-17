@@ -7,18 +7,10 @@ package org.jetbrains.kotlin.cli.common
 
 import com.intellij.ide.highlighter.JavaFileType
 import org.jetbrains.kotlin.cli.CliDiagnostics
-import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
-import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments
-import org.jetbrains.kotlin.cli.common.arguments.Disables
-import org.jetbrains.kotlin.cli.common.arguments.Enables
-import org.jetbrains.kotlin.cli.common.arguments.argumentAnnotation
-import org.jetbrains.kotlin.cli.common.arguments.cliArgument
-import org.jetbrains.kotlin.cli.common.arguments.toLanguageVersionSettings
-import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
+import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.*
-import org.jetbrains.kotlin.diagnostics.DiagnosticBaseContext
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.FlexibleTypeImpl
@@ -96,7 +88,7 @@ fun CompilerConfiguration.setupCommonArguments(
     setupLanguageVersionSettings(arguments)
 
     // It should be called after the language version is initialized because the reporting depends on the current language version
-    checkRedundantArguments(arguments, messageCollector)
+    checkRedundantArguments(arguments)
 
     val usesK2 = languageVersionSettings.languageVersion.usesK2
     put(CommonConfigurationKeys.USE_FIR, usesK2)
@@ -132,19 +124,9 @@ fun CompilerConfiguration.setupLanguageVersionSettings(arguments: CommonCompiler
     languageVersionSettings = arguments.toLanguageVersionSettings(getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY))
 }
 
-private fun CompilerConfiguration.checkRedundantArguments(
-    arguments: CommonCompilerArguments,
-    messageCollector: MessageCollector,
-) {
+private fun CompilerConfiguration.checkRedundantArguments(arguments: CommonCompilerArguments) {
     val languageVersion = languageVersionSettings.languageVersion
     val defaultArguments = arguments::class.primaryConstructor!!.callBy(emptyMap())
-
-    val context by lazy(LazyThreadSafetyMode.NONE) {
-        object : DiagnosticBaseContext {
-            override val languageVersionSettings: LanguageVersionSettings
-                get() = this@checkRedundantArguments.languageVersionSettings
-        }
-    }
 
     propertiesLoop@ for (property in arguments::class.memberProperties) {
         val propertyValue = property.getter.call(arguments)
@@ -174,17 +156,9 @@ private fun CompilerConfiguration.checkRedundantArguments(
         if (!hasEnablesDisablesAnnotation) continue
 
         val argValue = if (propertyValue is String) "=$propertyValue" else ""
-        val diagnostic = CliDiagnostics.REDUNDANT_CLI_ARG.create(
+        reportDiagnostic(
+            CliDiagnostics.REDUNDANT_CLI_ARG,
             "The argument '${property.argumentAnnotation.value}${argValue}' is redundant for the current language version $languageVersion.",
-            location = null,
-            context
-        ) ?: continue
-
-        FirDiagnosticsCompilerResultsReporter.reportDiagnosticToMessageCollector(
-            diagnostic,
-            location = null,
-            messageCollector,
-            renderDiagnosticInternalName,
         )
     }
 }

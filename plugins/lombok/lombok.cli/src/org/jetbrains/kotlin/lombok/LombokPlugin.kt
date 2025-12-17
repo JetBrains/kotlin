@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.lombok
 
-import org.jetbrains.kotlin.cli.common.reportIfNeeded
+import org.jetbrains.kotlin.cli.common.reportDiagnostic
 import org.jetbrains.kotlin.compiler.plugin.AbstractCliOption
 import org.jetbrains.kotlin.compiler.plugin.CliOption
 import org.jetbrains.kotlin.compiler.plugin.CommandLineProcessor
@@ -32,7 +32,7 @@ class LombokComponentRegistrar : CompilerPluginRegistrar() {
     }
 
     override fun ExtensionStorage.registerExtensions(configuration: CompilerConfiguration) {
-        configuration.reportIfNeeded(
+        configuration.reportDiagnostic(
             LombokDiagnostics.LOMBOK_PLUGIN_IS_EXPERIMENTAL,
             "Lombok Kotlin compiler plugin is an experimental feature. See: https://kotlinlang.org/docs/components-stability.html.",
         )

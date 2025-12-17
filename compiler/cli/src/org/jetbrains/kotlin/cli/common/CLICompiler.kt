@@ -465,7 +465,7 @@ fun checkPluginsArguments(
     }
 
     if (pluginConfigurations.isNotEmpty()) {
-        configuration.reportIfNeeded(CliDiagnostics.COMPILER_PLUGIN_ARG_IS_EXPERIMENTAL, "Argument -Xcompiler-plugin is experimental")
+        configuration.reportDiagnostic(CliDiagnostics.COMPILER_PLUGIN_ARG_IS_EXPERIMENTAL, "Argument -Xcompiler-plugin is experimental")
 
         if (!useK2) {
             hasErrors = true
