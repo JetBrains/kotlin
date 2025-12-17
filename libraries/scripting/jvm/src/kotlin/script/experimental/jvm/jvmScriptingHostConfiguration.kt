@@ -6,9 +6,11 @@
 package kotlin.script.experimental.jvm
 
 import java.io.File
+import java.io.Serializable
 import java.net.URLClassLoader
 import kotlin.reflect.KClass
 import kotlin.script.experimental.api.KotlinType
+import kotlin.script.experimental.api.ScriptDependency
 import kotlin.script.experimental.host.*
 import kotlin.script.experimental.jvm.util.toClassPathOrEmpty
 import kotlin.script.experimental.util.PropertiesCollection
@@ -47,10 +49,20 @@ interface GetScriptingClassByClassLoader : GetScriptingClass {
     operator fun invoke(classType: KotlinType, contextClassLoader: ClassLoader?, hostConfiguration: ScriptingHostConfiguration): KClass<*>
 }
 
-class JvmGetScriptingClass : GetScriptingClassByClassLoader {
+class JvmGetScriptingClass : GetScriptingClassByClassLoader, Serializable {
+
+    @Transient
+    private var dependencies: List<ScriptDependency>? = null
 
     @Transient
     private var classLoader: ClassLoader? = null
+
+    @Transient
+    // TODO: find out whether Transient fields are initialized on deserialization and if so, convert back to not-nullable val
+    private var baseClassLoaderIsInitialized: Boolean? = null
+
+    @Transient
+    private var baseClassLoader: ClassLoader? = null
 
     override fun invoke(classType: KotlinType, contextClass: KClass<*>, hostConfiguration: ScriptingHostConfiguration): KClass<*> =
         invoke(classType, contextClass.java.classLoader, hostConfiguration)
@@ -70,13 +82,35 @@ class JvmGetScriptingClass : GetScriptingClassByClassLoader {
             if (actualClassLoadersChain.any { it == fromClass.java.classLoader }) return fromClass
         }
 
-        if (classLoader == null) {
-            classLoader = hostConfiguration[ScriptingHostConfiguration.jvm.baseClassLoader]
+        val newDeps = hostConfiguration[ScriptingHostConfiguration.configurationDependencies]
+        if (dependencies == null) {
+            dependencies = newDeps
+        } else {
+            if (newDeps != dependencies) throw IllegalArgumentException(
+                "scripting configuration dependencies changed:\nold: ${dependencies?.joinToString { (it as? JvmDependency)?.classpath.toString() }}\nnew: ${newDeps?.joinToString { (it as? JvmDependency)?.classpath.toString() }}"
+            )
         }
+
+        if (baseClassLoaderIsInitialized != true) {
+            baseClassLoader = hostConfiguration[ScriptingHostConfiguration.jvm.baseClassLoader] ?: contextClassLoader
+            baseClassLoaderIsInitialized = true
+        }
+        // TODO: this check breaks testLazyScriptDefinition, find out the reason and fix
+//        else if (baseClassLoader != null) {
+//            val baseClassLoadersChain = generateSequence(baseClassLoader) { it.parent }
+//            if (baseClassLoadersChain.none { it == contextClassloader }) throw IllegalArgumentException("scripting class instantiation context changed")
+//        }
+
         if (classLoader == null) {
-            val dependencies = hostConfiguration[ScriptingHostConfiguration.configurationDependencies].toClassPathOrEmpty()
-            if (dependencies.isNotEmpty())
-                classLoader = URLClassLoader(dependencies.map { it.toURI().toURL() }.toTypedArray(), contextClassLoader)
+            val classpath = dependencies?.flatMap { dependency ->
+                when (dependency) {
+                    is JvmDependency -> dependency.classpath.map { it.toURI().toURL() }
+                    else -> throw IllegalArgumentException("unknown dependency type $dependency")
+                }
+            }
+            classLoader =
+                if (classpath == null || classpath.isEmpty()) baseClassLoader
+                else URLClassLoader(classpath.toTypedArray(), baseClassLoader)
         }
 
         return try {
@@ -84,5 +118,25 @@ class JvmGetScriptingClass : GetScriptingClassByClassLoader {
         } catch (e: Throwable) {
             throw IllegalArgumentException("unable to load class ${classType.typeName}", e)
         }
+    }
+
+    override fun equals(other: Any?): Boolean =
+        when {
+            other === this -> true
+            other !is JvmGetScriptingClass -> false
+            else -> {
+                other.dependencies == dependencies &&
+                        (other.classLoader == null || classLoader == null || other.classLoader == classLoader) &&
+                        (other.baseClassLoader == null || baseClassLoader == null || other.baseClassLoader == baseClassLoader)
+            }
+        }
+
+
+    override fun hashCode(): Int {
+        return dependencies.hashCode() + 23 * classLoader.hashCode() + 37 * baseClassLoader.hashCode()
+    }
+
+    companion object {
+        private const val serialVersionUID = 1L
     }
 }
