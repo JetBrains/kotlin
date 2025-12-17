@@ -47,4 +47,7 @@ public class WasmConfigurationKeys {
 
     public static final CompilerConfigurationKey<String> WASM_DEPENDENCY_RESOLUTION_MAP =
             CompilerConfigurationKey.create("provide alternative paths to imported dependency modules.");
+
+    public static final CompilerConfigurationKey<String> WASM_ENTRY_FUNCTIONS_PER_MODULE =
+            CompilerConfigurationKey.create("provide entry functions.");
 }

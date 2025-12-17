@@ -22,6 +22,7 @@ fun copyK2WasmCompilerArguments(from: K2WasmCompilerArguments, to: K2WasmCompile
     to.wasmDebug = from.wasmDebug
     to.wasmEnableArrayRangeChecks = from.wasmEnableArrayRangeChecks
     to.wasmEnableAsserts = from.wasmEnableAsserts
+    to.wasmEntryFunctionsPerModule = from.wasmEntryFunctionsPerModule
     to.wasmGenerateWat = from.wasmGenerateWat
     to.wasmIncludedModuleOnly = from.wasmIncludedModuleOnly
     to.wasmKClassFqn = from.wasmKClassFqn

@@ -92,6 +92,16 @@ abstract class K2WasmCompilerArguments : CommonKlibBasedCompilerArguments() {
         }
 
     @Argument(
+        value = "-Xwasm-entry-functions-per-module",
+        description = "Provide entry functions per module.",
+    )
+    var wasmEntryFunctionsPerModule: String? = null
+        set(value) {
+            checkFrozen()
+            field = if (value.isNullOrEmpty()) null else value
+        }
+
+    @Argument(
         value = "-Xwasm-generate-dwarf",
         description = "Generate DWARF debug information.",
     )

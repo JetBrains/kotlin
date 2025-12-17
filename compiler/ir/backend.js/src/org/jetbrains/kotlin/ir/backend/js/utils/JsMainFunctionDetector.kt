@@ -11,9 +11,9 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.hasShape
 import org.jetbrains.kotlin.types.Variance
 
-class JsMainFunctionDetector(val context: JsCommonBackendContext) {
+open class JsMainFunctionDetector(open val context: JsCommonBackendContext) {
 
-    private fun IrSimpleFunction.isMain(allowEmptyParameters: Boolean): Boolean {
+    protected fun IrSimpleFunction.isMain(allowEmptyParameters: Boolean, definedEntryFunctionName: String = "main"): Boolean {
         if (typeParameters.isNotEmpty()) return false
 
         val hasSingleParameter = hasShape(regularParameters = 1)
@@ -28,7 +28,7 @@ class JsMainFunctionDetector(val context: JsCommonBackendContext) {
                             returnType == context.irBuiltIns.anyType)))
             return false
 
-        if (name.asString() != "main") return false
+        if (name.asString() != definedEntryFunctionName) return false
 
         if (hasSingleParameter) {
             return isLoweredSuspendFunction || parameters[0].isStringArrayParameter()
@@ -48,7 +48,7 @@ class JsMainFunctionDetector(val context: JsCommonBackendContext) {
         return file.declarations.filterIsInstance<IrSimpleFunction>().singleOrNull { it.isMain(allowEmptyParameters = true) }
     }
 
-    fun getMainFunctionOrNull(module: IrModuleFragment): IrSimpleFunction? {
+    open fun getMainFunctionOrNull(module: IrModuleFragment): IrSimpleFunction? {
 
         var resultPair: Pair<String, IrSimpleFunction>? = null
 

@@ -9,9 +9,9 @@ import org.jetbrains.kotlin.backend.common.ModuleLoweringPass
 import org.jetbrains.kotlin.backend.common.ir.createArrayOfExpression
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
+import org.jetbrains.kotlin.backend.wasm.utils.WasmMainFunctionDetector
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
-import org.jetbrains.kotlin.ir.backend.js.utils.JsMainFunctionDetector
 import org.jetbrains.kotlin.ir.backend.js.utils.isLoweredSuspendFunction
 import org.jetbrains.kotlin.ir.backend.js.utils.isStringArrayParameter
 import org.jetbrains.kotlin.ir.builders.irCall
@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.name.Name
  */
 class GenerateMainFunctionWrappers(private val backendContext: WasmBackendContext) : ModuleLoweringPass {
     override fun lower(irModule: IrModuleFragment) {
-        val mainFunction = JsMainFunctionDetector(backendContext).getMainFunctionOrNull(irModule) ?: return
+        val mainFunction = WasmMainFunctionDetector(backendContext).getMainFunctionOrNull(irModule) ?: return
         val generateArgv = mainFunction.parameters.firstOrNull()?.isStringArrayParameter() ?: false
         val generateContinuation = mainFunction.isLoweredSuspendFunction(backendContext)
 

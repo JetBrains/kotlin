@@ -65,6 +65,7 @@ object WasmConfigurationUpdater : ConfigurationUpdater<K2JSCompilerArguments>() 
         configuration.put(WasmConfigurationKeys.WASM_INCLUDED_MODULE_ONLY, arguments.wasmIncludedModuleOnly)
         configuration.putIfNotNull(WasmConfigurationKeys.WASM_TARGET, wasmTarget)
         configuration.putIfNotNull(WasmConfigurationKeys.DCE_DUMP_DECLARATION_IR_SIZES_TO_FILE, arguments.irDceDumpDeclarationIrSizesToFile)
+        configuration.putIfNotNull(WasmConfigurationKeys.WASM_ENTRY_FUNCTIONS_PER_MODULE, arguments.wasmEntryFunctionsPerModule)
         configuration.propertyLazyInitialization = arguments.irPropertyLazyInitialization
         configuration.targetPlatform = WasmPlatforms.wasmPlatformByTargets(listOf(configuration.wasmTarget))
     }

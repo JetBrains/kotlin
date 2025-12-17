@@ -234,4 +234,15 @@ val actualWasmArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.wa
             introducedVersion = KotlinReleaseVersion.v2_1_20,
         )
     }
+
+    compilerArgument {
+        name = "Xwasm-entry-functions-per-module"
+        compilerName = "wasmEntryFunctionsPerModule"
+        description = "Provide entry functions per module.".asReleaseDependent()
+        valueType = StringType.defaultNull
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_3_20
+        )
+    }
 }
