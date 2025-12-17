@@ -8,6 +8,7 @@
 
 package org.jetbrains.kotlin.ir
 
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
@@ -68,6 +69,13 @@ interface IrElement {
      * @return The transformed node.
      */
     fun <D> transform(transformer: IrTransformer<D>, data: D): IrElement
+
+    /**
+     * Runs the provided [transformer] on the IR subtree with the root at this node.
+     *
+     * @param transformer The visitor to accept.
+     */
+    fun transformVoid(transformer: IrElementTransformerVoid): IrElement
 
     /**
      * Runs the provided [visitor] on subtrees with roots in this node's children.

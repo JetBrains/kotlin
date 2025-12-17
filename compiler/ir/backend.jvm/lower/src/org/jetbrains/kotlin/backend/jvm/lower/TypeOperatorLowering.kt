@@ -63,8 +63,6 @@ internal class TypeOperatorLowering(private val backendContext: JvmBackendContex
 
     override fun lower(irFile: IrFile) = irFile.transformChildrenVoid()
 
-    private fun IrExpression.transformVoid() = transform(this@TypeOperatorLowering, null)
-
     private fun lowerInstanceOf(argument: IrExpression, type: IrType) = with(builder) {
         when {
             type.isReifiedTypeParameter ->
@@ -674,7 +672,7 @@ internal class TypeOperatorLowering(private val backendContext: JvmBackendContex
         return when (expression.operator) {
             IrTypeOperator.IMPLICIT_COERCION_TO_UNIT ->
                 irComposite(resultType = expression.type) {
-                    +expression.argument.transformVoid()
+                    +expression.argument.transformVoid(this@TypeOperatorLowering)
                     // TODO: Don't generate these casts in the first place
                     if (!expression.argument.type.isSubtypeOf(expression.type.makeNullable(), backendContext.typeSystem)) {
                         +IrCompositeImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, expression.type)
@@ -684,10 +682,10 @@ internal class TypeOperatorLowering(private val backendContext: JvmBackendContex
             // There is no difference between IMPLICIT_CAST and IMPLICIT_INTEGER_COERCION on JVM_IR.
             // Instead, this is handled in StackValue.coerce.
             IrTypeOperator.IMPLICIT_INTEGER_COERCION ->
-                irImplicitCast(expression.argument.transformVoid(), expression.typeOperand)
+                irImplicitCast(expression.argument.transformVoid(this@TypeOperatorLowering), expression.typeOperand)
 
             IrTypeOperator.CAST ->
-                lowerCast(expression.argument.transformVoid(), expression.typeOperand)
+                lowerCast(expression.argument.transformVoid(this@TypeOperatorLowering), expression.typeOperand)
 
             IrTypeOperator.SAFE_CAST ->
                 if (expression.typeOperand.isReifiedTypeParameter) {
@@ -695,7 +693,7 @@ internal class TypeOperatorLowering(private val backendContext: JvmBackendContex
                     expression
                 } else {
                     irLetS(
-                        expression.argument.transformVoid(),
+                        expression.argument.transformVoid(this@TypeOperatorLowering),
                         IrStatementOrigin.SAFE_CALL,
                         irType = context.irBuiltIns.anyNType
                     ) { valueSymbol ->
@@ -714,15 +712,15 @@ internal class TypeOperatorLowering(private val backendContext: JvmBackendContex
                 }
 
             IrTypeOperator.INSTANCEOF ->
-                lowerInstanceOf(expression.argument.transformVoid(), expression.typeOperand)
+                lowerInstanceOf(expression.argument.transformVoid(this@TypeOperatorLowering), expression.typeOperand)
 
             IrTypeOperator.NOT_INSTANCEOF ->
-                irNot(lowerInstanceOf(expression.argument.transformVoid(), expression.typeOperand))
+                irNot(lowerInstanceOf(expression.argument.transformVoid(this@TypeOperatorLowering), expression.typeOperand))
 
             IrTypeOperator.IMPLICIT_NOTNULL -> {
                 val text = computeNotNullAssertionText(expression)
 
-                irLetS(expression.argument.transformVoid(), irType = context.irBuiltIns.anyNType) { valueSymbol ->
+                irLetS(expression.argument.transformVoid(this@TypeOperatorLowering), irType = context.irBuiltIns.anyNType) { valueSymbol ->
                     irComposite(resultType = expression.type) {
                         if (text != null) {
                             +irCall(checkExpressionValueIsNotNull).apply {
