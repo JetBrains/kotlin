@@ -132,7 +132,7 @@ KtDestructuringDeclarationEntry(324,329): 'first'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     attempt: KaSymbolResolutionError
-    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'component1'.>
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'component1' on receiver of type 'NonDataTuple'.>
     symbols:
       Nothing (Unresolved reference)
     resolveToSymbols:
@@ -281,7 +281,7 @@ KtForExpression(492,521): 'for ([first: String] in y) {}'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     attempt: KaSymbolResolutionError
-    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'iterator'.>
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'iterator' on receiver of type 'NonDataTuple'.>
     symbols:
       Nothing (Unresolved reference)
 
@@ -460,7 +460,7 @@ KtDestructuringDeclarationEntry(697,702): 'first'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     attempt: KaSymbolResolutionError
-    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'component1'.>
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'component1' on receiver of type 'NonDataTuple'.>
     symbols:
       Nothing (Unresolved reference)
     resolveToSymbols:

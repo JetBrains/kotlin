@@ -14,7 +14,7 @@ compiler/testData/compileKotlinAgainstCustomBinaries/releaseCompilerAgainstPreRe
 compiler/testData/compileKotlinAgainstCustomBinaries/releaseCompilerAgainstPreReleaseFeatureJs/source.kt:9:22: error: package 'a' was compiled by a pre-release version of Kotlin and cannot be loaded by this version of the compiler. Enabled pre-release features: <!POISONING_LANGUAGE_FEATURE!>
     val methodCall = param.method()
                      ^^^^^
-compiler/testData/compileKotlinAgainstCustomBinaries/releaseCompilerAgainstPreReleaseFeatureJs/source.kt:9:28: error: unresolved reference 'method'.
+compiler/testData/compileKotlinAgainstCustomBinaries/releaseCompilerAgainstPreReleaseFeatureJs/source.kt:9:28: error: unresolved reference 'method' on receiver of type 'A'.
     val methodCall = param.method()
                            ^^^^^^
 compiler/testData/compileKotlinAgainstCustomBinaries/releaseCompilerAgainstPreReleaseFeatureJs/source.kt:10:30: error: package 'a' was compiled by a pre-release version of Kotlin and cannot be loaded by this version of the compiler. Enabled pre-release features: <!POISONING_LANGUAGE_FEATURE!>

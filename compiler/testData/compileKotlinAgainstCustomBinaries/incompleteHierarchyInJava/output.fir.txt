@@ -4,7 +4,7 @@ class SubSub : Sub()
 compiler/testData/compileKotlinAgainstCustomBinaries/incompleteHierarchyInJava/source.kt:5:22: error: cannot access 'test.Super' which is a supertype of 'SubSub'. Check your module classpath for missing or conflicting dependencies.
 fun bar() = SubSub().foo()
                      ^^^
-compiler/testData/compileKotlinAgainstCustomBinaries/incompleteHierarchyInJava/source.kt:5:22: error: unresolved reference 'foo'.
+compiler/testData/compileKotlinAgainstCustomBinaries/incompleteHierarchyInJava/source.kt:5:22: error: unresolved reference 'foo' on receiver of type 'SubSub'.
 fun bar() = SubSub().foo()
                      ^^^
 COMPILATION_ERROR

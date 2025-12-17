@@ -1,7 +1,7 @@
 compiler/testData/cli/jvm/noStdlibK2.kt:4:5: error: cannot access built-in declaration 'kotlin.String'. Ensure that you have a dependency on the Kotlin standard library.
     String::class.primaryConstructor
     ^^^^^^
-compiler/testData/cli/jvm/noStdlibK2.kt:4:19: error: unresolved reference 'primaryConstructor'.
+compiler/testData/cli/jvm/noStdlibK2.kt:4:19: error: unresolved reference 'primaryConstructor' on receiver of type 'KClass<String>'.
     String::class.primaryConstructor
                   ^^^^^^^^^^^^^^^^^^
 compiler/testData/cli/jvm/noStdlibK2.kt:6:7: error: cannot access built-in declaration 'kotlin.Unit'. Ensure that you have a dependency on the Kotlin standard library.

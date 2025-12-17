@@ -30,7 +30,9 @@ import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.hasError
 import org.jetbrains.kotlin.metadata.deserialization.VersionRequirement
 import org.jetbrains.kotlin.mpp.DeclarationSymbolMarker
 import org.jetbrains.kotlin.name.CallableId
@@ -363,6 +365,11 @@ object FirDiagnosticRenderers {
 
     val FOR_OPTIONAL_OPERATOR = Renderer { it: String? ->
         if (!it.isNullOrBlank()) " for operator '$it'" else ""
+    }
+
+    val FOR_OPTIONAL_RECEIVER = ContextDependentRenderer { type: ConeKotlinType?, ctx ->
+        val classType = type as? ConeClassLikeType
+        if (classType?.hasError() == false) " on receiver of type '${RENDER_TYPE.render(classType, ctx)}'" else ""
     }
 
     val OF_OPTIONAL_NAME = Renderer { name: Name? ->
