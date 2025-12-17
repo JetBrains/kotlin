@@ -1188,14 +1188,14 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     @TestMetadata("kotlin-js-plugin-project")
     fun testNewKotlinJsPlugin(gradleVersion: GradleVersion) {
         project("kotlin-js-plugin-project", gradleVersion) {
-            build("publish", "assemble", "test", "compileBenchmarkKotlinJs") {
+            build("publish", "assemble", "jsTest", "compileBenchmarkKotlinJs") {
                 assertTasksExecuted(
                     ":compileKotlinJs", ":compileTestKotlinJs", ":compileBenchmarkKotlinJs"
                 )
 
-                val moduleDir = projectPath.resolve("build/repo/com/example/kotlin-js-plugin/1.0/")
+                val moduleDir = projectPath.resolve("build/repo/com/example/kotlin-js-plugin-js/1.0/")
 
-                val kjsManifest = moduleDir.resolve("kotlin-js-plugin-1.0.klib")
+                val kjsManifest = moduleDir.resolve("kotlin-js-plugin-js-1.0.klib")
                     .useAsZipFile { zipFile ->
                         zipFile.readKLibManifest()
                     }
@@ -1204,12 +1204,12 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
                     kjsManifest.isNotEmpty()
                 }
 
-                val publishedPom = moduleDir.resolve("kotlin-js-plugin-1.0.pom")
+                val publishedPom = moduleDir.resolve("kotlin-js-plugin-js-1.0.pom")
                 val pomText = publishedPom.readText().replace(Regex("\\s+"), "")
                 assertTrue { "kotlinx-html-js</artifactId><version>0.7.5</version><scope>compile</scope>" in pomText }
                 assertTrue { "kotlin-stdlib-js</artifactId><scope>runtime</scope>" in pomText }
 
-                assertFileExists(moduleDir.resolve("kotlin-js-plugin-1.0-sources.jar"))
+                assertFileExists(moduleDir.resolve("kotlin-js-plugin-js-1.0-sources.jar"))
 
                 assertTestResults(projectPath.resolve("tests.xml"), "jsNodeTest")
             }
@@ -1509,7 +1509,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
                 )
             )
         ) {
-            build("packageJson", "rootPackageJson", "kotlinNpmInstall") {
+            build("jsPackageJson", "rootPackageJson", "kotlinNpmInstall") {
                 fun getPackageJson() =
                     projectPath.resolve("build/js")
                         .resolve(NpmProject.PACKAGE_JSON)
@@ -1612,7 +1612,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
                 assertOutputDoesNotContain("##teamcity[")
             }
 
-            projectPath.resolve("src/test/kotlin/Tests.kt").appendText(
+            projectPath.resolve("src/jsTest/kotlin/Tests.kt").appendText(
                 "\n" + """
                 |class Tests3 {
                 |   @Test
@@ -1631,7 +1631,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
                 )
             }
 
-            projectPath.resolve("src/test/kotlin/Tests.kt").appendText(
+            projectPath.resolve("src/jsTest/kotlin/Tests.kt").appendText(
                 "\n" + """
                 |
                 |@JsModule("foo")

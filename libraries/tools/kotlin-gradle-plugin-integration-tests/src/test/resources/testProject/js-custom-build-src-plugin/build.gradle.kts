@@ -10,10 +10,6 @@ repositories {
     mavenLocal()
 }
 
-dependencies {
-    implementation(npm("async", "3.2.4"))
-}
-
 kotlin {
     js {
         tasks.register("checkConfigurationsResolve") {
@@ -22,6 +18,14 @@ kotlin {
             inputs.files(npmAggregatedFiles).withPropertyName("npmAggregatedFiles")
             doLast {
                 npmAggregatedFiles.files
+            }
+        }
+    }
+
+    sourceSets {
+        jsMain {
+            dependencies {
+                implementation(npm("async", "3.2.4"))
             }
         }
     }
