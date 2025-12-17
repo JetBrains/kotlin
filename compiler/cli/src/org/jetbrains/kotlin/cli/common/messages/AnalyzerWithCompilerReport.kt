@@ -22,8 +22,8 @@ import com.intellij.psi.util.PsiFormatUtil
 import org.jetbrains.kotlin.KtRealPsiSourceElement
 import org.jetbrains.kotlin.analyzer.AbstractAnalyzerWithCompilerReport
 import org.jetbrains.kotlin.analyzer.AnalysisResult
-import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
+import org.jetbrains.kotlin.cli.common.renderDiagnosticInternalName
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils.sortedDiagnostics
@@ -49,7 +49,7 @@ class AnalyzerWithCompilerReport(
     constructor(configuration: CompilerConfiguration) : this(
         configuration.messageCollector,
         configuration.languageVersionSettings,
-        configuration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
+        configuration.renderDiagnosticInternalName,
     )
 
     private fun reportIncompleteHierarchies() {

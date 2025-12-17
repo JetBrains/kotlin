@@ -35,7 +35,7 @@ private inline fun <F> PhaseContext.firFrontend(
     val configuration = input.configuration
     val messageCollector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
     val diagnosticsReporter = DiagnosticReporterFactory.createPendingReporter()
-    val renderDiagnosticNames = configuration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
+    val renderDiagnosticNames = configuration.renderDiagnosticInternalName
 
     // FIR
     val extensionRegistrars = FirExtensionRegistrar.getInstances(input.project)

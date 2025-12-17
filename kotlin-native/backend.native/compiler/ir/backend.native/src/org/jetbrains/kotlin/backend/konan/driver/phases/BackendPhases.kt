@@ -16,8 +16,8 @@ import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
 import org.jetbrains.kotlin.backend.konan.lower.ExpectToActualDefaultValueCopier
 import org.jetbrains.kotlin.backend.konan.lower.SpecialBackendChecksTraversal
 import org.jetbrains.kotlin.backend.konan.objcexport.createTestBundle
-import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
+import org.jetbrains.kotlin.cli.common.renderDiagnosticInternalName
 import org.jetbrains.kotlin.cli.common.runPreSerializationLoweringPhases
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.languageVersionSettings
@@ -109,7 +109,7 @@ internal fun <T : PhaseContext> PhaseEngine<T>.runPreSerializationLowerings(fir2
     FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(
             diagnosticReporter,
             environment.configuration.messageCollector,
-            environment.configuration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME),
+            environment.configuration.renderDiagnosticInternalName,
     )
     if (diagnosticReporter.hasErrors) {
         throw KonanCompilationException("Compilation failed: there were some diagnostics during IR Inliner")

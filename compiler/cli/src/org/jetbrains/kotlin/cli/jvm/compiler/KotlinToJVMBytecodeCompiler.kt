@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.modules.ModuleBuilder
+import org.jetbrains.kotlin.cli.common.renderDiagnosticInternalName
 import org.jetbrains.kotlin.cli.jvm.config.*
 import org.jetbrains.kotlin.cli.jvm.config.ClassicFrontendSpecificJvmConfigurationKeys.JAVA_CLASSES_TRACKER
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
@@ -317,7 +318,7 @@ object KotlinToJVMBytecodeCompiler {
         val analyzerWithCompilerReport = AnalyzerWithCompilerReport(
             collector,
             environment.configuration.languageVersionSettings,
-            environment.configuration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
+            environment.configuration.renderDiagnosticInternalName,
         )
         analyzerWithCompilerReport.analyzeAndReport(sourceFiles) {
             val project = environment.project
@@ -413,7 +414,7 @@ object KotlinToJVMBytecodeCompiler {
             FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(
                 diagnosticsReporter,
                 configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY),
-                configuration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
+                configuration.renderDiagnosticInternalName,
             )
         }
 

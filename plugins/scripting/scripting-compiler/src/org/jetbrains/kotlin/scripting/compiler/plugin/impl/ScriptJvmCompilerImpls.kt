@@ -253,7 +253,7 @@ private fun doCompile(
     FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(
         diagnosticsReporter,
         messageCollector,
-        context.environment.configuration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
+        context.environment.configuration.renderDiagnosticInternalName,
     )
 
     if (messageCollector.hasErrors()) return failure(
@@ -278,7 +278,7 @@ private fun analyze(sourceFiles: Collection<KtFile>, environment: KotlinCoreEnvi
     val analyzerWithCompilerReport = AnalyzerWithCompilerReport(
         messageCollector,
         environment.configuration.languageVersionSettings,
-        environment.configuration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
+        environment.configuration.renderDiagnosticInternalName,
     )
 
     analyzerWithCompilerReport.analyzeAndReport(sourceFiles) {
@@ -321,7 +321,7 @@ private fun doCompileWithK2(
         "java-production"
     )
 
-    val renderDiagnosticName = configuration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
+    val renderDiagnosticName = configuration.renderDiagnosticInternalName
     val diagnosticsReporter = DiagnosticReporterFactory.createPendingReporter()
 
     val projectEnvironment = context.environment.toVfsBasedProjectEnvironment()

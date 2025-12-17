@@ -209,7 +209,7 @@ open class IncrementalFirJvmCompilerRunner(
             // !! main class - maybe from cache?
             var mainClassFqName: FqName? = null
 
-            val renderDiagnosticName = configuration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
+            val renderDiagnosticName = configuration.renderDiagnosticInternalName
 
             var incrementalExcludesScope: AbstractProjectFileSearchScope? = null
 

@@ -147,7 +147,7 @@ object MetadataFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifa
             false -> checkKotlinPackageUsageForPsi(configuration, sourceFiles.asKtFilesList())
         }
 
-        val renderDiagnosticNames = configuration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
+        val renderDiagnosticNames = configuration.renderDiagnosticInternalName
         FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(diagnosticsReporter, messageCollector, renderDiagnosticNames)
         return MetadataFrontendPipelineArtifact(
             AllModulesFrontendOutput(outputs),
