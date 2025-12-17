@@ -12796,9 +12796,6 @@ final fun kotlin.native.internal/Kotlin_hashCode(kotlin/Any): kotlin/Int // kotl
 final fun kotlin.native.internal/Kotlin_toString(kotlin/Any): kotlin/String // kotlin.native.internal/Kotlin_toString|Kotlin_toString(kotlin.Any){}[0]
 
 // Targets: [native]
-final fun kotlin.native.internal/ThrowNullPointerException(): kotlin/Nothing // kotlin.native.internal/ThrowNullPointerException|ThrowNullPointerException(){}[0]
-
-// Targets: [native]
 final fun kotlin.native.internal/areEqualByValue(kotlin.native.internal/NativePtr, kotlin.native.internal/NativePtr): kotlin/Boolean // kotlin.native.internal/areEqualByValue|areEqualByValue(kotlin.native.internal.NativePtr;kotlin.native.internal.NativePtr){}[0]
 
 // Targets: [native]
