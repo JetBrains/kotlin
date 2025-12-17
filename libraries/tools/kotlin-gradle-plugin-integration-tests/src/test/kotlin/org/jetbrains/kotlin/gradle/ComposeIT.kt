@@ -662,6 +662,7 @@ class ComposeIT : KGPBaseTest() {
                 appExtension.beforeVariants {
                     if (it.name == "release") {
                         it.isMinifyEnabled = true
+                        it.shrinkResources = true
                     }
                 }
             }
@@ -677,7 +678,18 @@ class ComposeIT : KGPBaseTest() {
 
                 assertTasksExecuted(":mergeReleaseComposeMapping")
 
-                // validate mapping is present
+                // validate all mapping files are present
+                val expectedOutputFiles = listOf(
+                    "mapping.txt",
+                    "seeds.txt",
+                    "configuration.txt",
+                    "usage.txt",
+                    "resources.txt",
+                )
+                for (name in expectedOutputFiles) {
+                    val file = projectPath.resolve(Path("build/outputs/mapping/release/$name")).toFile()
+                    assertFileExists(file, "Missing $name from R8 outputs")
+                }
                 val outputMapping = projectPath.resolve(Path("build/outputs/mapping/release/mapping.txt")).toFile()
                 var hasComposeMapping = false
                 outputMapping.useLines { lines ->
