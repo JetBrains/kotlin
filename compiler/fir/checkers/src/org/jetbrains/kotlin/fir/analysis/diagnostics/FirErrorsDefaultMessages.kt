@@ -993,9 +993,10 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         // Unresolved
         map.put(
             UNRESOLVED_REFERENCE,
-            "Unresolved reference ''{0}''{1}.",
+            "Unresolved reference ''{0}''{1}.{2}",
             NULLABLE_STRING,
             FOR_OPTIONAL_OPERATOR,
+            OPTIONAL_SENTENCE,
         )
         map.put(
             UNRESOLVED_REFERENCE_WRONG_RECEIVER,
