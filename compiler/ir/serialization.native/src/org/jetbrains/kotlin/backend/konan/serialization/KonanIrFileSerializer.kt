@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.konan.serialization
 
 import org.jetbrains.kotlin.backend.common.serialization.IrFileSerializer
 import org.jetbrains.kotlin.backend.common.serialization.IrSerializationSettings
+import org.jetbrains.kotlin.config.KlibAbiCompatibilityLevel
 import org.jetbrains.kotlin.ir.declarations.IrAnnotationContainer
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFunction
@@ -28,5 +29,12 @@ open class KonanIrFileSerializer(
         return node.hasAnnotation(classId)
     }
 
-    override fun backendSpecificSerializeAllMembers(irClass: IrClass) = !KonanFakeOverrideClassFilter.needToConstructFakeOverrides(irClass)
+    override fun backendSpecificSerializeAllMembers(irClass: IrClass): Boolean {
+        val filter = if (settings.abiCompatibilityLevel.isAtLeast(KlibAbiCompatibilityLevel.ABI_LEVEL_2_4)) {
+            K1LazyFakeOverrideClassFilter
+        } else {
+            KonanFakeOverrideClassFilter
+        }
+        return !filter.needToConstructFakeOverrides(irClass)
+    }
 }
