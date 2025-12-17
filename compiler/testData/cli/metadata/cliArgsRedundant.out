@@ -1,4 +1,7 @@
 warning: [REDUNDANT_CLI_ARG] The argument '-Xannotation-default-target=first-only-warn' is redundant for the current language version 2.3.
 warning: [REDUNDANT_CLI_ARG] The argument '-Xnested-type-aliases' is redundant for the current language version 2.3.
 warning: [REDUNDANT_CLI_ARG] The argument '-Xwhen-guards' is redundant for the current language version 2.3.
+compiler/testData/cli/metadata/cliArgs.kt:19:38: warning: [WHEN_ON_SEALED_WEL_ELSE] Exhaustive 'when' on sealed or enum class with 'else' --- Status
+fun render(status: Status): String = when (status) {
+                                     ^^^^^^^^^^^^^^^
 OK

@@ -23,28 +23,28 @@ fun test(s: Sealed): Int {
     class B
     val CompanionB: Int = 0
 
-    return when (s) {
+    return <!WHEN_ON_SEALED_WEL_ELSE!>when (s) {
         <!IMPOSSIBLE_IS_CHECK_WARNING!>is <!CONTEXT_SENSITIVE_RESOLUTION_AMBIGUITY!>B<!><!> -> 2
         C -> 3
         is D -> 4
         <!IMPOSSIBLE_IS_CHECK_WARNING!>is <!CONTEXT_SENSITIVE_RESOLUTION_AMBIGUITY!>String<!><!> -> 5
         <!CONTEXT_SENSITIVE_RESOLUTION_AMBIGUITY, INCOMPATIBLE_TYPES!>CompanionB<!> -> 7
         else -> 100
-    }
+    }<!>
 }
 
 fun testSealed(s: Sealed): Int {
     class B
     val CompanionB: Int = 0
 
-    return when (s) {
+    return <!WHEN_ON_SEALED_WEL_ELSE!>when (s) {
         is Sealed.B -> 2
         Sealed.C -> 3
         is Sealed.D -> 4
         is Sealed.String -> 5
         Sealed.CompanionB -> 7
         else -> 100
-    }
+    }<!>
 }
 
 class Test {
@@ -55,7 +55,7 @@ class Test {
     val CompanionB: Int = 0
 
     fun test(s: Sealed): Int {
-        return when (s) {
+        return <!WHEN_ON_SEALED_WEL_ELSE!>when (s) {
             <!CONTEXT_SENSITIVE_RESOLUTION_AMBIGUITY!>A<!> -> 1
             <!IMPOSSIBLE_IS_CHECK_WARNING!>is <!CONTEXT_SENSITIVE_RESOLUTION_AMBIGUITY!>B<!><!> -> 2
             C -> 3
@@ -64,11 +64,11 @@ class Test {
             <!CONTEXT_SENSITIVE_RESOLUTION_AMBIGUITY!>CompanionA<!> -> 6
             <!CONTEXT_SENSITIVE_RESOLUTION_AMBIGUITY, INCOMPATIBLE_TYPES!>CompanionB<!> -> 7
             else -> 100
-        }
+        }<!>
     }
 
     fun testClass(s: Sealed): Int {
-        return when (s) {
+        return <!WHEN_ON_SEALED_WEL_ELSE!>when (s) {
             Test.A -> 1
             <!IMPOSSIBLE_IS_CHECK_WARNING!>is Test.B<!> -> 2
             Sealed.C -> 3
@@ -77,7 +77,7 @@ class Test {
             Test.CompanionA -> 6
             <!INCOMPATIBLE_TYPES!>this.CompanionB<!> -> 7
             else -> 100
-        }
+        }<!>
     }
 
     fun testSealed(s: Sealed): Int {

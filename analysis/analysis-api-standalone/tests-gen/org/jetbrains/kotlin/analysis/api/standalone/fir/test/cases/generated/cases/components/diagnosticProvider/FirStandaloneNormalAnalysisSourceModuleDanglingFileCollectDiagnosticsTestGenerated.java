@@ -634,12 +634,6 @@ public class FirStandaloneNormalAnalysisSourceModuleDanglingFileCollectDiagnosti
     }
 
     @Test
-    @TestMetadata("sealedClassSameModuleExhaustive.kt")
-    public void testSealedClassSameModuleExhaustive() {
-      runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/when/sealedClassSameModuleExhaustive.kt");
-    }
-
-    @Test
     @TestMetadata("sealedClassSameModuleMissingCase.kt")
     public void testSealedClassSameModuleMissingCase() {
       runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/when/sealedClassSameModuleMissingCase.kt");
@@ -667,12 +661,6 @@ public class FirStandaloneNormalAnalysisSourceModuleDanglingFileCollectDiagnosti
     @TestMetadata("sealedInterfaceFromLibraryMissingCase.kt")
     public void testSealedInterfaceFromLibraryMissingCase() {
       runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/when/sealedInterfaceFromLibraryMissingCase.kt");
-    }
-
-    @Test
-    @TestMetadata("sealedInterfaceSameModuleExhaustive.kt")
-    public void testSealedInterfaceSameModuleExhaustive() {
-      runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/when/sealedInterfaceSameModuleExhaustive.kt");
     }
 
     @Test

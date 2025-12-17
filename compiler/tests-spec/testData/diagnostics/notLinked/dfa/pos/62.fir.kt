@@ -203,60 +203,60 @@ fun case_14(x: Any?): String? {
 // TESTCASE NUMBER: 15
 fun case_15(x: Any) {
     x as EnumClass
-    val y = when(x) {
+    val y = <!WHEN_ON_SEALED_GEEN_ELSE!>when(x) {
         EnumClass.NORTH -> 1
         EnumClass.SOUTH -> 2
         EnumClass.WEST -> 3
         EnumClass.EAST -> 4
-    }
+    }<!>
 }
 
 // TESTCASE NUMBER: 16
 fun case_16(x: Any) {
     if (x is EnumClass?) {
-        val y = when(x) {
+        val y = <!WHEN_ON_SEALED_GEEN_ELSE!>when(x) {
             EnumClass.NORTH -> 1
             EnumClass.SOUTH -> 2
             EnumClass.WEST -> 3
             EnumClass.EAST -> 4
             <!SENSELESS_NULL_IN_WHEN!>null<!> -> 5
-        }
+        }<!>
     }
 }
 
 // TESTCASE NUMBER: 17
 fun case_17(x: Any?) {
     x as EnumClass?
-    val y = when(x) {
+    val y = <!WHEN_ON_SEALED_GEEN_ELSE!>when(x) {
         EnumClass.NORTH -> 1
         EnumClass.SOUTH -> 2
         EnumClass.WEST -> 3
         EnumClass.EAST -> 4
         null -> 5
-    }
+    }<!>
 }
 
 // TESTCASE NUMBER: 18
 fun case_18(x: EnumClass?): Int {
     x!!
-    return when(x) {
+    return <!WHEN_ON_SEALED_GEEN_ELSE!>when(x) {
         EnumClass.NORTH -> 1
         EnumClass.SOUTH -> 2
         EnumClass.WEST -> 3
         EnumClass.EAST -> 4
-    }
+    }<!>
 }
 
 // TESTCASE NUMBER: 19
 fun case_19(x: Any): Int {
     if (x is EnumClass?) {
-        return when(x) {
+        return <!WHEN_ON_SEALED_GEEN_ELSE!>when(x) {
             EnumClass.NORTH -> 1
             EnumClass.SOUTH -> 2
             EnumClass.WEST -> 3
             EnumClass.EAST -> 4
             <!SENSELESS_NULL_IN_WHEN!>null<!> -> 5
-        }
+        }<!>
     }
     return 0
 }
@@ -264,23 +264,23 @@ fun case_19(x: Any): Int {
 // TESTCASE NUMBER: 20
 fun case_20(x: Any?) {
     x as EnumClass
-    val y = when(x) {
+    val y = <!WHEN_ON_SEALED_GEEN_ELSE!>when(x) {
         EnumClass.NORTH -> 1
         EnumClass.SOUTH -> 2
         EnumClass.WEST -> 3
         EnumClass.EAST -> 4
-    }
+    }<!>
 }
 
 // TESTCASE NUMBER: 21
 fun case_21(x: EnumClass?): Int {
     if (x !== null) {
-        return when(x) {
+        return <!WHEN_ON_SEALED_GEEN_ELSE!>when(x) {
             EnumClass.NORTH -> 1
             EnumClass.SOUTH -> 2
             EnumClass.WEST -> 3
             EnumClass.EAST -> 4
-        }
+        }<!>
     }
     return 0
 }
@@ -308,55 +308,55 @@ fun case_23(x: Any?) {
 // TESTCASE NUMBER: 24
 fun case_24(x: Any) {
     x as SealedClass
-    val y = when(x) {
+    val y = <!WHEN_ON_SEALED_GEEN_ELSE!>when(x) {
         is SealedChild1 -> 1
         is SealedChild2 -> 2
         is SealedChild3 -> 3
-    }
+    }<!>
 }
 
 // TESTCASE NUMBER: 25
 fun case_25(x: Any) {
     if (x is SealedClass?) {
-        val y = when(x) {
+        val y = <!WHEN_ON_SEALED_GEEN_ELSE!>when(x) {
             is SealedChild1 -> 1
             is SealedChild2 -> 2
             is SealedChild3 -> 3
             <!SENSELESS_NULL_IN_WHEN!>null<!> -> 5
-        }
+        }<!>
     }
 }
 
 // TESTCASE NUMBER: 26
 fun case_26(x: Any?) {
     x as SealedClass?
-    val y = when(x) {
+    val y = <!WHEN_ON_SEALED_GEEN_ELSE!>when(x) {
         is SealedChild1 -> 1
         is SealedChild2 -> 2
         is SealedChild3 -> 3
         null -> 5
-    }
+    }<!>
 }
 
 // TESTCASE NUMBER: 27
 fun case_27(x: SealedClass?): Int {
     x!!
-    return when(x) {
+    return <!WHEN_ON_SEALED_GEEN_ELSE!>when(x) {
         is SealedChild1 -> 1
         is SealedChild2 -> 2
         is SealedChild3 -> 3
-    }
+    }<!>
 }
 
 // TESTCASE NUMBER: 28
 fun case_28(x: Any): Int {
     if (x is SealedClass?) {
-        return when(x) {
+        return <!WHEN_ON_SEALED_GEEN_ELSE!>when(x) {
             is SealedChild1 -> 1
             is SealedChild2 -> 2
             is SealedChild3 -> 3
             <!SENSELESS_NULL_IN_WHEN!>null<!> -> 5
-        }
+        }<!>
     }
     return 0
 }
@@ -364,21 +364,21 @@ fun case_28(x: Any): Int {
 // TESTCASE NUMBER: 29
 fun case_29(x: Any?) {
     x as SealedClass
-    val y = when(x) {
+    val y = <!WHEN_ON_SEALED_GEEN_ELSE!>when(x) {
         is SealedChild1 -> 1
         is SealedChild2 -> 2
         is SealedChild3 -> 3
-    }
+    }<!>
 }
 
 // TESTCASE NUMBER: 30
 fun case_30(x: SealedClass?): Int {
     if (x !== null) {
-        return when(x) {
+        return <!WHEN_ON_SEALED_GEEN_ELSE!>when(x) {
             is SealedChild1 -> 1
             is SealedChild2 -> 2
             is SealedChild3 -> 3
-        }
+        }<!>
     }
     return 0
 }
@@ -386,55 +386,55 @@ fun case_30(x: SealedClass?): Int {
 // TESTCASE NUMBER: 31
 fun case_31(x: Any) {
     x as SealedClassWithObjects
-    val y = when(x) {
+    val y = <!WHEN_ON_SEALED_GEEN_ELSE!>when(x) {
         SealedWithObjectsChild1 -> 1
         SealedWithObjectsChild2 -> 2
         SealedWithObjectsChild3 -> 3
-    }
+    }<!>
 }
 
 // TESTCASE NUMBER: 32
 fun case_32(x: Any) {
     if (x is SealedClassWithObjects?) {
-        val y = when(x) {
+        val y = <!WHEN_ON_SEALED_GEEN_ELSE!>when(x) {
             SealedWithObjectsChild1 -> 1
             SealedWithObjectsChild2 -> 2
             SealedWithObjectsChild3 -> 3
             <!SENSELESS_NULL_IN_WHEN!>null<!> -> 5
-        }
+        }<!>
     }
 }
 
 // TESTCASE NUMBER: 33
 fun case_33(x: Any?) {
     x as SealedClassWithObjects?
-    val y = when(x) {
+    val y = <!WHEN_ON_SEALED_GEEN_ELSE!>when(x) {
         SealedWithObjectsChild1 -> 1
         SealedWithObjectsChild2 -> 2
         SealedWithObjectsChild3 -> 3
         null -> 5
-    }
+    }<!>
 }
 
 // TESTCASE NUMBER: 34
 fun case_34(x: SealedClassWithObjects?): Int {
     x!!
-    return when(x) {
+    return <!WHEN_ON_SEALED_GEEN_ELSE!>when(x) {
         SealedWithObjectsChild1 -> 1
         SealedWithObjectsChild2 -> 2
         SealedWithObjectsChild3 -> 3
-    }
+    }<!>
 }
 
 // TESTCASE NUMBER: 35
 fun case_35(x: Any): Int {
     if (x is SealedClassWithObjects?) {
-        return when(x) {
+        return <!WHEN_ON_SEALED_GEEN_ELSE!>when(x) {
             SealedWithObjectsChild1 -> 1
             SealedWithObjectsChild2 -> 2
             SealedWithObjectsChild3 -> 3
             <!SENSELESS_NULL_IN_WHEN!>null<!> -> 5
-        }
+        }<!>
     }
     return 0
 }
@@ -442,21 +442,21 @@ fun case_35(x: Any): Int {
 // TESTCASE NUMBER: 36
 fun case_36(x: Any?) {
     x as SealedClassWithObjects
-    val y = when(x) {
+    val y = <!WHEN_ON_SEALED_GEEN_ELSE!>when(x) {
         SealedWithObjectsChild1 -> 1
         SealedWithObjectsChild2 -> 2
         SealedWithObjectsChild3 -> 3
-    }
+    }<!>
 }
 
 // TESTCASE NUMBER: 37
 fun case_37(x: SealedClassWithObjects?): Int {
     if (x !== null) {
-        return when(x) {
+        return <!WHEN_ON_SEALED_GEEN_ELSE!>when(x) {
             SealedWithObjectsChild1 -> 1
             SealedWithObjectsChild2 -> 2
             SealedWithObjectsChild3 -> 3
-        }
+        }<!>
     }
     return 0
 }

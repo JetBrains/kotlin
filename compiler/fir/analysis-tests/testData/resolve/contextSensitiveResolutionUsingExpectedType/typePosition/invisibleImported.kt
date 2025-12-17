@@ -14,10 +14,10 @@ sealed interface MySealed {
     class Right(val y: String): MySealed
 }
 
-fun MySealed.getOrElse1() = when (this) {
+fun MySealed.getOrElse1() = <!WHEN_ON_SEALED_GEEN_ELSE!>when (this) {
     is Left -> x
     is Right -> y
-}
+}<!>
 
 fun Any.getOrElse2() = <!NO_ELSE_IN_WHEN!>when<!> (this) {
     is <!INVISIBLE_REFERENCE!>Left<!> -> <!UNRESOLVED_REFERENCE!>x<!>

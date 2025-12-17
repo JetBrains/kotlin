@@ -9,28 +9,28 @@ enum class Inner {
 }
 
 fun foo(o: Outer, i: Inner): Int {
-    return when (o) {
+    return <!WHEN_ON_SEALED_GEEN_ELSE!>when (o) {
         FIRST -> 1
-        SECOND -> when (i) {
+        SECOND -> <!WHEN_ON_SEALED_GEEN_ELSE!>when (i) {
             SECOND -> 2
             THIRD -> 3
-        }
-    }
+        }<!>
+    }<!>
 }
 
 fun bar(o: Outer, i: Inner): Int {
-    return when (o) {
+    return <!WHEN_ON_SEALED_GEEN_ELSE!>when (o) {
         FIRST -> 1
         SECOND -> {
             fun baz(): Int {
-                return when (i) {
+                return <!WHEN_ON_SEALED_GEEN_ELSE!>when (i) {
                     SECOND -> 2
                     THIRD -> 3
-                }
+                }<!>
             }
             baz()
         }
-    }
+    }<!>
 }
 
 /* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, equalityExpression, functionDeclaration, integerLiteral,

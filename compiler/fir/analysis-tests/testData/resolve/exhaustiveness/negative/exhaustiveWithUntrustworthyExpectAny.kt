@@ -14,10 +14,10 @@ sealed class Variants : ExpectAny() {
 
 fun foo(v: Variants): String {
     // Must not be `UNSAFE_EXHAUSTIVENESS` during metadata compilation
-    return when (v) {
+    return <!WHEN_ON_SEALED_GEEN_ELSE("Variants")!>when (v) {
         Variants.A -> "A"
         Variants.B -> "B"
-    }
+    }<!>
 }
 
 // MODULE: jvm()()(common)

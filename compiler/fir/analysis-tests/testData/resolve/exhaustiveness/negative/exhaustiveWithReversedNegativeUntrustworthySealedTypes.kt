@@ -18,11 +18,11 @@ fun foo(v: Variants): String {
         return "B"
     }
 
-    return when (v) {
+    return <!WHEN_ON_SEALED_GEEN_ELSE("Variants")!>when (v) {
         Variants.A -> "B"
         Variants.D -> "D"
         Variants.C -> "C"
-    }
+    }<!>
 }
 
 fun bar(v: Variants): String {

@@ -10,9 +10,9 @@ enum class MyEnum { A, B, C }
 fun negSimpleEnum(x: MyEnum): Int {
     if (x != MyEnum.C) return 0
 
-    return when (x) {
+    return <!WHEN_ON_SEALED_GEEN_ELSE!>when (x) {
         MyEnum.C -> 3
-    }
+    }<!>
 }
 
 fun simpleVar(i: MyEnum): Int {
@@ -20,9 +20,9 @@ fun simpleVar(i: MyEnum): Int {
     if (x == MyEnum.A) return 1
     x = MyEnum.A
 
-    return when (x) {
+    return <!WHEN_ON_SEALED_GEEN_ELSE!>when (x) {
         MyEnum.A -> 2
-    }
+    }<!>
 }
 
 @OptIn(ExperimentalContracts::class)
@@ -45,10 +45,10 @@ fun exactlyOnceEnum(i: MyEnum): Int {
         x = MyEnum.A
     }
 
-    return when (x) {
+    return <!WHEN_ON_SEALED_GEEN_ELSE!>when (x) {
         MyEnum.A -> 3
         MyEnum.C -> 4
-    }
+    }<!>
 }
 
 fun exactlyOnceEnum2(i: MyEnum): Int {

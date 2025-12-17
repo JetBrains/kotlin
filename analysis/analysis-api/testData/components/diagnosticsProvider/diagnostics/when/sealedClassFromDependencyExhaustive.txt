@@ -2,4 +2,6 @@ Diagnostics from MySealedClass.kt:
   <NO DIAGNOSTICS>
 
 Diagnostics from main.kt:
-  <NO DIAGNOSTICS>
+  for PSI element of type KtWhenExpression at (14,12) - (17,6)
+    WHEN_ON_SEALED_GEEN_ELSE      text ranges: [(109,191)]
+      PSI: KtWhenExpression at (14,12) - (17,6)

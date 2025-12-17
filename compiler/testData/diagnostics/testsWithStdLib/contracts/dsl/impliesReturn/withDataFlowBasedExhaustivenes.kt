@@ -19,10 +19,10 @@ fun ensureA(v: Variants): Variants? {
 }
 
 fun foo(v: Variants.A): String {
-    return when (ensureA(v)) {
+    return <!WHEN_ON_SEALED_GEEN_ELSE!>when (ensureA(v)) {
         is Variants.B -> "B"
         is Variants.A -> "A"
-    }
+    }<!>
 }
 
 /* GENERATED_FIR_TAGS: asExpression, contractImpliesReturnEffect, contracts, data, functionDeclaration,

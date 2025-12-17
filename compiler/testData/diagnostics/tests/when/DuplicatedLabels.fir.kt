@@ -49,12 +49,12 @@ fun third(arg: Any?): Int {
 
 enum class Color { RED, GREEN, BLUE }
 
-fun fourth(arg: Color) = when (arg) {
+fun fourth(arg: Color) = <!WHEN_ON_SEALED_GEEN_ELSE!>when (arg) {
     Color.RED -> "RED"
     Color.GREEN -> "GREEN"
     <!DUPLICATE_BRANCH_CONDITION_IN_WHEN!>Color.RED<!> -> "BLUE"
     Color.BLUE -> "BLUE"
-}
+}<!>
 
 fun fifth(arg: Any?) = when (arg) {
     is Any -> "Any"

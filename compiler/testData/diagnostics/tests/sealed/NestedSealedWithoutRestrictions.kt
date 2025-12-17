@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 // ISSUE: KT-13495
 // LANGUAGE: +AllowSealedInheritorsInDifferentFilesOfSamePackage
 // DIAGNOSTICS: -UNUSED_VARIABLE

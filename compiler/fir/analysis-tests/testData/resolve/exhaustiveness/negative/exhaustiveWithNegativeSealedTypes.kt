@@ -14,10 +14,10 @@ fun foo(v: Variants): String {
         return "A"
     }
 
-    return when (v) {
+    return <!WHEN_ON_SEALED_GEEN_ELSE!>when (v) {
         is Variants.B -> "B"
         is Variants.C -> "C"
-    }
+    }<!>
 }
 
 fun bar(v: Variants): String {
@@ -29,9 +29,9 @@ fun bar(v: Variants): String {
         return "B"
     }
 
-    return when (v) {
+    return <!WHEN_ON_SEALED_GEEN_ELSE!>when (v) {
         is Variants.C -> "C"
-    }
+    }<!>
 }
 
 fun baz(v: Variants): String {
@@ -39,10 +39,10 @@ fun baz(v: Variants): String {
         return "A"
     }
 
-    return when (v) {
+    return <!WHEN_ON_SEALED_EEN_EN_ELSE!>when (v) {
         is Variants.B -> "B"
         else -> v.<!UNRESOLVED_REFERENCE!>test<!>()
-    }
+    }<!>
 }
 
 fun quux(v: Variants): String {

@@ -16,11 +16,11 @@ fun whenWithEquals(e: SealedWithEquals): Int {
     if (e == SealedWithEquals.A) return 1
     if (e == SealedWithEquals.B) return 2
 
-    return when (e) {
+    return <!WHEN_ON_SEALED_GEEN_ELSE!>when (e) {
         SealedWithEquals.A -> 3
         SealedWithEquals.B -> 4
         SealedWithEquals.C -> 5
-    }
+    }<!>
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, functionDeclaration, ifExpression, integerLiteral,

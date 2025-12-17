@@ -7,17 +7,17 @@ sealed class Base
 
 class Derived : Base()
 
-fun test_1(b: Base) = when (b) {
+fun test_1(b: Base) = <!WHEN_ON_SEALED_GEEN_ELSE!>when (b) {
     is Derived -> 1
-}
+}<!>
 
 // MODULE: m1-jvm()()(m1-common)
 
 class PlatfromDerived : <!SEALED_INHERITOR_IN_DIFFERENT_MODULE!>Base<!>() // must be an error
 
-fun test_2(b: Base) = when (b) {
+fun test_2(b: Base) = <!WHEN_ON_SEALED_GEEN_ELSE!>when (b) {
     is Derived -> 1
-}
+}<!>
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, isExpression, sealed, whenExpression,
 whenWithSubject */

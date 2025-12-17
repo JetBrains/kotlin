@@ -17,22 +17,22 @@ enum class E {
 
 fun test_1() {
     val e = Utils.getEnum()
-    val s = when (e) {
+    val s = <!WHEN_ON_SEALED_GEEN_ELSE!>when (e) {
         null -> return
         E.A -> ""
         E.B -> ""
         E.C -> ""
-    }
+    }<!>
     s.length
 }
 
 fun test_2() {
     val e = Utils.getEnum()
-    val s = when (e) {
+    val s = <!WHEN_ON_SEALED_GEEN_ELSE!>when (e) {
         E.A -> ""
         E.B -> ""
         E.C -> ""
-    }
+    }<!>
     s.length
 }
 

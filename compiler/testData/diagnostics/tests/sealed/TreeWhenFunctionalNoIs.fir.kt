@@ -4,11 +4,11 @@ sealed class Tree {
     class Leaf(val x: Int): Tree()
     class Node(val left: Tree, val right: Tree): Tree()
 
-    fun max(): Int = when(this) {
+    fun max(): Int = <!WHEN_ON_SEALED_GEEN_ELSE!>when(this) {
         Empty -> -1
         is Leaf  -> this.x
         is Node  -> this.left.max()
-    }
+    }<!>
 
     fun maxIsClass(): Int = <!NO_ELSE_IN_WHEN!>when<!>(this) {
         Empty -> -1
@@ -16,11 +16,11 @@ sealed class Tree {
         is Node  -> this.left.max()
     }
 
-    fun maxWithElse(): Int = when(this) {
+    fun maxWithElse(): Int = <!WHEN_ON_SEALED_WEL_ELSE!>when(this) {
         is Leaf  -> this.x
         is Node  -> this.left.max()
         else -> -1
-    }
+    }<!>
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, functionDeclaration, integerLiteral, isExpression,

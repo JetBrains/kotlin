@@ -5,3 +5,5 @@
 /whenWithGuardEnabled.fir.kt:(944,954): error: Use of comma in 'when' condition with guard statement is not allowed.
 
 /whenWithGuardEnabled.fir.kt:(1051,1055): error: 'when' expression must be exhaustive. Add the 'False' branch or an 'else' branch.
+
+/whenWithGuardEnabled.fir.kt:(1186,1287): warning: Exhaustive 'when' on sealed or enum class without 'else' --- BooleanHolder

@@ -15,20 +15,20 @@ class C(val b: B)
 // TESTCASE NUMBER: 1
 fun case1() {
     val flag = A.A1
-    val l0: B = when (flag<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>) {
+    val l0: B = <!WHEN_ON_SEALED_GEEN_ELSE!>when (flag<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>) {
         A.A1 -> B()
         A.A2 -> B()
-    }
+    }<!>
     val x1 = C(l0) //ok (l0 is B)
 }
 
 // TESTCASE NUMBER: 2
 fun case2() {
     val flag = A.A1
-    val l0: B = when (flag) {
+    val l0: B = <!WHEN_ON_SEALED_GEEN_ELSE!>when (flag) {
         A.A1 -> B()
         A.A2 -> B()
-    }
+    }<!>
     val x1 = C(l0) //ok (l0 is B)
 }
 
@@ -36,10 +36,10 @@ fun case2() {
 fun case3() {
     val flag = A.A1
 
-    val l1 = when (flag<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>) {
+    val l1 = <!WHEN_ON_SEALED_GEEN_ELSE!>when (flag<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>) {
         A.A1 -> B()
         A.A2 -> B()
-    }
+    }<!>
     val x1 = C(l1)
 }
 
@@ -47,10 +47,10 @@ fun case3() {
 fun case4() {
     val flag = A.A1
 
-    val l2 = when (flag) {
+    val l2 = <!WHEN_ON_SEALED_GEEN_ELSE!>when (flag) {
         A.A1 -> B()
         A.A2 -> B()
-    }
+    }<!>
     val x2 = C(l2)
 }
 

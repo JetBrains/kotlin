@@ -8,11 +8,11 @@ sealed interface MySealed {
     class NonSealedSubclass(val z: String)
 }
 
-fun MySealed.getOrElse() = when (this) {
+fun MySealed.getOrElse() = <!WHEN_ON_SEALED_GEEN_ELSE!>when (this) {
     is Left -> x
     is Right -> y
     is <!UNRESOLVED_REFERENCE!>NonSealedSubclass<!> -> <!UNRESOLVED_REFERENCE!>z<!>
-}
+}<!>
 
 /* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, interfaceDeclaration,
 isExpression, nestedClass, primaryConstructor, propertyDeclaration, sealed, smartcast, whenExpression, whenWithSubject */

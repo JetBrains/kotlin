@@ -21,15 +21,15 @@ actual sealed class Base actual constructor()
 class PlatformDerived : Base()
 
 // should be ok
-fun platformTest_1(x: Base) = when (x) {
+fun platformTest_1(x: Base) = <!WHEN_ON_SEALED_GEEN_ELSE!>when (x) {
     is CommonDerived -> 1
     is PlatformDerived -> 2
-}
+}<!>
 
 // should be an error
-fun platformTest_2(x: Base) = when (x) {
+fun platformTest_2(x: Base) = <!WHEN_ON_SEALED_GEEN_ELSE!>when (x) {
     is PlatformDerived -> 2
-}
+}<!>
 
 /* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, integerLiteral, isExpression,
 primaryConstructor, sealed, smartcast, whenExpression, whenWithSubject */

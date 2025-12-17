@@ -4,11 +4,11 @@
 enum class SomeEnum { A, B}
 
 fun test(x: SomeEnum) {
-    when (x) {
+    <!WHEN_ON_SEALED_GEEN_ELSE!>when (x) {
         SomeEnum.A -> 1
         @Suppress("deprecation")
         SomeEnum.B -> 2
-    }.inc()
+    }<!>.inc()
 }
 
 /* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, equalityExpression, functionDeclaration, integerLiteral, smartcast,

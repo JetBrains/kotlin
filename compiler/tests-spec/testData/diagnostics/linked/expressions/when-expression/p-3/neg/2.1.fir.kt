@@ -24,30 +24,30 @@ enum JavaEnum {
 
 fun case1() {
     val z = JavaEnum.Val_3
-    val when1 = when (z) {
+    val when1 = <!WHEN_ON_SEALED_WEL_ELSE!>when (z) {
         JavaEnum.Val_1 -> { false }
         <!ELSE_MISPLACED_IN_WHEN!>else<!> -> {true}
         JavaEnum.Val_2 -> { false }
-    }
+    }<!>
 }
 
 // TESTCASE NUMBER: 2
 
 fun case2() {
     val z = JavaEnum.Val_3
-    val when1 = when (z) {
+    val when1 = <!WHEN_ON_SEALED_WEL_ELSE!>when (z) {
         <!ELSE_MISPLACED_IN_WHEN!>else<!> -> {true}
         JavaEnum.Val_1 -> { false }
         JavaEnum.Val_2 -> { false }
-    }
+    }<!>
 }// TESTCASE NUMBER: 3
 
 fun case3() {
     val z = JavaEnum.Val_3
-    val when1 = when (z) {
+    val when1 = <!WHEN_ON_SEALED_WEL_ELSE!>when (z) {
         <!ELSE_MISPLACED_IN_WHEN!>else<!> -> {true}
         JavaEnum.Val_1 -> { false }
         JavaEnum.Val_2 -> { false }
         else -> { true }
-    }
+    }<!>
 }

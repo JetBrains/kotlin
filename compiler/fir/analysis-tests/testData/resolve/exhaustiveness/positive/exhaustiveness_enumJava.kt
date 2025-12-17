@@ -20,16 +20,16 @@ fun test_1(e: JavaEnum) {
         <!IMPOSSIBLE_IS_CHECK_WARNING!>is String<!> -> 3
     }.plus(0)
 
-    val c = when (e) {
+    val c = <!WHEN_ON_SEALED_GEEN_ELSE!>when (e) {
         JavaEnum.A -> 1
         JavaEnum.B -> 2
         JavaEnum.C -> 3
-    }.plus(0)
+    }<!>.plus(0)
 
-    val d = when (e) {
+    val d = <!WHEN_ON_SEALED_EEN_EN_ELSE!>when (e) {
         JavaEnum.A -> 1
         else -> 2
-    }.plus(0)
+    }<!>.plus(0)
 }
 
 fun test_2(e: JavaEnum?) {
@@ -39,26 +39,26 @@ fun test_2(e: JavaEnum?) {
         JavaEnum.C -> 3
     }.plus(0)
 
-    val b = when (e) {
+    val b = <!WHEN_ON_SEALED_GEEN_ELSE!>when (e) {
         JavaEnum.A -> 1
         JavaEnum.B -> 2
         JavaEnum.C -> 3
         null -> 4
-    }.plus(0)
+    }<!>.plus(0)
 
-    val c = when (e) {
+    val c = <!WHEN_ON_SEALED_WEL_ELSE!>when (e) {
         JavaEnum.A -> 1
         JavaEnum.B -> 2
         JavaEnum.C -> 3
         else -> 4
-    }.plus(0)
+    }<!>.plus(0)
 }
 
 fun test_3(e: JavaEnum) {
-    val a = when (e) {
+    val a = <!WHEN_ON_SEALED_GEEN_ELSE!>when (e) {
         JavaEnum.A, JavaEnum.B -> 1
         JavaEnum.C -> 2
-    }.plus(0)
+    }<!>.plus(0)
 }
 
 /* GENERATED_FIR_TAGS: disjunctionExpression, equalityExpression, functionDeclaration, integerLiteral, isExpression,

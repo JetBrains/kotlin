@@ -14,9 +14,9 @@ fun foo(v: Variants): String {
         return "B"
     }
 
-    return when (v) {
+    return <!WHEN_ON_SEALED_GEEN_ELSE!>when (v) {
         is Variants.A -> "A"
-    }
+    }<!>
 }
 
 /* GENERATED_FIR_TAGS: data, functionDeclaration, ifExpression, interfaceDeclaration, isExpression, nestedClass,

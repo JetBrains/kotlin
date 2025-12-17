@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 //KT-1185 Support full enumeration check for 'when'
 
 package kt1185

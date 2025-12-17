@@ -30,10 +30,10 @@ class Test {
         B -> 2
     }
 
-    fun test2enum(x: MyEnum): Int = when (x) {
+    fun test2enum(x: MyEnum): Int = <!WHEN_ON_SEALED_GEEN_ELSE!>when (x) {
         MyEnum.A -> 1
         B -> 2
-    }
+    }<!>
 
     fun test2companion(x: MyEnum): Int = <!NO_ELSE_IN_WHEN!>when<!> (x) {
         Companion.A -> 1

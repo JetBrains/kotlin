@@ -11,11 +11,11 @@ interface Left {
     val z: String
 }
 
-fun MySealed.getOrElse() = when (this) {
+fun MySealed.getOrElse() = <!WHEN_ON_SEALED_WEL_ELSE!>when (this) {
     is <!CONTEXT_SENSITIVE_RESOLUTION_AMBIGUITY!>Left<!> -> z
     is Right -> y
     else -> ""
-}
+}<!>
 
 /* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, interfaceDeclaration,
 intersectionType, isExpression, nestedClass, primaryConstructor, propertyDeclaration, sealed, smartcast, stringLiteral,

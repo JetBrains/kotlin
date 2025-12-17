@@ -12,10 +12,10 @@ abstract class Impl13 : DoubleDerived3, Base1
 abstract class Impl23 : Base2, Derived3
 class DerivedImpl23 : Impl23(), Base3
 
-fun foo(x: Base3): String? = when (x) {
+fun foo(x: Base3): String? = <!WHEN_ON_SEALED_GEEN_ELSE!>when (x) {
     is Impl13 -> null
     is Base2 -> null
-}
+}<!>
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, isExpression, nullableType, sealed,
 smartcast, whenExpression, whenWithSubject */

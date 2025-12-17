@@ -18,17 +18,17 @@ fun test(e: E?) = <!NO_ELSE_IN_WHEN!>when<!> (e) {
     E.B -> 2
 }
 
-fun withNull(e: E?) = when (e) {
+fun withNull(e: E?) = <!WHEN_ON_SEALED_GEEN_ELSE!>when (e) {
     E.A -> 3
     E.B -> 4
     null -> null
-}
+}<!>
 
-fun withNullableNothingCheck(e: E?) = when (e) {
+fun withNullableNothingCheck(e: E?) = <!WHEN_ON_SEALED_GEEN_ELSE!>when (e) {
     E.A -> 3
     E.B -> 4
     is Nothing? -> null
-}
+}<!>
 
 fun withWrongNullableNothingCheck(e: E?) = <!NO_ELSE_IN_WHEN!>when<!> (e) {
     E.A -> 3
@@ -37,24 +37,24 @@ fun withWrongNullableNothingCheck(e: E?) = <!NO_ELSE_IN_WHEN!>when<!> (e) {
 }
 
 fun nullableNothing(): Nothing? = null
-fun withNullableNothing(e: E?) = when (e) {
+fun withNullableNothing(e: E?) = <!WHEN_ON_SEALED_GEEN_ELSE!>when (e) {
     E.A -> 5
     E.B -> 6
     nullableNothing() -> null
-}
+}<!>
 
-fun platformType() = when (J.foo()) {
+fun platformType() = <!WHEN_ON_SEALED_GEEN_ELSE!>when (J.foo()) {
     E.A -> 7
     E.B -> 8
-}
+}<!>
 
 fun platformTypeSmartCast(): Int {
     val e = J.foo()
     if (e == null) return -1
-    return when (e) {
+    return <!WHEN_ON_SEALED_GEEN_ELSE!>when (e) {
         E.A -> 1
         E.B -> 2
-    }
+    }<!>
 }
 
 

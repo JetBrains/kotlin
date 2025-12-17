@@ -933,6 +933,9 @@ object FirErrors : KtDiagnosticsContainer() {
     val COMMA_IN_WHEN_CONDITION_WITH_WHEN_GUARD: KtDiagnosticFactory0 = KtDiagnosticFactory0("COMMA_IN_WHEN_CONDITION_WITH_WHEN_GUARD", ERROR, SourceElementPositioningStrategies.WHEN_GUARD, PsiElement::class, getRendererFactory())
     val WHEN_GUARD_WITHOUT_SUBJECT: KtDiagnosticFactory0 = KtDiagnosticFactory0("WHEN_GUARD_WITHOUT_SUBJECT", ERROR, SourceElementPositioningStrategies.WHEN_GUARD, PsiElement::class, getRendererFactory())
     val INFERRED_INVISIBLE_WHEN_TYPE: KtDiagnosticFactoryForDeprecation2<ConeKotlinType, String> = KtDiagnosticFactoryForDeprecation2("INFERRED_INVISIBLE_WHEN_TYPE", ForbidInferOfInvisibleTypeAsReifiedVarargOrReturnType, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
+    val WHEN_ON_SEALED_GEEN_ELSE: KtDiagnosticFactory1<ConeKotlinType> = KtDiagnosticFactory1("WHEN_ON_SEALED_GEEN_ELSE", WARNING, SourceElementPositioningStrategies.DEFAULT, KtWhenExpression::class, getRendererFactory())
+    val WHEN_ON_SEALED_EEN_EN_ELSE: KtDiagnosticFactory1<ConeKotlinType> = KtDiagnosticFactory1("WHEN_ON_SEALED_EEN_EN_ELSE", WARNING, SourceElementPositioningStrategies.DEFAULT, KtWhenExpression::class, getRendererFactory())
+    val WHEN_ON_SEALED_WEL_ELSE: KtDiagnosticFactory1<ConeKotlinType> = KtDiagnosticFactory1("WHEN_ON_SEALED_WEL_ELSE", WARNING, SourceElementPositioningStrategies.DEFAULT, KtWhenExpression::class, getRendererFactory())
 
     // Context tracking
     val TYPE_PARAMETER_IS_NOT_AN_EXPRESSION: KtDiagnosticFactory1<FirTypeParameterSymbol> = KtDiagnosticFactory1("TYPE_PARAMETER_IS_NOT_AN_EXPRESSION", ERROR, SourceElementPositioningStrategies.DEFAULT, KtSimpleNameExpression::class, getRendererFactory())

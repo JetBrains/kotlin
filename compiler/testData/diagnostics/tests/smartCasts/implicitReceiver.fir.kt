@@ -39,9 +39,9 @@ sealed class Received<out T> {
 
 val Received<String>.thisRaisesUnresolvedReference: Boolean
     get() = if (this is Received.Error<*>) {
-        when (this) {
+        <!WHEN_ON_SEALED_GEEN_ELSE!>when (this) {
             is Received.Error.SomeError -> details?.length == 0
-        }
+        }<!>
     } else {
         false
     }

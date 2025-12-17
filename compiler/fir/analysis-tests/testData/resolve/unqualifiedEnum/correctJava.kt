@@ -9,10 +9,10 @@ public enum JavaEnum {
 
 // FILE: test.kt
 
-fun foo(javaEnum: JavaEnum) = when (javaEnum) {
+fun foo(javaEnum: JavaEnum) = <!WHEN_ON_SEALED_GEEN_ELSE!>when (javaEnum) {
     FIRST -> 1
     SECOND -> 2
-}
+}<!>
 
 /* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, integerLiteral, javaProperty, javaType, smartcast,
 whenExpression, whenWithSubject */

@@ -7,10 +7,10 @@ enum class Some {
 
 typealias Other = Some
 
-fun foo(o: Other) = when (o) {
+fun foo(o: Other) = <!WHEN_ON_SEALED_GEEN_ELSE!>when (o) {
     FIRST -> 1
     SECOND -> 2
-}
+}<!>
 
 /* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, equalityExpression, functionDeclaration, integerLiteral, smartcast,
 typeAliasDeclaration, whenExpression, whenWithSubject */

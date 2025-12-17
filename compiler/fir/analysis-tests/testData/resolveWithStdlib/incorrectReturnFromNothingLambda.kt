@@ -6,10 +6,10 @@ sealed class Result4k<out T, out E>
 data class Success<out T>(val value: T) : Result4k<T, Nothing>()
 data class Failure<out E>(val reason: E) : Result4k<Nothing, E>()
 
-inline fun <T, E> Result4k<T, E>.onFailure(block: (Failure<E>) -> Nothing): T = when (this) {
+inline fun <T, E> Result4k<T, E>.onFailure(block: (Failure<E>) -> Nothing): T = <!WHEN_ON_SEALED_GEEN_ELSE!>when (this) {
     is Success<T> -> value
     is Failure<E> -> block(this)
-}
+}<!>
 
 data class MyData(val a: Int, val b: List<String>)
 
