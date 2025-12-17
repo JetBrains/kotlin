@@ -26,8 +26,6 @@ constexpr int kDefaultThreadCount = 10;
 constexpr int kDefaultThreadCount = 100;
 #endif
 
-void DeinitMemoryForTests(MemoryState* memoryState);
-
 // Scopely initializes the memory subsystem of the current thread for tests.
 // TODO(KT-72132): consider dropping this class.
 class ScopedMemoryInit : private kotlin::Pinned {
@@ -43,7 +41,8 @@ public:
         ClearMemoryForTests(memoryState());
         // Ensure that memory deinit is performed in the native state.
         SwitchThreadState(memoryState(), ThreadState::kNative);
-        DeinitMemoryForTests(memoryState());
+        mm::ThreadRegistry::Instance().Unregister(mm::FromMemoryState(memoryState()));
+        mm::ThreadRegistry::ClearCurrentThreadData();
     }
 
     MemoryState* memoryState() { return memoryState_; }

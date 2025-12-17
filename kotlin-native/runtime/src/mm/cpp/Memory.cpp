@@ -80,19 +80,6 @@ void kotlin::initGlobalMemory() noexcept {
     mm::GlobalData::init();
 }
 
-extern "C" void DeinitMemory(MemoryState* state) {
-    // We need the native state to avoid a deadlock on unregistering the thread.
-    // The deadlock is possible if we are in the runnable state and the GC already locked
-    // the thread registery and waits for threads to suspend or go to the native state.
-    AssertThreadState(state, ThreadState::kNative);
-    auto* node = mm::FromMemoryState(state);
-    if (!konan::isOnThreadExitNotSetOrAlreadyStarted()) {
-        // we can clear reference in advance, as Unregister function can't use it anyway
-        mm::ThreadRegistry::ClearCurrentThreadData();
-    }
-    mm::ThreadRegistry::Instance().Unregister(node);
-}
-
 extern "C" void ClearMemoryForTests(MemoryState* state) {
     state->GetThreadData()->ClearForTests();
 }

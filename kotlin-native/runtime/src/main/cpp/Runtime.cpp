@@ -130,13 +130,21 @@ void deinitRuntime(RuntimeState* state) {
   --aliveRuntimesCount;
   ClearTLS(state->memoryState);
 
-  // Do not use ThreadStateGuard because memoryState will be destroyed during DeinitMemory.
+  // Do not use ThreadStateGuard because memoryState will be destroyed later.
   kotlin::SwitchThreadState(state->memoryState, kotlin::ThreadState::kNative);
 
   auto workerId = GetWorkerId(state->worker);
   WorkerDeinit(state->worker);
 
-  DeinitMemory(state->memoryState);
+  // We need the native state to avoid a deadlock on unregistering the thread.
+  // The deadlock is possible if we are in the runnable state and the GC already locked
+  // the thread registery and waits for threads to suspend or go to the native state.
+  auto* node = mm::FromMemoryState(state->memoryState);
+  if (!konan::isOnThreadExitNotSetOrAlreadyStarted()) {
+      // we can clear reference in advance, as Unregister function can't use it anyway
+      mm::ThreadRegistry::ClearCurrentThreadData();
+  }
+  mm::ThreadRegistry::Instance().Unregister(node);
   delete state;
   WorkerDestroyThreadDataIfNeeded(workerId);
   ::runtimeState = kInvalidRuntime;
