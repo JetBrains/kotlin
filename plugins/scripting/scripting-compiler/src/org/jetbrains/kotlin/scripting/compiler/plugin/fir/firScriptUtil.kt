@@ -12,4 +12,4 @@ import kotlin.script.experimental.api.ScriptCompilationConfiguration
 
 private object ScriptCompilationConfigurationKey : FirDeclarationDataKey()
 
-val FirScript.scriptCompilationConfiguration: ScriptCompilationConfiguration? by FirDeclarationDataRegistry.data(ScriptCompilationConfigurationKey)
+var FirScript.scriptCompilationConfiguration: ScriptCompilationConfiguration? by FirDeclarationDataRegistry.data(ScriptCompilationConfigurationKey)

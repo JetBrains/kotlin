@@ -69,6 +69,7 @@ class CollectAdditionalScriptSourcesExtension : CollectAdditionalSourceFilesExte
                             script, scriptCompilationConfiguration, hostConfiguration,
                             { _, scriptCompilationConfiguration ->
                                 getOrCreateSessionForAnnotationResolution(
+                                    scriptCompilationConfiguration,
                                     scriptCompilationConfiguration[ScriptCompilationConfiguration.hostConfiguration] ?: hostConfiguration,
                                     configuration,
                                     environment
@@ -155,6 +156,7 @@ class CollectAdditionalScriptSourcesExtension : CollectAdditionalSourceFilesExte
     @SessionConfiguration
     @Synchronized
     private fun getOrCreateSessionForAnnotationResolution(
+        scriptCompilationConfiguration: ScriptCompilationConfiguration,
         hostConfiguration: ScriptingHostConfiguration,
         configuration: CompilerConfiguration,
         projectEnvironment: VfsBasedProjectEnvironment,
@@ -169,7 +171,9 @@ class CollectAdditionalScriptSourcesExtension : CollectAdditionalSourceFilesExte
 
             val extensionRegistrars = configuration.getCompilerExtensions(FirExtensionRegistrar)
 
-            val classpath = hostConfiguration[ScriptingHostConfiguration.configurationDependencies].orEmpty().flatMap {
+            val dependencies = hostConfiguration[ScriptingHostConfiguration.configurationDependencies].orEmpty() +
+                    scriptCompilationConfiguration[ScriptCompilationConfiguration.dependencies].orEmpty()
+            val classpath = dependencies.flatMap {
                 (it as? JvmDependency)?.classpath ?: emptyList()
             }
 
