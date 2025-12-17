@@ -11,8 +11,6 @@ import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.library.KOTLIN_NATIVE_STDLIB_NAME
 import org.jetbrains.kotlin.nativeDistribution.nativeBootstrapDistribution
 import org.jetbrains.kotlin.nativeDistribution.nativeDistribution
-import org.jetbrains.kotlin.testing.native.GitDownloadTask
-import java.net.URI
 import org.jetbrains.kotlin.konan.target.Architecture as TargetArchitecture
 
 val kotlinVersion: String by rootProject.extra
@@ -23,17 +21,36 @@ plugins {
     id("runtime-testing")
 }
 
+repositories {
+    ivy {
+        name = "Google Breakpad"
+        url = uri("https://github.com/google/breakpad")
+        patternLayout {
+            artifact("archive/refs/tags/v[revision].[ext]")
+        }
+        metadataSources { artifact() }
+    }
+}
+val breakpad = configurations.dependencyScope("breakpad")
+val breakpadClasspath = configurations.resolvable("breakpadClasspath") {
+    extendsFrom(breakpad.get())
+}
+dependencies {
+    breakpad("google:breakpad:2024.02.16@zip")
+}
+
 if (HostManager.host == KonanTarget.MACOS_ARM64) {
     project.configureJvmToolchain(JdkMajorVersion.JDK_17_0)
 }
 
-val breakpadLocationNoDependency = layout.buildDirectory.dir("breakpad")
-
-val downloadBreakpad = tasks.register<GitDownloadTask>("downloadBreakpad") {
-    description = "Retrieves Breakpad sources"
-    repository.set(URI.create("https://github.com/google/breakpad.git"))
-    revision.set("v2024.02.16")
-    outputDirectory.set(breakpadLocationNoDependency)
+val unpackBreakpad = tasks.register<Sync>("unpackBreakpad") {
+    from(breakpadClasspath.map { zipTree(it.singleFile) })
+    eachFile {
+        relativePath = RelativePath(true, *relativePath.segments.drop(1).toTypedArray())
+    }
+    includeEmptyDirs = false
+    val breakpadLocationNoDependency = layout.buildDirectory.dir("breakpad")
+    into(breakpadLocationNoDependency)
 }
 
 val breakpadSources by configurations.creating {
@@ -46,7 +63,7 @@ val breakpadSources by configurations.creating {
 }
 
 artifacts {
-    add(breakpadSources.name, downloadBreakpad)
+    add(breakpadSources.name, unpackBreakpad)
 }
 
 googletest {
@@ -158,7 +175,7 @@ bitcode {
 
         if (!project.hasProperty("disableBreakpad")) {
             module("breakpad") {
-                srcRoot.set(downloadBreakpad.flatMap { it.outputDirectory })
+                srcRoot.fileProvider(unpackBreakpad.map { it.destinationDir })
                 val sources = listOf(
                         "client/mac/crash_generation/crash_generation_client.cc",
                         "client/mac/handler/breakpad_nlist_64.cc",
@@ -184,14 +201,10 @@ bitcode {
                         inputFiles.from(srcRoot.dir("src"))
                         inputFiles.setIncludes(sources)
                         headersDirs.setFrom(project.layout.projectDirectory.dir("src/breakpad/cpp"))
-                        // Fix Gradle Configuration Cache: support this task being configured before breakpad sources are actually downloaded.
-                        compileTask.configure {
-                            inputFiles.setFrom(sources.map { breakpadLocationNoDependency.get().dir("src").file(it) })
-                        }
                     }
                 }
                 // Make sure breakpad sources are downloaded when building the corresponding compilation database entry
-                dependencies.add(downloadBreakpad)
+                dependencies.add(unpackBreakpad)
                 compilerArgs.set(listOf(
                         "-std=c++17",
                         "-DHAVE_MACH_O_NLIST_H",
@@ -544,12 +557,12 @@ bitcode {
                 srcRoot.set(layout.projectDirectory.dir("src/crashHandler/impl"))
                 // Cannot use output of `downloadBreakpad` to support Gradle Configuration Cache working before `downloadBreakpad`
                 // actually had a chance to run.
-                headersDirs.from("src/main/cpp", "src/breakpad/cpp", breakpadLocationNoDependency.get().dir("src"))
+                headersDirs.from("src/main/cpp", "src/breakpad/cpp", unpackBreakpad.map { it.destinationDir.resolve("src") })
                 sourceSets {
                     main {
                         // This task depends on breakpad headers being present.
                         compileTask.configure {
-                            dependsOn(downloadBreakpad)
+                            dependsOn(unpackBreakpad)
                         }
                     }
                 }
