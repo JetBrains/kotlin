@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
 import org.jetbrains.kotlin.cli.jvm.config.configureJdkClasspathRoots
 import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
+import org.jetbrains.kotlin.cli.jvm.config.jvmModularRoots
 import org.jetbrains.kotlin.cli.jvm.plugins.PluginCliParser
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
@@ -235,7 +236,7 @@ fun makeScriptCompilerArguments(compilerOptions: List<String>): K2JVMCompilerArg
 }
 
 private fun ScriptCompilationConfiguration.withUpdatesFromCompilerConfiguration(kotlinCompilerConfiguration: CompilerConfiguration) =
-    withUpdatedClasspath(kotlinCompilerConfiguration.jvmClasspathRoots)
+    withUpdatedClasspath(kotlinCompilerConfiguration.jvmClasspathRoots + kotlinCompilerConfiguration.jvmModularRoots)
 
 private fun createInitialCompilerConfiguration(
     scriptCompilationConfiguration: ScriptCompilationConfiguration,
