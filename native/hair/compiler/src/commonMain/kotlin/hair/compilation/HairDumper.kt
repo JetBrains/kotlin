@@ -17,7 +17,7 @@ abstract class HairDumper {
                     generateGraphviz() to true
                 }
             } catch (_: Throwable) {
-                generateGraphviz() to true
+                generateGraphviz() to false
             }
             dumpImpl(
                 f = compilation.function,
