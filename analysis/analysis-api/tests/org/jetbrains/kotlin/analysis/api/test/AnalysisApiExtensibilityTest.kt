@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.test
 
+import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.analysis.api.KaExtensibleApi
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -12,6 +13,7 @@ import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtObjectDeclaration
+import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
 import org.jetbrains.kotlin.test.TestDataAssertions
 import org.junit.jupiter.api.Test
@@ -19,7 +21,10 @@ import java.io.File
 
 
 /**
- * The test verifies that all extensible endpoints are intentionally extensible.
+ * The test verifies:
+ *
+ * - All extensible endpoints are intentionally extensible
+ * - No [ExtensionPointName] usages in the public API
  *
  * All extensible endpoints have to be annotated with `@KaExtensibleApi` annotation.
  */
@@ -33,6 +38,22 @@ class AnalysisApiExtensibilityTest : AbstractAnalysisApiSurfaceCodebaseValidatio
         psiFile.forEachDescendantOfType<KtClassOrObject> {
             assertExtensibility(file, it)
         }
+
+        psiFile.forEachDescendantOfType<KtProperty> {
+            assertExtensionPointUsage(file, it)
+        }
+    }
+
+    private fun assertExtensionPointUsage(file: File, property: KtProperty) {
+        if (property.hasModifier(KtTokens.PRIVATE_KEYWORD)) return
+
+        val hasExtensionPointUsage = property.text.contains(EXTENSION_POINT_NAME)
+        if (!hasExtensionPointUsage) return
+
+        val qualifier = property.fqName.toString()
+        if (qualifier in ignoredExtensionPointUsages) return
+
+        error("'$EXTENSION_POINT_NAME' usages are forbidden in the public API. The violation place: $qualifier from ${file.name} (${file.path})")
     }
 
     private fun assertExtensibility(file: File, classOrObject: KtClassOrObject) {
@@ -73,5 +94,13 @@ class AnalysisApiExtensibilityTest : AbstractAnalysisApiSurfaceCodebaseValidatio
         val KA_EXTENSIBLE_API: String = KaExtensibleApi::class.simpleName!!
         val SUBCLASS_OPT_IN: String = SubclassOptInRequired::class.simpleName!!
         val SUBCLASS_OPT_IN_ANNOTATION = "@$SUBCLASS_OPT_IN(KaImplementationDetail::class)"
+        val EXTENSION_POINT_NAME: String = ExtensionPointName::class.simpleName!!
+
+        val ignoredExtensionPointUsages: List<String> = listOf(
+            "org.jetbrains.kotlin.analysis.api.resolve.extensions.KaResolveExtensionProvider.Companion.EP_NAME",
+
+            // Should be dropped together with deprecated AdditionalKDocResolutionProvider
+            "org.jetbrains.kotlin.analysis.api.symbols.AdditionalKDocResolutionProvider.Companion.EP_NAME",
+        )
     }
 }
