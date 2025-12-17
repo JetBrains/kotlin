@@ -15,8 +15,6 @@ import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.api.io.TempDir
-import org.junit.jupiter.api.parallel.Execution
-import org.junit.jupiter.api.parallel.ExecutionMode
 import java.nio.file.Path
 import java.nio.file.Paths
 
@@ -39,7 +37,6 @@ import java.nio.file.Paths
 @TestDataPath("\$CONTENT_ROOT/resources/testProject")
 @ExtendWith(BrokenMacosTestInterceptor::class)
 @OsCondition(allowRunningOnMacosOnCI = true)
-@Execution(ExecutionMode.CONCURRENT)
 abstract class KGPBaseTest {
     open val defaultBuildOptions = BuildOptions()
 

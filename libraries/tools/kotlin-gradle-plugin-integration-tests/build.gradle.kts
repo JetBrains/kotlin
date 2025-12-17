@@ -272,20 +272,10 @@ if (project.kotlinBuildProperties.isTeamcityBuild) {
 tasks.register<Test>("kgpAllParallelTests") {
     group = KGP_TEST_TASKS_GROUP
     description = "Runs all tests for Kotlin Gradle plugins except daemon ones"
-    maxParallelForks = 1
+    maxParallelForks = maxParallelTestForks
 
     useJUnitPlatform {
         excludeTags(JunitTag.DaemonsKGP.name)
-    }
-
-    doFirst {
-        this as Test
-        systemProperties["junit.jupiter.execution.parallel.enabled"] = "true"
-        systemProperties["junit.jupiter.execution.parallel.mode.default"] = "concurrent"
-        systemProperties["junit.jupiter.execution.parallel.mode.classes.default"] = "concurrent"
-        systemProperty("junit.jupiter.execution.parallel.config.strategy", "fixed")
-        systemProperty("junit.jupiter.execution.parallel.config.fixed.parallelism", "4")
-        systemProperty("junit.jupiter.execution.parallel.config.fixed.max-pool-size", "4")
     }
 }
 
