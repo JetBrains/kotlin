@@ -10,17 +10,17 @@ const val charTwoVal = <!EVALUATED("2")!>'2'<!>
 const val charThreeVal = <!EVALUATED("3")!>'3'<!>
 const val charFourVal = <!EVALUATED("4")!>'4'<!>
 
-const val byteMinusOneVal = (-1).<!EVALUATED("-1")!>toByte()<!>
-const val byteOneVal = 1.<!EVALUATED("1")!>toByte()<!>
-const val byteTwoVal = 2.<!EVALUATED("2")!>toByte()<!>
-const val byteThreeVal = 3.<!EVALUATED("3")!>toByte()<!>
-const val byteFourVal = 4.<!EVALUATED("4")!>toByte()<!>
+const val byteMinusOneVal = <!EVALUATED{IR}("-1")!>(-1).<!EVALUATED{FIR}("-1")!>toByte()<!><!>
+const val byteOneVal = <!EVALUATED{IR}("1")!>1.<!EVALUATED{FIR}("1")!>toByte()<!><!>
+const val byteTwoVal = <!EVALUATED{IR}("2")!>2.<!EVALUATED{FIR}("2")!>toByte()<!><!>
+const val byteThreeVal = <!EVALUATED{IR}("3")!>3.<!EVALUATED{FIR}("3")!>toByte()<!><!>
+const val byteFourVal = <!EVALUATED{IR}("4")!>4.<!EVALUATED{FIR}("4")!>toByte()<!><!>
 
-const val shortMinusOneVal = (-1).<!EVALUATED("-1")!>toShort()<!>
-const val shortOneVal = 1.<!EVALUATED("1")!>toShort()<!>
-const val shortTwoVal = 2.<!EVALUATED("2")!>toShort()<!>
-const val shortThreeVal = 3.<!EVALUATED("3")!>toShort()<!>
-const val shortFourVal = 4.<!EVALUATED("4")!>toShort()<!>
+const val shortMinusOneVal = <!EVALUATED{IR}("-1")!>(-1).<!EVALUATED{FIR}("-1")!>toShort()<!><!>
+const val shortOneVal = <!EVALUATED{IR}("1")!>1.<!EVALUATED{FIR}("1")!>toShort()<!><!>
+const val shortTwoVal = <!EVALUATED{IR}("2")!>2.<!EVALUATED{FIR}("2")!>toShort()<!><!>
+const val shortThreeVal = <!EVALUATED{IR}("3")!>3.<!EVALUATED{FIR}("3")!>toShort()<!><!>
+const val shortFourVal = <!EVALUATED{IR}("4")!>4.<!EVALUATED{FIR}("4")!>toShort()<!><!>
 
 const val intMinusOneVal = <!EVALUATED("-1")!>-1<!>
 const val intOneVal = <!EVALUATED("1")!>1<!>
@@ -88,10 +88,10 @@ const val equalsDouble2 = doubleTwoVal.<!EVALUATED{IR}("true")!>equals(doubleTwo
 const val equalsDouble3 = <!EVALUATED("false")!>doubleThreeVal == doubleTwoVal<!>
 const val equalsDouble4 = doubleFourVal.<!EVALUATED{IR}("false")!>equals(1)<!>
 
-const val equalsString1 = someStr.<!EVALUATED("false")!>equals(otherStr)<!>
-const val equalsString2 = someStr.<!EVALUATED("true")!>equals("123")<!>
+const val equalsString1 = <!EVALUATED{IR}("false")!>someStr.<!EVALUATED{FIR}("false")!>equals(otherStr)<!><!>
+const val equalsString2 = <!EVALUATED{IR}("true")!>someStr.<!EVALUATED{FIR}("true")!>equals("123")<!><!>
 const val equalsString3 = <!EVALUATED("false")!>otherStr == someStr<!>
-const val equalsString4 = someStr.<!EVALUATED("false")!>equals(1)<!>
+const val equalsString4 = <!EVALUATED{IR}("false")!>someStr.<!EVALUATED{FIR}("false")!>equals(1)<!><!>
 
 // STOP_EVALUATION_CHECKS
 fun box(): String {

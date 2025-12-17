@@ -7,25 +7,25 @@ const val otherStr = <!EVALUATED("other")!>"other"<!>
 const val oneVal = <!EVALUATED("1")!>1<!>
 const val oneUnsignedVal = <!EVALUATED("1")!>1u<!>
 
-const val plus1 = someStr.<!EVALUATED("123other")!>plus(otherStr)<!>
-const val plus2 = someStr.<!EVALUATED("1231")!>plus(oneVal)<!>
-const val plus3 = someStr.<!EVALUATED("1231")!>plus(oneUnsignedVal)<!>
+const val plus1 = <!EVALUATED{IR}("123other")!>someStr.<!EVALUATED{FIR}("123other")!>plus(otherStr)<!><!>
+const val plus2 = <!EVALUATED{IR}("1231")!>someStr.<!EVALUATED{FIR}("1231")!>plus(oneVal)<!><!>
+const val plus3 = <!EVALUATED{IR}("1231")!>someStr.<!EVALUATED{FIR}("1231")!>plus(oneUnsignedVal)<!><!>
 
-const val length1 = someStr.<!EVALUATED("3")!>length<!>
-const val length2 = otherStr.<!EVALUATED("5")!>length<!>
+const val length1 = <!EVALUATED{IR}("3")!>someStr.<!EVALUATED{FIR}("3")!>length<!><!>
+const val length2 = <!EVALUATED{IR}("5")!>otherStr.<!EVALUATED{FIR}("5")!>length<!><!>
 
-const val get1 = someStr.<!EVALUATED("1")!>get(0)<!>
-const val get2 = otherStr.<!EVALUATED("t")!>get(oneVal)<!>
+const val get1 = <!EVALUATED{IR}("1")!>someStr.<!EVALUATED{FIR}("1")!>get(0)<!><!>
+const val get2 = <!EVALUATED{IR}("t")!>otherStr.<!EVALUATED{FIR}("t")!>get(oneVal)<!><!>
 
-const val compareTo1 = someStr.<!EVALUATED("0")!>compareTo("123")<!>
-const val compareTo2 = someStr.<!EVALUATED("-62")!>compareTo(otherStr)<!>
-const val compareTo3 = otherStr.<!EVALUATED("62")!>compareTo(someStr)<!>
+const val compareTo1 = <!EVALUATED{IR}("0")!>someStr.<!EVALUATED{FIR}("0")!>compareTo("123")<!><!>
+const val compareTo2 = <!EVALUATED{IR}("-62")!>someStr.<!EVALUATED{FIR}("-62")!>compareTo(otherStr)<!><!>
+const val compareTo3 = <!EVALUATED{IR}("62")!>otherStr.<!EVALUATED{FIR}("62")!>compareTo(someStr)<!><!>
 
 const val equals1 = <!EVALUATED("true")!>someStr == "123"<!>
 const val equals2 = <!EVALUATED("false")!>someStr == otherStr<!>
 const val equals3 = <!EVALUATED("false")!>otherStr == someStr<!>
 
-const val toString1 = someStr.<!EVALUATED("123")!>toString()<!>
+const val toString1 = <!EVALUATED{IR}("123")!>someStr.<!EVALUATED{FIR}("123")!>toString()<!><!>
 
 // STOP_EVALUATION_CHECKS
 fun box(): String {

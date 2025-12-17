@@ -317,6 +317,16 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
                                 if (initializer is FirLiteralExpression) {
                                     val constType = initializer.resolvedType.toIrType()
                                     field.initializer = factory.createExpressionBody(initializer.toIrConst(constType))
+                                } else if (property.isConst) {
+                                    val constType = initializer!!.resolvedType.toIrType()
+                                    var value = when(property.evaluatedInitializer) {
+                                        is FirEvaluatorResult.Evaluated -> (property.evaluatedInitializer as FirEvaluatorResult.Evaluated).unwrapOr<FirLiteralExpression> {}
+                                        else -> null
+                                    }
+                                    if (value != null) {
+                                        var irExpression = value.toIrConst(constType)
+                                        field.initializer = factory.createExpressionBody(irExpression)
+                                    }
                                 }
                             }
                         }

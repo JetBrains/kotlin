@@ -7,82 +7,82 @@ const val threeVal = <!EVALUATED("3.0")!>3.0<!>
 const val fourVal = <!EVALUATED("4.0")!>4.0<!>
 const val oneAndAHalf = <!EVALUATED("1.5")!>1.5<!>
 
-const val byteVal = 2.<!EVALUATED("2")!>toByte()<!>
-const val shortVal = 2.<!EVALUATED("2")!>toShort()<!>
+const val byteVal = <!EVALUATED{IR}("2")!>2.<!EVALUATED{FIR}("2")!>toByte()<!><!>
+const val shortVal = <!EVALUATED{IR}("2")!>2.<!EVALUATED{FIR}("2")!>toShort()<!><!>
 const val intVal = <!EVALUATED("2")!>2<!>
 const val longVal = <!EVALUATED("2")!>2L<!>
 const val floatVal = <!EVALUATED("2.0")!>2.0f<!>
 const val doubleVal = <!EVALUATED("2.0")!>2.0<!>
 
-const val funCompareTo1 = oneVal.<!EVALUATED("-1")!>compareTo(twoVal)<!>
-const val funCompareTo2 = twoVal.<!EVALUATED("0")!>compareTo(twoVal)<!>
-const val funCompareTo3 = threeVal.<!EVALUATED("1")!>compareTo(twoVal)<!>
-const val funCompareTo4 = twoVal.<!EVALUATED("0")!>compareTo(byteVal)<!>
-const val funCompareTo5 = twoVal.<!EVALUATED("0")!>compareTo(shortVal)<!>
-const val funCompareTo6 = twoVal.<!EVALUATED("0")!>compareTo(intVal)<!>
-const val funCompareTo7 = twoVal.<!EVALUATED("0")!>compareTo(longVal)<!>
-const val funCompareTo8 = twoVal.<!EVALUATED("0")!>compareTo(floatVal)<!>
+const val funCompareTo1 = <!EVALUATED{IR}("-1")!>oneVal.<!EVALUATED{FIR}("-1")!>compareTo(twoVal)<!><!>
+const val funCompareTo2 = <!EVALUATED{IR}("0")!>twoVal.<!EVALUATED{FIR}("0")!>compareTo(twoVal)<!><!>
+const val funCompareTo3 = <!EVALUATED{IR}("1")!>threeVal.<!EVALUATED{FIR}("1")!>compareTo(twoVal)<!><!>
+const val funCompareTo4 = <!EVALUATED{IR}("0")!>twoVal.<!EVALUATED{FIR}("0")!>compareTo(byteVal)<!><!>
+const val funCompareTo5 = <!EVALUATED{IR}("0")!>twoVal.<!EVALUATED{FIR}("0")!>compareTo(shortVal)<!><!>
+const val funCompareTo6 = <!EVALUATED{IR}("0")!>twoVal.<!EVALUATED{FIR}("0")!>compareTo(intVal)<!><!>
+const val funCompareTo7 = <!EVALUATED{IR}("0")!>twoVal.<!EVALUATED{FIR}("0")!>compareTo(longVal)<!><!>
+const val funCompareTo8 = <!EVALUATED{IR}("0")!>twoVal.<!EVALUATED{FIR}("0")!>compareTo(floatVal)<!><!>
 
 const val singCompareTo1 = <!EVALUATED("false")!>oneVal >= twoVal<!>
 const val singCompareTo2 = <!EVALUATED("false")!>twoVal > twoVal<!>
 const val singCompareTo3 = <!EVALUATED("false")!>threeVal <= twoVal<!>
 const val singCompareTo4 = <!EVALUATED("false")!>twoVal < byteVal<!>
 
-const val plus1 = oneVal.<!EVALUATED("3.0")!>plus(twoVal)<!>
-const val plus2 = twoVal.<!EVALUATED("4.0")!>plus(twoVal)<!>
-const val plus3 = threeVal.<!EVALUATED("5.0")!>plus(twoVal)<!>
-const val plus4 = twoVal.<!EVALUATED("4.0")!>plus(byteVal)<!>
-const val plus5 = twoVal.<!EVALUATED("4.0")!>plus(shortVal)<!>
-const val plus6 = twoVal.<!EVALUATED("4.0")!>plus(intVal)<!>
-const val plus7 = twoVal.<!EVALUATED("4.0")!>plus(longVal)<!>
-const val plus8 = twoVal.<!EVALUATED("4.0")!>plus(floatVal)<!>
+const val plus1 = <!EVALUATED{IR}("3.0")!>oneVal.<!EVALUATED{FIR}("3.0")!>plus(twoVal)<!><!>
+const val plus2 = <!EVALUATED{IR}("4.0")!>twoVal.<!EVALUATED{FIR}("4.0")!>plus(twoVal)<!><!>
+const val plus3 = <!EVALUATED{IR}("5.0")!>threeVal.<!EVALUATED{FIR}("5.0")!>plus(twoVal)<!><!>
+const val plus4 = <!EVALUATED{IR}("4.0")!>twoVal.<!EVALUATED{FIR}("4.0")!>plus(byteVal)<!><!>
+const val plus5 = <!EVALUATED{IR}("4.0")!>twoVal.<!EVALUATED{FIR}("4.0")!>plus(shortVal)<!><!>
+const val plus6 = <!EVALUATED{IR}("4.0")!>twoVal.<!EVALUATED{FIR}("4.0")!>plus(intVal)<!><!>
+const val plus7 = <!EVALUATED{IR}("4.0")!>twoVal.<!EVALUATED{FIR}("4.0")!>plus(longVal)<!><!>
+const val plus8 = <!EVALUATED{IR}("4.0")!>twoVal.<!EVALUATED{FIR}("4.0")!>plus(floatVal)<!><!>
 
-const val minus1 = oneVal.<!EVALUATED("-1.0")!>minus(twoVal)<!>
-const val minus2 = twoVal.<!EVALUATED("0.0")!>minus(twoVal)<!>
-const val minus3 = threeVal.<!EVALUATED("1.0")!>minus(twoVal)<!>
-const val minus4 = twoVal.<!EVALUATED("0.0")!>minus(byteVal)<!>
-const val minus5 = twoVal.<!EVALUATED("0.0")!>minus(shortVal)<!>
-const val minus6 = twoVal.<!EVALUATED("0.0")!>minus(intVal)<!>
-const val minus7 = twoVal.<!EVALUATED("0.0")!>minus(longVal)<!>
-const val minus8 = twoVal.<!EVALUATED("0.0")!>minus(floatVal)<!>
+const val minus1 = <!EVALUATED{IR}("-1.0")!>oneVal.<!EVALUATED{FIR}("-1.0")!>minus(twoVal)<!><!>
+const val minus2 = <!EVALUATED{IR}("0.0")!>twoVal.<!EVALUATED{FIR}("0.0")!>minus(twoVal)<!><!>
+const val minus3 = <!EVALUATED{IR}("1.0")!>threeVal.<!EVALUATED{FIR}("1.0")!>minus(twoVal)<!><!>
+const val minus4 = <!EVALUATED{IR}("0.0")!>twoVal.<!EVALUATED{FIR}("0.0")!>minus(byteVal)<!><!>
+const val minus5 = <!EVALUATED{IR}("0.0")!>twoVal.<!EVALUATED{FIR}("0.0")!>minus(shortVal)<!><!>
+const val minus6 = <!EVALUATED{IR}("0.0")!>twoVal.<!EVALUATED{FIR}("0.0")!>minus(intVal)<!><!>
+const val minus7 = <!EVALUATED{IR}("0.0")!>twoVal.<!EVALUATED{FIR}("0.0")!>minus(longVal)<!><!>
+const val minus8 = <!EVALUATED{IR}("0.0")!>twoVal.<!EVALUATED{FIR}("0.0")!>minus(floatVal)<!><!>
 
-const val times1 = oneVal.<!EVALUATED("2.0")!>times(twoVal)<!>
-const val times2 = twoVal.<!EVALUATED("4.0")!>times(twoVal)<!>
-const val times3 = threeVal.<!EVALUATED("6.0")!>times(twoVal)<!>
-const val times4 = twoVal.<!EVALUATED("4.0")!>times(byteVal)<!>
-const val times5 = twoVal.<!EVALUATED("4.0")!>times(shortVal)<!>
-const val times6 = twoVal.<!EVALUATED("4.0")!>times(intVal)<!>
-const val times7 = twoVal.<!EVALUATED("4.0")!>times(longVal)<!>
-const val times8 = twoVal.<!EVALUATED("4.0")!>times(floatVal)<!>
+const val times1 = <!EVALUATED{IR}("2.0")!>oneVal.<!EVALUATED{FIR}("2.0")!>times(twoVal)<!><!>
+const val times2 = <!EVALUATED{IR}("4.0")!>twoVal.<!EVALUATED{FIR}("4.0")!>times(twoVal)<!><!>
+const val times3 = <!EVALUATED{IR}("6.0")!>threeVal.<!EVALUATED{FIR}("6.0")!>times(twoVal)<!><!>
+const val times4 = <!EVALUATED{IR}("4.0")!>twoVal.<!EVALUATED{FIR}("4.0")!>times(byteVal)<!><!>
+const val times5 = <!EVALUATED{IR}("4.0")!>twoVal.<!EVALUATED{FIR}("4.0")!>times(shortVal)<!><!>
+const val times6 = <!EVALUATED{IR}("4.0")!>twoVal.<!EVALUATED{FIR}("4.0")!>times(intVal)<!><!>
+const val times7 = <!EVALUATED{IR}("4.0")!>twoVal.<!EVALUATED{FIR}("4.0")!>times(longVal)<!><!>
+const val times8 = <!EVALUATED{IR}("4.0")!>twoVal.<!EVALUATED{FIR}("4.0")!>times(floatVal)<!><!>
 
-const val div1 = oneVal.<!EVALUATED("0.5")!>div(twoVal)<!>
-const val div2 = twoVal.<!EVALUATED("1.0")!>div(twoVal)<!>
-const val div3 = threeVal.<!EVALUATED("1.5")!>div(twoVal)<!>
-const val div4 = twoVal.<!EVALUATED("1.0")!>div(byteVal)<!>
-const val div5 = twoVal.<!EVALUATED("1.0")!>div(shortVal)<!>
-const val div6 = twoVal.<!EVALUATED("1.0")!>div(intVal)<!>
-const val div7 = twoVal.<!EVALUATED("1.0")!>div(longVal)<!>
-const val div8 = twoVal.<!EVALUATED("1.0")!>div(floatVal)<!>
+const val div1 = <!EVALUATED{IR}("0.5")!>oneVal.<!EVALUATED{FIR}("0.5")!>div(twoVal)<!><!>
+const val div2 = <!EVALUATED{IR}("1.0")!>twoVal.<!EVALUATED{FIR}("1.0")!>div(twoVal)<!><!>
+const val div3 = <!EVALUATED{IR}("1.5")!>threeVal.<!EVALUATED{FIR}("1.5")!>div(twoVal)<!><!>
+const val div4 = <!EVALUATED{IR}("1.0")!>twoVal.<!EVALUATED{FIR}("1.0")!>div(byteVal)<!><!>
+const val div5 = <!EVALUATED{IR}("1.0")!>twoVal.<!EVALUATED{FIR}("1.0")!>div(shortVal)<!><!>
+const val div6 = <!EVALUATED{IR}("1.0")!>twoVal.<!EVALUATED{FIR}("1.0")!>div(intVal)<!><!>
+const val div7 = <!EVALUATED{IR}("1.0")!>twoVal.<!EVALUATED{FIR}("1.0")!>div(longVal)<!><!>
+const val div8 = <!EVALUATED{IR}("1.0")!>twoVal.<!EVALUATED{FIR}("1.0")!>div(floatVal)<!><!>
 
-const val rem1 = oneVal.<!EVALUATED("1.0")!>rem(twoVal)<!>
-const val rem2 = twoVal.<!EVALUATED("0.0")!>rem(twoVal)<!>
-const val rem3 = threeVal.<!EVALUATED("1.0")!>rem(twoVal)<!>
-const val rem4 = twoVal.<!EVALUATED("0.0")!>rem(byteVal)<!>
-const val rem5 = twoVal.<!EVALUATED("0.0")!>rem(shortVal)<!>
-const val rem6 = twoVal.<!EVALUATED("0.0")!>rem(intVal)<!>
-const val rem7 = twoVal.<!EVALUATED("0.0")!>rem(longVal)<!>
-const val rem8 = twoVal.<!EVALUATED("0.0")!>rem(floatVal)<!>
+const val rem1 = <!EVALUATED{IR}("1.0")!>oneVal.<!EVALUATED{FIR}("1.0")!>rem(twoVal)<!><!>
+const val rem2 = <!EVALUATED{IR}("0.0")!>twoVal.<!EVALUATED{FIR}("0.0")!>rem(twoVal)<!><!>
+const val rem3 = <!EVALUATED{IR}("1.0")!>threeVal.<!EVALUATED{FIR}("1.0")!>rem(twoVal)<!><!>
+const val rem4 = <!EVALUATED{IR}("0.0")!>twoVal.<!EVALUATED{FIR}("0.0")!>rem(byteVal)<!><!>
+const val rem5 = <!EVALUATED{IR}("0.0")!>twoVal.<!EVALUATED{FIR}("0.0")!>rem(shortVal)<!><!>
+const val rem6 = <!EVALUATED{IR}("0.0")!>twoVal.<!EVALUATED{FIR}("0.0")!>rem(intVal)<!><!>
+const val rem7 = <!EVALUATED{IR}("0.0")!>twoVal.<!EVALUATED{FIR}("0.0")!>rem(longVal)<!><!>
+const val rem8 = <!EVALUATED{IR}("0.0")!>twoVal.<!EVALUATED{FIR}("0.0")!>rem(floatVal)<!><!>
 
-const val unaryPlus1 = oneVal.<!EVALUATED("1.0")!>unaryPlus()<!>
-const val unaryPlus2 = minusOneVal.<!EVALUATED("-1.0")!>unaryPlus()<!>
-const val unaryMinus1 = oneVal.<!EVALUATED("-1.0")!>unaryMinus()<!>
-const val unaryMinus2 = minusOneVal.<!EVALUATED("1.0")!>unaryMinus()<!>
+const val unaryPlus1 = <!EVALUATED{IR}("1.0")!>oneVal.<!EVALUATED{FIR}("1.0")!>unaryPlus()<!><!>
+const val unaryPlus2 = <!EVALUATED{IR}("-1.0")!>minusOneVal.<!EVALUATED{FIR}("-1.0")!>unaryPlus()<!><!>
+const val unaryMinus1 = <!EVALUATED{IR}("-1.0")!>oneVal.<!EVALUATED{FIR}("-1.0")!>unaryMinus()<!><!>
+const val unaryMinus2 = <!EVALUATED{IR}("1.0")!>minusOneVal.<!EVALUATED{FIR}("1.0")!>unaryMinus()<!><!>
 
-const val convert1 = oneVal.toInt().<!EVALUATED("")!>toChar()<!>
-const val convert2 = oneVal.<!EVALUATED("1")!>toInt()<!>
-const val convert3 = oneVal.<!EVALUATED("1")!>toLong()<!>
-const val convert4 = oneVal.<!EVALUATED("1.0")!>toFloat()<!>
-const val convert5 = oneVal.<!EVALUATED("1.0")!>toDouble()<!>
+const val convert1 = <!EVALUATED{IR}("")!>oneVal.toInt().<!EVALUATED{FIR}("")!>toChar()<!><!>
+const val convert2 = <!EVALUATED{IR}("1")!>oneVal.<!EVALUATED{FIR}("1")!>toInt()<!><!>
+const val convert3 = <!EVALUATED{IR}("1")!>oneVal.<!EVALUATED{FIR}("1")!>toLong()<!><!>
+const val convert4 = <!EVALUATED{IR}("1.0")!>oneVal.<!EVALUATED{FIR}("1.0")!>toFloat()<!><!>
+const val convert5 = <!EVALUATED{IR}("1.0")!>oneVal.<!EVALUATED{FIR}("1.0")!>toDouble()<!><!>
 
 const val equals1 = <!EVALUATED("false")!>oneVal == twoVal<!>
 const val equals2 = <!EVALUATED("true")!>twoVal == twoVal<!>

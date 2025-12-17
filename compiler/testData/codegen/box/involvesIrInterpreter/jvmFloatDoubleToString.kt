@@ -4,13 +4,13 @@
 // ^^^ KT-73621: EVALUATED{IR} is missing
 fun <T> T.id() = this
 
-const val toStringDouble1 = 1.0.<!EVALUATED("1.0")!>toString()<!>
-const val toStringDouble2 = 2.0.<!EVALUATED("2.0")!>toString()<!>
-const val toStringDouble3 = 1.5.<!EVALUATED("1.5")!>toString()<!>
+const val toStringDouble1 = <!EVALUATED{IR}("1.0")!>1.0.<!EVALUATED{FIR}("1.0")!>toString()<!><!>
+const val toStringDouble2 = <!EVALUATED{IR}("2.0")!>2.0.<!EVALUATED{FIR}("2.0")!>toString()<!><!>
+const val toStringDouble3 = <!EVALUATED{IR}("1.5")!>1.5.<!EVALUATED{FIR}("1.5")!>toString()<!><!>
 
-const val toStringFloat1 = 1.0f.<!EVALUATED("1.0")!>toString()<!>
-const val toStringFloat2 = 2.0f.<!EVALUATED("2.0")!>toString()<!>
-const val toStringFloat3 = 1.5f.<!EVALUATED("1.5")!>toString()<!>
+const val toStringFloat1 = <!EVALUATED{IR}("1.0")!>1.0f.<!EVALUATED{FIR}("1.0")!>toString()<!><!>
+const val toStringFloat2 = <!EVALUATED{IR}("2.0")!>2.0f.<!EVALUATED{FIR}("2.0")!>toString()<!><!>
+const val toStringFloat3 = <!EVALUATED{IR}("1.5")!>1.5f.<!EVALUATED{FIR}("1.5")!>toString()<!><!>
 
 fun box(): String {
     // STOP_EVALUATION_CHECKS

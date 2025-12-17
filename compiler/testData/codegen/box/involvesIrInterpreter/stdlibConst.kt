@@ -1,9 +1,9 @@
 // WITH_STDLIB
 fun <T> T.id() = this
 
-const val code = '1'.<!EVALUATED("49")!>code<!>
-const val floorDiv = 10.<!EVALUATED("5")!>floorDiv(2)<!>
-const val mod = 5.<!EVALUATED("2")!>mod(3)<!>
+const val code = <!EVALUATED{IR}("49")!>'1'.<!EVALUATED{FIR}("49")!>code<!><!>
+const val floorDiv = <!EVALUATED{IR}("5")!>10.<!EVALUATED{FIR}("5")!>floorDiv(2)<!><!>
+const val mod = <!EVALUATED{IR}("2")!>5.<!EVALUATED{FIR}("2")!>mod(3)<!><!>
 
 // STOP_EVALUATION_CHECKS
 fun box(): String {

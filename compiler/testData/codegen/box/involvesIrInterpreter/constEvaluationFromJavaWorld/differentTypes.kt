@@ -15,8 +15,8 @@ public class Bar {
 // FILE: Main.kt
 const val CHAR: Char = <!EVALUATED("2")!>'1' + 1<!>
 const val BOOL: Boolean = <!EVALUATED("true")!>true<!>
-const val BYTE: Byte = (1.toByte() + 1).<!EVALUATED("2")!>toByte()<!>
-const val SHORT: Short = (1.toShort() + 1).<!EVALUATED("2")!>toShort()<!>
+const val BYTE: Byte = <!EVALUATED{IR}("2")!>(1.toByte() + 1).<!EVALUATED{FIR}("2")!>toByte()<!><!>
+const val SHORT: Short = <!EVALUATED{IR}("2")!>(1.toShort() + 1).<!EVALUATED{FIR}("2")!>toShort()<!><!>
 const val INT: Int = <!EVALUATED("2")!>1 + 1<!>
 const val LONG: Long = <!EVALUATED("2")!>1L + 1L<!>
 const val FLOAT: Float = <!EVALUATED("2.0")!>1.5f + .5f<!>
@@ -25,9 +25,9 @@ const val STRING: String = <!EVALUATED("12")!>"1" + "2"<!>
 
 // FILE: usages.kt
 const val CHAR_JAVA: Char = <!EVALUATED("4")!>Bar.CHAR + 1<!>
-const val BOOL_JAVA: Boolean = Bar.<!EVALUATED("false")!>BOOL<!>
-const val BYTE_JAVA: Byte = (Bar.BYTE + 1).<!EVALUATED("4")!>toByte()<!>
-const val SHORT_JAVA: Short = (Bar.SHORT + 1).<!EVALUATED("4")!>toShort()<!>
+const val BOOL_JAVA: Boolean = <!EVALUATED{IR}("false")!>Bar.<!EVALUATED{FIR}("false")!>BOOL<!><!>
+const val BYTE_JAVA: Byte = <!EVALUATED{IR}("4")!>(Bar.BYTE + 1).<!EVALUATED{FIR}("4")!>toByte()<!><!>
+const val SHORT_JAVA: Short = <!EVALUATED{IR}("4")!>(Bar.SHORT + 1).<!EVALUATED{FIR}("4")!>toShort()<!><!>
 const val INT_JAVA: Int = <!EVALUATED("4")!>Bar.INT + 1<!>
 const val LONG_JAVA: Long = <!EVALUATED("4")!>Bar.LONG + 1L<!>
 const val FLOAT_JAVA: Float = <!EVALUATED("4.0")!>Bar.FLOAT + 1.0f<!>
