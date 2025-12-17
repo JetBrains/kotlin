@@ -9,10 +9,12 @@ import org.jetbrains.kotlin.CompilerVersionOfApiDeprecation
 import org.jetbrains.kotlin.DeprecatedCompilerApi
 import org.jetbrains.kotlin.DeprecatedForRemovalCompilerApi
 import org.jetbrains.kotlin.descriptors.ParameterDescriptor
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
@@ -131,6 +133,9 @@ abstract class IrValueParameter : IrDeclarationBase(), IrValueDeclaration {
 
     override fun <D> transform(transformer: IrTransformer<D>, data: D): IrValueParameter =
         accept(transformer, data) as IrValueParameter
+
+    override fun transformVoid(transformer: IrElementTransformerVoid): IrValueParameter =
+        accept(transformer, null) as IrValueParameter
 
     override fun <D> acceptChildren(visitor: IrVisitor<Unit, D>, data: D) {
         defaultValue?.accept(visitor, data)

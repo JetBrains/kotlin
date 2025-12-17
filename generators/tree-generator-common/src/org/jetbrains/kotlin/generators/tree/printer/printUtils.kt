@@ -432,6 +432,36 @@ fun ImportCollectingPrinter.printTransformMethod(
     println()
 }
 
+fun ImportCollectingPrinter.printTransformVoidMethod(
+    element: AbstractElement<*, *, *>,
+    transformerType: ClassRef<*>,
+    hasImplementation: Boolean,
+    treeName: String,
+) {
+    if (!element.hasTransformMethod) return
+    println()
+
+    val visitorParameter = FunctionParameter("transformer", transformerType)
+    if (element.isRootElement) {
+        printKDoc(acceptMethodKDoc(visitorParameter, null, StandardTypes.unit, treeName))
+    }
+
+    printFunctionDeclaration(
+        name = "transformVoid",
+        parameters = listOf(visitorParameter),
+        returnType = StandardTypes.unit,
+        override = !element.isRootElement,
+    )
+    print(": ${element.typeName}")
+    if (hasImplementation) {
+        println(" =")
+        withIndent {
+            print("accept(transformer, null) as ${element.typeName}")
+        }
+    }
+    println()
+}
+
 private fun acceptChildrenKDoc(visitorParameter: FunctionParameter, dataParameter: FunctionParameter?) = buildString {
     append("Runs the provided [")
     append(visitorParameter.name)
@@ -571,23 +601,6 @@ fun ImportCollectingPrinter.printAcceptChildrenVoidMethod(visitorType: ClassRef<
     printFunctionDeclaration("acceptChildren", listOf(visitorParameter), StandardTypes.unit)
     printBlock {
         println("acceptChildren(", visitorParameter.name, ", null)")
-    }
-}
-
-fun ImportCollectingPrinter.printTransformVoidMethod(element: AbstractElement<*, *, *>, transformerType: ClassRef<*>, treeName: String) {
-    assert(element.isRootElement) { "Expected root element" }
-    val transformerParameter = FunctionParameter("transformer", transformerType)
-    val elementTP = TypeVariable("E", listOf(element))
-    printKDoc(transformMethodKDoc(transformerParameter, null, treeName))
-    printFunctionDeclaration(
-        name = "transform",
-        parameters = listOf(transformerParameter),
-        returnType = elementTP,
-        typeParameters = listOf(elementTP)
-    )
-    println(" =")
-    withIndent {
-        println("transform(", transformerParameter.name, ", null)")
     }
 }
 

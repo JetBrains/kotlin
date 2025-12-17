@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.generators.tree.imports.ArbitraryImportable
 import org.jetbrains.kotlin.generators.tree.printer.*
 import org.jetbrains.kotlin.generators.util.printBlock
 import org.jetbrains.kotlin.ir.generator.BASE_PACKAGE
+import org.jetbrains.kotlin.ir.generator.elementTransformerVoidType
 import org.jetbrains.kotlin.ir.generator.irTransformerType
 import org.jetbrains.kotlin.ir.generator.irVisitorVoidType
 import org.jetbrains.kotlin.ir.generator.irVisitorType
@@ -60,6 +61,13 @@ internal class ElementPrinter(printer: ImportCollectingPrinter) : AbstractElemen
             transformerClass = irTransformerType,
             implementation = "accept(transformer, data)".takeIf { !element.isRootElement },
             returnType = element,
+            treeName = "IR",
+        )
+
+        printTransformVoidMethod(
+            element = element,
+            transformerType = elementTransformerVoidType,
+            hasImplementation = !element.isRootElement,
             treeName = "IR",
         )
 
