@@ -1,5 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-67825
+// LATEST_LV_DIFFERENCE
 
 // FILE: Test.kt
 fun test(k: K<String>) {
