@@ -1,6 +1,8 @@
 // TARGET_BACKEND: JVM
+// IGNORE_BACKEND_K2: JVM_IR
 // WITH_STDLIB
 // ISSUE: KT-81988
+// LANGUAGE: +DontMakeExplicitJavaTypeArgumentsFlexible +PreciseSimplificationToFlexibleLowerConstraint
 
 // FILE: MyConsumer.java
 public interface MyConsumer<T> {

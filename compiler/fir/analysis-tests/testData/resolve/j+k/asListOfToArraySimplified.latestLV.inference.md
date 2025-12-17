@@ -14,7 +14,7 @@ R|<local>/x|.toArray#(R|<local>/y|)
 ##### Resolution Stages > CheckArguments:
 
 1. `kotlin/Array<kotlin/String?> <: ft<kotlin/Array<TypeVariable(T)!>, kotlin/Array<out TypeVariable(T)!>?>` _from Argument R|<local>/y|_
-    1. `kotlin/String? <: TypeVariable(T)`
+    1. `kotlin/String! <: TypeVariable(T)`
 
 ##### Call Completion:
 
@@ -50,25 +50,23 @@ Q|J|.asList#(R|<local>/x|.R?C|java/util/ArrayList.toArray|(R|<local>/y|))
 1. `ft<kotlin/Array<TypeVariable(T)!>, kotlin/Array<out TypeVariable(T)!>?> <: ft<kotlin/Array<TypeVariable(F)!>, kotlin/Array<out TypeVariable(F)!>?>` _from Argument R|<local>/x|.R?C|java/util/ArrayList.toArray|(R|<local>/y|)_
     1. `ft<TypeVariable(T) & Any, TypeVariable(T)?> <: TypeVariable(F)`
     2. `TypeVariable(T) <: TypeVariable(F)!`
-2. Combine `kotlin/String? <: TypeVariable(T)` with `TypeVariable(T) <: TypeVariable(F)!`
-    1. `kotlin/String? <: TypeVariable(F)`
+2. Combine `kotlin/String! <: TypeVariable(T)` with `TypeVariable(T) <: TypeVariable(F)!`
+    1. `kotlin/String! <: TypeVariable(F)`
 
 ##### Resolution Stages > CheckLambdaAgainstTypeVariableContradiction:
 
 1. `ft<kotlin/collections/MutableList<TypeVariable(F)!>, kotlin/collections/List<TypeVariable(F)!>?> <: kotlin/collections/List<kotlin/String>` _from ExpectedType for some call_
     1. `TypeVariable(F) <: kotlin/String!`
-2. Combine `ft<TypeVariable(T) & Any, TypeVariable(T)?> <: TypeVariable(F)` with `TypeVariable(F) <: kotlin/String!`
-    1. `TypeVariable(T) <: kotlin/String?`
-3. Combine `TypeVariable(F) <: kotlin/String!` with `TypeVariable(T) <: TypeVariable(F)!`
-    1. `TypeVariable(T) <: kotlin/String!`
-4. Combine `kotlin/String? <: TypeVariable(T)` with `TypeVariable(T) <: kotlin/String?`
-    1. `TypeVariable(T) == kotlin/String?`
-5. Combine `TypeVariable(T) == kotlin/String?` with `TypeVariable(T) <: TypeVariable(F)!`
-    1. `kotlin/String? <: TypeVariable(F)`
-6. Combine `TypeVariable(T) == kotlin/String?` with `ft<TypeVariable(T) & Any, TypeVariable(T)?> <: TypeVariable(F)`
-    1. `kotlin/String! <: TypeVariable(F)`
-7. Combine `TypeVariable(F) <: kotlin/String!` with `kotlin/String! <: TypeVariable(F)`
+2. Combine `kotlin/String! <: TypeVariable(F)` with `TypeVariable(F) <: kotlin/String!`
     1. `TypeVariable(F) == kotlin/String!`
+3. Combine `ft<TypeVariable(T) & Any, TypeVariable(T)?> <: TypeVariable(F)` with `TypeVariable(F) == kotlin/String!`
+    1. `TypeVariable(T) <: kotlin/String?`
+4. Combine `TypeVariable(F) == kotlin/String!` with `TypeVariable(T) <: TypeVariable(F)!`
+    1. `TypeVariable(T) <: kotlin/String!`
+5. Combine `kotlin/String! <: TypeVariable(T)` with `TypeVariable(T) <: kotlin/String!`
+    1. `TypeVariable(T) == kotlin/String!`
+6. Combine `TypeVariable(T) == kotlin/String!` with `TypeVariable(T) <: TypeVariable(F)!`
+    1. `kotlin/String! <: TypeVariable(F)`
 
 ##### Call Completion:
 
@@ -83,7 +81,7 @@ Q|J|.asList#(R|<local>/x|.R?C|java/util/ArrayList.toArray|(R|<local>/y|))
    	 true HAS_NO_RELATION_TO_ANY_OUTPUT_TYPE
    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
    	false REIFIED
-   	 true HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
+   	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
    	 true HAS_PROPER_NON_ILT_CONSTRAINT
    	 true HAS_PROPER_NON_ILT_EQUALITY_CONSTRAINT
    )`
@@ -122,4 +120,4 @@ Q|J|.asList#(R|<local>/x|.R?C|java/util/ArrayList.toArray|(R|<local>/y|))
    	 true HAS_PROPER_NON_ILT_CONSTRAINT
    	 true HAS_PROPER_NON_ILT_EQUALITY_CONSTRAINT
    )`
-6. `TypeVariable(T) == kotlin/String?` _from Fix variable T_
+6. `TypeVariable(T) == kotlin/String!` _from Fix variable T_

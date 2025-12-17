@@ -4,9 +4,9 @@
 
 // FILE: Test.kt
 fun test(k: K<String>) {
-    k.foo(<!TYPE_MISMATCH!>JavaBox(null)<!>)
-    foo2<String>(<!TYPE_MISMATCH!>JavaBox(null)<!>)
-    foo3(<!TYPE_MISMATCH!>JavaBox(null)<!>)
+    k.foo(JavaBox(null))
+    foo2<String>(JavaBox(null))
+    foo3(JavaBox(null))
 }
 
 class K<T> {
