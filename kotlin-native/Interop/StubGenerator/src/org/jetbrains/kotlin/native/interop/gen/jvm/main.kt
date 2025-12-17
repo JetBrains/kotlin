@@ -542,6 +542,9 @@ private fun checkKlibAbiCompatibilityLevel(cinteropArguments: CInteropArguments)
         KlibAbiCompatibilityLevel.ABI_LEVEL_2_3 -> {
             // No specific restrictions for now.
         }
+        KlibAbiCompatibilityLevel.ABI_LEVEL_2_4 -> {
+            // No specific restrictions for now.
+        }
     }
 }
 

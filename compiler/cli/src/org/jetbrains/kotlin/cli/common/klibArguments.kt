@@ -165,6 +165,7 @@ private val LANGUAGE_VERSION_TO_ABI_COMPATIBILITY_LEVEL =
             when (abiCompatibilityLevel) {
                 KlibAbiCompatibilityLevel.ABI_LEVEL_2_2 -> LanguageVersion.KOTLIN_2_2
                 KlibAbiCompatibilityLevel.ABI_LEVEL_2_3 -> LanguageVersion.KOTLIN_2_3
+                KlibAbiCompatibilityLevel.ABI_LEVEL_2_4 -> LanguageVersion.KOTLIN_2_4
                 // add new entries here as necessary
             }
         }
