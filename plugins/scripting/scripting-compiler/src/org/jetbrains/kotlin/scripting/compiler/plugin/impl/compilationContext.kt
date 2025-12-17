@@ -9,10 +9,10 @@ package org.jetbrains.kotlin.scripting.compiler.plugin.impl
 
 import com.intellij.openapi.Disposable
 import org.jetbrains.kotlin.K1Deprecation
-import org.jetbrains.kotlin.cli.common.ExitCode.INTERNAL_ERROR
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
 import org.jetbrains.kotlin.cli.common.arguments.validateArguments
+import org.jetbrains.kotlin.cli.common.arguments.validateArgumentsAllErrors
 import org.jetbrains.kotlin.cli.common.checkPluginsArguments
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
@@ -182,8 +182,10 @@ internal fun CompilerConfiguration.updateWithCompilerOptions(
     isRefinement: Boolean
 ) {
     updateWithCompilerOptions(compilerOptions) {
-        validateArguments(it.errors)?.let { error ->
-            messageCollector.report(CompilerMessageSeverity.ERROR, error)
+        validateArgumentsAllErrors(it.errors).takeIf { errors -> errors.isNotEmpty() }?.let { errors ->
+            errors.forEach { error ->
+                messageCollector.report(CompilerMessageSeverity.ERROR, error)
+            }
             false
         } ?: run {
             messageCollector.reportArgumentParseProblems(it)

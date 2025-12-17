@@ -306,19 +306,28 @@ private fun <A : CommonToolArguments> updateField(
 }
 
 /**
- * @return error message if arguments are parsed incorrectly, null otherwise
+ * @return comprehensive error message (all child error messages separated by line break) if arguments are parsed incorrectly.
+ * Avoid changing the signature because it's used externally.
  */
 fun validateArguments(errors: ArgumentParseErrors?): String? {
-    if (errors == null) return null
-    if (errors.argumentWithoutValue != null) {
-        return "No value passed for argument ${errors.argumentWithoutValue}"
+    return validateArgumentsAllErrors(errors).takeIf { it.isNotEmpty() }?.joinToString("\n")
+}
+
+/**
+ * @return all error messages encountered during arguments parsing.
+ */
+fun validateArgumentsAllErrors(errors: ArgumentParseErrors?): List<String> {
+    if (errors == null) return emptyList()
+    return buildList {
+        errors.argumentWithoutValue?.let {
+            add("No value passed for argument $it")
+        }
+        errors.booleanArgumentWithValue?.let {
+            add("No value expected for boolean argument ${it.substringBefore('=')}. Please remove the value: $it")
+        }
+        errors.unknownArgs.forEach {
+            add("Invalid argument: $it")
+        }
     }
-    errors.booleanArgumentWithValue?.let { arg ->
-        return "No value expected for boolean argument ${arg.substringBefore('=')}. Please remove the value: $arg"
-    }
-    if (errors.unknownArgs.isNotEmpty()) {
-        return "Invalid argument: ${errors.unknownArgs.first()}"
-    }
-    return null
 }
 

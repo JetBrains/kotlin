@@ -322,9 +322,11 @@ abstract class CLICompiler<A : CommonCompilerArguments> {
 
             errStream.print(messageRenderer.renderPreamble())
 
-            val errorMessage = validateArguments(arguments.errors)
-            if (errorMessage != null) {
-                collector.report(ERROR, errorMessage, null)
+            val errorMessages = validateArgumentsAllErrors(arguments.errors)
+            if (errorMessages.isNotEmpty()) {
+                errorMessages.forEach {
+                    collector.report(ERROR, it, null)
+                }
                 collector.report(INFO, "Use -help for more information", null)
                 return COMPILATION_ERROR
             }

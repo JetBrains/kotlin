@@ -11,7 +11,7 @@ import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.ArgumentParseErrors
 import org.jetbrains.kotlin.cli.common.arguments.preprocessCommandLineArguments
-import org.jetbrains.kotlin.cli.common.arguments.validateArguments
+import org.jetbrains.kotlin.cli.common.arguments.validateArgumentsAllErrors
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
@@ -44,9 +44,9 @@ internal fun transformArgs(args: List<String>, messageCollector: MessageCollecto
     val parseErrors = ArgumentParseErrors()
     val kotlincTransformed = preprocessCommandLineArguments(args, lazy { parseErrors })
 
-    val errorMessage = validateArguments(parseErrors)
-    if (errorMessage != null) {
-        messageCollector.report(CompilerMessageSeverity.ERROR, errorMessage)
+    val errorMessages = validateArgumentsAllErrors(parseErrors)
+    if (errorMessages.isNotEmpty()) {
+        errorMessages.forEach { messageCollector.report(CompilerMessageSeverity.ERROR, it) }
         return emptyList()
     }
 

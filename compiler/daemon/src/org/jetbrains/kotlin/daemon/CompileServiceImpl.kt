@@ -364,10 +364,12 @@ abstract class CompileServiceImplBase(
 
         val k2PlatformArgs = compiler.createArguments()
         parseCommandLineArguments(compilerArguments.asList(), k2PlatformArgs)
-        val argumentParseError = validateArguments(k2PlatformArgs.errors)
+        val argumentParseError = validateArgumentsAllErrors(k2PlatformArgs.errors)
 
-        if (argumentParseError != null) {
-            messageCollector.report(CompilerMessageSeverity.ERROR, argumentParseError)
+        if (argumentParseError.isNotEmpty()) {
+            argumentParseError.forEach {
+                messageCollector.report(CompilerMessageSeverity.ERROR, it)
+            }
             CompileService.CallResult.Good(ExitCode.COMPILATION_ERROR.code)
         } else when (compilationOptions.compilerMode) {
             CompilerMode.JPS_COMPILER -> {
