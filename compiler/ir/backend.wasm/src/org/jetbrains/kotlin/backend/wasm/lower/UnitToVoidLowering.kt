@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
-import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
 /**
  * Replaces some `Unit`s with `Void`s. **NOTE**: This is an optional lowering.

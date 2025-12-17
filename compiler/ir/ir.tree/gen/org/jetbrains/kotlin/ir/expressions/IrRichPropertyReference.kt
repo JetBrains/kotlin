@@ -11,6 +11,7 @@ package org.jetbrains.kotlin.ir.expressions
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.symbols.IrDeclarationWithAccessorsSymbol
 import org.jetbrains.kotlin.ir.util.transformInPlace
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
@@ -61,5 +62,11 @@ abstract class IrRichPropertyReference : IrRichCallableReference<IrDeclarationWi
         boundValues.transformInPlace(transformer, data)
         getterFunction = getterFunction.transform(transformer, data) as IrSimpleFunction
         setterFunction = setterFunction?.transform(transformer, data) as IrSimpleFunction?
+    }
+
+    override fun transformChildrenVoid(transformer: IrElementTransformerVoid) {
+        boundValues.transformInPlace(transformer, null)
+        getterFunction = getterFunction.transformVoid(transformer) as IrSimpleFunction
+        setterFunction = setterFunction?.transformVoid(transformer) as IrSimpleFunction?
     }
 }

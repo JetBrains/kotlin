@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.org.objectweb.asm.Opcodes
 
@@ -316,7 +315,7 @@ private class SyntheticAccessorTransformer(
                 accessorGenerator.isOrShouldBeHiddenAsSealedClassConstructor(function) -> accessorGenerator.getSyntheticConstructorOfSealedClass(function)
                 else -> return super.visitFunctionReference(expression)
             }
-            expression.transformChildrenVoid()
+            expression.transformChildrenVoid(this)
             return IrFunctionReferenceImpl(
                 expression.startOffset, expression.endOffset, expression.type,
                 generatedAccessor.symbol, generatedAccessor.typeParameters.size,

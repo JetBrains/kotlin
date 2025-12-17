@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 
@@ -259,7 +258,7 @@ internal class EnumClassLowering(private val context: JvmBackendContext) : Class
                 } ?: expression
 
             override fun visitSetValue(expression: IrSetValue): IrExpression {
-                expression.transformChildrenVoid()
+                expression.transformChildrenVoid(this)
                 return loweredEnumConstructorParameters[expression.symbol]?.let {
                     IrSetValueImpl(expression.startOffset, expression.endOffset, it.type, it.symbol, expression.value, expression.origin)
                 } ?: expression

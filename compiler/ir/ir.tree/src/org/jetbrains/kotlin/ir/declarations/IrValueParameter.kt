@@ -148,4 +148,8 @@ abstract class IrValueParameter : IrDeclarationBase(), IrValueDeclaration {
     override fun <D> transformChildren(transformer: IrTransformer<D>, data: D) {
         defaultValue = defaultValue?.transform(transformer, data)
     }
+
+    override fun transformChildrenVoid(transformer: IrElementTransformerVoid) {
+        defaultValue = defaultValue?.transformVoid(transformer)
+    }
 }

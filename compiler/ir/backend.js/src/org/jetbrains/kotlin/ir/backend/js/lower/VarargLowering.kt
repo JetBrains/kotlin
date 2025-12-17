@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.getAllArgumentsWithIr
 import org.jetbrains.kotlin.ir.util.getInlineClassBackingField
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
 @PhasePrerequisites(InteropCallableReferenceLowering::class)
 class VarargLowering(val context: JsIrBackendContext) : BodyLoweringPass {
@@ -148,7 +147,7 @@ private class VarargTransformer(
     }
 
     override fun visitFunctionAccess(expression: IrFunctionAccessExpression): IrExpression {
-        expression.transformChildrenVoid()
+        expression.transformChildrenVoid(this)
 
         if (expression.symbol.owner.isExternal) {
             for (parameter in expression.symbol.owner.parameters) {

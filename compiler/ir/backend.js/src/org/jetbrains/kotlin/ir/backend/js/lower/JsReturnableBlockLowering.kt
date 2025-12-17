@@ -93,7 +93,7 @@ class JsReturnableBlockTransformer(val context: CommonBackendContext) : IrElemen
         if (expression !is IrReturnableBlock) return super.visitBlock(expression)
 
         return withNewVariableForReturnableBlock(returnableBlock = expression) { variable ->
-            expression.transformChildrenVoid()
+            expression.transformChildrenVoid(this)
 
             val builder = context.createIrBuilder(expression.symbol)
 
@@ -107,7 +107,7 @@ class JsReturnableBlockTransformer(val context: CommonBackendContext) : IrElemen
     }
 
     override fun visitReturn(expression: IrReturn): IrExpression {
-        expression.transformChildrenVoid()
+        expression.transformChildrenVoid(this)
 
         val targetSymbol = expression.returnTargetSymbol
         if (targetSymbol !is IrReturnableBlockSymbol) return expression

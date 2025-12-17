@@ -247,7 +247,7 @@ private class CallInlining(
 
             parameterToLambda[newExpression.symbol]?.let {
                 val copy = it.deepCopyWithSymbols()
-                copy.transformChildrenVoid()
+                copy.transformChildrenVoid(this)
                 return copy
             }
 

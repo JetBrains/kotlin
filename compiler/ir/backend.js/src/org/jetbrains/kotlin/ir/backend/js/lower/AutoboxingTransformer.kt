@@ -229,7 +229,7 @@ class AutoboxingTransformer(context: JsCommonBackendContext, replaceTypesInsideI
 
     override fun visitCall(expression: IrCall): IrExpression {
         return if (expression.origin == IrStatementOrigin.SYNTHETIC_NOT_AUTOBOXED_CHECK) {
-            expression.apply { transformChildrenVoid() }
+            expression.apply { transformChildrenVoid(this@AutoboxingTransformer) }
         } else {
             super.visitCall(expression)
         }

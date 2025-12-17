@@ -29,7 +29,7 @@ open class VersionOverloadsLowering(val irFactory: IrFactory, val irBuiltIns: Ir
     constructor(context: LoweringContext) : this(context.irFactory, context.irBuiltIns)
 
     override fun lower(irFile: IrFile) {
-        irFile.transformChildrenVoid()
+        irFile.transformChildrenVoid(this)
     }
 
     override fun visitFunction(declaration: IrFunction): IrStatement = declaration.also {

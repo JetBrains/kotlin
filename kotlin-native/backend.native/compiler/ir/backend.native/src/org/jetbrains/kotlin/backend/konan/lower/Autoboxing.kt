@@ -233,7 +233,7 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
     override fun visitCall(expression: IrCall): IrExpression {
         return when (expression.symbol) {
             symbols.reinterpret -> {
-                expression.transformChildrenVoid()
+                expression.transformChildrenVoid(this)
 
                 // TODO: check types has the same binary representation.
                 val oldType = expression.typeArguments[0]!!
@@ -507,7 +507,7 @@ private class InlineClassTransformer(private val context: Context) : IrBuildingT
                 statement.setDeclarationsParent(result)
                 +statement.transformStatement(object : IrElementTransformerVoid() {
                     override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall): IrExpression {
-                        expression.transformChildrenVoid()
+                        expression.transformChildrenVoid(this)
 
                         return irBlock(expression) {
                             thisVar = if (irConstructor.isPrimary) {
@@ -521,7 +521,7 @@ private class InlineClassTransformer(private val context: Context) : IrBuildingT
                     }
 
                     override fun visitGetValue(expression: IrGetValue): IrExpression {
-                        expression.transformChildrenVoid()
+                        expression.transformChildrenVoid(this)
                         if (expression.symbol == irClass.thisReceiver?.symbol) {
                             return irGet(thisVar)
                         }
@@ -531,13 +531,13 @@ private class InlineClassTransformer(private val context: Context) : IrBuildingT
                     }
 
                     override fun visitSetValue(expression: IrSetValue): IrExpression {
-                        expression.transformChildrenVoid()
+                        expression.transformChildrenVoid(this)
                         parameterMapping[expression.symbol]?.let { return irSet(it.symbol, expression.value) }
                         return expression
                     }
 
                     override fun visitReturn(expression: IrReturn): IrExpression {
-                        expression.transformChildrenVoid()
+                        expression.transformChildrenVoid(this)
                         if (expression.returnTargetSymbol == irConstructor.symbol) {
                             return irReturn(irBlock(expression.startOffset, expression.endOffset) {
                                 +expression.value

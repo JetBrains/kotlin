@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 import org.jetbrains.kotlin.utils.memoryOptimizedPlus
@@ -289,7 +288,7 @@ open class DefaultParameterInjector<TContext : CommonBackendContext>(
         isStatic(declaration) && declaration.parentAsClass.isMultiFieldValueClass && declaration is IrSimpleFunction
 
     override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall): IrExpression {
-        expression.transformChildrenVoid()
+        expression.transformChildrenVoid(this)
         return visitFunctionAccessExpression(expression) {
             with(expression) {
                 IrDelegatingConstructorCallImpl(
@@ -301,7 +300,7 @@ open class DefaultParameterInjector<TContext : CommonBackendContext>(
     }
 
     override fun visitConstructorCall(expression: IrConstructorCall): IrExpression {
-        expression.transformChildrenVoid()
+        expression.transformChildrenVoid(this)
         return visitFunctionAccessExpression(expression) {
             with(expression) {
                 IrConstructorCallImpl.fromSymbolOwner(
@@ -316,7 +315,7 @@ open class DefaultParameterInjector<TContext : CommonBackendContext>(
     }
 
     override fun visitEnumConstructorCall(expression: IrEnumConstructorCall): IrExpression {
-        expression.transformChildrenVoid()
+        expression.transformChildrenVoid(this)
         return visitFunctionAccessExpression(expression) {
             with(expression) {
                 IrEnumConstructorCallImpl(
@@ -328,7 +327,7 @@ open class DefaultParameterInjector<TContext : CommonBackendContext>(
     }
 
     override fun visitCall(expression: IrCall): IrExpression {
-        expression.transformChildrenVoid()
+        expression.transformChildrenVoid(this)
         val declaration = expression.symbol.owner
         val typeParametersToRemove = if (needsTypeArgumentOffset(declaration)) declaration.parentAsClass.typeParameters.size else 0
         with(expression) {

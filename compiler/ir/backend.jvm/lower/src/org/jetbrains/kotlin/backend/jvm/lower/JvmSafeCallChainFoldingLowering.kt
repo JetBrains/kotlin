@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.isConstantLike
 import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 
 /**
@@ -130,7 +129,7 @@ internal class JvmSafeCallChainFoldingLowering(val context: JvmBackendContext) :
 
     private inner class Transformer : IrElementTransformerVoid() {
         override fun visitBlock(expression: IrBlock): IrExpression {
-            expression.transformChildrenVoid()
+            expression.transformChildrenVoid(this)
 
             val safeCallInfo = expression.parseSafeCall(context.irBuiltIns)
             if (safeCallInfo != null) {
@@ -397,7 +396,7 @@ internal class JvmSafeCallChainFoldingLowering(val context: JvmBackendContext) :
         }
 
         override fun visitCall(expression: IrCall): IrExpression {
-            expression.transformChildrenVoid()
+            expression.transformChildrenVoid(this)
 
             if (expression.symbol == context.irBuiltIns.eqeqSymbol) {
                 val startOffset = expression.startOffset

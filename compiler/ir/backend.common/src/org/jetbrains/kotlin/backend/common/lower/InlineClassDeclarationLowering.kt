@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.ir.types.extractTypeParameters
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 import kotlin.collections.get
@@ -103,7 +102,7 @@ open class InlineClassDeclarationLowering(private val context: CommonBackendCont
                                 if (isMemberFieldSet) {
                                     setMemberField = expression.deepCopyWithSymbols(irConstructor)
                                 }
-                                expression.transformChildrenVoid()
+                                expression.transformChildrenVoid(this)
                                 if (isMemberFieldSet) {
                                     return builder.irBlock {
                                         if (!expression.value.isPure(true)) {
@@ -119,14 +118,14 @@ open class InlineClassDeclarationLowering(private val context: CommonBackendCont
                             }
 
                             override fun visitGetField(expression: IrGetField): IrExpression {
-                                expression.transformChildrenVoid()
+                                expression.transformChildrenVoid(this)
                                 if (expression.symbol.owner.parent == klass)
                                     return builder.irGet(initFunction.parameters.single())
                                 return expression
                             }
 
                             override fun visitGetValue(expression: IrGetValue): IrExpression {
-                                expression.transformChildrenVoid()
+                                expression.transformChildrenVoid(this)
                                 if (expression.symbol.owner.parent == klass)
                                     return unboxedInlineClassValue()
                                 if (expression.symbol == origParameterSymbol)
@@ -135,7 +134,7 @@ open class InlineClassDeclarationLowering(private val context: CommonBackendCont
                             }
 
                             override fun visitSetValue(expression: IrSetValue): IrExpression {
-                                expression.transformChildrenVoid()
+                                expression.transformChildrenVoid(this)
                                 if (expression.symbol == origParameterSymbol)
                                     return builder.irSet(initFunction.parameters.single(), expression.value)
                                 return expression
@@ -177,7 +176,7 @@ open class InlineClassDeclarationLowering(private val context: CommonBackendCont
                     (constructorBody as IrBlockBody).statements.forEach { statement ->
                         +statement.transformStatement(object : IrElementTransformerVoid() {
                             override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall): IrExpression {
-                                expression.transformChildrenVoid()
+                                expression.transformChildrenVoid(this)
                                 // Static function for delegating constructors return unboxed instance of inline class
                                 expression.type = irClass.defaultType
                                 return irBlock(expression) {
@@ -190,7 +189,7 @@ open class InlineClassDeclarationLowering(private val context: CommonBackendCont
                             }
 
                             override fun visitGetValue(expression: IrGetValue): IrExpression {
-                                expression.transformChildrenVoid()
+                                expression.transformChildrenVoid(this)
                                 if (expression.symbol == irClass.thisReceiver?.symbol) {
                                     return irGet(thisVar)
                                 }
@@ -200,7 +199,7 @@ open class InlineClassDeclarationLowering(private val context: CommonBackendCont
                             }
 
                             override fun visitSetValue(expression: IrSetValue): IrExpression {
-                                expression.transformChildrenVoid()
+                                expression.transformChildrenVoid(this)
                                 parameterMapping[expression.symbol]?.let { return irSet(it.symbol, expression.value) }
                                 return expression
                             }
@@ -213,7 +212,7 @@ open class InlineClassDeclarationLowering(private val context: CommonBackendCont
                             }
 
                             override fun visitReturn(expression: IrReturn): IrExpression {
-                                expression.transformChildrenVoid()
+                                expression.transformChildrenVoid(this)
                                 if (expression.returnTargetSymbol == irConstructor.symbol) {
                                     return irReturn(irBlock(expression.startOffset, expression.endOffset) {
                                         +expression.value
@@ -264,7 +263,7 @@ open class InlineClassDeclarationLowering(private val context: CommonBackendCont
 
                     override fun visitSetValue(expression: IrSetValue): IrExpression {
                         val valueDeclaration = expression.symbol.owner as? IrValueParameter ?: return super.visitSetValue(expression)
-                        expression.transformChildrenVoid()
+                        expression.transformChildrenVoid(this)
                         return context.createIrBuilder(staticMethod.symbol).irSet(
                             when (valueDeclaration) {
                                 in function.parameters -> staticMethod.parameters[valueDeclaration.indexInParameters].symbol

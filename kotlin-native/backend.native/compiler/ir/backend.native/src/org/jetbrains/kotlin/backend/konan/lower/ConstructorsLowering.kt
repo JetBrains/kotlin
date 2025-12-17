@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.ir.types.isString
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
-import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
 
 internal var IrConstructor.loweredConstructorFunction: IrSimpleFunction? by irAttribute(copyByDefault = false)
@@ -120,7 +119,7 @@ internal class ConstructorsLowering(private val context: Context) : FileLowering
             val irBuilder = context.createIrBuilder(loweredConstructorFunction.symbol)
             body.transformChildrenVoid(object : IrElementTransformerVoid() {
                 override fun visitReturn(expression: IrReturn): IrExpression {
-                    expression.transformChildrenVoid()
+                    expression.transformChildrenVoid(this)
 
                     return if (expression.returnTargetSymbol == constructor.symbol)
                         irBuilder.at(expression).irReturn(expression.value)
@@ -128,7 +127,7 @@ internal class ConstructorsLowering(private val context: Context) : FileLowering
                 }
 
                 override fun visitGetValue(expression: IrGetValue): IrExpression {
-                    expression.transformChildrenVoid()
+                    expression.transformChildrenVoid(this)
 
                     return when (val value = expression.symbol.owner) {
                         constructedClass.thisReceiver ->
@@ -145,7 +144,7 @@ internal class ConstructorsLowering(private val context: Context) : FileLowering
                 }
 
                 override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall): IrExpression {
-                    expression.transformChildrenVoid()
+                    expression.transformChildrenVoid(this)
 
                     return irBuilder.at(expression).run {
                         val callee = expression.symbol.owner

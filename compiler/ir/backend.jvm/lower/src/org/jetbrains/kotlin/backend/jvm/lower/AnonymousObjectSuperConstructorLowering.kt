@@ -58,7 +58,7 @@ import org.jetbrains.kotlin.config.languageVersionSettings
 internal class AnonymousObjectSuperConstructorLowering(val context: JvmBackendContext) : IrElementTransformerVoidWithContext(),
     FileLoweringPass {
     override fun lower(irFile: IrFile) {
-        irFile.transformChildrenVoid()
+        irFile.transformChildrenVoid(this)
     }
 
     override fun visitBlock(expression: IrBlock): IrExpression {

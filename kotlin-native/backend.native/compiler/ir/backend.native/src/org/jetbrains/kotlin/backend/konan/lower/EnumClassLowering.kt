@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
-import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
 
@@ -179,7 +178,7 @@ internal class EnumClassLowering(val context: Context) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
         irFile.transformChildrenVoid(object : IrElementTransformerVoid() {
             override fun visitClass(declaration: IrClass): IrStatement {
-                declaration.transformChildrenVoid()
+                declaration.transformChildrenVoid(this)
                 if (declaration.kind == ClassKind.ENUM_CLASS)
                     EnumClassTransformer(declaration).run()
                 return declaration

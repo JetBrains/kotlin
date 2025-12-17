@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
  * Inlines directly invoked lambdas and replaces invoked function references with calls.
  */
 internal class DirectInvokeLowering(private val context: JvmBackendContext) : FileLoweringPass, IrElementTransformerVoidWithContext() {
-    override fun lower(irFile: IrFile) = irFile.transformChildrenVoid()
+    override fun lower(irFile: IrFile) = irFile.transformChildrenVoid(this)
 
     override fun visitCall(expression: IrCall): IrExpression {
         val function = expression.symbol.owner
@@ -49,7 +49,7 @@ internal class DirectInvokeLowering(private val context: JvmBackendContext) : Fi
                 expression
         }
 
-        result.transformChildrenVoid()
+        result.transformChildrenVoid(this)
         return result
     }
 

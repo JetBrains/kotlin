@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.ir.util.getShapeOfParameters
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.util.resolveFakeOverrideMaybeAbstractOrFail
 import org.jetbrains.kotlin.ir.util.transformInPlace
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
@@ -523,6 +524,10 @@ abstract class IrMemberAccessExpression<S : IrSymbol> : IrDeclarationReference()
 
     override fun <D> transformChildren(transformer: IrTransformer<D>, data: D) {
         arguments.transformInPlace(transformer, data)
+    }
+
+    override fun transformChildrenVoid(transformer: IrElementTransformerVoid) {
+        arguments.transformInPlace(transformer, null)
     }
 
 

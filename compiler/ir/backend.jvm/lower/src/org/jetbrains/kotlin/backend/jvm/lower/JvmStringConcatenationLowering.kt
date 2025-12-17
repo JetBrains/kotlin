@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.util.hasShape
 import org.jetbrains.kotlin.ir.util.isNullable
-import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
 private val IrClass.toStringFunction: IrSimpleFunction
     get() = functions.single {
@@ -128,7 +127,7 @@ private const val MAX_STRING_CONCAT_DEPTH = 23
     ForLoopsLowering::class,
 )
 internal class JvmStringConcatenationLowering(val context: JvmBackendContext) : FileLoweringPass, IrElementTransformerVoidWithContext() {
-    override fun lower(irFile: IrFile) = irFile.transformChildrenVoid()
+    override fun lower(irFile: IrFile) = irFile.transformChildrenVoid(this)
 
     private val stringBuilder = context.symbols.stringBuilder.owner
 

@@ -54,7 +54,7 @@ open class LocalDeclarationPopupLowering(
 
             override fun visitRichFunctionReference(expression: IrRichFunctionReference): IrExpression {
                 expression.boundValues.transformInPlace(this, null)
-                expression.invokeFunction.transformChildrenVoid()
+                expression.invokeFunction.transformChildrenVoid(this)
                 return expression
             }
 

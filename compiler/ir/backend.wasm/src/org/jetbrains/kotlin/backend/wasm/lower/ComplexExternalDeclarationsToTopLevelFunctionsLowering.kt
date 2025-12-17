@@ -519,12 +519,12 @@ class ComplexExternalDeclarationsUsageLowering(val context: WasmBackendContext) 
 
     private val usagesTransformer = object : IrElementTransformerVoid() {
         override fun visitCall(expression: IrCall): IrExpression {
-            expression.transformChildrenVoid()
+            expression.transformChildrenVoid(this)
             return transformCall(expression)
         }
 
         override fun visitConstructorCall(expression: IrConstructorCall): IrExpression {
-            expression.transformChildrenVoid()
+            expression.transformChildrenVoid(this)
             return transformCall(expression)
         }
 

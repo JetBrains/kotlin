@@ -24,7 +24,7 @@ abstract class AbstractValueRemapper : IrElementTransformerVoid() {
     }
 
     override fun visitSetValue(expression: IrSetValue): IrExpression {
-        expression.transformChildrenVoid()
+        expression.transformChildrenVoid(this)
         val newValue = remapValue(expression.symbol) ?: return expression
         assert(newValue.owner.isAssignable)
         return expression.run { IrSetValueImpl(startOffset, endOffset, type, newValue, value, origin) }

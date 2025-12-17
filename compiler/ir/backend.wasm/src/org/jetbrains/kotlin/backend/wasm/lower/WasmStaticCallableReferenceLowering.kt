@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.ir.util.constructedClass
 import org.jetbrains.kotlin.ir.util.hasShape
 import org.jetbrains.kotlin.ir.util.primaryConstructor
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
 /**
  * Turns static callable references into singletons.
@@ -28,7 +27,7 @@ class WasmStaticCallableReferenceLowering(val context: WasmBackendContext) : Fil
     override fun lower(irFile: IrFile) {
         irFile.transformChildrenVoid(object : IrElementTransformerVoid() {
             override fun visitClass(declaration: IrClass): IrStatement {
-                declaration.transformChildrenVoid()
+                declaration.transformChildrenVoid(this)
                 if (declaration.isSyntheticSingleton) {
                     declaration.kind = ClassKind.OBJECT
                 }

@@ -68,7 +68,7 @@ class ReturnableBlockTransformer(
     private val returnMap = mutableMapOf<IrReturnableBlockSymbol, (IrReturn) -> IrExpression>()
 
     override fun visitReturn(expression: IrReturn): IrExpression {
-        expression.transformChildrenVoid()
+        expression.transformChildrenVoid(this)
         return returnMap[expression.returnTargetSymbol]?.invoke(expression) ?: expression
     }
 
@@ -133,7 +133,7 @@ class ReturnableBlockTransformer(
 
         fun transformSingleStatement(statement: IrStatement, isLastInList: Boolean): IrStatement {
             return if (isLastInList && statement is IrReturn && statement.returnTargetSymbol == expression.symbol) {
-                statement.transformChildrenVoid()
+                statement.transformChildrenVoid(this)
                 if (!hasReturned) statement.value else {
                     builder.irSet(variable.symbol, statement.value)
                 }

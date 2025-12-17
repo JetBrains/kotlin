@@ -41,7 +41,7 @@ class JsSingleAbstractMethodLowering(context: CommonBackendContext) : SingleAbst
         enclosingContainer = container.parentClassOrNull ?: container.file
         enclosingBodyContainer = container
 
-        irBody.transformChildrenVoid()
+        irBody.transformChildrenVoid(this)
 
         for (wrapper in cachedImplementations.values + inlineCachedImplementations.values) {
             val parentClass = wrapper.parent as IrDeclarationContainer

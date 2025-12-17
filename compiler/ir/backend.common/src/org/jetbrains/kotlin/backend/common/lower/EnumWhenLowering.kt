@@ -39,7 +39,7 @@ open class EnumWhenLowering(protected open val context: CommonBackendContext) : 
     }
 
     override fun visitBlock(expression: IrBlock): IrExpression {
-        expression.transformChildrenVoid()
+        expression.transformChildrenVoid(this)
 
         // NB: See BranchingExpressionGenerator to get insight about `when` block translation to IR.
         if (expression.origin != IrStatementOrigin.WHEN) {

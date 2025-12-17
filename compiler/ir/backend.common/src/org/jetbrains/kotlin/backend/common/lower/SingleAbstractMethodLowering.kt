@@ -89,7 +89,7 @@ abstract class SingleAbstractMethodLowering(val context: CommonBackendContext) :
         cachedImplementations.clear()
         inlineCachedImplementations.clear()
         enclosingContainer = irFile.declarations.findIsInstanceAnd<IrClass> { it.isFileClass } ?: irFile
-        irFile.transformChildrenVoid()
+        irFile.transformChildrenVoid(this)
 
         for (wrapper in cachedImplementations.values + inlineCachedImplementations.values) {
             val parentClass = wrapper.parent as IrDeclarationContainer

@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_SERIALIZABLE_LAMBDA_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.name.Name
@@ -178,7 +177,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
             if (invokable is IrTypeOperatorCall && invokable.operator == IrTypeOperator.IMPLICIT_CAST && invokable.argument is IrBlock) {
                 invokable.argument = processBlock(invokable.argument as IrBlock, lambdaMetafactoryArguments.shouldBeSerializable)
             } else {
-                invokable.transformChildrenVoid()
+                invokable.transformChildrenVoid(this)
             }
 
             return wrapSamDelegatingLambdaWithIndySamConversion(samSuperType, lambdaBlock, lambdaMetafactoryArguments)
@@ -186,7 +185,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
             return super.visitTypeOperator(expression)
         }
 
-        reference.transformChildrenVoid()
+        reference.transformChildrenVoid(this)
 
         if (shouldGenerateIndySamConversions) {
             val lambdaMetafactoryArguments =

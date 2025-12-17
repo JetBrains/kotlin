@@ -25,10 +25,10 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
  * Turns static callable references into singletons.
  */
 internal class StaticCallableReferenceLowering(val backendContext: JvmBackendContext) : FileLoweringPass, IrElementTransformerVoid() {
-    override fun lower(irFile: IrFile) = irFile.transformChildrenVoid()
+    override fun lower(irFile: IrFile) = irFile.transformChildrenVoid(this)
 
     override fun visitClass(declaration: IrClass): IrStatement {
-        declaration.transformChildrenVoid()
+        declaration.transformChildrenVoid(this)
         if (declaration.isSyntheticSingleton) {
             declaration.declarations += backendContext.cachedDeclarations.getFieldForObjectInstance(declaration).apply {
                 initializer = backendContext.createIrBuilder(symbol).run {

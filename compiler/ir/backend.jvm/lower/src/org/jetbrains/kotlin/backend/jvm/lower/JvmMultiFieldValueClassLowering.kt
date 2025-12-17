@@ -489,7 +489,7 @@ internal class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : Jvm
                     }
 
                     override fun visitReturn(expression: IrReturn): IrExpression {
-                        expression.transformChildrenVoid()
+                        expression.transformChildrenVoid(this)
                         if (expression.returnTargetSymbol != constructor.symbol)
                             return expression
 
@@ -1564,7 +1564,7 @@ private fun BlockOrBody.makeBodyWithAddedVariables(context: JvmBackendContext, v
 
         override fun visitBlock(expression: IrBlock): IrExpression {
             containingVariables[Block(expression)]?.let {
-                expression.transformChildrenVoid()
+                expression.transformChildrenVoid(this)
                 replaceSetVariableWithInitialization(it, expression)
                 return expression
             }
@@ -1573,7 +1573,7 @@ private fun BlockOrBody.makeBodyWithAddedVariables(context: JvmBackendContext, v
 
         override fun visitBlockBody(body: IrBlockBody): IrBody {
             containingVariables[BlockOrBody.Body(body)]?.let {
-                body.transformChildrenVoid()
+                body.transformChildrenVoid(this)
                 replaceSetVariableWithInitialization(it, body)
                 return body
             }

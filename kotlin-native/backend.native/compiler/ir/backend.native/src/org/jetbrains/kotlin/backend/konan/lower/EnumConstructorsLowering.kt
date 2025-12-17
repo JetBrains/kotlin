@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 
 internal class EnumConstructorsLowering(val context: Context) : ClassLoweringPass {
@@ -338,7 +337,7 @@ internal class EnumConstructorsLowering(val context: Context) : ClassLoweringPas
             }
 
             override fun visitSetValue(expression: IrSetValue): IrExpression {
-                expression.transformChildrenVoid()
+                expression.transformChildrenVoid(this)
                 return loweredEnumConstructorParameters[expression.symbol.owner]?.let {
                     IrSetValueImpl(expression.startOffset, expression.endOffset, it.type,
                             it.symbol, expression.value, expression.origin)
@@ -370,7 +369,7 @@ private class ParameterMapper(superConstructor: IrConstructor,
     }
 
     override fun visitSetValue(expression: IrSetValue): IrExpression {
-        expression.transformChildrenVoid()
+        expression.transformChildrenVoid(this)
         val superParameter = expression.symbol.owner as? IrValueParameter ?: return expression
         if (valueParameters.contains(superParameter)) {
             val index = if (useLoweredIndex) superParameter.loweredIndex else superParameter.indexInParameters

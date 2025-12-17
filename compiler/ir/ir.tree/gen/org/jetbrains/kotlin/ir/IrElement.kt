@@ -111,4 +111,15 @@ interface IrElement {
      * @param data An arbitrary context to pass to each invocation of [transformer]'s methods.
      */
     fun <D> transformChildren(transformer: IrTransformer<D>, data: D)
+
+    /**
+     * Recursively transforms this node's children *in place* using [transformer].
+     *
+     * Basically, executes `this.child = this.child.transform(transformer)` for each child of this node.
+     *
+     * Does **not** run [transformer] on this node itself.
+     *
+     * @param transformer The transformer to use for transforming the children.
+     */
+    fun transformChildrenVoid(transformer: IrElementTransformerVoid)
 }

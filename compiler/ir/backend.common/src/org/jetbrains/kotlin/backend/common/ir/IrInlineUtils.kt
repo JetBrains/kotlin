@@ -95,7 +95,7 @@ private fun IrBody.move(
         // Might be an inline lambda argument; if the function has already been moved out, visit it explicitly.
         if (expression.origin == IrStatementOrigin.LAMBDA || expression.origin == IrStatementOrigin.ANONYMOUS_FUNCTION)
             if (expression.statements.lastOrNull() is IrFunctionReference && expression.statements.none { it is IrFunction })
-                (expression.statements.last() as IrFunctionReference).symbol.owner.transformChildrenVoid()
+                (expression.statements.last() as IrFunctionReference).symbol.owner.transformChildrenVoid(this)
         return super.visitBlock(expression)
     }
 

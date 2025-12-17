@@ -52,4 +52,9 @@ abstract class IrCatch : IrElementBase(), IrElement {
         catchParameter = catchParameter.transform(transformer, data) as IrVariable
         result = result.transform(transformer, data)
     }
+
+    override fun transformChildrenVoid(transformer: IrElementTransformerVoid) {
+        catchParameter = catchParameter.transformVoid(transformer) as IrVariable
+        result = result.transformVoid(transformer)
+    }
 }
