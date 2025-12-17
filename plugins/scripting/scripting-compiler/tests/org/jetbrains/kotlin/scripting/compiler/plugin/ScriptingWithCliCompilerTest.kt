@@ -121,6 +121,8 @@ class ScriptingWithCliCompilerTest {
         runWithK2JVMCompiler(
             arrayOf(
                 K2JVMCompilerArguments::classpath.cliArgument, getMainKtsClassPath().joinToString(File.pathSeparator),
+                "-P",
+                "plugin:kotlin.scripting:disable-script-compilation-cache=true",
                 K2JVMCompilerArguments::script.cliArgument,
                 scriptFile.path
             ),
@@ -133,6 +135,8 @@ class ScriptingWithCliCompilerTest {
             arrayOf(
                 K2JVMCompilerArguments::classpath.cliArgument, getMainKtsClassPath().joinToString(File.pathSeparator),
                 K2JVMCompilerArguments::defaultScriptExtension.cliArgument(".main.kts"),
+                "-P",
+                "plugin:kotlin.scripting:disable-script-compilation-cache=true",
                 K2JVMCompilerArguments::script.cliArgument,
                 scriptFile.path
             ),
@@ -145,6 +149,8 @@ class ScriptingWithCliCompilerTest {
             arrayOf(
                 K2JVMCompilerArguments::classpath.cliArgument, getMainKtsClassPath().joinToString(File.pathSeparator),
                 K2JVMCompilerArguments::defaultScriptExtension.cliArgument("main.kts"),
+                "-P",
+                "plugin:kotlin.scripting:disable-script-compilation-cache=true",
                 K2JVMCompilerArguments::script.cliArgument,
                 scriptFile.path
             ),
@@ -314,6 +320,7 @@ class ScriptingWithCliCompilerTest {
         val quoteForWin = if (SystemInfo.isWindows) "\"" else ""
         runWithKotlinc(
             arrayOf(
+//                "-J-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=*:5007",
                 "-Xcompiler-plugin=${quoteForWin}dist/kotlinc/lib/allopen-compiler-plugin.jar=annotation=AllOpen$quoteForWin",
                 "-script", "$TEST_DATA_DIR/integration/withAllOpenPlugin.kts",
             ), listOf("OK")
