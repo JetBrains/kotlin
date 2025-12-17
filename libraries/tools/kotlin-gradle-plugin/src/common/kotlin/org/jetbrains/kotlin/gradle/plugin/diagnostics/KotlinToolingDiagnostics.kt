@@ -2154,6 +2154,17 @@ internal object KotlinToolingDiagnostics {
                 .documentationLink(URI("https://kotl.in/build-tools-api"))
         }
     }
+
+    internal object GeneratingCompilerRefIndexWithoutBuildToolsApi : ToolingDiagnosticFactory(
+        WARNING,
+        DiagnosticGroup.Kgp.Misconfiguration,
+    ) {
+        operator fun invoke() = build {
+            title("Skipping the Compiler Reference Index data generation")
+                .description("Compiler Reference Index data can be generated only when compilation is performed via Build Tools API.")
+                .solution("Please set `kotlin.compiler.runViaBuildToolsApi=true` to enable compilation via Build Tools API.")
+        }
+    }
 }
 
 private fun String.indentLines(nSpaces: Int = 4, skipFirstLine: Boolean = true): String {

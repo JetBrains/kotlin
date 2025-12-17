@@ -91,6 +91,8 @@ internal fun createGradleCompilerRunner(
         } else {
             diagnosticsReporter.reportDiagnostic(KotlinToolingDiagnostics.UsingOutOfProcessDisablesBuildToolsApi())
         }
+    } else if (compilerExecutionSettings.generateCompilerRefIndex) {
+        diagnosticsReporter.reportDiagnostic(KotlinToolingDiagnostics.GeneratingCompilerRefIndexWithoutBuildToolsApi())
     }
     return GradleCompilerRunnerWithWorkers(
         taskProvider,
