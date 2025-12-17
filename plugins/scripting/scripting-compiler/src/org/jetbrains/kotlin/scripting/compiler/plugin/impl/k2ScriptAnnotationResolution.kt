@@ -9,12 +9,11 @@ import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.cli.common.fir.reportToMessageCollector
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
-import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirEvaluatorResult
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.SessionConfiguration
+import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.FirScript
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
@@ -23,11 +22,10 @@ import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirDeclaration
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirExpressionsResolveTransformer
 import org.jetbrains.kotlin.fir.scopes.createImportingScopes
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.withFileAnalysisExceptionWrapping
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.scriptRefinedCompilationConfigurationsCache
 import org.jetbrains.kotlin.scripting.compiler.plugin.fir.FirScriptCompilationComponent
-import org.jetbrains.kotlin.scripting.compiler.plugin.fir.scriptCompilationComponent
+import org.jetbrains.kotlin.scripting.compiler.plugin.fir.scriptCompilationConfiguration
 import org.jetbrains.kotlin.utils.tryCreateCallableMappingFromNamedArgs
 import kotlin.reflect.KClass
 import kotlin.script.experimental.api.*
@@ -40,7 +38,7 @@ import kotlin.script.experimental.jvm.baseClassLoader
 import kotlin.script.experimental.jvm.jvm
 import kotlin.script.experimental.jvm.util.toSourceCodePosition
 
-@OptIn(SessionConfiguration::class)
+@OptIn(SessionConfiguration::class, DirectDeclarationsAccess::class)
 internal fun collectAndResolveScriptAnnotationsViaFir(
     script: SourceCode,
     compilationConfiguration: ScriptCompilationConfiguration,
@@ -53,16 +51,22 @@ internal fun collectAndResolveScriptAnnotationsViaFir(
     val contextClassLoader = hostConfiguration[ScriptingHostConfiguration.jvm.baseClassLoader]
     val getScriptingClass = hostConfiguration[ScriptingHostConfiguration.getScriptingClass]
     val jvmGetScriptingClass = (getScriptingClass as? GetScriptingClassByClassLoader)
-        ?: throw IllegalArgumentException("Expecting class implementing GetScriptingClassByClassLoader in the hostConfiguration[getScriptingClass], got $getScriptingClass")
+        ?: error("Expecting class implementing GetScriptingClassByClassLoader in the hostConfiguration[getScriptingClass], got $getScriptingClass")
+    val messageCollector = ScriptDiagnosticsMessageCollector(null)
     val acceptedAnnotations =
-        compilationConfiguration[ScriptCompilationConfiguration.refineConfigurationOnAnnotations]?.flatMap {
+        compilationConfiguration[ScriptCompilationConfiguration.refineConfigurationOnAnnotations]?.flatMapTo(LinkedHashSet()) {
             it.annotations.mapNotNull { ann ->
-                @Suppress("UNCHECKED_CAST")
-                jvmGetScriptingClass(ann, contextClassLoader, hostConfiguration) as? KClass<Annotation> // TODO errors
+                try {
+                    @Suppress("UNCHECKED_CAST")
+                    jvmGetScriptingClass(ann, contextClassLoader, hostConfiguration) as? KClass<Annotation>
+                } catch (e: Throwable) {
+                    messageCollector.report(e.asDiagnostics(customMessage = "Failed to load annotation class ${ann.typeName}"))
+                    null
+                }
             }
         }?.takeIf { it.isNotEmpty() } ?: return ScriptCollectedData(emptyMap()).asSuccess()
-    // separate reporter for refinement to avoid double raw fir warnings reporting
-    val diagnosticsCollector = DiagnosticReporterFactory.createPendingReporter()
+
+    if (messageCollector.hasErrors()) return failure(messageCollector)
 
     val sessionForAnnotationResolution = getSessionForAnnotationResolution(script, compilationConfiguration)
     sessionForAnnotationResolution.register(
@@ -75,15 +79,22 @@ internal fun collectAndResolveScriptAnnotationsViaFir(
         )
     )
 
+    // separate reporter for refinement to avoid double raw fir warnings reporting
+    val diagnosticsCollector = DiagnosticReporterFactory.createPendingReporter()
     val firFile = script.convertToFir(sessionForAnnotationResolution, diagnosticsCollector)
+    firFile.declarations.forEach {
+        if (it is FirScript) {
+            it.scriptCompilationConfiguration = compilationConfiguration
+        }
+    }
     if (diagnosticsCollector.hasErrors) {
-        val messageCollector = ScriptDiagnosticsMessageCollector(null)
         diagnosticsCollector.reportToMessageCollector(messageCollector, false)
         return failure(messageCollector)
     }
 
     fun loadAnnotation(firAnnotation: FirAnnotation): ResultWithDiagnostics<ScriptSourceAnnotation<Annotation>?> =
-        (firAnnotation as? FirAnnotationCall)?.toAnnotationObjectIfMatches(acceptedAnnotations, sessionForAnnotationResolution, firFile)
+        (firAnnotation as? FirAnnotationCall)
+            ?.toAnnotationObjectIfMatches(acceptedAnnotations.toList(), sessionForAnnotationResolution, firFile)
             ?.onSuccess {
                 val location = script.locationId
                 val startPosition = firAnnotation.source?.startOffset?.toSourceCodePosition(script)

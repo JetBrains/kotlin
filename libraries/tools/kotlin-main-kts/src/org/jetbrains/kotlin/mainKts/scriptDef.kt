@@ -204,7 +204,18 @@ class MainKtsConfigurator(
         val resolveResult = try {
             @Suppress("DEPRECATION_ERROR")
             internalScriptingRunSuspend {
-                resolver.resolveFromScriptSourceAnnotations(annotations.filter { it.annotation is DependsOn || it.annotation is Repository })
+                resolver.resolveFromScriptSourceAnnotations(
+                    annotations.filter {
+                        when (it.annotation) {
+                            is DependsOn,
+                            is Repository -> true
+                            else ->
+                                if ((it.annotation::class.simpleName?.let { it == "DependsOn" || it == "Repository" }) == true )
+                                    error("Annotation ${it.annotation::class.simpleName} loaded in another classloader")
+                                else false
+                        }
+                    }
+                )
             }
         } catch (e: Throwable) {
             diagnostics.add(e.asDiagnostics(path = context.script.locationId))

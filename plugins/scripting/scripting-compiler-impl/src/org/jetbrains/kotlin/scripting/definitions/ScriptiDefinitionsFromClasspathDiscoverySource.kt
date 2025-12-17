@@ -280,6 +280,7 @@ private fun loadScriptDefinition(
                 anns,
                 templateClassName,
                 classpathWithLoader.classpath,
+                classpathWithLoader.classLoader,
                 messageReporter
             )
         } else if (ann.name == ScriptTemplateDefinition::class.java.simpleName) {

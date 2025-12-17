@@ -66,6 +66,7 @@ class FirProcessScriptSourcesExtension : FirProcessSourcesBeforeCompilingExtensi
                             script, scriptCompilationConfiguration, hostConfiguration,
                             { _, scriptCompilationConfiguration ->
                                 getOrCreateSessionForAnnotationResolution(
+                                    scriptCompilationConfiguration,
                                     scriptCompilationConfiguration[ScriptCompilationConfiguration.hostConfiguration] ?: hostConfiguration,
                                     configuration,
                                     environment
@@ -152,6 +153,7 @@ class FirProcessScriptSourcesExtension : FirProcessSourcesBeforeCompilingExtensi
     @SessionConfiguration
     @Synchronized
     private fun getOrCreateSessionForAnnotationResolution(
+        scriptCompilationConfiguration: ScriptCompilationConfiguration,
         hostConfiguration: ScriptingHostConfiguration,
         configuration: CompilerConfiguration,
         projectEnvironment: VfsBasedProjectEnvironment,
@@ -166,7 +168,9 @@ class FirProcessScriptSourcesExtension : FirProcessSourcesBeforeCompilingExtensi
 
             val extensionRegistrars = FirExtensionRegistrar.getInstances(projectEnvironment.project)
 
-            val classpath = hostConfiguration[ScriptingHostConfiguration.configurationDependencies].orEmpty().flatMap {
+            val dependencies = hostConfiguration[ScriptingHostConfiguration.configurationDependencies].orEmpty() +
+                    scriptCompilationConfiguration[ScriptCompilationConfiguration.dependencies].orEmpty()
+            val classpath = dependencies.flatMap {
                 (it as? JvmDependency)?.classpath ?: emptyList()
             }
 
