@@ -8,3 +8,4 @@ $TESTDATA_DIR$/../../../../dist/common/kotlin-stdlib-common.klib
 -Xnested-type-aliases
 -Xwhen-guards=true
 -Xannotation-default-target=first-only-warn
+-Xrender-internal-diagnostic-names
