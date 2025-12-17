@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased
 
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.calculateHashCode
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaFe10DescKotlinPropertySymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtType
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.KaFe10PsiSymbol
@@ -58,4 +59,11 @@ internal class KaFe10PsiBackingFieldSymbol(
             // So here we return the return type of the containing property.
             descriptor?.returnType?.toKtType(analysisContext) ?: createErrorType()
         }
+
+    override fun equals(other: Any?): Boolean {
+        return this === other
+                || (other is KaFe10PsiBackingFieldSymbol && backingOwningProperty == other.backingOwningProperty)
+    }
+
+    override fun hashCode(): Int = calculateHashCode()
 }
