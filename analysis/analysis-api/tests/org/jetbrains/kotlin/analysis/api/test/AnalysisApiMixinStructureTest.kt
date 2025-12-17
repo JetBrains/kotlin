@@ -29,7 +29,7 @@ class AnalysisApiMixinStructureTest : AbstractAnalysisApiSurfaceCodebaseValidati
             it.name == KA_SESSION_CLASS
         } ?: return
 
-        assertNoCompanion(file, sessionComponent)
+        assertNoNestedClasses(file, sessionComponent)
 
         // OptIn annotation itself
         assertSpecialAnnotation(file, sessionComponent, KA_SESSION_COMPONENT_IMPLEMENTATION_DETAIL_ANNOTATION)
@@ -38,9 +38,10 @@ class AnalysisApiMixinStructureTest : AbstractAnalysisApiSurfaceCodebaseValidati
         assertSpecialAnnotation(file, sessionComponent, KA_SESSION_COMPONENT_IMPLEMENTATION_DETAIL_SUBCLASS_ANNOTATION)
     }
 
-    private fun assertNoCompanion(file: File, sessionComponent: KtClassOrObject) {
-        if (sessionComponent.companionObjects.isNotEmpty()) {
-            error("Session component '${sessionComponent.name}' (${file}) should not have a companion object since it exposes the session component type")
+    private fun assertNoNestedClasses(file: File, sessionComponent: KtClassOrObject) {
+        val nestedClasses = sessionComponent.declarations.filterIsInstance<KtClassOrObject>()
+        if (nestedClasses.isNotEmpty()) {
+            error("Session component '${sessionComponent.name}' (${file}) should not have nested classes (${nestedClasses.map { it.name }}) since they expose the session component type")
         }
     }
 
