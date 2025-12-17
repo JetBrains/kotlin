@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.ir
 
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import java.util.IdentityHashMap
 
 abstract class IrElementBase : IrElement {
@@ -33,6 +34,10 @@ abstract class IrElementBase : IrElement {
         accept(transformer, data)
 
     override fun <D> acceptChildren(visitor: IrVisitor<Unit, D>, data: D) {
+        // No children by default
+    }
+
+    override fun acceptChildrenVoid(visitor: IrVisitorVoid) {
         // No children by default
     }
 

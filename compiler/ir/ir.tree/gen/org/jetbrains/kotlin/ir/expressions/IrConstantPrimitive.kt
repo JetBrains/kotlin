@@ -28,6 +28,10 @@ abstract class IrConstantPrimitive : IrConstantValue() {
         value.accept(visitor, data)
     }
 
+    override fun acceptChildrenVoid(visitor: IrVisitorVoid) {
+        value.acceptVoid(visitor)
+    }
+
     override fun <D> transformChildren(transformer: IrTransformer<D>, data: D) {
         value = value.transform(transformer, data) as IrConst
     }

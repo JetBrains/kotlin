@@ -81,6 +81,12 @@ abstract class IrClass : IrDeclarationBase(), IrPossiblyExternalDeclaration, IrD
         thisReceiver?.accept(visitor, data)
     }
 
+    override fun acceptChildrenVoid(visitor: IrVisitorVoid) {
+        typeParameters.forEach { it.acceptVoid(visitor) }
+        declarations.forEach { it.acceptVoid(visitor) }
+        thisReceiver?.acceptVoid(visitor)
+    }
+
     override fun <D> transformChildren(transformer: IrTransformer<D>, data: D) {
         typeParameters = typeParameters.transformIfNeeded(transformer, data)
         declarations.transformInPlace(transformer, data)

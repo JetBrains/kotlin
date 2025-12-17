@@ -26,6 +26,10 @@ abstract class IrGetField : IrFieldAccessExpression() {
         receiver?.accept(visitor, data)
     }
 
+    override fun acceptChildrenVoid(visitor: IrVisitorVoid) {
+        receiver?.acceptVoid(visitor)
+    }
+
     override fun <D> transformChildren(transformer: IrTransformer<D>, data: D) {
         receiver = receiver?.transform(transformer, data)
     }

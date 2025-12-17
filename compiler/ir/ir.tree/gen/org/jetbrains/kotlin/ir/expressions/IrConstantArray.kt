@@ -29,6 +29,10 @@ abstract class IrConstantArray : IrConstantValue() {
         elements.forEach { it.accept(visitor, data) }
     }
 
+    override fun acceptChildrenVoid(visitor: IrVisitorVoid) {
+        elements.forEach { it.acceptVoid(visitor) }
+    }
+
     override fun <D> transformChildren(transformer: IrTransformer<D>, data: D) {
         elements.transformInPlace(transformer, data)
     }

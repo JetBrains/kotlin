@@ -43,6 +43,10 @@ abstract class IrVariable : IrDeclarationBase(), IrValueDeclaration {
         initializer?.accept(visitor, data)
     }
 
+    override fun acceptChildrenVoid(visitor: IrVisitorVoid) {
+        initializer?.acceptVoid(visitor)
+    }
+
     override fun <D> transformChildren(transformer: IrTransformer<D>, data: D) {
         initializer = initializer?.transform(transformer, data)
     }

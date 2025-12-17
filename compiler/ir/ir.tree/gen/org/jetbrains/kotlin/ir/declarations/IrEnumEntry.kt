@@ -40,6 +40,11 @@ abstract class IrEnumEntry : IrDeclarationBase(), IrDeclarationWithName {
         correspondingClass?.accept(visitor, data)
     }
 
+    override fun acceptChildrenVoid(visitor: IrVisitorVoid) {
+        initializerExpression?.acceptVoid(visitor)
+        correspondingClass?.acceptVoid(visitor)
+    }
+
     override fun <D> transformChildren(transformer: IrTransformer<D>, data: D) {
         initializerExpression = initializerExpression?.transform(transformer, data)
         correspondingClass = correspondingClass?.transform(transformer, data) as IrClass?

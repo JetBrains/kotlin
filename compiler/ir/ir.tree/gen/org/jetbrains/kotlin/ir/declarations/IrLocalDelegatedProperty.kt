@@ -59,6 +59,12 @@ abstract class IrLocalDelegatedProperty : IrDeclarationBase(), IrDeclarationWith
         setter?.accept(visitor, data)
     }
 
+    override fun acceptChildrenVoid(visitor: IrVisitorVoid) {
+        delegate?.acceptVoid(visitor)
+        getter.acceptVoid(visitor)
+        setter?.acceptVoid(visitor)
+    }
+
     override fun <D> transformChildren(transformer: IrTransformer<D>, data: D) {
         delegate = delegate?.transform(transformer, data) as IrVariable?
         getter = getter.transform(transformer, data) as IrSimpleFunction

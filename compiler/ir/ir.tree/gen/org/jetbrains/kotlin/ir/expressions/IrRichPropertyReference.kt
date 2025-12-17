@@ -51,6 +51,12 @@ abstract class IrRichPropertyReference : IrRichCallableReference<IrDeclarationWi
         setterFunction?.accept(visitor, data)
     }
 
+    override fun acceptChildrenVoid(visitor: IrVisitorVoid) {
+        boundValues.forEach { it.acceptVoid(visitor) }
+        getterFunction.acceptVoid(visitor)
+        setterFunction?.acceptVoid(visitor)
+    }
+
     override fun <D> transformChildren(transformer: IrTransformer<D>, data: D) {
         boundValues.transformInPlace(transformer, data)
         getterFunction = getterFunction.transform(transformer, data) as IrSimpleFunction

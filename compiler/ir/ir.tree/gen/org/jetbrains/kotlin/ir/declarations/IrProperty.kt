@@ -54,6 +54,12 @@ abstract class IrProperty : IrDeclarationBase(), IrPossiblyExternalDeclaration, 
         setter?.accept(visitor, data)
     }
 
+    override fun acceptChildrenVoid(visitor: IrVisitorVoid) {
+        backingField?.acceptVoid(visitor)
+        getter?.acceptVoid(visitor)
+        setter?.acceptVoid(visitor)
+    }
+
     override fun <D> transformChildren(transformer: IrTransformer<D>, data: D) {
         backingField = backingField?.transform(transformer, data) as IrField?
         getter = getter?.transform(transformer, data) as IrSimpleFunction?

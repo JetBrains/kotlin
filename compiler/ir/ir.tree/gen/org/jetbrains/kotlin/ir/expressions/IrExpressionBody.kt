@@ -31,6 +31,10 @@ abstract class IrExpressionBody : IrBody() {
         expression.accept(visitor, data)
     }
 
+    override fun acceptChildrenVoid(visitor: IrVisitorVoid) {
+        expression.acceptVoid(visitor)
+    }
+
     override fun <D> transformChildren(transformer: IrTransformer<D>, data: D) {
         expression = expression.transform(transformer, data)
     }

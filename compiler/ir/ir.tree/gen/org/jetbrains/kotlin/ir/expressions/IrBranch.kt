@@ -36,6 +36,11 @@ abstract class IrBranch : IrElementBase(), IrElement {
         result.accept(visitor, data)
     }
 
+    override fun acceptChildrenVoid(visitor: IrVisitorVoid) {
+        condition.acceptVoid(visitor)
+        result.acceptVoid(visitor)
+    }
+
     override fun <D> transformChildren(transformer: IrTransformer<D>, data: D) {
         condition = condition.transform(transformer, data)
         result = result.transform(transformer, data)

@@ -27,6 +27,11 @@ abstract class IrDoWhileLoop : IrLoop() {
         condition.accept(visitor, data)
     }
 
+    override fun acceptChildrenVoid(visitor: IrVisitorVoid) {
+        body?.acceptVoid(visitor)
+        condition.acceptVoid(visitor)
+    }
+
     override fun <D> transformChildren(transformer: IrTransformer<D>, data: D) {
         body = body?.transform(transformer, data)
         condition = condition.transform(transformer, data)

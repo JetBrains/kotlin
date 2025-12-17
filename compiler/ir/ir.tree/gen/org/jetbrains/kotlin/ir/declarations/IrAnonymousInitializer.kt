@@ -41,6 +41,10 @@ abstract class IrAnonymousInitializer : IrDeclarationBase() {
         body.accept(visitor, data)
     }
 
+    override fun acceptChildrenVoid(visitor: IrVisitorVoid) {
+        body.acceptVoid(visitor)
+    }
+
     override fun <D> transformChildren(transformer: IrTransformer<D>, data: D) {
         body = body.transform(transformer, data) as IrBlockBody
     }

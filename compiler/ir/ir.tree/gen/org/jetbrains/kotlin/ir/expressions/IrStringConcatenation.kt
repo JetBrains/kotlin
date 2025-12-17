@@ -40,6 +40,10 @@ abstract class IrStringConcatenation : IrExpression() {
         arguments.forEach { it.accept(visitor, data) }
     }
 
+    override fun acceptChildrenVoid(visitor: IrVisitorVoid) {
+        arguments.forEach { it.acceptVoid(visitor) }
+    }
+
     override fun <D> transformChildren(transformer: IrTransformer<D>, data: D) {
         arguments.transformInPlace(transformer, data)
     }
