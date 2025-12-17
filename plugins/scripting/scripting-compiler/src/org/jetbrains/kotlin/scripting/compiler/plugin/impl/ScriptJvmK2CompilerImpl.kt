@@ -52,6 +52,7 @@ import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.host.withDefaultsFrom
 import kotlin.script.experimental.impl._languageVersion
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
+import kotlin.script.experimental.jvm.util.toClassPathOrEmpty
 
 class ScriptJvmK2CompilerIsolated(val hostConfiguration: ScriptingHostConfiguration) : ScriptCompilerProxy {
     override fun compile(
@@ -143,7 +144,7 @@ class ScriptJvmK2CompilerImpl(
         refineAllForK2(script, state.hostConfiguration) { source, configuration ->
             collectAndResolveScriptAnnotationsViaFir(
                 source, configuration, state.hostConfiguration,
-                { _, _ -> state.getOrCreateSessionForAnnotationResolution() },
+                { _, scriptCompilationConfiguration -> state.getOrCreateSessionForAnnotationResolution(scriptCompilationConfiguration) },
                 { session, diagnosticsReporter -> convertToFir(session, diagnosticsReporter) }
             )
         }.onSuccess {
@@ -226,7 +227,11 @@ class ScriptJvmK2CompilerImpl(
             FirScriptCompilationComponent::class,
             FirScriptCompilationComponent(
                 state.hostConfiguration,
-                getSessionForAnnotationResolution = { _, _ -> state.getOrCreateSessionForAnnotationResolution() }
+                getSessionForAnnotationResolution = { _, scriptCompilationConfiguration ->
+                    state.getOrCreateSessionForAnnotationResolution(
+                        scriptCompilationConfiguration
+                    )
+                }
             )
         )
 
@@ -316,8 +321,14 @@ fun SourceCode.convertToFirViaLightTree(session: FirSession, diagnosticsReporter
 }
 
 @SessionConfiguration
-private fun K2ScriptingCompilerEnvironmentInternal.getOrCreateSessionForAnnotationResolution(): FirSession =
-    dummySessionForAnnotationResolution ?: (createSourceSession(
+private fun K2ScriptingCompilerEnvironmentInternal.getOrCreateSessionForAnnotationResolution(
+    scriptCompilationConfiguration: ScriptCompilationConfiguration
+): FirSession {
+    val dependencies = scriptCompilationConfiguration[ScriptCompilationConfiguration.dependencies].toClassPathOrEmpty()
+    if (dependencies.isNotEmpty()) {
+        configureLibrarySessionIfNeeded(this, compilerContext.environment.configuration, dependencies)
+    }
+    return dummySessionForAnnotationResolution ?: (createSourceSession(
         moduleDataProvider.addNewScriptModuleData(Name.special("<raw-script>")),
         AbstractProjectFileSearchScope.EMPTY,
         createIncrementalCompilationSymbolProviders = { null },
@@ -334,4 +345,5 @@ private fun K2ScriptingCompilerEnvironmentInternal.getOrCreateSessionForAnnotati
         )
         dummySessionForAnnotationResolution = this
     })
+}
 

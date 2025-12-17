@@ -10,12 +10,15 @@ import kotlin.script.experimental.annotations.KotlinScript
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.*
 import kotlin.script.experimental.jvm.JvmDependency
+import kotlin.script.experimental.jvm.baseClassLoader
+import kotlin.script.experimental.jvm.jvm
 
 class LazyScriptDefinitionFromDiscoveredClass internal constructor(
     private val baseHostConfiguration: ScriptingHostConfiguration,
     private val annotationsFromAsm: ArrayList<BinAnnData>,
     private val className: String,
     private val classpath: List<File>,
+    private val classLoader: ClassLoader,
     private val messageReporter: MessageReporter
 ) : ScriptDefinition.FromConfigurationsBase() {
 
@@ -28,8 +31,11 @@ class LazyScriptDefinitionFromDiscoveredClass internal constructor(
             createScriptDefinitionFromTemplate(
                 KotlinType(className),
                 baseHostConfiguration.with {
-                    if (classpath.isNotEmpty()) {
-                        configurationDependencies.append(JvmDependency(classpath))
+                    jvm {
+                        if (classpath.isNotEmpty()) {
+                            configurationDependencies.append(JvmDependency(classpath))
+                            baseClassLoader(classLoader)
+                        }
                     }
                 },
                 LazyScriptDefinitionFromDiscoveredClass::class
