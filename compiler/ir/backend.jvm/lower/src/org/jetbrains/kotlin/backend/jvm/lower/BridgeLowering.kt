@@ -166,10 +166,11 @@ internal class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPas
         if (isFakeOverride && parentAsClass.isJvmInterface)
             return null
 
-        val specialBridgeOrNull = if (!parentAsClass.isInterface) this.specialBridgeOrNull else null
-        val mayNeedSpecialBridge = specialBridgeOrNull != null && isJvmAbstract(context.config.jvmDefaultMode)
 
         if (useEnhancedBridges) {
+            val specialBridgeOrNull = if (!parentAsClass.isInterface) this.specialBridgeOrNull else null
+            val mayNeedSpecialBridge = specialBridgeOrNull != null && isJvmAbstract(context.config.jvmDefaultMode)
+
             // Finally, the JVM backend also ignores concrete fake overrides whose implementation is directly inherited from an interface.
             // This is sound, since we do not generate type-specialized versions of fake overrides and if the method
             // were to override several interface methods the frontend would require a separate implementation.
