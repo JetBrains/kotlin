@@ -18,7 +18,8 @@ class KaBaseBackingFieldSymbolPointer(
     originalSymbol: KaBackingFieldSymbol
 ) : KaBaseCachedSymbolPointer<KaBackingFieldSymbol>(originalSymbol) {
     override fun pointsToTheSameSymbolAs(other: KaSymbolPointer<KaSymbol>): Boolean {
-        return other is KaBaseBackingFieldSymbolPointer && other.propertySymbolPointer.pointsToTheSameSymbolAs(propertySymbolPointer)
+        return this === other
+                || (other is KaBaseBackingFieldSymbolPointer && other.propertySymbolPointer.pointsToTheSameSymbolAs(propertySymbolPointer))
     }
 
     override fun restoreIfNotCached(analysisSession: KaSession): KaBackingFieldSymbol? = with(analysisSession) {
