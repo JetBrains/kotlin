@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.wasm.ir2wasm
 
 import org.jetbrains.kotlin.ir.declarations.IdSignatureRetriever
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.wasm.ir.*
@@ -80,5 +81,28 @@ class WasmFileCodegenContextWithImport(
         defineRttiGlobal(global = rttiGlobal, irClass = declaration, irSuperClass = superType)
         declarationImported = true
         return true
+    }
+
+    override fun handleGlobalField(declaration: IrFieldSymbol): Boolean = true
+
+    override fun addObjectInstanceFieldInitializer(initializer: IrFunctionSymbol) {
+    }
+
+    override fun addNonConstantFieldInitializers(initializer: IrFunctionSymbol) {
+    }
+
+    override fun addMainFunctionWrapper(mainFunctionWrapper: IrFunctionSymbol) {
+    }
+
+    override fun addTestFunDeclarator(testFunctionDeclarator: IrFunctionSymbol) {
+    }
+
+    override fun addEquivalentFunction(key: String, function: IrFunctionSymbol) {
+    }
+
+    override fun addClassAssociatedObjects(klass: IrClassSymbol, associatedObjectsGetters: List<AssociatedObjectBySymbols>) {
+    }
+
+    override fun addJsModuleAndQualifierReferences(reference: JsModuleAndQualifierReference) {
     }
 }

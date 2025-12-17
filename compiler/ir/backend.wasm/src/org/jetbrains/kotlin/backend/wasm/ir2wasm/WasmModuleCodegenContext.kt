@@ -34,6 +34,7 @@ open class WasmFileCodegenContext(
     open fun handleVTableWithImport(declaration: IrClassSymbol): Boolean = false
     open fun handleClassITableWithImport(declaration: IrClassSymbol): Boolean = false
     open fun handleRTTIWithImport(declaration: IrClassSymbol, superType: IrClassSymbol?): Boolean = false
+    open fun handleGlobalField(declaration: IrFieldSymbol): Boolean = false
 
     protected fun IrSymbol.getReferenceKey(): IdSignature =
         idSignatureRetriever.declarationSignature(this.owner as IrDeclaration)!!
@@ -103,7 +104,7 @@ open class WasmFileCodegenContext(
     open fun referenceFunction(irFunction: IrFunctionSymbol): FuncSymbol =
         FuncSymbol(irFunction.getReferenceKey())
 
-    open fun referenceGlobalField(irField: IrFieldSymbol): FieldGlobalSymbol =
+    fun referenceGlobalField(irField: IrFieldSymbol): FieldGlobalSymbol =
         FieldGlobalSymbol(irField.getReferenceKey())
 
     open fun referenceGlobalVTable(irClass: IrClassSymbol): VTableGlobalSymbol =
@@ -161,27 +162,27 @@ open class WasmFileCodegenContext(
         wasmFileFragment.jsBuiltinsPolyfills[declarationName] = polyfillImpl
     }
 
-    fun addObjectInstanceFieldInitializer(initializer: IrFunctionSymbol) {
+    open fun addObjectInstanceFieldInitializer(initializer: IrFunctionSymbol) {
         wasmFileFragment.objectInstanceFieldInitializers.add(initializer.getReferenceKey())
     }
 
-    fun addNonConstantFieldInitializers(initializer: IrFunctionSymbol) {
+    open fun addNonConstantFieldInitializers(initializer: IrFunctionSymbol) {
         wasmFileFragment.nonConstantFieldInitializers.add(initializer.getReferenceKey())
     }
 
-    fun addMainFunctionWrapper(mainFunctionWrapper: IrFunctionSymbol) {
+    open fun addMainFunctionWrapper(mainFunctionWrapper: IrFunctionSymbol) {
         wasmFileFragment.mainFunctionWrappers.add(mainFunctionWrapper.getReferenceKey())
     }
 
-    fun addTestFunDeclarator(testFunctionDeclarator: IrFunctionSymbol) {
+    open fun addTestFunDeclarator(testFunctionDeclarator: IrFunctionSymbol) {
         wasmFileFragment.testFunctionDeclarators.add(testFunctionDeclarator.getReferenceKey())
     }
 
-    fun addEquivalentFunction(key: String, function: IrFunctionSymbol) {
+    open fun addEquivalentFunction(key: String, function: IrFunctionSymbol) {
         wasmFileFragment.equivalentFunctions.add(key to function.getReferenceKey())
     }
 
-    fun addClassAssociatedObjects(klass: IrClassSymbol, associatedObjectsGetters: List<AssociatedObjectBySymbols>) {
+    open fun addClassAssociatedObjects(klass: IrClassSymbol, associatedObjectsGetters: List<AssociatedObjectBySymbols>) {
         val classAssociatedObjects = ClassAssociatedObjects(
             referenceTypeId(klass),
             associatedObjectsGetters.map { (obj, getter, isExternal) ->
@@ -191,7 +192,7 @@ open class WasmFileCodegenContext(
         wasmFileFragment.classAssociatedObjectsInstanceGetters.add(classAssociatedObjects)
     }
 
-    fun addJsModuleAndQualifierReferences(reference: JsModuleAndQualifierReference) {
+    open fun addJsModuleAndQualifierReferences(reference: JsModuleAndQualifierReference) {
         wasmFileFragment.jsModuleAndQualifierReferences.add(reference)
     }
 

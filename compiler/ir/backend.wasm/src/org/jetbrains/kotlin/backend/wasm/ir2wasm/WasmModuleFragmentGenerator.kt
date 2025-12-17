@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
 class ModuleReferencedDeclarations {
     val referencedFunction = mutableSetOf<IdSignature>()
-    val referencedGlobalField = mutableSetOf<IdSignature>()
     val referencedGlobalVTable = mutableSetOf<IdSignature>()
     val referencedGlobalClassITable = mutableSetOf<IdSignature>()
     val referencedRttiGlobal = mutableSetOf<IdSignature>()

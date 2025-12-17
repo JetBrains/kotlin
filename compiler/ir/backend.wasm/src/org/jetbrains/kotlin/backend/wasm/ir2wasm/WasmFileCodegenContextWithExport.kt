@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.ir.declarations.IdSignatureRetriever
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithVisibility
 import org.jetbrains.kotlin.ir.overrides.isEffectivelyPrivate
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.wasm.ir.WasmExport
 import org.jetbrains.kotlin.wasm.ir.WasmFunction
@@ -36,11 +35,6 @@ class WasmFileCodegenContextWithExport(
     override fun referenceFunction(irFunction: IrFunctionSymbol): FuncSymbol {
         moduleReferencedDeclarations.referencedFunction.add(irFunction.getReferenceKey())
         return super.referenceFunction(irFunction)
-    }
-
-    override fun referenceGlobalField(irField: IrFieldSymbol): FieldGlobalSymbol {
-        moduleReferencedDeclarations.referencedGlobalField.add(irField.getReferenceKey())
-        return super.referenceGlobalField(irField)
     }
 
     override fun referenceGlobalVTable(irClass: IrClassSymbol): VTableGlobalSymbol {

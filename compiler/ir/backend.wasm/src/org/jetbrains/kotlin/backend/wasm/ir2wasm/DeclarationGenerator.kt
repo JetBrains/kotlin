@@ -598,6 +598,8 @@ class DeclarationGenerator(
     }
 
     override fun visitField(declaration: IrField) {
+        if (wasmFileCodegenContext.handleGlobalField(declaration.symbol)) return
+
         // Member fields are generated as part of struct type
         if (!declaration.isStatic) return
 
