@@ -108,11 +108,7 @@
                 </executions>
                 <configuration>
                     <discoverToolchains>true</discoverToolchains>
-                    <toolchains>
-                        <jdk>
-                            <version>[17,)</version>
-                        </jdk>
-                    </toolchains>
+                    <version>[17,)</version>
                 </configuration>
             </plugin>
 
