@@ -13,12 +13,12 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 
 @KaImplementationDetail
-class KaBackingFieldSymbolPointer(
+class KaBaseBackingFieldSymbolPointer(
     private val propertySymbolPointer: KaSymbolPointer<KaPropertySymbol>,
     originalSymbol: KaBackingFieldSymbol
 ) : KaBaseCachedSymbolPointer<KaBackingFieldSymbol>(originalSymbol) {
     override fun pointsToTheSameSymbolAs(other: KaSymbolPointer<KaSymbol>): Boolean {
-        return other is KaBackingFieldSymbolPointer && other.propertySymbolPointer.pointsToTheSameSymbolAs(propertySymbolPointer)
+        return other is KaBaseBackingFieldSymbolPointer && other.propertySymbolPointer.pointsToTheSameSymbolAs(propertySymbolPointer)
     }
 
     override fun restoreIfNotCached(analysisSession: KaSession): KaBackingFieldSymbol? = with(analysisSession) {

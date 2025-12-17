@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForDeclaration
 import org.jetbrains.kotlin.analysis.api.fir.findPsi
-import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaBackingFieldSymbolPointer
+import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaBaseBackingFieldSymbolPointer
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaBackingFieldSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaKotlinPropertySymbol
@@ -60,7 +60,7 @@ internal class KaFirBackingFieldSymbol private constructor(
 
     override fun createPointer(): KaSymbolPointer<KaBackingFieldSymbol> = withValidityAssertion {
         return psiBasedSymbolPointerOfTypeIfSource<KaBackingFieldSymbol>()
-            ?: KaBackingFieldSymbolPointer(backingOwningProperty.createPointer(), this)
+            ?: KaBaseBackingFieldSymbolPointer(backingOwningProperty.createPointer(), this)
     }
 
     override fun equals(other: Any?): Boolean {

@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.bas
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.KaFe10PsiSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.createErrorType
 import org.jetbrains.kotlin.analysis.api.descriptors.utils.cached
-import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaBackingFieldSymbolPointer
+import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaBaseBackingFieldSymbolPointer
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaBackingFieldSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaKotlinPropertySymbol
@@ -47,7 +47,7 @@ internal class KaFe10PsiBackingFieldSymbol(
 
     override fun createPointer(): KaSymbolPointer<KaBackingFieldSymbol> {
         val ptr = backingOwningProperty.createPointer()
-        return KaBackingFieldSymbolPointer(ptr, this)
+        return KaBaseBackingFieldSymbolPointer(ptr, this)
     }
 
     override val isVal: Boolean
