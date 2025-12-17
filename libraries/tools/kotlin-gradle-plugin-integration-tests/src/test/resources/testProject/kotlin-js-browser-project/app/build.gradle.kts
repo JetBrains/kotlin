@@ -51,7 +51,7 @@ kotlin {
         val mainCompilation = compilations["main"]
         rootProject.plugins.withType<org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin> {
             tasks.register<Exec>("runWebpackResult") {
-                val webpackTask = tasks.named<org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack>("browserProductionWebpack")
+                val webpackTask = tasks.named<org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack>("jsBrowserProductionWebpack")
                 dependsOn(webpackTask)
 
                 val workDir = webpackTask.flatMap { it.outputDirectory.asFile }
@@ -74,8 +74,13 @@ kotlin {
             dependencies {
                 implementation(kotlin("stdlib-js"))
                 implementation(project(":lib"))
-                implementation(npm(projectDir.resolve("src/main/css")))
-                testImplementation(kotlin("test-js"))
+                implementation(npm(projectDir.resolve("src/jsMain/css")))
+            }
+        }
+
+        jsTest {
+            dependencies {
+                implementation(kotlin("test-js"))
             }
         }
     }

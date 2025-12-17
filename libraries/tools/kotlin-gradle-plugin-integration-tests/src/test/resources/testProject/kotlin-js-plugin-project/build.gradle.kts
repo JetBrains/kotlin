@@ -11,20 +11,6 @@ repositories {
     mavenCentral()
 }
 
-kotlin.sourceSets {
-    jsMain {
-        dependencies {
-            api("org.jetbrains.kotlinx:kotlinx-html-js:0.7.5")
-            implementation(kotlin("stdlib-js"))
-        }
-    }
-    jsTest {
-        dependencies {
-            implementation(kotlin("test-js"))
-        }
-    }
-}
-
 kotlin.js {
     nodejs()
     browser {
@@ -43,6 +29,22 @@ kotlin.js().compilations.create("benchmark") {
         val main by kotlin.js().compilations
         implementation(main.compileDependencyFiles + main.output.classesDirs)
         runtimeOnly(files(main.runtimeDependencyFiles))
+    }
+}
+
+kotlin {
+    sourceSets {
+        jsMain {
+            dependencies {
+                api("org.jetbrains.kotlinx:kotlinx-html-js:0.7.5")
+                implementation(kotlin("stdlib-js"))
+            }
+        }
+        jsTest {
+            dependencies {
+                implementation(kotlin("test-js"))
+            }
+        }
     }
 }
 

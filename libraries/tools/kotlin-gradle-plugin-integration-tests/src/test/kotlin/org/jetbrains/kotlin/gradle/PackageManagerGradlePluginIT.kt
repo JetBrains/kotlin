@@ -220,15 +220,15 @@ abstract class PackageManagerGradlePluginIT : KGPBaseTest() {
         storeTask: String,
     ) {
         build(upgradeTask) {
-            assertTasksExecuted(":base:publicPackageJson")
-            assertTasksExecuted(":lib:lib-2:publicPackageJson")
+            assertTasksExecuted(":base:jsPublicPackageJson")
+            assertTasksExecuted(":lib:lib-2:jsPublicPackageJson")
             assertTasksExecuted(":kotlinNpmInstall")
             assertTasksExecuted(":$upgradeTask")
         }
 
         build(":nodeTest") {
-            assertTasksUpToDate(":base:publicPackageJson")
-            assertTasksUpToDate(":lib:lib-2:publicPackageJson")
+            assertTasksUpToDate(":base:jsPublicPackageJson")
+            assertTasksUpToDate(":lib:lib-2:jsPublicPackageJson")
             assertTasksUpToDate(":kotlinNpmInstall")
             assertTasksExecuted(":$storeTask")
         }

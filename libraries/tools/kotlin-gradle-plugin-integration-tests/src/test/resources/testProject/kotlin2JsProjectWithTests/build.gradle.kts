@@ -11,9 +11,9 @@ val kotlin_version: String by extra
 
 kotlin {
     sourceSets {
-        jsMain {
+        jsTest {
             dependencies {
-                testImplementation("org.jetbrains.kotlin:kotlin-test-js:$kotlin_version")
+                implementation("org.jetbrains.kotlin:kotlin-test:$kotlin_version")
             }
         }
     }

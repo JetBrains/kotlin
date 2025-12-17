@@ -14,11 +14,8 @@ kotlin {
     }
 }
 
-@Suppress("DEPRECATION")
 kotlin {
-    js("ir")
-    js(IR)
-    js(IR_TYPE) {
+    js {
         useCommonJs()
         browser {
         }

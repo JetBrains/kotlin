@@ -63,7 +63,7 @@ abstract class Kotlin2JsIrBeIncrementalCompilationIT : KGPBaseTest() {
 
             var successfulBuildCacheFiles = emptyMap<String, Int>()
             srcFile.appendText("\nfun unknownFunction() = 1\n")
-            build("nodeDevelopmentRun") {
+            build("jsNodeDevelopmentRun") {
                 assertTasksExecuted(":app:compileDevelopmentExecutableKotlinJs")
                 assertOutputContains("Hello, World!")
                 successfulBuildCacheFiles = readCacheFiles()
@@ -73,14 +73,14 @@ abstract class Kotlin2JsIrBeIncrementalCompilationIT : KGPBaseTest() {
             srcFile.writeText(badCode)
 
             for (i in 0..1) {
-                buildAndFail("nodeDevelopmentRun") {
+                buildAndFail("jsNodeDevelopmentRun") {
                     assertTasksFailed(":app:compileDevelopmentExecutableKotlinJs")
                     assertTrue("guard file after compilation error expected") { guardFile.exists() }
                 }
             }
 
             srcFile.writeText(badCode.replace("Hello, World!", "Hello, Kotlin!") + "\nfun unknownFunction() = 2\n")
-            build("nodeDevelopmentRun") {
+            build("jsNodeDevelopmentRun") {
                 assertTasksExecuted(":app:compileDevelopmentExecutableKotlinJs")
                 assertOutputContains("Hello, Kotlin!")
                 val successfulRebuildCacheFiles = readCacheFiles()
@@ -117,19 +117,19 @@ abstract class Kotlin2JsIrBeIncrementalCompilationIT : KGPBaseTest() {
             }
 
             // -Xir-property-lazy-initialization default is true
-            build("nodeDevelopmentRun") {
+            build("jsNodeDevelopmentRun") {
                 assertTasksExecuted(":compileDevelopmentExecutableKotlinJs")
                 assertEquals(listOf("Hello, Gradle."), output.testScriptOutLines())
             }
 
             setLazyInitializationArg(false)
-            build("nodeDevelopmentRun") {
+            build("jsNodeDevelopmentRun") {
                 assertTasksExecuted(":compileDevelopmentExecutableKotlinJs")
                 assertEquals(listOf("TOP LEVEL!", "Hello, Gradle."), output.testScriptOutLines())
             }
 
             setLazyInitializationArg(true)
-            build("nodeDevelopmentRun") {
+            build("jsNodeDevelopmentRun") {
                 assertTasksExecuted(":compileDevelopmentExecutableKotlinJs")
                 assertEquals(listOf("Hello, Gradle."), output.testScriptOutLines())
             }
@@ -224,7 +224,7 @@ abstract class Kotlin2JsIrBeIncrementalCompilationIT : KGPBaseTest() {
     @GradleTest
     fun testCacheGuardInvalidation(gradleVersion: GradleVersion) {
         project("kotlin2JsIrICProject", gradleVersion) {
-            build("nodeDevelopmentRun", "--debug") {
+            build("jsNodeDevelopmentRun", "--debug") {
                 assertTasksExecuted(":compileDevelopmentExecutableKotlinJs")
                 assertOutputContains("module [main] was built clean")
                 assertOutputContains(">>> TEST OUT: Hello, Gradle.")
@@ -237,7 +237,7 @@ abstract class Kotlin2JsIrBeIncrementalCompilationIT : KGPBaseTest() {
             srcFile.writeText(srcFile.readText().replace("greeting(\"Gradle\")", "greeting(\"Kotlin\")"))
 
             cacheGuard.createNewFile()
-            build("nodeDevelopmentRun", "--debug") {
+            build("jsNodeDevelopmentRun", "--debug") {
                 assertTasksExecuted(":compileDevelopmentExecutableKotlinJs")
                 assertOutputContains(Regex("Cache guard file detected, cache directory '.+' cleared"))
                 assertOutputContains("module [main] was built clean")

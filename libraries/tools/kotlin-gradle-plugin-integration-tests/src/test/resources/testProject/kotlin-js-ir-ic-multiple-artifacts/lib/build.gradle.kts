@@ -26,11 +26,8 @@ kotlin {
     }
 
     sourceSets {
-        jsMain {
-            kotlin.exclude("**/other/**")
-        }
-        val other by getting {
-            kotlin.srcDirs("src/main/kotlin/other")
+        jsMain {}
+        val jsOther by getting {
             dependencies {
                 implementation(project(path = project.path))
             }

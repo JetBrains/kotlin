@@ -28,7 +28,7 @@ tasks.register("foo") {
     }
 }
 
-tasks.named("browserTest") {
+tasks.named("jsBrowserTest") {
     enabled = false
 }
 

@@ -33,7 +33,7 @@ kotlin {
             def mainCompilation = compilations["main"]
 
             tasks.register("runWebpack", Exec) {
-                dependsOn(tasks.named('browserProductionWebpack'))
+                dependsOn(tasks.named('jsBrowserProductionWebpack'))
 
                 workingDir = "${rootProject.buildDir}/js/packages/kotlin-js-dce-mainProject"
 

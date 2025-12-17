@@ -14,7 +14,7 @@ kotlin.js {
     browser()
 }
 
-tasks.named("browserTest") {
+tasks.named("jsBrowserTest") {
     enabled = false
 }
 

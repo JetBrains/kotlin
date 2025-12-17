@@ -20,7 +20,12 @@ kotlin {
         jsMain {
             dependencies {
                 implementation "org.jetbrains.kotlin:kotlin-stdlib-js:$kotlin_version"
-                testImplementation "org.jetbrains.kotlin:kotlin-test-js:$kotlin_version"
+            }
+        }
+
+        jsTest {
+            dependencies {
+                implementation("org.jetbrains.kotlin:kotlin-test:$kotlin_version")
             }
         }
     }

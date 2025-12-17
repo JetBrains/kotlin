@@ -20,7 +20,7 @@ kotlin {
     }
 }
 
-tasks.named("browserTest") {
+tasks.named("jsBrowserTest") {
     enabled = false
 }
 
@@ -34,8 +34,12 @@ kotlin {
                 api(npm("is-odd", "3.0.1"))
                 runtimeOnly(npm("is-even", "1.0.0"))
                 // No compileOnly dependency because they are not supported. See  IncorrectCompileOnlyDependenciesChecker.
+            }
+        }
 
-                testImplementation(kotlin("test-js"))
+        jsTest {
+            dependencies {
+                implementation(kotlin("test-js"))
             }
         }
     }

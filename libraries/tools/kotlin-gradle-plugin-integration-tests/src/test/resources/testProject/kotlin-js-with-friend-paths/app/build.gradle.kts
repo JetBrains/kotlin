@@ -20,5 +20,5 @@ kotlin {
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile>().configureEach {
-    friendPaths.from(project(":lib").buildDir.resolve("classes/kotlin/main"))
+    friendPaths.from(project(":lib").buildDir.resolve("classes/kotlin/js/main"))
 }

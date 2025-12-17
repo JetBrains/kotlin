@@ -134,6 +134,10 @@ class NodeJsPlatform {
     }()
 }
 
+plugins.withType<org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin> {
+    the<org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsEnvSpec>().version.set("18.19.1")
+}
+
 afterEvaluate {
     project.kotlinNodeJs.nodeVersion = "18.19.1"
 
@@ -153,6 +157,10 @@ afterEvaluate {
 }
 
 kotlin {
+    js {
+        browser {}
+    }
+
     sourceSets {
         jsMain {
             dependencies {
@@ -161,5 +169,3 @@ kotlin {
         }
     }
 }
-
-kotlin.target.browser {}

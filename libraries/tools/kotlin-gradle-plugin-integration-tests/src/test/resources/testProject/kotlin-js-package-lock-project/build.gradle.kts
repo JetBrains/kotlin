@@ -9,7 +9,12 @@ kotlin {
         jsMain {
             dependencies {
                 implementation("org.jetbrains.kotlin:kotlin-stdlib-js")
-                testImplementation("org.jetbrains.kotlin:kotlin-test-js")
+            }
+        }
+
+        jsTest {
+            dependencies {
+                implementation("org.jetbrains.kotlin:kotlin-test:$kotlin_version")
             }
         }
     }

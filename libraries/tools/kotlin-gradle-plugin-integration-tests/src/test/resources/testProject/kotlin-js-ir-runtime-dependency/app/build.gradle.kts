@@ -10,7 +10,12 @@ kotlin {
         jsMain {
             dependencies {
                 implementation(project(":lib"))
-                testImplementation(kotlin("test-js"))
+            }
+        }
+
+        jsTest {
+            dependencies {
+                implementation(kotlin("test-js"))
             }
         }
     }
