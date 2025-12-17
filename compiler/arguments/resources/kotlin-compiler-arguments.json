@@ -7086,37 +7086,6 @@
                                         }
                                     },
                                     {
-                                        "name": "Xwasm-internal-local-variable-prefix",
-                                        "shortName": null,
-                                        "deprecatedName": null,
-                                        "description": {
-                                            "current": "Prefix to use for internally generated local variables.",
-                                            "valueInVersions": []
-                                        },
-                                        "delimiter": null,
-                                        "valueType": {
-                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
-                                            "isNullable": {
-                                                "current": false,
-                                                "valueInVersions": []
-                                            },
-                                            "defaultValue": {
-                                                "current": "~",
-                                                "valueInVersions": []
-                                            }
-                                        },
-                                        "valueDescription": {
-                                            "current": null,
-                                            "valueInVersions": []
-                                        },
-                                        "releaseVersionsMetadata": {
-                                            "introducedVersion": "2.2.20",
-                                            "stabilizedVersion": null,
-                                            "deprecatedVersion": null,
-                                            "removedVersion": null
-                                        }
-                                    },
-                                    {
                                         "name": "Xwasm-kclass-fqn",
                                         "shortName": null,
                                         "deprecatedName": null,

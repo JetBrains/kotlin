@@ -24,7 +24,6 @@ fun copyK2WasmCompilerArguments(from: K2WasmCompilerArguments, to: K2WasmCompile
     to.wasmEnableAsserts = from.wasmEnableAsserts
     to.wasmGenerateWat = from.wasmGenerateWat
     to.wasmIncludedModuleOnly = from.wasmIncludedModuleOnly
-    to.wasmInternalLocalVariablePrefix = from.wasmInternalLocalVariablePrefix
     to.wasmKClassFqn = from.wasmKClassFqn
     to.wasmNoJsTag = from.wasmNoJsTag
     to.wasmTarget = from.wasmTarget

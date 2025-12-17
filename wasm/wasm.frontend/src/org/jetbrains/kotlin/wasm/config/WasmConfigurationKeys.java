@@ -47,7 +47,4 @@ public class WasmConfigurationKeys {
 
     public static final CompilerConfigurationKey<String> WASM_DEPENDENCY_RESOLUTION_MAP =
             CompilerConfigurationKey.create("provide alternative paths to imported dependency modules.");
-
-    public static final CompilerConfigurationKey<String> WASM_INTERNAL_LOCAL_VARIABLE_PREFIX =
-            CompilerConfigurationKey.create("internal local variable prefix");
 }

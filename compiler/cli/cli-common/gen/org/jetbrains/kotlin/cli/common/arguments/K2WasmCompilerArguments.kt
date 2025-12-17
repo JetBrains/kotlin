@@ -132,16 +132,6 @@ abstract class K2WasmCompilerArguments : CommonKlibBasedCompilerArguments() {
         }
 
     @Argument(
-        value = "-Xwasm-internal-local-variable-prefix",
-        description = "Prefix to use for internally generated local variables.",
-    )
-    var wasmInternalLocalVariablePrefix: String = "~"
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(
         value = "-Xwasm-kclass-fqn",
         description = "Enable support for 'KClass.qualifiedName'.",
     )

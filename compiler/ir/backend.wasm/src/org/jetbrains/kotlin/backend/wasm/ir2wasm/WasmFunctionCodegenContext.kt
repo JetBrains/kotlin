@@ -6,17 +6,7 @@
 package org.jetbrains.kotlin.backend.wasm.ir2wasm
 
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
-import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
-import org.jetbrains.kotlin.cli.common.arguments.K2WasmCompilerArguments
-import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.ir.IrFileEntry
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin.Companion.DEFINED
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin.Companion.DESTRUCTURED_OBJECT_PARAMETER
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin.Companion.FOR_LOOP_ITERATOR
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin.Companion.IR_TEMPORARY_VARIABLE
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin.Companion.IR_TEMPORARY_VARIABLE_FOR_INLINED_PARAMETER
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin.Companion.UNDERSCORE_PARAMETER
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.expressions.IrLoop
@@ -24,7 +14,6 @@ import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
-import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 import org.jetbrains.kotlin.wasm.ir.*
 import java.util.LinkedList
 
@@ -46,36 +35,15 @@ class WasmFunctionCodegenContext(
     private val nonLocalReturnLevels = LinkedHashMap<IrReturnableBlockSymbol, Int>()
 
     data class InlineContext(val inlineFunctionSymbol: IrFunctionSymbol?, val irFileEntry: IrFileEntry)
-
     private val inlineContextStack = LinkedList<InlineContext>()
 
     fun defineLocal(irValueDeclaration: IrValueSymbol) {
         assert(irValueDeclaration !in wasmLocals) { "Redefinition of local" }
 
         val owner = irValueDeclaration.owner
-        val originalName = owner.name.asString()
-
-        // prefix internal variables with a special character, to have the debugger sort them separately from "normal" variables declared by the user
-        val internalVariablePrefix = backendContext.configuration.get(WasmConfigurationKeys.WASM_INTERNAL_LOCAL_VARIABLE_PREFIX)
-        val name = when (owner.origin) {
-            // "blacklist" internal origins
-            // TODO can unify with JVM's ExpressionCodegen.kt IrValueDeclaration.isVisibleinLVT?
-            // origins also blacklisted in the JVM backend:
-            IR_TEMPORARY_VARIABLE, FOR_LOOP_ITERATOR, UNDERSCORE_PARAMETER, DESTRUCTURED_OBJECT_PARAMETER,
-                // additional origins that only come up here:
-            IR_TEMPORARY_VARIABLE_FOR_INLINED_PARAMETER,
-                -> {
-                internalVariablePrefix + originalName
-            }
-            else -> originalName
-        }
-        // TODO this is a temp change for debugging during development and will be reverted
-//        val name = owner.name.asString() + "(${owner.origin.name})"
-
-
         val wasmLocal = WasmLocal(
             wasmFunction.locals.size,
-            name,
+            owner.name.asString(),
             if (owner is IrValueParameter) wasmModuleTypeTransformer.transformValueParameterType(owner) else wasmModuleTypeTransformer.transformType(owner.type),
             isParameter = irValueDeclaration is IrValueParameterSymbol
         )

@@ -57,8 +57,6 @@ where advanced options include:
   -Xwasm-generate-wat        Generate a .wat file.
   -Xwasm-ic-cache-readonly   Do not commit IC cache updates.
   -Xwasm-included-module-only Compile only a module passed using `-include` option.
-  -Xwasm-internal-local-variable-prefix
-                             Prefix to use for internally generated local variables.
   -Xwasm-kclass-fqn          Enable support for 'KClass.qualifiedName'.
   -Xwasm-no-jstag            Don't use WebAssembly.JSTag for throwing and catching exceptions
   -Xwasm-preserve-ic-order   Preserve wasm file structure between IC runs.
