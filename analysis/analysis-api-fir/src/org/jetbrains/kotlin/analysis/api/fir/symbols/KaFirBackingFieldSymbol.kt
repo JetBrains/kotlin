@@ -65,10 +65,10 @@ internal class KaFirBackingFieldSymbol private constructor(
 
     override fun equals(other: Any?): Boolean {
         return this === other
-                || (other is KaFirBackingFieldSymbol && owningProperty == other.owningProperty)
+                || (other is KaFirBackingFieldSymbol && backingOwningProperty == other.backingOwningProperty)
     }
 
     override fun hashCode(): Int {
-        return 31 * owningProperty.hashCode() + KaFirKotlinPropertySymbol.HASH_CODE_ADDITION_FOR_BACKING_FIELD
+        return 31 * backingOwningProperty.hashCode() + KaFirKotlinPropertySymbol.HASH_CODE_ADDITION_FOR_BACKING_FIELD
     }
 }
