@@ -86,11 +86,11 @@ private annotation class KaAllowProhibitedAnalyzeFromWriteAction
  *    val valueBefore = function.getConstantFromExpressionBody() // valueBefore is 0
  *
  *    changeExpressionBodyTo(1) // now function will looks like `fun foo(): Int = 1`
- *    val valueAfter = function.getConstantFromExpressionBody() // Wrong way: valueAfter is not guarantied to be '1'
+ *    val valueAfter = function.getConstantFromExpressionBody() // Wrong way: valueAfter is not guaranteed to be '1'
  *   }
  *
  *   analyse(function) {
- *    val valueAfter = function.getConstantFromExpressionBody() // OK: valueAfter is guarantied to be '1'
+ *    val valueAfter = function.getConstantFromExpressionBody() // OK: valueAfter is guaranteed to be '1'
  *   }
  * }
  * ```
