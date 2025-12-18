@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.ir.moveBodyTo
 import org.jetbrains.kotlin.backend.common.lower.SamEqualsHashCodeMethodsGenerator
 import org.jetbrains.kotlin.backend.common.lower.VariableRemapper
+import org.jetbrains.kotlin.backend.common.lower.declarationsAtFunctionReferenceLowering
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.JvmSymbols
@@ -19,6 +20,7 @@ import org.jetbrains.kotlin.config.JvmClosureGenerationScheme
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
@@ -83,6 +85,14 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
 
     override fun visitBlock(expression: IrBlock): IrExpression {
         return processBlock(expression, forceSerializability = false)
+    }
+
+    override fun visitClassNew(declaration: IrClass): IrStatement {
+        if (declaration.isFun || declaration.symbol.isSuspendFunction() || declaration.symbol.isKSuspendFunction()) {
+            declaration.declarationsAtFunctionReferenceLowering = declaration.declarations.toList()
+        }
+        declaration.transformChildrenVoid()
+        return declaration
     }
 
     private fun processBlock(expression: IrBlock, forceSerializability: Boolean): IrExpression {

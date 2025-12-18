@@ -63,6 +63,8 @@ open class UpgradeCallableReferences(
         val expression: IrExpression,
     )
 
+    open fun selectSAMOverriddenFunction(irClass: IrClass): IrSimpleFunction = irClass.selectSAMOverriddenFunction()
+
     private inner class UpgradeTransformer : IrTransformer<IrDeclarationParent>() {
         private fun IrClass?.isRestrictedSuspension(): Boolean {
             if (this == null) return false
@@ -98,11 +100,13 @@ open class UpgradeCallableReferences(
                 endOffset = expression.endOffset,
                 type = expression.type,
                 reflectionTargetSymbol = null,
-                overriddenFunctionSymbol = expression.type.classOrFail.owner.selectSAMOverriddenFunction().symbol,
+                overriddenFunctionSymbol = selectSAMOverriddenFunction(expression.type.classOrFail.owner).symbol,
                 invokeFunction = expression.function,
                 origin = expression.origin,
                 isRestrictedSuspension = isRestrictedSuspension,
-            )
+            ).apply {
+                copyNecessaryAttributes(expression, this)
+            }
         }
 
         override fun visitElement(element: IrElement, data: IrDeclarationParent): IrElement {
@@ -185,9 +189,11 @@ open class UpgradeCallableReferences(
         override fun visitBlock(expression: IrBlock, data: IrDeclarationParent): IrExpression {
             if (!upgradeFunctionReferencesAndLambdas) return super.visitBlock(expression, data)
             val (function, reference, samType, referenceType) = expression.parseAdaptedBlock() ?: return super.visitBlock(expression, data)
+            fixCallableReferenceComingFromKlib(reference)
             function.transformChildren(this, function)
             function.setDeclarationsParent(data)
             function.visibility = DescriptorVisibilities.LOCAL
+            function.isInline = false
             reference.transformChildren(this, data)
             val isRestrictedSuspension = function.isRestrictedSuspensionFunction()
             function.flattenParameters(
@@ -203,7 +209,7 @@ open class UpgradeCallableReferences(
                 endOffset = expression.endOffset,
                 type = referenceType,
                 reflectionTargetSymbol = reflectionTarget,
-                overriddenFunctionSymbol = referenceType.classOrFail.owner.selectSAMOverriddenFunction().symbol,
+                overriddenFunctionSymbol = selectSAMOverriddenFunction(referenceType.classOrFail.owner).symbol,
                 invokeFunction = function,
                 origin = reference.origin,
                 hasSuspendConversion = reflectionTarget != null && reflectionTarget.isSuspend == false && function.isSuspend,
@@ -237,7 +243,7 @@ open class UpgradeCallableReferences(
                     startOffset = expression.startOffset
                     endOffset = expression.endOffset
                     type = expression.typeOperand
-                    overriddenFunctionSymbol = expression.typeOperand.classOrFail.owner.selectSAMOverriddenFunction().symbol
+                    overriddenFunctionSymbol = selectSAMOverriddenFunction(expression.typeOperand.classOrFail.owner).symbol
                 }
             }
             return super.visitTypeOperator(expression, data)
@@ -266,12 +272,13 @@ open class UpgradeCallableReferences(
                 endOffset = expression.endOffset,
                 type = expression.type,
                 reflectionTargetSymbol = (expression.reflectionTarget ?: expression.symbol).takeUnless { expression.origin.isLambda },
-                overriddenFunctionSymbol = expression.type.classOrFail.owner.selectSAMOverriddenFunction().symbol,
+                overriddenFunctionSymbol = selectSAMOverriddenFunction(expression.type.classOrFail.owner).symbol,
                 invokeFunction = expression.wrapFunction(arguments, data, expression.symbol.owner),
                 origin = expression.origin,
                 isRestrictedSuspension = expression.symbol.owner.isRestrictedSuspensionFunction(),
             ).apply {
                 boundValues += arguments.map { it.expression }
+                copyNecessaryAttributes(expression, this)
             }
         }
 
@@ -589,6 +596,7 @@ open class UpgradeCallableReferences(
         }
     }
 
+    protected open fun copyNecessaryAttributes(oldReference: IrFunctionExpression, newReference: IrRichFunctionReference) {}
     protected open fun copyNecessaryAttributes(oldReference: IrFunctionReference, newReference: IrRichFunctionReference) {}
     protected open fun copyNecessaryAttributes(oldReference: IrPropertyReference, newReference: IrRichPropertyReference) {}
     protected open fun copyNecessaryAttributes(oldReference: IrLocalDelegatedPropertyReference, newReference: IrRichPropertyReference) {}
