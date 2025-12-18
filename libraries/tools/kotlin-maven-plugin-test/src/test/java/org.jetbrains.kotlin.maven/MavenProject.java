@@ -5,17 +5,25 @@ import kotlin.text.StringsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import com.intellij.openapi.util.io.FileUtil;
+import org.jetbrains.kotlin.maven.plugin.test.MavenTestExecutionContext;
 
 import java.io.*;
+import java.nio.file.Paths;
 import java.util.*;
 
 import static org.jetbrains.kotlin.maven.MavenTestUtils.getNotNullSystemProperty;
+import static org.jetbrains.kotlin.maven.plugin.test.MavenTestExecutionContextKt.createMavenTestExecutionContextFromEnvironment;
+import static org.jetbrains.kotlin.maven.test.MavenSettingsXmlBuilderKt.checkOrWriteKotlinMavenTestSettingsXml;
 
 class MavenProject {
     @NotNull
     private final File workingDir;
 
-    private static final File mavenSettingsXml = new File("../../maven-settings.xml");
+    @NotNull
+    private final File mavenSettingsXml;
+
+    @NotNull
+    private final MavenTestExecutionContext mavenTestExecutionContext;
 
     public enum ExecutionStrategy {
         IN_PROCESS,
@@ -32,6 +40,16 @@ class MavenProject {
             File to = new File(workingDir, from.getName());
             FileUtil.copyFileOrDir(from, to);
         }
+
+        mavenTestExecutionContext = createMavenTestExecutionContextFromEnvironment(
+                // this argument is required but is not used later in the test, so I set it to a random value
+                Paths.get(workingDir.getAbsolutePath(), "tmp")
+        );
+        mavenSettingsXml = new File(workingDir, "maven-settings.xml");
+        checkOrWriteKotlinMavenTestSettingsXml(
+                Paths.get(mavenSettingsXml.getAbsolutePath()),
+                mavenTestExecutionContext.getKotlinBuildRepo()
+        );
     }
 
     @NotNull
@@ -97,17 +115,21 @@ class MavenProject {
         cmd.add("-D" + kotlinVersionProperty + "=" + getNotNullSystemProperty(kotlinVersionProperty));
 
         String mavenRepoLocalProperty = "maven.repo.local";
-        String localRepoPath = System.getProperty(mavenRepoLocalProperty);
         try {
-            if (localRepoPath != null && !StringsKt.isBlank(localRepoPath) && new File(localRepoPath).isDirectory()) {
+            String localRepoPath = mavenTestExecutionContext.getSharedMavenLocal().toAbsolutePath().toString();
+            if (!StringsKt.isBlank(localRepoPath) && new File(localRepoPath).isDirectory()) {
                 cmd.add("-D" + mavenRepoLocalProperty + "=" + localRepoPath);
             }
+            cmd.add("-X");
         }
         catch (SecurityException e) {
             e.printStackTrace();
         }
 
         cmd.addAll(Arrays.asList(args));
+
+        String cmdLine = String.join(" ", cmd);
+        System.out.println("Executing command: " + cmdLine);
 
         return cmd;
     }

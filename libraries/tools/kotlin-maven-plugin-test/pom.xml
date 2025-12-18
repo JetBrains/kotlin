@@ -26,17 +26,24 @@
 
     <dependencies>
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.13.1</version>
-<!--        FIXME: KTIJ-36856/Kotlin-Maven-test-scope-is-not-visible-in-tests -->
-<!--            <scope>test</scope>-->
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-stdlib</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
         </dependency>
+
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-maven-plugin</artifactId>
             <version>${project.version}</version>
-<!--        FIXME:  KTIJ-36856/Kotlin-Maven-test-scope-is-not-visible-in-tests -->
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.13.1</version>
+<!--        FIXME: KTIJ-36856/Kotlin-Maven-test-scope-is-not-visible-in-tests -->
 <!--            <scope>test</scope>-->
         </dependency>
 
@@ -52,12 +59,6 @@
             <artifactId>junit-vintage-engine</artifactId>
 <!--         FIXME: KTIJ-36856/Kotlin-Maven-test-scope-is-not-visible-in-tests -->
 <!--            <scope>test</scope>-->
-        </dependency>
-
-        <dependency>
-            <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>kotlin-stdlib</artifactId>
-            <version>${kotlin.bootstrap.version}</version>
         </dependency>
 
         <dependency>
@@ -82,7 +83,7 @@
         <dependency>
             <groupId>com.jetbrains.intellij.platform</groupId>
             <artifactId>util</artifactId>
-            <version>${intellijSdk.version}</version>
+            <version>251.27812.49</version>
         </dependency>
     </dependencies>
 
@@ -116,7 +117,6 @@
             <plugin>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-maven-plugin</artifactId>
-                <version>${kotlin.bootstrap.version}</version>
                 <extensions>true</extensions>
                 <executions>
                     <execution>
@@ -190,10 +190,10 @@
                                     <systemPropertyVariables>
                                         <maven.home>${maven.home}</maven.home>
                                         <kotlin.version>${project.version}</kotlin.version>
-                                        <maven.repo.local>${project.basedir}/local-repo</maven.repo.local>
+                                        <kotlin.maven.local.repo.for.tests>${project.basedir}/local-repo</kotlin.maven.local.repo.for.tests>
                                         <kotlin.it.testDirs>${project.basedir}/src/it</kotlin.it.testDirs>
                                         <!-- ./libraries/tools/kotlin-maven-plugin-test/pom.xml -->
-                                        <kotlin.build.repo>${project.basedir}/../../../build/repo</kotlin.build.repo>
+                                        <kotlin.build.repo>${maven.repo.local}</kotlin.build.repo>
                                         <kotlin.it.verify-common.bsh>${project.basedir}/verify-common.bsh</kotlin.it.verify-common.bsh>
                                     </systemPropertyVariables>
                                 </configuration>

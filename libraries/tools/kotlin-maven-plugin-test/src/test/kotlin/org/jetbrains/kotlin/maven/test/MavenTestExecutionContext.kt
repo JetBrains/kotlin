@@ -39,7 +39,7 @@ fun createMavenTestExecutionContextFromEnvironment(
     val testProjectsDir = System.getProperty("kotlin.it.testDirs")
         ?: error("kotlin.it.testDirs system property is not set, set it to location with test projects")
 
-    val mavenRepoLocal = System.getProperty("maven.repo.local") ?: error("maven.repo.local system property is not set")
+    val mavenRepoLocal = System.getProperty("kotlin.maven.local.repo.for.tests") ?: error("kotlin.maven.local.repo.for.tests system property is not set")
 
     val kotlinVersion = System.getProperty("kotlin.version") ?: error("kotlin.version system property is not set")
     val kotlinBuildRepo = System.getProperty("kotlin.build.repo")

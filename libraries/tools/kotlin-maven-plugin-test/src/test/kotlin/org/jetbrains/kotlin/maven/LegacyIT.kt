@@ -108,6 +108,7 @@ class LegacyIT : KotlinMavenTestBase() {
     @Test
     fun `test-languageVersion`() = verifyWithLegacyBsh("test-languageVersion")
 
+    @Disabled // requires JDK 17
     @Test
     fun `test-lombok-simple`() = verifyWithLegacyBsh("test-lombok-simple")
 

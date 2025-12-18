@@ -15,6 +15,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.io.TempDir
 import java.io.ByteArrayOutputStream
+import java.io.File
 import java.io.PrintStream
 import java.io.StringReader
 import java.nio.file.Path
@@ -24,6 +25,7 @@ import kotlin.io.path.*
 class MavenDistribution(val mavenHome: Path)
 
 class MavenTestProject(
+    val name: String,
     val context: MavenTestExecutionContext,
     val mavenDistribution: MavenDistribution,
     val workDir: Path,
@@ -49,9 +51,24 @@ class MavenTestProject(
         verifier.addCliArguments("--settings", settingsFile.absolutePathString())
         verifier.addCliArguments(*args)
 
-        runCatching {
+        val res = runCatching {
             verifier.execute()
+//            verifier.verifyErrorFreeLog()
         }
+
+        // if (res.isFailure) {
+        //println("Maven build failed with error: ${res.exceptionOrNull()?.message}")
+        println("Maven verified finished $")
+        println("====LOG BEGIN====")
+        val logFile = verifier.basedir.let(::File).resolve(verifier.logFileName)
+        logFile.bufferedReader().use { reader ->
+            reader.lineSequence().forEach { line ->
+                println(line)
+            }
+        }
+        println("====LOG END====")
+            // throw res.exceptionOrNull()!!
+        // }
 
         return verifier
     }
@@ -134,7 +151,14 @@ abstract class KotlinMavenTestBase {
         settingsXml.checkOrWriteKotlinMavenTestSettingsXml(context.kotlinBuildRepo)
 
         val mavenDistribution = context.mavenDistributionProvider(mavenVersion)
-        val project = MavenTestProject(context, mavenDistribution, workDir, settingsXml, buildOptions)
+        val project = MavenTestProject(
+            name = projectDir,
+            context = context,
+            mavenDistribution = mavenDistribution,
+            workDir = workDir,
+            settingsFile = settingsXml,
+            buildOptions = buildOptions
+        )
 
         if (code != null) code(project)
         return project
