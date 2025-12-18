@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.generators.gradle.targets.js
 
 val npmPackages = listOf(
-    NpmPackage("webpack"),
+    NpmPackage("webpack", "5.101.3"),
     NpmPackage("webpack-cli"),
     NpmPackage("webpack-dev-server"),
     NpmPackage("source-map-loader"),
