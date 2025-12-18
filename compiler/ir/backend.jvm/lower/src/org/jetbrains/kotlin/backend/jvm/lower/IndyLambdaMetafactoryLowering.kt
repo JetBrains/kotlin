@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.lower.IrBuildingTransformer
 import org.jetbrains.kotlin.backend.common.lower.irThrow
 import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
@@ -14,6 +13,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.JvmSymbols
 import org.jetbrains.kotlin.backend.jvm.ir.*
+import org.jetbrains.kotlin.backend.jvm.lower.indy.*
 import org.jetbrains.kotlin.backend.jvm.unboxInlineClass
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrStatement
@@ -29,6 +29,8 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.dump
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 import org.jetbrains.org.objectweb.asm.Handle
@@ -36,7 +38,7 @@ import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.commons.Method
 import java.lang.invoke.LambdaMetafactory
 
-class IndyLambdaMetafactoryLowering(val backendContext: JvmBackendContext): FileLoweringPass, IrBuildingTransformer(backendContext) {
+class IndyLambdaMetafactoryLowering(val backendContext: JvmBackendContext) : FileLoweringPass, IrElementTransformerVoid() {
     private val inlineLambdaToScope = mutableMapOf<IrFunction, IrDeclaration>()
 
 
@@ -48,7 +50,6 @@ class IndyLambdaMetafactoryLowering(val backendContext: JvmBackendContext): File
         inlineLambdaToScope.clear()
     }
 
-    private val jvmIndyLambdaMetafactoryIntrinsic = backendContext.symbols.indyLambdaMetafactoryIntrinsic
 
     private fun JvmIrBuilder.jvmInvokeDynamic(
         dynamicCall: IrCall,
@@ -67,14 +68,11 @@ class IndyLambdaMetafactoryLowering(val backendContext: JvmBackendContext): File
             arguments[0] = irRawFunctionReference(context.irBuiltIns.anyType, methodSymbol)
         }
 
-    override fun visitCall(expression: IrCall): IrExpression {
-        return when (expression.symbol) {
-            jvmIndyLambdaMetafactoryIntrinsic -> {
-                expression.transformChildrenVoid()
-                rewriteIndyLambdaMetafactoryCall(expression)
-            }
-            else -> super.visitCall(expression)
-        }
+    override fun visitRichFunctionReference(expression: IrRichFunctionReference): IrExpression {
+        val indyCallData = expression.indyCallData ?: return super.visitRichFunctionReference(expression)
+        expression.transformChildrenVoid()
+        getClassContext().functionsToAdd.add(expression.invokeFunction)
+        return rewriteIndyLambdaMetafactoryCall(expression, indyCallData)
     }
 
     private class SerializableMethodRefInfo(
@@ -87,7 +85,8 @@ class IndyLambdaMetafactoryLowering(val backendContext: JvmBackendContext): File
     )
 
     private class ClassContext {
-        val serializableMethodRefInfos = ArrayList<SerializableMethodRefInfo>()
+        val serializableMethodRefInfos = mutableListOf<SerializableMethodRefInfo>()
+        val functionsToAdd = mutableListOf<IrFunction>()
     }
 
     private val classContextStack = ArrayDeque<ClassContext>()
@@ -114,6 +113,10 @@ class IndyLambdaMetafactoryLowering(val backendContext: JvmBackendContext): File
         val result = super.visitClass(declaration)
         if (context.serializableMethodRefInfos.isNotEmpty()) {
             generateDeserializeLambdaMethod(declaration, context.serializableMethodRefInfos)
+        }
+        for (function in context.functionsToAdd) {
+            function.visibility = DescriptorVisibilities.PRIVATE
+            declaration.addChild(function)
         }
         leaveClass()
         return result
@@ -305,61 +308,55 @@ class IndyLambdaMetafactoryLowering(val backendContext: JvmBackendContext): File
         )
     }
 
-    /**
-     * @see FunctionReferenceLowering.wrapWithIndySamConversion
-     */
-    private fun rewriteIndyLambdaMetafactoryCall(call: IrCall): IrCall {
+    private fun rewriteIndyLambdaMetafactoryCall(
+        call: IrRichFunctionReference,
+        indyCallData: IndyCallData,
+    ): IrCall {
         fun fail(message: String): Nothing =
             throw AssertionError("$message, call:\n${call.dump()}")
 
         val startOffset = call.startOffset
         val endOffset = call.endOffset
 
-        val samType = call.typeArguments[0] as? IrSimpleType
-            ?: fail("'samType' is expected to be a simple type")
+        val samType = call.type as? IrSimpleType ?: fail("'samType' is expected to be a simple type")
 
-        val samMethodRef = call.arguments[0] as? IrRawFunctionReference
-            ?: fail("'samMethodType' should be 'IrRawFunctionReference'")
-        // TODO change after KT-78719
-        val implFunRef = call.arguments[1] as? IrFunctionReference
-            ?: fail("'implMethodReference' is expected to be 'IrFunctionReference'")
-        val implFunSymbol = implFunRef.symbol
-        val instanceMethodRef = call.arguments[2] as? IrRawFunctionReference
-            ?: fail("'instantiatedMethodType' is expected to be 'IrRawFunctionReference'")
+        val implFunSymbol = call.invokeFunction.symbol
 
-        val extraOverriddenMethods = run {
-            val extraOverriddenMethodVararg = call.arguments[3] as? IrVararg
-                ?: fail("'extraOverriddenMethodTypes' is expected to be 'IrVararg'")
-            extraOverriddenMethodVararg.elements.map {
-                val ref = it as? IrRawFunctionReference
-                    ?: fail("'extraOverriddenMethodTypes' elements are expected to be 'IrRawFunctionReference'")
-                ref.symbol.owner as? IrSimpleFunction
-                    ?: fail("Extra overridden method is expected to be 'IrSimpleFunction': ${ref.symbol.owner.render()}")
-            }
+        val generatedParameters = LambdaMetafactoryArgumentsBuilder(backendContext, emptySet())
+            .getLambdaMetafactoryArguments(
+                call, plainLambda = indyCallData.plainLambda, forceSerializability = indyCallData.forceSerializability
+            )
+        require(generatedParameters is LambdaMetafactoryArguments) {
+            """Unexpected lambda metafactory arguments for ${call.dump()}, ${indyCallData}:
+               $generatedParameters
+            """.trimIndent()
         }
 
-        val shouldBeSerializable = call.getBooleanConstArgument(4)
+        val dynamicCall = wrapClosureInDynamicCall(samType, generatedParameters.samMethod, call)
 
-        val samMethod = samMethodRef.symbol.owner as? IrSimpleFunction
-            ?: fail("SAM method is expected to be 'IrSimpleFunction': ${samMethodRef.symbol.owner.render()}")
-        val instanceMethod = instanceMethodRef.symbol.owner as? IrSimpleFunction
-            ?: fail("Instance method is expected to be 'IrSimpleFunction': ${instanceMethodRef.symbol.owner.render()}")
+        val requiredBridges = getOverriddenMethodsRequiringBridges(
+            instanceMethod = generatedParameters.fakeInstanceMethod,
+            samMethod = generatedParameters.samMethod,
+            extraOverriddenMethods = generatedParameters.extraOverriddenMethods
+        )
 
-        val dynamicCall = wrapClosureInDynamicCall(samType, samMethod, implFunRef)
-
-        val requiredBridges = getOverriddenMethodsRequiringBridges(instanceMethod, samMethod, extraOverriddenMethods)
-
-        if (shouldBeSerializable) {
+        if (generatedParameters.shouldBeSerializable) {
             getClassContext().serializableMethodRefInfos.add(
                 SerializableMethodRefInfo(
-                    samType, samMethod.symbol, implFunSymbol, instanceMethodRef.symbol, requiredBridges, dynamicCall.symbol
+                    samType = samType,
+                    samMethodSymbol = generatedParameters.samMethod.symbol,
+                    implFunSymbol = implFunSymbol,
+                    instanceFunSymbol = generatedParameters.fakeInstanceMethod.symbol,
+                    requiredBridges = requiredBridges,
+                    dynamicCallSymbol = dynamicCall.symbol
                 )
             )
         }
 
         return backendContext.createJvmIrBuilder(implFunSymbol, startOffset, endOffset)
             .createLambdaMetafactoryCall(
-                samMethod.symbol, implFunSymbol, instanceMethodRef.symbol, shouldBeSerializable, requiredBridges, dynamicCall
+                generatedParameters.samMethod.symbol, implFunSymbol,
+                generatedParameters.fakeInstanceMethod.symbol, generatedParameters.shouldBeSerializable, requiredBridges, dynamicCall
             )
     }
 
@@ -446,11 +443,8 @@ class IndyLambdaMetafactoryLowering(val backendContext: JvmBackendContext): File
     private fun wrapClosureInDynamicCall(
         erasedSamType: IrSimpleType,
         samMethod: IrSimpleFunction,
-        targetRef: IrFunctionReference
+        targetRef: IrRichFunctionReference,
     ): IrCall {
-        fun fail(message: String): Nothing =
-            throw AssertionError("$message, targetRef:\n${targetRef.dump()}")
-
         val dynamicCallArguments = mutableListOf<IrExpression>()
 
         val irDynamicCallTarget = backendContext.irFactory.buildFun {
@@ -460,43 +454,16 @@ class IndyLambdaMetafactoryLowering(val backendContext: JvmBackendContext): File
         }.apply {
             parent = backendContext.symbols.kotlinJvmInternalInvokeDynamicPackage
 
-            val targetFun = targetRef.symbol.owner
+            val targetFun = targetRef.invokeFunction
 
             var syntheticParameterIndex = 0
 
-            var argumentStart = 0
-            parameters = (targetFun.parameters zip targetRef.arguments).mapNotNull { (parameter, argument) ->
-                if (argument == null) return@mapNotNull null
-                val (newParameterType, newArgument) = when (parameter.kind) {
-                    IrParameterKind.DispatchReceiver -> when (targetFun) {
-                        is IrSimpleFunction -> {
-                            // Fake overrides may have inexact dispatch receiver type.
-                            targetFun.parentAsClass.defaultType to argument
-                        }
-                        is IrConstructor -> {
-                            // At this point, outer class instances in inner class constructors are represented as regular value parameters.
-                            // However, in a function reference to such constructors, bound receiver value is stored as a dispatch receiver.
-                            argumentStart++
-                            targetFun.parameters[0].type to argument
-                        }
-                    }
-                    IrParameterKind.Context, IrParameterKind.ExtensionReceiver -> {
-                        argumentStart++
-                        parameter.type to argument
-                    }
-                    IrParameterKind.Regular -> {
-                        val capturedValueArgument = targetRef.arguments[argumentStart]
-                            ?: fail("Captured value argument #$argumentStart (${parameter.render()}) not provided")
-                        argumentStart++
-                        parameter.type to capturedValueArgument
-                    }
-                }
-
-                dynamicCallArguments.add(newArgument)
+            parameters = (targetFun.parameters zip targetRef.boundValues).map { (parameter, argument) ->
+                dynamicCallArguments.add(argument)
 
                 buildValueParameter(this) {
                     name = Name.identifier("p${syntheticParameterIndex++}")
-                    type = newParameterType
+                    type = parameter.type
                     kind = IrParameterKind.Regular
                 }
             }

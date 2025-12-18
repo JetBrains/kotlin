@@ -7,27 +7,23 @@ package org.jetbrains.kotlin.backend.jvm.lower.indy
 
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
-import org.jetbrains.kotlin.backend.jvm.ir.findSuperDeclaration
 import org.jetbrains.kotlin.backend.jvm.ir.getJvmAnnotationRetention
-import org.jetbrains.kotlin.backend.jvm.ir.getSingleAbstractMethod
 import org.jetbrains.kotlin.backend.jvm.ir.isCompiledToJvmDefault
 import org.jetbrains.kotlin.backend.jvm.needsMfvcFlattening
 import org.jetbrains.kotlin.builtins.functions.BuiltInFunctionArity
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.declarations.buildClass
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
+import org.jetbrains.kotlin.ir.expressions.IrRichFunctionReference
 import org.jetbrains.kotlin.ir.overrides.buildFakeOverrideMember
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
-import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_SERIALIZABLE_LAMBDA_ANNOTATION_FQ_NAME
@@ -70,8 +66,6 @@ internal sealed class MetafactoryArgumentsResult {
 internal class LambdaMetafactoryArguments(
     val samMethod: IrSimpleFunction,
     val fakeInstanceMethod: IrSimpleFunction,
-    // TODO change after KT-78719
-    val implMethodReference: IrFunctionReference,
     val extraOverriddenMethods: List<IrSimpleFunction>,
     val shouldBeSerializable: Boolean,
 ) : MetafactoryArgumentsResult.Success()
@@ -88,11 +82,11 @@ internal class LambdaMetafactoryArgumentsBuilder(
      * @see java.lang.invoke.LambdaMetafactory
      */
     fun getLambdaMetafactoryArguments(
-        reference: IrFunctionReference,
-        samType: IrType,
+        reference: IrRichFunctionReference,
         plainLambda: Boolean,
         forceSerializability: Boolean,
     ): MetafactoryArgumentsResult {
+        val samType = reference.type
         val samClass = samType.getClass()
             ?: throw AssertionError("SAM type is not a class: ${samType.render()}")
 
@@ -100,7 +94,6 @@ internal class LambdaMetafactoryArgumentsBuilder(
         var abiHazard = false
         var inliningHazard = false
         var shouldBeSerializable = false
-        var functionHazard = false
 
         // Can't use JDK LambdaMetafactory for function references by default (because of 'equals').
         // TODO special mode that would generate indy everywhere?
@@ -112,8 +105,7 @@ internal class LambdaMetafactoryArgumentsBuilder(
             shouldBeSerializable = true
         }
 
-        val samMethod = samClass.getSingleAbstractMethod()
-            ?: throw AssertionError("SAM class has no single abstract method: ${samClass.render()}")
+        val samMethod = reference.overriddenFunctionSymbol.owner
 
         // Can't use JDK LambdaMetafactory for fun interface with suspend fun.
         if (samMethod.isSuspend) {
@@ -125,48 +117,7 @@ internal class LambdaMetafactoryArgumentsBuilder(
             abiHazard = true
         }
 
-        val implFun = reference.symbol.owner
-
-        if (implFun.typeParameters.any { it.isReified }) {
-            functionHazard = true
-        }
-
-        // Don't generate references to intrinsic functions as invokedynamic (no such method exists at run-time).
-        if (context.getIntrinsic(implFun.symbol) != null) {
-            functionHazard = true
-        }
-
-        // Can't use invokedynamic if the referenced function has to be inlined for correct semantics.
-        // Also in some cases like `private inline fun` we'd need accessors, which `SyntheticAccessorLowering`
-        // won't generate under the assumption that the inline function will be inlined. Plus if the function
-        // is in a different module we should probably copy it anyway (and regenerate all objects in it).
-        if (implFun.isInline) {
-            functionHazard = true
-        }
-
-        if (isConstructorRequiringAccessor(implFun)) {
-            // Kotlin generates constructor accessors differently from Java.
-            functionHazard = true
-        }
-
-        // It's possible to reference through a child class a method declared in a package-private base Java class.
-        // In this case the corresponding method might be inaccessible in the context where it's referenced (see KT-48954).
-        // For now, just prohibit referencing methods from package-private Java classes through indy (without precise accessibility check).
-        if (implFun is IrSimpleFunction) {
-            val baseFun = findSuperDeclaration(implFun)
-            val baseFunClass = baseFun.parent as? IrClass
-            if (baseFunClass != null && baseFunClass.visibility == JavaDescriptorVisibilities.PACKAGE_VISIBILITY) {
-                functionHazard = true
-            }
-        }
-
-        val implFunParent = implFun.parent
-        if (implFunParent is IrClass && implFunParent.origin == IrDeclarationOrigin.JVM_MULTIFILE_CLASS) {
-            // LambdaMetafactory treats multifile class part members as non-accessible,
-            // even if the member is referenced via facade,
-            // because corresponding part class is non-accessible
-            functionHazard = true
-        }
+        val implFun = reference.invokeFunction
 
         // Previously instances of lambdas retained annotations:
         // Can't use JDK LambdaMetafactory for annotated lambdas.
@@ -185,7 +136,7 @@ internal class LambdaMetafactoryArgumentsBuilder(
         }
 
         // Don't use JDK LambdaMetafactory for big arity lambdas.
-        if (plainLambda && implFun.parameters.size >= BuiltInFunctionArity.BIG_ARITY) {
+        if (plainLambda && implFun.parameters.size - reference.boundValues.size >= BuiltInFunctionArity.BIG_ARITY) {
             abiHazard = true
         }
 
@@ -207,23 +158,13 @@ internal class LambdaMetafactoryArgumentsBuilder(
             semanticsHazard -> return MetafactoryArgumentsResult.Failure.LambdaMetafactorySemanticsHazard
             abiHazard -> return MetafactoryArgumentsResult.Failure.LambdaMetafactoryAbiHazard
             inliningHazard -> return MetafactoryArgumentsResult.Failure.InliningHazard
-            functionHazard -> return MetafactoryArgumentsResult.Failure.FunctionHazard
         }
 
         // Do the hard work of matching Kotlin functional interface hierarchy against LambdaMetafactory constraints.
         // Briefly: sometimes we have to force boxing on the primitive and inline class values, sometimes we have to keep them unboxed.
         // If this results in conflicting requirements, we can't use INVOKEDYNAMIC with LambdaMetafactory for creating a closure.
-        return getLambdaMetafactoryArgsOrNullInner(reference, samMethod, samType, implFun, shouldBeSerializable)
+        return getLambdaMetafactoryArgsOrNullInner(reference, shouldBeSerializable)
             ?: MetafactoryArgumentsResult.Failure.FunctionHazard
-    }
-
-    private fun isConstructorRequiringAccessor(implFun: IrFunction): Boolean {
-        if (implFun !is IrConstructor) return false
-        // We don't do exact accessibility check here:
-        // constructor will be called by a class generated by LambdaMetafactory at runtime.
-        val visibility = implFun.visibility
-        return visibility == DescriptorVisibilities.PROTECTED ||
-                DescriptorVisibilities.isPrivate(visibility)
     }
 
     private val javaIoSerializableFqn =
@@ -247,12 +188,12 @@ internal class LambdaMetafactoryArgumentsBuilder(
     }
 
     private fun getLambdaMetafactoryArgsOrNullInner(
-        reference: IrFunctionReference,
-        samMethod: IrSimpleFunction,
-        samType: IrType,
-        implFun: IrFunction,
+        reference: IrRichFunctionReference,
         shouldBeSerializable: Boolean,
     ): LambdaMetafactoryArguments? {
+        val implFun = reference.invokeFunction
+        val samMethod = reference.overriddenFunctionSymbol.owner
+        val samType = reference.type
         val nonFakeOverriddenFuns = samMethod.allOverridden().filterNot { it.isFakeOverride }
         val relevantOverriddenFuns = if (samMethod.isFakeOverride) nonFakeOverriddenFuns else nonFakeOverriddenFuns + samMethod
 
@@ -329,7 +270,7 @@ internal class LambdaMetafactoryArgumentsBuilder(
 
         adaptFakeInstanceMethodSignature(fakeInstanceMethod, signatureAdaptationConstraints)
         if (implFun.isAdaptable()) {
-            adaptLambdaSignature(implFun as IrSimpleFunction, fakeInstanceMethod, signatureAdaptationConstraints)
+            adaptLambdaSignature(implFun, fakeInstanceMethod, signatureAdaptationConstraints, reference.boundValues.size)
         } else if (
             !checkMethodSignatureCompliance(implFun, fakeInstanceMethod, signatureAdaptationConstraints, reference)
         ) {
@@ -337,29 +278,27 @@ internal class LambdaMetafactoryArgumentsBuilder(
         }
 
         if (implFun.origin == IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA || implFun.isAnonymousFunction) {
-            adjustLambdaFunction(implFun as IrSimpleFunction)
+            adjustLambdaFunction(implFun)
         }
 
         if (samMethod.isFakeOverride && nonFakeOverriddenFuns.size == 1) {
             return LambdaMetafactoryArguments(
                 nonFakeOverriddenFuns.single(),
                 fakeInstanceMethod,
-                reference,
                 listOf(),
                 shouldBeSerializable
             )
         }
-        return LambdaMetafactoryArguments(samMethod, fakeInstanceMethod, reference, nonFakeOverriddenFuns, shouldBeSerializable)
+        return LambdaMetafactoryArguments(samMethod, fakeInstanceMethod, nonFakeOverriddenFuns, shouldBeSerializable)
     }
 
     private fun checkMethodSignatureCompliance(
         implFun: IrFunction,
         fakeInstanceMethod: IrSimpleFunction,
         constraints: SignatureAdaptationConstraints,
-        reference: IrFunctionReference,
+        reference: IrRichFunctionReference,
     ): Boolean {
-        val implParameters = (implFun.parameters zip reference.arguments)
-            .mapNotNull { (implParameter, referenceArgument) -> if (referenceArgument == null) implParameter else null }
+        val implParameters = implFun.parameters.drop(reference.boundValues.size)
 
         val methodParameters = fakeInstanceMethod.nonDispatchParameters
         validateMethodParameters(implParameters, methodParameters, implFun, fakeInstanceMethod)
@@ -398,12 +337,13 @@ internal class LambdaMetafactoryArgumentsBuilder(
         implFun: IrSimpleFunction,
         fakeInstanceMethod: IrSimpleFunction,
         constraints: SignatureAdaptationConstraints,
+        capturedParametersCount: Int,
     ) {
         if (!implFun.isAdaptable()) {
             throw AssertionError("Function origin should be adaptable: ${implFun.dump()}")
         }
 
-        val implParameters = implFun.nonDispatchParameters
+        val implParameters = implFun.nonDispatchParameters.drop(capturedParametersCount)
         val methodParameters = fakeInstanceMethod.nonDispatchParameters
         validateMethodParameters(implParameters, methodParameters, implFun, fakeInstanceMethod)
         for ((implParameter, methodParameter) in implParameters.zip(methodParameters)) {

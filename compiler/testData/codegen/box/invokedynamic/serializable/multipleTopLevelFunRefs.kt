@@ -3,15 +3,19 @@
 // SAM_CONVERSIONS: INDY
 // FULL_JDK
 
-// We generate 1 clause in '$deserializeLambda' for each unique possible combination of deserialized lambda parameters
-// (that's all information stored during indy lambda serialization, anyway).
 
 // CHECK_BYTECODE_TEXT
-// 12 java/lang/invoke/LambdaMetafactory
+// 16 java/lang/invoke/LambdaMetafactory
 // 1 (LOOKUP|TABLE)SWITCH
-// 4 java/lang/String\.equals
+// 8 java/lang/String\.equals
 
 // FILE: multipleTopLevelFunRefs.kt
+
+// No deduplication happens now, because each reference would generate it's own private
+// wrapper function. In principle, it's possible to deduplicate such functions,
+// at least in simple cases, where no adaptations happen. Than there would be only 4 private
+// funcions instead of 8, and only 4 cases in desirialization switch, leading to only 12 indy calls.
+
 import java.io.*
 
 fun plusK1(s: String) = s + "K"

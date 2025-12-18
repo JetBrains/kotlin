@@ -16,7 +16,6 @@ synthetic final class Module_main_inlineFunctionReferenceKt$test1$1$1 {
     method <init>(p0: java.lang.Object): void
     public final method invoke(p0: androidx.compose.runtime.Composer, p1: int): void
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
-    public final inner class kotlin/jvm/internal/Intrinsics$Kotlin
 }
 
 public final class Module_main_inlineFunctionReferenceKt {

@@ -50,6 +50,6 @@ suspend fun some(a: String = "OK") = suspendThere(a)
 
 fun box(): String {
     Wrapper(::some)
-    TailCallOptimizationChecker.checkStateMachineIn("box\$some")
+    TailCallOptimizationChecker.checkStateMachineIn("invoke")
     return result
 }
