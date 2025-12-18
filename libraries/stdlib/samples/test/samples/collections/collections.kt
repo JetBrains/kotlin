@@ -272,6 +272,35 @@ class Collections {
         }
 
         @Sample
+        fun binarySearchFoundNotFound() {
+            val list = mutableListOf('a', 'b', 'c', 'd', 'e')
+            assertPrints(list.binarySearch('d') >= 0, "true") // found
+            assertPrints(list.binarySearch('f') >= 0, "false") // not found
+        }
+
+        @Sample
+        fun binarySearchFindOrInsert() {
+            /**
+             * If the value is found, returns its index.
+             * Otherwise, inserts the value at the right position and returns its index.
+             */
+            fun findOrInsert(list: MutableList<Char>, value: Char): Int {
+                val index = list.binarySearch(value)
+                if (index < 0) { // value not found
+                    val insertionIndex = index.inv() // same as -(index + 1)
+                    list.add(insertionIndex, value)
+                    return insertionIndex
+                }
+                return index
+            }
+
+            val index1 = findOrInsert(mutableListOf('a', 'b', 'c', 'd', 'e'), 'd')
+            assertPrints(index1, "3")
+            val index2 = findOrInsert(mutableListOf('a', 'b', 'c', 'e'), 'd')
+            assertPrints(index2, "3")
+        }
+
+        @Sample
         fun binarySearchOnComparable() {
             val list = mutableListOf('a', 'b', 'c', 'd', 'e')
             assertPrints(list.binarySearch('d'), "3")
@@ -279,11 +308,20 @@ class Collections {
             list.remove('d')
 
             val invertedInsertionPoint = list.binarySearch('d')
-            val actualInsertionPoint = -(invertedInsertionPoint + 1)
+            val actualInsertionPoint = invertedInsertionPoint.inv() // same as -(invertedInsertionPoint + 1)
             assertPrints(actualInsertionPoint, "3")
 
             list.add(actualInsertionPoint, 'd')
             assertPrints(list, "[a, b, c, d, e]")
+        }
+
+        @Sample
+        fun binarySearchRepeatingValues() {
+            // If multiple equal values are present, binarySearch could return any one of them.
+            val list2b = mutableListOf('a', 'b', 'b', 'c', 'd', 'e')
+            assertPrints(list2b.binarySearch('b'), "2") // could be either 1 or 2
+            val list5b = mutableListOf('a', 'b', 'b', 'b', 'b', 'b', 'c', 'd', 'e')
+            assertPrints(list5b.binarySearch('b'), "4") // could be either 1, 2, 3, 4 or 5
         }
 
         @Sample

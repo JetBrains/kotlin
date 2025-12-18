@@ -324,8 +324,13 @@ internal fun <T> List<T>.optimizeReadOnlyList() = when (size) {
  * @return the index of the element, if it is contained in the list within the specified range;
  * otherwise, the inverted insertion point `(-insertion point - 1)`.
  * The insertion point is defined as the index at which the element should be inserted,
- * so that the list (or the specified subrange of list) still remains sorted.
+ * so that the list (or the specified subrange of the list) still remains sorted.
+ * Thus, if the returned index is `>= 0`, then the value is present;
+ * otherwise the value could be inserted at `index.inv()`
+ * @sample samples.collections.Collections.Lists.binarySearchFoundNotFound
+ * @sample samples.collections.Collections.Lists.binarySearchFindOrInsert
  * @sample samples.collections.Collections.Lists.binarySearchOnComparable
+ * @sample samples.collections.Collections.Lists.binarySearchRepeatingValues
  * @sample samples.collections.Collections.Lists.binarySearchWithBoundaries
  */
 public fun <T : Comparable<T>> List<T?>.binarySearch(element: T?, fromIndex: Int = 0, toIndex: Int = size): Int {
