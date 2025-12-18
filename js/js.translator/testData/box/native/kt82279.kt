@@ -1,7 +1,6 @@
 // ISSUE: KT-82279
 // DONT_TARGET_EXACT_BACKEND: WASM_JS
 // WASM_MUTE_REASON: UNSUPPORTED_JS_INTEROP
-// IGNORE_BACKEND: JS_IR_ES6
 
 // FILE: main.kt
 external abstract class Processor {

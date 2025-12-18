@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.ir.backend.js.JsSymbols.RuntimeMetadataKind
 import org.jetbrains.kotlin.ir.backend.js.ir.isExported
 import org.jetbrains.kotlin.ir.backend.js.lower.isBuiltInClass
 import org.jetbrains.kotlin.ir.backend.js.lower.isEs6ConstructorReplacement
+import org.jetbrains.kotlin.ir.backend.js.lower.isEs6PrimaryConstructorReplacement
 import org.jetbrains.kotlin.ir.backend.js.objectGetInstanceFunction
 import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.*
@@ -69,13 +70,14 @@ internal class JsUsefulDeclarationProcessor(
                     // TODO: Possibly solution with origin is not so good
                     //  There is option with applying this hack to jsGetKClass
                     if (expression.origin == JsStatementOrigins.CLASS_REFERENCE) {
-                        // Maybe we need to filter primary constructor
-                        // Although at this time, we should have only primary constructor
-                        (ref as IrClass)
-                            .constructors
-                            .forEach {
-                                it.enqueue(data, "intrinsic: jsClass (constructor)")
+                        if (ref !is IrClass) {
+                            compilationException("Expected IrClass as a type argument", expression)
+                        }
+                        for (declaration in ref.declarations) {
+                            if (declaration is IrConstructor && declaration.isPrimary || declaration.isEs6PrimaryConstructorReplacement) {
+                                declaration.enqueue(data, "intrinsic: jsClass (constructor)")
                             }
+                        }
                     }
                     true
                 }
