@@ -12,14 +12,14 @@
  */
 
 // TESTCASE NUMBER: 1
-fun case_1(dir: EnumClass): String = when (dir) {
+fun case_1(dir: EnumClass): String = <!WHEN_ON_SEALED_GEEN_ELSE!>when (dir) {
     EnumClass.EAST -> ""
     EnumClass.NORTH -> ""
     EnumClass.SOUTH -> ""
     EnumClass.WEST -> ""
-}
+}<!>
 
 // TESTCASE NUMBER: 2
-fun case_2(value_1: EnumClassSingle): String = when (value_1) {
+fun case_2(value_1: EnumClassSingle): String = <!WHEN_ON_SEALED_GEEN_ELSE!>when (value_1) {
     EnumClassSingle.EVERYTHING -> ""
-}
+}<!>

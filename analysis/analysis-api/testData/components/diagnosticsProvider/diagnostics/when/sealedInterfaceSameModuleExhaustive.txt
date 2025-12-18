@@ -1,2 +1,4 @@
 Diagnostics from file:
-  <NO DIAGNOSTICS>
+  for PSI element of type KtWhenExpression at (7,12) - (10,6)
+    WHEN_ON_SEALED_GEEN_ELSE      text ranges: [(177,259)]
+      PSI: KtWhenExpression at (7,12) - (10,6)

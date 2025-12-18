@@ -1,1 +1,7 @@
+compiler/testData/compileKotlinAgainstCustomBinaries/changedEnumsInLibrary/source.kt:3:17: warning: exhaustive 'when' on sealed or enum class without 'else'.
+fun f1(x: E1) = when (x) {
+                ^^^^^^^^^^
+compiler/testData/compileKotlinAgainstCustomBinaries/changedEnumsInLibrary/source.kt:9:17: warning: exhaustive 'when' on sealed or enum class without 'else'.
+fun f2(x: E2) = when (x) {
+                ^^^^^^^^^^
 OK

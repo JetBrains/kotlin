@@ -30,15 +30,15 @@ fun case1() {
         <!REDUNDANT_ELSE_IN_WHEN!>else<!> -> {}
     }
 
-    val when2 = when (z) {
+    val when2 = <!WHEN_ON_SEALED_GEEN_ELSE!>when (z) {
         JavaEnum.Val_1 -> { }
         JavaEnum.Val_2 -> { }
-    }
-    val when3 = when (z) {
+    }<!>
+    val when3 = <!WHEN_ON_SEALED_GEEN_ELSE!>when (z) {
         JavaEnum.Val_1 -> { }
         JavaEnum.Val_2 -> { }
         <!DUPLICATE_BRANCH_CONDITION_IN_WHEN!>JavaEnum.Val_2<!> -> { }
-    }
+    }<!>
 }
 
 // TESTCASE NUMBER: 2
@@ -94,17 +94,17 @@ fun case4() {
         <!REDUNDANT_ELSE_IN_WHEN!>else<!> -> { }
     }
 
-    val when2 = when (x){
+    val when2 = <!WHEN_ON_SEALED_GEEN_ELSE!>when (x){
         is  SClass.A ->{ }
         is  SClass.B ->{ }
         is  SClass.C ->{ }
-    }
-    val when3 = when (x){
+    }<!>
+    val when3 = <!WHEN_ON_SEALED_GEEN_ELSE!>when (x){
         is  SClass.A ->{ }
         is  SClass.B ->{ }
         is  <!DUPLICATE_BRANCH_CONDITION_IN_WHEN!>SClass.B<!> ->{ }
         is  SClass.C ->{ }
-    }
+    }<!>
 }
 
 sealed class SClass {

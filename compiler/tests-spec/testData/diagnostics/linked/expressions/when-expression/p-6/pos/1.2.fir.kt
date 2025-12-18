@@ -12,29 +12,29 @@
  */
 
 // TESTCASE NUMBER: 1
-fun case_1(value_1: SealedClass) = when (value_1) {
+fun case_1(value_1: SealedClass) = <!WHEN_ON_SEALED_GEEN_ELSE!>when (value_1) {
     !is SealedChild1 -> {}
     <!USELESS_IS_CHECK!>!is SealedChild2<!> -> {}
     <!USELESS_IS_CHECK!>!is SealedChild3<!> -> {}
-}
+}<!>
 
 /*
  * TESTCASE NUMBER: 2
  * UNEXPECTED BEHAVIOUR
  * ISSUES: KT-22996
  */
-fun case_2(value_1: SealedClass?): String = when (value_1) {
+fun case_2(value_1: SealedClass?): String = <!WHEN_ON_SEALED_GEEN_ELSE!>when (value_1) {
     !is SealedChild2 -> "" // including null
     <!USELESS_IS_CHECK!>is SealedChild2<!> -> ""
     <!SENSELESS_NULL_IN_WHEN!>null<!> -> "" // redundant
-}
+}<!>
 
 // TESTCASE NUMBER: 3
-fun case_3(value_1: SealedClass?): String = when (value_1) {
+fun case_3(value_1: SealedClass?): String = <!WHEN_ON_SEALED_GEEN_ELSE!>when (value_1) {
     !is SealedChild2? -> "" // null isn't included
     is SealedChild2 -> ""
     null -> ""
-}
+}<!>
 
 /*
  * TESTCASE NUMBER: 4
