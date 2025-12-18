@@ -410,7 +410,8 @@ class GroupAnalysisCompilerTest(
         """
             @Composable fun A() {}
         """,
-        checkOptimizeGroups = true
+        checkOptimizeGroups = true,
+        allowDuplicatedKeys = true
     )
 
     @JvmField
@@ -422,6 +423,7 @@ class GroupAnalysisCompilerTest(
         @Language("kotlin") extra: String = "",
         checkFunctionMeta: Boolean = false,
         checkOptimizeGroups: Boolean = false,
+        allowDuplicatedKeys: Boolean = false,
         dumpIr: Boolean = false
     ) {
         val sources = listOf(
@@ -458,7 +460,7 @@ class GroupAnalysisCompilerTest(
                     }
                 p to buildString {
                     mapping.writeProguardMapping(this)
-                }.trim().redactGroupKeys(regex = MAPPING_REGEX)
+                }.trim().redactGroupKeys(regex = MAPPING_REGEX, allowDuplicatedKeys = allowDuplicatedKeys)
             }
         } else {
             val lambdaKeyCache = LambdaKeyCache()
@@ -470,7 +472,7 @@ class GroupAnalysisCompilerTest(
                             it.fileName == "Test.kt" && it.methods.isNotEmpty()
                         }?.render(lambdaKeyCache)
                     }.joinToString(separator = "\n")
-                p to info.redactGroupKeys(regex = GROUP_DUMP_REGEX)
+                p to info.redactGroupKeys(regex = GROUP_DUMP_REGEX, allowDuplicatedKeys = allowDuplicatedKeys)
             }
         }
 
@@ -524,7 +526,7 @@ class GroupAnalysisCompilerTest(
         }
     }
 
-    private fun String.redactGroupKeys(regex: Regex): String {
+    private fun String.redactGroupKeys(regex: Regex, allowDuplicatedKeys: Boolean): String {
         val counts = mutableMapOf<String, Int>()
         regex.findAll(this).forEach {
             val keyMatch = it.groups[1] ?: error("Match without a key: ${it.value}")
@@ -536,7 +538,7 @@ class GroupAnalysisCompilerTest(
             val keyValue = keyMatch.value
             val value = if (keyValue == "null") {
                 keyValue
-            } else if (counts[keyValue] == 1) {
+            } else if (allowDuplicatedKeys || counts[keyValue] == 1) {
                 "<key>"
             } else {
                 "<!DUPLICATED KEY: $keyValue!>"
