@@ -332,10 +332,6 @@ extern "C" void Kotlin_native_runtime_GC_MainThreadFinalizerProcessor_setBatchSi
             [=](auto& config) noexcept -> void { config.batchSize = value; });
 }
 
-extern "C" RUNTIME_NOTHROW void PerformFullGC(MemoryState* memory) {
-    mm::GlobalData::Instance().gcScheduler().scheduleAndWaitFinalized();
-}
-
 // Used in C export.
 extern "C" RUNTIME_NOTHROW mm::RawExternalRCRef* CreateStablePointer(ObjHeader* object) {
     AssertThreadState(ThreadState::kRunnable);

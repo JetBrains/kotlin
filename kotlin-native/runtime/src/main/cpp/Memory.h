@@ -239,8 +239,6 @@ void ClearTLS(MemoryState* memory) RUNTIME_NOTHROW;
 // Lookup element in TLS object storage.
 ObjHeader** LookupTLS(void** key, int index) RUNTIME_NOTHROW;
 
-void PerformFullGC(MemoryState* memory) RUNTIME_NOTHROW;
-
 // Sets state of the current thread to NATIVE (used by the new MM).
 RUNTIME_NOTHROW void Kotlin_mm_switchThreadStateNative();
 // Sets state of the current thread to RUNNABLE (used by the new MM).
