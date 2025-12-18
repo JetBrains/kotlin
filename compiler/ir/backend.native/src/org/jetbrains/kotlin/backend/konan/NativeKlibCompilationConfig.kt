@@ -8,6 +8,16 @@ package org.jetbrains.kotlin.backend.konan
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.konan.config.konanFriendLibraries
+import org.jetbrains.kotlin.konan.config.konanGeneratedHeaderKlibPath
+import org.jetbrains.kotlin.konan.config.konanIncludedBinaries
+import org.jetbrains.kotlin.konan.config.konanManifestNativeTargets
+import org.jetbrains.kotlin.konan.config.konanNativeLibraries
+import org.jetbrains.kotlin.konan.config.konanOutputPath
+import org.jetbrains.kotlin.konan.config.konanProducedArtifactKind
+import org.jetbrains.kotlin.konan.config.konanRefinesModules
+import org.jetbrains.kotlin.konan.config.konanShortModuleName
+import org.jetbrains.kotlin.konan.config.konanWriteDependenciesOfProducedKlibTo
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.properties.Properties
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
@@ -32,37 +42,37 @@ interface NativeKlibCompilationConfig {
     val moduleId: String
 
     val produce: CompilerOutputKind
-        get() = configuration.get(KonanConfigKeys.PRODUCE)!!
+        get() = configuration.konanProducedArtifactKind!!
 
     val metadataKlib: Boolean
         get() = configuration.getBoolean(CommonConfigurationKeys.METADATA_KLIB)
 
     val headerKlibPath: String?
-        get() = configuration.get(KonanConfigKeys.HEADER_KLIB)?.removeSuffixIfPresent(".klib")
+        get() = configuration.konanGeneratedHeaderKlibPath?.removeSuffixIfPresent(".klib")
 
     val friendModuleFiles: Set<File>
-        get() = configuration.get(KonanConfigKeys.FRIEND_MODULES)?.map { File(it) }?.toSet() ?: emptySet()
+        get() = configuration.konanFriendLibraries.map { File(it) }.toSet()
 
     val refinesModuleFiles: Set<File>
-        get() = configuration.get(KonanConfigKeys.REFINES_MODULES)?.map { File(it) }?.toSet().orEmpty()
+        get() = configuration.konanRefinesModules.map { File(it) }.toSet()
 
     val nativeLibraries: List<String>
-        get() = configuration.getList(KonanConfigKeys.NATIVE_LIBRARY_FILES)
+        get() = configuration.konanNativeLibraries
 
     val includeBinaries: List<String>
-        get() = configuration.getList(KonanConfigKeys.INCLUDED_BINARY_FILES)
+        get() = configuration.konanIncludedBinaries
 
     val writeDependenciesOfProducedKlibTo: String?
-        get() = configuration.get(KonanConfigKeys.WRITE_DEPENDENCIES_OF_PRODUCED_KLIB_TO)
+        get() = configuration.konanWriteDependenciesOfProducedKlibTo
 
-    val nativeTargetsForManifest: Collection<KonanTarget>?
-        get() = configuration.get(KonanConfigKeys.MANIFEST_NATIVE_TARGETS)
+    val nativeTargetsForManifest: Collection<KonanTarget>
+        get() = configuration.konanManifestNativeTargets
 
     val manifestProperties: Properties?
 
     val shortModuleName: String?
-        get() = configuration.get(KonanConfigKeys.SHORT_MODULE_NAME)
+        get() = configuration.konanShortModuleName
 
     val outputPath: String
-        get() = configuration.get(KonanConfigKeys.OUTPUT)?.removeSuffixIfPresent(produce.suffix(target)) ?: produce.visibleName
+        get() = configuration.konanOutputPath?.removeSuffixIfPresent(produce.suffix(target)) ?: produce.visibleName
 }

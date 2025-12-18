@@ -26,6 +26,12 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.moduleName
 import org.jetbrains.kotlin.config.nativeBinaryOptions.BinaryOptions
 import org.jetbrains.kotlin.config.zipFileSystemAccessor
+import org.jetbrains.kotlin.konan.config.NativeConfigurationKeys
+import org.jetbrains.kotlin.konan.config.konanIncludedLibraries
+import org.jetbrains.kotlin.konan.config.konanLibraries
+import org.jetbrains.kotlin.konan.config.konanOutputPath
+import org.jetbrains.kotlin.konan.config.konanProducedArtifactKind
+import org.jetbrains.kotlin.konan.config.konanTarget
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -61,7 +67,7 @@ class KonanDriver(
         val compilationSpawner: CompilationSpawner
 ) {
     fun run() {
-        val outputKind = configuration[KonanConfigKeys.PRODUCE]
+        val outputKind = configuration.konanProducedArtifactKind
         val isCompilingFromBitcode = configuration[KonanConfigKeys.COMPILE_FROM_BITCODE] != null
         val hasSourceRoots = configuration.kotlinSourceRoots.isNotEmpty()
 
@@ -114,9 +120,9 @@ class KonanDriver(
             konanConfig.targetManager.list()
         }
 
-        val hasIncludedLibraries = configuration[KonanConfigKeys.INCLUDED_LIBRARIES]?.isNotEmpty() == true
+        val hasIncludedLibraries = configuration.konanIncludedLibraries.isNotEmpty()
         val isProducingExecutableFromLibraries = konanConfig.produce == CompilerOutputKind.PROGRAM
-                && configuration[KonanConfigKeys.LIBRARY_FILES]?.isNotEmpty() == true && !hasIncludedLibraries
+                && configuration.konanLibraries.isNotEmpty() && !hasIncludedLibraries
         val hasCompilerInput = configuration.kotlinSourceRoots.isNotEmpty()
                 || hasIncludedLibraries
                 || configuration[KonanConfigKeys.EXPORTED_LIBRARIES]?.isNotEmpty() == true
@@ -205,13 +211,13 @@ class KonanDriver(
             fun <T> copy(key: CompilerConfigurationKey<T>) = putIfNotNull(key, configuration.get(key))
             fun <T> copyNotNull(key: CompilerConfigurationKey<T>) = put(key, configuration.getNotNull(key))
             // For the first stage, use "-p library" produce mode.
-            put(KonanConfigKeys.PRODUCE, CompilerOutputKind.LIBRARY)
-            copy(KonanConfigKeys.TARGET)
-            put(KonanConfigKeys.OUTPUT, intermediateKLib.absolutePath)
+            konanProducedArtifactKind = CompilerOutputKind.LIBRARY
+            copy(NativeConfigurationKeys.KONAN_TARGET)
+            konanOutputPath = intermediateKLib.absolutePath
             copyNotNull(CLIConfigurationKeys.CONTENT_ROOTS)
-            copyNotNull(KonanConfigKeys.LIBRARY_FILES)
-            copy(KonanConfigKeys.FRIEND_MODULES)
-            copy(KonanConfigKeys.REFINES_MODULES)
+            copyNotNull(NativeConfigurationKeys.KONAN_LIBRARIES)
+            copy(NativeConfigurationKeys.KONAN_FRIEND_LIBRARIES)
+            copy(NativeConfigurationKeys.KONAN_REFINES_MODULES)
             copy(KonanConfigKeys.EMIT_LAZY_OBJC_HEADER_FILE)
             copy(KonanConfigKeys.FULL_EXPORTED_NAME_PREFIX)
             copy(KonanConfigKeys.EXPORT_KDOC)
@@ -234,8 +240,7 @@ class KonanDriver(
         // We need to remove this flag, as it would otherwise override header written previously.
         // Unfortunately, there is no way to remove the flag, so empty string is put instead
         configuration.get(KonanConfigKeys.EMIT_LAZY_OBJC_HEADER_FILE)?.let { configuration.put(KonanConfigKeys.EMIT_LAZY_OBJC_HEADER_FILE, "") }
-        configuration.put(KonanConfigKeys.INCLUDED_LIBRARIES,
-                configuration.get(KonanConfigKeys.INCLUDED_LIBRARIES).orEmpty() + listOf(intermediateKLib.absolutePath))
+        configuration.konanIncludedLibraries += listOf(intermediateKLib.absolutePath)
         compilationSpawner.spawn(configuration) // Need to spawn a new compilation to create fresh environment (without sources).
     }
 }

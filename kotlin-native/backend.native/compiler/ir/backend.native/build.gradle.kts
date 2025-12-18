@@ -33,6 +33,7 @@ dependencies {
     implementation(project(":kotlin-util-klib"))
     implementation(project(":kotlin-util-klib-metadata"))
     implementation(project(":native:base"))
+    implementation(project(":native:native.config"))
     implementation(project(":native:frontend.native"))
     implementation(project(":native:kotlin-native-utils"))
     implementation(project(":native:objcexport-header-generator"))

@@ -48,18 +48,8 @@ class KonanConfigKeys {
                 = CompilerConfigurationKey.create<Boolean>("make per-file cache")
         val FRAMEWORK_IMPORT_HEADERS: CompilerConfigurationKey<List<String>>
                 = CompilerConfigurationKey.create<List<String>>("headers imported to framework header")
-        val FRIEND_MODULES: CompilerConfigurationKey<List<String>>
-                = CompilerConfigurationKey.create<List<String>>("friend module paths")
-        val REFINES_MODULES: CompilerConfigurationKey<List<String>>
-                = CompilerConfigurationKey.create<List<String>>("refines module paths")
         val GENERATE_TEST_RUNNER: CompilerConfigurationKey<TestRunnerKind>
                 = CompilerConfigurationKey.create("generate test runner") 
-        val INCLUDED_BINARY_FILES: CompilerConfigurationKey<List<String>>
-                = CompilerConfigurationKey.create("included binary file paths")
-        val KONAN_HOME: CompilerConfigurationKey<String>
-                = CompilerConfigurationKey.create("overridden compiler distribution path")
-        val LIBRARY_FILES: CompilerConfigurationKey<List<String>> 
-                = CompilerConfigurationKey.create("library file paths")
         val LIGHT_DEBUG: CompilerConfigurationKey<Boolean?>
                 = CompilerConfigurationKey.create("add light debug information")
         val GENERATE_DEBUG_TRAMPOLINE: CompilerConfigurationKey<Boolean?>
@@ -68,26 +58,12 @@ class KonanConfigKeys {
                 = CompilerConfigurationKey.create("additional linker arguments")
         val LIST_TARGETS: CompilerConfigurationKey<Boolean>
                 = CompilerConfigurationKey.create("list available targets")
-        val MANIFEST_FILE: CompilerConfigurationKey<String?> 
-                = CompilerConfigurationKey.create("provide manifest addend file")
-        val HEADER_KLIB: CompilerConfigurationKey<String?>
-                = CompilerConfigurationKey.create("path to file where header klib should be produced")
-        val NATIVE_LIBRARY_FILES: CompilerConfigurationKey<List<String>>
-                = CompilerConfigurationKey.create("native library file paths")
-        val NODEFAULTLIBS: CompilerConfigurationKey<Boolean>
-                = CompilerConfigurationKey.create("don't link with the default libraries")
         val NOENDORSEDLIBS: CompilerConfigurationKey<Boolean>
                 = CompilerConfigurationKey.create("don't link with the endorsed libraries")
         val NOMAIN: CompilerConfigurationKey<Boolean> 
                 = CompilerConfigurationKey.create("assume 'main' entry point to be provided by external libraries")
-        val NOSTDLIB: CompilerConfigurationKey<Boolean> 
-                = CompilerConfigurationKey.create("don't link with stdlib")
-        val NOPACK: CompilerConfigurationKey<Boolean> 
-                = CompilerConfigurationKey.create("don't the library into a klib file")
-        val OPTIMIZATION: CompilerConfigurationKey<Boolean> 
+        val OPTIMIZATION: CompilerConfigurationKey<Boolean>
                 = CompilerConfigurationKey.create("optimized compilation")
-        val OUTPUT: CompilerConfigurationKey<String> 
-                = CompilerConfigurationKey.create("program or library name")
         val OVERRIDE_CLANG_OPTIONS: CompilerConfigurationKey<List<String>>
                 = CompilerConfigurationKey.create("arguments for clang")
         val ALLOCATION_MODE: CompilerConfigurationKey<AllocationMode>
@@ -100,20 +76,10 @@ class KonanConfigKeys {
                 = CompilerConfigurationKey.create("print ir")
         val PRINT_FILES: CompilerConfigurationKey<Boolean>
                 = CompilerConfigurationKey.create("print files")
-        val PRODUCE: CompilerConfigurationKey<CompilerOutputKind>
-                = CompilerConfigurationKey.create("compiler output kind")
-        val PURGE_USER_LIBS: CompilerConfigurationKey<Boolean>
-                = CompilerConfigurationKey.create("purge user-specified libs too")
         val RUNTIME_FILE: CompilerConfigurationKey<String?>
                 = CompilerConfigurationKey.create("override default runtime file path")
-        val INCLUDED_LIBRARIES: CompilerConfigurationKey<List<String>>
-                = CompilerConfigurationKey("klibs processed in the same manner as source files")
-        val SHORT_MODULE_NAME: CompilerConfigurationKey<String?>
-                = CompilerConfigurationKey("short module name for IDE and export")
         val STATIC_FRAMEWORK: CompilerConfigurationKey<Boolean>
                 = CompilerConfigurationKey.create("produce a static library for a framework")
-        val TARGET: CompilerConfigurationKey<String?>
-                = CompilerConfigurationKey.create("target we compile for")
         val TEMPORARY_FILES_DIR: CompilerConfigurationKey<String?>
                 = CompilerConfigurationKey.create("directory for temporary files")
         val SAVE_LLVM_IR: CompilerConfigurationKey<List<String>>
@@ -122,8 +88,6 @@ class KonanConfigKeys {
                 = CompilerConfigurationKey.create("verify bitcode")
         val VERIFY_COMPILER: CompilerConfigurationKey<Boolean>
                 = CompilerConfigurationKey.create("verify compiler")
-        val WRITE_DEPENDENCIES_OF_PRODUCED_KLIB_TO: CompilerConfigurationKey<String?>
-                = CompilerConfigurationKey.create("write dependencies of the klib being produced to the given path")
         val DEBUG_INFO_VERSION: CompilerConfigurationKey<Int>
                 = CompilerConfigurationKey.create("debug info format version")
         val OBJC_GENERICS: CompilerConfigurationKey<Boolean>
@@ -147,7 +111,6 @@ class KonanConfigKeys {
         val SAVE_DEPENDENCIES_PATH: CompilerConfigurationKey<String?> = CompilerConfigurationKey.create("path to save serialized dependencies to")
         val SAVE_LLVM_IR_DIRECTORY: CompilerConfigurationKey<String?> = CompilerConfigurationKey.create("directory to store LLVM IR from phases")
         val KONAN_DATA_DIR: CompilerConfigurationKey<String?> = CompilerConfigurationKey.create("directory for storing konan dependencies, cache and prebuilds")
-        val MANIFEST_NATIVE_TARGETS: CompilerConfigurationKey<Collection<KonanTarget>?> = CompilerConfigurationKey.create("value of native_targets property to write in manifest")
         val LLVM_MODULE_PASSES: CompilerConfigurationKey<String?> = CompilerConfigurationKey.create("llvm passes to run instead of module optimization pipeline")
         val LLVM_LTO_PASSES: CompilerConfigurationKey<String?> = CompilerConfigurationKey.create("llvm passes to run instead of LTO optimization pipeline")
     }

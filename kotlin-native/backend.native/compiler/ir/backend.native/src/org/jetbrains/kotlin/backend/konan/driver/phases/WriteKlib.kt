@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.konan.KonanConfigKeys
 import org.jetbrains.kotlin.backend.konan.OutputFiles
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.backend.konan.serialization.SerializerOutput
+import org.jetbrains.kotlin.konan.config.konanDontCompressKlibs
 import org.jetbrains.kotlin.native.writeKlib
 import org.jetbrains.kotlin.native.KlibWriterInput
 
@@ -19,7 +20,7 @@ internal val WriteKlibPhase = createSimpleNamedCompilerPhase<PhaseContext, KlibW
 ) { context, input ->
     val config = context.config
     val outputFiles = OutputFiles(input.customOutputPath ?: config.outputPath, config.target, config.produce)
-    val nopack = config.configuration.getBoolean(KonanConfigKeys.NOPACK)
+    val nopack = config.configuration.konanDontCompressKlibs
     val output = outputFiles.klibOutputFileName(!nopack)
     val suffix = outputFiles.produce.suffix(config.target)
     context.writeKlib(input, output, suffix)

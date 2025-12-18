@@ -37,6 +37,7 @@ dependencies {
     implementation(project(":compiler:fir:fir-native"))
     implementation(project(":compiler:ir.objcinterop"))
     implementation(project(":native:frontend.native"))
+    implementation(project(":native:native.config"))
 }
 
 optInToUnsafeDuringIrConstructionAPI()

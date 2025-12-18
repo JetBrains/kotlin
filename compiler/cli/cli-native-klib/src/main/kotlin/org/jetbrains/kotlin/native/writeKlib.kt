@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.konan.KonanConfigKeys
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.konan.config.konanDontCompressKlibs
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.impl.buildLibrary
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_HEADER
@@ -21,7 +22,7 @@ import java.util.Properties
 fun PhaseContext.writeKlib(input: KlibWriterInput, klibOutputFileName: String, suffix: String) {
     val config = config
     val configuration = config.configuration
-    val nopack = configuration.getBoolean(KonanConfigKeys.NOPACK)
+    val nopack = configuration.konanDontCompressKlibs
     val libraryName = config.moduleId
     val shortLibraryName = config.shortModuleName
     val versions = KotlinLibraryVersioning(
@@ -38,7 +39,8 @@ fun PhaseContext.writeKlib(input: KlibWriterInput, klibOutputFileName: String, s
 
     addLanguageFeaturesToManifest(manifestProperties, configuration.languageVersionSettings)
 
-    val nativeTargetsForManifest = config.nativeTargetsForManifest?.map { it.visibleName } ?: listOf(target.visibleName)
+    val nativeTargetsForManifest =
+        config.nativeTargetsForManifest.map { it.visibleName }.takeIf { it.isNotEmpty() } ?: listOf(target.visibleName)
 
     if (!nopack) {
         if (!klibOutputFileName.endsWith(suffix)) {

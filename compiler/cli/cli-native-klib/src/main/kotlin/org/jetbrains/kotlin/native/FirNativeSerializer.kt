@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.pipeline.AllModulesFrontendOutput
 import org.jetbrains.kotlin.fir.pipeline.Fir2KlibMetadataSerializer
 import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
+import org.jetbrains.kotlin.konan.config.konanPurgeUserLibs
 import org.jetbrains.kotlin.library.metadata.resolver.TopologicalLibraryOrder
 
 fun PhaseContext.firSerializer(input: FirOutput): SerializerOutput? = when (input) {
@@ -41,7 +42,7 @@ private fun PhaseContext.firSerializerBase(
     val configuration = config.configuration
     val usedResolvedLibraries = fir2IrOutput?.let {
         config.resolvedLibraries.getFullResolvedList(TopologicalLibraryOrder).filter {
-            (!it.isDefault && !configuration.getBoolean(KonanConfigKeys.Companion.PURGE_USER_LIBS)) || it in fir2IrOutput.usedLibraries
+            (!it.isDefault && !configuration.konanPurgeUserLibs) || it in fir2IrOutput.usedLibraries
         }
     }
 

@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.konan.config.konanProducedArtifactKind
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -241,7 +242,7 @@ private object CallableIds {
 }
 
 private fun CompilerConfiguration.getMainCallableId() : CallableId? {
-    if (get(KonanConfigKeys.PRODUCE) != CompilerOutputKind.PROGRAM) return null
+    if (konanProducedArtifactKind != CompilerOutputKind.PROGRAM) return null
     get(KonanConfigKeys.ENTRY)?.let {
         val entryPointFqName = FqName(it)
         return CallableId(entryPointFqName.parent(), entryPointFqName.shortName())

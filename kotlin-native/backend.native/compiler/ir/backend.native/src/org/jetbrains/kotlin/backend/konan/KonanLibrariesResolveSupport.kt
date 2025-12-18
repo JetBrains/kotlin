@@ -10,6 +10,10 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.DuplicatedUniqueNameStrategy
 import org.jetbrains.kotlin.config.KlibConfigurationKeys
 import org.jetbrains.kotlin.config.zipFileSystemAccessor
+import org.jetbrains.kotlin.konan.config.konanIncludedLibraries
+import org.jetbrains.kotlin.konan.config.konanLibraries
+import org.jetbrains.kotlin.konan.config.konanNoDefaultLibs
+import org.jetbrains.kotlin.konan.config.konanNoStdlib
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.defaultResolver
 import org.jetbrains.kotlin.konan.target.Distribution
@@ -26,12 +30,12 @@ class KonanLibrariesResolveSupport(
         resolveManifestDependenciesLenient: Boolean
 ) {
     private val includedLibraryFiles =
-            configuration.getList(KonanConfigKeys.INCLUDED_LIBRARIES).map { File(it) }
+            configuration.konanIncludedLibraries.map { File(it) }
 
     private val libraryToCacheFile =
                     configuration.get(KonanConfigKeys.LIBRARY_TO_ADD_TO_CACHE)?.let { File(it) }
 
-    private val libraryPaths = configuration.getList(KonanConfigKeys.LIBRARY_FILES)
+    private val libraryPaths = configuration.konanLibraries
 
     private val unresolvedLibraries = libraryPaths.toUnresolvedLibraries
 
@@ -52,8 +56,8 @@ class KonanLibrariesResolveSupport(
         val additionalLibraryFiles = (includedLibraryFiles + listOfNotNull(libraryToCacheFile)).toSet()
         resolver.resolveWithDependencies(
             unresolvedLibraries + additionalLibraryFiles.map { RequiredUnresolvedLibrary(it.absolutePath) },
-            noStdLib = configuration.getBoolean(KonanConfigKeys.NOSTDLIB),
-            noDefaultLibs = configuration.getBoolean(KonanConfigKeys.NODEFAULTLIBS),
+            noStdLib = configuration.konanNoStdlib,
+            noDefaultLibs = configuration.konanNoDefaultLibs,
             noEndorsedLibs = configuration.getBoolean(KonanConfigKeys.NOENDORSEDLIBS),
             duplicatedUniqueNameStrategy = configuration.get(
                 KlibConfigurationKeys.DUPLICATED_UNIQUE_NAME_STRATEGY,
