@@ -55,6 +55,11 @@ internal class WasmContinuation<in T, R>(
     private var _result: Any? = null
     private var _exception: Throwable? = null
 
+    private var _intercepted: Continuation<T>? = null
+
+    fun intercepted(): Continuation<T> = _intercepted
+        ?: (context[ContinuationInterceptor]?.interceptContinuation(this) ?: this).also { _intercepted = it }
+
     val result get() = _result
     val exception get() = _exception
 

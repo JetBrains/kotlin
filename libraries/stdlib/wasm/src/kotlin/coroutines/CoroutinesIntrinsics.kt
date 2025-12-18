@@ -129,7 +129,7 @@ public actual fun <R, T> (suspend R.() -> T).createCoroutineUnintercepted(
  * If this function is invoked on other [Continuation] instances it returns `this` continuation unchanged.
  */
 public actual fun <T> Continuation<T>.intercepted(): Continuation<T> =
-    (this as? CoroutineImpl)?.intercepted() ?: this
+    (this as? CoroutineImpl)?.intercepted() ?: (this as? WasmContinuation<T, *>)?.intercepted() ?: this
 
 @Suppress("UNCHECKED_CAST")
 private inline fun <T> createCoroutineFromSuspendFunction(
