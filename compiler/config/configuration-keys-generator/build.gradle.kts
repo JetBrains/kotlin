@@ -12,6 +12,7 @@ dependencies {
     implementation(project(":compiler:cli-base"))
     implementation(project(":js:js.frontend"))
     implementation(project(":kotlin-util-klib"))
+    implementation(project(":native:kotlin-native-utils"))
     implementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
 
     /*
