@@ -1,5 +1,5 @@
 plugins {
-    kotlin("js")
+    kotlin("multiplatform")
 }
 
 kotlin {
@@ -14,9 +14,6 @@ kotlin {
             isCanBeConsumed = true
             isCanBeResolved = false
         }
-        dependencies {
-            runtimeOnly(project(mapOf("path" to path, "configuration" to otherDist.name)))
-        }
         artifacts {
             add(otherDist.name, tasks.named("otherKlib").map { it.outputs.files.files.first() })
         }
@@ -26,11 +23,12 @@ kotlin {
     }
 
     sourceSets {
-        val main by getting {
-            kotlin.exclude("**/other/**")
+        jsMain {
+            dependencies {
+                runtimeOnly(project(mapOf("path" to path, "configuration" to "otherDist")))
+            }
         }
-        val other by getting {
-            kotlin.srcDirs("src/main/kotlin/other")
+        val jsOther by getting {
             dependencies {
                 implementation(project(path = project.path))
             }

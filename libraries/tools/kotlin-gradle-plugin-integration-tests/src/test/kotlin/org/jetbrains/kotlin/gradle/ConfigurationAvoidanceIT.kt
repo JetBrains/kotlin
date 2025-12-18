@@ -213,16 +213,16 @@ class ConfigurationAvoidanceIT : KGPBaseTest() {
         assertEquals(
             mapOf(
                 ":base" to setOf(
-                    "testNpmAggregated",
-                    "npmAggregated",
+                    "jsTestNpmAggregated",
+                    "jsNpmAggregated",
                 ),
                 ":app" to setOf(
-                    "testNpmAggregated",
-                    "npmAggregated",
+                    "jsTestNpmAggregated",
+                    "jsNpmAggregated",
                 ),
                 ":lib" to setOf(
-                    "testNpmAggregated",
-                    "npmAggregated",
+                    "jsTestNpmAggregated",
+                    "jsNpmAggregated",
                 )
             ),
             eagerlyResolvedConfigurations,

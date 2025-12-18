@@ -3,10 +3,9 @@ import java.time.ZoneId
 import java.util.concurrent.TimeUnit
 
 plugins {
-    id "org.jetbrains.kotlin.js"
+    id "org.jetbrains.kotlin.multiplatform"
 }
 
-String nodeJsVersion
 String nodeJsLocation
 
 tasks.create("checkDownloadedFolder") {
@@ -134,14 +133,10 @@ class NodeJsPlatform {
     }()
 }
 
-afterEvaluate {
-    project.kotlinNodeJs.nodeVersion = "18.19.1"
-
-    project.tasks.nodeKotlinClean.dependsOn(checkDownloadedFolder)
-    project.tasks.testCleanTask.dependsOn(nodeKotlinClean)
-
-    nodeJsVersion = project.extensions.getByName("kotlinNodeJs").nodeVersion
-    println("Node js version: $nodeJsVersion")
+project.plugins.withType(org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin) {
+    def spec = project.extensions.getByType(org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsEnvSpec)
+    def nodeJsVersion = "18.19.1"
+    spec.version = nodeJsVersion
 
     def nodeJsPlatform = new NodeJsPlatform()
 
@@ -152,8 +147,21 @@ afterEvaluate {
     println("Use $nodeJsLocation location")
 }
 
-dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-js"
+afterEvaluate {
+    project.tasks.nodeKotlinClean.dependsOn(checkDownloadedFolder)
+    project.tasks.testCleanTask.dependsOn(nodeKotlinClean)
 }
 
-kotlin.target.browser {}
+kotlin {
+    js {
+        browser {}
+    }
+
+    sourceSets {
+        jsMain {
+            dependencies {
+                implementation "org.jetbrains.kotlin:kotlin-stdlib-js"
+            }
+        }
+    }
+}

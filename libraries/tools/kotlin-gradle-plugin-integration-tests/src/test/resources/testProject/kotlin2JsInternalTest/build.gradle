@@ -8,21 +8,25 @@ buildscript {
     }
 }
 
-apply plugin: 'org.jetbrains.kotlin.js'
+apply plugin: 'org.jetbrains.kotlin.multiplatform'
 
 repositories {
     mavenLocal()
     mavenCentral()
 }
 
-dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-js:$kotlin_version"
-}
-
 kotlin {
     js {
         nodejs {
 
+        }
+    }
+
+    sourceSets {
+        jsMain {
+            dependencies {
+                implementation "org.jetbrains.kotlin:kotlin-stdlib-js:$kotlin_version"
+            }
         }
     }
 }

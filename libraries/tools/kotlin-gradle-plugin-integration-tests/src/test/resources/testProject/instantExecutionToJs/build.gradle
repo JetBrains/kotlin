@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 
 plugins {
-    id "org.jetbrains.kotlin.js"
+    id "org.jetbrains.kotlin.multiplatform"
 }
 
 repositories {
@@ -15,9 +15,20 @@ kotlin {
     }
 }
 
-dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-js:$kotlin_version"
-    testImplementation "org.jetbrains.kotlin:kotlin-test-js:$kotlin_version"
+kotlin {
+    sourceSets {
+        jsMain {
+            dependencies {
+                implementation "org.jetbrains.kotlin:kotlin-stdlib-js:$kotlin_version"
+            }
+        }
+
+        jsTest {
+            dependencies {
+                implementation("org.jetbrains.kotlin:kotlin-test:$kotlin_version")
+            }
+        }
+    }
 }
 
 tasks.named("compileKotlinJs", Kotlin2JsCompile) {

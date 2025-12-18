@@ -1,5 +1,5 @@
 plugins {
-    kotlin("js").apply(false)
+    kotlin("multiplatform").apply(false)
 }
 
 group = "com.example"
