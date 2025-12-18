@@ -662,7 +662,6 @@ class WasmSerializer(outputStream: OutputStream) {
             serializeNullable(fragmentTag, ::serializeString)
 
             serializeDefinedFunctions(definedFunctions)
-            serializeList(forValueFunctions, ::serializeIdSignature)
             serializeDefinedGlobals(definedGlobalFields)
             serializeDefinedGlobals(definedGlobalVTables)
             serializeDefinedGlobals(definedGlobalClassITables)
@@ -679,6 +678,7 @@ class WasmSerializer(outputStream: OutputStream) {
             serializeMap(stringLiteralId, ::serializeString, ::serializeIntSymbol)
 
             serializeConstantArrayDataSegmentId(constantArrayDataSegmentId)
+            serializeList(forValueFunctions, ::serializeIdSignature)
             serializeMap(jsFuns, ::serializeIdSignature, ::serializeJsCodeSnippet)
             serializeMap(jsModuleImports, ::serializeIdSignature, ::serializeString)
             serializeMap(jsBuiltinsPolyfills, ::serializeString, ::serializeString)
