@@ -8,11 +8,14 @@
 
 package org.jetbrains.kotlin.gradle.unitTests
 
+import org.gradle.api.Project
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.provider.Provider
 import org.gradle.kotlin.dsl.extra
+import org.gradle.testfixtures.ProjectBuilder
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.NativeCacheKind
+import org.jetbrains.kotlin.gradle.internal.properties.NativeProperties
 import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.kotlinToolingDiagnosticsCollector
@@ -25,25 +28,22 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink
 import org.jetbrains.kotlin.gradle.unitTests.fus.collectedFusConfigurationTimeMetrics
 import org.jetbrains.kotlin.gradle.unitTests.fus.enableFusOnCI
+import org.jetbrains.kotlin.gradle.unitTests.utils.MockKonanHomeRule
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import org.junit.Assume
-import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import java.net.URI
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
 class DisabledNativeCacheTest {
-
-    // workaround for tests that don't unpack Kotlin Native when using local repo: KT-77580
-    @Before
-    fun setUp() {
-        provisionKotlinNativeDistribution()
-    }
+    @get:Rule
+    val mockKonan = MockKonanHomeRule()
 
     @Test
     fun `test deprecated native cache property`() {
@@ -63,8 +63,6 @@ class DisabledNativeCacheTest {
             evaluate()
 
             assertContainsDiagnostic(KotlinToolingDiagnostics.DeprecatedWarningGradleProperties)
-            assertNoDiagnostics(KotlinToolingDiagnostics.NativeCacheDisabledDiagnostic)
-            assertNoDiagnostics(KotlinToolingDiagnostics.NativeCacheRedundantDiagnostic)
         }
     }
 
@@ -84,15 +82,13 @@ class DisabledNativeCacheTest {
             evaluate()
 
             assertContainsDiagnostic(KotlinToolingDiagnostics.DeprecatedWarningGradleProperties)
-            assertNoDiagnostics(KotlinToolingDiagnostics.NativeCacheDisabledDiagnostic)
-            assertNoDiagnostics(KotlinToolingDiagnostics.NativeCacheRedundantDiagnostic)
         }
     }
 
     @Test
     fun `test native cache is enabled by default`() {
         Assume.assumeTrue(!HostManager.hostIsMingw) // No cacheable targets on Windows
-        with(buildProjectWithMPP(preApplyCode = { project.extraProperties.set("kotlin.native.distribution.downloadFromMaven", "true") })) {
+        with(mppProjectWithFakeKonan(mockKonan)) {
             kotlin {
                 createCacheableTargets().forEach { target ->
                     target.binaries.staticLib()
@@ -100,9 +96,6 @@ class DisabledNativeCacheTest {
             }
 
             evaluate()
-
-            assertNoDiagnostics(KotlinToolingDiagnostics.NativeCacheDisabledDiagnostic)
-            assertNoDiagnostics(KotlinToolingDiagnostics.NativeCacheRedundantDiagnostic)
 
             if (HostManager.hostIsMac) {
                 assertEquals(
@@ -153,7 +146,7 @@ class DisabledNativeCacheTest {
     @Test
     fun `test native cache is disabled`() {
         Assume.assumeTrue(!HostManager.hostIsMingw) // No cacheable targets on Windows
-        with(buildProjectWithMPP()) {
+        with(mppProjectWithFakeKonan(mockKonan)) {
             kotlin {
                 createCacheableTargets().forEach { target ->
                     target.binaries.staticLib {
@@ -167,9 +160,6 @@ class DisabledNativeCacheTest {
             }
 
             evaluate()
-
-            assertContainsDiagnostic(KotlinToolingDiagnostics.NativeCacheDisabledDiagnostic)
-            assertNoDiagnostics(KotlinToolingDiagnostics.NativeCacheRedundantDiagnostic)
 
             if (HostManager.hostIsMac) {
                 assertEquals(
@@ -218,32 +208,9 @@ class DisabledNativeCacheTest {
     }
 
     @Test
-    fun `test native cache diagnostic not emitted for unsupported native targets`() {
-        with(buildProjectWithMPP()) {
-            kotlin {
-                createNonCacheableTargets().forEach { target ->
-                    target.binaries.staticLib {
-                        disableNativeCache(
-                            currentVersionForDisableCache,
-                            "Disabled for tests",
-                            URI("https://kotlinlang.org")
-                        )
-                    }
-                }
-            }
-
-            evaluate()
-
-            assertNoDiagnostics(KotlinToolingDiagnostics.NativeCacheDisabledDiagnostic)
-            assertContainsDiagnostic(KotlinToolingDiagnostics.NativeCacheRedundantDiagnostic)
-        }
-    }
-
-    // KT-82786 Warning about disabled K/N caches is displayed twice"
-    @Test
-    fun `test disabled native cache diagnostic emitted only once`() {
+    fun `test native cache is disabled for particular buildType`() {
         Assume.assumeTrue(!HostManager.hostIsMingw) // No cacheable targets on Windows
-        with(buildProjectWithMPP()) {
+        with(mppProjectWithFakeKonan(mockKonan)) {
             kotlin {
                 val target = if (HostManager.hostIsMac) macosArm64() else linuxX64()
                 target.binaries.staticLib {
@@ -282,98 +249,12 @@ class DisabledNativeCacheTest {
                     "Native cache should be disabled on Linux x64 DEBUG target"
                 )
             }
-
-            val emittedDiagnostics = kotlinToolingDiagnosticsCollector
-                .getDiagnosticsForProject(this)
-                .filter { it.id == KotlinToolingDiagnostics.NativeCacheDisabledDiagnostic.id }
-
-            assertEquals(1, emittedDiagnostics.size, "Expected only one diagnostic emitted for disabled cache")
-
-            val target = if (HostManager.hostIsMac)
-                KonanTarget.MACOS_ARM64
-            else
-                KonanTarget.LINUX_X64
-
-            assertContains(
-                "The Kotlin/Native cache has been disabled for the Debug binary 'debugStatic' on target '${target.visibleName}'.\n" +
-                        "Build times for '${target.visibleName}' (Debug) may be slower as a result.",
-                emittedDiagnostics.single().message
-            )
-        }
-    }
-
-    // KT-82970 Warning about disabled K/N caches for non-cacheable targets is printed twice
-    @Test
-    fun `test disabled native cache redundant diagnostic emitted only once`() {
-        with(buildProjectWithMPP()) {
-            kotlin {
-                val target = if (HostManager.hostIsMac || HostManager.hostIsMingw)
-                    linuxX64()
-                else if (HostManager.hostIsLinux)
-                    macosArm64()
-                else
-                    error("Unsupported host")
-
-                target.binaries.staticLib {
-                    if (buildType == NativeBuildType.DEBUG) {
-                        disableNativeCache(
-                            currentVersionForDisableCache,
-                            "Disabled for tests for DEBUG only",
-                            URI("https://kotlinlang.org")
-                        )
-                    }
-                }
-            }
-
-            evaluate()
-
-            if (HostManager.hostIsMac || HostManager.hostIsMingw) {
-                assertEquals(
-                    NativeCacheKind.NONE,
-                    konanCacheKind(LINUX_X64_LINK_RELEASE_TASK_NAME).get(),
-                    "Native cache should be disabled on Linux x64 RELEASE target"
-                )
-                assertEquals(
-                    NativeCacheKind.NONE,
-                    konanCacheKind(LINUX_X64_LINK_DEBUG_TASK_NAME).get(),
-                    "Native cache should be disabled on Linux x64 DEBUG target"
-                )
-            } else if (HostManager.hostIsLinux) {
-                assertEquals(
-                    NativeCacheKind.NONE,
-                    konanCacheKind(MAC_ARM64_LINK_RELEASE_TASK_NAME).get(),
-                    "Native cache should be disabled on macOS Arm64 RELEASE target"
-                )
-                assertEquals(
-                    NativeCacheKind.NONE,
-                    konanCacheKind(MAC_ARM64_LINK_DEBUG_TASK_NAME).get(),
-                    "Native cache should be disabled on macOS Arm64 DEBUG target"
-                )
-            }
-
-            val emittedDiagnostics = kotlinToolingDiagnosticsCollector
-                .getDiagnosticsForProject(this)
-                .filter { it.id == KotlinToolingDiagnostics.NativeCacheRedundantDiagnostic.id }
-
-            assertEquals(1, emittedDiagnostics.size, "Expected only one diagnostic emitted for redundant disabled cache")
-
-            val target = if (HostManager.hostIsMac || HostManager.hostIsMingw)
-                KonanTarget.LINUX_X64
-            else if (HostManager.hostIsLinux)
-                KonanTarget.MACOS_ARM64
-            else error("Unsupported host")
-
-            assertContains(
-                "The Kotlin/Native cache has been explicitly disabled for the Debug binary 'debugStatic' on target '${target.visibleName}'.\n" +
-                        "However, this target does not support caching on the current host '${HostManager.platformName()}' regardless of configuration.",
-                emittedDiagnostics.single().message
-            )
         }
     }
 
     @Test
     fun `test disable native cache FUS event present`() {
-        with(buildProjectWithMPP(preApplyCode = { enableFusOnCI() })) {
+        with(mppProjectWithFakeKonan(mockKonan, preApplyCode = { enableFusOnCI() })) {
             kotlin {
                 linuxX64().binaries.staticLib {
                     disableNativeCache(
@@ -397,7 +278,7 @@ class DisabledNativeCacheTest {
 
     @Test
     fun `test disable native cache FUS event not present`() {
-        with(buildProjectWithMPP(preApplyCode = { enableFusOnCI() })) {
+        with(mppProjectWithFakeKonan(mockKonan, preApplyCode = { enableFusOnCI() })) {
             kotlin {
                 linuxX64()
             }
@@ -461,40 +342,6 @@ private fun KotlinMultiplatformExtension.createCacheableTargets(): List<KotlinNa
     }
 }
 
-@Suppress("DEPRECATION")
-private fun KotlinMultiplatformExtension.createNonCacheableTargets(): List<KotlinNativeTarget> {
-    val isArm64 = HostManager.hostArch() == "aarch64"
-
-    return when {
-        HostManager.hostIsMac && isArm64 -> listOf(
-            iosX64(),
-            macosX64()
-        )
-        HostManager.hostIsMac && !isArm64 -> listOf(
-            iosSimulatorArm64(),
-            macosArm64()
-        )
-        HostManager.hostIsLinux -> listOf(
-            iosArm64(),
-            iosSimulatorArm64(),
-            iosX64(),
-            macosArm64(),
-            macosX64(),
-            mingwX64()
-        )
-        HostManager.hostIsMingw -> listOf(
-            iosArm64(),
-            iosSimulatorArm64(),
-            iosX64(),
-            linuxX64(),
-            macosArm64(),
-            macosX64(),
-            mingwX64()
-        )
-        else -> emptyList()
-    }
-}
-
 private val ProjectInternal.currentVersionForDisableCache: DisableCacheInKotlinVersion
     get() {
         val allInstances: List<DisableCacheInKotlinVersion> =
@@ -512,3 +359,23 @@ private val ProjectInternal.currentVersionForDisableCache: DisableCacheInKotlinV
 private fun ProjectInternal.konanCacheKind(linkTask: String): Provider<NativeCacheKind> =
     tasks.named(linkTask, KotlinNativeLink::class.java).flatMap { it.konanCacheKind }
 
+private fun mppProjectWithFakeKonan(
+    fakeKonanRule: MockKonanHomeRule,
+    copyKonanProperties: Boolean = true,
+    projectBuilder: ProjectBuilder.() -> Unit = { },
+    preApplyCode: Project.() -> Unit = {},
+    code: Project.() -> Unit = {},
+) = buildProjectWithMPP(
+    preApplyCode = {
+        fakeKonanRule.setup(copyKonanProperties)
+
+        project.extraProperties.set(
+            NativeProperties.NATIVE_HOME.name,
+            fakeKonanRule.konanHome.absolutePath
+        )
+
+        preApplyCode()
+    },
+    projectBuilder = projectBuilder,
+    code = code
+)

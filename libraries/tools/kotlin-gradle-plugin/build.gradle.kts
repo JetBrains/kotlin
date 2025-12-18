@@ -575,11 +575,13 @@ functionalTestCompilation.associateWith(testFixturesCompilation)
 
 tasks.register<Test>("functionalTest") {
     systemProperty("kotlinVersion", rootProject.extra["kotlinVersion"] as String)
+    systemProperty("konanProperties", rootDir.resolve("kotlin-native/konan/konan.properties"))
 }
 
 tasks.register<Test>("functionalUnitTest") {
     include("**/org/jetbrains/kotlin/gradle/unitTests/**")
     systemProperty("kotlinVersion", rootProject.extra["kotlinVersion"] as String)
+    systemProperty("konanProperties", rootDir.resolve("kotlin-native/konan/konan.properties"))
 }
 
 tasks.register<Test>("functionalRegressionTest") {
