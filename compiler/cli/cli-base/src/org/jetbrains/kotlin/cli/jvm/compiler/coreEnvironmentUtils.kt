@@ -87,7 +87,7 @@ fun <VirtualFile, Source> List<KotlinSourceRoot>.allSourceFilesSequence(
 
     for ((sourceRootPath, isCommon, hmppModuleName) in this@allSourceFilesSequence) {
         val sourceRoot = File(sourceRootPath)
-        val vFile = findVirtualFile(sourceRoot.absoluteFile.normalize())
+        val vFile = findVirtualFile(sourceRoot.normalize())
         if (vFile == null) {
             val message = "Source file or directory not found: $sourceRootPath"
 

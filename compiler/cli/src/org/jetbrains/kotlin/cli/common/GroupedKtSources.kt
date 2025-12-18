@@ -9,6 +9,7 @@ import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFileSystem
+import com.intellij.openapi.vfs.isFile
 import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.KtVirtualFileSourceFile
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
@@ -82,14 +83,16 @@ fun collectSources(
                     JavaFileType.DEFAULT_EXTENSION -> false
                     KotlinFileType.EXTENSION -> true
                     else -> {
-                        ensurePluginsConfigured()
-                        val isKotlin = virtualFile.fileType == KotlinFileType.INSTANCE
-                        if (isExplicit && !isKotlin)
-                            compilerConfiguration.report(
-                                CompilerMessageSeverity.ERROR,
-                                "Source entry is not a Kotlin file: ${virtualFile.path}"
-                            )
-                        isKotlin
+                        if (virtualFile.isFile) {
+                            ensurePluginsConfigured()
+                            val isKotlin = virtualFile.fileType == KotlinFileType.INSTANCE
+                            if (isExplicit && !isKotlin)
+                                compilerConfiguration.report(
+                                    CompilerMessageSeverity.ERROR,
+                                    "Source entry is not a Kotlin file: ${virtualFile.path}"
+                                )
+                            isKotlin
+                        } else false
                     }
                 }
             },
