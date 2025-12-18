@@ -202,7 +202,6 @@ namespace {
 THREAD_LOCAL_VARIABLE Worker* g_worker = nullptr;
 
 void waitInNativeState(pthread_cond_t* cond, pthread_mutex_t* mutex) {
-    kotlin::compactObjectPoolInCurrentThread();
     CallWithThreadState<ThreadState::kNative>(pthread_cond_wait, cond, mutex);
 }
 
@@ -210,7 +209,6 @@ void waitInNativeState(pthread_cond_t* cond,
           pthread_mutex_t* mutex,
           uint64_t timeoutNanoseconds,
           uint64_t* microsecondsPassed = nullptr) {
-    kotlin::compactObjectPoolInCurrentThread();
     CallWithThreadState<ThreadState::kNative>(WaitOnCondVar, cond, mutex, timeoutNanoseconds, microsecondsPassed);
 }
 

@@ -413,11 +413,3 @@ RUNTIME_NOTHROW extern "C" OBJ_GETTER(Konan_getWeakReferenceImpl, ObjHeader* ref
 #endif // KONAN_OBJC_INTEROP
     RETURN_RESULT_OF(mm::createRegularWeakReferenceImpl, referred);
 }
-
-void kotlin::initObjectPool() noexcept {
-    alloc::initObjectPool();
-}
-
-void kotlin::compactObjectPoolInCurrentThread() noexcept {
-    alloc::compactObjectPoolInCurrentThread();
-}

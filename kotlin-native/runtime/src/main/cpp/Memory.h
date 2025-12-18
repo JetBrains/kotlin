@@ -429,9 +429,6 @@ private:
     ThreadStateGuard backingGuard_;
 };
 
-void initObjectPool() noexcept;
-void compactObjectPoolInCurrentThread() noexcept;
-
 } // namespace kotlin
 
 RUNTIME_NOTHROW extern "C" void Kotlin_processObjectInMark(void* state, ObjHeader* object);

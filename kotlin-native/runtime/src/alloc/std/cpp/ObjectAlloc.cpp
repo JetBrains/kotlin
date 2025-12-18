@@ -18,8 +18,6 @@ std::atomic<size_t> allocatedBytesCounter = 0;
 
 } // namespace
 
-void alloc::initObjectPool() noexcept {}
-
 void* alloc::allocateInObjectPool(size_t size) noexcept {
     // TODO: Check that alignment to kObjectAlignment is satisfied.
     void* result = ::calloc(1, size);
@@ -33,10 +31,6 @@ void alloc::freeInObjectPool(void* ptr, size_t size) noexcept {
     allocatedBytesCounter.fetch_sub(size, std::memory_order_relaxed);
     ::free(ptr);
 }
-
-void alloc::compactObjectPoolInCurrentThread() noexcept {}
-
-void alloc::compactObjectPoolInMainThread() noexcept {}
 
 size_t alloc::allocatedBytes() noexcept {
     return allocatedBytesCounter.load();

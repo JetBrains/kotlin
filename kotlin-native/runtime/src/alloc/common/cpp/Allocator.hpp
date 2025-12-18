@@ -71,10 +71,6 @@ private:
     std::unique_ptr<Impl> impl_;
 };
 
-void initObjectPool() noexcept;
-// Instruct the allocator to free unused resources.
-void compactObjectPoolInCurrentThread() noexcept;
-
 gc::GC::ObjectData& objectDataForObject(ObjHeader* object) noexcept;
 ObjHeader* objectForObjectData(gc::GC::ObjectData& objectData) noexcept;
 

@@ -121,7 +121,6 @@ void alloc::Allocator::sweep(gc::GCHandle gcHandle) noexcept {
     alloc::SweepExtraObjects<alloc::DefaultSweepTraits<alloc::ObjectFactoryImpl>>(gcHandle, state->extraObjectFactoryIterable_);
     auto finalizerQueue = alloc::Sweep<alloc::DefaultSweepTraits<alloc::ObjectFactoryImpl>>(gcHandle, state->objectFactoryIterable_);
     state = std::nullopt; // Release object factory locks.
-    alloc::compactObjectPoolInMainThread();
     RuntimeAssert(impl_->pendingFinalizers().size() == 0, "pendingFinalizers_ were not empty");
     impl_->pendingFinalizers() = std::move(finalizerQueue);
 }

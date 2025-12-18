@@ -102,10 +102,6 @@ void alloc::Allocator::scheduleFinalization(gc::GCHandle gcHandle) noexcept {
     impl_->finalizerProcessor().schedule(std::move(queue), gcHandle.getEpoch());
 }
 
-void alloc::initObjectPool() noexcept {}
-
-void alloc::compactObjectPoolInCurrentThread() noexcept {}
-
 gc::GC::ObjectData& alloc::objectDataForObject(ObjHeader* object) noexcept {
     return CustomHeapObject::from(object).heapHeader();
 }
