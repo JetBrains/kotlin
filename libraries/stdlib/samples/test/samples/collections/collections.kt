@@ -370,6 +370,36 @@ class Collections {
         }
 
         @Sample
+        fun binarySearchWithComparisonFunctionLowerBoundUpperBound() {
+            // first index such that list[index] >= value, or list.size() if such index doesn't exist
+            fun <T : Comparable<T>> List<T?>.lowerBound(value: T?): Int =
+                binarySearch { if (it != null && value != null && it < value) -1 else 1 }.inv()
+
+            // first index such that list[index] > value, or list.size() if such index doesn't exist
+            fun <T : Comparable<T>> List<T?>.upperBound(value: T?): Int =
+                binarySearch { if (it == null || (value != null && it <= value)) -1 else 1 }.inv()
+
+            // [lowerBound, upperBound) is a semi-interval of all the entries of the value in the list
+
+            val lst1 = mutableListOf('a', 'b', 'b', 'c', 'd', 'e')
+            val lst2 = mutableListOf('a',           'c', 'd', 'e')
+            val lst3 = mutableListOf('a', 'b', 'c')
+            val lst4 = mutableListOf(null, null, 'a', 'b', 'c')
+            val lst5 = mutableListOf('a', 'b', 'c')
+
+            assertPrints(lst1.lowerBound('b'), "1")
+            assertPrints(lst1.upperBound('b'), "3")
+            assertPrints(lst2.lowerBound('b'), "1")
+            assertPrints(lst2.upperBound('b'), "1")
+            assertPrints(lst3.lowerBound(null), "0")
+            assertPrints(lst3.upperBound(null), "0")
+            assertPrints(lst4.lowerBound(null), "0")
+            assertPrints(lst4.upperBound(null), "2")
+            assertPrints(lst4.lowerBound('d'), "3")
+            assertPrints(lst4.upperBound('d'), "3")
+        }
+
+        @Sample
         fun add() {
             val list = mutableListOf('a', 'b', 'c')
             assertTrue(list.add('c'))

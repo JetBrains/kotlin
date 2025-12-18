@@ -319,6 +319,9 @@ internal fun <T> List<T>.optimizeReadOnlyList() = when (size) {
  *
  * If the list contains multiple elements equal to [element], there is no guarantee which one will be found.
  *
+ * If you need to find the first or the last occurrence of an element,
+ * refer to the [binarySearch] with a custom comparison function.
+ *
  * `null` value is considered to be less than any non-null value.
  *
  * @return the index of the element, if it is contained in the list within the specified range;
@@ -437,6 +440,7 @@ public inline fun <T, K : Comparable<K>> List<T>.binarySearchBy(
  * The insertion point is defined as the index at which the element should be inserted,
  * so that the list (or the specified subrange of list) still remains sorted.
  * @sample samples.collections.Collections.Lists.binarySearchWithComparisonFunction
+ * @sample samples.collections.Collections.Lists.binarySearchWithComparisonFunctionLowerBoundUpperBound
  */
 public fun <T> List<T>.binarySearch(fromIndex: Int = 0, toIndex: Int = size, comparison: (T) -> Int): Int {
     rangeCheck(size, fromIndex, toIndex)
