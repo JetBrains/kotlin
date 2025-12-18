@@ -814,7 +814,7 @@ class KotlinAndroidMppIT : KGPBaseTest() {
             buildOptions = defaultBuildOptions
                 .copy(androidVersion = agpVersion)
                 // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
-                .disableIsolatedProjects(),
+                .disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
             buildJdk = jdkVersion.location
         ) {
             includeOtherProjectAsSubmodule(pathPrefix = "new-mpp-lib-and-app", otherProjectName = "sample-lib")
@@ -845,7 +845,7 @@ class KotlinAndroidMppIT : KGPBaseTest() {
             buildOptions = defaultBuildOptions
                 .copy(androidVersion = agpVersion)
                 // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
-                .disableIsolatedProjects(),
+                .disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
             buildJdk = jdkVersion.location
         ) {
             build(":lib:allTests", "--dry-run") {
@@ -872,7 +872,7 @@ class KotlinAndroidMppIT : KGPBaseTest() {
             buildOptions = defaultBuildOptions
                 .copy(androidVersion = agpVersion)
                 // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
-                .disableIsolatedProjects(),
+                .disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
             buildJdk = jdkVersion.location
         ) {
             build("publish") {
@@ -1003,7 +1003,7 @@ class KotlinAndroidMppIT : KGPBaseTest() {
             defaultBuildOptions
                 .copy(androidVersion = agpVersion)
                 // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
-                .disableIsolatedProjects(),
+                .disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
             buildJdk = jdkVersion.location
         ) {
             build("assembleDebug") {
@@ -1024,7 +1024,7 @@ class KotlinAndroidMppIT : KGPBaseTest() {
             defaultBuildOptions
                 .copy(androidVersion = agpVersion)
                 // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
-                .disableIsolatedProjects(),
+                .disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
             buildJdk = jdkVersion.location
         ) {
             // Code copied from the reproducer from KT-63753
