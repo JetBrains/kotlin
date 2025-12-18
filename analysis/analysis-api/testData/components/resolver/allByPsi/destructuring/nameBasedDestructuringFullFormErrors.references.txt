@@ -10,7 +10,7 @@ KtNameReferenceExpression(94,97): 'Int'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
+      (in kotlin) class Int private constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
 KtNameReferenceExpression(119,124): 'Tuple'
   KtSimpleNameReference:
@@ -166,7 +166,7 @@ KtNameReferenceExpression(430,433): 'Int'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
+      (in kotlin) class Int private constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
 KtDestructuringDeclarationEntry(435,448): 'val b: String'
   KtDestructuringDeclarationReference:
@@ -203,7 +203,7 @@ KtNameReferenceExpression(484,487): 'Int'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
+      (in kotlin) class Int private constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
 KtNameReferenceExpression(490,491): 'a'
   KtSimpleNameReference:
@@ -462,7 +462,7 @@ KtNameReferenceExpression(827,830): 'Int'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
+      (in kotlin) class Int private constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
 KtDestructuringDeclarationEntry(832,845): 'val b: String'
   KtDestructuringDeclarationReference:
@@ -508,7 +508,7 @@ KtNameReferenceExpression(877,880): 'Int'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
+      (in kotlin) class Int private constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
 KtNameReferenceExpression(883,884): 'a'
   KtSimpleNameReference:
@@ -780,7 +780,7 @@ KtNameReferenceExpression(1225,1228): 'Int'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
+      (in kotlin) class Int private constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
 KtDestructuringDeclarationEntry(1230,1243): 'val b: String'
   KtDestructuringDeclarationReference:
@@ -824,7 +824,7 @@ KtNameReferenceExpression(1272,1275): 'Int'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
+      (in kotlin) class Int private constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
 KtNameReferenceExpression(1278,1279): 'a'
   KtSimpleNameReference:

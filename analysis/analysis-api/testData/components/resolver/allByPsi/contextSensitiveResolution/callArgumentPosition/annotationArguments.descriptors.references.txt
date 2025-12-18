@@ -226,7 +226,7 @@ KtNameReferenceExpression(435,438): 'Int'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
+      (in kotlin) class Int private constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
 KtNameReferenceExpression(444,446): 'A4'
   KtSimpleNameReference:
@@ -327,7 +327,7 @@ KtNameReferenceExpression(570,573): 'Int'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
+      (in kotlin) class Int private constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
 KtNameReferenceExpression(580,592): 'MyAnnotation'
   KtSimpleNameReference:

@@ -52,7 +52,7 @@ KtNameReferenceExpression(127,130): 'Int'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
+      (in kotlin) class Int private constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
 KtNameReferenceExpression(139,140): 's'
   KtSimpleNameReference:
@@ -166,7 +166,7 @@ KtNameReferenceExpression(331,334): 'Int'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
+      (in kotlin) class Int private constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
 KtNameReferenceExpression(343,344): 's'
   KtSimpleNameReference:
@@ -394,7 +394,7 @@ KtNameReferenceExpression(589,592): 'Int'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
+      (in kotlin) class Int private constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
 KtNameReferenceExpression(601,602): 's'
   KtSimpleNameReference:
@@ -555,7 +555,7 @@ KtNameReferenceExpression(793,796): 'Int'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
+      (in kotlin) class Int private constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
 KtNameReferenceExpression(803,804): 's'
   KtSimpleNameReference:
@@ -596,7 +596,7 @@ KtNameReferenceExpression(853,856): 'Int'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
+      (in kotlin) class Int private constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
 KtNameReferenceExpression(863,864): 's'
   KtSimpleNameReference:
@@ -637,7 +637,7 @@ KtNameReferenceExpression(914,917): 'Int'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
+      (in kotlin) class Int private constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
 KtNameReferenceExpression(924,925): 's'
   KtSimpleNameReference:
@@ -685,7 +685,7 @@ KtNameReferenceExpression(982,985): 'Int'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
+      (in kotlin) class Int private constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
 KtNameReferenceExpression(992,993): 's'
   KtSimpleNameReference:
@@ -733,7 +733,7 @@ KtNameReferenceExpression(1052,1055): 'Int'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
+      (in kotlin) class Int private constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
 KtNameReferenceExpression(1062,1063): 's'
   KtSimpleNameReference:
@@ -781,7 +781,7 @@ KtNameReferenceExpression(1119,1122): 'Int'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
+      (in kotlin) class Int private constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
 KtNameReferenceExpression(1129,1130): 's'
   KtSimpleNameReference:
@@ -829,7 +829,7 @@ KtNameReferenceExpression(1180,1183): 'Int'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
+      (in kotlin) class Int private constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
 KtNameReferenceExpression(1190,1191): 's'
   KtSimpleNameReference:
@@ -870,7 +870,7 @@ KtNameReferenceExpression(1237,1240): 'Int'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
+      (in kotlin) class Int private constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable
 
 KtNameReferenceExpression(1247,1248): 's'
   KtSimpleNameReference:
@@ -911,7 +911,7 @@ KtNameReferenceExpression(1301,1308): 'Boolean'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in kotlin) class Booleanprivate constructor : kotlin.Comparable<kotlin.Boolean>, java.io.Serializable
+      (in kotlin) class Boolean private constructor : kotlin.Comparable<kotlin.Boolean>, java.io.Serializable
 
 KtNameReferenceExpression(1311,1312): 's'
   KtSimpleNameReference:
@@ -958,7 +958,7 @@ KtNameReferenceExpression(1350,1357): 'Boolean'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in kotlin) class Booleanprivate constructor : kotlin.Comparable<kotlin.Boolean>, java.io.Serializable
+      (in kotlin) class Boolean private constructor : kotlin.Comparable<kotlin.Boolean>, java.io.Serializable
 
 KtNameReferenceExpression(1360,1361): 's'
   KtSimpleNameReference:
@@ -1018,7 +1018,7 @@ KtNameReferenceExpression(1408,1415): 'Boolean'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in kotlin) class Booleanprivate constructor : kotlin.Comparable<kotlin.Boolean>, java.io.Serializable
+      (in kotlin) class Boolean private constructor : kotlin.Comparable<kotlin.Boolean>, java.io.Serializable
 
 KtNameReferenceExpression(1418,1419): 's'
   KtSimpleNameReference:
@@ -1078,7 +1078,7 @@ KtNameReferenceExpression(1458,1465): 'Boolean'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in kotlin) class Booleanprivate constructor : kotlin.Comparable<kotlin.Boolean>, java.io.Serializable
+      (in kotlin) class Boolean private constructor : kotlin.Comparable<kotlin.Boolean>, java.io.Serializable
 
 KtNameReferenceExpression(1468,1469): 's'
   KtSimpleNameReference:
@@ -1138,7 +1138,7 @@ KtNameReferenceExpression(1514,1521): 'Boolean'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in kotlin) class Booleanprivate constructor : kotlin.Comparable<kotlin.Boolean>, java.io.Serializable
+      (in kotlin) class Boolean private constructor : kotlin.Comparable<kotlin.Boolean>, java.io.Serializable
 
 KtNameReferenceExpression(1524,1525): 's'
   KtSimpleNameReference:
@@ -1185,7 +1185,7 @@ KtNameReferenceExpression(1572,1579): 'Boolean'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in kotlin) class Booleanprivate constructor : kotlin.Comparable<kotlin.Boolean>, java.io.Serializable
+      (in kotlin) class Boolean private constructor : kotlin.Comparable<kotlin.Boolean>, java.io.Serializable
 
 KtNameReferenceExpression(1582,1583): 's'
   KtSimpleNameReference:
@@ -1245,7 +1245,7 @@ KtNameReferenceExpression(1639,1646): 'Boolean'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in kotlin) class Booleanprivate constructor : kotlin.Comparable<kotlin.Boolean>, java.io.Serializable
+      (in kotlin) class Boolean private constructor : kotlin.Comparable<kotlin.Boolean>, java.io.Serializable
 
 KtNameReferenceExpression(1649,1650): 's'
   KtSimpleNameReference:
@@ -1305,7 +1305,7 @@ KtNameReferenceExpression(1698,1705): 'Boolean'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in kotlin) class Booleanprivate constructor : kotlin.Comparable<kotlin.Boolean>, java.io.Serializable
+      (in kotlin) class Boolean private constructor : kotlin.Comparable<kotlin.Boolean>, java.io.Serializable
 
 KtNameReferenceExpression(1708,1709): 's'
   KtSimpleNameReference:
@@ -1352,7 +1352,7 @@ KtNameReferenceExpression(1747,1754): 'Boolean'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in kotlin) class Booleanprivate constructor : kotlin.Comparable<kotlin.Boolean>, java.io.Serializable
+      (in kotlin) class Boolean private constructor : kotlin.Comparable<kotlin.Boolean>, java.io.Serializable
 
 KtNameReferenceExpression(1757,1758): 's'
   KtSimpleNameReference:
@@ -1412,7 +1412,7 @@ KtNameReferenceExpression(1805,1812): 'Boolean'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in kotlin) class Booleanprivate constructor : kotlin.Comparable<kotlin.Boolean>, java.io.Serializable
+      (in kotlin) class Boolean private constructor : kotlin.Comparable<kotlin.Boolean>, java.io.Serializable
 
 KtNameReferenceExpression(1815,1816): 's'
   KtSimpleNameReference:
