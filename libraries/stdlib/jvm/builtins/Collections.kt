@@ -700,6 +700,7 @@ public actual interface MutableMap<K, V> : Map<K, V> {
      */
     @SinceKotlin("1.1")
     @PlatformDependent
+    @IgnorableReturnValue
     public fun remove(key: K, value: V): Boolean {
         // See default implementation in JDK sources
         return true

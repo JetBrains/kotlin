@@ -115,6 +115,7 @@ FILE fqName:<root> fileName:/1.kt
       annotations:
         SinceKotlin(version = "1.1")
         PlatformDependent
+        IgnorableReturnValue
       overridden:
         public open fun remove (key: @[FlexibleNullability] T of <root>.Java1?, value: @[FlexibleNullability] T of <root>.Java1?): kotlin.Boolean declared in <root>.Java1
     FUN FAKE_OVERRIDE name:replace visibility:public modality:OPEN returnType:@[EnhancedNullability] T of <root>.A? [fake_override]
@@ -295,6 +296,7 @@ FILE fqName:<root> fileName:/1.kt
       annotations:
         SinceKotlin(version = "1.1")
         PlatformDependent
+        IgnorableReturnValue
       overridden:
         public open fun remove (key: @[FlexibleNullability] T of <root>.Java1?, value: @[FlexibleNullability] T of <root>.Java1?): kotlin.Boolean declared in <root>.Java1
     FUN FAKE_OVERRIDE name:replace visibility:public modality:OPEN returnType:@[EnhancedNullability] T of <root>.B? [fake_override]
