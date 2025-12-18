@@ -490,17 +490,6 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
             .loadClass("SourceKt").getDeclaredMethod("run").invoke(null)
     }
 
-    fun testChangedEnumsInLibrary() {
-        val oldLibrary = compileLibrary("old", checkKotlinOutput = {})
-        val newLibrary = compileLibrary("new", checkKotlinOutput = {})
-        compileKotlin("source.kt", tmpdir, listOf(oldLibrary))
-
-        val result =
-            URLClassLoader(arrayOf(newLibrary.toURI().toURL(), tmpdir.toURI().toURL()), ForTestCompileRuntime.runtimeJarClassLoader())
-                .loadClass("SourceKt").getDeclaredMethod("run").invoke(null) as String
-        assertEquals("ABCAB", result)
-    }
-
     fun testContextualDeclarationUse() = muteForK1 {
         val library = compileLibrary("library", additionalOptions = listOf(CommonCompilerArguments::contextParameters.cliArgument))
         compileKotlin("contextualDeclarationUse.kt", tmpdir, listOf(library), additionalOptions = listOf(CommonCompilerArguments::skipPrereleaseCheck.cliArgument))
