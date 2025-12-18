@@ -72,6 +72,7 @@ abstract class WasmBinaryTransform : TransformAction<WasmBinaryTransform.Paramet
     abstract val archiveOperations: ArchiveOperations
 
     @get:InputArtifact
+    @get:PathSensitive(PathSensitivity.NAME_ONLY)
     abstract val inputArtifact: Provider<FileSystemLocation>
 
     @get:CompileClasspath
