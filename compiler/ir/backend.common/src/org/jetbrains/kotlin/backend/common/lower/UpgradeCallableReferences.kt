@@ -76,10 +76,12 @@ open class UpgradeCallableReferences(
             }
         }
 
-        private fun IrFunction.flattenParameters() {
+        private fun IrFunction.flattenParameters(hasBoundExtensionReceiver: Boolean) {
             for (parameter in parameters) {
                 require(parameter.kind != IrParameterKind.DispatchReceiver) { "No dispatch receiver allowed in wrappers" }
-                if (parameter.kind == IrParameterKind.ExtensionReceiver) parameter.origin = BOUND_RECEIVER_PARAMETER
+                if (parameter.kind == IrParameterKind.ExtensionReceiver) {
+                    parameter.origin = if (hasBoundExtensionReceiver) BOUND_RECEIVER_PARAMETER else LAMBDA_EXTENSION_RECEIVER
+                }
                 parameter.kind = IrParameterKind.Regular
             }
         }
@@ -90,7 +92,7 @@ open class UpgradeCallableReferences(
             expression.transformChildren(this, data)
             if (!upgradeFunctionReferencesAndLambdas) return expression
             val isRestrictedSuspension = expression.function.isRestrictedSuspensionFunction()
-            expression.function.flattenParameters()
+            expression.function.flattenParameters(hasBoundExtensionReceiver = false)
             return IrRichFunctionReferenceImpl(
                 startOffset = expression.startOffset,
                 endOffset = expression.endOffset,
@@ -188,7 +190,11 @@ open class UpgradeCallableReferences(
             function.visibility = DescriptorVisibilities.LOCAL
             reference.transformChildren(this, data)
             val isRestrictedSuspension = function.isRestrictedSuspensionFunction()
-            function.flattenParameters()
+            function.flattenParameters(
+                function.parameters.any {
+                    it.kind == IrParameterKind.ExtensionReceiver && reference.arguments[it] != null
+                }
+            )
             val (boundParameters, unboundParameters) = function.parameters.partition { reference.arguments[it.indexInParameters] != null }
             function.parameters = boundParameters + unboundParameters
             val reflectionTarget = reference.reflectionTarget.takeUnless { expression.origin.isLambda }
@@ -588,3 +594,5 @@ open class UpgradeCallableReferences(
     protected open fun copyNecessaryAttributes(oldReference: IrLocalDelegatedPropertyReference, newReference: IrRichPropertyReference) {}
     protected open fun IrDeclaration.hasMissingObjectDispatchReceiver(): Boolean = false
 }
+
+val LAMBDA_EXTENSION_RECEIVER by IrDeclarationOriginImpl.Regular
