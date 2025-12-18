@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("DEPRECATION_ERROR")
+
 package org.jetbrains.kotlin.extensions
 
 import com.intellij.openapi.project.Project
@@ -24,6 +26,7 @@ import com.intellij.testFramework.LightVirtualFile
  * The interface for the extensions that are used to substitute VirtualFile on the creation of KtFile, allows to preprocess a file before
  * lexing and parsing
  */
+@Deprecated("This extension point will be deleted in kotlin 2.4", level = DeprecationLevel.ERROR)
 interface PreprocessedVirtualFileFactoryExtension {
     companion object : ProjectExtensionDescriptor<PreprocessedVirtualFileFactoryExtension>(
         "org.jetbrains.kotlin.preprocessedVirtualFileFactoryExtension",
