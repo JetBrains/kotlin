@@ -32,6 +32,9 @@ import org.jetbrains.kotlin.utils.KotlinNativePaths
 import java.nio.file.Files
 import java.nio.file.Paths
 
+/**
+ * The implementation of [NativeKlibCompilationConfig] for the second compilation stage.
+ */
 class KonanConfig(
         project: Project,
         configuration: CompilerConfiguration,
