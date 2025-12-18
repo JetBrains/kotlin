@@ -121,6 +121,8 @@ internal class ResumeIntrinsicResult(
     val result: Any?,
 )
 
+@Suppress("UNUSED")
+@UsedFromCompilerGeneratedCode
 internal fun buildResumeIntrinsicSuspendResult(
     suspendBody: ((Continuation<*>) -> Any?)?,
     remainingFunction: contref1,
@@ -128,22 +130,27 @@ internal fun buildResumeIntrinsicSuspendResult(
     return ResumeIntrinsicResult(suspendBody, WasmContinuationBox(remainingFunction), null)
 }
 
+@Suppress("UNUSED")
+@UsedFromCompilerGeneratedCode
 internal fun buildResumeIntrinsicValueResult(value: Any?): ResumeIntrinsicResult {
     return ResumeIntrinsicResult(null, null, value)
 }
 
 @Suppress("UNUSED")
+@UsedFromCompilerGeneratedCode
 internal fun setWasmContinuation(cont: WasmContinuation<*, *>, b: contref1): Any? {
     cont.wasmContBox = WasmContinuationBox(b)
     return cont
 }
 
 @Suppress("UNUSED")
+@UsedFromCompilerGeneratedCode
 internal fun resumeCompletionWithValue(completion: Continuation<Any?>, value: Any?) {
     completion.resume(value)
 }
 
 @Suppress("UNUSED")
+@UsedFromCompilerGeneratedCode
 internal fun resumeCompletionWithException(completion: Continuation<Throwable>, exception: Throwable) {
     completion.resumeWithException(exception)
 }
