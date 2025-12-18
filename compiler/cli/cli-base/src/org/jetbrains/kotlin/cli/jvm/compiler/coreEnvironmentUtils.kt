@@ -106,7 +106,7 @@ fun <VirtualFile, Source> List<KotlinSourceRoot>.allSourceFilesSequence(
         for (file in sourceRoot.walkTopDown()) {
             if (!file.isFile) continue
 
-            val virtualFile = if (file == sourceRoot) vFile else findVirtualFile(file.absoluteFile.normalize())
+            val virtualFile = findVirtualFile(file.absoluteFile.normalize())
             if (virtualFile != null && processedFiles.add(virtualFile)) {
                 if (accept(virtualFile, false))
                     yield(SourceFileWithModule(convertToSourceFiles(virtualFile), isCommon, hmppModuleName))
