@@ -25,9 +25,7 @@ abstract class KmpIncrementalITBase : KGPBaseTest() {
              * disable IC-breaking feature; it's tested separately in [org.jetbrains.kotlin.gradle.mpp.CommonCodeWithPlatformSymbolsITBase]
              */
             enableUnsafeIncrementalCompilationForMultiplatform = true,
-            // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
-            isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED,
-        )
+        ).disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
 
     protected open val gradleTask = "assemble"
     protected open val projectName = "generic-kmp-app-plus-lib-with-tests"

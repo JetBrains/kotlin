@@ -22,5 +22,5 @@ kotlin {
 // We need it for suppress warnings of Gradle 7.0
 // We need to think about it, when we will support multiple binaries
 tasks.named("jsNodeProductionLibraryDistribution") {
-    mustRunAfter("productionExecutableCompileSync")
+    mustRunAfter("jsProductionExecutableCompileSync")
 }

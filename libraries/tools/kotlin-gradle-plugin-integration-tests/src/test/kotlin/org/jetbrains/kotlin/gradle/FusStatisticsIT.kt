@@ -208,28 +208,6 @@ class FusStatisticsIT : KGPBaseTest() {
         }
     }
 
-    @JsGradlePluginTests
-    @DisplayName("Verify that the metric for applying the Kotlin JS plugin is being collected")
-    @GradleTest
-    @GradleTestVersions(
-        additionalVersions = [TestVersions.Gradle.G_8_2],
-    )
-    fun testMetricCollectingOfApplyingKotlinJsPlugin(gradleVersion: GradleVersion) {
-        project(
-            "simple-js-library",
-            gradleVersion,
-            // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
-            buildOptions = defaultBuildOptions.copy(isolatedProjects = IsolatedProjectsMode.DISABLED),
-        ) {
-            assertNoErrorFilesCreated {
-                build("assemble", "-Pkotlin.session.logger.root.path=$projectPath") {
-                    assertOutputDoesNotContainFusErrors()
-                    fusStatisticsDirectory.assertFusReportContains("KOTLIN_JS_PLUGIN_ENABLED=true")
-                }
-            }
-        }
-    }
-
 
     @JvmGradlePluginTests
     @DisplayName("Ensure that the metric are not collected if plugins were not applied to simple project")
@@ -558,7 +536,7 @@ class FusStatisticsIT : KGPBaseTest() {
             "new-mpp-wasm-test",
             gradleVersion,
             // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
-            buildOptions = defaultBuildOptions.copy(isolatedProjects = IsolatedProjectsMode.DISABLED),
+            buildOptions = defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
         ) {
             gradleProperties.writeText("kotlin.incremental.wasm=true")
 

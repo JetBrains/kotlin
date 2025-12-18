@@ -14,9 +14,6 @@ kotlin {
             isCanBeConsumed = true
             isCanBeResolved = false
         }
-        dependencies {
-            runtimeOnly(project(mapOf("path" to path, "configuration" to otherDist.name)))
-        }
         artifacts {
             add(otherDist.name, tasks.named("otherKlib").map { it.outputs.files.files.first() })
         }
@@ -26,7 +23,11 @@ kotlin {
     }
 
     sourceSets {
-        jsMain {}
+        jsMain {
+            dependencies {
+                runtimeOnly(project(mapOf("path" to path, "configuration" to "otherDist")))
+            }
+        }
         val jsOther by getting {
             dependencies {
                 implementation(project(path = project.path))

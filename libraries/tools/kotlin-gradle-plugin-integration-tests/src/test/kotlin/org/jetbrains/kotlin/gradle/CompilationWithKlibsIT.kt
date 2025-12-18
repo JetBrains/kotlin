@@ -25,7 +25,7 @@ class CompilationWithKlibsIT : KGPBaseTest() {
             "kt-64115",
             gradleVersion,
             // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
-            buildOptions = defaultBuildOptions.copy(isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED),
+            buildOptions = defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
         ) {
             build(":foo:compileTestKotlinJs") {
                 assertTasksExecuted(":foo:compileTestKotlinJs")

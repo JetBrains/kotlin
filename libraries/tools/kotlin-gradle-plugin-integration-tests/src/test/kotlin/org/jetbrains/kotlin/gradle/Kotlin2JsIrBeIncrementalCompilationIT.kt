@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import java.io.File
@@ -39,9 +40,7 @@ abstract class Kotlin2JsIrBeIncrementalCompilationIT : KGPBaseTest() {
             incrementalJsKlib = true,
             incrementalJsIr = true
         ),
-        // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
-        isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED,
-    )
+    ).disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
 
     @DisplayName("Test rebuild after backend error")
     @GradleTest
@@ -191,29 +190,28 @@ abstract class Kotlin2JsIrBeIncrementalCompilationIT : KGPBaseTest() {
         }
     }
 
-    @DisplayName("Test removing unused dependency from klib")
+    @DisplayName("KT-50503: Test removing unused dependency from klib")
     @GradleTest
     fun testRemoveUnusedDependency(gradleVersion: GradleVersion) {
         project("kotlin-js-ir-ic-remove-unused-dep", gradleVersion) {
-            val appBuildGradleKts = subProject("app").buildGradleKts
+            val enableDependencyProperty = "enableDependency"
+            subProject("app").buildScriptInjection {
+                if (project.hasProperty(enableDependencyProperty)) {
+                    project.applyMultiplatform {
+                        sourceSets.jsMain.dependencies {
+                            implementation(project(":lib"))
+                        }
+                    }
+                }
+            }
 
-            val buildGradleKtsWithoutDependency = appBuildGradleKts.readText()
-            appBuildGradleKts.appendText(
-                """
-                |
-                |dependencies {
-                |    implementation(project(":lib"))
-                |}
-                |
-                """.trimMargin()
-            )
-
-            build("compileDevelopmentExecutableKotlinJs") {
+            build("compileDevelopmentExecutableKotlinJs", "-P${enableDependencyProperty}") {
                 assertTasksExecuted(":app:compileDevelopmentExecutableKotlinJs")
             }
 
-            appBuildGradleKts.writeText(buildGradleKtsWithoutDependency)
             build("compileDevelopmentExecutableKotlinJs") {
+                // Check the dependency was there and has been removed
+                assertOutputContains("lib/build/classes/kotlin/js/main/default/ir/bodies.knb has been removed")
                 assertTasksExecuted(":app:compileDevelopmentExecutableKotlinJs")
             }
         }
@@ -233,7 +231,7 @@ abstract class Kotlin2JsIrBeIncrementalCompilationIT : KGPBaseTest() {
             val cacheGuard = projectPath.resolve("build/klib/cache/js/developmentExecutable/cache.guard").toFile()
             assertFalse(cacheGuard.exists(), "Cache guard file should be removed after successful build")
 
-            val srcFile = projectPath.resolve("src/main/kotlin/Main.kt").toFile()
+            val srcFile = projectPath.resolve("src/jsMain/kotlin/Main.kt").toFile()
             srcFile.writeText(srcFile.readText().replace("greeting(\"Gradle\")", "greeting(\"Kotlin\")"))
 
             cacheGuard.createNewFile()

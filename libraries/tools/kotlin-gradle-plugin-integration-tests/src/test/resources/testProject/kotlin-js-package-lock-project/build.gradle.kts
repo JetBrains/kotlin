@@ -14,7 +14,7 @@ kotlin {
 
         jsTest {
             dependencies {
-                implementation("org.jetbrains.kotlin:kotlin-test:$kotlin_version")
+                implementation("org.jetbrains.kotlin:kotlin-test")
             }
         }
     }

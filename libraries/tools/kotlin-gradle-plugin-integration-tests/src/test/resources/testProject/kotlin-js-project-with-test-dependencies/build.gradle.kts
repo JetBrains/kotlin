@@ -19,9 +19,9 @@ kotlin {
 
 kotlin {
     sourceSets {
-        jsMain {
+        jsTest {
             dependencies {
-                testRuntimeOnly(npm("xmlhttprequest", "1.8.0"))
+                runtimeOnly(npm("xmlhttprequest", "1.8.0"))
             }
         }
     }

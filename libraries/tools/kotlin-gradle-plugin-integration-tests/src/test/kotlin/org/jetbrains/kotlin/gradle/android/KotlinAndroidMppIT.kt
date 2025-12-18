@@ -156,7 +156,7 @@ class KotlinAndroidMppIT : KGPBaseTest() {
             buildOptions = defaultBuildOptions
                 .copy(androidVersion = agpVersion)
                 // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
-                .disableIsolatedProjects(),
+                .disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
             buildJdk = jdkVersion.location
         ) {
             val groupDir = subProject("lib").projectPath.resolve("build/repo/com/example")
@@ -366,7 +366,7 @@ class KotlinAndroidMppIT : KGPBaseTest() {
             buildOptions = defaultBuildOptions
                 .copy(androidVersion = agpVersion)
                 // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
-                .disableIsolatedProjects(),
+                .disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
             buildJdk = jdkVersion.location
         ) {
             subProject("lib").buildGradleKts.appendText(
@@ -405,7 +405,7 @@ class KotlinAndroidMppIT : KGPBaseTest() {
             buildOptions = defaultBuildOptions
                 .copy(androidVersion = agpVersion)
                 // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
-                .disableIsolatedProjects(),
+                .disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
             buildJdk = jdkVersion.location
         ) {
             // Convert the 'app' project to a library, publish two flavors without metadata,
@@ -562,7 +562,7 @@ class KotlinAndroidMppIT : KGPBaseTest() {
             buildOptions = defaultBuildOptions
                 .copy(androidVersion = agpVersion)
                 // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
-                .disableIsolatedProjects(),
+                .disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
             buildJdk = jdkVersion.location
         ) {
             subProject("app").buildScriptInjection {
@@ -700,7 +700,7 @@ class KotlinAndroidMppIT : KGPBaseTest() {
             buildOptions = defaultBuildOptions
                 .copy(androidVersion = agpVersion)
                 // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
-                .disableIsolatedProjects(),
+                .disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
             buildJdk = jdkVersion.location
         ) {
             val libBuildScript = subProject("lib").buildGradleKts

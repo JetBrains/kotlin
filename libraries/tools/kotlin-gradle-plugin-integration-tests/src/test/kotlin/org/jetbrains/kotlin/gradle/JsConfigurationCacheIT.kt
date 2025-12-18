@@ -17,7 +17,7 @@ class JsIrConfigurationCacheIT : KGPBaseTest() {
 
     override val defaultBuildOptions: BuildOptions
         // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
-        get() = super.defaultBuildOptions.copy(isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED)
+        get() = super.defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
 
     @DisplayName("configuration cache is working for kotlin2js plugin")
     @GradleTest
@@ -83,7 +83,7 @@ class JsIrConfigurationCacheIT : KGPBaseTest() {
                     ":jsPublicPackageJson",
                     ":rootPackageJson",
                     ":compileKotlinJs",
-                    ":nodeTest",
+                    ":jsNodeTest",
                 ) + listOf(":compileProductionExecutableKotlinJs")
             )
         }
@@ -105,7 +105,7 @@ class JsIrConfigurationCacheIT : KGPBaseTest() {
                     ":jsPublicPackageJson",
                     ":rootPackageJson",
                     ":compileKotlinJs",
-                    ":nodeTest",
+                    ":jsNodeTest",
                 ) + listOf(":compileProductionExecutableKotlinJs")
                 assertTasksUpToDate(*upToDateTasks.toTypedArray())
             }
