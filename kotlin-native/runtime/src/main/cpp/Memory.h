@@ -208,8 +208,6 @@ void InitAndRegisterGlobal(ObjHeader** location, const ObjHeader* initialValue) 
 void ZeroHeapRef(ObjHeader** location) RUNTIME_NOTHROW;
 // Zeroes an array.
 void ZeroArrayRefs(ArrayHeader* array) RUNTIME_NOTHROW;
-// Zeroes stack location.
-void ZeroStackRef(ObjHeader** location) RUNTIME_NOTHROW;
 // Updates stack location.
 void UpdateStackRef(ObjHeader** location, const ObjHeader* object) RUNTIME_NOTHROW;
 // Updates heap/static data location.
@@ -298,8 +296,6 @@ class ObjHolder {
    ObjHeader** slot() {
      return &obj_;
    }
-
-   void clear() { ::ZeroStackRef(&obj_); }
 
  private:
    ObjHeader** frame() { return reinterpret_cast<ObjHeader**>(&frame_); }

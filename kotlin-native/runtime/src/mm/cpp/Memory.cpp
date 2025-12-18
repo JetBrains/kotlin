@@ -114,10 +114,6 @@ extern "C" RUNTIME_NOTHROW void ZeroArrayRefs(ArrayHeader* array) {
     }
 }
 
-extern "C" PERFORMANCE_INLINE RUNTIME_NOTHROW void ZeroStackRef(ObjHeader** location) {
-    mm::StackRefAccessor{location} = nullptr;
-}
-
 extern "C" PERFORMANCE_INLINE RUNTIME_NOTHROW void UpdateStackRef(ObjHeader** location, const ObjHeader* object) {
     mm::StackRefAccessor{location} = const_cast<ObjHeader*>(object);
 }
