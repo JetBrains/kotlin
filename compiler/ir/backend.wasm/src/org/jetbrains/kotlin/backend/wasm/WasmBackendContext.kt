@@ -68,7 +68,7 @@ class WasmBackendContext(
     class CrossFileContext {
         var mainFunctionWrapper: IrSimpleFunction? = null
         val closureCallExports = mutableMapOf<String, IrSimpleFunction>()
-        val kotlinClosureToJsConverters = mutableMapOf<String, IrSimpleFunction>()
+        val kotlinClosureToJsConverters = mutableMapOf<Int, IrSimpleFunction>()
         val jsClosureCallers = mutableMapOf<String, IrSimpleFunction>()
         val jsToKotlinClosures = mutableMapOf<String, IrSimpleFunction>()
         val jsModuleAndQualifierReferences = mutableSetOf<JsModuleAndQualifierReference>()

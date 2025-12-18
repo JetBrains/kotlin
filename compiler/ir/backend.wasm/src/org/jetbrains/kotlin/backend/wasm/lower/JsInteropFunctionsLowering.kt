@@ -347,19 +347,20 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
                 )
             }
 
-            // Converter functions will create new JavaScript closures that delegate to Kotlin closures
+            // Converter functions will create new JavaScript closures that delegate to Kotlin closures,
             // using the above-mentioned trampolines, which are passed in as an argument from the WebAssembly side.
+            // Only one converter function needs to be created per arity, as the type adaptation code has
+            // all been factored out into the trampoline.
             // For each f, we can additionally cache the created Javascript closure.
             //
             //     @JsFun("""(f, trampoline) => {
             //        (p1, p2, ...) => <cache_lookup>(trampoline(f, p1, p2, ...))
             //     }""")
-            //     external fun __convertKotlinClosureToJsClosure_<signatureString>(f: structref, trampoline: funcref): ExternalRef
-            //
-            // TODO: We can actually create these converter functions per arity instead of per function signature.
+            //     external fun __convertKotlinClosureToJsClosure_<arity>(f: structref, trampoline: funcref): ExternalRef
+            val arity = functionTypeInfo.parametersAdapters.size
             val kotlinToJsClosureConvertor =
-                context.getFileContext(currentFile).kotlinClosureToJsConverters.getOrPut(functionTypeInfo.signatureString) {
-                    createKotlinToJsClosureConvertor(functionTypeInfo)
+                context.getFileContext(currentFile).kotlinClosureToJsConverters.getOrPut(arity) {
+                    createKotlinToJsClosureConvertor(arity)
                 }
 
             return TrampolineBasedAdapter(kotlinToJsClosureConvertor, trampolineRef)
@@ -537,9 +538,9 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
         return result
     }
 
-    private fun createKotlinToJsClosureConvertor(info: FunctionTypeInfo): IrSimpleFunction {
+    private fun createKotlinToJsClosureConvertor(arity: Int): IrSimpleFunction {
         val result = context.irFactory.buildFun {
-            name = Name.identifier("__convertKotlinClosureToJsClosure_${info.signatureString}")
+            name = Name.identifier("__convertKotlinClosureToJsClosure_${arity}")
             returnType = jsRelatedSymbols.jsAnyType
             isExternal = true
         }
@@ -553,7 +554,6 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
             type = context.wasmSymbols.wasmFuncRefType
         }
         val builder = context.createIrBuilder(result.symbol)
-        val arity = info.parametersAdapters.size
         val jsCode = buildString {
             append("(f, trampoline) => ")
             append("getCachedJsObject(f, ")
