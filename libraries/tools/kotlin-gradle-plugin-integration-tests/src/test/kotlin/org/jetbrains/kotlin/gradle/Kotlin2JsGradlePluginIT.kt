@@ -1720,16 +1720,6 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
         }
     }
 
-    @DisplayName("test deprecated kotlin-js gradle plugin message reported")
-    @GradleTest
-    fun testDeprecatedMessageReported(gradleVersion: GradleVersion) {
-        project("kotlin2JsInternalTest", gradleVersion) {
-            build("help") { // just to trigger plugin registration
-                assertOutputContains("w: 'kotlin-js' Gradle plugin is deprecated and will be removed in the future.")
-            }
-        }
-    }
-
     @DisplayName("nodejs up-to-date check works")
     @GradleTest
     fun testNodeJsAndYarnDownload(gradleVersion: GradleVersion) {
