@@ -106,9 +106,8 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
             if (!configuration.printVersion) {
                 messageCollector.report(CompilerMessageSeverity.ERROR, "No source files")
             }
+            return null
         }
-
-        if (!configuration.printVersion && messageCollector.hasErrors()) return null
 
         perfManager?.notifyPhaseStarted(PhaseType.Analysis)
         val sourceScope: AbstractProjectFileSearchScope
