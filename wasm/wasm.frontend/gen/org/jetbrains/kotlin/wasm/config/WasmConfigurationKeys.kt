@@ -62,6 +62,9 @@ object WasmConfigurationKeys {
     @JvmField
     val WASM_DISABLE_CROSS_FILE_OPTIMISATIONS = CompilerConfigurationKey.create<Boolean>("Disables cross file optimizations. Required to for IC.")
 
+    @JvmField
+    val WASM_INTERNAL_LOCAL_VARIABLE_PREFIX = CompilerConfigurationKey.create<String>("prefix for the name of internal/synthetic local variables")
+
 }
 
 var CompilerConfiguration.wasmEnableArrayRangeChecks: Boolean
@@ -123,4 +126,8 @@ var CompilerConfiguration.wasmCommandModule: Boolean
 var CompilerConfiguration.wasmDisableCrossFileOptimisations: Boolean
     get() = getBoolean(WasmConfigurationKeys.WASM_DISABLE_CROSS_FILE_OPTIMISATIONS)
     set(value) { put(WasmConfigurationKeys.WASM_DISABLE_CROSS_FILE_OPTIMISATIONS, value) }
+
+var CompilerConfiguration.wasmInternalLocalVariablePrefix: String?
+    get() = get(WasmConfigurationKeys.WASM_INTERNAL_LOCAL_VARIABLE_PREFIX)
+    set(value) { put(WasmConfigurationKeys.WASM_INTERNAL_LOCAL_VARIABLE_PREFIX, requireNotNull(value) { "nullable values are not allowed" }) }
 

@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.arguments.dsl.defaultFalse
 import org.jetbrains.kotlin.arguments.dsl.defaultNull
 import org.jetbrains.kotlin.arguments.dsl.defaultTrue
 import org.jetbrains.kotlin.arguments.dsl.types.BooleanType
+import org.jetbrains.kotlin.arguments.dsl.types.KotlinJvmTargetType
 import org.jetbrains.kotlin.arguments.dsl.types.StringType
 
 
@@ -117,6 +118,19 @@ val actualWasmArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.wa
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_1_20,
+        )
+    }
+
+    compilerArgument {
+        name = "Xwasm-internal-local-variable-prefix"
+        description = "Prefix to use for internally generated local variables.".asReleaseDependent()
+        valueType = StringType(
+            isNullable = false.asReleaseDependent(),
+            defaultValue = "~".asReleaseDependent()
+        )
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_4_0
         )
     }
 
