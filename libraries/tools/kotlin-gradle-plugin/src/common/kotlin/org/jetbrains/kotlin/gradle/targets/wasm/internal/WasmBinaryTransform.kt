@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.library.loader.KlibLoader
 import java.io.File
 import javax.inject.Inject
 
+@CacheableTransform
 abstract class WasmBinaryTransform : TransformAction<WasmBinaryTransform.Parameters> {
     abstract class Parameters : TransformParameters {
         @get:Internal
@@ -156,6 +157,7 @@ abstract class WasmBinaryTransform : TransformAction<WasmBinaryTransform.Paramet
     }
 }
 
+@CacheableTransform
 abstract class NoOpWasmBinaryTransform : TransformAction<TransformParameters.None> {
 
     override fun transform(p0: TransformOutputs) {
