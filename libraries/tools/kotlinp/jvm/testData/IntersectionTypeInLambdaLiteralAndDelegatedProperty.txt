@@ -62,7 +62,7 @@ lambda {
 // ------------------------------------------
 lambda {
 
-  // signature: invoke(LInv;LInv;)LInv;
+  // signature: invoke(Ljava/lang/Object;Ljava/lang/Object;)LInv;
   local final fun kotlin/Nothing.<anonymous>(it: kotlin/Nothing): Inv<out kotlin/Any>
 }
 // IntersectionTypeInLambdaLiteralAndDelegatedPropertyKt$test$d$2.class

@@ -233,6 +233,10 @@ abstract class AbstractFunctionReferenceLowering<C : CommonBackendContext>(val c
         return functionReferenceClass
     }
 
+    /**
+     * This function is very similar to [org.jetbrains.kotlin.backend.jvm.lower.FunctionReferenceLowering.FunctionReferenceBuilder.createInvokeMethod].
+     * If you make any changes, don't forget to also change the other one.
+     */
     private fun buildInvokeMethod(
         functionReference: IrRichFunctionReference,
         functionReferenceClass: IrClass,
