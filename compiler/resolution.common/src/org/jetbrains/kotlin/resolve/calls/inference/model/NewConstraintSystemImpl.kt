@@ -226,7 +226,7 @@ class NewConstraintSystemImpl(
         val variableWithConstraints = notFixedTypeVariables[type.typeConstructor()] ?: return listOf(type.typeConstructor())
 
         return variableWithConstraints.constraints.mapNotNull {
-            if (it.kind == ConstraintKind.LOWER) return@mapNotNull null
+            if (it.kind == ConstraintKind.LOWER || it.isNoInfer) return@mapNotNull null
             it.type.typeConstructor().takeUnless { allTypeVariables.containsKey(it) }
         }
     }
