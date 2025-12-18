@@ -390,7 +390,6 @@ class ExportModelGenerator(val context: JsIrBackendContext, val isEsModules: Boo
                     members.addIfNotNull(exportProperty(candidate, typeParameterScope)?.withAttributesFor(candidate))
 
                 is IrClass -> {
-                    if (klass.isInterface && !candidate.isCompanion) return@forEachExportedMember
                     if (candidate.isInner && (candidate.modality == Modality.OPEN || candidate.modality == Modality.FINAL)) {
                         members.add(candidate.toFactoryPropertyForInnerClass(typeParameterScope).withAttributesFor(candidate))
                     }

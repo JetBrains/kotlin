@@ -72,6 +72,49 @@ declare namespace JS_TESTS {
                 readonly "foo.InterfaceWithCompanion": unique symbol;
             };
         }
+        interface InterfaceWithNamedCompanion {
+            readonly __doNotUseOrImplementIt: {
+                readonly "foo.InterfaceWithNamedCompanion": unique symbol;
+            };
+        }
+        namespace InterfaceWithNamedCompanion {
+            function companionStaticFunction(): string;
+            abstract class Named extends KtSingleton<Named.$metadata$.constructor>() {
+                private constructor();
+            }
+            namespace Named {
+                /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+                namespace $metadata$ {
+                    abstract class constructor {
+                        companionFunction(): string;
+                        private constructor();
+                    }
+                }
+            }
+        }
+        interface SomeSealedInterface {
+            readonly x: string;
+            readonly __doNotUseOrImplementIt: {
+                readonly "foo.SomeSealedInterface": unique symbol;
+            };
+        }
+        namespace SomeSealedInterface {
+            class SomeNestedImpl implements foo.SomeSealedInterface {
+                constructor(x: string);
+                get x(): string;
+                copy(x?: string): foo.SomeSealedInterface.SomeNestedImpl;
+                toString(): string;
+                hashCode(): number;
+                equals(other: Nullable<any>): boolean;
+                readonly __doNotUseOrImplementIt: foo.SomeSealedInterface["__doNotUseOrImplementIt"];
+            }
+            namespace SomeNestedImpl {
+                /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+                namespace $metadata$ {
+                    const constructor: abstract new () => SomeNestedImpl;
+                }
+            }
+        }
         interface ExportedChildInterface extends foo.ExportedParentInterface {
             bar(): void;
             readonly __doNotUseOrImplementIt: {

@@ -66,6 +66,24 @@ interface InterfaceWithCompanion {
     }
 }
 
+// KT-82128
+@JsExport
+interface InterfaceWithNamedCompanion {
+    companion object Named {
+        fun companionFunction(): String = "FUNCTION"
+
+        @JsStatic
+        fun companionStaticFunction(): String = "STATIC FUNCTION"
+    }
+}
+
+// KT-52800
+@JsExport
+sealed interface SomeSealedInterface {
+    val x: String
+    data class SomeNestedImpl(override val x: String) : SomeSealedInterface
+}
+
 // KT-64708
 @JsExport
 external interface ExportedParentInterface

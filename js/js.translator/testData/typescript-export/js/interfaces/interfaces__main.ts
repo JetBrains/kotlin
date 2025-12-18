@@ -3,7 +3,9 @@ import ChildTestInterfaceImpl = JS_TESTS.foo.ChildTestInterfaceImpl;
 import processInterface = JS_TESTS.foo.processInterface;
 import processOptionalInterface = JS_TESTS.foo.processOptionalInterface;
 import WithTheCompanion = JS_TESTS.foo.WithTheCompanion;
+import InterfaceWithNamedCompanion = JS_TESTS.foo.InterfaceWithNamedCompanion;
 import ImplementorOfInterfaceWithDefaultArguments = JS_TESTS.foo.ImplementorOfInterfaceWithDefaultArguments;
+import SomeSealedInterface = JS_TESTS.foo.SomeSealedInterface
 
 function assert(condition: boolean) {
     if (!condition) {
@@ -24,12 +26,17 @@ function box(): string {
 
     assert(WithTheCompanion.companionStaticFunction() == "STATIC FUNCTION")
     assert(WithTheCompanion.Companion.companionFunction() == "FUNCTION")
+    assert(InterfaceWithNamedCompanion.companionStaticFunction() == "STATIC FUNCTION")
+    assert(InterfaceWithNamedCompanion.Named.companionFunction() == "FUNCTION")
 
     const instance = new ImplementorOfInterfaceWithDefaultArguments()
     assert(instance.foo() === 0);
     assert(instance.foo(2) === 2);
     assert(instance.bar() === 1);
     assert(instance.bar(2) === 3);
+
+    const sealedImpl: SomeSealedInterface = new SomeSealedInterface.SomeNestedImpl("OK")
+    assert(sealedImpl.x === "OK")
 
     return "OK";
 }
