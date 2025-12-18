@@ -1,0 +1,41 @@
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] explicitBackingField.kt
+    public final [ResolvedTo(STATUS)] class Test : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Test] constructor(): R|Test| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] val foo: R|IFoo|
+            private final [ResolvedTo(BODY_RESOLVE)] backing field field: R|Foo| = R|/Foo.Foo|()
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Test] get(): R|IFoo|
+
+    }
+    public abstract [ResolvedTo(STATUS)] interface IFoo : R|kotlin/Any| {
+    }
+    public final [ResolvedTo(STATUS)] class Foo : R|IFoo| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Foo] constructor(): R|Foo| {
+            LAZY_super<<implicit>>
+        }
+
+    }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] explicitBackingField.kt
+    public final [ResolvedTo(BODY_RESOLVE)] class Test : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Test] constructor(): R|Test| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] val foo: R|IFoo|
+            private final [ResolvedTo(BODY_RESOLVE)] backing field field: R|Foo| = R|/Foo.Foo|()
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Test] get(): R|IFoo|
+
+    }
+    public abstract [ResolvedTo(BODY_RESOLVE)] interface IFoo : R|kotlin/Any| {
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] class Foo : R|IFoo| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo] constructor(): R|Foo| {
+            super<R|kotlin/Any|>()
+        }
+
+    }

@@ -1948,6 +1948,12 @@ public class FirSourceLazyDeclarationResolveTestGenerated extends AbstractFirSou
     }
 
     @Test
+    @TestMetadata("explicitBackingField.kt")
+    public void testExplicitBackingField() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/properties/explicitBackingField.kt");
+    }
+
+    @Test
     @TestMetadata("finalPropertyInInterface.kt")
     public void testFinalPropertyInInterface() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/properties/finalPropertyInInterface.kt");
