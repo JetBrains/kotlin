@@ -414,10 +414,6 @@ RUNTIME_NOTHROW extern "C" OBJ_GETTER(Konan_getWeakReferenceImpl, ObjHeader* ref
     RETURN_RESULT_OF(mm::createRegularWeakReferenceImpl, referred);
 }
 
-void kotlin::OnMemoryAllocation(size_t totalAllocatedBytes) noexcept {
-    mm::GlobalData::Instance().gcScheduler().setAllocatedBytes(totalAllocatedBytes);
-}
-
 void kotlin::initObjectPool() noexcept {
     alloc::initObjectPool();
 }

@@ -429,8 +429,6 @@ private:
     ThreadStateGuard backingGuard_;
 };
 
-void OnMemoryAllocation(size_t totalAllocatedBytes) noexcept;
-
 void initObjectPool() noexcept;
 void compactObjectPoolInCurrentThread() noexcept;
 

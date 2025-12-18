@@ -6,10 +6,9 @@
 #include "ObjectAlloc.hpp"
 
 #include <atomic>
-
-#include "Memory.h"
-
 #include <cstdlib>
+
+#include "GlobalData.hpp"
 
 using namespace kotlin;
 
@@ -26,7 +25,7 @@ void* alloc::allocateInObjectPool(size_t size) noexcept {
     void* result = ::calloc(1, size);
     auto newSize = allocatedBytesCounter.fetch_add(size, std::memory_order_relaxed);
     newSize += size;
-    OnMemoryAllocation(newSize);
+    mm::GlobalData::Instance().gcScheduler().setAllocatedBytes(newSize);
     return result;
 }
 

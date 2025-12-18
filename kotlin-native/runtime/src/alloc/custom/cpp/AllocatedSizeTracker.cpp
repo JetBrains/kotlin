@@ -43,7 +43,7 @@ void alloc::AllocatedSizeTracker::Heap::recordDifferenceAndNotifyScheduler(std::
     if (schedulerNotificationTestHook) {
         schedulerNotificationTestHook(nowAllocated);
     }
-    OnMemoryAllocation(nowAllocated);
+    mm::GlobalData::Instance().gcScheduler().setAllocatedBytes(nowAllocated);
 }
 
 void alloc::test_support::setSchedulerNotificationHook(void (*hook)(std::size_t)) noexcept {
