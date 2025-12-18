@@ -2265,6 +2265,11 @@ public class CliTestGenerated extends AbstractCliTest {
       runTest("compiler/testData/cli/metadata/anonymousObjectType.args");
     }
 
+    @TestMetadata("cliArgsDisallowedValuesForFeatureArgs.args")
+    public void testCliArgsDisallowedValuesForFeatureArgs() {
+      runTest("compiler/testData/cli/metadata/cliArgsDisallowedValuesForFeatureArgs.args");
+    }
+
     @TestMetadata("cliArgsMultipleErrors.args")
     public void testCliArgsMultipleErrors() {
       runTest("compiler/testData/cli/metadata/cliArgsMultipleErrors.args");
