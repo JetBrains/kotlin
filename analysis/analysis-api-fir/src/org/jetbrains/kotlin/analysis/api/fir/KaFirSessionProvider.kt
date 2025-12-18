@@ -20,7 +20,9 @@ import org.jetbrains.kotlin.analysis.api.fir.utils.KaFirCacheCleaner
 import org.jetbrains.kotlin.analysis.api.impl.base.sessions.KaBaseSessionProvider
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.permissions.KaAnalysisPermissionRegistry
+import org.jetbrains.kotlin.analysis.api.platform.KotlinAnalysisInWriteActionListener
 import org.jetbrains.kotlin.analysis.api.platform.KaCachedService
+import org.jetbrains.kotlin.analysis.api.platform.analysisMessageBus
 import org.jetbrains.kotlin.analysis.api.platform.lifetime.KotlinReadActionConfinementLifetimeToken
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule
@@ -115,7 +117,7 @@ internal class KaFirSessionProvider(project: Project) : KaBaseSessionProvider(pr
             }
 
             val identifier = tokenFactory.identifier
-            identifier.flushPendingChanges(project)
+            identifier.handleEnteringAnalysisInWriteAction(project)
 
             val session = cache.get(useSiteModule, ::createAnalysisSession)
                 ?: error("`createAnalysisSession` must not return `null`.")
@@ -165,16 +167,20 @@ internal class KaFirSessionProvider(project: Project) : KaBaseSessionProvider(pr
     }
 
     override fun afterLeavingAnalysis(session: KaSession, useSiteElement: KtElement) {
-        try {
-            super.afterLeavingAnalysis(session, useSiteElement)
-        } finally {
-            cacheCleaner.exitAnalysis()
-        }
+        afterLeavingAnalysisImpl { super.afterLeavingAnalysis(session, useSiteElement) }
     }
 
     override fun afterLeavingAnalysis(session: KaSession, useSiteModule: KaModule) {
+        afterLeavingAnalysisImpl { super.afterLeavingAnalysis(session, useSiteModule) }
+    }
+
+    private inline fun afterLeavingAnalysisImpl(superCall: () -> Unit) {
         try {
-            super.afterLeavingAnalysis(session, useSiteModule)
+            try {
+                superCall()
+            } finally {
+                tokenFactory.identifier.handleLeavingAnalysisInWriteAction(project)
+            }
         } finally {
             cacheCleaner.exitAnalysis()
         }
@@ -260,13 +266,23 @@ internal class KaFirSessionProvider(project: Project) : KaBaseSessionProvider(pr
     }
 }
 
-private fun KClass<out KaLifetimeToken>.flushPendingChanges(project: Project) {
-    if (this == KotlinReadActionConfinementLifetimeToken::class &&
-        KaAnalysisPermissionRegistry.getInstance().isAnalysisAllowedInWriteAction &&
-        ApplicationManager.getApplication().isWriteAccessAllowed
-    ) {
-        // We must flush modifications to publish local modifications into FIR tree
+private fun KClass<out KaLifetimeToken>.handleEnteringAnalysisInWriteAction(project: Project) {
+    if (isAnalysisInWriteAction(this)) {
+        // As we are inside a write action, we must flush deferred modifications to materialize its effects up to this point.
         @OptIn(LLFirInternals::class)
         LLFirDeclarationModificationService.getInstance(project).flushModifications()
+
+        project.analysisMessageBus.syncPublisher(KotlinAnalysisInWriteActionListener.TOPIC).onEnteringAnalysisInWriteAction()
     }
 }
+
+private fun KClass<out KaLifetimeToken>.handleLeavingAnalysisInWriteAction(project: Project) {
+    if (isAnalysisInWriteAction(this)) {
+        project.analysisMessageBus.syncPublisher(KotlinAnalysisInWriteActionListener.TOPIC).afterLeavingAnalysisInWriteAction()
+    }
+}
+
+private fun isAnalysisInWriteAction(lifetimeTokenIdentifier: KClass<out KaLifetimeToken>): Boolean =
+    lifetimeTokenIdentifier == KotlinReadActionConfinementLifetimeToken::class &&
+            KaAnalysisPermissionRegistry.getInstance().isAnalysisAllowedInWriteAction &&
+            ApplicationManager.getApplication().isWriteAccessAllowed
