@@ -16,6 +16,10 @@ KClass: class JavaEnum : Enum
     public final fun valueOf(kotlin.String): JavaEnum
     public final fun values(): kotlin.Array<JavaEnum>
     public final val entries: kotlin.enums.EnumEntries<JavaEnum>
+  staticMembers:
+    public final val entries: kotlin.enums.EnumEntries<JavaEnum>
+    public final fun valueOf(kotlin.String): JavaEnum
+    public final fun values(): kotlin.Array<JavaEnum>
 KClass: interface JavaPropertyAnnotation : Annotation, Any
   members:
     public open operator fun JavaPropertyAnnotation.equals(kotlin.Any?): kotlin.Boolean

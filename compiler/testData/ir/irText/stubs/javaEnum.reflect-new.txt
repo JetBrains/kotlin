@@ -16,5 +16,9 @@ KClass: class JEnum : Enum
     public final fun valueOf(kotlin.String): JEnum
     public final fun values(): kotlin.Array<JEnum>
     public final val entries: kotlin.enums.EnumEntries<JEnum>
+  staticMembers:
+    public final val entries: kotlin.enums.EnumEntries<JEnum>
+    public final fun valueOf(kotlin.String): JEnum
+    public final fun values(): kotlin.Array<JEnum>
 KPackage: JavaEnumKt
   public final val test: JEnum

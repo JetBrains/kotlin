@@ -163,6 +163,8 @@ KClass: abstract interface JavaDefault : Any
   declaredMembers:
     public abstract fun JavaDefault.foo(): kotlin.Unit
     public final val a: kotlin.Int
+  staticMembers:
+    public final val a: kotlin.Int
 KClass: abstract interface JavaPublic : Any
   members:
     public open operator fun JavaPublic.equals(kotlin.Any?): kotlin.Boolean
@@ -172,6 +174,8 @@ KClass: abstract interface JavaPublic : Any
     public final val a: kotlin.Int
   declaredMembers:
     public abstract fun JavaPublic.foo(): kotlin.Unit
+    public final val a: kotlin.Int
+  staticMembers:
     public final val a: kotlin.Int
 KClass: class K : JavaDefault, KotlinInternal
   members:
