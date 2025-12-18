@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck.Outp
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Settings
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.withPlatformLibs
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.LLDBSessionSpec
+import org.jetbrains.kotlin.konan.test.blackbox.support.util.ReplLLDBSessionSpec
 import org.jetbrains.kotlin.test.directives.model.*
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
@@ -320,12 +321,12 @@ internal fun parseEntryPoint(registeredDirectives: RegisteredDirectives, locatio
     return entryPoint
 }
 
-internal fun parseLLDBSpec(testDataFile: File): LLDBSessionSpec {
+internal fun parseReplLLDBSpec(testDataFile: File): ReplLLDBSessionSpec {
     val specFilePathWithoutExtension = testDataFile.absolutePath.removeSuffix(testDataFile.extension)
     val specFileLocation = "${specFilePathWithoutExtension}txt"
     val specFile = File(specFileLocation)
     return try {
-        LLDBSessionSpec.parse(specFile.readText())
+        ReplLLDBSessionSpec.parse(specFile.readText())
     } catch (e: Exception) {
         Assertions.fail<Nothing>("${testDataFile.absolutePath}: Cannot parse LLDB session specification: " + e.message, e)
     }
