@@ -1,0 +1,3 @@
+error: no value expected for boolean argument -Xnested-type-aliases. Please remove the value: -Xnested-type-aliases=
+info: use -help for more information
+COMPILATION_ERROR
