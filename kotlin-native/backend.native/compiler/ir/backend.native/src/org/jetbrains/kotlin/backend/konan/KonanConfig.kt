@@ -17,44 +17,25 @@ import org.jetbrains.kotlin.backend.konan.serialization.PartialCacheInfo
 import org.jetbrains.kotlin.backend.konan.util.systemCacheRootDirectory
 import org.jetbrains.kotlin.backend.konan.util.toObsoleteKind
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.KotlinCompilerVersion
-import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.config.moduleName
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.config.nativeBinaryOptions.*
 import org.jetbrains.kotlin.config.nativeBinaryOptions.SanitizerKind
 import org.jetbrains.kotlin.config.nativeBinaryOptions.UnitSuspendFunctionObjCExport
-import org.jetbrains.kotlin.config.phaseConfig
-import org.jetbrains.kotlin.konan.config.konanFriendLibraries
-import org.jetbrains.kotlin.konan.config.konanGeneratedHeaderKlibPath
 import org.jetbrains.kotlin.konan.config.konanHome
-import org.jetbrains.kotlin.konan.config.konanIncludedBinaries
-import org.jetbrains.kotlin.konan.config.konanManifestAddend
-import org.jetbrains.kotlin.konan.config.konanManifestNativeTargets
-import org.jetbrains.kotlin.konan.config.konanNativeLibraries
-import org.jetbrains.kotlin.konan.config.konanOutputPath
-import org.jetbrains.kotlin.konan.config.konanProducedArtifactKind
 import org.jetbrains.kotlin.konan.config.konanPurgeUserLibs
-import org.jetbrains.kotlin.konan.config.konanRefinesModules
-import org.jetbrains.kotlin.konan.config.konanShortModuleName
 import org.jetbrains.kotlin.konan.config.konanTarget
-import org.jetbrains.kotlin.konan.config.konanWriteDependenciesOfProducedKlibTo
 import org.jetbrains.kotlin.konan.file.File
-import org.jetbrains.kotlin.konan.properties.loadProperties
 import org.jetbrains.kotlin.konan.target.*
-import org.jetbrains.kotlin.konan.util.visibleName
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.metadata.resolver.TopologicalLibraryOrder
-import org.jetbrains.kotlin.util.removeSuffixIfPresent
 import org.jetbrains.kotlin.utils.KotlinNativePaths
 import java.nio.file.Files
 import java.nio.file.Paths
 
 class KonanConfig(
-        override val project: Project,
-        override val configuration: CompilerConfiguration
-) : NativeKlibCompilationConfig {
+        project: Project,
+        configuration: CompilerConfiguration,
+) : NativeKlibCompilationConfig(project, configuration) {
     /**
      * Determine if we compile for iOS target with Mac ABI (Catalyst).
      * Avoid using this property if possible. Instead, use [TargetTriple.isMacabi] as it is more direct.
@@ -468,10 +449,6 @@ class KonanConfig(
         configuration.get(BinaryOptions.linkRuntime) ?: defaultStrategy
     }
 
-    override val manifestProperties = configuration.konanManifestAddend?.let {
-        File(it).loadProperties()
-    }
-
     private val defaultPropertyLazyInitialization = true
     internal val propertyLazyInitialization: Boolean
         get() = configuration.get(KonanConfigKeys.PROPERTY_LAZY_INITIALIZATION)?.also {
@@ -685,39 +662,6 @@ class KonanConfig(
 
     val isInteropStubs: Boolean
         get() = manifestProperties?.getProperty("interop") == "true"
-
-    override val produce: CompilerOutputKind
-        get() = configuration.konanProducedArtifactKind!!
-
-    override val metadataKlib: Boolean
-        get() = configuration.getBoolean(CommonConfigurationKeys.METADATA_KLIB)
-
-    override val headerKlibPath: String?
-        get() = configuration.konanGeneratedHeaderKlibPath?.removeSuffixIfPresent(".klib")
-
-    override val friendModuleFiles: Set<File>
-        get() = configuration.konanFriendLibraries.map { File(it) }.toSet()
-
-    override val refinesModuleFiles: Set<File>
-        get() = configuration.konanRefinesModules.map { File(it) }.toSet()
-
-    override val nativeLibraries: List<String>
-        get() = configuration.konanNativeLibraries
-
-    override val includeBinaries: List<String>
-        get() = configuration.konanIncludedBinaries
-
-    override val writeDependenciesOfProducedKlibTo: String?
-        get() = configuration.konanWriteDependenciesOfProducedKlibTo
-
-    override val nativeTargetsForManifest: Collection<KonanTarget>
-        get() = configuration.konanManifestNativeTargets
-
-    override val shortModuleName: String?
-        get() = configuration.konanShortModuleName
-
-    override val outputPath: String
-        get() = configuration.konanOutputPath?.removeSuffixIfPresent(produce.suffix(target)) ?: produce.visibleName
 }
 
 private fun String.isRelease(): Boolean {

@@ -6,11 +6,12 @@
 package org.jetbrains.kotlin.backend.konan
 
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.metadataKlib
 import org.jetbrains.kotlin.konan.config.konanFriendLibraries
 import org.jetbrains.kotlin.konan.config.konanGeneratedHeaderKlibPath
 import org.jetbrains.kotlin.konan.config.konanIncludedBinaries
+import org.jetbrains.kotlin.konan.config.konanManifestAddend
 import org.jetbrains.kotlin.konan.config.konanManifestNativeTargets
 import org.jetbrains.kotlin.konan.config.konanNativeLibraries
 import org.jetbrains.kotlin.konan.config.konanOutputPath
@@ -19,7 +20,7 @@ import org.jetbrains.kotlin.konan.config.konanRefinesModules
 import org.jetbrains.kotlin.konan.config.konanShortModuleName
 import org.jetbrains.kotlin.konan.config.konanWriteDependenciesOfProducedKlibTo
 import org.jetbrains.kotlin.konan.file.File
-import org.jetbrains.kotlin.konan.properties.Properties
+import org.jetbrains.kotlin.konan.properties.loadProperties
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.util.visibleName
@@ -27,25 +28,22 @@ import org.jetbrains.kotlin.library.metadata.resolver.KotlinLibraryResolveResult
 import org.jetbrains.kotlin.util.removeSuffixIfPresent
 
 /**
- * This interface exists not because it is a good abstraction. Rather, it emerged
+ * This abstract class exists not because it is a good abstraction. Rather, it emerged
  * from the need to extract src -> klib compilation from the /kotlin-native directory.
  */
-interface NativeKlibCompilationConfig {
-    val project: Project
+abstract class NativeKlibCompilationConfig(val project: Project, val configuration: CompilerConfiguration) {
 
-    val configuration: CompilerConfiguration
+    abstract val target: KonanTarget
 
-    val target: KonanTarget
+    abstract val resolvedLibraries: KotlinLibraryResolveResult
 
-    val resolvedLibraries: KotlinLibraryResolveResult
-
-    val moduleId: String
+    abstract val moduleId: String
 
     val produce: CompilerOutputKind
         get() = configuration.konanProducedArtifactKind!!
 
     val metadataKlib: Boolean
-        get() = configuration.getBoolean(CommonConfigurationKeys.METADATA_KLIB)
+        get() = configuration.metadataKlib
 
     val headerKlibPath: String?
         get() = configuration.konanGeneratedHeaderKlibPath?.removeSuffixIfPresent(".klib")
@@ -68,7 +66,9 @@ interface NativeKlibCompilationConfig {
     val nativeTargetsForManifest: Collection<KonanTarget>
         get() = configuration.konanManifestNativeTargets
 
-    val manifestProperties: Properties?
+    val manifestProperties = configuration.konanManifestAddend?.let {
+        File(it).loadProperties()
+    }
 
     val shortModuleName: String?
         get() = configuration.konanShortModuleName
