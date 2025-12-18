@@ -263,14 +263,15 @@ abstract class AbstractFunctionReferenceLowering<C : CommonBackendContext>(val c
             )
 
             val nonDispatchParameters = superFunction.nonDispatchParameters.mapIndexed { i, superParameter ->
+                val oldParameter = invokeFunction.parameters[i + boundFields.size]
                 superParameter.copyTo(
                     this,
-                    startOffset = if (isLambda) invokeFunction.parameters[i].startOffset else UNDEFINED_OFFSET,
-                    endOffset = if (isLambda) invokeFunction.parameters[i].endOffset else UNDEFINED_OFFSET,
-                    name = invokeFunction.parameters[i].name,
+                    startOffset = if (isLambda) oldParameter.startOffset else UNDEFINED_OFFSET,
+                    endOffset = if (isLambda) oldParameter.endOffset else UNDEFINED_OFFSET,
+                    name = oldParameter.name,
                     type = typeSubstitutor.substitute(superParameter.type),
                     defaultValue = null,
-                )
+                ).apply { copyAnnotationsFrom(oldParameter) }
             }
             this.parameters += nonDispatchParameters
             val overriddenMethodOfAny = superFunction.findOverriddenMethodOfAny()
