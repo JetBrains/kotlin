@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.utils.memoryOptimizedPlus
  * This is needed to avoid creating fake overrides of declarations at later state.
  * @see org.jetbrains.kotlin.ir.overrides.IrFakeOverrideBuilder.buildFakeOverridesForClassUsingOverriddenSymbols for more details.
  */
-internal var IrClass.declarationsAtFunctionReferenceLowering: List<IrDeclaration>? by irAttribute(copyByDefault = true)
+var IrClass.declarationsAtFunctionReferenceLowering: List<IrDeclaration>? by irAttribute(copyByDefault = true)
 
 /**
  * This lowering transforms [IrRichFunctionReference] nodes to an anonymous class.
