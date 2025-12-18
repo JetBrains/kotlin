@@ -116,7 +116,7 @@ fun main(args: Array<String>) {
         // LLDB integration tests.
         testGroup(testsRoot, "native/native.tests/testData/lldb") {
             testClass<AbstractNativeBlackBoxTest>(
-                suiteTestClassName = "FirLldbTestGenerated",
+                suiteTestClassName = "NativeLldbTestGenerated",
                 annotations = listOf(
                     debugger(),
                     provider<UseStandardTestCaseGroupProvider>(),
