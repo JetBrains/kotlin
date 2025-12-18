@@ -2,12 +2,23 @@ import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
 import org.jetbrains.kotlin.gradle.targets.js.ir.JsIrBinary
 
 plugins {
-    kotlin("js")
+    kotlin("multiplatform")
 }
 
-dependencies {
-    implementation(project(":lib"))
-    testImplementation(kotlin("test-js"))
+kotlin {
+    sourceSets {
+        jsMain {
+            dependencies {
+                implementation(project(":lib"))
+            }
+        }
+
+        jsTest {
+            dependencies {
+                implementation(kotlin("test-js"))
+            }
+        }
+    }
 }
 
 kotlin {

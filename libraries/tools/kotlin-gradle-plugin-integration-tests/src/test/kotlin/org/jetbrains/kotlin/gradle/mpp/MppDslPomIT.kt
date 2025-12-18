@@ -52,7 +52,7 @@ class MppDslPomIT : KGPBaseTest() {
                     )
 
                     val jvmPom = "$repoGroupDir/jvm-app/1.0/jvm-app-1.0.pom"
-                    val jsPom = "$repoGroupDir/js-app/1.0/js-app-1.0.pom"
+                    val jsPom = "$repoGroupDir/js-app-js/1.0/js-app-js-1.0.pom"
 
                     if (keepPomIntact) {
                         // The JVM POM should contain the original dependency on 'mpp-lib'

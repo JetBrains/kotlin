@@ -1,5 +1,5 @@
 plugins {
-    kotlin("js")
+    kotlin("multiplatform")
 }
 
 group = "com.example"
@@ -22,14 +22,14 @@ kotlin {
 
 // We need it for suppress warnings of Gradle 7.0
 // We need to think about it, when we will support multiple binaries
-tasks.named("nodeProductionLibraryDistribution") {
-    mustRunAfter("productionExecutableCompileSync")
+tasks.named("jsNodeProductionLibraryDistribution") {
+    mustRunAfter("jsProductionExecutableCompileSync")
 }
 
-tasks.named("browserProductionLibraryDistribution") {
-    mustRunAfter("productionExecutableCompileSync")
+tasks.named("jsBrowserProductionLibraryDistribution") {
+    mustRunAfter("jsProductionExecutableCompileSync")
 }
 
-tasks.named("browserProductionWebpack") {
-    mustRunAfter("productionLibraryCompileSync")
+tasks.named("jsBrowserProductionWebpack") {
+    mustRunAfter("jsProductionLibraryCompileSync")
 }

@@ -1,5 +1,5 @@
 plugins {
-    kotlin("js")
+    kotlin("multiplatform")
 }
 
 group = "com.example"
@@ -17,6 +17,12 @@ kotlin {
     }
 }
 
-dependencies {
-    testRuntimeOnly(npm("xmlhttprequest", "1.8.0"))
+kotlin {
+    sourceSets {
+        jsTest {
+            dependencies {
+                runtimeOnly(npm("xmlhttprequest", "1.8.0"))
+            }
+        }
+    }
 }

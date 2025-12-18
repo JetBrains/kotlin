@@ -1,5 +1,5 @@
 plugins {
-    kotlin("js")
+    kotlin("multiplatform")
 }
 
 repositories {
@@ -9,8 +9,14 @@ repositories {
 
 val kotlin_version: String by extra
 
-dependencies {
-    testImplementation("org.jetbrains.kotlin:kotlin-test-js:$kotlin_version")
+kotlin {
+    sourceSets {
+        jsTest {
+            dependencies {
+                implementation("org.jetbrains.kotlin:kotlin-test:$kotlin_version")
+            }
+        }
+    }
 }
 
 kotlin {
