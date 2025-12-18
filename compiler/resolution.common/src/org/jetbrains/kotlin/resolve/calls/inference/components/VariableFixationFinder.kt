@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.hasRecursiveTypeParametersWi
 import org.jetbrains.kotlin.resolve.calls.inference.isRecursiveTypeParameter
 import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.resolve.calls.model.PostponedResolvedAtomMarker
+import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.model.*
 import kotlin.collections.component1
 import kotlin.collections.component2
@@ -98,7 +99,11 @@ abstract class VariableFixationFinder(
         completionMode: ConstraintSystemCompletionMode,
         topLevelType: KotlinTypeMarker,
     ): VariableForFixation? =
-        findTypeVariableForFixation(allTypeVariables, postponedKtPrimitives, completionMode, topLevelType)
+        findTypeVariableForFixation(allTypeVariables, postponedKtPrimitives, completionMode, topLevelType)?.also { variable ->
+            if (AbstractTypeChecker.RUN_SLOW_ASSERTIONS) {
+                require(!variable.isReady || c.notFixedTypeVariables[variable.variable]?.constraints?.any { !it.isNoInfer } == true)
+            }
+        }
 
     context(c: Context)
     fun typeVariableHasProperConstraint(typeVariable: TypeConstructorMarker): Boolean {
