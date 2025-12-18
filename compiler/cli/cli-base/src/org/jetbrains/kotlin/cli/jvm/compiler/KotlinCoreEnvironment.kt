@@ -760,6 +760,8 @@ class KotlinCoreEnvironment private constructor(
             PackageFragmentProviderExtension.registerExtensionPoint(project)
             StorageComponentContainerContributor.registerExtensionPoint(project)
             DeclarationAttributeAltererExtension.registerExtensionPoint(project)
+
+            @Suppress("DEPRECATION_ERROR")
             PreprocessedVirtualFileFactoryExtension.registerExtensionPoint(project)
             CompilerConfigurationExtension.registerExtensionPoint(project)
             CollectAdditionalSourcesExtension.registerExtensionPoint(project)
