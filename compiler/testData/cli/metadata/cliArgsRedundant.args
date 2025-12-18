@@ -6,6 +6,6 @@ $TESTDATA_DIR$/../../../../dist/common/kotlin-stdlib-common.klib
 -Xtarget-platform=JVM,JS,WasmJs,WasmWasi,Native
 
 -Xnested-type-aliases
--Xwhen-guards=true
+-Xwhen-guards
 -Xannotation-default-target=first-only-warn
 -Xrender-internal-diagnostic-names

@@ -1,4 +1,3 @@
 $TESTDATA_DIR$/annotationTargetAll.kt
--Xannotation-target-all=false
 -d
 $TEMP_DIR$
