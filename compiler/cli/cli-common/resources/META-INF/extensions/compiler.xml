@@ -29,9 +29,6 @@
         <extensionPoint qualifiedName="org.jetbrains.kotlin.simpleNameReferenceExtension"
                         interface="org.jetbrains.kotlin.plugin.references.SimpleNameReferenceExtension"
                         area="IDEA_PROJECT" dynamic="true"/>
-        <extensionPoint qualifiedName="org.jetbrains.kotlin.classBuilderFactoryInterceptorExtension"
-                        interface="org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension"
-                        area="IDEA_PROJECT" dynamic="true"/>
         <extensionPoint qualifiedName="org.jetbrains.kotlin.classGeneratorExtension"
                         interface="org.jetbrains.kotlin.backend.jvm.extensions.ClassGeneratorExtension"
                         area="IDEA_PROJECT" dynamic="true"/>
