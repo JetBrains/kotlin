@@ -24,9 +24,7 @@ class MppTestsIT : KGPBaseTest() {
             gradleVersion,
             buildOptions = defaultBuildOptions.copy(
                 freeArgs = listOf("--continue"), // to ensure that all the tests are run
-                // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
-                isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED,
-            )
+            ).disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
         ) {
             val nativeTarget = MPPNativeTargets.current
 
@@ -63,10 +61,7 @@ class MppTestsIT : KGPBaseTest() {
         project(
             "new-mpp-lib-with-tests",
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(
-                // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
-                isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED,
-            )
+            buildOptions = defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
         ) {
             buildGradle.modify {
                 it + "\n" +

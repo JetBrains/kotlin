@@ -39,9 +39,7 @@ abstract class Kotlin2JsIrBeIncrementalCompilationIT : KGPBaseTest() {
             incrementalJsKlib = true,
             incrementalJsIr = true
         ),
-        // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
-        isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED,
-    )
+    ).disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
 
     @DisplayName("Test rebuild after backend error")
     @GradleTest

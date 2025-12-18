@@ -26,10 +26,7 @@ class MppDslPomIT : KGPBaseTest() {
             projectName = "kt-27059-pom-rewriting",
             gradleVersion = gradleVersion,
             localRepoDir = localRepoDir,
-            buildOptions = defaultBuildOptions.copy(
-                // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
-                isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED,
-            ),
+            buildOptions = defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
         ) {
             val repoGroupDir = localRepoDir.resolve("com/example").pathString
 

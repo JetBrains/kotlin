@@ -16,9 +16,7 @@ class MppIncorrectCompileOnlyDependenciesValidationIT : KGPBaseTest() {
     override val defaultBuildOptions: BuildOptions
         get() = super.defaultBuildOptions.copy(
             logLevel = LIFECYCLE, // less logging, faster tests
-            // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
-            isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED,
-        )
+        ).disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
 
     @GradleTest
     @TestMetadata(value = "mpp-compile-only-dep")
