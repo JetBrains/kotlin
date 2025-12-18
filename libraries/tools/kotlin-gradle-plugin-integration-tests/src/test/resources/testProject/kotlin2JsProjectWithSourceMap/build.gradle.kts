@@ -4,7 +4,7 @@ import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrLink
 import kotlin.text.toBoolean
 
 plugins {
-    kotlin("js")
+    kotlin("multiplatform")
 }
 
 repositories {
@@ -13,7 +13,7 @@ repositories {
 }
 
 subprojects {
-    apply(plugin = "org.jetbrains.kotlin.js")
+    apply(plugin = "org.jetbrains.kotlin.multiplatform")
 
     repositories {
         mavenLocal()
@@ -39,8 +39,14 @@ project("app") {
             browser()
             binaries.executable()
         }
-        dependencies {
-            implementation(project(":lib"))
+        kotlin {
+    sourceSets {
+        jsMain {
+            dependencies {
+                        implementation(project(":lib"))
+                    }
         }
+    }
+}
     }
 }

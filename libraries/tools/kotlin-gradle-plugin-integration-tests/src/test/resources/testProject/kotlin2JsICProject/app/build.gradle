@@ -1,5 +1,5 @@
 plugins {
-    id("org.jetbrains.kotlin.js")
+    id("org.jetbrains.kotlin.multiplatform")
 }
 
 repositories {
@@ -7,9 +7,15 @@ repositories {
     mavenCentral()
 }
 
-dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-js:$kotlin_version"
-    implementation project(":lib")
+kotlin {
+    sourceSets {
+        jsMain {
+            dependencies {
+                implementation "org.jetbrains.kotlin:kotlin-stdlib-js:$kotlin_version"
+                implementation project(":lib")
+            }
+        }
+    }
 }
 
 kotlin {

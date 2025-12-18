@@ -1,1 +1,1 @@
-include(":mpp-lib", ":jvm-app", ":js-app")
+include(":mpp-lib", ":jvm-app")

@@ -88,7 +88,7 @@ class BuildCacheRelocationIT : KGPBaseTest() {
                 ":libraryProject:compileKotlinJs",
                 ":mainProject:compileKotlinJs",
                 ":mainProject:compileProductionExecutableKotlinJs",
-                ":mainProject:browserProductionWebpack"
+                ":mainProject:jsBrowserProductionWebpack"
             )
         )
     }

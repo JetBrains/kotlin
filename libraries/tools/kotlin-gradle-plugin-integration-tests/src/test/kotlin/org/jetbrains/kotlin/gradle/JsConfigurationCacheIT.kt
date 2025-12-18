@@ -40,11 +40,11 @@ class JsIrConfigurationCacheIT : KGPBaseTest() {
                 ":app:build",
                 buildOptions = defaultBuildOptions,
                 executedTaskNames = listOf(
-                    ":app:packageJson",
-                    ":app:publicPackageJson",
+                    ":app:jsPackageJson",
+                    ":app:jsPublicPackageJson",
                     ":app:compileKotlinJs",
                     ":app:compileProductionExecutableKotlinJs",
-                    ":app:browserProductionWebpack",
+                    ":app:jsBrowserProductionWebpack",
                 )
             )
         }
@@ -62,10 +62,10 @@ class JsIrConfigurationCacheIT : KGPBaseTest() {
             build(":app:build", "-Didea.version=2020.1") {
                 assertConfigurationCacheReused()
                 assertTasksUpToDate(
-                    ":app:packageJson",
-                    ":app:publicPackageJson",
+                    ":app:jsPackageJson",
+                    ":app:jsPublicPackageJson",
                     ":app:compileProductionExecutableKotlinJs",
-                    ":app:browserProductionWebpack",
+                    ":app:jsBrowserProductionWebpack",
                 )
             }
         }
@@ -79,11 +79,11 @@ class JsIrConfigurationCacheIT : KGPBaseTest() {
                 ":build",
                 buildOptions = defaultBuildOptions,
                 executedTaskNames = listOf(
-                    ":packageJson",
-                    ":publicPackageJson",
+                    ":jsPackageJson",
+                    ":jsPublicPackageJson",
                     ":rootPackageJson",
                     ":compileKotlinJs",
-                    ":nodeTest",
+                    ":jsNodeTest",
                 ) + listOf(":compileProductionExecutableKotlinJs")
             )
         }
@@ -101,11 +101,11 @@ class JsIrConfigurationCacheIT : KGPBaseTest() {
             build(":build", "-Didea.version=2020.1") {
                 assertConfigurationCacheReused()
                 val upToDateTasks = listOf(
-                    ":packageJson",
-                    ":publicPackageJson",
+                    ":jsPackageJson",
+                    ":jsPublicPackageJson",
                     ":rootPackageJson",
                     ":compileKotlinJs",
-                    ":nodeTest",
+                    ":jsNodeTest",
                 ) + listOf(":compileProductionExecutableKotlinJs")
                 assertTasksUpToDate(*upToDateTasks.toTypedArray())
             }
@@ -148,15 +148,15 @@ class JsIrConfigurationCacheIT : KGPBaseTest() {
     @GradleTest
     fun testNodeJsRun(gradleVersion: GradleVersion) {
         project("kotlin-js-nodejs-project", gradleVersion) {
-            build("nodeDevelopmentRun", buildOptions = buildOptions) {
-                assertTasksExecuted(":nodeDevelopmentRun")
+            build("jsNodeDevelopmentRun", buildOptions = buildOptions) {
+                assertTasksExecuted(":jsNodeDevelopmentRun")
                 if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_8_5)) {
                     assertOutputContains(
-                        "Calculating task graph as no configuration cache is available for tasks: nodeDevelopmentRun"
+                        "Calculating task graph as no configuration cache is available for tasks: jsNodeDevelopmentRun"
                     )
                 } else {
                     assertOutputContains(
-                        "Calculating task graph as no cached configuration is available for tasks: nodeDevelopmentRun"
+                        "Calculating task graph as no cached configuration is available for tasks: jsNodeDevelopmentRun"
                     )
                 }
 
@@ -166,8 +166,8 @@ class JsIrConfigurationCacheIT : KGPBaseTest() {
             build("clean", buildOptions = buildOptions)
 
             // Then run a build where tasks states are deserialized to check that they work correctly in this mode
-            build("nodeDevelopmentRun", buildOptions = buildOptions) {
-                assertTasksExecuted(":nodeDevelopmentRun")
+            build("jsNodeDevelopmentRun", buildOptions = buildOptions) {
+                assertTasksExecuted(":jsNodeDevelopmentRun")
                 assertConfigurationCacheReused()
             }
         }

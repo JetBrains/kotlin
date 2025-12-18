@@ -1,5 +1,5 @@
 plugins {
-    kotlin("js")
+    kotlin("multiplatform")
 }
 
 group = "com.example"
@@ -28,7 +28,7 @@ tasks.register("foo") {
     }
 }
 
-tasks.named("browserTest") {
+tasks.named("jsBrowserTest") {
     enabled = false
 }
 

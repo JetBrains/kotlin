@@ -43,7 +43,7 @@ abstract class AbstractKotlinJsIncrementalGradlePluginIT(
                 assertCompiledKotlinSources(emptyList(), output)
             }
 
-            val modifiedFile = subProject("lib").kotlinSourcesDir().resolve("A.kt") ?: error("No A.kt file in test project")
+            val modifiedFile = subProject("lib").kotlinSourcesDir("jsMain").resolve("A.kt") ?: error("No A.kt file in test project")
             modifiedFile.modify {
                 it.replace("val x = 0", "val x = \"a\"")
             }
@@ -77,8 +77,8 @@ abstract class AbstractKotlinJsIncrementalGradlePluginIT(
         project("kotlin-js-ir-ic-multiple-artifacts", gradleVersion, buildOptions = buildOptions) {
             build("compileKotlinJs")
 
-            val libKt = subProject("lib").kotlinSourcesDir().resolve("Lib.kt") ?: error("No Lib.kt file in test project")
-            val appKt = subProject("app").kotlinSourcesDir().resolve("App.kt") ?: error("No App.kt file in test project")
+            val libKt = subProject("lib").kotlinSourcesDir("jsMain").resolve("Lib.kt") ?: error("No Lib.kt file in test project")
+            val appKt = subProject("app").kotlinSourcesDir("jsMain").resolve("App.kt") ?: error("No App.kt file in test project")
 
             libKt.modify { it.replace("fun answer", "func answe") } // introduce compilation error
             buildAndFail("compileKotlinJs")

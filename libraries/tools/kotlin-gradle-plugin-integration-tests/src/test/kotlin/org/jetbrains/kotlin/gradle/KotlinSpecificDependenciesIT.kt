@@ -81,7 +81,7 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
             gradleVersion,
         ) {
             buildGradleKts.modify { it.lines().filter { "html" !in it }.joinToString("\n") }
-            kotlinSourcesDir().resolve("Main.kt").modify { "fun f() = listOf(1, 2, 3).joinToString()" }
+            kotlinSourcesDir("jsMain").resolve("Main.kt").modify { "fun f() = listOf(1, 2, 3).joinToString()" }
             removeDependencies(buildGradleKts)
 
             checkTaskCompileClasspath(
@@ -102,7 +102,7 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
             gradleVersion,
         ) {
             buildGradleKts.modify { it.lines().filter { "html" !in it }.joinToString("\n") }
-            kotlinSourcesDir().resolve("Main.kt").modify { "fun f() = listOf(1, 2, 3).joinToString()" }
+            kotlinSourcesDir("jsMain").resolve("Main.kt").modify { "fun f() = listOf(1, 2, 3).joinToString()" }
             removeDependencies(buildGradleKts)
 
             gradleProperties.appendText(
@@ -439,7 +439,7 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
             gradleVersion,
         ) {
             assertKotlinTestDependency(
-                listOf("testImplementation"),
+                listOf("jsTestImplementation"),
                 mapOf("compileTestKotlinJs" to listOf("kotlin-test-js")),
                 isBuildGradleKts = true
             )

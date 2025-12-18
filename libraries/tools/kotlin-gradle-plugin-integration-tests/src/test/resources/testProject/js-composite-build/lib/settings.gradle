@@ -7,7 +7,7 @@ pluginManagement {
     }
 
     plugins {
-        id "org.jetbrains.kotlin.js" version "$kotlin_version"
+        id "org.jetbrains.kotlin.multiplatform" version "$kotlin_version"
         id "org.jetbrains.kotlin.test.fixes.android" version "$test_fixes_version"
     }
 }

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.gradle.util.checkedReplace
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.gradle.util.testResolveAllConfigurations
@@ -53,18 +54,20 @@ class VariantAwareDependenciesMppIT : KGPBaseTest() {
         project("new-mpp-lib-and-app/sample-lib", gradleVersion) {
             includeOtherProjectAsSubmodule("kotlin2JsInternalTest")
 
-            subProject("kotlin2JsInternalTest")
-                .buildGradle
-                .appendText(
-                    """
-                    |
-                    |dependencies { implementation rootProject }
-                    |
-                    """.trimMargin()
-                )
+            subProject("kotlin2JsInternalTest").buildScriptInjection {
+                project.applyMultiplatform {
+                    sourceSets.jsMain {
+                        dependencies {
+                            implementation(
+                                project.dependencies.create(project.rootProject)
+                            )
+                        }
+                    }
+                }
+            }
 
             testResolveAllConfigurations("kotlin2JsInternalTest") { _, buildResult ->
-                buildResult.assertOutputContains(">> :kotlin2JsInternalTest:runtimeClasspath --> build/classes/kotlin/nodeJs/main")
+                buildResult.assertOutputContains(">> :kotlin2JsInternalTest:jsRuntimeClasspath --> build/classes/kotlin/nodeJs/main")
             }
         }
     }
