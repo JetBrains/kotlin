@@ -37,25 +37,6 @@ internal class JvmUpgradeCallableReferences(context: JvmBackendContext) : Upgrad
     castDispatchReceiver = false,
     generateFakeAccessorsForReflectionProperty = true,
 ) {
-    private val jvmSymbols = context.symbols
-
-    // TODO change after KT-78719
-    override fun IrTransformer<IrDeclarationParent>.processCallExpression(expression: IrCall, data: IrDeclarationParent): IrElement {
-        val function = expression.symbol.owner
-        if (function.symbol == jvmSymbols.indyLambdaMetafactoryIntrinsic) { // delete
-            for ((i, element) in expression.arguments.withIndex()) {
-                expression.arguments[i] = if (i == 1) {
-                    element?.transformChildren(this, data)
-                    element
-                } else {
-                    element?.transform(this, data)
-                }
-            }
-            return expression
-        }
-        expression.transformChildren(this, data)
-        return expression
-    }
 
     // this shouldn't be needed after moving the lowering outside of per-file part
     override fun selectSAMOverriddenFunction(irClass: IrClass): IrSimpleFunction {

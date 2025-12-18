@@ -9,131 +9,74 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.JvmIrBuilder
 import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
 import org.jetbrains.kotlin.backend.jvm.ir.getSingleAbstractMethod
+import org.jetbrains.kotlin.backend.jvm.ir.suspendFunctionOriginal
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.builders.declarations.buildValueParameter
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.IrContainerExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
+import org.jetbrains.kotlin.ir.expressions.IrRichFunctionReference
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
-import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrRichFunctionReferenceImpl
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.ir.util.nonDispatchParameters
 import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.ir.util.selectSAMOverriddenFunction
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
-internal sealed class SamDelegatingLambdaBlock {
-    abstract val block: IrContainerExpression
-    abstract val ref: IrFunctionReference
-    abstract fun replaceRefWith(expression: IrExpression)
-}
-
-
-internal class RegularDelegatingLambdaBlock(
-    override val block: IrContainerExpression,
-    override val ref: IrFunctionReference
-) : SamDelegatingLambdaBlock() {
-
-    override fun replaceRefWith(expression: IrExpression) {
-        block.statements[block.statements.size - 1] = expression
-        block.type = expression.type
-    }
-}
-
-
-internal class NullableDelegatingLambdaBlock(
-    override val block: IrContainerExpression,
-    override val ref: IrFunctionReference,
-    private val ifExpr: IrExpression,
-    private val ifNotNullBlock: IrContainerExpression
-) : SamDelegatingLambdaBlock() {
-
-    override fun replaceRefWith(expression: IrExpression) {
-        ifNotNullBlock.statements[ifNotNullBlock.statements.size - 1] = expression
-        ifNotNullBlock.type = expression.type
-        ifExpr.type = expression.type
-        block.type = expression.type
-    }
-}
+internal class SamDelegatingLambdaBlock(
+    val rootExpression: IrExpression,
+    val ref: IrRichFunctionReference,
+)
 
 
 internal class SamDelegatingLambdaBuilder(private val jvmContext: JvmBackendContext) {
-    fun build(expression: IrExpression, superType: IrType, scopeSymbol: IrSymbol, parent: IrDeclarationParent): SamDelegatingLambdaBlock {
-        return if (superType.isNullable() && expression.type.isNullable())
-            buildNullableDelegatingLambda(expression, superType, scopeSymbol, parent)
-        else
-            buildRegularDelegatingLambda(expression, superType, scopeSymbol, parent)
-    }
-
-    private fun buildRegularDelegatingLambda(
+    fun build(
         expression: IrExpression,
         superType: IrType,
         scopeSymbol: IrSymbol,
         parent: IrDeclarationParent
     ): SamDelegatingLambdaBlock {
-        lateinit var ref: IrFunctionReference
+        lateinit var ref: IrRichFunctionReference
         val block = jvmContext.createJvmIrBuilder(scopeSymbol, expression).run {
+            //  for non-nullable samSuperType
             //  {
             //      val tmp = <expression>
-            //      fun `<anonymous>`(p1: T1, ..., pN: TN): R =
+            //      RichReference(
+            //      invoke = fun `<anonymous>`(p1: T1, ..., pN: TN): R =
             //          tmp.invoke(p1, ..., pN)
+            //      )
             //      ::`<anonymous>`
             //  }
-
-            irBlock(origin = IrStatementOrigin.LAMBDA) {
-                val tmp = irTemporary(expression)
-                val lambda = createDelegatingLambda(expression, superType, tmp, parent)
-                    .also { +it }
-                ref = createDelegatingLambdaReference(expression, lambda)
-                    .also { +it }
-            }
-        }
-        block.type = expression.type
-        return RegularDelegatingLambdaBlock(block, ref)
-    }
-
-    private fun buildNullableDelegatingLambda(
-        expression: IrExpression,
-        superType: IrType,
-        scopeSymbol: IrSymbol,
-        parent: IrDeclarationParent
-    ): SamDelegatingLambdaBlock {
-        lateinit var ref: IrFunctionReference
-        lateinit var ifExpr: IrExpression
-        lateinit var ifNotNullBlock: IrContainerExpression
-        val block = jvmContext.createJvmIrBuilder(scopeSymbol, expression).run {
+            //  for nullable samSuperType
             //  {
             //      val tmp = <expression>
             //      if (tmp == null)
-            //          null
-            //      else {
-            //          fun `<anonymous>`(p1: T1, ..., pN: TN): R =
-            //              tmp.invoke(p1, ..., pN)
-            //          ::`<anonymous>`
-            //      }
+            //         null
+            //      else
+            //         RichReference(
+            //           invoke = fun `<anonymous>`(p1: T1, ..., pN: TN): R =
+            //             tmp.invoke(p1, ..., pN)
+            //         )
             //  }
 
             irBlock(origin = IrStatementOrigin.LAMBDA) {
                 val tmp = irTemporary(expression)
-                ifNotNullBlock = irBlock {
-                    val lambda = createDelegatingLambda(expression, superType, tmp, parent)
-                        .also { +it }
-                    ref = createDelegatingLambdaReference(expression, lambda)
-                        .also { +it }
+                ref = createDelegatingLambdaReference(expression, superType, tmp, parent)
+                if (superType.isNullable()) {
+                    +irIfNull(superType, irGet(tmp), irNull(), ref)
+                } else {
+                    +ref
                 }
-                ifExpr = irIfNull(expression.type, irGet(tmp), irNull(), ifNotNullBlock)
-                    .also { +it }
             }
         }
-        block.type = expression.type
-        return NullableDelegatingLambdaBlock(block, ref, ifExpr, ifNotNullBlock)
+        return SamDelegatingLambdaBlock(block, ref)
     }
 
     private fun createDelegatingLambda(
@@ -198,14 +141,20 @@ internal class SamDelegatingLambdaBuilder(private val jvmContext: JvmBackendCont
         }
     }
 
-    private fun JvmIrBuilder.createDelegatingLambdaReference(expression: IrExpression, lambda: IrSimpleFunction): IrFunctionReference {
-        return IrFunctionReferenceImpl(
-            startOffset, endOffset,
-            expression.type,
-            lambda.symbol,
-            typeArgumentsCount = 0,
-            reflectionTarget = null,
-            origin = IrStatementOrigin.LAMBDA
+    private fun JvmIrBuilder.createDelegatingLambdaReference(
+        expression: IrExpression,
+        superType: IrType,
+        functionalValue: IrVariable,
+        parent: IrDeclarationParent
+    ): IrRichFunctionReference {
+        return IrRichFunctionReferenceImpl(
+            startOffset = startOffset,
+            endOffset = endOffset,
+            type = superType,
+            reflectionTargetSymbol = null,
+            overriddenFunctionSymbol = superType.classOrFail.owner.selectSAMOverriddenFunction().suspendFunctionOriginal().symbol,
+            invokeFunction = createDelegatingLambda(expression, superType, functionalValue, parent),
+            origin = IrStatementOrigin.LAMBDA,
         )
     }
 

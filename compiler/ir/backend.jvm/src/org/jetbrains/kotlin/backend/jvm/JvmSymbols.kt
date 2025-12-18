@@ -628,61 +628,6 @@ class JvmSymbols(
     val arrayOfAnyType = irBuiltIns.arrayClass.typeWith(irBuiltIns.anyType)
     val arrayOfAnyNType = irBuiltIns.arrayClass.typeWith(irBuiltIns.anyNType)
 
-    /**
-     * An intrinsic to represent closure creation using `INVOKEDYNAMIC` with `LambdaMetafactory.{metafactory, altMetafactory}`
-     * as a bootstrap method.
-     * ```kotlin
-     * fun <SAM_TYPE : Any> `<jvm-indy-lambda-metafactory>`(
-     *     samMethodType: Any?,
-     *     implMethodReference: Any?,
-     *     instantiatedMethodType: Any?,
-     *     vararg extraOverriddenMethodTypes: Any,
-     *     shouldBeSerializable: Boolean,
-     * ): SAM_TYPE
-     * ```
-     * where:
-     * - `SAM_TYPE` is a single abstract method interface, which is implemented by a resulting closure;
-     * - `samMethodType` is a method type (signature and return type) of a method to be implemented by a closure;
-     * - `implMethodReference` is an actual implementation method (e.g., method for a lambda function);
-     * - `instantiatedMethodType` is a specialized implementation method type;
-     * - `extraOverriddenMethodTypes` is a possibly empty vararg of additional methods to be implemented by a closure;
-     * - `shouldBeSerializable` is true if the class of the resulting object should implement `java.io.Serializable`.
-     *
-     * At this stage, "method types" are represented as [IrRawFunctionReference] nodes for the functions with corresponding signature.
-     * `<jvm-indy-lambda-metafactory>` call rewriting selects a particular bootstrap method (`metafactory` or `altMetafactory`)
-     * and takes care about low-level detains of bootstrap method arguments representation.
-     * Note that `instantiatedMethodType` is a raw function reference to a "fake" specialized function (belonging to a "fake" specialized
-     * class) that doesn't exist in the bytecode and serves only the purpose of representing a corresponding method signature.
-     *
-     * Resulting closure produced by INVOKEDYNAMIC instruction has (approximately) the following shape:
-     * ```kotlin
-     *      object : ${SAM_TYPE} {
-     *          override fun ${samMethodName}(${instantiatedMethodType}) = ${implMethod}(...)
-     *          // bridge fun ${samMethodName}(${bridgeMethodType}) = ${instantiatedMethod}(...)
-     *          //      for each 'bridgeMethodType' in [ ${samMethodType}, *${extraOverriddenMethodTypes} ]
-     *      }
-     * ```
-     */
-    val indyLambdaMetafactoryIntrinsic: IrSimpleFunctionSymbol =
-        irFactory.buildFun {
-            name = Name.special("<jvm-indy-lambda-metafactory>")
-            origin = IrDeclarationOrigin.IR_BUILTINS_STUB
-        }.apply {
-            parent = kotlinJvmInternalPackage
-            val samType = addTypeParameter("SAM_TYPE", irBuiltIns.anyType)
-            addValueParameter("samMethodType", irBuiltIns.anyNType)
-            addValueParameter("implMethodReference", irBuiltIns.anyNType)
-            addValueParameter("instantiatedMethodType", irBuiltIns.anyNType)
-            addValueParameter {
-                name = Name.identifier("extraOverriddenMethodTypes")
-                type = arrayOfAnyType
-                varargElementType = irBuiltIns.anyType
-            }
-            addValueParameter("shouldBeSerializable", irBuiltIns.booleanType)
-            returnType = samType.defaultType
-        }.symbol
-
-
     inner class SerializedLambdaClass
     @Deprecated("Should not be used outside of JvmSymbols") internal constructor() {
         val symbol = createClass(FqName("java.lang.invoke.SerializedLambda"))

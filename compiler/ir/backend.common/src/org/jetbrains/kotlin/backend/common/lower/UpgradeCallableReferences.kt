@@ -45,10 +45,6 @@ open class UpgradeCallableReferences(
         irFunction.transform(UpgradeTransformer(), irFunction)
     }
 
-    open fun IrTransformer<IrDeclarationParent>.processCallExpression(expression: IrCall, data: IrDeclarationParent) =
-        this.visitFunctionAccess(expression, data)
-
-
     private data class AdaptedBlock(
         val function: IrSimpleFunction,
         val reference: IrFunctionReference,
@@ -87,8 +83,6 @@ open class UpgradeCallableReferences(
                 parameter.kind = IrParameterKind.Regular
             }
         }
-
-        override fun visitCall(expression: IrCall, data: IrDeclarationParent): IrElement = processCallExpression(expression, data)
 
         override fun visitFunctionExpression(expression: IrFunctionExpression, data: IrDeclarationParent): IrElement {
             expression.transformChildren(this, data)

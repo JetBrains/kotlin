@@ -1,14 +1,14 @@
 @kotlin.Metadata
 public final class<null>  IndySamConversionViaProxyFun_ktKt {
     // source: 'indySamConversionViaProxyFun.kt.kt'
-    private final static <()Ljava/util/Map<Ljava/lang/Object;Ljava/lang/Object;>;> method test$mutableMapOf__proxy(): java.util.Map
     public final static <<U:Ljava/lang/Object;>(LSam4<TU;>;)V> method use4(@org.jetbrains.annotations.NotNull p0: Sam4): void
     public final static <null> method ifn(): void
-    private final static <null> method test$ifn__proxy(): void
-    private varargs final static <null> method test$intArrayOf__proxy(p0: int[]): int[]
-    private synthetic final static <null> method test$plus__proxy$0(p0: java.lang.String, p1: java.lang.Object): java.lang.String
-    private synthetic final static <null> method test$plus__proxy$1(p0: java.lang.String, p1: java.lang.Object): java.lang.String
-    private synthetic final static <null> method test$plus__proxy(p0: java.lang.String, p1: java.lang.Object): java.lang.String
+    private final static <null> method test$ifn(): void
+    private final static <null> method test$intArrayOf(p0: int[]): int[]
+    private final static <null> method test$mutableMapOf(): java.util.Map
+    private final static <null> method test$plus$0(p0: java.lang.String, p1: java.lang.Object): java.lang.String
+    private final static <null> method test$plus$1(p0: java.lang.String, p1: java.lang.Object): java.lang.String
+    private final static <null> method test$plus(p0: java.lang.String, p1: java.lang.Object): java.lang.String
     public final static <null> method test(): void
     public final static <null> method use(@org.jetbrains.annotations.NotNull p0: java.lang.Object): void
 }

@@ -45,9 +45,9 @@ private val jvmFilePhases = createFilePhases(
 
     ::JvmInlineCallableReferenceToLambdaPhase,
     ::DirectInvokeLowering,
+    ::JvmUpgradeCallableReferences,
     ::FunctionReferenceLowering,
 
-    ::JvmUpgradeCallableReferences,
     ::SuspendLambdaLowering,
     ::PropertyReferenceDelegationLowering,
     ::SingletonOrConstantDelegationLowering,
@@ -110,9 +110,9 @@ private val jvmFilePhases = createFilePhases(
     ::EnumClassLowering,
     ::EnumExternalEntriesLowering,
     ::ObjectClassLowering,
+    ::IndyLambdaMetafactoryLowering,
     ::StaticInitializersLowering,
     ::UniqueLoopLabelsLowering,
-    ::IndyLambdaMetafactoryLowering,
     ::JvmInitializersLowering,
     ::JvmInitializersCleanupLowering,
     ::FunctionNVarargBridgeLowering,

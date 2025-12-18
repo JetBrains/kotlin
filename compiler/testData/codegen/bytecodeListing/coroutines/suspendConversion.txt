@@ -13,8 +13,6 @@ synthetic final class SuspendConversionKt$test$1 {
 public final class SuspendConversionKt {
     // source: 'suspendConversion.kt'
     inner (anonymous) class SuspendConversionKt$test$1
-    public synthetic final static method access$test$suspendConversion0(p0: kotlin.jvm.functions.Function0, p1: kotlin.coroutines.Continuation): java.lang.Object
     public final static method myApply(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function1): void
-    private synthetic final static method test$suspendConversion0(p0: kotlin.jvm.functions.Function0, p1: kotlin.coroutines.Continuation): java.lang.Object
     public final static method test(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function0): void
 }

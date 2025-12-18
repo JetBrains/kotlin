@@ -7,7 +7,6 @@ synthetic final class Module_main_functionReferenceKt$x$1 {
     method <init>(): void
     public final method invoke(p0: androidx.compose.runtime.Composer, p1: int): void
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
-    public final inner class kotlin/jvm/internal/Intrinsics$Kotlin
 }
 
 synthetic final class Module_main_functionReferenceKt$x1$1 {
@@ -19,7 +18,6 @@ synthetic final class Module_main_functionReferenceKt$x1$1 {
     method <init>(): void
     public final method invoke(p0: int, p1: androidx.compose.runtime.Composer, p2: int): void
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object): java.lang.Object
-    public final inner class kotlin/jvm/internal/Intrinsics$Kotlin
 }
 
 public final class Module_main_functionReferenceKt {

@@ -3,13 +3,11 @@
 // SAM_CONVERSIONS: INDY
 // FULL_JDK
 
-// We generate 1 clause in '$deserializeLambda' for each unique possible combination of deserialized lambda parameters
-// (that's all information stored during indy lambda serialization, anyway).
 
 // CHECK_BYTECODE_TEXT
-// 12 java/lang/invoke/LambdaMetafactory
+// 16 java/lang/invoke/LambdaMetafactory
 // 1 (LOOKUP|TABLE)SWITCH
-// 4 java/lang/String\.equals
+// 8 java/lang/String\.equals
 
 // FILE: multipleTopLevelFunRefs.kt
 import java.io.*
