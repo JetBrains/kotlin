@@ -167,7 +167,7 @@ bool kotlin::initializeGlobalRuntimeIfNeeded() noexcept {
     konan::consoleInit();
     logging::OnRuntimeInit();
     crashHandlerInit();
-    initGlobalMemory();
+    mm::GlobalData::init();
 #if KONAN_OBJC_INTEROP
     Kotlin_ObjCExport_initialize();
 #endif
