@@ -4,6 +4,16 @@ public abstract interface annotation class org/jetbrains/kotlin/analysis/api/pla
 public abstract interface class org/jetbrains/kotlin/analysis/api/platform/KaEngineService {
 }
 
+public abstract interface class org/jetbrains/kotlin/analysis/api/platform/KotlinAnalysisInWriteActionListener {
+	public static final field Companion Lorg/jetbrains/kotlin/analysis/api/platform/KotlinAnalysisInWriteActionListener$Companion;
+	public abstract fun afterLeavingAnalysisInWriteAction ()V
+	public abstract fun onEnteringAnalysisInWriteAction ()V
+}
+
+public final class org/jetbrains/kotlin/analysis/api/platform/KotlinAnalysisInWriteActionListener$Companion {
+	public final fun getTOPIC ()Lcom/intellij/util/messages/Topic;
+}
+
 public abstract interface class org/jetbrains/kotlin/analysis/api/platform/KotlinComposableProvider {
 }
 
