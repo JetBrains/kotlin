@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers
 
 import org.gradle.api.Project
+import org.jetbrains.kotlin.cli.common.toBooleanLenient
 import org.jetbrains.kotlin.gradle.internal.properties.PropertiesBuildService
 import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_KMP_ISOLATED_PROJECT_SUPPORT
@@ -15,7 +16,6 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.*
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinGradleProjectChecker
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinGradleProjectCheckerContext
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnosticsCollector
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.GradleDeprecatedPropertyChecker.DeprecatedProperty
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.presetName
 
@@ -23,6 +23,7 @@ internal object GradleDeprecatedPropertyChecker : KotlinGradleProjectChecker {
     private open class DeprecatedProperty(
         val propertyName: String,
         val details: String? = null,
+        val filter: (Any) -> Boolean = { true },
     )
 
     private class NativeCacheDeprecatedProperty(presetName: String? = null) : DeprecatedProperty(
@@ -74,6 +75,10 @@ internal object GradleDeprecatedPropertyChecker : KotlinGradleProjectChecker {
         DeprecatedProperty(
             propertyName = "kotlin.mpp.import.enableKgpDependencyResolution",
             details = "Legacy mode of KMP IDE import has been removed: https://kotl.in/KT-61127",
+            filter = {
+                // KT-83254: true was the default since long ago and AGP pre 9.1 sets this property to true and emits the diagnostic otherwise
+                it.toString().toBooleanLenient() == false
+            }
         ),
         DeprecatedProperty(
             propertyName = KOTLIN_KMP_ISOLATED_PROJECT_SUPPORT,
@@ -102,7 +107,7 @@ internal object GradleDeprecatedPropertyChecker : KotlinGradleProjectChecker {
         val propertiesBuildService = PropertiesBuildService.registerIfAbsent(project).get()
 
         warningDeprecatedProperties.filter {
-            propertiesBuildService.isPropertyUsed(project, it.propertyName)
+            propertiesBuildService.shouldReportProperty(project, it)
         }.forEach {
             collector.reportOncePerGradleBuild(
                 project,
@@ -115,7 +120,7 @@ internal object GradleDeprecatedPropertyChecker : KotlinGradleProjectChecker {
         }
 
         errorDeprecatedProperties.filter {
-            propertiesBuildService.isPropertyUsed(project, it.propertyName)
+            propertiesBuildService.shouldReportProperty(project, it)
         }.forEach {
             collector.reportOncePerGradleBuild(
                 project,
@@ -128,5 +133,11 @@ internal object GradleDeprecatedPropertyChecker : KotlinGradleProjectChecker {
         }
     }
 
-    private fun PropertiesBuildService.isPropertyUsed(project: Project, property: String): Boolean = get(property, project) != null
+    private fun PropertiesBuildService.shouldReportProperty(
+        project: Project,
+        property: DeprecatedProperty,
+    ): Boolean {
+        val value = get(property.propertyName, project) ?: return false
+        return property.filter(value)
+    }
 }

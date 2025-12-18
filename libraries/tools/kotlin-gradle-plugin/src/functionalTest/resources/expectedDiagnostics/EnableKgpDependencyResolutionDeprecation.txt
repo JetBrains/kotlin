@@ -1,0 +1,4 @@
+[DeprecatedWarningGradleProperties | WARNING] Deprecated Gradle Property 'kotlin.mpp.import.enableKgpDependencyResolution' Used
+The `kotlin.mpp.import.enableKgpDependencyResolution` deprecated property is used in your build.
+It is unsupported, please stop using it.
+Legacy mode of KMP IDE import has been removed: https://kotl.in/KT-61127
