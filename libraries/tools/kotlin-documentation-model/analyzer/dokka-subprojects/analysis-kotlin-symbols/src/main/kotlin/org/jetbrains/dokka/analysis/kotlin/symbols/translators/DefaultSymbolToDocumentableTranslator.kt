@@ -626,7 +626,7 @@ internal class DokkaSymbolVisitor(
             sources = propertyAccessorSymbol.getSource(),
             visibility = propertyAccessorSymbol.visibility.toDokkaVisibility().toSourceSetDependent(),
             generics = generics,
-            documentation = getDocumentation(propertyAccessorSymbol)?.toSourceSetDependent() ?: emptyMap(),
+            documentation = getAccessorSymbolDocumentation(propertyAccessorSymbol)?.toSourceSetDependent() ?: emptyMap(),
             modifier = propertyAccessorSymbol.getDokkaModality().toSourceSetDependent(),
             type = toBoundFrom(propertyAccessorSymbol.returnType),
             sourceSets = setOf(sourceSet),
@@ -908,12 +908,29 @@ internal class DokkaSymbolVisitor(
         }
     }
 
+    private fun KaSession.getAccessorSymbolDocumentation(symbol: KaPropertyAccessorSymbol): DocumentationNode? {
+        val documentation = getDocumentation(symbol) ?: return null
+        return documentation.removePropertyTag()
+    }
+
     private fun KaSession.getDocumentation(symbol: KaSymbol) =
         if (symbol.origin == KaSymbolOrigin.SOURCE_MEMBER_GENERATED)
             // a primary (implicit default) constructor  can be generated, so we need KDoc from @constructor tag
             getGeneratedKDocDocumentationFrom(symbol) ?: if(symbol is KaConstructorSymbol) getKDocDocumentationFrom(symbol, logger) else null
         else
             getKDocDocumentationFrom(symbol, logger) ?: javadocParser?.let { getJavaDocDocumentationFrom(symbol, it) }
+
+    /**
+     * Unwrap the documentation for property accessors from the [Property] wrapper if its present.
+     * Otherwise, documentation will not be rendered
+     */
+    private fun DocumentationNode.removePropertyTag(): DocumentationNode =
+        DocumentationNode(children.map { it.removePropertyTag() })
+
+    private fun TagWrapper.removePropertyTag(): TagWrapper = when (this) {
+        is Property -> Description(root)
+        else -> this
+    }
 
     private fun KaSession.isObvious(functionSymbol: KaFunctionSymbol, inheritedFrom: DRI?): Boolean {
         return functionSymbol.origin == KaSymbolOrigin.SOURCE_MEMBER_GENERATED && !hasGeneratedKDocDocumentation(functionSymbol) ||
