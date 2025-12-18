@@ -42,7 +42,7 @@ internal actual fun getArguments(): List<String> = withScopedMemoryAllocator { a
     }
 
     val argumentNumber = numberOfArgumentsPtr.loadInt()
-    if (argumentNumber <= 2) return emptyList()
+    if (argumentNumber == 0) return@withScopedMemoryAllocator emptyList()
 
     val argumentStringSize = sizeOfArgumentStringPtr.loadInt()
     val stringBufferPtr = allocator.allocate(argumentStringSize)
@@ -54,7 +54,7 @@ internal actual fun getArguments(): List<String> = withScopedMemoryAllocator { a
         throw IllegalStateException("Wasi error code $argNumRes")
     }
 
-    val startAddress = (argvPtr + 2 * Int.SIZE_BYTES).loadInt().toUInt()
+    val startAddress = (argvPtr).loadInt().toUInt()
     val endAddress = stringBufferPtr.address + argumentStringSize.toUInt()
     decodeStrings(argumentStringSize, startAddress, endAddress)
 }

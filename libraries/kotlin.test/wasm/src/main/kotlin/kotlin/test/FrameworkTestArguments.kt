@@ -10,7 +10,7 @@ internal enum class IgnoredTestSuitesReporting {
     skip, reportAsIgnoredTest, reportAllInnerTestsAsIgnored
 }
 
-internal class FrameworkTestArguments(
+internal data class FrameworkTestArguments(
     val includedQualifiers: List<String>,
     val includedClassMethods: List<Pair<String, String>>,
     val excludedQualifiers: List<String>,

@@ -101,7 +101,7 @@ class CommonKotlinWasmTestFramework(
                     }.get().toPath()
                 )
             )
-            addAll(cliArgs.toList())
+            addAll(cliArgs.toList().flatMap { listOf("--args", it) })
         }
 
         return TCServiceMessagesTestExecutionSpec(
