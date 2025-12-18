@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 // ISSUE: KT-13495
 // LANGUAGE: +AllowSealedInheritorsInDifferentFilesOfSamePackage
 // DIAGNOSTICS: -UNUSED_VARIABLE
@@ -33,11 +32,11 @@ class BContainer {
 package foo
 
 fun test(base: Container.Base) {
-    val x = <!WHEN_ON_SEALED_GEEN_ELSE!>when (base) {
+    val x = when (base) {
         is A -> 1
         is BContainer.B -> 2
         is BContainer.C -> 3
-    }<!>
+    }
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inner, integerLiteral, isExpression, localProperty,

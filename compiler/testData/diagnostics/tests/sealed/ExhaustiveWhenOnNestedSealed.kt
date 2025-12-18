@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 sealed class Sealed {
     object First: Sealed()
     sealed class NonFirst {
@@ -10,14 +9,14 @@ sealed class Sealed {
 }
 
 fun foo(s: Sealed, nf: Sealed.NonFirst): Int {
-    val si = <!WHEN_ON_SEALED_GEEN_ELSE!>when(s) {
+    val si = when(s) {
         Sealed.First -> 1
         Sealed.NonFirst.Fourth -> 4
-    }<!>
-    val nfi = <!WHEN_ON_SEALED_GEEN_ELSE!>when(nf) {
+    }
+    val nfi = when(nf) {
         Sealed.NonFirst.Second -> 2
         Sealed.NonFirst.Third -> 3
-    }<!>
+    }
     return si + nfi
 }
 

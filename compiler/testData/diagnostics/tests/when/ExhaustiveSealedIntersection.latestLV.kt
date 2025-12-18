@@ -19,17 +19,17 @@ fun test(a: A): Int {
         <!IMPOSSIBLE_IS_CHECK_ERROR!>is SubB<!> -> 1
         is SubAandB -> 1
     }
-    i += when(a) {
+    i += <!WHEN_ON_SEALED_GEEN_ELSE!>when(a) {
         is SubA -> 1
         is SubAandB -> 1
-    }
-    i += when(a) {
+    }<!>
+    i += <!WHEN_ON_SEALED_GEEN_ELSE!>when(a) {
         <!USELESS_IS_CHECK!>is A<!> -> 1
         is SubA -> 1
         is B -> 1
         <!IMPOSSIBLE_IS_CHECK_ERROR!>is SubB<!> -> 1
         is SubAandB -> 1
-    }
+    }<!>
     return i
 }
 
@@ -38,21 +38,21 @@ fun test(b: B): Int {
     i += <!NO_ELSE_IN_WHEN!>when<!>(b) {
         is SubAandB -> 1
     }
-    i += when(b) {
+    i += <!WHEN_ON_SEALED_GEEN_ELSE!>when(b) {
         is SubB -> 1
         is SubAandB -> 1
-    }
+    }<!>
     i += <!NO_ELSE_IN_WHEN!>when<!>(b) {
         <!IMPOSSIBLE_IS_CHECK_ERROR!>is SubA<!> -> 1
         is SubAandB -> 1
     }
-    i += when(b) {
+    i += <!WHEN_ON_SEALED_GEEN_ELSE!>when(b) {
         is A -> 1
         <!IMPOSSIBLE_IS_CHECK_ERROR!>is SubA<!> -> 1
         <!USELESS_IS_CHECK!>is B<!> -> 1
         is SubB -> 1
         is SubAandB -> 1
-    }
+    }<!>
     return i
 }
 
@@ -63,21 +63,21 @@ fun testIntersection(both: A): Int {
     i += <!NO_ELSE_IN_WHEN!>when<!>(both) {
         is SubAandB -> 1
     }
-    i += when(both) {
+    i += <!WHEN_ON_SEALED_GEEN_ELSE!>when(both) {
         <!IMPOSSIBLE_IS_CHECK_ERROR!>is SubB<!> -> 1
         is SubAandB -> 1
-    }
-    i += when(both) {
+    }<!>
+    i += <!WHEN_ON_SEALED_GEEN_ELSE!>when(both) {
         <!USELESS_IS_CHECK!>is SubA<!> -> 1
         is SubAandB -> 1
-    }
-    i += when(both) {
+    }<!>
+    i += <!WHEN_ON_SEALED_GEEN_ELSE!>when(both) {
         <!USELESS_IS_CHECK!>is A<!> -> 1
         <!USELESS_IS_CHECK!>is SubA<!> -> 1
         <!USELESS_IS_CHECK!>is B<!> -> 1
         <!IMPOSSIBLE_IS_CHECK_ERROR!>is SubB<!> -> 1
         is SubAandB -> 1
-    }
+    }<!>
     return i
 }
 
@@ -88,21 +88,21 @@ fun testIntersection(both: B): Int {
     i += <!NO_ELSE_IN_WHEN!>when<!>(both) {
         is SubAandB -> 1
     }
-    i += when(both) {
+    i += <!WHEN_ON_SEALED_GEEN_ELSE!>when(both) {
         <!USELESS_IS_CHECK!>is SubB<!> -> 1
         is SubAandB -> 1
-    }
-    i += when(both) {
+    }<!>
+    i += <!WHEN_ON_SEALED_GEEN_ELSE!>when(both) {
         <!IMPOSSIBLE_IS_CHECK_ERROR!>is SubA<!> -> 1
         is SubAandB -> 1
-    }
-    i += when(both) {
+    }<!>
+    i += <!WHEN_ON_SEALED_GEEN_ELSE!>when(both) {
         <!USELESS_IS_CHECK!>is A<!> -> 1
         <!IMPOSSIBLE_IS_CHECK_ERROR!>is SubA<!> -> 1
         <!USELESS_IS_CHECK!>is B<!> -> 1
         <!USELESS_IS_CHECK!>is SubB<!> -> 1
         is SubAandB -> 1
-    }
+    }<!>
     return i
 }
 

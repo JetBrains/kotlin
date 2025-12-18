@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 // ISSUE: KT-20423
 // LANGUAGE: +AllowSealedInheritorsInDifferentFilesOfSamePackage +SealedInterfaces
 // DIAGNOSTICS: -UNUSED_VARIABLE
@@ -20,23 +19,23 @@ enum class C : Base {
 object D : Base
 
 fun test_1(base: Base) {
-    val x = <!WHEN_ON_SEALED_GEEN_ELSE!>when (base) {
+    val x = when (base) {
         is A -> 1
         is B -> 2
         is C -> 3
         is D -> 4
-    }<!>
+    }
 }
 
 fun test_2(base: Base) {
-    val x = <!WHEN_ON_SEALED_GEEN_ELSE!>when (base) {
+    val x = when (base) {
         is A -> 1
         is B.First -> 2
         is B.Second -> 3
         C.SomeValue -> 4
         C.AnotherValue -> 5
         D -> 6
-    }<!>
+    }
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, enumDeclaration, enumEntry, equalityExpression, functionDeclaration,

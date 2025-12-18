@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 // DIAGNOSTICS: -UNUSED_VARIABLE
 // ISSUE: KT-41215, KT-43551
 
@@ -36,33 +35,33 @@ public class SameFileNonSealed {
 
 // FILE: main.kt
 fun test_ok_1(base: Base) {
-    val x = <!WHEN_ON_SEALED_GEEN_ELSE!>when (base) {
+    val x = when (base) {
         is A -> 1
         is B -> 2
-    }<!>
+    }
 }
 
 fun test_ok_2(base: Base) {
-    val x = <!WHEN_ON_SEALED_GEEN_ELSE!>when (base) {
+    val x = when (base) {
         is A -> 1
         is B.C -> 2
         is B.D -> 3
-    }<!>
+    }
 }
 
 fun test_ok_3(sameFile: SameFile) {
-    val x = <!WHEN_ON_SEALED_GEEN_ELSE!>when (sameFile) {
+    val x = when (sameFile) {
         is SameFile.A -> 1
         is SameFile.B -> 2
-    }<!>
+    }
 }
 
 fun test_ok_4(sameFile: SameFile) {
-    val x = <!WHEN_ON_SEALED_GEEN_ELSE!>when (sameFile) {
+    val x = when (sameFile) {
         is SameFile.A -> 1
         is SameFile.B.C -> 2
         is SameFile.B.D -> 3
-    }<!>
+    }
 }
 
 fun test_error_1(base: Base) {

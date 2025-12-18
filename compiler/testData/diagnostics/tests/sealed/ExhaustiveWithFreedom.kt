@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 // ISSUE: KT-13495
 // DIAGNOSTICS: -UNUSED_VARIABLE
 // LANGUAGE: +AllowSealedInheritorsInDifferentFilesOfSamePackage
@@ -25,12 +24,12 @@ class Containter {
 // FILE: main.kt
 
 fun test_OK(base: Base) {
-    val x = <!WHEN_ON_SEALED_GEEN_ELSE!>when (base) {
+    val x = when (base) {
         is Base.A -> 1
         is B -> 2
         is Containter.C -> 3
         is Containter.D -> 4
-    }<!>
+    }
 }
 
 fun test_error_1(base: Base) {

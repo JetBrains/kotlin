@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 sealed class Sealed(val x: Int) {
     object First: Sealed(12)
     open class NonFirst(x: Int, val y: Int): Sealed(x) {
@@ -9,10 +8,10 @@ sealed class Sealed(val x: Int) {
 }
 
 fun foo(s: Sealed): Int {
-    return <!WHEN_ON_SEALED_WEL_ELSE!>when(s) {
+    return when(s) {
         is Sealed.NonFirst -> 0
         else -> -1
-    }<!>
+    }
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, isExpression, nestedClass,

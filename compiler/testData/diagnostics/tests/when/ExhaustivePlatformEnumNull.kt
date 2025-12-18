@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 /*
  * KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
  *
@@ -25,11 +24,11 @@ public enum J {
 
 fun foo(): Int {
     // When is exhaustive including null
-    return <!WHEN_ON_SEALED_GEEN_ELSE!>when (J.create()) {
+    return when (J.create()) {
         J.A -> 1
         J.B -> 2
         null -> 0
-    }<!>
+    }
 }
 
 /* GENERATED_FIR_TAGS: equalityExpression, flexibleType, functionDeclaration, integerLiteral, javaProperty, javaType,

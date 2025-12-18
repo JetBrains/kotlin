@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 sealed class Sealed() {
     object First: Sealed()
     open class NonFirst: Sealed() {
@@ -14,7 +13,7 @@ sealed class Sealed() {
     }    
 }
 
-fun foo(s: Sealed) = <!WHEN_ON_SEALED_GEEN_ELSE!>when(s) {
+fun foo(s: Sealed) = when(s) {
     Sealed.First -> 1
     is Sealed.NonFirst -> 2
     Sealed.NonFirst.Second -> 4
@@ -22,14 +21,14 @@ fun foo(s: Sealed) = <!WHEN_ON_SEALED_GEEN_ELSE!>when(s) {
     is Sealed.NonFirst.NonSecond.NonThird -> 8
     is Sealed.NonFirst.NonSecond.NonThird.Fifth -> 10
     // no else required
-}<!>
+}
 
-fun fooWithElse(s: Sealed) = <!WHEN_ON_SEALED_WEL_ELSE!>when(s) {
+fun fooWithElse(s: Sealed) = when(s) {
     Sealed.First -> 1
     Sealed.NonFirst.NonSecond.Third -> 6
     is Sealed.NonFirst.NonSecond.NonThird.Fifth -> 10
     else -> 0
-}<!>
+}
 
 fun fooWithoutElse(s: Sealed) = <!NO_ELSE_IN_WHEN!>when<!>(s) {
     Sealed.First -> 1

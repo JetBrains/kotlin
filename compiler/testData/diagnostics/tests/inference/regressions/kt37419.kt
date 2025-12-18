@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 // DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
 
 interface Receiver
@@ -16,18 +15,18 @@ class SomeClass {
     val e = E.VALUE
 
     val withoutType: LambdaWithReceiver
-        get() = <!WHEN_ON_SEALED_GEEN_ELSE!>when (e) {
+        get() = when (e) {
             E.VALUE -> { param ->
                 method(param)
             }
-        }<!>
+        }
 
     val withExplicitType: LambdaWithReceiver
-        get() = <!WHEN_ON_SEALED_GEEN_ELSE!>when (e) {
+        get() = when (e) {
             E.VALUE -> { param: Parameter ->
                 method(param)
             }
-        }<!>
+        }
 }
 
 class OtherClass {
@@ -39,11 +38,11 @@ class OtherClass {
 
 val e2 = E.VALUE
 val staticWithExplicitType: LambdaWithReceiver
-    get() = <!WHEN_ON_SEALED_GEEN_ELSE!>when (e2) {
+    get() = when (e2) {
         E.VALUE -> { param: Parameter ->
             method(param)
         }
-    }<!>
+    }
 
 /* GENERATED_FIR_TAGS: classDeclaration, enumDeclaration, enumEntry, equalityExpression, funWithExtensionReceiver,
 functionDeclaration, functionalType, getter, interfaceDeclaration, lambdaLiteral, nullableType, propertyDeclaration,

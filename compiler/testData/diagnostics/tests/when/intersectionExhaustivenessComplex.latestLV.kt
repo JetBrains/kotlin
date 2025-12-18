@@ -15,27 +15,27 @@ sealed class B {
 fun foo(a: A) {
     if (<!IMPOSSIBLE_IS_CHECK_ERROR!>a !is B<!>) return
 
-    when (a) {
+    <!WHEN_ON_SEALED_GEEN_ELSE!>when (a) {
         <!USELESS_IS_CHECK!>is A.A1<!> -> ""
         <!USELESS_IS_CHECK!>is A.A2<!> -> "v"
-    }.length
+    }<!>.length
 
-    when (a) {
+    <!WHEN_ON_SEALED_GEEN_ELSE!>when (a) {
         <!USELESS_IS_CHECK!>is A.A1<!> -> ""
         <!USELESS_IS_CHECK!>is A.A2<!> -> "v"
-    }.length // OK
+    }<!>.length // OK
 
-    when (a) {
+    <!WHEN_ON_SEALED_GEEN_ELSE!>when (a) {
         <!USELESS_IS_CHECK!>is A.A1<!> -> ""
         <!USELESS_IS_CHECK!>is A.A2<!> -> "v"
         <!IMPOSSIBLE_IS_CHECK_ERROR!>is B.B1<!> -> "..." // should be warning: unreachable code
-    }.length // OK
+    }<!>.length // OK
 
-    when (a) {
+    <!WHEN_ON_SEALED_GEEN_ELSE!>when (a) {
         <!USELESS_IS_CHECK!>is A.A1<!> -> ""
         <!IMPOSSIBLE_IS_CHECK_ERROR!>is B.B1<!> -> "..."
         <!USELESS_IS_CHECK!>is A.A2<!> -> "v"
-    }.length // OK
+    }<!>.length // OK
 
     <!NO_ELSE_IN_WHEN!>when<!> (a) {
         <!USELESS_IS_CHECK!>is A.A1<!> -> ""

@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 sealed class Sealed() {
     object First: Sealed()
     open class NonFirst: Sealed() {
@@ -10,12 +9,12 @@ sealed class Sealed() {
     }    
 }
 
-fun foo(s: Sealed) = <!WHEN_ON_SEALED_GEEN_ELSE!>when(s) {
+fun foo(s: Sealed) = when(s) {
     Sealed.First -> 1
     is Sealed.NonFirst -> 2
     Sealed.NonFirst.Fourth -> 4
     // no else required
-}<!>
+}
 
 /* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, functionDeclaration, integerLiteral, isExpression,
 nestedClass, objectDeclaration, primaryConstructor, sealed, smartcast, whenExpression, whenWithSubject */

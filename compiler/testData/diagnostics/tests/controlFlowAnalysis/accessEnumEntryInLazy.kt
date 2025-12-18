@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 // DIAGNOSTICS: -UNUSED_VARIABLE
 // WITH_STDLIB
 // ISSUE: KT-68339
@@ -8,9 +7,9 @@ enum class ECCurve {
     A;
 
     val a by lazy {
-        val bString = <!WHEN_ON_SEALED_GEEN_ELSE!>when (this) {
+        val bString = when (this) {
             A -> ""
-        }<!>
+        }
     }
 
     val b by lazy {
