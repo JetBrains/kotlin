@@ -489,7 +489,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
             is IrConstructor -> irFun
             is IrSimpleFunction -> findSuperDeclaration(irFun)
         }
-        val irParentClass = irNonFakeFun.parent as? IrClass
+        val irParentClass = irNonFakeFun.parents.filterIsInstance<IrClass>().firstOrNull()
             ?: throw AssertionError("Unexpected parent: ${irNonFakeFun.parent.render()}")
         val owner = typeMapper.mapOwner(irParentClass)
         val asmMethod = mapAsmMethod(irNonFakeFun)
