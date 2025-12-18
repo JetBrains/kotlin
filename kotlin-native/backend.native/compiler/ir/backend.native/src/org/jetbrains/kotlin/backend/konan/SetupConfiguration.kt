@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.getModuleNameForSource
+import org.jetbrains.kotlin.config.moduleName
 import org.jetbrains.kotlin.config.nativeBinaryOptions.BinaryOptionWithValue
 import org.jetbrains.kotlin.config.nativeBinaryOptions.BinaryOptions
 import org.jetbrains.kotlin.config.nativeBinaryOptions.Freezing
@@ -51,7 +52,7 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
     put(LIBRARY_FILES, arguments.libraries.toNonNullList())
     put(LINKER_ARGS, arguments.linkerArguments.toNonNullList() +
             arguments.singleLinkerArguments.toNonNullList())
-    arguments.moduleName?.let { put(MODULE_NAME, it) }
+    arguments.moduleName?.let { moduleName = it }
 
     // TODO: allow overriding the prefix directly.
     // With Swift Export, exported prefix must be Kotlin.

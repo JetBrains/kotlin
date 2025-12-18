@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.config.moduleName
 import org.jetbrains.kotlin.config.nativeBinaryOptions.*
 import org.jetbrains.kotlin.config.nativeBinaryOptions.SanitizerKind
 import org.jetbrains.kotlin.config.nativeBinaryOptions.UnitSuspendFunctionObjCExport
@@ -412,7 +413,7 @@ class KonanConfig(
         get() = configuration.get(KonanConfigKeys.FULL_EXPORTED_NAME_PREFIX) ?: implicitModuleName
 
     override val moduleId: String
-        get() = configuration.get(KonanConfigKeys.MODULE_NAME) ?: implicitModuleName
+        get() = configuration.moduleName ?: implicitModuleName
 
     private val defaultAllocationMode
         get() = AllocationMode.CUSTOM
