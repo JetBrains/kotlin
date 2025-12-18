@@ -142,7 +142,7 @@
 /compiler/testData/compileKotlinAgainstCustomBinaries/ @JetBrains/kotlin-frontend
 /compiler/testData/compileKotlinAgainstJava/ @JetBrains/kotlin-frontend @JetBrains/kotlin-jvm
 /compiler/testData/compiler/smoke/ @JetBrains/kotlin-frontend
-/compiler/testData/debug/ @JetBrains/kotlin-frontend @JetBrains/kotlin-jvm @JetBrains/kotlin-js @JetBrains/kotlin-wasm
+/compiler/testData/debug/ @JetBrains/kotlin-frontend @JetBrains/kotlin-jvm @JetBrains/kotlin-native @JetBrains/kotlin-js @JetBrains/kotlin-wasm
 /compiler/testData/diagnostics/ @JetBrains/kotlin-frontend
 /compiler/testData/diagnostics/klibSerializationTests/ @JetBrains/kotlin-common-backend
 /compiler/testData/diagnostics/irInliner/ @JetBrains/kotlin-common-backend
