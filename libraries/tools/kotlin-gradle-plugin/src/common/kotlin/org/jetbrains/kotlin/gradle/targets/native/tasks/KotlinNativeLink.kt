@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.useXcodeMessageStyle
 import org.jetbrains.kotlin.gradle.plugin.statistics.UsesBuildFusService
 import org.jetbrains.kotlin.gradle.report.UsesBuildMetricsService
+import org.jetbrains.kotlin.gradle.targets.native.DisableNativeCacheSettings
 import org.jetbrains.kotlin.gradle.targets.native.UsesKonanPropertiesBuildService
 import org.jetbrains.kotlin.gradle.targets.native.internal.getOriginalPlatformLibrariesForTargetWithKonanDistribution
 import org.jetbrains.kotlin.gradle.targets.native.tasks.CompilerPluginData
@@ -45,12 +46,15 @@ import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.internal.compilerRunner.native.KotlinNativeCompilerRunner
 import org.jetbrains.kotlin.internal.compilerRunner.native.KotlinNativeToolRunner
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
+import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.project.model.LanguageSettings
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import org.jetbrains.kotlin.tooling.core.toKotlinVersion
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import java.io.File
+import java.util.Locale
 import javax.inject.Inject
+import kotlin.collections.map
 
 /**
  * A task producing a final binary from a compilation.
@@ -128,7 +132,17 @@ constructor(
     val baseName: String by lazyConvention { binary.baseName }
 
     @get:Input
-    internal val binaryName: String by lazyConvention { binary.name }
+    internal val disableCacheSettings: ListProperty<DisableNativeCacheSettings> = objectFactory.listPropertyWithConvention(
+        binary.disableCacheSettings
+    )
+
+    @get:Input
+    internal val binaryName: Provider<String> = objectFactory.providerWithLazyConvention { binary.name }
+
+    @get:Input
+    internal val binaryBuildType: Provider<String> = objectFactory.providerWithLazyConvention {
+        binary.buildType.name.lowercase(Locale.ROOT).replaceFirstChar { it.titlecase(Locale.ROOT) }
+    }
 
     @Suppress("DEPRECATION_ERROR")
     @Deprecated("Use toolOptions to configure the task")
@@ -137,11 +151,15 @@ constructor(
 
     @get:Input
     internal val disableCache: Provider<Boolean> = objects.propertyWithConvention(
-        simpleKotlinNativeVersion.map { version ->
-            binary.disableCacheSettings.any { disableSetting ->
-                disableSetting.version == KotlinToolingVersion(version).toKotlinVersion()
+        simpleKotlinNativeVersion
+            .map { KotlinToolingVersion(it) }
+            .zip(disableCacheSettings) { version, settings ->
+                settings.any { disableSetting ->
+                    disableSetting.version.major == version.major &&
+                            disableSetting.version.minor == version.minor &&
+                            disableSetting.version.patch == version.patch
+                }
             }
-        }
     )
 
     @get:Input
@@ -325,7 +343,7 @@ constructor(
             }
 
             """
-                |Following dependencies exported in the $binaryName binary are not specified as API-dependencies of a corresponding source set:
+                |Following dependencies exported in the ${binaryName.get()} binary are not specified as API-dependencies of a corresponding source set:
                 |
                 $failedDependenciesList
                 |
@@ -339,11 +357,41 @@ constructor(
             reportDiagnostic(
                 KotlinToolingDiagnostics.IncompatibleBinaryTaskConfiguration(
                     path,
-                    binaryName,
+                    binaryName.get(),
                     debuggable,
                     optimized
                 )
             )
+        }
+    }
+
+    private fun validateDisabledNativeCache() {
+        if (hasDisabledNativeCache) {
+            val diagnostics = disableCacheSettings.get().map { disableCache ->
+                if (konanPropertiesService.get().defaultCacheKindForTarget(konanTarget) == NativeCacheKind.NONE) {
+                    KotlinToolingDiagnostics.NativeCacheRedundantDiagnostic(
+                        binaryBuildType.get(),
+                        binaryName.get(),
+                        konanTarget.visibleName,
+                        HostManager.platformName()
+                    )
+                } else {
+                    val version = simpleKotlinNativeVersion.map { version ->
+                        KotlinToolingVersion(version).toKotlinVersion()
+                    }
+
+                    KotlinToolingDiagnostics.NativeCacheDisabledDiagnostic(
+                        version.get(),
+                        binaryBuildType.get(),
+                        binaryName.get(),
+                        konanTarget.visibleName,
+                        disableCache.reason,
+                        disableCache.issueUrl
+                    )
+                }
+            }
+
+            diagnostics.forEach { reportDiagnostic(it) }
         }
     }
 
@@ -437,6 +485,7 @@ constructor(
 
         addBuildMetricsForTaskAction(metricsReporter = metricsReporter, languageVersion = null) {
             validateBinaryConfiguration()
+            validateDisabledNativeCache()
             validatedExportedLibraries()
 
             val output = outputFile.get()
@@ -453,7 +502,7 @@ constructor(
                     if (cacheSettings.icEnabled) {
                         val icCacheDir = cacheSettings.gradleBuildDir
                             .resolve("kotlin-native-ic-cache")
-                            .resolve(binaryName)
+                            .resolve(binaryName.get())
                         icCacheDir.mkdirs()
                         add("-Xenable-incremental-compilation")
                         add("-Xic-cache-dir=$icCacheDir")
@@ -481,4 +530,5 @@ constructor(
 
 internal val String.asValidFrameworkName get() = replace('-', '_')
 
+private val KotlinNativeLink.hasDisabledNativeCache get() = disableCacheSettings.get().isNotEmpty()
 private val KotlinNativeLink.hasIncompatibleConfiguration get() = (debuggable && optimized) || (!debuggable && !optimized)

@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics.C
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic.Severity.*
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.UnresolvedKmpDependency.ResolvedVariant
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.UnresolvedKmpDependency.UnresolvedComponent
-import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBinary
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.Uklib
 import org.jetbrains.kotlin.gradle.plugin.sources.android.multiplatformAndroidSourceSetLayoutV1
 import org.jetbrains.kotlin.gradle.plugin.sources.android.multiplatformAndroidSourceSetLayoutV2
@@ -40,7 +39,6 @@ import org.jetbrains.kotlin.utils.addToStdlib.flatGroupBy
 import java.io.File
 import java.net.URI
 import java.security.MessageDigest
-import java.util.Locale
 import kotlin.KotlinVersion as StdlibKotlinVersion
 
 internal object KotlinToolingDiagnostics {
@@ -418,51 +416,47 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
-    internal abstract class NativeCacheDiagnostic : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
-        val NativeBinary.binaryBuildType // "DEBUG" -> "debug" -> "Debug"
-            get() = buildType.name.lowercase(Locale.ROOT).replaceFirstChar { it.titlecase(Locale.ROOT) }
-
-        val NativeBinary.targetName
-            get() = target.konanTarget.visibleName
-    }
-
-    internal object NativeCacheDisabledDiagnostic : NativeCacheDiagnostic() {
+    internal object NativeCacheDisabledDiagnostic : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
         operator fun invoke(
             kotlinVersion: StdlibKotlinVersion,
-            binary: NativeBinary,
+            buildType: String,
+            binaryName: String,
+            targetName: String,
             reason: String,
             issueUrl: URI?
         ) = build {
-            title("Kotlin/Native cache is disabled for ${binary.binaryBuildType} binary '${binary.name}'")
+            title("Kotlin/Native cache is disabled for $buildType binary '${binaryName}'")
                 .description {
                     """
-                    The Kotlin/Native cache has been disabled for the ${binary.binaryBuildType} binary '${binary.name}' on target '${binary.targetName}'.
-                    Build times for '${binary.targetName}' (${binary.binaryBuildType}) may be slower as a result.
+                    The Kotlin/Native cache has been disabled for the $buildType binary '$binaryName' on target '$targetName'.
+                    Build times for '$targetName' ($buildType) may be slower as a result.
                     
                     Reason: $reason
                     """.trimIndent()
                 }
                 .solution {
-                    "Investigate if '$reason' is still relevant for $kotlinVersion to re-enable caching for '${binary.targetName}'."
+                    "Investigate if '$reason' is still relevant for $kotlinVersion to re-enable caching for '$targetName'."
                 }
                 .documentationLink(issueUrl ?: URI("https://kotl.in/disable-native-cache"))
         }
     }
 
-    internal object NativeCacheRedundantDiagnostic : NativeCacheDiagnostic() {
+    internal object NativeCacheRedundantDiagnostic : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
         operator fun invoke(
-            binary: NativeBinary,
+            buildType: String,
+            binaryName: String,
+            targetName: String,
             hostName: String
         ) = build {
-            title("Kotlin/Native cache disable configuration is redundant for ${binary.binaryBuildType} binary '${binary.name}'")
+            title("Kotlin/Native cache disable configuration is redundant for $buildType binary '$binaryName'")
                 .description {
                     """
-                    The Kotlin/Native cache has been explicitly disabled for the ${binary.binaryBuildType} binary '${binary.name}' on target '${binary.targetName}'.
+                    The Kotlin/Native cache has been explicitly disabled for the $buildType binary '$binaryName' on target '$targetName'.
                     However, this target does not support caching on the current host '$hostName' regardless of configuration.
                     """.trimIndent()
                 }
                 .solution {
-                    "Remove the configuration that disables the cache for '${binary.name}'. " +
+                    "Remove the configuration that disables the cache for '$binaryName'. " +
                             "Since caching is not supported for this target on this host, this configuration has no effect."
                 }
                 .documentationLink(URI("https://kotl.in/disable-native-cache"))
