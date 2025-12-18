@@ -65,7 +65,14 @@ public interface KaNamedClassSymbolRenderer {
                         declarationRenderer.typeParametersRenderer.renderTypeParameters(analysisSession, symbol, declarationRenderer, printer)
                         if (primaryConstructor != null) {
                             val annotationsPrinted = checkIfPrinted {
-                                renderAnnotationsModifiersAndContextReceivers(analysisSession, primaryConstructor, declarationRenderer, printer)
+                                withPrefix(" ") {
+                                    renderAnnotationsModifiersAndContextReceivers(
+                                        analysisSession,
+                                        primaryConstructor,
+                                        declarationRenderer,
+                                        printer
+                                    )
+                                }
                             }
                             if (annotationsPrinted) {
                                 withPrefix(" ") {

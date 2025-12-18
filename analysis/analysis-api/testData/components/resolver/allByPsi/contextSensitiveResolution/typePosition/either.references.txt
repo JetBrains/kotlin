@@ -24,7 +24,7 @@ KtNameReferenceExpression(171,178): 'Nothing'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in kotlin) class Nothingprivate constructor
+      (in kotlin) class Nothing private constructor
 
 KtNameReferenceExpression(219,220): 'A'
   KtSimpleNameReference:
@@ -45,7 +45,7 @@ KtNameReferenceExpression(230,237): 'Nothing'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     symbols:
-      (in kotlin) class Nothingprivate constructor
+      (in kotlin) class Nothing private constructor
 
 KtNameReferenceExpression(239,240): 'A'
   KtSimpleNameReference:

@@ -1,4 +1,4 @@
-actual annotation class Aactual constructor(name: kotlin.String) {
+actual annotation class A actual constructor(name: kotlin.String) {
   actual val name: kotlin.String
 }
 
