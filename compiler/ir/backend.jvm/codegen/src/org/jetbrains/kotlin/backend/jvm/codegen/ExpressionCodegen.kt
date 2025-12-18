@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.jvm.codegen
 
 import org.jetbrains.kotlin.backend.common.lower.BOUND_RECEIVER_PARAMETER
+import org.jetbrains.kotlin.backend.common.lower.LAMBDA_EXTENSION_RECEIVER
 import org.jetbrains.kotlin.backend.jvm.*
 import org.jetbrains.kotlin.backend.jvm.intrinsics.IntrinsicMethod
 import org.jetbrains.kotlin.backend.jvm.intrinsics.JavaClassProperty
@@ -386,7 +387,7 @@ class ExpressionCodegen(
 
         // If the parameter is an extension receiver parameter or a captured extension receiver from enclosing,
         // then generate name accordingly.
-        val name = if (param.origin == BOUND_RECEIVER_PARAMETER || isReceiver) {
+        val name = if (param.origin == BOUND_RECEIVER_PARAMETER || param.origin == LAMBDA_EXTENSION_RECEIVER || isReceiver) {
             getNameForReceiverParameter(irFunction.toIrBasedDescriptor(), context.config.languageVersionSettings)
         } else {
             param.name.asString()
