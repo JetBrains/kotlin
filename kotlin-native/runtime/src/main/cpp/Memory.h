@@ -252,8 +252,6 @@ NO_INLINE RUNTIME_NOTHROW void Kotlin_mm_switchThreadStateRunnable_debug();
 void Kotlin_mm_safePointFunctionPrologue() RUNTIME_NOTHROW;
 void Kotlin_mm_safePointWhileLoopBody() RUNTIME_NOTHROW;
 
-RUNTIME_NOTHROW void DisposeRegularWeakReferenceImpl(ObjHeader* counter);
-
 #ifdef __cplusplus
 }
 #endif

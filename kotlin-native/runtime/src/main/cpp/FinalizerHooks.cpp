@@ -8,6 +8,7 @@
 #include "Cleaner.h"
 #include "Memory.h"
 #include "Types.h"
+#include "Weak.hpp"
 
 using namespace kotlin;
 
@@ -25,7 +26,7 @@ NO_INLINE void RunFinalizerHooksImpl(ObjHeader* object, const TypeInfo* type) no
     if (type == theCleanerImplTypeInfo) {
         DisposeCleaner(object);
     } else if (type == theRegularWeakReferenceImplTypeInfo) {
-        DisposeRegularWeakReferenceImpl(object);
+        mm::disposeRegularWeakReferenceImpl(object);
     }
 }
 
