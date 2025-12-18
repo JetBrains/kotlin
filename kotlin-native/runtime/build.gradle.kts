@@ -143,7 +143,7 @@ bitcode {
         testsGroup("main_test") {
             testedModules.addAll("main")
             // TODO(KT-53776): Some tests depend on allocator being legacy.
-            testSupportModules.addAll("mm", "noop_externalCallsChecker", "common_alloc", "legacy_alloc", "std_alloc", "common_gc", "noop_gc", "common_gcScheduler", "manual_gcScheduler", "objc", "noop_crashHandler")
+            testSupportModules.addAll("mm", "noop_externalCallsChecker", "common_alloc", "legacy_alloc", "std_alloc", "common_gc", "noop_gc", "common_gcScheduler", "manual_gcScheduler", "objc", "noop_crashHandler", "noop_hot_reload")
         }
 
         // Headers from here get reused by Swift Export, so this module should not depend on anything in the runtime
@@ -287,6 +287,14 @@ bitcode {
         module("hot_reload") {
             srcRoot.set(layout.projectDirectory.dir("src/hot_reload"))
             headersDirs.from("src/alloc/common/cpp", "src/gcScheduler/common/cpp", "src/gc/common/cpp", "src/mm/cpp", "src/externalCallsChecker/common/cpp", "src/main/cpp")
+            sourceSets {
+                main {}
+            }
+        }
+
+        module("noop_hot_reload") {
+            srcRoot.set(layout.projectDirectory.dir("src/hot_reload/noop"))
+            headersDirs.from("src/hot_reload/cpp", "src/main/cpp", "src/mm/cpp", "src/alloc/common/cpp", "src/gc/common/cpp")
             sourceSets {
                 main {}
             }
@@ -493,7 +501,7 @@ bitcode {
 
         testsGroup("common_gcScheduler_test") {
             testedModules.addAll("common_gcScheduler")
-            testSupportModules.addAll("main", "mm", "noop_externalCallsChecker", "common_alloc", "custom_alloc", "common_gc", "noop_gc", "manual_gcScheduler", "objc", "noop_crashHandler")
+            testSupportModules.addAll("main", "mm", "noop_externalCallsChecker", "common_alloc", "custom_alloc", "common_gc", "noop_gc", "manual_gcScheduler", "objc", "noop_crashHandler", "noop_hot_reload")
         }
 
         module("manual_gcScheduler") {
@@ -515,7 +523,7 @@ bitcode {
 
         testsGroup("adaptive_gcScheduler_test") {
             testedModules.addAll("adaptive_gcScheduler")
-            testSupportModules.addAll("main", "mm", "noop_externalCallsChecker", "common_alloc", "custom_alloc", "common_gc", "noop_gc", "common_gcScheduler", "objc", "noop_crashHandler")
+            testSupportModules.addAll("main", "mm", "noop_externalCallsChecker", "common_alloc", "custom_alloc", "common_gc", "noop_gc", "common_gcScheduler", "objc", "noop_crashHandler", "noop_hot_reload")
         }
 
         module("aggressive_gcScheduler") {
@@ -529,7 +537,7 @@ bitcode {
 
         testsGroup("aggressive_gcScheduler_test") {
             testedModules.addAll("aggressive_gcScheduler")
-            testSupportModules.addAll("main", "mm", "noop_externalCallsChecker", "common_alloc", "custom_alloc", "common_gc", "noop_gc", "common_gcScheduler", "objc", "noop_crashHandler")
+            testSupportModules.addAll("main", "mm", "noop_externalCallsChecker", "common_alloc", "custom_alloc", "common_gc", "noop_gc", "common_gcScheduler", "objc", "noop_crashHandler", "noop_hot_reload")
         }
 
         module("impl_externalCallsChecker") {
