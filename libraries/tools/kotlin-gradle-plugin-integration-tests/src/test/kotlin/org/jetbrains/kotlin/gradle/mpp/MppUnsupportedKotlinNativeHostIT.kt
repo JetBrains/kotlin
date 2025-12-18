@@ -15,8 +15,7 @@ import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.junit.jupiter.api.DisplayName
 
 @DisplayName("Tests for Mpp unsupported host platforms")
-@MppGradlePluginTests
-class MppUnsupportedKotlinNativeHostIT : KGPBaseTest() {
+class MppUnsupportedKotlinNativeHostIT : KGPDaemonsBaseTest() {
 
     /**
      * Defines the parameters for a Linux RISCV64 host environment.
