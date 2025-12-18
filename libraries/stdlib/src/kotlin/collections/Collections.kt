@@ -333,7 +333,7 @@ internal fun <T> List<T>.optimizeReadOnlyList() = when (size) {
  * @sample samples.collections.Collections.Lists.binarySearchFoundNotFound
  * @sample samples.collections.Collections.Lists.binarySearchFindOrInsert
  * @sample samples.collections.Collections.Lists.binarySearchOnComparable
- * @sample samples.collections.Collections.Lists.binarySearchRepeatingValues
+ * @sample samples.collections.Collections.Lists.binarySearchRepeatingElements
  * @sample samples.collections.Collections.Lists.binarySearchWithBoundaries
  */
 public fun <T : Comparable<T>> List<T?>.binarySearch(element: T?, fromIndex: Int = 0, toIndex: Int = size): Int {

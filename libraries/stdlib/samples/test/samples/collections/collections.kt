@@ -281,14 +281,14 @@ class Collections {
         @Sample
         fun binarySearchFindOrInsert() {
             /**
-             * If the value is found, returns its index.
-             * Otherwise, inserts the value at the right position and returns its index.
+             * If the element is found, returns its index.
+             * Otherwise, inserts the element at the right position and returns its index.
              */
-            fun findOrInsert(list: MutableList<Char>, value: Char): Int {
-                val index = list.binarySearch(value)
-                if (index < 0) { // value not found
+            fun findOrInsert(list: MutableList<Char>, element: Char): Int {
+                val index = list.binarySearch(element)
+                if (index < 0) { // element not found
                     val insertionIndex = index.inv() // same as -(index + 1)
-                    list.add(insertionIndex, value)
+                    list.add(insertionIndex, element)
                     return insertionIndex
                 }
                 return index
@@ -316,8 +316,8 @@ class Collections {
         }
 
         @Sample
-        fun binarySearchRepeatingValues() {
-            // If multiple equal values are present, binarySearch could return any one of them.
+        fun binarySearchRepeatingElements() {
+            // If multiple equal elements are present, binarySearch could return any one of them.
             val list2b = mutableListOf('a', 'b', 'b', 'c', 'd', 'e')
             assertPrints(list2b.binarySearch('b'), "2") // could be either 1 or 2
             val list5b = mutableListOf('a', 'b', 'b', 'b', 'b', 'b', 'c', 'd', 'e')
@@ -371,15 +371,15 @@ class Collections {
 
         @Sample
         fun binarySearchWithComparisonFunctionLowerBoundUpperBound() {
-            // first index such that list[index] >= value, or list.size() if such index doesn't exist
-            fun <T : Comparable<T>> List<T?>.lowerBound(value: T?): Int =
-                binarySearch { if (it != null && value != null && it < value) -1 else 1 }.inv()
+            // first index such that list[index] >= element, or list.size() if such index doesn't exist
+            fun <T : Comparable<T>> List<T?>.lowerBound(element: T?): Int =
+                binarySearch { if (it != null && element != null && it < element) -1 else 1 }.inv()
 
-            // first index such that list[index] > value, or list.size() if such index doesn't exist
-            fun <T : Comparable<T>> List<T?>.upperBound(value: T?): Int =
-                binarySearch { if (it == null || (value != null && it <= value)) -1 else 1 }.inv()
+            // first index such that list[index] > element, or list.size() if such index doesn't exist
+            fun <T : Comparable<T>> List<T?>.upperBound(element: T?): Int =
+                binarySearch { if (it == null || (element != null && it <= element)) -1 else 1 }.inv()
 
-            // [lowerBound, upperBound) is a semi-interval of all the entries of the value in the list
+            // [lowerBound, upperBound) is a semi-interval of all the entries of the element in the list
 
             val lst1 = mutableListOf('a', 'b', 'b', 'c', 'd', 'e')
             val lst2 = mutableListOf('a',           'c', 'd', 'e')
