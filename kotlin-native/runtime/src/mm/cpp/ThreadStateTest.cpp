@@ -229,14 +229,6 @@ TEST(ThreadStateDeathTest, StateAssertsForDetachedThread) {
                  "runtime assert: threadData must not be nullptr");
     EXPECT_DEATH(AssertThreadState(ThreadState::kNative),
                  "runtime assert: Thread is not attached to the runtime");
-
-    EXPECT_DEATH(AssertThreadState(static_cast<MemoryState*>(nullptr), {ThreadState::kNative}),
-                 "runtime assert: thread must not be nullptr");
-    EXPECT_DEATH(AssertThreadState(static_cast<mm::ThreadData*>(nullptr), {ThreadState::kNative}),
-                 "runtime assert: threadData must not be nullptr");
-    EXPECT_DEATH(AssertThreadState({ThreadState::kNative}),
-                 "runtime assert: Thread is not attached to the runtime");
-
 }
 
 TEST(ThreadStateDeathTest, IncorrectStateSwitchWithDifferentFunctions) {
