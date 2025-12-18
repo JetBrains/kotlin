@@ -765,8 +765,6 @@ class KotlinCoreEnvironment private constructor(
             DiagnosticSuppressor.registerExtensionPoint(project)
 
             // K1 extensions for removal
-            @Suppress("DEPRECATION_ERROR")
-            org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension.registerExtensionPoint(project)
             PreprocessedVirtualFileFactoryExtension.registerExtensionPoint(project)
 
             // K1 extensions for scripting
