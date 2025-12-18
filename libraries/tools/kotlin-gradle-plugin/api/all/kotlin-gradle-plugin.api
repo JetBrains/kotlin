@@ -2739,6 +2739,8 @@ public final class org/jetbrains/kotlin/gradle/targets/js/ir/ExecutableWasm : or
 	public fun <init> (Lorg/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsIrCompilation;Ljava/lang/String;Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsBinaryMode;)V
 	public final fun getMainOptimizedFile ()Lorg/gradle/api/provider/Provider;
 	public fun getOptimizeTask ()Lorg/gradle/api/tasks/TaskProvider;
+	public fun getWasmBinaryConfigurationName ()Ljava/lang/String;
+	public fun getWasmBinaryOutputConfigurationName ()Ljava/lang/String;
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/targets/js/ir/JsBinary {
@@ -3041,6 +3043,8 @@ public final class org/jetbrains/kotlin/gradle/targets/js/ir/LibraryConfigurator
 public final class org/jetbrains/kotlin/gradle/targets/js/ir/LibraryWasm : org/jetbrains/kotlin/gradle/targets/js/ir/JsIrBinary, org/jetbrains/kotlin/gradle/targets/js/ir/WasmBinary {
 	public fun <init> (Lorg/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsIrCompilation;Ljava/lang/String;Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsBinaryMode;)V
 	public fun getOptimizeTask ()Lorg/gradle/api/tasks/TaskProvider;
+	public fun getWasmBinaryConfigurationName ()Ljava/lang/String;
+	public fun getWasmBinaryOutputConfigurationName ()Ljava/lang/String;
 }
 
 public final class org/jetbrains/kotlin/gradle/targets/js/ir/NodeJsEnvironmentConfigurator : org/jetbrains/kotlin/gradle/targets/js/ir/JsEnvironmentConfigurator {
@@ -3058,6 +3062,13 @@ public abstract interface class org/jetbrains/kotlin/gradle/targets/js/ir/WasmBi
 	public abstract fun getName ()Ljava/lang/String;
 	public abstract fun getOptimizeTask ()Lorg/gradle/api/tasks/TaskProvider;
 	public abstract fun getOutputDirBase ()Lorg/gradle/api/provider/Provider;
+	public abstract fun getWasmBinaryConfigurationName ()Ljava/lang/String;
+	public abstract fun getWasmBinaryOutputConfigurationName ()Ljava/lang/String;
+}
+
+public final class org/jetbrains/kotlin/gradle/targets/js/ir/WasmBinary$DefaultImpls {
+	public static fun getWasmBinaryConfigurationName (Lorg/jetbrains/kotlin/gradle/targets/js/ir/WasmBinary;)Ljava/lang/String;
+	public static fun getWasmBinaryOutputConfigurationName (Lorg/jetbrains/kotlin/gradle/targets/js/ir/WasmBinary;)Ljava/lang/String;
 }
 
 public final class org/jetbrains/kotlin/gradle/targets/js/ir/WebpackConfigurator : org/jetbrains/kotlin/gradle/targets/js/ir/SubTargetConfigurator {
@@ -5443,6 +5454,7 @@ public abstract class org/jetbrains/kotlin/gradle/targets/wasm/binaryen/Binaryen
 	public fun <init> ()V
 	protected fun exec ()V
 	public final fun getBinaryenArgs ()Ljava/util/List;
+	public final fun getBinaryenArguments ()Lorg/gradle/api/provider/ListProperty;
 	public abstract fun getFs ()Lorg/gradle/api/file/FileSystemOperations;
 	public final fun getInputFileProperty ()Lorg/gradle/api/file/RegularFileProperty;
 	public abstract fun getOutputDirectory ()Lorg/gradle/api/file/DirectoryProperty;
@@ -5566,6 +5578,33 @@ public abstract class org/jetbrains/kotlin/gradle/targets/wasm/d8/D8SetupTask : 
 }
 
 public final class org/jetbrains/kotlin/gradle/targets/wasm/d8/D8SetupTask$Companion {
+}
+
+public abstract class org/jetbrains/kotlin/gradle/targets/wasm/internal/NoOpWasmBinaryTransform : org/gradle/api/artifacts/transform/TransformAction {
+	public fun <init> ()V
+	public fun transform (Lorg/gradle/api/artifacts/transform/TransformOutputs;)V
+}
+
+public abstract class org/jetbrains/kotlin/gradle/targets/wasm/internal/WasmBinaryTransform : org/gradle/api/artifacts/transform/TransformAction {
+	public fun <init> ()V
+	public abstract fun getArchiveOperations ()Lorg/gradle/api/file/ArchiveOperations;
+	public abstract fun getDependencies ()Lorg/gradle/api/file/FileCollection;
+	public abstract fun getFs ()Lorg/gradle/api/file/FileSystemOperations;
+	public abstract fun getInputArtifact ()Lorg/gradle/api/provider/Provider;
+	public fun transform (Lorg/gradle/api/artifacts/transform/TransformOutputs;)V
+}
+
+public abstract class org/jetbrains/kotlin/gradle/targets/wasm/internal/WasmBinaryTransform$Parameters : org/gradle/api/artifacts/transform/TransformParameters {
+	public fun <init> ()V
+	public abstract fun getBuildDir ()Lorg/gradle/api/provider/Property;
+	public abstract fun getClientIsAliveFlagFile ()Lorg/gradle/api/provider/Property;
+	public abstract fun getCompilerOptions ()Lorg/gradle/api/provider/Property;
+	public abstract fun getCurrentJvmJdkToolsJar ()Lorg/gradle/api/provider/Property;
+	public abstract fun getDefaultCompilerClasspath ()Lorg/gradle/api/file/ConfigurableFileCollection;
+	public abstract fun getKotlinPluginVersion ()Lorg/gradle/api/provider/Property;
+	public abstract fun getPathProvider ()Lorg/gradle/api/provider/Property;
+	public abstract fun getProjectRootFile ()Lorg/gradle/api/provider/Property;
+	public abstract fun getSessionFlagFile ()Lorg/gradle/api/provider/Property;
 }
 
 public abstract class org/jetbrains/kotlin/gradle/targets/wasm/nodejs/WasmNodeJsEnvSpec : org/jetbrains/kotlin/gradle/targets/web/nodejs/BaseNodeJsEnvSpec {
