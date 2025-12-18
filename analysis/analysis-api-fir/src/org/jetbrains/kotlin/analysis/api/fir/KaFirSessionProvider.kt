@@ -270,7 +270,7 @@ private fun KClass<out KaLifetimeToken>.handleEnteringAnalysisInWriteAction(proj
     if (isAnalysisInWriteAction(this)) {
         // As we are inside a write action, we must flush deferred modifications to materialize its effects up to this point.
         @OptIn(LLFirInternals::class)
-        LLFirDeclarationModificationService.getInstance(project).flushModifications()
+        LLFirDeclarationModificationService.getInstance(project).flushDeferredModifications()
 
         project.analysisMessageBus.syncPublisher(KotlinAnalysisInWriteActionListener.TOPIC).onEnteringAnalysisInWriteAction()
     }
