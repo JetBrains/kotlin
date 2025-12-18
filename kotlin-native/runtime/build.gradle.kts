@@ -311,7 +311,7 @@ bitcode {
 
         testsGroup("common_alloc_test") {
             testedModules.addAll("common_alloc")
-            testSupportModules.addAll("main", "mm", "noop_externalCallsChecker", "custom_alloc", "common_gc", "noop_gc", "common_gcScheduler", "manual_gcScheduler", "objc", "noop_crashHandler")
+            testSupportModules.addAll("main", "mm", "noop_externalCallsChecker", "custom_alloc", "common_gc", "noop_gc", "common_gcScheduler", "manual_gcScheduler", "objc", "noop_crashHandler", "noop_hot_reload")
         }
 
         module("std_alloc") {
@@ -335,7 +335,7 @@ bitcode {
         testsGroup("custom_alloc_test") {
             testedModules.addAll("custom_alloc")
             // TODO(KT-53776): Some tests depend on GC not being noop.
-            testSupportModules.addAll("main", "noop_externalCallsChecker", "mm", "common_alloc", "common_gc", "concurrent_ms_gc", "common_gcScheduler", "manual_gcScheduler", "objc", "noop_crashHandler")
+            testSupportModules.addAll("main", "noop_externalCallsChecker", "mm", "common_alloc", "common_gc", "concurrent_ms_gc", "common_gcScheduler", "manual_gcScheduler", "objc", "noop_crashHandler", "noop_hot_reload")
         }
 
         module("legacy_alloc") {
@@ -350,7 +350,7 @@ bitcode {
 
         testsGroup("std_legacy_alloc_test") {
             testedModules.addAll("legacy_alloc")
-            testSupportModules.addAll("main", "noop_externalCallsChecker", "mm", "common_alloc", "std_alloc", "common_gc", "noop_gc", "common_gcScheduler", "manual_gcScheduler", "objc", "noop_crashHandler")
+            testSupportModules.addAll("main", "noop_externalCallsChecker", "mm", "common_alloc", "std_alloc", "common_gc", "noop_gc", "common_gcScheduler", "manual_gcScheduler", "objc", "noop_crashHandler", "noop_hot_reload")
         }
 
         module("exceptionsSupport") {
@@ -407,7 +407,7 @@ bitcode {
 
         testsGroup("mm_test") {
             testedModules.addAll("mm")
-            testSupportModules.addAll("main", "noop_externalCallsChecker", "common_alloc", "custom_alloc", "common_gc", "noop_gc", "common_gcScheduler", "manual_gcScheduler", "objc", "noop_crashHandler")
+            testSupportModules.addAll("main", "noop_externalCallsChecker", "common_alloc", "custom_alloc", "common_gc", "noop_gc", "common_gcScheduler", "manual_gcScheduler", "objc", "noop_crashHandler", "noop_hot_reload")
         }
 
         module("common_gc") {
@@ -421,7 +421,7 @@ bitcode {
 
         testsGroup("common_gc_test") {
             testedModules.addAll("common_gc")
-            testSupportModules.addAll("main", "mm", "noop_externalCallsChecker", "common_alloc", "custom_alloc", "noop_gc", "common_gcScheduler", "manual_gcScheduler", "objc", "noop_crashHandler")
+            testSupportModules.addAll("main", "mm", "noop_externalCallsChecker", "common_alloc", "custom_alloc", "noop_gc", "common_gcScheduler", "manual_gcScheduler", "objc", "noop_crashHandler", "noop_hot_reload")
         }
 
         module("noop_gc") {
@@ -443,12 +443,12 @@ bitcode {
 
         testsGroup("stms_gc_test") {
             testedModules.addAll("same_thread_ms_gc")
-            testSupportModules.addAll("main", "mm", "noop_externalCallsChecker", "common_alloc", "common_alloc", "legacy_alloc", "std_alloc", "common_gc", "common_gcScheduler", "manual_gcScheduler", "objc", "noop_crashHandler")
+            testSupportModules.addAll("main", "mm", "noop_externalCallsChecker", "common_alloc", "common_alloc", "legacy_alloc", "std_alloc", "common_gc", "common_gcScheduler", "manual_gcScheduler", "objc", "noop_crashHandler", "noop_hot_reload")
         }
 
         testsGroup("stms_gc_custom_test") {
             testedModules.addAll("same_thread_ms_gc")
-            testSupportModules.addAll("main", "mm", "noop_externalCallsChecker", "common_alloc", "custom_alloc", "common_gc", "common_gcScheduler", "manual_gcScheduler", "objc", "noop_crashHandler")
+            testSupportModules.addAll("main", "mm", "noop_externalCallsChecker", "common_alloc", "custom_alloc", "common_gc", "common_gcScheduler", "manual_gcScheduler", "objc", "noop_crashHandler", "noop_hot_reload")
         }
 
         module("pmcs_gc") {
@@ -463,12 +463,12 @@ bitcode {
 
         testsGroup("pmcs_gc_test") {
             testedModules.addAll("pmcs_gc")
-            testSupportModules.addAll("main", "mm", "noop_externalCallsChecker", "common_alloc", "common_alloc", "legacy_alloc", "std_alloc", "common_gc", "common_gcScheduler", "manual_gcScheduler", "objc", "noop_crashHandler")
+            testSupportModules.addAll("main", "mm", "noop_externalCallsChecker", "common_alloc", "common_alloc", "legacy_alloc", "std_alloc", "common_gc", "common_gcScheduler", "manual_gcScheduler", "objc", "noop_crashHandler", "noop_hot_reload")
         }
 
         testsGroup("pmcs_gc_custom_test") {
             testedModules.addAll("pmcs_gc")
-            testSupportModules.addAll("main", "mm", "noop_externalCallsChecker", "common_alloc", "custom_alloc", "common_gc", "common_gcScheduler", "manual_gcScheduler", "objc", "noop_crashHandler")
+            testSupportModules.addAll("main", "mm", "noop_externalCallsChecker", "common_alloc", "custom_alloc", "common_gc", "common_gcScheduler", "manual_gcScheduler", "objc", "noop_crashHandler", "noop_hot_reload")
         }
 
         module("concurrent_ms_gc") {
@@ -482,12 +482,12 @@ bitcode {
 
         testsGroup("cms_gc_test") {
             testedModules.addAll("concurrent_ms_gc")
-            testSupportModules.addAll("main", "mm", "noop_externalCallsChecker", "common_alloc", "common_alloc", "legacy_alloc", "std_alloc", "common_gc", "common_gcScheduler", "manual_gcScheduler", "objc", "noop_crashHandler")
+            testSupportModules.addAll("main", "mm", "noop_externalCallsChecker", "common_alloc", "common_alloc", "legacy_alloc", "std_alloc", "common_gc", "common_gcScheduler", "manual_gcScheduler", "objc", "noop_crashHandler", "noop_hot_reload")
         }
 
         testsGroup("cms_gc_custom_test") {
             testedModules.addAll("concurrent_ms_gc")
-            testSupportModules.addAll("main", "mm", "noop_externalCallsChecker", "common_alloc", "custom_alloc", "common_gc", "common_gcScheduler", "manual_gcScheduler", "objc", "noop_crashHandler")
+            testSupportModules.addAll("main", "mm", "noop_externalCallsChecker", "common_alloc", "custom_alloc", "common_gc", "common_gcScheduler", "manual_gcScheduler", "objc", "noop_crashHandler", "noop_hot_reload")
         }
 
         module("common_gcScheduler") {
