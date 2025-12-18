@@ -750,32 +750,39 @@ class KotlinCoreEnvironment private constructor(
         @Suppress("MemberVisibilityCanPrivate") // made public for CLI Android Lint
         @K1Deprecation
         fun registerPluginExtensionPoints(project: MockProject) {
+            // K1 extensions
             SyntheticResolveExtension.registerExtensionPoint(project)
             SyntheticJavaResolveExtension.registerExtensionPoint(project)
-            @Suppress("DEPRECATION_ERROR")
-            org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension.registerExtensionPoint(project)
-            ClassGeneratorExtension.registerExtensionPoint(project)
-            ClassFileFactoryFinalizerExtension.registerExtensionPoint(project)
             AnalysisHandlerExtension.registerExtensionPoint(project)
             PackageFragmentProviderExtension.registerExtensionPoint(project)
             StorageComponentContainerContributor.registerExtensionPoint(project)
             DeclarationAttributeAltererExtension.registerExtensionPoint(project)
+            TypeResolutionInterceptor.registerExtensionPoint(project)
+            CandidateInterceptor.registerExtensionPoint(project)
+            DescriptorSerializerPlugin.registerExtensionPoint(project)
+            TypeAttributeTranslatorExtension.registerExtensionPoint(project)
+            AssignResolutionAltererExtension.registerExtensionPoint(project)
+            DiagnosticSuppressor.registerExtensionPoint(project)
+
+            // K1 extensions for removal
+            @Suppress("DEPRECATION_ERROR")
+            org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension.registerExtensionPoint(project)
             PreprocessedVirtualFileFactoryExtension.registerExtensionPoint(project)
+
+            // K1 extensions for scripting
             CompilerConfigurationExtension.registerExtensionPoint(project)
             CollectAdditionalSourcesExtension.registerExtensionPoint(project)
             ProcessSourcesBeforeCompilingExtension.registerExtensionPoint(project)
             ExtraImportsProviderExtension.registerExtensionPoint(project)
-            IrGenerationExtension.registerExtensionPoint(project)
             ScriptEvaluationExtension.registerExtensionPoint(project)
             ShellExtension.registerExtensionPoint(project)
-            TypeResolutionInterceptor.registerExtensionPoint(project)
-            CandidateInterceptor.registerExtensionPoint(project)
-            DescriptorSerializerPlugin.registerExtensionPoint(project)
+
+            // K2 extensions
             FirExtensionRegistrarAdapter.registerExtensionPoint(project)
-            TypeAttributeTranslatorExtension.registerExtensionPoint(project)
-            AssignResolutionAltererExtension.registerExtensionPoint(project)
             FirAnalysisHandlerExtension.registerExtensionPoint(project)
-            DiagnosticSuppressor.registerExtensionPoint(project)
+            IrGenerationExtension.registerExtensionPoint(project)
+            ClassGeneratorExtension.registerExtensionPoint(project)
+            ClassFileFactoryFinalizerExtension.registerExtensionPoint(project)
         }
 
         internal fun registerExtensionsFromPlugins(project: MockProject, configuration: CompilerConfiguration) {
