@@ -9,6 +9,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForDeclaration
+import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaBaseEmptyAnnotationList
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaBaseBackingFieldSymbolPointer
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaBackingFieldSymbol
@@ -42,7 +43,13 @@ internal class KaFirDefaultBackingFieldSymbol(
         get() = withValidityAssertion { backingOwningProperty.returnType }
 
     override val annotations: KaAnnotationList
-        get() = withValidityAssertion { KaFirAnnotationListForDeclaration.create(firSymbol, builder) }
+        get() = withValidityAssertion {
+            if (backingOwningProperty.mayHaveBackingFieldAnnotation()) {
+                KaFirAnnotationListForDeclaration.create(firSymbol, builder)
+            } else {
+                KaBaseEmptyAnnotationList(token)
+            }
+        }
 
     override fun createPointer(): KaSymbolPointer<KaBackingFieldSymbol> = withValidityAssertion {
         return KaBaseBackingFieldSymbolPointer(backingOwningProperty.createPointer(), this)
