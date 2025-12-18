@@ -34,47 +34,65 @@ public actual inline fun <T> arrayOfNulls(size: Int): Array<T?> = Array<Any?>(si
 
 /**
  * Returns an array containing the specified elements.
+ *
+ * @sample samples.collections.Arrays.Constructors.arrayOfSample
  */
 @Suppress("UNCHECKED_CAST")
 public actual inline fun <T> arrayOf(vararg elements: T): Array<T> = elements as Array<T>
 
 /**
  * Returns an array containing the specified [Double] numbers.
+ *
+ * @sample samples.collections.Arrays.Constructors.doubleArrayOfSample
  */
 public actual inline fun doubleArrayOf(vararg elements: Double): DoubleArray = elements
 
 /**
  * Returns an array containing the specified [Float] numbers.
+ *
+ * @sample samples.collections.Arrays.Constructors.floatArrayOfSample
  */
 public actual inline fun floatArrayOf(vararg elements: Float): FloatArray = elements
 
 /**
  * Returns an array containing the specified [Long] numbers.
+ *
+ * @sample samples.collections.Arrays.Constructors.longArrayOfSample
  */
 public actual inline fun longArrayOf(vararg elements: Long): LongArray = elements
 
 /**
  * Returns an array containing the specified [Int] numbers.
+ *
+ * @sample samples.collections.Arrays.Constructors.intArrayOfSample
  */
 public actual inline fun intArrayOf(vararg elements: Int): IntArray = elements
 
 /**
  * Returns an array containing the specified characters.
+ *
+ * @sample samples.collections.Arrays.Constructors.charArrayOfSample
  */
 public actual inline fun charArrayOf(vararg elements: Char): CharArray = elements
 
 /**
  * Returns an array containing the specified [Short] numbers.
+ *
+ * @sample samples.collections.Arrays.Constructors.shortArrayOfSample
  */
 public actual inline fun shortArrayOf(vararg elements: Short): ShortArray = elements
 
 /**
  * Returns an array containing the specified [Byte] numbers.
+ *
+ * @sample samples.collections.Arrays.Constructors.byteArrayOfSample
  */
 public actual inline fun byteArrayOf(vararg elements: Byte): ByteArray = elements
 
 /**
  * Returns an array containing the specified boolean values.
+ *
+ * @sample samples.collections.Arrays.Constructors.booleanArrayOfSample
  */
 public actual inline fun booleanArrayOf(vararg elements: Boolean): BooleanArray = elements
 
