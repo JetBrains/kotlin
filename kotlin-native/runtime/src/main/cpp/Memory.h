@@ -133,7 +133,6 @@ struct ArrayHeader {
 };
 static_assert(alignof(ArrayHeader) <= kotlin::kObjectAlignment);
 
-static inline ObjHeader* const kInitializingSingleton = reinterpret_cast<ObjHeader*>(1);
 ALWAYS_INLINE inline bool isNullOrMarker(const ObjHeader* obj) noexcept {
     return reinterpret_cast<uintptr_t>(obj) <= 1;
 }
