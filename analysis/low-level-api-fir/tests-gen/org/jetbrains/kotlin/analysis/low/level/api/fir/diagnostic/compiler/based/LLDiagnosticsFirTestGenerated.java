@@ -2332,6 +2332,46 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
       }
 
       @Nested
+      @TestMetadata("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/operatorOfChecks")
+      @TestDataPath("$PROJECT_ROOT")
+      public class OperatorOfChecks {
+        @Test
+        public void testAllFilesPresentInOperatorOfChecks() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/operatorOfChecks"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("contexts.kt")
+        public void testContexts() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/operatorOfChecks/contexts.kt");
+        }
+
+        @Test
+        @TestMetadata("defaultValuesForParameters.kt")
+        public void testDefaultValuesForParameters() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/operatorOfChecks/defaultValuesForParameters.kt");
+        }
+
+        @Test
+        @TestMetadata("extensions.kt")
+        public void testExtensions() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/operatorOfChecks/extensions.kt");
+        }
+
+        @Test
+        @TestMetadata("nonCompanionMember.kt")
+        public void testNonCompanionMember() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/operatorOfChecks/nonCompanionMember.kt");
+        }
+
+        @Test
+        @TestMetadata("topLevel.kt")
+        public void testTopLevel() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/operatorOfChecks/topLevel.kt");
+        }
+      }
+
+      @Nested
       @TestMetadata("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/stdlibTypes")
       @TestDataPath("$PROJECT_ROOT")
       public class StdlibTypes {

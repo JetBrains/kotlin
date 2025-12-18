@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
 import org.jetbrains.kotlin.fir.declarations.utils.isExtension
 import org.jetbrains.kotlin.fir.declarations.utils.isInlineOrValue
-import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.declarations.utils.isSuspend
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
@@ -161,8 +160,9 @@ object OperatorFunctionChecks {
         )
         checkFor(
             OperatorNameConventions.OF,
-            Checks.staticMember, Checks.notExtension, Checks.noContextParameters,
-            Checks.simple("CollectionLiterals feature must be enabled") { _, session ->
+            Checks.companionMember, Checks.notExtension,
+            Checks.noContextParameters, Checks.noDefaults,
+            Checks.simple("${LanguageFeature.CollectionLiterals.name} feature must be enabled") { _, session ->
                 session.languageVersionSettings.supportsFeature(LanguageFeature.CollectionLiterals)
             },
         )
@@ -189,6 +189,24 @@ private abstract class Check {
     open val feature: LanguageFeature? = null
 
     abstract fun check(function: FirNamedFunction, session: FirSession, scopeSession: ScopeSession?): String?
+
+    infix fun and(other: Check): Check {
+        require(feature == other.feature) { "Checks with different features cannot be combined" }
+        return object : Check() {
+            override val feature = other.feature
+
+            override fun check(
+                function: FirNamedFunction,
+                session: FirSession,
+                scopeSession: ScopeSession?,
+            ): String? {
+                return when (val resultOfFirst = this@Check.check(function, session, scopeSession)) {
+                    null -> other.check(function, session, scopeSession)
+                    else -> resultOfFirst
+                }
+            }
+        }
+    }
 }
 
 private object Checks {
@@ -230,13 +248,14 @@ private object Checks {
         it.dispatchReceiverType != null
     }
 
-    val staticMember =
+    val companionMember =
         simple(
-            "must be a static member function or a member of companion",
-            requiredResolvePhase = { _ -> FirResolvePhase.STATUS }
+            "must be a member of companion",
+            requiredResolvePhase = { FirResolvePhase.STATUS }
         )
         { function, session ->
-            function.containingClassLookupTag()?.toRegularClassSymbol(session)?.isCompanion == true || function.isStatic
+            val dispatch = function.dispatchReceiverType ?: return@simple false
+            dispatch.toRegularClassSymbol(session)?.isCompanion == true
         }
 
     val notExtension = simple("must not have an extension receiver") { it, _ ->
@@ -304,15 +323,23 @@ private object Checks {
         }
     }
 
-    val noDefaultAndVarargs =
+    val noVarargs =
         simple(
-            "should not have varargs or parameters with default values", feature = null,
+            "should not have varargs", feature = null,
             requiredResolvePhase = { _ -> FirResolvePhase.BODY_RESOLVE })
         { it, _ ->
-            it.valueParameters.all { param ->
-                param.defaultValue == null && !param.isVararg
-            }
+            it.valueParameters.all { param -> !param.isVararg }
         }
+
+    val noDefaults =
+        simple(
+            "should not have parameters with default values", feature = null,
+            requiredResolvePhase = { _ -> FirResolvePhase.BODY_RESOLVE }
+        ) { it, _ ->
+            it.valueParameters.all { param -> param.defaultValue == null }
+        }
+
+    val noDefaultAndVarargs = noDefaults and noVarargs
 
     private val kPropertyType = ConeClassLikeTypeImpl(
         StandardClassIds.KProperty.toLookupTag(),
