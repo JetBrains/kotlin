@@ -40,7 +40,7 @@ class BuildServiceDeclarationIT : KGPBaseTest() {
             "kotlin-js-browser-project",
             gradleVersion,
             // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
-            buildOptions = defaultBuildOptions.copy(isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED),
+            buildOptions = defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
         ) {
             enableStableConfigurationCachePreview()
             build("build") {
@@ -57,7 +57,7 @@ class BuildServiceDeclarationIT : KGPBaseTest() {
             "kotlin-js-nodejs-project",
             gradleVersion,
             // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
-            buildOptions = defaultBuildOptions.copy(isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED),
+            buildOptions = defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
         ) {
             enableStableConfigurationCachePreview()
             build("build") {
@@ -74,7 +74,7 @@ class BuildServiceDeclarationIT : KGPBaseTest() {
             "new-mpp-lib-with-tests",
             gradleVersion,
             // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
-            buildOptions = defaultBuildOptions.copy(isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED),
+            buildOptions = defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
         ) {
             enableStableConfigurationCachePreview()
             build("build") {

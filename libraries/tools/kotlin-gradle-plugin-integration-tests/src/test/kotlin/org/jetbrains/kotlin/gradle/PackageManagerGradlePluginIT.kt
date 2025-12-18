@@ -194,9 +194,7 @@ abstract class PackageManagerGradlePluginIT : KGPBaseTest() {
             jsOptions = super.defaultBuildOptions.jsOptions?.copy(
                 yarn = yarn
             ),
-            // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
-            isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED,
-        )
+        ).disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
 
     @DisplayName("js composite build works with lock file persistence")
     @GradleTest

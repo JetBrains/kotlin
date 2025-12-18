@@ -77,8 +77,7 @@ class BuildCacheRelocationIT : KGPBaseTest() {
         val (firstProject, secondProject) = prepareTestProjects(
             "kotlin-js-dce",
             gradleVersion,
-            // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
-            buildOptions = defaultBuildOptions.copy(isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED),
+            buildOptions = defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
         )
 
         checkBuildCacheRelocation(
@@ -102,7 +101,7 @@ class BuildCacheRelocationIT : KGPBaseTest() {
             "new-mpp-wasm-wasi-js-test",
             gradleVersion,
             // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
-            buildOptions = defaultBuildOptions.copy(isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED),
+            buildOptions = defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
         )
 
         checkBuildCacheRelocation(
@@ -128,7 +127,7 @@ class BuildCacheRelocationIT : KGPBaseTest() {
             "mpp-wasm-js-browser-nodejs",
             gradleVersion,
             // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
-            buildOptions = defaultBuildOptions.copy(isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED),
+            buildOptions = defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
         )
 
         checkBuildCacheRelocation(
@@ -152,7 +151,7 @@ class BuildCacheRelocationIT : KGPBaseTest() {
             "new-mpp-lib-with-tests",
             gradleVersion,
             // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
-            buildOptions = defaultBuildOptions.copy(isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED),
+            buildOptions = defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
         )
 
         checkBuildCacheRelocation(

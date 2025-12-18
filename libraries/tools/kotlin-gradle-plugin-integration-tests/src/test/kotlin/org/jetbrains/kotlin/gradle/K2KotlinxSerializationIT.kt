@@ -23,7 +23,7 @@ class K2KotlinxSerializationIT : KGPBaseTest() {
             "kotlinxSerializationMppK2",
             gradleVersion,
             // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
-            buildOptions = defaultBuildOptions.copy(isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED),
+            buildOptions = defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
         ) {
             build(":compileCommonMainKotlinMetadata") {
                 assertTasksExecuted(":compileCommonMainKotlinMetadata")
@@ -83,7 +83,7 @@ class K2KotlinxSerializationIT : KGPBaseTest() {
             "kotlinxSerializationK2WithJs",
             gradleVersion,
             // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
-            buildOptions = defaultBuildOptions.copy(isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED),
+            buildOptions = defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
         ) {
             build(":compileProductionExecutableKotlinJs")
         }
@@ -96,7 +96,7 @@ class K2KotlinxSerializationIT : KGPBaseTest() {
             "kotlinxSerializationK2WithJs",
             gradleVersion,
             // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
-            buildOptions = defaultBuildOptions.copy(isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED),
+            buildOptions = defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
         ) {
             build(":compileTestKotlinJs")
         }
@@ -109,7 +109,7 @@ class K2KotlinxSerializationIT : KGPBaseTest() {
             "kotlinxSerializationMppK2",
             gradleVersion,
             // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
-            buildOptions = defaultBuildOptions.copy(isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED),
+            buildOptions = defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
         ) {
             build(":compileKotlinJs")
         }

@@ -205,7 +205,11 @@ class ConfigurationAvoidanceIT : KGPBaseTest() {
     @GradleTest
     @TestMetadata("kotlin-js-browser-project")
     fun testEarlyConfigurationsResolutionKotlinJs(gradleVersion: GradleVersion) {
-        val eagerlyResolvedConfigurations = testEarlyConfigurationsResolution("kotlin-js-browser-project", gradleVersion)
+        val eagerlyResolvedConfigurations = testEarlyConfigurationsResolution(
+            "kotlin-js-browser-project",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
+        )
         assertEquals(
             mapOf(
                 ":base" to setOf(

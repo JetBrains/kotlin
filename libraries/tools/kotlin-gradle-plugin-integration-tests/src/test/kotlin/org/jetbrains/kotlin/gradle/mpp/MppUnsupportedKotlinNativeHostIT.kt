@@ -40,7 +40,7 @@ class MppUnsupportedKotlinNativeHostIT : KGPBaseTest() {
             "empty",
             gradleVersion,
             // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
-            buildOptions = defaultBuildOptions.copy(isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED),
+            buildOptions = defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
         ) {
             plugins {
                 kotlin("multiplatform")

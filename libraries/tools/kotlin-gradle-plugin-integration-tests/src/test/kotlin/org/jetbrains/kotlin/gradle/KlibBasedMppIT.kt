@@ -32,7 +32,7 @@ open class KlibBasedMppIT : KGPBaseTest() {
     override val defaultBuildOptions: BuildOptions = super.defaultBuildOptions
         .copyEnsuringK2()
         // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
-        .copy(isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED)
+        .disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
 
     @DisplayName("Could be compiled with project dependency")
     @GradleTest

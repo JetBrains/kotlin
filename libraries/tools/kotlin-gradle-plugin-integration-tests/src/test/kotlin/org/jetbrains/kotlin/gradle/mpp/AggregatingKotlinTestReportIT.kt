@@ -107,9 +107,7 @@ class AggregatingKotlinTestReportIT : KGPBaseTest() {
             gradleVersion,
             buildOptions = defaultBuildOptions.copy(
                 freeArgs = listOf("-Pkotlin.tests.individualTaskReports=false"),
-                // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
-                isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED,
-            )
+            ).disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
         ) {
             val nativeTarget = MPPNativeTargets.current
 

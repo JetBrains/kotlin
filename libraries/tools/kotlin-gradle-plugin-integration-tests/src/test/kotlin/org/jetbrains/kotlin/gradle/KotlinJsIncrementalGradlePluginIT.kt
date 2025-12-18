@@ -27,9 +27,7 @@ abstract class AbstractKotlinJsIncrementalGradlePluginIT(
     override val defaultBuildOptions =
         super.defaultBuildOptions.copy(
             jsOptions = defaultJsOptions,
-            // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
-            isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED,
-        )
+        ).disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
 
     @DisplayName("incremental compilation for js works")
     @GradleTest

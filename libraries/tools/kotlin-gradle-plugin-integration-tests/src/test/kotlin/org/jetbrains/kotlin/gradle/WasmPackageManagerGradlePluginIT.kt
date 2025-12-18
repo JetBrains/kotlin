@@ -196,9 +196,7 @@ abstract class WasmPackageManagerGradlePluginIT : KGPBaseTest() {
             jsOptions = super.defaultBuildOptions.jsOptions?.copy(
                 yarn = yarn
             ),
-            // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
-            isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED,
-        )
+        ).disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
 
     @DisplayName("Check NPM dependencies not installed for empty project")
     @GradleTest

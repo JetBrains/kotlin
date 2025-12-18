@@ -55,10 +55,7 @@ class BrokenLazyConfigurationIT : KGPBaseTest() {
             }
             build(
                 "build",
-                buildOptions = defaultBuildOptions.copy(
-                    // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
-                    isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED,
-                )
+                buildOptions = defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
             )
         }
     }
@@ -80,10 +77,7 @@ class BrokenLazyConfigurationIT : KGPBaseTest() {
             }
             build(
                 "build",
-                buildOptions = defaultBuildOptions.copy(
-                    // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
-                    isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED,
-                )
+                buildOptions = defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
             )
         }
     }
@@ -102,10 +96,7 @@ class BrokenLazyConfigurationIT : KGPBaseTest() {
             )
             build(
                 "build",
-                buildOptions = defaultBuildOptions.copy(
-                    // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
-                    isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED,
-                )
+                buildOptions = defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
             ) {
                 assertDirectoryInProjectDoesNotExist("build")
 

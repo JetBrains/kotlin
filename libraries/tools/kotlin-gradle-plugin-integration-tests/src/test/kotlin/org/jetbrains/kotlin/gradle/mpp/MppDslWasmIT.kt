@@ -19,7 +19,7 @@ class MppDslWasmIT : KGPBaseTest() {
             projectName = "new-mpp-wasm-js",
             gradleVersion = gradleVersion,
             // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
-            buildOptions = defaultBuildOptions.copy(isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED),
+            buildOptions = defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
         ) {
             buildGradleKts.replaceText("<JsEngine>", "d8")
             build("build") {
