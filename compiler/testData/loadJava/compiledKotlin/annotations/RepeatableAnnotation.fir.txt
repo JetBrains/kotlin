@@ -6,7 +6,7 @@
 
 }
 
-@R|test/Ann.Container|(value = <collectionLiteralCall>(@R|test/Ann|(x = Int(1)) , @R|test/Ann|(x = Int(2)) )) public final class Some : R|kotlin/Any| {
+@R|test/Ann|(x = Int(1)) @R|test/Ann|(x = Int(2)) public final class Some : R|kotlin/Any| {
     public constructor(): R|test/Some|
 
 }
