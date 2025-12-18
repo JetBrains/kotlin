@@ -243,15 +243,24 @@ open class UpgradeCallableReferences(
             return super.visitTypeOperator(expression, data)
         }
 
-        private fun IrCallableReference<*>.getCapturedValues() = getArgumentsWithIr().map {
-            CapturedValue(it.first.name, it.second.type, it.first, it.second)
+        private fun IrCallableReference<*>.getCapturedValues(referencedDeclaration: IrDeclaration) = buildList {
+            if (referencedDeclaration.hasMissingObjectDispatchReceiver()) {
+                val objectClass = referencedDeclaration.parentAsClass
+                val dispatchReceiver = IrGetObjectValueImpl(
+                    UNDEFINED_OFFSET, UNDEFINED_OFFSET, objectClass.defaultType, objectClass.symbol
+                )
+                add(CapturedValue(SpecialNames.THIS, objectClass.defaultType, null, dispatchReceiver))
+            }
+            for ((parameter, argument) in getArgumentsWithIr()) {
+                add(CapturedValue(parameter.name, argument.type, parameter, argument))
+            }
         }
 
         override fun visitFunctionReference(expression: IrFunctionReference, data: IrDeclarationParent): IrExpression {
             expression.transformChildren(this, data)
             fixCallableReferenceComingFromKlib(expression)
             if (!upgradeFunctionReferencesAndLambdas) return expression
-            val arguments = expression.getCapturedValues()
+            val arguments = expression.getCapturedValues(expression.symbol.owner)
             return IrRichFunctionReferenceImpl(
                 startOffset = expression.startOffset,
                 endOffset = expression.endOffset,
@@ -290,16 +299,7 @@ open class UpgradeCallableReferences(
                         )
                     }
                 } else {
-                    val getterArguments = if (getter.hasMissingObjectDispatchReceiver()) {
-                        val objectClass = expression.symbol.owner.parentAsClass
-                        val dispatchReceiver = IrGetObjectValueImpl(
-                            UNDEFINED_OFFSET, UNDEFINED_OFFSET, objectClass.defaultType, objectClass.symbol
-                        )
-                        val fakeParameter = CapturedValue(SpecialNames.THIS, objectClass.defaultType, null, dispatchReceiver)
-                        listOf(fakeParameter) + expression.getCapturedValues()
-                    } else {
-                        expression.getCapturedValues()
-                    }
+                    val getterArguments = expression.getCapturedValues(getter)
                     boundValues = getterArguments.map { it.expression }
                     getterFun = expression.wrapFunction(getterArguments, data, getter, isPropertySetter = false)
                     setterFun = runIf(expression.type.isKMutableProperty() && setter != null) {
