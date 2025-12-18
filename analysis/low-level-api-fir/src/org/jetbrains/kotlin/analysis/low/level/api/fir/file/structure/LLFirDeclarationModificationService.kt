@@ -62,7 +62,7 @@ class LLFirDeclarationModificationService(val project: Project) : Disposable {
         ApplicationManager.getApplication().addApplicationListener(
             object : ApplicationListener {
                 override fun writeActionFinished(action: Any) {
-                    flushModifications()
+                    flushDeferredModifications()
                 }
             },
             this,
@@ -123,7 +123,7 @@ class LLFirDeclarationModificationService(val project: Project) : Disposable {
      * Force the service to publish deferred modifications.
      * This action is required to fix inconsistencies in [FirFile][org.jetbrains.kotlin.fir.declarations.FirFile] tree.
      */
-    fun flushModifications() {
+    fun flushDeferredModifications() {
         ApplicationManager.getApplication().assertWriteIntentLockAcquired()
 
         processQueue { value, _ ->
