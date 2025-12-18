@@ -24,7 +24,7 @@ class MppKlibIT : KGPBaseTest() {
             projectName = "kt-36721-mpp-klibs-with-same-name",
             gradleVersion = gradleVersion,
             // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
-            buildOptions = defaultBuildOptions.disableIsolatedProjects(),
+            buildOptions = defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
         ) {
             build("assemble") {
                 assertTasksExecuted(

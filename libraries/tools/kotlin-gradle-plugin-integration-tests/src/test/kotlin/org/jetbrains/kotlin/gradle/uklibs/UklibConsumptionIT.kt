@@ -181,10 +181,8 @@ class UklibConsumptionIT : KGPBaseTest() {
             "empty",
             gradleVersion,
             buildOptions = defaultBuildOptions.copy(
-                // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
-                isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED,
                 androidVersion = androidVersion,
-            ),
+            ).disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
         ) {
             addAgpToBuildScriptCompilationClasspath(androidVersion)
             addKgpToBuildScriptCompilationClasspath()
@@ -309,9 +307,7 @@ class UklibConsumptionIT : KGPBaseTest() {
             gradleVersion,
             buildOptions = defaultBuildOptions.copy(
                 androidVersion = androidVersion,
-                // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
-                isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED,
-            ),
+            ).disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
         ) {
             if (androidVersion != null) addAgpToBuildScriptCompilationClasspath(androidVersion)
             addKgpToBuildScriptCompilationClasspath()

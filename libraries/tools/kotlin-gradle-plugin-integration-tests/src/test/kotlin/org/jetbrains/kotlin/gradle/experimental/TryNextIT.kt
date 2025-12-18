@@ -174,9 +174,7 @@ class TryNextIT : KGPBaseTest() {
             localRepoDir = localRepository,
             buildOptions = defaultBuildOptions.copy(
                 logLevel = LogLevel.DEBUG,
-                // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
-                isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED,
-            ),
+            ).disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
         ) {
             enableTryNext()
 
@@ -282,9 +280,7 @@ class TryNextIT : KGPBaseTest() {
             gradleVersion,
             buildOptions = defaultBuildOptions.copy(
                 logLevel = LogLevel.DEBUG,
-                // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
-                isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED,
-            ),
+            ).disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
         ) {
             enableTryNext()
 
@@ -303,10 +299,7 @@ class TryNextIT : KGPBaseTest() {
         project(
             "kotlin-js-nodejs-project",
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(
-                // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
-                isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED,
-            ),
+            buildOptions = defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
         ) {
             enableTryNext()
 
