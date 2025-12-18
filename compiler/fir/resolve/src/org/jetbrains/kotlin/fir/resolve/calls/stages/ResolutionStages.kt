@@ -897,8 +897,9 @@ internal object CheckIncompatibleTypeVariableUpperBounds : ResolutionStage() {
                 val upperTypes = variableWithConstraints.constraints.extractUpperTypesToCheckIntersectionEmptiness()
 
                 // TODO: consider reporting errors on bounded type variables by incompatible types but with other lower constraints, KT-59676
-                if (upperTypes.size <= 1 || variableWithConstraints.constraints.any { it.kind.isLower() })
+                if (upperTypes.size <= 1 || variableWithConstraints.constraints.any { it.kind.isLower() && !it.isNoInfer }) {
                     continue
+                }
 
                 val emptyIntersectionTypeInfo = candidate.system.getEmptyIntersectionTypeKind(upperTypes) ?: continue
                 if (variableWithConstraints.constraints.any {
