@@ -1,3 +1,4 @@
-error: no value expected for boolean argument -Xnested-type-aliases. Please remove the value: -Xnested-type-aliases=
+error: no value expected for boolean argument '-Xwhen-guards' that changes language features. Remove the '=false'.
+error: no value expected for boolean argument '-Xnested-type-aliases' that changes language features. Remove the '='.
 info: use -help for more information
 COMPILATION_ERROR
