@@ -61,27 +61,18 @@ class A {
 // test.kt:1 <get-$companion>
 // test.kt:28 <get-$companion>
 // test.kt:11 test
-// test.kt:17 foo
-// test.kt:18 foo
-// test.kt:19 foo
 // test.kt:11 test
 // test.kt:12 test
 // test.kt:16 <get-$companion>
 // test.kt:1 <get-$companion>
 // test.kt:28 <get-$companion>
 // test.kt:12 test
-// test.kt:22 <get-prop>
-// test.kt:23 <get-prop>
-// test.kt:24 <get-prop>
 // test.kt:12 test
 // test.kt:13 test
 // test.kt:16 <get-$companion>
 // test.kt:1 <get-$companion>
 // test.kt:28 <get-$companion>
 // test.kt:13 test
-// test.kt:25 <set-prop>
-// test.kt:26 <set-prop>
-// test.kt:27 <set-prop>
 // test.kt:14 test
 // test.kt:6 box
 

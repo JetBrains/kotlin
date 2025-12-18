@@ -24,9 +24,6 @@ fun box() {
 // EXPECTATIONS NATIVE
 // test.kt:7 box
 // test.kt:4 eval
-// test.kt:7 invoke
-// test.kt:8 invoke
-// test.kt:9 invoke
 // test.kt:4 eval
 // test.kt:10 box
 

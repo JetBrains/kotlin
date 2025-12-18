@@ -74,9 +74,6 @@ fun box() {
 // test.kt:14 getValue
 // test.kt:11 <get-f>
 // test.kt:14 getValue
-// test.kt:5 invoke
-// test.kt:6 invoke
-// test.kt:7 invoke
 // test.kt:14 getValue
 // test.kt:14 getValue
 // test.kt:15 getValue

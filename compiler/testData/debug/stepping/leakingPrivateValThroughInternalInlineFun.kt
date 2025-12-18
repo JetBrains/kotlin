@@ -18,7 +18,6 @@ fun box(): String {
 // test.kt:9 box
 // test.kt:6 box
 // test.kt:1 access$<get-a>$tTestKt
-// test.kt:4 <get-a>
 // test.kt:1 access$<get-a>$tTestKt
 // test.kt:6 box
 // test.kt:9 box

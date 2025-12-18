@@ -47,7 +47,6 @@ fun box() {
 
 // EXPECTATIONS NATIVE
 // test.kt:15 box
-// test.kt:15 <init>
 // test.kt:15 box
 // test.kt:7 bar
 // test.kt:8 bar

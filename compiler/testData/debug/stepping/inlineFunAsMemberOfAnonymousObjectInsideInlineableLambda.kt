@@ -32,8 +32,6 @@ fun box(): String {
 // test.kt:7 box
 // test.kt:4 box
 // test.kt:9 box
-// test.kt:9 <init>
-// test.kt:11 <init>
 // test.kt:9 box
 // test.kt:12 box
 // test.kt:13 box

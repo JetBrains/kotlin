@@ -24,11 +24,6 @@ fun box() {
 
 // EXPECTATIONS NATIVE
 // test.kt:12 box
-// test.kt:6 makeFace
-// test.kt:6 <init>
-// test.kt:9 <init>
-// test.kt:6 makeFace
-// test.kt:9 makeFace
 // test.kt:13 box
 
 // EXPECTATIONS JS_IR

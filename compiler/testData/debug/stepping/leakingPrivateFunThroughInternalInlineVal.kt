@@ -26,13 +26,8 @@ fun box(): String {
 // test.kt:12 box
 // test.kt:7 box
 // test.kt:12 box
-// test.kt:7 invoke
-// test.kt:8 invoke
 // test.kt:1 access$foo$tTestKt
-// test.kt:4 foo
 // test.kt:1 access$foo$tTestKt
-// test.kt:8 invoke
-// test.kt:9 invoke
 // test.kt:12 box
 // test.kt:13 box
 

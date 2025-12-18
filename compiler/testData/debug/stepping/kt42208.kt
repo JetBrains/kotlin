@@ -23,8 +23,6 @@ inline fun foo() = {
 // test.kt:6 box
 // test1.kt:10 box
 // test.kt:6 box
-// test1.kt:10 invoke
-// test1.kt:11 invoke
 // test.kt:7 box
 
 // EXPECTATIONS JS_IR

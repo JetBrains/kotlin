@@ -40,13 +40,6 @@ fun box() {
 // test.kt:10 flaf
 // test.kt:7 flaf
 // test.kt:6 foo
-// test.kt:7 invoke
-// test.kt:11 invoke
-// Standard.kt:45 invoke
-// test.kt:12 invoke
-// Standard.kt:45 invoke
-// test.kt:13 invoke
-// test.kt:7 invoke
 // test.kt:6 foo
 // test.kt:7 flaf
 // test.kt:15 flaf

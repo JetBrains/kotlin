@@ -25,17 +25,10 @@ suspend fun box() {
 
 // EXPECTATIONS NATIVE
 // test.kt:8 box
-// test.kt:8 invokeSuspend
-// test.kt:8 invokeSuspend
-// test.kt:9 invokeSuspend
 // test.kt:4 foo
 // test.kt:5 foo
 // test.kt:5 foo
 // test.kt:6 foo
-// test.kt:9 invokeSuspend
-// test.kt:9 invokeSuspend
-// test.kt:8 invokeSuspend
-// test.kt:12 invokeSuspend
 // test.kt:8 box
 // test.kt:12 box
 

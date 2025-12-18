@@ -179,9 +179,6 @@ class O<T>(i: T) {
 // test.kt:12 box
 // test.kt:13 box
 // test.kt:49 <init>
-// test.kt:48 $INITIALIZER
-// test.kt:54 $INITIALIZER
-// test.kt:56 $INITIALIZER
 // test.kt:49 <init>
 // test.kt:50 <init>
 // test.kt:51 <init>
