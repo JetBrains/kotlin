@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
+import org.jetbrains.kotlin.backend.jvm.JvmSymbols
 import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.backend.jvm.unboxInlineClass
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -65,42 +66,6 @@ class IndyLambdaMetafactoryLowering(val backendContext: JvmBackendContext): File
         irCall(backendContext.symbols.jvmOriginalMethodTypeIntrinsic, context.irBuiltIns.anyType).apply {
             arguments[0] = irRawFunctionReference(context.irBuiltIns.anyType, methodSymbol)
         }
-
-    /**
-     * @see java.lang.invoke.LambdaMetafactory.metafactory
-     */
-    private val jdkMetafactoryHandle =
-        Handle(
-            Opcodes.H_INVOKESTATIC,
-            "java/lang/invoke/LambdaMetafactory",
-            "metafactory",
-            "(" +
-                    "Ljava/lang/invoke/MethodHandles\$Lookup;" +
-                    "Ljava/lang/String;" +
-                    "Ljava/lang/invoke/MethodType;" +
-                    "Ljava/lang/invoke/MethodType;" +
-                    "Ljava/lang/invoke/MethodHandle;" +
-                    "Ljava/lang/invoke/MethodType;" +
-                    ")Ljava/lang/invoke/CallSite;",
-            false
-        )
-
-    /**
-     * @see java.lang.invoke.LambdaMetafactory.altMetafactory
-     */
-    private val jdkAltMetafactoryHandle =
-        Handle(
-            Opcodes.H_INVOKESTATIC,
-            "java/lang/invoke/LambdaMetafactory",
-            "altMetafactory",
-            "(" +
-                    "Ljava/lang/invoke/MethodHandles\$Lookup;" +
-                    "Ljava/lang/String;" +
-                    "Ljava/lang/invoke/MethodType;" +
-                    "[Ljava/lang/Object;" +
-                    ")Ljava/lang/invoke/CallSite;",
-            false
-        )
 
     override fun visitCall(expression: IrCall): IrExpression {
         return when (expression.symbol) {
@@ -557,5 +522,57 @@ class IndyLambdaMetafactoryLowering(val backendContext: JvmBackendContext): File
             .apply { arguments.assignFrom(dynamicCallArguments) }
     }
 
+    companion object {
+
+        /**
+         * @see java.lang.invoke.LambdaMetafactory.metafactory
+         */
+        private val jdkMetafactoryHandle =
+            Handle(
+                Opcodes.H_INVOKESTATIC,
+                "java/lang/invoke/LambdaMetafactory",
+                "metafactory",
+                "(" +
+                        "Ljava/lang/invoke/MethodHandles\$Lookup;" +
+                        "Ljava/lang/String;" +
+                        "Ljava/lang/invoke/MethodType;" +
+                        "Ljava/lang/invoke/MethodType;" +
+                        "Ljava/lang/invoke/MethodHandle;" +
+                        "Ljava/lang/invoke/MethodType;" +
+                        ")Ljava/lang/invoke/CallSite;",
+                false
+            )
+
+        /**
+         * @see java.lang.invoke.LambdaMetafactory.altMetafactory
+         */
+        private val jdkAltMetafactoryHandle =
+            Handle(
+                Opcodes.H_INVOKESTATIC,
+                "java/lang/invoke/LambdaMetafactory",
+                "altMetafactory",
+                "(" +
+                        "Ljava/lang/invoke/MethodHandles\$Lookup;" +
+                        "Ljava/lang/String;" +
+                        "Ljava/lang/invoke/MethodType;" +
+                        "[Ljava/lang/Object;" +
+                        ")Ljava/lang/invoke/CallSite;",
+                false
+            )
+
+        fun isLambdaMetafactoryIndy(symbols: JvmSymbols, call: IrCall): Boolean {
+            if (call.symbol != symbols.jvmIndyIntrinsic) return false
+            val boostrapMethodHandle = call.arguments.getOrNull(1) as? IrCall ?: return false
+            if (boostrapMethodHandle.symbol != symbols.jvmMethodHandle) return false
+            val owner = boostrapMethodHandle.arguments.getOrNull(1) as? IrConst ?: return false
+            if (owner.kind != IrConstKind.String) return false
+            return owner.value == jdkMetafactoryHandle.owner || owner.value == jdkAltMetafactoryHandle.owner
+        }
+
+        fun getLambdaMetafactoryIndyImplFunctionRefOrNull(symbols: JvmSymbols, call: IrCall): IrRawFunctionReference? {
+            if (!isLambdaMetafactoryIndy(symbols, call)) return null
+            return (call.arguments[2] as IrVararg).elements[1] as IrRawFunctionReference
+        }
+    }
 
 }
