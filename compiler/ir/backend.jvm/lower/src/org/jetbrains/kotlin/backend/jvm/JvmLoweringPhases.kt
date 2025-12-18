@@ -126,6 +126,7 @@ private val jvmFilePhases = createFilePhases(
     ::JvmOptimizationLowering,
     ::AdditionalClassAnnotationLowering,
     ::RecordEnclosingMethodsLowering,
+    ::IndyLambdaMetafactoryLowering,
     ::TypeOperatorLowering,
     ::ReplaceKFunctionInvokeWithFunctionInvoke,
     ::JvmKotlinNothingValueExceptionLowering,
