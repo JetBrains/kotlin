@@ -516,7 +516,7 @@ class StateMachineBuilder(
         transformLastExpression { expression.apply { receiver = it } }
     }
 
-    override fun visitDynamicMemberExpression(expression: IrDynamicMemberExpression, data: Nothing?) {
+    override fun visitDynamicMemberExpression(expression: IrDynamicMemberExpression) {
         if (expression !in suspendableNodes) return addStatement(expression)
         expression.acceptChildrenVoid(this)
         transformLastExpression { expression.apply { receiver = it } }
