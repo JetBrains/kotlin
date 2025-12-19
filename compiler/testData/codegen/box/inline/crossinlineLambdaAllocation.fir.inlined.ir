@@ -71,7 +71,7 @@ FILE fqName:<root> fileName:/lib.kt lineStartOffsets: [0, 19, 45, 105, 121, 140,
             thisReceiver: VALUE_PARAMETER[504, 690] INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.bar.<no name provided>
             FIELD[504, 690] FIELD_FOR_CAPTURED_VALUE name:$insideCounter type:kotlin.internal.SharedVariableBox<kotlin.Int> visibility:private [final]
             CONSTRUCTOR[504, 690] visibility:private returnType:<root>.bar.<no name provided> [primary]
-              VALUE_PARAMETER[466, 487] BOUND_VALUE_PARAMETER kind:Regular name:$insideCounter index:0 type:kotlin.internal.SharedVariableBox<kotlin.Int>
+              VALUE_PARAMETER[-1, -1] BOUND_VALUE_PARAMETER kind:Regular name:$insideCounter index:0 type:kotlin.internal.SharedVariableBox<kotlin.Int>
               BLOCK_BODY[504, 690]
                 SET_FIELD[-1, -1] 'FIELD FIELD_FOR_CAPTURED_VALUE name:$insideCounter type:kotlin.internal.SharedVariableBox<kotlin.Int> visibility:private [final] declared in <root>.bar.<no name provided>' type=kotlin.Unit origin=INITIALIZER_OF_FIELD_FOR_CAPTURED_VALUE
                   receiver: GET_VAR[-1, -1] '<this>: <root>.bar.<no name provided> declared in <root>.bar.<no name provided>' type=<root>.bar.<no name provided> origin=null
@@ -228,7 +228,7 @@ FILE fqName:<root> fileName:/main.kt lineStartOffsets: [0, 1, 2, 3, 4, 5, 6, 7, 
                   thisReceiver: VALUE_PARAMETER[504, 690] INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.box.<no name provided>
                   FIELD[504, 690] FIELD_FOR_CAPTURED_VALUE name:$insideCounter type:kotlin.internal.SharedVariableBox<kotlin.Int> visibility:private [final]
                   CONSTRUCTOR[504, 690] visibility:private returnType:<root>.box.<no name provided> [primary]
-                    VALUE_PARAMETER[466, 487] BOUND_VALUE_PARAMETER kind:Regular name:$insideCounter index:0 type:kotlin.internal.SharedVariableBox<kotlin.Int>
+                    VALUE_PARAMETER[-1, -1] BOUND_VALUE_PARAMETER kind:Regular name:$insideCounter index:0 type:kotlin.internal.SharedVariableBox<kotlin.Int>
                     BLOCK_BODY[504, 690]
                       SET_FIELD[-1, -1] 'FIELD FIELD_FOR_CAPTURED_VALUE name:$insideCounter type:kotlin.internal.SharedVariableBox<kotlin.Int> visibility:private [final] declared in <root>.box.<no name provided>' type=kotlin.Unit origin=INITIALIZER_OF_FIELD_FOR_CAPTURED_VALUE
                         receiver: GET_VAR[-1, -1] '<this>: <root>.box.<no name provided> declared in <root>.box.<no name provided>' type=<root>.box.<no name provided> origin=null

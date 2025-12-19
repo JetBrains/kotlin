@@ -215,7 +215,14 @@ abstract class BridgesConstruction(private val context: JsCommonBackendContext) 
         if (bridge.isEffectivelyExternal()) {
             valueParametersToCopy = valueParametersToCopy.takeWhile { it.varargElementType == null }
         }
-        parameters = parameters memoryOptimizedPlus valueParametersToCopy.map { p -> p.copyTo(this, type = p.type.substitute(substitutionMap)) }
+        parameters = parameters memoryOptimizedPlus valueParametersToCopy.map { p ->
+            p.copyTo(
+                startOffset = UNDEFINED_OFFSET, // The offsets must be UNDEFINED because the bridge could come from another file
+                endOffset = UNDEFINED_OFFSET,
+                irFunction = this,
+                type = p.type.substitute(substitutionMap)
+            )
+        }
     }
 
     abstract fun getBridgeOrigin(bridge: IrSimpleFunction): IrDeclarationOrigin
