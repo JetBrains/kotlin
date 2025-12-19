@@ -67,7 +67,9 @@ internal fun compileScript(
 ): Pair<KClass<*>?, ExitCode> {
     val scriptCompiler = ScriptJvmCompilerFromEnvironment(environment)
     val messageCollector = environment.configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
-    val scriptDefinition = ScriptDefinitionProvider.getInstance(environment.project)!!.findDefinition(script)!!
+    val scriptDefinition =
+        ScriptDefinitionProvider.getInstance(environment.project)?.findDefinition(script)
+            ?: return null to ExitCode.COMPILATION_ERROR
 
     val compileResult = scriptCompiler.compile(script, scriptDefinition.compilationConfiguration)
     for (report in compileResult.reports) {

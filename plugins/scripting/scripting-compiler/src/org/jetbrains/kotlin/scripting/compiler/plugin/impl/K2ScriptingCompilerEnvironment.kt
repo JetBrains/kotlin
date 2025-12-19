@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
 import org.jetbrains.kotlin.compiler.plugin.registerInProject
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.disableStandardScriptDefinition
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.config.scriptingHostConfiguration
 import org.jetbrains.kotlin.fir.FirBinaryDependenciesModuleData
@@ -176,7 +177,9 @@ fun createCompilerState(
 
     val definitionSources = compilerConfiguration.getList(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS_SOURCES)
     val definitions = compilerConfiguration.getList(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS)
-    val scriptDefinitionProvider = CliScriptDefinitionProvider().also {
+    val scriptDefinitionProvider = CliScriptDefinitionProvider(
+        compilerConfiguration.disableStandardScriptDefinition
+    ).also {
         it.setScriptDefinitionsSources(definitionSources)
         it.setScriptDefinitions(definitions)
     }

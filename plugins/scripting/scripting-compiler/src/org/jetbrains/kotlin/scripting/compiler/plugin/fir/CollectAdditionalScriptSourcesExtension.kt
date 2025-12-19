@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
 import org.jetbrains.kotlin.compiler.plugin.registerInProject
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.disableStandardScriptDefinition
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.config.scriptingHostConfiguration
 import org.jetbrains.kotlin.fir.FirSession
@@ -59,7 +60,20 @@ class CollectAdditionalScriptSourcesExtension : CollectAdditionalSourceFilesExte
         sources: Iterable<KtSourceFile>
     ): Iterable<KtSourceFile> {
         environment as VfsBasedProjectEnvironment
-        val hostConfiguration = ensureUpdatedHostConfiguration(configuration)
+        val providedHostConfiguration = configuration.scriptingHostConfiguration as? ScriptingHostConfiguration
+
+        val definitionProvider =
+            providedHostConfiguration?.get(ScriptingHostConfiguration.scriptCompilationConfigurationProvider)
+                ?: ScriptCompilationConfigurationProviderOverDefinitionProvider(
+                    CliScriptDefinitionProvider(
+                        configuration.disableStandardScriptDefinition
+                    ).also {
+                        it.setScriptDefinitionsSources(configuration.getList(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS_SOURCES))
+                        it.setScriptDefinitions(configuration.getList(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS))
+                    }
+                )
+
+        val hostConfiguration = ensureUpdatedHostConfiguration(providedHostConfiguration, definitionProvider, configuration)
 
         fun SourceCode.collectImports(): List<SourceCode>? {
             val refinedScriptCompilationConfiguration =
@@ -98,7 +112,10 @@ class CollectAdditionalScriptSourcesExtension : CollectAdditionalSourceFilesExte
             else null  // TODO: support non-file sources (KT-83973)
 
 
-        val sourcesToFiles = sources.associateByTo(mutableMapOf(), KtSourceFile::toSourceCode)
+        val sourcesToFiles = sources
+            .associateBy(KtSourceFile::toSourceCode)
+            .filterTo(mutableMapOf()) { definitionProvider.isScript(it.key) }
+
         val remainingSources = ArrayList<SourceCode>().also { it.addAll(sourcesToFiles.keys) }
         val knownSources = sourcesToFiles.keys.mapTo(mutableSetOf()) { it.locationId?.toSystemIndependentScriptPath() }
         val sourceDependencies = mutableMapOf<SourceCode, List<SourceCode>>()
@@ -132,16 +149,11 @@ class CollectAdditionalScriptSourcesExtension : CollectAdditionalSourceFilesExte
         }
     }
 
-    private fun ensureUpdatedHostConfiguration(configuration: CompilerConfiguration): ScriptingHostConfiguration {
-        val providedHostConfiguration = configuration.scriptingHostConfiguration as? ScriptingHostConfiguration
-        val definitionProvider =
-            providedHostConfiguration?.get(ScriptingHostConfiguration.scriptCompilationConfigurationProvider)
-                ?: ScriptCompilationConfigurationProviderOverDefinitionProvider(
-                    CliScriptDefinitionProvider().also {
-                        it.setScriptDefinitionsSources(configuration.getList(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS_SOURCES))
-                        it.setScriptDefinitions(configuration.getList(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS))
-                    }
-                )
+    private fun ensureUpdatedHostConfiguration(
+        providedHostConfiguration: ScriptingHostConfiguration?,
+        definitionProvider: ScriptCompilationConfigurationProvider,
+        configuration: CompilerConfiguration
+    ): ScriptingHostConfiguration {
         val refinedCache =
             providedHostConfiguration?.get(ScriptingHostConfiguration.scriptRefinedCompilationConfigurationsCache)
                 ?: ScriptRefinedCompilationConfigurationCacheImpl()
