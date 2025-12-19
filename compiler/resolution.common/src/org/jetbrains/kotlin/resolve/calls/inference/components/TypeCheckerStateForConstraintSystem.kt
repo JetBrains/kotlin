@@ -318,14 +318,24 @@ abstract class TypeCheckerStateForConstraintSystem(
                 when (subType) {
                     is RigidTypeMarker ->
                         when {
-                            usePreciseSimplificationToFlexibleLowerConstraint() ->
-                                // Foo <: T! -- (Foo!! .. Foo) <: T
-                                // Foo? <: T! -- (Foo!! .. Foo?) <: T
+                            // The problem we are trying to solve here: simplification Foo? <: T! => Foo? <: T
+                            // loses some information (T = Foo is a solution of the first one but not of the second one).
+                            // This can provoke problems like KT-78621.
+                            // However, this simplification is with us for a too long time, and we want to avoid
+                            // vague changes with inferring Foo! instead of Foo? and possible resolve changes because of it (KT-81988).
+                            // That's why we keep the legacy simplification in the last two branches
+                            // and apply a sound simplification here only for R(?) <: T! constraints with two type variables.
+                            // Note that the situation with subType.isCapturedType() is questionable (see test flexibleConstraints2.kt),
+                            // and a type parameter in subType position can reproduce an analogue of KT-81988 so we don't want it.
+                            usePreciseSimplificationToFlexibleLowerConstraint() && subType.isTypeVariableType() ->
+                                // Foo <: T! => (Foo!! .. Foo?) <: T
+                                // Foo? <: T! => (Foo!! .. Foo?) <: T
                                 createTrivialFlexibleTypeOrSelf(
                                     subType.makeDefinitelyNotNullOrNotNull(),
                                 )
-                            // Obsolete behavior in 2.2 and earlier versions
+                            // Foo <: T! -- (Foo .. Foo?) <: T
                             !subType.isMarkedNullable() -> createTrivialFlexibleTypeOrSelf(subType)
+                            // Foo? <: T! => Foo? <: T
                             else -> subType
                         }
 

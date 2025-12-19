@@ -1,7 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // FULL_JDK
 // WITH_STDLIB
-// LATEST_LV_DIFFERENCE
 
 fun testCollections() {
     testKotlinSet(<!TYPE_MISMATCH!>java.util.HashSet(setOf(null))<!>)

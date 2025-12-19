@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +PreciseSimplificationToFlexibleLowerConstraint
 // ISSUE: KT-59138

@@ -114,7 +114,7 @@ fun main() {
     A().doOnSuccessTypeParameterProducer(::returnAny)
     A().doOnSuccessTypeParameterProducer(::returnNullableString)
     A().doOnSuccessTypeParameterProducer(::returnString)
-    A().doOnSuccessTypeParameterProducer<String>(::returnNullableString)
+    A().doOnSuccessTypeParameterProducer<String>(::<!INAPPLICABLE_CANDIDATE!>returnNullableString<!>)
 }
 
 /* GENERATED_FIR_TAGS: callableReference, classDeclaration, flexibleType, functionDeclaration, inProjection,

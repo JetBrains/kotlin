@@ -1,5 +1,6 @@
+// FIR_IDENTICAL
 // LANGUAGE: +DontMakeExplicitJavaTypeArgumentsFlexible +PreciseSimplificationToFlexibleLowerConstraint
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-78621
 
 // FILE: JavaClass.java
