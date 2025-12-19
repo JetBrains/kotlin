@@ -318,7 +318,8 @@ abstract class TypeCheckerStateForConstraintSystem(
                 when (subType) {
                     is RigidTypeMarker ->
                         when {
-                            usePreciseSimplificationToFlexibleLowerConstraint() ->
+                            (subType.isTypeVariableType() || subType.typeConstructor().isTypeParameterTypeConstructor()) &&
+                                    usePreciseSimplificationToFlexibleLowerConstraint() ->
                                 // Foo <: T! -- (Foo!! .. Foo) <: T
                                 // Foo? <: T! -- (Foo!! .. Foo?) <: T
                                 createTrivialFlexibleTypeOrSelf(

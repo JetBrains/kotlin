@@ -47,7 +47,7 @@ fun geneticFunTest() {
     takeString(JavaWithGenericFun.foo4(JavaBox(JavaBox(""))).a.a)
     takeString(JavaWithGenericFun.foo4<String>(JavaBox(JavaBox(""))).a.a)
     takeString(<!ARGUMENT_TYPE_MISMATCH!>JavaWithGenericFun.foo4<String?>(JavaBox(JavaBox(""))).a.a<!>)
-    takeString(JavaWithGenericFun.foo4(JavaBox(JavaBox(null))).a.a)
+    takeString(<!ARGUMENT_TYPE_MISMATCH!>JavaWithGenericFun.foo4(JavaBox(JavaBox(null))).a.a<!>)
     takeString(JavaWithGenericFun.foo4<String>(JavaBox(JavaBox(null))).a.a)
     takeString(<!ARGUMENT_TYPE_MISMATCH!>JavaWithGenericFun.foo4<String?>(JavaBox(JavaBox(null))).a.a<!>)
 
@@ -61,7 +61,7 @@ fun geneticFunTest() {
     takeString(JavaWithGenericFun.foo6(JavaBox("")).a)
     takeString(JavaWithGenericFun.foo6<String>(JavaBox("")).a)
     takeString(<!ARGUMENT_TYPE_MISMATCH!>JavaWithGenericFun.foo6<String?>(JavaBox("")).a<!>)
-    takeString(JavaWithGenericFun.foo6(JavaBox(null)).a)
+    takeString(<!ARGUMENT_TYPE_MISMATCH!>JavaWithGenericFun.foo6(JavaBox(null)).a<!>)
     takeString(JavaWithGenericFun.foo6<String>(JavaBox(null)).a)
     takeString(<!ARGUMENT_TYPE_MISMATCH!>JavaWithGenericFun.foo6<String?>(JavaBox(null)).a<!>)
 }
