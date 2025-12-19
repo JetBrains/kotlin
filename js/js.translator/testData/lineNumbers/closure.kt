@@ -5,4 +5,4 @@ fun box(x: Int, y: Int): Int {
     return foo(y)
 }
 
-// LINES: 1 1 5 5 2 1 3 4 4 4
+// LINES: 1 1 5 5 2 3 4 4 4

@@ -392,12 +392,18 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
                 }
 
                 outerReceiverMapping[expression.symbol]?.let {
+                    val receiver = it.receiver?.deepCopyWithSymbols()?.apply {
+                        val oldReceiver = expression.receiver ?: return@apply
+                        startOffset = oldReceiver.startOffset
+                        endOffset = oldReceiver.endOffset
+                    }
+
                     return IrGetFieldImpl(
                         expression.startOffset,
                         expression.endOffset,
                         it.symbol,
                         it.type,
-                        it.receiver?.deepCopyWithSymbols()
+                        receiver
                     )
                 }
 
