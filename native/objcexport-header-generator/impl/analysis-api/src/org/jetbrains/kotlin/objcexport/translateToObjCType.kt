@@ -64,7 +64,7 @@ internal fun ObjCExportContext.mapToReferenceTypeIgnoringNullability(type: KaTyp
         val classId = (fullyExpandedType as? KaClassType)?.classId
 
         if (type.isError) {
-            return objCErrorType
+            return translateToObjCErrorType(type, moduleContext)
         }
 
         if (type.isAnyType) {

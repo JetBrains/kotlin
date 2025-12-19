@@ -1,6 +1,7 @@
 package org.jetbrains.kotlin.objcexport
 
 import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 
 /**
@@ -46,8 +47,21 @@ data class ObjCExportContext(
      * See more at [org.jetbrains.kotlin.objcexport.TranslateToObjCTypeKt.mapToReferenceTypeIgnoringNullability]
      */
     val classifierContext: KaClassSymbol? = null,
+    /**
+     * Keeps reference to module of current symbol.
+     * Used for cases when
+     */
+    val moduleContext: KaModule? = null,
 ) {
     fun <T> withClassifierContext(symbol: KaClassSymbol, action: ObjCExportContext.() -> T): T {
-        return copy(classifierContext = symbol).action()
+        return copy(
+            classifierContext = symbol
+        ).action()
+    }
+
+    fun <T> withModuleContext(module: KaModule?, action: ObjCExportContext.() -> T): T {
+        return copy(
+            moduleContext = module
+        ).action()
     }
 }

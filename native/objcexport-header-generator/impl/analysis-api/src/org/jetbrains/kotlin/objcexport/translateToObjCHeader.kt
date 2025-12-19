@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.objcexport
 
+import org.jetbrains.kotlin.analysis.api.getModule
 import org.jetbrains.kotlin.analysis.api.export.utilities.getDeclaredSuperInterfaceSymbols
 import org.jetbrains.kotlin.analysis.api.export.utilities.getSuperClassSymbolNotAny
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
@@ -112,8 +113,10 @@ private class KtObjCExportHeaderGenerator(
 
     private fun ObjCExportContext.translateFileClassifiers(file: KtObjCExportFile) {
         val resolvedFile = with(file) { analysisSession.resolve() }
-        resolvedFile.classifierSymbols.sortedWith(StableClassifierOrder).forEach { classOrObjectSymbol ->
-            translateClassOrObjectSymbol(classOrObjectSymbol)
+        withModuleContext(getFileContainingModule(file)) {
+            resolvedFile.classifierSymbols.sortedWith(StableClassifierOrder).forEach { classOrObjectSymbol ->
+                translateClassOrObjectSymbol(classOrObjectSymbol)
+            }
         }
     }
 
@@ -130,9 +133,12 @@ private class KtObjCExportHeaderGenerator(
 
     private fun ObjCExportContext.translateTopLevelFacade(file: KtObjCExportFile) {
         val resolvedFile = with(file) { analysisSession.resolve() }
-        translateToObjCTopLevelFacade(resolvedFile)?.let { topLevelFacade ->
-            addObjCStubIfNotTranslated(topLevelFacade)
-            enqueueDependencyClasses(topLevelFacade)
+
+        withModuleContext(getFileContainingModule(resolvedFile)) {
+            translateToObjCTopLevelFacade(resolvedFile)?.let { topLevelFacade ->
+                addObjCStubIfNotTranslated(topLevelFacade)
+                enqueueDependencyClasses(topLevelFacade)
+            }
         }
     }
 

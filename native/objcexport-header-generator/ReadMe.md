@@ -143,30 +143,10 @@ interface ValueStorage {
 Both headers are valid, but because of mangling bug `swift_name` attributes are different. So user can pass parameter
 with name `value_` in Swift and code is going to be green, but at compile time there will be error about absence of parameter `value_`.
 
-To verify structural differences:
+### Running integration test
 
-1. We generate headers
-   in [GenerateObjCExportIntegrationTestData](test/org/jetbrains/kotlin/backend/konan/tests/integration/GenerateObjCExportIntegrationTestData.kt)
-2. Then compile both headers with `Indexer` and compare indexer result
-   in [ObjCExportIntegrationTest](test/org/jetbrains/kotlin/backend/konan/tests/integration/ObjCExportIntegrationTest.kt)
+Run test [ObjCExportIntegrationTest](test/org/jetbrains/kotlin/backend/konan/tests/integration/ObjCExportIntegrationTest.kt)
 
-### To run/debug integration test
+### Umbrella issue
 
-1. Run test [ObjCExportIntegrationTest](test/org/jetbrains/kotlin/backend/konan/tests/integration/ObjCExportIntegrationTest.kt) in IDE in debug mode
-2. Instance of [IntegrationTestReport](test/org/jetbrains/kotlin/backend/konan/tests/integration/utils/IntegrationTestReport.kt) is going to be created and can be inspected in debugger. 
-
-### Gradle integration test setup
-
-Complete `testIntegration` task flow:
-```
-testIntegration
-├─ prepareIntegrationTestData (Sync task)
-│   ├─ generateK1IntegrationData (Test - only GenerateObjCExportIntegrationTestData with K1)
-│   └─ generateK2IntegrationData (Test - only GenerateObjCExportIntegrationTestData with K2)
-└─ Uses IntegrationTestOutputDirArgumentProvider to set output system property
-```
-
-Key Files and Locations:
-- K1 outputs: `build/integration-artifacts/k1/integrationTestFiles/`
-- K2 outputs: `build/integration-artifacts/k2/integrationTestFiles/`
-- Merged outputs: `build/integration-data/integrationTestFiles/`
+[ObjCExport-K1-K2-integration-umbrella-issue](https://youtrack.jetbrains.com/issue/KT-83503/ObjCExport-K1-K2-integration-umbrella-issue)

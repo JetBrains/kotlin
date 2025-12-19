@@ -14,15 +14,16 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.copyNativeHomeProperty
 import org.jetbrains.kotlin.native.interop.gen.jvm.KotlinPlatform
 import org.jetbrains.kotlin.native.interop.indexer.IndexerResult
 import org.jetbrains.kotlin.native.interop.tool.ToolConfig
+import org.jetbrains.kotlin.test.KtAssert.fail
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assumptions.assumeTrue
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.io.File
 import java.nio.file.Path
 import kotlin.io.path.name
 import kotlin.test.assertTrue
-import kotlin.test.fail
 
 /**
  * Integration test that generates ObjC headers using K1 and K2 header generators,
@@ -53,10 +54,6 @@ import kotlin.test.fail
  */
 class ObjCExportIntegrationTest {
 
-    /**
-     * Currently failing is disabled, since we have unresolved K1/K2 issues
-     */
-    private val failOnIssues = false
     private var files = IntegrationTempFiles(integrationModuleName)
 
     init {
@@ -85,46 +82,51 @@ class ObjCExportIntegrationTest {
     }
 
     @Test
+    @Disabled
     fun `compare kotlinx-datetime`() {
         val report = generateHeadersAndBuildReport(testLibraryKotlinxDatetime)
-        if (failOnIssues && report.hasIssues) {
-            error(report.toString())
+        if (report.hasIssues) {
+            fail(report.toString())
         }
     }
 
     @Test
+    @Disabled
     fun `compare kotlinx-coroutines`() {
         val report = generateHeadersAndBuildReport(testLibraryKotlinxCoroutines)
-        if (failOnIssues && report.hasIssues) {
-            error(report.toString())
+        if (report.hasIssues) {
+            fail(report.toString())
         }
     }
 
     @Test
     fun `compare kotlinx-atomic-fu`() {
         val report = generateHeadersAndBuildReport(testLibraryAtomicFu)
-        if (failOnIssues && report.hasIssues) {
-            error(report.toString())
+        if (report.hasIssues) {
+            fail(report.toString())
         }
     }
 
     @Test
+    @Disabled
     fun `compare kotlinx-serialization-core`() {
         val report = generateHeadersAndBuildReport(testLibraryKotlinxSerializationCore)
-        if (failOnIssues && report.hasIssues) {
-            error(report.toString())
+        if (report.hasIssues) {
+            fail(report.toString())
         }
     }
 
     @Test
+    @Disabled
     fun `compare kotlinx-serialization-json`() {
         val report = generateHeadersAndBuildReport(testLibraryKotlinxSerializationJson)
-        if (failOnIssues && report.hasIssues) {
-            error(report.toString())
+        if (report.hasIssues) {
+            fail(report.toString())
         }
     }
 
     @Test
+    @Disabled
     fun `compare combined dependencies`() {
         val report = generateHeadersAndBuildReport(
             "combined",
@@ -136,8 +138,8 @@ class ObjCExportIntegrationTest {
                 testLibraryKotlinxSerializationJson
             )
         )
-        if (failOnIssues && report.hasIssues) {
-            error(report.toString())
+        if (report.hasIssues) {
+            fail(report.toString())
         }
     }
 
