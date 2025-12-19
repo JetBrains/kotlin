@@ -311,9 +311,22 @@ If an interface or class isn't intended to be subclassed by clients, make this e
 interface KaSession
 ```
 
-On the other hand, if you expect users to create subtypes of your class or interface,
+#### Use `@KaSpi` for Extendable Types
+
+If you expect users to create subtypes of your class or interface,
 mark the declaration with `@KaSpi` annotation and provide detailed instructions on not only how to use
-each of the members, but also how to implement them correctly.
+each of the members, as well as how to implement them correctly.
+
+Use `@KaSpiExtensionPoint` annotation to explicitly mark members of the SPI that are designed only for extension, not for direct use.
+
+`ExtensionPointName` can be used to inject client implementations. Implementation notes:
+
+- The KDoc of the SPI should mention the extension point name (the name that is used to register the EP)
+- `@KaSpiExtensionPoint` should be used to annotate all members of the extension point class
+
+**Do not mix API and SPI (Service Provider Interface) in one type**. It is better to have a clear separation
+between types that are supposed to be used by clients and types that are supposed to be used by the Analysis API platform itself.
+This would help prevent the potential evolution of API/SPI from introducing breaking changes.
 
 #### Check Whether Your Entity Needs to be a `KaLifetimeOwner`
 

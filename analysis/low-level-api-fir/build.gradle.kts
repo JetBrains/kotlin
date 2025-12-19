@@ -89,6 +89,7 @@ kotlin {
         optIn.addAll(
             "org.jetbrains.kotlin.analysis.api.KaExperimentalApi",
             "org.jetbrains.kotlin.analysis.api.KaPlatformInterface",
+            "org.jetbrains.kotlin.analysis.api.KaSpiExtensionPoint",
         )
     }
 }

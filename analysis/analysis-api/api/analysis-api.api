@@ -35,6 +35,9 @@ public final class org/jetbrains/kotlin/analysis/api/KaSessionKt {
 	public static final fun getModule (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lcom/intellij/psi/PsiElement;)Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaModule;
 }
 
+public abstract interface annotation class org/jetbrains/kotlin/analysis/api/KaSpiExtensionPoint : java/lang/annotation/Annotation {
+}
+
 public abstract interface class org/jetbrains/kotlin/analysis/api/annotations/KaAnnotated {
 	public abstract fun getAnnotations ()Lorg/jetbrains/kotlin/analysis/api/annotations/KaAnnotationList;
 }
