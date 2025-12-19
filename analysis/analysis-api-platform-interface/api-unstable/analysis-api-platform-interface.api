@@ -729,7 +729,7 @@ public final class org/jetbrains/kotlin/analysis/api/platform/projectStructure/K
 
 public abstract interface class org/jetbrains/kotlin/analysis/api/platform/projectStructure/KotlinCompilerPluginsProvider : org/jetbrains/kotlin/analysis/api/platform/KotlinOptionalPlatformComponent {
 	public static final field Companion Lorg/jetbrains/kotlin/analysis/api/platform/projectStructure/KotlinCompilerPluginsProvider$Companion;
-	public abstract fun getRegisteredExtensions (Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaModule;Lorg/jetbrains/kotlin/extensions/ProjectExtensionDescriptor;)Ljava/util/List;
+	public abstract fun getRegisteredExtensions (Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaModule;Lorg/jetbrains/kotlin/extensions/ExtensionPointDescriptor;)Ljava/util/List;
 	public abstract fun isPluginOfTypeRegistered (Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaModule;Lorg/jetbrains/kotlin/analysis/api/platform/projectStructure/KotlinCompilerPluginsProvider$CompilerPluginType;)Z
 }
 
