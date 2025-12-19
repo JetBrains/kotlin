@@ -144,7 +144,10 @@ data class ArgumentField(
     val argument: Argument,
     val enablesAnnotations: List<Enables>,
     val disablesAnnotations: List<Disables>,
-)
+) {
+    val changesLanguageFeatures: Boolean
+        get() = enablesAnnotations.isNotEmpty() || disablesAnnotations.isNotEmpty()
+}
 
 data class ArgumentsInfo(
     val cliArgNameToArguments: Map<String, ArgumentField>,
@@ -253,7 +256,7 @@ private fun <A : CommonToolArguments> parsePreprocessedCommandLineArguments(
 
         val value: Any = when {
             getter.returnType.kotlin == Boolean::class -> {
-                val changesLangFeatures = enablesAnnotations.isNotEmpty() || disablesAnnotations.isNotEmpty()
+                val changesLangFeatures = argumentField.changesLanguageFeatures
                 if (arg.startsWith(argument.value + delimiter)) {
                     when (arg.substring(argument.value.length + 1)) {
                         "true" -> true
