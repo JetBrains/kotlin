@@ -9,18 +9,21 @@ import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinCompile
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinCompilerPluginsProvider.CompilerPluginType
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.areCompilerPluginsSupported
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
+import org.jetbrains.kotlin.extensions.ExtensionPointDescriptor
 import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
 import org.jetbrains.kotlin.extensions.internal.InternalNonStableExtensionPoints
 import org.jetbrains.kotlin.resolve.extensions.AssignResolutionAltererExtension
 
 @Suppress("unused")
 internal class KotlinFe10CompilerPluginsProvider : KotlinCompilerPluginsProvider {
-    override fun <T : Any> getRegisteredExtensions(module: KaModule, extensionType: ProjectExtensionDescriptor<T>): List<T> {
+    override fun <T : Any> getRegisteredExtensions(module: KaModule, extensionType: ExtensionPointDescriptor<T>): List<T> {
         if (!module.areCompilerPluginsSupported()) {
             return emptyList()
         }
-
-        return extensionType.getInstances(module.project)
+        if (extensionType is ProjectExtensionDescriptor) {
+            return extensionType.getInstances(module.project)
+        }
+        return emptyList()
     }
 
     @OptIn(InternalNonStableExtensionPoints::class)

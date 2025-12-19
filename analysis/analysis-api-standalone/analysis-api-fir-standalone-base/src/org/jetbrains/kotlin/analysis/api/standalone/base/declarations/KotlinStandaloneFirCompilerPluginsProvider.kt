@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
+import org.jetbrains.kotlin.extensions.ExtensionPointDescriptor
 import org.jetbrains.kotlin.fir.extensions.FirAssignExpressionAltererExtension
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
@@ -27,7 +27,7 @@ class KotlinStandaloneFirCompilerPluginsProvider(compilerConfiguration: Compiler
 
     override fun <T : Any> getRegisteredExtensions(
         module: KaModule,
-        extensionType: ProjectExtensionDescriptor<T>,
+        extensionType: ExtensionPointDescriptor<T>,
     ): List<T> {
         if (!module.areCompilerPluginsSupported()) {
             return emptyList()

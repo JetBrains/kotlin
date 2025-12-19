@@ -10,6 +10,7 @@ import com.intellij.openapi.util.Disposer
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
+import org.jetbrains.kotlin.extensions.ExtensionPointDescriptor
 import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
 
 @ExperimentalCompilerApi
@@ -28,15 +29,15 @@ abstract class CompilerPluginRegistrar {
     abstract fun ExtensionStorage.registerExtensions(configuration: CompilerConfiguration)
 
     class ExtensionStorage {
-        private val _registeredExtensions = mutableMapOf<ProjectExtensionDescriptor<*>, MutableList<Any>>()
-        val registeredExtensions: Map<ProjectExtensionDescriptor<*>, List<Any>>
+        private val _registeredExtensions = mutableMapOf<ExtensionPointDescriptor<*>, MutableList<Any>>()
+        val registeredExtensions: Map<ExtensionPointDescriptor<*>, List<Any>>
             get() = _registeredExtensions
 
         private val _disposables = mutableListOf<PluginDisposable>()
         val disposables: List<PluginDisposable>
             get() = _disposables
 
-        fun <T : Any> ProjectExtensionDescriptor<T>.registerExtension(extension: T) {
+        fun <T : Any> ExtensionPointDescriptor<T>.registerExtension(extension: T) {
             _registeredExtensions.getOrPut(this, ::mutableListOf).add(extension)
         }
 
@@ -68,7 +69,9 @@ fun CompilerPluginRegistrar.ExtensionStorage.registerInProject(
         for (extension in extensions) {
             @Suppress("UNCHECKED_CAST")
             try {
-                (extensionPoint as ProjectExtensionDescriptor<Any>).registerExtensionUnsafe(project, extension)
+                if (extensionPoint is ProjectExtensionDescriptor<*>) {
+                    (extensionPoint as ProjectExtensionDescriptor<Any>).registerExtensionUnsafe(project, extension)
+                }
             } catch (e: AbstractMethodError) {
                 throw IllegalStateException(errorMessage(extension), e)
             }
