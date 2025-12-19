@@ -1,0 +1,40 @@
+synthetic final class Module_main_functionReferenceKt$x$1 {
+    // source: 'module_main_functionReference.kt'
+    enclosing class Module_main_functionReferenceKt
+    public final static field INSTANCE: Module_main_functionReferenceKt$x$1
+    inner (anonymous) class Module_main_functionReferenceKt$x$1
+    static method <clinit>(): void
+    method <init>(): void
+    public final method invoke(p0: androidx.compose.runtime.Composer, p1: int): void
+    public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
+    public final inner class kotlin/jvm/internal/Intrinsics$Kotlin
+}
+
+synthetic final class Module_main_functionReferenceKt$x1$1 {
+    // source: 'module_main_functionReference.kt'
+    enclosing class Module_main_functionReferenceKt
+    public final static field INSTANCE: Module_main_functionReferenceKt$x1$1
+    inner (anonymous) class Module_main_functionReferenceKt$x1$1
+    static method <clinit>(): void
+    method <init>(): void
+    public final method invoke(p0: int, p1: androidx.compose.runtime.Composer, p2: int): void
+    public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object): java.lang.Object
+    public final inner class kotlin/jvm/internal/Intrinsics$Kotlin
+}
+
+public final class Module_main_functionReferenceKt {
+    // source: 'module_main_functionReference.kt'
+    private final static field x1: kotlin.jvm.functions.Function3
+    private final static field x: kotlin.jvm.functions.Function2
+    inner (anonymous) class Module_main_functionReferenceKt$x$1
+    inner (anonymous) class Module_main_functionReferenceKt$x1$1
+    static method <clinit>(): void
+    private final static method App$lambda$0(p0: int, p1: androidx.compose.runtime.Composer, p2: int): kotlin.Unit
+    public final static method App(p0: androidx.compose.runtime.Composer, p1: int): void
+    public synthetic final static method access$x$Test(p0: androidx.compose.runtime.Composer, p1: int): void
+    public synthetic final static method access$x1$TestWithParams(p0: int, p1: androidx.compose.runtime.Composer, p2: int): void
+    public final static method getX(): kotlin.jvm.functions.Function2
+    public final static method getX1(): kotlin.jvm.functions.Function3
+    private final static method x$Test(p0: androidx.compose.runtime.Composer, p1: int): void
+    private final static method x1$TestWithParams(p0: int, p1: androidx.compose.runtime.Composer, p2: int): void
+}
