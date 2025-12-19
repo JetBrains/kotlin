@@ -76,7 +76,7 @@ fun loadStdlibMetadata(configuration: CompilerConfiguration): NamedMetadata {
     val dummyLogger = CliLoggerAdapter(CommonizerLogLevel.Quiet, 2)
     val stdlibModuleProvider = DefaultModulesProvider.forDependencies(listOf(NativeLibrary(stdlib)), dummyLogger)
 
-    return NamedMetadata(stdlib.libraryName, stdlibModuleProvider.loadModuleMetadata(stdlib.moduleName))
+    return NamedMetadata(stdlib.moduleName, stdlibModuleProvider.loadModuleMetadata(stdlib.moduleName))
 }
 
 fun createEmptyModule(name: String, disposable: Disposable): SerializedMetadata {

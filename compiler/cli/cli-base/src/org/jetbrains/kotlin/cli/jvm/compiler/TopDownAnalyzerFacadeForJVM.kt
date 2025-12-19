@@ -327,7 +327,7 @@ private val jvmFactories = KlibMetadataFactories(
 private fun getKlibModules(klibList: List<KotlinLibrary>, dependencyModule: ModuleDescriptorImpl?): List<ModuleDescriptorImpl> {
     val descriptorMap = mutableMapOf<String, ModuleDescriptorImpl>()
     return klibList.map { library ->
-        descriptorMap.getOrPut(library.libraryName) { getModuleDescriptorByLibrary(library, descriptorMap, dependencyModule) }
+        descriptorMap.getOrPut(library.location.path) { getModuleDescriptorByLibrary(library, descriptorMap, dependencyModule) }
     }
 }
 

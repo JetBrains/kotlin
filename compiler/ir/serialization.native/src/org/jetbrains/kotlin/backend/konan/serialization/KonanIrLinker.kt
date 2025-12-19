@@ -124,7 +124,7 @@ class KonanIrLinker(
                 .filter { !it.key.isForwardDeclarationModuleName && it.value.moduleDescriptor !== currentModule }
                 .forEach {
                     val klib = it.value.klib
-                    this[klib.libraryName] = it.value.moduleFragment
+                    this[klib.location.path] = it.value.moduleFragment
                 }
         }
 }

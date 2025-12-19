@@ -181,11 +181,11 @@ class CacheBuilder(
 
         configuration.report(CompilerMessageSeverity.LOGGING, "IC analysis results")
         configuration.report(CompilerMessageSeverity.LOGGING, "    CACHED:")
-        icedLibraries.filter { caches[it] != null }.forEach { configuration.report(CompilerMessageSeverity.LOGGING, "        ${it.libraryName}") }
+        icedLibraries.filter { caches[it] != null }.forEach { configuration.report(CompilerMessageSeverity.LOGGING, "        ${it.location}") }
         configuration.report(CompilerMessageSeverity.LOGGING, "    CLEAN BUILD:")
-        icedLibraries.filter { caches[it] == null }.forEach { configuration.report(CompilerMessageSeverity.LOGGING, "        ${it.libraryName}") }
+        icedLibraries.filter { caches[it] == null }.forEach { configuration.report(CompilerMessageSeverity.LOGGING, "        ${it.location}") }
         configuration.report(CompilerMessageSeverity.LOGGING, "    FULL REBUILD:")
-        icedLibraries.filter { it in needFullRebuild }.forEach { configuration.report(CompilerMessageSeverity.LOGGING, "        ${it.libraryName}") }
+        icedLibraries.filter { it in needFullRebuild }.forEach { configuration.report(CompilerMessageSeverity.LOGGING, "        ${it.location}") }
         configuration.report(CompilerMessageSeverity.LOGGING, "    ADDED FILES:")
         addedFiles.forEach { configuration.report(CompilerMessageSeverity.LOGGING, "        $it") }
         configuration.report(CompilerMessageSeverity.LOGGING, "    REMOVED FILES:")
@@ -244,12 +244,12 @@ class CacheBuilder(
         val dependencyCaches = dependencies.map {
             cacheRootDirectories[it] ?: run {
                 configuration.report(CompilerMessageSeverity.LOGGING,
-                        "SKIPPING ${library.libraryName} as some of the dependencies aren't cached")
+                        "SKIPPING ${library.location} as some of the dependencies aren't cached")
                 return
             }
         }
 
-        configuration.report(CompilerMessageSeverity.LOGGING, "CACHING ${library.libraryName}")
+        configuration.report(CompilerMessageSeverity.LOGGING, "CACHING ${library.location}")
         filesToCache.forEach { configuration.report(CompilerMessageSeverity.LOGGING, "    $it") }
 
         // Produce monolithic caches for external libraries for now.
@@ -409,7 +409,7 @@ class CacheBuilder(
                     ?: run {
                         @Suppress("IncorrectFormatting") val extraUserInfo =
                                 """
-                                    Failed to build cache for ${library.libraryName}.
+                                    Failed to build cache for ${library.location}.
                                     As a workaround, please try to disable ${
                                         if (makePerFileCache)
                                             "incremental compilation (kotlin.incremental.native=false)"
@@ -438,7 +438,7 @@ class CacheBuilder(
             val libraries = dependencies.filter { !it.isFromKotlinNativeDistribution }.map { it.libraryFile.absolutePath }
             val cachedLibraries = dependencies.zip(dependencyCaches).associate { it.first.libraryFile.absolutePath to it.second }
             configuration.report(CompilerMessageSeverity.LOGGING,
-                    "-p static_cache -Xadd-cache=${library.libraryName} \\\n" +
+                    "-p static_cache -Xadd-cache=${library.location} \\\n" +
                             libraries.joinToString("\n") { "-library $it \\" } + "\n" +
                             cachedLibraries.entries.joinToString("\n") { "-Xcached-library=${it.key},${it.value} \\" } + "\n" +
                             "-Xcache-directory=${libraryCacheDirectory.absolutePath}\n"

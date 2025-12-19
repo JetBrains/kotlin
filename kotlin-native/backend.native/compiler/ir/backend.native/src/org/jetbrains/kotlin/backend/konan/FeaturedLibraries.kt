@@ -78,7 +78,7 @@ private sealed class FeaturedLibrariesReporter {
         override fun reportIllegalKind(library: KotlinLibrary) {
             configuration.report(
                     CompilerMessageSeverity.STRONG_WARNING,
-                    illegalKindMessage(library.reportedKind, library.libraryName)
+                    illegalKindMessage(library.reportedKind, library.location.path)
             )
         }
 
@@ -97,7 +97,7 @@ private sealed class FeaturedLibrariesReporter {
 
     private class IncludedLibrariesReporter(val configuration: CompilerConfiguration) : FeaturedLibrariesReporter() {
         override fun reportIllegalKind(library: KotlinLibrary) = with(library) {
-            val message = "$reportedKind library $libraryName cannot be passed with -Xinclude " +
+            val message = "$reportedKind library $location cannot be passed with -Xinclude " +
                     "(library path: ${libraryFile.absolutePath})"
             configuration.report(CompilerMessageSeverity.STRONG_WARNING, message)
         }

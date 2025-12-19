@@ -53,7 +53,7 @@ fun KotlinLibrary.getFileFqNames(filePaths: List<String>): List<String> {
         fileReader.deserializeFileEntryName(fileEntry) to (it.index to fileReader)
     }
     return filePaths.map { filePath ->
-        val (index, fileReader) = filePathToIndexAndReader[filePath] ?: error("No file with path $filePath is found in klib $libraryName")
+        val (index, fileReader) = filePathToIndexAndReader[filePath] ?: error("No file with path $filePath is found in klib $location")
         fileReader.deserializeFqName(fileProtos[index].fqNameList)
     }
 }
@@ -180,8 +180,8 @@ class CacheSupport(
                                 "going to be cached"
                             }
                             configuration.reportCompilationError(
-                                    "${library.library.libraryName} is $description, " +
-                                            "but its dependency isn't: ${it.library.libraryName}"
+                                    "${library.library.location} is $description, " +
+                                            "but its dependency isn't: ${it.library.location}"
                             )
                         }
                     }
@@ -195,7 +195,7 @@ class CacheSupport(
         libraryToCache?.klib?.let {
             val cache = cachedLibraries.getLibraryCache(it)
             if (cache is CachedLibraries.Cache.Monolithic) {
-                configuration.reportCompilationError("can't cache library '${it.libraryName}' " +
+                configuration.reportCompilationError("can't cache library '${it.location}' " +
                         "that is already cached in '${cache.path}'")
             }
         }

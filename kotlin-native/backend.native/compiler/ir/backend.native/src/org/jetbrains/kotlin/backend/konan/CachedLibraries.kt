@@ -164,7 +164,7 @@ class CachedLibraries(
 
         if (dynamicFile.absolutePath in cacheBinaryPartDirContents && staticFile.absolutePath in cacheBinaryPartDirContents)
             error("Both dynamic and static caches files cannot be in the same directory." +
-                    " Library: ${library.libraryName}, path to cache: $absolutePath")
+                    " Library: ${library.location}, path to cache: $absolutePath")
         return when {
             dynamicFile.absolutePath in cacheBinaryPartDirContents -> Cache.Monolithic(target, Kind.DYNAMIC, dynamicFile.absolutePath)
             staticFile.absolutePath in cacheBinaryPartDirContents -> Cache.Monolithic(target, Kind.STATIC, staticFile.absolutePath)
@@ -197,7 +197,7 @@ class CachedLibraries(
 
         val cache = if (explicitPath != null) {
             File(explicitPath).trySelectCacheFor(library)
-                    ?: error("No cache found for library ${library.libraryName} at $explicitPath")
+                    ?: error("No cache found for library ${library.location} at $explicitPath")
         } else {
             val libraryPath = library.libraryFile.canonicalPath
             library.trySelectCacheAt { cacheNameToImplicitDirMapping[it] }

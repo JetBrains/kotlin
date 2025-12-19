@@ -52,7 +52,6 @@ internal class KlibImpl(
 
     override val attributes = KlibAttributes()
 
-    override val libraryName get() = location.path
     override val libraryFile get() = location
 
     override fun toString() = listOfNotNull(

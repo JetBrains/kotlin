@@ -235,7 +235,7 @@ internal fun LinkKlibsContext.linkKlibs(
     return if (libraryToCache == null) {
         LinkKlibsOutput(modules, mainModule, generatorContext.irBuiltIns, symbols, symbolTable, irDeserializer)
     } else {
-        val libraryName = libraryToCache.klib.libraryName
+        val libraryName = libraryToCache.klib.location.path
         val libraryModule = modules[libraryName] ?: error("No module for the library being cached: $libraryName")
         LinkKlibsOutput(
                 irModules = modules.filterKeys { it != libraryName },
