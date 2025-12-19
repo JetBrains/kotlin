@@ -119,6 +119,19 @@ public object KotlinCoroutineSupportModule : SirModule() {
         superClass = KotlinRuntimeModule.kotlinBase.nominalType()
         protocols.add(KotlinRuntimeSupportModule.kotlinBridgeable)
     }.initializeParentForSelfAndChildren(KotlinCoroutineSupportModule)
+
+    public val kotlinFlow: SirProtocol = buildProtocol {
+        origin = KotlinRuntimeElement()
+        name = "_KotlinFlow"
+        visibility = SirVisibility.PUBLIC
+    }.initializeParentForSelfAndChildren(KotlinCoroutineSupportModule)
+
+    public val kotlinFlowMarker: SirProtocol = buildProtocol {
+        origin = KotlinRuntimeElement()
+        name = "__KotlinFlow"
+        visibility = SirVisibility.PUBLIC
+    }.initializeParentForSelfAndChildren(KotlinCoroutineSupportModule)
+
 }
 
 private fun <T> T.initializeParentForSelfAndChildren(parentModule: SirModule): T where T : SirDeclaration, T : SirDeclarationContainer {

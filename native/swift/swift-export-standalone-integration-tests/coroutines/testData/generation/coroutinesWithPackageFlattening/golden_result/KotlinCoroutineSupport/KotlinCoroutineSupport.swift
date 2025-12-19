@@ -1,4 +1,5 @@
 import KotlinRuntime
+import KotlinRuntimeSupport
 @_implementationOnly import KotlinCoroutineSupportBridge
 
 /// A Bridge type for Job-like class in Kotlin
@@ -35,5 +36,72 @@ package final class KotlinTask: KotlinRuntime.KotlinBase {
 
     public func cancelExternally() -> Swift.Void {
         return __root___SwiftJob_cancelExternally(self.__externalRCRef())
+    }
+}
+
+public protocol _KotlinFlow: KotlinRuntime.KotlinBase, AsyncSequence { }
+
+extension _KotlinFlow {
+    public func makeAsyncIterator() -> KotlinFlowIterator {
+        .init(flow: self)
+    }
+}
+
+/// An async iterator type for kotlinx.coroutines.flow.Flow
+///
+/// ## Discussion
+/// This type is a manually bridged counterpart to SwiftFlowIterator type in Kotlin
+/// It simply maps `next()` calls to its implementation in Kotlin.
+public final class KotlinFlowIterator: KotlinRuntime.KotlinBase, AsyncIteratorProtocol {
+    public typealias Element = any KotlinRuntimeSupport._KotlinBridgeable
+    public typealias Failure = any Error
+
+    fileprivate init(flow: some _KotlinFlow) {
+        let __kt = _kotlin_swift_SwiftFlowIterator_init_allocate()
+        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
+        _kotlin_swift_SwiftFlowIterator_init_initialize(__kt, flow.__externalRCRef())
+    }
+
+    deinit {
+        _kotlin_swift_SwiftFlowIterator_cancel(self.__externalRCRef())
+    }
+
+    package override init(
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+        options: KotlinRuntime.KotlinBaseConstructionOptions
+    ) {
+        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+    }
+
+    public func next() async throws -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
+        try await {
+            try Task.checkCancellation()
+            var cancellation: KotlinCoroutineSupport.KotlinTask! = nil
+            return try await withTaskCancellationHandler {
+                try await withUnsafeThrowingContinuation { (nativeContinuation: UnsafeContinuation<(any KotlinRuntimeSupport._KotlinBridgeable)?, any Error>) in
+                    withUnsafeCurrentTask { currentTask in
+                        let continuation: (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Void = { nativeContinuation.resume(returning: $0) }
+                        let exception: (Swift.Optional<KotlinRuntime.KotlinBase>) -> Swift.Void = { error in
+                            nativeContinuation.resume(throwing: error.map { KotlinError(wrapped: $0) } ?? CancellationError())
+                        }
+                        cancellation = KotlinCoroutineSupport.KotlinTask(currentTask!)
+
+                        let _: () = _kotlin_swift_SwiftFlowIterator_next(self.__externalRCRef(), { arg0 in
+                                return {
+                                    continuation(arg0.flatMap(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef:)));
+                                    return 0
+                                }()
+                        }, { arg0 in
+                                return {
+                                    exception(arg0.flatMap(KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef:)));
+                                    return 0
+                                }()
+                        }, cancellation.__externalRCRef())
+                    }
+                }
+            } onCancel: {
+                cancellation?.cancelExternally()
+            }
+        }()
     }
 }

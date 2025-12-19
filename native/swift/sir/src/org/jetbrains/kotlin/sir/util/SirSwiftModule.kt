@@ -61,6 +61,14 @@ object SirSwiftModule : SirModule() {
     val rawRepresentable = protocol("RawRepresentable")
 }
 
+object SirSwiftConcurrencyModule : SirModule() { // Some swift standard library definitions are actually re-exported from other modules
+    override val name: String get() = "_Concurrency"
+    override val imports: MutableList<SirImport> = mutableListOf()
+    override val declarations: MutableList<SirDeclaration> = mutableListOf()
+
+    val asyncSequence = protocol("AsyncSequence")
+}
+
 private fun SirMutableDeclarationContainer.struct(typeName: String) = addChild {
     buildStruct {
         origin = externallyDefined(typeName)
