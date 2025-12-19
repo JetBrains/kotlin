@@ -20,7 +20,7 @@ import kotlin.reflect.jvm.internal.types.ReflectTypeSystemContext
 import kotlin.reflect.jvm.javaField
 import kotlin.reflect.jvm.javaMethod
 
-internal fun getAllMembers_newKotlinReflectImpl(kClass: KClassImpl<*>): Collection<DescriptorKCallable<*>> {
+internal fun getAllMembers(kClass: KClassImpl<*>): Collection<DescriptorKCallable<*>> {
     val membersReadOnly = kClass.data.value.fakeOverrideMembers
     // Kotlin doesn't have statics (unless it's enum), and it never inherits statics from Java
     val isKotlin = kClass.java.isKotlin
@@ -151,7 +151,7 @@ internal fun computeFakeOverrideMembers(kClass: KClassImpl<*>): FakeOverrideMemb
             val kotlinSignature = member.toEquatableCallableSignature(EqualityMode.KotlinSignature)
             if (declaredKotlinMembers.contains(kotlinSignature)) continue
             // Inherited signatures are always compared by JvmSignatures. Even for kotlin classes.
-            javaSignaturesMap.merge_Jdk6Compatibility(
+            javaSignaturesMap.mergeWith(
                 kotlinSignature.withEqualityMode(EqualityMode.JavaSignature),
                 member
             ) { a, b ->
@@ -188,22 +188,22 @@ internal fun computeFakeOverrideMembers(kClass: KClassImpl<*>): FakeOverrideMemb
 }
 
 /**
- * MutableMap.merge that is available on JDK < 8. Reflect has to be able to work in JDK 6
+ * Alternative `MutableMap.merge` implementation that is available on JDK < 8. Reflect has to be able to work in JDK 6
  *
- * Related test: [org.jetbrains.kotlin.tools.tests.JdkApiUsageTest]
+ * Related test: `org.jetbrains.kotlin.tools.tests.JdkApiUsageTest`
  */
-private fun <K, V> MutableMap<K, V>.merge_Jdk6Compatibility(key: K, value: V, remappingFunction: (V, V) -> V): V {
-    val newValue = when (val oldValue = get(key)) {
-        null -> value
-        else -> remappingFunction(oldValue, value)
+private inline fun <K, V : Any> MutableMap<K, V>.mergeWith(key: K, value: V, remappingFunction: (V, V) -> V): V =
+    when (val oldValue = get(key)) {
+        null -> {
+            this[key] = value
+            value
+        }
+        else -> {
+            val value = remappingFunction(oldValue, value)
+            this[key] = value
+            value
+        }
     }
-    if (newValue == null) {
-        remove(key)
-    } else {
-        this[key] = newValue
-    }
-    return newValue
-}
 
 private val modalityIntersectionOverrideComparator: Comparator<DescriptorKCallable<*>> = compareBy(
     // Deprioritize interfaces, prioritize classes
@@ -228,10 +228,10 @@ private val KClass<*>.fakeOverrideMembers: FakeOverrideMembers
 
 private fun <T : EqualityMode> DescriptorKCallable<*>.toEquatableCallableSignature(equalityMode: T): EquatableCallableSignature<T> {
     val parameterTypes = parameters.filter { it.kind != KParameter.Kind.INSTANCE }.map { it.type }
-    val kind = when (this) {
-        is KProperty<*> if javaField?.declaringClass?.isKotlin == false -> SignatureKind.FIELD_IN_JAVA_CLASS
-        is KProperty<*> -> SignatureKind.PROPERTY
-        is KFunction<*> -> SignatureKind.FUNCTION
+    val kind = when {
+        isJavaField -> SignatureKind.FIELD_IN_JAVA_CLASS
+        this is KProperty<*> -> SignatureKind.PROPERTY
+        this is KFunction<*> -> SignatureKind.FUNCTION
         else -> error("Unknown kind for ${this::class}")
     }
     val javaMethod = (this as? KFunction<*>)?.javaMethod

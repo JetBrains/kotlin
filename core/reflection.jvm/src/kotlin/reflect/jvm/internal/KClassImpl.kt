@@ -409,7 +409,7 @@ internal class KClassImpl<T : Any>(
             by ReflectProperties.lazySoft {
                 when (useK1ImplementationForFakeOverrides()) {
                     true -> allNonStaticMembers + allStaticMembers
-                    false -> getAllMembers_newKotlinReflectImpl(this@KClassImpl)
+                    false -> getAllMembers(this@KClassImpl)
                 }
             }
         internal val fakeOverrideMembers: FakeOverrideMembers
