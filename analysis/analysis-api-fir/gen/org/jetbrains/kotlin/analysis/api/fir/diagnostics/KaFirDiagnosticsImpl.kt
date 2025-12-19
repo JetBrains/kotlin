@@ -1335,11 +1335,6 @@ internal class CallToJsNonModuleWithModuleSystemImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.CallToJsNonModuleWithModuleSystem
 
-internal class RuntimeAnnotationNotSupportedImpl(
-    firDiagnostic: KtPsiDiagnostic,
-    token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.RuntimeAnnotationNotSupported
-
 internal class RuntimeAnnotationOnExternalDeclarationImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,

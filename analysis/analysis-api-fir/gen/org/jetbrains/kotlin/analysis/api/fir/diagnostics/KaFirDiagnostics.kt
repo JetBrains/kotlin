@@ -1111,10 +1111,6 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val callee: KaSymbol
     }
 
-    interface RuntimeAnnotationNotSupported : KaFirDiagnostic<PsiElement> {
-        override val diagnosticClass get() = RuntimeAnnotationNotSupported::class
-    }
-
     interface RuntimeAnnotationOnExternalDeclaration : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = RuntimeAnnotationOnExternalDeclaration::class
     }
