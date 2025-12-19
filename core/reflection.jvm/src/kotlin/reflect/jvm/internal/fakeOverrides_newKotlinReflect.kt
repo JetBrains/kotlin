@@ -189,6 +189,8 @@ internal fun computeFakeOverrideMembers(kClass: KClassImpl<*>): FakeOverrideMemb
 
 /**
  * MutableMap.merge that is available on JDK < 8. Reflect has to be able to work in JDK 6
+ *
+ * Related test: [org.jetbrains.kotlin.tools.tests.JdkApiUsageTest]
  */
 private fun <K, V> MutableMap<K, V>.merge_Jdk6Compatibility(key: K, value: V, remappingFunction: (V, V) -> V): V {
     val newValue = when (val oldValue = get(key)) {
@@ -269,10 +271,9 @@ internal enum class SignatureKind {
     FUNCTION, PROPERTY, FIELD_IN_JAVA_CLASS
 }
 
-sealed class EqualityMode {
+internal sealed class EqualityMode {
     /**
      * For declared members in Kotlin classes
-     * (which include comparison of declared members in Kotlin classes and inherited members)
      */
     data object KotlinSignature : EqualityMode()
 
