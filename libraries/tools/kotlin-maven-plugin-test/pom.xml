@@ -187,7 +187,7 @@
                                     <goal>verify</goal>
                                 </goals>
                                 <configuration>
-                                    <jvm>${env.JDK_17_0}</jvm>
+                                    <jvm>${env.JDK_17_0}/bin/java</jvm>
                                     <systemPropertyVariables>
                                         <maven.home>${maven.home}</maven.home>
                                         <kotlin.version>${project.version}</kotlin.version>
