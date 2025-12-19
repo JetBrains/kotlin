@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.test.klib.LegacyNativeKlibWriterTest.LegacyNativeKlibWriterParameters
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_NATIVE_TARGETS
 import org.jetbrains.kotlin.library.KotlinLibraryVersioning
-import org.jetbrains.kotlin.library.SerializedIrModule
 import org.jetbrains.kotlin.library.loader.KlibLoader
 import org.junit.jupiter.api.Test
 import java.io.File
@@ -51,9 +50,7 @@ class LegacyNativeKlibWriterTest : AbstractNativeKlibWriterTest<LegacyNativeKlib
             included = parameters.nativeIncludedBinaryFiles.map { it.file.path },
             linkDependencies = KlibLoader { libraryPaths(parameters.dependencies.map { it.path }) }.load().librariesStdlibFirst,
             metadata = parameters.metadata,
-            ir = if (parameters.ir != null || parameters.irOfInlinableFunctions != null) {
-                SerializedIrModule(parameters.ir.orEmpty(), parameters.irOfInlinableFunctions)
-            } else null,
+            ir = parameters.ir,
             versions = KotlinLibraryVersioning(
                 compilerVersion = parameters.compilerVersion,
                 metadataVersion = parameters.metadataVersion,

@@ -44,9 +44,7 @@ class LegacyKlibWriterTest : AbstractKlibWriterTest<LegacyKlibWriterParameters>(
     override fun writeKlib(parameters: LegacyKlibWriterParameters): File {
         val klibPath = buildKotlinLibrary(
             metadata = parameters.metadata,
-            ir = if (parameters.ir != null || parameters.irOfInlinableFunctions != null) {
-                SerializedIrModule(parameters.ir.orEmpty(), parameters.irOfInlinableFunctions)
-            } else null,
+            ir = parameters.ir,
             versions = KotlinLibraryVersioning(
                 compilerVersion = parameters.compilerVersion,
                 metadataVersion = parameters.metadataVersion,
