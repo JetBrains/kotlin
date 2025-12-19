@@ -163,13 +163,10 @@ class NativeCompilerDownloader(
         val compilerDependency = if (downloadFromMaven.get()) {
             project.dependencies.create(getCompilerDependencyNotation(project))
         } else {
-            project.dependencies.create(
-                mapOf(
-                    "name" to "${getDependencyName(project)}-$simpleOsName",
-                    "version" to getCompilerVersion(project),
-                    "ext" to archiveExtension
-                )
-            )
+            val name = "${getDependencyName(project)}-$simpleOsName"
+            val version = getCompilerVersion(project)
+            val ext = archiveExtension
+            project.dependencies.create(":$name:$version@$ext")
         }
 
         val configuration = project.configurations.detachedResolvable(compilerDependency)
