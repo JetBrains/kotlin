@@ -227,9 +227,6 @@ internal abstract class MergeMappingFileTask @Inject constructor(objects: Object
     val r8Outputs: FileCollection = objects.fileCollection()
         .from(originalFile.asFile.map { it.parentFile })
         .asFileTree
-        .matching {
-            it.include("**/*")
-        }
 
     @get:InputFile
     @get:PathSensitive(PathSensitivity.RELATIVE)
@@ -238,7 +235,7 @@ internal abstract class MergeMappingFileTask @Inject constructor(objects: Object
     @get:OutputFile
     abstract val output: RegularFileProperty
 
-    @get:OutputDirectory
+    @get:OutputFiles
     val outputDir: Provider<File> = output.asFile.map { it.parentFile }
 
     @TaskAction
