@@ -1,0 +1,230 @@
+@kotlin.annotation.Repeatable()
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+@java.lang.annotation.Repeatable(value = A.Container.class)
+/**
+ * @kotlin/annotation/Repeatable
+ * public final annotation class A : kotlin/Annotation {
+ *
+ *   // signature: <init>(Lkotlin/reflect/KClass;)V
+ *   public constructor(clazz: kotlin/reflect/KClass<*>)
+ *
+ *   // getter: clazz()Ljava/lang/Class;
+ *   public final val clazz: kotlin/reflect/KClass<*>
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public abstract @interface A {
+
+    public abstract java.lang.Class<?> clazz();
+
+    @kotlin.jvm.internal.RepeatableContainer()
+    @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+    /**
+     * synthetic class
+     */
+    @kotlin.Metadata()
+    public static abstract @interface Container {
+
+        public abstract A[] value();
+    }
+}
+
+////////////////////
+
+
+@As(classes = {boolean.class, char.class, byte.class, short.class, int.class, float.class, long.class, double.class, boolean[].class, char[].class, byte[].class, short[].class, int[].class, float[].class, long[].class, double[].class, java.lang.Object.class, java.lang.Void.class, java.util.List.class, java.util.Map.class, java.util.Map.Entry.class, kotlin.jvm.functions.Function0.class, kotlin.jvm.functions.Function1.class, kotlin.jvm.functions.Function22.class, java.lang.Integer[].class, int[][].class, int[][][].class, long[][][][].class})
+/**
+ * @As(classes = [kotlin/Boolean::class, kotlin/Char::class, kotlin/Byte::class, kotlin/Short::class, kotlin/Int::class, kotlin/Float::class, kotlin/Long::class, kotlin/Double::class, kotlin/BooleanArray::class, kotlin/CharArray::class, kotlin/ByteArray::class, kotlin/ShortArray::class, kotlin/IntArray::class, kotlin/FloatArray::class, kotlin/LongArray::class, kotlin/DoubleArray::class, kotlin/Any::class, kotlin/Nothing::class, kotlin/collections/MutableList::class, kotlin/collections/Map::class, kotlin/collections/MutableMap.MutableEntry::class, kotlin/Function0::class, kotlin/Function1::class, kotlin/Function22::class, kotlin/Array<kotlin/Int::class>, kotlin/Array<kotlin/IntArray::class>, kotlin/Array<kotlin/Array<kotlin/IntArray::class>>, kotlin/Array<kotlin/Array<kotlin/Array<kotlin/LongArray::class>>>])
+ * public final class ArrayOfAll : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class ArrayOfAll {
+
+    public ArrayOfAll() {
+        super();
+    }
+}
+
+////////////////////
+
+
+@As(classes = {boolean.class})
+@As(classes = {char.class})
+@As(classes = {byte.class})
+@As(classes = {short.class})
+@As(classes = {int.class})
+@As(classes = {float.class})
+@As(classes = {long.class})
+@As(classes = {double.class})
+@As(classes = {boolean[].class})
+@As(classes = {char[].class})
+@As(classes = {byte[].class})
+@As(classes = {short[].class})
+@As(classes = {int[].class})
+@As(classes = {float[].class})
+@As(classes = {long[].class})
+@As(classes = {double[].class})
+@As(classes = {java.lang.Object.class})
+@As(classes = {java.lang.Void.class})
+@As(classes = {java.util.List.class})
+@As(classes = {java.util.Map.class})
+@As(classes = {java.util.Map.Entry.class})
+@As(classes = {kotlin.jvm.functions.Function0.class})
+@As(classes = {kotlin.jvm.functions.Function1.class})
+@As(classes = {kotlin.jvm.functions.Function22.class})
+@As(classes = {java.lang.Integer[].class})
+@As(classes = {int[][].class})
+@As(classes = {int[][][].class})
+@As(classes = {long[][][][].class})
+/**
+ * @As(classes = [kotlin/Boolean::class])
+ * @As(classes = [kotlin/Char::class])
+ * @As(classes = [kotlin/Byte::class])
+ * @As(classes = [kotlin/Short::class])
+ * @As(classes = [kotlin/Int::class])
+ * @As(classes = [kotlin/Float::class])
+ * @As(classes = [kotlin/Long::class])
+ * @As(classes = [kotlin/Double::class])
+ * @As(classes = [kotlin/BooleanArray::class])
+ * @As(classes = [kotlin/CharArray::class])
+ * @As(classes = [kotlin/ByteArray::class])
+ * @As(classes = [kotlin/ShortArray::class])
+ * @As(classes = [kotlin/IntArray::class])
+ * @As(classes = [kotlin/FloatArray::class])
+ * @As(classes = [kotlin/LongArray::class])
+ * @As(classes = [kotlin/DoubleArray::class])
+ * @As(classes = [kotlin/Any::class])
+ * @As(classes = [kotlin/Nothing::class])
+ * @As(classes = [kotlin/collections/MutableList::class])
+ * @As(classes = [kotlin/collections/Map::class])
+ * @As(classes = [kotlin/collections/MutableMap.MutableEntry::class])
+ * @As(classes = [kotlin/Function0::class])
+ * @As(classes = [kotlin/Function1::class])
+ * @As(classes = [kotlin/Function22::class])
+ * @As(classes = [kotlin/Array<kotlin/Int::class>])
+ * @As(classes = [kotlin/Array<kotlin/IntArray::class>])
+ * @As(classes = [kotlin/Array<kotlin/Array<kotlin/IntArray::class>>])
+ * @As(classes = [kotlin/Array<kotlin/Array<kotlin/Array<kotlin/LongArray::class>>>])
+ * public final class ArrayOfSingleArgument : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class ArrayOfSingleArgument {
+
+    public ArrayOfSingleArgument() {
+        super();
+    }
+}
+
+////////////////////
+
+
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+/**
+ * public final annotation class As : kotlin/Annotation {
+ *
+ *   // signature: <init>(Lkotlin/Array;)V
+ *   public constructor(classes: kotlin/Array<kotlin/reflect/KClass<*>>)
+ *
+ *   // getter: classes()[Ljava/lang/Class;
+ *   public final val classes: kotlin/Array<kotlin/reflect/KClass<*>>
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public abstract @interface As {
+
+    public abstract java.lang.Class<?>[] classes();
+}
+
+////////////////////
+
+
+@A(clazz = boolean.class)
+@A(clazz = char.class)
+@A(clazz = byte.class)
+@A(clazz = short.class)
+@A(clazz = int.class)
+@A(clazz = float.class)
+@A(clazz = long.class)
+@A(clazz = double.class)
+@A(clazz = boolean[].class)
+@A(clazz = char[].class)
+@A(clazz = byte[].class)
+@A(clazz = short[].class)
+@A(clazz = int[].class)
+@A(clazz = float[].class)
+@A(clazz = long[].class)
+@A(clazz = double[].class)
+@A(clazz = java.lang.Object.class)
+@A(clazz = java.lang.Void.class)
+@A(clazz = java.util.List.class)
+@A(clazz = java.util.Map.class)
+@A(clazz = java.util.Map.Entry.class)
+@A(clazz = kotlin.jvm.functions.Function0.class)
+@A(clazz = kotlin.jvm.functions.Function1.class)
+@A(clazz = kotlin.jvm.functions.Function22.class)
+@A(clazz = java.lang.Integer[].class)
+@A(clazz = int[][].class)
+@A(clazz = int[][][].class)
+@A(clazz = long[][][][].class)
+/**
+ * @A(clazz = kotlin/Boolean::class)
+ * @A(clazz = kotlin/Char::class)
+ * @A(clazz = kotlin/Byte::class)
+ * @A(clazz = kotlin/Short::class)
+ * @A(clazz = kotlin/Int::class)
+ * @A(clazz = kotlin/Float::class)
+ * @A(clazz = kotlin/Long::class)
+ * @A(clazz = kotlin/Double::class)
+ * @A(clazz = kotlin/BooleanArray::class)
+ * @A(clazz = kotlin/CharArray::class)
+ * @A(clazz = kotlin/ByteArray::class)
+ * @A(clazz = kotlin/ShortArray::class)
+ * @A(clazz = kotlin/IntArray::class)
+ * @A(clazz = kotlin/FloatArray::class)
+ * @A(clazz = kotlin/LongArray::class)
+ * @A(clazz = kotlin/DoubleArray::class)
+ * @A(clazz = kotlin/Any::class)
+ * @A(clazz = kotlin/Nothing::class)
+ * @A(clazz = kotlin/collections/MutableList::class)
+ * @A(clazz = kotlin/collections/Map::class)
+ * @A(clazz = kotlin/collections/MutableMap.MutableEntry::class)
+ * @A(clazz = kotlin/Function0::class)
+ * @A(clazz = kotlin/Function1::class)
+ * @A(clazz = kotlin/Function22::class)
+ * @A(clazz = kotlin/Array<kotlin/Int::class>)
+ * @A(clazz = kotlin/Array<kotlin/IntArray::class>)
+ * @A(clazz = kotlin/Array<kotlin/Array<kotlin/IntArray::class>>)
+ * @A(clazz = kotlin/Array<kotlin/Array<kotlin/Array<kotlin/LongArray::class>>>)
+ * public final class SingleArgument : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class SingleArgument {
+
+    public SingleArgument() {
+        super();
+    }
+}

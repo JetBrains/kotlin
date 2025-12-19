@@ -3,6 +3,7 @@
 package {
 
   // signature: ok()V
+  @test/D
   public final fun ok(): kotlin/Unit
 
   // module name: jvm
