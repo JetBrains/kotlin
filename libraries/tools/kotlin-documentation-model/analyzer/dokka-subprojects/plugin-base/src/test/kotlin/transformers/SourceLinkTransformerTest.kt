@@ -218,4 +218,48 @@ class SourceLinkTransformerTest : BaseAbstractTest() {
             }
         }
     }
+
+    @Test
+    fun `synthetic enum values should have source link`() {
+        val configuration = dokkaConfiguration {
+            sourceSets {
+                sourceSet {
+                    sourceRoots = listOf("src/")
+                    sourceLinks = listOf(
+                        SourceLinkDefinitionImpl(
+                            localDirectory = "src/main/kotlin",
+                            remoteUrl = URL("https://github.com/user/repo/tree/master/src/main/kotlin"),
+                            remoteLineSuffix = "#L"
+                        )
+                    )
+                }
+            }
+        }
+
+        val writerPlugin = TestOutputWriterPlugin()
+
+        testInline(
+            """
+            |/src/main/kotlin/basic/Deprecated.kt
+            |package testpackage
+            |
+            |enum class Deprecated {
+            |    A;
+            |}
+
+        """.trimMargin(),
+            configuration,
+            pluginOverrides = listOf(writerPlugin)
+        ) {
+            renderingStage = { _, _ ->
+                val page = writerPlugin.writer.renderedContent("root/testpackage/-deprecated/values.html")
+                val sourceLink = page.getSourceLink()
+
+                assertEquals(
+                    "https://github.com/user/repo/tree/master/src/main/kotlin/basic/Deprecated.kt#L3",
+                    sourceLink
+                )
+            }
+        }
+    }
 }
