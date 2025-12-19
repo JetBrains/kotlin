@@ -426,7 +426,7 @@ internal object KDocReferenceResolver {
                  * it's most likely used to point to the class.
                  * That's why we need to manually add the enclosing class as a context declaration.
                  */
-                addIfNotNull(contextElement.containingClass()?.symbol)
+                add(contextElement.getContainingClassOrObject().symbol)
             } else {
                 add(contextElement.symbol)
             }
