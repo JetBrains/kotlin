@@ -94,6 +94,12 @@ public class Fe10IdeNormalAnalysisSourceModuleSymbolByFqNameTestGenerated extend
   }
 
   @Test
+  @TestMetadata("getFirstJdk21.kt")
+  public void testGetFirstJdk21() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByFqName/getFirstJdk21.kt");
+  }
+
+  @Test
   @TestMetadata("intArray.kt")
   public void testIntArray() {
     runTest("analysis/analysis-api/testData/symbols/symbolByFqName/intArray.kt");
