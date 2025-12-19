@@ -123,10 +123,6 @@ public class StandaloneAnalysisAPISessionBuilder(
         }
     }
 
-    public fun <T : Any> registerProjectExtensionPoint(extensionDescriptor: ProjectExtensionDescriptor<T>) {
-        extensionDescriptor.registerExtensionPoint(project)
-    }
-
     private fun registerProjectServices(
         sourceKtFiles: List<KtFile>,
         packagePartProvider: (GlobalSearchScope) -> PackagePartProvider,
