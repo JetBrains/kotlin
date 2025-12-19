@@ -68,7 +68,7 @@ private class IrJvmFlexibleTypeImpl(
                 arguments = listOf(makeTypeProjection(irType.getArrayElementType(), Variance.INVARIANT))
             }
             if (raw) {
-                annotations = listOf(specialAnnotations.generateRawTypeAnnotation())
+                annotations = listOf(specialAnnotations.generateRawTypeAnnotationCall())
             }
         }
 

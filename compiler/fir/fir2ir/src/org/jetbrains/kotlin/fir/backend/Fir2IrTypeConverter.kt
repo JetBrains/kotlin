@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.*
 import org.jetbrains.kotlin.ir.expressions.IrAnnotation
+import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.*
@@ -127,19 +128,19 @@ class Fir2IrTypeConverter(
                 val specialAnnotationsProvider = specialAnnotationsProvider
                 if (specialAnnotationsProvider != null) {
                     if (type.hasEnhancedNullability) {
-                        typeAnnotations += specialAnnotationsProvider.generateEnhancedNullabilityAnnotation()
+                        typeAnnotations += specialAnnotationsProvider.generateEnhancedNullabilityAnnotationCall()
                     }
                     if (hasFlexibleNullability) {
-                        typeAnnotations += specialAnnotationsProvider.generateFlexibleNullabilityAnnotation()
+                        typeAnnotations += specialAnnotationsProvider.generateFlexibleNullabilityAnnotationCall()
                     }
                     if (hasFlexibleMutability) {
-                        typeAnnotations += specialAnnotationsProvider.generateFlexibleMutabilityAnnotation()
+                        typeAnnotations += specialAnnotationsProvider.generateFlexibleMutabilityAnnotationCall()
                     }
                     if (hasFlexibleArrayElementVariance) {
-                        typeAnnotations += specialAnnotationsProvider.generateFlexibleArrayElementVarianceAnnotation()
+                        typeAnnotations += specialAnnotationsProvider.generateFlexibleArrayElementVarianceAnnotationCall()
                     }
                     if (addRawTypeAnnotation) {
-                        typeAnnotations += specialAnnotationsProvider.generateRawTypeAnnotation()
+                        typeAnnotations += specialAnnotationsProvider.generateRawTypeAnnotationCall()
                     }
                 }
 

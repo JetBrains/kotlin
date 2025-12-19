@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.backend.jvm
 import org.jetbrains.kotlin.ir.expressions.IrAnnotation
 
 interface JvmGeneratorExtensions {
-    fun generateRawTypeAnnotation(): IrAnnotation?
+    fun generateRawTypeAnnotationCall(): IrAnnotation?
 
     val cachedFields: CachedFieldsForObjectInstances
 }
