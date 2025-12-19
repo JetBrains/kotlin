@@ -195,6 +195,8 @@ private fun <A : CommonToolArguments> parsePreprocessedCommandLineArguments(
 
     val freeArgs = ArrayList<String>()
 
+    val explicitArgs = mutableListOf<ArgumentField>()
+
     var i = 0
     loop@ while (i < args.size) {
         val arg = args[i++]
@@ -297,9 +299,13 @@ private fun <A : CommonToolArguments> parsePreprocessedCommandLineArguments(
         }
 
         updateField(getter, setter, result, value, argument.resolvedDelimiter, overrideArguments)
+
+        explicitArgs.add(argumentField)
     }
 
     result.freeArgs += freeArgs
+    result.explicitArguments = explicitArgs
+
     if (result is CommonCompilerArguments) {
         val internalArguments = ArrayList<ManualLanguageFeatureSetting>()
         for (arg in result.manuallyConfiguredFeatures.orEmpty()) {

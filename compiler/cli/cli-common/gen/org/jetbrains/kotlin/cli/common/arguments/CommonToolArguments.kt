@@ -97,4 +97,7 @@ abstract class CommonToolArguments : Freezable(), Serializable {
     @Transient
     var errors: ArgumentParseErrors? = null
 
+    @Transient
+    var explicitArguments: List<ArgumentField> = emptyList()
+
 }
