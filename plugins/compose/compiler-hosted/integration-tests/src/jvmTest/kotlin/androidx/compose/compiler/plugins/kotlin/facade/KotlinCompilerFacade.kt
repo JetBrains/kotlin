@@ -29,9 +29,12 @@ import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.extensionsStorage
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.codegen.state.GenerationState
+import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
+import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
@@ -101,6 +104,7 @@ abstract class KotlinCompilerFacade(val environment: KotlinCoreEnvironment) {
     companion object {
         const val TEST_MODULE_NAME = "test-module"
 
+        @OptIn(ExperimentalCompilerApi::class)
         fun create(
             disposable: Disposable,
             updateConfiguration: CompilerConfiguration.() -> Unit,
@@ -112,6 +116,7 @@ abstract class KotlinCompilerFacade(val environment: KotlinCoreEnvironment) {
                 put(CommonConfigurationKeys.ENABLE_IR_VISIBILITY_CHECKS, true)
                 this.targetPlatform = JvmPlatforms.unspecifiedJvmPlatform
                 put(JVMConfigurationKeys.JVM_TARGET, JvmTarget.JVM_11)
+                extensionsStorage = CompilerPluginRegistrar.ExtensionStorage()
                 messageCollector = TestMessageCollector
                 updateConfiguration()
                 put(CommonConfigurationKeys.USE_FIR, languageVersionSettings.languageVersion.usesK2)

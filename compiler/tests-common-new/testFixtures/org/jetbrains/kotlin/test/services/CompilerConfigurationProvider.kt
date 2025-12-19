@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.cli.initializeDiagnosticFactoriesStorageForCli
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.cli.pipeline.registerExtensionStorage
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.compiler.plugin.TEST_ONLY_PLUGIN_REGISTRATION_CALLBACK
 import org.jetbrains.kotlin.compiler.plugin.TEST_ONLY_PROJECT_CONFIGURATION_CALLBACK
@@ -207,6 +208,7 @@ fun createCompilerConfiguration(
     configuration.messageCollector = messageCollector
     configuration.initializeDiagnosticFactoriesStorageForCli()
     configuration.languageVersionSettings = module.languageVersionSettings
+    configuration.registerExtensionStorage()
     configuration.targetPlatform = module.targetPlatform(testServices)
     configuration.setupKlibAbiCompatibilityLevel()
 

@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.PsiBasedProjectFileSearchScope
 import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.kotlin.cli.jvm.compiler.toVfsBasedProjectEnvironment
+import org.jetbrains.kotlin.cli.pipeline.registerExtensionStorage
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.config.languageVersionSettings
@@ -85,6 +86,7 @@ abstract class AbstractFirOldFrontendLightClassesTest : BaseDiagnosticsTest() {
             val configuration = CompilerConfiguration().apply {
                 this.languageVersionSettings = config?.languageVersionSettings ?: LanguageVersionSettingsImpl.DEFAULT
                 initializeDiagnosticFactoriesStorageForCli()
+                registerExtensionStorage()
             }
             FirSessionFactoryHelper.createSessionWithDependencies(
                 Name.identifier(info.name.asString().removeSurrounding("<", ">")),
