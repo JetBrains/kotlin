@@ -83,7 +83,7 @@ class ScriptJvmK2CompilerFromEnvironment(
         script: SourceCode,
         scriptCompilationConfiguration: ScriptCompilationConfiguration,
     ): ResultWithDiagnostics<CompiledScript> =
-        withMessageCollector(parentMessageCollector = environment.configuration.messageCollector) { messageCollector ->
+        withMessageCollector(script = script) { messageCollector ->
             val configWithUpdatedHost = scriptCompilationConfiguration.updateWithHostConfiguration(hostConfiguration)
             withScriptCompilationCache(script, configWithUpdatedHost, messageCollector) {
                 val compiler = ScriptJvmK2CompilerImpl(
