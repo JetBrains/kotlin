@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.report
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.compiler.plugin.registerInProject
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.disableStandardScriptDefinition
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.config.scriptingHostConfiguration
 import org.jetbrains.kotlin.fir.FirSession
@@ -61,7 +62,9 @@ class FirProcessScriptSourcesExtension : FirProcessSourcesBeforeCompilingExtensi
         val definitionProvider =
             providedHostConfiguration?.get(ScriptingHostConfiguration.scriptCompilationConfigurationProvider)
                 ?: ScriptCompilationConfigurationProviderOverDefinitionProvider(
-                    CliScriptDefinitionProvider().also {
+                    CliScriptDefinitionProvider(
+                        configuration.disableStandardScriptDefinition
+                    ).also {
                         it.setScriptDefinitionsSources(configuration.getList(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS_SOURCES))
                         it.setScriptDefinitions(configuration.getList(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS))
                     }

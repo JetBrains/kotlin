@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.scripting.compiler.plugin.services
 
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.disableStandardScriptDefinition
 import org.jetbrains.kotlin.config.scriptingHostConfiguration
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.extensions.FirExtensionSessionComponent
@@ -141,7 +142,9 @@ class FirScriptDefinitionProviderService(
                     val definitions = compilerConfiguration.getList(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS)
                     if (definitionSources.isNotEmpty() || definitions.isNotEmpty()) {
                         // TODO: rewrite to direct implementation of ScriptCompilationConfigurationProvider
-                        val scriptDefinitionProvider = CliScriptDefinitionProvider().also {
+                        val scriptDefinitionProvider = CliScriptDefinitionProvider(
+                            compilerConfiguration.disableStandardScriptDefinition
+                        ).also {
                             it.setScriptDefinitionsSources(definitionSources)
                             it.setScriptDefinitions(definitions)
                         }

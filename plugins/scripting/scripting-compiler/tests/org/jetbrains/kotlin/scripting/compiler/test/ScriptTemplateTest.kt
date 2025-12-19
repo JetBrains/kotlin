@@ -345,14 +345,6 @@ class ScriptTemplateTest {
         assertTrue(exceptionThrown)
     }
 
-    @Test
-    fun testScriptWithNoMatchingTemplate() {
-        val messageCollector = MessageCollectorImpl()
-        val aClass =
-            compileScript("without_params.kts", ScriptWithDifferentFileNamePattern::class, null, messageCollector = messageCollector)
-        assertNotNull(aClass, "Compilation failed:\n$messageCollector")
-    }
-
     private fun compileScript(
         scriptPath: String,
         scriptTemplate: KClass<out Any>,
