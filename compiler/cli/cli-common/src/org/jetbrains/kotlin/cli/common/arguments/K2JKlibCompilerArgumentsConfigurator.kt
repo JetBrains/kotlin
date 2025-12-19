@@ -32,28 +32,6 @@ class K2JKlibCompilerArgumentsConfigurator : CommonCompilerArgumentsConfigurator
         return result
     }
 
-    private fun K2JVMCompilerArguments.configureJvmDefaultMode(collector: MessageCollector?): JvmDefaultMode? = when {
-        jvmDefaultStable != null -> JvmDefaultMode.fromStringOrNull(jvmDefaultStable).also {
-            if (it == null) {
-                collector?.report(
-                    CompilerMessageSeverity.ERROR,
-                    "Unknown -jvm-default mode: $jvmDefaultStable, supported modes: " +
-                            "${JvmDefaultMode.entries.map(JvmDefaultMode::description)}"
-                )
-            }
-        }
-        jvmDefault != null -> JvmDefaultMode.fromStringOrNullOld(jvmDefault).also {
-            if (it == null) {
-                collector?.report(
-                    CompilerMessageSeverity.ERROR,
-                    "Unknown -Xjvm-default mode: $jvmDefault, supported modes: " +
-                            "${JvmDefaultMode.entries.map(JvmDefaultMode::oldDescription)}"
-                )
-            }
-        }
-        else -> null
-    }
-
     override fun configureLanguageFeatures(
         arguments: CommonCompilerArguments,
         collector: MessageCollector,

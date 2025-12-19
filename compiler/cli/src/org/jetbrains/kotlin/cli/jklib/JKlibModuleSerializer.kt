@@ -17,11 +17,10 @@ class JKlibModuleSerializer(
 ) : IrModuleSerializer<IrFileSerializer>(
     settings, diagnosticReporter
 ) {
-
     override val globalDeclarationTable = JKlibGlobalDeclarationTable()
 
 
-    override fun createSerializerForFile(file: IrFile): IrFileSerializer =
+    override fun createFileSerializer(settings: IrSerializationSettings): IrFileSerializer =
         IrFileSerializer(settings, DeclarationTable.Default(globalDeclarationTable))
 
 }

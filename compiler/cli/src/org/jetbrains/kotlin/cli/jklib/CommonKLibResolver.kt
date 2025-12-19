@@ -11,11 +11,11 @@ import org.jetbrains.kotlin.konan.file.ZipFileSystemAccessor
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.KotlinLibraryProperResolverWithAttributes
 import org.jetbrains.kotlin.library.UnresolvedLibrary
-import org.jetbrains.kotlin.library.impl.createKotlinLibraryComponents
 import org.jetbrains.kotlin.library.metadata.resolver.KotlinLibraryResolveResult
 import org.jetbrains.kotlin.library.metadata.resolver.KotlinLibraryResolver
 import org.jetbrains.kotlin.library.metadata.resolver.impl.libraryResolver
 import org.jetbrains.kotlin.util.Logger
+import org.jetbrains.kotlin.library.loader.KlibLoader
 
 object CommonKLibResolver {
     fun resolve(
@@ -70,7 +70,7 @@ object CommonKLibResolver {
 
 class KLibResolution(
     private val libraryResolver: KotlinLibraryResolver<KotlinLibrary>,
-    val libraries: List<KotlinLibrary>
+    val libraries: List<KotlinLibrary>,
 ) {
     fun resolveWithDependencies(): KotlinLibraryResolveResult {
         return with(libraryResolver) {
@@ -94,5 +94,10 @@ private class KLibResolverHelper(
     knownIrProviders = knownIrProviders,
 ) {
     // Stick with the default KotlinLibrary for now.
-    override fun libraryComponentBuilder(file: File, isDefault: Boolean) = createKotlinLibraryComponents(file, isDefault, zipAccessor)
+    override fun libraryComponentBuilder(file: File, isDefault: Boolean): List<KotlinLibrary> {
+        return KlibLoader {
+            libraryPaths(file.path)
+            zipAccessor?.let(::zipFileSystemAccessor)
+        }.load().librariesStdlibFirst
+    }
 }
