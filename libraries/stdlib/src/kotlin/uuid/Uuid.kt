@@ -18,7 +18,6 @@ import kotlin.internal.InlineOnly
 import kotlin.internal.ReadObjectParameterType
 import kotlin.internal.throwReadObjectNotSupported
 import kotlin.time.Clock
-import kotlin.time.ExperimentalTime
 import kotlin.time.Instant
 
 /**
@@ -667,7 +666,6 @@ public class Uuid private constructor(
          * @sample samples.uuid.Uuids.v7
          */
         @SinceKotlin("2.3")
-        @OptIn(ExperimentalTime::class)
         public fun generateV7(): Uuid = generateV7(Clock.System)
 
         /**
@@ -722,7 +720,6 @@ public class Uuid private constructor(
          * @sample samples.uuid.Uuids.v7ForTimestampSorted
          */
         @SinceKotlin("2.3")
-        @ExperimentalTime
         public fun generateV7NonMonotonicAt(timestamp: Instant): Uuid {
             val randomBytes = ByteArray(10).also {
                 secureRandomBytes(it)
@@ -741,7 +738,6 @@ public class Uuid private constructor(
             return fromLongs(tsVerAndRandA, varAndRandB)
         }
 
-        @OptIn(ExperimentalTime::class)
         internal fun generateV7(clock: Clock): Uuid = UuidV7Generator.generate(clock)
 
         /**
@@ -991,7 +987,6 @@ private object UuidV7Generator {
      *
      * This implementation is thread safe.
      */
-    @OptIn(ExperimentalTime::class)
     @ExperimentalUuidApi
     fun generate(clock: Clock): Uuid {
         // we need random values for:
