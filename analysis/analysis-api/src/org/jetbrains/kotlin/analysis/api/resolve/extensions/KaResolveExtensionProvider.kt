@@ -7,14 +7,14 @@ package org.jetbrains.kotlin.analysis.api.resolve.extensions
 
 import com.intellij.openapi.extensions.ExtensionPointName
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
-import org.jetbrains.kotlin.analysis.api.KaExtensibleApi
+import org.jetbrains.kotlin.analysis.api.KaSpi
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 
 /**
  * Provides [resolve extensions][KaResolveExtension] for [KaModule]s. Resolve extensions provide additional Kotlin files containing
  * generated declarations, which will be included in the resolution as if they were regular source files in the module.
  */
-@KaExtensibleApi
+@KaSpi
 @KaExperimentalApi
 public abstract class KaResolveExtensionProvider {
     /**

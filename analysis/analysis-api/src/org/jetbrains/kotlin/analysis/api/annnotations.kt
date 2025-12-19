@@ -132,9 +132,9 @@ internal annotation class KaNoContextParameterBridgeRequired
 internal annotation class KaCustomContextParameterBridge
 
 /**
- * Marks an API endpoint designed to be extensible.
+ * Marks a class designed as a service provider interface.
  *
- * Apply this to types that are intended to be subclassed or implemented by external clients.
+ * Apply this to classes that are intended to be subclassed or implemented by external clients.
  */
 @Target(AnnotationTarget.CLASS)
-internal annotation class KaExtensibleApi
+internal annotation class KaSpi

@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.api.resolve.extensions
 import com.intellij.openapi.Disposable
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
-import org.jetbrains.kotlin.analysis.api.KaExtensibleApi
+import org.jetbrains.kotlin.analysis.api.KaSpi
 import org.jetbrains.kotlin.name.FqName
 
 /**
@@ -47,7 +47,7 @@ import org.jetbrains.kotlin.name.FqName
  * @see KaResolveExtensionFile
  * @see KaResolveExtensionProvider
  */
-@KaExtensibleApi
+@KaSpi
 @KaExperimentalApi
 public abstract class KaResolveExtension : Disposable {
     /**

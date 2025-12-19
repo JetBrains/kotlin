@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.resolve.extensions
 
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
-import org.jetbrains.kotlin.analysis.api.KaExtensibleApi
+import org.jetbrains.kotlin.analysis.api.KaSpi
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.name.Name
  *
  * @see KaResolveExtension
  */
-@KaExtensibleApi
+@KaSpi
 @KaExperimentalApi
 public abstract class KaResolveExtensionFile {
     /**

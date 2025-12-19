@@ -159,7 +159,7 @@ public sealed class KaCompilerTarget {
  *
  * @see KaCompilerTarget.Jvm
  */
-@KaExtensibleApi
+@KaSpi
 @KaExperimentalApi
 public fun interface KaCompiledClassHandler {
     /**

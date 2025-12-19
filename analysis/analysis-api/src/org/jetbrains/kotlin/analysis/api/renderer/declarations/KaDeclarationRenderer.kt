@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.analysis.api.renderer.declarations
 
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
-import org.jetbrains.kotlin.analysis.api.KaExtensibleApi
 import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.KaSpi
 import org.jetbrains.kotlin.analysis.api.renderer.base.KaKeywordsRenderer
 import org.jetbrains.kotlin.analysis.api.renderer.base.annotations.KaAnnotationRenderer
 import org.jetbrains.kotlin.analysis.api.renderer.base.contextReceivers.KaContextReceiversRenderer
@@ -191,8 +191,8 @@ public class KaDeclarationRenderer private constructor(
             Builder().apply(action).build()
     }
 
+    @KaSpi
     @KaExperimentalApi
-    @KaExtensibleApi
     public open class Builder {
         public lateinit var returnTypeFilter: KaCallableReturnTypeFilter
         public lateinit var nameRenderer: KaDeclarationNameRenderer

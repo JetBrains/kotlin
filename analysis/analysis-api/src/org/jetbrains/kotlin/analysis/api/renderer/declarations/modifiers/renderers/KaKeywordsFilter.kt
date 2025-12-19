@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,13 +7,13 @@ package org.jetbrains.kotlin.analysis.api.renderer.declarations.modifiers.render
 
 import com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
-import org.jetbrains.kotlin.analysis.api.KaExtensibleApi
 import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.KaSpi
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotated
 import org.jetbrains.kotlin.lexer.KtKeywordToken
 
+@KaSpi
 @KaExperimentalApi
-@KaExtensibleApi
 public interface KaRendererKeywordFilter {
     public fun filter(analysisSession: KaSession, modifier: KtKeywordToken, annotated: KaAnnotated): Boolean
 

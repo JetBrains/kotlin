@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.analysis.api.symbols
 
-import org.jetbrains.kotlin.analysis.api.KaExtensibleApi
 import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.KaSpi
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtElement
 
@@ -40,7 +40,7 @@ import org.jetbrains.kotlin.psi.KtElement
  *
  * The extension point name is `org.jetbrains.kotlin.analysis.kaAdditionalKDocResolutionProvider`.
  */
-@KaExtensibleApi
+@KaSpi
 public interface KaAdditionalKDocResolutionProvider {
     /**
      * Returns additional symbols for the given [contextElement] in KDoc.
