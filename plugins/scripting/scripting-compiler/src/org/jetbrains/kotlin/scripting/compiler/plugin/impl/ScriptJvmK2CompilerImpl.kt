@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.fir.session.sourcesToPathsMapper
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.NameUtils
+import org.jetbrains.kotlin.readSourceFileWithMapping
 import org.jetbrains.kotlin.scripting.compiler.plugin.ScriptCompilerProxy
 import org.jetbrains.kotlin.scripting.compiler.plugin.configureFirSession
 import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.getOrStoreRefinedCompilationConfiguration
@@ -310,8 +311,10 @@ fun <T> withK2ScriptCompilerWithLightTree(
 fun SourceCode.convertToFirViaLightTree(session: FirSession, diagnosticsReporter: BaseDiagnosticsCollector): FirFile {
     val sourcesToPathsMapper = session.sourcesToPathsMapper
     val builder = LightTree2Fir(session, session.kotlinScopeProvider, diagnosticsReporter)
-    val linesMapping = text.toSourceLinesMapping()
-    return builder.buildFirFile(text, toKtSourceFile(), linesMapping).also { firFile ->
+    val (sanitizedText, linesMapping) = text.byteInputStream(Charsets.UTF_8).use {
+        it.reader().readSourceFileWithMapping()
+    }
+    return builder.buildFirFile(sanitizedText, toKtSourceFile(), linesMapping).also { firFile ->
         (session.firProvider as FirProviderImpl).recordFile(firFile)
         sourcesToPathsMapper.registerFileSource(firFile.source!!, locationId ?: name!!)
     }
