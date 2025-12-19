@@ -21,8 +21,10 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.utils.SmartList
+import java.lang.reflect.Constructor
 import java.lang.reflect.Method
 import java.util.concurrent.ConcurrentHashMap
+import kotlin.jvm.java
 import kotlin.reflect.KClass
 import kotlin.reflect.cast
 
@@ -112,8 +114,7 @@ inline fun <reified T : CommonToolArguments> parseCommandLineArguments(args: Lis
 }
 
 fun <T : CommonToolArguments> parseCommandLineArguments(clazz: KClass<T>, args: List<String>): T {
-    val constructor = clazz.java.constructors.find { it.parameters.isEmpty() }
-        ?: error("Missing empty constructor on '${clazz.java.name}")
+    val constructor = getArgumentsInfo(clazz.java).defaultArgsConstructor
     val arguments = clazz.cast(constructor.newInstance())
     parseCommandLineArguments(args, arguments)
     return arguments
@@ -135,7 +136,9 @@ fun <A : CommonToolArguments> parseCommandLineArgumentsFromEnvironment(arguments
     parseCommandLineArguments(settingsFromEnvironment, arguments, overrideArguments = true)
 }
 
-private data class ArgumentField(
+private val argumentsCache = ConcurrentHashMap<Class<*>, ArgumentsInfo>()
+
+data class ArgumentField(
     val getter: Method,
     val setter: Method,
     val argument: Argument,
@@ -143,23 +146,39 @@ private data class ArgumentField(
     val disablesAnnotations: List<Disables>,
 )
 
-private val argumentsCache = ConcurrentHashMap<Class<*>, Map<String, ArgumentField>>()
+data class ArgumentsInfo(
+    val cliArgNameToArguments: Map<String, ArgumentField>,
+    val defaultArgsConstructor: Constructor<*>,
+) {
+    private val defaultArgs: CommonToolArguments by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        defaultArgsConstructor.newInstance() as CommonToolArguments
+    }
 
-private fun getArguments(klass: Class<*>): Map<String, ArgumentField> = argumentsCache.getOrPut(klass) {
-    if (klass == Any::class.java) emptyMap()
-    else buildMap {
-        putAll(getArguments(klass.superclass))
-        for (field in klass.declaredFields) {
-            val argument = field.getAnnotation(Argument::class.java) ?: continue
-            val enablesAnnotations = field.getAnnotationsByType(Enables::class.java).toList()
-            val disablesAnnotations = field.getAnnotationsByType(Disables::class.java).toList()
-            val getter = klass.getMethod(JvmAbi.getterName(field.name))
-            val setter = klass.getMethod(JvmAbi.setterName(field.name), field.type)
-            val argumentField = ArgumentField(getter, setter, argument, enablesAnnotations, disablesAnnotations)
-            for (key in listOf(argument.value, argument.shortName, argument.deprecatedName)) {
-                if (key.isNotEmpty()) put(key, argumentField)
-            }
-        }
+    fun getDefaultValue(argumentField: ArgumentField): Any? = argumentField.getter.invoke(defaultArgs)
+}
+
+fun getArgumentsInfo(klass: Class<*>): ArgumentsInfo {
+    return argumentsCache.getOrPut(klass) {
+        ArgumentsInfo(
+            cliArgNameToArguments = buildMap {
+                val superclass = klass.superclass
+                if (CommonToolArguments::class.java.isAssignableFrom(superclass)) {
+                    putAll(getArgumentsInfo(superclass).cliArgNameToArguments)
+                }
+                for (field in klass.declaredFields) {
+                    val argument = field.getAnnotation(Argument::class.java) ?: continue
+                    val enablesAnnotations = field.getAnnotationsByType(Enables::class.java).toList()
+                    val disablesAnnotations = field.getAnnotationsByType(Disables::class.java).toList()
+                    val getter = klass.getMethod(JvmAbi.getterName(field.name))
+                    val setter = klass.getMethod(JvmAbi.setterName(field.name), field.type)
+                    val argumentField = ArgumentField(getter, setter, argument, enablesAnnotations, disablesAnnotations)
+                    for (key in listOf(argument.value, argument.shortName, argument.deprecatedName)) {
+                        if (key.isNotEmpty()) put(key, argumentField)
+                    }
+                }
+            },
+            defaultArgsConstructor = klass.constructors.find { it.parameters.isEmpty() } ?: error("Missing empty constructor on '${klass.name}"),
+        )
     }
 }
 
@@ -169,7 +188,7 @@ private fun <A : CommonToolArguments> parsePreprocessedCommandLineArguments(
     errors: Lazy<ArgumentParseErrors>,
     overrideArguments: Boolean
 ) {
-    val properties = getArguments(result::class.java)
+    val properties = getArgumentsInfo(result::class.java).cliArgNameToArguments
 
     val visitedArgs = mutableSetOf<String>()
     var freeArgsStarted = false

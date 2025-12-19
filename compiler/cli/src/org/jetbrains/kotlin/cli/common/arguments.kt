@@ -19,9 +19,6 @@ import org.jetbrains.kotlin.utils.KotlinPaths
 import org.jetbrains.kotlin.utils.KotlinPathsFromHomeDir
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
-import kotlin.reflect.full.memberProperties
-import kotlin.reflect.full.primaryConstructor
-import kotlin.reflect.jvm.javaField
 
 fun CompilerConfiguration.setupCommonArguments(
     arguments: CommonCompilerArguments,
@@ -126,11 +123,11 @@ fun CompilerConfiguration.setupLanguageVersionSettings(arguments: CommonCompiler
 
 private fun CompilerConfiguration.checkRedundantArguments(arguments: CommonCompilerArguments) {
     val languageVersion = languageVersionSettings.languageVersion
-    val defaultArguments = arguments::class.primaryConstructor!!.callBy(emptyMap())
+    val argumentsInfo = getArgumentsInfo(arguments::class.java)
 
-    propertiesLoop@ for (property in arguments::class.memberProperties) {
-        val propertyValue = property.getter.call(arguments)
-        val defaultPropertyValue = property.getter.call(defaultArguments)
+    propertiesLoop@ for ((_, argField) in argumentsInfo.cliArgNameToArguments) {
+        val propertyValue = argField.getter.invoke(arguments)
+        val defaultPropertyValue = argumentsInfo.getDefaultValue(argField)
 
         // Check if a user explicitly sets the value
         if (propertyValue == defaultPropertyValue) continue
@@ -144,11 +141,10 @@ private fun CompilerConfiguration.checkRedundantArguments(arguments: CommonCompi
                     (state == LanguageFeature.State.ENABLED) != languageVersionSettings.isEnabledByDefault(feature)
         }
 
-        val javaField = property.javaField!!
-        javaField.getAnnotationsByType(Enables::class.java).forEach {
+        argField.enablesAnnotations.forEach {
             if (checkNecessity(it.feature, it.ifValueIs, LanguageFeature.State.ENABLED)) continue@propertiesLoop
         }
-        javaField.getAnnotationsByType(Disables::class.java).forEach {
+        argField.disablesAnnotations.forEach {
             if (checkNecessity(it.feature, it.ifValueIs, LanguageFeature.State.DISABLED)) continue@propertiesLoop
         }
 
@@ -158,7 +154,7 @@ private fun CompilerConfiguration.checkRedundantArguments(arguments: CommonCompi
         val argValue = if (propertyValue is String) "=$propertyValue" else ""
         reportDiagnostic(
             CliDiagnostics.REDUNDANT_CLI_ARG,
-            "The argument '${property.argumentAnnotation.value}${argValue}' is redundant for the current language version $languageVersion.",
+            "The argument '${argField.argument.value}${argValue}' is redundant for the current language version $languageVersion.",
         )
     }
 }
