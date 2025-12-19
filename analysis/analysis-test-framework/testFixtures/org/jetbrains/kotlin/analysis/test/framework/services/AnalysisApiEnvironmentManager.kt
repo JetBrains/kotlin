@@ -17,6 +17,9 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreApplicationEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreApplicationEnvironmentMode
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreProjectEnvironment
+import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
+import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
+import org.jetbrains.kotlin.compiler.plugin.registerInProject
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.test.services.*
@@ -62,13 +65,14 @@ class AnalysisApiEnvironmentManagerImpl(
         }
     }
 
-    @OptIn(KaImplementationDetail::class)
+    @OptIn(KaImplementationDetail::class, ExperimentalCompilerApi::class)
     override fun initializeProjectStructure() {
         val ktTestModuleStructure = testServices.ktTestModuleStructure
         val useSiteModule = testServices.moduleStructure.modules.first()
         val useSiteCompilerConfiguration =
             testServices.compilerConfigurationProvider.getCompilerConfiguration(useSiteModule, CompilationStage.FIRST)
-        val builtinsModule = KaBuiltinsModuleImpl(useSiteModule.targetPlatform(testServices), getProject())
+        val project = getProject()
+        val builtinsModule = KaBuiltinsModuleImpl(useSiteModule.targetPlatform(testServices), project)
 
         val globalLanguageVersionSettings = useSiteModule.languageVersionSettings
 
@@ -78,8 +82,10 @@ class AnalysisApiEnvironmentManagerImpl(
             useSiteCompilerConfiguration.languageVersionSettings,
             useSiteCompilerConfiguration.get(JVMConfigurationKeys.JDK_HOME)?.toPath(),
         )
-
-        testServices.compilerConfigurationProvider.registerCompilerExtensions(getProject(), useSiteModule, useSiteCompilerConfiguration)
+        val extensionStorage = CompilerPluginRegistrar.ExtensionStorage()
+        testServices.compilerConfigurationProvider.registerCompilerExtensions(extensionStorage, useSiteModule, useSiteCompilerConfiguration)
+        extensionStorage.registerInProject(project) { "Error during registering compiler extensions: $it" }
+        testServices.compilerConfigurationProvider.configureProject(project, useSiteModule, useSiteCompilerConfiguration)
     }
 
     override fun getProjectEnvironment(): KotlinCoreProjectEnvironment =
