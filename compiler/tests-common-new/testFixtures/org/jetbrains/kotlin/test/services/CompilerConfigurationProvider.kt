@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.compiler.plugin.TEST_ONLY_PLUGIN_REGISTRATION_CALLBACK
+import org.jetbrains.kotlin.compiler.plugin.TEST_ONLY_PROJECT_CONFIGURATION_CALLBACK
 import org.jetbrains.kotlin.compiler.plugin.registerInProject
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.js.config.*
@@ -68,15 +69,22 @@ abstract class CompilerConfigurationProvider(val testServices: TestServices) : T
         return getKotlinCoreEnvironment(module).project
     }
 
-    fun registerCompilerExtensions(project: Project, module: TestModule, configuration: CompilerConfiguration) {
-        val extensionStorage = CompilerPluginRegistrar.ExtensionStorage()
+    fun registerCompilerExtensions(
+        extensionStorage: CompilerPluginRegistrar.ExtensionStorage,
+        module: TestModule,
+        configuration: CompilerConfiguration,
+    ) {
         for (configurator in configurators) {
-            configurator.legacyRegisterCompilerExtensions(project, module, configuration)
             with(configurator) {
                 extensionStorage.registerCompilerExtensions(module, configuration)
             }
         }
-        extensionStorage.registerInProject(project)
+    }
+
+    fun configureProject(project: Project, module: TestModule, configuration: CompilerConfiguration) {
+        for (configurator in configurators) {
+            configurator.legacyRegisterCompilerExtensions(project, module, configuration)
+        }
     }
 
     open fun getPackagePartProviderFactory(module: TestModule): (GlobalSearchScope) -> JvmPackagePartProvider {
@@ -119,7 +127,14 @@ open class CompilerConfigurationProviderImpl(
             projectEnv,
             configuration,
             configFiles
-        ).also { registerCompilerExtensions(projectEnv.project, module, configuration) }
+        ).also {
+            val extensionStorage = CompilerPluginRegistrar.ExtensionStorage()
+            registerCompilerExtensions(extensionStorage, module, configuration)
+            if (!testServices.cliBasedFacadesEnabled) {
+                configureProject(projectEnv.project, module, configuration)
+            }
+            extensionStorage.registerInProject(projectEnv.project)
+        }
     }
 
     @OptIn(TestInfrastructureInternals::class)
@@ -131,8 +146,11 @@ open class CompilerConfigurationProviderImpl(
     fun createCompilerConfiguration(module: TestModule, compilationStage: CompilationStage): CompilerConfiguration {
         return createCompilerConfiguration(testServices, module, configurators, compilationStage).also { configuration ->
             if (testServices.cliBasedFacadesEnabled) {
-                configuration.put(TEST_ONLY_PLUGIN_REGISTRATION_CALLBACK) { project ->
-                    registerCompilerExtensions(project, module, configuration)
+                configuration.put(TEST_ONLY_PLUGIN_REGISTRATION_CALLBACK) { extensionStorage ->
+                    registerCompilerExtensions(extensionStorage, module, configuration)
+                }
+                configuration.put(TEST_ONLY_PROJECT_CONFIGURATION_CALLBACK) {
+                    configureProject(it, module, configuration)
                 }
             }
         }
