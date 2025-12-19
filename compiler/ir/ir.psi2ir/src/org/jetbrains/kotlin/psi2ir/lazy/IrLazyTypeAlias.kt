@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.ir.declarations.IrTypeAlias
 import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
 import org.jetbrains.kotlin.ir.declarations.MetadataSource
 import org.jetbrains.kotlin.ir.declarations.lazy.lazyVar
-import org.jetbrains.kotlin.ir.expressions.IrAnnotation
+import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrTypeAliasSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
@@ -38,7 +38,7 @@ class IrLazyTypeAlias(
         symbol.bind(this)
     }
 
-    override var annotations: List<IrAnnotation> by createLazyAnnotations()
+    override var annotations: List<IrConstructorCall> by createLazyAnnotations()
 
     override var typeParameters: List<IrTypeParameter> by lazyVar(stubGenerator.lock) {
         descriptor.declaredTypeParameters.mapTo(arrayListOf()) {

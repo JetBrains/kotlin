@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.ir.builders.declarations.IrFunctionBuilder
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.builders.declarations.buildProperty
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.IrAnnotation
+import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.impl.IrAnnotationImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
@@ -134,14 +134,14 @@ abstract class MemoizedValueClassAbstractReplacements(
     protected fun IrSimpleFunction.overridesOnlyMethodsFromJava(): Boolean = allOverridden().all { it.isFromJava() }
 }
 
-fun List<IrAnnotation>.withoutJvmExposeBoxedAnnotation(): List<IrAnnotation> =
+fun List<IrConstructorCall>.withoutJvmExposeBoxedAnnotation(): List<IrConstructorCall> =
     this.toMutableList().apply {
         removeAll {
             it.symbol.owner.returnType.classOrNull?.owner?.hasEqualFqName(JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME) == true
         }
     }
 
-fun List<IrAnnotation>.withJvmExposeBoxedAnnotation(declaration: IrDeclaration, context: JvmBackendContext): List<IrAnnotation> {
+fun List<IrConstructorCall>.withJvmExposeBoxedAnnotation(declaration: IrDeclaration, context: JvmBackendContext): List<IrConstructorCall> {
     if (hasAnnotation(JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME)) {
         val jvmExposeBoxedAnnotation = findAnnotation(JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME)
         // If name is not provided, copy the name from @JvmName annotation, if the latter is present

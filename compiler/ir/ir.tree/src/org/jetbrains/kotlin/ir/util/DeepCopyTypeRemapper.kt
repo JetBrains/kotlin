@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.ir.util
 
-import org.jetbrains.kotlin.ir.expressions.IrAnnotation
+import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
@@ -26,7 +26,7 @@ class DeepCopyTypeRemapper(
             newClassifier,
             type.nullability,
             typeParameters ?: type.arguments,
-            type.annotations.memoryOptimizedMap { it.transform(deepCopy, null) as IrAnnotation }
+            type.annotations.memoryOptimizedMap { it.transform(deepCopy, null) as IrConstructorCall }
         )
     }
 }

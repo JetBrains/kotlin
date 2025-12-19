@@ -54,7 +54,7 @@ open class DefaultArgumentStubGenerator<TContext : CommonBackendContext>(
         return null
     }
 
-    protected open fun IrFunction.resolveAnnotations(): List<IrAnnotation> = copyAnnotations()
+    protected open fun IrFunction.resolveAnnotations(): List<IrConstructorCall> = copyAnnotations()
 
     protected open fun IrFunction.generateDefaultStubBody(originalDeclaration: IrFunction): IrBody {
         val newIrFunction = this

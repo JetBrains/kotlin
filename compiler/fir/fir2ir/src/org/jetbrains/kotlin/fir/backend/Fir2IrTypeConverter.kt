@@ -111,7 +111,7 @@ class Fir2IrTypeConverter(
                 }
             }
             is ConeLookupTagBasedType -> {
-                val typeAnnotations = mutableListOf<IrAnnotation>()
+                val typeAnnotations = mutableListOf<IrConstructorCall>()
                 typeAnnotations += with(annotationGenerator) { annotations.toIrAnnotations() }
 
                 val irSymbol =

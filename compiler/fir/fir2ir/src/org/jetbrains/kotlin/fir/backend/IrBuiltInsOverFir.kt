@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
-import org.jetbrains.kotlin.ir.expressions.IrAnnotation
+import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.impl.IrAnnotationImpl
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
@@ -317,7 +317,7 @@ class IrBuiltInsOverFir(
 
     // ------------------------------------- intrinsic const evaluation -------------------------------------
 
-    private val intrinsicConstAnnotation: IrAnnotation by lazy {
+    private val intrinsicConstAnnotation: IrConstructorCall by lazy {
         /*
          * Old versions of stdlib may not contain @IntrinsicConstEvaluation (AV < 1.7), so in this case we should create annotation class manually
          *

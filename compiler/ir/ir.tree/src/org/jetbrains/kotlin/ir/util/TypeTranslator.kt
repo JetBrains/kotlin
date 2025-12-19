@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrTypeParametersContainer
 import org.jetbrains.kotlin.ir.descriptors.IrBasedTypeParameterDescriptor
-import org.jetbrains.kotlin.ir.expressions.IrAnnotation
+import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.*
@@ -237,9 +237,9 @@ abstract class TypeTranslator(
                 approximateCapturedTypes(ktType).upper
         }
 
-    private fun translateTypeAnnotations(kotlinType: KotlinType, flexibleType: KotlinType = kotlinType): List<IrAnnotation> {
+    private fun translateTypeAnnotations(kotlinType: KotlinType, flexibleType: KotlinType = kotlinType): List<IrConstructorCall> {
         val annotations = kotlinType.annotations
-        val irAnnotations = ArrayList<IrAnnotation>()
+        val irAnnotations = ArrayList<IrConstructorCall>()
 
         annotations.mapNotNullTo(irAnnotations) {
             constantValueGenerator.generateAnnotationCall(it)

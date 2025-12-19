@@ -294,7 +294,7 @@ class IrBodyDeserializer(
         }
     }
 
-    fun deserializeAnnotation(proto: ProtoConstructorCall): IrAnnotation {
+    fun deserializeAnnotation(proto: ProtoConstructorCall): IrConstructorCall {
         // TODO: use real coordinates
         val startOffset = 0
         val endOffset = 0

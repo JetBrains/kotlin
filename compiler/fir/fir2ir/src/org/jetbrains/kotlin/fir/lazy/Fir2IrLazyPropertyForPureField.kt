@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
-import org.jetbrains.kotlin.ir.expressions.IrAnnotation
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.util.isFakeOverride
@@ -43,7 +42,7 @@ class Fir2IrLazyPropertyForPureField(
         }
     }
 
-    override var annotations: List<IrAnnotation>
+    override var annotations: List<IrConstructorCall>
         get() = emptyList()
         set(_) = mutationNotSupported()
 

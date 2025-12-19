@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.ir.declarations.IrTypeAlias
 import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
 import org.jetbrains.kotlin.ir.declarations.MetadataSource
 import org.jetbrains.kotlin.ir.declarations.lazy.lazyVar
-import org.jetbrains.kotlin.ir.expressions.IrAnnotation
+import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrTypeAliasSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.name.Name
@@ -40,7 +40,7 @@ class Fir2IrLazyTypeAlias(
         classifierStorage.preCacheTypeParameters(fir)
     }
 
-    override var annotations: List<IrAnnotation> by createLazyAnnotations()
+    override var annotations: List<IrConstructorCall> by createLazyAnnotations()
     override lateinit var typeParameters: List<IrTypeParameter>
 
     @ObsoleteDescriptorBasedAPI

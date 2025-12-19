@@ -331,16 +331,16 @@ tailrec fun IrDeclaration.getPackageFragment(): IrPackageFragment {
         ?: (parent as IrDeclaration).getPackageFragment()
 }
 
-// Just delegate to IrAnnotation.isAnnotationWithEqualFqName(FqName) which is capable to correctly handle unbound symbols.
-fun IrAnnotation.isAnnotation(name: FqName): Boolean = isAnnotationWithEqualFqName(name)
+// Just delegate to IrConstructorCall.isAnnotationWithEqualFqName(FqName) which is capable to correctly handle unbound symbols.
+fun IrConstructorCall.isAnnotation(name: FqName): Boolean = isAnnotationWithEqualFqName(name)
 
-fun IrAnnotationContainer.getAnnotation(name: FqName): IrAnnotation? =
+fun IrAnnotationContainer.getAnnotation(name: FqName): IrConstructorCall? =
     annotations.find { it.isAnnotationWithEqualFqName(name) }
 
-// Just delegate to List<IrAnnotation>.hasAnnotation(FqName) which is capable to correctly handle unbound symbols.
+// Just delegate to List<IrConstructorCall>.hasAnnotation(FqName) which is capable to correctly handle unbound symbols.
 fun IrAnnotationContainer.hasAnnotation(name: FqName): Boolean = annotations.hasAnnotation(name)
 
-// Just delegate to List<IrAnnotation>.hasAnnotation(ClassId) which is capable to correctly handle unbound symbols.
+// Just delegate to List<IrConstructorCall>.hasAnnotation(ClassId) which is capable to correctly handle unbound symbols.
 fun IrAnnotationContainer.hasAnnotation(classId: ClassId): Boolean = annotations.hasAnnotation(classId)
 
 fun IrAnnotationContainer.hasAnnotation(symbol: IrClassSymbol) =
@@ -348,18 +348,18 @@ fun IrAnnotationContainer.hasAnnotation(symbol: IrClassSymbol) =
         it.symbol.owner.parentAsClass.symbol == symbol
     }
 
-fun IrAnnotation.getAnnotationStringValue() = (arguments[0] as? IrConst)?.value as String?
+fun IrConstructorCall.getAnnotationStringValue() = (arguments[0] as? IrConst)?.value as String?
 
-fun IrAnnotation.getAnnotationStringValue(name: String): String {
+fun IrConstructorCall.getAnnotationStringValue(name: String): String {
     val parameter = symbol.owner.parameters.single { it.name.asString() == name }
     return (arguments[parameter.indexInParameters] as IrConst).value as String
 }
 
-inline fun <reified T> IrAnnotation.getAnnotationValueOrNull(name: String): T? =
+inline fun <reified T> IrConstructorCall.getAnnotationValueOrNull(name: String): T? =
     getAnnotationValueOrNullImpl(name) as T?
 
 @PublishedApi
-internal fun IrAnnotation.getAnnotationValueOrNullImpl(name: String): Any? {
+internal fun IrConstructorCall.getAnnotationValueOrNullImpl(name: String): Any? {
     val parameter = symbol.owner.parameters.atMostOne { it.name.asString() == name }
     val argument = parameter?.let { arguments[it.indexInParameters] }
     return (argument as IrConst?)?.value
@@ -929,9 +929,9 @@ private fun IrTypeParameter.copySuperTypesFrom(source: IrTypeParameter, srcToDst
     }
 }
 
-fun IrAnnotationContainer.copyAnnotations(): List<IrAnnotation> =
+fun IrAnnotationContainer.copyAnnotations(): List<IrConstructorCall> =
     annotations.memoryOptimizedMap {
-        it.transform(DeepCopyIrTreeWithSymbols(SymbolRemapper.EMPTY), null) as IrAnnotation
+        it.transform(DeepCopyIrTreeWithSymbols(SymbolRemapper.EMPTY), null) as IrConstructorCall
     }
 
 fun IrMutableAnnotationContainer.copyAnnotationsFrom(source: IrAnnotationContainer) {

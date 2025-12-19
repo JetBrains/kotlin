@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyDeclarationBase
 import org.jetbrains.kotlin.ir.declarations.lazy.lazyVar
-import org.jetbrains.kotlin.ir.expressions.IrAnnotation
+import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
@@ -46,7 +46,7 @@ interface Psi2IrLazyDeclarationBase : IrLazyDeclarationBase {
             isHidden = false,
         )
 
-    override fun createLazyAnnotations(): ReadWriteProperty<Any?, List<IrAnnotation>> = lazyVar(stubGenerator.lock) {
+    override fun createLazyAnnotations(): ReadWriteProperty<Any?, List<IrConstructorCall>> = lazyVar(stubGenerator.lock) {
         descriptor.annotations.mapNotNull(typeTranslator.constantValueGenerator::generateAnnotationCall).toMutableList()
     }
 }

@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyDeclarationBase
 import org.jetbrains.kotlin.ir.declarations.lazy.lazyVar
 import org.jetbrains.kotlin.ir.expressions.IrAnnotation
+import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import kotlin.properties.ReadWriteProperty
 
 interface AbstractFir2IrLazyDeclaration<F> :
@@ -31,7 +32,7 @@ interface AbstractFir2IrLazyDeclaration<F> :
     override val factory: IrFactory
         get() = IrFactoryImpl
 
-    override fun createLazyAnnotations(): ReadWriteProperty<Any?, List<IrAnnotation>> = lazyVar(lock) {
+    override fun createLazyAnnotations(): ReadWriteProperty<Any?, List<IrConstructorCall>> = lazyVar(lock) {
         // Normally lazy resolve would be not necessary here,
         // but in context of Kotlin project itself opened in IDE we can have here
         // an annotated built-in function in sources, like arrayOfNull (KT-70856).

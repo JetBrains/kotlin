@@ -8,14 +8,14 @@ package org.jetbrains.kotlin.backend.common.extensions
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
-import org.jetbrains.kotlin.ir.expressions.IrAnnotation
+import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 
 abstract class IrGeneratedDeclarationsRegistrar {
-    abstract fun getMetadataVisibleAnnotationsForElement(declaration: IrDeclaration): MutableList<IrAnnotation>
+    abstract fun getMetadataVisibleAnnotationsForElement(declaration: IrDeclaration): MutableList<IrConstructorCall>
 
-    abstract fun addMetadataVisibleAnnotationsToElement(declaration: IrDeclaration, annotations: List<IrAnnotation>)
+    abstract fun addMetadataVisibleAnnotationsToElement(declaration: IrDeclaration, annotations: List<IrConstructorCall>)
 
-    fun addMetadataVisibleAnnotationsToElement(declaration: IrDeclaration, vararg annotations: IrAnnotation) {
+    fun addMetadataVisibleAnnotationsToElement(declaration: IrDeclaration, vararg annotations: IrConstructorCall) {
         addMetadataVisibleAnnotationsToElement(declaration, annotations.toList())
     }
 

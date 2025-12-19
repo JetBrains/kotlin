@@ -16,9 +16,9 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
-import org.jetbrains.kotlin.ir.expressions.IrAnnotation
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrConstKind
+import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.*
@@ -120,7 +120,7 @@ class LenientModeMissingActualDeclarationProvider(
         )
         clazz.superTypes = owner.superTypes
         clazz.thisReceiver = owner.thisReceiver?.copyAsStub(clazz)
-        clazz.annotations = owner.annotations.map(IrAnnotation::deepCopyWithoutPatchingParents)
+        clazz.annotations = owner.annotations.map(IrConstructorCall::deepCopyWithoutPatchingParents)
         clazz.parent = parent
         clazz.declarations.addAll(owner.declarations.mapNotNull { buildStub(it.symbol, clazz)?.owner as IrDeclaration? })
 
@@ -180,7 +180,7 @@ class LenientModeMissingActualDeclarationProvider(
             function.correspondingPropertySymbol = symbol
             function
         }
-        property.annotations = owner.annotations.map(IrAnnotation::deepCopyWithoutPatchingParents)
+        property.annotations = owner.annotations.map(IrConstructorCall::deepCopyWithoutPatchingParents)
         property.parent = parent
 
         return symbol
@@ -380,7 +380,7 @@ class LenientModeMissingActualDeclarationProvider(
     private fun fillFunction(function: IrFunction, owner: IrFunction, parent: IrDeclarationParent) {
         function.parameters = owner.parameters.map { it.copyAsStub(function) }
         function.typeParameters = owner.typeParameters.map { it.copyAsStub(function) }
-        function.annotations = owner.annotations.map(IrAnnotation::deepCopyWithoutPatchingParents)
+        function.annotations = owner.annotations.map(IrConstructorCall::deepCopyWithoutPatchingParents)
         function.parent = parent
     }
 
@@ -400,7 +400,7 @@ class LenientModeMissingActualDeclarationProvider(
             isHidden = isHidden
         ).also {
             it.parent = parent
-            it.annotations = annotations.map(IrAnnotation::deepCopyWithoutPatchingParents)
+            it.annotations = annotations.map(IrConstructorCall::deepCopyWithoutPatchingParents)
         }
     }
 
@@ -416,7 +416,7 @@ class LenientModeMissingActualDeclarationProvider(
             isReified = isReified
         ).also {
             it.parent = parent
-            it.annotations = annotations.map(IrAnnotation::deepCopyWithoutPatchingParents)
+            it.annotations = annotations.map(IrConstructorCall::deepCopyWithoutPatchingParents)
         }
     }
 }

@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.IrAnnotation
+import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.ReferenceSymbolTable
@@ -241,9 +241,9 @@ open class IrPluginContextImpl(
     }
 
     private object DummyIrGeneratedDeclarationsRegistrar : IrGeneratedDeclarationsRegistrar() {
-        override fun getMetadataVisibleAnnotationsForElement(declaration: IrDeclaration): MutableList<IrAnnotation> = mutableListOf()
+        override fun getMetadataVisibleAnnotationsForElement(declaration: IrDeclaration): MutableList<IrConstructorCall> = mutableListOf()
 
-        override fun addMetadataVisibleAnnotationsToElement(declaration: IrDeclaration, annotations: List<IrAnnotation>) {
+        override fun addMetadataVisibleAnnotationsToElement(declaration: IrDeclaration, annotations: List<IrConstructorCall>) {
             declaration.annotations += annotations
         }
 
