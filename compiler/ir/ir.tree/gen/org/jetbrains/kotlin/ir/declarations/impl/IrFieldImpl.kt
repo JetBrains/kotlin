@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.MetadataSource
-import org.jetbrains.kotlin.ir.expressions.IrAnnotation
+import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
@@ -41,7 +41,7 @@ class IrFieldImpl @IrImplementationDetail constructor(
 ) : IrField() {
     override var attributeOwnerId: IrElement = this
 
-    override var annotations: List<IrAnnotation> = emptyList()
+    override var annotations: List<IrConstructorCall> = emptyList()
 
     override var metadata: MetadataSource? = null
 

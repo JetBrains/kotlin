@@ -330,7 +330,7 @@ object IrTree : AbstractTreeBuilder() {
     val mutableAnnotationContainer: Element by element(Declaration) {
         parent(type(Packages.declarations, "IrAnnotationContainer"))
 
-        +listField("annotations", annotation, mutability = Var, isChild = false) {
+        +listField("annotations", constructorCall, mutability = Var, isChild = false) {
             isOverride = true
         }
     }
