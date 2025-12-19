@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,10 +10,80 @@
 package kotlin.collections
 
 /**
- * Hash table based implementation of the [MutableMap] interface,
- * which additionally preserves the insertion order of entries during the iteration.
+ * A hash table implementation of [MutableMap] that maintains insertion order.
  *
- * The insertion order is preserved by the corresponding [InternalMap] implementation.
+ * This class stores key-value pairs using a hash table data structure that provides fast lookups
+ * based on keys, while also maintaining the order in which entries were inserted.
+ * It fully implements the [MutableMap] contract, providing all standard map operations
+ * including insertion, removal, and lookup of values by key.
+ *
+ * ## Null keys and values
+ *
+ * [LinkedHashMap] accepts `null` as a key. Since keys are unique, at most one entry with a `null` key
+ * can exist in the map. [LinkedHashMap] also accepts `null` as a value, and multiple entries can have
+ * `null` values.
+ *
+ * ## Key's hash code and equality contracts
+ *
+ * [LinkedHashMap] relies on the [Any.hashCode] and [Any.equals] functions of keys to organize and locate entries.
+ * Keys are considered equal if their [Any.equals] function returns `true`, and keys that are equal must
+ * have the same [Any.hashCode] value. Violating this contract can lead to incorrect behavior.
+ *
+ * The [Any.hashCode] and [Any.equals] functions should be consistent and immutable during the lifetime
+ * of the key objects. Modifying a key object in a way that changes its hash code or equality
+ * after it has been used as a key in a [LinkedHashMap] may lead to the entry becoming unreachable.
+ *
+ * ## Performance characteristics
+ *
+ * The performance characteristics below assume that the [Any.hashCode] function of keys distributes
+ * them uniformly across the hash table, minimizing collisions. A poor hash function that causes
+ * many collisions can degrade performance.
+ *
+ * [LinkedHashMap] provides efficient implementation for common operations:
+ *
+ * - **Lookup** ([get], [containsKey]): O(1) time
+ * - **Insertion and removal** ([put], [remove]): O(1) time
+ * - **Value search** ([containsValue]): O(n) time, requires scanning all entries
+ * - **Iteration** ([entries], [keys], [values]): O(n) time
+ *
+ * ## Iteration order
+ *
+ * [LinkedHashMap] maintains a predictable iteration order for its keys, values, and entries.
+ * Entries are iterated in the order they were inserted into the map, from oldest to newest.
+ * This insertion order is preserved even when the map is rehashed (when entries are added or removed
+ * and the internal capacity is adjusted).
+ *
+ * Note that the insertion order is not affected if a key is _re-inserted_ into the map.
+ * A key `k` is re-inserted into the map when `put(k, v)` is called and the map already contains
+ * an entry with key `k`.
+ *
+ * If predictable iteration order is not required, consider using [HashMap], which may have
+ * slightly better performance characteristics.
+ *
+ * ## Usage guidelines
+ *
+ * [LinkedHashMap] uses an internal data structure with a finite *capacity* - the maximum number of entries
+ * it can store before needing to grow. When the map becomes full, the map automatically increases its capacity
+ * and performs *rehashing* - rebuilding the internal data structure to redistribute entries. Rehashing is a
+ * relatively expensive operation that temporarily impacts performance. When creating a [LinkedHashMap], you can
+ * optionally provide an initial capacity value, which will be used to size the internal data structure,
+ * potentially avoiding rehashing operations as the map grows.
+ *
+ * To optimize performance and memory usage:
+ *
+ * - If the number of entries is known in advance, use the constructor with initial capacity
+ *   to avoid multiple rehashing operations as the map grows.
+ * - Ensure key objects have well-distributed [Any.hashCode] implementations to minimize collisions
+ *   and maintain good performance.
+ * - Prefer [putAll] over multiple individual [put] calls when adding multiple entries.
+ *
+ * ## Thread safety
+ *
+ * [LinkedHashMap] is not thread-safe. If multiple threads access an instance concurrently and at least
+ * one thread modifies it, external synchronization is required.
+ *
+ * @param K the type of map keys. The map is invariant in its key type.
+ * @param V the type of map values. The mutable map is invariant in its value type.
  */
 public actual open class LinkedHashMap<K, V> : HashMap<K, V>, MutableMap<K, V> {
     /**
