@@ -227,7 +227,7 @@ private val KClass<*>.fakeOverrideMembers: FakeOverrideMembers
     }
 
 private fun <T : EqualityMode> DescriptorKCallable<*>.toEquatableCallableSignature(equalityMode: T): EquatableCallableSignature<T> {
-    val parameterTypes = parameters.filter { it.kind != KParameter.Kind.INSTANCE }.map { it.type }
+    val kotlinParameterTypes = parameters.filter { it.kind != KParameter.Kind.INSTANCE }.map { it.type }
     val kind = when {
         isJavaField -> SignatureKind.FIELD_IN_JAVA_CLASS
         this is KProperty<*> -> SignatureKind.PROPERTY
@@ -236,16 +236,16 @@ private fun <T : EqualityMode> DescriptorKCallable<*>.toEquatableCallableSignatu
     }
     val javaMethod = (this as? KFunction<*>)?.javaMethod
     val javaGenericParameterTypes = javaMethod?.genericParameterTypes.orEmpty().toList()
-    val javaParameterTypes = javaMethod?.parameterTypes.orEmpty()
-    check(javaParameterTypes.size == javaGenericParameterTypes.size)
+    val javaParameterTypes = javaMethod?.parameterTypes.orEmpty().toList()
     val jvmNameIfFunction = javaMethod?.name.orEmpty()
     return EquatableCallableSignature(
         kind,
         name,
         jvmNameIfFunction,
         typeParameters,
-        parameterTypes,
-        javaGenericParameterTypes.zip(javaParameterTypes),
+        kotlinParameterTypes,
+        javaParameterTypes,
+        javaGenericParameterTypes,
         isStatic,
         equalityMode,
     )
@@ -294,16 +294,18 @@ internal data class EquatableCallableSignature<T : EqualityMode>(
     val name: String,
     val jvmNameIfFunction: String,
     val typeParameters: List<KTypeParameter>,
-    val parameterTypes: List<KType>,
-    val javaParameterTypesIfFunction: List<Pair<Type, Class<*>>>,
+    val kotlinParameterTypes: List<KType>,
+    val javaParameterTypesIfFunction: List<Class<*>>,
+    val javaGenericParameterTypesIfFunction: List<Type>,
     val isStatic: Boolean,
     val equalityMode: T,
 ) {
     init {
         check(
             kind != SignatureKind.FIELD_IN_JAVA_CLASS ||
-                parameterTypes.isEmpty() && typeParameters.isEmpty() && javaParameterTypesIfFunction.isEmpty()
+                kotlinParameterTypes.isEmpty() && typeParameters.isEmpty() && javaParameterTypesIfFunction.isEmpty()
         )
+        check(javaParameterTypesIfFunction.size == javaGenericParameterTypesIfFunction.size)
     }
 
     fun <T : EqualityMode> withEqualityMode(equalityMode: T): EquatableCallableSignature<T> =
@@ -312,15 +314,16 @@ internal data class EquatableCallableSignature<T : EqualityMode>(
             name,
             jvmNameIfFunction,
             typeParameters,
-            parameterTypes,
+            kotlinParameterTypes,
             javaParameterTypesIfFunction,
+            javaGenericParameterTypesIfFunction,
             isStatic,
             equalityMode
         )
 
     override fun hashCode(): Int = when (equalityMode == EqualityMode.JavaSignature && kind == SignatureKind.FUNCTION) {
-        true -> arrayOf<Any>(kind, parameterTypes.size, isStatic, jvmNameIfFunction).contentHashCode()
-        false -> arrayOf<Any>(kind, parameterTypes.size, isStatic, name).contentHashCode()
+        true -> arrayOf<Any>(kind, kotlinParameterTypes.size, isStatic, jvmNameIfFunction).contentHashCode()
+        false -> arrayOf<Any>(kind, kotlinParameterTypes.size, isStatic, name).contentHashCode()
     }
 
     /**
@@ -343,14 +346,16 @@ internal data class EquatableCallableSignature<T : EqualityMode>(
         }
         if (kind != other.kind) return false
         if (isStatic != other.isStatic) return false
-        if (parameterTypes.size != other.parameterTypes.size) return false
+        if (kotlinParameterTypes.size != other.kotlinParameterTypes.size) return false
         if (equalityMode == EqualityMode.JavaSignature && kind == SignatureKind.FUNCTION) {
             if (jvmNameIfFunction != other.jvmNameIfFunction) return false
             if (javaParameterTypesIfFunction.size != other.javaParameterTypesIfFunction.size) return false
-            check(javaParameterTypesIfFunction.size == parameterTypes.size)
+            check(javaParameterTypesIfFunction.size == kotlinParameterTypes.size)
             for (i in javaParameterTypesIfFunction.indices) {
-                val (javaTypeA, javaClassA) = javaParameterTypesIfFunction[i]
-                val (javaTypeB, javaClassB) = other.javaParameterTypesIfFunction[i]
+                val javaTypeA = javaGenericParameterTypesIfFunction[i]
+                val javaClassA = javaParameterTypesIfFunction[i]
+                val javaTypeB = other.javaGenericParameterTypesIfFunction[i]
+                val javaClassB = other.javaParameterTypesIfFunction[i]
                 val isATypeParameterFromClass = (javaTypeA as? TypeVariable<*>)?.genericDeclaration is Class<*>
                 val isBTypeParameterFromClass = (javaTypeB as? TypeVariable<*>)?.genericDeclaration is Class<*>
                 if (isATypeParameterFromClass || isBTypeParameterFromClass) {
@@ -358,8 +363,8 @@ internal data class EquatableCallableSignature<T : EqualityMode>(
 
                     // Since we don't have type substitutors for Java types, here we abuse KTypes for this purpose
                     // Make types non-flexible and non-mutable to make 'equals' transitive
-                    val kTypeA = parameterTypes[i].coerceFlexibleTypesAndMutabilityRecursive()
-                    val kTypeB = other.parameterTypes[i].coerceFlexibleTypesAndMutabilityRecursive()
+                    val kTypeA = kotlinParameterTypes[i].coerceFlexibleTypesAndMutabilityRecursive()
+                    val kTypeB = other.kotlinParameterTypes[i].coerceFlexibleTypesAndMutabilityRecursive()
                     if (!areEqualKTypes(kTypeA, kTypeB)) return false
                 } else {
                     if (javaClassA != javaClassB) return false
@@ -381,10 +386,10 @@ internal data class EquatableCallableSignature<T : EqualityMode>(
                     .all { areEqualKTypes(it.first, it.second) }
                 if (!equalUpperBounds) return false
             }
-            for (i in parameterTypes.indices) {
-                val a = functionTypeParametersEliminator.substitute(parameterTypes[i]).type
+            for (i in kotlinParameterTypes.indices) {
+                val a = functionTypeParametersEliminator.substitute(kotlinParameterTypes[i]).type
                     ?: starProjectionSupertypesAreNotPossible()
-                val b = other.parameterTypes[i]
+                val b = other.kotlinParameterTypes[i]
                 if (!areEqualKTypes(a, b)) return false
             }
         }
