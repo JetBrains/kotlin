@@ -31,20 +31,24 @@ internal val Project.kotlinMultiplatformRootPublication: Future<MavenPublication
 
 internal val MultiplatformPublishingSetupAction = KotlinProjectSetupCoroutine {
     if (isPluginApplied("maven-publish")) {
-        // Check if the current host supports all declared targets.
-        // If not, we disable publishing to prevent incomplete artifacts, unless explicitly allowed.
-        if (project.shouldDisablePublishingDueToIncompatibleHost()) {
-            kotlinMultiplatformRootPublicationImpl.complete(null)
-            return@KotlinProjectSetupCoroutine
-        }
+        // Strategy for handling unsupported hosts (e.g., FreeBSD):
+        // 1. If the host is known to be supported by K/N (HostManager.hostOrNull != null) OR the user forced it,
+        //    we proceed with setup immediately.
+        // 2. If the host is unsupported, we defer the decision to 'whenEvaluated'.
+        //    This allows us to check if the user actually configured any Native targets.
+        //    - If NO Native targets are present (only JVM/JS/Wasm), we allow publishing.
+        //    - If Native targets ARE present, we disable publishing to prevent incomplete artifacts.
 
-        if (project.kotlinPropertiesProvider.createDefaultMultiplatformPublications) {
-            project.extensions.configure(PublishingExtension::class.java) { publishing ->
-                createRootPublication(project, publishing).also(kotlinMultiplatformRootPublicationImpl::complete)
-                createTargetPublications(project, publishing)
-            }
+        if (HostManager.hostOrNull != null || project.kotlinPropertiesProvider.allowMultiplatformPublicationsOnUnsupportedHost) {
+            setupMultiplatformPublishing()
         } else {
-            kotlinMultiplatformRootPublicationImpl.complete(null)
+            project.whenEvaluated {
+                if (project.shouldDisablePublishingDueToIncompatibleHost()) {
+                    kotlinMultiplatformRootPublicationImpl.complete(null)
+                } else {
+                    setupMultiplatformPublishing()
+                }
+            }
         }
         project.components.add(project.multiplatformExtension.rootSoftwareComponent)
     } else {
@@ -53,7 +57,23 @@ internal val MultiplatformPublishingSetupAction = KotlinProjectSetupCoroutine {
 }
 
 /**
- * Checks if the current host environment is a supported Kotlin/Native build host.
+ * Configures the Multiplatform publications.
+ * Can be called immediately or deferred depending on host compatibility checks.
+ */
+private fun Project.setupMultiplatformPublishing() {
+    if (project.kotlinPropertiesProvider.createDefaultMultiplatformPublications) {
+        project.extensions.configure(PublishingExtension::class.java) { publishing ->
+            createRootPublication(project, publishing).also(project.kotlinMultiplatformRootPublicationImpl::complete)
+            createTargetPublications(project, publishing)
+        }
+    } else {
+        kotlinMultiplatformRootPublicationImpl.complete(null)
+    }
+}
+
+/**
+ * Checks if the current host environment is incompatible with the project's targets.
+ * This is typically called in a deferred manner (whenEvaluated) on unsupported hosts.
  *
  * @return `true` if publishing should be disabled.
  */
@@ -61,8 +81,14 @@ private fun Project.shouldDisablePublishingDueToIncompatibleHost(): Boolean {
     // 1. Check for kotlin.internal.mpp.allowMultiplatformPublicationsOnUnsupportedHost property to allow partial publishing
     if (project.kotlinPropertiesProvider.allowMultiplatformPublicationsOnUnsupportedHost) return false
 
-    // 2. Check if a native host is supported
-    if (HostManager.hostOrNull == null) {
+    // 2. Check if the current host is supported
+    if (HostManager.hostOrNull != null) return false
+
+    // 3. Host is unsupported. Check if the project actually uses any Native targets.
+    // If the project is pure JVM/JS/Wasm, we shouldn't block publishing just because the OS is exotic (e.g., FreeBSD).
+    val hasNativeTargets = project.multiplatformExtension.targets.any { it is KotlinNativeTarget }
+
+    if (hasNativeTargets) {
         project.reportDiagnostic(
             KotlinToolingDiagnostics.PublishingDisabledOnUnsupportedHost(
                 name,
@@ -70,7 +96,6 @@ private fun Project.shouldDisablePublishingDueToIncompatibleHost(): Boolean {
                 HostManager().supportedHosts
             )
         )
-
         return true
     }
 
