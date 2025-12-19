@@ -12,7 +12,6 @@ fun A.test(): String {
 }
 
 // METHOD : Kt11117Kt$test$o$1.<init>(LA;)V
-// VARIABLE : NAME=x TYPE=Ljava/lang/String; INDEX=2
-// VARIABLE : NAME=this TYPE=LKt11117Kt$test$o$1; INDEX=0
-// VARIABLE : NAME=$receiver TYPE=LA; INDEX=1
-
+// VARIABLE : NAME=$receiver TYPE=LA;
+// VARIABLE : NAME=this TYPE=LKt11117Kt$test$o$1;
+// VARIABLE : NAME=x TYPE=Ljava/lang/String;

@@ -11,18 +11,18 @@ fun ValueClassTest.foo(x: Int, y: UInt, z: ValueClassTest) {
 }
 
 // METHOD : MultiFieldValueClassesExtensionKt.foo-09T95H0(IIIZIIIZIZIIIZ)V
-// VARIABLE : NAME=$context-Int TYPE=I INDEX=*
-// VARIABLE : NAME=$context-UInt TYPE=I INDEX=*
-// VARIABLE : NAME=$context-ValueClassTest-a TYPE=I INDEX=*
-// VARIABLE : NAME=$context-ValueClassTest-boolean TYPE=Z INDEX=*
-// VARIABLE : NAME=$this$foo-a TYPE=I INDEX=*
-// VARIABLE : NAME=$this$foo-boolean TYPE=Z INDEX=*
-// VARIABLE : NAME=arg0 TYPE=I INDEX=*
-// VARIABLE : NAME=c1 TYPE=I INDEX=*
-// VARIABLE : NAME=c2 TYPE=I INDEX=*
-// VARIABLE : NAME=c3-a TYPE=I INDEX=*
-// VARIABLE : NAME=c3-boolean TYPE=Z INDEX=*
-// VARIABLE : NAME=x TYPE=I INDEX=*
-// VARIABLE : NAME=y TYPE=I INDEX=*
-// VARIABLE : NAME=z-a TYPE=I INDEX=*
-// VARIABLE : NAME=z-boolean TYPE=Z INDEX=*
+// VARIABLE : NAME=$context-Int TYPE=I
+// VARIABLE : NAME=$context-UInt TYPE=I
+// VARIABLE : NAME=$context-ValueClassTest-a TYPE=I
+// VARIABLE : NAME=$context-ValueClassTest-boolean TYPE=Z
+// VARIABLE : NAME=$this$foo-a TYPE=I
+// VARIABLE : NAME=$this$foo-boolean TYPE=Z
+// VARIABLE : NAME=arg0 TYPE=I
+// VARIABLE : NAME=c1 TYPE=I
+// VARIABLE : NAME=c2 TYPE=I
+// VARIABLE : NAME=c3-a TYPE=I
+// VARIABLE : NAME=c3-boolean TYPE=Z
+// VARIABLE : NAME=x TYPE=I
+// VARIABLE : NAME=y TYPE=I
+// VARIABLE : NAME=z-a TYPE=I
+// VARIABLE : NAME=z-boolean TYPE=Z

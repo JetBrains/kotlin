@@ -9,6 +9,6 @@ fun box() {
 }
 
 // METHOD : DestructuringInLambdasKt$box$1.invoke(LA;)Ljava/lang/String;
-// VARIABLE : NAME=x TYPE=Ljava/lang/String; INDEX=2
-// VARIABLE : NAME=y TYPE=I INDEX=3
-// VARIABLE : NAME=this TYPE=LDestructuringInLambdasKt$box$1; INDEX=0
+// VARIABLE : NAME=this TYPE=LDestructuringInLambdasKt$box$1;
+// VARIABLE : NAME=x TYPE=Ljava/lang/String;
+// VARIABLE : NAME=y TYPE=I
