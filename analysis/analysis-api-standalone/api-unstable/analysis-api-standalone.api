@@ -16,7 +16,7 @@ public final class org/jetbrains/kotlin/analysis/api/standalone/StandaloneAnalys
 	public final fun registerApplicationService (Ljava/lang/Class;)V
 	public final fun registerApplicationService (Ljava/lang/Class;Ljava/lang/Object;)V
 	public final fun registerCompilerPluginServices (Lorg/jetbrains/kotlin/config/CompilerConfiguration;)V
-	public final fun registerProjectExtensionPoint (Lorg/jetbrains/kotlin/extensions/ProjectExtensionDescriptor;)V
+	public final fun registerProjectExtensionPoint (Lcom/intellij/openapi/extensions/ExtensionPointName;Ljava/lang/Class;)V
 	public final fun registerProjectService (Ljava/lang/Class;)V
 	public final fun registerProjectService (Ljava/lang/Class;Ljava/lang/Object;)V
 }
