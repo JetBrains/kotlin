@@ -62,7 +62,7 @@ internal class KlibImpl(
     ).joinToString("\n")
 }
 
-private class KlibManifestComponentLayout(root: KlibFile) : KlibComponentLayout(root) {
+internal class KlibManifestComponentLayout(root: KlibFile) : KlibComponentLayout(root) {
     val manifestFile: KlibFile
         get() = root.child(KLIB_DEFAULT_COMPONENT_NAME).child(KLIB_MANIFEST_FILE_NAME)
 }

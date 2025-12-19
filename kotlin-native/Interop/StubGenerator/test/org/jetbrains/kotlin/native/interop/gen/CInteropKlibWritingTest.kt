@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.config.KlibAbiCompatibilityLevel
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.konan.library.AbstractNativeKlibWriterTest
 import org.jetbrains.kotlin.library.KotlinAbiVersion
-import org.jetbrains.kotlin.library.SerializedIrFile
+import org.jetbrains.kotlin.library.SerializedIrModule
 import org.jetbrains.kotlin.library.loader.KlibLoader
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.native.interop.gen.CInteropKlibWritingTest.CInteropParameters
@@ -36,11 +36,7 @@ class CInteropKlibWritingTest : AbstractNativeKlibWriterTest<CInteropParameters>
             get() = abiLevel.toAbiVersionForManifest()
             set(_) = abort<Nothing>("The ABI version can only be deduced from the ABI compatibility level")
 
-        override var ir: Collection<SerializedIrFile>?
-            get() = null
-            set(_) = abort<Nothing>("createInteropLibrary() does not support serialization of IR")
-
-        override var irOfInlinableFunctions: SerializedIrFile?
+        override var ir: SerializedIrModule?
             get() = null
             set(_) = abort<Nothing>("createInteropLibrary() does not support serialization of IR")
     }
