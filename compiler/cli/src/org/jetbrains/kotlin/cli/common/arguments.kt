@@ -127,18 +127,27 @@ private fun CompilerConfiguration.checkRedundantArguments(arguments: CommonCompi
 
     propertiesLoop@ for (explicitArgument in arguments.explicitArguments) {
         val propertyValue = explicitArgument.getter.invoke(arguments)
-        val defaultPropertyValue = argumentsInfo.getDefaultValue(explicitArgument)
 
-        // Check if a user explicitly sets the value
-        if (propertyValue == defaultPropertyValue) continue
-
-        var hasEnablesDisablesAnnotation = false
+        if (!explicitArgument.changesLanguageFeatures) {
+            if (propertyValue == argumentsInfo.getDefaultValue(explicitArgument)) {
+                reportDiagnostic(
+                    CliDiagnostics.REDUNDANT_CLI_ARG,
+                    "The argument '${explicitArgument.argument.value}=${propertyValue ?: ""}' is redundant.",
+                )
+            }
+            continue
+        }
 
         fun checkNecessity(feature: LanguageFeature, ifValueIs: String, state: LanguageFeature.State): Boolean {
-            hasEnablesDisablesAnnotation = true
-            // At first make sure the annotation is relevant and at second check the necessity
-            return (ifValueIs.isEmpty() || ifValueIs == propertyValue.toString()) &&
-                    (state == LanguageFeature.State.ENABLED) != languageVersionSettings.isEnabledByDefault(feature)
+            // At first, check if the annotation is relevant. Only Boolean and String types are allowed
+            when {
+                // Language features can't be disabled, so it's expected if the value is changed, it's always `true`
+                ifValueIs.isEmpty() -> require(propertyValue as Boolean)
+                else -> if (propertyValue as String != ifValueIs) return false
+            }
+
+            // At second check the necessity
+            return (state == LanguageFeature.State.ENABLED) != languageVersionSettings.isEnabledByDefault(feature)
         }
 
         explicitArgument.enablesAnnotations.forEach {
@@ -147,9 +156,6 @@ private fun CompilerConfiguration.checkRedundantArguments(arguments: CommonCompi
         explicitArgument.disablesAnnotations.forEach {
             if (checkNecessity(it.feature, it.ifValueIs, LanguageFeature.State.DISABLED)) continue@propertiesLoop
         }
-
-        // The checker currently supports only `Enables`, `Disables` annotations (at least one should be specified)
-        if (!hasEnablesDisablesAnnotation) continue
 
         val argValue = if (propertyValue is String) "=$propertyValue" else ""
         reportDiagnostic(
