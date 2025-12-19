@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.compiler.plugin
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import org.jetbrains.annotations.TestOnly
+import org.jetbrains.kotlin.cli.extensionsStorage
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
 import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
@@ -43,9 +44,8 @@ fun registerExtensionsForTest(
     configuration: CompilerConfiguration,
     register: CompilerPluginRegistrar.ExtensionStorage.(CompilerConfiguration) -> Unit
 ) {
-    val extensionStorage = CompilerPluginRegistrar.ExtensionStorage().apply {
-        register(configuration)
-    }
+    val extensionStorage = configuration.extensionsStorage ?: error("Extensions storage is not registered")
+    extensionStorage.register(configuration)
     extensionStorage.registerInProject(project)
 }
 

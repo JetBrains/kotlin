@@ -814,7 +814,7 @@ class KotlinCoreEnvironment private constructor(
                 }
             }
 
-            val extensionStorage = CompilerPluginRegistrar.ExtensionStorage()
+            val extensionStorage = configuration.extensionsStorage ?: error("Extensions storage is not registered")
             for (registrar in configuration.getList(CompilerPluginRegistrar.COMPILER_PLUGIN_REGISTRARS)) {
                 with(registrar) { extensionStorage.registerExtensions(configuration) }
             }
