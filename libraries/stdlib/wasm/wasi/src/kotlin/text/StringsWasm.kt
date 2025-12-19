@@ -27,3 +27,25 @@ internal actual fun String.nativeIndexOf(str: String, fromIndex: Int): Int {
     }
     return -1
 }
+
+/**
+ * Returns a string containing this char sequence repeated [n] times.
+ * @throws [IllegalArgumentException] when n < 0.
+ * @sample samples.text.Strings.repeat
+ */
+public actual fun CharSequence.repeat(n: Int): String {
+    require(n >= 0) { "Count 'n' must be non-negative, but was $n." }
+    if (isEmpty()) return ""
+    return when (n) {
+        0 -> ""
+        1 -> this.toString()
+        else -> {
+            val sequence = this
+            buildString(n * length) {
+                repeat(n) {
+                    append(sequence)
+                }
+            }
+        }
+    }
+}

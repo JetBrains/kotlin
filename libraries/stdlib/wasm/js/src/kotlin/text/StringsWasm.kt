@@ -20,3 +20,18 @@ private fun nativeIndexOf(source: String, substring: String, fromIndex: Int): In
  */
 internal actual fun String.nativeIndexOf(str: String, fromIndex: Int): Int =
     nativeIndexOf(this, str, fromIndex)
+
+@OptIn(ExperimentalWasmJsInterop::class)
+private fun nativeRepeat(str: String, n: Int): String =
+    js("str.repeat(n)")
+
+/**
+ * Returns a string containing this char sequence repeated [n] times.
+ * @throws [IllegalArgumentException] when n < 0.
+ * @sample samples.text.Strings.repeat
+ */
+public actual fun CharSequence.repeat(n: Int): String {
+    require(n >= 0) { "Count 'n' must be non-negative, but was $n." }
+
+    return nativeRepeat(this.toString(), n)
+}
