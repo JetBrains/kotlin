@@ -278,7 +278,7 @@ internal sealed class EqualityMode {
     data object KotlinSignature : EqualityMode()
 
     /**
-     * For inherited members and declared members in Java classes
+     * For inherited members and declared members in Java classes; and for inherited members in Kotlin classes
      *
      * There is also the third kind of signatures: JVM signatures
      * JVM signature is a plain triple: (jvmName: String, parameters: List<Class<*>>, returnType: Class<*>)
