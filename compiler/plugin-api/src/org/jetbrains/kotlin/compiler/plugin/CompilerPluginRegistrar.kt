@@ -101,5 +101,14 @@ fun registerExtensionsForTest(
  *
  * This key is allowed to be used ONLY in tests
  */
-val TEST_ONLY_PLUGIN_REGISTRATION_CALLBACK: CompilerConfigurationKey<(Project) -> Unit> =
+val TEST_ONLY_PLUGIN_REGISTRATION_CALLBACK: CompilerConfigurationKey<(CompilerPluginRegistrar.ExtensionStorage) -> Unit> =
     CompilerConfigurationKey.create("Compiler plugin registrars for tests")
+
+/**
+ * This configuration key is used to provide a way to programmatically do something with [Project]
+ * during environment configuration.
+ *
+ * This key is allowed to be used ONLY in tests
+ */
+val TEST_ONLY_PROJECT_CONFIGURATION_CALLBACK: CompilerConfigurationKey<(Project) -> Unit> =
+    CompilerConfigurationKey.create("Project configurator for tests")
