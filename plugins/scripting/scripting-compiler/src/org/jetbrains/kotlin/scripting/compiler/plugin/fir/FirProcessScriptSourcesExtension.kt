@@ -56,7 +56,18 @@ class FirProcessScriptSourcesExtension : FirProcessSourcesBeforeCompilingExtensi
         sources: Iterable<KtSourceFile>
     ): Iterable<KtSourceFile> {
         environment as VfsBasedProjectEnvironment
-        val hostConfiguration = ensureUpdatedHostConfiguration(configuration)
+        val providedHostConfiguration = configuration.scriptingHostConfiguration as? ScriptingHostConfiguration
+
+        val definitionProvider =
+            providedHostConfiguration?.get(ScriptingHostConfiguration.scriptCompilationConfigurationProvider)
+                ?: ScriptCompilationConfigurationProviderOverDefinitionProvider(
+                    CliScriptDefinitionProvider().also {
+                        it.setScriptDefinitionsSources(configuration.getList(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS_SOURCES))
+                        it.setScriptDefinitions(configuration.getList(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS))
+                    }
+                )
+
+        val hostConfiguration = ensureUpdatedHostConfiguration(providedHostConfiguration, definitionProvider, configuration)
 
         fun SourceCode.collectImports(): List<SourceCode>? {
             val refinedScriptCompilationConfiguration =
@@ -95,7 +106,10 @@ class FirProcessScriptSourcesExtension : FirProcessSourcesBeforeCompilingExtensi
             else null  // TODO: support non-file sources
 
 
-        val sourcesToFiles = sources.associateByTo(mutableMapOf(), KtSourceFile::toSourceCode)
+        val sourcesToFiles = sources
+            .associateBy(KtSourceFile::toSourceCode)
+            .filterTo(mutableMapOf()) { definitionProvider.isScript(it.key) }
+
         val remainingSources = ArrayList<SourceCode>().also { it.addAll(sourcesToFiles.keys) }
         val knownSources = sourcesToFiles.keys.mapTo(mutableSetOf()) { it.locationId }
         val sourceDependencies = mutableMapOf<SourceCode, List<SourceCode>>()
@@ -129,16 +143,11 @@ class FirProcessScriptSourcesExtension : FirProcessSourcesBeforeCompilingExtensi
         }
     }
 
-    private fun ensureUpdatedHostConfiguration(configuration: CompilerConfiguration): ScriptingHostConfiguration {
-        val providedHostConfiguration = configuration.scriptingHostConfiguration as? ScriptingHostConfiguration
-        val definitionProvider =
-            providedHostConfiguration?.get(ScriptingHostConfiguration.scriptCompilationConfigurationProvider)
-                ?: ScriptCompilationConfigurationProviderOverDefinitionProvider(
-                    CliScriptDefinitionProvider().also {
-                        it.setScriptDefinitionsSources(configuration.getList(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS_SOURCES))
-                        it.setScriptDefinitions(configuration.getList(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS))
-                    }
-                )
+    private fun ensureUpdatedHostConfiguration(
+        providedHostConfiguration: ScriptingHostConfiguration?,
+        definitionProvider: ScriptCompilationConfigurationProvider,
+        configuration: CompilerConfiguration
+    ): ScriptingHostConfiguration {
         val refinedCache =
             providedHostConfiguration?.get(ScriptingHostConfiguration.scriptRefinedCompilationConfigurationsCache)
                 ?: ScriptRefinedCompilationConfigurationCacheImpl()

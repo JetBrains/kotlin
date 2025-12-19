@@ -19,7 +19,7 @@ open class CliScriptDefinitionProvider : LazyScriptDefinitionProvider() {
     override val currentDefinitions: Sequence<ScriptDefinition>
         get() {
             val base = definitions.asSequence() + definitionsFromSources.asSequence().flatMap { it }
-            return base + getDefaultDefinition()
+            return base
         }
 
     fun setScriptDefinitions(newDefinitions: List<ScriptDefinition>) {
