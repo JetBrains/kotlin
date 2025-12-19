@@ -9,6 +9,7 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.cli.common.setupKlibAbiCompatibilityLevel
+import org.jetbrains.kotlin.cli.extensionsStorage
 import org.jetbrains.kotlin.cli.initializeDiagnosticFactoriesStorageForCli
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider
@@ -129,7 +130,7 @@ open class CompilerConfigurationProviderImpl(
             configuration,
             configFiles
         ).also {
-            val extensionStorage = CompilerPluginRegistrar.ExtensionStorage()
+            val extensionStorage = it.configuration.extensionsStorage!!
             registerCompilerExtensions(extensionStorage, module, configuration)
             if (!testServices.cliBasedFacadesEnabled) {
                 configureProject(projectEnv.project, module, configuration)
