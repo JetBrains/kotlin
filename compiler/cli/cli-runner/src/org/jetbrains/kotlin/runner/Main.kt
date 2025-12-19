@@ -125,6 +125,10 @@ object Main {
                 arg.startsWith("-X") -> {
                     compilerArguments.add(arg)
                 }
+                arg.startsWith("-P") -> {
+                    compilerArguments.add(arg)
+                    compilerArguments.add(next())
+                }
                 "-language-version" == arg -> {
                     compilerArguments.add(arg)
                     compilerArguments.add(next())
