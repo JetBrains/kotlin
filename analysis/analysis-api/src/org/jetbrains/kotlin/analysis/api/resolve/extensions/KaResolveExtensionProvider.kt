@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.api.resolve.extensions
 import com.intellij.openapi.extensions.ExtensionPointName
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSpi
+import org.jetbrains.kotlin.analysis.api.KaSpiExtensionPoint
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 
 /**
@@ -32,14 +33,16 @@ public abstract class KaResolveExtensionProvider {
      *   - Also avoid using [KaModuleProvider][org.jetbrains.kotlin.analysis.api.projectStructure.KaModuleProvider] or the project structure
      *     provider, as content scope calculation may be triggered during `getModule`.
      */
+    @KaSpiExtensionPoint
     public abstract fun provideExtensionsFor(module: KaModule): List<KaResolveExtension>
 
     @KaExperimentalApi
     public companion object {
         public val EP_NAME: ExtensionPointName<KaResolveExtensionProvider> =
-            ExtensionPointName<KaResolveExtensionProvider>("org.jetbrains.kotlin.kaResolveExtensionProvider")
+            ExtensionPointName("org.jetbrains.kotlin.kaResolveExtensionProvider")
 
         public fun provideExtensionsFor(module: KaModule): List<KaResolveExtension> {
+            @OptIn(KaSpiExtensionPoint::class)
             return EP_NAME.getExtensionList(module.project).flatMap { it.provideExtensionsFor(module) }
         }
     }
