@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.js.config.wasmCompilation
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.isJsStdlib
 import org.jetbrains.kotlin.library.isWasmStdlib
-import org.jetbrains.kotlin.library.unresolvedDependencies
 import org.jetbrains.kotlin.progress.IncrementalNextRoundException
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
 import org.jetbrains.kotlin.psi.KtFile
@@ -136,7 +135,7 @@ class ModulesStructure(
             return _descriptors.getValue(current)
         }
 
-        val isBuiltIns = current.unresolvedDependencies.isEmpty()
+        val isBuiltIns = current.isJsStdlib || current.isWasmStdlib
 
         val lookupTracker = compilerConfiguration[CommonConfigurationKeys.LOOKUP_TRACKER] ?: LookupTracker.DO_NOTHING
         val md = JsFactories.DefaultDeserializedDescriptorFactory.createDescriptorOptionalBuiltIns(

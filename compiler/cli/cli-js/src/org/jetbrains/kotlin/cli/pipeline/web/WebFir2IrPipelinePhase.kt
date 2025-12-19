@@ -34,7 +34,8 @@ import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.js.config.incrementalDataProvider
 import org.jetbrains.kotlin.js.config.wasmCompilation
-import org.jetbrains.kotlin.library.unresolvedDependencies
+import org.jetbrains.kotlin.library.isJsStdlib
+import org.jetbrains.kotlin.library.isWasmStdlib
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 
 object WebFir2IrPipelinePhase : PipelinePhase<WebFrontendPipelineArtifact, JsFir2IrPipelineArtifact>(
@@ -82,7 +83,7 @@ object WebFir2IrPipelinePhase : PipelinePhase<WebFrontendPipelineArtifact, JsFir
             dependencies += moduleDescriptor
             moduleDescriptor.setDependencies(ArrayList(dependencies))
 
-            val isBuiltIns = resolvedLibrary.unresolvedDependencies.isEmpty()
+            val isBuiltIns = resolvedLibrary.isJsStdlib || resolvedLibrary.isWasmStdlib
             if (isBuiltIns) builtInsModule = moduleDescriptor.builtIns
 
             moduleDescriptor

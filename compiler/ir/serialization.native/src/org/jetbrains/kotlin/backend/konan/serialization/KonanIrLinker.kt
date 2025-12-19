@@ -12,14 +12,11 @@ import org.jetbrains.kotlin.backend.common.overrides.IrLinkerFakeOverrideProvide
 import org.jetbrains.kotlin.backend.common.serialization.DeserializationStrategy
 import org.jetbrains.kotlin.backend.common.serialization.KotlinIrLinker
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.konan.isNativeStdlib
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyClassBase
 import org.jetbrains.kotlin.ir.objcinterop.isObjCClass
 import org.jetbrains.kotlin.ir.overrides.IrExternalOverridabilityCondition
@@ -28,8 +25,11 @@ import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.library.isNativeStdlib
+import org.jetbrains.kotlin.library.metadata.DeserializedKlibModuleOrigin
 import org.jetbrains.kotlin.library.metadata.impl.KlibResolvedModuleDescriptorsFactoryImpl
 import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
+import org.jetbrains.kotlin.library.metadata.klibModuleOrigin
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 class KonanIrLinker(
@@ -48,7 +48,10 @@ class KonanIrLinker(
     externalOverridabilityConditions: List<IrExternalOverridabilityCondition>,
 ) : KotlinIrLinker(currentModule, messageCollector, builtIns, symbolTable, exportedDependencies) {
 
-    override fun isBuiltInModule(moduleDescriptor: ModuleDescriptor): Boolean = moduleDescriptor.isNativeStdlib()
+    override fun isBuiltInModule(moduleDescriptor: ModuleDescriptor): Boolean {
+        val klib = (moduleDescriptor.klibModuleOrigin as? DeserializedKlibModuleOrigin)?.library ?: return false
+        return klib.isNativeStdlib
+    }
 
     private val forwardDeclarationDeserializer = forwardModuleDescriptor?.let {
         KonanForwardDeclarationModuleDeserializer(it, this, stubGenerator)

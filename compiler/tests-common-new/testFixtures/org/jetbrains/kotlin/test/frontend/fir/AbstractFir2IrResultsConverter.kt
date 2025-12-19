@@ -28,8 +28,8 @@ import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.library.isAnyPlatformStdlib
 import org.jetbrains.kotlin.library.metadata.KlibMetadataFactories
-import org.jetbrains.kotlin.library.unresolvedDependencies
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
@@ -148,10 +148,12 @@ abstract class AbstractFir2IrResultsConverter(
         languageVersionSettings: LanguageVersionSettings,
         testServices: TestServices
     ): Pair<List<ModuleDescriptor>, KotlinBuiltIns?> {
-        var builtInsModule: KotlinBuiltIns? = null
+        val stdlib: KotlinLibrary? = libraries.firstOrNull { it.isAnyPlatformStdlib }
+
+        var builtIns: KotlinBuiltIns? = null
         val dependencies = mutableListOf<ModuleDescriptorImpl>()
 
-        return libraries.map { library ->
+        fun loadDescriptor(library: KotlinLibrary): ModuleDescriptorImpl =
             testServices.libraryProvider.getOrCreateStdlibByPath(library.libraryFile.absolutePath) {
                 // TODO: check safety of the approach of creating a separate storage manager per library
                 val storageManager = LockBasedStorageManager("ModulesStructure")
@@ -160,19 +162,29 @@ abstract class AbstractFir2IrResultsConverter(
                     library,
                     languageVersionSettings,
                     storageManager,
-                    builtInsModule,
+                    builtIns,
                     packageAccessHandler = null,
                     lookupTracker = LookupTracker.DO_NOTHING
                 )
                 dependencies += moduleDescriptor
-                moduleDescriptor.setDependencies(ArrayList(dependencies))
+                moduleDescriptor.setDependencies(dependencies.toList())
 
                 Pair(moduleDescriptor, library)
-            }.also { moduleDescriptor ->
-                val isBuiltIns = library.unresolvedDependencies.isEmpty()
-                if (isBuiltIns) builtInsModule = moduleDescriptor.builtIns
-            }
-        } to builtInsModule
+            } as ModuleDescriptorImpl
+
+        val moduleDescriptors = mutableListOf<ModuleDescriptorImpl>()
+        if (stdlib != null) {
+            val stdlibModuleDescriptor = loadDescriptor(stdlib)
+            moduleDescriptors += stdlibModuleDescriptor
+            builtIns = stdlibModuleDescriptor.builtIns
+        }
+
+        libraries.forEach { library ->
+            if (library == stdlib) return@forEach
+            moduleDescriptors += loadDescriptor(library)
+        }
+
+        return moduleDescriptors to builtIns
     }
 }
 
