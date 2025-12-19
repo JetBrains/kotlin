@@ -76,6 +76,7 @@ internal class WasmContinuation<in T, R>(
                 } ?: resumeWithImpl(wasmContBox.cont, result.value)
             } catch (e: Throwable) {
                 _exception = e
+                releaseIntercepted()
                 completion.resumeWithException(e)
                 return
             }
@@ -83,7 +84,7 @@ internal class WasmContinuation<in T, R>(
                 // Run suspend block and if the result is not COROUTINE_SUSPENDED, then resume the function again
                 val remainingFunction = WasmContinuation<Any?, R>(resumeResult.remainingFunction!!, false, completion)
                 val suspendBlockResult = try {
-                    resumeResult.suspendBody(remainingFunction).let { if (it == COROUTINE_SUSPENDED) null else Result.success(it) }
+                    resumeResult.suspendBody(remainingFunction).let { if (it === COROUTINE_SUSPENDED) null else Result.success(it) }
                 } catch (e: Throwable) {
                     Result.failure(e)
                 }
@@ -94,11 +95,20 @@ internal class WasmContinuation<in T, R>(
                 }
                 COROUTINE_SUSPENDED
             } else resumeResult.result
-            if (_result != COROUTINE_SUSPENDED) {
+            if (_result !== COROUTINE_SUSPENDED) {
+                releaseIntercepted()
                 completion.resume(resumeResult.result as R)
             }
             return
         }
+    }
+
+    private fun releaseIntercepted() {
+        val intercepted = _intercepted
+        if (intercepted != null && intercepted !== this) {
+            context[ContinuationInterceptor]!!.releaseInterceptedContinuation(intercepted)
+        }
+        this._intercepted = null
     }
 }
 
