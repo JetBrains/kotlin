@@ -5582,12 +5582,21 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
     }
     add(FirErrors.WHEN_ON_SEALED_GEEN_ELSE) { firDiagnostic ->
         WhenOnSealedGeenElseImpl(
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.WHEN_ON_SEALED_EEN_EN_ELSE) { firDiagnostic ->
+        WhenOnSealedEenEnElseImpl(
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
             firDiagnostic as KtPsiDiagnostic,
             token,
         )
     }
     add(FirErrors.WHEN_ON_SEALED_WEL_ELSE) { firDiagnostic ->
         WhenOnSealedWelElseImpl(
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
             firDiagnostic as KtPsiDiagnostic,
             token,
         )

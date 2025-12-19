@@ -26,7 +26,7 @@ fun test_1(e: Base) {
         is C -> 3
     }<!>
 
-    val d = <!WHEN_ON_SEALED_WEL_ELSE!>when (e) {
+    val d = <!WHEN_ON_SEALED_EEN_EN_ELSE!>when (e) {
         is Base.A -> 1
         else -> 2
     }<!>

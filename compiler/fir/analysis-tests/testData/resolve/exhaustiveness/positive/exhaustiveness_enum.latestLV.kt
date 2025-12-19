@@ -22,7 +22,7 @@ fun test_1(e: Enum) {
         Enum.C -> 3
     }<!>
 
-    val d = <!WHEN_ON_SEALED_WEL_ELSE!>when (e) {
+    val d = <!WHEN_ON_SEALED_EEN_EN_ELSE!>when (e) {
         Enum.A -> 1
         else -> 2
     }<!>

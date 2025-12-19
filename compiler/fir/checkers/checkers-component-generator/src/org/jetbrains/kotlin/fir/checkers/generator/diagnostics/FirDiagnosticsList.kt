@@ -1931,8 +1931,15 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<String>("syntaxConstructionName")
         }
 
-        val WHEN_ON_SEALED_GEEN_ELSE by warning<KtWhenExpression>()
-        val WHEN_ON_SEALED_WEL_ELSE by warning<KtWhenExpression>()
+        val WHEN_ON_SEALED_GEEN_ELSE by warning<KtWhenExpression> {
+            parameter<ConeKotlinType>("whenType")
+        }
+        val WHEN_ON_SEALED_EEN_EN_ELSE by warning<KtWhenExpression>() {
+            parameter<ConeKotlinType>("whenType")
+        }
+        val WHEN_ON_SEALED_WEL_ELSE by warning<KtWhenExpression> {
+            parameter<ConeKotlinType>("whenType")
+        }
     }
 
     val CONTEXT_TRACKING by object : DiagnosticGroup("Context tracking") {

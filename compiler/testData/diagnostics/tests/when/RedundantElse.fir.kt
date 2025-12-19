@@ -74,7 +74,7 @@ fun foo(b: Boolean) = when (b) {
 
 fun useJava(): String {
     val me = MyEnum.getInstance()
-    return <!WHEN_ON_SEALED_WEL_ELSE!>when (me) {
+    return <!WHEN_ON_SEALED_EEN_EN_ELSE!>when (me) {
         MyEnum.SINGLE -> "OK"
         else -> "FAIL" // no warning
     }<!>

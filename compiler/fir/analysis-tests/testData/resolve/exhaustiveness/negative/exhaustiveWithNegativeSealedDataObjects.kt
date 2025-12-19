@@ -79,7 +79,7 @@ fun baz(v: Variants): String {
         return "A"
     }
 
-    return <!WHEN_ON_SEALED_WEL_ELSE!>when (v) {
+    return <!WHEN_ON_SEALED_EEN_EN_ELSE!>when (v) {
         Variants.B -> "B"
         else -> v.<!UNRESOLVED_REFERENCE!>test<!>()
     }<!>

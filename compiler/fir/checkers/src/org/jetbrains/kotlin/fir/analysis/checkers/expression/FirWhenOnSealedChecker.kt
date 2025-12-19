@@ -31,25 +31,26 @@ object FirWhenOnSealedChecker : FirWhenExpressionChecker(MppCheckerKind.Common) 
         if (!expression.usedAsExpression || expression.subjectVariable == null) return
         // redundant 'else' and problems are not important here
         if (expression.exhaustivenessStatus != ExhaustivenessStatus.ProperlyExhaustive) return
-        if (!shouldReportType(context.session, expression)) return
 
-        if (expression.branches.any { it.condition is FirElseIfTrueCondition }) {
-            // has an 'else' branch
-            reporter.reportOn(expression.source, FirErrors.WHEN_ON_SEALED_WEL_ELSE, context)
-        } else {
-            reporter.reportOn(expression.source, FirErrors.WHEN_ON_SEALED_GEEN_ELSE, context)
+        val types = getSubjectType(context.session, expression)
+            ?.minimumBoundIfFlexible(context.session)
+            ?.unwrapTypeParameterAndIntersectionTypes(context.session)
+        if (!shouldReportType(context.session, types)) return
+
+        val typeToReport = ConeTypeIntersector.intersectTypes(context.session.typeContext, types!!)
+        val errorToReport = when {
+            expression.branches.none { it.condition is FirElseIfTrueCondition } -> FirErrors.WHEN_ON_SEALED_GEEN_ELSE
+            expression.branches.size == 2 -> FirErrors.WHEN_ON_SEALED_EEN_EN_ELSE
+            else -> FirErrors.WHEN_ON_SEALED_WEL_ELSE
         }
+        reporter.reportOn(expression.source, errorToReport, typeToReport, context)
     }
 
-    fun shouldReportType(session: FirSession, whenExpression: FirWhenExpression): Boolean {
-        val types = getSubjectType(session, whenExpression)
-            ?.minimumBoundIfFlexible(session)
-            ?.unwrapTypeParameterAndIntersectionTypes(session)
-        return !types.isNullOrEmpty() && types.all {
+    fun shouldReportType(session: FirSession, types: Collection<ConeKotlinType>?): Boolean =
+        !types.isNullOrEmpty() && types.all {
             val symbol = it.toRegularClassSymbol(session)
             symbol?.classKind == ClassKind.ENUM_CLASS || symbol?.modality == Modality.SEALED
         }
-    }
 
     // copied from FirWhenExhaustivenessComputer
     private fun getSubjectType(session: FirSession, whenExpression: FirWhenExpression): ConeKotlinType? {

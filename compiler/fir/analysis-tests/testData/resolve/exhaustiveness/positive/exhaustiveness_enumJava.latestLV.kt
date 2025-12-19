@@ -26,7 +26,7 @@ fun test_1(e: JavaEnum) {
         JavaEnum.C -> 3
     }<!>.plus(0)
 
-    val d = <!WHEN_ON_SEALED_WEL_ELSE!>when (e) {
+    val d = <!WHEN_ON_SEALED_EEN_EN_ELSE!>when (e) {
         JavaEnum.A -> 1
         else -> 2
     }<!>.plus(0)

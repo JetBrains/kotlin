@@ -3913,10 +3913,17 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     interface WhenOnSealedGeenElse : KaFirDiagnostic<KtWhenExpression> {
         override val diagnosticClass get() = WhenOnSealedGeenElse::class
+        val whenType: KaType
+    }
+
+    interface WhenOnSealedEenEnElse : KaFirDiagnostic<KtWhenExpression> {
+        override val diagnosticClass get() = WhenOnSealedEenEnElse::class
+        val whenType: KaType
     }
 
     interface WhenOnSealedWelElse : KaFirDiagnostic<KtWhenExpression> {
         override val diagnosticClass get() = WhenOnSealedWelElse::class
+        val whenType: KaType
     }
 
     interface TypeParameterIsNotAnExpression : KaFirDiagnostic<KtSimpleNameExpression> {
