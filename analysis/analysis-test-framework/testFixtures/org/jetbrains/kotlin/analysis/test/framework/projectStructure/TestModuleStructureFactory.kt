@@ -9,6 +9,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.analysis.api.impl.base.util.LibraryUtils
 import org.jetbrains.kotlin.analysis.api.projectStructure.*
 import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.StandaloneProjectFactory
 import org.jetbrains.kotlin.analysis.test.framework.AnalysisApiTestDirectives
@@ -19,6 +20,7 @@ import org.jetbrains.kotlin.analysis.test.framework.services.environmentManager
 import org.jetbrains.kotlin.analysis.test.framework.utils.stripOutSnapshotVersion
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
+import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.library.KLIB_FILE_EXTENSION
 import org.jetbrains.kotlin.platform.TargetPlatform
@@ -172,9 +174,13 @@ object TestModuleStructureFactory {
             val (jdkRoots, libraryRoots) = classpathRoots.partition { jdkHome != null && it.startsWith(jdkHome) }
 
             val targetPlatform = testModule.targetPlatform(testServices)
-            if (targetPlatform.isJvm() && jdkRoots.isNotEmpty()) {
+            if (targetPlatform.isJvm() && (jdkRoots.isNotEmpty() || jdkHome != null)) {
+                val roots = jdkRoots.ifEmpty {
+                    LibraryUtils.findClassesFromJdkHome(jdkHome, false)
+                }
+
                 ktModule.directRegularDependencies.add(
-                    libraryCache.getOrCreateJdkModule(jdkRoots)
+                    libraryCache.getOrCreateJdkModule(roots)
                 )
             }
 
