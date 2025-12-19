@@ -463,6 +463,9 @@ private fun SmartPrinter.generateFreeArgsAndErrors() {
     println("@Transient")
     println("var errors: ArgumentParseErrors? = null")
     println()
+    println("@Transient")
+    println("var explicitArguments: List<ArgumentField> = emptyList()")
+    println()
 }
 
 private val KotlinCompilerArgument.defaultValueInArgs: String

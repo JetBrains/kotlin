@@ -1,4 +1,4 @@
-warning: [REDUNDANT_CLI_ARG] The argument '-Xannotation-default-target=first-only-warn' is redundant for the current language version 2.4.
 warning: [REDUNDANT_CLI_ARG] The argument '-Xnested-type-aliases' is redundant for the current language version 2.4.
 warning: [REDUNDANT_CLI_ARG] The argument '-Xwhen-guards' is redundant for the current language version 2.4.
+warning: [REDUNDANT_CLI_ARG] The argument '-Xannotation-default-target=first-only-warn' is redundant for the current language version 2.4.
 OK
