@@ -1979,16 +1979,6 @@ public class CliTestGenerated extends AbstractCliTest {
       runTest("compiler/testData/cli/js/extraCheckers.args");
     }
 
-    @TestMetadata("fir.args")
-    public void testFir() {
-      runTest("compiler/testData/cli/js/fir.args");
-    }
-
-    @TestMetadata("firLightTreeOn.args")
-    public void testFirLightTreeOn() {
-      runTest("compiler/testData/cli/js/firLightTreeOn.args");
-    }
-
     @TestMetadata("firMpp.args")
     public void testFirMpp() {
       runTest("compiler/testData/cli/js/firMpp.args");
@@ -2032,6 +2022,16 @@ public class CliTestGenerated extends AbstractCliTest {
     @TestMetadata("jsObsoleteOutputArgument.args")
     public void testJsObsoleteOutputArgument() {
       runTest("compiler/testData/cli/js/jsObsoleteOutputArgument.args");
+    }
+
+    @TestMetadata("k2LightTree.args")
+    public void testK2LightTree() {
+      runTest("compiler/testData/cli/js/k2LightTree.args");
+    }
+
+    @TestMetadata("k2Psi.args")
+    public void testK2Psi() {
+      runTest("compiler/testData/cli/js/k2Psi.args");
     }
 
     @TestMetadata("kotlinPackage.args")
@@ -2082,11 +2082,6 @@ public class CliTestGenerated extends AbstractCliTest {
     @TestMetadata("publicSyntheticAccessorGenerationWithExplicitAPIModeDisabled.args")
     public void testPublicSyntheticAccessorGenerationWithExplicitAPIModeDisabled() {
       runTest("compiler/testData/cli/js/publicSyntheticAccessorGenerationWithExplicitAPIModeDisabled.args");
-    }
-
-    @TestMetadata("publicSyntheticAccessorGenerationWithoutExplicitAPIFlag.args")
-    public void testPublicSyntheticAccessorGenerationWithoutExplicitAPIFlag() {
-      runTest("compiler/testData/cli/js/publicSyntheticAccessorGenerationWithoutExplicitAPIFlag.args");
     }
 
     @TestMetadata("reifiedIntersectionType.args")

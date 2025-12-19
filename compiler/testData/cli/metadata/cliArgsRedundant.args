@@ -9,3 +9,6 @@ $TESTDATA_DIR$/../../../../dist/common/kotlin-stdlib-common.klib
 -Xwhen-guards
 -Xannotation-default-target=first-only-warn
 -Xrender-internal-diagnostic-names
+-Xuse-fir-lt=true
+-Xuse-fir-ic=false
+-Xexplicit-api=disable
