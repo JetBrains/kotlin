@@ -397,7 +397,12 @@ internal data class EquatableCallableSignature<T : EqualityMode>(
     }
 }
 
-// Make KType.equals transitive
+/**
+ * This util function is used to make [areEqualKTypes] transitive and to get red of mutability in types
+ * (e.g. MutableList becomes List).
+ * Type equality is not transitive in Kotlin because of flexible types
+ * (e.g. `String?` != `String` but (`String?` == `String!` and `String` == `String!`)
+ */
 private fun KType.coerceFlexibleTypesAndMutabilityRecursive(): KType {
     val classifier = classifier ?: nonDenotableSupertypesAreNotPossible()
     // Recreating type from classifiers erases mutability (e.g., MutableList becomes List)
