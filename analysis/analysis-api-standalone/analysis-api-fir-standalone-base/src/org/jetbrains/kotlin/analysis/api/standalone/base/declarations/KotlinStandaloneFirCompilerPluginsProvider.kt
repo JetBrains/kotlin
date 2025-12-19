@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinCompile
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinCompilerPluginsProvider.CompilerPluginType
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.areCompilerPluginsSupported
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
+import org.jetbrains.kotlin.cli.extensionsStorage
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -19,11 +20,11 @@ import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
 
 @OptIn(ExperimentalCompilerApi::class)
 class KotlinStandaloneFirCompilerPluginsProvider(compilerConfiguration: CompilerConfiguration) : KotlinCompilerPluginsProvider {
-    private val extensionStorage = CompilerPluginRegistrar.ExtensionStorage().apply {
+    private val extensionStorage = compilerConfiguration.extensionsStorage?.apply {
         for (registrar in compilerConfiguration.getList(CompilerPluginRegistrar.COMPILER_PLUGIN_REGISTRARS)) {
             with(registrar) { registerExtensions(compilerConfiguration) }
         }
-    }
+    } ?: error("Extensions storage is not registered")
 
     override fun <T : Any> getRegisteredExtensions(
         module: KaModule,
