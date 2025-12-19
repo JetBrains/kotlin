@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.IrAnnotation
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetEnumValue
@@ -258,10 +257,10 @@ internal fun IrExpression.isInitializePropertyFromParameter(): Boolean =
 internal val IrConstructorCall.constructedClass
     get() = this.symbol.owner.constructedClass
 
-internal val List<IrAnnotation>.hasAnySerialAnnotation: Boolean
+internal val List<IrConstructorCall>.hasAnySerialAnnotation: Boolean
     get() = serialNameValue != null || any { it.constructedClass.isSerialInfoAnnotation }
 
-internal val List<IrAnnotation>.serialNameValue: String?
+internal val List<IrConstructorCall>.serialNameValue: String?
     get() = findAnnotation(SerializationAnnotations.serialNameAnnotationFqName)?.getStringConstArgument(0) // @SerialName("foo")
 
 
