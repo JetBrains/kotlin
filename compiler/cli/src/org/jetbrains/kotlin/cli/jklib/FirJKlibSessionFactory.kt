@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.fir.deserialization.SingleModuleDataProvider
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.java.FirJvmTargetProvider
 import org.jetbrains.kotlin.fir.java.JavaSymbolProvider
-import org.jetbrains.kotlin.fir.java.deserialization.FirJvmBuiltinsSymbolProvider
 import org.jetbrains.kotlin.fir.java.deserialization.FirJvmClasspathBuiltinSymbolProvider
 import org.jetbrains.kotlin.fir.java.deserialization.JvmClassFileBasedSymbolProvider
 import org.jetbrains.kotlin.fir.java.deserialization.OptionalAnnotationClassesProvider
@@ -26,7 +25,6 @@ import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirCloneableSymbolProvider
-import org.jetbrains.kotlin.fir.resolve.providers.impl.FirFallbackBuiltinSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.scopes.wrapScopeWithJvmMapped
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.session.FirAbstractSessionFactory
@@ -36,21 +34,19 @@ import org.jetbrains.kotlin.fir.session.FirSharableJavaComponents
 import org.jetbrains.kotlin.fir.session.KlibBasedSymbolProvider
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
-import org.jetbrains.kotlin.fir.session.registerDefaultComponents
 import org.jetbrains.kotlin.fir.session.registerJavaComponents
 import org.jetbrains.kotlin.library.KotlinLibrary
-import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 @OptIn(SessionConfiguration::class)
-object FirJKlibSessionFactory : FirAbstractSessionFactory<FirJKlibSessionFactory.Context, FirJKlibSessionFactory.Context>() {
+object FirJKlibSessionFactory : FirAbstractSessionFactory<FirJKlibSessionFactory.Context>() {
     override fun createPlatformSpecificSharedProviders(
         session: FirSession,
         moduleData: FirModuleData,
         scopeProvider: FirKotlinScopeProvider,
-        context: Context
+        context: Context,
     ): List<FirSymbolProvider> {
         return listOf(
             FirCloneableSymbolProvider(session, moduleData, scopeProvider),
@@ -133,7 +129,6 @@ object FirJKlibSessionFactory : FirAbstractSessionFactory<FirJKlibSessionFactory
     }
 
     override fun FirSession.registerLibrarySessionComponents(c: Context) {
-        registerDefaultComponents()
         registerJavaComponents(c.projectEnvironment.getJavaModuleResolver(), c.predefinedJavaComponents)
     }
 
@@ -207,22 +202,22 @@ object FirJKlibSessionFactory : FirAbstractSessionFactory<FirJKlibSessionFactory
         }
     }
 
-    override fun FirSessionConfigurator.registerPlatformCheckers(c: Context) {
+    override fun FirSessionConfigurator.registerPlatformCheckers() {
         registerJvmCheckers()
     }
 
-
-    override fun FirSessionConfigurator.registerExtraPlatformCheckers(c: Context) {
+    override fun FirSessionConfigurator.registerExtraPlatformCheckers() {
     }
 
     override fun FirSession.registerSourceSessionComponents(c: Context) {
-        registerDefaultComponents()
-        registerJavaComponents(c.projectEnvironment.getJavaModuleResolver(), c.predefinedJavaComponents)
+        registerLibrarySessionComponents(c)
         register(FirJvmTargetProvider::class, FirJvmTargetProvider(JvmTarget.Companion.DEFAULT))
     }
 
     override val requiresSpecialSetupOfSourceProvidersInHmppCompilation: Boolean
         get() = false
+    override val isFactoryForMetadataCompilation: Boolean
+        get() = TODO("Not yet implemented")
 
     // ==================================== Common parts ====================================
 
@@ -252,14 +247,4 @@ object FirJKlibSessionFactory : FirAbstractSessionFactory<FirJKlibSessionFactory
             ) { kotlinClassFinder.findBuiltInsData(it) }
         }
     }
-
-    private fun initializeBuiltinsProvider(
-        session: FirSession,
-        builtinsModuleData: FirModuleData,
-        kotlinScopeProvider: FirKotlinScopeProvider,
-        kotlinClassFinder: KotlinClassFinder,
-    ): FirJvmBuiltinsSymbolProvider = FirJvmBuiltinsSymbolProvider(
-        session,
-        FirFallbackBuiltinSymbolProvider(session, builtinsModuleData, kotlinScopeProvider)
-    ) { kotlinClassFinder.findBuiltInsData(it) }
 }

@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.backend.common.overrides.IrLinkerFakeOverrideProvide
 import org.jetbrains.kotlin.backend.common.serialization.*
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDescriptor
-import org.jetbrains.kotlin.backend.common.toLogger
+import org.jetbrains.kotlin.cli.common.messages.getLogger
 import org.jetbrains.kotlin.backend.jvm.JvmGeneratorExtensionsImpl
 import org.jetbrains.kotlin.backend.jvm.JvmIrDeserializerImpl
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
@@ -47,10 +47,12 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
+import org.jetbrains.kotlin.diagnostics.impl.deduplicating
 import org.jetbrains.kotlin.fir.DependencyListForCliModule
 import org.jetbrains.kotlin.fir.backend.jvm.JvmFir2IrExtensions
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.pipeline.*
+import org.jetbrains.kotlin.fir.session.AbstractFirMetadataSessionFactory
 import org.jetbrains.kotlin.fir.session.FirSharableJavaComponents
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
 import org.jetbrains.kotlin.fir.session.firCachesFactoryForCliMode
@@ -58,10 +60,7 @@ import org.jetbrains.kotlin.frontend.java.di.createContainerForLazyResolveWithJa
 import org.jetbrains.kotlin.frontend.java.di.initialize
 import org.jetbrains.kotlin.idea.MainFunctionDetector
 import org.jetbrains.kotlin.incremental.components.*
-import org.jetbrains.kotlin.ir.InternalSymbolFinderAPI
-import org.jetbrains.kotlin.ir.IrBuiltIns
-import org.jetbrains.kotlin.ir.IrDiagnosticReporter
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
+import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
@@ -82,6 +81,8 @@ import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
 import org.jetbrains.kotlin.library.impl.buildKotlinLibrary
+import org.jetbrains.kotlin.library.loader.KlibLoader
+import org.jetbrains.kotlin.library.loader.reportLoadingProblemsIfAny
 import org.jetbrains.kotlin.library.metadata.KlibMetadataFactories
 import org.jetbrains.kotlin.library.metadata.resolver.KotlinResolvedLibrary
 import org.jetbrains.kotlin.library.metadata.resolver.impl.KotlinResolvedLibraryImpl
@@ -112,6 +113,7 @@ import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.util.klibMetadataVersionOrDefault
 import org.jetbrains.kotlin.utils.KotlinPaths
 import org.jetbrains.kotlin.utils.PathUtil
+import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
 import java.util.*
 
@@ -200,9 +202,6 @@ class K2JKlibCompiler : CLICompiler<K2JKlibCompilerArguments>() {
         override fun isBuiltInModule(moduleDescriptor: ModuleDescriptor): Boolean =
             moduleDescriptor === moduleDescriptor.builtIns.builtInsModule
 
-        private val IrLibrary.libContainsErrorCode: Boolean
-            get() = this is KotlinLibrary && this.containsErrorCode
-
         override fun createModuleDeserializer(
             moduleDescriptor: ModuleDescriptor,
             klib: KotlinLibrary?,
@@ -218,7 +217,6 @@ class K2JKlibCompiler : CLICompiler<K2JKlibCompilerArguments>() {
                 klib,
                 strategyResolver,
                 libraryAbiVersion,
-                klib.libContainsErrorCode,
             )
         }
 
@@ -254,6 +252,7 @@ class K2JKlibCompiler : CLICompiler<K2JKlibCompilerArguments>() {
             moduleDescriptor: ModuleDescriptor,
             dependencies: List<IrModuleDeserializer>,
         ) : IrModuleDeserializer(moduleDescriptor, KotlinAbiVersion.CURRENT) {
+            override val klib: KotlinLibrary get() = error("'klib' is not available for ${this::class.java}")
 
             override fun contains(idSig: IdSignature): Boolean = true
 
@@ -308,17 +307,14 @@ class K2JKlibCompiler : CLICompiler<K2JKlibCompilerArguments>() {
 
         private inner class JKlibModuleDeserializer(
             moduleDescriptor: ModuleDescriptor,
-            klib: IrLibrary,
+            override val klib: KotlinLibrary,
             strategyResolver: (String) -> DeserializationStrategy,
             libraryAbiVersion: KotlinAbiVersion,
-            allowErrorCode: Boolean,
         ) : BasicIrModuleDeserializer(
             this,
             moduleDescriptor,
-            klib,
             strategyResolver,
             libraryAbiVersion,
-            allowErrorCode,
         ) {
 
             override fun init(delegate: IrModuleDeserializer) {
@@ -521,7 +517,7 @@ class K2JKlibCompiler : CLICompiler<K2JKlibCompilerArguments>() {
         klibFactories = KlibMetadataFactories({ builtIns }, JavaFlexibleTypeDeserializer)
         val trace = BindingTraceContext(projectContext.project)
 
-        val allDependencies = CommonKLibResolver.resolve(klibFiles, messageCollector.toLogger())
+        val allDependencies = CommonKLibResolver.resolve(klibFiles, configuration.getLogger())
         val moduleDependencies =
             allDependencies.getFullResolvedList().associate { klib -> klib.library to klib.resolvedDependencies.map { d -> d.library } }
                 .toMap()
@@ -630,7 +626,7 @@ class K2JKlibCompiler : CLICompiler<K2JKlibCompilerArguments>() {
         destination: File,
     ): ExitCode {
         val collector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
-        val performanceManager = configuration.getNotNull(CLIConfigurationKeys.PERF_MANAGER)
+        val performanceManager = configuration.perfManager
 
         val pluginLoadResult = loadPlugins(paths, arguments, configuration, rootDisposable)
         if (pluginLoadResult != ExitCode.OK) return pluginLoadResult
@@ -735,13 +731,11 @@ class K2JKlibCompiler : CLICompiler<K2JKlibCompilerArguments>() {
                 arguments.classpath?.split(File.pathSeparator)?.forEach { addClasspathEntry(it) }
             }
 
-            val diagnosticsReporter = DiagnosticReporterFactory.createPendingReporter(collector)
+            val diagnosticsReporter = DiagnosticReporterFactory.createPendingReporter()
 
             val klibFiles = configuration.getList(JVMConfigurationKeys.KLIB_PATHS)
 
-            val logger = collector.toLogger()
-
-            val resolvedLibraries = klibFiles.map { KotlinResolvedLibraryImpl(resolveSingleFileKlib(File(it), logger)) }
+            val resolvedLibraries = klibFiles.map { KotlinResolvedLibraryImpl(resolveSingleFileKlib(File(it), collector)) }
             val extensionRegistrars = FirExtensionRegistrar.getInstances(projectEnvironment.project)
             val ltFiles = groupedSources.let { it.commonSources + it.platformSources }.toList()
 
@@ -771,7 +765,7 @@ class K2JKlibCompiler : CLICompiler<K2JKlibCompilerArguments>() {
                 val firFiles = session.buildFirViaLightTree(
                     files,
                     diagnosticsReporter,
-                    performanceManager::addSourcesStats,
+                    if (performanceManager != null) performanceManager::addSourcesStats else null,
                 )
                 resolveAndCheckFir(session, firFiles, diagnosticsReporter)
             }
@@ -787,7 +781,7 @@ class K2JKlibCompiler : CLICompiler<K2JKlibCompilerArguments>() {
                 return COMPILATION_ERROR
             }
 
-            val firResult = FirResult(outputs)
+            val firResult = AllModulesFrontendOutput(outputs)
 
             val fir2IrExtensions = JvmFir2IrExtensions(configuration, JvmIrDeserializerImpl())
             val irGenerationExtensions = IrGenerationExtension.getInstances(projectEnvironment.project)
@@ -804,7 +798,10 @@ class K2JKlibCompiler : CLICompiler<K2JKlibCompilerArguments>() {
                 moduleName = fir2IrResult.irModuleFragment.name.asString(),
                 irModuleFragment = fir2IrResult.irModuleFragment,
                 configuration = configuration,
-                diagnosticReporter = diagnosticsReporter,
+                diagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(
+                    diagnosticsReporter.deduplicating(),
+                    configuration.languageVersionSettings
+                ),
                 cleanFiles = emptyList(),
                 dependencies = resolvedLibraries.map { it.library },
                 createModuleSerializer = { irDiagnosticReporter: IrDiagnosticReporter ->
@@ -826,7 +823,6 @@ class K2JKlibCompiler : CLICompiler<K2JKlibCompilerArguments>() {
             )
 
             buildKotlinLibrary(
-                linkDependencies = serializerOutput.neededLibraries,
                 ir = serializerOutput.serializedIr,
                 metadata = serializerOutput.serializedMetadata ?: error("expected serialized metadata"),
                 versions = versions,
@@ -847,6 +843,14 @@ class K2JKlibCompiler : CLICompiler<K2JKlibCompilerArguments>() {
         }
 
         return ExitCode.OK
+    }
+
+    private fun resolveSingleFileKlib(file: File, collector: MessageCollector): KotlinLibrary {
+        val klibLoadingResult = KlibLoader { libraryPaths(file.path) }.load()
+        klibLoadingResult.reportLoadingProblemsIfAny { _, message ->
+            collector.report(ERROR, message)
+        }
+        return klibLoadingResult.librariesStdlibFirst.single()
     }
 
     override fun executableScriptFileName(): String = "kotlinc"
@@ -929,19 +933,26 @@ fun <F> prepareJKlibSessions(
                 predefinedJavaComponents = predefinedJavaComponents,
             )
         },
-    ) { _, moduleData, isForLeafHmppModule, sessionConfigurator ->
-        FirJKlibSessionFactory.createSourceSession(
-            moduleData = moduleData,
-            javaSourcesScope = projectEnvironment.getSearchScopeForProjectJavaSources(),
-            projectEnvironment = projectEnvironment,
-            createIncrementalCompilationSymbolProviders = { null },
-            extensionRegistrars = extensionRegistrars,
-            configuration = configuration,
-            predefinedJavaComponents = predefinedJavaComponents,
-            needRegisterJavaElementFinder = true,
-            packagePartProvider = packagePartProviderForLibraries,
-            init = sessionConfigurator,
-            isForLeafHmppModule = isForLeafHmppModule,
-        )
-    }
+        createSourceSession = { _, moduleData, isForLeafHmppModule, sessionConfigurator ->
+            FirJKlibSessionFactory.createSourceSession(
+                moduleData = moduleData,
+                javaSourcesScope = projectEnvironment.getSearchScopeForProjectJavaSources(),
+                projectEnvironment = projectEnvironment,
+                createIncrementalCompilationSymbolProviders = { null },
+                extensionRegistrars = extensionRegistrars,
+                configuration = configuration,
+                predefinedJavaComponents = predefinedJavaComponents,
+                needRegisterJavaElementFinder = true,
+                packagePartProvider = packagePartProviderForLibraries,
+                init = sessionConfigurator,
+                isForLeafHmppModule = isForLeafHmppModule,
+            )
+        },
+        createMetadataSessionFactoryContextForHmppCommonLibrarySession = {
+            AbstractFirMetadataSessionFactory.Context(
+                createJvmContext = { shouldNotBeCalled() },
+                createJsContext = { shouldNotBeCalled() }
+            )
+        }
+    )
 }
