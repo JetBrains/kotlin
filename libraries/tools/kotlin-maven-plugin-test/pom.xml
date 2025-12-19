@@ -96,22 +96,22 @@
         </resources>
 
         <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-toolchains-plugin</artifactId>
-                <version>3.2.0</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>select-jdk-toolchain</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <discoverToolchains>true</discoverToolchains>
-                    <version>[17,)</version>
-                </configuration>
-            </plugin>
+<!--            <plugin>-->
+<!--                <groupId>org.apache.maven.plugins</groupId>-->
+<!--                <artifactId>maven-toolchains-plugin</artifactId>-->
+<!--                <version>3.2.0</version>-->
+<!--                <executions>-->
+<!--                    <execution>-->
+<!--                        <goals>-->
+<!--                            <goal>select-jdk-toolchain</goal>-->
+<!--                        </goals>-->
+<!--                    </execution>-->
+<!--                </executions>-->
+<!--                <configuration>-->
+<!--                    <discoverToolchains>true</discoverToolchains>-->
+<!--                    <version>[17,)</version>-->
+<!--                </configuration>-->
+<!--            </plugin>-->
 
             <!-- Kotlin compiler plugin configuration -->
             <plugin>
@@ -187,6 +187,7 @@
                                     <goal>verify</goal>
                                 </goals>
                                 <configuration>
+                                    <jvm>${env.JDK_17_0}</jvm>
                                     <systemPropertyVariables>
                                         <maven.home>${maven.home}</maven.home>
                                         <kotlin.version>${project.version}</kotlin.version>
