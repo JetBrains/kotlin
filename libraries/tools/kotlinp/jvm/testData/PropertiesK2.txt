@@ -12,7 +12,7 @@ public final annotation class Ann : kotlin/Annotation {
 public final class C : kotlin/Any {
 
   // signature: <init>(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
-  public constructor(constructorParam: kotlin/String /* = ... */, constructorValWithAnnotation: kotlin/String /* = ... */, constructorValWithGetterAnnotation: kotlin/String /* = ... */, constructorVarWithAnnotation: kotlin/String /* = ... */, constructorVarWithGetterAnnotation: kotlin/String /* = ... */, constructorVarWithSetterAnnotation: kotlin/String /* = ... */, constructorValWithInternal: kotlin/String /* = ... */)
+  public constructor(constructorParam: kotlin/String /* = ... */, @Ann constructorValWithAnnotation: kotlin/String /* = ... */, constructorValWithGetterAnnotation: kotlin/String /* = ... */, @Ann constructorVarWithAnnotation: kotlin/String /* = ... */, constructorVarWithGetterAnnotation: kotlin/String /* = ... */, constructorVarWithSetterAnnotation: kotlin/String /* = ... */, constructorValWithInternal: kotlin/String /* = ... */)
 
   // signature: getValue(Ljava/lang/Void;Ljava/lang/Object;Ljava/lang/Object;)Ljava/util/List;
   public final operator fun kotlin/Nothing?.getValue(x: kotlin/Any?, y: kotlin/Any?): kotlin/collections/List<kotlin/Nothing>
@@ -26,18 +26,21 @@ public final class C : kotlin/Any {
   // field: classValWithAnnotation:Ljava/lang/String;
   // getter: getClassValWithAnnotation()Ljava/lang/String;
   // synthetic method for annotations: getClassValWithAnnotation$annotations()V
+  @Ann
   public final val classValWithAnnotation: kotlin/String /* = ... */
     public final get
 
   // field: classValWithGetterAnnotation:Ljava/lang/String;
   // getter: getClassValWithGetterAnnotation()Ljava/lang/String;
   public final val classValWithGetterAnnotation: kotlin/String /* = ... */
+    @Ann
     public final get
 
   // field: classVarWithAnnotation:Ljava/lang/String;
   // getter: getClassVarWithAnnotation()Ljava/lang/String;
   // setter: setClassVarWithAnnotation(Ljava/lang/String;)V
   // synthetic method for annotations: getClassVarWithAnnotation$annotations()V
+  @Ann
   public final var classVarWithAnnotation: kotlin/String
     public final get
     public final set
@@ -46,6 +49,7 @@ public final class C : kotlin/Any {
   // getter: getClassVarWithGetterAnnotation()Ljava/lang/String;
   // setter: setClassVarWithGetterAnnotation(Ljava/lang/String;)V
   public final var classVarWithGetterAnnotation: kotlin/String
+    @Ann
     public final get
     public final set
 
@@ -61,6 +65,7 @@ public final class C : kotlin/Any {
   // setter: setClassVarWithSetterAnnotation(Ljava/lang/String;)V
   public final var classVarWithSetterAnnotation: kotlin/String
     public final get
+    @Ann
     public final set
 
   // field: classVarWithSetterInternal:Ljava/lang/String;
@@ -83,6 +88,7 @@ public final class C : kotlin/Any {
   // field: constructorValWithGetterAnnotation:Ljava/lang/String;
   // getter: getConstructorValWithGetterAnnotation()Ljava/lang/String;
   public final val constructorValWithGetterAnnotation: kotlin/String
+    @Ann
     public final get
 
   // field: constructorValWithInternal:Ljava/lang/String;
@@ -101,6 +107,7 @@ public final class C : kotlin/Any {
   // getter: getConstructorVarWithGetterAnnotation()Ljava/lang/String;
   // setter: setConstructorVarWithGetterAnnotation(Ljava/lang/String;)V
   public final var constructorVarWithGetterAnnotation: kotlin/String
+    @Ann
     public final get
     public final set
 
@@ -109,6 +116,7 @@ public final class C : kotlin/Any {
   // setter: setConstructorVarWithSetterAnnotation(Ljava/lang/String;)V
   public final var constructorVarWithSetterAnnotation: kotlin/String
     public final get
+    @Ann
     public final set
 
   // getter: getDelegated(Ljava/lang/Number;)Ljava/util/List;

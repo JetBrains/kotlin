@@ -1,0 +1,78 @@
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+/**
+ * public final annotation class RootAnnotation : kotlin/Annotation {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public abstract @interface RootAnnotation {
+}
+
+////////////////////
+
+
+/**
+ * public final class RootClass : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class RootClass {
+
+    public RootClass() {
+        super();
+    }
+}
+
+////////////////////
+
+package test;
+
+/**
+ * package {
+ *
+ *   // signature: f()LRootClass;
+ *   public final fun f(): RootClass?
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class BKt {
+
+    @org.jetbrains.annotations.Nullable()
+    public static final RootClass f() {
+        return null;
+    }
+}
+
+////////////////////
+
+package test;
+
+@RootAnnotation()
+/**
+ * @RootAnnotation
+ * public final class test/C : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class C {
+
+    public C() {
+        super();
+    }
+}

@@ -27,6 +27,7 @@ import kotlin.reflect.KClass;
 
 @Anno(value = Unresolved.class)
 /**
+ * @Anno
  * public final class C : kotlin/Any {
  *
  *   // signature: <init>()V
