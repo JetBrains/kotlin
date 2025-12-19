@@ -125,9 +125,9 @@ private fun CompilerConfiguration.checkRedundantArguments(arguments: CommonCompi
     val languageVersion = languageVersionSettings.languageVersion
     val argumentsInfo = getArgumentsInfo(arguments::class.java)
 
-    propertiesLoop@ for ((_, argField) in argumentsInfo.cliArgNameToArguments) {
-        val propertyValue = argField.getter.invoke(arguments)
-        val defaultPropertyValue = argumentsInfo.getDefaultValue(argField)
+    propertiesLoop@ for (explicitArgument in arguments.explicitArguments) {
+        val propertyValue = explicitArgument.getter.invoke(arguments)
+        val defaultPropertyValue = argumentsInfo.getDefaultValue(explicitArgument)
 
         // Check if a user explicitly sets the value
         if (propertyValue == defaultPropertyValue) continue
@@ -141,10 +141,10 @@ private fun CompilerConfiguration.checkRedundantArguments(arguments: CommonCompi
                     (state == LanguageFeature.State.ENABLED) != languageVersionSettings.isEnabledByDefault(feature)
         }
 
-        argField.enablesAnnotations.forEach {
+        explicitArgument.enablesAnnotations.forEach {
             if (checkNecessity(it.feature, it.ifValueIs, LanguageFeature.State.ENABLED)) continue@propertiesLoop
         }
-        argField.disablesAnnotations.forEach {
+        explicitArgument.disablesAnnotations.forEach {
             if (checkNecessity(it.feature, it.ifValueIs, LanguageFeature.State.DISABLED)) continue@propertiesLoop
         }
 
@@ -154,7 +154,7 @@ private fun CompilerConfiguration.checkRedundantArguments(arguments: CommonCompi
         val argValue = if (propertyValue is String) "=$propertyValue" else ""
         reportDiagnostic(
             CliDiagnostics.REDUNDANT_CLI_ARG,
-            "The argument '${argField.argument.value}${argValue}' is redundant for the current language version $languageVersion.",
+            "The argument '${explicitArgument.argument.value}${argValue}' is redundant for the current language version $languageVersion.",
         )
     }
 }
