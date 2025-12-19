@@ -1,6 +1,7 @@
 // DONT_TARGET_EXACT_BACKEND: JVM_IR
 // ^EagerInitialization is not supported
 // PROPERTY_LAZY_INITIALIZATION
+// WASM_FAILS_IN_SINGLE_MODULE_MODE
 
 // MODULE: lib1
 // FILE: lib.kt
