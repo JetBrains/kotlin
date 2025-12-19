@@ -11748,6 +11748,39 @@ final object kotlin.native.runtime/GC { // kotlin.native.runtime/GC|null[0]
 }
 
 // Targets: [native]
+final object kotlin.native.runtime/HotReload { // kotlin.native.runtime/HotReload|null[0]
+    final fun addReloadSuccessHandler(kotlin/Function0<kotlin/Unit>) // kotlin.native.runtime/HotReload.addReloadSuccessHandler|addReloadSuccessHandler(kotlin.Function0<kotlin.Unit>){}[0]
+    final fun collectLatestStats(): kotlin.native.runtime/HotReload.Stats // kotlin.native.runtime/HotReload.collectLatestStats|collectLatestStats(){}[0]
+    final fun perform(kotlin/String) // kotlin.native.runtime/HotReload.perform|perform(kotlin.String){}[0]
+    final fun removeReloadSuccessHandler(kotlin/Function0<kotlin/Unit>) // kotlin.native.runtime/HotReload.removeReloadSuccessHandler|removeReloadSuccessHandler(kotlin.Function0<kotlin.Unit>){}[0]
+
+    final class Stats { // kotlin.native.runtime/HotReload.Stats|null[0]
+        constructor <init>(kotlin/Long, kotlin/Long, kotlin/String, kotlin/Int, kotlin/Boolean) // kotlin.native.runtime/HotReload.Stats.<init>|<init>(kotlin.Long;kotlin.Long;kotlin.String;kotlin.Int;kotlin.Boolean){}[0]
+
+        final val end // kotlin.native.runtime/HotReload.Stats.end|{}end[0]
+            final fun <get-end>(): kotlin/Long // kotlin.native.runtime/HotReload.Stats.end.<get-end>|<get-end>(){}[0]
+        final val loadedLibrary // kotlin.native.runtime/HotReload.Stats.loadedLibrary|{}loadedLibrary[0]
+            final fun <get-loadedLibrary>(): kotlin/String // kotlin.native.runtime/HotReload.Stats.loadedLibrary.<get-loadedLibrary>|<get-loadedLibrary>(){}[0]
+        final val reboundSymbols // kotlin.native.runtime/HotReload.Stats.reboundSymbols|{}reboundSymbols[0]
+            final fun <get-reboundSymbols>(): kotlin/Int // kotlin.native.runtime/HotReload.Stats.reboundSymbols.<get-reboundSymbols>|<get-reboundSymbols>(){}[0]
+        final val start // kotlin.native.runtime/HotReload.Stats.start|{}start[0]
+            final fun <get-start>(): kotlin/Long // kotlin.native.runtime/HotReload.Stats.start.<get-start>|<get-start>(){}[0]
+        final val successful // kotlin.native.runtime/HotReload.Stats.successful|{}successful[0]
+            final fun <get-successful>(): kotlin/Boolean // kotlin.native.runtime/HotReload.Stats.successful.<get-successful>|<get-successful>(){}[0]
+
+        final fun component1(): kotlin/Long // kotlin.native.runtime/HotReload.Stats.component1|component1(){}[0]
+        final fun component2(): kotlin/Long // kotlin.native.runtime/HotReload.Stats.component2|component2(){}[0]
+        final fun component3(): kotlin/String // kotlin.native.runtime/HotReload.Stats.component3|component3(){}[0]
+        final fun component4(): kotlin/Int // kotlin.native.runtime/HotReload.Stats.component4|component4(){}[0]
+        final fun component5(): kotlin/Boolean // kotlin.native.runtime/HotReload.Stats.component5|component5(){}[0]
+        final fun copy(kotlin/Long = ..., kotlin/Long = ..., kotlin/String = ..., kotlin/Int = ..., kotlin/Boolean = ...): kotlin.native.runtime/HotReload.Stats // kotlin.native.runtime/HotReload.Stats.copy|copy(kotlin.Long;kotlin.Long;kotlin.String;kotlin.Int;kotlin.Boolean){}[0]
+        final fun equals(kotlin/Any?): kotlin/Boolean // kotlin.native.runtime/HotReload.Stats.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // kotlin.native.runtime/HotReload.Stats.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // kotlin.native.runtime/HotReload.Stats.toString|toString(){}[0]
+    }
+}
+
+// Targets: [native]
 final object kotlin.native/Platform { // kotlin.native/Platform|null[0]
     final val canAccessUnaligned // kotlin.native/Platform.canAccessUnaligned|{}canAccessUnaligned[0]
         final fun <get-canAccessUnaligned>(): kotlin/Boolean // kotlin.native/Platform.canAccessUnaligned.<get-canAccessUnaligned>|<get-canAccessUnaligned>(){}[0]

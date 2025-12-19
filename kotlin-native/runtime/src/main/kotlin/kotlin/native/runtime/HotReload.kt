@@ -7,6 +7,7 @@ package kotlin.native.runtime
 
 import kotlin.native.internal.ExportForCppRuntime
 import kotlin.native.internal.GCUnsafeCall
+import kotlin.native.internal.InternalForKotlinNativeTests
 import kotlin.native.internal.escapeAnalysis.Escapes
 
 /**
@@ -19,26 +20,6 @@ internal fun invokeReloadSuccessHandler() {
     HotReload.registeredSuccessHandlers.forEach { it.invoke() }
 }
 
-/**
- * Captures telemetry and status information for a single hot-code reload event.
- *
- * @property start The timestamp (in milliseconds since Epoch) when the reload command was received.
- * @property end The timestamp (in milliseconds since Epoch) when the reload process finished.
- * @property loadedLibrary The absolute path or filename of the dynamic library loaded by the runtime.
- * @property reboundSymbols The total count of function symbols that were successfully rebound.
- * @property successful True if the reload command completed without errors, false otherwise.
- */
-public data class HotReloadStats(
-        val start: Long,
-        val end: Long,
-        val loadedLibrary: String,
-        val reboundSymbols: Int,
-        val successful: Boolean,
-)
-
-public val HotReloadStats.duration: Long
-    get() = end - start
-
 private class HotReloadStatsBuilder(
         var start: Long = 0,
         var end: Long = 0,
@@ -46,11 +27,11 @@ private class HotReloadStatsBuilder(
         var reboundSymbols: Int = 0,
         var successful: Boolean = false,
 ) {
-    fun build(): HotReloadStats {
-        return HotReloadStatsBuilder().let {
-            fill()
-            HotReloadStats(start, end, loadedLibrary, reboundSymbols, successful)
-        }
+
+    @OptIn(NativeRuntimeApi::class)
+    fun build(): HotReload.Stats {
+        fill()
+        return HotReload.Stats(start, end, loadedLibrary, reboundSymbols, successful)
     }
 
     @ExportForCppRuntime("Kotlin_native_internal_HotReload_HotReloadStatsBuilder_setStartEpoch")
@@ -64,7 +45,7 @@ private class HotReloadStatsBuilder(
     }
 
     @ExportForCppRuntime("Kotlin_native_internal_HotReload_HotReloadStatsBuilder_setLoadedLibrary")
-    private fun setStartEpoch(path: String) {
+    private fun setLoadedLibrary(path: String) {
         loadedLibrary = path
     }
 
@@ -92,6 +73,23 @@ public object HotReload {
      */
     public typealias ReloadSuccessHandler = () -> Unit
 
+    /**
+     * Captures telemetry and status information for a single hot-code reload event.
+     *
+     * @property start The timestamp (in milliseconds since Epoch) when the reload command was received.
+     * @property end The timestamp (in milliseconds since Epoch) when the reload process finished.
+     * @property loadedLibrary The absolute path or filename of the dynamic library loaded by the runtime.
+     * @property reboundSymbols The total count of function symbols that were successfully rebound.
+     * @property successful True if the reload command completed without errors, false otherwise.
+     */
+    public data class Stats(
+            val start: Long,
+            val end: Long,
+            val loadedLibrary: String,
+            val reboundSymbols: Int,
+            val successful: Boolean,
+    )
+
     internal val registeredSuccessHandlers: LinkedHashSet<ReloadSuccessHandler> = LinkedHashSet()
 
     /**
@@ -117,7 +115,8 @@ public object HotReload {
     /**
      * Collect statistics about the latest hot-code reload event.
      */
-    public fun collectLatestStats(): HotReloadStats = HotReloadStatsBuilder().build()
+    @InternalForKotlinNativeTests
+    public fun collectLatestStats(): Stats = HotReloadStatsBuilder().build()
 
     /**
      * Perform hot-code reload in a stop-the-world fashion if there is an upcoming reloading request.
@@ -125,5 +124,6 @@ public object HotReload {
      */
     @GCUnsafeCall("Kotlin_native_internal_HotReload_perform")
     @Escapes.Nothing
+    @InternalForKotlinNativeTests
     public external fun perform(dylibPath: String)
 }
