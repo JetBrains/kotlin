@@ -41,6 +41,6 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: kotlin.collections.List
   canBeOperator: false
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
-  deprecationStatus: null
+  deprecationStatus: DeprecationInfo(deprecationLevel=HIDDEN, propagatesToOverrides=true, message=null)
   returnValueStatus: Unspecified
   importableFqName: null
