@@ -194,10 +194,10 @@ fun computeKotlinPaths(messageCollector: MessageCollector, arguments: CommonComp
 fun MessageCollector.reportArgumentParseProblems(arguments: CommonToolArguments) {
     for ((key, values) in arguments.explicitArguments) {
         if (values.size > 1) {
-            report(
-                CompilerMessageSeverity.STRONG_WARNING,
-                "Argument '${key.argument.value}' is passed multiple times. Only the last value will be used: '${values.last()}'."
-            )
+            val argName = key.argument.value
+            val valuesString = values.joinToString("', '")
+            val message = "Argument '$argName' is passed multiple times: '$valuesString'. The last value will be used."
+            report(CompilerMessageSeverity.STRONG_WARNING, message)
         }
     }
 
