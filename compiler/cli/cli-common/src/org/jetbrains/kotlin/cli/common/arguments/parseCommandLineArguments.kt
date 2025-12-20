@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.utils.SmartList
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.lang.reflect.Constructor
 import java.lang.reflect.Method
 import java.util.concurrent.ConcurrentHashMap
@@ -87,10 +88,6 @@ data class ArgumentParseErrors(
 
     // Names of extra (-X...) arguments which have been passed in an obsolete form ("-Xaaa bbb", instead of "-Xaaa=bbb")
     val extraArgumentsPassedInObsoleteForm: MutableList<String> = SmartList(),
-
-    // Non-overridable arguments which have been passed multiple times, possibly with different values.
-    // The key in the map is the name of the argument, the value is the last passed value.
-    val duplicateArguments: MutableMap<Argument, Any> = mutableMapOf(),
 
     // Arguments where [Argument.deprecatedName] was used; the key is the deprecated name, the value is the new name ([Argument.value])
     val deprecatedArguments: MutableMap<String, String> = mutableMapOf(),
@@ -193,12 +190,11 @@ private fun <A : CommonToolArguments> parsePreprocessedCommandLineArguments(
 ) {
     val properties = getArgumentsInfo(result::class.java).cliArgNameToArguments
 
-    val visitedArgs = mutableSetOf<String>()
     var freeArgsStarted = false
 
     val freeArgs = ArrayList<String>()
 
-    val explicitArgs = mutableListOf<ArgumentField>()
+    val explicitArgs = mutableMapOf<ArgumentField, MutableList<Any>>()
 
     var i = 0
     loop@ while (i < args.size) {
@@ -296,14 +292,34 @@ private fun <A : CommonToolArguments> parsePreprocessedCommandLineArguments(
             }
         }
 
-        // Overriding is relevant only for array types
-        if ((!getter.returnType.isArray || overrideArguments) && !visitedArgs.add(argument.value)) {
-            errors.value.duplicateArguments[argument] = value
+        val existingValues = explicitArgs.getOrPut(argumentField) { mutableListOf() }
+
+        val newValue = when (getter.returnType.kotlin) {
+            Boolean::class, String::class -> value.also { existingValues.add(it) }
+            Array<String>::class -> {
+                val resolvedDelimiter = argument.resolvedDelimiter
+                val valueString = value as String
+
+                val newElements: List<String> = if (resolvedDelimiter.isNullOrEmpty()) {
+                    listOf(valueString)
+                } else {
+                    valueString.split(resolvedDelimiter)
+                }
+
+                val oldValue: MutableList<String>? = if (!overrideArguments) {
+                    existingValues.firstIsInstanceOrNull<MutableList<String>>()
+                } else {
+                    null
+                }
+
+                val resultElements: MutableList<String> = oldValue?.also { it.addAll(newElements) }
+                    ?: newElements.toMutableList().also { existingValues.add(it) }
+
+                resultElements.toTypedArray()
+            }
+            else -> throw IllegalStateException("Unexpected argument type: ${getter.returnType}")
         }
-
-        updateField(getter, setter, result, value, argument.resolvedDelimiter, overrideArguments)
-
-        explicitArgs.add(argumentField)
+        setter(result, newValue)
     }
 
     result.freeArgs += freeArgs
@@ -333,31 +349,6 @@ private fun <A : CommonToolArguments> A.updateInternalArguments(
     } else internalArguments
 
     internalArguments = filteredExistingArguments + newInternalArguments
-}
-
-private fun <A : CommonToolArguments> updateField(
-    getter: Method,
-    setter: Method,
-    result: A,
-    value: Any,
-    delimiter: String?,
-    overrideArguments: Boolean
-) {
-    when (getter.returnType.kotlin) {
-        Boolean::class, String::class -> setter(result, value)
-        Array<String>::class -> {
-            val newElements = if (delimiter.isNullOrEmpty()) {
-                arrayOf(value as String)
-            } else {
-                (value as String).split(delimiter).toTypedArray()
-            }
-
-            @Suppress("UNCHECKED_CAST")
-            val oldValue = getter(result) as Array<String>?
-            setter(result, if (oldValue != null && !overrideArguments) arrayOf(*oldValue, *newElements) else newElements)
-        }
-        else -> throw IllegalStateException("Unsupported argument type: ${getter.returnType}")
-    }
 }
 
 /**

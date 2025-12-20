@@ -464,7 +464,7 @@ private fun SmartPrinter.generateFreeArgsAndErrors() {
     println("var errors: ArgumentParseErrors? = null")
     println()
     println("@Transient")
-    println("var explicitArguments: List<ArgumentField> = emptyList()")
+    println("var explicitArguments: Map<ArgumentField, List<Any>> = emptyMap()")
     println()
 }
 

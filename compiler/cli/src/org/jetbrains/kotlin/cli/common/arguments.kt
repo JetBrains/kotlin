@@ -125,7 +125,7 @@ private fun CompilerConfiguration.checkRedundantArguments(arguments: CommonCompi
     val languageVersion = languageVersionSettings.languageVersion
     val argumentsInfo = getArgumentsInfo(arguments::class.java)
 
-    propertiesLoop@ for (explicitArgument in arguments.explicitArguments) {
+    propertiesLoop@ for ((explicitArgument, _) in arguments.explicitArguments) {
         val propertyValue = explicitArgument.getter.invoke(arguments)
 
         if (!explicitArgument.changesLanguageFeatures) {
@@ -188,6 +188,15 @@ fun computeKotlinPaths(messageCollector: MessageCollector, arguments: CommonComp
 }
 
 fun MessageCollector.reportArgumentParseProblems(arguments: CommonToolArguments) {
+    for ((key, values) in arguments.explicitArguments) {
+        if (values.size > 1) {
+            report(
+                CompilerMessageSeverity.STRONG_WARNING,
+                "Argument ${key.argument.value} is passed multiple times. Only the last value will be used: ${values.last()}"
+            )
+        }
+    }
+
     val errors = arguments.errors ?: return
     for (flag in errors.unknownExtraFlags) {
         report(CompilerMessageSeverity.STRONG_WARNING, "Flag is not supported by this version of the compiler: $flag")
@@ -197,9 +206,6 @@ fun MessageCollector.reportArgumentParseProblems(arguments: CommonToolArguments)
             CompilerMessageSeverity.STRONG_WARNING,
             "Advanced option value is passed in an obsolete form. Please use the '=' character to specify the value: $argument=..."
         )
-    }
-    for ((key, value) in errors.duplicateArguments) {
-        report(CompilerMessageSeverity.STRONG_WARNING, "Argument ${key.value} is passed multiple times. Only the last value will be used: ${value}")
     }
     for ((deprecatedName, newName) in errors.deprecatedArguments) {
         report(CompilerMessageSeverity.STRONG_WARNING, "Argument $deprecatedName is deprecated. Please use $newName instead")
