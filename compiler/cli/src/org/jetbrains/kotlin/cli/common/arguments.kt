@@ -199,7 +199,7 @@ fun MessageCollector.reportArgumentParseProblems(arguments: CommonToolArguments)
         )
     }
     for ((key, value) in errors.duplicateArguments) {
-        report(CompilerMessageSeverity.STRONG_WARNING, "Argument $key is passed multiple times. Only the last value will be used: $value")
+        report(CompilerMessageSeverity.STRONG_WARNING, "Argument ${key.value} is passed multiple times. Only the last value will be used: ${value}")
     }
     for ((deprecatedName, newName) in errors.deprecatedArguments) {
         report(CompilerMessageSeverity.STRONG_WARNING, "Argument $deprecatedName is deprecated. Please use $newName instead")

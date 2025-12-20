@@ -88,9 +88,9 @@ data class ArgumentParseErrors(
     // Names of extra (-X...) arguments which have been passed in an obsolete form ("-Xaaa bbb", instead of "-Xaaa=bbb")
     val extraArgumentsPassedInObsoleteForm: MutableList<String> = SmartList(),
 
-    // Non-boolean arguments which have been passed multiple times, possibly with different values.
+    // Non-overridable arguments which have been passed multiple times, possibly with different values.
     // The key in the map is the name of the argument, the value is the last passed value.
-    val duplicateArguments: MutableMap<String, String> = mutableMapOf(),
+    val duplicateArguments: MutableMap<Argument, Any> = mutableMapOf(),
 
     // Arguments where [Argument.deprecatedName] was used; the key is the deprecated name, the value is the new name ([Argument.value])
     val deprecatedArguments: MutableMap<String, String> = mutableMapOf(),
@@ -296,9 +296,9 @@ private fun <A : CommonToolArguments> parsePreprocessedCommandLineArguments(
             }
         }
 
-        if (!getter.returnType.isArray && !visitedArgs.add(argument.value) && value is String && getter(result) != value
-        ) {
-            errors.value.duplicateArguments[argument.value] = value
+        // Overriding is relevant only for array types
+        if ((!getter.returnType.isArray || overrideArguments) && !visitedArgs.add(argument.value)) {
+            errors.value.duplicateArguments[argument] = value
         }
 
         updateField(getter, setter, result, value, argument.resolvedDelimiter, overrideArguments)
