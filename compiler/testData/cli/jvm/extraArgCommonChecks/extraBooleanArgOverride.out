@@ -1,2 +1,2 @@
-warning: argument -Xallow-kotlin-package is passed multiple times. Only the last value will be used: true
+warning: argument '-Xallow-kotlin-package' is passed multiple times. Only the last value will be used: 'true'.
 OK
