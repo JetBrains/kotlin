@@ -2270,6 +2270,11 @@ public class CliTestGenerated extends AbstractCliTest {
       runTest("compiler/testData/cli/metadata/cliArgsNotRedundant.args");
     }
 
+    @TestMetadata("cliArgsNotRedundantWhenOverriding.args")
+    public void testCliArgsNotRedundantWhenOverriding() {
+      runTest("compiler/testData/cli/metadata/cliArgsNotRedundantWhenOverriding.args");
+    }
+
     @TestMetadata("cliArgsRedundant.args")
     public void testCliArgsRedundant() {
       runTest("compiler/testData/cli/metadata/cliArgsRedundant.args");
