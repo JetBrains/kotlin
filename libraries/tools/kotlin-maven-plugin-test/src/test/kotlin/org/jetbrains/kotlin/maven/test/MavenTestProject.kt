@@ -144,6 +144,7 @@ abstract class KotlinMavenTestBase {
     @EnabledOnOs(OS.WINDOWS)
     fun cleanup() {
         // to prevent problems on Windows
+        @OptIn(kotlin.io.path.ExperimentalPathApi::class)
         tmpDir.deleteRecursively()
     }
 
