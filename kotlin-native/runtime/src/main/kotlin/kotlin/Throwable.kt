@@ -32,7 +32,9 @@ public open class Throwable(public open val message: String?, public open val ca
     public constructor() : this(null, null)
 
     @get:ExportForCppRuntime("Kotlin_Throwable_getStackTrace")
-    private val stackTrace: NativePtrArray = getCurrentStackTrace()
+    private val stackTrace: NativePtrArray by lazy {
+        getCurrentStackTrace()
+    }
 
     private val stackTraceStrings: Array<String> by lazy {
         getStackTraceStrings(stackTrace).freeze()
