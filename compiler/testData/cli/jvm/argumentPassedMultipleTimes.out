@@ -1,2 +1,5 @@
+warning: argument -classpath is passed multiple times. Only the last value will be used: $TESTDATA_DIR$
+warning: argument -java-parameters is passed multiple times. Only the last value will be used: true
+warning: argument -Xno-inline is passed multiple times. Only the last value will be used: true
 warning: argument -module-name is passed multiple times. Only the last value will be used: bbb
 OK
