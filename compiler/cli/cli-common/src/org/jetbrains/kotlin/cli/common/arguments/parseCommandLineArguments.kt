@@ -226,7 +226,8 @@ private fun <A : CommonToolArguments> parsePreprocessedCommandLineArguments(
             continue
         }
 
-        val (getter, setter, argument, enablesAnnotations, disablesAnnotations) = argumentField
+        val argument = argumentField.argument
+        val getterReturnType = argumentField.getter.returnType.kotlin
 
         // Tests for -shortName=value, which isn't currently allowed.
         if (key != arg && key == argument.shortName) {
@@ -245,81 +246,49 @@ private fun <A : CommonToolArguments> parsePreprocessedCommandLineArguments(
         }
 
         if (argument.value == arg) {
-            if (argument.isAdvanced && getter.returnType.kotlin != Boolean::class) {
+            if (argument.isAdvanced && getterReturnType != Boolean::class) {
                 errors.value.extraArgumentsPassedInObsoleteForm.add(arg)
             }
         }
 
-        val value: Any = when {
-            getter.returnType.kotlin == Boolean::class -> {
-                val changesLangFeatures = argumentField.changesLanguageFeatures
-                if (arg.startsWith(argument.value + delimiter)) {
-                    when (arg.substring(argument.value.length + 1)) {
-                        "true" -> true
-                        "false" -> false
-                        else -> true.also {
-                            if (!changesLangFeatures) {
-                                errors.value.booleanArgumentsWithIncorrectValue.add(arg)
-                            }
-                        }
-                    }.also {
-                        if (changesLangFeatures) {
-                            errors.value.booleanLangFeatureArgumentsWithValue.add(arg)
+        val existingValues by lazy(LazyThreadSafetyMode.NONE) { explicitArgs.getOrPut(argumentField) { mutableListOf() } }
+
+        val newValue: Any = if (getterReturnType == Boolean::class) {
+            parseBooleanValue(arg, argumentField, delimiter, errors).also { existingValues.add(it) }
+        } else {
+            val argument = argumentField.argument
+            val stringValue: String = when {
+                arg.startsWith(argument.value + delimiter) -> {
+                    val legalValues = buildSet {
+                        argumentField.enablesAnnotations.forEach { add(it.ifValueIs) }
+                        argumentField.disablesAnnotations.forEach { add(it.ifValueIs) }
+                    }
+                    arg.substring(argument.value.length + 1).also {
+                        if (legalValues.isNotEmpty() && !legalValues.contains(it)) {
+                            errors.value.stringLangFeatureArgumentsWithIncorrectValue.add(arg to legalValues)
                         }
                     }
-                } else true
-            }
-            arg.startsWith(argument.value + delimiter) -> {
-                val legalValues = buildSet {
-                    enablesAnnotations.forEach { add(it.ifValueIs) }
-                    disablesAnnotations.forEach { add(it.ifValueIs) }
                 }
-                arg.substring(argument.value.length + 1).also {
-                    if (legalValues.isNotEmpty() && !legalValues.contains(it)) {
-                        errors.value.stringLangFeatureArgumentsWithIncorrectValue.add(arg to legalValues)
-                    }
+                arg.startsWith(argument.deprecatedName + delimiter) -> {
+                    arg.substring(argument.deprecatedName.length + 1)
+                }
+                i == args.size -> {
+                    errors.value.argumentsWithoutValue.add(arg)
+                    break@loop
+                }
+                else -> {
+                    args[i++]
                 }
             }
-            arg.startsWith(argument.deprecatedName + delimiter) -> {
-                arg.substring(argument.deprecatedName.length + 1)
-            }
-            i == args.size -> {
-                errors.value.argumentsWithoutValue.add(arg)
-                break@loop
-            }
-            else -> {
-                args[i++]
+
+            when (getterReturnType) {
+                String::class -> stringValue.also { existingValues.add(it) }
+                Array<String>::class -> convertArrayOfStrings(argument, stringValue, overrideArguments, existingValues)
+                else -> error("Unexpected argument type: $getterReturnType")
             }
         }
 
-        val existingValues = explicitArgs.getOrPut(argumentField) { mutableListOf() }
-
-        val newValue = when (getter.returnType.kotlin) {
-            Boolean::class, String::class -> value.also { existingValues.add(it) }
-            Array<String>::class -> {
-                val resolvedDelimiter = argument.resolvedDelimiter
-                val valueString = value as String
-
-                val newElements: List<String> = if (resolvedDelimiter.isNullOrEmpty()) {
-                    listOf(valueString)
-                } else {
-                    valueString.split(resolvedDelimiter)
-                }
-
-                val oldValue: MutableList<String>? = if (!overrideArguments) {
-                    existingValues.firstIsInstanceOrNull<MutableList<String>>()
-                } else {
-                    null
-                }
-
-                val resultElements: MutableList<String> = oldValue?.also { it.addAll(newElements) }
-                    ?: newElements.toMutableList().also { existingValues.add(it) }
-
-                resultElements.toTypedArray()
-            }
-            else -> throw IllegalStateException("Unexpected argument type: ${getter.returnType}")
-        }
-        setter(result, newValue)
+        argumentField.setter(result, newValue)
     }
 
     result.freeArgs += freeArgs
@@ -336,6 +305,59 @@ private fun <A : CommonToolArguments> parsePreprocessedCommandLineArguments(
         }
         result.updateInternalArguments(internalArguments, overrideArguments)
     }
+}
+
+private fun parseBooleanValue(
+    arg: String,
+    argumentField: ArgumentField,
+    delimiter: Char,
+    errors: Lazy<ArgumentParseErrors>,
+): Boolean {
+    val argumentValue = argumentField.argument.value
+    return if (arg.startsWith(argumentValue + delimiter)) {
+        val changesLangFeatures = argumentField.changesLanguageFeatures
+        when (arg.substring(argumentValue.length + 1)) {
+            "true" -> true
+            "false" -> false
+            else -> true.also {
+                if (!changesLangFeatures) {
+                    errors.value.booleanArgumentsWithIncorrectValue.add(arg)
+                }
+            }
+        }.also {
+            if (changesLangFeatures) {
+                errors.value.booleanLangFeatureArgumentsWithValue.add(arg)
+            }
+        }
+    } else {
+        true
+    }
+}
+
+private fun convertArrayOfStrings(
+    argument: Argument,
+    stringValue: String,
+    overrideArguments: Boolean,
+    existingValues: MutableList<Any>,
+): Array<String> {
+    val resolvedDelimiter = argument.resolvedDelimiter
+
+    val newElements: List<String> = if (resolvedDelimiter.isNullOrEmpty()) {
+        listOf(stringValue)
+    } else {
+        stringValue.split(resolvedDelimiter)
+    }
+
+    val oldValue: MutableList<String>? = if (!overrideArguments) {
+        existingValues.firstIsInstanceOrNull<MutableList<String>>()
+    } else {
+        null
+    }
+
+    val resultElements: MutableList<String> = oldValue?.also { it.addAll(newElements) }
+        ?: newElements.toMutableList().also { existingValues.add(it) }
+
+    return resultElements.toTypedArray()
 }
 
 private fun <A : CommonToolArguments> A.updateInternalArguments(
