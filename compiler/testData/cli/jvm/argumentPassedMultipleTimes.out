@@ -1,5 +1,5 @@
-warning: argument '-classpath' is passed multiple times. Only the last value will be used: '$TESTDATA_DIR$'.
-warning: argument '-java-parameters' is passed multiple times. Only the last value will be used: 'true'.
-warning: argument '-Xno-inline' is passed multiple times. Only the last value will be used: 'true'.
-warning: argument '-module-name' is passed multiple times. Only the last value will be used: 'bbb'.
+warning: argument '-classpath' is passed multiple times: '$TESTDATA_DIR$', '$TESTDATA_DIR$'. The last value will be used.
+warning: argument '-java-parameters' is passed multiple times: 'true', 'true', 'true'. The last value will be used.
+warning: argument '-Xno-inline' is passed multiple times: 'true', 'true'. The last value will be used.
+warning: argument '-module-name' is passed multiple times: 'aaa', 'bbb'. The last value will be used.
 OK
