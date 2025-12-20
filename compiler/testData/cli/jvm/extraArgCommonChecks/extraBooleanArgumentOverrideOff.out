@@ -1,3 +1,4 @@
+warning: argument -Xallow-kotlin-package is passed multiple times. Only the last value will be used: false
 compiler/testData/cli/jvm/extraArgCommonChecks/extraBooleanArgumentEqualsFalse.kt:1:1: error: only the Kotlin standard library is allowed to use the 'kotlin' package
 package kotlin
 ^^^^^^^^^^^^^^
