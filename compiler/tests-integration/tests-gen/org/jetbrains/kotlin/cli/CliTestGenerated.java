@@ -597,9 +597,14 @@ public class CliTestGenerated extends AbstractCliTest {
       runTest("compiler/testData/cli/jvm/extraArgCommonChecks/extraArgumentPassedInObsoleteForm.args");
     }
 
-    @TestMetadata("extraBooleanArgOverrideOn.args")
-    public void testExtraBooleanArgOverrideOn() {
-      runTest("compiler/testData/cli/jvm/extraArgCommonChecks/extraBooleanArgOverrideOn.args");
+    @TestMetadata("extraBooleanArgOverride.args")
+    public void testExtraBooleanArgOverride() {
+      runTest("compiler/testData/cli/jvm/extraArgCommonChecks/extraBooleanArgOverride.args");
+    }
+
+    @TestMetadata("extraBooleanArgOverrideReversed.args")
+    public void testExtraBooleanArgOverrideReversed() {
+      runTest("compiler/testData/cli/jvm/extraArgCommonChecks/extraBooleanArgOverrideReversed.args");
     }
 
     @TestMetadata("extraBooleanArgumentEqualsFalse.args")
@@ -615,11 +620,6 @@ public class CliTestGenerated extends AbstractCliTest {
     @TestMetadata("extraBooleanArgumentEqualsTrue.args")
     public void testExtraBooleanArgumentEqualsTrue() {
       runTest("compiler/testData/cli/jvm/extraArgCommonChecks/extraBooleanArgumentEqualsTrue.args");
-    }
-
-    @TestMetadata("extraBooleanArgumentOverrideOff.args")
-    public void testExtraBooleanArgumentOverrideOff() {
-      runTest("compiler/testData/cli/jvm/extraArgCommonChecks/extraBooleanArgumentOverrideOff.args");
     }
 
     @TestMetadata("unknownExtraFlags.args")
