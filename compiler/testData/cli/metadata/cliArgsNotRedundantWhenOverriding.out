@@ -1,4 +1,4 @@
-warning: argument -Xuse-fir-lt is passed multiple times. Only the last value will be used: true
-warning: argument -kotlin-home is passed multiple times. Only the last value will be used:
-warning: argument -Xannotation-default-target is passed multiple times. Only the last value will be used: first-only-warn
+warning: argument '-Xuse-fir-lt' is passed multiple times. Only the last value will be used: 'true'.
+warning: argument '-kotlin-home' is passed multiple times. Only the last value will be used: ''.
+warning: argument '-Xannotation-default-target' is passed multiple times. Only the last value will be used: 'first-only-warn'.
 OK

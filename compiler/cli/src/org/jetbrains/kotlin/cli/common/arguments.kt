@@ -196,7 +196,7 @@ fun MessageCollector.reportArgumentParseProblems(arguments: CommonToolArguments)
         if (values.size > 1) {
             report(
                 CompilerMessageSeverity.STRONG_WARNING,
-                "Argument ${key.argument.value} is passed multiple times. Only the last value will be used: ${values.last()}"
+                "Argument '${key.argument.value}' is passed multiple times. Only the last value will be used: '${values.last()}'."
             )
         }
     }
