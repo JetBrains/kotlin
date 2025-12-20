@@ -125,43 +125,47 @@ private fun CompilerConfiguration.checkRedundantArguments(arguments: CommonCompi
     val languageVersion = languageVersionSettings.languageVersion
     val argumentsInfo = getArgumentsInfo(arguments::class.java)
 
-    propertiesLoop@ for ((explicitArgument, _) in arguments.explicitArguments) {
-        val propertyValue = explicitArgument.getter.invoke(arguments)
-
+    propertiesLoop@ for ((explicitArgument, values) in arguments.explicitArguments) {
         if (!explicitArgument.changesLanguageFeatures) {
-            if (propertyValue == argumentsInfo.getDefaultValue(explicitArgument)) {
+            val defaultValue = argumentsInfo.getDefaultValue(explicitArgument)
+            val actualPropertyValue = values.last()
+            if (actualPropertyValue == defaultValue && values.dropLast(1).all { it == defaultValue }) {
                 reportDiagnostic(
                     CliDiagnostics.REDUNDANT_CLI_ARG,
-                    "The argument '${explicitArgument.argument.value}=${propertyValue ?: ""}' is redundant.",
+                    "The argument '${explicitArgument.argument.value}=${actualPropertyValue ?: ""}' is redundant.",
                 )
             }
-            continue
+            continue@propertiesLoop
         }
 
-        fun checkNecessity(feature: LanguageFeature, ifValueIs: String, state: LanguageFeature.State): Boolean {
-            // At first, check if the annotation is relevant. Only Boolean and String types are allowed
-            when {
-                // Language features can't be disabled, so it's expected if the value is changed, it's always `true`
-                ifValueIs.isEmpty() -> require(propertyValue as Boolean)
-                else -> if (propertyValue as String != ifValueIs) return false
+        for (actualPropertyValue in values) {
+            fun checkNecessity(feature: LanguageFeature, ifValueIs: String, state: LanguageFeature.State): Boolean {
+                // At first, check if the annotation is relevant. Only Boolean and String types are allowed
+                when {
+                    // Language features can't be disabled, so it's expected if the value is changed, it's always `true`
+                    ifValueIs.isEmpty() -> require(actualPropertyValue as Boolean)
+                    else -> if (actualPropertyValue as String != ifValueIs) return false
+                }
+
+                // At second check the necessity
+                return (state == LanguageFeature.State.ENABLED) != languageVersionSettings.isEnabledByDefault(feature)
             }
 
-            // At second check the necessity
-            return (state == LanguageFeature.State.ENABLED) != languageVersionSettings.isEnabledByDefault(feature)
-        }
+            explicitArgument.enablesAnnotations.forEach {
+                if (checkNecessity(it.feature, it.ifValueIs, LanguageFeature.State.ENABLED)) continue@propertiesLoop
+            }
+            explicitArgument.disablesAnnotations.forEach {
+                if (checkNecessity(it.feature, it.ifValueIs, LanguageFeature.State.DISABLED)) continue@propertiesLoop
+            }
 
-        explicitArgument.enablesAnnotations.forEach {
-            if (checkNecessity(it.feature, it.ifValueIs, LanguageFeature.State.ENABLED)) continue@propertiesLoop
-        }
-        explicitArgument.disablesAnnotations.forEach {
-            if (checkNecessity(it.feature, it.ifValueIs, LanguageFeature.State.DISABLED)) continue@propertiesLoop
-        }
+            val argValue = if (actualPropertyValue is String) "=$actualPropertyValue" else ""
+            reportDiagnostic(
+                CliDiagnostics.REDUNDANT_CLI_ARG,
+                "The argument '${explicitArgument.argument.value}${argValue}' is redundant for the current language version $languageVersion.",
+            )
 
-        val argValue = if (propertyValue is String) "=$propertyValue" else ""
-        reportDiagnostic(
-            CliDiagnostics.REDUNDANT_CLI_ARG,
-            "The argument '${explicitArgument.argument.value}${argValue}' is redundant for the current language version $languageVersion.",
-        )
+            continue@propertiesLoop
+        }
     }
 }
 
