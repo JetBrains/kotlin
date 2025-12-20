@@ -10,9 +10,12 @@ import groovy.lang.Binding
 import groovy.util.GroovyScriptEngine
 import org.apache.maven.shared.verifier.Verifier
 import org.jetbrains.kotlin.maven.test.checkOrWriteKotlinMavenTestSettingsXml
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.TestInstance
+import org.junit.jupiter.api.condition.EnabledOnOs
+import org.junit.jupiter.api.condition.OS
 import org.junit.jupiter.api.io.TempDir
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -123,7 +126,7 @@ data class MavenBuildOptions(
     val javaVersion: String = "17",
 )
 
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@TestInstance(TestInstance.Lifecycle.PER_METHOD)
 abstract class KotlinMavenTestBase {
 
     @TempDir
@@ -135,6 +138,13 @@ abstract class KotlinMavenTestBase {
     @BeforeEach
     fun setup() {
         context = createMavenTestExecutionContextFromEnvironment(tmpDir)
+    }
+
+    @AfterEach
+    @EnabledOnOs(OS.WINDOWS)
+    fun cleanup() {
+        // to prevent problems on Windows
+        tmpDir.deleteRecursively()
     }
 
     fun testProject(
