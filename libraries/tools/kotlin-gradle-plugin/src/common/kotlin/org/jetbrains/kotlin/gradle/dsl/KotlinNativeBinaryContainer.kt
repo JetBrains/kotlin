@@ -27,8 +27,7 @@ abstract class KotlinNativeBinaryContainer @Inject constructor(
     override val target: KotlinNativeTarget,
     backingContainer: DomainObjectSet<NativeBinary>
 ) : AbstractKotlinNativeBinaryContainer(),
-    DomainObjectSet<NativeBinary> by backingContainer
-{
+    DomainObjectSet<NativeBinary> by backingContainer {
     final override val project: Project
         get() = target.project
 
@@ -39,7 +38,7 @@ abstract class KotlinNativeBinaryContainer @Inject constructor(
         get() = target.compilations.getByName(KotlinCompilation.TEST_COMPILATION_NAME)
 
     private val nameToBinary = mutableMapOf<String, NativeBinary>()
-    internal val prefixGroups: NamedDomainObjectSet<PrefixGroup> = project.container(PrefixGroup::class.java)
+    internal val prefixGroups: NamedDomainObjectSet<PrefixGroup> = project.objects.namedDomainObjectSet(PrefixGroup::class.java)
 
     // region DSL getters.
     private inline fun <reified T : NativeBinary> getBinary(
@@ -146,7 +145,7 @@ abstract class KotlinNativeBinaryContainer @Inject constructor(
     }
 
     companion object {
-       internal fun generateBinaryName(prefix: String, buildType: NativeBuildType, outputKindClassifier: String) =
+        internal fun generateBinaryName(prefix: String, buildType: NativeBuildType, outputKindClassifier: String) =
             lowerCamelCaseName(prefix, buildType.getName(), outputKindClassifier)
 
         internal fun extractPrefixFromBinaryName(name: String, buildType: NativeBuildType, outputKindClassifier: String): String {
@@ -159,7 +158,7 @@ abstract class KotlinNativeBinaryContainer @Inject constructor(
     }
     // endregion.
 
-    internal inner class PrefixGroup(
+    internal inner class PrefixGroup @Inject constructor(
         private val name: String
     ) : Named {
         override fun getName(): String = name

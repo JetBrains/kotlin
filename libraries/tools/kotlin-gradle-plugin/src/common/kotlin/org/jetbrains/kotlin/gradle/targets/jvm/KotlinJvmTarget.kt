@@ -22,12 +22,10 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptionsDefault
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage.*
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTarget
-import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.publication.KmpPublicationStrategy
 import org.jetbrains.kotlin.gradle.targets.jvm.tasks.KotlinJvmRunDsl
 import org.jetbrains.kotlin.gradle.targets.jvm.tasks.KotlinJvmRunDslImpl
 import org.jetbrains.kotlin.gradle.targets.jvm.tasks.registerMainRunTask
@@ -50,7 +48,7 @@ abstract class KotlinJvmTarget @Inject constructor(
     KotlinTargetWithTests<JvmClasspathTestRunSource, KotlinJvmTestRun> {
 
     override val testRuns: NamedDomainObjectContainer<KotlinJvmTestRun> by lazy {
-        project.container(KotlinJvmTestRun::class.java, KotlinJvmTestRunFactory(this))
+        project.objects.domainObjectContainer(KotlinJvmTestRun::class.java, KotlinJvmTestRunFactory(this))
     }
 
     internal val mainRun: Future<KotlinJvmRunDslImpl?> = project.future { registerMainRunTask() }

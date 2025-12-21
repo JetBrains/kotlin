@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinAnyOptionsDeprecated
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.DecoratedKotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationImpl
+import javax.inject.Inject
 
 /**
  * Similar to [DecoratedExternalKotlinTarget]:
@@ -21,7 +22,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationI
  * [DecoratedExternalKotlinTarget.createCompilation] functions and providing a [ExternalKotlinCompilationDescriptor.compilationFactory]
  */
 @ExternalKotlinTargetApi
-abstract class DecoratedExternalKotlinCompilation(delegate: Delegate) :
+abstract class DecoratedExternalKotlinCompilation @Inject constructor(delegate: Delegate) :
     DecoratedKotlinCompilation<KotlinAnyOptionsDeprecated>(delegate.compilation) {
     open class Delegate internal constructor(internal open val compilation: KotlinCompilationImpl)
 }
