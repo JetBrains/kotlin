@@ -18,6 +18,12 @@ open class KonanIrFileSerializer(
     settings: IrSerializationSettings,
     declarationTable: KonanDeclarationTable,
 ) : IrFileSerializer(settings, declarationTable) {
+    private val fakeOverrideClassFilter =
+        if (settings.abiCompatibilityLevel.isAtLeast(KlibAbiCompatibilityLevel.ABI_LEVEL_2_4)) {
+            K1LazyFakeOverrideClassFilter
+        } else {
+            KonanFakeOverrideClassFilter
+        }
 
     override fun backendSpecificExplicitRoot(node: IrAnnotationContainer): Boolean {
         val classId = when (node) {
@@ -29,12 +35,6 @@ open class KonanIrFileSerializer(
         return node.hasAnnotation(classId)
     }
 
-    override fun backendSpecificSerializeAllMembers(irClass: IrClass): Boolean {
-        val filter = if (settings.abiCompatibilityLevel.isAtLeast(KlibAbiCompatibilityLevel.ABI_LEVEL_2_4)) {
-            K1LazyFakeOverrideClassFilter
-        } else {
-            KonanFakeOverrideClassFilter
-        }
-        return !filter.needToConstructFakeOverrides(irClass)
-    }
+    override fun backendSpecificSerializeAllMembers(irClass: IrClass): Boolean =
+        !fakeOverrideClassFilter.needToConstructFakeOverrides(irClass)
 }
