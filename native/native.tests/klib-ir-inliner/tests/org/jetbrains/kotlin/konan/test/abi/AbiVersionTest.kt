@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEquals
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.junit.jupiter.api.Test
+import kotlin.test.assertContains
 
 class AbiVersionTest {
     @Test
@@ -37,7 +38,9 @@ class AbiVersionTest {
         val representedInAbiCompatibilityLevel: List<KotlinAbiVersion> =
             KlibAbiCompatibilityLevel.entries.map { it.toAbiVersionForManifest() }
 
-        assertEquals(coveredAbiVersions, representedInAbiCompatibilityLevel)
+        for (abiVersion in coveredAbiVersions) {
+            assertContains(representedInAbiCompatibilityLevel, abiVersion)
+        }
     }
 
     @Test
@@ -49,11 +52,6 @@ class AbiVersionTest {
         }
 
         assertEquals(expected, actual)
-    }
-
-    @Test
-    fun `KlibAbiCompatibilityLevel_LATEST_STABLE is the last entry in enum`() {
-        assertEquals(KlibAbiCompatibilityLevel.entries.last(), KlibAbiCompatibilityLevel.LATEST_STABLE)
     }
 
     companion object {

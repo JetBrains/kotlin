@@ -543,7 +543,9 @@ private fun checkKlibAbiCompatibilityLevel(cinteropArguments: CInteropArguments)
             // No specific restrictions for now.
         }
         KlibAbiCompatibilityLevel.ABI_LEVEL_2_4 -> {
-            // No specific restrictions for now.
+            check(KlibAbiCompatibilityLevel.LATEST_STABLE.isAtLeast(klibAbiCompatibilityLevel)) {
+                "Option $KLIB_ABI_COMPATIBILITY_LEVEL is expected to be not higher than the latest stable: ${KlibAbiCompatibilityLevel.LATEST_STABLE}. $klibAbiCompatibilityLevel is provided."
+            }
         }
     }
 }
