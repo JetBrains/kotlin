@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.serialization.metadata.DynamicTypeDeserializer
 import org.jetbrains.kotlin.backend.konan.KonanCompilationException
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
-import org.jetbrains.kotlin.backend.konan.ir.BaseKonanSymbols
+import org.jetbrains.kotlin.backend.common.ir.PreSerializationNativeSymbols
 import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerIr
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
@@ -149,6 +149,6 @@ fun PhaseContext.fir2Ir(
 
 private fun PhaseContext.createKonanSymbols(
     irBuiltIns: IrBuiltIns,
-): BaseKonanSymbols {
-    return BaseKonanSymbols.Impl(irBuiltIns)
+): PreSerializationNativeSymbols {
+    return PreSerializationNativeSymbols.Impl(irBuiltIns)
 }

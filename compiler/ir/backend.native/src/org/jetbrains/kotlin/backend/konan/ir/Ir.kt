@@ -254,55 +254,13 @@ private fun CompilerConfiguration.getMainCallableId() : CallableId? {
     }
 }
 
-// Symbols needed just for Fir2IR compilation.
-interface BaseKonanSymbols : PreSerializationNativeSymbols {
-    val throwNullPointerException: IrSimpleFunctionSymbol
-    val signedIntegerClasses: Set<IrClassSymbol>
-    val unsignedIntegerClasses: Set<IrClassSymbol>
-    val allIntegerClasses: Set<IrClassSymbol>
-    val nativePointed: IrClassSymbol
-    val initInstance: IrSimpleFunctionSymbol
-    val reinterpret: IrSimpleFunctionSymbol
-    val createEmptyString: IrSimpleFunctionSymbol
-    val interopCValue: IrClassSymbol
-    val interopCPointer: IrClassSymbol
-    val interopCValuesRef: IrClassSymbol
-    val interopCEnumVar: IrClassSymbol
-    val createUninitializedArray: IrSimpleFunctionSymbol
-    val createUninitializedInstance: IrSimpleFunctionSymbol
-    val immutableBlobOf: IrSimpleFunctionSymbol
-    val createCleaner: IrSimpleFunctionSymbol
-
-    open class Impl(irBuiltIns: IrBuiltIns) : PreSerializationNativeSymbols.Impl(irBuiltIns), BaseKonanSymbols {
-        override val throwNullPointerException = CallableIds.throwNullPointerException.functionSymbol()
-        override val nativePointed = ClassIds.nativePointed.classSymbol()
-        override val signedIntegerClasses = setOf(irBuiltIns.byteClass, irBuiltIns.shortClass, irBuiltIns.intClass, irBuiltIns.longClass)
-        override val unsignedIntegerClasses =
-            setOf(irBuiltIns.ubyteClass!!, irBuiltIns.ushortClass!!, irBuiltIns.uintClass!!, irBuiltIns.ulongClass!!)
-
-        override val allIntegerClasses = signedIntegerClasses + unsignedIntegerClasses
-        override val createCleaner = CallableIds.createCleaner.functionSymbol()
-        override val immutableBlobOf = CallableIds.immutableBlobOf.functionSymbol()
-        override val interopCValue = ClassIds.interopCValue.classSymbol()
-        override val interopCValuesRef = ClassIds.interopCValuesRef.classSymbol()
-        override val interopCPointer = ClassIds.interopCPointer.classSymbol()
-        override val interopCEnumVar = ClassIds.interopCEnumVar.classSymbol()
-        override val createUninitializedInstance = CallableIds.createUninitializedInstance.functionSymbol()
-        override val createUninitializedArray = CallableIds.createUninitializedArray.functionSymbol()
-
-        override val createEmptyString = CallableIds.createEmptyString.functionSymbol()
-        override val reinterpret = CallableIds.reinterpret.functionSymbol()
-        override val initInstance = CallableIds.initInstance.functionSymbol()
-    }
-}
-
 // TODO KT-77388 rename to `BackendNativeSymbolsImpl`
 @OptIn(InternalSymbolFinderAPI::class, InternalKotlinNativeApi::class)
 class KonanSymbols(
     context: ErrorReportingContext,
     irBuiltIns: IrBuiltIns,
     config: CompilerConfiguration,
-) : KlibSymbols(irBuiltIns), BaseKonanSymbols by BaseKonanSymbols.Impl(irBuiltIns) {
+) : KlibSymbols(irBuiltIns), PreSerializationNativeSymbols by PreSerializationNativeSymbols.Impl(irBuiltIns) {
     val entryPoint by run {
         val mainCallableId = config.getMainCallableId()
         val unfilteredCandidates = mainCallableId?.functionSymbols()
