@@ -17,9 +17,7 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.irImplicitCast
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrVariable
-import org.jetbrains.kotlin.ir.declarations.name
 import org.jetbrains.kotlin.ir.expressions.IrBlock
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrBreak
@@ -341,6 +339,7 @@ internal class ComputeTypesPass(val context: Context) : BodyLoweringPass {
                             controlFlowMergePoint(continuesCFMPInfo, dummyUnitExpression, vvAtBodyEnd)
                     val vvAtConditionEnd = loop.condition.accept(this, vvAtConditionStart)
                     vvAtLoopStart = vvAtConditionEnd
+                    vvAtLoopStart.or(prevVVAtLoopStart)
 
                     context.log { "LOOP ITER #$iter: ${vvAtLoopStart.format()}" }
 
@@ -373,23 +372,20 @@ internal class ComputeTypesPass(val context: Context) : BodyLoweringPass {
 
             override fun visitGetValue(expression: IrGetValue, data: BitSet): BitSet {
                 val variable = expression.symbol.owner as? IrVariable ?: return data
-                val mergedVariablesWrites = getValueVariablesWrites.getOrPut(expression) { BitSet() }
-                mergedVariablesWrites.or(data)
-                val variableValues = variableWrites[variable]?.copy()?.let { writes ->
-                    writes.and(mergedVariablesWrites)
-                    writes.mapEachBit { allVariablesWrites[it].value }
-                } ?: error("A use of uninitialized variable ${variable.render()}")
+                val variableWrites = variableWrites[variable]?.copy()?.apply { and(data) }
+                        ?: error("A use of uninitialized variable ${variable.render()}")
+                val mergedVariableWrites = getValueVariablesWrites.getOrPut(expression) { BitSet() }
+                mergedVariableWrites.or(variableWrites)
+                val variableValues = mergedVariableWrites.mapEachBit { allVariablesWrites[it].value }
                 val actualType = variableValues.computeType()
                 expression.type = actualType ?: variable.type
 
                 context.logMultiple {
                     +expression.render()
-                    val mergedVariableWrites = mergedVariablesWrites.copy()
-                    mergedVariableWrites.and(variableWrites[variable]!!)
                     +"    ${mergedVariableWrites.format()}"
                 }
 
-                return mergedVariablesWrites.copy()
+                return data
             }
 
             fun setVariable(variable: IrVariable, value: IrExpression, variablesValues: BitSet): BitSet {
