@@ -13,7 +13,6 @@ public abstract class<<K:Ljava/lang/Object;>Ljava/lang/Object;Ljava/util/Map<TK;
     public <null> method clear(): void
     public bridge final <null> method containsValue(p0: java.lang.Object): boolean
     public abstract <null> method containsValue(p0: java.lang.String): boolean
-    public synthetic bridge <null> method get(p0: java.lang.Object): java.lang.Object
     public abstract <null> method getSize(): int
     public synthetic bridge <null> method put(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
     public synthetic bridge <null> method remove(p0: java.lang.Object): java.lang.Object

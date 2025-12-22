@@ -344,10 +344,10 @@ internal class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPas
             }
         }
 
-        // Some special-related bridges should be considered erroneous, as they are generated as self-recursive.
-        // Such bridges should better be removed (see KT-82651), but it involves potential binary compatibility issues
-        // Currently they are still generated, but with no new features like annotations copying
+        // Some special-related bridge candidates should be considered erroneous, as they would be generated as self-recursive (KT-82651).
+        // Such bridges are generated only in compatibility mode, controlled by LanguageFeature.JvmEnhancedBridges
         val isErroneousSpecialBridge = specialBridge != null && bridgeTarget.isFakeOverride && !bridgeTarget.resolvesToClass()
+        if (useEnhancedBridges && isErroneousSpecialBridge) return
 
         // Generate common bridges
         val generated = mutableMapOf<Method, Bridge>()

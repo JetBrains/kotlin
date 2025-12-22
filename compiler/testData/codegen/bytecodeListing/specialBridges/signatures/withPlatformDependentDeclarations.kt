@@ -1,6 +1,8 @@
 // FULL_JDK
 // JVM_TARGET: 1.8
 // WITH_SIGNATURES
+// LANGUAGE: +JvmEnhancedBridges
+
 interface I
 
 abstract class T1<K, V> : MutableMap<K, V> {
