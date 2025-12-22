@@ -2234,6 +2234,12 @@ public class LLPartialDiagnosticsFirTestGenerated extends AbstractLLPartialDiagn
       @TestDataPath("$PROJECT_ROOT")
       public class NestedCollectionLiterals {
         @Test
+        @TestMetadata("acceptSetSet.kt")
+        public void testAcceptSetSet() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/nestedCollectionLiterals/acceptSetSet.kt");
+        }
+
+        @Test
         public void testAllFilesPresentInNestedCollectionLiterals() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/nestedCollectionLiterals"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
         }
@@ -2242,6 +2248,12 @@ public class LLPartialDiagnosticsFirTestGenerated extends AbstractLLPartialDiagn
         @TestMetadata("genericMatrix.kt")
         public void testGenericMatrix() {
           runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/nestedCollectionLiterals/genericMatrix.kt");
+        }
+
+        @Test
+        @TestMetadata("listOfListsOutVariance.kt")
+        public void testListOfListsOutVariance() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/nestedCollectionLiterals/listOfListsOutVariance.kt");
         }
 
         @Test
