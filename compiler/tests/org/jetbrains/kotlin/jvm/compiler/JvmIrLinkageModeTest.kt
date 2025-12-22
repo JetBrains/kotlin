@@ -9,6 +9,8 @@ import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.codegen.CodegenTestCase
+import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
+import org.jetbrains.kotlin.compiler.plugin.registerInProject
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.ir.IrElement
@@ -81,7 +83,11 @@ open class JvmIrLinkageModeTest : CodegenTestCase() {
 
     override fun setupEnvironment(environment: KotlinCoreEnvironment) {
         val idSignatureShouldBePresent = !useFir && environment.configuration.getBoolean(JVMConfigurationKeys.LINK_VIA_SIGNATURES)
-        IrGenerationExtension.registerExtension(environment.project, LinkageTestIrExtension(idSignatureShouldBePresent))
+        val extensionStorage = CompilerPluginRegistrar.ExtensionStorage()
+        with(extensionStorage) {
+            IrGenerationExtension.registerExtension(LinkageTestIrExtension(idSignatureShouldBePresent))
+        }
+        extensionStorage.registerInProject(environment.project)
         super.setupEnvironment(environment)
     }
 

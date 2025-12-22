@@ -38,14 +38,14 @@ abstract class AbstractMetricsTransformTest(useFir: Boolean) : AbstractIrTransfo
                     with(ComposePluginRegistrar.Companion) {
                         registerCommonExtensions()
                     }
-                }
-                extension =
-                    ComposePluginRegistrar.createComposeIrExtension(configuration) { inferencer, featureFlags ->
-                        ModuleMetricsImpl(KotlinCompilerFacade.TEST_MODULE_NAME, featureFlags = featureFlags) { type ->
-                            inferencer.stabilityOf(type)
+                    extension =
+                        ComposePluginRegistrar.createComposeIrExtension(configuration) { inferencer, featureFlags ->
+                            ModuleMetricsImpl(KotlinCompilerFacade.TEST_MODULE_NAME, featureFlags = featureFlags) { type ->
+                                inferencer.stabilityOf(type)
+                            }
                         }
-                    }
-                IrGenerationExtension.registerExtension(this, extension)
+                    IrGenerationExtension.registerExtension(extension)
+                }
             }
         )
         extension.metrics.verify()

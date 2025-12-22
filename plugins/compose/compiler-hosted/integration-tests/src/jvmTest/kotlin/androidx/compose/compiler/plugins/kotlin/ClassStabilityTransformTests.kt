@@ -1832,30 +1832,26 @@ class ClassStabilityTransformTests(useFir: Boolean) : AbstractIrTransformTest(us
                     with(ComposePluginRegistrar.Companion) {
                         registerCommonExtensions()
                     }
-                }
-                IrGenerationExtension.registerExtension(
-                    this,
-                    object : IrGenerationExtension {
-                        override fun generate(moduleFragment: IrModuleFragment, pluginContext: IrPluginContext) {
-                            moduleFragment.files.fastForEach {
-                                it.addChild(
-                                    pluginContext.irFactory.buildClass {
-                                        name = Name.identifier("StabilityTest")
-                                    }.apply {
-                                        thisReceiver = buildReceiverParameter {
-                                            origin = IrDeclarationOrigin.INSTANCE_RECEIVER
-                                            type = IrSimpleTypeImpl(symbol, false, emptyList(), emptyList())
+                    IrGenerationExtension.registerExtension(
+                        object : IrGenerationExtension {
+                            override fun generate(moduleFragment: IrModuleFragment, pluginContext: IrPluginContext) {
+                                moduleFragment.files.fastForEach {
+                                    it.addChild(
+                                        pluginContext.irFactory.buildClass {
+                                            name = Name.identifier("StabilityTest")
+                                        }.apply {
+                                            thisReceiver = buildReceiverParameter {
+                                                origin = IrDeclarationOrigin.INSTANCE_RECEIVER
+                                                type = IrSimpleTypeImpl(symbol, false, emptyList(), emptyList())
+                                            }
                                         }
-                                    }
-                                )
+                                    )
+                                }
                             }
                         }
-                    }
-                )
-                IrGenerationExtension.registerExtension(
-                    this,
-                    ComposePluginRegistrar.createComposeIrExtension(it)
-                )
+                    )
+                    IrGenerationExtension.registerExtension(ComposePluginRegistrar.createComposeIrExtension(it))
+                }
             }
         )
     }

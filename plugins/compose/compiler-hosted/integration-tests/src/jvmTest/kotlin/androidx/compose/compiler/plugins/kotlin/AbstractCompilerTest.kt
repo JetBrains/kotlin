@@ -136,11 +136,8 @@ abstract class AbstractCompilerTest(val useFir: Boolean) {
                 with(ComposePluginRegistrar.Companion) {
                     registerCommonExtensions()
                 }
+                IrGenerationExtension.registerExtension(ComposePluginRegistrar.createComposeIrExtension(configuration))
             }
-            IrGenerationExtension.registerExtension(
-                this,
-                ComposePluginRegistrar.createComposeIrExtension(configuration)
-            )
         }
     )
 

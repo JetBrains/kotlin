@@ -62,7 +62,12 @@ fun generateIrForKlibSerialization(
             Psi2IrConfiguration(ignoreErrors = false, configuration.partialLinkageConfig.isEnabled),
             messageCollector::checkNoUnboundSymbols
         )
-        val psi2IrContext = psi2Ir.createGeneratorContext(analysisResult.moduleDescriptor, analysisResult.bindingContext, symbolTable)
+        val psi2IrContext = psi2Ir.createGeneratorContext(
+            analysisResult.moduleDescriptor,
+            analysisResult.bindingContext,
+            configuration,
+            symbolTable
+        )
 
         val stubGenerator = DeclarationStubGeneratorImpl(
             psi2IrContext.moduleDescriptor,

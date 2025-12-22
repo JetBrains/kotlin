@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
 import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
 import org.jetbrains.kotlin.cli.common.renderDiagnosticInternalName
+import org.jetbrains.kotlin.compiler.plugin.getCompilerExtension
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.isEmpty
@@ -79,7 +80,7 @@ fun PhaseContext.fir2Ir(
     val actualizedResult = input.firResult.convertToIrAndActualize(
             NativeFir2IrExtensions,
             fir2IrConfiguration,
-            IrGenerationExtension.getInstances(config.project),
+            config.configuration.getCompilerExtension(IrGenerationExtension),
             irMangler = KonanManglerIr,
             visibilityConverter = Fir2IrVisibilityConverter.Default,
             kotlinBuiltIns = builtInsModule ?: DefaultBuiltIns.Instance,
