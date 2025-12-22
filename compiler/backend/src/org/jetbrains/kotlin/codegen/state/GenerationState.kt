@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.codegen.inline.GlobalInlineContext
 import org.jetbrains.kotlin.codegen.inline.InlineCache
 import org.jetbrains.kotlin.codegen.optimization.OptimizationClassBuilderFactory
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings
+import org.jetbrains.kotlin.compiler.plugin.getCompilerExtension
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.incrementalCompilationComponents
 import org.jetbrains.kotlin.config.moduleName
@@ -92,7 +93,7 @@ class GenerationState(
                 extension.interceptClassBuilderFactory(classBuilderFactory)
             }
         },
-        ClassFileFactoryFinalizerExtension.getInstances(project),
+        configuration.getCompilerExtension(ClassFileFactoryFinalizerExtension),
     )
 
     val globalSerializationBindings = JvmSerializationBindings()
