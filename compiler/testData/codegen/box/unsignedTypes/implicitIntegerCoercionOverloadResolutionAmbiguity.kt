@@ -1,6 +1,3 @@
-// TARGET_BACKEND: JVM_IR
-// TARGET_BACKEND: NATIVE
-
 // IGNORE_BACKEND_K1: ANDROID
 // STATUS:
 //  This line has been added because of the `AndroidRunner` test.

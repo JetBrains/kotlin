@@ -1,5 +1,5 @@
-// TARGET_BACKEND: JS_IR
-// TARGET_BACKEND: WASM
+// IGNORE_BACKEND: JVM
+// ^Known behavior difference
 fun <T> T.id() = this
 
 const val toStringDouble1 = 1.0.<!EVALUATED("1.0")!>toString()<!>

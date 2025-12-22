@@ -1,5 +1,4 @@
 // LANGUAGE: +MultiPlatformProjects
-// TARGET_BACKEND: JVM_IR, JS_IR, WASM, NATIVE
 // WITH_STDLIB
 // Stdlib is needed only for JVM_IR to resolve `kotlin.OptionalExpectation`
 
