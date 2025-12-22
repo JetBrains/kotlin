@@ -11,3 +11,5 @@ import java.nio.file.Path
 fun Path.toCanonicalLocalFileUrlString(): String {
     return "file://" + toFile().canonicalPath
 }
+
+val isWindowsHost get() = System.getProperty("os.name").lowercase().contains("windows")

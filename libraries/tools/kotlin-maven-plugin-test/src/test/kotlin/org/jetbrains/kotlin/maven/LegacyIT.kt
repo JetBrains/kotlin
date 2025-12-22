@@ -5,22 +5,26 @@
 
 package org.jetbrains.kotlin.maven.plugin.test
 
+import org.jetbrains.kotlin.maven.test.isWindowsHost
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
-import java.util.Properties
-import kotlin.io.path.exists
-import kotlin.io.path.inputStream
 
 @Execution(ExecutionMode.CONCURRENT)
 // TODO: KT-83109 Remove beanshell and groovy verification in kotlin-maven-plugin-test
 class LegacyIT : KotlinMavenTestBase() {
     private fun verifyWithLegacyBsh(
         projectName: String,
-        withDebug: Boolean = true
+        withDebug: Boolean = true,
+        buildOptions: MavenBuildOptions = this.buildOptions,
+        disableKotlinDaemonOnWindows: Boolean = false,
     ) {
-        testProject(projectName, "default") {
+        val buildOptions = if (disableKotlinDaemonOnWindows && isWindowsHost) {
+            buildOptions.copy(useKotlinDaemon = false)
+        } else buildOptions
+
+        testProject(projectName, "default", buildOptions) {
             val args = mutableListOf<String>()
 
             // enable debug output by default, as some verification scripts are checking for dependencies hits
@@ -36,125 +40,131 @@ class LegacyIT : KotlinMavenTestBase() {
     }
 
     @Test
-    fun `test-helloworld`() = verifyWithLegacyBsh("test-helloworld")
+    fun `test-helloworld`() = verifyWithLegacyBsh("test-helloworld",)
 
     @Test
-    fun `test-helloworld-kts`() = verifyWithLegacyBsh("test-helloworld-kts")
+    fun `test-helloworld-kts`() = verifyWithLegacyBsh("test-helloworld-kts",)
 
     @Test
-    fun `test-accessToInternal`() = verifyWithLegacyBsh("test-accessToInternal")
+    fun `test-accessToInternal`() = verifyWithLegacyBsh("test-accessToInternal",)
 
     @Test
-    fun `test-allopen-simple`() = verifyWithLegacyBsh("test-allopen-simple")
+    fun `test-allopen-simple`() = verifyWithLegacyBsh("test-allopen-simple",)
 
     @Test
-    fun `test-allopen-spring`() = verifyWithLegacyBsh("test-allopen-spring")
+    fun `test-allopen-spring`() = verifyWithLegacyBsh("test-allopen-spring",)
 
     @Test
-    fun `test-apiVersion`() = verifyWithLegacyBsh("test-apiVersion")
+    fun `test-apiVersion`() = verifyWithLegacyBsh("test-apiVersion",)
 
     @Test
-    fun `test-bom`() = verifyWithLegacyBsh("test-bom")
+    fun `test-bom`() = verifyWithLegacyBsh("test-bom",)
 
     @Test
     @Disabled // FIXME: KT-83111 Add JavaVersion argument resolver for kotlin-maven-plugin-test
-    fun `test-customJdk`() = verifyWithLegacyBsh("test-customJdk")
+    fun `test-customJdk`() = verifyWithLegacyBsh("test-customJdk",)
 
     @Test
-    fun `test-empty-argument`() = verifyWithLegacyBsh("test-empty-argument")
+    fun `test-empty-argument`() = verifyWithLegacyBsh("test-empty-argument",)
 
     @Test
-    fun `test-enable-extensions`() = verifyWithLegacyBsh("test-enable-extensions")
+    fun `test-enable-extensions`() = verifyWithLegacyBsh("test-enable-extensions",)
 
     @Test
-    fun `test-executeKotlinScriptBuildAccess`() = verifyWithLegacyBsh("test-executeKotlinScriptBuildAccess")
+    fun `test-executeKotlinScriptBuildAccess`() = verifyWithLegacyBsh("test-executeKotlinScriptBuildAccess",)
 
     @Test
-    fun `test-executeKotlinScriptCompileError`() = verifyWithLegacyBsh("test-executeKotlinScriptCompileError")
+    fun `test-executeKotlinScriptCompileError`() = verifyWithLegacyBsh("test-executeKotlinScriptCompileError",)
 
     @Test
-    fun `test-executeKotlinScriptFile`() = verifyWithLegacyBsh("test-executeKotlinScriptFile")
+    fun `test-executeKotlinScriptFile`() = verifyWithLegacyBsh("test-executeKotlinScriptFile",)
 
     @Test
-    fun `test-executeKotlinScriptInline`() = verifyWithLegacyBsh("test-executeKotlinScriptInline")
+    fun `test-executeKotlinScriptInline`() = verifyWithLegacyBsh("test-executeKotlinScriptInline",)
 
     @Test
-    fun `test-executeKotlinScriptScriptException`() = verifyWithLegacyBsh("test-executeKotlinScriptScriptException")
+    fun `test-executeKotlinScriptScriptException`() = verifyWithLegacyBsh("test-executeKotlinScriptScriptException",)
 
     @Test
-    fun `test-executeKotlinScriptWithDependencies`() = verifyWithLegacyBsh("test-executeKotlinScriptWithDependencies")
+    fun `test-executeKotlinScriptWithDependencies`() = verifyWithLegacyBsh("test-executeKotlinScriptWithDependencies",)
 
     @Test
-    fun `test-executeKotlinScriptWithTemplate`() = verifyWithLegacyBsh("test-executeKotlinScriptWithTemplate")
+    fun `test-executeKotlinScriptWithTemplate`() = verifyWithLegacyBsh("test-executeKotlinScriptWithTemplate",)
 
     @Test
-    fun `test-extraArguments`() = verifyWithLegacyBsh("test-extraArguments")
+    fun `test-extraArguments`() = verifyWithLegacyBsh("test-extraArguments",)
 
     @Test
-    fun `test-jvmTarget`() = verifyWithLegacyBsh("test-jvmTarget")
+    fun `test-jvmTarget`() = verifyWithLegacyBsh("test-jvmTarget",)
 
     @Test
-    fun `test-kapt-annotationProcessorPaths-without-version`() = verifyWithLegacyBsh("test-kapt-annotationProcessorPaths-without-version")
+    fun `test-kapt-annotationProcessorPaths-without-version`() = verifyWithLegacyBsh(
+        "test-kapt-annotationProcessorPaths-without-version",
+        disableKotlinDaemonOnWindows = true
+    )
 
     @Test
-    fun `test-kapt-generateKotlinCode`() = verifyWithLegacyBsh("test-kapt-generateKotlinCode")
+    fun `test-kapt-generateKotlinCode`() = verifyWithLegacyBsh(
+        "test-kapt-generateKotlinCode",
+        disableKotlinDaemonOnWindows = true
+    )
 
     @Test
-    fun `test-kotlin-dataframe`() = verifyWithLegacyBsh("test-kotlin-dataframe")
+    fun `test-kotlin-dataframe`() = verifyWithLegacyBsh("test-kotlin-dataframe",)
 
     @Test
-    fun `test-kotlin-version-in-manifest`() = verifyWithLegacyBsh("test-kotlin-version-in-manifest")
+    fun `test-kotlin-version-in-manifest`() = verifyWithLegacyBsh("test-kotlin-version-in-manifest",)
 
     @Test
-    fun `test-languageVersion`() = verifyWithLegacyBsh("test-languageVersion")
+    fun `test-languageVersion`() = verifyWithLegacyBsh("test-languageVersion",)
 
     @Disabled // requires JDK 17
     @Test
-    fun `test-lombok-simple`() = verifyWithLegacyBsh("test-lombok-simple")
+    fun `test-lombok-simple`() = verifyWithLegacyBsh("test-lombok-simple",)
 
     @Test
-    fun `test-lombok-with-kapt`() = verifyWithLegacyBsh("test-lombok-with-kapt")
+    fun `test-lombok-with-kapt`() = verifyWithLegacyBsh("test-lombok-with-kapt",)
 
     @Test
-    fun `test-moduleName`() = verifyWithLegacyBsh("test-moduleName")
+    fun `test-moduleName`() = verifyWithLegacyBsh("test-moduleName",)
 
     @Test
-    fun `test-moduleNameDefault`() = verifyWithLegacyBsh("test-moduleNameDefault")
+    fun `test-moduleNameDefault`() = verifyWithLegacyBsh("test-moduleNameDefault",)
 
     @Test
-    fun `test-multimodule`() = verifyWithLegacyBsh("test-multimodule")
+    fun `test-multimodule`() = verifyWithLegacyBsh("test-multimodule",)
 
     @Test
-    fun `test-multimodule-in-process`() = verifyWithLegacyBsh("test-multimodule-in-process")
+    fun `test-multimodule-in-process`() = verifyWithLegacyBsh("test-multimodule-in-process",)
 
     @Test
-    fun `test-multimodule-srcdir`() = verifyWithLegacyBsh("test-multimodule-srcdir")
+    fun `test-multimodule-srcdir`() = verifyWithLegacyBsh("test-multimodule-srcdir",)
 
     @Test
-    fun `test-multimodule-srcdir-absolute`() = verifyWithLegacyBsh("test-multimodule-srcdir-absolute")
+    fun `test-multimodule-srcdir-absolute`() = verifyWithLegacyBsh("test-multimodule-srcdir-absolute",)
 
     @Test
-    fun `test-noarg-jpa`() = verifyWithLegacyBsh("test-noarg-jpa")
+    fun `test-noarg-jpa`() = verifyWithLegacyBsh("test-noarg-jpa",)
 
     @Test
-    fun `test-noarg-simple`() = verifyWithLegacyBsh("test-noarg-simple")
+    fun `test-noarg-simple`() = verifyWithLegacyBsh("test-noarg-simple",)
 
     @Test
-    fun `test-plugins`() = verifyWithLegacyBsh("test-plugins", withDebug = false)
+    fun `test-plugins`() = verifyWithLegacyBsh("test-plugins", withDebug = false,)
 
     @Test
-    fun `test-power-assert`() = verifyWithLegacyBsh("test-power-assert")
+    fun `test-power-assert`() = verifyWithLegacyBsh("test-power-assert",)
 
     @Test
-    fun `test-reflection`() = verifyWithLegacyBsh("test-reflection")
+    fun `test-reflection`() = verifyWithLegacyBsh("test-reflection",)
 
     @Test
-    fun `test-respect-compile-source-root`() = verifyWithLegacyBsh("test-respect-compile-source-root")
+    fun `test-respect-compile-source-root`() = verifyWithLegacyBsh("test-respect-compile-source-root",)
 
     @Test
-    fun `test-sam-with-receiver-simple`() = verifyWithLegacyBsh("test-sam-with-receiver-simple")
+    fun `test-sam-with-receiver-simple`() = verifyWithLegacyBsh("test-sam-with-receiver-simple",)
 
     @Test
-    fun `test-suppressWarnings`() = verifyWithLegacyBsh("test-suppressWarnings")
+    fun `test-suppressWarnings`() = verifyWithLegacyBsh("test-suppressWarnings",)
 
 }

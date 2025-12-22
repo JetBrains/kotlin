@@ -52,7 +52,10 @@ class MavenTestProject(
 
         verifier.setSystemProperty("kotlin.version", context.kotlinVersion)
         verifier.addCliArguments("--settings", settingsFile.absolutePathString())
-        verifier.addCliArguments(*args)
+
+        val buildOptionsArgs = buildOptions.asCliArgs().toTypedArray()
+
+        verifier.addCliArguments(*buildOptionsArgs, *args)
 
         val res = runCatching {
             verifier.execute()
@@ -124,7 +127,12 @@ class MavenTestProject(
 
 data class MavenBuildOptions(
     val javaVersion: String = "17",
-)
+    val useKotlinDaemon: Boolean? = null
+) {
+    fun asCliArgs(): List<String> = buildList {
+        useKotlinDaemon?.let { add("-Dkotlin.compiler.daemon=$it") }
+    }
+}
 
 @TestInstance(TestInstance.Lifecycle.PER_METHOD)
 abstract class KotlinMavenTestBase {
