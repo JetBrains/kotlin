@@ -78,6 +78,7 @@ dependencies {
 
     compileOnly(project(":compiler:backend.jvm"))
     compileOnly(project(":compiler:ir.tree"))
+    compileOnly(project(":native:native.config"))
 
     compileOnly(kotlinStdlib())
 

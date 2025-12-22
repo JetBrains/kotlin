@@ -214,6 +214,7 @@ val commonCompilerModules = arrayOf(
     ":js:js.config",
     ":js:js.frontend.common",
     ":wasm:wasm.config",
+    ":native:native.config",
 ).also { extra["commonCompilerModules"] = it }
 
 val firCompilerCoreModules = arrayOf(
@@ -439,6 +440,7 @@ extra["kotlinJpsPluginEmbeddedDependencies"] = listOf(
     ":compiler:config.jvm",
     ":js:js.config",
     ":wasm:wasm.config",
+    ":native:native.config",
     ":core:util.runtime",
     ":compiler:compiler.version",
     ":compiler:build-tools:kotlin-build-statistics",

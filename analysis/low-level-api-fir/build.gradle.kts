@@ -26,9 +26,11 @@ dependencies {
     api(project(":compiler:fir:fir-jvm"))
     api(project(":compiler:backend.common.jvm"))
     api(project(":compiler:cli-common"))
+    implementation(project(":native:native.config"))
     implementation(project(":analysis:decompiled:decompiler-to-file-stubs"))
     implementation(project(":analysis:decompiled:decompiler-to-psi"))
     testFixturesApi(project(":analysis:analysis-api-fir"))
+    testFixturesImplementation(project(":native:native.config"))
 
     implementation(project(":compiler:frontend.common"))
     implementation(project(":compiler:fir:entrypoint"))

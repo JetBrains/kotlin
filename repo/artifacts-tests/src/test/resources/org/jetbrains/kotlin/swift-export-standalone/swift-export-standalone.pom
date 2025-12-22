@@ -28,6 +28,12 @@
   <dependencies>
     <dependency>
       <groupId>org.jetbrains.kotlin</groupId>
+      <artifactId>native.config</artifactId>
+      <version>ArtifactsTest.version</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jetbrains.kotlin</groupId>
       <artifactId>sir</artifactId>
       <version>ArtifactsTest.version</version>
       <scope>runtime</scope>

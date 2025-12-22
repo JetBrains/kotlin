@@ -13,6 +13,7 @@ dependencies {
     compileOnly(project(":compiler:fir:plugin-utils"))
     compileOnly(project(":compiler:fir:entrypoint"))
     compileOnly(project(":compiler:cli-common"))
+    compileOnly(project(":native:native.config"))
 
     implementation(project(":kotlinx-serialization-compiler-plugin.common"))
 

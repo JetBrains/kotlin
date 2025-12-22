@@ -20,6 +20,7 @@ dependencies {
     testFixturesApi(project(":compiler:cli-common"))
     testFixturesApi(project(":compiler:cli"))
     testFixturesApi(project(":compiler:cli-js"))
+    testFixturesImplementation(project(":native:native.config"))
     testFixturesApi(project(":compiler:serialization"))
     testFixturesApi(project(":compiler:fir:entrypoint"))
     testFixturesApi(project(":compiler:fir:fir2ir:jvm-backend"))
