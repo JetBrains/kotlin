@@ -1,6 +1,6 @@
 // WITH_STDLIB
-// TARGET_BACKEND: JVM_IR, WASM
-
+// IGNORE_BACKEND: JS_IR, JS_IR_ES6
+// ^ KT-83349 Wrong hashCode values in instantiated annotations
 annotation class A(val t: String)
 annotation class WithAnn(val a: A, val xs: Array<A>)
 

@@ -1,5 +1,4 @@
 // WITH_STDLIB
-// TARGET_BACKEND: JVM_IR, WASM
 
 enum class E { A, B }
 

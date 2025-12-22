@@ -1,5 +1,4 @@
 // WITH_STDLIB
-// TARGET_BACKEND: JVM_IR, WASM
 
 // MODULE: lib
 annotation class LibAnn(val i: Int)

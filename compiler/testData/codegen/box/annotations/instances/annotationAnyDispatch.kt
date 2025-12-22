@@ -1,5 +1,4 @@
 // WITH_STDLIB
-// TARGET_BACKEND: JVM_IR, WASM
 
 annotation class Ann(val x: Int = 1, val s: String = "k")
 
