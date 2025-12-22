@@ -82,5 +82,7 @@ declare namespace JS_TESTS {
                 const constructor: abstract new () => Test3;
             }
         }
+        function shortNameBasedDestructuring(): string;
+        function fullNameBasedDestructuring(): string;
     }
 }

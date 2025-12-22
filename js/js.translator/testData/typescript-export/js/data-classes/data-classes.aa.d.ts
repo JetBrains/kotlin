@@ -3,6 +3,8 @@ declare namespace JS_TESTS {
     function KtSingleton<T>(): T & (abstract new() => any);
 
     namespace foo {
+        function shortNameBasedDestructuring(): string;
+        function fullNameBasedDestructuring(): string;
         /* ErrorDeclaration: Class declarations are not implemented yet */
         /* ErrorDeclaration: Class declarations are not implemented yet */
         /* ErrorDeclaration: Class declarations are not implemented yet */

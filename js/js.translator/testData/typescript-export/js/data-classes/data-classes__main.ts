@@ -1,6 +1,8 @@
 import TestDataClass = JS_TESTS.foo.TestDataClass;
 import KT39423 = JS_TESTS.foo.KT39423;
 import Test2 = JS_TESTS.foo.Test2;
+import shortNameBasedDestructuring = JS_TESTS.foo.shortNameBasedDestructuring;
+import fullNameBasedDestructuring = JS_TESTS.foo.fullNameBasedDestructuring;
 
 function assert(condition: boolean) {
     if (!condition) {
@@ -47,6 +49,9 @@ function box(): string {
     assert(new Test2("1", "2").copy(undefined, "3").value2 === "3")
 
     assert(new Test2("1", "2").component1() === "1")
+
+    assert(shortNameBasedDestructuring() === "42")
+    assert(fullNameBasedDestructuring() === "4 2")
 
     return "OK";
 }
