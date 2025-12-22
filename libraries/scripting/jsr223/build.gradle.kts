@@ -13,7 +13,7 @@ dependencies {
     api(project(":kotlin-scripting-jvm"))
     api(project(":kotlin-scripting-jvm-host-unshaded"))
     api(project(":kotlin-scripting-compiler"))
-    compileOnly(project(":compiler:cli-common"))
+    compileOnly(project(":compiler:cli-base"))
     compileOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
     compileOnly(intellijCore())
     publishedRuntime(project(":kotlin-compiler"))

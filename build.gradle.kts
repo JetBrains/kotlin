@@ -175,7 +175,7 @@ val commonCompilerModules = arrayOf(
     ":compiler:config.jvm",
     ":compiler:compiler.version",
     ":compiler:arguments.common",
-    ":compiler:cli-common",
+    ":compiler:cli-base",
     ":compiler:resolution.common",
     ":compiler:resolution.common.jvm",
     ":compiler:backend.common.jvm",
@@ -272,7 +272,6 @@ val fe10CompilerModules = arrayOf(
     ":kotlin-util-klib-metadata",
     ":compiler:backend",
     ":compiler:javac-wrapper",
-    ":compiler:cli-base",
     ":compiler:cli",
     ":compiler:cli-js",
     ":compiler:incremental-compilation-impl",
@@ -413,7 +412,7 @@ extra["projectsUsedInIntelliJKotlinPlugin"] = projectsUsedInIntelliJKotlinPlugin
 
 // They are embedded just because we don't publish those dependencies as separate Maven artifacts (yet)
 extra["kotlinJpsPluginEmbeddedDependencies"] = listOf(
-    ":compiler:cli-common",
+    ":compiler:cli-base",
     ":kotlin-build-tools-enum-compat",
     ":kotlin-compiler-runner-unshaded",
     ":daemon-common",

@@ -8,7 +8,6 @@ dependencies {
     api(project(":compiler:ir.tree"))
 
     compileOnly(jpsModel())
-    compileOnly(project(":compiler:cli-common"))
     compileOnly(commonDependency("org.jetbrains.intellij.deps:log4j")) { isTransitive = false }
 
     implementation(commonDependency("com.fasterxml:aalto-xml")) { isTransitive = false }
