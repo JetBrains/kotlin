@@ -336,8 +336,9 @@ public inline fun <K, V> Map.Entry<K, V>.toPair(): Pair<K, V> = Pair(key, value)
  * The returned entry is not connected to the map this entry was obtained from.
  * The key and value of the returned entry remain the same even after the map the original entry was obtained from was modified.
  *
- * @return An immutable entry that is equal to this entry but not connected to any map. The function may return the same entry
- * if `this` entry was obtained from the call to [copy].
+ * @return An immutable entry that is equal to `this` entry but not connected to any map.
+ * The function may return the same entry if `this` entry was obtained from the call to [copy].
+ * The returned entry, while still implementing [Map.Entry] interface, may not be an instance of the same class as the original entry.
  *
  * @sample samples.collections.Maps.CoreApi.entryCopy
  */
