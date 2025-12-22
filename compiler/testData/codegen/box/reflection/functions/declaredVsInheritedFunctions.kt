@@ -10,13 +10,21 @@ public class J {
     private static void privateStaticJ() {}
 }
 
+// FILE: J2.java
+public class J2 extends J {
+    public void publicMemberJ2() {}
+    private void privateMemberJ2() {}
+    public static void publicStaticJ2() {}
+    private static void privateStaticJ2() {}
+}
+
 // FILE: K.kt
 
 import kotlin.reflect.*
 import kotlin.reflect.full.*
 import kotlin.test.assertEquals
 
-open class K : J() {
+open class K : J2() {
     public fun publicMemberK() {}
     private fun privateMemberK() {}
     public fun Any.publicMemberExtensionK() {}
@@ -50,6 +58,21 @@ fun box(): String {
     check(j.memberFunctions, any + j.declaredMemberFunctions.names())
     check(j.memberExtensionFunctions, emptySet())
 
+    val j2 = J2::class
+
+    check(j2.staticFunctions,
+          setOf("publicStaticJ2", "privateStaticJ2", "publicStaticJ"))
+    check(j2.declaredFunctions,
+          setOf("publicMemberJ2", "privateMemberJ2", "publicStaticJ2", "privateStaticJ2"))
+    check(j2.declaredMemberFunctions,
+          setOf("publicMemberJ2", "privateMemberJ2"))
+    check(j2.declaredMemberExtensionFunctions,
+          emptySet())
+
+    check(j2.functions, any + listOf("publicMemberJ", "publicStaticJ") + j2.declaredFunctions.names())
+    check(j2.memberFunctions, any + listOf("publicMemberJ") + j2.declaredMemberFunctions.names())
+    check(j2.memberExtensionFunctions, emptySet())
+
     val k = K::class
 
     check(k.staticFunctions,
@@ -61,7 +84,7 @@ fun box(): String {
     check(k.declaredMemberExtensionFunctions,
           setOf("publicMemberExtensionK", "privateMemberExtensionK"))
 
-    check(k.memberFunctions, any + setOf("publicMemberJ") + k.declaredMemberFunctions.names())
+    check(k.memberFunctions, any + setOf("publicMemberJ", "publicMemberJ2") + k.declaredMemberFunctions.names())
     check(k.memberExtensionFunctions, k.declaredMemberExtensionFunctions.names())
     check(k.functions, any + (k.memberFunctions + k.memberExtensionFunctions).names())
 
@@ -72,7 +95,7 @@ fun box(): String {
     check(l.declaredFunctions, emptySet())
     check(l.declaredMemberFunctions, emptySet())
     check(l.declaredMemberExtensionFunctions, emptySet())
-    check(l.memberFunctions, any + setOf("publicMemberJ", "publicMemberK"))
+    check(l.memberFunctions, any + setOf("publicMemberJ", "publicMemberJ2", "publicMemberK"))
     check(l.memberExtensionFunctions, setOf("publicMemberExtensionK"))
     check(l.functions, any + (l.memberFunctions + l.memberExtensionFunctions).names())
 
