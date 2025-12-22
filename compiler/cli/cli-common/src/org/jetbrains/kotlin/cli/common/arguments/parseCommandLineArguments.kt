@@ -167,8 +167,19 @@ fun getArgumentsInfo(klass: Class<*>): ArgumentsInfo {
                 }
                 for (field in klass.declaredFields) {
                     val argument = field.getAnnotation(Argument::class.java) ?: continue
-                    val enablesAnnotations = field.getAnnotationsByType(Enables::class.java).toList()
-                    val disablesAnnotations = field.getAnnotationsByType(Disables::class.java).toList()
+
+                    // TODO: There is an issue with dependencies that requires the `catch` workaround:
+                    // Execution failed for task ':gradle-settings-conventions:kotlin-daemon-config:compilePluginsBlocks' because of `NoClassDefFoundError`
+                    // It should be removed eventually.
+                    lateinit var enablesAnnotations: List<Enables>
+                    lateinit var disablesAnnotations: List<Disables>
+                    try {
+                        enablesAnnotations = field.getAnnotationsByType(Enables::class.java).toList()
+                        disablesAnnotations = field.getAnnotationsByType(Disables::class.java).toList()
+                    } catch (_: NoClassDefFoundError) {
+                        enablesAnnotations = emptyList()
+                        disablesAnnotations = emptyList()
+                    }
                     val getter = klass.getMethod(JvmAbi.getterName(field.name))
                     val setter = klass.getMethod(JvmAbi.setterName(field.name), field.type)
                     val argumentField = ArgumentField(getter, setter, argument, enablesAnnotations, disablesAnnotations)
