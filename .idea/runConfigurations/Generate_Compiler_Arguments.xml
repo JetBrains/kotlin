@@ -2,7 +2,7 @@
   <configuration default="false" name="Generate Compiler Arguments" type="GradleRunConfiguration" factoryName="Gradle" folderName="Generators">
     <ExternalSystemSettings>
       <option name="executionName" />
-      <option name="externalProjectPath" value="$PROJECT_DIR$/compiler/cli/cli-common" />
+      <option name="externalProjectPath" value="$PROJECT_DIR$/compiler/cli/cli-base" />
       <option name="externalSystemIdString" value="GRADLE" />
       <option name="scriptParameters" value="" />
       <option name="taskDescriptions">
@@ -10,7 +10,7 @@
       </option>
       <option name="taskNames">
         <list>
-          <option value=":compiler:cli-common:generateCliArguments" />
+          <option value=":compiler:cli-base:generateCliArguments" />
           <option value=":generators:generateCompilerArgumentsCopy" />
           <option value=":compiler:build-tools:kotlin-build-tools-impl:generateBtaArguments" />
           <option value=":compiler:build-tools:kotlin-build-tools-api:generateBtaArguments" />

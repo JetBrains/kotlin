@@ -64,7 +64,7 @@ testing {
             dependencies {
                 implementation(project())
                 implementation(gradleKotlinDsl())
-                implementation(project(":compiler:cli-common")) { isTransitive = false }
+                implementation(project(":compiler:cli-base")) { isTransitive = false }
                 implementation(platform(libs.junit.bom))
                 implementation(libs.junit.jupiter.api)
                 implementation("org.jetbrains.kotlin:kotlin-stdlib:$coreDepsVersion")

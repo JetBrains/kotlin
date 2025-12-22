@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.platform
 
 /**
  * This class exists only to be able to reference it in modules which does not depend
- * on `:compiler:cli-common`. The only allowed inheritor of this class
+ * on `:compiler:cli-base`. The only allowed inheritor of this class
  * is [org.jetbrains.kotlin.platform.konan.NativePlatform]
  */
 abstract class NativePlatform(platformName: String) : SimplePlatform(platformName)

@@ -41,7 +41,6 @@ dependencies {
     testImplementation(project(":compiler:plugin-api"))
     testImplementation(project(":compiler:util"))
     testImplementation(project(":compiler:cli"))
-    testImplementation(project(":compiler:cli-common"))
     testImplementation(project(":compiler:frontend.java"))
     testImplementation(project(":compiler:fir:plugin-utils"))
     testImplementation(testFixtures(project(":compiler:tests-common"))) { // TODO: drop this, it's based on JUnit4
