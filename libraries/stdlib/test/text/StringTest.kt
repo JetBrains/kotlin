@@ -596,6 +596,18 @@ class StringTest {
         assertEquals("sample", "sample".removeSuffix(""))
     }
 
+    @Test fun ensureSuffix() = withOneCharSequenceArg("fix") { suffix ->
+        assertEquals("suffix", "suf".ensureSuffix(suffix), "Appends suffix")
+        assertEquals("suffix", "suffix".ensureSuffix(suffix))
+        assertEquals("sample", "sample".ensureSuffix(""))
+    }
+
+    @Test fun ensurePrefix() = withOneCharSequenceArg("suf") { prefix ->
+        assertEquals("suffix", "fix".ensurePrefix(prefix), "Appends prefix")
+        assertEquals("suffix", "suffix".ensurePrefix(prefix))
+        assertEquals("sample", "sample".ensurePrefix(""))
+    }
+
     @Test fun removeSurrounding() = withOneCharSequenceArg { arg1 ->
         val pre = arg1("<")
         val post = arg1(">")
@@ -626,6 +638,24 @@ class StringTest {
         assertContentEquals("suffix", "suffixfix".removeSuffix(suffix), "Removes suffix once")
         assertContentEquals("sample", "sample".removeSuffix(suffix))
         assertContentEquals("sample", "sample".removeSuffix(""))
+    }
+
+    @Test fun ensurePrefixCharSequence() = withTwoCharSequenceArgs { arg1, arg2 ->
+        fun String.ensurePrefix(prefix: String) = arg1(this).ensurePrefix(arg2(prefix))
+        val prefix = "suf"
+
+        assertContentEquals("suffix", "fix".ensurePrefix(prefix), "Appends prefix")
+        assertContentEquals("suffix", "suffix".ensurePrefix(prefix))
+        assertContentEquals("sample", "sample".ensurePrefix(""))
+    }
+
+    @Test fun ensureSuffixCharSequence() = withTwoCharSequenceArgs { arg1, arg2 ->
+        fun String.ensureSuffix(suffix: String) = arg1(this).ensureSuffix(arg2(suffix))
+        val suffix = "fix"
+
+        assertContentEquals("suffix", "suf".ensureSuffix(suffix), "Appends suffix")
+        assertContentEquals("suffix", "suffix".ensureSuffix(suffix))
+        assertContentEquals("sample", "sample".ensureSuffix(""))
     }
 
     @Test fun removeSurroundingCharSequence() = withTwoCharSequenceArgs { arg1, arg2 ->
