@@ -574,6 +574,18 @@ public class LLJsDiagnosticsFe10TestGenerated extends AbstractLLJsDiagnosticsTes
     }
 
     @Test
+    @TestMetadata("exportFileWithNameBasedDestructuringDeclarations.kt")
+    public void testExportFileWithNameBasedDestructuringDeclarations() {
+      runTest("compiler/testData/diagnostics/testsWithJsStdLib/export/exportFileWithNameBasedDestructuringDeclarations.kt");
+    }
+
+    @Test
+    @TestMetadata("exportNameBasedDestructuringDeclarations.kt")
+    public void testExportNameBasedDestructuringDeclarations() {
+      runTest("compiler/testData/diagnostics/testsWithJsStdLib/export/exportNameBasedDestructuringDeclarations.kt");
+    }
+
+    @Test
     @TestMetadata("exportableSuspendFunctions.kt")
     public void testExportableSuspendFunctions() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/export/exportableSuspendFunctions.kt");
