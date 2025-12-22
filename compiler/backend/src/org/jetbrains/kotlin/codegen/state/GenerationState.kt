@@ -116,8 +116,8 @@ class GenerationState(
         val adapted = try {
             // Using Class.forName here because we're in the old JVM backend, and we need to load extensions declared in the JVM IR backend.
             Class.forName("org.jetbrains.kotlin.backend.jvm.extensions.ClassBuilderExtensionAdapter")
-                .getDeclaredMethod("getExtensions", Project::class.java)
-                .invoke(null, project) as List<org.jetbrains.kotlin.codegen.extensions.ClassGeneratorExtensionAdapter>
+                .getDeclaredMethod("getExtensions", CompilerConfiguration::class.java)
+                .invoke(null, configuration) as List<ClassGeneratorExtensionAdapter>
         } catch (e: InvocationTargetException) {
             // Unwrap and rethrow any exception that happens. It's important e.g. in case of ProcessCanceledException.
             throw e.targetException
