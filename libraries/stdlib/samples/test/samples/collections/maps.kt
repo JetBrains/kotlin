@@ -551,6 +551,24 @@ class Maps {
             entries.clear()
             assertTrue(map.isEmpty())
         }
+
+        @Sample
+        fun entryCopy() {
+            val map = mutableMapOf(1 to "a", 2 to "b", 3 to "c", 4 to "d")
+            val selectedEntries = map.entries.filter { it.key % 2 == 0 }
+            assertPrints(selectedEntries, "[2=b, 4=d]")
+            // This may throw: "The backing map has been modified after this entry was obtained."
+            // because the map is structurally modified as soon as the first one entry is removed
+            // map.entries.removeAll(selectedEntries)
+
+            val selectedEntriesCopy = selectedEntries.map { it.copy() }
+            map.entries.removeAll(selectedEntriesCopy)
+            assertPrints(map, "{1=a, 3=c}")
+
+            // Copied entries continue to be valid even after the original map is cleared
+            map.clear()
+            assertPrints(selectedEntriesCopy, "[2=b, 4=d]")
+        }
     }
 }
 
