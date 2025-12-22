@@ -1,5 +1,5 @@
-// TARGET_BACKEND: JVM_IR, WASM_JS, WASM_WASI
-//  ^Reason: JS doesn't support inheritance from FunctionN, Native doesn't support coroutine testing utilities
+// TARGET_BACKEND: JVM_IR, WASM_JS, WASM_WASI, NATIVE
+//  ^Reason: JS doesn't support inheritance from FunctionN
 // WITH_STDLIB
 // WITH_COROUTINES
 // ISSUE: KT-82683
