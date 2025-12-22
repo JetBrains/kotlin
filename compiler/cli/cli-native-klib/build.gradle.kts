@@ -31,7 +31,6 @@ dependencies {
     implementation(project(":compiler:ir.serialization.native"))
     implementation(project(":core:compiler.common.native"))
     implementation(project(":compiler:cli"))
-    implementation(project(":compiler:cli-common"))
     implementation(project(":compiler:ir.backend.common"))
     implementation(project(":compiler:util"))
     implementation(project(":compiler:fir:fir-native"))

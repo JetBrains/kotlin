@@ -17,7 +17,6 @@ dependencies {
     testFixturesApi(project(":compiler:frontend.java"))
     testFixturesApi(project(":compiler:util"))
     testFixturesApi(project(":compiler:psi:psi-api"))
-    testFixturesApi(project(":compiler:cli-common"))
     testFixturesApi(project(":compiler:cli"))
     testFixturesApi(project(":compiler:cli-js"))
     testFixturesImplementation(project(":native:native.config"))

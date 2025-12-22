@@ -45,12 +45,12 @@
 /compiler/cli/ @JetBrains/kotlin-frontend
 /compiler/cli/cli-js/ @JetBrains/kotlin-js @JetBrains/kotlin-wasm
 /compiler/cli/cli-native-klib/ @JetBrains/kotlin-frontend @JetBrains/kotlin-common-backend
-/compiler/cli/cli-common/gen/org/jetbrains/kotlin/cli/common/arguments/K2NativeCompilerArguments.kt @JetBrains/kotlin-native
-/compiler/cli/cli-common/gen/org/jetbrains/kotlin/cli/common/arguments/K2NativeCompilerArgumentsCopyGenerated.kt @JetBrains/kotlin-native
-/compiler/cli/cli-common/gen/org/jetbrains/kotlin/cli/common/arguments/K2WasmCompilerArguments.kt @JetBrains/kotlin-wasm
-/compiler/cli/cli-common/gen/org/jetbrains/kotlin/cli/common/arguments/K2WasmCompilerArgumentsCopyGenerated.kt @JetBrains/kotlin-wasm
-/compiler/cli/cli-common/gen/org/jetbrains/kotlin/cli/common/arguments/K2JSCompilerArguments.kt @JetBrains/kotlin-js
-/compiler/cli/cli-common/gen/org/jetbrains/kotlin/cli/common/arguments/K2JSCompilerArgumentsCopyGenerated.kt @JetBrains/kotlin-js
+/compiler/cli/cli-base/gen/org/jetbrains/kotlin/cli/common/arguments/K2NativeCompilerArguments.kt @JetBrains/kotlin-native
+/compiler/cli/cli-base/gen/org/jetbrains/kotlin/cli/common/arguments/K2NativeCompilerArgumentsCopyGenerated.kt @JetBrains/kotlin-native
+/compiler/cli/cli-base/gen/org/jetbrains/kotlin/cli/common/arguments/K2WasmCompilerArguments.kt @JetBrains/kotlin-wasm
+/compiler/cli/cli-base/gen/org/jetbrains/kotlin/cli/common/arguments/K2WasmCompilerArgumentsCopyGenerated.kt @JetBrains/kotlin-wasm
+/compiler/cli/cli-base/gen/org/jetbrains/kotlin/cli/common/arguments/K2JSCompilerArguments.kt @JetBrains/kotlin-js
+/compiler/cli/cli-base/gen/org/jetbrains/kotlin/cli/common/arguments/K2JSCompilerArgumentsCopyGenerated.kt @JetBrains/kotlin-js
 /compiler/compiler.version/ @JetBrains/kotlin-frontend
 /compiler/compiler-runner/ @JetBrains/kotlin-frontend
 /compiler/compiler-runner-unshaded/ @JetBrains/kotlin-build-tools
