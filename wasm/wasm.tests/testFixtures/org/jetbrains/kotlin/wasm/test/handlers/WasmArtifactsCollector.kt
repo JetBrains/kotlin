@@ -14,7 +14,7 @@ import java.io.File
 internal interface WasmArtifactsCollector {
     val testServices: TestServices
 
-    fun collectJsArtifacts(originalFile: File): JsArtifacts {
+    fun collectJsArtifacts(originalFile: File, mode: String): JsArtifacts {
         val jsFiles = mutableListOf<AdditionalFile>()
         val mjsFiles = mutableListOf<AdditionalFile>()
         var entryMjs: String? = "test.mjs"
@@ -54,6 +54,12 @@ internal interface WasmArtifactsCollector {
             ?.let {
                 entryMjs = it.name
                 mjsFiles += AdditionalFile(it.name, it.readText())
+            }
+
+        WasmTypeScriptCompilationHandler.compiledTypeScriptOutput(testServices, mode)
+            .takeIf { it.exists() }
+            ?.let {
+                entryMjs = it.name
             }
 
         return JsArtifacts(entryMjs, jsFiles, mjsFiles)

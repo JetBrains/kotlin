@@ -50,6 +50,11 @@ object WasmEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
         applicability = DirectiveApplicability.Global
     )
 
+    val PATH_TO_NODE_DIR by stringDirective(
+        description = "Specify the path to output directory, where all artifacts will be stored",
+        applicability = DirectiveApplicability.Global
+    )
+
     val TEST_GROUP_OUTPUT_DIR_PREFIX by stringDirective(
         description = "Specify the prefix directory for output directory that will contains artifacts",
         applicability = DirectiveApplicability.Global

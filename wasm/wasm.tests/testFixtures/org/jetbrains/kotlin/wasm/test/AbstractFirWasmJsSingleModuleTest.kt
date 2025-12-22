@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.WrappedException
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.builders.wasmArtifactsHandlersStep
+import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.WASM_FAILS_IN_SINGLE_MODULE_MODE
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
@@ -25,6 +27,7 @@ import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.wasm.test.converters.WasmBackendSingleModuleFacade
 import org.jetbrains.kotlin.wasm.test.handlers.WasmBoxRunnerWithPrecompiled
 import org.jetbrains.kotlin.wasm.test.handlers.WasmDebugRunnerWithPrecompiled
+import org.jetbrains.kotlin.wasm.test.handlers.WasmTypeScriptCompilationHandler
 import org.jetbrains.kotlin.wasm.test.providers.WasmJsSteppingTestAdditionalSourceProvider
 import org.junit.jupiter.api.BeforeAll
 
@@ -91,7 +94,7 @@ abstract class AbstractWasmJsCodegenSingleModuleTestBase(
 }
 
 open class AbstractFirWasmJsCodegenSingleModuleBoxTest(
-    testGroupOutputDirPrefix: String = "codegen/singleModuleBox/"
+    testGroupOutputDirPrefix: String = "codegen/singleModuleBox/",
 ) : AbstractWasmJsCodegenSingleModuleRegularStdTest(
     pathToTestDir = "compiler/testData/codegen/box/",
     testGroupOutputDirPrefix = testGroupOutputDirPrefix
@@ -107,15 +110,20 @@ open class AbstractFirWasmTypeScriptExportSingleModuleTest : AbstractWasmJsCodeg
     "typescript-export-single-module/"
 ) {
     override fun configure(builder: TestConfigurationBuilder) {
+        builder.wasmArtifactsHandlersStep {
+            useHandlers(::WasmTypeScriptCompilationHandler)
+        }
         super.configure(builder)
         builder.defaultDirectives {
             +WasmEnvironmentConfigurationDirectives.CHECK_TYPESCRIPT_DECLARATIONS
+            JsEnvironmentConfigurationDirectives.TSC_TARGET with "es2020"
+            JsEnvironmentConfigurationDirectives.TSC_MODULE with "es2020"
         }
     }
 }
 
 open class AbstractFirWasmJsSteppingSingleFileTest(
-    testGroupOutputDirPrefix: String = "debug/stepping/firBoxSingleModule"
+    testGroupOutputDirPrefix: String = "debug/stepping/firBoxSingleModule",
 ) : AbstractWasmJsCodegenSingleModuleTestBase(
     "compiler/testData/debug/stepping/",
     testGroupOutputDirPrefix

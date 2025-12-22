@@ -25,7 +25,6 @@ internal class WasmBoxRunner(
 
     private fun runWasmCode() {
         val artifacts = modulesToArtifact.values.single()
-        val outputDirBase = testServices.getWasmTestOutputDirectory()
         val debugMode = DebugMode.fromSystemProperty("kotlin.wasm.debugMode")
 
         val originalFile = testServices.moduleStructure.originalTestDataFiles.first()
@@ -33,7 +32,7 @@ internal class WasmBoxRunner(
         val failsIn = InTextDirectivesUtils.findListWithPrefixes(testFileText, "// WASM_FAILS_IN: ")
 
         fun writeToFilesAndRunTest(mode: String, result: WasmCompilerResult): List<Throwable> {
-            val outputDir = File(outputDirBase, mode)
+            val outputDir = testServices.getWasmTestOutputDirectoryForMode(mode)
 
             outputDir.mkdirs()
             writeCompilationResult(result, outputDir, "index")
