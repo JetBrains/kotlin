@@ -43,7 +43,7 @@ Some of the code in the standard library is created by generating code from temp
 
 Also the [JavaScript back-end](https://github.com/JetBrains/kotlin/blob/master/js/ReadMe.md) could really use your help. See the [JavaScript contribution section](https://github.com/JetBrains/kotlin/blob/master/js/ReadMe.md) for more details.
 
-You can also [contribute to Kotlin/Native](../kotlin-native/README.md).
+You can also [contribute to Kotlin/Native](/kotlin-native/README.md).
 
 If you want to contribute a new language feature, it is important to discuss it through a [KEEP](https://github.com/Kotlin/KEEP) first and get an approval from the language designers. This way you'll make sure your work will be in line with the overall language evolution plan and no other design decisions or considerations will block its acceptance.
 
