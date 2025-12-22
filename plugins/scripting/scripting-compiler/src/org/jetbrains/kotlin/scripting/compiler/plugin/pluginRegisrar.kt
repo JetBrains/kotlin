@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.cli.common.extensions.ScriptEvaluationExtension
 import org.jetbrains.kotlin.cli.common.extensions.ShellExtension
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.extensionsStorage
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
 import org.jetbrains.kotlin.compiler.plugin.registerExtension
@@ -61,9 +62,6 @@ class ScriptingCompilerConfigurationComponentRegistrar : ComponentRegistrar {
             // TODO: add jdk path and other params if needed
         }
         withClassloadingProblemsReporting(messageCollector) {
-            if (configuration.get(ENABLE_SCRIPT_EXPLANATION_OPTION, false)) {
-                IrGenerationExtension.registerExtension(project, ScriptingIrExplainGenerationExtension(project))
-            }
             CompilerConfigurationExtension.registerExtension(project, ScriptingCompilerConfigurationExtension(project, hostConfiguration))
             CollectAdditionalSourcesExtension.registerExtension(project, ScriptingCollectAdditionalSourcesExtension(project))
             ProcessSourcesBeforeCompilingExtension.registerExtension(project, ScriptingProcessSourcesBeforeCompilingExtension(project))
@@ -82,8 +80,14 @@ class ScriptingCompilerConfigurationComponentRegistrar : ComponentRegistrar {
             SyntheticResolveExtension.registerExtension(project, ScriptingResolveExtension())
             ExtraImportsProviderExtension.registerExtension(project, ScriptExtraImportsProviderExtension())
 
-            IrGenerationExtension.registerExtension(project, ScriptLoweringExtension())
-            IrGenerationExtension.registerExtension(project, ReplLoweringExtension())
+            with(configuration.extensionsStorage!!) {
+                if (configuration.get(ENABLE_SCRIPT_EXPLANATION_OPTION, false)) {
+                    IrGenerationExtension.registerExtension(ScriptingIrExplainGenerationExtension(project))
+                }
+
+                IrGenerationExtension.registerExtension(ScriptLoweringExtension())
+                IrGenerationExtension.registerExtension(ReplLoweringExtension())
+            }
 
             if (messageCollector != null) {
                 project.registerService(ScriptReportSink::class.java, CliScriptReportSink(messageCollector))

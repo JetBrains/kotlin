@@ -280,7 +280,6 @@ object KotlinToJVMBytecodeCompiler {
         val codegenFactory = JvmIrCodegenFactory(configuration)
         val backendInput = environment.configuration.perfManager.tryMeasurePhaseTime(PhaseType.TranslationToIr) {
             codegenFactory.convertToIr(
-                environment.project,
                 environment.getSourceFiles(),
                 configuration,
                 result.moduleDescriptor,
