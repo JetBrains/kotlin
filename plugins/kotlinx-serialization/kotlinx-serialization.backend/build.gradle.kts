@@ -14,6 +14,7 @@ dependencies {
     compileOnly(project(":compiler:fir:fir2ir"))
     compileOnly(project(":compiler:fir:tree"))
     compileOnly(project(":compiler:fir:fir-deserialization"))
+    compileOnly(project(":native:config.native"))
     compileOnly(project(":kotlin-util-klib-metadata"))
     compileOnly(project(":compiler:cli-common"))
 

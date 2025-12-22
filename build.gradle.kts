@@ -208,6 +208,7 @@ val commonCompilerModules = arrayOf(
     ":kotlin-util-klib-abi",
     ":native:base",
     ":native:binary-options",
+    ":native:config.native",
     ":native:kotlin-native-utils",
     ":compiler:build-tools:kotlin-build-statistics",
     ":compiler:build-tools:kotlin-build-tools-api",

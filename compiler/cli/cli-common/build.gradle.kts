@@ -10,6 +10,7 @@ dependencies {
     implementation(project(":compiler:config.jvm"))
     implementation(project(":js:js.config"))
     implementation(project(":wasm:wasm.config"))
+    implementation(project(":native:config.native"))
     implementation(project(":native:kotlin-native-utils"))
     api(project(":compiler:plugin-api"))
     compileOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
