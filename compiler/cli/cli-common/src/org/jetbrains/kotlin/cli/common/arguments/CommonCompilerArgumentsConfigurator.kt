@@ -143,7 +143,7 @@ open class CommonCompilerArgumentsConfigurator {
             )
         }
 
-        if (featuresThatForcePreReleaseBinaries.isNotEmpty()) {
+        if (featuresThatForcePreReleaseBinaries.isNotEmpty() && !arguments.suppressInternalArgsWarnings) {
             collector.report(
                 CompilerMessageSeverity.STRONG_WARNING,
                 "Following manually enabled features will force generation of pre-release binaries: ${featuresThatForcePreReleaseBinaries.joinToString()}"

@@ -214,6 +214,7 @@ fun MessageCollector.reportArgumentParseProblems(arguments: CommonToolArguments)
 }
 
 private fun MessageCollector.reportUnsafeInternalArgumentsIfAny(arguments: CommonToolArguments) {
+    if (arguments.suppressInternalArgsWarnings) return
     val unsafeArguments = arguments.internalArguments.filterNot {
         // -XXLanguage which turns on BUG_FIX considered safe
         it.languageFeature.actuallyEnabledInProgressiveMode && it.state == LanguageFeature.State.ENABLED

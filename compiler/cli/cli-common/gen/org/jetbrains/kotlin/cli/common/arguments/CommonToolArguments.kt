@@ -63,6 +63,16 @@ abstract class CommonToolArguments : Freezable(), Serializable {
         }
 
     @Argument(
+        value = "-Xsuppress-internal-args-warnings",
+        description = "Suppress warnings about using internal compiler arguments and pre-release binaries.",
+    )
+    var suppressInternalArgsWarnings: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
         value = "-verbose",
         description = "Enable verbose logging output.",
     )

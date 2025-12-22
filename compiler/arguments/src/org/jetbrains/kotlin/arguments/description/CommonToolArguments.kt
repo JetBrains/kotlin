@@ -74,6 +74,19 @@ val actualCommonToolsArguments by compilerArgumentsLevel(CompilerArgumentsLevelN
     }
 
     compilerArgument {
+        name = "Xsuppress-internal-args-warnings"
+        compilerName = "suppressInternalArgsWarnings"
+        description = "Suppress warnings about using internal compiler arguments and pre-release binaries.".asReleaseDependent()
+
+        valueType = BooleanType.defaultFalse
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_3_0,
+            stabilizedVersion = KotlinReleaseVersion.v2_3_0,
+        )
+    }
+
+    compilerArgument {
         name = "Werror"
         compilerName = "allWarningsAsErrors"
         description = "Report an error if there are any warnings.".asReleaseDependent()
