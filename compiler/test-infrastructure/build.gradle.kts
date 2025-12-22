@@ -6,6 +6,7 @@ plugins {
 dependencies {
     testFixturesApi(project(":compiler:fir:entrypoint"))
     testFixturesApi(project(":compiler:cli"))
+    testFixturesApi(project(":native:native.config"))
     testFixturesApi(intellijCore())
 
     testFixturesApi(testFixtures(project(":compiler:test-infrastructure-utils")))

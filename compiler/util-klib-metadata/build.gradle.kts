@@ -13,6 +13,7 @@ dependencies {
     compileOnly(project(":core:compiler.common.native"))
     compileOnly(project(":compiler:serialization"))
     compileOnly(project(":native:kotlin-native-utils"))
+    compileOnly(project(":native:native.config"))
 
     api(kotlinStdlib())
     api(project(":kotlin-util-io"))
