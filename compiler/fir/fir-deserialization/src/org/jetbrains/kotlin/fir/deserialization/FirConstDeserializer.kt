@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.deserialization
 
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildLiteralExpression
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.Flags
@@ -19,7 +20,7 @@ import org.jetbrains.kotlin.types.ConstantValueKind
 open class FirConstDeserializer(
     private val protocol: SerializerExtensionProtocol
 ) {
-    protected val constantCache: MutableMap<CallableId, FirExpression> = hashMapOf()
+    protected val constantCache: MutableMap<CallableId, FirLiteralExpression> = hashMapOf()
 
     open fun loadConstant(
         propertyProto: ProtoBuf.Property, callableId: CallableId, nameResolver: NameResolver, isUnsigned: Boolean,
@@ -33,7 +34,7 @@ open class FirConstDeserializer(
 
 fun buildFirConstant(
     protoValue: ProtoBuf.Annotation.Argument.Value?, sourceValue: Any?, constKind: String, nameResolver: NameResolver, isUnsigned: Boolean
-): FirExpression? {
+): FirLiteralExpression? {
     return when (constKind) {
         "BYTE", "B" -> buildLiteralExpression(
             null,
