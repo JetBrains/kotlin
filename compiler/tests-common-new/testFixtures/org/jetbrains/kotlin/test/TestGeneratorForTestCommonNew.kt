@@ -89,6 +89,10 @@ fun main(args: Array<String>) {
                 model("codegen/box", excludeDirs = k2BoxTestDir)
             }
 
+            testClass<AbstractDirectivesValidatorTest> {
+                model("codegen/box")
+            }
+
             testClass<AbstractIrSteppingTest> {
                 model("debug/stepping")
             }
