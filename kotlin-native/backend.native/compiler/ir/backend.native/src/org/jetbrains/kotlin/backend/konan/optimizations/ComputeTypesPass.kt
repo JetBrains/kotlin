@@ -119,6 +119,7 @@ internal class ComputeTypesPass(val context: Context) : BodyLoweringPass {
 
     private fun List<IrExpression>.computeType() = leastCommonAncestor(
             this.map { (it as? IrTypeOperatorCall)?.tryShortcutToArgument() ?: it.type }
+                    .distinct()
                     .filterNot { it.isNothing() }
     )
 
@@ -154,7 +155,7 @@ internal class ComputeTypesPass(val context: Context) : BodyLoweringPass {
     private class ControlFlowMergePointInfo(val variable: IrElement) {
         val needValues = variable is IrExpression && !variable.type.erasedUpperBound.isFinalClass
         val variablesValues = BitSet()
-        val values = mutableListOf<IrExpression>()
+        val variableWrites = if (needValues) BitSet() else null
     }
 
     // Some variables (catch block parameters and suspension point id parameters) are initialized by runtime.
@@ -168,6 +169,9 @@ internal class ComputeTypesPass(val context: Context) : BodyLoweringPass {
         val allVariablesWrites = mutableListOf<VariableWrite>()
         val variableWriteMap = mutableMapOf<VariableWrite, Int>()
         val variableWrites = mutableMapOf<IrVariable, BitSet>()
+
+        fun BitSet.computeType() = this.mapEachBit { allVariablesWrites[it].value }.computeType()
+
         irBody.accept(object : IrVisitor<BitSet, BitSet>() {
             fun getVariableWriteId(variable: IrElement, value: IrExpression) = VariableWrite(variable, value).let { write ->
                 variableWriteMap.getOrPut(write) {
@@ -211,8 +215,8 @@ internal class ComputeTypesPass(val context: Context) : BodyLoweringPass {
                 val result = if (!cfmpInfo.needValues)
                     variablesValues
                 else {
-                    cfmpInfo.values.add(value)
                     val id = getVariableWriteId(cfmpInfo.variable, value)
+                    cfmpInfo.variableWrites!!.set(id)
                     variablesValues.copy().apply { set(id) }
                 }
 
@@ -248,9 +252,7 @@ internal class ComputeTypesPass(val context: Context) : BodyLoweringPass {
                     returnableBlockCFMPInfos[irReturnableBlock.symbol] = cfmpInfo
                     visitElement(expression, data)
                     returnableBlockCFMPInfos.remove(irReturnableBlock.symbol)
-                    val actualType = cfmpInfo.values.computeType()
-                    if (actualType != null)
-                        expression.type = actualType
+                    cfmpInfo.variableWrites?.computeType()?.let { expression.type = it }
                     cfmpInfo.variablesValues
                 }
             }
@@ -265,9 +267,7 @@ internal class ComputeTypesPass(val context: Context) : BodyLoweringPass {
                 }
                 val isExhaustive = expression.branches.last().isUnconditional()
                 if (isExhaustive) {
-                    val actualType = cfmpInfo.values.computeType()
-                    if (actualType != null)
-                        expression.type = actualType
+                    cfmpInfo.variableWrites?.computeType()?.let { expression.type = it }
                 } else {
                     // A non-exhaustive when always has type Unit (or Nothing).
                     controlFlowMergePoint(cfmpInfo, dummyUnitExpression, result)
@@ -300,9 +300,7 @@ internal class ComputeTypesPass(val context: Context) : BodyLoweringPass {
                     val catchVV = aCatch.result.accept(this, catchesVV)
                     controlFlowMergePoint(cfmpInfo, aCatch.result, catchVV)
                 }
-                val actualType = cfmpInfo.values.computeType()
-                if (actualType != null)
-                    aTry.type = actualType
+                cfmpInfo.variableWrites?.computeType()?.let { aTry.type = it }
 
                 return cfmpInfo.variablesValues
             }
@@ -376,9 +374,7 @@ internal class ComputeTypesPass(val context: Context) : BodyLoweringPass {
                         ?: error("A use of uninitialized variable ${variable.render()}")
                 val mergedVariableWrites = getValueVariablesWrites.getOrPut(expression) { BitSet() }
                 mergedVariableWrites.or(variableWrites)
-                val variableValues = mergedVariableWrites.mapEachBit { allVariablesWrites[it].value }
-                val actualType = variableValues.computeType()
-                expression.type = actualType ?: variable.type
+                expression.type = mergedVariableWrites.computeType() ?: variable.type
 
                 context.logMultiple {
                     +expression.render()
