@@ -32,3 +32,6 @@ fun TestServices.getWasmTestOutputDirectory(): File {
         WasmEnvironmentConfigurationDirectives.PATH_TO_TEST_DIR,
     ).resolve(originalFile.nameWithoutExtension)
 }
+
+fun TestServices.getWasmTestOutputDirectoryForMode(mode: String): File =
+    getWasmTestOutputDirectory().resolve(mode)
