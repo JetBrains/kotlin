@@ -60,7 +60,7 @@ dependencies {
     testImplementation(testFixtures(project(":kotlin-gradle-plugin"))) {
         (this as ModuleDependency).isTransitive = false
     }
-    testImplementation(project(":compiler:cli-common"))
+    testImplementation(project(":compiler:cli-base"))
     testImplementation(project(":kotlin-gradle-plugin"))
     testImplementation(project(":kotlin-allopen"))
     testImplementation(project(":kotlin-noarg"))
@@ -92,7 +92,7 @@ dependencies {
     testImplementation(project(":kotlin-compiler-embeddable"))
     testImplementation(intellijJDom())
     testImplementation(intellijPlatformUtil())
-    testImplementation(project(":compiler:cli-common"))
+    testImplementation(project(":compiler:cli-base"))
     testImplementation(testFixtures(project(":compiler:test-infrastructure-utils.common")))
     // testCompileOnly dependency on non-shaded artifacts is needed for IDE support
     // testRuntimeOnly on shaded artifact is needed for running tests with shaded compiler

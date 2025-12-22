@@ -161,7 +161,6 @@ include ":benchmarks",
         ":compiler:light-classes",
         ":compiler:javac-wrapper",
         ":compiler:cli:cli-arguments-generator",
-        ":compiler:cli-common",
         ":compiler:cli-base",
         ":compiler:cli",
         ":compiler:cli-js",
@@ -820,7 +819,6 @@ project(':kotlin-compiler-client-embeddable').projectDir = "$rootDir/prepare/com
 project(':kotlin-klib-abi-reader').projectDir = "$rootDir/libraries/tools/klib-abi-reader" as File
 project(':kotlin-preloader').projectDir = "$rootDir/compiler/preloader" as File
 project(':kotlin-build-common').projectDir = "$rootDir/build-common" as File
-project(':compiler:cli-common').projectDir = "$rootDir/compiler/cli/cli-common" as File
 project(':compiler:cli-base').projectDir = "$rootDir/compiler/cli/cli-base" as File
 project(':compiler:cli-js').projectDir = "$rootDir/compiler/cli/cli-js" as File
 project(':kotlin-runner').projectDir = "$rootDir/compiler/cli/cli-runner" as File

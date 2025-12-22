@@ -15,11 +15,11 @@ val testCompilerClasspath by configurations.creating {
 val testCompilationClasspath by configurations.creating
 
 dependencies {
-    embedded(project(":compiler:cli-common")) { isTransitive = false }
+    embedded(project(":compiler:cli-base")) { isTransitive = false }
     embedded(project(":daemon-common")) { isTransitive = false }
     embedded(project(":kotlin-daemon-client")) { isTransitive = false }
     
-    testImplementation(project(":compiler:cli-common"))
+    testImplementation(project(":compiler:cli-base"))
     testImplementation(project(":daemon-common"))
     testImplementation(project(":kotlin-daemon-client"))
     testImplementation(libs.junit4)
