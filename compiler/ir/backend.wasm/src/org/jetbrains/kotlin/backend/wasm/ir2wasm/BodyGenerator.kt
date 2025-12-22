@@ -639,7 +639,11 @@ class BodyGenerator(
     }
 
     override fun visitRawFunctionReference(expression: IrRawFunctionReference) {
-        generateRawFunctionReference(expression)
+        body.buildInstr(
+            WasmOp.REF_FUNC,
+            expression.getSourceLocation(),
+            wasmFileCodegenContext.referenceFunctionWasmReference(expression.symbol)
+        )
     }
 
     override fun visitConstructorCall(expression: IrConstructorCall) {
@@ -737,14 +741,6 @@ class BodyGenerator(
         generateExpression(expression)
         body.buildStructNew(wasmFileCodegenContext.referenceGcType(klassSymbol), location)
         body.commentPreviousInstr { "box" }
-    }
-
-    private fun generateRawFunctionReference(functionRef: IrRawFunctionReference) {
-        body.buildInstr(
-            WasmOp.REF_FUNC,
-            functionRef.getSourceLocation(),
-            wasmFileCodegenContext.referenceFunctionForValue(functionRef.symbol)
-        )
     }
 
     private fun generateCall(call: IrFunctionAccessExpression) {

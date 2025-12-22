@@ -100,8 +100,8 @@ open class WasmFileCodegenContext(
         }
     }
 
-    fun referenceFunctionForValue(irFunction: IrFunctionSymbol): FuncSymbol {
-        wasmFileFragment.forValueFunctions.add(irFunction.getReferenceKey())
+    fun referenceFunctionWasmReference(irFunction: IrFunctionSymbol): FuncSymbol {
+        wasmFileFragment.wasmReferencedFunctions.add(irFunction.getReferenceKey())
         return referenceFunction(irFunction)
     }
 

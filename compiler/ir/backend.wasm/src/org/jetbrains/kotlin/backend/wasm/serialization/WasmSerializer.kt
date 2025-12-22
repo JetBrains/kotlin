@@ -678,7 +678,7 @@ class WasmSerializer(outputStream: OutputStream) {
             serializeMap(stringLiteralId, ::serializeString, ::serializeIntSymbol)
 
             serializeConstantArrayDataSegmentId(constantArrayDataSegmentId)
-            serializeList(forValueFunctions, ::serializeIdSignature)
+            serializeList(wasmReferencedFunctions, ::serializeIdSignature)
             serializeMap(jsFuns, ::serializeIdSignature, ::serializeJsCodeSnippet)
             serializeMap(jsModuleImports, ::serializeIdSignature, ::serializeString)
             serializeMap(jsBuiltinsPolyfills, ::serializeString, ::serializeString)

@@ -41,7 +41,7 @@ class WasmCompiledFileFragment(
     val fragmentTag: String?,
 
     val definedFunctions: MutableMap<IdSignature, WasmFunction> = mutableMapOf(),
-    val forValueFunctions: MutableList<IdSignature> = mutableListOf(),
+    val wasmReferencedFunctions: MutableList<IdSignature> = mutableListOf(),
     val definedGlobalFields: MutableMap<IdSignature, WasmGlobal> = mutableMapOf(),
     val definedGlobalVTables: MutableMap<IdSignature, WasmGlobal> = mutableMapOf(),
     val definedGlobalClassITables: MutableMap<IdSignature, WasmGlobal> = mutableMapOf(),
@@ -238,7 +238,7 @@ class WasmCompiledModuleFragment(
         createAndBindSpecialITableTypes(definedDeclarations)
         createAndBindRttiTypeDeclaration(definedDeclarations)
 
-        val elements = getForValueFunctions(definedDeclarations)
+        val elements = getWasmForwardReferencedDeclarations(definedDeclarations)
 
         createAndExportServiceFunctions(
             definedDeclarations = definedDeclarations,
@@ -447,10 +447,10 @@ class WasmCompiledModuleFragment(
         definedDeclarations.gcTypes[Synthetics.GcTypes.rttiType.value] = rttiTypeDeclaration
     }
 
-    private fun getForValueFunctions(definedDeclarations: DefinedDeclarationsResolver) = mutableListOf<WasmElement>().apply {
-        // WebAssembly requires functions used for value via func.ref to be forward declared.
+    private fun getWasmForwardReferencedDeclarations(definedDeclarations: DefinedDeclarationsResolver) = mutableListOf<WasmElement>().apply {
+        // WebAssembly requires functions used for value via ref.func to be forward declared.
         wasmCompiledFileFragments.forEach { fragment ->
-            addAll(fragment.forValueFunctions.map { key ->
+            addAll(fragment.wasmReferencedFunctions.map { key ->
                 WasmElement(
                     type = WasmFuncRef,
                     values = listOf(WasmTable.Value.Function(definedDeclarations.functions[key] ?: error("Function $key is not found in fragments"))),

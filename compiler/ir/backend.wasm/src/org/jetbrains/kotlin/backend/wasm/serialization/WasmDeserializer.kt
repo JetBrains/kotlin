@@ -632,7 +632,7 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
         stringLiteralId = deserializeStringLiteralId(),
 
         constantArrayDataSegmentId = deserializeConstantArrayDataSegmentId(),
-        forValueFunctions = deserializeForValueFunctions(),
+        wasmReferencedFunctions = deserializeForValueFunctions(),
         jsFuns = deserializeJsFuns(),
         jsModuleImports = deserializeJsModuleImports(),
         jsBuiltinsPolyfills = deserializeJsBuiltinsPolyfills(),

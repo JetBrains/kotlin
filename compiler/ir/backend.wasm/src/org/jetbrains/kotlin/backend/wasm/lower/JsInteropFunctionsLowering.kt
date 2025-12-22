@@ -45,6 +45,8 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
     val symbols = context.wasmSymbols
     val jsRelatedSymbols get() = context.wasmSymbols.jsRelatedSymbols
     val adapters get() = jsRelatedSymbols.jsInteropAdapters
+    val trampolineFunctions = mutableMapOf<String, IrSimpleFunction>()
+    val kotlinClosureToJsConverters = mutableMapOf<Int, IrSimpleFunction>()
 
     val additionalDeclarations = mutableListOf<IrDeclaration>()
     lateinit var currentParent: IrDeclarationParent
@@ -337,9 +339,11 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
             //     }
             //
 
-            val trampolineRef = context.getFileContext(currentFile).closureCallExports.getOrPut(functionTypeInfo.signatureString) {
+            val trampolineFunction = trampolineFunctions.getOrPut(functionTypeInfo.signatureString) {
                 createKotlinClosureCaller(functionTypeInfo)
-            }.run {
+            }
+
+            val trampolineReference = trampolineFunction.run {
                 IrRawFunctionReferenceImpl(
                     startOffset, endOffset,
                     type,
@@ -359,11 +363,11 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
             //     external fun __convertKotlinClosureToJsClosure_<arity>(f: structref, trampoline: funcref): ExternalRef
             val arity = functionTypeInfo.parametersAdapters.size
             val kotlinToJsClosureConvertor =
-                context.getFileContext(currentFile).kotlinClosureToJsConverters.getOrPut(arity) {
+                kotlinClosureToJsConverters.getOrPut(arity) {
                     createKotlinToJsClosureConvertor(arity)
                 }
 
-            return TrampolineBasedAdapter(kotlinToJsClosureConvertor, trampolineRef)
+            return TrampolineBasedAdapter(kotlinToJsClosureConvertor, trampolineReference)
         }
         return SendKotlinObjectToJsAdapter(this)
     }
