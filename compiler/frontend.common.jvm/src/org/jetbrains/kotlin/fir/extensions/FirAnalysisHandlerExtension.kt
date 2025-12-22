@@ -7,28 +7,13 @@ package org.jetbrains.kotlin.fir.extensions
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
+import org.jetbrains.kotlin.extensions.ExtensionPointDescriptor
 
 abstract class FirAnalysisHandlerExtension {
-    companion object : ProjectExtensionDescriptor<FirAnalysisHandlerExtension>(
+    companion object : ExtensionPointDescriptor<FirAnalysisHandlerExtension>(
         "org.jetbrains.kotlin.fir.firAnalyzeCompleteHandlerExtension",
         FirAnalysisHandlerExtension::class.java
-    ) {
-        /**
-         * Applies [FirAnalysisHandlerExtension] instances to a project
-         * @param project the project to analyze
-         * @param configuration compiler configuration
-         * @return [null] if no applicable extensions were found, [true] if all applicable extensions returned [true] from [doAnalysis],
-         * [false] if any applicable extension returned [false]
-         *
-         * @see FirAnalysisHandlerExtension.isApplicable
-         * @see FirAnalysisHandlerExtension.doAnalysis
-         */
-        fun analyze(project: Project, configuration: CompilerConfiguration): Boolean? {
-            val extensions = FirAnalysisHandlerExtension.getInstances(project).filter { it.isApplicable(configuration) }
-            return if (extensions.isEmpty()) null else extensions.all { it.doAnalysis(project, configuration) }
-        }
-    }
+    )
 
     /**
      * Checks whether [doAnalysis] should be called

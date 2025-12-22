@@ -778,7 +778,6 @@ class KotlinCoreEnvironment private constructor(
             ShellExtension.registerExtensionPoint(project)
 
             // K2 extensions
-            FirAnalysisHandlerExtension.registerExtensionPoint(project)
             IrGenerationExtension.registerExtensionPoint(project)
             ClassGeneratorExtension.registerExtensionPoint(project)
             ClassFileFactoryFinalizerExtension.registerExtensionPoint(project)
