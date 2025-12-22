@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibSingleFile
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDescriptor
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.compiler.plugin.getCompilerExtension
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider
@@ -440,6 +441,7 @@ private fun preparePsi2Ir(
     return psi2Ir.createGeneratorContext(
         analysisResult.moduleDescriptor,
         analysisResult.bindingContext,
+        modulesStructure.compilerConfiguration,
         symbolTable
     )
 }
@@ -464,7 +466,7 @@ fun GeneratorContext.generateModuleFragmentWithPlugins(
         linker = irLinker,
         messageCollector = messageCollector,
     )
-    for (extension in IrGenerationExtension.getInstances(project)) {
+    for (extension in compilerConfiguration.getCompilerExtension(IrGenerationExtension)) {
         psi2Ir.addPostprocessingStep { module ->
             val old = stubGenerator?.unboundSymbolGeneration
             try {

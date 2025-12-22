@@ -202,7 +202,7 @@ class K2CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
             fir2IrExtensions,
             configuration,
             analysisResult.reporter,
-            IrGenerationExtension.getInstances(project),
+            configuration.getCompilerExtension(IrGenerationExtension),
         )
 
         return FirFrontendResult(fir2IrResult, fir2IrExtensions)

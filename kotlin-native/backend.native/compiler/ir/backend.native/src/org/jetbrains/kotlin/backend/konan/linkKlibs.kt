@@ -11,12 +11,7 @@ import org.jetbrains.kotlin.backend.konan.driver.NativeBackendPhaseContext
 import org.jetbrains.kotlin.backend.konan.ir.BackendNativeSymbols
 import org.jetbrains.kotlin.backend.konan.ir.interop.IrProviderForCEnumAndCStructStubs
 import org.jetbrains.kotlin.backend.konan.ir.konanLibrary
-import org.jetbrains.kotlin.backend.konan.serialization.CInteropModuleDeserializerFactory
-import org.jetbrains.kotlin.backend.konan.serialization.KonanInteropModuleDeserializer
-import org.jetbrains.kotlin.backend.konan.serialization.KonanIrLinker
-import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerDesc
-import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerIr
-import org.jetbrains.kotlin.backend.konan.serialization.isFromCInteropLibrary
+import org.jetbrains.kotlin.backend.konan.serialization.*
 import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.languageVersionSettings
@@ -92,7 +87,12 @@ internal fun LinkKlibsContext.linkKlibs(
             Psi2IrConfiguration(ignoreErrors = false, partialLinkageConfig.isEnabled),
             messageCollector::checkNoUnboundSymbols
     )
-    val generatorContext = translator.createGeneratorContext(moduleDescriptor, bindingContext, symbolTable)
+    val generatorContext = translator.createGeneratorContext(
+            moduleDescriptor,
+            bindingContext,
+            config.configuration,
+            symbolTable
+    )
 
     val forwardDeclarationsModuleDescriptor = moduleDescriptor.allDependencyModules.firstOrNull { it.isForwardDeclarationModule }
 

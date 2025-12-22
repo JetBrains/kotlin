@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.psi2ir
 
 import org.jetbrains.kotlin.backend.common.linkage.IrDeserializer
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.IrProvider
@@ -58,6 +59,7 @@ class Psi2IrTranslator(
     fun createGeneratorContext(
         moduleDescriptor: ModuleDescriptor,
         bindingContext: BindingContext,
+        compilerConfiguration: CompilerConfiguration,
         symbolTable: SymbolTable,
         extensions: GeneratorExtensions = GeneratorExtensions(),
         fragmentContext: FragmentContext? = null
@@ -68,6 +70,7 @@ class Psi2IrTranslator(
         )
         return GeneratorContext(
             configuration,
+            compilerConfiguration,
             moduleDescriptor,
             bindingContext,
             languageVersionSettings,
