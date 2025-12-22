@@ -1,0 +1,12 @@
+// Rendering settings:
+// - Signature version: 1
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <interop_class_inheritor_library_2_4>
+final class interop_class_inheritor.test/Derived : interop_class_inheritor_2_4/Base { // interop_class_inheritor.test/Derived|null[0]
+    constructor <init>() // interop_class_inheritor.test/Derived.<init>|-5645683436151566731[0]
+    final fun overriddenFunction() // interop_class_inheritor.test/Derived.overriddenFunction|-6472102329825707726[0]
+    final fun overriddenProperty(): kotlin/Int // interop_class_inheritor.test/Derived.overriddenProperty|-7224960608403565684[0]
+    final fun setOverriddenProperty(kotlin/Int) // interop_class_inheritor.test/Derived.setOverriddenProperty|-8479216322956180924[0]
+}
