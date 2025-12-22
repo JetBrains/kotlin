@@ -24,7 +24,7 @@ import kotlin.properties.Delegates
 class JsCompilationExecutionSource(override val compilation: KotlinJsIrCompilation) :
     CompilationExecutionSource<KotlinJsIrCompilation>
 
-open class KotlinJsPlatformTestRun(testRunName: String, target: KotlinTarget) :
+open class KotlinJsPlatformTestRun @Inject constructor(testRunName: String, target: KotlinTarget) :
     KotlinTaskTestRun<JsCompilationExecutionSource, KotlinJsTest>(testRunName, target),
     CompilationExecutionSourceSupport<KotlinJsIrCompilation> {
 

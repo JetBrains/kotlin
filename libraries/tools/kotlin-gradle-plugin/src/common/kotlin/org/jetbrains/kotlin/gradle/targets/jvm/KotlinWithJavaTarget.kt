@@ -71,7 +71,7 @@ abstract class KotlinWithJavaTarget<KotlinOptionsType : Any, CO : KotlinCommonCo
 
     override val compilations: NamedDomainObjectContainer<KotlinWithJavaCompilation<KotlinOptionsType, CO>> =
         @Suppress("UNCHECKED_CAST")
-        project.container(
+        project.objects.domainObjectContainer(
             KotlinWithJavaCompilation::class.java as Class<KotlinWithJavaCompilation<KotlinOptionsType, CO>>,
             KotlinWithJavaCompilationFactory(this, compilerOptionsFactory, kotlinOptionsFactory)
         )

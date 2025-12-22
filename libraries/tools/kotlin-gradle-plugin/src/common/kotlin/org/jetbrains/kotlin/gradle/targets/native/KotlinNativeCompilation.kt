@@ -73,7 +73,7 @@ open class KotlinNativeCompilation @Inject internal constructor(
         get() = super.compilerOptions as NativeCompilerOptions
 
     // Interop DSL.
-    val cinterops = compilation.project.container(DefaultCInteropSettings::class.java, DefaultCInteropSettingsFactory(compilation))
+    val cinterops = compilation.project.objects.domainObjectContainer(DefaultCInteropSettings::class.java, DefaultCInteropSettingsFactory(compilation))
 
     fun cinterops(action: Action<NamedDomainObjectContainer<DefaultCInteropSettings>>) = action.execute(cinterops)
 
