@@ -11,12 +11,15 @@ import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.ir.isAny
+import org.jetbrains.kotlin.backend.konan.logMultiple
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.irImplicitCast
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrVariable
+import org.jetbrains.kotlin.ir.declarations.name
 import org.jetbrains.kotlin.ir.expressions.IrBlock
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrBreak
@@ -54,6 +57,7 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.utils.atMostOne
 import org.jetbrains.kotlin.utils.copy
+import org.jetbrains.kotlin.utils.forEachBit
 import org.jetbrains.kotlin.utils.mapEachBit
 import java.util.BitSet
 
@@ -161,6 +165,8 @@ internal class ComputeTypesPass(val context: Context) : BodyLoweringPass {
     private val nothingValue = BitSet()
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
+        context.log { "Analyzing ${container.render()}" }
+
         val allVariablesWrites = mutableListOf<VariableWrite>()
         val variableWriteMap = mutableMapOf<VariableWrite, Int>()
         val variableWrites = mutableMapOf<IrVariable, BitSet>()
@@ -174,6 +180,20 @@ internal class ComputeTypesPass(val context: Context) : BodyLoweringPass {
                     }
                     index
                 }
+            }
+
+            private fun BitSet.format() = buildString {
+                append('[')
+                var first = true
+                forEachBit {
+                    if (!first) append(", ")
+                    first = false
+                    val (variable, value) = allVariablesWrites[it]
+                    append((variable as? IrVariable)?.name ?: variable::class.java)
+                    append(" = ")
+                    append(value::class.java)
+                }
+                append(']')
             }
 
             val dummyUnitExpression = IrGetObjectValueImpl(
@@ -305,7 +325,12 @@ internal class ComputeTypesPass(val context: Context) : BodyLoweringPass {
 
             fun handleDoWhileLoop(loop: IrLoop, variablesValues: BitSet): BitSet {
                 var vvAtLoopStart = variablesValues
+
+                context.log { "LOOP START: ${vvAtLoopStart.format()}" }
+
+                var iter = 0
                 while (true) {
+                    ++iter
                     val prevVVAtLoopStart = vvAtLoopStart
                     val breaksCFMPInfo = ControlFlowMergePointInfo(loop)
                     val continuesCFMPInfo = ControlFlowMergePointInfo(loop)
@@ -316,6 +341,9 @@ internal class ComputeTypesPass(val context: Context) : BodyLoweringPass {
                             controlFlowMergePoint(continuesCFMPInfo, dummyUnitExpression, vvAtBodyEnd)
                     val vvAtConditionEnd = loop.condition.accept(this, vvAtConditionStart)
                     vvAtLoopStart = vvAtConditionEnd
+
+                    context.log { "LOOP ITER #$iter: ${vvAtLoopStart.format()}" }
+
                     if (vvAtLoopStart == prevVVAtLoopStart) {
                         breaksCFMPInfos.remove(loop)
                         continuesCFMPInfos.remove(loop)
@@ -353,6 +381,13 @@ internal class ComputeTypesPass(val context: Context) : BodyLoweringPass {
                 } ?: error("A use of uninitialized variable ${variable.render()}")
                 val actualType = variableValues.computeType()
                 expression.type = actualType ?: variable.type
+
+                context.logMultiple {
+                    +expression.render()
+                    val mergedVariableWrites = mergedVariablesWrites.copy()
+                    mergedVariableWrites.and(variableWrites[variable]!!)
+                    +"    ${mergedVariableWrites.format()}"
+                }
 
                 return mergedVariablesValues
             }
