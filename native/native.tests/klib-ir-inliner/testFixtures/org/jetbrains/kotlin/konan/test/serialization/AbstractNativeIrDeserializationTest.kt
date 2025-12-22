@@ -116,12 +116,6 @@ open class AbstractNativeIrDeserializationTest : AbstractKotlinCompilerWithTarge
                 useHandlers(::NativeKlibInterpreterDumpHandler)
             }
         }
-
-        forTestsMatching("compiler/testData/codegen/box/properties/backingField/*") {
-            defaultDirectives {
-                LanguageSettingsDirectives.LANGUAGE with "+ExplicitBackingFields"
-            }
-        }
     }
 }
 

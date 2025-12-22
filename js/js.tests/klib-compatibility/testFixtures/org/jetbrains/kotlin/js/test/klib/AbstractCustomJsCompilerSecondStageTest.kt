@@ -86,11 +86,6 @@ open class AbstractCustomJsCompilerSecondStageTest : AbstractKotlinCompilerWithT
             // where `X.Y.Z` matches to `customJsCompilerSettings.version`
             ::CustomKlibCompilerSecondStageTestSuppressor.bind(customJsCompilerSettings.defaultLanguageVersion),
         )
-        forTestsMatching("compiler/testData/codegen/box/properties/backingField/*") {
-            defaultDirectives {
-                LANGUAGE with "+ExplicitBackingFields"
-            }
-        }
     }
 }
 

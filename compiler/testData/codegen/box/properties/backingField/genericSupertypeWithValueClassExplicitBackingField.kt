@@ -1,9 +1,12 @@
 // IGNORE_BACKEND_K1: ANY
-// IGNORE_BACKEND_K2: NATIVE
+// IGNORE_BACKEND: NATIVE
+// ^KT-83269
+// LANGUAGE: +ExplicitBackingFields
+// WORKS_WHEN_VALUE_CLASS
+
 // WITH_STDLIB
 
-@Suppress("UNRESOLVED_REFERENCE")
-@JvmInline
+OPTIONAL_JVM_INLINE_ANNOTATION
 value class V(val x: Int) : Comparable<Int> {
     override fun compareTo(other: Int): Int = x - other
 }

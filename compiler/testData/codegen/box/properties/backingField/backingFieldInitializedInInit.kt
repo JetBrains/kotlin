@@ -1,8 +1,7 @@
 // IGNORE_BACKEND_K1: ANY
-// WITH_STDLIB
 // LANGUAGE: +ExplicitBackingFields
-// ^This explicit setting is only needed for some Native runners,
-//  as they haven't been translated to our proper test infrastructure.
+
+// WITH_STDLIB
 
 class Test {
     val numbers: List<Int> field: MutableList<Int>

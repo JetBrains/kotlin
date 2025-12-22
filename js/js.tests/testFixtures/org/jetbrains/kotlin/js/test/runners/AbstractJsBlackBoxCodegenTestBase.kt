@@ -132,12 +132,6 @@ abstract class AbstractJsBlackBoxCodegenTestBase(
                 useHandlers(::JsIrInterpreterDumpHandler)
             }
         }
-
-        forTestsMatching("compiler/testData/codegen/box/properties/backingField/*") {
-            defaultDirectives {
-                LANGUAGE with "+ExplicitBackingFields"
-            }
-        }
     }
 }
 

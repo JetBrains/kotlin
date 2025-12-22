@@ -1,11 +1,14 @@
 // IGNORE_BACKEND_K1: ANY
-// IGNORE_BACKEND_K2: NATIVE
+// IGNORE_BACKEND: NATIVE
+// ^KT-83269
+// LANGUAGE: +ExplicitBackingFields
+
 // WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
 
 interface I { fun call(): Int }
 
-@Suppress("UNRESOLVED_REFERENCE")
-@JvmInline
+OPTIONAL_JVM_INLINE_ANNOTATION
 value class V(val x: Int) : I { override fun call(): Int = x }
 
 class A {

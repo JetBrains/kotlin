@@ -226,12 +226,6 @@ fun TestConfigurationBuilder.baseFirBlackBoxCodegenTestDirectivesConfiguration()
             +WITH_STDLIB
         }
     }
-
-    forTestsMatching("compiler/testData/codegen/box/properties/backingField/*") {
-        defaultDirectives {
-            LanguageSettingsDirectives.LANGUAGE with "+ExplicitBackingFields"
-        }
-    }
 }
 
 /**

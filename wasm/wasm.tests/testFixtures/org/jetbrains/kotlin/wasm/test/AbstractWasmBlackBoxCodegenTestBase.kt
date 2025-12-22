@@ -110,12 +110,6 @@ abstract class AbstractWasmBlackBoxCodegenTestBase<R : ResultingArtifact.Fronten
                 useHandlers(::WasmIrInterpreterDumpHandler)
             }
         }
-
-        forTestsMatching("compiler/testData/codegen/box/properties/backingField/*") {
-            defaultDirectives {
-                LANGUAGE with "+ExplicitBackingFields"
-            }
-        }
     }
 }
 
