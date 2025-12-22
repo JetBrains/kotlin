@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.konan.test.blackbox
 
+import org.jetbrains.kotlin.config.KlibAbiCompatibilityLevel
 import org.jetbrains.kotlin.konan.test.blackbox.support.Location
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCompilerArgs
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives
@@ -21,7 +22,9 @@ import org.jetbrains.kotlin.test.directives.KlibAbiDumpDirectives
 import org.jetbrains.kotlin.test.directives.KlibAbiDumpDirectives.KLIB_ABI_DUMP_EXCLUDED_CLASSES
 import org.jetbrains.kotlin.test.directives.KlibAbiDumpDirectives.KLIB_ABI_DUMP_EXCLUDED_PACKAGES
 import org.jetbrains.kotlin.test.directives.KlibAbiDumpDirectives.KLIB_ABI_DUMP_NON_PUBLIC_MARKERS
+import org.jetbrains.kotlin.test.directives.KlibAbiDumpDirectives.KLIB_ABI_LEVEL
 import org.jetbrains.kotlin.test.directives.model.ComposedDirectivesContainer
+import org.jetbrains.kotlin.test.directives.model.singleOrZeroValue
 import org.jetbrains.kotlin.test.services.JUnit5Assertions
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEqualsToFile
 import org.jetbrains.kotlin.test.services.impl.RegisteredDirectivesParser
@@ -43,10 +46,10 @@ import java.io.File
 abstract class AbstractNativeCInteropLibraryAbiReaderTest : AbstractNativeSimpleTest() {
     fun runTest(localPath: String) {
         val (sourceFile, dumpFiles) = computeTestFiles(localPath)
-        val (moduleName, filters) = parseDirectives(sourceFile)
+        val (moduleName, filters, klibAbiLevel) = parseDirectives(sourceFile)
 
         val customDependencies: List<ExistingDependency<TestCompilationArtifact.KLIB>> =
-            produceCustomDependencies(sourceFile).map(TestCompilationArtifact.KLIB::asLibraryDependency)
+            produceCustomDependencies(sourceFile, klibAbiLevel).map(TestCompilationArtifact.KLIB::asLibraryDependency)
 
         val library = compileToLibrary(
             testCase = generateTestCaseWithSingleFile(
@@ -68,17 +71,21 @@ abstract class AbstractNativeCInteropLibraryAbiReaderTest : AbstractNativeSimple
         }
     }
 
-    private fun produceCustomDependencies(sourceFile: File): List<TestCompilationArtifact.KLIB> {
+    private fun produceCustomDependencies(sourceFile: File, klibAbiLevel: KlibAbiCompatibilityLevel?): List<TestCompilationArtifact.KLIB> {
         assumeTrue(targets.hostTarget.family.isAppleFamily) // ObjC tests can run only on Apple targets.
 
         val defFile = sourceFile.withExtension(".def")
         assertTrue(defFile.isFile) { "Def file does not exist: $defFile" }
 
+        val compilerArgs = klibAbiLevel?.let { abiLevel ->
+            TestCompilerArgs(compilerArgs = emptyList(), cinteropArgs = listOf("-Xklib-abi-compatibility-level", abiLevel.toString()))
+        } ?: TestCompilerArgs.EMPTY
+
         return listOf(
             cinteropToLibrary(
                 defFile = defFile,
                 outputDir = buildDir,
-                freeCompilerArgs = TestCompilerArgs.EMPTY
+                freeCompilerArgs = compilerArgs,
             ).assertSuccess().resultingArtifact
         )
     }
@@ -97,7 +104,11 @@ abstract class AbstractNativeCInteropLibraryAbiReaderTest : AbstractNativeSimple
             }
         }
 
-        internal data class FromDirectives(val moduleName: String, val filters: List<AbiReadingFilter>)
+        internal data class FromDirectives(
+            val moduleName: String,
+            val filters: List<AbiReadingFilter>,
+            val klibAbiLevel: KlibAbiCompatibilityLevel?,
+        )
 
         internal fun parseDirectives(sourceFile: File): FromDirectives {
             val directivesParser = RegisteredDirectivesParser(
@@ -116,6 +127,7 @@ abstract class AbstractNativeCInteropLibraryAbiReaderTest : AbstractNativeSimple
             val excludedPackages = registeredDirectives[KLIB_ABI_DUMP_EXCLUDED_PACKAGES]
             val excludedClasses = registeredDirectives[KLIB_ABI_DUMP_EXCLUDED_CLASSES]
             val nonPublicMarkers = registeredDirectives[KLIB_ABI_DUMP_NON_PUBLIC_MARKERS]
+            val klibAbiLevel = registeredDirectives.singleOrZeroValue(KLIB_ABI_LEVEL)
 
             return FromDirectives(
                 moduleName = moduleName,
@@ -123,7 +135,8 @@ abstract class AbstractNativeCInteropLibraryAbiReaderTest : AbstractNativeSimple
                     excludedPackages.ifNotEmpty(AbiReadingFilter::ExcludedPackages),
                     excludedClasses.ifNotEmpty(AbiReadingFilter::ExcludedClasses),
                     nonPublicMarkers.ifNotEmpty(AbiReadingFilter::NonPublicMarkerAnnotations)
-                )
+                ),
+                klibAbiLevel = klibAbiLevel,
             )
         }
     }

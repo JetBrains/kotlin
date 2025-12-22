@@ -1,4 +1,5 @@
 // MODULE: interop_class_inheritor_library
+// KLIB_ABI_LEVEL: ABI_LEVEL_2_3
 
 @file:Suppress("RedundantModalityModifier")
 
