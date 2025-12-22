@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.test.directives
 
+import org.jetbrains.kotlin.config.KlibAbiCompatibilityLevel
 import org.jetbrains.kotlin.library.KotlinIrSignatureVersion
 import org.jetbrains.kotlin.library.KotlinIrSignatureVersion.Companion.CURRENTLY_SUPPORTED_VERSIONS
 import org.jetbrains.kotlin.library.abi.AbiCompoundName
@@ -34,6 +35,10 @@ object KlibAbiDumpDirectives : SimpleDirectivesContainer() {
     val KLIB_ABI_DUMP_NON_PUBLIC_MARKERS by valueDirective<AbiQualifiedName>(
         description = "Non-public API markers (annotation classes)",
         parser = ::parseQualifiedName
+    )
+
+    val KLIB_ABI_LEVEL by enumDirective<KlibAbiCompatibilityLevel>(
+        description = "Specify the KLIB ABI compatibility level",
     )
 
     enum class KlibAbiDumpMode(val abiSignatureVersions: Set<AbiSignatureVersion>) {
