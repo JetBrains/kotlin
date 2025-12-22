@@ -776,7 +776,6 @@ class KotlinCoreEnvironment private constructor(
             ShellExtension.registerExtensionPoint(project)
 
             // K2 extensions
-            ClassGeneratorExtension.registerExtensionPoint(project)
             ClassFileFactoryFinalizerExtension.registerExtensionPoint(project)
         }
 

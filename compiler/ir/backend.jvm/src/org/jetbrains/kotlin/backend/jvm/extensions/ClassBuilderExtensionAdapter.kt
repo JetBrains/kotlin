@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.backend.jvm.extensions
 
-import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.backend.jvm.ir.psiElement
 import org.jetbrains.kotlin.codegen.ClassBuilder
@@ -13,6 +12,8 @@ import org.jetbrains.kotlin.codegen.ClassBuilderFactory
 import org.jetbrains.kotlin.codegen.DelegatingClassBuilder
 import org.jetbrains.kotlin.codegen.DelegatingClassBuilderFactory
 import org.jetbrains.kotlin.codegen.extensions.ClassGeneratorExtensionAdapter
+import org.jetbrains.kotlin.compiler.plugin.getCompilerExtension
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrField
@@ -28,8 +29,10 @@ import org.jetbrains.org.objectweb.asm.RecordComponentVisitor
 @Suppress("unused") // Used reflectively in GenerationState.
 internal object ClassBuilderExtensionAdapter {
     @JvmStatic
-    fun getExtensions(project: Project): List<ClassGeneratorExtensionAdapter> =
-        ClassGeneratorExtension.getInstances(project).map(::ClassGeneratorExtensionAdapterImpl)
+    fun getExtensions(configuration: CompilerConfiguration): List<ClassGeneratorExtensionAdapter> {
+        return configuration.getCompilerExtension(ClassGeneratorExtension)
+            .map(::ClassGeneratorExtensionAdapterImpl)
+    }
 }
 
 class ClassGeneratorExtensionAdapterImpl(private val extension: ClassGeneratorExtension) : ClassGeneratorExtensionAdapter {
