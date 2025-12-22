@@ -146,7 +146,6 @@ kotlin {
                                 "-Xuse-14-inline-classes-mangling-scheme",
                                 "-Xno-new-java-annotation-targets",
                                 "-Xoutput-builtins-metadata",
-                                "-Xcompile-builtins-as-part-of-stdlib",
                                 diagnosticNamesArg
                             )
                         )

@@ -29,7 +29,6 @@ fun copyK2JVMCompilerArguments(from: K2JVMCompilerArguments, to: K2JVMCompilerAr
     to.enableJvmPreview = from.enableJvmPreview
     to.enhanceTypeParameterTypesToDefNotNull = from.enhanceTypeParameterTypesToDefNotNull
     to.enhancedCoroutinesDebugging = from.enhancedCoroutinesDebugging
-    to.expectBuiltinsAsPartOfStdlib = from.expectBuiltinsAsPartOfStdlib
     to.expression = from.expression
     to.friendPaths = from.friendPaths?.copyOf()
     to.ignoredAnnotationsForBridges = from.ignoredAnnotationsForBridges?.copyOf()

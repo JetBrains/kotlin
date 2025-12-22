@@ -36,4 +36,16 @@ val removedJvmCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLevel
             removedVersion = KotlinReleaseVersion.v2_3_0,
         )
     }
+
+    compilerArgument {
+        name = "Xcompile-builtins-as-part-of-stdlib"
+        compilerName = "expectBuiltinsAsPartOfStdlib"
+        description = "Enable behaviour needed to compile builtins as part of JVM stdlib".asReleaseDependent()
+        valueType = BooleanType.defaultFalse
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_1_20,
+            removedVersion = KotlinReleaseVersion.v2_3_20,
+        )
+    }
 }

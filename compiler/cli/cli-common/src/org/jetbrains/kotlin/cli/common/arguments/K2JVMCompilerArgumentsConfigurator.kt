@@ -36,13 +36,6 @@ class K2JVMCompilerArgumentsConfigurator : CommonCompilerArgumentsConfigurator()
         result[JvmAnalysisFlags.enableJvmPreview] = enableJvmPreview
         result[AnalysisFlags.allowUnstableDependencies] = allowUnstableDependencies
         result[JvmAnalysisFlags.outputBuiltinsMetadata] = outputBuiltinsMetadata
-        if (expectBuiltinsAsPartOfStdlib && !stdlibCompilation) {
-            collector.report(
-                CompilerMessageSeverity.ERROR,
-                "-Xcompile-builtins-as-part-of-stdlib must not be used without -Xstdlib-compilation"
-            )
-        }
-        result[JvmAnalysisFlags.expectBuiltinsAsPartOfStdlib] = expectBuiltinsAsPartOfStdlib
         return result
     }
 

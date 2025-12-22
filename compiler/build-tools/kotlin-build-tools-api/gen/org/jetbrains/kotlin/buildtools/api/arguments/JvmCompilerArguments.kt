@@ -135,9 +135,12 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
      * Enable behaviour needed to compile builtins as part of JVM stdlib
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     *
+     * Removed in Kotlin version 2.3.20.
      */
     @JvmField
     @ExperimentalCompilerArgument
+    @RemovedCompilerArgument
     public val X_COMPILE_BUILTINS_AS_PART_OF_STDLIB: JvmCompilerArgument<Boolean> =
         JvmCompilerArgument("X_COMPILE_BUILTINS_AS_PART_OF_STDLIB", KotlinReleaseVersion(2, 1, 20))
 

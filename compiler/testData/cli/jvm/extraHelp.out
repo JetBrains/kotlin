@@ -20,8 +20,6 @@ where advanced options include:
                              0 means use one thread per processor core.
                              The default value is 1.
   -Xbuild-file=<path>        Path to the .xml build file to compile.
-  -Xcompile-builtins-as-part-of-stdlib
-                             Enable behaviour needed to compile builtins as part of JVM stdlib
   -Xcompile-java             Reuse 'javac' analysis and compile Java source files.
   -Xdebug                    Enable debug mode for compilation.
                              Currently this includes spilling all variables in a suspending context regardless of whether they are alive.

@@ -110,16 +110,6 @@ The default value is 1.""",
         }
 
     @Argument(
-        value = "-Xcompile-builtins-as-part-of-stdlib",
-        description = "Enable behaviour needed to compile builtins as part of JVM stdlib",
-    )
-    var expectBuiltinsAsPartOfStdlib: Boolean = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(
         value = "-Xcompile-java",
         description = "Reuse 'javac' analysis and compile Java source files.",
     )
