@@ -258,7 +258,7 @@ abstract class KotlinLibrarySearchPathResolver<L : KotlinLibrary>(
 // such as abi version.
 // JS and Native resolvers are inherited from this one.
 abstract class KotlinLibraryProperResolverWithAttributes<L : KotlinLibrary>(
-    directLibs: List<String>,
+    val directLibs: List<String>,
     distributionKlib: String?,
     skipCurrentDir: Boolean,
     logger: Logger,

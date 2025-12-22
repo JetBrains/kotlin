@@ -24,13 +24,39 @@ import org.jetbrains.kotlin.library.metadata.resolver.KotlinLibraryResolver
 import org.jetbrains.kotlin.library.metadata.resolver.KotlinResolvedLibrary
 import org.jetbrains.kotlin.library.metadata.resolver.LibraryOrder
 import org.jetbrains.kotlin.util.WithLogger
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
+@Deprecated(
+    "Preserved for binary compatibility with existing versions of the kotlinx-benchmarks Gradle plugin. See KT-82882." +
+            "\nPlease use KlibLoader.load() instead.",
+    replaceWith = ReplaceWith("KlibLoader.load()", imports = ["org.jetbrains.kotlin.library.loader.KlibLoader"]),
+    level = DeprecationLevel.ERROR
+)
+@JvmName("libraryResolver")
+fun <L : KotlinLibrary> SearchPathResolver<L>.libraryResolverLegacy(resolveManifestDependenciesLenient: Boolean = false) =
+    KotlinLibraryResolverImpl(
+        this,
+        resolveManifestDependenciesLenient,
+        legacyExternalToolResolveMode = true
+    )
+
+@JvmName("libraryResolverNew")
 fun <L : KotlinLibrary> SearchPathResolver<L>.libraryResolver(resolveManifestDependenciesLenient: Boolean = false) =
-    KotlinLibraryResolverImpl<L>(this, resolveManifestDependenciesLenient)
+    KotlinLibraryResolverImpl(
+        this,
+        resolveManifestDependenciesLenient,
+        legacyExternalToolResolveMode = false
+    )
 
+/**
+ * @property searchPathResolver The resolver that looks up libraries by their paths.
+ * @property resolveManifestDependenciesLenient Whether to resolve manifest dependencies leniently.
+ * @property legacyExternalToolResolveMode Whether to use legacy external tool resolution mode. See KT-82882.
+ */
 class KotlinLibraryResolverImpl<L : KotlinLibrary> internal constructor(
     override val searchPathResolver: SearchPathResolver<L>,
     val resolveManifestDependenciesLenient: Boolean,
+    private val legacyExternalToolResolveMode: Boolean,
 ) : KotlinLibraryResolver<L>, WithLogger by searchPathResolver {
     override fun resolveWithoutDependencies(
         unresolvedLibraries: List<UnresolvedLibrary>,
@@ -59,11 +85,19 @@ class KotlinLibraryResolverImpl<L : KotlinLibrary> internal constructor(
             .mapNotNull { searchPathResolver.resolve(it) }
             .toList()
 
+        val legacyExternalToolResolveModeLibraries = runIf(legacyExternalToolResolveMode) {
+            (searchPathResolver as? KotlinLibraryProperResolverWithAttributes)
+                ?.directLibs
+                ?.mapNotNull { libraryPath ->
+                    searchPathResolver.resolve(LenientUnresolvedLibrary(libraryPath))
+                }
+        }.orEmpty()
+
         val defaultLibraries = searchPathResolver.defaultLinks(noStdLib, noDefaultLibs, noEndorsedLibs)
 
         // Make sure the user provided ones appear first, so that
         // they have precedence over defaults when duplicates are eliminated.
-        return userProvidedLibraries + defaultLibraries
+        return userProvidedLibraries + legacyExternalToolResolveModeLibraries + defaultLibraries
     }
 
     /**

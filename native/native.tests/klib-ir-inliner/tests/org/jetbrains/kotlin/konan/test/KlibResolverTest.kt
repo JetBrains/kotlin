@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeTar
 import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.library.impl.createKotlinLibraryComponents
 import org.jetbrains.kotlin.library.loader.KlibLoader
-import org.jetbrains.kotlin.library.metadata.resolver.impl.libraryResolver
+import org.jetbrains.kotlin.library.metadata.resolver.impl.libraryResolverLegacy
 import org.jetbrains.kotlin.test.services.JUnit5Assertions
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertContainsElements
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertFalse
@@ -548,12 +548,6 @@ class KlibResolverTest : AbstractNativeSimpleTest() {
                 isForKotlinNative = isForKotlinNative,
             )
 
-            if (!isForKotlinNative) {
-                // TODO (KT-83328): This needs to be fixed.
-                assertTrue(resolvedDependencies.isEmpty())
-                return
-            }
-
             assertEquals(allDependencyLocations.size, resolvedDependencies.size)
 
             assertEquals(
@@ -603,7 +597,7 @@ class KlibResolverTest : AbstractNativeSimpleTest() {
 
             return KotlinxBenchmarksLibraryResolverSimulation(
                 klibs = dependencyFiles.map { it.path }
-            ).libraryResolver().resolveWithDependencies(
+            ).libraryResolverLegacy().resolveWithDependencies(
                 unresolvedLibraries = library.unresolvedDependencies,
                 noStdLib = !isForKotlinNative,
                 noDefaultLibs = !isForKotlinNative,
