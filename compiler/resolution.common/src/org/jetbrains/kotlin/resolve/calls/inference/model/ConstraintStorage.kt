@@ -140,6 +140,7 @@ class Constraint(
     // The main idea behind that parameter is that we don't consider such constraints as proper (signifying that the variable is ready for completion).
     // And also, there is additional logic in K1 that doesn't allow to fix variable into `Nothing?` if we had only that kind of lower constraints
     val isNullabilityConstraint: Boolean,
+    val isFromFlexibleConstraint: Boolean,
     // Can only be true in K2
     val isNoInfer: Boolean,
     val inputTypePositionBeforeIncorporation: OnlyInputTypeConstraintPosition? = null,
