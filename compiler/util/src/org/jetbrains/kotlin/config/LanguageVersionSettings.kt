@@ -464,7 +464,6 @@ enum class LanguageFeature(
     ApproximateLocalTypesInPublicDeclarations(KOTLIN_2_4, issue = "KT-82454"),
     LocalVariableTargetedAnnotationOnDestructuring(KOTLIN_2_4, "KT-81408"),
     ForbidGetSetValueWithTooManyParameters(KOTLIN_2_4, enabledInProgressiveMode = true, issue = "KTLC-289"),
-    ForbidReturnInExpressionBodyWithoutExplicitTypeEdgeCases(KOTLIN_2_4, enabledInProgressiveMode = true, "KTLC-288"),
     ForbidInlineEnumEntries(KOTLIN_2_4, enabledInProgressiveMode = true, "KTLC-361"),
     TurnTypeCheckWarningsIntoErrors(KOTLIN_2_4, enabledInProgressiveMode = true, "KTLC-365"),
     ProhibitExtendingAnnotationClasses(KOTLIN_2_4, enabledInProgressiveMode = true, "KTLC-374"),
@@ -544,6 +543,7 @@ enum class LanguageFeature(
     DontMakeExplicitJavaTypeArgumentsFlexible(sinceVersion = null, "KTLC-284"),
     PreciseSimplificationToFlexibleLowerConstraint(sinceVersion = null, "KT-78621"),
     DiscriminateSuspendInOverloadResolution(sinceVersion = null, "KT-23610"), // Postponed because of KT-82869
+    ForbidReturnInExpressionBodyWithoutExplicitTypeEdgeCases(sinceVersion = null, "KTLC-288"), // Postponed due to KT-83343
 
     // Experimental features
 
