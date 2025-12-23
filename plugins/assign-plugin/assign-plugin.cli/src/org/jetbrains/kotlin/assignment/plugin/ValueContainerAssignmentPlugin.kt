@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.container.useInstance
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
 import org.jetbrains.kotlin.extensions.internal.InternalNonStableExtensionPoints
-import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
+import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.resolve.extensions.AssignResolutionAltererExtension
 
@@ -50,7 +50,7 @@ class AssignmentComponentRegistrar : CompilerPluginRegistrar() {
         if (annotations.isNotEmpty()) {
             AssignResolutionAltererExtension.Companion.registerExtension(CliAssignPluginResolutionAltererExtension(annotations))
             StorageComponentContainerContributor.registerExtension(AssignmentComponentContainerContributor(annotations))
-            FirExtensionRegistrarAdapter.registerExtension(FirAssignmentPluginExtensionRegistrar(annotations))
+            FirExtensionRegistrar.registerExtension(FirAssignmentPluginExtensionRegistrar(annotations))
         }
     }
 

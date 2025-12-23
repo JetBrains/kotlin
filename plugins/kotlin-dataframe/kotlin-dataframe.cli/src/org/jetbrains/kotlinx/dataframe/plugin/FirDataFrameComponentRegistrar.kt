@@ -6,18 +6,12 @@
 package org.jetbrains.kotlinx.dataframe.plugin
 
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
-import org.jetbrains.kotlin.compiler.plugin.AbstractCliOption
-import org.jetbrains.kotlin.compiler.plugin.CliOption
-import org.jetbrains.kotlin.compiler.plugin.CliOptionProcessingException
-import org.jetbrains.kotlin.compiler.plugin.CommandLineProcessor
-import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
-import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
+import org.jetbrains.kotlin.compiler.plugin.*
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.extensions.FirExtensionApiInternals
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
-import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
 import org.jetbrains.kotlin.fir.extensions.predicate.LookupPredicate
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlinx.dataframe.plugin.DataFrameConfigurationKeys.DATAFRAME_DISABLE_TOP_LEVEL_EXTENSION_PROPERTIES
@@ -68,7 +62,7 @@ class FirDataFrameComponentRegistrar : CompilerPluginRegistrar() {
     override fun ExtensionStorage.registerExtensions(configuration: CompilerConfiguration) {
 
         val path = configuration.get(DATAFRAME_PATH)
-        FirExtensionRegistrarAdapter.registerExtension(
+        FirExtensionRegistrar.registerExtension(
             FirDataFrameExtensionRegistrar(
                 isTest = false,
                 dumpSchemas = true,

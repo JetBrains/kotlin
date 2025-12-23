@@ -33,20 +33,24 @@ import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.convertToIrAndActualizeForJvm
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.codegen.state.GenerationState
+import org.jetbrains.kotlin.compiler.plugin.getCompilerExtension
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.diagnostics.KtPsiDiagnostic
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
-import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.DependencyListForCliModule
+import org.jetbrains.kotlin.fir.FirModuleData
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.FirSourceModuleData
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendClassResolver
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendExtension
 import org.jetbrains.kotlin.fir.backend.jvm.JvmFir2IrExtensions
 import org.jetbrains.kotlin.fir.backend.utils.extractFirDeclarations
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
-import org.jetbrains.kotlin.fir.pipeline.Fir2IrActualizedResult
 import org.jetbrains.kotlin.fir.pipeline.AllModulesFrontendOutput
+import org.jetbrains.kotlin.fir.pipeline.Fir2IrActualizedResult
 import org.jetbrains.kotlin.fir.pipeline.buildResolveAndCheckFirFromKtFiles
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirBuiltinSyntheticFunctionInterfaceProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.syntheticFunctionInterfacesSymbolProvider
@@ -94,7 +98,7 @@ class K2CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
                 )
             ),
             createIncrementalCompilationSymbolProviders = { null },
-            FirExtensionRegistrar.getInstances(project),
+            configuration.getCompilerExtension(FirExtensionRegistrar),
             configuration,
             context,
             needRegisterJavaElementFinder = true,
@@ -130,7 +134,7 @@ class K2CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
 
         val sharedLibrarySession = FirJvmSessionFactory.createSharedLibrarySession(
             Name.identifier(rootModuleName),
-            FirExtensionRegistrar.getInstances(project),
+            configuration.getCompilerExtension(FirExtensionRegistrar),
             configuration.languageVersionSettings,
             context,
         )
@@ -138,7 +142,7 @@ class K2CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
         val librarySession = FirJvmSessionFactory.createLibrarySession(
             sharedLibrarySession,
             dependencyList.moduleDataProvider,
-            FirExtensionRegistrar.getInstances(project),
+            configuration.getCompilerExtension(FirExtensionRegistrar),
             configuration.languageVersionSettings,
             context,
         )

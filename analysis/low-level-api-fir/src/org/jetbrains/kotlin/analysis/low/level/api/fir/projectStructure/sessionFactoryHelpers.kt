@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.analysis.api.impl.base.extensions.FirExtensionRegistrarAdapterPointDescriptor
 import org.jetbrains.kotlin.analysis.api.platform.declarations.createAnnotationResolver
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinCompilerPluginsProvider
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
@@ -96,7 +97,7 @@ internal fun FirSession.registerCompilerPluginExtensions(project: Project, modul
 
 @SessionConfiguration
 internal fun FirSessionConfigurator.registerCompilerPluginExtensions(project: Project, module: KaModule) {
-    FirExtensionRegistrarAdapter.getInstances(project).forEach(::applyExtensionRegistrar)
+    FirExtensionRegistrarAdapterPointDescriptor.getInstances(project).forEach(::applyExtensionRegistrar)
 
     val pluginsProvider = KotlinCompilerPluginsProvider.getInstance(project) ?: return
     pluginsProvider
@@ -105,7 +106,8 @@ internal fun FirSessionConfigurator.registerCompilerPluginExtensions(project: Pr
 }
 
 private fun FirSessionConfigurator.applyExtensionRegistrar(registrar: FirExtensionRegistrarAdapter) {
-    registerExtensions((registrar as FirExtensionRegistrar).configure())
+    val extensions = (registrar as FirExtensionRegistrar).configure()
+    registerExtensions(extensions)
 }
 
 @SessionConfiguration
@@ -116,3 +118,4 @@ internal fun LLFirSession.registerCompilerPluginServices(project: Project, resol
     register(FirRegisteredPluginAnnotations::class, LLFirIdeRegisteredPluginAnnotations(this, annotationsResolver))
     register(FirPredicateBasedProvider::class, LLFirIdePredicateBasedProvider(this, annotationsResolver))
 }
+

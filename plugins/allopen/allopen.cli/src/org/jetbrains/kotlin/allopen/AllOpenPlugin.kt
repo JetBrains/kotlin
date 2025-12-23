@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.compiler.plugin.*
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
 import org.jetbrains.kotlin.extensions.DeclarationAttributeAltererExtension
-import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
+import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 
 object AllOpenConfigurationKeys {
     val ALLOPEN_ANNOTATION: CompilerConfigurationKey<List<String>> = CompilerConfigurationKey.create("ALLOPEN_ANNOTATION")
@@ -53,7 +53,7 @@ class AllOpenComponentRegistrar : CompilerPluginRegistrar() {
         if (annotations.isEmpty()) return
 
         DeclarationAttributeAltererExtension.registerExtension(CliAllOpenDeclarationAttributeAltererExtension(annotations))
-        FirExtensionRegistrarAdapter.registerExtension(FirAllOpenExtensionRegistrar(annotations))
+        FirExtensionRegistrar.registerExtension(FirAllOpenExtensionRegistrar(annotations))
     }
 
     override val pluginId: String get() = AllOpenPluginNames.PLUGIN_ID

@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.*
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.config.JvmModulePathRoot
 import org.jetbrains.kotlin.codegen.state.GenerationState
+import org.jetbrains.kotlin.compiler.plugin.getCompilerExtension
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
@@ -470,7 +471,7 @@ private fun prepareJvmSessionsForScripting(
     isScript: (KtFile) -> Boolean,
     createProviderAndScopeForIncrementalCompilation: (List<KtFile>) -> IncrementalCompilationContext?,
 ): List<SessionWithSources<KtFile>> {
-    val extensionRegistrars = FirExtensionRegistrar.getInstances(projectEnvironment.project)
+    val extensionRegistrars = configuration.getCompilerExtension(FirExtensionRegistrar)
     return MinimizedFrontendContext(projectEnvironment, MessageCollector.NONE, extensionRegistrars, configuration).prepareJvmSessions(
         files, rootModuleNameAsString, friendPaths, librariesScope, isCommonSourceForPsi, isScript,
         fileBelongsToModuleForPsi, createProviderAndScopeForIncrementalCompilation
