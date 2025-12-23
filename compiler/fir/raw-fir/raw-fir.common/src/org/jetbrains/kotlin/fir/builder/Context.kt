@@ -118,6 +118,7 @@ class Context<T> {
      * @see popContainerSymbol
      */
     val containerSymbol: FirBasedSymbol<*> get() = _containerSymbolStack.last()
+    val containerSymbolIfAny: FirBasedSymbol<*>? get() = _containerSymbolStack.lastOrNull()
     private val _containerSymbolStack: MutableList<FirBasedSymbol<*>> = mutableListOf()
 
     /**

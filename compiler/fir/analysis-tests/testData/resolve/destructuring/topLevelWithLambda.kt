@@ -2,4 +2,6 @@
 // WITH_STDLIB
 // ISSUE: KT-83241
 
-val (a, b) = run { (c, d) -> }
+val <!SYNTAX!>(a, b)<!> = run <!ARGUMENT_TYPE_MISMATCH!>{ <!CANNOT_INFER_IT_PARAMETER_TYPE, COMPONENT_FUNCTION_AMBIGUITY, COMPONENT_FUNCTION_AMBIGUITY!>(c, d)<!> -> }<!>
+
+/* GENERATED_FIR_TAGS: lambdaLiteral, localProperty, propertyDeclaration */
