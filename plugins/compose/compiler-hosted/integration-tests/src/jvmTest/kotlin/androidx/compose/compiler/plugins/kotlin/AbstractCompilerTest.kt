@@ -120,7 +120,7 @@ abstract class AbstractCompilerTest(val useFir: Boolean) {
                 ApiVersion.createByLanguageVersion(languageVersion),
                 analysisFlags
             )
-            ComposePluginRegistrar.updateConfigurationCommon(this)
+            ComposePluginRegistrar.setupJvmConfiguration(this)
             updateConfiguration()
             additionalConfigurationParameters(this)
             addJvmClasspathRoots(additionalPaths)
