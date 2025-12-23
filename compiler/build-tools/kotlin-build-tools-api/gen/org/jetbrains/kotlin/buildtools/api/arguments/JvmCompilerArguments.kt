@@ -181,6 +181,19 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
         JvmCompilerArgument("X_COMPILE_BUILTINS_AS_PART_OF_STDLIB", KotlinReleaseVersion(2, 1, 20))
 
     /**
+     * Reuse 'javac' analysis and compile Java source files.
+     *
+     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     *
+     * Removed in Kotlin version 2.3.20.
+     */
+    @JvmField
+    @ExperimentalCompilerArgument
+    @RemovedCompilerArgument
+    public val X_COMPILE_JAVA: JvmCompilerArgument<Boolean> =
+        JvmCompilerArgument("X_COMPILE_JAVA", KotlinReleaseVersion(1, 1, 50))
+
+    /**
      * Enable debug mode for compilation.
      * Currently this includes spilling all variables in a suspending context regardless of whether they are alive.
      * If API Level >= 2.2 -- no-op.
@@ -325,6 +338,19 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
     @ExperimentalCompilerArgument
     public val X_JAVA_SOURCE_ROOTS: JvmCompilerArgument<Array<String>?> =
         JvmCompilerArgument("X_JAVA_SOURCE_ROOTS", KotlinReleaseVersion(1, 3, 40))
+
+    /**
+     * Java compiler arguments.
+     *
+     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     *
+     * Removed in Kotlin version 2.3.20.
+     */
+    @JvmField
+    @ExperimentalCompilerArgument
+    @RemovedCompilerArgument
+    public val X_JAVAC_ARGUMENTS: JvmCompilerArgument<Array<String>?> =
+        JvmCompilerArgument("X_JAVAC_ARGUMENTS", KotlinReleaseVersion(1, 1, 4))
 
     /**
      * Compile against the specified JDK API version, similarly to javac's '-release'. This requires JDK 9 or newer.
@@ -722,6 +748,19 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
     @ExperimentalCompilerArgument
     public val X_USE_INLINE_SCOPES_NUMBERS: JvmCompilerArgument<Boolean> =
         JvmCompilerArgument("X_USE_INLINE_SCOPES_NUMBERS", KotlinReleaseVersion(2, 0, 0))
+
+    /**
+     * Use javac for Java source and class file analysis.
+     *
+     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     *
+     * Removed in Kotlin version 2.3.20.
+     */
+    @JvmField
+    @ExperimentalCompilerArgument
+    @RemovedCompilerArgument
+    public val X_USE_JAVAC: JvmCompilerArgument<Boolean> =
+        JvmCompilerArgument("X_USE_JAVAC", KotlinReleaseVersion(1, 1, 4))
 
     /**
      * Enable the experimental support for K2 KAPT.
