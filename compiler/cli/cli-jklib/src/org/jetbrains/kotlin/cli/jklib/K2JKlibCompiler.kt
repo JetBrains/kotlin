@@ -116,6 +116,9 @@ import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
 import java.util.*
+import org.jetbrains.kotlin.ir.backend.jklib.JKlibDescriptorMangler
+import org.jetbrains.kotlin.ir.backend.jklib.JKlibIrMangler
+import org.jetbrains.kotlin.ir.backend.jklib.JKlibModuleSerializer
 
 /**
  * This class is the entry-point for compiling Kotlin code into a Klib with references to jars.
