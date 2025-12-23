@@ -10,6 +10,7 @@ plugins {
 dependencies {
     testFixturesApi(project(":kotlin-scripting-compiler"))
     testFixturesApi(testFixtures(project(":compiler:tests-common")))
+    testFixturesImplementation(project(":compiler:cli-jvm:javac-integration"))
     testFixturesImplementation(intellijCore())
     testImplementation(intellijCore())
     testFixturesApi(platform(libs.junit.bom))

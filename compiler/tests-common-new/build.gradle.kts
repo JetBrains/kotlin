@@ -11,6 +11,7 @@ dependencies {
     testFixturesApi(project(":compiler:fir:fir-serialization"))
     testFixturesApi(project(":compiler:fir:fir2ir:jvm-backend"))
     testFixturesApi(project(":compiler:cli"))
+    testFixturesImplementation(project(":compiler:cli-jvm:javac-integration"))
     testFixturesImplementation(project(":compiler:ir.tree"))
     testFixturesImplementation(project(":compiler:ir.serialization.native"))
     testFixturesImplementation(project(":compiler:backend.jvm.entrypoint"))
