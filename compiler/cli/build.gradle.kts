@@ -7,6 +7,7 @@ dependencies {
     api(project(":compiler:util"))
     api(project(":compiler:cli-base"))
     api(project(":compiler:frontend"))
+    api(project(":compiler:frontend:cfg"))
     api(project(":compiler:ir.backend.common"))
     api(project(":compiler:backend"))
     implementation(project(":compiler:backend.jvm.entrypoint"))
