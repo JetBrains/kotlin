@@ -95,8 +95,10 @@ KtSuperTypeList(258,271): 'SealedClass()'
   null
 
 KtSuperTypeCallEntry(258,271): 'SealedClass()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(): SealedClass
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): SealedClass
+    ]
 
 KtConstructorCalleeExpression(258,269): 'SealedClass'
   null
@@ -141,8 +143,10 @@ KtSuperTypeList(320,333): 'SealedClass()'
   null
 
 KtSuperTypeCallEntry(320,333): 'SealedClass()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(): SealedClass
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): SealedClass
+    ]
 
 KtConstructorCalleeExpression(320,331): 'SealedClass'
   null
@@ -190,8 +194,10 @@ KtSuperTypeList(403,416): 'SealedClass()'
   null
 
 KtSuperTypeCallEntry(403,416): 'SealedClass()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(): SealedClass
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): SealedClass
+    ]
 
 KtConstructorCalleeExpression(403,414): 'SealedClass'
   null
@@ -215,8 +221,10 @@ KtSuperTypeList(453,471): 'SealedInheritor1()'
   null
 
 KtSuperTypeCallEntry(453,471): 'SealedInheritor1()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(prop1: kotlin.String): SealedClass.SealedInheritor1
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(prop1: kotlin.String): SealedClass.SealedInheritor1
+    ]
 
 KtConstructorCalleeExpression(453,469): 'SealedInheritor1'
   null
@@ -246,8 +254,10 @@ KtSuperTypeList(533,546): 'SealedClass()'
   null
 
 KtSuperTypeCallEntry(533,546): 'SealedClass()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(): SealedClass
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): SealedClass
+    ]
 
 KtConstructorCalleeExpression(533,544): 'SealedClass'
   null
@@ -271,8 +281,10 @@ KtSuperTypeList(596,614): 'SealedInheritor1()'
   null
 
 KtSuperTypeCallEntry(596,614): 'SealedInheritor1()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(prop1: kotlin.String): SealedClass.SealedInheritor1
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(prop1: kotlin.String): SealedClass.SealedInheritor1
+    ]
 
 KtConstructorCalleeExpression(596,612): 'SealedInheritor1'
   null
@@ -323,8 +335,10 @@ KtSuperTypeList(683,696): 'SealedClass()'
   null
 
 KtSuperTypeCallEntry(683,696): 'SealedClass()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(): SealedClass
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): SealedClass
+    ]
 
 KtConstructorCalleeExpression(683,694): 'SealedClass'
   null

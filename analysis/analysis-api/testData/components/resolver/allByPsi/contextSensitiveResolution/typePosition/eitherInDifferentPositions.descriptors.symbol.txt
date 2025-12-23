@@ -350,8 +350,10 @@ KtNameReferenceExpression(397,398): 's'
   null
 
 KtCallExpression(399,409): 'hashCode()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = kotlin/Any.hashCode(<dispatch receiver>: kotlin.Any): kotlin.Int
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any.hashCode(<dispatch receiver>: kotlin.Any): kotlin.Int
+    ]
 
 KtNameReferenceExpression(399,407): 'hashCode'
   null
@@ -381,8 +383,10 @@ KtStringTemplateExpression(430,432): '""'
   null
 
 KtCallExpression(433,443): 'hashCode()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = kotlin/String.hashCode(<dispatch receiver>: kotlin.Any): kotlin.Int
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String.hashCode(<dispatch receiver>: kotlin.Any): kotlin.Int
+    ]
 
 KtNameReferenceExpression(433,441): 'hashCode'
   null

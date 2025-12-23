@@ -10,10 +10,9 @@ import org.jetbrains.kotlin.analysis.api.components.KaResolver
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.assertStableResult
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.findSpecializedResolveFunctions
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.stringRepresentation
-import org.jetbrains.kotlin.analysis.api.resolution.KaMultiSymbolResolutionSuccess
-import org.jetbrains.kotlin.analysis.api.resolution.KaSingleSymbolResolutionSuccess
 import org.jetbrains.kotlin.analysis.api.resolution.KaSymbolResolutionAttempt
 import org.jetbrains.kotlin.analysis.api.resolution.KaSymbolResolutionError
+import org.jetbrains.kotlin.analysis.api.resolution.KaSymbolResolutionSuccess
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtExperimentalApi
 import org.jetbrains.kotlin.resolution.KtResolvable
@@ -67,8 +66,10 @@ abstract class AbstractResolveSymbolTest : AbstractResolveByElementTest() {
 
             when (attempt) {
                 null, is KaSymbolResolutionError -> assertions.assertEquals(expected = null, actual = specificCall)
-                is KaSingleSymbolResolutionSuccess -> assertions.assertEquals(expected = attempt.symbol, actual = specificCall)
-                is KaMultiSymbolResolutionSuccess -> error("Compound resolution is not supported yet")
+                is KaSymbolResolutionSuccess -> {
+                    // Only non-compound cases can be checked
+                    assertions.assertEquals(expected = attempt.symbols.singleOrNull(), actual = specificCall)
+                }
             }
         }
     }

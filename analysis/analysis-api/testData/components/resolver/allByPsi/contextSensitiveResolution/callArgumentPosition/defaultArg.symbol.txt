@@ -35,8 +35,10 @@ KtSuperTypeList(166,175): 'MyClass()'
   null
 
 KtSuperTypeCallEntry(166,175): 'MyClass()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(): MyClass
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): MyClass
+    ]
 
 KtConstructorCalleeExpression(166,173): 'MyClass'
   null
@@ -78,8 +80,10 @@ KtNameReferenceExpression(220,227): 'MyClass'
   null
 
 KtCallExpression(230,236): 'TODO()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = kotlin/TODO(): kotlin.Nothing
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/TODO(): kotlin.Nothing
+    ]
 
 KtNameReferenceExpression(230,234): 'TODO'
   null

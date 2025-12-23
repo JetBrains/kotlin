@@ -44,8 +44,10 @@ KtSuperTypeList(165,174): 'MyClass()'
   null
 
 KtSuperTypeCallEntry(165,174): 'MyClass()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(): MyClass
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): MyClass
+    ]
 
 KtConstructorCalleeExpression(165,172): 'MyClass'
   null
@@ -135,8 +137,10 @@ KtBlockExpression(366,534): '{'
   null
 
 KtCallExpression(372,532): 'receiveMyClass('
-  KaSingleSymbolResolutionSuccess:
-    symbol = /receiveMyClass(m: MyClass): kotlin.Unit
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /receiveMyClass(m: MyClass): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(372,386): 'receiveMyClass'
   null

@@ -65,8 +65,10 @@ KtNameReferenceExpression(166,167): 'X'
   null
 
 KtCallExpression(173,179): 'foo(X)'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /foo(a: MyEnum): kotlin.Unit
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /foo(a: MyEnum): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(173,176): 'foo'
   null
@@ -81,8 +83,10 @@ KtNameReferenceExpression(177,178): 'X'
   null
 
 KtCallExpression(184,190): 'foo(L)'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /foo(a: MyEnum): kotlin.Unit
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /foo(a: MyEnum): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(184,187): 'foo'
   null
@@ -97,8 +101,10 @@ KtNameReferenceExpression(188,189): 'L'
   null
 
 KtCallExpression(195,210): 'foo(UNRESOLVED)'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /foo(a: MyEnum): kotlin.Unit
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /foo(a: MyEnum): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(195,198): 'foo'
   null

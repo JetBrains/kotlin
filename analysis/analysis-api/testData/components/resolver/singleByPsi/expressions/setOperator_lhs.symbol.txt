@@ -1,3 +1,5 @@
 KtArrayAccessExpression(93,104): 'variable[0]'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /MyClass.set(<dispatch receiver>: MyClass, i: kotlin.Int, v: kotlin.Int): kotlin.Unit
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.set(<dispatch receiver>: MyClass, i: kotlin.Int, v: kotlin.Int): kotlin.Unit
+    ]

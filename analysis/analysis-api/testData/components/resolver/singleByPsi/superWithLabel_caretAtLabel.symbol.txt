@@ -1,3 +1,5 @@
 KtLabelReferenceExpression(76,80): '@Foo'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /Foo
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Foo
+    ]

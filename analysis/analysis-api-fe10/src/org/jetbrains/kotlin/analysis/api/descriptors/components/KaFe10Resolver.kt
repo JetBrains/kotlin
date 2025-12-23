@@ -101,7 +101,7 @@ internal class KaFe10Resolver(
         if (resolvedCall != null) {
             val symbol = resolvedCall.candidateDescriptor.toKtSymbol(analysisContext)
             return if (resolvedCall.status.isSuccess && symbol != null) {
-                KaBaseSingleSymbolResolutionSuccess(symbol)
+                KaBaseSymbolResolutionSuccess(symbol)
             } else {
                 val diagnostic = getDiagnosticToReport(bindingContext, psi, null)?.let {
                     KaFe10Diagnostic(it, token)
@@ -132,7 +132,7 @@ internal class KaFe10Resolver(
         val labeledDeclaration = bindingContext[BindingContext.LABEL_TARGET, this] ?: return null
         val descriptor = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, labeledDeclaration] ?: return null
         val symbol = descriptor.toKtSymbol(analysisContext) ?: return null
-        return KaBaseSingleSymbolResolutionSuccess(symbol)
+        return KaBaseSymbolResolutionSuccess(symbol)
     }
 
     private fun KtReturnExpression.toKaSymbolResolutionAttempt(bindingContext: BindingContext): KaSymbolResolutionAttempt? {
@@ -145,7 +145,7 @@ internal class KaFe10Resolver(
         } ?: return null
 
         val symbol = with(analysisSession) { (function as KtDeclaration).symbol }
-        return KaBaseSingleSymbolResolutionSuccess(symbol)
+        return KaBaseSymbolResolutionSuccess(symbol)
     }
 
     override fun KtReference.resolveToSymbols(): Collection<KaSymbol> = withPsiValidityAssertion(element) {

@@ -227,8 +227,10 @@ KtSuperTypeList(388,405): 'ItemCallback<T>()'
   null
 
 KtSuperTypeCallEntry(388,405): 'ItemCallback<T>()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(): ItemCallback<T>
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): ItemCallback<T>
+    ]
 
 KtConstructorCalleeExpression(388,403): 'ItemCallback<T>'
   null
@@ -399,8 +401,10 @@ KtSuperTypeList(615,632): 'ItemCallback<T>()'
   null
 
 KtSuperTypeCallEntry(615,632): 'ItemCallback<T>()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(): ItemCallback<T>
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): ItemCallback<T>
+    ]
 
 KtConstructorCalleeExpression(615,630): 'ItemCallback<T>'
   null
@@ -523,8 +527,10 @@ KtSuperTypeList(784,801): 'ItemCallback<T>()'
   null
 
 KtSuperTypeCallEntry(784,801): 'ItemCallback<T>()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(): ItemCallback<T>
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): ItemCallback<T>
+    ]
 
 KtConstructorCalleeExpression(784,799): 'ItemCallback<T>'
   null
@@ -701,8 +707,10 @@ KtNameReferenceExpression(1002,1003): 'i'
   null
 
 KtCallExpression(1004,1013): 'equals(m)'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /InterfaceWithEquals.equals(<dispatch receiver>: InterfaceWithEquals, other: kotlin.Any?): kotlin.Boolean
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /InterfaceWithEquals.equals(<dispatch receiver>: InterfaceWithEquals, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(1004,1010): 'equals'
   null
@@ -723,8 +731,10 @@ KtNameReferenceExpression(1018,1019): 'm'
   null
 
 KtCallExpression(1020,1029): 'equals(i)'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /MessagePreview.equals(<dispatch receiver>: MessagePreview, other: kotlin.Any?): kotlin.Boolean
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MessagePreview.equals(<dispatch receiver>: MessagePreview, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(1020,1026): 'equals'
   null

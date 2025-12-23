@@ -116,27 +116,29 @@ KtContainerNode(151,160): '@iterator'
   null
 
 KtLabelReferenceExpression(151,160): '@iterator'
-  KaSingleSymbolResolutionSuccess:
-    symbol = KaReceiverParameterSymbol:
-      annotations: []
-      callableId: null
-      compilerVisibility: Public
-      contextReceivers: []
-      isActual: false
-      isExpect: false
-      isExtension: false
-      isVal: true
-      location: LOCAL
-      modality: FINAL
-      name: <receiver>
-      origin: SOURCE
-      owningCallableSymbol: KaNamedFunctionSymbol(f/iterator)
-      receiverParameter: null
-      returnType: KaUsualClassType:
+  KaSymbolResolutionSuccess:
+    symbols = [
+      KaReceiverParameterSymbol:
         annotations: []
-        typeArguments: []
-        type: f/IntProgression
-      visibility: PUBLIC
+        callableId: null
+        compilerVisibility: Public
+        contextReceivers: []
+        isActual: false
+        isExpect: false
+        isExtension: false
+        isVal: true
+        location: LOCAL
+        modality: FINAL
+        name: <receiver>
+        origin: SOURCE
+        owningCallableSymbol: KaNamedFunctionSymbol(f/iterator)
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: f/IntProgression
+        visibility: PUBLIC
+    ]
 
 KtNameReferenceExpression(161,166): 'start'
   null
@@ -172,27 +174,29 @@ KtContainerNode(211,220): '@iterator'
   null
 
 KtLabelReferenceExpression(211,220): '@iterator'
-  KaSingleSymbolResolutionSuccess:
-    symbol = KaReceiverParameterSymbol:
-      annotations: []
-      callableId: null
-      compilerVisibility: Public
-      contextReceivers: []
-      isActual: false
-      isExpect: false
-      isExtension: false
-      isVal: true
-      location: LOCAL
-      modality: FINAL
-      name: <receiver>
-      origin: SOURCE
-      owningCallableSymbol: KaNamedFunctionSymbol(f/iterator)
-      receiverParameter: null
-      returnType: KaUsualClassType:
+  KaSymbolResolutionSuccess:
+    symbols = [
+      KaReceiverParameterSymbol:
         annotations: []
-        typeArguments: []
-        type: f/IntProgression
-      visibility: PUBLIC
+        callableId: null
+        compilerVisibility: Public
+        contextReceivers: []
+        isActual: false
+        isExpect: false
+        isExtension: false
+        isVal: true
+        location: LOCAL
+        modality: FINAL
+        name: <receiver>
+        origin: SOURCE
+        owningCallableSymbol: KaNamedFunctionSymbol(f/iterator)
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: f/IntProgression
+        visibility: PUBLIC
+    ]
 
 KtNameReferenceExpression(221,224): 'end'
   null
@@ -243,8 +247,10 @@ KtContainerNode(297,318): 'IntProgression(1, 10)'
   null
 
 KtCallExpression(297,318): 'IntProgression(1, 10)'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(start: kotlin.Int, end: kotlin.Int): f.IntProgression
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(start: kotlin.Int, end: kotlin.Int): f.IntProgression
+    ]
 
 KtNameReferenceExpression(297,311): 'IntProgression'
   null

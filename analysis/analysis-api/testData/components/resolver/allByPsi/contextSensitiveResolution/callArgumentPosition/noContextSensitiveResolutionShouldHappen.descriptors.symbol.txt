@@ -68,8 +68,10 @@ KtBlockExpression(178,213): '{'
   null
 
 KtCallExpression(184,190): 'foo(X)'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /foo(a: MyEnum): kotlin.Unit
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /foo(a: MyEnum): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(184,187): 'foo'
   null
@@ -84,8 +86,10 @@ KtNameReferenceExpression(188,189): 'X'
   null
 
 KtCallExpression(195,211): 'foo(WrongEnum.X)'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /foo(a: MyEnum): kotlin.Unit
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /foo(a: MyEnum): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(195,198): 'foo'
   null
@@ -112,8 +116,10 @@ KtDeclarationModifierList(215,236): '@DslMarker'
   null
 
 KtAnnotationEntry(215,225): '@DslMarker'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(): kotlin.DslMarker
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): kotlin.DslMarker
+    ]
 
 KtConstructorCalleeExpression(216,225): 'DslMarker'
   null
@@ -134,8 +140,10 @@ KtDeclarationModifierList(250,256): '@MyDsl'
   null
 
 KtAnnotationEntry(250,256): '@MyDsl'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(): MyDsl
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): MyDsl
+    ]
 
 KtConstructorCalleeExpression(251,256): 'MyDsl'
   null
@@ -156,8 +164,10 @@ KtDeclarationModifierList(266,272): '@MyDsl'
   null
 
 KtAnnotationEntry(266,272): '@MyDsl'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(): MyDsl
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): MyDsl
+    ]
 
 KtConstructorCalleeExpression(267,272): 'MyDsl'
   null

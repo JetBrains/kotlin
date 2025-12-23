@@ -80,8 +80,10 @@ KtBlockExpression(173,309): '{'
   null
 
 KtReturnExpression(179,307): 'return when (o) {'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /foo(o: Outer, i: Inner): kotlin.Int
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /foo(o: Outer, i: Inner): kotlin.Int
+    ]
 
 KtWhenExpression(186,307): 'when (o) {'
   null
@@ -183,8 +185,10 @@ KtBlockExpression(344,600): '{'
   null
 
 KtReturnExpression(350,598): 'return when (o) {'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /bar(o: Outer, i: Inner): kotlin.Int
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /bar(o: Outer, i: Inner): kotlin.Int
+    ]
 
 KtWhenExpression(357,598): 'when (o) {'
   null
@@ -235,8 +239,10 @@ KtBlockExpression(434,564): '{'
   null
 
 KtReturnExpression(452,550): 'return when (i) {'
-  KaSingleSymbolResolutionSuccess:
-    symbol = baz(): kotlin.Int
+  KaSymbolResolutionSuccess:
+    symbols = [
+      baz(): kotlin.Int
+    ]
 
 KtWhenExpression(459,550): 'when (i) {'
   null
@@ -269,8 +275,10 @@ KtConstantExpression(531,532): '3'
   null
 
 KtCallExpression(577,582): 'baz()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = baz(): kotlin.Int
+  KaSymbolResolutionSuccess:
+    symbols = [
+      baz(): kotlin.Int
+    ]
 
 KtNameReferenceExpression(577,580): 'baz'
   null

@@ -93,8 +93,10 @@ KtBlockExpression(232,271): '{'
   null
 
 KtCallExpression(238,269): 'boundHolder<MyEnum>(EnumValue1)'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /boundHolder(arg: T): T
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /boundHolder(arg: T): T
+    ]
 
 KtNameReferenceExpression(238,249): 'boundHolder'
   null

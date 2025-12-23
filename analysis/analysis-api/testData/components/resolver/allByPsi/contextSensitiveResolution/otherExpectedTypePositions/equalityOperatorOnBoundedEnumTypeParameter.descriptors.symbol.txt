@@ -56,8 +56,10 @@ KtNameReferenceExpression(128,129): 'X'
   null
 
 KtCallExpression(132,138): 'TODO()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = kotlin/TODO(): kotlin.Nothing
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/TODO(): kotlin.Nothing
+    ]
 
 KtNameReferenceExpression(132,136): 'TODO'
   null
@@ -337,8 +339,10 @@ KtOperationReferenceExpression(720,722): '=='
   null
 
 KtCallExpression(723,728): 'id(L)'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /id(x: X): X
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /id(x: X): X
+    ]
 
 KtNameReferenceExpression(723,725): 'id'
   null
@@ -604,8 +608,10 @@ KtWhenConditionWithExpression(1031,1036): 'id(L)'
   null
 
 KtCallExpression(1031,1036): 'id(L)'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /id(x: X): X
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /id(x: X): X
+    ]
 
 KtNameReferenceExpression(1031,1033): 'id'
   null
@@ -694,8 +700,10 @@ KtWhenConditionWithExpression(1127,1132): 'id(L)'
   null
 
 KtCallExpression(1127,1132): 'id(L)'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /id(x: X): X
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /id(x: X): X
+    ]
 
 KtNameReferenceExpression(1127,1129): 'id'
   null

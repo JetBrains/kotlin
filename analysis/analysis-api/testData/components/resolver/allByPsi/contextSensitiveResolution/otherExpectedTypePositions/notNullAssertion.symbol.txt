@@ -41,8 +41,10 @@ KtSuperTypeList(176,185): 'MyClass()'
   null
 
 KtSuperTypeCallEntry(176,185): 'MyClass()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(): MyClass
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): MyClass
+    ]
 
 KtConstructorCalleeExpression(176,183): 'MyClass'
   null
@@ -81,8 +83,10 @@ KtNameReferenceExpression(235,242): 'MyClass'
   null
 
 KtCallExpression(245,254): 'MyClass()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(): MyClass
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): MyClass
+    ]
 
 KtNameReferenceExpression(245,252): 'MyClass'
   null
@@ -163,8 +167,10 @@ KtBlockExpression(450,609): '{'
   null
 
 KtCallExpression(456,491): 'receive<MyClass>(NestedInheritor!!)'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /receive(e: T): kotlin.Unit
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /receive(e: T): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(456,463): 'receive'
   null
@@ -200,8 +206,10 @@ KtOperationReferenceExpression(488,490): '!!'
   null
 
 KtCallExpression(496,527): 'receive<MyClass>(myClassProp!!)'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /receive(e: T): kotlin.Unit
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /receive(e: T): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(496,503): 'receive'
   null
@@ -277,8 +285,10 @@ KtOperationReferenceExpression(559,561): '!!'
   null
 
 KtCallExpression(567,607): 'receive<MyClass>(getNestedInheritor()!!)'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /receive(e: T): kotlin.Unit
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /receive(e: T): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(567,574): 'receive'
   null
@@ -461,8 +471,10 @@ KtNameReferenceExpression(757,764): 'MyClass'
   null
 
 KtCallExpression(765,785): 'getNestedInheritor()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /MyClass.Companion.getNestedInheritor(<dispatch receiver>: MyClass.Companion): MyClass.NestedInheritor
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.Companion.getNestedInheritor(<dispatch receiver>: MyClass.Companion): MyClass.NestedInheritor
+    ]
 
 KtNameReferenceExpression(765,783): 'getNestedInheritor'
   null
@@ -477,12 +489,16 @@ KtConstantExpression(789,790): '4'
   null
 
 KtReturnExpression(796,819): 'return map[myClassProp]'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /testIndexAccess(): kotlin.Int?
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /testIndexAccess(): kotlin.Int?
+    ]
 
 KtArrayAccessExpression(803,819): 'map[myClassProp]'
-  KaSingleSymbolResolutionSuccess:
-    symbol = kotlin/collections/Map.get(<dispatch receiver>: kotlin.collections.Map<K, V>, key: K): V?
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/collections/Map.get(<dispatch receiver>: kotlin.collections.Map<K, V>, key: K): V?
+    ]
 
 KtNameReferenceExpression(803,806): 'map'
   null
@@ -494,8 +510,10 @@ KtNameReferenceExpression(807,818): 'myClassProp'
   null
 
 KtReturnExpression(824,846): 'return map[stringProp]'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /testIndexAccess(): kotlin.Int?
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /testIndexAccess(): kotlin.Int?
+    ]
 
 KtArrayAccessExpression(831,846): 'map[stringProp]'
   KaSymbolResolutionError:
@@ -514,12 +532,16 @@ KtNameReferenceExpression(835,845): 'stringProp'
   null
 
 KtReturnExpression(851,878): 'return map[NestedInheritor]'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /testIndexAccess(): kotlin.Int?
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /testIndexAccess(): kotlin.Int?
+    ]
 
 KtArrayAccessExpression(858,878): 'map[NestedInheritor]'
-  KaSingleSymbolResolutionSuccess:
-    symbol = kotlin/collections/Map.get(<dispatch receiver>: kotlin.collections.Map<K, V>, key: K): V?
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/collections/Map.get(<dispatch receiver>: kotlin.collections.Map<K, V>, key: K): V?
+    ]
 
 KtNameReferenceExpression(858,861): 'map'
   null
@@ -531,12 +553,16 @@ KtNameReferenceExpression(862,877): 'NestedInheritor'
   null
 
 KtReturnExpression(883,915): 'return map[getNestedInheritor()]'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /testIndexAccess(): kotlin.Int?
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /testIndexAccess(): kotlin.Int?
+    ]
 
 KtArrayAccessExpression(890,915): 'map[getNestedInheritor()]'
-  KaSingleSymbolResolutionSuccess:
-    symbol = kotlin/collections/Map.get(<dispatch receiver>: kotlin.collections.Map<K, V>, key: K): V?
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/collections/Map.get(<dispatch receiver>: kotlin.collections.Map<K, V>, key: K): V?
+    ]
 
 KtNameReferenceExpression(890,893): 'map'
   null
@@ -657,8 +683,10 @@ KtBlockExpression(1080,1101): '{'
   null
 
 KtReturnExpression(1086,1099): 'return null!!'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /rangeTo(<extension receiver>: MyClass, that: MyClass): kotlin.ranges.ClosedFloatingPointRange<MyClass>
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /rangeTo(<extension receiver>: MyClass, that: MyClass): kotlin.ranges.ClosedFloatingPointRange<MyClass>
+    ]
 
 KtPostfixExpression(1093,1099): 'null!!'
   null
@@ -712,8 +740,10 @@ KtBlockExpression(1156,1175): '{'
   null
 
 KtReturnExpression(1162,1173): 'return true'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /contains(<extension receiver>: MyClass, that: MyClass): kotlin.Boolean
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /contains(<extension receiver>: MyClass, that: MyClass): kotlin.Boolean
+    ]
 
 KtConstantExpression(1169,1173): 'true'
   null

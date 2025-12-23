@@ -131,8 +131,10 @@ KtSuperTypeList(291,304): 'SealedClass()'
   null
 
 KtSuperTypeCallEntry(291,304): 'SealedClass()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(): SealedClass
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): SealedClass
+    ]
 
 KtConstructorCalleeExpression(291,302): 'SealedClass'
   null
@@ -177,8 +179,10 @@ KtSuperTypeList(353,366): 'SealedClass()'
   null
 
 KtSuperTypeCallEntry(353,366): 'SealedClass()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(): SealedClass
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): SealedClass
+    ]
 
 KtConstructorCalleeExpression(353,364): 'SealedClass'
   null
@@ -241,8 +245,10 @@ KtSuperTypeList(442,460): 'SealedGeneric<T>()'
   null
 
 KtSuperTypeCallEntry(442,460): 'SealedGeneric<T>()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(): SealedGeneric<T>
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): SealedGeneric<T>
+    ]
 
 KtConstructorCalleeExpression(442,458): 'SealedGeneric<T>'
   null
@@ -305,8 +311,10 @@ KtSuperTypeList(501,519): 'SealedGeneric<T>()'
   null
 
 KtSuperTypeCallEntry(501,519): 'SealedGeneric<T>()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(): SealedGeneric<T>
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): SealedGeneric<T>
+    ]
 
 KtConstructorCalleeExpression(501,517): 'SealedGeneric<T>'
   null
@@ -459,8 +467,10 @@ KtNameReferenceExpression(709,714): 'prop2'
   null
 
 KtCallExpression(715,725): 'toString()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = kotlin/Int.toString(<dispatch receiver>: kotlin.Int): kotlin.String
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.toString(<dispatch receiver>: kotlin.Int): kotlin.String
+    ]
 
 KtNameReferenceExpression(715,723): 'toString'
   null
@@ -625,8 +635,10 @@ KtNameReferenceExpression(973,978): 'prop2'
   null
 
 KtCallExpression(979,989): 'toString()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = kotlin/toString(<extension receiver>: kotlin.Any?): kotlin.String
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/toString(<extension receiver>: kotlin.Any?): kotlin.String
+    ]
 
 KtNameReferenceExpression(979,987): 'toString'
   null
@@ -731,8 +743,10 @@ KtNameReferenceExpression(1157,1162): 'prop2'
   null
 
 KtCallExpression(1163,1173): 'toString()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = kotlin/Int.toString(<dispatch receiver>: kotlin.Int): kotlin.String
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.toString(<dispatch receiver>: kotlin.Int): kotlin.String
+    ]
 
 KtNameReferenceExpression(1163,1171): 'toString'
   null
@@ -1029,8 +1043,10 @@ KtNameReferenceExpression(1648,1653): 'prop2'
   null
 
 KtCallExpression(1654,1664): 'toString()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = kotlin/Int.toString(<dispatch receiver>: kotlin.Int): kotlin.String
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.toString(<dispatch receiver>: kotlin.Int): kotlin.String
+    ]
 
 KtNameReferenceExpression(1654,1662): 'toString'
   null
@@ -1138,8 +1154,10 @@ KtBlockExpression(1821,2004): '{'
   null
 
 KtReturnExpression(1831,1998): 'return when(instance) {'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /testFakeIntersection2(instance: kotlin.Any): kotlin.String
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /testFakeIntersection2(instance: kotlin.Any): kotlin.String
+    ]
 
 KtWhenExpression(1838,1998): 'when(instance) {'
   null
@@ -1205,8 +1223,10 @@ KtLiteralStringTemplateEntry(1984,1987): '100'
   null
 
 KtReturnExpression(2009,2021): 'return "100"'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /testFakeIntersection2(instance: kotlin.Any): kotlin.String
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /testFakeIntersection2(instance: kotlin.Any): kotlin.String
+    ]
 
 KtStringTemplateExpression(2016,2021): '"100"'
   null
@@ -1299,8 +1319,10 @@ KtBlockExpression(2127,2310): '{'
   null
 
 KtReturnExpression(2137,2304): 'return when(instance) {'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /testIntersection(instance: kotlin.Any): kotlin.String
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /testIntersection(instance: kotlin.Any): kotlin.String
+    ]
 
 KtWhenExpression(2144,2304): 'when(instance) {'
   null
@@ -1366,8 +1388,10 @@ KtLiteralStringTemplateEntry(2290,2293): '100'
   null
 
 KtReturnExpression(2315,2327): 'return "100"'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /testIntersection(instance: kotlin.Any): kotlin.String
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /testIntersection(instance: kotlin.Any): kotlin.String
+    ]
 
 KtStringTemplateExpression(2322,2327): '"100"'
   null
@@ -1523,8 +1547,10 @@ KtBlockExpression(2572,2710): '{'
   null
 
 KtReturnExpression(2578,2708): 'return when(val i = JClass.staticProp) {'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /testFlexible(): kotlin.Int
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /testFlexible(): kotlin.Int
+    ]
 
 KtWhenExpression(2585,2708): 'when(val i = JClass.staticProp) {'
   null
@@ -1623,8 +1649,10 @@ KtDeclarationModifierList(2751,2766): '@UnsafeVariance'
   null
 
 KtAnnotationEntry(2751,2766): '@UnsafeVariance'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(): kotlin.UnsafeVariance
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): kotlin.UnsafeVariance
+    ]
 
 KtConstructorCalleeExpression(2752,2766): 'UnsafeVariance'
   null

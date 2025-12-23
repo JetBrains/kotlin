@@ -32,8 +32,10 @@ KtSuperTypeList(119,130): 'A<String>()'
   null
 
 KtSuperTypeCallEntry(119,130): 'A<String>()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(): A<T>
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): A<T>
+    ]
 
 KtConstructorCalleeExpression(119,128): 'A<String>'
   null
@@ -84,8 +86,10 @@ KtNameReferenceExpression(152,153): 'T'
   null
 
 KtCallExpression(156,162): 'TODO()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = kotlin/TODO(): kotlin.Nothing
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/TODO(): kotlin.Nothing
+    ]
 
 KtNameReferenceExpression(156,160): 'TODO'
   null
@@ -103,8 +107,10 @@ KtSuperTypeList(191,202): 'A<String>()'
   null
 
 KtSuperTypeCallEntry(191,202): 'A<String>()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(): A<T>
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): A<T>
+    ]
 
 KtConstructorCalleeExpression(191,200): 'A<String>'
   null
@@ -155,8 +161,10 @@ KtNameReferenceExpression(224,225): 'T'
   null
 
 KtCallExpression(228,234): 'TODO()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = kotlin/TODO(): kotlin.Nothing
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/TODO(): kotlin.Nothing
+    ]
 
 KtNameReferenceExpression(228,232): 'TODO'
   null
@@ -171,8 +179,10 @@ KtSuperTypeList(255,263): 'A<Int>()'
   null
 
 KtSuperTypeCallEntry(255,263): 'A<Int>()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(): A<T>
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): A<T>
+    ]
 
 KtConstructorCalleeExpression(255,261): 'A<Int>'
   null

@@ -1,3 +1,5 @@
 KtEnumEntrySuperclassReferenceExpression(127,127): ''
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(i: kotlin.Int): EnumWithConstructor
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(i: kotlin.Int): EnumWithConstructor
+    ]

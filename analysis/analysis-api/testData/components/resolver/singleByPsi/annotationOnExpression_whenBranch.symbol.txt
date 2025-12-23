@@ -1,3 +1,5 @@
 KtAnnotationEntry(54,78): '@Suppress("DEPRECATION")'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(vararg names: kotlin.String): kotlin.Suppress
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(vararg names: kotlin.String): kotlin.Suppress
+    ]

@@ -27,32 +27,18 @@ import org.jetbrains.kotlin.resolution.KtResolvable
 public sealed interface KaSymbolResolutionAttempt : KaLifetimeOwner
 
 /**
- * Represents a successful resolution result. It can be either a single symbol success or a multi-symbol success
+ * Represents a successful resolution result.
  *
- * @see KaSingleSymbolResolutionSuccess
- * @see KaMultiSymbolResolutionSuccess
- */
-@KaExperimentalApi
-public sealed interface KaSymbolResolutionSuccess : KaSymbolResolutionAttempt
-
-/**
- * Represents a successful resolution resulting in a single symbol
- */
-@KaExperimentalApi
-@SubclassOptInRequired(KaImplementationDetail::class)
-public interface KaSingleSymbolResolutionSuccess : KaSymbolResolutionSuccess {
-    /**
-     * The resolved symbol
-     */
-    public val symbol: KaSymbol
-}
-
-/**
- * Represents a successful resolution resulting in multiple symbols
+ * Unlike [KaCall], the symbol API doesn't split the API on single-symbol and compound-symbol resolutions.
+ * Instead, the result consists of a single symbol for simple cases, and a list of symbols for compound cases.
+ *
+ * @see KaResolver.tryResolveSymbol
+ * @see KaResolver.resolveSymbols
+ * @see KaResolver.resolveSymbol
  */
 @KaExperimentalApi
 @SubclassOptInRequired(KaImplementationDetail::class)
-public interface KaMultiSymbolResolutionSuccess : KaSymbolResolutionSuccess {
+public interface KaSymbolResolutionSuccess : KaSymbolResolutionAttempt {
     /**
      * The non-empty list of resolved symbols
      */
@@ -107,14 +93,14 @@ public interface KaSymbolResolutionError : KaSymbolResolutionAttempt {
 /**
  * Returns a list of [KaSymbol].
  *
- * - If [this] is an instance of [KaSingleSymbolResolutionSuccess], the list will contain only [KaSingleSymbolResolutionSuccess.symbol].
- * - If [this] is an instance of [KaMultiSymbolResolutionSuccess], the list will contain [KaMultiSymbolResolutionSuccess.symbols].
+ * - If [this] is an instance of [KaSymbolResolutionSuccess], the list will contain [KaSymbolResolutionSuccess.symbols].
  * - If [this] is an instance of [KaSymbolResolutionError], the list will contain [KaSymbolResolutionError.candidateSymbols].
+ *
+ * @see KaResolver.tryResolveSymbol
  */
 @KaExperimentalApi
 public val KaSymbolResolutionAttempt.symbols: List<KaSymbol>
     get() = when (this) {
-        is KaSingleSymbolResolutionSuccess -> listOf(symbol)
-        is KaMultiSymbolResolutionSuccess -> symbols
+        is KaSymbolResolutionSuccess -> symbols
         is KaSymbolResolutionError -> candidateSymbols
     }

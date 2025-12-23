@@ -1,3 +1,5 @@
 KtAnnotationEntry(23,34): '@field:Anno'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(): Anno
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): Anno
+    ]

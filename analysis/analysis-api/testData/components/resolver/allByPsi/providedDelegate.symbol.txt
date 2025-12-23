@@ -143,12 +143,16 @@ KtBlockExpression(229,264): '{'
   null
 
 KtReturnExpression(239,258): 'return MyDelegate()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = myPack/ResourceID.provideDelegate(<dispatch receiver>: myPack.ResourceID<T>, thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): kotlin.properties.ReadOnlyProperty<kotlin.Any?, T>
+  KaSymbolResolutionSuccess:
+    symbols = [
+      myPack/ResourceID.provideDelegate(<dispatch receiver>: myPack.ResourceID<T>, thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): kotlin.properties.ReadOnlyProperty<kotlin.Any?, T>
+    ]
 
 KtCallExpression(246,258): 'MyDelegate()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(): myPack.MyDelegate<T>
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): myPack.MyDelegate<T>
+    ]
 
 KtNameReferenceExpression(246,256): 'MyDelegate'
   null
@@ -268,8 +272,10 @@ KtBlockExpression(386,418): '{'
   null
 
 KtReturnExpression(396,412): 'return null as T'
-  KaSingleSymbolResolutionSuccess:
-    symbol = myPack/MyDelegate.getValue(<dispatch receiver>: myPack.MyDelegate<T>, thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): T
+  KaSymbolResolutionSuccess:
+    symbols = [
+      myPack/MyDelegate.getValue(<dispatch receiver>: myPack.MyDelegate<T>, thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): T
+    ]
 
 KtBinaryExpressionWithTypeRHS(403,412): 'null as T'
   null
@@ -296,8 +302,10 @@ KtPropertyDelegate(443,463): 'by ResourceID<Int>()'
   null
 
 KtCallExpression(446,463): 'ResourceID<Int>()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(): myPack.ResourceID<T>
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): myPack.ResourceID<T>
+    ]
 
 KtNameReferenceExpression(446,456): 'ResourceID'
   null

@@ -149,8 +149,10 @@ KtNameReferenceExpression(266,267): 'X'
   null
 
 KtCallExpression(270,276): 'TODO()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = kotlin/TODO(): kotlin.Nothing
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/TODO(): kotlin.Nothing
+    ]
 
 KtNameReferenceExpression(270,274): 'TODO'
   null
@@ -205,8 +207,10 @@ KtValueArgument(310,315): 'id(X)'
   null
 
 KtCallExpression(310,315): 'id(X)'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /id(x: X): X
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /id(x: X): X
+    ]
 
 KtNameReferenceExpression(310,312): 'id'
   null
@@ -221,8 +225,10 @@ KtNameReferenceExpression(313,314): 'X'
   null
 
 KtCallExpression(321,335): 'foo(MyEnum1.X)'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /foo(x: MyEnum1): kotlin.Unit
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /foo(x: MyEnum1): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(321,324): 'foo'
   null
@@ -243,8 +249,10 @@ KtNameReferenceExpression(333,334): 'X'
   null
 
 KtCallExpression(340,358): 'foo(id(MyEnum1.X))'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /foo(x: MyEnum1): kotlin.Unit
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /foo(x: MyEnum1): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(340,343): 'foo'
   null
@@ -256,8 +264,10 @@ KtValueArgument(344,357): 'id(MyEnum1.X)'
   null
 
 KtCallExpression(344,357): 'id(MyEnum1.X)'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /id(x: X): X
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /id(x: X): X
+    ]
 
 KtNameReferenceExpression(344,346): 'id'
   null
@@ -278,8 +288,10 @@ KtNameReferenceExpression(355,356): 'X'
   null
 
 KtCallExpression(364,370): 'bar(X)'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /bar(x: MyEnum3): kotlin.Unit
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /bar(x: MyEnum3): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(364,367): 'bar'
   null
@@ -294,8 +306,10 @@ KtNameReferenceExpression(368,369): 'X'
   null
 
 KtCallExpression(375,385): 'bar(id(X))'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /bar(x: MyEnum3): kotlin.Unit
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /bar(x: MyEnum3): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(375,378): 'bar'
   null
@@ -307,8 +321,10 @@ KtValueArgument(379,384): 'id(X)'
   null
 
 KtCallExpression(379,384): 'id(X)'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /id(x: X): X
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /id(x: X): X
+    ]
 
 KtNameReferenceExpression(379,381): 'id'
   null
@@ -411,8 +427,10 @@ KtValueArgument(477,482): 'id(X)'
   null
 
 KtCallExpression(477,482): 'id(X)'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /id(x: X): X
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /id(x: X): X
+    ]
 
 KtNameReferenceExpression(477,479): 'id'
   null
@@ -427,8 +445,10 @@ KtNameReferenceExpression(480,481): 'X'
   null
 
 KtCallExpression(489,503): 'bar(MyEnum3.X)'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /bar(x: MyEnum3): kotlin.Unit
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /bar(x: MyEnum3): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(489,492): 'bar'
   null

@@ -50,8 +50,10 @@ KtSuperTypeList(163,176): 'SealedClass()'
   null
 
 KtSuperTypeCallEntry(163,176): 'SealedClass()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(): SealedClass
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): SealedClass
+    ]
 
 KtConstructorCalleeExpression(163,174): 'SealedClass'
   null
@@ -96,8 +98,10 @@ KtSuperTypeList(225,238): 'SealedClass()'
   null
 
 KtSuperTypeCallEntry(225,238): 'SealedClass()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(): SealedClass
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): SealedClass
+    ]
 
 KtConstructorCalleeExpression(225,236): 'SealedClass'
   null
@@ -145,8 +149,10 @@ KtSuperTypeList(308,321): 'SealedClass()'
   null
 
 KtSuperTypeCallEntry(308,321): 'SealedClass()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(): SealedClass
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): SealedClass
+    ]
 
 KtConstructorCalleeExpression(308,319): 'SealedClass'
   null
@@ -170,8 +176,10 @@ KtSuperTypeList(358,376): 'SealedInheritor1()'
   null
 
 KtSuperTypeCallEntry(358,376): 'SealedInheritor1()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(prop1: kotlin.String): SealedClass.SealedInheritor1
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(prop1: kotlin.String): SealedClass.SealedInheritor1
+    ]
 
 KtConstructorCalleeExpression(358,374): 'SealedInheritor1'
   null
@@ -201,8 +209,10 @@ KtSuperTypeList(438,451): 'SealedClass()'
   null
 
 KtSuperTypeCallEntry(438,451): 'SealedClass()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(): SealedClass
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): SealedClass
+    ]
 
 KtConstructorCalleeExpression(438,449): 'SealedClass'
   null
@@ -226,8 +236,10 @@ KtSuperTypeList(501,519): 'SealedInheritor1()'
   null
 
 KtSuperTypeCallEntry(501,519): 'SealedInheritor1()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(prop1: kotlin.String): SealedClass.SealedInheritor1
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(prop1: kotlin.String): SealedClass.SealedInheritor1
+    ]
 
 KtConstructorCalleeExpression(501,517): 'SealedInheritor1'
   null
@@ -278,8 +290,10 @@ KtSuperTypeList(588,601): 'SealedClass()'
   null
 
 KtSuperTypeCallEntry(588,601): 'SealedClass()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(): SealedClass
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): SealedClass
+    ]
 
 KtConstructorCalleeExpression(588,599): 'SealedClass'
   null
@@ -348,8 +362,10 @@ KtNameReferenceExpression(728,735): 'Nothing'
   null
 
 KtCallExpression(738,744): 'TODO()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = kotlin/TODO(): kotlin.Nothing
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/TODO(): kotlin.Nothing
+    ]
 
 KtNameReferenceExpression(738,742): 'TODO'
   null
@@ -409,8 +425,10 @@ KtNameReferenceExpression(820,825): 'prop1'
   null
 
 KtCallExpression(826,836): 'hashCode()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = kotlin/Any.hashCode(<dispatch receiver>: kotlin.Any): kotlin.Int
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any.hashCode(<dispatch receiver>: kotlin.Any): kotlin.Int
+    ]
 
 KtNameReferenceExpression(826,834): 'hashCode'
   null
@@ -449,8 +467,10 @@ KtNameReferenceExpression(870,875): 'prop2'
   null
 
 KtCallExpression(876,881): 'dec()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = kotlin/Int.dec(<dispatch receiver>: kotlin.Int): kotlin.Int
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.dec(<dispatch receiver>: kotlin.Int): kotlin.Int
+    ]
 
 KtNameReferenceExpression(876,879): 'dec'
   null
@@ -489,8 +509,10 @@ KtNameReferenceExpression(915,920): 'prop1'
   null
 
 KtCallExpression(921,931): 'hashCode()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = kotlin/Any.hashCode(<dispatch receiver>: kotlin.Any): kotlin.Int
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any.hashCode(<dispatch receiver>: kotlin.Any): kotlin.Int
+    ]
 
 KtNameReferenceExpression(921,929): 'hashCode'
   null
@@ -550,8 +572,10 @@ KtNameReferenceExpression(1004,1009): 'prop1'
   null
 
 KtCallExpression(1010,1020): 'hashCode()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = kotlin/Any.hashCode(<dispatch receiver>: kotlin.Any): kotlin.Int
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any.hashCode(<dispatch receiver>: kotlin.Any): kotlin.Int
+    ]
 
 KtNameReferenceExpression(1010,1018): 'hashCode'
   null
@@ -590,8 +614,10 @@ KtNameReferenceExpression(1054,1059): 'prop2'
   null
 
 KtCallExpression(1060,1065): 'dec()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = kotlin/Int.dec(<dispatch receiver>: kotlin.Int): kotlin.Int
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.dec(<dispatch receiver>: kotlin.Int): kotlin.Int
+    ]
 
 KtNameReferenceExpression(1060,1063): 'dec'
   null
@@ -905,8 +931,10 @@ KtNameReferenceExpression(1462,1467): 'prop1'
   null
 
 KtCallExpression(1469,1479): 'hashCode()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = kotlin/Any.hashCode(<dispatch receiver>: kotlin.Any): kotlin.Int
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any.hashCode(<dispatch receiver>: kotlin.Any): kotlin.Int
+    ]
 
 KtNameReferenceExpression(1469,1477): 'hashCode'
   null
@@ -989,8 +1017,10 @@ KtNameReferenceExpression(1571,1576): 'prop1'
   null
 
 KtCallExpression(1578,1588): 'hashCode()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = kotlin/Any.hashCode(<dispatch receiver>: kotlin.Any): kotlin.Int
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any.hashCode(<dispatch receiver>: kotlin.Any): kotlin.Int
+    ]
 
 KtNameReferenceExpression(1578,1586): 'hashCode'
   null
@@ -1111,8 +1141,10 @@ KtValueArgumentList(1745,1747): '()'
   null
 
 KtCallExpression(1753,1798): 'consume<SealedClass?>(i as? SealedInheritor1)'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /consume(arg: T): kotlin.Nothing
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /consume(arg: T): kotlin.Nothing
+    ]
 
 KtNameReferenceExpression(1753,1760): 'consume'
   null
@@ -1160,8 +1192,10 @@ KtNameReferenceExpression(1781,1797): 'SealedInheritor1'
   null
 
 KtCallExpression(1803,1865): 'consume<SealedClass.SealedInheritor1?>(i as? SealedInheritor1)'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /consume(arg: T): kotlin.Nothing
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /consume(arg: T): kotlin.Nothing
+    ]
 
 KtNameReferenceExpression(1803,1810): 'consume'
   null
@@ -1215,8 +1249,10 @@ KtNameReferenceExpression(1848,1864): 'SealedInheritor1'
   null
 
 KtCallExpression(1870,1932): 'consume<SealedClass.SealedInheritor2?>(i as? SealedInheritor2)'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /consume(arg: T): kotlin.Nothing
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /consume(arg: T): kotlin.Nothing
+    ]
 
 KtNameReferenceExpression(1870,1877): 'consume'
   null

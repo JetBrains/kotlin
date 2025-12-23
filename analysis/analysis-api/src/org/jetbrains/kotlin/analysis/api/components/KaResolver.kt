@@ -34,12 +34,11 @@ public interface KaResolver : KaSessionComponent {
      * Resolves symbols for the given [KtResolvable].
      *
      * Returns all resolved [KaSymbol]s if successful; otherwise, an empty list. Might contain multiple symbols
-     * for a multiple result ([KaMultiSymbolResolutionSuccess])
+     * for a compound case
      *
      * @see tryResolveSymbol
      * @see resolveSymbol
-     * @see KaSingleSymbolResolutionSuccess
-     * @see KaMultiSymbolResolutionSuccess
+     * @see KaSymbolResolutionSuccess
      */
     @KaExperimentalApi
     @OptIn(KtExperimentalApi::class)
@@ -48,11 +47,11 @@ public interface KaResolver : KaSessionComponent {
     /**
      * Resolves a single symbol for the given [KtResolvable].
      *
-     * Returns the [KaSymbol] if there is exactly one target ([KaSingleSymbolResolutionSuccess]); otherwise, `null`
+     * Returns the [KaSymbol] if there is exactly one target; otherwise, `null`
      *
      * @see tryResolveSymbol
      * @see resolveSymbols
-     * @see KaSingleSymbolResolutionSuccess
+     * @see KaSymbolResolutionSuccess
      */
     @KaExperimentalApi
     @OptIn(KtExperimentalApi::class)
@@ -808,12 +807,11 @@ public fun KtResolvable.tryResolveSymbol(): KaSymbolResolutionAttempt? {
  * Resolves symbols for the given [KtResolvable].
  *
  * Returns all resolved [KaSymbol]s if successful; otherwise, an empty list. Might contain multiple symbols
- * for a multiple result ([KaMultiSymbolResolutionSuccess])
+ * for a compound case
  *
  * @see tryResolveSymbol
  * @see resolveSymbol
- * @see KaSingleSymbolResolutionSuccess
- * @see KaMultiSymbolResolutionSuccess
+ * @see KaSymbolResolutionSuccess
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
@@ -829,11 +827,11 @@ public fun KtResolvable.resolveSymbols(): Collection<KaSymbol> {
 /**
  * Resolves a single symbol for the given [KtResolvable].
  *
- * Returns the [KaSymbol] if there is exactly one target ([KaSingleSymbolResolutionSuccess]); otherwise, `null`
+ * Returns the [KaSymbol] if there is exactly one target; otherwise, `null`
  *
  * @see tryResolveSymbol
  * @see resolveSymbols
- * @see KaSingleSymbolResolutionSuccess
+ * @see KaSymbolResolutionSuccess
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi

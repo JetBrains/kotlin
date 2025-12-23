@@ -23,8 +23,10 @@ KtSuperTypeList(128,137): 'MyClass()'
   null
 
 KtSuperTypeCallEntry(128,137): 'MyClass()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(): MyClass
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): MyClass
+    ]
 
 KtConstructorCalleeExpression(128,135): 'MyClass'
   null
@@ -63,8 +65,10 @@ KtNameReferenceExpression(187,194): 'MyClass'
   null
 
 KtCallExpression(197,206): 'MyClass()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(): MyClass
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): MyClass
+    ]
 
 KtNameReferenceExpression(197,204): 'MyClass'
   null
@@ -133,8 +137,10 @@ KtSuperTypeList(372,384): 'Exception(m)'
   null
 
 KtSuperTypeCallEntry(372,384): 'Exception(m)'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(message: kotlin.String!): java.lang.Exception
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(message: kotlin.String!): java.lang.Exception
+    ]
 
 KtConstructorCalleeExpression(372,381): 'Exception'
   null
@@ -182,8 +188,10 @@ KtSuperTypeList(406,418): 'Exception(m)'
   null
 
 KtSuperTypeCallEntry(406,418): 'Exception(m)'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(message: kotlin.String!): java.lang.Exception
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(message: kotlin.String!): java.lang.Exception
+    ]
 
 KtConstructorCalleeExpression(406,415): 'Exception'
   null
@@ -231,8 +239,10 @@ KtSuperTypeList(440,452): 'Exception(m)'
   null
 
 KtSuperTypeCallEntry(440,452): 'Exception(m)'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(message: kotlin.String!): java.lang.Exception
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(message: kotlin.String!): java.lang.Exception
+    ]
 
 KtConstructorCalleeExpression(440,449): 'Exception'
   null
@@ -325,8 +335,10 @@ KtNameReferenceExpression(503,504): 'T'
   null
 
 KtCallExpression(507,510): 'b()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = kotlin/Function0.invoke(<dispatch receiver>: () -> R): R
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Function0.invoke(<dispatch receiver>: () -> R): R
+    ]
 
 KtNameReferenceExpression(507,508): 'b'
   null

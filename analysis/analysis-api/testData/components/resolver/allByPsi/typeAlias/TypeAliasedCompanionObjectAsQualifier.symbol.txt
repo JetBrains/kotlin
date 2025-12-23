@@ -77,8 +77,10 @@ KtNameReferenceExpression(167,174): 'MyAlias'
   null
 
 KtCallExpression(175,185): 'function()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = test/MyClass.Companion.function(<dispatch receiver>: test.MyClass.Companion): kotlin.Unit
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/MyClass.Companion.function(<dispatch receiver>: test.MyClass.Companion): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(175,183): 'function'
   null
@@ -96,8 +98,10 @@ KtNameReferenceExpression(198,206): 'property'
   null
 
 KtCallableReferenceExpression(212,229): 'MyAlias::function'
-  KaSingleSymbolResolutionSuccess:
-    symbol = test/MyClass.Companion.function(<dispatch receiver>: test.MyClass.Companion): kotlin.Unit
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/MyClass.Companion.function(<dispatch receiver>: test.MyClass.Companion): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(212,219): 'MyAlias'
   null
@@ -106,8 +110,10 @@ KtNameReferenceExpression(221,229): 'function'
   null
 
 KtCallableReferenceExpression(234,251): 'MyAlias::property'
-  KaSingleSymbolResolutionSuccess:
-    symbol = val property: kotlin.Int
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val property: kotlin.Int
+    ]
 
 KtNameReferenceExpression(234,241): 'MyAlias'
   null

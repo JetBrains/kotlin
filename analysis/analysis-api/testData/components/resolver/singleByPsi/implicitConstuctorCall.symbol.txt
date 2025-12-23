@@ -1,3 +1,5 @@
 KtCallExpression(34,37): 'A()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(): A
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): A
+    ]

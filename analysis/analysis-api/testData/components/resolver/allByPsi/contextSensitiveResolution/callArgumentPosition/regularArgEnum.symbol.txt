@@ -71,8 +71,10 @@ KtNameReferenceExpression(224,234): 'EnumValue2'
   null
 
 KtCallExpression(240,263): 'receiveEnum(EnumValue2)'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /receiveEnum(arg: MyEnum): kotlin.Unit
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /receiveEnum(arg: MyEnum): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(240,251): 'receiveEnum'
   null
@@ -87,8 +89,10 @@ KtNameReferenceExpression(252,262): 'EnumValue2'
   null
 
 KtCallExpression(268,285): 'receiveEnum(arg1)'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /receiveEnum(arg: MyEnum): kotlin.Unit
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /receiveEnum(arg: MyEnum): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(268,279): 'receiveEnum'
   null
@@ -103,8 +107,10 @@ KtNameReferenceExpression(280,284): 'arg1'
   null
 
 KtCallExpression(290,307): 'receiveEnum(arg2)'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /receiveEnum(arg: MyEnum): kotlin.Unit
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /receiveEnum(arg: MyEnum): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(290,301): 'receiveEnum'
   null
@@ -119,8 +125,10 @@ KtNameReferenceExpression(302,306): 'arg2'
   null
 
 KtCallExpression(312,329): 'receiveEnum(arg3)'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /receiveEnum(arg: MyEnum): kotlin.Unit
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /receiveEnum(arg: MyEnum): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(312,323): 'receiveEnum'
   null

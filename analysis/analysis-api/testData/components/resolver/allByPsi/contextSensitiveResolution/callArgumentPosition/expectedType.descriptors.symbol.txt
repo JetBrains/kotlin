@@ -86,8 +86,10 @@ KtSuperTypeList(269,278): 'MyClass()'
   null
 
 KtSuperTypeCallEntry(269,278): 'MyClass()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(): MyClass
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): MyClass
+    ]
 
 KtConstructorCalleeExpression(269,276): 'MyClass'
   null
@@ -210,8 +212,10 @@ KtNameReferenceExpression(377,383): 'String'
   null
 
 KtCallExpression(386,392): 'TODO()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = kotlin/TODO(): kotlin.Nothing
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/TODO(): kotlin.Nothing
+    ]
 
 KtNameReferenceExpression(386,390): 'TODO'
   null
@@ -289,8 +293,10 @@ KtNameReferenceExpression(494,500): 'OtherI'
   null
 
 KtCallExpression(503,509): 'TODO()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = kotlin/TODO(): kotlin.Nothing
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/TODO(): kotlin.Nothing
+    ]
 
 KtNameReferenceExpression(503,507): 'TODO'
   null
@@ -329,8 +335,10 @@ KtNameReferenceExpression(549,555): 'String'
   null
 
 KtCallExpression(558,564): 'TODO()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = kotlin/TODO(): kotlin.Nothing
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/TODO(): kotlin.Nothing
+    ]
 
 KtNameReferenceExpression(558,562): 'TODO'
   null
@@ -399,8 +407,10 @@ KtNameReferenceExpression(637,643): 'String'
   null
 
 KtCallExpression(646,652): 'TODO()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = kotlin/TODO(): kotlin.Nothing
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/TODO(): kotlin.Nothing
+    ]
 
 KtNameReferenceExpression(646,650): 'TODO'
   null
@@ -481,8 +491,10 @@ KtNameReferenceExpression(750,765): 'NestedInheritor'
   null
 
 KtCallExpression(768,774): 'TODO()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = kotlin/TODO(): kotlin.Nothing
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/TODO(): kotlin.Nothing
+    ]
 
 KtNameReferenceExpression(768,772): 'TODO'
   null
@@ -563,8 +575,10 @@ KtNameReferenceExpression(879,894): 'SealedInterface'
   null
 
 KtCallExpression(897,903): 'TODO()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = kotlin/TODO(): kotlin.Nothing
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/TODO(): kotlin.Nothing
+    ]
 
 KtNameReferenceExpression(897,901): 'TODO'
   null
@@ -639,8 +653,10 @@ KtNameReferenceExpression(988,995): 'MyClass'
   null
 
 KtCallExpression(998,1004): 'TODO()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = kotlin/TODO(): kotlin.Nothing
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/TODO(): kotlin.Nothing
+    ]
 
 KtNameReferenceExpression(998,1002): 'TODO'
   null
@@ -820,8 +836,10 @@ KtNameReferenceExpression(1170,1185): 'InheritorObject'
   null
 
 KtCallExpression(1193,1222): 'testNullable(InheritorObject)'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /testNullable(instance: MyClass?): kotlin.String
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /testNullable(instance: MyClass?): kotlin.String
+    ]
 
 KtNameReferenceExpression(1193,1205): 'testNullable'
   null

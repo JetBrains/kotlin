@@ -308,8 +308,10 @@ KtNameReferenceExpression(403,412): 'JavaClass'
   null
 
 KtCallExpression(413,418): 'foo()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /JavaClass.foo(): MySealed!
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /JavaClass.foo(): MySealed!
+    ]
 
 KtNameReferenceExpression(413,416): 'foo'
   null

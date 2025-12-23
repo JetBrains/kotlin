@@ -1,3 +1,5 @@
 KtLabelReferenceExpression(68,72): '@foo'
-  KaSingleSymbolResolutionSuccess:
-    symbol = val foo: kotlin.Any
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val foo: kotlin.Any
+    ]

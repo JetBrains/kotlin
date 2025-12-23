@@ -35,8 +35,10 @@ KtSuperTypeList(189,199): 'MySealed()'
   null
 
 KtSuperTypeCallEntry(189,199): 'MySealed()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(): MySealed
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): MySealed
+    ]
 
 KtConstructorCalleeExpression(189,197): 'MySealed'
   null

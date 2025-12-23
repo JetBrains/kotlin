@@ -14,8 +14,10 @@ KtDeclarationModifierList(15,56): '@Target(AnnotationTarget.TYPE)'
   null
 
 KtAnnotationEntry(15,45): '@Target(AnnotationTarget.TYPE)'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(vararg allowedTargets: kotlin.annotation.AnnotationTarget): kotlin.annotation.Target
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(vararg allowedTargets: kotlin.annotation.AnnotationTarget): kotlin.annotation.Target
+    ]
 
 KtConstructorCalleeExpression(16,22): 'Target'
   null
@@ -96,8 +98,10 @@ KtDeclarationModifierList(148,177): '@Anno("parameter type $prop")'
   null
 
 KtAnnotationEntry(148,177): '@Anno("parameter type $prop")'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(position: kotlin.String): Anno
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(position: kotlin.String): Anno
+    ]
 
 KtConstructorCalleeExpression(149,153): 'Anno'
   null
@@ -148,8 +152,10 @@ KtDeclarationModifierList(183,219): '@Anno("nested parameter type $prop")'
   null
 
 KtAnnotationEntry(183,219): '@Anno("nested parameter type $prop")'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(position: kotlin.String): Anno
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(position: kotlin.String): Anno
+    ]
 
 KtConstructorCalleeExpression(184,188): 'Anno'
   null
@@ -200,8 +206,10 @@ KtDeclarationModifierList(231,274): '@Anno("nested nested parameter type $prop")
   null
 
 KtAnnotationEntry(231,274): '@Anno("nested nested parameter type $prop")'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(position: kotlin.String): Anno
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(position: kotlin.String): Anno
+    ]
 
 KtConstructorCalleeExpression(232,236): 'Anno'
   null
@@ -246,8 +254,10 @@ KtDeclarationModifierList(286,313): '@Anno("defaultValue $prop")'
   null
 
 KtAnnotationEntry(286,313): '@Anno("defaultValue $prop")'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(position: kotlin.String): Anno
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(position: kotlin.String): Anno
+    ]
 
 KtConstructorCalleeExpression(287,291): 'Anno'
   null
@@ -292,8 +302,10 @@ KtDeclarationModifierList(321,368): '@Anno("anonymousFunction parameter type $pr
   null
 
 KtAnnotationEntry(321,368): '@Anno("anonymousFunction parameter type $prop")'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(position: kotlin.String): Anno
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(position: kotlin.String): Anno
+    ]
 
 KtConstructorCalleeExpression(322,326): 'Anno'
   null
@@ -338,8 +350,10 @@ KtDeclarationModifierList(375,419): '@Anno("anonymousFunction return type $prop"
   null
 
 KtAnnotationEntry(375,419): '@Anno("anonymousFunction return type $prop")'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(position: kotlin.String): Anno
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(position: kotlin.String): Anno
+    ]
 
 KtConstructorCalleeExpression(376,380): 'Anno'
   null
@@ -381,12 +395,16 @@ KtBlockExpression(424,426): '{}'
   null
 
 KtConstructorDelegationCall(427,427): ''
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(): kotlin.Any
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): kotlin.Any
+    ]
 
 KtConstructorDelegationReferenceExpression(427,427): ''
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(): kotlin.Any
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): kotlin.Any
+    ]
 
 KtClass(431,462): 'abstract class AbstractClass<T>'
   null
@@ -407,8 +425,10 @@ KtSuperTypeList(480,618): '@Anno("super type call $prop") AbstractClass<@Anno("n
   null
 
 KtSuperTypeCallEntry(480,618): '@Anno("super type call $prop") AbstractClass<@Anno("nested super type ref $prop") List<@Anno("nested nested super type ref $prop") Int>>()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(): AbstractClass<T>
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): AbstractClass<T>
+    ]
 
 KtConstructorCalleeExpression(480,616): '@Anno("super type call $prop") AbstractClass<@Anno("nested super type ref $prop") List<@Anno("nested nested super type ref $prop") Int>>'
   null
@@ -420,8 +440,10 @@ KtDeclarationModifierList(480,510): '@Anno("super type call $prop")'
   null
 
 KtAnnotationEntry(480,510): '@Anno("super type call $prop")'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(position: kotlin.String): Anno
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(position: kotlin.String): Anno
+    ]
 
 KtConstructorCalleeExpression(481,485): 'Anno'
   null
@@ -472,8 +494,10 @@ KtDeclarationModifierList(525,561): '@Anno("nested super type ref $prop")'
   null
 
 KtAnnotationEntry(525,561): '@Anno("nested super type ref $prop")'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(position: kotlin.String): Anno
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(position: kotlin.String): Anno
+    ]
 
 KtConstructorCalleeExpression(526,530): 'Anno'
   null
@@ -524,8 +548,10 @@ KtDeclarationModifierList(567,610): '@Anno("nested nested super type ref $prop")
   null
 
 KtAnnotationEntry(567,610): '@Anno("nested nested super type ref $prop")'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(position: kotlin.String): Anno
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(position: kotlin.String): Anno
+    ]
 
 KtConstructorCalleeExpression(568,572): 'Anno'
   null
@@ -579,8 +605,10 @@ KtSuperTypeList(653,791): '@Anno("super type call $prop") AbstractClass<@Anno("n
   null
 
 KtSuperTypeCallEntry(653,791): '@Anno("super type call $prop") AbstractClass<@Anno("nested super type ref $prop") List<@Anno("nested nested super type ref $prop") Int>>()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(): AbstractClass<T>
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): AbstractClass<T>
+    ]
 
 KtConstructorCalleeExpression(653,789): '@Anno("super type call $prop") AbstractClass<@Anno("nested super type ref $prop") List<@Anno("nested nested super type ref $prop") Int>>'
   null
@@ -592,8 +620,10 @@ KtDeclarationModifierList(653,683): '@Anno("super type call $prop")'
   null
 
 KtAnnotationEntry(653,683): '@Anno("super type call $prop")'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(position: kotlin.String): Anno
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(position: kotlin.String): Anno
+    ]
 
 KtConstructorCalleeExpression(654,658): 'Anno'
   null
@@ -644,8 +674,10 @@ KtDeclarationModifierList(698,734): '@Anno("nested super type ref $prop")'
   null
 
 KtAnnotationEntry(698,734): '@Anno("nested super type ref $prop")'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(position: kotlin.String): Anno
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(position: kotlin.String): Anno
+    ]
 
 KtConstructorCalleeExpression(699,703): 'Anno'
   null
@@ -696,8 +728,10 @@ KtDeclarationModifierList(740,783): '@Anno("nested nested super type ref $prop")
   null
 
 KtAnnotationEntry(740,783): '@Anno("nested nested super type ref $prop")'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(position: kotlin.String): Anno
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(position: kotlin.String): Anno
+    ]
 
 KtConstructorCalleeExpression(741,745): 'Anno'
   null
@@ -757,8 +791,10 @@ KtDeclarationModifierList(840,869): '@Anno("super type ref $prop")'
   null
 
 KtAnnotationEntry(840,869): '@Anno("super type ref $prop")'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(position: kotlin.String): Anno
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(position: kotlin.String): Anno
+    ]
 
 KtConstructorCalleeExpression(841,845): 'Anno'
   null
@@ -809,8 +845,10 @@ KtDeclarationModifierList(875,911): '@Anno("nested super type ref $prop")'
   null
 
 KtAnnotationEntry(875,911): '@Anno("nested super type ref $prop")'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(position: kotlin.String): Anno
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(position: kotlin.String): Anno
+    ]
 
 KtConstructorCalleeExpression(876,880): 'Anno'
   null
@@ -861,8 +899,10 @@ KtDeclarationModifierList(917,960): '@Anno("nested nested super type ref $prop")
   null
 
 KtAnnotationEntry(917,960): '@Anno("nested nested super type ref $prop")'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(position: kotlin.String): Anno
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(position: kotlin.String): Anno
+    ]
 
 KtConstructorCalleeExpression(918,922): 'Anno'
   null

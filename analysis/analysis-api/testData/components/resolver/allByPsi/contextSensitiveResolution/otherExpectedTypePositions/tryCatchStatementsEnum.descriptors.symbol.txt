@@ -116,8 +116,10 @@ KtNameReferenceExpression(200,201): 'T'
   null
 
 KtCallExpression(204,210): 'TODO()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = kotlin/TODO(): kotlin.Nothing
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/TODO(): kotlin.Nothing
+    ]
 
 KtNameReferenceExpression(204,208): 'TODO'
   null
@@ -159,8 +161,10 @@ KtNameReferenceExpression(230,231): 'X'
   null
 
 KtCallExpression(234,240): 'TODO()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = kotlin/TODO(): kotlin.Nothing
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/TODO(): kotlin.Nothing
+    ]
 
 KtNameReferenceExpression(234,238): 'TODO'
   null
@@ -406,8 +410,10 @@ KtNameReferenceExpression(649,650): 'L'
   null
 
 KtCallExpression(662,803): 'foo('
-  KaSingleSymbolResolutionSuccess:
-    symbol = /foo(a: MyEnum): kotlin.Unit
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /foo(a: MyEnum): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(662,665): 'foo'
   null
@@ -476,8 +482,10 @@ KtNameReferenceExpression(786,787): 'L'
   null
 
 KtCallExpression(809,963): 'myRunWithMyEnum {'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /myRunWithMyEnum(b: kotlin.Function0<MyEnum>): kotlin.Unit
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /myRunWithMyEnum(b: kotlin.Function0<MyEnum>): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(809,824): 'myRunWithMyEnum'
   null
@@ -552,8 +560,10 @@ KtNameReferenceExpression(946,947): 'L'
   null
 
 KtCallExpression(969,1121): 'myRun<MyEnum> {'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /myRun(b: kotlin.Function0<T>): T
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /myRun(b: kotlin.Function0<T>): T
+    ]
 
 KtNameReferenceExpression(969,974): 'myRun'
   null

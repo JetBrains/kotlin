@@ -50,8 +50,10 @@ KtSuperTypeList(161,174): 'SealedClass()'
   null
 
 KtSuperTypeCallEntry(161,174): 'SealedClass()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(): SealedClass
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): SealedClass
+    ]
 
 KtConstructorCalleeExpression(161,172): 'SealedClass'
   null
@@ -75,8 +77,10 @@ KtSuperTypeList(210,227): 'SealedInheritor()'
   null
 
 KtSuperTypeCallEntry(210,227): 'SealedInheritor()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(prop: kotlin.String): SealedClass.SealedInheritor
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(prop: kotlin.String): SealedClass.SealedInheritor
+    ]
 
 KtConstructorCalleeExpression(210,225): 'SealedInheritor'
   null
@@ -124,8 +128,10 @@ KtBlockExpression(295,438): '{'
   null
 
 KtReturnExpression(301,436): 'return when (instance) {'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /testIsInWhenGuardSealedClass(instance: SealedClass): kotlin.String
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /testIsInWhenGuardSealedClass(instance: SealedClass): kotlin.String
+    ]
 
 KtWhenExpression(308,436): 'when (instance) {'
   null
@@ -230,8 +236,10 @@ KtSuperTypeList(530,541): 'OpenClass()'
   null
 
 KtSuperTypeCallEntry(530,541): 'OpenClass()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(): OpenClass
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): OpenClass
+    ]
 
 KtConstructorCalleeExpression(530,539): 'OpenClass'
   null
@@ -255,8 +263,10 @@ KtSuperTypeList(588,616): 'SealedInheritorOfOpenClass()'
   null
 
 KtSuperTypeCallEntry(588,616): 'SealedInheritorOfOpenClass()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(prop: kotlin.String): OpenClass.SealedInheritorOfOpenClass
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(prop: kotlin.String): OpenClass.SealedInheritorOfOpenClass
+    ]
 
 KtConstructorCalleeExpression(588,614): 'SealedInheritorOfOpenClass'
   null
@@ -304,8 +314,10 @@ KtBlockExpression(680,845): '{'
   null
 
 KtReturnExpression(686,843): 'return when (instance) {'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /testIsInWhenGuardOpenClass(instance: OpenClass): kotlin.String
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /testIsInWhenGuardOpenClass(instance: OpenClass): kotlin.String
+    ]
 
 KtWhenExpression(693,843): 'when (instance) {'
   null

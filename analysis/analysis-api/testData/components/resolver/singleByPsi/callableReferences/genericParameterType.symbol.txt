@@ -1,3 +1,5 @@
 KtCallableReferenceExpression(69,82): 'Foo<Int>::foo'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /Foo.foo(<dispatch receiver>: Foo<T>, value: T): kotlin.Unit
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Foo.foo(<dispatch receiver>: Foo<T>, value: T): kotlin.Unit
+    ]

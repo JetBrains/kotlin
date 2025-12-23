@@ -1,3 +1,5 @@
 KtCallExpression(86,102): 'arrayOf(1, 2, 3)'
-  KaSingleSymbolResolutionSuccess:
-    symbol = kotlin/arrayOf(vararg elements: T): kotlin.Array<T>
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/arrayOf(vararg elements: T): kotlin.Array<T>
+    ]

@@ -1,3 +1,5 @@
 KtCallExpression(47,55): 'x(1, "")'
-  KaSingleSymbolResolutionSuccess:
-    symbol = kotlin/Function2.invoke(<dispatch receiver>: (P1, P2) -> R, p1: P1, p2: P2): R
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Function2.invoke(<dispatch receiver>: (P1, P2) -> R, p1: P1, p2: P2): R
+    ]

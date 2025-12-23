@@ -29,8 +29,10 @@ KtSuperTypeList(114,122): 'Sealed()'
   null
 
 KtSuperTypeCallEntry(114,122): 'Sealed()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(): foo.Sealed
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): foo.Sealed
+    ]
 
 KtConstructorCalleeExpression(114,120): 'Sealed'
   null
@@ -75,8 +77,10 @@ KtSuperTypeList(154,162): 'Sealed()'
   null
 
 KtSuperTypeCallEntry(154,162): 'Sealed()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(): foo.Sealed
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): foo.Sealed
+    ]
 
 KtConstructorCalleeExpression(154,160): 'Sealed'
   null
@@ -103,8 +107,10 @@ KtSuperTypeList(183,191): 'Sealed()'
   null
 
 KtSuperTypeCallEntry(183,191): 'Sealed()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(): foo.Sealed
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): foo.Sealed
+    ]
 
 KtConstructorCalleeExpression(183,189): 'Sealed'
   null
@@ -149,8 +155,10 @@ KtSuperTypeList(223,231): 'Sealed()'
   null
 
 KtSuperTypeCallEntry(223,231): 'Sealed()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(): foo.Sealed
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): foo.Sealed
+    ]
 
 KtConstructorCalleeExpression(223,229): 'Sealed'
   null
@@ -201,8 +209,10 @@ KtSuperTypeList(278,286): 'Sealed()'
   null
 
 KtSuperTypeCallEntry(278,286): 'Sealed()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(): foo.Sealed
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): foo.Sealed
+    ]
 
 KtConstructorCalleeExpression(278,284): 'Sealed'
   null
@@ -553,8 +563,10 @@ KtNameReferenceExpression(680,681): 'A'
   null
 
 KtReturnExpression(686,694): 'return 1'
-  KaSingleSymbolResolutionSuccess:
-    symbol = foo/cast1wrong(s: foo.Sealed): kotlin.Int
+  KaSymbolResolutionSuccess:
+    symbols = [
+      foo/cast1wrong(s: foo.Sealed): kotlin.Int
+    ]
 
 KtConstantExpression(693,694): '1'
   null
@@ -608,8 +620,10 @@ KtNameReferenceExpression(740,741): 'B'
   null
 
 KtReturnExpression(746,754): 'return 2'
-  KaSingleSymbolResolutionSuccess:
-    symbol = foo/cast2wrong(s: foo.Sealed): kotlin.Int
+  KaSymbolResolutionSuccess:
+    symbols = [
+      foo/cast2wrong(s: foo.Sealed): kotlin.Int
+    ]
 
 KtConstantExpression(753,754): '2'
   null
@@ -669,8 +683,10 @@ KtNameReferenceExpression(808,809): 'A'
   null
 
 KtReturnExpression(814,822): 'return 1'
-  KaSingleSymbolResolutionSuccess:
-    symbol = foo/cast1sealed(s: foo.Sealed): kotlin.Int
+  KaSymbolResolutionSuccess:
+    symbols = [
+      foo/cast1sealed(s: foo.Sealed): kotlin.Int
+    ]
 
 KtConstantExpression(821,822): '1'
   null
@@ -730,8 +746,10 @@ KtNameReferenceExpression(876,877): 'B'
   null
 
 KtReturnExpression(882,890): 'return 2'
-  KaSingleSymbolResolutionSuccess:
-    symbol = foo/cast2sealed(s: foo.Sealed): kotlin.Int
+  KaSymbolResolutionSuccess:
+    symbols = [
+      foo/cast2sealed(s: foo.Sealed): kotlin.Int
+    ]
 
 KtConstantExpression(889,890): '2'
   null
@@ -791,8 +809,10 @@ KtNameReferenceExpression(943,944): 'A'
   null
 
 KtReturnExpression(949,957): 'return 1'
-  KaSingleSymbolResolutionSuccess:
-    symbol = foo/cast1topLevel(s: foo.Sealed): kotlin.Int
+  KaSymbolResolutionSuccess:
+    symbols = [
+      foo/cast1topLevel(s: foo.Sealed): kotlin.Int
+    ]
 
 KtConstantExpression(956,957): '1'
   null
@@ -852,8 +872,10 @@ KtNameReferenceExpression(1010,1011): 'B'
   null
 
 KtReturnExpression(1016,1024): 'return 2'
-  KaSingleSymbolResolutionSuccess:
-    symbol = foo/cast2topLevel(s: foo.Sealed): kotlin.Int
+  KaSymbolResolutionSuccess:
+    symbols = [
+      foo/cast2topLevel(s: foo.Sealed): kotlin.Int
+    ]
 
 KtConstantExpression(1023,1024): '2'
   null
@@ -907,8 +929,10 @@ KtNameReferenceExpression(1067,1068): 'C'
   null
 
 KtReturnExpression(1073,1081): 'return 3'
-  KaSingleSymbolResolutionSuccess:
-    symbol = foo/cast3ok(s: foo.Sealed): kotlin.Int
+  KaSymbolResolutionSuccess:
+    symbols = [
+      foo/cast3ok(s: foo.Sealed): kotlin.Int
+    ]
 
 KtConstantExpression(1080,1081): '3'
   null
@@ -962,8 +986,10 @@ KtNameReferenceExpression(1124,1125): 'D'
   null
 
 KtReturnExpression(1130,1138): 'return 4'
-  KaSingleSymbolResolutionSuccess:
-    symbol = foo/cast4ok(s: foo.Sealed): kotlin.Int
+  KaSymbolResolutionSuccess:
+    symbols = [
+      foo/cast4ok(s: foo.Sealed): kotlin.Int
+    ]
 
 KtConstantExpression(1137,1138): '4'
   null

@@ -1,3 +1,5 @@
 KtCallExpression(117,127): 'thisProp()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /invoke(<extension receiver>: A): kotlin.Unit
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /invoke(<extension receiver>: A): kotlin.Unit
+    ]

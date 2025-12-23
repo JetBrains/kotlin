@@ -74,8 +74,10 @@ KtNameReferenceExpression(114,121): 'MyClass'
   null
 
 KtCallExpression(124,133): 'MyClass()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(): r.MyClass
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): r.MyClass
+    ]
 
 KtNameReferenceExpression(124,131): 'MyClass'
   null
@@ -93,8 +95,10 @@ KtParameterList(151,153): '()'
   null
 
 KtCallExpression(156,165): 'MyClass()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(): r.MyClass
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): r.MyClass
+    ]
 
 KtNameReferenceExpression(156,163): 'MyClass'
   null
@@ -112,8 +116,10 @@ KtBlockExpression(180,260): '{'
   null
 
 KtCallExpression(186,191): 'foo()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = r/foo(): kotlin.Int
+  KaSymbolResolutionSuccess:
+    symbols = [
+      r/foo(): kotlin.Int
+    ]
 
 KtNameReferenceExpression(186,189): 'foo'
   null
@@ -131,15 +137,19 @@ KtParenthesizedExpression(204,217): '(((foo)())())'
   null
 
 KtCallExpression(205,216): '((foo)())()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = r/MyClass.invoke(<dispatch receiver>: r.MyClass): r.MyClass
+  KaSymbolResolutionSuccess:
+    symbols = [
+      r/MyClass.invoke(<dispatch receiver>: r.MyClass): r.MyClass
+    ]
 
 KtParenthesizedExpression(205,214): '((foo)())'
   null
 
 KtCallExpression(206,213): '(foo)()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = r/MyClass.invoke(<dispatch receiver>: r.MyClass): r.MyClass
+  KaSymbolResolutionSuccess:
+    symbols = [
+      r/MyClass.invoke(<dispatch receiver>: r.MyClass): r.MyClass
+    ]
 
 KtParenthesizedExpression(206,211): '(foo)'
   null
@@ -154,8 +164,10 @@ KtValueArgumentList(214,216): '()'
   null
 
 KtCallExpression(218,226): 'invoke()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = r/MyClass.invoke(<dispatch receiver>: r.MyClass): r.MyClass
+  KaSymbolResolutionSuccess:
+    symbols = [
+      r/MyClass.invoke(<dispatch receiver>: r.MyClass): r.MyClass
+    ]
 
 KtNameReferenceExpression(218,224): 'invoke'
   null
@@ -170,8 +182,10 @@ KtNameReferenceExpression(231,234): 'foo'
   null
 
 KtCallExpression(235,243): 'invoke()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = r/MyClass.invoke(<dispatch receiver>: r.MyClass): r.MyClass
+  KaSymbolResolutionSuccess:
+    symbols = [
+      r/MyClass.invoke(<dispatch receiver>: r.MyClass): r.MyClass
+    ]
 
 KtNameReferenceExpression(235,241): 'invoke'
   null
@@ -180,8 +194,10 @@ KtValueArgumentList(241,243): '()'
   null
 
 KtCallExpression(248,258): 'property()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = r/MyClass.invoke(<dispatch receiver>: r.MyClass): r.MyClass
+  KaSymbolResolutionSuccess:
+    symbols = [
+      r/MyClass.invoke(<dispatch receiver>: r.MyClass): r.MyClass
+    ]
 
 KtNameReferenceExpression(248,256): 'property'
   null

@@ -1,3 +1,5 @@
 KtSuperTypeCallEntry(93,111): 'Foo<String>("str")'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(x: T): Foo<T>
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(x: T): Foo<T>
+    ]

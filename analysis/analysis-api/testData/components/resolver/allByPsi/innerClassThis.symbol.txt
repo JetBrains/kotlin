@@ -50,12 +50,16 @@ KtParameterList(72,74): '()'
   null
 
 KtConstructorDelegationCall(76,84): 'this(10)'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(<dispatch receiver>: r.A, x: kotlin.Int): r.A.B
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(<dispatch receiver>: r.A, x: kotlin.Int): r.A.B
+    ]
 
 KtConstructorDelegationReferenceExpression(76,80): 'this'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(<dispatch receiver>: r.A, x: kotlin.Int): r.A.B
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(<dispatch receiver>: r.A, x: kotlin.Int): r.A.B
+    ]
 
 KtValueArgumentList(80,84): '(10)'
   null

@@ -95,8 +95,10 @@ KtBlockExpression(270,317): '{'
   null
 
 KtCallExpression(276,293): 'lEnum(EnumValue1)'
-  KaSingleSymbolResolutionSuccess:
-    symbol = kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
+    ]
 
 KtNameReferenceExpression(276,281): 'lEnum'
   null
@@ -111,8 +113,10 @@ KtNameReferenceExpression(282,292): 'EnumValue1'
   null
 
 KtCallExpression(298,315): 'lEnum(EnumValue2)'
-  KaSingleSymbolResolutionSuccess:
-    symbol = kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
+    ]
 
 KtNameReferenceExpression(298,303): 'lEnum'
   null

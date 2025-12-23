@@ -104,8 +104,10 @@ KtNameReferenceExpression(206,212): 'MyEnum'
   null
 
 KtCallExpression(215,229): 'id(EnumValue1)'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /id(x: X): X
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /id(x: X): X
+    ]
 
 KtNameReferenceExpression(215,217): 'id'
   null
@@ -120,8 +122,10 @@ KtNameReferenceExpression(218,228): 'EnumValue1'
   null
 
 KtCallExpression(235,266): 'receive<MyEnum>(id(EnumValue1))'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /receive(arg: T): kotlin.Unit
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /receive(arg: T): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(235,242): 'receive'
   null
@@ -148,8 +152,10 @@ KtValueArgument(251,265): 'id(EnumValue1)'
   null
 
 KtCallExpression(251,265): 'id(EnumValue1)'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /id(x: X): X
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /id(x: X): X
+    ]
 
 KtNameReferenceExpression(251,253): 'id'
   null

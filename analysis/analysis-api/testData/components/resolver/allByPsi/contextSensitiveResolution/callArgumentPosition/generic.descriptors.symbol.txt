@@ -47,8 +47,10 @@ KtSuperTypeList(197,206): 'MyClass()'
   null
 
 KtSuperTypeCallEntry(197,206): 'MyClass()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(): MyClass
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): MyClass
+    ]
 
 KtConstructorCalleeExpression(197,204): 'MyClass'
   null
@@ -75,8 +77,10 @@ KtSuperTypeList(237,246): 'MyClass()'
   null
 
 KtSuperTypeCallEntry(237,246): 'MyClass()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(): MyClass
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): MyClass
+    ]
 
 KtConstructorCalleeExpression(237,244): 'MyClass'
   null
@@ -109,8 +113,10 @@ KtSuperTypeList(298,307): 'MySuper()'
   null
 
 KtSuperTypeCallEntry(298,307): 'MySuper()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(): MySuper
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): MySuper
+    ]
 
 KtConstructorCalleeExpression(298,305): 'MySuper'
   null
@@ -143,8 +149,10 @@ KtNameReferenceExpression(335,342): 'MyClass'
   null
 
 KtCallExpression(345,351): 'TODO()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = kotlin/TODO(): kotlin.Nothing
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/TODO(): kotlin.Nothing
+    ]
 
 KtNameReferenceExpression(345,349): 'TODO'
   null
@@ -165,8 +173,10 @@ KtNameReferenceExpression(384,398): 'InheritorClass'
   null
 
 KtCallExpression(401,417): 'InheritorClass()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(): MyClass.InheritorClass
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): MyClass.InheritorClass
+    ]
 
 KtNameReferenceExpression(401,415): 'InheritorClass'
   null
@@ -220,8 +230,10 @@ KtNameReferenceExpression(535,542): 'MyClass'
   null
 
 KtCallExpression(545,551): 'TODO()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = kotlin/TODO(): kotlin.Nothing
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/TODO(): kotlin.Nothing
+    ]
 
 KtNameReferenceExpression(545,549): 'TODO'
   null
@@ -245,8 +257,10 @@ KtPropertyDelegate(581,593): 'by lazy {""}'
   null
 
 KtCallExpression(584,593): 'lazy {""}'
-  KaSingleSymbolResolutionSuccess:
-    symbol = kotlin/lazy(initializer: kotlin.Function0<T>): kotlin.Lazy<T>
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/lazy(initializer: kotlin.Function0<T>): kotlin.Lazy<T>
+    ]
 
 KtNameReferenceExpression(584,588): 'lazy'
   null

@@ -42,17 +42,13 @@ abstract class KaBaseResolver<T : KaSession> : KaBaseSessionComponent<T>(), KaRe
 
     final override fun KtResolvable.resolveSymbols(): Collection<KaSymbol> = withValidityAssertion {
         when (val attempt = tryResolveSymbol()) {
-            is KaSingleSymbolResolutionSuccess -> listOf(attempt.symbol)
-            is KaMultiSymbolResolutionSuccess -> attempt.symbols
-            else -> emptyList()
+            is KaSymbolResolutionSuccess -> attempt.symbols
+            is KaSymbolResolutionError, null -> emptyList()
         }
     }
 
     final override fun KtResolvable.resolveSymbol(): KaSymbol? = withValidityAssertion {
-        when (val attempt = tryResolveSymbol()) {
-            is KaSingleSymbolResolutionSuccess -> attempt.symbol
-            else -> null
-        }
+        resolveSymbols().singleOrNull()
     }
 
     private inline fun <reified R : KaSymbol> KtResolvable.resolveSymbolSafe(): R? = resolveSymbol() as? R

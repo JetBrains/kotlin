@@ -155,8 +155,10 @@ KtBlockExpression(174,763): '{'
   null
 
 KtCallExpression(180,749): 'foo1 {'
-  KaSingleSymbolResolutionSuccess:
-    symbol = returnPack/foo1(action: (kotlin.Int) -> kotlin.Unit): kotlin.Unit
+  KaSymbolResolutionSuccess:
+    symbols = [
+      returnPack/foo1(action: (kotlin.Int) -> kotlin.Unit): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(180,184): 'foo1'
   null
@@ -174,8 +176,10 @@ KtBlockExpression(195,743): 'foo2 {'
   null
 
 KtCallExpression(195,743): 'foo2 {'
-  KaSingleSymbolResolutionSuccess:
-    symbol = returnPack/foo2(action: (kotlin.String) -> kotlin.Unit): kotlin.Unit
+  KaSymbolResolutionSuccess:
+    symbols = [
+      returnPack/foo2(action: (kotlin.String) -> kotlin.Unit): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(195,199): 'foo2'
   null
@@ -193,8 +197,10 @@ KtBlockExpression(214,733): 'foo3 {'
   null
 
 KtCallExpression(214,733): 'foo3 {'
-  KaSingleSymbolResolutionSuccess:
-    symbol = returnPack/foo3(action: (kotlin.Boolean) -> kotlin.Unit): kotlin.Unit
+  KaSymbolResolutionSuccess:
+    symbols = [
+      returnPack/foo3(action: (kotlin.Boolean) -> kotlin.Unit): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(214,218): 'foo3'
   null
@@ -212,8 +218,10 @@ KtBlockExpression(237,719): 'foo1('
   null
 
 KtCallExpression(237,413): 'foo1('
-  KaSingleSymbolResolutionSuccess:
-    symbol = returnPack/foo1(action: (kotlin.Int) -> kotlin.Unit): kotlin.Unit
+  KaSymbolResolutionSuccess:
+    symbols = [
+      returnPack/foo1(action: (kotlin.Int) -> kotlin.Unit): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(237,241): 'foo1'
   null
@@ -234,41 +242,55 @@ KtBlockExpression(289,372): 'return@foo3'
   null
 
 KtReturnExpression(289,300): 'return@foo3'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <anonymous function>(it: kotlin.Boolean): kotlin.Unit
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <anonymous function>(it: kotlin.Boolean): kotlin.Unit
+    ]
 
 KtContainerNode(295,300): '@foo3'
   null
 
 KtLabelReferenceExpression(295,300): '@foo3'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <anonymous function>(it: kotlin.Boolean): kotlin.Unit
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <anonymous function>(it: kotlin.Boolean): kotlin.Unit
+    ]
 
 KtReturnExpression(325,336): 'return@foo2'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <anonymous function>(it: kotlin.String): kotlin.Unit
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <anonymous function>(it: kotlin.String): kotlin.Unit
+    ]
 
 KtContainerNode(331,336): '@foo2'
   null
 
 KtLabelReferenceExpression(331,336): '@foo2'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <anonymous function>(it: kotlin.String): kotlin.Unit
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <anonymous function>(it: kotlin.String): kotlin.Unit
+    ]
 
 KtReturnExpression(361,372): 'return@foo1'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <anonymous function>(it: kotlin.Int): kotlin.Unit
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <anonymous function>(it: kotlin.Int): kotlin.Unit
+    ]
 
 KtContainerNode(367,372): '@foo1'
   null
 
 KtLabelReferenceExpression(367,372): '@foo1'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <anonymous function>(it: kotlin.Int): kotlin.Unit
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <anonymous function>(it: kotlin.Int): kotlin.Unit
+    ]
 
 KtCallExpression(431,634): 'foo2(label@ fun(s: String) {'
-  KaSingleSymbolResolutionSuccess:
-    symbol = returnPack/foo2(action: (kotlin.String) -> kotlin.Unit): kotlin.Unit
+  KaSymbolResolutionSuccess:
+    symbols = [
+      returnPack/foo2(action: (kotlin.String) -> kotlin.Unit): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(431,435): 'foo2'
   null
@@ -310,86 +332,118 @@ KtBlockExpression(458,633): '{'
   null
 
 KtReturnExpression(480,486): 'return'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <anonymous function>(s: kotlin.String): kotlin.Unit
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <anonymous function>(s: kotlin.String): kotlin.Unit
+    ]
 
 KtReturnExpression(507,519): 'return@label'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <anonymous function>(s: kotlin.String): kotlin.Unit
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <anonymous function>(s: kotlin.String): kotlin.Unit
+    ]
 
 KtContainerNode(513,519): '@label'
   null
 
 KtLabelReferenceExpression(513,519): '@label'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <anonymous function>(s: kotlin.String): kotlin.Unit
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <anonymous function>(s: kotlin.String): kotlin.Unit
+    ]
 
 KtReturnExpression(540,551): 'return@foo3'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <anonymous function>(it: kotlin.Boolean): kotlin.Unit
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <anonymous function>(it: kotlin.Boolean): kotlin.Unit
+    ]
 
 KtContainerNode(546,551): '@foo3'
   null
 
 KtLabelReferenceExpression(546,551): '@foo3'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <anonymous function>(it: kotlin.Boolean): kotlin.Unit
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <anonymous function>(it: kotlin.Boolean): kotlin.Unit
+    ]
 
 KtReturnExpression(572,583): 'return@foo2'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <anonymous function>(it: kotlin.String): kotlin.Unit
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <anonymous function>(it: kotlin.String): kotlin.Unit
+    ]
 
 KtContainerNode(578,583): '@foo2'
   null
 
 KtLabelReferenceExpression(578,583): '@foo2'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <anonymous function>(it: kotlin.String): kotlin.Unit
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <anonymous function>(it: kotlin.String): kotlin.Unit
+    ]
 
 KtReturnExpression(604,615): 'return@foo1'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <anonymous function>(it: kotlin.Int): kotlin.Unit
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <anonymous function>(it: kotlin.Int): kotlin.Unit
+    ]
 
 KtContainerNode(610,615): '@foo1'
   null
 
 KtLabelReferenceExpression(610,615): '@foo1'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <anonymous function>(it: kotlin.Int): kotlin.Unit
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <anonymous function>(it: kotlin.Int): kotlin.Unit
+    ]
 
 KtReturnExpression(652,663): 'return@foo3'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <anonymous function>(it: kotlin.Boolean): kotlin.Unit
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <anonymous function>(it: kotlin.Boolean): kotlin.Unit
+    ]
 
 KtContainerNode(658,663): '@foo3'
   null
 
 KtLabelReferenceExpression(658,663): '@foo3'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <anonymous function>(it: kotlin.Boolean): kotlin.Unit
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <anonymous function>(it: kotlin.Boolean): kotlin.Unit
+    ]
 
 KtReturnExpression(680,691): 'return@foo2'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <anonymous function>(it: kotlin.String): kotlin.Unit
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <anonymous function>(it: kotlin.String): kotlin.Unit
+    ]
 
 KtContainerNode(686,691): '@foo2'
   null
 
 KtLabelReferenceExpression(686,691): '@foo2'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <anonymous function>(it: kotlin.String): kotlin.Unit
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <anonymous function>(it: kotlin.String): kotlin.Unit
+    ]
 
 KtReturnExpression(708,719): 'return@foo1'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <anonymous function>(it: kotlin.Int): kotlin.Unit
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <anonymous function>(it: kotlin.Int): kotlin.Unit
+    ]
 
 KtContainerNode(714,719): '@foo1'
   null
 
 KtLabelReferenceExpression(714,719): '@foo1'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <anonymous function>(it: kotlin.Int): kotlin.Unit
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <anonymous function>(it: kotlin.Int): kotlin.Unit
+    ]
 
 KtReturnExpression(755,761): 'return'
-  KaSingleSymbolResolutionSuccess:
-    symbol = returnPack/usage(): kotlin.Unit
+  KaSymbolResolutionSuccess:
+    symbols = [
+      returnPack/usage(): kotlin.Unit
+    ]

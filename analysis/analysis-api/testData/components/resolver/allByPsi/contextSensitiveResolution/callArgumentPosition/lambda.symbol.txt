@@ -56,8 +56,10 @@ KtSuperTypeList(217,226): 'MyClass()'
   null
 
 KtSuperTypeCallEntry(217,226): 'MyClass()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(): MyClass
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): MyClass
+    ]
 
 KtConstructorCalleeExpression(217,224): 'MyClass'
   null
@@ -99,8 +101,10 @@ KtSuperTypeList(292,301): 'MyClass()'
   null
 
 KtSuperTypeCallEntry(292,301): 'MyClass()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(): MyClass
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): MyClass
+    ]
 
 KtConstructorCalleeExpression(292,299): 'MyClass'
   null
@@ -148,8 +152,10 @@ KtSuperTypeList(388,395): 'Super()'
   null
 
 KtSuperTypeCallEntry(388,395): 'Super()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(): Super
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): Super
+    ]
 
 KtConstructorCalleeExpression(388,393): 'Super'
   null
@@ -182,8 +188,10 @@ KtNameReferenceExpression(423,430): 'MyClass'
   null
 
 KtCallExpression(433,439): 'TODO()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = kotlin/TODO(): kotlin.Nothing
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/TODO(): kotlin.Nothing
+    ]
 
 KtNameReferenceExpression(433,437): 'TODO'
   null
@@ -204,8 +212,10 @@ KtNameReferenceExpression(472,486): 'InheritorClass'
   null
 
 KtCallExpression(489,505): 'InheritorClass()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(): MyClass.InheritorClass
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): MyClass.InheritorClass
+    ]
 
 KtNameReferenceExpression(489,503): 'InheritorClass'
   null
@@ -277,8 +287,10 @@ KtPropertyDelegate(673,685): 'by lazy {""}'
   null
 
 KtCallExpression(676,685): 'lazy {""}'
-  KaSingleSymbolResolutionSuccess:
-    symbol = kotlin/lazy(initializer: () -> T): kotlin.Lazy<T>
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/lazy(initializer: () -> T): kotlin.Lazy<T>
+    ]
 
 KtNameReferenceExpression(676,680): 'lazy'
   null
@@ -329,8 +341,10 @@ KtNameReferenceExpression(749,756): 'MyClass'
   null
 
 KtCallExpression(759,765): 'TODO()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = kotlin/TODO(): kotlin.Nothing
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/TODO(): kotlin.Nothing
+    ]
 
 KtNameReferenceExpression(759,763): 'TODO'
   null
@@ -381,8 +395,10 @@ KtBlockExpression(824,1172): '{'
   null
 
 KtCallExpression(830,855): 'lMyClass(InheritorObject)'
-  KaSingleSymbolResolutionSuccess:
-    symbol = kotlin/Function1.invoke(<dispatch receiver>: (P1) -> R, p1: P1): R
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Function1.invoke(<dispatch receiver>: (P1) -> R, p1: P1): R
+    ]
 
 KtNameReferenceExpression(830,838): 'lMyClass'
   null
@@ -397,8 +413,10 @@ KtNameReferenceExpression(839,854): 'InheritorObject'
   null
 
 KtCallExpression(860,881): 'lMyClass(propMyClass)'
-  KaSingleSymbolResolutionSuccess:
-    symbol = kotlin/Function1.invoke(<dispatch receiver>: (P1) -> R, p1: P1): R
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Function1.invoke(<dispatch receiver>: (P1) -> R, p1: P1): R
+    ]
 
 KtNameReferenceExpression(860,868): 'lMyClass'
   null
@@ -413,8 +431,10 @@ KtNameReferenceExpression(869,880): 'propMyClass'
   null
 
 KtCallExpression(886,914): 'lMyClass(propInheritorClass)'
-  KaSingleSymbolResolutionSuccess:
-    symbol = kotlin/Function1.invoke(<dispatch receiver>: (P1) -> R, p1: P1): R
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Function1.invoke(<dispatch receiver>: (P1) -> R, p1: P1): R
+    ]
 
 KtNameReferenceExpression(886,894): 'lMyClass'
   null
@@ -429,8 +449,10 @@ KtNameReferenceExpression(895,913): 'propInheritorClass'
   null
 
 KtCallExpression(919,948): 'lMyClass(propInheritorObject)'
-  KaSingleSymbolResolutionSuccess:
-    symbol = kotlin/Function1.invoke(<dispatch receiver>: (P1) -> R, p1: P1): R
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Function1.invoke(<dispatch receiver>: (P1) -> R, p1: P1): R
+    ]
 
 KtNameReferenceExpression(919,927): 'lMyClass'
   null
@@ -559,8 +581,10 @@ KtNameReferenceExpression(1080,1090): 'lambdaProp'
   null
 
 KtCallExpression(1097,1123): 'lMyClass(InheritorClass())'
-  KaSingleSymbolResolutionSuccess:
-    symbol = kotlin/Function1.invoke(<dispatch receiver>: (P1) -> R, p1: P1): R
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Function1.invoke(<dispatch receiver>: (P1) -> R, p1: P1): R
+    ]
 
 KtNameReferenceExpression(1097,1105): 'lMyClass'
   null
@@ -583,8 +607,10 @@ KtValueArgumentList(1120,1122): '()'
   null
 
 KtCallExpression(1128,1144): 'lMyClass(func())'
-  KaSingleSymbolResolutionSuccess:
-    symbol = kotlin/Function1.invoke(<dispatch receiver>: (P1) -> R, p1: P1): R
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Function1.invoke(<dispatch receiver>: (P1) -> R, p1: P1): R
+    ]
 
 KtNameReferenceExpression(1128,1136): 'lMyClass'
   null
@@ -607,8 +633,10 @@ KtValueArgumentList(1141,1143): '()'
   null
 
 KtCallExpression(1149,1170): 'lMyClass(superFunc())'
-  KaSingleSymbolResolutionSuccess:
-    symbol = kotlin/Function1.invoke(<dispatch receiver>: (P1) -> R, p1: P1): R
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Function1.invoke(<dispatch receiver>: (P1) -> R, p1: P1): R
+    ]
 
 KtNameReferenceExpression(1149,1157): 'lMyClass'
   null

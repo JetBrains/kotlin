@@ -38,8 +38,10 @@ KtNameReferenceExpression(91,98): 'MyClass'
   null
 
 KtCallExpression(101,107): 'TODO()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = kotlin/TODO(): kotlin.Nothing
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/TODO(): kotlin.Nothing
+    ]
 
 KtNameReferenceExpression(101,105): 'TODO'
   null
@@ -60,8 +62,10 @@ KtSuperTypeList(167,176): 'MyClass()'
   null
 
 KtSuperTypeCallEntry(167,176): 'MyClass()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(): MyClass
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): MyClass
+    ]
 
 KtConstructorCalleeExpression(167,174): 'MyClass'
   null
@@ -157,8 +161,10 @@ KtNameReferenceExpression(285,286): 'X'
   null
 
 KtCallExpression(289,295): 'TODO()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = kotlin/TODO(): kotlin.Nothing
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/TODO(): kotlin.Nothing
+    ]
 
 KtNameReferenceExpression(289,293): 'TODO'
   null
@@ -185,8 +191,10 @@ KtBlockExpression(315,640): '{'
   null
 
 KtCallExpression(321,341): 'expectInt(MAX_VALUE)'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /expectInt(x: kotlin.Int): kotlin.Unit
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /expectInt(x: kotlin.Int): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(321,330): 'expectInt'
   null
@@ -201,8 +209,10 @@ KtNameReferenceExpression(331,340): 'MAX_VALUE'
   null
 
 KtCallExpression(347,365): 'expectMyClass(FOO)'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /expectMyClass(x: MyClass): kotlin.Unit
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /expectMyClass(x: MyClass): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(347,360): 'expectMyClass'
   null
@@ -252,8 +262,10 @@ KtNameReferenceExpression(387,390): 'FOO'
   null
 
 KtCallExpression(398,430): 'expectMyClass(FOR_TYPE_MISMATCH)'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /expectMyClass(x: MyClass): kotlin.Unit
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /expectMyClass(x: MyClass): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(398,411): 'expectMyClass'
   null
@@ -303,8 +315,10 @@ KtNameReferenceExpression(452,469): 'FOR_TYPE_MISMATCH'
   null
 
 KtCallExpression(477,495): 'expectMyClass(Bar)'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /expectMyClass(x: MyClass): kotlin.Unit
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /expectMyClass(x: MyClass): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(477,490): 'expectMyClass'
   null
@@ -354,8 +368,10 @@ KtNameReferenceExpression(517,520): 'Bar'
   null
 
 KtCallExpression(528,558): 'expectMyClass(ForTypeMismatch)'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /expectMyClass(x: MyClass): kotlin.Unit
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /expectMyClass(x: MyClass): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(528,541): 'expectMyClass'
   null
@@ -411,8 +427,10 @@ KtNameReferenceExpression(603,612): 'JavaClass'
   null
 
 KtCallExpression(613,638): 'expectJavaClass(INSTANCE)'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /JavaClass.expectJavaClass(j: JavaClass!): kotlin.Unit
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /JavaClass.expectJavaClass(j: JavaClass!): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(613,628): 'expectJavaClass'
   null

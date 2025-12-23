@@ -23,8 +23,10 @@ KtSuperTypeList(130,139): 'MyClass()'
   null
 
 KtSuperTypeCallEntry(130,139): 'MyClass()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(): MyClass
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): MyClass
+    ]
 
 KtConstructorCalleeExpression(130,137): 'MyClass'
   null
@@ -96,8 +98,10 @@ KtBlockExpression(220,335): '{'
   null
 
 KtCallExpression(226,333): 'receiveMyClass('
-  KaSingleSymbolResolutionSuccess:
-    symbol = /receiveMyClass(m: MyClass): kotlin.Unit
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /receiveMyClass(m: MyClass): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(226,240): 'receiveMyClass'
   null
@@ -169,8 +173,10 @@ KtBlockExpression(396,512): '{'
   null
 
 KtCallExpression(402,510): 'receiveMyClass('
-  KaSingleSymbolResolutionSuccess:
-    symbol = /receiveMyClass(m: MyClass): kotlin.Unit
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /receiveMyClass(m: MyClass): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(402,416): 'receiveMyClass'
   null
@@ -254,8 +260,10 @@ KtBlockExpression(587,737): '{'
   null
 
 KtCallExpression(593,735): 'receiveMyClass('
-  KaSingleSymbolResolutionSuccess:
-    symbol = /receiveMyClass(m: MyClass): kotlin.Unit
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /receiveMyClass(m: MyClass): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(593,607): 'receiveMyClass'
   null
@@ -318,8 +326,10 @@ KtSuperTypeList(791,803): 'OtherClass()'
   null
 
 KtSuperTypeCallEntry(791,803): 'OtherClass()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(): OtherClass
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): OtherClass
+    ]
 
 KtConstructorCalleeExpression(791,801): 'OtherClass'
   null
@@ -343,8 +353,10 @@ KtSuperTypeList(819,825): 'Base()'
   null
 
 KtSuperTypeCallEntry(819,825): 'Base()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(): OtherClass.Base
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): OtherClass.Base
+    ]
 
 KtConstructorCalleeExpression(819,823): 'Base'
   null
@@ -368,8 +380,10 @@ KtSuperTypeList(840,846): 'Base()'
   null
 
 KtSuperTypeCallEntry(840,846): 'Base()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(): OtherClass.Base
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): OtherClass.Base
+    ]
 
 KtConstructorCalleeExpression(840,844): 'Base'
   null
@@ -393,8 +407,10 @@ KtSuperTypeList(863,875): 'OtherClass()'
   null
 
 KtSuperTypeCallEntry(863,875): 'OtherClass()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(): OtherClass
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): OtherClass
+    ]
 
 KtConstructorCalleeExpression(863,873): 'OtherClass'
   null
@@ -502,8 +518,10 @@ KtBlockExpression(1006,1141): '{'
   null
 
 KtCallExpression(1012,1139): 'receiveOtherClass('
-  KaSingleSymbolResolutionSuccess:
-    symbol = /receiveOtherClass(m: OtherClass): kotlin.Unit
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /receiveOtherClass(m: OtherClass): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(1012,1029): 'receiveOtherClass'
   null
@@ -563,8 +581,10 @@ KtSuperTypeList(1206,1217): 'OpenClass()'
   null
 
 KtSuperTypeCallEntry(1206,1217): 'OpenClass()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(): OpenClass
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): OpenClass
+    ]
 
 KtConstructorCalleeExpression(1206,1215): 'OpenClass'
   null
@@ -636,8 +656,10 @@ KtBlockExpression(1304,1434): '{'
   null
 
 KtCallExpression(1310,1432): 'receiveOpenClass('
-  KaSingleSymbolResolutionSuccess:
-    symbol = /receiveOpenClass(m: OpenClass): kotlin.Unit
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /receiveOpenClass(m: OpenClass): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(1310,1326): 'receiveOpenClass'
   null
@@ -709,8 +731,10 @@ KtBlockExpression(1506,1635): '{'
   null
 
 KtCallExpression(1512,1633): 'receiveOpenClass('
-  KaSingleSymbolResolutionSuccess:
-    symbol = /receiveOpenClass(m: OpenClass): kotlin.Unit
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /receiveOpenClass(m: OpenClass): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(1512,1528): 'receiveOpenClass'
   null

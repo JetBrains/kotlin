@@ -167,8 +167,10 @@ KtNameReferenceExpression(453,459): 'MyEnum'
   null
 
 KtCallExpression(462,518): '{ arg: Boolean -> if (arg) enumProp else Option1 }(true)'
-  KaSingleSymbolResolutionSuccess:
-    symbol = kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
+    ]
 
 KtLambdaExpression(462,512): '{ arg: Boolean -> if (arg) enumProp else Option1 }'
   null
@@ -462,8 +464,10 @@ KtBlockExpression(872,917): '{'
   null
 
 KtReturnExpression(878,915): 'return if (arg) enumProp else Option1'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <anonymous function>(arg: kotlin.Boolean): MyEnum
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <anonymous function>(arg: kotlin.Boolean): MyEnum
+    ]
 
 KtIfExpression(885,915): 'if (arg) enumProp else Option1'
   null
@@ -535,8 +539,10 @@ KtBinaryExpression(975,1005): 'contextOf<MyEnum>() == Option1'
   null
 
 KtCallExpression(975,994): 'contextOf<MyEnum>()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = kotlin/contextOf(): @R|kotlin.internal.NoInfer|()  A
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/contextOf(): @R|kotlin.internal.NoInfer|()  A
+    ]
 
 KtNameReferenceExpression(975,984): 'contextOf'
   null

@@ -467,8 +467,10 @@ KtBlockExpression(634,636): '{}'
   null
 
 KtCallExpression(642,685): 'foo { [val first, val second: String,] -> }'
-  KaSingleSymbolResolutionSuccess:
-    symbol = foo(f: kotlin.Function1<Tuple, kotlin.Unit>): kotlin.Unit
+  KaSymbolResolutionSuccess:
+    symbols = [
+      foo(f: kotlin.Function1<Tuple, kotlin.Unit>): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(642,645): 'foo'
   null
@@ -510,8 +512,10 @@ KtBlockExpression(684,684): ''
   null
 
 KtCallExpression(690,717): 'foo { [val first: Int] -> }'
-  KaSingleSymbolResolutionSuccess:
-    symbol = foo(f: kotlin.Function1<Tuple, kotlin.Unit>): kotlin.Unit
+  KaSymbolResolutionSuccess:
+    symbols = [
+      foo(f: kotlin.Function1<Tuple, kotlin.Unit>): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(690,693): 'foo'
   null
@@ -550,8 +554,10 @@ KtBlockExpression(716,716): ''
   null
 
 KtCallExpression(722,744): 'bar { [val first] -> }'
-  KaSingleSymbolResolutionSuccess:
-    symbol = bar(f: kotlin.Function1<NonDataTuple, kotlin.Unit>): kotlin.Unit
+  KaSymbolResolutionSuccess:
+    symbols = [
+      bar(f: kotlin.Function1<NonDataTuple, kotlin.Unit>): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(722,725): 'bar'
   null

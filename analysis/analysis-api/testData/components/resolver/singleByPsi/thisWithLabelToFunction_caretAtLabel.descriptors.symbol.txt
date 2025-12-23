@@ -1,3 +1,5 @@
 KtLabelReferenceExpression(47,51): '@foo'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /Foo.foo(<extension receiver>: kotlin.String<dispatch receiver>: Foo): kotlin.Unit
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Foo.foo(<extension receiver>: kotlin.String<dispatch receiver>: Foo): kotlin.Unit
+    ]

@@ -59,8 +59,10 @@ KtBlockExpression(149,238): '{'
   null
 
 KtReturnExpression(155,236): 'return when (s) {'
-  KaSingleSymbolResolutionSuccess:
-    symbol = test/trivial(s: test.Sample): kotlin.Int
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/trivial(s: test.Sample): kotlin.Int
+    ]
 
 KtWhenExpression(162,236): 'when (s) {'
   null
@@ -135,8 +137,10 @@ KtBlockExpression(274,392): '{'
   null
 
 KtReturnExpression(280,390): 'return when {'
-  KaSingleSymbolResolutionSuccess:
-    symbol = test/shouldNotWork(s: test.Sample): kotlin.Int
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/shouldNotWork(s: test.Sample): kotlin.Int
+    ]
 
 KtWhenExpression(287,390): 'when {'
   null
@@ -283,8 +287,10 @@ KtNameReferenceExpression(516,521): 'THIRD'
   null
 
 KtReturnExpression(530,661): 'return when (s) {'
-  KaSingleSymbolResolutionSuccess:
-    symbol = test/Container.priority(<dispatch receiver>: test.Container, s: test.Sample): kotlin.Int
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/Container.priority(<dispatch receiver>: test.Container, s: test.Sample): kotlin.Int
+    ]
 
 KtWhenExpression(537,661): 'when (s) {'
   null

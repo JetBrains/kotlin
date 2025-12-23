@@ -1,3 +1,5 @@
 KtConstructorDelegationCall(144,152): 'super(1)'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(i: T): ClassWithType<T>
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(i: T): ClassWithType<T>
+    ]

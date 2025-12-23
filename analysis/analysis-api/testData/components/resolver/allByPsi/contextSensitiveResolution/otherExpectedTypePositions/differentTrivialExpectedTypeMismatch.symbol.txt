@@ -35,8 +35,10 @@ KtNameReferenceExpression(132,139): 'MyClass'
   null
 
 KtCallExpression(142,151): 'MyClass()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(): MyClass
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): MyClass
+    ]
 
 KtNameReferenceExpression(142,149): 'MyClass'
   null
@@ -327,15 +329,19 @@ KtContainerNodeForControlStructureBody(559,567): 'return X'
   null
 
 KtReturnExpression(559,567): 'return X'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /bar(b: kotlin.Boolean): MyClass
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /bar(b: kotlin.Boolean): MyClass
+    ]
 
 KtNameReferenceExpression(566,567): 'X'
   null
 
 KtReturnExpression(572,580): 'return Y'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /bar(b: kotlin.Boolean): MyClass
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /bar(b: kotlin.Boolean): MyClass
+    ]
 
 KtNameReferenceExpression(579,580): 'Y'
   null

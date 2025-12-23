@@ -38,8 +38,10 @@ KtBlockExpression(28,44): '{'
   null
 
 KtCallExpression(34,42): 'action()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = kotlin/Function0.invoke(<dispatch receiver>: kotlin.Function0<R>): R
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Function0.invoke(<dispatch receiver>: kotlin.Function0<R>): R
+    ]
 
 KtNameReferenceExpression(34,40): 'action'
   null
@@ -57,8 +59,10 @@ KtBlockExpression(58,163): '{'
   null
 
 KtCallExpression(64,102): 'foo label@{'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /foo(action: kotlin.Function0<kotlin.Unit>): kotlin.Unit
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /foo(action: kotlin.Function0<kotlin.Unit>): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(64,67): 'foo'
   null
@@ -85,15 +89,19 @@ KtBlockExpression(84,96): 'return@label'
   null
 
 KtReturnExpression(84,96): 'return@label'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <anonymous function>(): kotlin.Unit
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <anonymous function>(): kotlin.Unit
+    ]
 
 KtContainerNode(90,96): '@label'
   null
 
 KtLabelReferenceExpression(90,96): '@label'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <anonymous function>(): kotlin.Unit
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <anonymous function>(): kotlin.Unit
+    ]
 
 KtLabeledExpression(108,161): 'myFor@ for (i in 0..1) {'
   null

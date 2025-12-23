@@ -1,3 +1,5 @@
 KtConstructorDelegationCall(111,125): 'this(s.length)'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(p1: kotlin.Int): Sub
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(p1: kotlin.Int): Sub
+    ]

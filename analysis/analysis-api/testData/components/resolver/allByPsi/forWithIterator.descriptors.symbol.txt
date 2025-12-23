@@ -116,8 +116,10 @@ KtContainerNode(151,160): '@iterator'
   null
 
 KtLabelReferenceExpression(151,160): '@iterator'
-  KaSingleSymbolResolutionSuccess:
-    symbol = f/iterator(<extension receiver>: f.IntProgression): kotlin.collections.Iterator<kotlin.Int>
+  KaSymbolResolutionSuccess:
+    symbols = [
+      f/iterator(<extension receiver>: f.IntProgression): kotlin.collections.Iterator<kotlin.Int>
+    ]
 
 KtNameReferenceExpression(161,166): 'start'
   null
@@ -153,8 +155,10 @@ KtContainerNode(211,220): '@iterator'
   null
 
 KtLabelReferenceExpression(211,220): '@iterator'
-  KaSingleSymbolResolutionSuccess:
-    symbol = f/iterator(<extension receiver>: f.IntProgression): kotlin.collections.Iterator<kotlin.Int>
+  KaSymbolResolutionSuccess:
+    symbols = [
+      f/iterator(<extension receiver>: f.IntProgression): kotlin.collections.Iterator<kotlin.Int>
+    ]
 
 KtNameReferenceExpression(221,224): 'end'
   null
@@ -205,8 +209,10 @@ KtContainerNode(297,318): 'IntProgression(1, 10)'
   null
 
 KtCallExpression(297,318): 'IntProgression(1, 10)'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(start: kotlin.Int, end: kotlin.Int): f.IntProgression
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(start: kotlin.Int, end: kotlin.Int): f.IntProgression
+    ]
 
 KtNameReferenceExpression(297,311): 'IntProgression'
   null

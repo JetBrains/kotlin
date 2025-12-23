@@ -1,3 +1,5 @@
 KtCallExpression(120,123): 'c()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /c(): kotlin.Unit
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /c(): kotlin.Unit
+    ]

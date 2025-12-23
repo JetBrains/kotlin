@@ -287,13 +287,13 @@ internal class KaFirResolver(
         }
 
         val symbol = symbol?.buildSymbol(firSymbolBuilder) ?: return null
-        return KaBaseSingleSymbolResolutionSuccess(backingSymbol = symbol)
+        return KaBaseSymbolResolutionSuccess(backingSymbol = symbol)
     }
 
     private fun FirCollectionLiteral.toKaSymbolResolutionAttempt(): KaSymbolResolutionAttempt = with(analysisSession) {
         val resolvedSymbol = arrayOfSymbol(this@toKaSymbolResolutionAttempt)
         if (resolvedSymbol != null) {
-            return KaBaseSingleSymbolResolutionSuccess(resolvedSymbol)
+            return KaBaseSymbolResolutionSuccess(resolvedSymbol)
         }
 
         val defaultSymbol = arrayOfSymbol(arrayOf)
@@ -325,7 +325,7 @@ internal class KaFirResolver(
 
         else -> {
             val kaSymbol = firFunctionSymbol.buildSymbol(firSymbolBuilder)
-            KaBaseSingleSymbolResolutionSuccess(kaSymbol)
+            KaBaseSymbolResolutionSuccess(kaSymbol)
         }
     }
 

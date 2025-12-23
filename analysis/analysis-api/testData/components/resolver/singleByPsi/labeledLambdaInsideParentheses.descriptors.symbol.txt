@@ -1,3 +1,5 @@
 KtCallExpression(16,32): 'bar(2, l@{ it })'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /bar(a: kotlin.Int, b: kotlin.Function1<kotlin.Int, kotlin.Int>): kotlin.Unit
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /bar(a: kotlin.Int, b: kotlin.Function1<kotlin.Int, kotlin.Int>): kotlin.Unit
+    ]

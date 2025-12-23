@@ -23,8 +23,10 @@ KtDeclarationModifierList(36,41): '@Anno'
   null
 
 KtAnnotationEntry(36,41): '@Anno'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(): one.Anno
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): one.Anno
+    ]
 
 KtConstructorCalleeExpression(37,41): 'Anno'
   null

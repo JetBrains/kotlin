@@ -77,8 +77,10 @@ KtNameReferenceExpression(151,152): 'X'
   null
 
 KtCallExpression(155,161): 'TODO()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = kotlin/TODO(): kotlin.Nothing
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/TODO(): kotlin.Nothing
+    ]
 
 KtNameReferenceExpression(155,159): 'TODO'
   null
@@ -143,8 +145,10 @@ KtNameReferenceExpression(210,211): 'X'
   null
 
 KtCallExpression(218,228): 'foo(id(L))'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /foo(a: MyEnum): kotlin.Unit
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /foo(a: MyEnum): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(218,221): 'foo'
   null
@@ -156,8 +160,10 @@ KtValueArgument(222,227): 'id(L)'
   null
 
 KtCallExpression(222,227): 'id(L)'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /id(x: X): X
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /id(x: X): X
+    ]
 
 KtNameReferenceExpression(222,224): 'id'
   null

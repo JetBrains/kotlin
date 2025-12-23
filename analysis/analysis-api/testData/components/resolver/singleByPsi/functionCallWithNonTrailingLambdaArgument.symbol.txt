@@ -1,3 +1,5 @@
 KtCallExpression(66,92): 'function(1, { s -> true })'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /function(a: kotlin.Int, b: (kotlin.String) -> kotlin.Boolean): kotlin.Unit
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /function(a: kotlin.Int, b: (kotlin.String) -> kotlin.Boolean): kotlin.Unit
+    ]

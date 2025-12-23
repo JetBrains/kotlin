@@ -332,8 +332,10 @@ KtBlockExpression(328,343): '{ return this }'
   null
 
 KtReturnExpression(330,341): 'return this'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /inc(<extension receiver>: A): A
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /inc(<extension receiver>: A): A
+    ]
 
 KtThisExpression(337,341): 'this'
   null
@@ -606,8 +608,10 @@ KtBlockExpression(744,775): '{ return this@SimpleOperators }'
   null
 
 KtReturnExpression(746,773): 'return this@SimpleOperators'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /SimpleOperators.inc(<dispatch receiver>: SimpleOperators): SimpleOperators
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /SimpleOperators.inc(<dispatch receiver>: SimpleOperators): SimpleOperators
+    ]
 
 KtThisExpression(753,773): 'this@SimpleOperators'
   null
@@ -619,8 +623,10 @@ KtContainerNode(757,773): '@SimpleOperators'
   null
 
 KtLabelReferenceExpression(757,773): '@SimpleOperators'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /SimpleOperators
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /SimpleOperators
+    ]
 
 KtNamedFunction(779,1231): 'fun usage() {'
   null
@@ -635,8 +641,10 @@ KtProperty(797,808): 'var a = A()'
   null
 
 KtCallExpression(805,808): 'A()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(): A
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): A
+    ]
 
 KtNameReferenceExpression(805,806): 'A'
   null
@@ -648,8 +656,10 @@ KtProperty(813,838): 'var b = SimpleOperators()'
   null
 
 KtCallExpression(821,838): 'SimpleOperators()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(): SimpleOperators
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): SimpleOperators
+    ]
 
 KtNameReferenceExpression(821,836): 'SimpleOperators'
   null
@@ -658,8 +668,10 @@ KtValueArgumentList(836,838): '()'
   null
 
 KtCallExpression(843,1229): 'with(A()){'
-  KaSingleSymbolResolutionSuccess:
-    symbol = kotlin/with(receiver: T, block: kotlin.Function1<T, R>): R
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/with(receiver: T, block: kotlin.Function1<T, R>): R
+    ]
 
 KtNameReferenceExpression(843,847): 'with'
   null
@@ -671,8 +683,10 @@ KtValueArgument(848,851): 'A()'
   null
 
 KtCallExpression(848,851): 'A()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(): A
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): A
+    ]
 
 KtNameReferenceExpression(848,849): 'A'
   null
@@ -744,8 +758,10 @@ KtConstantExpression(944,945): '1'
   null
 
 KtArrayAccessExpression(954,965): 'thisProp[1]'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /get(<extension receiver>: A, b: kotlin.Int): kotlin.Unit
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /get(<extension receiver>: A, b: kotlin.Int): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(954,962): 'thisProp'
   null
@@ -757,8 +773,10 @@ KtConstantExpression(963,964): '1'
   null
 
 KtArrayAccessExpression(974,978): 'a[1]'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /get(<extension receiver>: A, b: kotlin.Int): kotlin.Unit
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /get(<extension receiver>: A, b: kotlin.Int): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(974,975): 'a'
   null
@@ -773,8 +791,10 @@ KtBinaryExpression(987,1004): 'thisProp[1] = A()'
   null
 
 KtArrayAccessExpression(987,998): 'thisProp[1]'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /set(<extension receiver>: A, b: kotlin.Int, x: A): kotlin.Unit
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /set(<extension receiver>: A, b: kotlin.Int, x: A): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(987,995): 'thisProp'
   null
@@ -789,8 +809,10 @@ KtOperationReferenceExpression(999,1000): '='
   null
 
 KtCallExpression(1001,1004): 'A()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(): A
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): A
+    ]
 
 KtNameReferenceExpression(1001,1002): 'A'
   null
@@ -802,8 +824,10 @@ KtBinaryExpression(1013,1023): 'a[1] = A()'
   null
 
 KtArrayAccessExpression(1013,1017): 'a[1]'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /set(<extension receiver>: A, b: kotlin.Int, x: A): kotlin.Unit
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /set(<extension receiver>: A, b: kotlin.Int, x: A): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(1013,1014): 'a'
   null
@@ -818,8 +842,10 @@ KtOperationReferenceExpression(1018,1019): '='
   null
 
 KtCallExpression(1020,1023): 'A()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(): A
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): A
+    ]
 
 KtNameReferenceExpression(1020,1021): 'A'
   null
@@ -828,8 +854,10 @@ KtValueArgumentList(1021,1023): '()'
   null
 
 KtCallExpression(1032,1042): 'thisProp()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /invoke(<extension receiver>: A): kotlin.Unit
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /invoke(<extension receiver>: A): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(1032,1040): 'thisProp'
   null
@@ -838,8 +866,10 @@ KtValueArgumentList(1040,1042): '()'
   null
 
 KtCallExpression(1051,1054): 'a()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /invoke(<extension receiver>: A): kotlin.Unit
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /invoke(<extension receiver>: A): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(1051,1052): 'a'
   null
@@ -920,8 +950,10 @@ KtNameReferenceExpression(1151,1152): 'b'
   null
 
 KtArrayAccessExpression(1161,1165): 'b[1]'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /SimpleOperators.get(<dispatch receiver>: SimpleOperators, b: kotlin.Int): kotlin.Unit
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /SimpleOperators.get(<dispatch receiver>: SimpleOperators, b: kotlin.Int): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(1161,1162): 'b'
   null
@@ -936,8 +968,10 @@ KtBinaryExpression(1174,1184): 'b[1] = A()'
   null
 
 KtArrayAccessExpression(1174,1178): 'b[1]'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /SimpleOperators.set(<dispatch receiver>: SimpleOperators, b: kotlin.Int, x: A): kotlin.Unit
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /SimpleOperators.set(<dispatch receiver>: SimpleOperators, b: kotlin.Int, x: A): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(1174,1175): 'b'
   null
@@ -952,8 +986,10 @@ KtOperationReferenceExpression(1179,1180): '='
   null
 
 KtCallExpression(1181,1184): 'A()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(): A
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): A
+    ]
 
 KtNameReferenceExpression(1181,1182): 'A'
   null
@@ -962,8 +998,10 @@ KtValueArgumentList(1182,1184): '()'
   null
 
 KtCallExpression(1193,1196): 'b()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /SimpleOperators.invoke(<dispatch receiver>: SimpleOperators): kotlin.Unit
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /SimpleOperators.invoke(<dispatch receiver>: SimpleOperators): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(1193,1194): 'b'
   null
@@ -1005,8 +1043,10 @@ KtProperty(1260,1271): 'var a = A()'
   null
 
 KtCallExpression(1268,1271): 'A()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(): A
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): A
+    ]
 
 KtNameReferenceExpression(1268,1269): 'A'
   null
@@ -1018,8 +1058,10 @@ KtProperty(1276,1301): 'var b = SimpleOperators()'
   null
 
 KtCallExpression(1284,1301): 'SimpleOperators()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(): SimpleOperators
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): SimpleOperators
+    ]
 
 KtNameReferenceExpression(1284,1299): 'SimpleOperators'
   null
@@ -1049,8 +1091,10 @@ KtConstantExpression(1318,1319): '1'
   null
 
 KtArrayAccessExpression(1324,1328): 'a[1]'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /get(<extension receiver>: A, b: kotlin.Int): kotlin.Unit
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /get(<extension receiver>: A, b: kotlin.Int): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(1324,1325): 'a'
   null
@@ -1065,8 +1109,10 @@ KtBinaryExpression(1333,1343): 'a[1] = A()'
   null
 
 KtArrayAccessExpression(1333,1337): 'a[1]'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /set(<extension receiver>: A, b: kotlin.Int, x: A): kotlin.Unit
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /set(<extension receiver>: A, b: kotlin.Int, x: A): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(1333,1334): 'a'
   null
@@ -1081,8 +1127,10 @@ KtOperationReferenceExpression(1338,1339): '='
   null
 
 KtCallExpression(1340,1343): 'A()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(): A
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): A
+    ]
 
 KtNameReferenceExpression(1340,1341): 'A'
   null
@@ -1091,8 +1139,10 @@ KtValueArgumentList(1341,1343): '()'
   null
 
 KtCallExpression(1348,1351): 'a()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /invoke(<extension receiver>: A): kotlin.Unit
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /invoke(<extension receiver>: A): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(1348,1349): 'a'
   null
@@ -1143,8 +1193,10 @@ KtNameReferenceExpression(1387,1388): 'b'
   null
 
 KtArrayAccessExpression(1393,1397): 'b[1]'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /SimpleOperators.get(<dispatch receiver>: SimpleOperators, b: kotlin.Int): kotlin.Unit
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /SimpleOperators.get(<dispatch receiver>: SimpleOperators, b: kotlin.Int): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(1393,1394): 'b'
   null
@@ -1159,8 +1211,10 @@ KtBinaryExpression(1402,1412): 'b[1] = A()'
   null
 
 KtArrayAccessExpression(1402,1406): 'b[1]'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /SimpleOperators.set(<dispatch receiver>: SimpleOperators, b: kotlin.Int, x: A): kotlin.Unit
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /SimpleOperators.set(<dispatch receiver>: SimpleOperators, b: kotlin.Int, x: A): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(1402,1403): 'b'
   null
@@ -1175,8 +1229,10 @@ KtOperationReferenceExpression(1407,1408): '='
   null
 
 KtCallExpression(1409,1412): 'A()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(): A
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): A
+    ]
 
 KtNameReferenceExpression(1409,1410): 'A'
   null
@@ -1185,8 +1241,10 @@ KtValueArgumentList(1410,1412): '()'
   null
 
 KtCallExpression(1417,1420): 'b()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /SimpleOperators.invoke(<dispatch receiver>: SimpleOperators): kotlin.Unit
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /SimpleOperators.invoke(<dispatch receiver>: SimpleOperators): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(1417,1418): 'b'
   null

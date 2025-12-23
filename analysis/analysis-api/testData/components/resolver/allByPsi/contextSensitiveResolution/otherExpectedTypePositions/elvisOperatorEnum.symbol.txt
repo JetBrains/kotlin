@@ -277,8 +277,10 @@ KtNameReferenceExpression(602,610): 'enumProp'
   null
 
 KtCallExpression(616,651): 'receive<MyEnum>(Option1 ?: Option2)'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /receive(e: T): kotlin.Unit
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /receive(e: T): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(616,623): 'receive'
   null
@@ -360,8 +362,10 @@ KtNameReferenceExpression(684,694): 'stringProp'
   null
 
 KtCallExpression(700,740): 'receive<MyEnum>(enumProp ?: getOption())'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /receive(e: T): kotlin.Unit
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /receive(e: T): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(700,707): 'receive'
   null

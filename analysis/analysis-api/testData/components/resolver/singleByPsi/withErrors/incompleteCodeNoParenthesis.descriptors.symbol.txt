@@ -1,3 +1,5 @@
 KtCallExpression(64,75): 'ALE<String>'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(): ALE<T>
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): ALE<T>
+    ]

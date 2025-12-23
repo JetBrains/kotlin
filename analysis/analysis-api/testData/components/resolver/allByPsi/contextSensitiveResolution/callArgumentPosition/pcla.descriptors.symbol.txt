@@ -137,8 +137,10 @@ KtNameReferenceExpression(253,254): 'S'
   null
 
 KtCallExpression(257,263): 'TODO()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = kotlin/TODO(): kotlin.Nothing
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/TODO(): kotlin.Nothing
+    ]
 
 KtNameReferenceExpression(257,261): 'TODO'
   null
@@ -168,8 +170,10 @@ KtBlockExpression(284,492): '{'
   null
 
 KtCallExpression(290,340): 'generate {'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /generate(g: kotlin.coroutines.SuspendFunction1<Controller<S>, kotlin.Unit>): S
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /generate(g: kotlin.coroutines.SuspendFunction1<Controller<S>, kotlin.Unit>): S
+    ]
 
 KtNameReferenceExpression(290,298): 'generate'
   null
@@ -187,8 +191,10 @@ KtBlockExpression(309,334): 'yield(m)'
   null
 
 KtCallExpression(309,317): 'yield(m)'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /Controller.yield(<dispatch receiver>: Controller<T>, t: T): kotlin.Boolean
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Controller.yield(<dispatch receiver>: Controller<T>, t: T): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(309,314): 'yield'
   null
@@ -203,8 +209,10 @@ KtNameReferenceExpression(315,316): 'm'
   null
 
 KtCallExpression(326,334): 'yield(X)'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /Controller.yield(<dispatch receiver>: Controller<T>, t: T): kotlin.Boolean
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Controller.yield(<dispatch receiver>: Controller<T>, t: T): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(326,331): 'yield'
   null
@@ -219,8 +227,10 @@ KtNameReferenceExpression(332,333): 'X'
   null
 
 KtCallExpression(346,396): 'generate {'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /generate(g: kotlin.coroutines.SuspendFunction1<Controller<S>, kotlin.Unit>): S
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /generate(g: kotlin.coroutines.SuspendFunction1<Controller<S>, kotlin.Unit>): S
+    ]
 
 KtNameReferenceExpression(346,354): 'generate'
   null
@@ -238,8 +248,10 @@ KtBlockExpression(365,390): 'yield(X)'
   null
 
 KtCallExpression(365,373): 'yield(X)'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /Controller.yield(<dispatch receiver>: Controller<T>, t: T): kotlin.Boolean
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Controller.yield(<dispatch receiver>: Controller<T>, t: T): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(365,370): 'yield'
   null
@@ -254,8 +266,10 @@ KtNameReferenceExpression(371,372): 'X'
   null
 
 KtCallExpression(382,390): 'yield(m)'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /Controller.yield(<dispatch receiver>: Controller<T>, t: T): kotlin.Boolean
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Controller.yield(<dispatch receiver>: Controller<T>, t: T): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(382,387): 'yield'
   null
@@ -282,8 +296,10 @@ KtNameReferenceExpression(409,415): 'MyEnum'
   null
 
 KtCallExpression(418,451): 'generate {'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /generate(g: kotlin.coroutines.SuspendFunction1<Controller<S>, kotlin.Unit>): S
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /generate(g: kotlin.coroutines.SuspendFunction1<Controller<S>, kotlin.Unit>): S
+    ]
 
 KtNameReferenceExpression(418,426): 'generate'
   null
@@ -301,8 +317,10 @@ KtBlockExpression(437,445): 'yield(X)'
   null
 
 KtCallExpression(437,445): 'yield(X)'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /Controller.yield(<dispatch receiver>: Controller<T>, t: T): kotlin.Boolean
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Controller.yield(<dispatch receiver>: Controller<T>, t: T): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(437,442): 'yield'
   null
@@ -339,8 +357,10 @@ KtBlockExpression(476,484): 'yield(X)'
   null
 
 KtCallExpression(476,484): 'yield(X)'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /Controller.yield(<dispatch receiver>: Controller<T>, t: T): kotlin.Boolean
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Controller.yield(<dispatch receiver>: Controller<T>, t: T): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(476,481): 'yield'
   null

@@ -56,8 +56,10 @@ KtNameReferenceExpression(128,129): 'X'
   null
 
 KtCallExpression(132,138): 'TODO()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = kotlin/TODO(): kotlin.Nothing
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/TODO(): kotlin.Nothing
+    ]
 
 KtNameReferenceExpression(132,136): 'TODO'
   null
@@ -282,8 +284,10 @@ KtOperationReferenceExpression(689,691): '=='
   null
 
 KtCallExpression(692,697): 'id(X)'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /id(x: X): X
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /id(x: X): X
+    ]
 
 KtNameReferenceExpression(692,694): 'id'
   null
@@ -319,8 +323,10 @@ KtOperationReferenceExpression(712,714): '=='
   null
 
 KtCallExpression(715,720): 'id(L)'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /id(x: X): X
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /id(x: X): X
+    ]
 
 KtNameReferenceExpression(715,717): 'id'
   null
@@ -536,8 +542,10 @@ KtWhenConditionWithExpression(996,1001): 'id(X)'
   null
 
 KtCallExpression(996,1001): 'id(X)'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /id(x: X): X
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /id(x: X): X
+    ]
 
 KtNameReferenceExpression(996,998): 'id'
   null
@@ -561,8 +569,10 @@ KtWhenConditionWithExpression(1016,1021): 'id(Y)'
   null
 
 KtCallExpression(1016,1021): 'id(Y)'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /id(x: X): X
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /id(x: X): X
+    ]
 
 KtNameReferenceExpression(1016,1018): 'id'
   null
@@ -580,8 +590,10 @@ KtWhenConditionWithExpression(1023,1028): 'id(L)'
   null
 
 KtCallExpression(1023,1028): 'id(L)'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /id(x: X): X
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /id(x: X): X
+    ]
 
 KtNameReferenceExpression(1023,1025): 'id'
   null
@@ -620,8 +632,10 @@ KtWhenConditionWithExpression(1092,1097): 'id(X)'
   null
 
 KtCallExpression(1092,1097): 'id(X)'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /id(x: X): X
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /id(x: X): X
+    ]
 
 KtNameReferenceExpression(1092,1094): 'id'
   null
@@ -645,8 +659,10 @@ KtWhenConditionWithExpression(1112,1117): 'id(Y)'
   null
 
 KtCallExpression(1112,1117): 'id(Y)'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /id(x: X): X
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /id(x: X): X
+    ]
 
 KtNameReferenceExpression(1112,1114): 'id'
   null
@@ -664,8 +680,10 @@ KtWhenConditionWithExpression(1119,1124): 'id(L)'
   null
 
 KtCallExpression(1119,1124): 'id(L)'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /id(x: X): X
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /id(x: X): X
+    ]
 
 KtNameReferenceExpression(1119,1121): 'id'
   null

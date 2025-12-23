@@ -50,8 +50,10 @@ KtBlockExpression(62,113): '{'
   null
 
 KtReturnExpression(72,107): 'return other?.equals(this) ?: false'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /MyClass.equals(<dispatch receiver>: MyClass, other: kotlin.Any?): kotlin.Boolean
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.equals(<dispatch receiver>: MyClass, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtBinaryExpression(79,107): 'other?.equals(this) ?: false'
   null
@@ -63,8 +65,10 @@ KtNameReferenceExpression(79,84): 'other'
   null
 
 KtCallExpression(86,98): 'equals(this)'
-  KaSingleSymbolResolutionSuccess:
-    symbol = kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+    ]
 
 KtNameReferenceExpression(86,92): 'equals'
   null

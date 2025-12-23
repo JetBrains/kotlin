@@ -257,15 +257,19 @@ KtContainerNodeForControlStructureBody(410,418): 'return X'
   null
 
 KtReturnExpression(410,418): 'return X'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /bar(b: kotlin.Boolean): MyEnum
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /bar(b: kotlin.Boolean): MyEnum
+    ]
 
 KtNameReferenceExpression(417,418): 'X'
   null
 
 KtReturnExpression(423,431): 'return L'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /bar(b: kotlin.Boolean): MyEnum
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /bar(b: kotlin.Boolean): MyEnum
+    ]
 
 KtNameReferenceExpression(430,431): 'L'
   null

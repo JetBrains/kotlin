@@ -1,3 +1,5 @@
 KtCallExpression(202,209): '(foo)()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = r/MyClass.invoke(<dispatch receiver>: r.MyClass): r.MyClass
+  KaSymbolResolutionSuccess:
+    symbols = [
+      r/MyClass.invoke(<dispatch receiver>: r.MyClass): r.MyClass
+    ]

@@ -119,8 +119,10 @@ KtNameReferenceExpression(238,248): 'InnerAlias'
   null
 
 KtCallExpression(251,263): 'InnerClass()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(<dispatch receiver>: one.two.TopLevelClass): one.two.TopLevelClass.InnerClass
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(<dispatch receiver>: one.two.TopLevelClass): one.two.TopLevelClass.InnerClass
+    ]
 
 KtNameReferenceExpression(251,261): 'InnerClass'
   null

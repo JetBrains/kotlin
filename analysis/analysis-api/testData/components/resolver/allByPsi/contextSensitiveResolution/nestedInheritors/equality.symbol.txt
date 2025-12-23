@@ -140,8 +140,10 @@ KtContainerNodeForControlStructureBody(331,344): 'work("Basic")'
   null
 
 KtCallExpression(331,344): 'work("Basic")'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /work(message: kotlin.String): kotlin.Unit
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /work(message: kotlin.String): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(331,335): 'work'
   null
@@ -180,8 +182,10 @@ KtContainerNodeForControlStructureBody(389,405): 'work("Specific")'
   null
 
 KtCallExpression(389,405): 'work("Specific")'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /work(message: kotlin.String): kotlin.Unit
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /work(message: kotlin.String): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(389,393): 'work'
   null
@@ -226,8 +230,10 @@ KtContainerNodeForControlStructureBody(458,474): 'work("Specific")'
   null
 
 KtCallExpression(458,474): 'work("Specific")'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /work(message: kotlin.String): kotlin.Unit
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /work(message: kotlin.String): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(458,462): 'work'
   null
@@ -263,8 +269,10 @@ KtSuperTypeList(540,554): 'OpenSettings()'
   null
 
 KtSuperTypeCallEntry(540,554): 'OpenSettings()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(): OpenSettings
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): OpenSettings
+    ]
 
 KtConstructorCalleeExpression(540,552): 'OpenSettings'
   null
@@ -291,8 +299,10 @@ KtSuperTypeList(594,608): 'OpenSettings()'
   null
 
 KtSuperTypeCallEntry(594,608): 'OpenSettings()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(): OpenSettings
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): OpenSettings
+    ]
 
 KtConstructorCalleeExpression(594,606): 'OpenSettings'
   null
@@ -370,8 +380,10 @@ KtContainerNodeForControlStructureBody(738,751): 'work("Basic")'
   null
 
 KtCallExpression(738,751): 'work("Basic")'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /work(message: kotlin.String): kotlin.Unit
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /work(message: kotlin.String): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(738,742): 'work'
   null
@@ -410,8 +422,10 @@ KtContainerNodeForControlStructureBody(800,816): 'work("Specific")'
   null
 
 KtCallExpression(800,816): 'work("Specific")'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /work(message: kotlin.String): kotlin.Unit
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /work(message: kotlin.String): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(800,804): 'work'
   null
@@ -456,8 +470,10 @@ KtContainerNodeForControlStructureBody(877,893): 'work("Specific")'
   null
 
 KtCallExpression(877,893): 'work("Specific")'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /work(message: kotlin.String): kotlin.Unit
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /work(message: kotlin.String): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(877,881): 'work'
   null

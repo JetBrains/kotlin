@@ -689,8 +689,10 @@ KtNameReferenceExpression(808,809): 'A'
   null
 
 KtReturnExpression(814,822): 'return 1'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /cast1wrong(s: bar.Sealed): kotlin.Int
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /cast1wrong(s: bar.Sealed): kotlin.Int
+    ]
 
 KtConstantExpression(821,822): '1'
   null
@@ -744,8 +746,10 @@ KtNameReferenceExpression(868,869): 'B'
   null
 
 KtReturnExpression(874,882): 'return 2'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /cast2wrong(s: bar.Sealed): kotlin.Int
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /cast2wrong(s: bar.Sealed): kotlin.Int
+    ]
 
 KtConstantExpression(881,882): '2'
   null
@@ -805,8 +809,10 @@ KtNameReferenceExpression(936,937): 'A'
   null
 
 KtReturnExpression(942,950): 'return 1'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /cast1sealed(s: bar.Sealed): kotlin.Int
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /cast1sealed(s: bar.Sealed): kotlin.Int
+    ]
 
 KtConstantExpression(949,950): '1'
   null
@@ -866,8 +872,10 @@ KtNameReferenceExpression(1004,1005): 'B'
   null
 
 KtReturnExpression(1010,1018): 'return 2'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /cast2sealed(s: bar.Sealed): kotlin.Int
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /cast2sealed(s: bar.Sealed): kotlin.Int
+    ]
 
 KtConstantExpression(1017,1018): '2'
   null
@@ -927,8 +935,10 @@ KtNameReferenceExpression(1071,1072): 'A'
   null
 
 KtReturnExpression(1077,1085): 'return 1'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /cast1topLevel(s: bar.Sealed): kotlin.Int
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /cast1topLevel(s: bar.Sealed): kotlin.Int
+    ]
 
 KtConstantExpression(1084,1085): '1'
   null
@@ -988,8 +998,10 @@ KtNameReferenceExpression(1138,1139): 'B'
   null
 
 KtReturnExpression(1144,1152): 'return 2'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /cast2topLevel(s: bar.Sealed): kotlin.Int
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /cast2topLevel(s: bar.Sealed): kotlin.Int
+    ]
 
 KtConstantExpression(1151,1152): '2'
   null
@@ -1043,8 +1055,10 @@ KtNameReferenceExpression(1195,1196): 'C'
   null
 
 KtReturnExpression(1201,1209): 'return 3'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /cast3ok(s: bar.Sealed): kotlin.Int
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /cast3ok(s: bar.Sealed): kotlin.Int
+    ]
 
 KtConstantExpression(1208,1209): '3'
   null
@@ -1098,8 +1112,10 @@ KtNameReferenceExpression(1252,1253): 'D'
   null
 
 KtReturnExpression(1258,1266): 'return 4'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /cast4ok(s: bar.Sealed): kotlin.Int
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /cast4ok(s: bar.Sealed): kotlin.Int
+    ]
 
 KtConstantExpression(1265,1266): '4'
   null

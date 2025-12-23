@@ -53,8 +53,10 @@ KtDeclarationModifierList(157,163): '@A1(X)'
   null
 
 KtAnnotationEntry(157,163): '@A1(X)'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(value: MyEnum): A1
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(value: MyEnum): A1
+    ]
 
 KtConstructorCalleeExpression(158,160): 'A1'
   null
@@ -117,8 +119,10 @@ KtDeclarationModifierList(233,242): '@A2(X, Y)'
   null
 
 KtAnnotationEntry(233,242): '@A2(X, Y)'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(vararg value: MyEnum): A2
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(vararg value: MyEnum): A2
+    ]
 
 KtConstructorCalleeExpression(234,236): 'A2'
   null
@@ -160,8 +164,10 @@ KtDeclarationModifierList(259,271): '@A2(*[X, Y])'
   null
 
 KtAnnotationEntry(259,271): '@A2(*[X, Y])'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(vararg value: MyEnum): A2
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(vararg value: MyEnum): A2
+    ]
 
 KtConstructorCalleeExpression(260,262): 'A2'
   null
@@ -182,8 +188,10 @@ KtValueArgument(263,270): '*[X, Y]'
   null
 
 KtCollectionLiteralExpression(264,270): '[X, Y]'
-  KaSingleSymbolResolutionSuccess:
-    symbol = kotlin/arrayOf(vararg elements: T): kotlin.Array<T>
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/arrayOf(vararg elements: T): kotlin.Array<T>
+    ]
 
 KtNameReferenceExpression(265,266): 'X'
   null
@@ -243,8 +251,10 @@ KtDeclarationModifierList(342,350): '@A3([X])'
   null
 
 KtAnnotationEntry(342,350): '@A3([X])'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(value: kotlin.Array<MyEnum>): A3
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(value: kotlin.Array<MyEnum>): A3
+    ]
 
 KtConstructorCalleeExpression(343,345): 'A3'
   null
@@ -265,8 +275,10 @@ KtValueArgument(346,349): '[X]'
   null
 
 KtCollectionLiteralExpression(346,349): '[X]'
-  KaSingleSymbolResolutionSuccess:
-    symbol = kotlin/arrayOf(vararg elements: T): kotlin.Array<T>
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/arrayOf(vararg elements: T): kotlin.Array<T>
+    ]
 
 KtNameReferenceExpression(347,348): 'X'
   null
@@ -284,8 +296,10 @@ KtDeclarationModifierList(367,382): '@A3(arrayOf(X))'
   null
 
 KtAnnotationEntry(367,382): '@A3(arrayOf(X))'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(value: kotlin.Array<MyEnum>): A3
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(value: kotlin.Array<MyEnum>): A3
+    ]
 
 KtConstructorCalleeExpression(368,370): 'A3'
   null
@@ -306,8 +320,10 @@ KtValueArgument(371,381): 'arrayOf(X)'
   null
 
 KtCallExpression(371,381): 'arrayOf(X)'
-  KaSingleSymbolResolutionSuccess:
-    symbol = kotlin/arrayOf(vararg elements: T): kotlin.Array<T>
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/arrayOf(vararg elements: T): kotlin.Array<T>
+    ]
 
 KtNameReferenceExpression(371,378): 'arrayOf'
   null
@@ -358,8 +374,10 @@ KtDeclarationModifierList(443,457): '@A4(MAX_VALUE)'
   null
 
 KtAnnotationEntry(443,457): '@A4(MAX_VALUE)'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(value: kotlin.Int): A4
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(value: kotlin.Int): A4
+    ]
 
 KtConstructorCalleeExpression(444,446): 'A4'
   null
@@ -395,8 +413,10 @@ KtDeclarationModifierList(473,528): '@Retention(RUNTIME)'
   null
 
 KtAnnotationEntry(473,492): '@Retention(RUNTIME)'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(value: kotlin.annotation.AnnotationRetention): kotlin.annotation.Retention
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(value: kotlin.annotation.AnnotationRetention): kotlin.annotation.Retention
+    ]
 
 KtConstructorCalleeExpression(474,483): 'Retention'
   null
@@ -420,8 +440,10 @@ KtNameReferenceExpression(484,491): 'RUNTIME'
   null
 
 KtAnnotationEntry(493,517): '@Target(CLASS, PROPERTY)'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(vararg allowedTargets: kotlin.annotation.AnnotationTarget): kotlin.annotation.Target
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(vararg allowedTargets: kotlin.annotation.AnnotationTarget): kotlin.annotation.Target
+    ]
 
 KtConstructorCalleeExpression(494,500): 'Target'
   null
@@ -457,8 +479,10 @@ KtDeclarationModifierList(549,562): '@MyAnnotation'
   null
 
 KtAnnotationEntry(549,562): '@MyAnnotation'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(): MyAnnotation
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): MyAnnotation
+    ]
 
 KtConstructorCalleeExpression(550,562): 'MyAnnotation'
   null
@@ -491,8 +515,10 @@ KtDeclarationModifierList(579,592): '@MyAnnotation'
   null
 
 KtAnnotationEntry(579,592): '@MyAnnotation'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(): MyAnnotation
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): MyAnnotation
+    ]
 
 KtConstructorCalleeExpression(580,592): 'MyAnnotation'
   null
@@ -513,8 +539,10 @@ KtDeclarationModifierList(608,621): '@MyAnnotation'
   null
 
 KtAnnotationEntry(608,621): '@MyAnnotation'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(): MyAnnotation
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): MyAnnotation
+    ]
 
 KtConstructorCalleeExpression(609,621): 'MyAnnotation'
   null

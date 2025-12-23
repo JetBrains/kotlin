@@ -1,3 +1,5 @@
 KtCallExpression(131,172): 'Annotation(strings = arrayOf("v1", "v2"))'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(vararg strings: kotlin.String): Annotation
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(vararg strings: kotlin.String): Annotation
+    ]

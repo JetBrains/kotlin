@@ -1,3 +1,5 @@
 KtCallableReferenceExpression(55,60): '::Foo'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(value: kotlin.String): Foo
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(value: kotlin.String): Foo
+    ]

@@ -68,8 +68,10 @@ KtSuperTypeList(86,93): 'Base(x)'
   null
 
 KtSuperTypeCallEntry(86,93): 'Base(x)'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(<dispatch receiver>: r.A, x: kotlin.Int): r.A.Base
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(<dispatch receiver>: r.A, x: kotlin.Int): r.A.Base
+    ]
 
 KtConstructorCalleeExpression(86,90): 'Base'
   null

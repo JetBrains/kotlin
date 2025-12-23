@@ -71,12 +71,16 @@ KtNameReferenceExpression(51,57): 'String'
   null
 
 KtConstructorDelegationCall(61,74): 'this((((i))))'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(i: T): A<T>
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(i: T): A<T>
+    ]
 
 KtConstructorDelegationReferenceExpression(61,65): 'this'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(i: T): A<T>
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(i: T): A<T>
+    ]
 
 KtValueArgumentList(65,74): '((((i))))'
   null
@@ -127,12 +131,16 @@ KtNameReferenceExpression(104,107): 'Int'
   null
 
 KtConstructorDelegationCall(111,128): 'this(i = (((i))))'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(i: T): A<T>
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(i: T): A<T>
+    ]
 
 KtConstructorDelegationReferenceExpression(111,115): 'this'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(i: T): A<T>
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(i: T): A<T>
+    ]
 
 KtValueArgumentList(115,128): '(i = (((i))))'
   null
@@ -201,12 +209,16 @@ KtParameterList(172,174): '()'
   null
 
 KtConstructorDelegationCall(177,189): 'super(((1)))'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(i: T): A<T>
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(i: T): A<T>
+    ]
 
 KtConstructorDelegationReferenceExpression(177,182): 'super'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(i: T): A<T>
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(i: T): A<T>
+    ]
 
 KtValueArgumentList(182,189): '(((1)))'
   null
@@ -242,12 +254,16 @@ KtNameReferenceExpression(214,217): 'Int'
   null
 
 KtConstructorDelegationCall(221,241): 'super(i = ((value)))'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(i: T): A<T>
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(i: T): A<T>
+    ]
 
 KtConstructorDelegationReferenceExpression(221,226): 'super'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(i: T): A<T>
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(i: T): A<T>
+    ]
 
 KtValueArgumentList(226,241): '(i = ((value)))'
   null
@@ -289,12 +305,16 @@ KtNameReferenceExpression(266,272): 'String'
   null
 
 KtConstructorDelegationCall(276,299): 'super(i = ((5)) as Int)'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(i: T): A<T>
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(i: T): A<T>
+    ]
 
 KtConstructorDelegationReferenceExpression(276,281): 'super'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(i: T): A<T>
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(i: T): A<T>
+    ]
 
 KtValueArgumentList(281,299): '(i = ((5)) as Int)'
   null

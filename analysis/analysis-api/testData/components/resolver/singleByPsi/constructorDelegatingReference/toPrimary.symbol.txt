@@ -1,3 +1,5 @@
 KtConstructorDelegationReferenceExpression(38,42): 'this'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(a: kotlin.Int): A
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(a: kotlin.Int): A
+    ]

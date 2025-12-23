@@ -44,8 +44,10 @@ KtBlockExpression(41,65): '{'
   null
 
 KtReturnExpression(51,59): 'return a'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /A.foo(<dispatch receiver>: A, a: kotlin.String): kotlin.String
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A.foo(<dispatch receiver>: A, a: kotlin.String): kotlin.String
+    ]
 
 KtNameReferenceExpression(58,59): 'a'
   null
@@ -93,8 +95,10 @@ KtNameReferenceExpression(130,134): 'this'
   null
 
 KtCallExpression(135,140): 'bar()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /Base.bar(<dispatch receiver>: Base): kotlin.Unit
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Base.bar(<dispatch receiver>: Base): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(135,138): 'bar'
   null
@@ -172,8 +176,10 @@ KtNameReferenceExpression(243,247): 'this'
   null
 
 KtCallExpression(248,253): 'bar()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /Base.bar(<dispatch receiver>: Base): kotlin.Unit
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Base.bar(<dispatch receiver>: Base): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(248,251): 'bar'
   null
@@ -182,8 +188,10 @@ KtValueArgumentList(251,253): '()'
   null
 
 KtReturnExpression(266,282): 'return a.foo("")'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <getter>(<dispatch receiver>: Base): kotlin.String
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <getter>(<dispatch receiver>: Base): kotlin.String
+    ]
 
 KtDotQualifiedExpression(273,282): 'a.foo("")'
   null
@@ -234,8 +242,10 @@ KtBlockExpression(339,389): '{'
   null
 
 KtCallExpression(349,360): 'funMember()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /Base.funMember(<dispatch receiver>: Base): kotlin.Unit
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Base.funMember(<dispatch receiver>: Base): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(349,358): 'funMember'
   null
@@ -265,8 +275,10 @@ KtBlockExpression(435,544): '{'
   null
 
 KtCallExpression(441,542): 'with(Base()) {'
-  KaSingleSymbolResolutionSuccess:
-    symbol = kotlin/with(receiver: T, block: kotlin.Function1<T, R>): R
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/with(receiver: T, block: kotlin.Function1<T, R>): R
+    ]
 
 KtNameReferenceExpression(441,445): 'with'
   null
@@ -278,8 +290,10 @@ KtValueArgument(446,452): 'Base()'
   null
 
 KtCallExpression(446,452): 'Base()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(): Base
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): Base
+    ]
 
 KtNameReferenceExpression(446,450): 'Base'
   null
@@ -300,8 +314,10 @@ KtBlockExpression(464,536): 'with(A()) {'
   null
 
 KtCallExpression(464,536): 'with(A()) {'
-  KaSingleSymbolResolutionSuccess:
-    symbol = kotlin/with(receiver: T, block: kotlin.Function1<T, R>): R
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/with(receiver: T, block: kotlin.Function1<T, R>): R
+    ]
 
 KtNameReferenceExpression(464,468): 'with'
   null
@@ -313,8 +329,10 @@ KtValueArgument(469,472): 'A()'
   null
 
 KtCallExpression(469,472): 'A()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(): A
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): A
+    ]
 
 KtNameReferenceExpression(469,470): 'A'
   null
@@ -335,8 +353,10 @@ KtBlockExpression(488,526): 'funMember()'
   null
 
 KtCallExpression(488,499): 'funMember()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /Base.funMember(<dispatch receiver>: Base): kotlin.Unit
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Base.funMember(<dispatch receiver>: Base): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(488,497): 'funMember'
   null
@@ -357,8 +377,10 @@ KtBlockExpression(582,637): '{'
   null
 
 KtCallExpression(588,635): 'with(Base()) {'
-  KaSingleSymbolResolutionSuccess:
-    symbol = kotlin/with(receiver: T, block: kotlin.Function1<T, R>): R
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/with(receiver: T, block: kotlin.Function1<T, R>): R
+    ]
 
 KtNameReferenceExpression(588,592): 'with'
   null
@@ -370,8 +392,10 @@ KtValueArgument(593,599): 'Base()'
   null
 
 KtCallExpression(593,599): 'Base()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(): Base
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): Base
+    ]
 
 KtNameReferenceExpression(593,597): 'Base'
   null
@@ -414,8 +438,10 @@ KtNameReferenceExpression(621,622): 'a'
   null
 
 KtCallExpression(625,628): 'A()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(): A
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): A
+    ]
 
 KtNameReferenceExpression(625,626): 'A'
   null

@@ -35,8 +35,10 @@ KtPropertyDelegate(74,87): 'by Delegate()'
   null
 
 KtCallExpression(77,87): 'Delegate()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(): myPack.Delegate
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): myPack.Delegate
+    ]
 
 KtNameReferenceExpression(77,85): 'Delegate'
   null
@@ -105,8 +107,10 @@ KtBlockExpression(179,204): '{'
   null
 
 KtReturnExpression(189,198): 'return ""'
-  KaSingleSymbolResolutionSuccess:
-    symbol = myPack/Delegate.getValue(<dispatch receiver>: myPack.Delegate, thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): kotlin.String
+  KaSymbolResolutionSuccess:
+    symbols = [
+      myPack/Delegate.getValue(<dispatch receiver>: myPack.Delegate, thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): kotlin.String
+    ]
 
 KtStringTemplateExpression(196,198): '""'
   null

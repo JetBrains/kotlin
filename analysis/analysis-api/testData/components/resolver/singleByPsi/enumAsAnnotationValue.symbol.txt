@@ -1,3 +1,5 @@
 KtAnnotationEntry(90,110): '@Annotation(Color.R)'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(color: Color): Annotation
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(color: Color): Annotation
+    ]

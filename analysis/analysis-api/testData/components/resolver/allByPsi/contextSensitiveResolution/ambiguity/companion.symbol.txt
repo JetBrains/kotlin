@@ -44,8 +44,10 @@ KtProperty(180,193): 'val A = Any()'
   null
 
 KtCallExpression(188,193): 'Any()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(): kotlin.Any
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): kotlin.Any
+    ]
 
 KtNameReferenceExpression(188,191): 'Any'
   null
@@ -84,8 +86,10 @@ KtBlockExpression(240,269): '{'
   null
 
 KtReturnExpression(250,263): 'return x == A'
-  KaSingleSymbolResolutionSuccess:
-    symbol = foo/Test.test1wrong(<dispatch receiver>: foo.Test, x: foo.MyEnum): kotlin.Boolean
+  KaSymbolResolutionSuccess:
+    symbols = [
+      foo/Test.test1wrong(<dispatch receiver>: foo.Test, x: foo.MyEnum): kotlin.Boolean
+    ]
 
 KtBinaryExpression(257,263): 'x == A'
   null
@@ -130,8 +134,10 @@ KtBlockExpression(309,345): '{'
   null
 
 KtReturnExpression(319,339): 'return x == MyEnum.A'
-  KaSingleSymbolResolutionSuccess:
-    symbol = foo/Test.test1enum(<dispatch receiver>: foo.Test, x: foo.MyEnum): kotlin.Boolean
+  KaSymbolResolutionSuccess:
+    symbols = [
+      foo/Test.test1enum(<dispatch receiver>: foo.Test, x: foo.MyEnum): kotlin.Boolean
+    ]
 
 KtBinaryExpression(326,339): 'x == MyEnum.A'
   null
@@ -182,8 +188,10 @@ KtBlockExpression(390,429): '{'
   null
 
 KtReturnExpression(400,423): 'return x == Companion.A'
-  KaSingleSymbolResolutionSuccess:
-    symbol = foo/Test.test1companion(<dispatch receiver>: foo.Test, x: foo.MyEnum): kotlin.Boolean
+  KaSymbolResolutionSuccess:
+    symbols = [
+      foo/Test.test1companion(<dispatch receiver>: foo.Test, x: foo.MyEnum): kotlin.Boolean
+    ]
 
 KtBinaryExpression(407,423): 'x == Companion.A'
   null

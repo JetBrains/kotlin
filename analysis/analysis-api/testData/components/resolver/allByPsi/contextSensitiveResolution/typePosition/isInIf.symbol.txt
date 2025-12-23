@@ -50,8 +50,10 @@ KtSuperTypeList(163,176): 'SealedClass()'
   null
 
 KtSuperTypeCallEntry(163,176): 'SealedClass()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(): SealedClass
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): SealedClass
+    ]
 
 KtConstructorCalleeExpression(163,174): 'SealedClass'
   null
@@ -96,8 +98,10 @@ KtSuperTypeList(225,238): 'SealedClass()'
   null
 
 KtSuperTypeCallEntry(225,238): 'SealedClass()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(): SealedClass
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): SealedClass
+    ]
 
 KtConstructorCalleeExpression(225,236): 'SealedClass'
   null
@@ -145,8 +149,10 @@ KtSuperTypeList(308,321): 'SealedClass()'
   null
 
 KtSuperTypeCallEntry(308,321): 'SealedClass()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(): SealedClass
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): SealedClass
+    ]
 
 KtConstructorCalleeExpression(308,319): 'SealedClass'
   null
@@ -170,8 +176,10 @@ KtSuperTypeList(358,376): 'SealedInheritor1()'
   null
 
 KtSuperTypeCallEntry(358,376): 'SealedInheritor1()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(prop1: kotlin.String): SealedClass.SealedInheritor1
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(prop1: kotlin.String): SealedClass.SealedInheritor1
+    ]
 
 KtConstructorCalleeExpression(358,374): 'SealedInheritor1'
   null
@@ -222,8 +230,10 @@ KtSuperTypeList(439,452): 'SealedClass()'
   null
 
 KtSuperTypeCallEntry(439,452): 'SealedClass()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(): SealedClass
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): SealedClass
+    ]
 
 KtConstructorCalleeExpression(439,450): 'SealedClass'
   null
@@ -304,8 +314,10 @@ KtBlockExpression(561,598): '{'
   null
 
 KtReturnExpression(571,592): 'return instance.prop1'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /testIsInIf(instance: SealedClass): kotlin.String
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /testIsInIf(instance: SealedClass): kotlin.String
+    ]
 
 KtDotQualifiedExpression(578,592): 'instance.prop1'
   null
@@ -347,8 +359,10 @@ KtBlockExpression(645,682): '{'
   null
 
 KtReturnExpression(655,676): 'return instance.prop1'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /testIsInIf(instance: SealedClass): kotlin.String
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /testIsInIf(instance: SealedClass): kotlin.String
+    ]
 
 KtDotQualifiedExpression(662,676): 'instance.prop1'
   null
@@ -390,8 +404,10 @@ KtBlockExpression(711,752): '{'
   null
 
 KtReturnExpression(721,746): 'return instance.innerProp'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /testIsInIf(instance: SealedClass): kotlin.String
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /testIsInIf(instance: SealedClass): kotlin.String
+    ]
 
 KtDotQualifiedExpression(728,746): 'instance.innerProp'
   null
@@ -487,8 +503,10 @@ KtBlockExpression(876,921): '{'
   null
 
 KtReturnExpression(890,911): 'return instance.prop2'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /testIsInIf(instance: SealedClass): kotlin.String
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /testIsInIf(instance: SealedClass): kotlin.String
+    ]
 
 KtDotQualifiedExpression(897,911): 'instance.prop2'
   null
@@ -530,8 +548,10 @@ KtBlockExpression(973,1010): '{'
   null
 
 KtReturnExpression(983,1004): 'return instance.prop3'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /testIsInIf(instance: SealedClass): kotlin.String
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /testIsInIf(instance: SealedClass): kotlin.String
+    ]
 
 KtDotQualifiedExpression(990,1004): 'instance.prop3'
   null
@@ -573,8 +593,10 @@ KtBlockExpression(1041,1073): '{'
   null
 
 KtReturnExpression(1051,1067): 'return "nested1"'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /testIsInIf(instance: SealedClass): kotlin.String
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /testIsInIf(instance: SealedClass): kotlin.String
+    ]
 
 KtStringTemplateExpression(1058,1067): '"nested1"'
   null
@@ -583,8 +605,10 @@ KtLiteralStringTemplateEntry(1059,1066): 'nested1'
   null
 
 KtReturnExpression(1079,1088): 'return ""'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /testIsInIf(instance: SealedClass): kotlin.String
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /testIsInIf(instance: SealedClass): kotlin.String
+    ]
 
 KtStringTemplateExpression(1086,1088): '""'
   null

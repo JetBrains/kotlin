@@ -122,8 +122,10 @@ KtSuperTypeList(186,195): 'Base<C>()'
   null
 
 KtSuperTypeCallEntry(186,195): 'Base<C>()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(): one.two.Base<B>
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): one.two.Base<B>
+    ]
 
 KtConstructorCalleeExpression(186,193): 'Base<C>'
   null
@@ -306,8 +308,10 @@ KtNameReferenceExpression(378,389): 'NestedClass'
   null
 
 KtCallExpression(392,405): 'NestedClass()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(): one.two.Base.NestedClass
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): one.two.Base.NestedClass
+    ]
 
 KtNameReferenceExpression(392,403): 'NestedClass'
   null
@@ -325,8 +329,10 @@ KtNameReferenceExpression(422,424): 'c1'
   null
 
 KtCallExpression(425,432): 'Inner()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(<dispatch receiver>: one.two.Base<B>): one.two.Base.Inner<B>
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(<dispatch receiver>: one.two.Base<B>): one.two.Base.Inner<B>
+    ]
 
 KtNameReferenceExpression(425,430): 'Inner'
   null

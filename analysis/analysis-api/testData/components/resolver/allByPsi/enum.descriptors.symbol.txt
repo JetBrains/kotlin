@@ -41,8 +41,10 @@ KtInitializerList(54,57): '(1)'
   null
 
 KtSuperTypeCallEntry(54,57): '(1)'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(i: kotlin.Int): EnumWithConstructor
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(i: kotlin.Int): EnumWithConstructor
+    ]
 
 KtConstructorCalleeExpression(54,54): ''
   null
@@ -54,8 +56,10 @@ KtUserType(54,54): ''
   null
 
 KtEnumEntrySuperclassReferenceExpression(54,54): ''
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(i: kotlin.Int): EnumWithConstructor
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(i: kotlin.Int): EnumWithConstructor
+    ]
 
 KtValueArgumentList(54,57): '(1)'
   null
@@ -73,8 +77,10 @@ KtInitializerList(76,79): '(2)'
   null
 
 KtSuperTypeCallEntry(76,79): '(2)'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(i: kotlin.Int): EnumWithConstructor
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(i: kotlin.Int): EnumWithConstructor
+    ]
 
 KtConstructorCalleeExpression(76,76): ''
   null
@@ -86,8 +92,10 @@ KtUserType(76,76): ''
   null
 
 KtEnumEntrySuperclassReferenceExpression(76,76): ''
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(i: kotlin.Int): EnumWithConstructor
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(i: kotlin.Int): EnumWithConstructor
+    ]
 
 KtValueArgumentList(76,79): '(2)'
   null
@@ -150,8 +158,10 @@ KtNameReferenceExpression(234,238): 'this'
   null
 
 KtCallExpression(239,244): 'baz()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = baz(<dispatch receiver>: EnumWithoutConstructor.EntryWithBody): kotlin.Unit
+  KaSymbolResolutionSuccess:
+    symbols = [
+      baz(<dispatch receiver>: EnumWithoutConstructor.EntryWithBody): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(239,242): 'baz'
   null

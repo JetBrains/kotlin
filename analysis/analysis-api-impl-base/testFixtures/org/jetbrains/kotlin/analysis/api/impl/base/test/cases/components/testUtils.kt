@@ -342,14 +342,6 @@ internal fun assertStableResult(
         // Symbol resolution supports more cases than call resolution, so we check some guaranties only against it
         null -> return
 
-        is KaCompoundArrayAccessCall -> {
-            assertions.assertEquals(expected = null, actual = symbolResolutionAttempt) {
-                "Inconsistency: ${KaCompoundArrayAccessCall::class.simpleName} assumes that there is no dedicated single symbol"
-            }
-
-            return
-        }
-
         is KaCallResolutionError -> {
             if (symbolResolutionAttempt !is KaSymbolResolutionError) {
                 testServices.assertions.fail {

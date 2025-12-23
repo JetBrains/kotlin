@@ -116,8 +116,10 @@ KtNameReferenceExpression(200,201): 'T'
   null
 
 KtCallExpression(204,210): 'TODO()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = kotlin/TODO(): kotlin.Nothing
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/TODO(): kotlin.Nothing
+    ]
 
 KtNameReferenceExpression(204,208): 'TODO'
   null
@@ -159,8 +161,10 @@ KtNameReferenceExpression(230,231): 'X'
   null
 
 KtCallExpression(234,240): 'TODO()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = kotlin/TODO(): kotlin.Nothing
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/TODO(): kotlin.Nothing
+    ]
 
 KtNameReferenceExpression(234,238): 'TODO'
   null
@@ -202,8 +206,10 @@ KtNameReferenceExpression(284,285): 'X'
   null
 
 KtCallExpression(291,364): 'myRunWithMyEnum {'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /myRunWithMyEnum(b: kotlin.Function0<MyEnum>): kotlin.Unit
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /myRunWithMyEnum(b: kotlin.Function0<MyEnum>): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(291,306): 'myRunWithMyEnum'
   null
@@ -233,15 +239,19 @@ KtContainerNodeForControlStructureBody(324,348): 'return@myRunWithMyEnum X'
   null
 
 KtReturnExpression(324,348): 'return@myRunWithMyEnum X'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <anonymous function>(): MyEnum
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <anonymous function>(): MyEnum
+    ]
 
 KtContainerNode(330,346): '@myRunWithMyEnum'
   null
 
 KtLabelReferenceExpression(330,346): '@myRunWithMyEnum'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <anonymous function>(): MyEnum
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <anonymous function>(): MyEnum
+    ]
 
 KtNameReferenceExpression(347,348): 'X'
   null
@@ -250,8 +260,10 @@ KtNameReferenceExpression(357,358): 'Y'
   null
 
 KtCallExpression(370,451): 'myRunWithMyEnum {'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /myRunWithMyEnum(b: kotlin.Function0<MyEnum>): kotlin.Unit
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /myRunWithMyEnum(b: kotlin.Function0<MyEnum>): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(370,385): 'myRunWithMyEnum'
   null
@@ -281,15 +293,19 @@ KtContainerNodeForControlStructureBody(403,431): 'return@myRunWithMyEnum id(X)'
   null
 
 KtReturnExpression(403,431): 'return@myRunWithMyEnum id(X)'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <anonymous function>(): MyEnum
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <anonymous function>(): MyEnum
+    ]
 
 KtContainerNode(409,425): '@myRunWithMyEnum'
   null
 
 KtLabelReferenceExpression(409,425): '@myRunWithMyEnum'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <anonymous function>(): MyEnum
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <anonymous function>(): MyEnum
+    ]
 
 KtCallExpression(426,431): 'id(X)'
   KaSymbolResolutionError:
@@ -330,8 +346,10 @@ KtNameReferenceExpression(443,444): 'Y'
   null
 
 KtCallExpression(457,518): 'myRun<MyEnum> {'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /myRun(b: kotlin.Function0<T>): T
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /myRun(b: kotlin.Function0<T>): T
+    ]
 
 KtNameReferenceExpression(457,462): 'myRun'
   null
@@ -376,15 +394,19 @@ KtContainerNodeForControlStructureBody(488,502): 'return@myRun X'
   null
 
 KtReturnExpression(488,502): 'return@myRun X'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <anonymous function>(): MyEnum
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <anonymous function>(): MyEnum
+    ]
 
 KtContainerNode(494,500): '@myRun'
   null
 
 KtLabelReferenceExpression(494,500): '@myRun'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <anonymous function>(): MyEnum
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <anonymous function>(): MyEnum
+    ]
 
 KtNameReferenceExpression(501,502): 'X'
   null
@@ -393,8 +415,10 @@ KtNameReferenceExpression(511,512): 'Y'
   null
 
 KtCallExpression(523,607): 'foo('
-  KaSingleSymbolResolutionSuccess:
-    symbol = /foo(a: MyEnum): kotlin.Unit
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /foo(a: MyEnum): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(523,526): 'foo'
   null
@@ -406,8 +430,10 @@ KtValueArgument(536,601): 'myRun {'
   null
 
 KtCallExpression(536,601): 'myRun {'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /myRun(b: kotlin.Function0<T>): T
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /myRun(b: kotlin.Function0<T>): T
+    ]
 
 KtNameReferenceExpression(536,541): 'myRun'
   null
@@ -437,15 +463,19 @@ KtContainerNodeForControlStructureBody(563,577): 'return@myRun X'
   null
 
 KtReturnExpression(563,577): 'return@myRun X'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <anonymous function>(): MyEnum
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <anonymous function>(): MyEnum
+    ]
 
 KtContainerNode(569,575): '@myRun'
   null
 
 KtLabelReferenceExpression(569,575): '@myRun'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <anonymous function>(): MyEnum
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <anonymous function>(): MyEnum
+    ]
 
 KtNameReferenceExpression(576,577): 'X'
   null
@@ -466,8 +496,10 @@ KtNameReferenceExpression(620,626): 'MyEnum'
   null
 
 KtCallExpression(629,682): 'myRun {'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /myRun(b: kotlin.Function0<T>): T
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /myRun(b: kotlin.Function0<T>): T
+    ]
 
 KtNameReferenceExpression(629,634): 'myRun'
   null
@@ -497,15 +529,19 @@ KtContainerNodeForControlStructureBody(652,666): 'return@myRun X'
   null
 
 KtReturnExpression(652,666): 'return@myRun X'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <anonymous function>(): MyEnum
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <anonymous function>(): MyEnum
+    ]
 
 KtContainerNode(658,664): '@myRun'
   null
 
 KtLabelReferenceExpression(658,664): '@myRun'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <anonymous function>(): MyEnum
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <anonymous function>(): MyEnum
+    ]
 
 KtNameReferenceExpression(665,666): 'X'
   null
@@ -548,15 +584,19 @@ KtContainerNodeForControlStructureBody(711,725): 'return@myRun X'
   null
 
 KtReturnExpression(711,725): 'return@myRun X'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <anonymous function>(): ERROR_TYPE
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <anonymous function>(): ERROR_TYPE
+    ]
 
 KtContainerNode(717,723): '@myRun'
   null
 
 KtLabelReferenceExpression(717,723): '@myRun'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <anonymous function>(): ERROR_TYPE
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <anonymous function>(): ERROR_TYPE
+    ]
 
 KtNameReferenceExpression(724,725): 'X'
   null
@@ -565,8 +605,10 @@ KtNameReferenceExpression(734,735): 'Y'
   null
 
 KtCallExpression(746,806): 'myRun {'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /myRun(b: kotlin.Function0<T>): T
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /myRun(b: kotlin.Function0<T>): T
+    ]
 
 KtNameReferenceExpression(746,751): 'myRun'
   null
@@ -596,15 +638,19 @@ KtContainerNodeForControlStructureBody(769,790): 'return@myRun MyEnum.X'
   null
 
 KtReturnExpression(769,790): 'return@myRun MyEnum.X'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <anonymous function>(): MyEnum
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <anonymous function>(): MyEnum
+    ]
 
 KtContainerNode(775,781): '@myRun'
   null
 
 KtLabelReferenceExpression(775,781): '@myRun'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <anonymous function>(): MyEnum
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <anonymous function>(): MyEnum
+    ]
 
 KtDotQualifiedExpression(782,790): 'MyEnum.X'
   null

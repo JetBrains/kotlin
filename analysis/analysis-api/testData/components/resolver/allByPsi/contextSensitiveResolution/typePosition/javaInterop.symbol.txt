@@ -173,8 +173,10 @@ KtBlockExpression(305,342): '{'
   null
 
 KtReturnExpression(315,336): 'return instance.prop1'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /testSealedJClassInIf(instance: SealedJClass): kotlin.Int
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /testSealedJClassInIf(instance: SealedJClass): kotlin.Int
+    ]
 
 KtDotQualifiedExpression(322,336): 'instance.prop1'
   null
@@ -216,8 +218,10 @@ KtBlockExpression(374,411): '{'
   null
 
 KtReturnExpression(384,405): 'return instance.prop2'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /testSealedJClassInIf(instance: SealedJClass): kotlin.Int
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /testSealedJClassInIf(instance: SealedJClass): kotlin.Int
+    ]
 
 KtDotQualifiedExpression(391,405): 'instance.prop2'
   null
@@ -229,8 +233,10 @@ KtNameReferenceExpression(400,405): 'prop2'
   null
 
 KtReturnExpression(416,424): 'return 0'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /testSealedJClassInIf(instance: SealedJClass): kotlin.Int
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /testSealedJClassInIf(instance: SealedJClass): kotlin.Int
+    ]
 
 KtConstantExpression(423,424): '0'
   null

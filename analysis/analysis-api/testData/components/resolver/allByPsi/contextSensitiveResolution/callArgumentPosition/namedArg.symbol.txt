@@ -77,8 +77,10 @@ KtSuperTypeList(314,323): 'MyClass()'
   null
 
 KtSuperTypeCallEntry(314,323): 'MyClass()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(): MyClass
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): MyClass
+    ]
 
 KtConstructorCalleeExpression(314,321): 'MyClass'
   null
@@ -105,8 +107,10 @@ KtSuperTypeList(354,363): 'MyClass()'
   null
 
 KtSuperTypeCallEntry(354,363): 'MyClass()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(): MyClass
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): MyClass
+    ]
 
 KtConstructorCalleeExpression(354,361): 'MyClass'
   null
@@ -142,8 +146,10 @@ KtSuperTypeList(441,450): 'MySuper()'
   null
 
 KtSuperTypeCallEntry(441,450): 'MySuper()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(): MySuper
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): MySuper
+    ]
 
 KtConstructorCalleeExpression(441,448): 'MySuper'
   null
@@ -176,8 +182,10 @@ KtNameReferenceExpression(476,483): 'MyClass'
   null
 
 KtCallExpression(486,492): 'TODO()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = kotlin/TODO(): kotlin.Nothing
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/TODO(): kotlin.Nothing
+    ]
 
 KtNameReferenceExpression(486,490): 'TODO'
   null
@@ -198,8 +206,10 @@ KtNameReferenceExpression(525,539): 'InheritorClass'
   null
 
 KtCallExpression(542,558): 'InheritorClass()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(): MyClass.InheritorClass
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): MyClass.InheritorClass
+    ]
 
 KtNameReferenceExpression(542,556): 'InheritorClass'
   null
@@ -253,8 +263,10 @@ KtNameReferenceExpression(676,683): 'MyClass'
   null
 
 KtCallExpression(686,692): 'TODO()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = kotlin/TODO(): kotlin.Nothing
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/TODO(): kotlin.Nothing
+    ]
 
 KtNameReferenceExpression(686,690): 'TODO'
   null
@@ -278,8 +290,10 @@ KtPropertyDelegate(722,734): 'by lazy {""}'
   null
 
 KtCallExpression(725,734): 'lazy {""}'
-  KaSingleSymbolResolutionSuccess:
-    symbol = kotlin/lazy(initializer: () -> T): kotlin.Lazy<T>
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/lazy(initializer: () -> T): kotlin.Lazy<T>
+    ]
 
 KtNameReferenceExpression(725,729): 'lazy'
   null
@@ -378,8 +392,10 @@ KtBlockExpression(908,1287): '{'
   null
 
 KtCallExpression(914,1001): 'namedArgumentsHolder('
-  KaSingleSymbolResolutionSuccess:
-    symbol = /namedArgumentsHolder(enumArg: MyEnum, arg: MyClass): kotlin.Unit
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /namedArgumentsHolder(enumArg: MyEnum, arg: MyClass): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(914,934): 'namedArgumentsHolder'
   null
@@ -412,8 +428,10 @@ KtNameReferenceExpression(985,995): 'EnumValue1'
   null
 
 KtCallExpression(1006,1087): 'namedArgumentsHolder('
-  KaSingleSymbolResolutionSuccess:
-    symbol = /namedArgumentsHolder(enumArg: MyEnum, arg: MyClass): kotlin.Unit
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /namedArgumentsHolder(enumArg: MyEnum, arg: MyClass): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(1006,1026): 'namedArgumentsHolder'
   null
@@ -496,8 +514,10 @@ KtNameReferenceExpression(1154,1163): 'superProp'
   null
 
 KtCallExpression(1169,1202): 'namedArgumentHolder(arg = func())'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /namedArgumentHolder(arg: MyClass): kotlin.Unit
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /namedArgumentHolder(arg: MyClass): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(1169,1188): 'namedArgumentHolder'
   null
@@ -526,8 +546,10 @@ KtValueArgumentList(1199,1201): '()'
   null
 
 KtCallExpression(1207,1245): 'namedArgumentHolder(arg = superFunc())'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /namedArgumentHolder(arg: MyClass): kotlin.Unit
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /namedArgumentHolder(arg: MyClass): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(1207,1226): 'namedArgumentHolder'
   null

@@ -26,8 +26,10 @@ KtSuperTypeList(122,132): 'MySealed()'
   null
 
 KtSuperTypeCallEntry(122,132): 'MySealed()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(): MySealed
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): MySealed
+    ]
 
 KtConstructorCalleeExpression(122,130): 'MySealed'
   null
@@ -54,8 +56,10 @@ KtSuperTypeList(153,163): 'MySealed()'
   null
 
 KtSuperTypeCallEntry(153,163): 'MySealed()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <constructor>(): MySealed
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): MySealed
+    ]
 
 KtConstructorCalleeExpression(153,161): 'MySealed'
   null
@@ -166,8 +170,10 @@ KtNameReferenceExpression(263,264): 'T'
   null
 
 KtCallExpression(267,273): 'TODO()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = kotlin/TODO(): kotlin.Nothing
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/TODO(): kotlin.Nothing
+    ]
 
 KtNameReferenceExpression(267,271): 'TODO'
   null
@@ -209,8 +215,10 @@ KtNameReferenceExpression(293,294): 'X'
   null
 
 KtCallExpression(297,303): 'TODO()'
-  KaSingleSymbolResolutionSuccess:
-    symbol = kotlin/TODO(): kotlin.Nothing
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/TODO(): kotlin.Nothing
+    ]
 
 KtNameReferenceExpression(297,301): 'TODO'
   null
@@ -252,8 +260,10 @@ KtNameReferenceExpression(349,350): 'X'
   null
 
 KtCallExpression(356,433): 'myRunWithMySealed {'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /myRunWithMySealed(b: kotlin.Function0<MySealed>): kotlin.Unit
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /myRunWithMySealed(b: kotlin.Function0<MySealed>): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(356,373): 'myRunWithMySealed'
   null
@@ -283,15 +293,19 @@ KtContainerNodeForControlStructureBody(391,417): 'return@myRunWithMySealed X'
   null
 
 KtReturnExpression(391,417): 'return@myRunWithMySealed X'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <anonymous function>(): MySealed
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <anonymous function>(): MySealed
+    ]
 
 KtContainerNode(397,415): '@myRunWithMySealed'
   null
 
 KtLabelReferenceExpression(397,415): '@myRunWithMySealed'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <anonymous function>(): MySealed
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <anonymous function>(): MySealed
+    ]
 
 KtNameReferenceExpression(416,417): 'X'
   null
@@ -300,8 +314,10 @@ KtNameReferenceExpression(426,427): 'Y'
   null
 
 KtCallExpression(439,524): 'myRunWithMySealed {'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /myRunWithMySealed(b: kotlin.Function0<MySealed>): kotlin.Unit
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /myRunWithMySealed(b: kotlin.Function0<MySealed>): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(439,456): 'myRunWithMySealed'
   null
@@ -331,15 +347,19 @@ KtContainerNodeForControlStructureBody(474,504): 'return@myRunWithMySealed id(X)
   null
 
 KtReturnExpression(474,504): 'return@myRunWithMySealed id(X)'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <anonymous function>(): MySealed
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <anonymous function>(): MySealed
+    ]
 
 KtContainerNode(480,498): '@myRunWithMySealed'
   null
 
 KtLabelReferenceExpression(480,498): '@myRunWithMySealed'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <anonymous function>(): MySealed
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <anonymous function>(): MySealed
+    ]
 
 KtCallExpression(499,504): 'id(X)'
   KaSymbolResolutionError:
@@ -380,8 +400,10 @@ KtNameReferenceExpression(516,517): 'Y'
   null
 
 KtCallExpression(530,593): 'myRun<MySealed> {'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /myRun(b: kotlin.Function0<T>): T
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /myRun(b: kotlin.Function0<T>): T
+    ]
 
 KtNameReferenceExpression(530,535): 'myRun'
   null
@@ -426,15 +448,19 @@ KtContainerNodeForControlStructureBody(563,577): 'return@myRun X'
   null
 
 KtReturnExpression(563,577): 'return@myRun X'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <anonymous function>(): MySealed
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <anonymous function>(): MySealed
+    ]
 
 KtContainerNode(569,575): '@myRun'
   null
 
 KtLabelReferenceExpression(569,575): '@myRun'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <anonymous function>(): MySealed
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <anonymous function>(): MySealed
+    ]
 
 KtNameReferenceExpression(576,577): 'X'
   null
@@ -443,8 +469,10 @@ KtNameReferenceExpression(586,587): 'Y'
   null
 
 KtCallExpression(598,682): 'foo('
-  KaSingleSymbolResolutionSuccess:
-    symbol = /foo(a: MySealed): kotlin.Unit
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /foo(a: MySealed): kotlin.Unit
+    ]
 
 KtNameReferenceExpression(598,601): 'foo'
   null
@@ -456,8 +484,10 @@ KtValueArgument(611,676): 'myRun {'
   null
 
 KtCallExpression(611,676): 'myRun {'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /myRun(b: kotlin.Function0<T>): T
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /myRun(b: kotlin.Function0<T>): T
+    ]
 
 KtNameReferenceExpression(611,616): 'myRun'
   null
@@ -487,15 +517,19 @@ KtContainerNodeForControlStructureBody(638,652): 'return@myRun X'
   null
 
 KtReturnExpression(638,652): 'return@myRun X'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <anonymous function>(): MySealed
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <anonymous function>(): MySealed
+    ]
 
 KtContainerNode(644,650): '@myRun'
   null
 
 KtLabelReferenceExpression(644,650): '@myRun'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <anonymous function>(): MySealed
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <anonymous function>(): MySealed
+    ]
 
 KtNameReferenceExpression(651,652): 'X'
   null
@@ -516,8 +550,10 @@ KtNameReferenceExpression(695,703): 'MySealed'
   null
 
 KtCallExpression(706,759): 'myRun {'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /myRun(b: kotlin.Function0<T>): T
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /myRun(b: kotlin.Function0<T>): T
+    ]
 
 KtNameReferenceExpression(706,711): 'myRun'
   null
@@ -547,15 +583,19 @@ KtContainerNodeForControlStructureBody(729,743): 'return@myRun X'
   null
 
 KtReturnExpression(729,743): 'return@myRun X'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <anonymous function>(): MySealed
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <anonymous function>(): MySealed
+    ]
 
 KtContainerNode(735,741): '@myRun'
   null
 
 KtLabelReferenceExpression(735,741): '@myRun'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <anonymous function>(): MySealed
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <anonymous function>(): MySealed
+    ]
 
 KtNameReferenceExpression(742,743): 'X'
   null
@@ -598,15 +638,19 @@ KtContainerNodeForControlStructureBody(788,802): 'return@myRun X'
   null
 
 KtReturnExpression(788,802): 'return@myRun X'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <anonymous function>(): ERROR_TYPE
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <anonymous function>(): ERROR_TYPE
+    ]
 
 KtContainerNode(794,800): '@myRun'
   null
 
 KtLabelReferenceExpression(794,800): '@myRun'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <anonymous function>(): ERROR_TYPE
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <anonymous function>(): ERROR_TYPE
+    ]
 
 KtNameReferenceExpression(801,802): 'X'
   null
@@ -615,8 +659,10 @@ KtNameReferenceExpression(811,812): 'Y'
   null
 
 KtCallExpression(823,885): 'myRun {'
-  KaSingleSymbolResolutionSuccess:
-    symbol = /myRun(b: kotlin.Function0<T>): T
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /myRun(b: kotlin.Function0<T>): T
+    ]
 
 KtNameReferenceExpression(823,828): 'myRun'
   null
@@ -646,15 +692,19 @@ KtContainerNodeForControlStructureBody(846,869): 'return@myRun MySealed.X'
   null
 
 KtReturnExpression(846,869): 'return@myRun MySealed.X'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <anonymous function>(): MySealed.X
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <anonymous function>(): MySealed.X
+    ]
 
 KtContainerNode(852,858): '@myRun'
   null
 
 KtLabelReferenceExpression(852,858): '@myRun'
-  KaSingleSymbolResolutionSuccess:
-    symbol = <anonymous function>(): MySealed.X
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <anonymous function>(): MySealed.X
+    ]
 
 KtDotQualifiedExpression(859,869): 'MySealed.X'
   null
