@@ -147,9 +147,6 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
                 configuration.perfManager?.notifyPhaseFinished(PhaseType.Initialization)
                 return COMPILATION_ERROR
             }
-            environment.registerJavacIfNeeded(arguments).let {
-                if (!it) return COMPILATION_ERROR
-            }
 
             if (environment.getSourceFiles().isEmpty() && !arguments.allowNoSourceFiles && buildFile == null) {
                 if (arguments.version) return OK

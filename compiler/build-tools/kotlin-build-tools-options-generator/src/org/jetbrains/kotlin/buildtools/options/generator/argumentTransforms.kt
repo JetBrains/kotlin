@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.arguments.description.actualCommonToolsArguments
 import org.jetbrains.kotlin.arguments.description.actualJvmCompilerArguments
 import org.jetbrains.kotlin.arguments.description.actualMetadataArguments
 import org.jetbrains.kotlin.arguments.description.removed.removedCommonCompilerArguments
+import org.jetbrains.kotlin.arguments.description.removed.removedJvmCompilerArguments
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgument
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgumentsLevel
 
@@ -67,6 +68,8 @@ private val levelsToArgumentTransforms: Map<String, Map<String, ArgumentTransfor
             drop("expression")
             drop("include-runtime") // we're only considering building into directories for now (not jars)
             drop("Xbuild-file")
+        }
+        with(removedJvmCompilerArguments) {
             drop("Xuse-javac")
             drop("Xcompile-java")
             drop("Xjavac-arguments")

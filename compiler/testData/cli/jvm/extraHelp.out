@@ -20,7 +20,6 @@ where advanced options include:
                              0 means use one thread per processor core.
                              The default value is 1.
   -Xbuild-file=<path>        Path to the .xml build file to compile.
-  -Xcompile-java             Reuse 'javac' analysis and compile Java source files.
   -Xdebug                    Enable debug mode for compilation.
                              Currently this includes spilling all variables in a suspending context regardless of whether they are alive.
                              If API Level >= 2.2 -- no-op.
@@ -43,7 +42,6 @@ where advanced options include:
                              When using the IR backend, do not clear BindingContext between 'psi2ir' and lowerings.
   -Xjava-package-prefix      Package prefix for Java files.
   -Xjava-source-roots=<path> Paths to directories with Java source files.
-  -Xjavac-arguments=<option[,]> Java compiler arguments.
   -Xjdk-release=<version>    Compile against the specified JDK API version, similarly to javac's '-release'. This requires JDK 9 or newer.
                              The supported versions depend on the JDK used; for JDK 17+, the supported versions are 1.8 and 9–25.
                              This also sets the value of '-jvm-target' to be equal to the selected JDK version.
@@ -133,7 +131,6 @@ where advanced options include:
                              Use the scheme for inline class mangling from version 1.4 instead of the one from 1.4.30.
   -Xuse-fast-jar-file-system Use the fast implementation of Jar FS. This may speed up compilation time, but it is experimental.
   -Xuse-inline-scopes-numbers Use inline scopes numbers for inline marker variables.
-  -Xuse-javac                Use javac for Java source and class file analysis.
   -Xuse-old-class-files-reading Use the old implementation for reading class files. This may slow down the compilation and cause problems with Groovy interop.
                              This can be used in the event of problems with the new implementation.
   -Xuse-type-table           Use a type table in metadata serialization.

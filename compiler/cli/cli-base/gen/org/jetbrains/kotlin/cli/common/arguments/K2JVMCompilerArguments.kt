@@ -110,16 +110,6 @@ The default value is 1.""",
         }
 
     @Argument(
-        value = "-Xcompile-java",
-        description = "Reuse 'javac' analysis and compile Java source files.",
-    )
-    var compileJava: Boolean = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(
         value = "-Xdebug",
         description = """Enable debug mode for compilation.
 Currently this includes spilling all variables in a suspending context regardless of whether they are alive.
@@ -252,17 +242,6 @@ inside suspend functions and lambdas to distinguish them from user code by debug
         description = "Paths to directories with Java source files.",
     )
     var javaSourceRoots: Array<String>? = null
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(
-        value = "-Xjavac-arguments",
-        valueDescription = "<option[,]>",
-        description = "Java compiler arguments.",
-    )
-    var javacArguments: Array<String>? = null
         set(value) {
             checkFrozen()
             field = value
@@ -663,16 +642,6 @@ See KT-45671 for more details.""",
         description = "Use inline scopes numbers for inline marker variables.",
     )
     var useInlineScopesNumbers: Boolean = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(
-        value = "-Xuse-javac",
-        description = "Use javac for Java source and class file analysis.",
-    )
-    var useJavac: Boolean = false
         set(value) {
             checkFrozen()
             field = value

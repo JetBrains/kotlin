@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -260,20 +260,6 @@ fun CompilerConfiguration.addModularRootIfNotNull(isModularJava: Boolean, module
         }
         else -> add(CLIConfigurationKeys.CONTENT_ROOTS, JvmClasspathRoot(file))
     }
-}
-
-fun KotlinCoreEnvironment.registerJavacIfNeeded(
-    arguments: K2JVMCompilerArguments,
-): Boolean {
-    if (arguments.useJavac) {
-        configuration.put(JVMConfigurationKeys.USE_JAVAC, true)
-        if (arguments.compileJava) {
-            configuration.put(JVMConfigurationKeys.COMPILE_JAVA, true)
-        }
-        return registerJavac(arguments = arguments.javacArguments)
-    }
-
-    return true
 }
 
 fun CompilerConfiguration.configureAdvancedJvmOptions(arguments: K2JVMCompilerArguments) {
