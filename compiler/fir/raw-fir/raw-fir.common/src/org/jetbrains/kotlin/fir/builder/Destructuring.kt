@@ -124,7 +124,7 @@ fun <T> AbstractRawFirBuilder<*>.buildDestructuringVariable(
             source = entry.source
             status = FirDeclarationStatusImpl(if (localEntries) Visibilities.Local else Visibilities.Public, Modality.FINAL)
             isLocal = localEntries
-            entry.extractAnnotationsTo(this, context.containerSymbol)
+            context.containerSymbolIfAny?.let { entry.extractAnnotationsTo(this, it) }
             if (!localEntries) {
                 dispatchReceiverType = currentDispatchReceiverType()
                 getter = FirDefaultPropertyGetter(
