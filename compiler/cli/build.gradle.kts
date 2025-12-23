@@ -39,10 +39,7 @@ dependencies {
 }
 
 sourceSets {
-    "main" {
-        projectDefault()
-        java.srcDirs("../builtins-serializer/src")
-    }
+    "main" { projectDefault() }
 }
 
 optInToExperimentalCompilerApi()
