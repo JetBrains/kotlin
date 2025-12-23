@@ -19,6 +19,7 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
+import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.*
 import org.gradle.kotlin.dsl.findByType
 import org.gradle.kotlin.dsl.register
@@ -220,7 +221,10 @@ internal abstract class ReportMappingErrorsTask : DefaultTask() {
 
 
 @CacheableTask
-internal abstract class MergeMappingFileTask @Inject constructor(objects: ObjectFactory) : DefaultTask() {
+internal abstract class MergeMappingFileTask @Inject constructor(
+    objects: ObjectFactory,
+    providers: ProviderFactory
+) : DefaultTask() {
 
     @get:InputFile
     @get:PathSensitive(PathSensitivity.RELATIVE)
@@ -239,8 +243,8 @@ internal abstract class MergeMappingFileTask @Inject constructor(objects: Object
     @get:OutputFile
     abstract val output: RegularFileProperty
 
-    @get:OutputFiles
-    val outputDir: Provider<File> = output.asFile.map { it.parentFile }
+    @get:OutputDirectory
+    val outputDir: Provider<File> = providers.provider { output.get().asFile.parentFile }
 
     @TaskAction
     fun taskAction() {
@@ -253,6 +257,8 @@ internal abstract class MergeMappingFileTask @Inject constructor(objects: Object
 
         val outputFile = output.get().asFile
         val outputDir = outputDir.get()
+
+        outputDir.deleteRecursively()
         outputDir.mkdirs()
 
         outputFile.bufferedWriter().use { writer ->
