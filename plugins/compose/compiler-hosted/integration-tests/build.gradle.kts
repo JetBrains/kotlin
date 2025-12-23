@@ -46,6 +46,7 @@ kotlin {
                 runtimeOnly(jpsModelImpl())
                 implementation(project(":compiler:ir.backend.common"))
                 implementation(project(":compiler:cli"))
+                implementation(project(":compiler:cli-jvm"))
                 implementation(project(":compiler:backend.jvm"))
                 implementation(project(":compiler:fir:fir2ir:jvm-backend"))
                 implementation(project(":compiler:backend.jvm.entrypoint"))

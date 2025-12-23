@@ -23,6 +23,7 @@ dependencies {
     compileOnly(project(":compiler:fir:fir2ir:jvm-backend"))
     compileOnly(project(":compiler:fir:plugin-utils"))
     compileOnly(project(":compiler:cli"))
+    compileOnly(project(":compiler:cli-jvm"))
     compileOnly(project(":core:descriptors.runtime"))
     compileOnly(project(":compiler:ir.tree"))
     compileOnly(project(":compiler:backend.jvm.entrypoint"))
