@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.unregisterFinders
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
 import org.jetbrains.kotlin.cli.jvm.config.jvmModularRoots
+import org.jetbrains.kotlin.compiler.plugin.getCompilerExtension
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.LanguageFeature.MultiPlatformProjects
@@ -36,11 +37,7 @@ import org.jetbrains.kotlin.fir.session.AbstractFirMetadataSessionFactory.JarMet
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.load.kotlin.PackageAndMetadataPartProvider
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.platform.CommonPlatforms
-import org.jetbrains.kotlin.platform.TargetPlatform
-import org.jetbrains.kotlin.platform.isCommon
-import org.jetbrains.kotlin.platform.isJs
-import org.jetbrains.kotlin.platform.isWasm
+import org.jetbrains.kotlin.platform.*
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.platform.konan.isNative
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
@@ -88,9 +85,9 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
         val (moduleDataMap, moduleDataProvider) = initializeModuleData(sortedModules)
 
         val project = testServices.compilerConfigurationProvider.getProject(module)
-        val extensionRegistrars = FirExtensionRegistrar.getInstances(project)
-        val targetPlatform = module.targetPlatform(testServices)
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
+        val extensionRegistrars = configuration.getCompilerExtension(FirExtensionRegistrar)
+        val targetPlatform = module.targetPlatform(testServices)
         val jvmSessionFactoryContext = runIf(targetPlatform.isCommon() || targetPlatform.isJvm()) {
             val packagePartProviderFactory = testServices.compilerConfigurationProvider.getPackagePartProviderFactory(module)
             val projectEnvironment = VfsBasedProjectEnvironment(
