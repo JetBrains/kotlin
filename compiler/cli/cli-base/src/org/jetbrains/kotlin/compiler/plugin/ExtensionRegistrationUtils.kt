@@ -13,8 +13,13 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
 import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
 
+/**
+ * @param additionalExtensionPointProjectDescriptors allows registering extensions which extension point descriptors are
+ * unbound from intellij API, but there are still project descriptors for them in the AA environment.
+ */
 fun CompilerPluginRegistrar.ExtensionStorage.registerInProject(
     project: Project,
+    additionalExtensionPointProjectDescriptors: List<ProjectExtensionDescriptor<*>> = emptyList(),
     errorMessage: (Any) -> String = { "Error while registering ${it.javaClass.name} "}
 ) {
     for ((extensionPoint, extensions) in registeredExtensions) {
@@ -23,6 +28,11 @@ fun CompilerPluginRegistrar.ExtensionStorage.registerInProject(
             try {
                 if (extensionPoint is ProjectExtensionDescriptor<*>) {
                     (extensionPoint as ProjectExtensionDescriptor<Any>).registerExtensionUnsafe(project, extension)
+                }
+                for (additionalDescriptor in additionalExtensionPointProjectDescriptors) {
+                    if (additionalDescriptor.extensionClass.isInstance(extension)) {
+                        (additionalDescriptor as ProjectExtensionDescriptor<Any>).registerExtensionUnsafe(project, extension)
+                    }
                 }
             } catch (e: AbstractMethodError) {
                 throw IllegalStateException(errorMessage(extension), e)
