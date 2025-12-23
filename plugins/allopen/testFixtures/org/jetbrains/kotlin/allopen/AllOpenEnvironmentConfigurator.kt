@@ -8,9 +8,10 @@ package org.jetbrains.kotlin.allopen
 import org.jetbrains.kotlin.allopen.AllOpenDirectives.ENABLE_ALLOPEN
 import org.jetbrains.kotlin.allopen.fir.FirAllOpenExtensionRegistrar
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar.ExtensionStorage
+import org.jetbrains.kotlin.compiler.plugin.registerExtension
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.extensions.DeclarationAttributeAltererExtension
-import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
+import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.model.TestModule
@@ -30,7 +31,7 @@ class AllOpenEnvironmentConfigurator(testServices: TestServices) : EnvironmentCo
                 AllOpenPluginNames.SUPPORTED_PRESETS.flatMap { it.value }
 
         DeclarationAttributeAltererExtension.registerExtension(CliAllOpenDeclarationAttributeAltererExtension(annotations))
-        FirExtensionRegistrarAdapter.registerExtension(FirAllOpenExtensionRegistrar(annotations))
+        FirExtensionRegistrar.registerExtension(FirAllOpenExtensionRegistrar(annotations))
     }
 }
 

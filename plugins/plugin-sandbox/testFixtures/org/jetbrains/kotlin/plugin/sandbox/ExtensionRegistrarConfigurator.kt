@@ -7,8 +7,9 @@ package org.jetbrains.kotlin.plugin.sandbox
 
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar.ExtensionStorage
+import org.jetbrains.kotlin.compiler.plugin.registerExtension
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
+import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.plugin.sandbox.fir.FirPluginPrototypeExtensionRegistrar
 import org.jetbrains.kotlin.plugin.sandbox.ir.GeneratedDeclarationsIrBodyFiller
 import org.jetbrains.kotlin.test.AbstractLoadedMetadataDumpHandler
@@ -35,7 +36,7 @@ class ExtensionRegistrarConfigurator(testServices: TestServices) : EnvironmentCo
                 return
             }
         }
-        FirExtensionRegistrarAdapter.registerExtension(FirPluginPrototypeExtensionRegistrar())
+        FirExtensionRegistrar.registerExtension(FirPluginPrototypeExtensionRegistrar())
         IrGenerationExtension.registerExtension(GeneratedDeclarationsIrBodyFiller())
     }
 }

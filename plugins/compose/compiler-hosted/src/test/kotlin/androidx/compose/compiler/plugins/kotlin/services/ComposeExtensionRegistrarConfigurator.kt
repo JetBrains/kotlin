@@ -12,9 +12,10 @@ import androidx.compose.compiler.plugins.kotlin.k2.ComposeFirExtensionRegistrar
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar.ExtensionStorage
 import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
+import org.jetbrains.kotlin.compiler.plugin.registerExtension
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.messageCollector
-import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
+import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.TestServices
@@ -22,7 +23,7 @@ import org.jetbrains.kotlin.test.services.TestServices
 class ComposeExtensionRegistrarConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {
     @OptIn(ExperimentalCompilerApi::class)
     override fun ExtensionStorage.registerCompilerExtensions(module: TestModule, configuration: CompilerConfiguration) {
-        FirExtensionRegistrarAdapter.registerExtension(ComposeFirExtensionRegistrar())
+        FirExtensionRegistrar.registerExtension(ComposeFirExtensionRegistrar())
         IrGenerationExtension.registerExtension(
             ComposeIrGenerationExtension(
                 useK2 = true,

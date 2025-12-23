@@ -18,9 +18,9 @@ package org.jetbrains.kotlinx.atomicfu.compiler.extensions
 
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
+import org.jetbrains.kotlin.compiler.plugin.registerExtension
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
-import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
 import org.jetbrains.kotlinx.atomicfu.compiler.diagnostic.AtomicfuErrors
 import org.jetbrains.kotlinx.atomicfu.compiler.diagnostic.AtomicfuFirCheckers
 
@@ -36,7 +36,7 @@ class AtomicfuComponentRegistrar : CompilerPluginRegistrar() {
 
     companion object {
         fun registerExtensions(extensionStorage: ExtensionStorage) = with(extensionStorage) {
-            FirExtensionRegistrarAdapter.registerExtension(AtomicfuFirExtensionRegistrar())
+            FirExtensionRegistrar.registerExtension(AtomicfuFirExtensionRegistrar())
             IrGenerationExtension.registerExtension(AtomicfuLoweringExtension())
         }
     }

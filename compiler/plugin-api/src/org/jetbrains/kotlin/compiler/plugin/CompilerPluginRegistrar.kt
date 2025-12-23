@@ -33,6 +33,11 @@ abstract class CompilerPluginRegistrar {
         val disposables: List<PluginDisposable>
             get() = _disposables
 
+        operator fun <T : Any> get(descriptor: ExtensionPointDescriptor<T>): List<T> {
+            @Suppress("UNCHECKED_CAST")
+            return _registeredExtensions[descriptor] as List<T>? ?: emptyList()
+        }
+
         fun <T : Any> ExtensionPointDescriptor<T>.registerExtension(extension: T) {
             _registeredExtensions.getOrPut(this, ::mutableListOf).add(extension)
         }

@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.useInstance
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
-import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
+import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.noarg.NoArgConfigurationKeys.ANNOTATION
 import org.jetbrains.kotlin.noarg.NoArgConfigurationKeys.INVOKE_INITIALIZERS
 import org.jetbrains.kotlin.noarg.NoArgConfigurationKeys.PRESET
@@ -92,7 +92,7 @@ class NoArgComponentRegistrar : CompilerPluginRegistrar() {
             invokeInitializers: Boolean
         ): Unit = with(extensionStorage) {
             StorageComponentContainerContributor.registerExtension(CliNoArgComponentContainerContributor(annotations, useIr = true))
-            FirExtensionRegistrarAdapter.registerExtension(FirNoArgExtensionRegistrar(annotations))
+            FirExtensionRegistrar.registerExtension(FirNoArgExtensionRegistrar(annotations))
 
             val irExtension = if (configuration.languageVersionSettings.languageVersion.usesK2) {
                 NoArgConstructorBodyIrGenerationExtension(annotations, invokeInitializers)

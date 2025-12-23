@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
+import org.jetbrains.kotlin.compiler.plugin.getCompilerExtension
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
@@ -23,7 +25,7 @@ import org.jetbrains.kotlin.fir.resolve.ImplicitIntegerCoercionModuleCapability
 import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
 import org.jetbrains.kotlin.name.Name
 
-@OptIn(SessionConfiguration::class)
+@OptIn(SessionConfiguration::class, ExperimentalCompilerApi::class)
 private inline fun <F> PhaseContext.firFrontend(
         input: KotlinCoreEnvironment,
         files: List<F>,
@@ -34,11 +36,11 @@ private inline fun <F> PhaseContext.firFrontend(
 ): FirOutput {
     val configuration = input.configuration
     val messageCollector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+    val extensionRegistrars = configuration.getCompilerExtension(FirExtensionRegistrar)
     val diagnosticsReporter = DiagnosticReporterFactory.createPendingReporter()
     val renderDiagnosticNames = configuration.renderDiagnosticInternalName
 
     // FIR
-    val extensionRegistrars = FirExtensionRegistrar.getInstances(input.project)
     val mainModuleName = Name.special("<${config.moduleId}>")
     val syntaxErrors = files.fold(false) { errorsFound, file -> fileHasSyntaxErrors(file) or errorsFound }
     val dependencyList = DependencyListForCliModule.build {
