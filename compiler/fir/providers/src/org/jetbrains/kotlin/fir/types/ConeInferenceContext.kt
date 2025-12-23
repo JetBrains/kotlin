@@ -86,7 +86,7 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
 
         if (flexibleType.isTrivial) {
             return ConeFlexibleType(
-                flexibleType.lowerBound.makeConeTypeDefinitelyNotNullOrNotNull(this),
+                flexibleType.lowerBound.makeConeTypeDefinitelyNotNullOrNotNull(this, preserveAttributes = true),
                 flexibleType.upperBound,
                 isTrivial = true
             )
