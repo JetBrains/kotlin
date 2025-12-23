@@ -147,6 +147,7 @@ include ":benchmarks",
         ":compiler:ir.serialization.jvm",
         ":compiler:ir.serialization.js",
         ":compiler:ir.serialization.native",
+        ":compiler:ir.serialization.jklib",
         ":compiler:ir.interpreter",
         ":compiler:ir.inline",
         ":compiler:ir.validation",
@@ -166,6 +167,7 @@ include ":benchmarks",
         ":compiler:cli-jvm",
         ":compiler:cli-jvm:javac-integration",
         ":compiler:cli-js",
+        ":compiler:cli-jklib",
         ":compiler:cli-metadata",
         ":compiler:cli:cli-native-klib",
         ":compiler:incremental-compilation-impl",
@@ -829,6 +831,7 @@ project(':compiler:cli-jvm').projectDir = "$rootDir/compiler/cli/cli-jvm" as Fil
 project(':compiler:cli-jvm:javac-integration').projectDir = "$rootDir/compiler/cli/cli-jvm/javac-integration" as File
 project(':compiler:cli-js').projectDir = "$rootDir/compiler/cli/cli-js" as File
 project(':compiler:cli-metadata').projectDir = "$rootDir/compiler/cli/cli-metadata" as File
+project(':compiler:cli-jklib').projectDir = "$rootDir/compiler/cli/cli-jklib" as File
 project(':kotlin-runner').projectDir = "$rootDir/compiler/cli/cli-runner" as File
 project(':kotlin-daemon').projectDir = "$rootDir/compiler/daemon" as File
 project(':daemon-common').projectDir = "$rootDir/compiler/daemon/daemon-common" as File
@@ -855,6 +858,7 @@ project(':compiler:ir.serialization.common').projectDir = "$rootDir/compiler/ir/
 project(':compiler:ir.serialization.jvm').projectDir = "$rootDir/compiler/ir/serialization.jvm" as File
 project(':compiler:ir.serialization.js').projectDir = "$rootDir/compiler/ir/serialization.js" as File
 project(':compiler:ir.serialization.native').projectDir = "$rootDir/compiler/ir/serialization.native" as File
+project(':compiler:ir.serialization.jklib').projectDir = "$rootDir/compiler/ir/serialization.jklib" as File
 project(':compiler:ir.interpreter').projectDir = "$rootDir/compiler/ir/ir.interpreter" as File
 project(':kotlin-util-io').projectDir = "$rootDir/compiler/util-io" as File
 project(':kotlin-util-klib').projectDir = "$rootDir/compiler/util-klib" as File

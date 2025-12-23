@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.cli.jklib
+package org.jetbrains.kotlin.ir.backend.jklib
 
 import org.jetbrains.kotlin.backend.common.serialization.mangle.*
 import org.jetbrains.kotlin.descriptors.*
@@ -51,7 +51,7 @@ open class JKlibIrMangleComputerBase(
         /*Session=*/Nothing?,
         >(builder, mode, allowOutOfScopeTypeParameters) {
 
-    fun mangleTypeArgumentsUsingEffectiveVariance(tBuilder: StringBuilder, type: IrType, declarationSiteSession: Nothing?) =
+    fun mangleTypeArgumentsUsingEffectiveVariance(tBuilder: StringBuilder, type: IrType, declarationSiteSession: Nothing?):Unit =
         with(getTypeSystemContext(declarationSiteSession)) {
             val typeArguments = type.getArguments().zip(type.typeConstructor().getParameters())
             if (typeArguments.isEmpty()) return
@@ -319,7 +319,7 @@ open class JKlibDescriptorMangleComputerBase(builder: StringBuilder, mode: Mangl
             /*FunctionDeclaration=*/FunctionDescriptor,
             /*Session=*/Nothing?,
             >(builder, mode) {
-    fun mangleTypeArgumentsUsingEffectiveVariance(tBuilder: StringBuilder, type: KotlinType, declarationSiteSession: Nothing?) =
+    fun mangleTypeArgumentsUsingEffectiveVariance(tBuilder: StringBuilder, type: KotlinType, declarationSiteSession: Nothing?):Unit =
         with(getTypeSystemContext(declarationSiteSession)) {
             val typeArguments = type.getArguments().zip(type.typeConstructor().getParameters())
             if (typeArguments.isEmpty()) return
