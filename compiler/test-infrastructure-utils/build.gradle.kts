@@ -10,6 +10,7 @@ dependencies {
     testFixturesApi(testFixtures(project(":compiler:test-infrastructure-utils.common")))
     testFixturesImplementation(project(":compiler:fir:entrypoint"))
     testFixturesImplementation(project(":compiler:cli"))
+    testFixturesImplementation(project(":compiler:cli-jvm"))
     testFixturesImplementation(intellijCore())
     testFixturesImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
     testImplementation(kotlin("test"))
