@@ -4,5 +4,7 @@ plugins {
 
 publishJarsForIde(listOf(
     ":compiler:cli",
-    ":compiler:cli-js"
+    ":compiler:cli-jvm",
+    ":compiler:cli-js",
+    ":compiler:cli-metadata",
 ))
