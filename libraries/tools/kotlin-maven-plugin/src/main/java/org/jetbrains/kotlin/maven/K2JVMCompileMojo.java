@@ -246,20 +246,6 @@ public class K2JVMCompileMojo extends KotlinCompileMojoBase<K2JVMCompilerArgumen
         );
     }
 
-    @Override
-    public void execute() throws MojoExecutionException, MojoFailureException {
-        if (args != null && args.contains("-Xuse-javac")) {
-            try {
-                URL toolsJar = getJdkToolsJarURL();
-                if (toolsJar != null) {
-                    project.getClassRealm().addURL(toolsJar);
-                }
-            } catch (IOException ignored) {}
-        }
-
-        super.execute();
-    }
-
     @Inject
     private KotlinArtifactResolver kotlinArtifactResolver;
 

@@ -4331,7 +4331,7 @@
                                     "introducedVersion": "1.1.50",
                                     "stabilizedVersion": null,
                                     "deprecatedVersion": null,
-                                    "removedVersion": null
+                                    "removedVersion": "2.4.0"
                                 }
                             },
                             {
@@ -4796,7 +4796,7 @@
                                     "introducedVersion": "1.1.4",
                                     "stabilizedVersion": null,
                                     "deprecatedVersion": null,
-                                    "removedVersion": null
+                                    "removedVersion": "2.4.0"
                                 }
                             },
                             {
@@ -5893,7 +5893,7 @@
                                     "introducedVersion": "1.1.4",
                                     "stabilizedVersion": null,
                                     "deprecatedVersion": null,
-                                    "removedVersion": null
+                                    "removedVersion": "2.4.0"
                                 }
                             },
                             {

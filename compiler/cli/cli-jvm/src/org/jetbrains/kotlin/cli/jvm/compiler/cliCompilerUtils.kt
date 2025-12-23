@@ -129,8 +129,7 @@ fun writeOutputsIfNeeded(
         } else {
             messageCollector.report(
                 CompilerMessageSeverity.WARNING,
-                "A chunk contains multiple modules (${outputs.joinToString { it.moduleName }}). " +
-                        "-Xuse-javac option couldn't be used to compile java files"
+                "A chunk contains multiple modules (${outputs.joinToString { it.moduleName }}). "
             )
         }
     }
