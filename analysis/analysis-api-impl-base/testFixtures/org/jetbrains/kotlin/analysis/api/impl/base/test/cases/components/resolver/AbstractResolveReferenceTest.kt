@@ -10,7 +10,7 @@ import com.intellij.psi.PsiReferenceService
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.containingDeclaration
 import org.jetbrains.kotlin.analysis.api.components.resolveToSymbols
-import org.jetbrains.kotlin.analysis.api.components.tryResolveSymbol
+import org.jetbrains.kotlin.analysis.api.components.tryResolveSymbols
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.assertStableResult
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.renderFrontendIndependentKClassNameOf
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.stringRepresentation
@@ -186,7 +186,7 @@ abstract class AbstractResolveReferenceTest : AbstractResolveTest<KtReference?>(
     @OptIn(KtExperimentalApi::class)
     context(_: KaSession)
     private fun resolveSymbols(reference: KtReference): ResolveResult = if (reference is KtResolvable) {
-        ResolveResult.Attempt(reference.tryResolveSymbol())
+        ResolveResult.Attempt(reference.tryResolveSymbols())
     } else {
         ResolveResult.Symbols(reference.resolveToSymbols())
     }

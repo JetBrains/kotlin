@@ -25,8 +25,8 @@ abstract class AbstractResolveSymbolTest : AbstractResolveByElementTest() {
     override val resolveKind: String get() = "symbol"
 
     override fun generateResolveOutput(mainElement: KtElement, testServices: TestServices): String = analyzeForTest(mainElement) {
-        val symbolAttempt = tryResolveSymbol(mainElement)
-        val secondSymbolAttempt = tryResolveSymbol(mainElement)
+        val symbolAttempt = tryResolveSymbols(mainElement)
+        val secondSymbolAttempt = tryResolveSymbols(mainElement)
 
         ignoreStabilityIfNeeded {
             assertStableResult(testServices, symbolAttempt, secondSymbolAttempt)
@@ -42,8 +42,8 @@ abstract class AbstractResolveSymbolTest : AbstractResolveByElementTest() {
         stringRepresentation(symbolAttempt)
     }
 
-    private fun KaSession.tryResolveSymbol(element: KtElement): KaSymbolResolutionAttempt? = if (element is KtResolvable) {
-        element.tryResolveSymbol()
+    private fun KaSession.tryResolveSymbols(element: KtElement): KaSymbolResolutionAttempt? = if (element is KtResolvable) {
+        element.tryResolveSymbols()
     } else {
         null
     }

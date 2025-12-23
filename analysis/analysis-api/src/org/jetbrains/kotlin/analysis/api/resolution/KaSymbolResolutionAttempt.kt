@@ -14,12 +14,12 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.resolution.KtResolvable
 
 /**
- * This interface represents an attempt on resolving some [KtResolvable] through [KaResolver.tryResolveSymbol] API.
+ * This interface represents an attempt on resolving some [KtResolvable] through [KaResolver.tryResolveSymbols] API.
  *
  * - A successful result is represented by [KaSymbolResolutionSuccess]
  * - An unsuccessful result is represented by [KaSymbolResolutionError]
  *
- * @see KaResolver.tryResolveSymbol
+ * @see KaResolver.tryResolveSymbols
  * @see KaSymbolResolutionSuccess
  * @see KaSymbolResolutionError
  */
@@ -32,7 +32,7 @@ public sealed interface KaSymbolResolutionAttempt : KaLifetimeOwner
  * Unlike [KaCall], the symbol API doesn't split the API on single-symbol and compound-symbol resolutions.
  * Instead, the result consists of a single symbol for simple cases, and a list of symbols for compound cases.
  *
- * @see KaResolver.tryResolveSymbol
+ * @see KaResolver.tryResolveSymbols
  * @see KaResolver.resolveSymbols
  * @see KaResolver.resolveSymbol
  */
@@ -96,7 +96,7 @@ public interface KaSymbolResolutionError : KaSymbolResolutionAttempt {
  * - If [this] is an instance of [KaSymbolResolutionSuccess], the list will contain [KaSymbolResolutionSuccess.symbols].
  * - If [this] is an instance of [KaSymbolResolutionError], the list will contain [KaSymbolResolutionError.candidateSymbols].
  *
- * @see KaResolver.tryResolveSymbol
+ * @see KaResolver.tryResolveSymbols
  */
 @KaExperimentalApi
 public val KaSymbolResolutionAttempt.symbols: List<KaSymbol>
