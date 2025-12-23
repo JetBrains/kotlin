@@ -143,7 +143,7 @@ abstract class AbstractFirTypeEnhancementTest : KtUsefulTestCase() {
             val psiFiles = virtualFiles.map { factory.trySetupPsiForFile(it, JavaLanguage.INSTANCE, true, false)!! }
 
             val scope = GlobalSearchScope.filesScope(project, virtualFiles)
-                .uniteWith(TopDownAnalyzerFacadeForJVM.AllJavaSourcesInProjectScope(project))
+                .uniteWith(AllJavaSourcesInProjectScope(project))
             val session = FirTestSessionFactoryHelper.createSessionForTests(
                 environment.toVfsBasedProjectEnvironment(),
                 scope.toAbstractProjectFileSearchScope()
