@@ -5,6 +5,8 @@ declare namespace JS_TESTS {
     namespace foo {
         function shortNameBasedDestructuring(): string;
         function fullNameBasedDestructuring(): string;
+        function shortPositionBasedDestructuring(): string;
+        function fullPositionBasedDestructuring(): string;
         /* ErrorDeclaration: Class declarations are not implemented yet */
         /* ErrorDeclaration: Class declarations are not implemented yet */
         /* ErrorDeclaration: Class declarations are not implemented yet */

@@ -46,7 +46,21 @@ fun shortNameBasedDestructuring(): String {
 
 @JsExport
 fun fullNameBasedDestructuring(): String {
-    (var value2, val value1) = Test2("4", "2")
+    (val value2, var value1) = Test2("4", "2")
     value1 += " "
+    value2 += " "
     return value1 + value2
+}
+
+@JsExport
+fun shortPositionBasedDestructuring(): String {
+    val [v1, v2] = Test2("4", "2")
+    return v1 + v2
+}
+
+@JsExport
+fun fullPositionBasedDestructuring(): String {
+    [var v1, val v2] = Test2("4", "2")
+    v1 += " "
+    return v1 + v2
 }
