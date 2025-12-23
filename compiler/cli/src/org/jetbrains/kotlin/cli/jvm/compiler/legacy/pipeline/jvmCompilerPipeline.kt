@@ -46,14 +46,11 @@ import org.jetbrains.kotlin.fir.backend.utils.extractFirDeclarations
 import org.jetbrains.kotlin.fir.pipeline.AllModulesFrontendOutput
 import org.jetbrains.kotlin.fir.pipeline.Fir2IrActualizedResult
 import org.jetbrains.kotlin.fir.pipeline.convertToIrAndActualize
-import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
-import org.jetbrains.kotlin.fir.session.IncrementalCompilationContext
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
 import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmIrMangler
 import org.jetbrains.kotlin.load.kotlin.MetadataFinderFactory
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
-import org.jetbrains.kotlin.load.kotlin.incremental.IncrementalPackagePartProvider
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
 import org.jetbrains.kotlin.util.PhaseType
@@ -168,54 +165,6 @@ fun generateCodeFromIr(
     }
 
     return generationState
-}
-
-fun createIncrementalCompilationScope(
-    configuration: CompilerConfiguration,
-    projectEnvironment: VfsBasedProjectEnvironment,
-    incrementalExcludesScope: AbstractProjectFileSearchScope?
-): AbstractProjectFileSearchScope? {
-    if (configuration.get(JVMConfigurationKeys.MODULES) == null) {
-        return null
-    }
-
-    val incrementalCompilationComponents = configuration.get(JVMConfigurationKeys.INCREMENTAL_COMPILATION_COMPONENTS)
-    if (incrementalCompilationComponents == null) {
-        return null
-    } else if (incrementalCompilationComponents is ProjectFileSearchScopeProvider) {
-        return incrementalCompilationComponents.createSearchScope(projectEnvironment)
-    }
-
-    val dir = configuration[JVMConfigurationKeys.OUTPUT_DIRECTORY] ?: return null
-    return projectEnvironment.getSearchScopeByDirectories(setOf(dir)).let {
-        if (incrementalExcludesScope?.isEmpty != false) it
-        else it - incrementalExcludesScope
-    }
-}
-
-interface ProjectFileSearchScopeProvider {
-    fun createSearchScope(projectEnvironment: VfsBasedProjectEnvironment): AbstractProjectFileSearchScope
-}
-
-fun createContextForIncrementalCompilation(
-    configuration: CompilerConfiguration,
-    projectEnvironment: VfsBasedProjectEnvironment,
-    sourceScope: AbstractProjectFileSearchScope,
-    previousStepsSymbolProviders: List<FirSymbolProvider>,
-    incrementalCompilationScope: AbstractProjectFileSearchScope?
-): IncrementalCompilationContext? {
-    if (incrementalCompilationScope == null && previousStepsSymbolProviders.isEmpty()) return null
-    val targetIds = configuration.get(JVMConfigurationKeys.MODULES)?.map(::TargetId) ?: return null
-    val incrementalComponents = configuration.get(JVMConfigurationKeys.INCREMENTAL_COMPILATION_COMPONENTS) ?: return null
-
-    return IncrementalCompilationContext(
-        previousStepsSymbolProviders,
-        IncrementalPackagePartProvider(
-            projectEnvironment.getPackagePartProvider(sourceScope),
-            targetIds.map(incrementalComponents::getIncrementalCache)
-        ),
-        incrementalCompilationScope
-    )
 }
 
 private class ProjectEnvironmentWithCoreEnvironmentEmulation(

@@ -168,30 +168,6 @@ fun ModuleBuilder.configureFromArgs(args: K2JVMCompilerArguments) {
     }
 }
 
-fun createContextForIncrementalCompilation(
-    projectEnvironment: VfsBasedProjectEnvironment,
-    moduleConfiguration: CompilerConfiguration,
-    sourceScope: AbstractProjectFileSearchScope,
-): IncrementalCompilationContext? {
-    val incrementalComponents = moduleConfiguration.get(JVMConfigurationKeys.INCREMENTAL_COMPILATION_COMPONENTS)
-    val targetIds = moduleConfiguration.get(JVMConfigurationKeys.MODULES)?.map(::TargetId)
-
-    if (targetIds == null || incrementalComponents == null) return null
-    val directoryWithIncrementalPartsFromPreviousCompilation =
-        moduleConfiguration[JVMConfigurationKeys.OUTPUT_DIRECTORY]
-            ?: return null
-    val incrementalCompilationScope = directoryWithIncrementalPartsFromPreviousCompilation.walk()
-        .filter { it.extension == "class" }
-        .let { projectEnvironment.getSearchScopeByIoFiles(it.asIterable()) }
-        .takeIf { !it.isEmpty }
-        ?: return null
-    val packagePartProvider = IncrementalPackagePartProvider(
-        projectEnvironment.getPackagePartProvider(sourceScope),
-        targetIds.map(incrementalComponents::getIncrementalCache)
-    )
-    return IncrementalCompilationContext(emptyList(), packagePartProvider, incrementalCompilationScope)
-}
-
 fun createLibraryListForJvm(
     moduleName: String,
     configuration: CompilerConfiguration,
