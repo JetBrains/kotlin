@@ -125,7 +125,7 @@ open class VfsBasedProjectEnvironment(
                 .toSet()
                 .takeIf { it.isNotEmpty() }
                 ?.let {
-                    KotlinToJVMBytecodeCompiler.DirectoriesScope(project, it)
+                    DirectoriesScope(project, it)
                 } ?: GlobalSearchScope.EMPTY_SCOPE
         )
 
@@ -201,6 +201,25 @@ open class VfsBasedProjectEnvironment(
         val javaAnnotationProvider = firSession.javaAnnotationProvider
         val javaClassFinder = project.createJavaClassFinder(fileSearchScope.asPsiSearchScope(), javaAnnotationProvider)
         return FirJavaFacadeForSource(firSession, baseModuleData, javaClassFinder)
+    }
+
+    class DirectoriesScope(
+        project: Project,
+        private val directories: Set<VirtualFile>
+    ) : DelegatingGlobalSearchScope(allScope(project)) {
+        private val fileSystems = directories.mapTo(hashSetOf(), VirtualFile::getFileSystem)
+
+        override fun contains(file: VirtualFile): Boolean {
+            if (file.fileSystem !in fileSystems) return false
+
+            var parent: VirtualFile = file
+            while (true) {
+                if (parent in directories) return true
+                parent = parent.parent ?: return false
+            }
+        }
+
+        override fun toString() = "All files under: $directories"
     }
 }
 
