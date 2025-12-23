@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.cli.extensionsStorage
 import org.jetbrains.kotlin.cli.js.platformChecker
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -16,14 +17,19 @@ import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors
 import org.jetbrains.kotlin.cli.pipeline.ConfigurationPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.PerformanceNotifications
 import org.jetbrains.kotlin.cli.pipeline.PipelinePhase
-import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
+import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
+import org.jetbrains.kotlin.config.CommonConfigurationKeys
+import org.jetbrains.kotlin.config.messageCollector
+import org.jetbrains.kotlin.config.perfManager
+import org.jetbrains.kotlin.config.useLightTree
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.DependencyListForCliModule
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
+import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
 import org.jetbrains.kotlin.fir.pipeline.*
 import org.jetbrains.kotlin.fir.session.KlibIcData
-import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider
 import org.jetbrains.kotlin.ir.backend.js.MainModule
 import org.jetbrains.kotlin.ir.backend.js.ModulesStructure
@@ -35,6 +41,7 @@ import org.jetbrains.kotlin.util.PerformanceManager
 import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.util.PotentiallyIncorrectPhaseTimeMeasurement
 
+@OptIn(ExperimentalCompilerApi::class)
 object WebFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, WebFrontendPipelineArtifact>(
     name = "JsFrontendPipelinePhase",
     postActions = setOf(PerformanceNotifications.AnalysisFinished, CheckCompilationErrors.CheckDiagnosticCollector)
@@ -63,7 +70,7 @@ object WebFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, W
             klibs = klibs,
         )
 
-        val lookupTracker = configuration.lookupTracker ?: LookupTracker.DO_NOTHING
+        val extensionStorage = configuration.extensionsStorage ?: error("Extensions storage is not registered")
 
         val kotlinPackageUsageIsFine: Boolean
         val analyzedOutput = if (configuration.useLightTree) {
@@ -92,7 +99,7 @@ object WebFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, W
                 diagnosticsReporter = input.diagnosticCollector,
                 performanceManager = configuration.perfManager,
                 incrementalDataProvider = configuration.incrementalDataProvider,
-                lookupTracker = lookupTracker,
+                extensionStorage = extensionStorage,
                 useWasmPlatform = isWasm,
             ).also {
                 kotlinPackageUsageIsFine = it.outputs.all { checkKotlinPackageUsageForLightTree(configuration, it.fir) }
@@ -118,7 +125,7 @@ object WebFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, W
                 friendLibraries = friendLibraries,
                 diagnosticsReporter = input.diagnosticCollector,
                 incrementalDataProvider = configuration.incrementalDataProvider,
-                lookupTracker = lookupTracker,
+                extensionStorage = extensionStorage,
                 useWasmPlatform = isWasm,
             )
         }
@@ -141,7 +148,7 @@ object WebFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, W
         friendLibraries: List<String>,
         diagnosticsReporter: BaseDiagnosticsCollector,
         incrementalDataProvider: IncrementalDataProvider?,
-        lookupTracker: LookupTracker?,
+        extensionStorage: CompilerPluginRegistrar.ExtensionStorage,
         useWasmPlatform: Boolean,
     ): AllModulesFrontendOutput {
         for (ktFile in ktFiles) {
@@ -153,7 +160,7 @@ object WebFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, W
             libraries,
             friendLibraries,
             incrementalDataProvider,
-            lookupTracker,
+            extensionStorage,
             isCommonSource = isCommonSourceForPsi,
             fileBelongsToModule = fileBelongsToModuleForPsi,
             buildResolveAndCheckFir = { session, files ->
@@ -174,7 +181,7 @@ object WebFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, W
         diagnosticsReporter: BaseDiagnosticsCollector,
         performanceManager: PerformanceManager?,
         incrementalDataProvider: IncrementalDataProvider?,
-        lookupTracker: LookupTracker?,
+        extensionStorage: CompilerPluginRegistrar.ExtensionStorage,
         useWasmPlatform: Boolean,
     ): AllModulesFrontendOutput {
         val output = compileModuleToAnalyzedFir(
@@ -183,7 +190,7 @@ object WebFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, W
             libraries,
             friendLibraries,
             incrementalDataProvider,
-            lookupTracker,
+            extensionStorage,
             isCommonSource = { groupedSources.isCommonSourceForLt(it) },
             fileBelongsToModule = { file, it -> groupedSources.fileBelongsToModuleForLt(file, it) },
             buildResolveAndCheckFir = { session, files ->
@@ -201,14 +208,15 @@ object WebFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, W
         libraries: List<String>,
         friendLibraries: List<String>,
         incrementalDataProvider: IncrementalDataProvider?,
-        lookupTracker: LookupTracker?,
+        extensionStorage: CompilerPluginRegistrar.ExtensionStorage,
         noinline isCommonSource: (F) -> Boolean,
         noinline fileBelongsToModule: (F, String) -> Boolean,
         buildResolveAndCheckFir: (FirSession, List<F>) -> SingleModuleFrontendOutput,
         useWasmPlatform: Boolean,
     ): List<SingleModuleFrontendOutput> {
         // FIR
-        val extensionRegistrars = FirExtensionRegistrar.getInstances(moduleStructure.project)
+        @Suppress("UNCHECKED_CAST")
+        val extensionRegistrars = extensionStorage[FirExtensionRegistrarAdapter] as List<FirExtensionRegistrar>
 
         val mainModuleName = moduleStructure.compilerConfiguration.get(CommonConfigurationKeys.MODULE_NAME)!!
         val escapedMainModuleName = Name.special("<$mainModuleName>")

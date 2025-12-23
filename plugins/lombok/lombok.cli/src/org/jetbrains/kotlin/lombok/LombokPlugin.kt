@@ -6,13 +6,10 @@
 package org.jetbrains.kotlin.lombok
 
 import org.jetbrains.kotlin.cli.common.reportDiagnostic
-import org.jetbrains.kotlin.compiler.plugin.AbstractCliOption
-import org.jetbrains.kotlin.compiler.plugin.CliOption
-import org.jetbrains.kotlin.compiler.plugin.CommandLineProcessor
-import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
+import org.jetbrains.kotlin.compiler.plugin.*
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
-import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
+import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.lombok.LombokConfigurationKeys.LOMBOK_CONFIG_FILE
 import org.jetbrains.kotlin.lombok.LombokPluginNames.CONFIG_OPTION_NAME
 import org.jetbrains.kotlin.lombok.LombokPluginNames.PLUGIN_ID
@@ -27,7 +24,7 @@ class LombokComponentRegistrar : CompilerPluginRegistrar() {
             val configFile = compilerConfiguration[LOMBOK_CONFIG_FILE]
             val config = LombokPluginConfig(configFile)
             SyntheticJavaResolveExtension.registerExtension(LombokResolveExtension(config))
-            FirExtensionRegistrarAdapter.registerExtension(FirLombokRegistrar(configFile))
+            FirExtensionRegistrar.registerExtension(FirLombokRegistrar(configFile))
         }
     }
 

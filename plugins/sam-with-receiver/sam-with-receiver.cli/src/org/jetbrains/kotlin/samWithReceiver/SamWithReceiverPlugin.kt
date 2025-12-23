@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.useInstance
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
-import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
+import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.samWithReceiver.SamWithReceiverConfigurationKeys.SAM_WITH_RECEIVER_ANNOTATION
@@ -63,7 +63,7 @@ class SamWithReceiverComponentRegistrar : CompilerPluginRegistrar() {
         if (annotations.isEmpty()) return
 
         StorageComponentContainerContributor.registerExtension(CliSamWithReceiverComponentContributor(annotations))
-        FirExtensionRegistrarAdapter.registerExtension(FirSamWithReceiverExtensionRegistrar(annotations))
+        FirExtensionRegistrar.registerExtension(FirSamWithReceiverExtensionRegistrar(annotations))
     }
 
     override val pluginId: String get() = PLUGIN_ID

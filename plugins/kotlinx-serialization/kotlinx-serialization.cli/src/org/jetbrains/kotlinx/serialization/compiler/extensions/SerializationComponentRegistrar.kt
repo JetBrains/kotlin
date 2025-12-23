@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.useInstance
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
-import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
+import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.library.metadata.KlibMetadataSerializerProtocol
 import org.jetbrains.kotlin.metadata.SerializationPluginMetadataExtensions
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
@@ -83,7 +83,7 @@ class SerializationComponentRegistrar : CompilerPluginRegistrar() {
 
             StorageComponentContainerContributor.registerExtension(SerializationPluginComponentContainerContributor())
 
-            FirExtensionRegistrarAdapter.registerExtension(FirSerializationExtensionRegistrar())
+            FirExtensionRegistrar.registerExtension(FirSerializationExtensionRegistrar())
         }
 
         private fun registerProtoExtensions() {

@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.extensions
 
-import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticsContainer
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.SessionConfiguration
@@ -21,11 +20,6 @@ import kotlin.reflect.KClass
 
 abstract class FirExtensionRegistrar : FirExtensionRegistrarAdapter() {
     companion object {
-        fun getInstances(project: Project): List<FirExtensionRegistrar> {
-            @Suppress("UNCHECKED_CAST")
-            return FirExtensionRegistrarAdapter.getInstances(project) as List<FirExtensionRegistrar>
-        }
-
         internal val AVAILABLE_EXTENSIONS = listOf(
             FirStatusTransformerExtension::class,
             FirDeclarationGenerationExtension::class,
@@ -342,3 +336,4 @@ fun FirExtensionService.registerExtensions(registeredExtensions: BunchOfRegister
         session.registeredDiagnosticFactoriesStorage.registerDiagnosticContainers(registeredExtensions.diagnosticsContainers)
     }
 }
+
