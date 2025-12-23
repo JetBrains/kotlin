@@ -1,4 +1,6 @@
 // ISSUE: KT-68538: The type of the outer if should not be Nothing because the inner ifs are not exhaustive.
+// IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_FIRST_STAGE: 2.0.0
+// ^^^ KT-68538 was fixed in 2.0.10
 // WITH_STDLIB
 import kotlin.test.*
 
