@@ -164,6 +164,7 @@ include ":benchmarks",
         ":compiler:cli-base",
         ":compiler:cli",
         ":compiler:cli-jvm",
+        ":compiler:cli-jvm:javac-integration",
         ":compiler:cli-js",
         ":compiler:cli-metadata",
         ":compiler:cli:cli-native-klib",
@@ -823,6 +824,7 @@ project(':kotlin-preloader').projectDir = "$rootDir/compiler/preloader" as File
 project(':kotlin-build-common').projectDir = "$rootDir/build-common" as File
 project(':compiler:cli-base').projectDir = "$rootDir/compiler/cli/cli-base" as File
 project(':compiler:cli-jvm').projectDir = "$rootDir/compiler/cli/cli-jvm" as File
+project(':compiler:cli-jvm:javac-integration').projectDir = "$rootDir/compiler/cli/cli-jvm/javac-integration" as File
 project(':compiler:cli-js').projectDir = "$rootDir/compiler/cli/cli-js" as File
 project(':compiler:cli-metadata').projectDir = "$rootDir/compiler/cli/cli-metadata" as File
 project(':kotlin-runner').projectDir = "$rootDir/compiler/cli/cli-runner" as File
