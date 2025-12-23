@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.fir.symbols
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.KtRealPsiSourceElement
 import org.jetbrains.kotlin.analysis.api.KaInitializerValue
 import org.jetbrains.kotlin.analysis.api.KaNonConstantInitializerValue
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
@@ -102,7 +103,11 @@ internal sealed class KaFirKotlinPropertySymbol<P : KtCallableDeclaration>(
 
             val backingFieldSymbol = firSymbol.backingFieldSymbol
             if (backingFieldSymbol != null) {
-                return KaFirBackingFieldSymbol(backingFieldSymbol, analysisSession, this)
+                return if (backingFieldSymbol.source is KtRealPsiSourceElement) {
+                    KaFirBackingFieldSymbol(backingFieldSymbol, analysisSession, this)
+                } else {
+                    KaFirDefaultBackingFieldSymbol(backingFieldSymbol, analysisSession, this)
+                }
             }
 
             return null
