@@ -6,7 +6,9 @@ val fe10CompilerModules: Array<String> by rootProject.extra
 
 val excludedCompilerModules = listOf(
     ":compiler:cli",
+    ":compiler:cli-jvm",
     ":compiler:cli-js",
+    ":compiler:cli-metadata",
     ":compiler:javac-wrapper",
     ":compiler:incremental-compilation-impl"
 )
