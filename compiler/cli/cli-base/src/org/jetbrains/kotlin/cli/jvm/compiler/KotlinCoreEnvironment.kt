@@ -59,7 +59,6 @@ import org.jetbrains.kotlin.cli.initializeDiagnosticFactoriesStorageForCli
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment.Companion.resetApplicationManager
 import org.jetbrains.kotlin.cli.jvm.config.*
 import org.jetbrains.kotlin.cli.jvm.index.*
-import org.jetbrains.kotlin.cli.jvm.javac.JavacWrapperRegistrar
 import org.jetbrains.kotlin.cli.jvm.modules.CliJavaModuleFinder
 import org.jetbrains.kotlin.cli.jvm.modules.CliJavaModuleResolver
 import org.jetbrains.kotlin.compiler.plugin.*
@@ -207,7 +206,9 @@ class KotlinCoreEnvironment private constructor(
 
     private val sourceFiles = mutableListOf<KtFile>()
     private val rootsIndex: JvmDependenciesDynamicCompoundIndex
-    private val packagePartProviders = mutableListOf<JvmPackagePartProvider>()
+
+    private val _packagePartProviders = mutableListOf<JvmPackagePartProvider>()
+    val packagePartProviders: List<JvmPackagePartProvider> get() = _packagePartProviders
 
     private val classpathRootsResolver: ClasspathRootsResolver
     private val initialRoots = ArrayList<JavaRoot>()
@@ -277,7 +278,7 @@ class KotlinCoreEnvironment private constructor(
 
         javaFileManager.initialize(
             rootsIndex,
-            packagePartProviders,
+            _packagePartProviders,
             SingleJavaFileRootsIndex(singleJavaFileRoots),
             configuration.getBoolean(JVMConfigurationKeys.USE_PSI_CLASS_FILES_READING),
             perfManager,
@@ -333,37 +334,8 @@ class KotlinCoreEnvironment private constructor(
     fun createPackagePartProvider(scope: GlobalSearchScope): JvmPackagePartProvider {
         return JvmPackagePartProvider(configuration.languageVersionSettings, scope).apply {
             addRoots(initialRoots, configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY))
-            packagePartProviders += this
+            _packagePartProviders += this
         }
-    }
-
-    private val VirtualFile.javaFiles: List<VirtualFile>
-        get() = mutableListOf<VirtualFile>().apply {
-            VfsUtilCore.processFilesRecursively(this@javaFiles) { file ->
-                if (file.extension == JavaFileType.DEFAULT_EXTENSION || file.fileType == JavaFileType.INSTANCE) {
-                    add(file)
-                }
-                true
-            }
-        }
-
-    private val allJavaFiles: List<File>
-        get() = configuration.javaSourceRoots
-            .mapNotNull(this::findLocalFile)
-            .flatMap { it.javaFiles }
-            .map { File(it.canonicalPath) }
-
-    fun registerJavac(
-        javaFiles: List<File> = allJavaFiles,
-        kotlinFiles: List<KtFile> = sourceFiles,
-        arguments: Array<String>? = null,
-        bootClasspath: List<File>? = null,
-        sourcePath: List<File>? = null
-    ): Boolean {
-        return JavacWrapperRegistrar.registerJavac(
-            projectEnvironment.project, configuration, javaFiles, kotlinFiles, arguments, bootClasspath, sourcePath,
-            LightClassGenerationSupport.getInstance(project), packagePartProviders
-        )
     }
 
     private val applicationEnvironment: CoreApplicationEnvironment
@@ -391,10 +363,10 @@ class KotlinCoreEnvironment private constructor(
         val newIndex = rootsIndex.addNewIndexForRoots(newRoots) ?: return null
         updateClasspathFromRootsIndex(newIndex)
 
-        if (packagePartProviders.isEmpty()) {
+        if (_packagePartProviders.isEmpty()) {
             initialRoots.addAll(newRoots)
         } else {
-            for (packagePartProvider in packagePartProviders) {
+            for (packagePartProvider in _packagePartProviders) {
                 packagePartProvider.addRoots(newRoots, configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY))
             }
         }
