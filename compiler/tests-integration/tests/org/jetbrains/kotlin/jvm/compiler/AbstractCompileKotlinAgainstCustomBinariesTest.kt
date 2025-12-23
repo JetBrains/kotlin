@@ -195,10 +195,6 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
         doTestBrokenLibrary("library", "a/A.class")
     }
 
-    fun testNonTransitiveDependencyWithJavac() {
-        doTestBrokenLibrary("library", "my/Some.class", additionalOptions = listOf(K2JVMCompilerArguments::useJavac.cliArgument, K2JVMCompilerArguments::compileJava.cliArgument))
-    }
-
     fun testComputeSupertypeWithMissingDependency() {
         doTestBrokenLibrary("library", "a/A.class")
     }

@@ -67,9 +67,6 @@ private val levelsToArgumentTransforms: Map<String, Map<String, ArgumentTransfor
             drop("expression")
             drop("include-runtime") // we're only considering building into directories for now (not jars)
             drop("Xbuild-file")
-            drop("Xuse-javac")
-            drop("Xcompile-java")
-            drop("Xjavac-arguments")
         }
     })
 }

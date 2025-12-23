@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.arguments.dsl.base.compilerArgumentsLevel
 import org.jetbrains.kotlin.arguments.dsl.defaultFalse
 import org.jetbrains.kotlin.arguments.dsl.defaultNull
 import org.jetbrains.kotlin.arguments.dsl.types.BooleanType
+import org.jetbrains.kotlin.arguments.dsl.types.StringArrayType
 
 val removedJvmCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jvmCompilerArguments) {
     compilerArgument {
@@ -46,6 +47,40 @@ val removedJvmCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLevel
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_1_20,
             removedVersion = KotlinReleaseVersion.v2_3_20,
+        )
+    }
+
+    compilerArgument {
+        name = "Xuse-javac"
+        description = "Use javac for Java source and class file analysis.".asReleaseDependent()
+        valueType = BooleanType.defaultFalse
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_1_4,
+            removedVersion = KotlinReleaseVersion.v2_4_0,
+        )
+    }
+
+    compilerArgument {
+        name = "Xcompile-java"
+        description = "Reuse 'javac' analysis and compile Java source files.".asReleaseDependent()
+        valueType = BooleanType.defaultFalse
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_1_50,
+            removedVersion = KotlinReleaseVersion.v2_4_0,
+        )
+    }
+
+    compilerArgument {
+        name = "Xjavac-arguments"
+        description = "Java compiler arguments.".asReleaseDependent()
+        valueType = StringArrayType.defaultNull
+        valueDescription = "<option[,]>".asReleaseDependent()
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_1_4,
+            removedVersion = KotlinReleaseVersion.v2_4_0,
         )
     }
 }

@@ -133,7 +133,6 @@ internal fun reportArgumentsNotAllowed(
         CompilerMessageSeverity.ERROR,
         messageCollector,
         reportingState,
-        K2JVMCompilerArguments::useJavac,
     )
 
 internal fun reportArgumentsIgnoredGenerally(
@@ -159,8 +158,6 @@ internal fun reportArgumentsIgnoredGenerally(
         K2JVMCompilerArguments::disableStandardScript,
         K2JVMCompilerArguments::defaultScriptExtension,
         K2JVMCompilerArguments::disableDefaultScriptingPlugin,
-        K2JVMCompilerArguments::useJavac,
-        K2JVMCompilerArguments::compileJava,
         K2JVMCompilerArguments::reportPerf,
         K2JVMCompilerArguments::dumpPerf
     )

@@ -399,37 +399,6 @@ This can be used in the event of problems with the new implementation.""".asRele
     // Javac options
 
     compilerArgument {
-        name = "Xuse-javac"
-        description = "Use javac for Java source and class file analysis.".asReleaseDependent()
-        valueType = BooleanType.defaultFalse
-
-        lifecycle(
-            introducedVersion = KotlinReleaseVersion.v1_1_4,
-        )
-    }
-
-    compilerArgument {
-        name = "Xcompile-java"
-        description = "Reuse 'javac' analysis and compile Java source files.".asReleaseDependent()
-        valueType = BooleanType.defaultFalse
-
-        lifecycle(
-            introducedVersion = KotlinReleaseVersion.v1_1_50,
-        )
-    }
-
-    compilerArgument {
-        name = "Xjavac-arguments"
-        description = "Java compiler arguments.".asReleaseDependent()
-        valueType = StringArrayType.defaultNull
-        valueDescription = "<option[,]>".asReleaseDependent()
-
-        lifecycle(
-            introducedVersion = KotlinReleaseVersion.v1_1_4,
-        )
-    }
-
-    compilerArgument {
         name = "Xjava-source-roots"
         description = "Paths to directories with Java source files.".asReleaseDependent()
         valueType = StringArrayType.defaultNull
