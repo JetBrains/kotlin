@@ -84,5 +84,7 @@ declare namespace JS_TESTS {
         }
         function shortNameBasedDestructuring(): string;
         function fullNameBasedDestructuring(): string;
+        function shortPositionBasedDestructuring(): string;
+        function fullPositionBasedDestructuring(): string;
     }
 }

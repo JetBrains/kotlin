@@ -3,6 +3,8 @@ import KT39423 = JS_TESTS.foo.KT39423;
 import Test2 = JS_TESTS.foo.Test2;
 import shortNameBasedDestructuring = JS_TESTS.foo.shortNameBasedDestructuring;
 import fullNameBasedDestructuring = JS_TESTS.foo.fullNameBasedDestructuring;
+import shortPositionBasedDestructuring = JS_TESTS.foo.shortPositionBasedDestructuring;
+import fullPositionBasedDestructuring = JS_TESTS.foo.fullPositionBasedDestructuring;
 
 function assert(condition: boolean) {
     if (!condition) {
@@ -51,7 +53,9 @@ function box(): string {
     assert(new Test2("1", "2").component1() === "1")
 
     assert(shortNameBasedDestructuring() === "42")
-    assert(fullNameBasedDestructuring() === "4 2")
+    assert(fullNameBasedDestructuring() === "4 2 ")
+    assert(shortPositionBasedDestructuring() === "42")
+    assert(fullPositionBasedDestructuring() === "4 2")
 
     return "OK";
 }
