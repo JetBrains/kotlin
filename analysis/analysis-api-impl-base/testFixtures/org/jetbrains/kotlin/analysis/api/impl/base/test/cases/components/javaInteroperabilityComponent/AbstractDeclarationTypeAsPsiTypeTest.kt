@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBase
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.analysis.test.framework.utils.executeOnPooledThreadInReadAction
+import org.jetbrains.kotlin.cli.pipeline.registerExtensionStorage
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.psi.KtDeclarationWithReturnType
@@ -69,6 +70,7 @@ abstract class AbstractDeclarationTypeAsPsiTypeTest : AbstractAnalysisApiBasedTe
                             configuration = CompilerConfiguration().apply {
                                 put(CommonConfigurationKeys.MODULE_NAME, mainModule.testModule.name)
                                 put(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS, mainModule.testModule.languageVersionSettings)
+                                registerExtensionStorage()
                             },
                             target = KaCompilerTarget.Jvm(isTestMode = true, compiledClassHandler = null, debuggerExtension = null),
                             allowedErrorFilter = TestAllowedErrorFilter
