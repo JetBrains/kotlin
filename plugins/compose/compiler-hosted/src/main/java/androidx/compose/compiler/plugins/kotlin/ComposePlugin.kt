@@ -633,9 +633,9 @@ class ComposePluginRegistrar : CompilerPluginRegistrar() {
             configuration.put(
                 JVMConfigurationKeys.IGNORED_ANNOTATIONS_FOR_BRIDGES,
                 listOf(
-                    "androidx.compose.runtime.Composable",
-                    "androidx.compose.runtime.ComposableTargetMarker",
-                    "androidx.compose.runtime.internal.FunctionKeyMeta",
+                    ComposeClassIds.Composable.asFqNameString(),
+                    ComposeClassIds.ComposableTargetMarker.asFqNameString(),
+                    ComposeClassIds.FunctionKeyMeta.asFqNameString(),
                 )
             )
         }
