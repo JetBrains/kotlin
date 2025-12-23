@@ -101,7 +101,13 @@ abstract class AbstractCompilerFacilityTest : AbstractAnalysisApiBasedTest() {
         val project = mainFile.project
         with(CompilerPluginRegistrar.ExtensionStorage()) {
             IrGenerationExtension.registerExtension(irCollector)
-            registerInProject(project)
+            registerInProject(
+                project,
+                additionalExtensionPointProjectDescriptors = listOf(
+                    FirExtensionRegistrarAdapterPointDescriptor,
+                    IrGenerationExtensionPointDescriptor,
+                )
+            )
         }
 
         val compilerConfiguration = CompilerConfiguration().apply {
