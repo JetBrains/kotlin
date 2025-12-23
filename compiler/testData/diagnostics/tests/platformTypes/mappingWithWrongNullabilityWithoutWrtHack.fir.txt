@@ -18,8 +18,8 @@ FILE: main.kt
                 }
             }
 
-            ^foo Q|Subscribers|.R|/Subscribers.mapping*s|<R|java/io/InputStream!|, R|ft<H & Any, H?>|>(R|<local>/subscriber|, <L> = SAM(mapping@fun <anonymous>(it: R|@EnhancedNullability java/io/InputStream!|): R|ft<@EnhancedNullability H & Any, @EnhancedNullability H?>| <inline=NoInline>  {
-                ^ this@R|/Handler|.R|/Handler.reader|.R|SubstitutionOverride<kotlin/Function1.invoke: R|H|>|(R|<local>/it|)
+            ^foo Q|Subscribers|.R|/Subscribers.mapping*s|<R|java/io/InputStream?|, R|H!|>(R|<local>/subscriber|, <L> = SAM(mapping@fun <anonymous>(it: R|@EnhancedNullability java/io/InputStream?|): R|@EnhancedNullability H!| <inline=NoInline>  {
+                ^ this@R|/Handler|.R|/Handler.reader|.R|SubstitutionOverride<kotlin/Function1.invoke: R|H|><Inapplicable(UNSAFE_CALL): kotlin/Function1.invoke>#|(R|<local>/it|)
             }
             ))
         }

@@ -5,7 +5,7 @@
 
 fun testCollections() {
     testKotlinSet(java.util.HashSet(setOf(null)))
-    testKotlinSet(HashSet(setOf(null)))
+    <!TYPE_MISMATCH!>testKotlinSet(HashSet(setOf(null)))<!>
     testKotlinList(java.util.ArrayList(arrayListOf(null)))
     testKotlinList(ArrayList(arrayListOf(null)))
     testKotlinMap(java.util.HashMap(hashMapOf(Pair(null, null))))
