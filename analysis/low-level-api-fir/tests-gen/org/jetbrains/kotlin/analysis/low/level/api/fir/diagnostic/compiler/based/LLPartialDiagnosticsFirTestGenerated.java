@@ -4938,6 +4938,12 @@ public class LLPartialDiagnosticsFirTestGenerated extends AbstractLLPartialDiagn
       public void testSuppressOnNameBasedDestructuring() {
         runTest("compiler/fir/analysis-tests/testData/resolve/destructuring/suppressOnNameBasedDestructuring.kt");
       }
+
+      @Test
+      @TestMetadata("topLevelWithLambda.kt")
+      public void testTopLevelWithLambda() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/destructuring/topLevelWithLambda.kt");
+      }
     }
 
     @Nested
