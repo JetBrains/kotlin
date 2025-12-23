@@ -589,7 +589,7 @@ class ComposePluginRegistrar : CompilerPluginRegistrar() {
                 if (usesK2) null
                 else ComposeDescriptorSerializerContext()
 
-            updateConfigurationCommon(configuration)
+            setupJvmConfiguration(configuration)
 
             registerCommonExtensions(descriptorSerializerContext)
 
@@ -629,12 +629,12 @@ class ComposePluginRegistrar : CompilerPluginRegistrar() {
             return true
         }
 
-        fun updateConfigurationCommon(configuration: CompilerConfiguration) {
+        fun setupJvmConfiguration(configuration: CompilerConfiguration) {
             configuration.put(
                 JVMConfigurationKeys.IGNORED_ANNOTATIONS_FOR_BRIDGES,
                 listOf(
                     ComposeClassIds.Composable.asFqNameString(),
-                    ComposeClassIds.ComposableTargetMarker.asFqNameString(),
+                    ComposeClassIds.ComposableInferredTarget.asFqNameString(),
                     ComposeClassIds.FunctionKeyMeta.asFqNameString(),
                 )
             )
