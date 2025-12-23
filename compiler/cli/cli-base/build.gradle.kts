@@ -11,7 +11,6 @@ dependencies {
     api(project(":compiler:resolution.common"))
     api(project(":compiler:frontend:cfg"))
     api(project(":compiler:light-classes"))
-    api(project(":compiler:javac-wrapper"))
 
     implementation(project(":compiler:config.jvm"))
     implementation(project(":js:js.config"))
@@ -19,7 +18,6 @@ dependencies {
     implementation(project(":native:native.config"))
     implementation(project(":kotlin-util-klib-metadata"))
 
-    compileOnly(toolsJarApi())
     compileOnly(intellijCore())
     compileOnly(libs.intellij.fastutil)
     compileOnly(libs.intellij.asm)

@@ -29,6 +29,7 @@ dependencies {
     implementation(project(":compiler:fir:fir-serialization"))
     implementation(project(":kotlin-util-io"))
     implementation(project(":kotlin-build-common"))
+    implementation(project(":compiler:javac-wrapper"))
 
     compileOnly(toolsJarApi())
     compileOnly(intellijCore())
