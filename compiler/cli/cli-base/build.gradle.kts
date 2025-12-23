@@ -9,7 +9,6 @@ dependencies {
     api(project(":compiler:arguments.common"))
     api(project(":compiler:plugin-api"))
     api(project(":compiler:resolution.common"))
-    api(project(":compiler:frontend:cfg"))
     api(project(":compiler:light-classes"))
 
     implementation(project(":compiler:config.jvm"))
