@@ -15,34 +15,3 @@ interface BaseWriter {
 }
 
 interface KotlinLibraryWriter : BaseWriter
-
-// TODO: Move SerializedIr here too to eliminate dependency on backend.common.serialization
-class SerializedMetadata(
-    val module: ByteArray,
-    val fragments: List<List<ByteArray>>,
-    val fragmentNames: List<String>,
-    val metadataVersion: IntArray,
-)
-
-class SerializedDeclaration(val id: Int, val bytes: ByteArray) {
-    val size = bytes.size
-}
-
-class SerializedIrFile(
-    val fileData: ByteArray,
-    val fqName: String,
-    val path: String,
-    val types: ByteArray,
-    val signatures: ByteArray,
-    val strings: ByteArray,
-    val bodies: ByteArray,
-    val declarations: ByteArray,
-    val debugInfo: ByteArray?,
-    val backendSpecificMetadata: ByteArray?,
-    val fileEntries: ByteArray?,
-)
-
-class SerializedIrModule(
-    val files: Collection<SerializedIrFile>,
-    val fileWithPreparedInlinableFunctions: SerializedIrFile?,
-)
