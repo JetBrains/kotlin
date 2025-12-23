@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +PreciseSimplificationToFlexibleLowerConstraint
 // FULL_JDK
 

@@ -81,7 +81,7 @@ class ConstraintIncorporator(
     private fun Constraint.areThereRecursiveConstraints(typeVariable: TypeVariableMarker) =
         type.contains { it.typeConstructor().unwrapStubTypeVariableConstructor() == typeVariable.freshTypeConstructor() }
 
-    // A <:(=) \alpha <:(=) B => A <: B
+    // A <:(=) \alpha <:(=) B => A <: B (or A <: B! if A <: \alpha was from a flexible constraint)
     context(c: Context)
     private fun directWithVariable(typeVariable: TypeVariableMarker, constraint: Constraint) {
         val shouldBeTypeVariableFlexible = with(utilContext) { typeVariable.shouldBeFlexible() }
@@ -94,9 +94,10 @@ class ConstraintIncorporator(
                         typeVariable, it,
                         typeVariable, constraint,
                     ) {
+                        val upperType = if (!it.isFromFlexibleConstraint) constraint.type else constraint.type.toFlexible()
                         c.processNewInitialConstraintFromIncorporation(
                             lowerType = it.type,
-                            upperType = constraint.type,
+                            upperType = upperType,
                             shouldTryUseDifferentFlexibilityForUpperType = shouldBeTypeVariableFlexible,
                             newDerivedFrom = constraint.computeNewDerivedFrom(it),
                             isFromNullabilityConstraint = it.isNullabilityConstraint,
@@ -119,9 +120,10 @@ class ConstraintIncorporator(
                         typeVariable, constraint,
                         typeVariable, it,
                     ) {
+                        val upperType = if (!constraint.isFromFlexibleConstraint) it.type else it.type.toFlexible()
                         c.processNewInitialConstraintFromIncorporation(
                             lowerType = constraint.type,
-                            upperType = it.type,
+                            upperType = upperType,
                             shouldTryUseDifferentFlexibilityForUpperType = shouldBeTypeVariableFlexible,
                             newDerivedFrom = constraint.computeNewDerivedFrom(it),
                             isFromDeclaredUpperBound = isFromDeclaredUpperBound,
@@ -131,6 +133,15 @@ class ConstraintIncorporator(
                     }
                 }
             }
+        }
+    }
+
+    context(c: Context)
+    private fun KotlinTypeMarker.toFlexible(): KotlinTypeMarker {
+        return asFlexibleType() ?: run {
+            val upperBound = withNullability(nullable = true).asRigidType()!!
+            val lowerBound = withNullability(nullable = false).asRigidType()!!
+            c.createFlexibleType(lowerBound, upperBound)
         }
     }
 
@@ -352,6 +363,7 @@ class ConstraintIncorporator(
             derivedFrom = derivedFrom,
             inputTypePositionBeforeIncorporation = inputTypePosition,
             isNullabilityConstraint = isNullabilityConstraint,
+            isFromFlexibleConstraint = false,
             isNoInfer = causeOfIncorporationConstraint.isNoInfer || otherConstraint.isNoInfer
         )
 

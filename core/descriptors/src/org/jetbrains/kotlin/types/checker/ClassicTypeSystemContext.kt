@@ -905,7 +905,7 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         return (baseType.memberScope as? SubstitutingScope)?.substitutor
     }
 
-    override fun usePreciseSimplificationToFlexibleLowerConstraint(): Boolean = false
+    override fun useIsFromFlexibleConstraint(): Boolean = false
 
     override fun simplifyFlexibleUpperConstraintWithDnnBoundToNullable(): Boolean = true
 

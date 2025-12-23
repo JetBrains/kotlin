@@ -35,6 +35,7 @@ abstract class TypeCheckerStateForConstraintSystem(
         typeVariable: TypeConstructorMarker,
         subType: KotlinTypeMarker,
         isFromNullabilityConstraint: Boolean = false,
+        isFromFlexibleConstraint: Boolean = false,
         isNoInfer: Boolean,
     )
 
@@ -318,13 +319,6 @@ abstract class TypeCheckerStateForConstraintSystem(
                 when (subType) {
                     is RigidTypeMarker ->
                         when {
-                            usePreciseSimplificationToFlexibleLowerConstraint() ->
-                                // Foo <: T! -- (Foo!! .. Foo) <: T
-                                // Foo? <: T! -- (Foo!! .. Foo?) <: T
-                                createTrivialFlexibleTypeOrSelf(
-                                    subType.makeDefinitelyNotNullOrNotNull(),
-                                )
-                            // Obsolete behavior in 2.2 and earlier versions
                             !subType.isMarkedNullable() -> createTrivialFlexibleTypeOrSelf(subType)
                             else -> subType
                         }
@@ -339,7 +333,12 @@ abstract class TypeCheckerStateForConstraintSystem(
             else -> error("sealed")
         }
 
-        addLowerConstraint(typeVariable.typeConstructor(), lowerConstraint, isFromNullabilityConstraint, isNoInfer)
+        val isFromFlexibleConstraint = useIsFromFlexibleConstraint() &&
+                typeVariable is FlexibleTypeMarker && subType is RigidTypeMarker
+        addLowerConstraint(
+            typeVariable.typeConstructor(), lowerConstraint,
+            isFromNullabilityConstraint, isFromFlexibleConstraint, isNoInfer
+        )
 
         return true
     }
@@ -385,7 +384,7 @@ abstract class TypeCheckerStateForConstraintSystem(
         runForkingPoint {
             for (variant in listOf(notNullSubType, dnnSubType)) {
                 fork {
-                    addLowerConstraint(typeVariableTypeConstructor, variant, isFromNullabilityConstraint, isNoInfer)
+                    addLowerConstraint(typeVariableTypeConstructor, variant, isFromNullabilityConstraint, isNoInfer = isNoInfer)
                     true
                 }
             }

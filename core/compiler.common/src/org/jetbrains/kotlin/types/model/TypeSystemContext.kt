@@ -324,19 +324,15 @@ interface TypeSystemInferenceExtensionContext : TypeSystemContext, TypeSystemBui
         }
 
     /**
-     * This flag handles the LowerConstraint returned for the case Foo(?) <: (T..T?)
+     * This flag allows usage of [org.jetbrains.kotlin.resolve.calls.inference.model.Constraint.isFromFlexibleConstraint]
      *
-     * With this flag (K2 +PreciseSimplificationFlexibleLowerConstraint),
-     * we use precise (Foo!!..Foo?) <: T for nullable type and (Foo!!..Foo) <: T for non-null type.
+     * A constraint has this flag (isFromFlexibleConstraint) in case its initial lower constraint has a flexible type variable.
+     * This flag changes the incorporation rules: with A? <: T <: B and A? <: T having 'isFromFlexibleConstraint' we infer
+     * A? <: B!. Without the flag, we infer A? <: B.
      *
-     * Without it (K1 or K2 -PreciseSimplificationToFlexibleLowerConstraint), we use Foo <: T for nullable type instead
-     * and it can lead to information loss. E.g. with initial constraints T = Bar, Bar? <: U, U? <: (T..T?)
-     * we infer a lower constraint U <: T and get Bar? <: Bar contradiction.
-     *
-     * In K1 and early versions of K2 (2.0-2.2) this problem is mitigated with so-called TypePreservingVisibilityWrtHack,
-     * that allows us to use flexible types for explicit type arguments of Java type parameters
+     * This flag is always false in K1 and in early versions of K2.
      */
-    fun usePreciseSimplificationToFlexibleLowerConstraint(): Boolean
+    fun useIsFromFlexibleConstraint(): Boolean
 
     fun simplifyFlexibleUpperConstraintWithDnnBoundToNullable(): Boolean
 

@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +PreciseSimplificationToFlexibleLowerConstraint
 // FULL_JDK
 
@@ -15,15 +15,15 @@ import java.util.function.Supplier
 
 fun test(){
     Supplier<String> {
-        JavaBox(null).a
+        <!ARGUMENT_TYPE_MISMATCH("Nothing?; String")!>JavaBox(null).a<!>
     }
 
     val sam : Supplier<String> = Supplier {
-        JavaBox(null).a
+        <!ARGUMENT_TYPE_MISMATCH!>JavaBox(null).a<!>
     }
 
     val sam2 = object : Supplier<String> {
-        override fun get() = JavaBox(null).a
+        override fun <!RETURN_TYPE_MISMATCH_ON_OVERRIDE!>get<!>() = JavaBox(null).a
     }
 }
 

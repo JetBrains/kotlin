@@ -153,6 +153,7 @@ class MutableVariableWithConstraints private constructor(
                             constraint.typeHashCode,
                             derivedFrom = constraint.derivedFrom,
                             isNullabilityConstraint = false,
+                            isFromFlexibleConstraint = false, // Should we use && instead?
                             isNoInfer = constraint.isNoInfer && previousConstraint.isNoInfer,
                         ).also {
                             inferenceLogger.withOrigins(

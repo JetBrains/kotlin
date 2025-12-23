@@ -33,7 +33,7 @@ class Handler<H>(val reader: (s: InputStream) -> H) {
         }
 
         return Subscribers.mapping(subscriber) {
-            reader(it)
+            reader(<!ARGUMENT_TYPE_MISMATCH("InputStream?; InputStream")!>it<!>)
         }
     }
 }
