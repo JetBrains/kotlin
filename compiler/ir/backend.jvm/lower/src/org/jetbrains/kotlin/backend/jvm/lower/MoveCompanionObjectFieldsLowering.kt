@@ -9,11 +9,11 @@ import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+import org.jetbrains.kotlin.backend.jvm.ir.addJavaLangDeprecatedAnnotation
 import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
 import org.jetbrains.kotlin.backend.jvm.ir.replaceThisByStaticReference
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.builders.declarations.addField
-import org.jetbrains.kotlin.ir.builders.irAnnotation
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrSetFieldImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrAnonymousInitializerSymbolImpl
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 
 /**
  * Moves and/or copies companion object fields to static fields of companion's owner.
@@ -109,9 +108,8 @@ internal class MoveOrCopyCompanionObjectFieldsLowering(val context: JvmBackendCo
             }
             annotations += oldField.annotations
             if (oldProperty.parentAsClass.visibility == DescriptorVisibilities.PRIVATE) {
-                context.createJvmIrBuilder(this.symbol).run {
-                    annotations = filterOutAnnotations(DeprecationResolver.JAVA_DEPRECATED, annotations) +
-                            irAnnotation(irSymbols.javaLangDeprecatedConstructorWithDeprecatedFlag)
+                with(context.createJvmIrBuilder(this.symbol)) {
+                    addJavaLangDeprecatedAnnotation()
                 }
             }
         }

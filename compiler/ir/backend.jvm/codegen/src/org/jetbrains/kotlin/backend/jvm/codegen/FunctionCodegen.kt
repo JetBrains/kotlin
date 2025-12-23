@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin.SUPER_INTERFACE_METHOD_BRIDGE
 import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.backend.jvm.ir.isJvmInterface
+import org.jetbrains.kotlin.backend.jvm.isJavaLangDeprecatedOnlyAddedByCompiler
 import org.jetbrains.kotlin.backend.jvm.mapping.mapTypeAsDeclaration
 import org.jetbrains.kotlin.backend.jvm.mapping.mapTypeParameter
 import org.jetbrains.kotlin.backend.jvm.originalOfSuspendForInline
@@ -237,7 +238,7 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
 
     private fun IrFunction.isDeprecatedHidden(): Boolean {
         // see KT-80649
-        if (isAnnotatedWithJavaLangDeprecated) return false
+        if (isAnnotatedWithJavaLangDeprecated && !isJavaLangDeprecatedOnlyAddedByCompiler) return false
 
         val mightBeDeprecated = if (this is IrSimpleFunction) {
             allOverridden(true).any {

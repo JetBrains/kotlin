@@ -1,0 +1,21 @@
+@kotlin.Metadata
+public class Base {
+    // source: 'hiddenWithoutJavaDeprecation.kt'
+    public method <init>(): void
+    public synthetic deprecated @kotlin.Deprecated(message="", level=HIDDEN) method f(): void
+}
+
+@kotlin.Metadata
+public final class I$DefaultImpls {
+    // source: 'hiddenWithoutJavaDeprecation.kt'
+    public synthetic deprecated static @kotlin.Deprecated(message="", level=HIDDEN) @java.lang.Deprecated method f(p0: I): int
+    public final inner class I$DefaultImpls
+}
+
+@kotlin.Metadata
+public interface I {
+    // source: 'hiddenWithoutJavaDeprecation.kt'
+    public synthetic static method access$f$jd(p0: I): int
+    public synthetic deprecated @kotlin.Deprecated(message="", level=HIDDEN) method f(): int
+    public final inner class I$DefaultImpls
+}

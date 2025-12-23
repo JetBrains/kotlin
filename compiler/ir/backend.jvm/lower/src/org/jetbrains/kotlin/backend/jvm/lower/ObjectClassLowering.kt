@@ -8,10 +8,10 @@ package org.jetbrains.kotlin.backend.jvm.lower
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+import org.jetbrains.kotlin.backend.jvm.ir.addJavaLangDeprecatedAnnotation
 import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
-import org.jetbrains.kotlin.ir.builders.irAnnotation
 import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.irExprBody
 import org.jetbrains.kotlin.ir.builders.irGetField
@@ -19,9 +19,7 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationContainer
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.util.constructors
-import org.jetbrains.kotlin.ir.util.filterOutAnnotations
 import org.jetbrains.kotlin.ir.util.isObject
-import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 
 internal class ObjectClassLowering(val context: JvmBackendContext) : ClassLoweringPass {
     private val pendingTransformations = mutableListOf<Function0<Unit>>()
@@ -63,10 +61,8 @@ internal class ObjectClassLowering(val context: JvmBackendContext) : ClassLoweri
         if (!context.config.languageVersionSettings.supportsFeature(LanguageFeature.ProperVisibilityForCompanionObjectInstanceField) &&
             (irClass.visibility == DescriptorVisibilities.PRIVATE || irClass.visibility == DescriptorVisibilities.PROTECTED)
         ) {
-            context.createJvmIrBuilder(irClass.symbol).run {
-                publicInstanceField.annotations =
-                    filterOutAnnotations(DeprecationResolver.JAVA_DEPRECATED, publicInstanceField.annotations) +
-                            irAnnotation(irSymbols.javaLangDeprecatedConstructorWithDeprecatedFlag)
+            with(context.createJvmIrBuilder(irClass.symbol)) {
+                publicInstanceField.addJavaLangDeprecatedAnnotation()
             }
         }
 

@@ -65,3 +65,5 @@ var IrVariable.originalSnippetValueSymbol: IrSymbol? by irAttribute(copyByDefaul
 // For Method.invoke(..) The original call is stored in this attribute
 // It's used in suspend calls generation
 var IrCall.originalForReflectiveCall: IrCall? by irAttribute(copyByDefault = false)
+
+var IrMutableAnnotationContainer.isJavaLangDeprecatedOnlyAddedByCompiler: Boolean by irFlag(copyByDefault = true)
