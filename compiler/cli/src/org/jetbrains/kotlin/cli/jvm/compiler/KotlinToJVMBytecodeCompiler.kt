@@ -7,10 +7,8 @@ package org.jetbrains.kotlin.cli.jvm.compiler
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.StandardFileSystems
-import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiJavaModule
-import com.intellij.psi.search.DelegatingGlobalSearchScope
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.backend.jvm.JvmBackendExtension
 import org.jetbrains.kotlin.backend.jvm.JvmGeneratorExtensionsImpl
@@ -327,7 +325,12 @@ object KotlinToJVMBytecodeCompiler {
             val sourcesOnly = TopDownAnalyzerFacadeForJVM.newModuleSearchScope(project, sourceFiles)
             // To support partial and incremental compilation, we add the scope which contains binaries from output directories
             // of the compiled modules (.class) to the list of scopes of the source module
-            val scope = if (moduleOutputs.isEmpty()) sourcesOnly else sourcesOnly.uniteWith(DirectoriesScope(project, moduleOutputs))
+            val scope = if (moduleOutputs.isEmpty()) sourcesOnly else sourcesOnly.uniteWith(
+                VfsBasedProjectEnvironment.DirectoriesScope(
+                    project,
+                    moduleOutputs
+                )
+            )
             @Suppress("DEPRECATION_ERROR")
             TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
                 project,
@@ -346,25 +349,6 @@ object KotlinToJVMBytecodeCompiler {
             analysisResult
         else
             null
-    }
-
-    class DirectoriesScope(
-        project: Project,
-        private val directories: Set<VirtualFile>
-    ) : DelegatingGlobalSearchScope(allScope(project)) {
-        private val fileSystems = directories.mapTo(hashSetOf(), VirtualFile::getFileSystem)
-
-        override fun contains(file: VirtualFile): Boolean {
-            if (file.fileSystem !in fileSystems) return false
-
-            var parent: VirtualFile = file
-            while (true) {
-                if (parent in directories) return true
-                parent = parent.parent ?: return false
-            }
-        }
-
-        override fun toString() = "All files under: $directories"
     }
 
     internal fun runLowerings(
