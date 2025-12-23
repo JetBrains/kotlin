@@ -105,7 +105,7 @@ internal class KaFirSymbolProvider(
             KaFirBackingFieldSymbol(
                 this,
                 analysisSession,
-                owningProperty.symbol as KaKotlinPropertySymbol // Backing fields for local properties don't parse
+                owningProperty.symbol as KaFirKotlinPropertySymbol<*> // Backing fields for local properties don't parse
             )
         }
 

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.fir.symbols
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.KtRealPsiSourceElement
 import org.jetbrains.kotlin.analysis.api.KaInitializerValue
 import org.jetbrains.kotlin.analysis.api.KaNonConstantInitializerValue
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
@@ -28,6 +29,7 @@ import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.correspondingProperty
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
+import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyBackingField
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
@@ -95,14 +97,27 @@ internal sealed class KaFirKotlinPropertySymbol<P : KtCallableDeclaration>(
 
     override val backingFieldSymbol: KaBackingFieldSymbol?
         get() = withValidityAssertion {
-            val backingFieldPsi = (backingPsi as? KtProperty)?.fieldDeclaration
-            if (backingFieldPsi != null) {
-                return KaFirBackingFieldSymbol(backingFieldPsi, analysisSession, this)
+            val backingPsi = backingPsi
+            if (backingPsi != null) {
+                val backingFieldPsi = (backingPsi as? KtProperty)?.fieldDeclaration
+                return if (backingFieldPsi != null) {
+                    KaFirBackingFieldSymbol(backingFieldPsi, analysisSession, this)
+                } else {
+                    /**
+                     * For consistency with the FIR compiler implementation. Even for computed properties without a real backing field,
+                     * the [org.jetbrains.kotlin.fir.declarations.FirBackingField] is still generated.
+                     */
+                    KaFirDefaultBackingFieldSymbol(analysisSession, this)
+                }
             }
 
             val backingFieldSymbol = firSymbol.backingFieldSymbol
             if (backingFieldSymbol != null) {
-                return KaFirBackingFieldSymbol(backingFieldSymbol, analysisSession, this)
+                return if (backingFieldSymbol.fir !is FirDefaultPropertyBackingField) {
+                    KaFirBackingFieldSymbol(backingFieldSymbol, analysisSession, this)
+                } else {
+                    KaFirDefaultBackingFieldSymbol(analysisSession, this)
+                }
             }
 
             return null
