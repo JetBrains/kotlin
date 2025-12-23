@@ -154,7 +154,7 @@ abstract class AbstractSimpleFileBenchmark {
     @OptIn(ObsoleteTestInfrastructure::class)
     private fun analyzeGreenFileIr(bh: Blackhole) {
         val scope = GlobalSearchScope.filesScope(env.project, listOf(file.virtualFile))
-            .uniteWith(TopDownAnalyzerFacadeForJVM.AllJavaSourcesInProjectScope(env.project))
+            .uniteWith(AllJavaSourcesInProjectScope(env.project))
         val session = FirTestSessionFactoryHelper.createSessionForTests(env.toVfsBasedProjectEnvironment(), scope.toAbstractProjectFileSearchScope())
         val firProvider = session.firProvider as FirProviderImpl
         val builder = PsiRawFirBuilder(session, firProvider.kotlinScopeProvider)

@@ -26,9 +26,9 @@ import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.backend.jvm.JvmIrDeserializerImpl
 import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
+import org.jetbrains.kotlin.cli.jvm.compiler.AllJavaSourcesInProjectScope
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.PsiBasedProjectFileSearchScope
-import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.convertToIrAndActualizeForJvm
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
@@ -92,11 +92,7 @@ class K2CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
     ): FirSession {
         return FirJvmSessionFactory.createSourceSession(
             moduleData,
-            PsiBasedProjectFileSearchScope(
-                TopDownAnalyzerFacadeForJVM.AllJavaSourcesInProjectScope(
-                    project
-                )
-            ),
+            PsiBasedProjectFileSearchScope(AllJavaSourcesInProjectScope(project)),
             createIncrementalCompilationSymbolProviders = { null },
             configuration.getCompilerExtensions(FirExtensionRegistrar),
             configuration,

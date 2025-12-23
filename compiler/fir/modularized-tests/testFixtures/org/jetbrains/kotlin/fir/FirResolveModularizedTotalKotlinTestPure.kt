@@ -80,7 +80,7 @@ class FirResolveModularizedTotalKotlinTestPure(config: ModularizedTestConfig) : 
                 val ktFiles = environment.getSourceFiles()
                 ktFiles.map { KtPsiSourceFile(it) } to
                         GlobalSearchScope.filesScope(project, ktFiles.map { it.virtualFile })
-                            .uniteWith(TopDownAnalyzerFacadeForJVM.AllJavaSourcesInProjectScope(project))
+                            .uniteWith(AllJavaSourcesInProjectScope(project))
                             .toAbstractProjectFileSearchScope()
             }
         val librariesScope = ProjectScope.getLibrariesScope(project)
