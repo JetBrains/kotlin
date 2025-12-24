@@ -20,16 +20,15 @@ import org.jetbrains.kotlin.psi.KtExpression
 @KaImplementationDetail
 class KaBaseDelegatedConstructorCall(
     private val backingPartiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaConstructorSymbol>,
-    kind: KaDelegatedConstructorCall.Kind,
-    argumentMapping: Map<KtExpression, KaVariableSignature<KaValueParameterSymbol>>,
-    typeArgumentsMapping: Map<KaTypeParameterSymbol, KaType>,
+    private val backingKind: KaDelegatedConstructorCall.Kind,
+    private val backingArgumentMapping: Map<KtExpression, KaVariableSignature<KaValueParameterSymbol>>,
+    private val backingTypeArgumentsMapping: Map<KaTypeParameterSymbol, KaType>,
 ) : KaDelegatedConstructorCall {
-    private val backingTypeArgumentsMapping: Map<KaTypeParameterSymbol, KaType> = typeArgumentsMapping
-    private val backingKind: KaDelegatedConstructorCall.Kind = kind
-    private val backingArgumentMapping: Map<KtExpression, KaVariableSignature<KaValueParameterSymbol>> = argumentMapping
     override val token: KaLifetimeToken get() = backingPartiallyAppliedSymbol.token
 
-    override val partiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaConstructorSymbol> get() = withValidityAssertion { backingPartiallyAppliedSymbol }
+    override val partiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaConstructorSymbol>
+        get() = withValidityAssertion { backingPartiallyAppliedSymbol }
+
     override val typeArgumentsMapping: Map<KaTypeParameterSymbol, KaType> get() = withValidityAssertion { backingTypeArgumentsMapping }
     override val kind: KaDelegatedConstructorCall.Kind get() = withValidityAssertion { backingKind }
     override val argumentMapping: Map<KtExpression, KaVariableSignature<KaValueParameterSymbol>> get() = withValidityAssertion { backingArgumentMapping }

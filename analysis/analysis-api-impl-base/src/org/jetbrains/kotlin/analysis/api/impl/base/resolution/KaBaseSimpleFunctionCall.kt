@@ -20,16 +20,15 @@ import org.jetbrains.kotlin.psi.KtExpression
 @KaImplementationDetail
 class KaBaseSimpleFunctionCall(
     private val backingPartiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaFunctionSymbol>,
-    argumentMapping: Map<KtExpression, KaVariableSignature<KaValueParameterSymbol>>,
-    typeArgumentsMapping: Map<KaTypeParameterSymbol, KaType>,
-    isImplicitInvoke: Boolean,
+    private val backingArgumentMapping: Map<KtExpression, KaVariableSignature<KaValueParameterSymbol>>,
+    private val backingTypeArgumentsMapping: Map<KaTypeParameterSymbol, KaType>,
+    private val backingIsImplicitInvoke: Boolean,
 ) : KaSimpleFunctionCall {
-    private val backingTypeArgumentsMapping: Map<KaTypeParameterSymbol, KaType> = typeArgumentsMapping
-    private val backingIsImplicitInvoke: Boolean = isImplicitInvoke
-    private val backingArgumentMapping: Map<KtExpression, KaVariableSignature<KaValueParameterSymbol>> = argumentMapping
     override val token: KaLifetimeToken get() = backingPartiallyAppliedSymbol.token
 
-    override val partiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaFunctionSymbol> get() = withValidityAssertion { backingPartiallyAppliedSymbol }
+    override val partiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaFunctionSymbol>
+        get() = withValidityAssertion { backingPartiallyAppliedSymbol }
+
     override val typeArgumentsMapping: Map<KaTypeParameterSymbol, KaType> get() = withValidityAssertion { backingTypeArgumentsMapping }
     override val isImplicitInvoke: Boolean get() = withValidityAssertion { backingIsImplicitInvoke }
     override val argumentMapping: Map<KtExpression, KaVariableSignature<KaValueParameterSymbol>> get() = withValidityAssertion { backingArgumentMapping }

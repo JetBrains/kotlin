@@ -323,7 +323,7 @@ internal class KaFe10Resolver(
         // TODO: We should prefer to compare symbols instead of descriptors, but we can't do so while symbols are not cached.
         fun KaCall.isInBestCandidates(): Boolean {
             val descriptor = this.safeAs<KaCallableMemberCall<*, *>>()?.descriptor as? CallableDescriptor
-            return descriptor != null && bestCandidateDescriptors.any { it ->
+            return descriptor != null && bestCandidateDescriptors.any {
                 DescriptorEquivalenceForOverrides.areCallableDescriptorsEquivalent(
                     it,
                     descriptor,
@@ -367,9 +367,10 @@ internal class KaFe10Resolver(
                     partiallyAppliedSymbol,
                     resolvedCall.toTypeArgumentsMapping(partiallyAppliedSymbol),
                     KaBaseSimpleVariableWriteAccess(right),
-                    isContextSensitive = false,
+                    backingIsContextSensitive = false,
                 )
             }
+
             in KtTokens.AUGMENTED_ASSIGNMENTS -> {
                 if (right == null) return null
                 val operatorCall = binaryExpression.getResolvedCall(context) ?: return null
@@ -381,7 +382,7 @@ internal class KaFe10Resolver(
                     operatorCall.toPartiallyAppliedFunctionSymbol<KaNamedFunctionSymbol>(context) ?: return null
 
                 val compoundAccess = KaBaseCompoundAssignOperation(
-                    operatorPartiallyAppliedSymbol,
+                    operatorPartiallyAppliedSymbol.asSimpleFunctionCall,
                     binaryExpression.getCompoundAssignKind(),
                     right
                 )
@@ -392,12 +393,34 @@ internal class KaFe10Resolver(
                     val resolvedCall = left.getResolvedCall(context) ?: return null
                     resolvedCalls += resolvedCall
                     val variableAppliedSymbol = resolvedCall.toPartiallyAppliedVariableSymbol(context) ?: return null
-                    KaBaseCompoundVariableAccessCall(variableAppliedSymbol, compoundAccess)
+                    KaBaseCompoundVariableAccessCall(variableAppliedSymbol.asVariableAccessCall, compoundAccess)
                 }
             }
+
             else -> null
         }?.let { createCallInfo(context, binaryExpression, it, resolvedCalls) }
     }
+
+    private val KaPartiallyAppliedFunctionSymbol<KaNamedFunctionSymbol>.asSimpleFunctionCall: KaFunctionCall<KaNamedFunctionSymbol>
+        get() {
+            val functionCall = KaBaseSimpleFunctionCall(
+                backingPartiallyAppliedSymbol = this,
+                backingArgumentMapping = emptyMap(),
+                backingTypeArgumentsMapping = emptyMap(),
+                backingIsImplicitInvoke = false,
+            )
+
+            @Suppress("UNCHECKED_CAST")
+            return functionCall as KaFunctionCall<KaNamedFunctionSymbol>
+        }
+
+    private val KaPartiallyAppliedVariableSymbol<KaVariableSymbol>.asVariableAccessCall: KaVariableAccessCall
+        get() = KaBaseSimpleVariableAccessCall(
+            backingPartiallyAppliedSymbol = this,
+            backingTypeArgumentsMapping = emptyMap(),
+            backingSimpleAccess = KaBaseSimpleVariableReadAccess,
+            backingIsContextSensitive = false,
+        )
 
     private fun handleAsIncOrDecOperator(context: BindingContext, unaryExpression: KtUnaryExpression): KaCallResolutionAttempt? {
         if (unaryExpression.operationToken !in KtTokens.INCREMENT_AND_DECREMENT) return null
@@ -412,13 +435,13 @@ internal class KaFe10Resolver(
             else -> error("unexpected KtUnaryExpression $unaryExpression")
         }
 
-        val compoundAccess = KaBaseCompoundUnaryOperation(operatorPartiallyAppliedSymbol, kind, precedence)
+        val compoundAccess = KaBaseCompoundUnaryOperation(operatorPartiallyAppliedSymbol.asSimpleFunctionCall, kind, precedence)
         return if (baseExpression is KtArrayAccessExpression) {
             createCompoundArrayAccessCall(context, baseExpression, compoundAccess, resolvedCalls)
         } else {
             val resolvedCall = baseExpression.getResolvedCall(context)
             val variableAppliedSymbol = resolvedCall?.toPartiallyAppliedVariableSymbol(context) ?: return null
-            KaBaseCompoundVariableAccessCall(variableAppliedSymbol, compoundAccess)
+            KaBaseCompoundVariableAccessCall(variableAppliedSymbol.asVariableAccessCall, compoundAccess)
         }?.let { createCallInfo(context, unaryExpression, it, resolvedCalls) }
     }
 
@@ -437,8 +460,8 @@ internal class KaFe10Resolver(
         return KaBaseCompoundArrayAccessCall(
             compoundAccess,
             arrayAccessExpression.indexExpressions,
-            getPartiallyAppliedSymbol,
-            setPartiallyAppliedSymbol
+            getPartiallyAppliedSymbol.asSimpleFunctionCall,
+            setPartiallyAppliedSymbol.asSimpleFunctionCall,
         )
     }
 
@@ -477,7 +500,7 @@ internal class KaFe10Resolver(
             partiallyAppliedSymbol,
             toTypeArgumentsMapping(partiallyAppliedSymbol),
             KaBaseSimpleVariableReadAccess,
-            isContextSensitive = false,
+            backingIsContextSensitive = false,
         )
     }
 

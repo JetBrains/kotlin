@@ -1,0 +1,96 @@
+KtOperationReferenceExpression(189,191): '+='
+  KaSuccessCallInfo:
+    call = KaCompoundArrayAccessCall:
+      compoundOperation = KaCompoundAssignOperation:
+        kind = PLUS_ASSIGN
+        operand = 1
+        operationCall = KaSimpleFunctionCall:
+          argumentMapping = {}
+          isImplicitInvoke = false
+          partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+            contextArguments = []
+            dispatchReceiver = KaExplicitReceiverValue:
+              expression = m["a"]
+              isSafeNavigation = false
+              type = kotlin.Int
+            extensionReceiver = null
+            signature = KaFunctionSignature:
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+              valueParameters = [
+                KaVariableSignature:
+                  name = other
+                  receiverType = null
+                  returnType = kotlin.Int
+                  symbol = other: kotlin.Int
+                  contextParameters = []
+                  callableId = null
+              ]
+              contextParameters = []
+              callableId = kotlin/Int.plus
+          typeArgumentsMapping = {}
+      getCall = KaSimpleFunctionCall:
+        argumentMapping = {}
+        isImplicitInvoke = false
+        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          contextArguments = []
+          dispatchReceiver = KaExplicitReceiverValue:
+            expression = m
+            isSafeNavigation = false
+            type = MyMap<kotlin.String, kotlin.Int>
+          extensionReceiver = null
+          signature = KaFunctionSignature:
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = /MyMap.get(<dispatch receiver>: MyMap<K1, V1>, k: K1): V1
+            valueParameters = [
+              KaVariableSignature:
+                name = k
+                receiverType = null
+                returnType = kotlin.String
+                symbol = k: K1
+                contextParameters = []
+                callableId = null
+            ]
+            contextParameters = []
+            callableId = /MyMap.get
+        typeArgumentsMapping = {}
+      indexArguments = [
+        "a"
+      ]
+      setCall = KaSimpleFunctionCall:
+        argumentMapping = {}
+        isImplicitInvoke = false
+        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          contextArguments = []
+          dispatchReceiver = KaImplicitReceiverValue:
+            symbol = /Foo
+            type = Foo
+          extensionReceiver = KaExplicitReceiverValue:
+            expression = m
+            isSafeNavigation = false
+            type = MyMap<kotlin.String, kotlin.Int>
+          signature = KaFunctionSignature:
+            receiverType = MyMap<kotlin.String, kotlin.Int>
+            returnType = kotlin.Unit
+            symbol = /Foo.set(<extension receiver>: MyMap<K2, V2>, <dispatch receiver>: Foo, k: K2, v: V2): kotlin.Unit
+            valueParameters = [
+              KaVariableSignature:
+                name = k
+                receiverType = null
+                returnType = kotlin.String
+                symbol = k: K2
+                contextParameters = []
+                callableId = null,
+              KaVariableSignature:
+                name = v
+                receiverType = null
+                returnType = kotlin.Int
+                symbol = v: V2
+                contextParameters = []
+                callableId = null
+            ]
+            contextParameters = []
+            callableId = /Foo.set
+        typeArgumentsMapping = {}

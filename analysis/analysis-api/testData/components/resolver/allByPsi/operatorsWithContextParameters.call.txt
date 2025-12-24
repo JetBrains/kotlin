@@ -2741,63 +2741,71 @@ KtPostfixExpression(1100,1110): 'thisProp++'
     call = KaCompoundVariableAccessCall:
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC
-        operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = [
-            KaImplicitReceiverValue:
-              symbol = KaReceiverParameterSymbol:
-                annotations: []
-                callableId: null
-                compilerVisibility: Public
-                contextReceivers: []
-                isActual: false
-                isExpect: false
-                isExtension: false
-                isVal: true
-                location: LOCAL
-                modality: FINAL
-                name: <receiver>
-                origin: SOURCE
-                owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
-                receiverParameter: null
-                returnType: KaUsualClassType:
+        operationCall = KaSimpleFunctionCall:
+          argumentMapping = {}
+          isImplicitInvoke = false
+          partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+            contextArguments = [
+              KaImplicitReceiverValue:
+                symbol = KaReceiverParameterSymbol:
                   annotations: []
-                  typeArguments: []
-                  type: A
-                visibility: PUBLIC
-              type = A
-          ]
-          dispatchReceiver = null
-          extensionReceiver = KaExplicitReceiverValue:
-            expression = thisProp
-            isSafeNavigation = false
-            type = A
-          signature = KaFunctionSignature:
-            receiverType = A
-            returnType = A
-            symbol = /inc(<extension receiver>: A): A
-            valueParameters = []
-            contextParameters = [
-              KaVariableSignature:
-                name = a
-                receiverType = null
-                returnType = A
-                symbol = a: A
-                contextParameters = []
-                callableId = null
+                  callableId: null
+                  compilerVisibility: Public
+                  contextReceivers: []
+                  isActual: false
+                  isExpect: false
+                  isExtension: false
+                  isVal: true
+                  location: LOCAL
+                  modality: FINAL
+                  name: <receiver>
+                  origin: SOURCE
+                  owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+                  receiverParameter: null
+                  returnType: KaUsualClassType:
+                    annotations: []
+                    typeArguments: []
+                    type: A
+                  visibility: PUBLIC
+                type = A
             ]
-            callableId = /inc
+            dispatchReceiver = null
+            extensionReceiver = KaExplicitReceiverValue:
+              expression = thisProp
+              isSafeNavigation = false
+              type = A
+            signature = KaFunctionSignature:
+              receiverType = A
+              returnType = A
+              symbol = /inc(<extension receiver>: A): A
+              valueParameters = []
+              contextParameters = [
+                KaVariableSignature:
+                  name = a
+                  receiverType = null
+                  returnType = A
+                  symbol = a: A
+                  contextParameters = []
+                  callableId = null
+              ]
+              callableId = /inc
+          typeArgumentsMapping = {}
         precedence = POSTFIX
-      variablePartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = thisProp
-          receiverType = null
-          returnType = A
-          symbol = var thisProp: A
-          contextParameters = []
-          callableId = null
+      variableCall = KaSimpleVariableAccessCall:
+        isContextSensitive = false
+        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          contextArguments = []
+          dispatchReceiver = null
+          extensionReceiver = null
+          signature = KaVariableSignature:
+            name = thisProp
+            receiverType = null
+            returnType = A
+            symbol = var thisProp: A
+            contextParameters = []
+            callableId = null
+        simpleAccess = Read
+        typeArgumentsMapping = {}
 
 KtNameReferenceExpression(1100,1108): 'thisProp'
   KaSuccessCallInfo:
@@ -2822,63 +2830,71 @@ KtOperationReferenceExpression(1108,1110): '++'
     call = KaCompoundVariableAccessCall:
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC
-        operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = [
-            KaImplicitReceiverValue:
-              symbol = KaReceiverParameterSymbol:
-                annotations: []
-                callableId: null
-                compilerVisibility: Public
-                contextReceivers: []
-                isActual: false
-                isExpect: false
-                isExtension: false
-                isVal: true
-                location: LOCAL
-                modality: FINAL
-                name: <receiver>
-                origin: SOURCE
-                owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
-                receiverParameter: null
-                returnType: KaUsualClassType:
+        operationCall = KaSimpleFunctionCall:
+          argumentMapping = {}
+          isImplicitInvoke = false
+          partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+            contextArguments = [
+              KaImplicitReceiverValue:
+                symbol = KaReceiverParameterSymbol:
                   annotations: []
-                  typeArguments: []
-                  type: A
-                visibility: PUBLIC
-              type = A
-          ]
-          dispatchReceiver = null
-          extensionReceiver = KaExplicitReceiverValue:
-            expression = thisProp
-            isSafeNavigation = false
-            type = A
-          signature = KaFunctionSignature:
-            receiverType = A
-            returnType = A
-            symbol = /inc(<extension receiver>: A): A
-            valueParameters = []
-            contextParameters = [
-              KaVariableSignature:
-                name = a
-                receiverType = null
-                returnType = A
-                symbol = a: A
-                contextParameters = []
-                callableId = null
+                  callableId: null
+                  compilerVisibility: Public
+                  contextReceivers: []
+                  isActual: false
+                  isExpect: false
+                  isExtension: false
+                  isVal: true
+                  location: LOCAL
+                  modality: FINAL
+                  name: <receiver>
+                  origin: SOURCE
+                  owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+                  receiverParameter: null
+                  returnType: KaUsualClassType:
+                    annotations: []
+                    typeArguments: []
+                    type: A
+                  visibility: PUBLIC
+                type = A
             ]
-            callableId = /inc
+            dispatchReceiver = null
+            extensionReceiver = KaExplicitReceiverValue:
+              expression = thisProp
+              isSafeNavigation = false
+              type = A
+            signature = KaFunctionSignature:
+              receiverType = A
+              returnType = A
+              symbol = /inc(<extension receiver>: A): A
+              valueParameters = []
+              contextParameters = [
+                KaVariableSignature:
+                  name = a
+                  receiverType = null
+                  returnType = A
+                  symbol = a: A
+                  contextParameters = []
+                  callableId = null
+              ]
+              callableId = /inc
+          typeArgumentsMapping = {}
         precedence = POSTFIX
-      variablePartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = thisProp
-          receiverType = null
-          returnType = A
-          symbol = var thisProp: A
-          contextParameters = []
-          callableId = null
+      variableCall = KaSimpleVariableAccessCall:
+        isContextSensitive = false
+        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          contextArguments = []
+          dispatchReceiver = null
+          extensionReceiver = null
+          signature = KaVariableSignature:
+            name = thisProp
+            receiverType = null
+            returnType = A
+            symbol = var thisProp: A
+            contextParameters = []
+            callableId = null
+        simpleAccess = Read
+        typeArgumentsMapping = {}
 
 KtBinaryExpression(1119,1126): 'a = a++'
   KaSuccessCallInfo:
@@ -2942,63 +2958,71 @@ KtPostfixExpression(1123,1126): 'a++'
     call = KaCompoundVariableAccessCall:
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC
-        operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = [
-            KaImplicitReceiverValue:
-              symbol = KaReceiverParameterSymbol:
-                annotations: []
-                callableId: null
-                compilerVisibility: Public
-                contextReceivers: []
-                isActual: false
-                isExpect: false
-                isExtension: false
-                isVal: true
-                location: LOCAL
-                modality: FINAL
-                name: <receiver>
-                origin: SOURCE
-                owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
-                receiverParameter: null
-                returnType: KaUsualClassType:
+        operationCall = KaSimpleFunctionCall:
+          argumentMapping = {}
+          isImplicitInvoke = false
+          partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+            contextArguments = [
+              KaImplicitReceiverValue:
+                symbol = KaReceiverParameterSymbol:
                   annotations: []
-                  typeArguments: []
-                  type: A
-                visibility: PUBLIC
-              type = A
-          ]
-          dispatchReceiver = null
-          extensionReceiver = KaExplicitReceiverValue:
-            expression = a
-            isSafeNavigation = false
-            type = A
-          signature = KaFunctionSignature:
-            receiverType = A
-            returnType = A
-            symbol = /inc(<extension receiver>: A): A
-            valueParameters = []
-            contextParameters = [
-              KaVariableSignature:
-                name = a
-                receiverType = null
-                returnType = A
-                symbol = a: A
-                contextParameters = []
-                callableId = null
+                  callableId: null
+                  compilerVisibility: Public
+                  contextReceivers: []
+                  isActual: false
+                  isExpect: false
+                  isExtension: false
+                  isVal: true
+                  location: LOCAL
+                  modality: FINAL
+                  name: <receiver>
+                  origin: SOURCE
+                  owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+                  receiverParameter: null
+                  returnType: KaUsualClassType:
+                    annotations: []
+                    typeArguments: []
+                    type: A
+                  visibility: PUBLIC
+                type = A
             ]
-            callableId = /inc
+            dispatchReceiver = null
+            extensionReceiver = KaExplicitReceiverValue:
+              expression = a
+              isSafeNavigation = false
+              type = A
+            signature = KaFunctionSignature:
+              receiverType = A
+              returnType = A
+              symbol = /inc(<extension receiver>: A): A
+              valueParameters = []
+              contextParameters = [
+                KaVariableSignature:
+                  name = a
+                  receiverType = null
+                  returnType = A
+                  symbol = a: A
+                  contextParameters = []
+                  callableId = null
+              ]
+              callableId = /inc
+          typeArgumentsMapping = {}
         precedence = POSTFIX
-      variablePartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = a
-          receiverType = null
-          returnType = A
-          symbol = var a: A
-          contextParameters = []
-          callableId = null
+      variableCall = KaSimpleVariableAccessCall:
+        isContextSensitive = false
+        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          contextArguments = []
+          dispatchReceiver = null
+          extensionReceiver = null
+          signature = KaVariableSignature:
+            name = a
+            receiverType = null
+            returnType = A
+            symbol = var a: A
+            contextParameters = []
+            callableId = null
+        simpleAccess = Read
+        typeArgumentsMapping = {}
 
 KtNameReferenceExpression(1123,1124): 'a'
   KaSuccessCallInfo:
@@ -3023,63 +3047,71 @@ KtOperationReferenceExpression(1124,1126): '++'
     call = KaCompoundVariableAccessCall:
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC
-        operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = [
-            KaImplicitReceiverValue:
-              symbol = KaReceiverParameterSymbol:
-                annotations: []
-                callableId: null
-                compilerVisibility: Public
-                contextReceivers: []
-                isActual: false
-                isExpect: false
-                isExtension: false
-                isVal: true
-                location: LOCAL
-                modality: FINAL
-                name: <receiver>
-                origin: SOURCE
-                owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
-                receiverParameter: null
-                returnType: KaUsualClassType:
+        operationCall = KaSimpleFunctionCall:
+          argumentMapping = {}
+          isImplicitInvoke = false
+          partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+            contextArguments = [
+              KaImplicitReceiverValue:
+                symbol = KaReceiverParameterSymbol:
                   annotations: []
-                  typeArguments: []
-                  type: A
-                visibility: PUBLIC
-              type = A
-          ]
-          dispatchReceiver = null
-          extensionReceiver = KaExplicitReceiverValue:
-            expression = a
-            isSafeNavigation = false
-            type = A
-          signature = KaFunctionSignature:
-            receiverType = A
-            returnType = A
-            symbol = /inc(<extension receiver>: A): A
-            valueParameters = []
-            contextParameters = [
-              KaVariableSignature:
-                name = a
-                receiverType = null
-                returnType = A
-                symbol = a: A
-                contextParameters = []
-                callableId = null
+                  callableId: null
+                  compilerVisibility: Public
+                  contextReceivers: []
+                  isActual: false
+                  isExpect: false
+                  isExtension: false
+                  isVal: true
+                  location: LOCAL
+                  modality: FINAL
+                  name: <receiver>
+                  origin: SOURCE
+                  owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+                  receiverParameter: null
+                  returnType: KaUsualClassType:
+                    annotations: []
+                    typeArguments: []
+                    type: A
+                  visibility: PUBLIC
+                type = A
             ]
-            callableId = /inc
+            dispatchReceiver = null
+            extensionReceiver = KaExplicitReceiverValue:
+              expression = a
+              isSafeNavigation = false
+              type = A
+            signature = KaFunctionSignature:
+              receiverType = A
+              returnType = A
+              symbol = /inc(<extension receiver>: A): A
+              valueParameters = []
+              contextParameters = [
+                KaVariableSignature:
+                  name = a
+                  receiverType = null
+                  returnType = A
+                  symbol = a: A
+                  contextParameters = []
+                  callableId = null
+              ]
+              callableId = /inc
+          typeArgumentsMapping = {}
         precedence = POSTFIX
-      variablePartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = a
-          receiverType = null
-          returnType = A
-          symbol = var a: A
-          contextParameters = []
-          callableId = null
+      variableCall = KaSimpleVariableAccessCall:
+        isContextSensitive = false
+        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          contextArguments = []
+          dispatchReceiver = null
+          extensionReceiver = null
+          signature = KaVariableSignature:
+            name = a
+            receiverType = null
+            returnType = A
+            symbol = var a: A
+            contextParameters = []
+            callableId = null
+        simpleAccess = Read
+        typeArgumentsMapping = {}
 
 KtBinaryExpression(1136,1141): 'b + 1'
   KaSuccessCallInfo:
@@ -3992,63 +4024,71 @@ KtPostfixExpression(1220,1223): 'b++'
     call = KaCompoundVariableAccessCall:
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC
-        operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = [
-            KaImplicitReceiverValue:
-              symbol = KaReceiverParameterSymbol:
-                annotations: []
-                callableId: null
-                compilerVisibility: Public
-                contextReceivers: []
-                isActual: false
-                isExpect: false
-                isExtension: false
-                isVal: true
-                location: LOCAL
-                modality: FINAL
-                name: <receiver>
-                origin: SOURCE
-                owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
-                receiverParameter: null
-                returnType: KaUsualClassType:
+        operationCall = KaSimpleFunctionCall:
+          argumentMapping = {}
+          isImplicitInvoke = false
+          partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+            contextArguments = [
+              KaImplicitReceiverValue:
+                symbol = KaReceiverParameterSymbol:
                   annotations: []
-                  typeArguments: []
-                  type: A
-                visibility: PUBLIC
-              type = A
-          ]
-          dispatchReceiver = KaExplicitReceiverValue:
-            expression = b
-            isSafeNavigation = false
-            type = SimpleOperators
+                  callableId: null
+                  compilerVisibility: Public
+                  contextReceivers: []
+                  isActual: false
+                  isExpect: false
+                  isExtension: false
+                  isVal: true
+                  location: LOCAL
+                  modality: FINAL
+                  name: <receiver>
+                  origin: SOURCE
+                  owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+                  receiverParameter: null
+                  returnType: KaUsualClassType:
+                    annotations: []
+                    typeArguments: []
+                    type: A
+                  visibility: PUBLIC
+                type = A
+            ]
+            dispatchReceiver = KaExplicitReceiverValue:
+              expression = b
+              isSafeNavigation = false
+              type = SimpleOperators
+            extensionReceiver = null
+            signature = KaFunctionSignature:
+              receiverType = null
+              returnType = SimpleOperators
+              symbol = /SimpleOperators.inc(<dispatch receiver>: SimpleOperators): SimpleOperators
+              valueParameters = []
+              contextParameters = [
+                KaVariableSignature:
+                  name = a
+                  receiverType = null
+                  returnType = A
+                  symbol = a: A
+                  contextParameters = []
+                  callableId = null
+              ]
+              callableId = /SimpleOperators.inc
+          typeArgumentsMapping = {}
+        precedence = POSTFIX
+      variableCall = KaSimpleVariableAccessCall:
+        isContextSensitive = false
+        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          contextArguments = []
+          dispatchReceiver = null
           extensionReceiver = null
-          signature = KaFunctionSignature:
+          signature = KaVariableSignature:
+            name = b
             receiverType = null
             returnType = SimpleOperators
-            symbol = /SimpleOperators.inc(<dispatch receiver>: SimpleOperators): SimpleOperators
-            valueParameters = []
-            contextParameters = [
-              KaVariableSignature:
-                name = a
-                receiverType = null
-                returnType = A
-                symbol = a: A
-                contextParameters = []
-                callableId = null
-            ]
-            callableId = /SimpleOperators.inc
-        precedence = POSTFIX
-      variablePartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = b
-          receiverType = null
-          returnType = SimpleOperators
-          symbol = var b: SimpleOperators
-          contextParameters = []
-          callableId = null
+            symbol = var b: SimpleOperators
+            contextParameters = []
+            callableId = null
+        simpleAccess = Read
+        typeArgumentsMapping = {}
 
 KtNameReferenceExpression(1220,1221): 'b'
   KaSuccessCallInfo:
@@ -4073,63 +4113,71 @@ KtOperationReferenceExpression(1221,1223): '++'
     call = KaCompoundVariableAccessCall:
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC
-        operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = [
-            KaImplicitReceiverValue:
-              symbol = KaReceiverParameterSymbol:
-                annotations: []
-                callableId: null
-                compilerVisibility: Public
-                contextReceivers: []
-                isActual: false
-                isExpect: false
-                isExtension: false
-                isVal: true
-                location: LOCAL
-                modality: FINAL
-                name: <receiver>
-                origin: SOURCE
-                owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
-                receiverParameter: null
-                returnType: KaUsualClassType:
+        operationCall = KaSimpleFunctionCall:
+          argumentMapping = {}
+          isImplicitInvoke = false
+          partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+            contextArguments = [
+              KaImplicitReceiverValue:
+                symbol = KaReceiverParameterSymbol:
                   annotations: []
-                  typeArguments: []
-                  type: A
-                visibility: PUBLIC
-              type = A
-          ]
-          dispatchReceiver = KaExplicitReceiverValue:
-            expression = b
-            isSafeNavigation = false
-            type = SimpleOperators
+                  callableId: null
+                  compilerVisibility: Public
+                  contextReceivers: []
+                  isActual: false
+                  isExpect: false
+                  isExtension: false
+                  isVal: true
+                  location: LOCAL
+                  modality: FINAL
+                  name: <receiver>
+                  origin: SOURCE
+                  owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+                  receiverParameter: null
+                  returnType: KaUsualClassType:
+                    annotations: []
+                    typeArguments: []
+                    type: A
+                  visibility: PUBLIC
+                type = A
+            ]
+            dispatchReceiver = KaExplicitReceiverValue:
+              expression = b
+              isSafeNavigation = false
+              type = SimpleOperators
+            extensionReceiver = null
+            signature = KaFunctionSignature:
+              receiverType = null
+              returnType = SimpleOperators
+              symbol = /SimpleOperators.inc(<dispatch receiver>: SimpleOperators): SimpleOperators
+              valueParameters = []
+              contextParameters = [
+                KaVariableSignature:
+                  name = a
+                  receiverType = null
+                  returnType = A
+                  symbol = a: A
+                  contextParameters = []
+                  callableId = null
+              ]
+              callableId = /SimpleOperators.inc
+          typeArgumentsMapping = {}
+        precedence = POSTFIX
+      variableCall = KaSimpleVariableAccessCall:
+        isContextSensitive = false
+        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          contextArguments = []
+          dispatchReceiver = null
           extensionReceiver = null
-          signature = KaFunctionSignature:
+          signature = KaVariableSignature:
+            name = b
             receiverType = null
             returnType = SimpleOperators
-            symbol = /SimpleOperators.inc(<dispatch receiver>: SimpleOperators): SimpleOperators
-            valueParameters = []
-            contextParameters = [
-              KaVariableSignature:
-                name = a
-                receiverType = null
-                returnType = A
-                symbol = a: A
-                contextParameters = []
-                callableId = null
-            ]
-            callableId = /SimpleOperators.inc
-        precedence = POSTFIX
-      variablePartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = b
-          receiverType = null
-          returnType = SimpleOperators
-          symbol = var b: SimpleOperators
-          contextParameters = []
-          callableId = null
+            symbol = var b: SimpleOperators
+            contextParameters = []
+            callableId = null
+        simpleAccess = Read
+        typeArgumentsMapping = {}
 
 KtNamedFunction(1233,1441): 'fun withoutContext() {'
   null
@@ -4916,40 +4964,48 @@ KtPostfixExpression(1367,1370): 'a++'
     call = KaCompoundVariableAccessCall:
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC
-        operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        operationCall = KaSimpleFunctionCall:
+          argumentMapping = {}
+          isImplicitInvoke = false
+          partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+            contextArguments = []
+            dispatchReceiver = null
+            extensionReceiver = KaExplicitReceiverValue:
+              expression = a
+              isSafeNavigation = false
+              type = A
+            signature = KaFunctionSignature:
+              receiverType = A
+              returnType = A
+              symbol = /inc(<extension receiver>: A): A
+              valueParameters = []
+              contextParameters = [
+                KaVariableSignature:
+                  name = a
+                  receiverType = null
+                  returnType = A
+                  symbol = a: A
+                  contextParameters = []
+                  callableId = null
+              ]
+              callableId = /inc
+          typeArgumentsMapping = {}
+        precedence = POSTFIX
+      variableCall = KaSimpleVariableAccessCall:
+        isContextSensitive = false
+        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
           contextArguments = []
           dispatchReceiver = null
-          extensionReceiver = KaExplicitReceiverValue:
-            expression = a
-            isSafeNavigation = false
-            type = A
-          signature = KaFunctionSignature:
-            receiverType = A
+          extensionReceiver = null
+          signature = KaVariableSignature:
+            name = a
+            receiverType = null
             returnType = A
-            symbol = /inc(<extension receiver>: A): A
-            valueParameters = []
-            contextParameters = [
-              KaVariableSignature:
-                name = a
-                receiverType = null
-                returnType = A
-                symbol = a: A
-                contextParameters = []
-                callableId = null
-            ]
-            callableId = /inc
-        precedence = POSTFIX
-      variablePartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = a
-          receiverType = null
-          returnType = A
-          symbol = var a: A
-          contextParameters = []
-          callableId = null
+            symbol = var a: A
+            contextParameters = []
+            callableId = null
+        simpleAccess = Read
+        typeArgumentsMapping = {}
 
 KtNameReferenceExpression(1367,1368): 'a'
   KaSuccessCallInfo:
@@ -4974,40 +5030,48 @@ KtOperationReferenceExpression(1368,1370): '++'
     call = KaCompoundVariableAccessCall:
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC
-        operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        operationCall = KaSimpleFunctionCall:
+          argumentMapping = {}
+          isImplicitInvoke = false
+          partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+            contextArguments = []
+            dispatchReceiver = null
+            extensionReceiver = KaExplicitReceiverValue:
+              expression = a
+              isSafeNavigation = false
+              type = A
+            signature = KaFunctionSignature:
+              receiverType = A
+              returnType = A
+              symbol = /inc(<extension receiver>: A): A
+              valueParameters = []
+              contextParameters = [
+                KaVariableSignature:
+                  name = a
+                  receiverType = null
+                  returnType = A
+                  symbol = a: A
+                  contextParameters = []
+                  callableId = null
+              ]
+              callableId = /inc
+          typeArgumentsMapping = {}
+        precedence = POSTFIX
+      variableCall = KaSimpleVariableAccessCall:
+        isContextSensitive = false
+        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
           contextArguments = []
           dispatchReceiver = null
-          extensionReceiver = KaExplicitReceiverValue:
-            expression = a
-            isSafeNavigation = false
-            type = A
-          signature = KaFunctionSignature:
-            receiverType = A
+          extensionReceiver = null
+          signature = KaVariableSignature:
+            name = a
+            receiverType = null
             returnType = A
-            symbol = /inc(<extension receiver>: A): A
-            valueParameters = []
-            contextParameters = [
-              KaVariableSignature:
-                name = a
-                receiverType = null
-                returnType = A
-                symbol = a: A
-                contextParameters = []
-                callableId = null
-            ]
-            callableId = /inc
-        precedence = POSTFIX
-      variablePartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = a
-          receiverType = null
-          returnType = A
-          symbol = var a: A
-          contextParameters = []
-          callableId = null
+            symbol = var a: A
+            contextParameters = []
+            callableId = null
+        simpleAccess = Read
+        typeArgumentsMapping = {}
 
 KtBinaryExpression(1376,1381): 'b + 1'
   KaErrorCallInfo:
@@ -5703,40 +5767,48 @@ KtPostfixExpression(1436,1439): 'b++'
     call = KaCompoundVariableAccessCall:
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC
-        operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        operationCall = KaSimpleFunctionCall:
+          argumentMapping = {}
+          isImplicitInvoke = false
+          partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+            contextArguments = []
+            dispatchReceiver = KaExplicitReceiverValue:
+              expression = b
+              isSafeNavigation = false
+              type = SimpleOperators
+            extensionReceiver = null
+            signature = KaFunctionSignature:
+              receiverType = null
+              returnType = SimpleOperators
+              symbol = /SimpleOperators.inc(<dispatch receiver>: SimpleOperators): SimpleOperators
+              valueParameters = []
+              contextParameters = [
+                KaVariableSignature:
+                  name = a
+                  receiverType = null
+                  returnType = A
+                  symbol = a: A
+                  contextParameters = []
+                  callableId = null
+              ]
+              callableId = /SimpleOperators.inc
+          typeArgumentsMapping = {}
+        precedence = POSTFIX
+      variableCall = KaSimpleVariableAccessCall:
+        isContextSensitive = false
+        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
           contextArguments = []
-          dispatchReceiver = KaExplicitReceiverValue:
-            expression = b
-            isSafeNavigation = false
-            type = SimpleOperators
+          dispatchReceiver = null
           extensionReceiver = null
-          signature = KaFunctionSignature:
+          signature = KaVariableSignature:
+            name = b
             receiverType = null
             returnType = SimpleOperators
-            symbol = /SimpleOperators.inc(<dispatch receiver>: SimpleOperators): SimpleOperators
-            valueParameters = []
-            contextParameters = [
-              KaVariableSignature:
-                name = a
-                receiverType = null
-                returnType = A
-                symbol = a: A
-                contextParameters = []
-                callableId = null
-            ]
-            callableId = /SimpleOperators.inc
-        precedence = POSTFIX
-      variablePartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = b
-          receiverType = null
-          returnType = SimpleOperators
-          symbol = var b: SimpleOperators
-          contextParameters = []
-          callableId = null
+            symbol = var b: SimpleOperators
+            contextParameters = []
+            callableId = null
+        simpleAccess = Read
+        typeArgumentsMapping = {}
 
 KtNameReferenceExpression(1436,1437): 'b'
   KaSuccessCallInfo:
@@ -5761,37 +5833,45 @@ KtOperationReferenceExpression(1437,1439): '++'
     call = KaCompoundVariableAccessCall:
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC
-        operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        operationCall = KaSimpleFunctionCall:
+          argumentMapping = {}
+          isImplicitInvoke = false
+          partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+            contextArguments = []
+            dispatchReceiver = KaExplicitReceiverValue:
+              expression = b
+              isSafeNavigation = false
+              type = SimpleOperators
+            extensionReceiver = null
+            signature = KaFunctionSignature:
+              receiverType = null
+              returnType = SimpleOperators
+              symbol = /SimpleOperators.inc(<dispatch receiver>: SimpleOperators): SimpleOperators
+              valueParameters = []
+              contextParameters = [
+                KaVariableSignature:
+                  name = a
+                  receiverType = null
+                  returnType = A
+                  symbol = a: A
+                  contextParameters = []
+                  callableId = null
+              ]
+              callableId = /SimpleOperators.inc
+          typeArgumentsMapping = {}
+        precedence = POSTFIX
+      variableCall = KaSimpleVariableAccessCall:
+        isContextSensitive = false
+        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
           contextArguments = []
-          dispatchReceiver = KaExplicitReceiverValue:
-            expression = b
-            isSafeNavigation = false
-            type = SimpleOperators
+          dispatchReceiver = null
           extensionReceiver = null
-          signature = KaFunctionSignature:
+          signature = KaVariableSignature:
+            name = b
             receiverType = null
             returnType = SimpleOperators
-            symbol = /SimpleOperators.inc(<dispatch receiver>: SimpleOperators): SimpleOperators
-            valueParameters = []
-            contextParameters = [
-              KaVariableSignature:
-                name = a
-                receiverType = null
-                returnType = A
-                symbol = a: A
-                contextParameters = []
-                callableId = null
-            ]
-            callableId = /SimpleOperators.inc
-        precedence = POSTFIX
-      variablePartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = b
-          receiverType = null
-          returnType = SimpleOperators
-          symbol = var b: SimpleOperators
-          contextParameters = []
-          callableId = null
+            symbol = var b: SimpleOperators
+            contextParameters = []
+            callableId = null
+        simpleAccess = Read
+        typeArgumentsMapping = {}

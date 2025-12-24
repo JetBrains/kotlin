@@ -8,30 +8,36 @@ package org.jetbrains.kotlin.analysis.api.impl.base.resolution
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.resolution.KaCompoundAccessCall
-import org.jetbrains.kotlin.analysis.api.resolution.KaCompoundArrayAccessCall
-import org.jetbrains.kotlin.analysis.api.resolution.KaCompoundOperation
-import org.jetbrains.kotlin.analysis.api.resolution.KaPartiallyAppliedFunctionSymbol
+import org.jetbrains.kotlin.analysis.api.resolution.*
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
 import org.jetbrains.kotlin.psi.KtExpression
 
 @KaImplementationDetail
 class KaBaseCompoundArrayAccessCall(
     private val backingCompoundAccess: KaCompoundOperation,
-    indexArguments: List<KtExpression>,
-    getPartiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaNamedFunctionSymbol>,
-    setPartiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaNamedFunctionSymbol>,
+    private val backingIndexArguments: List<KtExpression>,
+    private val backingGetCall: KaFunctionCall<KaNamedFunctionSymbol>,
+    private val backingSetCall: KaFunctionCall<KaNamedFunctionSymbol>,
 ) : KaCompoundArrayAccessCall, KaCompoundAccessCall {
-    private val backingIndexArguments: List<KtExpression> = indexArguments
-    private val backingGetPartiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaNamedFunctionSymbol> = getPartiallyAppliedSymbol
-    private val backingSetPartiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaNamedFunctionSymbol> = setPartiallyAppliedSymbol
     override val token: KaLifetimeToken get() = backingCompoundAccess.token
 
-    override val compoundOperation: KaCompoundOperation get() = withValidityAssertion { backingCompoundAccess }
-    override val indexArguments: List<KtExpression> get() = withValidityAssertion { backingIndexArguments }
-    override val getPartiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaNamedFunctionSymbol>
-        get() = withValidityAssertion { backingGetPartiallyAppliedSymbol }
+    override val compoundOperation: KaCompoundOperation
+        get() = withValidityAssertion { backingCompoundAccess }
 
+    override val indexArguments: List<KtExpression>
+        get() = withValidityAssertion { backingIndexArguments }
+
+    @Deprecated("Use 'getCall' instead")
+    override val getPartiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaNamedFunctionSymbol>
+        get() = withValidityAssertion { getCall.partiallyAppliedSymbol }
+
+    override val getCall: KaFunctionCall<KaNamedFunctionSymbol>
+        get() = withValidityAssertion { backingGetCall }
+
+    @Deprecated("Use 'setCall' instead")
     override val setPartiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaNamedFunctionSymbol>
-        get() = withValidityAssertion { backingSetPartiallyAppliedSymbol }
+        get() = withValidityAssertion { setCall.partiallyAppliedSymbol }
+
+    override val setCall: KaFunctionCall<KaNamedFunctionSymbol>
+        get() = withValidityAssertion { backingSetCall }
 }

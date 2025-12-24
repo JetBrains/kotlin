@@ -4,80 +4,116 @@ KtOperationReferenceExpression(151,153): '+='
       compoundOperation = KaCompoundAssignOperation:
         kind = PLUS_ASSIGN
         operand = "value"
-        operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        operationCall = KaSimpleFunctionCall:
+          argumentMapping = {
+            list[10] -> (KaVariableSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Any?
+              symbol = other: kotlin.Any?
+              contextParameters = []
+              callableId = null)
+          }
+          isImplicitInvoke = false
+          partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+            contextArguments = []
+            dispatchReceiver = KaExplicitReceiverValue:
+              expression = list[10]
+              isSafeNavigation = false
+              type = kotlin.String
+            extensionReceiver = null
+            signature = KaFunctionSignature:
+              receiverType = null
+              returnType = kotlin.String
+              symbol = kotlin/String.plus(<dispatch receiver>: kotlin.String, other: kotlin.Any?): kotlin.String
+              valueParameters = [
+                KaVariableSignature:
+                  name = other
+                  receiverType = null
+                  returnType = kotlin.Any?
+                  symbol = other: kotlin.Any?
+                  contextParameters = []
+                  callableId = null
+              ]
+              contextParameters = []
+              callableId = kotlin/String.plus
+          typeArgumentsMapping = {}
+      getCall = KaSimpleFunctionCall:
+        argumentMapping = {
+          10 -> (KaVariableSignature:
+            name = index
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = index: kotlin.Int
+            contextParameters = []
+            callableId = null)
+        }
+        isImplicitInvoke = false
+        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
           contextArguments = []
           dispatchReceiver = KaExplicitReceiverValue:
-            expression = list[10]
+            expression = list
             isSafeNavigation = false
-            type = kotlin.String
+            type = MyList
           extensionReceiver = null
           signature = KaFunctionSignature:
             receiverType = null
             returnType = kotlin.String
-            symbol = kotlin/String.plus(<dispatch receiver>: kotlin.String, other: kotlin.Any?): kotlin.String
+            symbol = /MyList.get(<dispatch receiver>: MyList, index: kotlin.Int): kotlin.String
             valueParameters = [
               KaVariableSignature:
-                name = other
+                name = index
                 receiverType = null
-                returnType = kotlin.Any?
-                symbol = other: kotlin.Any?
+                returnType = kotlin.Int
+                symbol = index: kotlin.Int
                 contextParameters = []
                 callableId = null
             ]
             contextParameters = []
-            callableId = kotlin/String.plus
-      getPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = list
-          isSafeNavigation = false
-          type = MyList
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.String
-          symbol = /MyList.get(<dispatch receiver>: MyList, index: kotlin.Int): kotlin.String
-          valueParameters = [
-            KaVariableSignature:
-              name = index
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = index: kotlin.Int
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /MyList.get
+            callableId = /MyList.get
+        typeArgumentsMapping = {}
       indexArguments = [
         10
       ]
-      setPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = list
-          isSafeNavigation = false
-          type = MyList
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = /MyList.set(<dispatch receiver>: MyList, index: kotlin.Int, value: kotlin.String): kotlin.Unit
-          valueParameters = [
-            KaVariableSignature:
-              name = index
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = index: kotlin.Int
-              contextParameters = []
-              callableId = null,
-            KaVariableSignature:
-              name = value
-              receiverType = null
-              returnType = kotlin.String
-              symbol = value: kotlin.String
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /MyList.set
+      setCall = KaSimpleFunctionCall:
+        argumentMapping = {
+          10 -> (KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.String
+            symbol = value: kotlin.String
+            contextParameters = []
+            callableId = null)
+        }
+        isImplicitInvoke = false
+        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          contextArguments = []
+          dispatchReceiver = KaExplicitReceiverValue:
+            expression = list
+            isSafeNavigation = false
+            type = MyList
+          extensionReceiver = null
+          signature = KaFunctionSignature:
+            receiverType = null
+            returnType = kotlin.Unit
+            symbol = /MyList.set(<dispatch receiver>: MyList, index: kotlin.Int, value: kotlin.String): kotlin.Unit
+            valueParameters = [
+              KaVariableSignature:
+                name = index
+                receiverType = null
+                returnType = kotlin.Int
+                symbol = index: kotlin.Int
+                contextParameters = []
+                callableId = null,
+              KaVariableSignature:
+                name = value
+                receiverType = null
+                returnType = kotlin.String
+                symbol = value: kotlin.String
+                contextParameters = []
+                callableId = null
+            ]
+            contextParameters = []
+            callableId = /MyList.set
+        typeArgumentsMapping = {}
     isInBestCandidates = true
