@@ -394,10 +394,13 @@ internal object DevirtualizationAnalysis {
                 var index = 0
                 for (i in 0 until numberOfNodes) {
                     var cnt = idOffsets[i]
-                    if (cnt > 0) {
-                        nodeOrder[index++] = i // Put root first
-                        --cnt
-                    }
+                    if (cnt == 0) continue
+
+                    // Put root first
+                    nodeOrder[index++] = i
+                    --cnt
+
+                    // Allocate space for the rest
                     idOffsets[i] = index
                     index += cnt
                 }
@@ -435,8 +438,7 @@ internal object DevirtualizationAnalysis {
                                 if (seenEdgeTo[toRootId] != seenColor) {
                                     val bitSetTo = seenBitSetTo[toRootId]
                                     if (bitSetTo == null) {
-                                        // No need to clone here as cast edges don't share bitsets
-                                        seenBitSetTo[toRootId] = edge.suitableTypes
+                                        seenBitSetTo[toRootId] = edge.suitableTypes.copy()
                                         // Since root always goes first we can safely add new edge in place
                                         nodes[fromRootId].addCastEdge(Node.CastEdge(nodes[toRootId], edge.suitableTypes))
                                     } else {
@@ -449,6 +451,8 @@ internal object DevirtualizationAnalysis {
                     }
 
                     if (fromRootId >= 0) {
+                        // Clear the bitsets so that they don't get reused errenously the nex time
+                        // All the new cast edges go from the `fromRootId`, so we can just iterate over that node's cast edges
                         nodes[fromRootId].directCastEdges?.forEach {
                             seenBitSetTo[it.node.id] = null
                         }
