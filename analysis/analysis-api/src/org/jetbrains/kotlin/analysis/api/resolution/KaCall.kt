@@ -135,6 +135,12 @@ public sealed interface KaVariableAccessCall : KaSingleCall<KaVariableSymbol, Ka
 
     @Deprecated("Use the content of the `partiallyAppliedSymbol` directly instead")
     override val partiallyAppliedSymbol: KaPartiallyAppliedSymbol<KaVariableSymbol, KaVariableSignature<KaVariableSymbol>>
+
+    /**
+     * Whether the call was resolved using the [context-sensitive resolution](https://github.com/Kotlin/KEEP/issues/379) feature
+     */
+    @KaExperimentalApi
+    public val isContextSensitive: Boolean
 }
 
 /**
@@ -146,12 +152,6 @@ public interface KaSimpleVariableAccessCall : KaVariableAccessCall {
      * The kind of access to the variable (read or write), alongside additional information.
      */
     public val simpleAccess: KaSimpleVariableAccess
-
-    /**
-     * Whether the call was resolved using the [context-sensitive resolution](https://github.com/Kotlin/KEEP/issues/379) feature
-     */
-    @KaExperimentalApi
-    public val isContextSensitive: Boolean
 }
 
 /**
