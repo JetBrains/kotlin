@@ -1,166 +1,166 @@
 KClass: class A : Java1, Java2
   members:
-    open PUBLIC fun A.bar(): T
-    open PUBLIC operator fun A.equals(kotlin.Any?): kotlin.Boolean
-    open PUBLIC fun A.foo(T!): kotlin.Unit
-    open PUBLIC fun A.hashCode(): kotlin.Int
-    open PUBLIC fun A.toString(): kotlin.String
+    public open fun A.bar(): T
+    public open operator fun A.equals(kotlin.Any?): kotlin.Boolean
+    public open fun A.foo(T!): kotlin.Unit
+    public open fun A.hashCode(): kotlin.Int
+    public open fun A.toString(): kotlin.String
   declaredMembers:
 KClass: class B : Java1, Java2
   members:
-    open PUBLIC fun B.bar(): T
-    open PUBLIC operator fun B.equals(kotlin.Any?): kotlin.Boolean
-    open PUBLIC fun B.foo(T): kotlin.Unit
-    open PUBLIC fun B.hashCode(): kotlin.Int
-    open PUBLIC fun B.toString(): kotlin.String
+    public open fun B.bar(): T
+    public open operator fun B.equals(kotlin.Any?): kotlin.Boolean
+    public open fun B.foo(T): kotlin.Unit
+    public open fun B.hashCode(): kotlin.Int
+    public open fun B.toString(): kotlin.String
   declaredMembers:
-    open PUBLIC fun B.bar(): T
-    open PUBLIC fun B.foo(T): kotlin.Unit
+    public open fun B.bar(): T
+    public open fun B.foo(T): kotlin.Unit
 KClass: abstract class C : Java2, KotlinInterface2, Any
   members:
-    abstract PUBLIC fun C.bar(): T
-    open PUBLIC operator fun C.equals(kotlin.Any?): kotlin.Boolean
-    abstract PUBLIC fun C.foo(T): kotlin.Unit
-    abstract PUBLIC fun C.foo(T): kotlin.Unit
-    open PUBLIC fun C.hashCode(): kotlin.Int
-    open PUBLIC fun C.toString(): kotlin.String
+    public abstract fun C.bar(): T
+    public open operator fun C.equals(kotlin.Any?): kotlin.Boolean
+    public abstract fun C.foo(T): kotlin.Unit
+    public abstract fun C.foo(T): kotlin.Unit
+    public open fun C.hashCode(): kotlin.Int
+    public open fun C.toString(): kotlin.String
   declaredMembers:
 KClass: abstract class D : Java2, KotlinInterface2, Any
   members:
-    open PUBLIC fun D.bar(): T
-    open PUBLIC operator fun D.equals(kotlin.Any?): kotlin.Boolean
-    open PUBLIC fun D.foo(T): kotlin.Unit
-    open PUBLIC fun D.foo(T): kotlin.Unit
-    open PUBLIC fun D.hashCode(): kotlin.Int
-    open PUBLIC fun D.toString(): kotlin.String
+    public open fun D.bar(): T
+    public open operator fun D.equals(kotlin.Any?): kotlin.Boolean
+    public open fun D.foo(T): kotlin.Unit
+    public open fun D.foo(T): kotlin.Unit
+    public open fun D.hashCode(): kotlin.Int
+    public open fun D.toString(): kotlin.String
   declaredMembers:
-    open PUBLIC fun D.bar(): T
-    open PUBLIC fun D.foo(T): kotlin.Unit
-    open PUBLIC fun D.foo(T): kotlin.Unit
+    public open fun D.bar(): T
+    public open fun D.foo(T): kotlin.Unit
+    public open fun D.foo(T): kotlin.Unit
 KClass: class E : D
   members:
-    open PUBLIC fun E.bar(): T
-    open PUBLIC operator fun E.equals(kotlin.Any?): kotlin.Boolean
-    open PUBLIC fun E.foo(T): kotlin.Unit
-    open PUBLIC fun E.foo(T): kotlin.Unit
-    open PUBLIC fun E.hashCode(): kotlin.Int
-    open PUBLIC fun E.toString(): kotlin.String
+    public open fun E.bar(): T
+    public open operator fun E.equals(kotlin.Any?): kotlin.Boolean
+    public open fun E.foo(T): kotlin.Unit
+    public open fun E.foo(T): kotlin.Unit
+    public open fun E.hashCode(): kotlin.Int
+    public open fun E.toString(): kotlin.String
   declaredMembers:
-    open PUBLIC fun E.bar(): T
+    public open fun E.bar(): T
 KClass: class F : KotlinClass, Java2
   members:
-    open PUBLIC fun F.bar(): T
-    open PUBLIC operator fun F.equals(kotlin.Any?): kotlin.Boolean
-    open PUBLIC fun F.foo(T!): kotlin.Unit
-    open PUBLIC fun F.hashCode(): kotlin.Int
-    open PUBLIC fun F.toString(): kotlin.String
+    public open fun F.bar(): T
+    public open operator fun F.equals(kotlin.Any?): kotlin.Boolean
+    public open fun F.foo(T!): kotlin.Unit
+    public open fun F.hashCode(): kotlin.Int
+    public open fun F.toString(): kotlin.String
   declaredMembers:
 KClass: class G : KotlinClass, Java2
   members:
-    open PUBLIC fun G.bar(): T
-    open PUBLIC operator fun G.equals(kotlin.Any?): kotlin.Boolean
-    open PUBLIC fun G.foo(T!): kotlin.Unit
-    open PUBLIC fun G.hashCode(): kotlin.Int
-    open PUBLIC fun G.toString(): kotlin.String
+    public open fun G.bar(): T
+    public open operator fun G.equals(kotlin.Any?): kotlin.Boolean
+    public open fun G.foo(T!): kotlin.Unit
+    public open fun G.hashCode(): kotlin.Int
+    public open fun G.toString(): kotlin.String
   declaredMembers:
-    open PUBLIC fun G.bar(): T
+    public open fun G.bar(): T
 KClass: class H : Java3, Java2
   members:
-    open PUBLIC fun H.bar(): T
-    open PUBLIC operator fun H.equals(kotlin.Any?): kotlin.Boolean
-    open PUBLIC fun H.foo(T!): kotlin.Unit
-    open PUBLIC fun H.hashCode(): kotlin.Int
-    open PUBLIC fun H.toString(): kotlin.String
+    public open fun H.bar(): T
+    public open operator fun H.equals(kotlin.Any?): kotlin.Boolean
+    public open fun H.foo(T!): kotlin.Unit
+    public open fun H.hashCode(): kotlin.Int
+    public open fun H.toString(): kotlin.String
   declaredMembers:
 KClass: class I : Java3, Java2
   members:
-    open PUBLIC fun I.bar(): T
-    open PUBLIC operator fun I.equals(kotlin.Any?): kotlin.Boolean
-    open PUBLIC fun I.foo(T): kotlin.Unit
-    open PUBLIC fun I.hashCode(): kotlin.Int
-    open PUBLIC fun I.toString(): kotlin.String
+    public open fun I.bar(): T
+    public open operator fun I.equals(kotlin.Any?): kotlin.Boolean
+    public open fun I.foo(T): kotlin.Unit
+    public open fun I.hashCode(): kotlin.Int
+    public open fun I.toString(): kotlin.String
   declaredMembers:
-    open PUBLIC fun I.foo(T): kotlin.Unit
+    public open fun I.foo(T): kotlin.Unit
 KClass: class J : Java4
   members:
-    open PUBLIC fun J.bar(): T!
-    open PUBLIC operator fun J.equals(kotlin.Any?): kotlin.Boolean
-    open PUBLIC fun J.foo(T!): kotlin.Unit
-    open PUBLIC fun J.hashCode(): kotlin.Int
-    open PUBLIC fun J.toString(): kotlin.String
+    public open fun J.bar(): T!
+    public open operator fun J.equals(kotlin.Any?): kotlin.Boolean
+    public open fun J.foo(T!): kotlin.Unit
+    public open fun J.hashCode(): kotlin.Int
+    public open fun J.toString(): kotlin.String
   declaredMembers:
 KClass: class Java1 : Any
   members:
-    open PUBLIC fun Java1.bar(): T!
-    open PUBLIC operator fun Java1.equals(kotlin.Any?): kotlin.Boolean
-    open PUBLIC fun Java1.foo(T!): kotlin.Unit
-    open PUBLIC fun Java1.hashCode(): kotlin.Int
-    open PUBLIC fun Java1.toString(): kotlin.String
+    public open fun Java1.bar(): T!
+    public open operator fun Java1.equals(kotlin.Any?): kotlin.Boolean
+    public open fun Java1.foo(T!): kotlin.Unit
+    public open fun Java1.hashCode(): kotlin.Int
+    public open fun Java1.toString(): kotlin.String
   declaredMembers:
-    open PUBLIC fun Java1.bar(): T!
-    open PUBLIC fun Java1.foo(T!): kotlin.Unit
+    public open fun Java1.bar(): T!
+    public open fun Java1.foo(T!): kotlin.Unit
 KClass: abstract interface Java2 : KotlinInterface, Any
   members:
-    abstract PUBLIC fun Java2.bar(): T
-    open PUBLIC operator fun Java2.equals(kotlin.Any?): kotlin.Boolean
-    abstract PUBLIC fun Java2.foo(T): kotlin.Unit
-    open PUBLIC fun Java2.hashCode(): kotlin.Int
-    open PUBLIC fun Java2.toString(): kotlin.String
+    public abstract fun Java2.bar(): T
+    public open operator fun Java2.equals(kotlin.Any?): kotlin.Boolean
+    public abstract fun Java2.foo(T): kotlin.Unit
+    public open fun Java2.hashCode(): kotlin.Int
+    public open fun Java2.toString(): kotlin.String
   declaredMembers:
 KClass: class Java3 : Java1
   members:
-    open PUBLIC fun Java3.bar(): T!
-    open PUBLIC operator fun Java3.equals(kotlin.Any?): kotlin.Boolean
-    open PUBLIC fun Java3.foo(T!): kotlin.Unit
-    open PUBLIC fun Java3.hashCode(): kotlin.Int
-    open PUBLIC fun Java3.toString(): kotlin.String
+    public open fun Java3.bar(): T!
+    public open operator fun Java3.equals(kotlin.Any?): kotlin.Boolean
+    public open fun Java3.foo(T!): kotlin.Unit
+    public open fun Java3.hashCode(): kotlin.Int
+    public open fun Java3.toString(): kotlin.String
   declaredMembers:
-    open PUBLIC fun Java3.bar(): T!
-    open PUBLIC fun Java3.foo(T!): kotlin.Unit
+    public open fun Java3.bar(): T!
+    public open fun Java3.foo(T!): kotlin.Unit
 KClass: class Java4 : KotlinClass
   members:
-    open PUBLIC fun Java4.bar(): T!
-    open PUBLIC operator fun Java4.equals(kotlin.Any?): kotlin.Boolean
-    open PUBLIC fun Java4.foo(T!): kotlin.Unit
-    open PUBLIC fun Java4.hashCode(): kotlin.Int
-    open PUBLIC fun Java4.toString(): kotlin.String
+    public open fun Java4.bar(): T!
+    public open operator fun Java4.equals(kotlin.Any?): kotlin.Boolean
+    public open fun Java4.foo(T!): kotlin.Unit
+    public open fun Java4.hashCode(): kotlin.Int
+    public open fun Java4.toString(): kotlin.String
   declaredMembers:
 KClass: class KotlinClass : Java1
   members:
-    open PUBLIC fun KotlinClass.bar(): T!
-    open PUBLIC operator fun KotlinClass.equals(kotlin.Any?): kotlin.Boolean
-    open PUBLIC fun KotlinClass.foo(T!): kotlin.Unit
-    open PUBLIC fun KotlinClass.hashCode(): kotlin.Int
-    open PUBLIC fun KotlinClass.toString(): kotlin.String
+    public open fun KotlinClass.bar(): T!
+    public open operator fun KotlinClass.equals(kotlin.Any?): kotlin.Boolean
+    public open fun KotlinClass.foo(T!): kotlin.Unit
+    public open fun KotlinClass.hashCode(): kotlin.Int
+    public open fun KotlinClass.toString(): kotlin.String
   declaredMembers:
 KClass: abstract interface KotlinInterface : Any
   members:
-    abstract PUBLIC fun KotlinInterface.bar(): T
-    open PUBLIC operator fun KotlinInterface.equals(kotlin.Any?): kotlin.Boolean
-    abstract PUBLIC fun KotlinInterface.foo(T): kotlin.Unit
-    open PUBLIC fun KotlinInterface.hashCode(): kotlin.Int
-    open PUBLIC fun KotlinInterface.toString(): kotlin.String
+    public abstract fun KotlinInterface.bar(): T
+    public open operator fun KotlinInterface.equals(kotlin.Any?): kotlin.Boolean
+    public abstract fun KotlinInterface.foo(T): kotlin.Unit
+    public open fun KotlinInterface.hashCode(): kotlin.Int
+    public open fun KotlinInterface.toString(): kotlin.String
   declaredMembers:
-    abstract PUBLIC fun KotlinInterface.bar(): T
-    abstract PUBLIC fun KotlinInterface.foo(T): kotlin.Unit
+    public abstract fun KotlinInterface.bar(): T
+    public abstract fun KotlinInterface.foo(T): kotlin.Unit
 KClass: abstract interface KotlinInterface2 : Any
   members:
-    abstract PUBLIC fun KotlinInterface2.bar(): T
-    open PUBLIC operator fun KotlinInterface2.equals(kotlin.Any?): kotlin.Boolean
-    abstract PUBLIC fun KotlinInterface2.foo(T): kotlin.Unit
-    open PUBLIC fun KotlinInterface2.hashCode(): kotlin.Int
-    open PUBLIC fun KotlinInterface2.toString(): kotlin.String
+    public abstract fun KotlinInterface2.bar(): T
+    public open operator fun KotlinInterface2.equals(kotlin.Any?): kotlin.Boolean
+    public abstract fun KotlinInterface2.foo(T): kotlin.Unit
+    public open fun KotlinInterface2.hashCode(): kotlin.Int
+    public open fun KotlinInterface2.toString(): kotlin.String
   declaredMembers:
-    abstract PUBLIC fun KotlinInterface2.bar(): T
-    abstract PUBLIC fun KotlinInterface2.foo(T): kotlin.Unit
+    public abstract fun KotlinInterface2.bar(): T
+    public abstract fun KotlinInterface2.foo(T): kotlin.Unit
 KClass: class L : Java4
   members:
-    open PUBLIC fun L.bar(): T!
-    open PUBLIC operator fun L.equals(kotlin.Any?): kotlin.Boolean
-    open PUBLIC fun L.foo(T): kotlin.Unit
-    open PUBLIC fun L.hashCode(): kotlin.Int
-    open PUBLIC fun L.toString(): kotlin.String
+    public open fun L.bar(): T!
+    public open operator fun L.equals(kotlin.Any?): kotlin.Boolean
+    public open fun L.foo(T): kotlin.Unit
+    public open fun L.hashCode(): kotlin.Int
+    public open fun L.toString(): kotlin.String
   declaredMembers:
-    open PUBLIC fun L.foo(T): kotlin.Unit
+    public open fun L.foo(T): kotlin.Unit
 KPackage: _1Kt
-  final PUBLIC fun test(A, B, C, D, E, F, G, H, I, J, L): kotlin.Unit
+  public final fun test(A, B, C, D, E, F, G, H, I, J, L): kotlin.Unit
