@@ -2290,7 +2290,7 @@ KtValueArgumentList(1021,1023): '()'
 
 KtCallExpression(1032,1042): 'thisProp()'
   KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
+    candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = [
         KaImplicitReceiverValue:
@@ -2363,7 +2363,7 @@ KtValueArgumentList(1040,1042): '()'
 
 KtCallExpression(1051,1054): 'a()'
   KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
+    candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = [
         KaImplicitReceiverValue:
@@ -4181,7 +4181,7 @@ KtValueArgumentList(1182,1184): '()'
 
 KtCallExpression(1193,1196): 'b()'
   KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
+    candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = [
         KaImplicitReceiverValue:
@@ -4232,7 +4232,7 @@ KtCallExpression(1193,1196): 'b()'
     isInBestCandidates = true
 
   KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
+    candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
@@ -5288,7 +5288,7 @@ KtValueArgumentList(1341,1343): '()'
 
 KtCallExpression(1348,1351): 'a()'
   KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
+    candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
@@ -6446,7 +6446,7 @@ KtValueArgumentList(1410,1412): '()'
 
 KtCallExpression(1417,1420): 'b()'
   KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
+    candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -6475,7 +6475,7 @@ KtCallExpression(1417,1420): 'b()'
     isInBestCandidates = true
 
   KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
+    candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null

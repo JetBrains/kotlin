@@ -641,7 +641,7 @@ KtBlockExpression(824,1172): '{'
   null
 
 KtCallExpression(830,855): 'lMyClass(InheritorObject)'
-  KaSimpleFunctionCall:
+  KaImplicitInvokeCall:
     argumentMapping = {
       InheritorObject -> (KaVariableSignature:
         name = arg
@@ -704,7 +704,7 @@ KtNameReferenceExpression(839,854): 'InheritorObject'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: InheritorObject>
 
 KtCallExpression(860,881): 'lMyClass(propMyClass)'
-  KaSimpleFunctionCall:
+  KaImplicitInvokeCall:
     argumentMapping = {
       propMyClass -> (KaVariableSignature:
         name = arg
@@ -767,7 +767,7 @@ KtNameReferenceExpression(869,880): 'propMyClass'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: propMyClass>
 
 KtCallExpression(886,914): 'lMyClass(propInheritorClass)'
-  KaSimpleFunctionCall:
+  KaImplicitInvokeCall:
     argumentMapping = {
       propInheritorClass -> (KaVariableSignature:
         name = arg
@@ -830,7 +830,7 @@ KtNameReferenceExpression(895,913): 'propInheritorClass'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: propInheritorClass>
 
 KtCallExpression(919,948): 'lMyClass(propInheritorObject)'
-  KaSimpleFunctionCall:
+  KaImplicitInvokeCall:
     argumentMapping = {
       propInheritorObject -> (KaVariableSignature:
         name = arg
@@ -893,7 +893,7 @@ KtNameReferenceExpression(928,947): 'propInheritorObject'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: propInheritorObject>
 
 KtCallExpression(954,976): 'lMyClass(NestedObject)'
-  KaSimpleFunctionCall:
+  KaImplicitInvokeCall:
     argumentMapping = {
       NestedObject -> (KaVariableSignature:
         name = arg
@@ -956,7 +956,7 @@ KtNameReferenceExpression(963,975): 'NestedObject'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: NestedObject>
 
 KtCallExpression(981,995): 'lMyClass(prop)'
-  KaSimpleFunctionCall:
+  KaImplicitInvokeCall:
     argumentMapping = {
       prop -> (KaVariableSignature:
         name = arg
@@ -1019,7 +1019,7 @@ KtNameReferenceExpression(990,994): 'prop'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: prop>
 
 KtCallExpression(1000,1019): 'lMyClass(superProp)'
-  KaSimpleFunctionCall:
+  KaImplicitInvokeCall:
     argumentMapping = {
       superProp -> (KaVariableSignature:
         name = arg
@@ -1082,7 +1082,7 @@ KtNameReferenceExpression(1009,1018): 'superProp'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: superProp>
 
 KtCallExpression(1024,1043): 'lMyClass(constProp)'
-  KaSimpleFunctionCall:
+  KaImplicitInvokeCall:
     argumentMapping = {
       constProp -> (KaVariableSignature:
         name = arg
@@ -1145,7 +1145,7 @@ KtNameReferenceExpression(1033,1042): 'constProp'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: constProp>
 
 KtCallExpression(1048,1066): 'lMyClass(lazyProp)'
-  KaSimpleFunctionCall:
+  KaImplicitInvokeCall:
     argumentMapping = {
       lazyProp -> (KaVariableSignature:
         name = arg
@@ -1208,7 +1208,7 @@ KtNameReferenceExpression(1057,1065): 'lazyProp'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: lazyProp>
 
 KtCallExpression(1071,1091): 'lMyClass(lambdaProp)'
-  KaSimpleFunctionCall:
+  KaImplicitInvokeCall:
     argumentMapping = {
       lambdaProp -> (KaVariableSignature:
         name = arg
@@ -1271,7 +1271,7 @@ KtNameReferenceExpression(1080,1090): 'lambdaProp'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: lambdaProp>
 
 KtCallExpression(1097,1123): 'lMyClass(InheritorClass())'
-  KaSimpleFunctionCall:
+  KaImplicitInvokeCall:
     argumentMapping = {
       InheritorClass() -> (KaVariableSignature:
         name = arg
@@ -1342,7 +1342,7 @@ KtValueArgumentList(1120,1122): '()'
   null
 
 KtCallExpression(1128,1144): 'lMyClass(func())'
-  KaSimpleFunctionCall:
+  KaImplicitInvokeCall:
     argumentMapping = {
       func() -> (KaVariableSignature:
         name = arg
@@ -1413,7 +1413,7 @@ KtValueArgumentList(1141,1143): '()'
   null
 
 KtCallExpression(1149,1170): 'lMyClass(superFunc())'
-  KaSimpleFunctionCall:
+  KaImplicitInvokeCall:
     argumentMapping = {
       superFunc() -> (KaVariableSignature:
         name = arg

@@ -135,7 +135,7 @@ KtValueArgument(46,73): 'AnnotationTarget.EXPRESSION'
 
 KtDotQualifiedExpression(46,73): 'AnnotationTarget.EXPRESSION'
   KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
+    candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
@@ -285,7 +285,7 @@ KtValueArgument(86,112): 'AnnotationRetention.SOURCE'
 
 KtDotQualifiedExpression(86,112): 'AnnotationRetention.SOURCE'
   KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
+    candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null

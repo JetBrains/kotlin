@@ -255,7 +255,7 @@ KtValueArgument(44,69): 'AnnotationTarget.PROPERTY'
 
 KtDotQualifiedExpression(44,69): 'AnnotationTarget.PROPERTY'
   KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
+    candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
@@ -297,7 +297,7 @@ KtValueArgument(75,106): 'AnnotationTarget.TYPE_PARAMETER'
 
 KtDotQualifiedExpression(75,106): 'AnnotationTarget.TYPE_PARAMETER'
   KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
+    candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
@@ -339,7 +339,7 @@ KtValueArgument(112,137): 'AnnotationTarget.FUNCTION'
 
 KtDotQualifiedExpression(112,137): 'AnnotationTarget.FUNCTION'
   KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
+    candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
@@ -381,7 +381,7 @@ KtValueArgument(143,175): 'AnnotationTarget.VALUE_PARAMETER'
 
 KtDotQualifiedExpression(143,175): 'AnnotationTarget.VALUE_PARAMETER'
   KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
+    candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
@@ -423,7 +423,7 @@ KtValueArgument(181,213): 'AnnotationTarget.PROPERTY_GETTER'
 
 KtDotQualifiedExpression(181,213): 'AnnotationTarget.PROPERTY_GETTER'
   KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
+    candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
@@ -465,7 +465,7 @@ KtValueArgument(219,251): 'AnnotationTarget.PROPERTY_SETTER'
 
 KtDotQualifiedExpression(219,251): 'AnnotationTarget.PROPERTY_SETTER'
   KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
+    candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
@@ -507,7 +507,7 @@ KtValueArgument(257,278): 'AnnotationTarget.TYPE'
 
 KtDotQualifiedExpression(257,278): 'AnnotationTarget.TYPE'
   KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
+    candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null

@@ -1,6 +1,6 @@
 KtDotQualifiedExpression(107,113): 'a.x(1)'
   KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
+    call = KaImplicitInvokeCall:
       argumentMapping = {
         1 -> (KaVariableSignature:
           name = i

@@ -111,7 +111,7 @@ KtBlockExpression(270,317): '{'
 
 KtCallExpression(276,293): 'lEnum(EnumValue1)'
   KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
+    candidate = KaImplicitInvokeCall:
       argumentMapping = {
         EnumValue1 -> (KaVariableSignature:
           name = arg
@@ -193,7 +193,7 @@ KtNameReferenceExpression(282,292): 'EnumValue1'
 
 KtCallExpression(298,315): 'lEnum(EnumValue2)'
   KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
+    candidate = KaImplicitInvokeCall:
       argumentMapping = {
         EnumValue2 -> (KaVariableSignature:
           name = arg

@@ -668,7 +668,7 @@ KtBlockExpression(927,1304): '{'
   null
 
 KtCallExpression(933,966): 'anonymousEnumConsumer(EnumValue1)'
-  KaSimpleFunctionCall:
+  KaImplicitInvokeCall:
     argumentMapping = {
       EnumValue1 -> (KaVariableSignature:
         name = p1
@@ -731,7 +731,7 @@ KtNameReferenceExpression(955,965): 'EnumValue1'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: EnumValue1>
 
 KtCallExpression(972,1006): 'anonymousConsumer(InheritorObject)'
-  KaSimpleFunctionCall:
+  KaImplicitInvokeCall:
     argumentMapping = {
       InheritorObject -> (KaVariableSignature:
         name = p1
@@ -794,7 +794,7 @@ KtNameReferenceExpression(990,1005): 'InheritorObject'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: InheritorObject>
 
 KtCallExpression(1011,1041): 'anonymousConsumer(propMyClass)'
-  KaSimpleFunctionCall:
+  KaImplicitInvokeCall:
     argumentMapping = {
       propMyClass -> (KaVariableSignature:
         name = p1
@@ -857,7 +857,7 @@ KtNameReferenceExpression(1029,1040): 'propMyClass'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: propMyClass>
 
 KtCallExpression(1047,1070): 'anonymousConsumer(prop)'
-  KaSimpleFunctionCall:
+  KaImplicitInvokeCall:
     argumentMapping = {
       prop -> (KaVariableSignature:
         name = p1
@@ -920,7 +920,7 @@ KtNameReferenceExpression(1065,1069): 'prop'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: prop>
 
 KtCallExpression(1075,1103): 'anonymousConsumer(constProp)'
-  KaSimpleFunctionCall:
+  KaImplicitInvokeCall:
     argumentMapping = {
       constProp -> (KaVariableSignature:
         name = p1
@@ -983,7 +983,7 @@ KtNameReferenceExpression(1093,1102): 'constProp'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: constProp>
 
 KtCallExpression(1108,1135): 'anonymousConsumer(lazyProp)'
-  KaSimpleFunctionCall:
+  KaImplicitInvokeCall:
     argumentMapping = {
       lazyProp -> (KaVariableSignature:
         name = p1
@@ -1046,7 +1046,7 @@ KtNameReferenceExpression(1126,1134): 'lazyProp'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: lazyProp>
 
 KtCallExpression(1140,1169): 'anonymousConsumer(lambdaProp)'
-  KaSimpleFunctionCall:
+  KaImplicitInvokeCall:
     argumentMapping = {
       lambdaProp -> (KaVariableSignature:
         name = p1
@@ -1109,7 +1109,7 @@ KtNameReferenceExpression(1158,1168): 'lambdaProp'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: lambdaProp>
 
 KtCallExpression(1174,1202): 'anonymousConsumer(superProp)'
-  KaSimpleFunctionCall:
+  KaImplicitInvokeCall:
     argumentMapping = {
       superProp -> (KaVariableSignature:
         name = p1
@@ -1172,7 +1172,7 @@ KtNameReferenceExpression(1192,1201): 'superProp'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: superProp>
 
 KtCallExpression(1208,1233): 'anonymousConsumer(func())'
-  KaSimpleFunctionCall:
+  KaImplicitInvokeCall:
     argumentMapping = {
       func() -> (KaVariableSignature:
         name = p1
@@ -1243,7 +1243,7 @@ KtValueArgumentList(1230,1232): '()'
   null
 
 KtCallExpression(1238,1268): 'anonymousConsumer(superFunc())'
-  KaSimpleFunctionCall:
+  KaImplicitInvokeCall:
     argumentMapping = {
       superFunc() -> (KaVariableSignature:
         name = p1
@@ -1314,7 +1314,7 @@ KtValueArgumentList(1265,1267): '()'
   null
 
 KtCallExpression(1273,1302): 'anonymousConsumer(lambdaProp)'
-  KaSimpleFunctionCall:
+  KaImplicitInvokeCall:
     argumentMapping = {
       lambdaProp -> (KaVariableSignature:
         name = p1

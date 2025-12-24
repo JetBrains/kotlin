@@ -443,6 +443,10 @@ internal fun assertConsistency(testServices: TestServices, call: KaCall) {
         assertions.assertEquals(call.contextArguments, partiallyAppliedSymbol.contextArguments)
     }
 
+    if (call is KaSimpleFunctionCall) {
+        assertions.assertEquals(call is KaImplicitInvokeCall, call.isImplicitInvoke)
+    }
+
     val typeParameters = symbol.typeParameters
     for (parameterSymbol in typeParameters) {
         val mappedType = typeArgumentsMapping[parameterSymbol]

@@ -37,7 +37,7 @@ KtDotQualifiedExpression(107,113): 'a.x(1)'
     isInBestCandidates = false
 
   KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
+    candidate = KaImplicitInvokeCall:
       argumentMapping = {
         1 -> (KaVariableSignature:
           name = i

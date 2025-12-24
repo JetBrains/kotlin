@@ -9,30 +9,35 @@ import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
+import org.jetbrains.kotlin.analysis.api.resolution.KaImplicitInvokeCall
 import org.jetbrains.kotlin.analysis.api.resolution.KaPartiallyAppliedFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.resolution.KaReceiverValue
 import org.jetbrains.kotlin.analysis.api.resolution.KaSimpleFunctionCall
 import org.jetbrains.kotlin.analysis.api.signatures.KaFunctionSignature
 import org.jetbrains.kotlin.analysis.api.signatures.KaVariableSignature
-import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.psi.KtExpression
 
 @KaImplementationDetail
-class KaBaseSimpleFunctionCall(
-    private val backingPartiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaFunctionSymbol>,
+// This suppression is required to preserve the semantic compatibility with KaSimpleFunctionCall.
+// It is safe since effectively type parameters are the same
+@Suppress("INCONSISTENT_TYPE_PARAMETER_VALUES")
+class KaBaseImplicitInvokeCall(
+    private val backingPartiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaNamedFunctionSymbol>,
     private val backingArgumentMapping: Map<KtExpression, KaVariableSignature<KaValueParameterSymbol>>,
     private val backingTypeArgumentsMapping: Map<KaTypeParameterSymbol, KaType>,
-) : KaSimpleFunctionCall {
-    override val token: KaLifetimeToken get() = backingPartiallyAppliedSymbol.token
+) : KaImplicitInvokeCall, KaSimpleFunctionCall {
+    override val token: KaLifetimeToken
+        get() = backingPartiallyAppliedSymbol.token
 
     @Deprecated("Use the content of the `partiallyAppliedSymbol` directly instead")
-    override val partiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaFunctionSymbol>
+    override val partiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaNamedFunctionSymbol>
         get() = withValidityAssertion { backingPartiallyAppliedSymbol }
 
-    override val signature: KaFunctionSignature<KaFunctionSymbol>
+    override val signature: KaFunctionSignature<KaNamedFunctionSymbol>
         get() = withValidityAssertion { backingPartiallyAppliedSymbol.signature }
 
     override val dispatchReceiver: KaReceiverValue?
@@ -46,6 +51,6 @@ class KaBaseSimpleFunctionCall(
         get() = withValidityAssertion { backingPartiallyAppliedSymbol.contextArguments }
 
     override val typeArgumentsMapping: Map<KaTypeParameterSymbol, KaType> get() = withValidityAssertion { backingTypeArgumentsMapping }
-    override val isImplicitInvoke: Boolean get() = withValidityAssertion { false }
+    override val isImplicitInvoke: Boolean get() = withValidityAssertion { true }
     override val argumentMapping: Map<KtExpression, KaVariableSignature<KaValueParameterSymbol>> get() = withValidityAssertion { backingArgumentMapping }
 }

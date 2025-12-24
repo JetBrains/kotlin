@@ -720,6 +720,9 @@ public abstract interface class org/jetbrains/kotlin/analysis/api/resolution/KaF
 	public abstract fun getPartiallyAppliedSymbol ()Lorg/jetbrains/kotlin/analysis/api/resolution/KaPartiallyAppliedSymbol;
 }
 
+public abstract interface class org/jetbrains/kotlin/analysis/api/resolution/KaImplicitInvokeCall : org/jetbrains/kotlin/analysis/api/resolution/KaFunctionCall {
+}
+
 public abstract interface class org/jetbrains/kotlin/analysis/api/resolution/KaImplicitReceiverValue : org/jetbrains/kotlin/analysis/api/resolution/KaReceiverValue {
 	public abstract fun getSymbol ()Lorg/jetbrains/kotlin/analysis/api/symbols/KaSymbol;
 }

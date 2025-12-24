@@ -956,7 +956,7 @@ KtBlockExpression(927,1304): '{'
 
 KtCallExpression(933,966): 'anonymousEnumConsumer(EnumValue1)'
   KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
+    candidate = KaImplicitInvokeCall:
       argumentMapping = {
         EnumValue1 -> (KaVariableSignature:
           name = p1
@@ -1038,7 +1038,7 @@ KtNameReferenceExpression(955,965): 'EnumValue1'
 
 KtCallExpression(972,1006): 'anonymousConsumer(InheritorObject)'
   KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
+    candidate = KaImplicitInvokeCall:
       argumentMapping = {
         InheritorObject -> (KaVariableSignature:
           name = p1
@@ -1118,7 +1118,7 @@ KtNameReferenceExpression(990,1005): 'InheritorObject'
 
 KtCallExpression(1011,1041): 'anonymousConsumer(propMyClass)'
   KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
+    candidate = KaImplicitInvokeCall:
       argumentMapping = {
         propMyClass -> (KaVariableSignature:
           name = p1
@@ -1200,7 +1200,7 @@ KtNameReferenceExpression(1029,1040): 'propMyClass'
 
 KtCallExpression(1047,1070): 'anonymousConsumer(prop)'
   KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
+    candidate = KaImplicitInvokeCall:
       argumentMapping = {
         prop -> (KaVariableSignature:
           name = p1
@@ -1282,7 +1282,7 @@ KtNameReferenceExpression(1065,1069): 'prop'
 
 KtCallExpression(1075,1103): 'anonymousConsumer(constProp)'
   KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
+    candidate = KaImplicitInvokeCall:
       argumentMapping = {
         constProp -> (KaVariableSignature:
           name = p1
@@ -1364,7 +1364,7 @@ KtNameReferenceExpression(1093,1102): 'constProp'
 
 KtCallExpression(1108,1135): 'anonymousConsumer(lazyProp)'
   KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
+    candidate = KaImplicitInvokeCall:
       argumentMapping = {
         lazyProp -> (KaVariableSignature:
           name = p1
@@ -1446,7 +1446,7 @@ KtNameReferenceExpression(1126,1134): 'lazyProp'
 
 KtCallExpression(1140,1169): 'anonymousConsumer(lambdaProp)'
   KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
+    candidate = KaImplicitInvokeCall:
       argumentMapping = {
         lambdaProp -> (KaVariableSignature:
           name = p1
@@ -1528,7 +1528,7 @@ KtNameReferenceExpression(1158,1168): 'lambdaProp'
 
 KtCallExpression(1174,1202): 'anonymousConsumer(superProp)'
   KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
+    candidate = KaImplicitInvokeCall:
       argumentMapping = {
         superProp -> (KaVariableSignature:
           name = p1
@@ -1610,7 +1610,7 @@ KtNameReferenceExpression(1192,1201): 'superProp'
 
 KtCallExpression(1208,1233): 'anonymousConsumer(func())'
   KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
+    candidate = KaImplicitInvokeCall:
       argumentMapping = {
         func() -> (KaVariableSignature:
           name = p1
@@ -1680,7 +1680,7 @@ KtValueArgumentList(1230,1232): '()'
 
 KtCallExpression(1238,1268): 'anonymousConsumer(superFunc())'
   KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
+    candidate = KaImplicitInvokeCall:
       argumentMapping = {
         superFunc() -> (KaVariableSignature:
           name = p1
@@ -1750,7 +1750,7 @@ KtValueArgumentList(1265,1267): '()'
 
 KtCallExpression(1273,1302): 'anonymousConsumer(lambdaProp)'
   KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
+    candidate = KaImplicitInvokeCall:
       argumentMapping = {
         lambdaProp -> (KaVariableSignature:
           name = p1

@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirArrayOfSymbolProvider.
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirArrayOfSymbolProvider.arrayTypeToArrayOfCall
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
 import org.jetbrains.kotlin.analysis.api.fir.utils.processEqualsFunctions
+import org.jetbrains.kotlin.analysis.api.fir.utils.withSymbolAttachment
 import org.jetbrains.kotlin.analysis.api.getModule
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseResolver
 import org.jetbrains.kotlin.analysis.api.impl.base.components.withPsiValidityAssertion
@@ -405,7 +406,6 @@ internal class KaFirResolver(
                 ),
                 backingArgumentMapping = mapOf(rightArg to signature.valueParameters.first()),
                 backingTypeArgumentsMapping = emptyMap(),
-                backingIsImplicitInvoke = false,
             )
         }
 
@@ -688,6 +688,33 @@ internal class KaFirResolver(
         var firstArgIsExtensionReceiver = false
         var isImplicitInvoke = false
 
+        fun buildFunctionCall(
+            partiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaFunctionSymbol>,
+            argumentMapping: Map<KtExpression, KaVariableSignature<KaValueParameterSymbol>>,
+            typeArgumentsMapping: Map<KaTypeParameterSymbol, KaType>,
+        ): KaFunctionCall<*> = if (isImplicitInvoke) {
+            val functionSymbol = partiallyAppliedSymbol.symbol
+            requireWithAttachment(
+                functionSymbol is KaNamedFunctionSymbol,
+                { "Expected ${KaNamedFunctionSymbol::class.simpleName}, but got ${functionSymbol::class.simpleName}" },
+            ) {
+                withSymbolAttachment("function", analysisSession, functionSymbol)
+            }
+
+            @Suppress("UNCHECKED_CAST")
+            KaBaseImplicitInvokeCall(
+                backingPartiallyAppliedSymbol = partiallyAppliedSymbol as KaPartiallyAppliedFunctionSymbol<KaNamedFunctionSymbol>,
+                backingArgumentMapping = argumentMapping,
+                backingTypeArgumentsMapping = typeArgumentsMapping,
+            )
+        } else {
+            KaBaseSimpleFunctionCall(
+                backingPartiallyAppliedSymbol = partiallyAppliedSymbol,
+                backingArgumentMapping = argumentMapping,
+                backingTypeArgumentsMapping = typeArgumentsMapping,
+            )
+        }
+
         fun createKtPartiallyAppliedSymbolForImplicitInvoke(
             dispatchReceiver: FirExpression?,
             extensionReceiver: FirExpression?,
@@ -902,11 +929,10 @@ internal class KaFirResolver(
                 // if errorsness call without ()
                 is KaFunctionSymbol -> {
                     @Suppress("UNCHECKED_CAST") // safe because of the above check on targetKtSymbol
-                    KaBaseSimpleFunctionCall(
-                        backingPartiallyAppliedSymbol = partiallyAppliedSymbol as KaPartiallyAppliedFunctionSymbol<KaFunctionSymbol>,
-                        backingArgumentMapping = emptyMap(),
-                        backingTypeArgumentsMapping = typeArgumentsMapping,
-                        backingIsImplicitInvoke = isImplicitInvoke,
+                    buildFunctionCall(
+                        partiallyAppliedSymbol = partiallyAppliedSymbol as KaPartiallyAppliedFunctionSymbol<KaFunctionSymbol>,
+                        argumentMapping = emptyMap(),
+                        typeArgumentsMapping = typeArgumentsMapping,
                     )
                 }
             }
@@ -927,13 +953,12 @@ internal class KaFirResolver(
                     }
 
                 @Suppress("UNCHECKED_CAST") // safe because of the above check on targetKtSymbol
-                KaBaseSimpleFunctionCall(
-                    backingPartiallyAppliedSymbol = partiallyAppliedSymbol as KaPartiallyAppliedFunctionSymbol<KaFunctionSymbol>,
-                    backingArgumentMapping = argumentMappingWithoutExtensionReceiver
+                buildFunctionCall(
+                    partiallyAppliedSymbol = partiallyAppliedSymbol as KaPartiallyAppliedFunctionSymbol<KaFunctionSymbol>,
+                    argumentMapping = argumentMappingWithoutExtensionReceiver
                         ?.createArgumentMapping(partiallyAppliedSymbol.signature)
                         .orEmpty(),
-                    backingTypeArgumentsMapping = typeArgumentsMapping,
-                    backingIsImplicitInvoke = isImplicitInvoke,
+                    typeArgumentsMapping = typeArgumentsMapping,
                 )
             }
 
@@ -1132,7 +1157,6 @@ internal class KaFirResolver(
             backingTypeArgumentsMapping = firCall
                 .toFirTypeArgumentsMapping(symbol = operationPartiallyAppliedSymbol.symbol.firSymbol)
                 .asKaTypeParametersMapping(),
-            backingIsImplicitInvoke = false,
         )
 
         val indexExpressions = lhsArrayAccessExpression.indexExpressions
@@ -1143,7 +1167,6 @@ internal class KaFirResolver(
             backingTypeArgumentsMapping = firCall
                 .toFirTypeArgumentsMapping(symbol = getPartiallyAppliedSymbol.symbol.firSymbol)
                 .asKaTypeParametersMapping(),
-            backingIsImplicitInvoke = false,
         )
 
         val setArgumentsMapping = mapOf(indexExpressions.last() to setPartiallyAppliedSymbol.signature.valueParameters.last())
@@ -1153,7 +1176,6 @@ internal class KaFirResolver(
             backingTypeArgumentsMapping = firCall
                 .toFirTypeArgumentsMapping(symbol = setPartiallyAppliedSymbol.symbol.firSymbol)
                 .asKaTypeParametersMapping(),
-            backingIsImplicitInvoke = false,
         )
 
         @Suppress("UNCHECKED_CAST")
@@ -1191,7 +1213,6 @@ internal class KaFirResolver(
             backingTypeArgumentsMapping = firOperationCall
                 .toFirTypeArgumentsMapping(symbol = operationPartiallyAppliedSymbol.symbol.firSymbol)
                 .asKaTypeParametersMapping(),
-            backingIsImplicitInvoke = false,
         )
 
         @Suppress("UNCHECKED_CAST")
@@ -1449,23 +1470,24 @@ internal class KaFirResolver(
         }.toMap()
     }
 
-    private fun FirResolvedQualifier.toKaCalls(constructors: List<FirConstructorSymbol>): List<KaFunctionCall<*>> {
-        analysisSession.apply {
-            return constructors.map { constructor ->
-                val signature = constructor.toKaSignature()
-                val partiallyAppliedSymbol = KaBasePartiallyAppliedSymbol(
-                    backingSignature = signature as KaFunctionSignature<*>,
-                    dispatchReceiver = null,
-                    extensionReceiver = null,
-                    contextArguments = emptyList(),
-                )
+    private fun FirResolvedQualifier.toKaCalls(constructors: List<FirConstructorSymbol>): List<KaFunctionCall<*>> =
+        constructors.map { constructor ->
+            val signature = constructor.toKaSignature()
+            val partiallyAppliedSymbol = KaBasePartiallyAppliedSymbol(
+                backingSignature = signature as KaFunctionSignature<*>,
+                dispatchReceiver = null,
+                extensionReceiver = null,
+                contextArguments = emptyList(),
+            )
 
-                val firTypeArgumentsMapping = toFirTypeArgumentsMapping(constructor)
-                val typeArgumentsMapping = firTypeArgumentsMapping.asKaTypeParametersMapping()
-                KaBaseSimpleFunctionCall(partiallyAppliedSymbol, emptyMap(), typeArgumentsMapping, false)
-            }
+            val firTypeArgumentsMapping = toFirTypeArgumentsMapping(constructor)
+            val typeArgumentsMapping = firTypeArgumentsMapping.asKaTypeParametersMapping()
+            KaBaseSimpleFunctionCall(
+                backingPartiallyAppliedSymbol = partiallyAppliedSymbol,
+                backingArgumentMapping = emptyMap(),
+                backingTypeArgumentsMapping = typeArgumentsMapping,
+            )
         }
-    }
 
     private fun FirQualifiedAccessExpression.collectCallCandidates(
         psi: KtElement,
@@ -1651,7 +1673,6 @@ internal class KaFirResolver(
                             backingPartiallyAppliedSymbol = partiallyAppliedSymbol,
                             backingArgumentMapping = createArgumentMapping(defaultArrayOfSymbol, substitutor),
                             backingTypeArgumentsMapping = toTypeArgumentsMapping(defaultArrayOfSymbol),
-                            backingIsImplicitInvoke = false,
                         )
                     ),
                 )
@@ -1673,7 +1694,6 @@ internal class KaFirResolver(
             backingPartiallyAppliedSymbol = partiallyAppliedSymbol,
             backingArgumentMapping = createArgumentMapping(arrayOfSymbol, substitutor),
             backingTypeArgumentsMapping = toTypeArgumentsMapping(arrayOfSymbol),
-            backingIsImplicitInvoke = false,
         )
     }
 
@@ -1710,7 +1730,6 @@ internal class KaFirResolver(
                     ),
                     backingArgumentMapping = mapOf(rightPsi to kaSignature.valueParameters.first()),
                     backingTypeArgumentsMapping = emptyMap(),
-                    backingIsImplicitInvoke = false,
                 )
             }
 

@@ -39,7 +39,7 @@ KtBlockExpression(28,44): '{'
 
 KtCallExpression(34,42): 'action()'
   KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
+    candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:

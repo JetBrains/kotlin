@@ -126,7 +126,7 @@ KtValueArgument(23,44): 'AnnotationTarget.TYPE'
 
 KtDotQualifiedExpression(23,44): 'AnnotationTarget.TYPE'
   KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
+    candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null

@@ -2120,7 +2120,7 @@ KtBlockExpression(1266,1284): '{'
   null
 
 KtCallExpression(1272,1282): 'body(this)'
-  KaSimpleFunctionCall:
+  KaImplicitInvokeCall:
     argumentMapping = {
       this -> (KaVariableSignature:
         name = p2
