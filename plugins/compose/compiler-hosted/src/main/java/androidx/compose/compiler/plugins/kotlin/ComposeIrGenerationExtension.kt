@@ -64,10 +64,7 @@ class ComposeIrGenerationExtension(
             return
         }
 
-        val stabilityInferencer = StabilityInferencer(
-            pluginContext.moduleDescriptor,
-            stableTypeMatchers,
-        )
+        val stabilityInferencer = StabilityInferencer(stableTypeMatchers)
 
         if (useK2) {
             moduleFragment.acceptVoid(ComposableLambdaAnnotator(pluginContext))

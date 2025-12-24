@@ -22,8 +22,6 @@ import androidx.compose.compiler.plugins.kotlin.ComposeFqNames
 import androidx.compose.compiler.plugins.kotlin.lower.annotationClass
 import androidx.compose.compiler.plugins.kotlin.lower.isSyntheticComposableFunction
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineClassType
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
@@ -197,7 +195,6 @@ private data class SymbolForAnalysis(
 )
 
 class StabilityInferencer(
-    private val currentModule: ModuleDescriptor,
     externalStableTypeMatchers: Set<FqNameMatcher>,
 ) {
     private val externalTypeMatcherCollection = FqNameMatcherCollection(externalStableTypeMatchers)
@@ -238,25 +235,14 @@ class StabilityInferencer(
                 mask = externalTypeMatcherCollection
                     .maskForName(declaration.fqNameWhenAvailable) ?: 0
                 stability = Stability.Stable
-            } else if (declaration.isInterface && declaration.isInCurrentModule()) {
-                // trying to avoid extracting stability bitmask for interfaces in current module
-                // to support incremental compilation
-                return Stability.Unknown(declaration)
             } else {
                 val bitmask = declaration.stabilityParamBitmask() ?: return Stability.Unstable
 
                 val knownStableMask =
                     if (typeParameters.size < 32) 0b1 shl typeParameters.size else 0
-                val isKnownStable = bitmask and knownStableMask != 0
                 mask = bitmask and knownStableMask.inv()
 
-                // supporting incremental compilation, where declaration stubs can be
-                // in the same module, so we need to use already inferred values
-                stability = if (isKnownStable && declaration.isInCurrentModule()) {
-                    Stability.Stable
-                } else {
-                    Stability.Runtime(declaration)
-                }
+                stability = Stability.Runtime(declaration)
             }
             return when {
                 mask == 0 || typeParameters.isEmpty() -> stability
@@ -304,10 +290,6 @@ class StabilityInferencer(
 
         return stability
     }
-
-    @OptIn(ObsoleteDescriptorBasedAPI::class)
-    private fun IrDeclaration.isInCurrentModule() =
-        module == currentModule
 
     private fun IrClass.isProtobufType(): Boolean {
         // Quick exit as all protos are final
