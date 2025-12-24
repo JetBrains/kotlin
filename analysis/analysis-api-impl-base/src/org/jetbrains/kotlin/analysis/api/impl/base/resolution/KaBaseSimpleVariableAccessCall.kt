@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.resolution.KaPartiallyAppliedVariableSymbol
 import org.jetbrains.kotlin.analysis.api.resolution.KaReceiverValue
-import org.jetbrains.kotlin.analysis.api.resolution.KaSimpleVariableAccessCall
 import org.jetbrains.kotlin.analysis.api.resolution.KaVariableAccessCall
 import org.jetbrains.kotlin.analysis.api.signatures.KaVariableSignature
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
@@ -24,7 +23,7 @@ class KaBaseSimpleVariableAccessCall(
     private val backingTypeArgumentsMapping: Map<KaTypeParameterSymbol, KaType>,
     private val backingKind: KaVariableAccessCall.Kind,
     private val backingIsContextSensitive: Boolean,
-) : KaSimpleVariableAccessCall {
+) : @Suppress("DEPRECATION") org.jetbrains.kotlin.analysis.api.resolution.KaSimpleVariableAccessCall {
     override val token: KaLifetimeToken get() = backingPartiallyAppliedSymbol.token
 
     @Deprecated("Use the content of the `partiallyAppliedSymbol` directly instead")

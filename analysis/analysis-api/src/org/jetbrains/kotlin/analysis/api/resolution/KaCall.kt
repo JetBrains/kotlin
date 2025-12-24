@@ -127,10 +127,11 @@ public interface KaDelegatedConstructorCall : KaFunctionCall<KaConstructorSymbol
 }
 
 /**
- * An access to variables (including properties).
+ * Access to variables (including properties).
  */
 @OptIn(KaImplementationDetail::class, KaExperimentalApi::class)
-public sealed interface KaVariableAccessCall : KaSingleCall<KaVariableSymbol, KaVariableSignature<KaVariableSymbol>>,
+@SubclassOptInRequired(KaImplementationDetail::class)
+public interface KaVariableAccessCall : KaSingleCall<KaVariableSymbol, KaVariableSignature<KaVariableSymbol>>,
     KaCallableMemberCall<KaVariableSymbol, KaVariableSignature<KaVariableSymbol>> {
 
     @Deprecated("Use the content of the `partiallyAppliedSymbol` directly instead")
@@ -176,6 +177,13 @@ public sealed interface KaVariableAccessCall : KaSingleCall<KaVariableSymbol, Ka
 /**
  * A simple read or write to a variable or property.
  */
+@Deprecated(
+    message = "Use 'KaVariableAccessCall' instead",
+    replaceWith = ReplaceWith(
+        expression = "KaVariableAccessCall",
+        imports = ["org.jetbrains.kotlin.analysis.api.resolution.KaVariableAccessCall"],
+    ),
+)
 @SubclassOptInRequired(KaImplementationDetail::class)
 public interface KaSimpleVariableAccessCall : KaVariableAccessCall {
     /**

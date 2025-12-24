@@ -11,8 +11,8 @@ import org.jetbrains.kotlin.analysis.api.components.KaExpressionInformationProvi
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
 import org.jetbrains.kotlin.analysis.api.impl.base.components.withPsiValidityAssertion
-import org.jetbrains.kotlin.analysis.api.resolution.KaSimpleVariableAccessCall
 import org.jetbrains.kotlin.analysis.api.resolution.KaSuccessCallInfo
+import org.jetbrains.kotlin.analysis.api.resolution.KaVariableAccessCall
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirSafe
 import org.jetbrains.kotlin.diagnostics.WhenMissingCase
@@ -425,7 +425,7 @@ private fun doesDoubleColonUseLHS(lhs: PsiElement): Boolean {
  * in which the `f` in 2) is regarded as used and `f` in 1) is not.
  */
 private fun KaSession.doesCallExpressionUseCallee(callee: PsiElement): Boolean {
-    return callee !is KtReferenceExpression || isSimpleVariableAccessCall(callee)
+    return callee !is KtReferenceExpression || isVariableAccessCall(callee)
 }
 
 /**
@@ -456,10 +456,10 @@ private fun KaSession.doesNamedFunctionUseBody(namedFunction: KtNamedFunction, b
 }
 
 
-private fun KaSession.isSimpleVariableAccessCall(reference: KtReferenceExpression): Boolean =
+private fun KaSession.isVariableAccessCall(reference: KtReferenceExpression): Boolean =
     when (val resolution = reference.resolveToCall()) {
         is KaSuccessCallInfo ->
-            resolution.call is KaSimpleVariableAccessCall
+            resolution.call is KaVariableAccessCall
         else ->
             false
     }
