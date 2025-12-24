@@ -8,7 +8,7 @@ import org.jetbrains.kotlin.library.metadata.resolver.KotlinResolvedLibrary
 
 class KotlinResolvedLibraryImpl(override val library: KotlinLibrary) : KotlinResolvedLibrary {
 
-    private val _resolvedDependencies = mutableListOf<KotlinResolvedLibrary>()
+    private val _resolvedDependencies = java.util.Collections.synchronizedList(mutableListOf<KotlinResolvedLibrary>())
     private val _emptyPackages by lazy { parseModuleHeader(library.metadata.moduleHeaderData).emptyPackageList }
 
     override val resolvedDependencies: List<KotlinResolvedLibrary>
