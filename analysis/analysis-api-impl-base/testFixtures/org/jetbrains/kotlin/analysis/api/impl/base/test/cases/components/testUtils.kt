@@ -444,6 +444,7 @@ internal fun assertConsistency(testServices: TestServices, call: KaCall) {
     }
 
     if (call is KaSimpleFunctionCall) {
+        @Suppress("DEPRECATION")
         assertions.assertEquals(call is KaImplicitInvokeCall, call.isImplicitInvoke)
     }
 

@@ -1598,7 +1598,7 @@ internal class KaFirResolver(
             return KaBaseApplicableCallCandidateInfo(
                 call as KaCall,
                 isInBestCandidates = if (isUnwrappedImplicitInvokeCall) {
-                    (call as? KaSimpleFunctionCall)?.isImplicitInvoke == true
+                    call is KaImplicitInvokeCall
                 } else {
                     isInBestCandidates
                 }
