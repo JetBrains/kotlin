@@ -319,7 +319,6 @@ KtCallExpression(473,479): 'TODO()'
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Nothing
@@ -336,7 +335,6 @@ KtNameReferenceExpression(473,477): 'TODO'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Nothing
@@ -367,7 +365,6 @@ KtCallExpression(529,545): 'InheritorClass()'
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = MyClass.InheritorClass
@@ -384,7 +381,6 @@ KtNameReferenceExpression(529,543): 'InheritorClass'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MyClass.InheritorClass
@@ -474,7 +470,6 @@ KtCallExpression(716,725): 'lazy {""}'
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Lazy<kotlin.String>
@@ -509,7 +504,6 @@ KtNameReferenceExpression(716,720): 'lazy'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Lazy<kotlin.String>
@@ -580,7 +574,6 @@ KtCallExpression(799,805): 'TODO()'
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Nothing
@@ -597,7 +590,6 @@ KtNameReferenceExpression(799,803): 'TODO'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Nothing
@@ -684,7 +676,6 @@ KtCallExpression(933,966): 'anonymousEnumConsumer(EnumValue1)'
       isSafeNavigation = false
       type = kotlin.Function1<MyEnum, kotlin.Unit>
     extensionReceiver = null
-    isImplicitInvoke = true
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Unit
@@ -747,7 +738,6 @@ KtCallExpression(972,1006): 'anonymousConsumer(InheritorObject)'
       isSafeNavigation = false
       type = kotlin.Function1<MyClass, kotlin.Unit>
     extensionReceiver = null
-    isImplicitInvoke = true
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Unit
@@ -810,7 +800,6 @@ KtCallExpression(1011,1041): 'anonymousConsumer(propMyClass)'
       isSafeNavigation = false
       type = kotlin.Function1<MyClass, kotlin.Unit>
     extensionReceiver = null
-    isImplicitInvoke = true
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Unit
@@ -873,7 +862,6 @@ KtCallExpression(1047,1070): 'anonymousConsumer(prop)'
       isSafeNavigation = false
       type = kotlin.Function1<MyClass, kotlin.Unit>
     extensionReceiver = null
-    isImplicitInvoke = true
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Unit
@@ -936,7 +924,6 @@ KtCallExpression(1075,1103): 'anonymousConsumer(constProp)'
       isSafeNavigation = false
       type = kotlin.Function1<MyClass, kotlin.Unit>
     extensionReceiver = null
-    isImplicitInvoke = true
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Unit
@@ -999,7 +986,6 @@ KtCallExpression(1108,1135): 'anonymousConsumer(lazyProp)'
       isSafeNavigation = false
       type = kotlin.Function1<MyClass, kotlin.Unit>
     extensionReceiver = null
-    isImplicitInvoke = true
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Unit
@@ -1062,7 +1048,6 @@ KtCallExpression(1140,1169): 'anonymousConsumer(lambdaProp)'
       isSafeNavigation = false
       type = kotlin.Function1<MyClass, kotlin.Unit>
     extensionReceiver = null
-    isImplicitInvoke = true
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Unit
@@ -1125,7 +1110,6 @@ KtCallExpression(1174,1202): 'anonymousConsumer(superProp)'
       isSafeNavigation = false
       type = kotlin.Function1<MyClass, kotlin.Unit>
     extensionReceiver = null
-    isImplicitInvoke = true
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Unit
@@ -1188,7 +1172,6 @@ KtCallExpression(1208,1233): 'anonymousConsumer(func())'
       isSafeNavigation = false
       type = kotlin.Function1<MyClass, kotlin.Unit>
     extensionReceiver = null
-    isImplicitInvoke = true
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Unit
@@ -1259,7 +1242,6 @@ KtCallExpression(1238,1268): 'anonymousConsumer(superFunc())'
       isSafeNavigation = false
       type = kotlin.Function1<MyClass, kotlin.Unit>
     extensionReceiver = null
-    isImplicitInvoke = true
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Unit
@@ -1330,7 +1312,6 @@ KtCallExpression(1273,1302): 'anonymousConsumer(lambdaProp)'
       isSafeNavigation = false
       type = kotlin.Function1<MyClass, kotlin.Unit>
     extensionReceiver = null
-    isImplicitInvoke = true
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Unit

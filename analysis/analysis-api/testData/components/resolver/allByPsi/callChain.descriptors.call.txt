@@ -61,7 +61,6 @@ KtBinaryExpression(27,35): 'this + a'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
@@ -103,7 +102,6 @@ KtOperationReferenceExpression(32,33): '+'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
@@ -239,7 +237,6 @@ KtDotQualifiedExpression(100,154): '(1.foo(2).bar(3) as? Int)?.foo(4.bar(5).bar(
         expression = (1.foo(2).bar(3) as? Int)?.foo(4.bar(5).bar(6))
         isSafeNavigation = false
         type = kotlin.Int?
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.Int?
         returnType = kotlin.Int
@@ -275,7 +272,6 @@ KtSafeQualifiedExpression(100,147): '(1.foo(2).bar(3) as? Int)?.foo(4.bar(5).bar
         expression = (1.foo(2).bar(3) as? Int)
         isSafeNavigation = true
         type = kotlin.Int?
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.Int
         returnType = kotlin.Int
@@ -317,7 +313,6 @@ KtDotQualifiedExpression(101,116): '1.foo(2).bar(3)'
         expression = 1.foo(2)
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.Int?
         returnType = kotlin.Int
@@ -353,7 +348,6 @@ KtDotQualifiedExpression(101,109): '1.foo(2)'
         expression = 1
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.Int
         returnType = kotlin.Int
@@ -391,7 +385,6 @@ KtCallExpression(103,109): 'foo(2)'
       expression = 1
       isSafeNavigation = false
       type = kotlin.Int
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = kotlin.Int
       returnType = kotlin.Int
@@ -427,7 +420,6 @@ KtNameReferenceExpression(103,106): 'foo'
         expression = 1
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.Int
         returnType = kotlin.Int
@@ -471,7 +463,6 @@ KtCallExpression(110,116): 'bar(3)'
       expression = 1.foo(2)
       isSafeNavigation = false
       type = kotlin.Int
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = kotlin.Int?
       returnType = kotlin.Int
@@ -507,7 +498,6 @@ KtNameReferenceExpression(110,113): 'bar'
         expression = 1.foo(2)
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.Int?
         returnType = kotlin.Int
@@ -563,7 +553,6 @@ KtCallExpression(127,147): 'foo(4.bar(5).bar(6))'
       expression = (1.foo(2).bar(3) as? Int)
       isSafeNavigation = true
       type = kotlin.Int?
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = kotlin.Int
       returnType = kotlin.Int
@@ -599,7 +588,6 @@ KtNameReferenceExpression(127,130): 'foo'
         expression = (1.foo(2).bar(3) as? Int)
         isSafeNavigation = true
         type = kotlin.Int?
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.Int
         returnType = kotlin.Int
@@ -641,7 +629,6 @@ KtDotQualifiedExpression(131,146): '4.bar(5).bar(6)'
         expression = 4.bar(5)
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.Int?
         returnType = kotlin.Int
@@ -677,7 +664,6 @@ KtDotQualifiedExpression(131,139): '4.bar(5)'
         expression = 4
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.Int?
         returnType = kotlin.Int
@@ -715,7 +701,6 @@ KtCallExpression(133,139): 'bar(5)'
       expression = 4
       isSafeNavigation = false
       type = kotlin.Int
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = kotlin.Int?
       returnType = kotlin.Int
@@ -751,7 +736,6 @@ KtNameReferenceExpression(133,136): 'bar'
         expression = 4
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.Int?
         returnType = kotlin.Int
@@ -795,7 +779,6 @@ KtCallExpression(140,146): 'bar(6)'
       expression = 4.bar(5)
       isSafeNavigation = false
       type = kotlin.Int
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = kotlin.Int?
       returnType = kotlin.Int
@@ -831,7 +814,6 @@ KtNameReferenceExpression(140,143): 'bar'
         expression = 4.bar(5)
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.Int?
         returnType = kotlin.Int
@@ -875,7 +857,6 @@ KtCallExpression(148,154): 'bar(0)'
       expression = (1.foo(2).bar(3) as? Int)?.foo(4.bar(5).bar(6))
       isSafeNavigation = false
       type = kotlin.Int?
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = kotlin.Int?
       returnType = kotlin.Int
@@ -911,7 +892,6 @@ KtNameReferenceExpression(148,151): 'bar'
         expression = (1.foo(2).bar(3) as? Int)?.foo(4.bar(5).bar(6))
         isSafeNavigation = false
         type = kotlin.Int?
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.Int?
         returnType = kotlin.Int

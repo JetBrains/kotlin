@@ -119,7 +119,6 @@ KtNameReferenceExpression(234,249): 'NestedInheritor'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MyClass.NestedInheritor
@@ -156,7 +155,6 @@ KtDotQualifiedExpression(318,341): 'MyClass.NestedInheritor'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MyClass.NestedInheritor
@@ -175,7 +173,6 @@ KtNameReferenceExpression(318,325): 'MyClass'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MyClass
@@ -194,7 +191,6 @@ KtNameReferenceExpression(326,341): 'NestedInheritor'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MyClass.NestedInheritor
@@ -245,7 +241,6 @@ KtCallExpression(372,532): 'receiveMyClass('
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -282,7 +277,6 @@ KtNameReferenceExpression(372,386): 'receiveMyClass'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -331,7 +325,6 @@ KtBinaryExpression(400,406): 'i == 0'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -386,7 +379,6 @@ KtOperationReferenceExpression(402,404): '=='
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -418,7 +410,6 @@ KtNameReferenceExpression(408,423): 'NestedInheritor'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MyClass.NestedInheritor
@@ -457,7 +448,6 @@ KtBinaryExpression(441,447): 'i == 1'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -512,7 +502,6 @@ KtOperationReferenceExpression(443,445): '=='
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -585,7 +574,6 @@ KtBinaryExpression(478,484): 'i == 2'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -640,7 +628,6 @@ KtOperationReferenceExpression(480,482): '=='
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean

@@ -5,7 +5,6 @@ KtCallExpression(84,89): 'foo()'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit

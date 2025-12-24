@@ -1367,7 +1367,6 @@ KtBinaryExpression(1183,1189): 's == A'
         isSafeNavigation = false
         type = foo.Sealed
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -1420,7 +1419,6 @@ KtOperationReferenceExpression(1185,1187): '=='
         isSafeNavigation = false
         type = foo.Sealed
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -1486,7 +1484,6 @@ KtBinaryExpression(1232,1245): 's == Sealed.A'
         isSafeNavigation = false
         type = foo.Sealed
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -1539,7 +1536,6 @@ KtOperationReferenceExpression(1234,1236): '=='
         isSafeNavigation = false
         type = foo.Sealed
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -1611,7 +1607,6 @@ KtBinaryExpression(1290,1300): 's == foo.A'
         isSafeNavigation = false
         type = foo.Sealed
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -1664,7 +1659,6 @@ KtOperationReferenceExpression(1292,1294): '=='
         isSafeNavigation = false
         type = foo.Sealed
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -1736,7 +1730,6 @@ KtBinaryExpression(1339,1352): 's == Sealed.C'
         isSafeNavigation = false
         type = foo.Sealed
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -1789,7 +1782,6 @@ KtOperationReferenceExpression(1341,1343): '=='
         isSafeNavigation = false
         type = foo.Sealed
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean

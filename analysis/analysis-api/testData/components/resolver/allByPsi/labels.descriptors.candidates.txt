@@ -47,7 +47,6 @@ KtCallExpression(34,42): 'action()'
         isSafeNavigation = false
         type = kotlin.Function0<kotlin.Unit>
       extensionReceiver = null
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -105,7 +104,6 @@ KtCallExpression(64,102): 'foo label@{'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -141,7 +139,6 @@ KtNameReferenceExpression(64,67): 'foo'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -226,7 +223,6 @@ KtBinaryExpression(125,129): '0..1'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.ranges.IntRange
@@ -266,7 +262,6 @@ KtOperationReferenceExpression(126,128): '..'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.ranges.IntRange

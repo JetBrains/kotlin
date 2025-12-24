@@ -16,7 +16,6 @@ KtCallExpression(76,81): 'f("")'
         expression = f
         isSafeNavigation = false
         type = Foo
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = Foo
         returnType = kotlin.Unit

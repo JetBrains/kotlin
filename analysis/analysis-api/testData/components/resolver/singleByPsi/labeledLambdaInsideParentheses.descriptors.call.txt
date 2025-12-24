@@ -19,7 +19,6 @@ KtCallExpression(16,32): 'bar(2, l@{ it })'
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Unit

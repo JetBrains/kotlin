@@ -26,7 +26,6 @@ KtCallExpression(86,105): 'intArrayOf(1, 2, 3)'
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.IntArray

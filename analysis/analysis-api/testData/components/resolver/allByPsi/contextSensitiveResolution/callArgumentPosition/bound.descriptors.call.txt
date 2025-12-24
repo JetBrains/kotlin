@@ -94,7 +94,6 @@ KtCallExpression(185,208): 'boundHolder(EnumValue1)'
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
-        isImplicitInvoke = false
         signature = KaFunctionSignature:
           receiverType = null
           returnType = ERROR_TYPE
@@ -132,7 +131,6 @@ KtNameReferenceExpression(185,196): 'boundHolder'
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
-        isImplicitInvoke = false
         signature = KaFunctionSignature:
           receiverType = null
           returnType = ERROR_TYPE
@@ -190,7 +188,6 @@ KtCallExpression(238,269): 'boundHolder<MyEnum>(EnumValue1)'
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
-        isImplicitInvoke = false
         signature = KaFunctionSignature:
           receiverType = null
           returnType = MyEnum
@@ -228,7 +225,6 @@ KtNameReferenceExpression(238,249): 'boundHolder'
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
-        isImplicitInvoke = false
         signature = KaFunctionSignature:
           receiverType = null
           returnType = MyEnum
@@ -333,7 +329,6 @@ KtBinaryExpression(331,350): 'value == EnumValue1'
         isSafeNavigation = false
         type = T
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -386,7 +381,6 @@ KtOperationReferenceExpression(337,339): '=='
         isSafeNavigation = false
         type = T
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -463,7 +457,6 @@ KtBinaryExpression(399,418): 'value == EnumValue1'
         isSafeNavigation = false
         type = T
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -516,7 +509,6 @@ KtOperationReferenceExpression(405,407): '=='
         isSafeNavigation = false
         type = T
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean

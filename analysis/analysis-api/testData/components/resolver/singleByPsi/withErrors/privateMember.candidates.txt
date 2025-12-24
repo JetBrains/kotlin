@@ -8,7 +8,6 @@ KtDotQualifiedExpression(59,66): 'a.foo()'
         isSafeNavigation = false
         type = A
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit

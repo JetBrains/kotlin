@@ -8,7 +8,6 @@ KtNameReferenceExpression(589,592): 'bar'
         isSafeNavigation = false
         type = kotlin.Unit
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit

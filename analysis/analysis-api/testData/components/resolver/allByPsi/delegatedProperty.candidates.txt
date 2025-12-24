@@ -41,7 +41,6 @@ KtCallExpression(77,87): 'Delegate()'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = myPack.Delegate
@@ -59,7 +58,6 @@ KtNameReferenceExpression(77,85): 'Delegate'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = myPack.Delegate

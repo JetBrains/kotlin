@@ -648,7 +648,6 @@ KtDotQualifiedExpression(700,725): 'instance.prop2.toString()'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.String
@@ -728,7 +727,6 @@ KtCallExpression(715,725): 'toString()'
       isSafeNavigation = false
       type = kotlin.Int
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.String
@@ -748,7 +746,6 @@ KtNameReferenceExpression(715,723): 'toString'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.String
@@ -967,7 +964,6 @@ KtDotQualifiedExpression(964,989): 'instance.prop2.toString()'
         expression = instance.prop2
         isSafeNavigation = false
         type = ERROR CLASS: Unresolved name: prop2
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.Any?
         returnType = kotlin.String
@@ -1013,7 +1009,6 @@ KtCallExpression(979,989): 'toString()'
       expression = instance.prop2
       isSafeNavigation = false
       type = ERROR CLASS: Unresolved name: prop2
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = kotlin.Any?
       returnType = kotlin.String
@@ -1033,7 +1028,6 @@ KtNameReferenceExpression(979,987): 'toString'
         expression = instance.prop2
         isSafeNavigation = false
         type = ERROR CLASS: Unresolved name: prop2
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.Any?
         returnType = kotlin.String
@@ -1206,7 +1200,6 @@ KtDotQualifiedExpression(1148,1173): 'instance.prop2.toString()'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.String
@@ -1286,7 +1279,6 @@ KtCallExpression(1163,1173): 'toString()'
       isSafeNavigation = false
       type = kotlin.Int
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.String
@@ -1306,7 +1298,6 @@ KtNameReferenceExpression(1163,1171): 'toString'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.String
@@ -1685,7 +1676,6 @@ KtDotQualifiedExpression(1639,1664): 'instance.prop2.toString()'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.String
@@ -1765,7 +1755,6 @@ KtCallExpression(1654,1664): 'toString()'
       isSafeNavigation = false
       type = kotlin.Int
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.String
@@ -1785,7 +1774,6 @@ KtNameReferenceExpression(1654,1662): 'toString'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.String

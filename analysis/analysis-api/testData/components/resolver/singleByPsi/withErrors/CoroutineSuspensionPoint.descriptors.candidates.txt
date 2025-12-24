@@ -26,7 +26,6 @@ KtNameReferenceExpression(183,194): 'suspendHere'
           visibility: LOCAL
         type = Controller
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit

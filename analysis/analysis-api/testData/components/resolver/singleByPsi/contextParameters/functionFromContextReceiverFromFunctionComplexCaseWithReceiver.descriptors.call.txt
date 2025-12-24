@@ -10,7 +10,6 @@ KtCallExpression(127,130): 'c()'
       symbol = /bar(<extension receiver>: kotlin.Boolean): kotlin.Unit
       type = Container
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Unit

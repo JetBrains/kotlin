@@ -152,7 +152,6 @@ KtCallExpression(246,258): 'MyDelegate()'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = myPack.MyDelegate<T>
@@ -172,7 +171,6 @@ KtNameReferenceExpression(246,256): 'MyDelegate'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = myPack.MyDelegate<T>
@@ -333,7 +331,6 @@ KtCallExpression(446,463): 'ResourceID<Int>()'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = myPack.ResourceID<kotlin.Int>
@@ -353,7 +350,6 @@ KtNameReferenceExpression(446,456): 'ResourceID'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = myPack.ResourceID<kotlin.Int>

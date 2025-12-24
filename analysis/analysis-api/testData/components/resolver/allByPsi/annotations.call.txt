@@ -434,7 +434,6 @@ KtCollectionLiteralExpression(438,447): '[1, 2, 3]'
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.IntArray
@@ -573,7 +572,6 @@ KtCollectionLiteralExpression(470,479): '[4, 5, 6]'
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.IntArray
@@ -706,7 +704,6 @@ KtCallExpression(496,515): 'intArrayOf(7, 8, 9)'
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.IntArray
@@ -753,7 +750,6 @@ KtNameReferenceExpression(496,506): 'intArrayOf'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.IntArray
@@ -1068,7 +1064,6 @@ KtCollectionLiteralExpression(624,674): '[AnnoWithKClass::class, one.AnnoWithKCl
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Array<kotlin.reflect.KClass<*>>
@@ -1205,7 +1200,6 @@ KtCallExpression(703,782): 'arrayOf(one.AnnoWithArray([10, 11, 12]), AnnoWithArr
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Array<one.AnnoWithArray>
@@ -1247,7 +1241,6 @@ KtNameReferenceExpression(703,710): 'arrayOf'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Array<one.AnnoWithArray>
@@ -1288,7 +1281,6 @@ KtDotQualifiedExpression(711,742): 'one.AnnoWithArray([10, 11, 12])'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = one.AnnoWithArray
@@ -1323,7 +1315,6 @@ KtCallExpression(715,742): 'AnnoWithArray([10, 11, 12])'
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = one.AnnoWithArray
@@ -1356,7 +1347,6 @@ KtNameReferenceExpression(715,728): 'AnnoWithArray'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = one.AnnoWithArray
@@ -1408,7 +1398,6 @@ KtCollectionLiteralExpression(729,741): '[10, 11, 12]'
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.IntArray
@@ -1452,7 +1441,6 @@ KtCallExpression(744,781): 'AnnoWithArray(intArrayOf(13, 14, 15))'
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = one.AnnoWithArray
@@ -1485,7 +1473,6 @@ KtNameReferenceExpression(744,757): 'AnnoWithArray'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = one.AnnoWithArray
@@ -1537,7 +1524,6 @@ KtCallExpression(758,780): 'intArrayOf(13, 14, 15)'
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.IntArray
@@ -1584,7 +1570,6 @@ KtNameReferenceExpression(758,768): 'intArrayOf'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.IntArray
@@ -1719,7 +1704,6 @@ KtBinaryExpression(800,825): 'stringConstant + " 1.2.3"'
         isSafeNavigation = false
         type = kotlin.String
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.String
@@ -1772,7 +1756,6 @@ KtOperationReferenceExpression(815,816): '+'
         isSafeNavigation = false
         type = kotlin.String
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.String

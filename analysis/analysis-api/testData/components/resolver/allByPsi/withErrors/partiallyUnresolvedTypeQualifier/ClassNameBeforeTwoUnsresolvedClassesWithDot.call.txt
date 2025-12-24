@@ -156,7 +156,6 @@ KtCallExpression(152,193): 'take {'
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
-        isImplicitInvoke = false
         signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit
@@ -196,7 +195,6 @@ KtNameReferenceExpression(152,156): 'take'
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
-        isImplicitInvoke = false
         signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit

@@ -5,7 +5,6 @@ KtNameReferenceExpression(55,61): 'values'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Array<test.E>

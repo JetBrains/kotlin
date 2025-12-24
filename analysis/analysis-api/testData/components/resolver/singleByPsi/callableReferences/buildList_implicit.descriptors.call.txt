@@ -30,7 +30,6 @@ KtCallableReferenceExpression(102,107): '::add'
         visibility: LOCAL
       type = kotlin.collections.MutableList<kotlin.String>
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Boolean

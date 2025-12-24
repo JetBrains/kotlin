@@ -206,7 +206,6 @@ KtDotQualifiedExpression(415,435): 'TopLevelObject.foo()'
         isSafeNavigation = false
         type = one.two.TopLevelObject
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -228,7 +227,6 @@ KtCallExpression(430,435): 'foo()'
       isSafeNavigation = false
       type = one.two.TopLevelObject
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Unit
@@ -248,7 +246,6 @@ KtNameReferenceExpression(430,433): 'foo'
         isSafeNavigation = false
         type = one.two.TopLevelObject
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -272,7 +269,6 @@ KtCallExpression(458,463): 'foo()'
       symbol = one/two/TopLevelObject
       type = one.two.TopLevelObject
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Unit
@@ -291,7 +287,6 @@ KtNameReferenceExpression(458,461): 'foo'
         symbol = one/two/TopLevelObject
         type = one.two.TopLevelObject
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -403,7 +398,6 @@ KtDotQualifiedExpression(659,692): 'TopLevelObject.NestedObject.baz()'
         isSafeNavigation = false
         type = one.two.TopLevelObject.NestedObject
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -431,7 +425,6 @@ KtCallExpression(687,692): 'baz()'
       isSafeNavigation = false
       type = one.two.TopLevelObject.NestedObject
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Unit
@@ -451,7 +444,6 @@ KtNameReferenceExpression(687,690): 'baz'
         isSafeNavigation = false
         type = one.two.TopLevelObject.NestedObject
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -477,7 +469,6 @@ KtDotQualifiedExpression(721,739): 'NestedObject.baz()'
         isSafeNavigation = false
         type = one.two.TopLevelObject.NestedObject
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -499,7 +490,6 @@ KtCallExpression(734,739): 'baz()'
       isSafeNavigation = false
       type = one.two.TopLevelObject.NestedObject
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Unit
@@ -519,7 +509,6 @@ KtNameReferenceExpression(734,737): 'baz'
         isSafeNavigation = false
         type = one.two.TopLevelObject.NestedObject
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -543,7 +532,6 @@ KtCallExpression(762,767): 'baz()'
       symbol = one/two/TopLevelObject.NestedObject
       type = one.two.TopLevelObject.NestedObject
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Unit
@@ -562,7 +550,6 @@ KtNameReferenceExpression(762,765): 'baz'
         symbol = one/two/TopLevelObject.NestedObject
         type = one.two.TopLevelObject.NestedObject
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit

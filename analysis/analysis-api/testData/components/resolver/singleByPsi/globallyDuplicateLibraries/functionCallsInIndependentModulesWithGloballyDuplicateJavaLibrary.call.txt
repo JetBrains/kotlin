@@ -9,7 +9,6 @@ module1 - main1.kt:
           isSafeNavigation = false
           type = library.Common
         extensionReceiver = null
-        isImplicitInvoke = false
         signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.String!
@@ -30,7 +29,6 @@ module2 - main2.kt:
           isSafeNavigation = false
           type = library.Common
         extensionReceiver = null
-        isImplicitInvoke = false
         signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Int

@@ -23,7 +23,6 @@ KtDotQualifiedExpression(203,225): 'another.foo(1L, "str")'
         isSafeNavigation = false
         type = Another
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit

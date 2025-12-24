@@ -4,7 +4,6 @@ KtCallableReferenceExpression(64,77): 'Foo<Int>::foo'
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Int

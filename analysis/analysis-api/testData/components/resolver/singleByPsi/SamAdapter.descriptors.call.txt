@@ -13,7 +13,6 @@ KtNameReferenceExpression(35,46): 'invokeLater'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit

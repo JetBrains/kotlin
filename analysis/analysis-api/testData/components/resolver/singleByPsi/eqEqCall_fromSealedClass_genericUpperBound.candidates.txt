@@ -16,7 +16,6 @@ KtBinaryExpression(357,375): 'oldItem == newItem'
         isSafeNavigation = false
         type = T
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean

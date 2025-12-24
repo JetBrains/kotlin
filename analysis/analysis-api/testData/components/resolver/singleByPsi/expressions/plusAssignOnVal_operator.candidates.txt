@@ -16,7 +16,6 @@ KtOperationReferenceExpression(75,77): '+='
         isSafeNavigation = false
         type = A
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit

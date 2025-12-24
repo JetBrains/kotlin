@@ -5,7 +5,6 @@ KtNameReferenceExpression(65,70): 'Inner'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = my.sample.Inner

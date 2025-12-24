@@ -121,7 +121,6 @@ KtCallExpression(204,210): 'TODO()'
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Nothing
@@ -138,7 +137,6 @@ KtNameReferenceExpression(204,208): 'TODO'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Nothing
@@ -190,7 +188,6 @@ KtCallExpression(234,240): 'TODO()'
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Nothing
@@ -207,7 +204,6 @@ KtNameReferenceExpression(234,238): 'TODO'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Nothing
@@ -638,7 +634,6 @@ KtCallExpression(662,803): 'foo('
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Unit
@@ -677,7 +672,6 @@ KtNameReferenceExpression(662,665): 'foo'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -828,7 +822,6 @@ KtCallExpression(809,963): 'myRunWithMyEnum {'
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Unit
@@ -869,7 +862,6 @@ KtNameReferenceExpression(809,824): 'myRunWithMyEnum'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -1026,7 +1018,6 @@ KtCallExpression(969,1121): 'myRun<MyEnum> {'
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = MyEnum
@@ -1069,7 +1060,6 @@ KtNameReferenceExpression(969,974): 'myRun'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MyEnum

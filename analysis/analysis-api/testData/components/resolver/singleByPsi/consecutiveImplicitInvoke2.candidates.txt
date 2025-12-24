@@ -8,7 +8,6 @@ KtCallExpression(135,140): 'i()()'
         expression = i()
         isSafeNavigation = false
         type = kotlin.Long
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = kotlin.Double
         returnType = kotlin.Unit
@@ -30,7 +29,6 @@ KtCallExpression(135,140): 'i()()'
         expression = i()
         isSafeNavigation = false
         type = kotlin.Long
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = kotlin.Int
         returnType = kotlin.Long
@@ -52,7 +50,6 @@ KtCallExpression(135,140): 'i()()'
         expression = i()
         isSafeNavigation = false
         type = kotlin.Long
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = kotlin.Long
         returnType = kotlin.Double

@@ -5,7 +5,6 @@ KtNameReferenceExpression(121,123): 'BB'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = foo.bar.baz.AA.BB

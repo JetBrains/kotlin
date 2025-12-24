@@ -500,7 +500,6 @@ KtDotQualifiedExpression(245,257): 'super.call()'
         isSafeNavigation = false
         type = r.BaseClass
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -527,7 +526,6 @@ KtCallExpression(251,257): 'call()'
         isSafeNavigation = false
         type = r.BaseClass
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -548,7 +546,6 @@ KtNameReferenceExpression(251,255): 'call'
         isSafeNavigation = false
         type = r.BaseClass
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit

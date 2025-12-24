@@ -338,7 +338,6 @@ KtDotQualifiedExpression(234,244): 'this.baz()'
         isSafeNavigation = false
         type = EnumWithoutConstructor.EntryWithBody
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -363,7 +362,6 @@ KtCallExpression(239,244): 'baz()'
       isSafeNavigation = false
       type = EnumWithoutConstructor.EntryWithBody
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Unit
@@ -383,7 +381,6 @@ KtNameReferenceExpression(239,242): 'baz'
         isSafeNavigation = false
         type = EnumWithoutConstructor.EntryWithBody
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit

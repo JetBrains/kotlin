@@ -61,7 +61,6 @@ KtCallExpression(132,138): 'TODO()'
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Nothing
@@ -78,7 +77,6 @@ KtNameReferenceExpression(132,136): 'TODO'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Nothing
@@ -182,7 +180,6 @@ KtBinaryExpression(191,197): 'a == X'
         isSafeNavigation = false
         type = MyEnum
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -235,7 +232,6 @@ KtOperationReferenceExpression(193,195): '=='
         isSafeNavigation = false
         type = MyEnum
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -303,7 +299,6 @@ KtBinaryExpression(210,216): 'a != X'
         isSafeNavigation = false
         type = MyEnum
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -356,7 +351,6 @@ KtOperationReferenceExpression(212,214): '!='
         isSafeNavigation = false
         type = MyEnum
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -534,7 +528,6 @@ KtBinaryExpression(269,275): 'a == L'
         isSafeNavigation = false
         type = MyEnum
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -587,7 +580,6 @@ KtOperationReferenceExpression(271,273): '=='
         isSafeNavigation = false
         type = MyEnum
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -652,7 +644,6 @@ KtBinaryExpression(459,465): 'X == a'
         isSafeNavigation = false
         type = ERROR CLASS: Unresolved name: X
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -693,7 +684,6 @@ KtOperationReferenceExpression(461,463): '=='
         isSafeNavigation = false
         type = ERROR CLASS: Unresolved name: X
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -758,7 +748,6 @@ KtBinaryExpression(478,484): 'L == a'
         isSafeNavigation = false
         type = MyEnum
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -811,7 +800,6 @@ KtOperationReferenceExpression(480,482): '=='
         isSafeNavigation = false
         type = MyEnum
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -876,7 +864,6 @@ KtBinaryExpression(687,697): 'a == id(X)'
         isSafeNavigation = false
         type = MyEnum
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -929,7 +916,6 @@ KtOperationReferenceExpression(689,691): '=='
         isSafeNavigation = false
         type = MyEnum
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -961,7 +947,6 @@ KtCallExpression(692,697): 'id(X)'
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Any?
@@ -996,7 +981,6 @@ KtNameReferenceExpression(692,694): 'id'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Any?
@@ -1057,7 +1041,6 @@ KtBinaryExpression(710,720): 'a == id(L)'
         isSafeNavigation = false
         type = MyEnum
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -1110,7 +1093,6 @@ KtOperationReferenceExpression(712,714): '=='
         isSafeNavigation = false
         type = MyEnum
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -1142,7 +1124,6 @@ KtCallExpression(715,720): 'id(L)'
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = MyEnum
@@ -1177,7 +1158,6 @@ KtNameReferenceExpression(715,717): 'id'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MyEnum
@@ -1253,7 +1233,6 @@ KtBinaryExpression(745,751): 'a == X'
         isSafeNavigation = false
         type = MyEnum
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -1306,7 +1285,6 @@ KtOperationReferenceExpression(747,749): '=='
         isSafeNavigation = false
         type = MyEnum
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -1371,7 +1349,6 @@ KtBinaryExpression(766,772): 'a != Y'
         isSafeNavigation = false
         type = MyEnum
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -1424,7 +1401,6 @@ KtOperationReferenceExpression(768,770): '!='
         isSafeNavigation = false
         type = MyEnum
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -1593,7 +1569,6 @@ KtBinaryExpression(831,837): 'a == L'
         isSafeNavigation = false
         type = MyEnum
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -1646,7 +1621,6 @@ KtOperationReferenceExpression(833,835): '=='
         isSafeNavigation = false
         type = MyEnum
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -1923,7 +1897,6 @@ KtCallExpression(996,1001): 'id(X)'
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Any?
@@ -1958,7 +1931,6 @@ KtNameReferenceExpression(996,998): 'id'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Any?
@@ -2012,7 +1984,6 @@ KtCallExpression(1016,1021): 'id(Y)'
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Any?
@@ -2047,7 +2018,6 @@ KtNameReferenceExpression(1016,1018): 'id'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Any?
@@ -2095,7 +2065,6 @@ KtCallExpression(1023,1028): 'id(L)'
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = MyEnum
@@ -2130,7 +2099,6 @@ KtNameReferenceExpression(1023,1025): 'id'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MyEnum
@@ -2225,7 +2193,6 @@ KtCallExpression(1092,1097): 'id(X)'
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Any?
@@ -2260,7 +2227,6 @@ KtNameReferenceExpression(1092,1094): 'id'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Any?
@@ -2314,7 +2280,6 @@ KtCallExpression(1112,1117): 'id(Y)'
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Any?
@@ -2349,7 +2314,6 @@ KtNameReferenceExpression(1112,1114): 'id'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Any?
@@ -2397,7 +2361,6 @@ KtCallExpression(1119,1124): 'id(L)'
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = MyEnum
@@ -2432,7 +2395,6 @@ KtNameReferenceExpression(1119,1121): 'id'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MyEnum

@@ -23,7 +23,6 @@ KtDotQualifiedExpression(156,183): 'handler.stash(lambda, list)'
         isSafeNavigation = false
         type = test.pkg.MyHandler
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit

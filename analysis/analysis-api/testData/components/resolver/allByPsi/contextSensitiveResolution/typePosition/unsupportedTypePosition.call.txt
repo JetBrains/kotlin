@@ -820,7 +820,6 @@ KtCallExpression(1217,1245): 'Generic2<SealedInheritor1>()'
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
-        isImplicitInvoke = false
         signature = KaFunctionSignature:
           receiverType = null
           returnType = Generic2<ERROR CLASS: Symbol not found for SealedInheritor1>
@@ -842,7 +841,6 @@ KtNameReferenceExpression(1217,1225): 'Generic2'
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
-        isImplicitInvoke = false
         signature = KaFunctionSignature:
           receiverType = null
           returnType = Generic2<ERROR CLASS: Symbol not found for SealedInheritor1>
@@ -917,7 +915,6 @@ KtCallExpression(1318,1351): 'constraintFun<SealedInheritor1>()'
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
-        isImplicitInvoke = false
         signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit
@@ -939,7 +936,6 @@ KtNameReferenceExpression(1318,1331): 'constraintFun'
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
-        isImplicitInvoke = false
         signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Unit

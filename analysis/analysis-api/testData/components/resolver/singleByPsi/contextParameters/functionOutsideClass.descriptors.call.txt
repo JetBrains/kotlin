@@ -25,7 +25,6 @@ KtCallExpression(205,216): 'funMember()'
         visibility: LOCAL
       type = Base
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Unit

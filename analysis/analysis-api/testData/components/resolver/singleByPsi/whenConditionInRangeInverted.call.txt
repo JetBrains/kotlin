@@ -15,7 +15,6 @@ KtWhenConditionInRange(177,190): '!in MyClass()'
       expression = MyClass()
       isSafeNavigation = false
       type = MyClass
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = MyClass
       returnType = kotlin.Boolean

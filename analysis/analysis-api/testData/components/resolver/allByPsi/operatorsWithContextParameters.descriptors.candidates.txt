@@ -347,7 +347,6 @@ KtNameReferenceExpression(337,341): 'this'
         expression = this
         isSafeNavigation = false
         type = A
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = A
         returnType = kotlin.Unit
@@ -638,7 +637,6 @@ KtNameReferenceExpression(753,757): 'this'
         isSafeNavigation = false
         type = SimpleOperators
       extensionReceiver = null
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -658,7 +656,6 @@ KtNameReferenceExpression(753,757): 'this'
         expression = this@SimpleOperators
         isSafeNavigation = false
         type = SimpleOperators
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = A
         returnType = kotlin.Unit
@@ -695,7 +692,6 @@ KtCallExpression(805,808): 'A()'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = A
@@ -713,7 +709,6 @@ KtNameReferenceExpression(805,806): 'A'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = A
@@ -737,7 +732,6 @@ KtCallExpression(821,838): 'SimpleOperators()'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = SimpleOperators
@@ -755,7 +749,6 @@ KtNameReferenceExpression(821,836): 'SimpleOperators'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = SimpleOperators
@@ -815,7 +808,6 @@ KtCallExpression(843,1229): 'with(A()){'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = SimpleOperators
@@ -890,7 +882,6 @@ KtNameReferenceExpression(843,847): 'with'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = SimpleOperators
@@ -932,7 +923,6 @@ KtCallExpression(848,851): 'A()'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = A
@@ -950,7 +940,6 @@ KtNameReferenceExpression(848,849): 'A'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = A
@@ -992,7 +981,6 @@ KtNameReferenceExpression(877,881): 'this'
         expression = this
         isSafeNavigation = false
         type = A
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = A
         returnType = kotlin.Unit
@@ -1013,7 +1001,6 @@ KtPrefixExpression(890,899): '+thisProp'
         expression = thisProp
         isSafeNavigation = false
         type = A
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = A
         returnType = kotlin.Unit
@@ -1034,7 +1021,6 @@ KtOperationReferenceExpression(890,891): '+'
         expression = thisProp
         isSafeNavigation = false
         type = A
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = A
         returnType = kotlin.Unit
@@ -1073,7 +1059,6 @@ KtPrefixExpression(908,910): '+a'
         expression = a
         isSafeNavigation = false
         type = A
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = A
         returnType = kotlin.Unit
@@ -1094,7 +1079,6 @@ KtOperationReferenceExpression(908,909): '+'
         expression = a
         isSafeNavigation = false
         type = A
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = A
         returnType = kotlin.Unit
@@ -1141,7 +1125,6 @@ KtBinaryExpression(919,931): 'thisProp + 1'
         expression = thisProp
         isSafeNavigation = false
         type = A
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = A
         returnType = kotlin.Unit
@@ -1196,7 +1179,6 @@ KtOperationReferenceExpression(928,929): '+'
         expression = thisProp
         isSafeNavigation = false
         type = A
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = A
         returnType = kotlin.Unit
@@ -1236,7 +1218,6 @@ KtBinaryExpression(940,945): 'a + 1'
         expression = a
         isSafeNavigation = false
         type = A
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = A
         returnType = kotlin.Unit
@@ -1291,7 +1272,6 @@ KtOperationReferenceExpression(942,943): '+'
         expression = a
         isSafeNavigation = false
         type = A
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = A
         returnType = kotlin.Unit
@@ -1331,7 +1311,6 @@ KtArrayAccessExpression(954,965): 'thisProp[1]'
         expression = thisProp
         isSafeNavigation = false
         type = A
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = A
         returnType = kotlin.Unit
@@ -1392,7 +1371,6 @@ KtArrayAccessExpression(974,978): 'a[1]'
         expression = a
         isSafeNavigation = false
         type = A
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = A
         returnType = kotlin.Unit
@@ -1463,7 +1441,6 @@ KtArrayAccessExpression(987,998): 'thisProp[1]'
         expression = thisProp
         isSafeNavigation = false
         type = A
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = A
         returnType = kotlin.Unit
@@ -1523,7 +1500,6 @@ KtCallExpression(1001,1004): 'A()'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = A
@@ -1541,7 +1517,6 @@ KtNameReferenceExpression(1001,1002): 'A'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = A
@@ -1583,7 +1558,6 @@ KtArrayAccessExpression(1013,1017): 'a[1]'
         expression = a
         isSafeNavigation = false
         type = A
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = A
         returnType = kotlin.Unit
@@ -1643,7 +1617,6 @@ KtCallExpression(1020,1023): 'A()'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = A
@@ -1661,7 +1634,6 @@ KtNameReferenceExpression(1020,1021): 'A'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = A
@@ -1685,7 +1657,6 @@ KtCallExpression(1032,1042): 'thisProp()'
         expression = thisProp
         isSafeNavigation = false
         type = A
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = A
         returnType = kotlin.Unit
@@ -1727,7 +1698,6 @@ KtCallExpression(1051,1054): 'a()'
         expression = a
         isSafeNavigation = false
         type = A
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = A
         returnType = kotlin.Unit
@@ -1777,7 +1747,6 @@ KtBinaryExpression(1063,1076): 'thisProp += 1'
         expression = thisProp
         isSafeNavigation = false
         type = A
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = A
         returnType = kotlin.Unit
@@ -1832,7 +1801,6 @@ KtOperationReferenceExpression(1072,1074): '+='
         expression = thisProp
         isSafeNavigation = false
         type = A
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = A
         returnType = kotlin.Unit
@@ -1872,7 +1840,6 @@ KtBinaryExpression(1085,1091): 'a += 1'
         expression = a
         isSafeNavigation = false
         type = A
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = A
         returnType = kotlin.Unit
@@ -1927,7 +1894,6 @@ KtOperationReferenceExpression(1087,1089): '+='
         expression = a
         isSafeNavigation = false
         type = A
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = A
         returnType = kotlin.Unit
@@ -1962,7 +1928,6 @@ KtPostfixExpression(1100,1110): 'thisProp++'
             expression = thisProp
             isSafeNavigation = false
             type = A
-          isImplicitInvoke = false
           signature = KaFunctionSignature:
             receiverType = A
             returnType = A
@@ -2019,7 +1984,6 @@ KtOperationReferenceExpression(1108,1110): '++'
             expression = thisProp
             isSafeNavigation = false
             type = A
-          isImplicitInvoke = false
           signature = KaFunctionSignature:
             receiverType = A
             returnType = A
@@ -2115,7 +2079,6 @@ KtPostfixExpression(1123,1126): 'a++'
             expression = a
             isSafeNavigation = false
             type = A
-          isImplicitInvoke = false
           signature = KaFunctionSignature:
             receiverType = A
             returnType = A
@@ -2172,7 +2135,6 @@ KtOperationReferenceExpression(1124,1126): '++'
             expression = a
             isSafeNavigation = false
             type = A
-          isImplicitInvoke = false
           signature = KaFunctionSignature:
             receiverType = A
             returnType = A
@@ -2216,7 +2178,6 @@ KtBinaryExpression(1136,1141): 'b + 1'
         isSafeNavigation = false
         type = SimpleOperators
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -2271,7 +2232,6 @@ KtOperationReferenceExpression(1138,1139): '+'
         isSafeNavigation = false
         type = SimpleOperators
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -2303,7 +2263,6 @@ KtPrefixExpression(1150,1152): '+b'
         isSafeNavigation = false
         type = SimpleOperators
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -2324,7 +2283,6 @@ KtOperationReferenceExpression(1150,1151): '+'
         isSafeNavigation = false
         type = SimpleOperators
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -2371,7 +2329,6 @@ KtArrayAccessExpression(1161,1165): 'b[1]'
         isSafeNavigation = false
         type = SimpleOperators
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -2407,7 +2364,6 @@ KtArrayAccessExpression(1161,1165): 'b[1]'
         expression = b
         isSafeNavigation = false
         type = SimpleOperators
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = A
         returnType = kotlin.Unit
@@ -2479,7 +2435,6 @@ KtArrayAccessExpression(1174,1178): 'b[1]'
         isSafeNavigation = false
         type = SimpleOperators
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -2529,7 +2484,6 @@ KtArrayAccessExpression(1174,1178): 'b[1]'
         expression = b
         isSafeNavigation = false
         type = SimpleOperators
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = A
         returnType = kotlin.Unit
@@ -2590,7 +2544,6 @@ KtCallExpression(1181,1184): 'A()'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = A
@@ -2608,7 +2561,6 @@ KtNameReferenceExpression(1181,1182): 'A'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = A
@@ -2632,7 +2584,6 @@ KtCallExpression(1193,1196): 'b()'
         isSafeNavigation = false
         type = SimpleOperators
       extensionReceiver = null
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -2652,7 +2603,6 @@ KtCallExpression(1193,1196): 'b()'
         expression = b
         isSafeNavigation = false
         type = SimpleOperators
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = A
         returnType = kotlin.Unit
@@ -2703,7 +2653,6 @@ KtBinaryExpression(1205,1211): 'b += 1'
         isSafeNavigation = false
         type = SimpleOperators
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -2758,7 +2707,6 @@ KtOperationReferenceExpression(1207,1209): '+='
         isSafeNavigation = false
         type = SimpleOperators
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -2793,7 +2741,6 @@ KtPostfixExpression(1220,1223): 'b++'
             isSafeNavigation = false
             type = SimpleOperators
           extensionReceiver = null
-          isImplicitInvoke = false
           signature = KaFunctionSignature:
             receiverType = null
             returnType = SimpleOperators
@@ -2850,7 +2797,6 @@ KtOperationReferenceExpression(1221,1223): '++'
             isSafeNavigation = false
             type = SimpleOperators
           extensionReceiver = null
-          isImplicitInvoke = false
           signature = KaFunctionSignature:
             receiverType = null
             returnType = SimpleOperators
@@ -2895,7 +2841,6 @@ KtCallExpression(1268,1271): 'A()'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = A
@@ -2913,7 +2858,6 @@ KtNameReferenceExpression(1268,1269): 'A'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = A
@@ -2937,7 +2881,6 @@ KtCallExpression(1284,1301): 'SimpleOperators()'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = SimpleOperators
@@ -2955,7 +2898,6 @@ KtNameReferenceExpression(1284,1299): 'SimpleOperators'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = SimpleOperators
@@ -2979,7 +2921,6 @@ KtPrefixExpression(1307,1309): '+a'
         expression = a
         isSafeNavigation = false
         type = A
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = A
         returnType = kotlin.Unit
@@ -3000,7 +2941,6 @@ KtOperationReferenceExpression(1307,1308): '+'
         expression = a
         isSafeNavigation = false
         type = A
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = A
         returnType = kotlin.Unit
@@ -3047,7 +2987,6 @@ KtBinaryExpression(1314,1319): 'a + 1'
         expression = a
         isSafeNavigation = false
         type = A
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = A
         returnType = kotlin.Unit
@@ -3102,7 +3041,6 @@ KtOperationReferenceExpression(1316,1317): '+'
         expression = a
         isSafeNavigation = false
         type = A
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = A
         returnType = kotlin.Unit
@@ -3142,7 +3080,6 @@ KtArrayAccessExpression(1324,1328): 'a[1]'
         expression = a
         isSafeNavigation = false
         type = A
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = A
         returnType = kotlin.Unit
@@ -3213,7 +3150,6 @@ KtArrayAccessExpression(1333,1337): 'a[1]'
         expression = a
         isSafeNavigation = false
         type = A
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = A
         returnType = kotlin.Unit
@@ -3273,7 +3209,6 @@ KtCallExpression(1340,1343): 'A()'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = A
@@ -3291,7 +3226,6 @@ KtNameReferenceExpression(1340,1341): 'A'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = A
@@ -3315,7 +3249,6 @@ KtCallExpression(1348,1351): 'a()'
         expression = a
         isSafeNavigation = false
         type = A
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = A
         returnType = kotlin.Unit
@@ -3365,7 +3298,6 @@ KtBinaryExpression(1356,1362): 'a += 1'
         expression = a
         isSafeNavigation = false
         type = A
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = A
         returnType = kotlin.Unit
@@ -3420,7 +3352,6 @@ KtOperationReferenceExpression(1358,1360): '+='
         expression = a
         isSafeNavigation = false
         type = A
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = A
         returnType = kotlin.Unit
@@ -3455,7 +3386,6 @@ KtPostfixExpression(1367,1370): 'a++'
             expression = a
             isSafeNavigation = false
             type = A
-          isImplicitInvoke = false
           signature = KaFunctionSignature:
             receiverType = A
             returnType = A
@@ -3512,7 +3442,6 @@ KtOperationReferenceExpression(1368,1370): '++'
             expression = a
             isSafeNavigation = false
             type = A
-          isImplicitInvoke = false
           signature = KaFunctionSignature:
             receiverType = A
             returnType = A
@@ -3556,7 +3485,6 @@ KtBinaryExpression(1376,1381): 'b + 1'
         isSafeNavigation = false
         type = SimpleOperators
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -3611,7 +3539,6 @@ KtOperationReferenceExpression(1378,1379): '+'
         isSafeNavigation = false
         type = SimpleOperators
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -3643,7 +3570,6 @@ KtPrefixExpression(1386,1388): '+b'
         isSafeNavigation = false
         type = SimpleOperators
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -3664,7 +3590,6 @@ KtOperationReferenceExpression(1386,1387): '+'
         isSafeNavigation = false
         type = SimpleOperators
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -3711,7 +3636,6 @@ KtArrayAccessExpression(1393,1397): 'b[1]'
         isSafeNavigation = false
         type = SimpleOperators
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -3747,7 +3671,6 @@ KtArrayAccessExpression(1393,1397): 'b[1]'
         expression = b
         isSafeNavigation = false
         type = SimpleOperators
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = A
         returnType = kotlin.Unit
@@ -3819,7 +3742,6 @@ KtArrayAccessExpression(1402,1406): 'b[1]'
         isSafeNavigation = false
         type = SimpleOperators
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -3869,7 +3791,6 @@ KtArrayAccessExpression(1402,1406): 'b[1]'
         expression = b
         isSafeNavigation = false
         type = SimpleOperators
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = A
         returnType = kotlin.Unit
@@ -3930,7 +3851,6 @@ KtCallExpression(1409,1412): 'A()'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = A
@@ -3948,7 +3868,6 @@ KtNameReferenceExpression(1409,1410): 'A'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = A
@@ -3972,7 +3891,6 @@ KtCallExpression(1417,1420): 'b()'
         isSafeNavigation = false
         type = SimpleOperators
       extensionReceiver = null
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -3992,7 +3910,6 @@ KtCallExpression(1417,1420): 'b()'
         expression = b
         isSafeNavigation = false
         type = SimpleOperators
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = A
         returnType = kotlin.Unit
@@ -4043,7 +3960,6 @@ KtBinaryExpression(1425,1431): 'b += 1'
         isSafeNavigation = false
         type = SimpleOperators
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -4098,7 +4014,6 @@ KtOperationReferenceExpression(1427,1429): '+='
         isSafeNavigation = false
         type = SimpleOperators
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -4133,7 +4048,6 @@ KtPostfixExpression(1436,1439): 'b++'
             isSafeNavigation = false
             type = SimpleOperators
           extensionReceiver = null
-          isImplicitInvoke = false
           signature = KaFunctionSignature:
             receiverType = null
             returnType = SimpleOperators
@@ -4190,7 +4104,6 @@ KtOperationReferenceExpression(1437,1439): '++'
             isSafeNavigation = false
             type = SimpleOperators
           extensionReceiver = null
-          isImplicitInvoke = false
           signature = KaFunctionSignature:
             receiverType = null
             returnType = SimpleOperators

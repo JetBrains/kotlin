@@ -49,7 +49,6 @@ KtCallExpression(188,193): 'Any()'
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Any
@@ -66,7 +65,6 @@ KtNameReferenceExpression(188,191): 'Any'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Any
@@ -130,7 +128,6 @@ KtBinaryExpression(257,263): 'x == A'
         isSafeNavigation = false
         type = foo.MyEnum
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -183,7 +180,6 @@ KtOperationReferenceExpression(259,261): '=='
         isSafeNavigation = false
         type = foo.MyEnum
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -271,7 +267,6 @@ KtBinaryExpression(326,339): 'x == MyEnum.A'
         isSafeNavigation = false
         type = foo.MyEnum
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -324,7 +319,6 @@ KtOperationReferenceExpression(328,330): '=='
         isSafeNavigation = false
         type = foo.MyEnum
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -402,7 +396,6 @@ KtBinaryExpression(407,423): 'x == Companion.A'
         isSafeNavigation = false
         type = foo.MyEnum
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -455,7 +448,6 @@ KtOperationReferenceExpression(409,411): '=='
         isSafeNavigation = false
         type = foo.MyEnum
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean

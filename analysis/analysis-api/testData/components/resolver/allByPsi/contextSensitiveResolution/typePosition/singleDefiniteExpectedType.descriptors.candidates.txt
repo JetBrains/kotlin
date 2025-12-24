@@ -662,7 +662,6 @@ KtDotQualifiedExpression(700,725): 'instance.prop2.toString()'
         isSafeNavigation = false
         type = ERROR_TYPE
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -682,7 +681,6 @@ KtDotQualifiedExpression(700,725): 'instance.prop2.toString()'
         isSafeNavigation = false
         type = ERROR_TYPE
       extensionReceiver = null
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -702,7 +700,6 @@ KtDotQualifiedExpression(700,725): 'instance.prop2.toString()'
         expression = instance.prop2
         isSafeNavigation = false
         type = ERROR_TYPE
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.Any?
         returnType = kotlin.String
@@ -747,7 +744,6 @@ KtCallExpression(715,725): 'toString()'
         isSafeNavigation = false
         type = ERROR_TYPE
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -767,7 +763,6 @@ KtCallExpression(715,725): 'toString()'
         isSafeNavigation = false
         type = ERROR_TYPE
       extensionReceiver = null
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -787,7 +782,6 @@ KtCallExpression(715,725): 'toString()'
         expression = instance.prop2
         isSafeNavigation = false
         type = ERROR_TYPE
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.Any?
         returnType = kotlin.String
@@ -808,7 +802,6 @@ KtNameReferenceExpression(715,723): 'toString'
         isSafeNavigation = false
         type = ERROR_TYPE
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -848,7 +841,6 @@ KtNameReferenceExpression(715,723): 'toString'
         expression = instance.prop2
         isSafeNavigation = false
         type = ERROR_TYPE
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.Any?
         returnType = kotlin.String
@@ -1046,7 +1038,6 @@ KtDotQualifiedExpression(964,989): 'instance.prop2.toString()'
         isSafeNavigation = false
         type = ERROR_TYPE
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -1066,7 +1057,6 @@ KtDotQualifiedExpression(964,989): 'instance.prop2.toString()'
         isSafeNavigation = false
         type = ERROR_TYPE
       extensionReceiver = null
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -1086,7 +1076,6 @@ KtDotQualifiedExpression(964,989): 'instance.prop2.toString()'
         expression = instance.prop2
         isSafeNavigation = false
         type = ERROR_TYPE
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.Any?
         returnType = kotlin.String
@@ -1131,7 +1120,6 @@ KtCallExpression(979,989): 'toString()'
         isSafeNavigation = false
         type = ERROR_TYPE
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -1151,7 +1139,6 @@ KtCallExpression(979,989): 'toString()'
         isSafeNavigation = false
         type = ERROR_TYPE
       extensionReceiver = null
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -1171,7 +1158,6 @@ KtCallExpression(979,989): 'toString()'
         expression = instance.prop2
         isSafeNavigation = false
         type = ERROR_TYPE
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.Any?
         returnType = kotlin.String
@@ -1192,7 +1178,6 @@ KtNameReferenceExpression(979,987): 'toString'
         isSafeNavigation = false
         type = ERROR_TYPE
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -1232,7 +1217,6 @@ KtNameReferenceExpression(979,987): 'toString'
         expression = instance.prop2
         isSafeNavigation = false
         type = ERROR_TYPE
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.Any?
         returnType = kotlin.String
@@ -1370,7 +1354,6 @@ KtDotQualifiedExpression(1148,1173): 'instance.prop2.toString()'
         isSafeNavigation = false
         type = ERROR_TYPE
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -1390,7 +1373,6 @@ KtDotQualifiedExpression(1148,1173): 'instance.prop2.toString()'
         isSafeNavigation = false
         type = ERROR_TYPE
       extensionReceiver = null
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -1410,7 +1392,6 @@ KtDotQualifiedExpression(1148,1173): 'instance.prop2.toString()'
         expression = instance.prop2
         isSafeNavigation = false
         type = ERROR_TYPE
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.Any?
         returnType = kotlin.String
@@ -1455,7 +1436,6 @@ KtCallExpression(1163,1173): 'toString()'
         isSafeNavigation = false
         type = ERROR_TYPE
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -1475,7 +1455,6 @@ KtCallExpression(1163,1173): 'toString()'
         isSafeNavigation = false
         type = ERROR_TYPE
       extensionReceiver = null
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -1495,7 +1474,6 @@ KtCallExpression(1163,1173): 'toString()'
         expression = instance.prop2
         isSafeNavigation = false
         type = ERROR_TYPE
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.Any?
         returnType = kotlin.String
@@ -1516,7 +1494,6 @@ KtNameReferenceExpression(1163,1171): 'toString'
         isSafeNavigation = false
         type = ERROR_TYPE
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -1556,7 +1533,6 @@ KtNameReferenceExpression(1163,1171): 'toString'
         expression = instance.prop2
         isSafeNavigation = false
         type = ERROR_TYPE
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.Any?
         returnType = kotlin.String
@@ -1901,7 +1877,6 @@ KtDotQualifiedExpression(1639,1664): 'instance.prop2.toString()'
         isSafeNavigation = false
         type = ERROR_TYPE
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -1921,7 +1896,6 @@ KtDotQualifiedExpression(1639,1664): 'instance.prop2.toString()'
         isSafeNavigation = false
         type = ERROR_TYPE
       extensionReceiver = null
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -1941,7 +1915,6 @@ KtDotQualifiedExpression(1639,1664): 'instance.prop2.toString()'
         expression = instance.prop2
         isSafeNavigation = false
         type = ERROR_TYPE
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.Any?
         returnType = kotlin.String
@@ -1986,7 +1959,6 @@ KtCallExpression(1654,1664): 'toString()'
         isSafeNavigation = false
         type = ERROR_TYPE
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -2006,7 +1978,6 @@ KtCallExpression(1654,1664): 'toString()'
         isSafeNavigation = false
         type = ERROR_TYPE
       extensionReceiver = null
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -2026,7 +1997,6 @@ KtCallExpression(1654,1664): 'toString()'
         expression = instance.prop2
         isSafeNavigation = false
         type = ERROR_TYPE
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.Any?
         returnType = kotlin.String
@@ -2047,7 +2017,6 @@ KtNameReferenceExpression(1654,1662): 'toString'
         isSafeNavigation = false
         type = ERROR_TYPE
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -2087,7 +2056,6 @@ KtNameReferenceExpression(1654,1662): 'toString'
         expression = instance.prop2
         isSafeNavigation = false
         type = ERROR_TYPE
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.Any?
         returnType = kotlin.String
@@ -2849,7 +2817,6 @@ KtDotQualifiedExpression(2643,2650): 'i.prop1'
         isSafeNavigation = false
         type = SealedJClass!
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -2869,7 +2836,6 @@ KtDotQualifiedExpression(2643,2650): 'i.prop1'
         isSafeNavigation = false
         type = ERROR_TYPE
       extensionReceiver = null
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -2908,7 +2874,6 @@ KtNameReferenceExpression(2645,2650): 'prop1'
         isSafeNavigation = false
         type = SealedJClass!
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -2964,7 +2929,6 @@ KtDotQualifiedExpression(2675,2682): 'i.prop2'
         isSafeNavigation = false
         type = SealedJClass!
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -2984,7 +2948,6 @@ KtDotQualifiedExpression(2675,2682): 'i.prop2'
         isSafeNavigation = false
         type = ERROR_TYPE
       extensionReceiver = null
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -3023,7 +2986,6 @@ KtNameReferenceExpression(2677,2682): 'prop2'
         isSafeNavigation = false
         type = SealedJClass!
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE

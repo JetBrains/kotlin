@@ -73,7 +73,6 @@ KtSafeQualifiedExpression(79,98): 'other?.equals(this)'
         isSafeNavigation = true
         type = kotlin.Any?
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -128,7 +127,6 @@ KtCallExpression(86,98): 'equals(this)'
         isSafeNavigation = true
         type = kotlin.Any?
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -165,7 +163,6 @@ KtNameReferenceExpression(86,92): 'equals'
         isSafeNavigation = true
         type = kotlin.Any?
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean

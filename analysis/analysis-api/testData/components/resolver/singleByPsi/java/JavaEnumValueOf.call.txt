@@ -16,7 +16,6 @@ KtNameReferenceExpression(74,81): 'valueOf'
         isSafeNavigation = false
         type = kotlin.Unit
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = java.lang.annotation.RetentionPolicy

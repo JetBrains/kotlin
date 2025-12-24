@@ -27,7 +27,6 @@ KtCallExpression(191,224): 'function(1, { s -> true }, "str")'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -91,7 +90,6 @@ KtCallExpression(191,224): 'function(1, { s -> true }, "str")'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -155,7 +153,6 @@ KtCallExpression(191,224): 'function(1, { s -> true }, "str")'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit

@@ -5,7 +5,6 @@ KtCallExpression(42,45): 'A()'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = A

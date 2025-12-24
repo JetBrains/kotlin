@@ -71,7 +71,6 @@ KtDotQualifiedExpression(133,151): 'MyAlias.function()'
         isSafeNavigation = false
         type = test.MyObject
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -89,7 +88,6 @@ KtNameReferenceExpression(133,140): 'MyAlias'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = test.MyObject
@@ -111,7 +109,6 @@ KtCallExpression(141,151): 'function()'
         isSafeNavigation = false
         type = test.MyObject
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -132,7 +129,6 @@ KtNameReferenceExpression(141,149): 'function'
         isSafeNavigation = false
         type = test.MyObject
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -174,7 +170,6 @@ KtNameReferenceExpression(156,163): 'MyAlias'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = test.MyObject
@@ -217,7 +212,6 @@ KtCallableReferenceExpression(178,195): 'MyAlias::function'
         isSafeNavigation = false
         type = test.MyObject
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -235,7 +229,6 @@ KtNameReferenceExpression(178,185): 'MyAlias'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = test.MyObject
@@ -278,7 +271,6 @@ KtNameReferenceExpression(200,207): 'MyAlias'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = test.MyObject

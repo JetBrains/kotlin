@@ -5,7 +5,6 @@ KtNameReferenceExpression(60,69): 'JavaClass'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = JavaClass<kotlin.Int>

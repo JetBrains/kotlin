@@ -311,7 +311,6 @@ KtDotQualifiedExpression(403,418): 'JavaClass.foo()'
         isSafeNavigation = false
         type = kotlin.Unit
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MySealed!
@@ -333,7 +332,6 @@ KtCallExpression(413,418): 'foo()'
       isSafeNavigation = false
       type = kotlin.Unit
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = MySealed!
@@ -353,7 +351,6 @@ KtNameReferenceExpression(413,416): 'foo'
         isSafeNavigation = false
         type = kotlin.Unit
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MySealed!

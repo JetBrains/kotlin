@@ -8,7 +8,6 @@ KtDotQualifiedExpression(106,113): 'f.foo()'
         expression = f
         isSafeNavigation = false
         type = Foo<kotlin.String>
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = Foo<kotlin.String>
         returnType = kotlin.Unit
@@ -39,7 +38,6 @@ KtDotQualifiedExpression(106,113): 'f.foo()'
         expression = f
         isSafeNavigation = false
         type = Foo<kotlin.String>
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = Foo<kotlin.String>
         returnType = kotlin.Unit

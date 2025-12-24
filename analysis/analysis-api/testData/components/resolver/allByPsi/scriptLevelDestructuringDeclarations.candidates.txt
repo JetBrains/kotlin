@@ -1196,7 +1196,6 @@ KtCallExpression(446,462): 'Pair(null, null)'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = util.Pair
@@ -1244,7 +1243,6 @@ KtNameReferenceExpression(446,450): 'Pair'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = util.Pair
@@ -1649,7 +1647,6 @@ KtCallExpression(534,550): 'Pair(null, null)'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = util.Pair
@@ -1697,7 +1694,6 @@ KtNameReferenceExpression(534,538): 'Pair'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = util.Pair

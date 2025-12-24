@@ -12,7 +12,6 @@ KtCallExpression(8,40): 'Comparator {x: Int, y: Int -> 1}'
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = {kotlin.Comparator<kotlin.Int!>=} java.util.Comparator<kotlin.Int!>

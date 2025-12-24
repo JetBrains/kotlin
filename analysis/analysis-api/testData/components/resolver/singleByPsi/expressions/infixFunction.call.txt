@@ -16,7 +16,6 @@ KtBinaryExpression(56,71): '4 infixOp "str"'
         expression = 4
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.Int
         returnType = kotlin.Unit

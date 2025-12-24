@@ -289,7 +289,6 @@ KtCallExpression(616,651): 'receive<MyEnum>(Option1 ?: Option2)'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -325,7 +324,6 @@ KtNameReferenceExpression(616,623): 'receive'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -394,7 +392,6 @@ KtCallExpression(656,695): 'receive<MyEnum>(enumProp ?: stringProp)'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -430,7 +427,6 @@ KtNameReferenceExpression(656,663): 'receive'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -499,7 +495,6 @@ KtCallExpression(700,740): 'receive<MyEnum>(enumProp ?: getOption())'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -535,7 +530,6 @@ KtNameReferenceExpression(700,707): 'receive'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit

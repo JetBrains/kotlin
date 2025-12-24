@@ -52,7 +52,6 @@ KtCallExpression(78,104): 'print(javaClass.something)'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -85,7 +84,6 @@ KtCallExpression(78,104): 'print(javaClass.something)'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -119,7 +117,6 @@ KtCallExpression(78,104): 'print(javaClass.something)'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -153,7 +150,6 @@ KtCallExpression(78,104): 'print(javaClass.something)'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -187,7 +183,6 @@ KtCallExpression(78,104): 'print(javaClass.something)'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -221,7 +216,6 @@ KtCallExpression(78,104): 'print(javaClass.something)'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -255,7 +249,6 @@ KtCallExpression(78,104): 'print(javaClass.something)'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -289,7 +282,6 @@ KtCallExpression(78,104): 'print(javaClass.something)'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -322,7 +314,6 @@ KtCallExpression(78,104): 'print(javaClass.something)'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -356,7 +347,6 @@ KtCallExpression(78,104): 'print(javaClass.something)'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -391,7 +381,6 @@ KtNameReferenceExpression(78,83): 'print'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -424,7 +413,6 @@ KtNameReferenceExpression(78,83): 'print'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -458,7 +446,6 @@ KtNameReferenceExpression(78,83): 'print'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -492,7 +479,6 @@ KtNameReferenceExpression(78,83): 'print'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -526,7 +512,6 @@ KtNameReferenceExpression(78,83): 'print'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -560,7 +545,6 @@ KtNameReferenceExpression(78,83): 'print'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -594,7 +578,6 @@ KtNameReferenceExpression(78,83): 'print'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -628,7 +611,6 @@ KtNameReferenceExpression(78,83): 'print'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -661,7 +643,6 @@ KtNameReferenceExpression(78,83): 'print'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -695,7 +676,6 @@ KtNameReferenceExpression(78,83): 'print'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -751,7 +731,6 @@ KtDotQualifiedExpression(84,103): 'javaClass.something'
         expression = something
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = kotlin.DeepRecursiveFunction<ERROR_TYPE, ERROR_TYPE>
         returnType = ERROR_TYPE
@@ -907,7 +886,6 @@ KtDotQualifiedExpression(109,128): 'javaClass.something'
         expression = something
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = kotlin.DeepRecursiveFunction<ERROR_TYPE, ERROR_TYPE>
         returnType = ERROR_TYPE
@@ -1050,7 +1028,6 @@ KtBinaryExpression(137,161): 'javaClass.something += 1'
             isSafeNavigation = false
             type = kotlin.Int
           extensionReceiver = null
-          isImplicitInvoke = false
           signature = KaFunctionSignature:
             receiverType = null
             returnType = kotlin.Int
@@ -1116,7 +1093,6 @@ KtDotQualifiedExpression(137,156): 'javaClass.something'
         expression = something
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = kotlin.DeepRecursiveFunction<ERROR_TYPE, ERROR_TYPE>
         returnType = ERROR_TYPE
@@ -1233,7 +1209,6 @@ KtOperationReferenceExpression(157,159): '+='
             isSafeNavigation = false
             type = kotlin.Int
           extensionReceiver = null
-          isImplicitInvoke = false
           signature = KaFunctionSignature:
             receiverType = null
             returnType = kotlin.Int
@@ -1285,7 +1260,6 @@ KtPostfixExpression(166,187): 'javaClass.something++'
             isSafeNavigation = false
             type = kotlin.Int
           extensionReceiver = null
-          isImplicitInvoke = false
           signature = KaFunctionSignature:
             receiverType = null
             returnType = kotlin.Int
@@ -1344,7 +1318,6 @@ KtDotQualifiedExpression(166,185): 'javaClass.something'
         expression = something
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = kotlin.DeepRecursiveFunction<ERROR_TYPE, ERROR_TYPE>
         returnType = ERROR_TYPE
@@ -1460,7 +1433,6 @@ KtOperationReferenceExpression(185,187): '++'
             isSafeNavigation = false
             type = kotlin.Int
           extensionReceiver = null
-          isImplicitInvoke = false
           signature = KaFunctionSignature:
             receiverType = null
             returnType = kotlin.Int
@@ -1502,7 +1474,6 @@ KtPrefixExpression(192,213): '--javaClass.something'
             isSafeNavigation = false
             type = kotlin.Int
           extensionReceiver = null
-          isImplicitInvoke = false
           signature = KaFunctionSignature:
             receiverType = null
             returnType = kotlin.Int
@@ -1544,7 +1515,6 @@ KtOperationReferenceExpression(192,194): '--'
             isSafeNavigation = false
             type = kotlin.Int
           extensionReceiver = null
-          isImplicitInvoke = false
           signature = KaFunctionSignature:
             receiverType = null
             returnType = kotlin.Int
@@ -1603,7 +1573,6 @@ KtDotQualifiedExpression(194,213): 'javaClass.something'
         expression = something
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = kotlin.DeepRecursiveFunction<ERROR_TYPE, ERROR_TYPE>
         returnType = ERROR_TYPE
@@ -1719,7 +1688,6 @@ KtPostfixExpression(219,230): 'something++'
             isSafeNavigation = false
             type = kotlin.Int
           extensionReceiver = null
-          isImplicitInvoke = false
           signature = KaFunctionSignature:
             receiverType = null
             returnType = kotlin.Int
@@ -1818,7 +1786,6 @@ KtOperationReferenceExpression(228,230): '++'
             isSafeNavigation = false
             type = kotlin.Int
           extensionReceiver = null
-          isImplicitInvoke = false
           signature = KaFunctionSignature:
             receiverType = null
             returnType = kotlin.Int
@@ -1878,7 +1845,6 @@ KtPostfixExpression(235,248): '(something)++'
             isSafeNavigation = false
             type = kotlin.Int
           extensionReceiver = null
-          isImplicitInvoke = false
           signature = KaFunctionSignature:
             receiverType = null
             returnType = kotlin.Int
@@ -1980,7 +1946,6 @@ KtOperationReferenceExpression(246,248): '++'
             isSafeNavigation = false
             type = kotlin.Int
           extensionReceiver = null
-          isImplicitInvoke = false
           signature = KaFunctionSignature:
             receiverType = null
             returnType = kotlin.Int
@@ -2209,7 +2174,6 @@ KtDotQualifiedExpression(274,293): 'javaClass.something'
         expression = something
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = kotlin.DeepRecursiveFunction<ERROR_TYPE, ERROR_TYPE>
         returnType = ERROR_TYPE

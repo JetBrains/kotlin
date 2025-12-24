@@ -46,7 +46,6 @@ KtBinaryExpression(39,44): '1..<5'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.ranges.IntRange
@@ -85,7 +84,6 @@ KtOperationReferenceExpression(40,43): '..<'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.ranges.IntRange

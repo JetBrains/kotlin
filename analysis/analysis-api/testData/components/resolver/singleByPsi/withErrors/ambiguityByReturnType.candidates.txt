@@ -19,7 +19,6 @@ KtCallExpression(208,319): 'sumOf { c ->'
         expression = listOf(19, 20, 21)
         isSafeNavigation = false
         type = kotlin.collections.List<kotlin.Int>
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Iterable<kotlin.Int>
         returnType = java.math.BigDecimal
@@ -60,7 +59,6 @@ KtCallExpression(208,319): 'sumOf { c ->'
         expression = listOf(19, 20, 21)
         isSafeNavigation = false
         type = kotlin.collections.List<kotlin.Int>
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Iterable<kotlin.Int>
         returnType = java.math.BigInteger
@@ -101,7 +99,6 @@ KtCallExpression(208,319): 'sumOf { c ->'
         expression = listOf(19, 20, 21)
         isSafeNavigation = false
         type = kotlin.collections.List<kotlin.Int>
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Iterable<kotlin.Int>
         returnType = kotlin.Double
@@ -142,7 +139,6 @@ KtCallExpression(208,319): 'sumOf { c ->'
         expression = listOf(19, 20, 21)
         isSafeNavigation = false
         type = kotlin.collections.List<kotlin.Int>
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Iterable<kotlin.Int>
         returnType = kotlin.Int
@@ -183,7 +179,6 @@ KtCallExpression(208,319): 'sumOf { c ->'
         expression = listOf(19, 20, 21)
         isSafeNavigation = false
         type = kotlin.collections.List<kotlin.Int>
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Iterable<kotlin.Int>
         returnType = kotlin.Long
@@ -224,7 +219,6 @@ KtCallExpression(208,319): 'sumOf { c ->'
         expression = listOf(19, 20, 21)
         isSafeNavigation = false
         type = kotlin.collections.List<kotlin.Int>
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Iterable<kotlin.Int>
         returnType = kotlin.UInt
@@ -265,7 +259,6 @@ KtCallExpression(208,319): 'sumOf { c ->'
         expression = listOf(19, 20, 21)
         isSafeNavigation = false
         type = kotlin.collections.List<kotlin.Int>
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Iterable<kotlin.Int>
         returnType = kotlin.ULong

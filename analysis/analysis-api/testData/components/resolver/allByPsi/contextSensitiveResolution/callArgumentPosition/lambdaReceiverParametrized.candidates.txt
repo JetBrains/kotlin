@@ -275,7 +275,6 @@ KtCallExpression(433,439): 'TODO()'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Nothing
@@ -292,7 +291,6 @@ KtCallExpression(433,439): 'TODO()'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Nothing
@@ -319,7 +317,6 @@ KtNameReferenceExpression(433,437): 'TODO'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Nothing
@@ -336,7 +333,6 @@ KtNameReferenceExpression(433,437): 'TODO'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Nothing
@@ -378,7 +374,6 @@ KtCallExpression(489,505): 'InheritorClass()'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MyClass.InheritorClass
@@ -396,7 +391,6 @@ KtNameReferenceExpression(489,503): 'InheritorClass'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MyClass.InheritorClass
@@ -429,7 +423,6 @@ KtNameReferenceExpression(557,572): 'InheritorObject'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MyClass.InheritorObject
@@ -504,7 +497,6 @@ KtCallExpression(676,685): 'lazy {""}'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Lazy<kotlin.String>
@@ -539,7 +531,6 @@ KtCallExpression(676,685): 'lazy {""}'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Lazy<kotlin.String>
@@ -582,7 +573,6 @@ KtCallExpression(676,685): 'lazy {""}'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Lazy<kotlin.String>
@@ -626,7 +616,6 @@ KtNameReferenceExpression(676,680): 'lazy'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Lazy<kotlin.String>
@@ -661,7 +650,6 @@ KtNameReferenceExpression(676,680): 'lazy'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Lazy<kotlin.String>
@@ -704,7 +692,6 @@ KtNameReferenceExpression(676,680): 'lazy'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Lazy<kotlin.String>
@@ -770,7 +757,6 @@ KtCallExpression(716,722): 'TODO()'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Nothing
@@ -787,7 +773,6 @@ KtCallExpression(716,722): 'TODO()'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Nothing
@@ -814,7 +799,6 @@ KtNameReferenceExpression(716,720): 'TODO'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Nothing
@@ -831,7 +815,6 @@ KtNameReferenceExpression(716,720): 'TODO'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Nothing
@@ -873,7 +856,6 @@ KtNameReferenceExpression(749,764): 'InheritorObject'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MyClass.InheritorObject
@@ -957,7 +939,6 @@ KtCallExpression(869,942): 'receiveParametrizedLambda<MyClass> { i: MyClass -> i
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -993,7 +974,6 @@ KtNameReferenceExpression(869,894): 'receiveParametrizedLambda'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -1074,7 +1054,6 @@ KtBinaryExpression(920,940): 'i == InheritorObject'
         isSafeNavigation = false
         type = MyClass
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -1129,7 +1108,6 @@ KtOperationReferenceExpression(922,924): '=='
         isSafeNavigation = false
         type = MyClass
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -1155,7 +1133,6 @@ KtNameReferenceExpression(925,940): 'InheritorObject'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MyClass.InheritorObject
@@ -1182,7 +1159,6 @@ KtCallExpression(947,1016): 'receiveParametrizedLambda<MyClass> { i: MyClass -> 
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -1218,7 +1194,6 @@ KtNameReferenceExpression(947,972): 'receiveParametrizedLambda'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -1299,7 +1274,6 @@ KtBinaryExpression(998,1014): 'i == propMyClass'
         isSafeNavigation = false
         type = MyClass
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -1354,7 +1328,6 @@ KtOperationReferenceExpression(1000,1002): '=='
         isSafeNavigation = false
         type = MyClass
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -1409,7 +1382,6 @@ KtCallExpression(1021,1097): 'receiveParametrizedLambda<MyClass> { i: MyClass ->
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -1445,7 +1417,6 @@ KtNameReferenceExpression(1021,1046): 'receiveParametrizedLambda'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -1526,7 +1497,6 @@ KtBinaryExpression(1072,1095): 'i == propInheritorClass'
         isSafeNavigation = false
         type = MyClass
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -1581,7 +1551,6 @@ KtOperationReferenceExpression(1074,1076): '=='
         isSafeNavigation = false
         type = MyClass
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -1636,7 +1605,6 @@ KtCallExpression(1102,1179): 'receiveParametrizedLambda<MyClass> { i: MyClass ->
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -1672,7 +1640,6 @@ KtNameReferenceExpression(1102,1127): 'receiveParametrizedLambda'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -1753,7 +1720,6 @@ KtBinaryExpression(1153,1177): 'i == propInheritorObject'
         isSafeNavigation = false
         type = MyClass
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -1808,7 +1774,6 @@ KtOperationReferenceExpression(1155,1157): '=='
         isSafeNavigation = false
         type = MyClass
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -1863,7 +1828,6 @@ KtCallExpression(1185,1247): 'receiveParametrizedLambda<MyClass> { i: MyClass ->
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -1899,7 +1863,6 @@ KtNameReferenceExpression(1185,1210): 'receiveParametrizedLambda'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -1980,7 +1943,6 @@ KtBinaryExpression(1236,1245): 'i == prop'
         isSafeNavigation = false
         type = MyClass
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -2035,7 +1997,6 @@ KtOperationReferenceExpression(1238,1240): '=='
         isSafeNavigation = false
         type = MyClass
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -2090,7 +2051,6 @@ KtCallExpression(1252,1319): 'receiveParametrizedLambda<MyClass> { i: MyClass ->
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -2126,7 +2086,6 @@ KtNameReferenceExpression(1252,1277): 'receiveParametrizedLambda'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -2207,7 +2166,6 @@ KtBinaryExpression(1303,1317): 'i == superProp'
         isSafeNavigation = false
         type = MyClass
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -2262,7 +2220,6 @@ KtOperationReferenceExpression(1305,1307): '=='
         isSafeNavigation = false
         type = MyClass
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -2317,7 +2274,6 @@ KtCallExpression(1324,1391): 'receiveParametrizedLambda<MyClass> { i: MyClass ->
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -2353,7 +2309,6 @@ KtNameReferenceExpression(1324,1349): 'receiveParametrizedLambda'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -2434,7 +2389,6 @@ KtBinaryExpression(1375,1389): 'i == constProp'
         isSafeNavigation = false
         type = MyClass
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -2489,7 +2443,6 @@ KtOperationReferenceExpression(1377,1379): '=='
         isSafeNavigation = false
         type = MyClass
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -2544,7 +2497,6 @@ KtCallExpression(1396,1462): 'receiveParametrizedLambda<MyClass> { i: MyClass ->
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -2580,7 +2532,6 @@ KtNameReferenceExpression(1396,1421): 'receiveParametrizedLambda'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -2661,7 +2612,6 @@ KtBinaryExpression(1447,1460): 'i == lazyProp'
         isSafeNavigation = false
         type = MyClass
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -2716,7 +2666,6 @@ KtOperationReferenceExpression(1449,1451): '=='
         isSafeNavigation = false
         type = MyClass
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -2771,7 +2720,6 @@ KtCallExpression(1468,1538): 'receiveParametrizedLambda<MyClass> { i: MyClass ->
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -2807,7 +2755,6 @@ KtNameReferenceExpression(1468,1493): 'receiveParametrizedLambda'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -2888,7 +2835,6 @@ KtBinaryExpression(1519,1536): 'i == NestedObject'
         isSafeNavigation = false
         type = MyClass
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -2943,7 +2889,6 @@ KtOperationReferenceExpression(1521,1523): '=='
         isSafeNavigation = false
         type = MyClass
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -2969,7 +2914,6 @@ KtNameReferenceExpression(1524,1536): 'NestedObject'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MyClass.NestedObject
@@ -2996,7 +2940,6 @@ KtCallExpression(1543,1611): 'receiveParametrizedLambda<MyClass> { i: MyClass ->
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -3032,7 +2975,6 @@ KtNameReferenceExpression(1543,1568): 'receiveParametrizedLambda'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -3113,7 +3055,6 @@ KtBinaryExpression(1594,1609): 'i == lambdaProp'
         isSafeNavigation = false
         type = MyClass
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -3168,7 +3109,6 @@ KtOperationReferenceExpression(1596,1598): '=='
         isSafeNavigation = false
         type = MyClass
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -3223,7 +3163,6 @@ KtCallExpression(1617,1681): 'receiveParametrizedLambda<MyClass> { i: MyClass ->
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -3259,7 +3198,6 @@ KtNameReferenceExpression(1617,1642): 'receiveParametrizedLambda'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -3340,7 +3278,6 @@ KtBinaryExpression(1668,1679): 'i == func()'
         isSafeNavigation = false
         type = MyClass
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -3395,7 +3332,6 @@ KtOperationReferenceExpression(1670,1672): '=='
         isSafeNavigation = false
         type = MyClass
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -3438,7 +3374,6 @@ KtCallExpression(1686,1755): 'receiveParametrizedLambda<MyClass> { i: MyClass ->
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -3474,7 +3409,6 @@ KtNameReferenceExpression(1686,1711): 'receiveParametrizedLambda'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -3555,7 +3489,6 @@ KtBinaryExpression(1737,1753): 'i == superFunc()'
         isSafeNavigation = false
         type = MyClass
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -3610,7 +3543,6 @@ KtOperationReferenceExpression(1739,1741): '=='
         isSafeNavigation = false
         type = MyClass
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -3653,7 +3585,6 @@ KtCallExpression(1760,1834): 'receiveParametrizedLambda<MyClass> { i: MyClass ->
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -3689,7 +3620,6 @@ KtNameReferenceExpression(1760,1785): 'receiveParametrizedLambda'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -3770,7 +3700,6 @@ KtBinaryExpression(1811,1832): 'i == InheritorClass()'
         isSafeNavigation = false
         type = MyClass
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -3825,7 +3754,6 @@ KtOperationReferenceExpression(1813,1815): '=='
         isSafeNavigation = false
         type = MyClass
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean

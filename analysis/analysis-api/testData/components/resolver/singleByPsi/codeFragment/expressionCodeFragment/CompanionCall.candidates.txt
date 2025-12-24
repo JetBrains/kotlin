@@ -5,7 +5,6 @@ KtNameReferenceExpression(138,144): 'String'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.String

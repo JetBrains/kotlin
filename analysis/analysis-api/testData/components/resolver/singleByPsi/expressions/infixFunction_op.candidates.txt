@@ -16,7 +16,6 @@ KtOperationReferenceExpression(58,65): 'infixOp'
         expression = 4
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.Int
         returnType = kotlin.Unit

@@ -12,7 +12,6 @@ KtCallExpression(44,62): 'foo(localProperty)'
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Unit

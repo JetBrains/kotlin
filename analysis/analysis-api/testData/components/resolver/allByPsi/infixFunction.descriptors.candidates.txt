@@ -64,7 +64,6 @@ KtBinaryExpression(37,45): 'this - i'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
@@ -107,7 +106,6 @@ KtOperationReferenceExpression(42,43): '-'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
@@ -186,7 +184,6 @@ KtBinaryExpression(98,117): 'parameter myMinus 5'
         expression = parameter
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.Int
         returnType = kotlin.Int
@@ -241,7 +238,6 @@ KtOperationReferenceExpression(108,115): 'myMinus'
         expression = parameter
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.Int
         returnType = kotlin.Int
@@ -284,7 +280,6 @@ KtBinaryExpression(145,171): 'newParameter + 1 myMinus 4'
         expression = newParameter + 1
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.Int
         returnType = kotlin.Int
@@ -321,7 +316,6 @@ KtBinaryExpression(145,161): 'newParameter + 1'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
@@ -376,7 +370,6 @@ KtOperationReferenceExpression(158,159): '+'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
@@ -416,7 +409,6 @@ KtOperationReferenceExpression(162,169): 'myMinus'
         expression = newParameter + 1
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.Int
         returnType = kotlin.Int
@@ -459,7 +451,6 @@ KtDotQualifiedExpression(195,249): 'newParameter.plus(parameter.myMinus(oneMoreP
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Double
@@ -496,7 +487,6 @@ KtDotQualifiedExpression(195,249): 'newParameter.plus(parameter.myMinus(oneMoreP
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Float
@@ -533,7 +523,6 @@ KtDotQualifiedExpression(195,249): 'newParameter.plus(parameter.myMinus(oneMoreP
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
@@ -570,7 +559,6 @@ KtDotQualifiedExpression(195,249): 'newParameter.plus(parameter.myMinus(oneMoreP
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
@@ -606,7 +594,6 @@ KtDotQualifiedExpression(195,249): 'newParameter.plus(parameter.myMinus(oneMoreP
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
@@ -643,7 +630,6 @@ KtDotQualifiedExpression(195,249): 'newParameter.plus(parameter.myMinus(oneMoreP
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Long
@@ -680,7 +666,6 @@ KtDotQualifiedExpression(195,249): 'newParameter.plus(parameter.myMinus(oneMoreP
         expression = newParameter
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.String?
         returnType = kotlin.String
@@ -736,7 +721,6 @@ KtCallExpression(208,249): 'plus(parameter.myMinus(oneMoreParameter))'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Double
@@ -773,7 +757,6 @@ KtCallExpression(208,249): 'plus(parameter.myMinus(oneMoreParameter))'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Float
@@ -810,7 +793,6 @@ KtCallExpression(208,249): 'plus(parameter.myMinus(oneMoreParameter))'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
@@ -847,7 +829,6 @@ KtCallExpression(208,249): 'plus(parameter.myMinus(oneMoreParameter))'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
@@ -883,7 +864,6 @@ KtCallExpression(208,249): 'plus(parameter.myMinus(oneMoreParameter))'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
@@ -920,7 +900,6 @@ KtCallExpression(208,249): 'plus(parameter.myMinus(oneMoreParameter))'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Long
@@ -957,7 +936,6 @@ KtCallExpression(208,249): 'plus(parameter.myMinus(oneMoreParameter))'
         expression = newParameter
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.String?
         returnType = kotlin.String
@@ -995,7 +973,6 @@ KtNameReferenceExpression(208,212): 'plus'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Double
@@ -1032,7 +1009,6 @@ KtNameReferenceExpression(208,212): 'plus'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Float
@@ -1069,7 +1045,6 @@ KtNameReferenceExpression(208,212): 'plus'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
@@ -1106,7 +1081,6 @@ KtNameReferenceExpression(208,212): 'plus'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
@@ -1142,7 +1116,6 @@ KtNameReferenceExpression(208,212): 'plus'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
@@ -1179,7 +1152,6 @@ KtNameReferenceExpression(208,212): 'plus'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Long
@@ -1216,7 +1188,6 @@ KtNameReferenceExpression(208,212): 'plus'
         expression = newParameter
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.String?
         returnType = kotlin.String
@@ -1260,7 +1231,6 @@ KtDotQualifiedExpression(213,248): 'parameter.myMinus(oneMoreParameter)'
         expression = parameter
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.Int
         returnType = kotlin.Int
@@ -1315,7 +1285,6 @@ KtCallExpression(223,248): 'myMinus(oneMoreParameter)'
         expression = parameter
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.Int
         returnType = kotlin.Int
@@ -1352,7 +1321,6 @@ KtNameReferenceExpression(223,230): 'myMinus'
         expression = parameter
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.Int
         returnType = kotlin.Int

@@ -10,7 +10,6 @@ KtNameReferenceExpression(168,171): 'foo'
           type = main.B?
         type = main.B
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit

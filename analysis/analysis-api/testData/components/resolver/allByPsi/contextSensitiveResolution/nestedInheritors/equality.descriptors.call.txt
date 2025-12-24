@@ -142,7 +142,6 @@ KtBinaryExpression(304,329): 'settings == BasicSettings'
         isSafeNavigation = false
         type = Settings
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -195,7 +194,6 @@ KtOperationReferenceExpression(313,315): '=='
         isSafeNavigation = false
         type = Settings
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -235,7 +233,6 @@ KtCallExpression(331,344): 'work("Basic")'
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Unit
@@ -268,7 +265,6 @@ KtNameReferenceExpression(331,335): 'work'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -322,7 +318,6 @@ KtBinaryExpression(354,387): 'basicSettings == SpecificSettings'
         isSafeNavigation = false
         type = Settings.BasicSettings
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -375,7 +370,6 @@ KtOperationReferenceExpression(368,370): '=='
         isSafeNavigation = false
         type = Settings.BasicSettings
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -415,7 +409,6 @@ KtCallExpression(389,405): 'work("Specific")'
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Unit
@@ -448,7 +441,6 @@ KtNameReferenceExpression(389,393): 'work'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -502,7 +494,6 @@ KtBinaryExpression(414,456): 'basicSettings == Settings.SpecificSettings'
         isSafeNavigation = false
         type = Settings.BasicSettings
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -555,7 +546,6 @@ KtOperationReferenceExpression(428,430): '=='
         isSafeNavigation = false
         type = Settings.BasicSettings
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -599,7 +589,6 @@ KtCallExpression(458,474): 'work("Specific")'
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Unit
@@ -632,7 +621,6 @@ KtNameReferenceExpression(458,462): 'work'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -870,7 +858,6 @@ KtBinaryExpression(707,736): 'settings == OpenBasicSettings'
         isSafeNavigation = false
         type = OpenSettings
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -923,7 +910,6 @@ KtOperationReferenceExpression(716,718): '=='
         isSafeNavigation = false
         type = OpenSettings
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -963,7 +949,6 @@ KtCallExpression(738,751): 'work("Basic")'
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Unit
@@ -996,7 +981,6 @@ KtNameReferenceExpression(738,742): 'work'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -1050,7 +1034,6 @@ KtBinaryExpression(761,798): 'basicSettings == OpenSpecificSettings'
         isSafeNavigation = false
         type = OpenSettings.OpenBasicSettings
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -1103,7 +1086,6 @@ KtOperationReferenceExpression(775,777): '=='
         isSafeNavigation = false
         type = OpenSettings.OpenBasicSettings
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -1143,7 +1125,6 @@ KtCallExpression(800,816): 'work("Specific")'
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Unit
@@ -1176,7 +1157,6 @@ KtNameReferenceExpression(800,804): 'work'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -1230,7 +1210,6 @@ KtBinaryExpression(825,875): 'basicSettings == OpenSettings.OpenSpecificSettings
         isSafeNavigation = false
         type = OpenSettings.OpenBasicSettings
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -1283,7 +1262,6 @@ KtOperationReferenceExpression(839,841): '=='
         isSafeNavigation = false
         type = OpenSettings.OpenBasicSettings
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -1327,7 +1305,6 @@ KtCallExpression(877,893): 'work("Specific")'
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Unit
@@ -1360,7 +1337,6 @@ KtNameReferenceExpression(877,881): 'work'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit

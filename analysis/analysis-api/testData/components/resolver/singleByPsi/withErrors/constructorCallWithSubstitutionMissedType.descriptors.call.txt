@@ -6,7 +6,6 @@ KtCallExpression(45,50): 'Foo()'
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
-        isImplicitInvoke = false
         signature = KaFunctionSignature:
           receiverType = null
           returnType = Foo<ERROR_TYPE>

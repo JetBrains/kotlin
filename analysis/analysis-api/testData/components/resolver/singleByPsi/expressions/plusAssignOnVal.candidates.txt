@@ -16,7 +16,6 @@ KtBinaryExpression(73,79): 'l += 1'
         isSafeNavigation = false
         type = A
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit

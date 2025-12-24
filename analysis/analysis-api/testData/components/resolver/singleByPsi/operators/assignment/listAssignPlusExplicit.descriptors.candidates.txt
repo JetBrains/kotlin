@@ -16,7 +16,6 @@ KtNameReferenceExpression(54,64): 'plusAssign'
         expression = l
         isSafeNavigation = false
         type = kotlin.collections.MutableList<kotlin.Int>
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.MutableCollection<in kotlin.Int>
         returnType = kotlin.Unit
@@ -54,7 +53,6 @@ KtNameReferenceExpression(54,64): 'plusAssign'
         expression = l
         isSafeNavigation = false
         type = kotlin.collections.MutableList<kotlin.Int>
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.MutableCollection<in kotlin.Int>
         returnType = kotlin.Unit
@@ -93,7 +91,6 @@ KtNameReferenceExpression(54,64): 'plusAssign'
         expression = l
         isSafeNavigation = false
         type = kotlin.collections.MutableList<kotlin.Int>
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.MutableCollection<in kotlin.Int>
         returnType = kotlin.Unit
@@ -132,7 +129,6 @@ KtNameReferenceExpression(54,64): 'plusAssign'
         expression = l
         isSafeNavigation = false
         type = kotlin.collections.MutableList<kotlin.Int>
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.MutableCollection<in kotlin.Int>
         returnType = kotlin.Unit
@@ -171,7 +167,6 @@ KtNameReferenceExpression(54,64): 'plusAssign'
         expression = l
         isSafeNavigation = false
         type = kotlin.collections.MutableList<kotlin.Int>
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.MutableMap<in ERROR_TYPE, in ERROR_TYPE>
         returnType = kotlin.Unit
@@ -211,7 +206,6 @@ KtNameReferenceExpression(54,64): 'plusAssign'
         expression = l
         isSafeNavigation = false
         type = kotlin.collections.MutableList<kotlin.Int>
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.MutableMap<in ERROR_TYPE, in ERROR_TYPE>
         returnType = kotlin.Unit
@@ -251,7 +245,6 @@ KtNameReferenceExpression(54,64): 'plusAssign'
         expression = l
         isSafeNavigation = false
         type = kotlin.collections.MutableList<kotlin.Int>
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.MutableMap<in ERROR_TYPE, in ERROR_TYPE>
         returnType = kotlin.Unit
@@ -291,7 +284,6 @@ KtNameReferenceExpression(54,64): 'plusAssign'
         expression = l
         isSafeNavigation = false
         type = kotlin.collections.MutableList<kotlin.Int>
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.MutableMap<in ERROR_TYPE, in ERROR_TYPE>
         returnType = kotlin.Unit
@@ -331,7 +323,6 @@ KtNameReferenceExpression(54,64): 'plusAssign'
         expression = l
         isSafeNavigation = false
         type = kotlin.collections.MutableList<kotlin.Int>
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.MutableMap<in ERROR_TYPE, in ERROR_TYPE>
         returnType = kotlin.Unit

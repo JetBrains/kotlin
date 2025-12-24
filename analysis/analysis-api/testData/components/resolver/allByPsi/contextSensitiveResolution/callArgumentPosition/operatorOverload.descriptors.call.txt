@@ -195,7 +195,6 @@ KtBinaryExpression(339,353): 'i + EnumValue1'
         isSafeNavigation = false
         type = OperatorHolder
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -248,7 +247,6 @@ KtOperationReferenceExpression(341,342): '+'
         isSafeNavigation = false
         type = OperatorHolder
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -289,7 +287,6 @@ KtBinaryExpression(358,377): 'i + InheritorObject'
         isSafeNavigation = false
         type = OperatorHolder
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -342,7 +339,6 @@ KtOperationReferenceExpression(360,361): '+'
         isSafeNavigation = false
         type = OperatorHolder
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -383,7 +379,6 @@ KtBinaryExpression(382,401): 'i - InheritorObject'
         isSafeNavigation = false
         type = OperatorHolder
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -436,7 +431,6 @@ KtOperationReferenceExpression(384,385): '-'
         isSafeNavigation = false
         type = OperatorHolder
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit

@@ -35,7 +35,6 @@ KtPrefixExpression(49,53): '-one'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
@@ -56,7 +55,6 @@ KtOperationReferenceExpression(49,50): '-'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
@@ -98,7 +96,6 @@ KtPrefixExpression(73,77): '+one'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
@@ -119,7 +116,6 @@ KtOperationReferenceExpression(73,74): '+'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
@@ -158,7 +154,6 @@ KtPrefixExpression(83,118): '!(+(-MyClass().unaryMinus().not()))'
         isSafeNavigation = false
         type = MyClass
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MyClass
@@ -179,7 +174,6 @@ KtOperationReferenceExpression(83,84): '!'
         isSafeNavigation = false
         type = MyClass
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MyClass
@@ -203,7 +197,6 @@ KtPrefixExpression(85,117): '+(-MyClass().unaryMinus().not())'
         isSafeNavigation = false
         type = MyClass
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MyClass
@@ -224,7 +217,6 @@ KtOperationReferenceExpression(85,86): '+'
         isSafeNavigation = false
         type = MyClass
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MyClass
@@ -248,7 +240,6 @@ KtPrefixExpression(87,116): '-MyClass().unaryMinus().not()'
         isSafeNavigation = false
         type = MyClass
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MyClass
@@ -269,7 +260,6 @@ KtOperationReferenceExpression(87,88): '-'
         isSafeNavigation = false
         type = MyClass
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MyClass
@@ -290,7 +280,6 @@ KtDotQualifiedExpression(88,116): 'MyClass().unaryMinus().not()'
         isSafeNavigation = false
         type = MyClass
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MyClass
@@ -311,7 +300,6 @@ KtDotQualifiedExpression(88,110): 'MyClass().unaryMinus()'
         isSafeNavigation = false
         type = MyClass
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MyClass
@@ -329,7 +317,6 @@ KtCallExpression(88,97): 'MyClass()'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MyClass
@@ -347,7 +334,6 @@ KtNameReferenceExpression(88,95): 'MyClass'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MyClass
@@ -371,7 +357,6 @@ KtCallExpression(98,110): 'unaryMinus()'
         isSafeNavigation = false
         type = MyClass
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MyClass
@@ -392,7 +377,6 @@ KtNameReferenceExpression(98,108): 'unaryMinus'
         isSafeNavigation = false
         type = MyClass
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MyClass
@@ -416,7 +400,6 @@ KtCallExpression(111,116): 'not()'
         isSafeNavigation = false
         type = MyClass
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MyClass
@@ -437,7 +420,6 @@ KtNameReferenceExpression(111,114): 'not'
         isSafeNavigation = false
         type = MyClass
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MyClass

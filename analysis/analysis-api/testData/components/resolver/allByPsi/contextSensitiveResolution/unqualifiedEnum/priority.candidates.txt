@@ -80,7 +80,6 @@ KtNameReferenceExpression(134,140): 'Second'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = second.Second

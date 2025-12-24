@@ -31,7 +31,6 @@ KtCallExpression(117,127): 'thisProp()'
         expression = thisProp
         isSafeNavigation = false
         type = A
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = A
         returnType = kotlin.Unit

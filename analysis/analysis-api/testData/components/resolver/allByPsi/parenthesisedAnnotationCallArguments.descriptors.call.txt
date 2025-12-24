@@ -733,7 +733,6 @@ KtCallExpression(316,338): 'arrayOf("A", "B", "C")'
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Array<kotlin.String>
@@ -782,7 +781,6 @@ KtNameReferenceExpression(316,323): 'arrayOf'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Array<kotlin.String>
@@ -984,7 +982,6 @@ KtCallExpression(381,400): 'arrayOf(("A"), "B")'
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Array<kotlin.String>
@@ -1026,7 +1023,6 @@ KtNameReferenceExpression(381,388): 'arrayOf'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Array<kotlin.String>

@@ -5,7 +5,6 @@ KtNameReferenceExpression(152,157): 'Local'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = <local>.Local

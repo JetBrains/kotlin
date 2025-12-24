@@ -134,7 +134,6 @@ KtCallExpression(245,254): 'MyClass()'
         expression = MyClass
         isSafeNavigation = false
         type = MyClass.Companion
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = kotlin.DeepRecursiveFunction<ERROR_TYPE, ERROR_TYPE>
         returnType = ERROR_TYPE
@@ -163,7 +162,6 @@ KtCallExpression(245,254): 'MyClass()'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MyClass
@@ -181,7 +179,6 @@ KtNameReferenceExpression(245,252): 'MyClass'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MyClass
@@ -259,7 +256,6 @@ KtDotQualifiedExpression(398,421): 'MyClass.NestedInheritor'
         expression = NestedInheritor
         isSafeNavigation = false
         type = MyClass.NestedInheritor
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = kotlin.DeepRecursiveFunction<ERROR_TYPE, ERROR_TYPE>
         returnType = ERROR_TYPE
@@ -312,7 +308,6 @@ KtCallExpression(456,491): 'receive<MyClass>(NestedInheritor!!)'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -348,7 +343,6 @@ KtNameReferenceExpression(456,463): 'receive'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -405,7 +399,6 @@ KtPostfixExpression(473,490): 'NestedInheritor!!'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -445,7 +438,6 @@ KtOperationReferenceExpression(488,490): '!!'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -482,7 +474,6 @@ KtCallExpression(496,527): 'receive<MyClass>(myClassProp!!)'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -518,7 +509,6 @@ KtNameReferenceExpression(496,503): 'receive'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -575,7 +565,6 @@ KtPostfixExpression(513,526): 'myClassProp!!'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -615,7 +604,6 @@ KtOperationReferenceExpression(524,526): '!!'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -652,7 +640,6 @@ KtCallExpression(532,562): 'receive<MyClass>(stringProp!!)'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -688,7 +675,6 @@ KtNameReferenceExpression(532,539): 'receive'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -745,7 +731,6 @@ KtPostfixExpression(549,561): 'stringProp!!'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -785,7 +770,6 @@ KtOperationReferenceExpression(559,561): '!!'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -822,7 +806,6 @@ KtCallExpression(567,607): 'receive<MyClass>(getNestedInheritor()!!)'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -858,7 +841,6 @@ KtNameReferenceExpression(567,574): 'receive'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -915,7 +897,6 @@ KtPostfixExpression(584,606): 'getNestedInheritor()!!'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -961,7 +942,6 @@ KtOperationReferenceExpression(604,606): '!!'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -1014,7 +994,6 @@ KtCallExpression(655,791): 'mapOf<MyClass, Int>(MyClass.myClassProp to 1,  MyCla
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.collections.Map<MyClass, kotlin.Int>
@@ -1043,7 +1022,6 @@ KtCallExpression(655,791): 'mapOf<MyClass, Int>(MyClass.myClassProp to 1,  MyCla
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.collections.Map<MyClass, kotlin.Int>
@@ -1101,7 +1079,6 @@ KtCallExpression(655,791): 'mapOf<MyClass, Int>(MyClass.myClassProp to 1,  MyCla
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.collections.Map<MyClass, kotlin.Int>
@@ -1131,7 +1108,6 @@ KtNameReferenceExpression(655,660): 'mapOf'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.collections.Map<MyClass, kotlin.Int>
@@ -1160,7 +1136,6 @@ KtNameReferenceExpression(655,660): 'mapOf'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.collections.Map<MyClass, kotlin.Int>
@@ -1218,7 +1193,6 @@ KtNameReferenceExpression(655,660): 'mapOf'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.collections.Map<MyClass, kotlin.Int>
@@ -1292,7 +1266,6 @@ KtBinaryExpression(675,699): 'MyClass.myClassProp to 1'
         expression = MyClass.myClassProp
         isSafeNavigation = false
         type = MyClass
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = MyClass
         returnType = kotlin.Pair<MyClass, kotlin.Int>
@@ -1344,7 +1317,6 @@ KtDotQualifiedExpression(675,694): 'MyClass.myClassProp'
         expression = myClassProp
         isSafeNavigation = false
         type = MyClass
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = kotlin.DeepRecursiveFunction<ERROR_TYPE, ERROR_TYPE>
         returnType = ERROR_TYPE
@@ -1409,7 +1381,6 @@ KtOperationReferenceExpression(695,697): 'to'
         expression = MyClass.myClassProp
         isSafeNavigation = false
         type = MyClass
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = MyClass
         returnType = kotlin.Pair<MyClass, kotlin.Int>
@@ -1455,7 +1426,6 @@ KtBinaryExpression(702,725): 'MyClass.stringProp to 2'
         expression = MyClass.stringProp
         isSafeNavigation = false
         type = kotlin.String
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.String
         returnType = kotlin.Pair<kotlin.String, kotlin.Int>
@@ -1507,7 +1477,6 @@ KtDotQualifiedExpression(702,720): 'MyClass.stringProp'
         expression = stringProp
         isSafeNavigation = false
         type = kotlin.String
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = kotlin.DeepRecursiveFunction<ERROR_TYPE, ERROR_TYPE>
         returnType = ERROR_TYPE
@@ -1572,7 +1541,6 @@ KtOperationReferenceExpression(721,723): 'to'
         expression = MyClass.stringProp
         isSafeNavigation = false
         type = kotlin.String
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.String
         returnType = kotlin.Pair<kotlin.String, kotlin.Int>
@@ -1618,7 +1586,6 @@ KtBinaryExpression(727,755): 'MyClass.NestedInheritor to 3'
         expression = MyClass.NestedInheritor
         isSafeNavigation = false
         type = MyClass.NestedInheritor
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = MyClass.NestedInheritor
         returnType = kotlin.Pair<MyClass.NestedInheritor, kotlin.Int>
@@ -1650,7 +1617,6 @@ KtDotQualifiedExpression(727,750): 'MyClass.NestedInheritor'
         expression = NestedInheritor
         isSafeNavigation = false
         type = MyClass.NestedInheritor
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = kotlin.DeepRecursiveFunction<ERROR_TYPE, ERROR_TYPE>
         returnType = ERROR_TYPE
@@ -1697,7 +1663,6 @@ KtOperationReferenceExpression(751,753): 'to'
         expression = MyClass.NestedInheritor
         isSafeNavigation = false
         type = MyClass.NestedInheritor
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = MyClass.NestedInheritor
         returnType = kotlin.Pair<MyClass.NestedInheritor, kotlin.Int>
@@ -1743,7 +1708,6 @@ KtBinaryExpression(757,790): 'MyClass.getNestedInheritor() to 4'
         expression = MyClass.getNestedInheritor()
         isSafeNavigation = false
         type = MyClass.NestedInheritor
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = MyClass.NestedInheritor
         returnType = kotlin.Pair<MyClass.NestedInheritor, kotlin.Int>
@@ -1775,7 +1739,6 @@ KtDotQualifiedExpression(757,785): 'MyClass.getNestedInheritor()'
         isSafeNavigation = false
         type = MyClass.Companion
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MyClass.NestedInheritor
@@ -1799,7 +1762,6 @@ KtCallExpression(765,785): 'getNestedInheritor()'
         isSafeNavigation = false
         type = MyClass.Companion
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MyClass.NestedInheritor
@@ -1820,7 +1782,6 @@ KtNameReferenceExpression(765,783): 'getNestedInheritor'
         isSafeNavigation = false
         type = MyClass.Companion
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MyClass.NestedInheritor
@@ -1852,7 +1813,6 @@ KtOperationReferenceExpression(786,788): 'to'
         expression = MyClass.getNestedInheritor()
         isSafeNavigation = false
         type = MyClass.NestedInheritor
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = MyClass.NestedInheritor
         returnType = kotlin.Pair<MyClass.NestedInheritor, kotlin.Int>
@@ -1898,7 +1858,6 @@ KtArrayAccessExpression(803,819): 'map[myClassProp]'
         isSafeNavigation = false
         type = kotlin.collections.Map<MyClass, kotlin.Int>
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int?
@@ -1934,7 +1893,6 @@ KtArrayAccessExpression(803,819): 'map[myClassProp]'
         expression = map
         isSafeNavigation = false
         type = kotlin.collections.Map<MyClass, kotlin.Int>
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Map<out MyClass, kotlin.Int>
         returnType = kotlin.Int?
@@ -1974,7 +1932,6 @@ KtArrayAccessExpression(803,819): 'map[myClassProp]'
         expression = map
         isSafeNavigation = false
         type = kotlin.collections.Map<MyClass, kotlin.Int>
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.text.MatchGroupCollection
         returnType = kotlin.text.MatchGroup?
@@ -2039,7 +1996,6 @@ KtArrayAccessExpression(831,846): 'map[stringProp]'
         isSafeNavigation = false
         type = kotlin.collections.Map<MyClass, kotlin.Int>
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int?
@@ -2075,7 +2031,6 @@ KtArrayAccessExpression(831,846): 'map[stringProp]'
         expression = map
         isSafeNavigation = false
         type = kotlin.collections.Map<MyClass, kotlin.Int>
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Map<out MyClass, kotlin.Int>
         returnType = kotlin.Int?
@@ -2115,7 +2070,6 @@ KtArrayAccessExpression(831,846): 'map[stringProp]'
         expression = map
         isSafeNavigation = false
         type = kotlin.collections.Map<MyClass, kotlin.Int>
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.text.MatchGroupCollection
         returnType = kotlin.text.MatchGroup?
@@ -2180,7 +2134,6 @@ KtArrayAccessExpression(858,878): 'map[NestedInheritor]'
         isSafeNavigation = false
         type = kotlin.collections.Map<MyClass, kotlin.Int>
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int?
@@ -2216,7 +2169,6 @@ KtArrayAccessExpression(858,878): 'map[NestedInheritor]'
         expression = map
         isSafeNavigation = false
         type = kotlin.collections.Map<MyClass, kotlin.Int>
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Map<out MyClass, kotlin.Int>
         returnType = kotlin.Int?
@@ -2256,7 +2208,6 @@ KtArrayAccessExpression(858,878): 'map[NestedInheritor]'
         expression = map
         isSafeNavigation = false
         type = kotlin.collections.Map<MyClass, kotlin.Int>
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.text.MatchGroupCollection
         returnType = kotlin.text.MatchGroup?
@@ -2321,7 +2272,6 @@ KtArrayAccessExpression(890,915): 'map[getNestedInheritor()]'
         isSafeNavigation = false
         type = kotlin.collections.Map<MyClass, kotlin.Int>
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int?
@@ -2357,7 +2307,6 @@ KtArrayAccessExpression(890,915): 'map[getNestedInheritor()]'
         expression = map
         isSafeNavigation = false
         type = kotlin.collections.Map<MyClass, kotlin.Int>
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Map<out MyClass, kotlin.Int>
         returnType = kotlin.Int?
@@ -2397,7 +2346,6 @@ KtArrayAccessExpression(890,915): 'map[getNestedInheritor()]'
         expression = map
         isSafeNavigation = false
         type = kotlin.collections.Map<MyClass, kotlin.Int>
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.text.MatchGroupCollection
         returnType = kotlin.text.MatchGroup?
@@ -2564,7 +2512,6 @@ KtPostfixExpression(1093,1099): 'null!!'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.ranges.ClosedFloatingPointRange<MyClass>
@@ -2603,7 +2550,6 @@ KtOperationReferenceExpression(1097,1099): '!!'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.ranges.ClosedFloatingPointRange<MyClass>
@@ -2726,7 +2672,6 @@ KtBinaryExpression(1242,1284): 'a !in MyClass.myClassProp..NestedInheritor'
         isSafeNavigation = false
         type = kotlin.ranges.ClosedFloatingPointRange<MyClass>
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -2799,7 +2744,6 @@ KtOperationReferenceExpression(1244,1247): '!in'
         isSafeNavigation = false
         type = kotlin.ranges.ClosedFloatingPointRange<MyClass>
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -2836,7 +2780,6 @@ KtBinaryExpression(1248,1284): 'MyClass.myClassProp..NestedInheritor'
         expression = MyClass.myClassProp
         isSafeNavigation = false
         type = MyClass
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = MyClass
         returnType = kotlin.ranges.ClosedFloatingPointRange<MyClass>
@@ -2885,7 +2828,6 @@ KtDotQualifiedExpression(1248,1267): 'MyClass.myClassProp'
         expression = myClassProp
         isSafeNavigation = false
         type = MyClass
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = kotlin.DeepRecursiveFunction<ERROR_TYPE, ERROR_TYPE>
         returnType = ERROR_TYPE
@@ -2950,7 +2892,6 @@ KtOperationReferenceExpression(1267,1269): '..'
         expression = MyClass.myClassProp
         isSafeNavigation = false
         type = MyClass
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = MyClass
         returnType = kotlin.ranges.ClosedFloatingPointRange<MyClass>

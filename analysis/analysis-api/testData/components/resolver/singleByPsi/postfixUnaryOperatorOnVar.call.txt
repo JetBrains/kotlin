@@ -11,7 +11,6 @@ KtPostfixExpression(31,34): 'i++'
             isSafeNavigation = false
             type = kotlin.Int
           extensionReceiver = null
-          isImplicitInvoke = false
           signature = KaFunctionSignature:
             receiverType = null
             returnType = kotlin.Int

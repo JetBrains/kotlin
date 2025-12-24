@@ -308,7 +308,6 @@ KtDotQualifiedExpression(403,418): 'JavaClass.foo()'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MySealed!
@@ -327,7 +326,6 @@ KtCallExpression(413,418): 'foo()'
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = MySealed!
@@ -344,7 +342,6 @@ KtNameReferenceExpression(413,416): 'foo'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MySealed!

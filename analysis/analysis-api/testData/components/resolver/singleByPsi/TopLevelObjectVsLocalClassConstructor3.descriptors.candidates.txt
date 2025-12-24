@@ -5,7 +5,6 @@ KtNameReferenceExpression(109,117): 'Conflict'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = test.Conflict

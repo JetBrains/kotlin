@@ -353,7 +353,6 @@ KtBinaryExpression(479,497): 'oldItem == newItem'
         isSafeNavigation = false
         type = T
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -406,7 +405,6 @@ KtOperationReferenceExpression(487,489): '=='
         isSafeNavigation = false
         type = T
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -649,7 +647,6 @@ KtBinaryExpression(706,724): 'oldItem == newItem'
         isSafeNavigation = false
         type = T
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -702,7 +699,6 @@ KtOperationReferenceExpression(714,716): '=='
         isSafeNavigation = false
         type = T
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -897,7 +893,6 @@ KtBinaryExpression(875,893): 'oldItem == newItem'
         isSafeNavigation = false
         type = T
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -950,7 +945,6 @@ KtOperationReferenceExpression(883,885): '=='
         isSafeNavigation = false
         type = T
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -1036,7 +1030,6 @@ KtBinaryExpression(956,962): 'i == m'
         isSafeNavigation = false
         type = InterfaceWithEquals
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -1089,7 +1082,6 @@ KtOperationReferenceExpression(958,960): '=='
         isSafeNavigation = false
         type = InterfaceWithEquals
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -1142,7 +1134,6 @@ KtBinaryExpression(967,973): 'i != m'
         isSafeNavigation = false
         type = InterfaceWithEquals
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -1195,7 +1186,6 @@ KtOperationReferenceExpression(969,971): '!='
         isSafeNavigation = false
         type = InterfaceWithEquals
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -1248,7 +1238,6 @@ KtBinaryExpression(979,985): 'm == i'
         isSafeNavigation = false
         type = MessagePreview
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -1301,7 +1290,6 @@ KtOperationReferenceExpression(981,983): '=='
         isSafeNavigation = false
         type = MessagePreview
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -1354,7 +1342,6 @@ KtBinaryExpression(990,996): 'm != i'
         isSafeNavigation = false
         type = MessagePreview
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -1407,7 +1394,6 @@ KtOperationReferenceExpression(992,994): '!='
         isSafeNavigation = false
         type = MessagePreview
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -1460,7 +1446,6 @@ KtDotQualifiedExpression(1002,1013): 'i.equals(m)'
         isSafeNavigation = false
         type = InterfaceWithEquals
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -1512,7 +1497,6 @@ KtCallExpression(1004,1013): 'equals(m)'
       isSafeNavigation = false
       type = InterfaceWithEquals
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Boolean
@@ -1548,7 +1532,6 @@ KtNameReferenceExpression(1004,1010): 'equals'
         isSafeNavigation = false
         type = InterfaceWithEquals
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -1607,7 +1590,6 @@ KtDotQualifiedExpression(1018,1029): 'm.equals(i)'
         isSafeNavigation = false
         type = MessagePreview
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -1659,7 +1641,6 @@ KtCallExpression(1020,1029): 'equals(i)'
       isSafeNavigation = false
       type = MessagePreview
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Boolean
@@ -1695,7 +1676,6 @@ KtNameReferenceExpression(1020,1026): 'equals'
         isSafeNavigation = false
         type = MessagePreview
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean

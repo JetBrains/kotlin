@@ -20,7 +20,6 @@ KtCallExpression(146,220): 'arrayOf(Annotation("v1", "v2"), Annotation(strings =
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Array<Annotation>

@@ -167,7 +167,6 @@ KtNameReferenceExpression(46,62): 'AnnotationTarget'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.annotation.AnnotationTarget
@@ -231,7 +230,6 @@ KtNameReferenceExpression(83,99): 'AnnotationTarget'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.annotation.AnnotationTarget
@@ -295,7 +293,6 @@ KtNameReferenceExpression(114,130): 'AnnotationTarget'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.annotation.AnnotationTarget
@@ -359,7 +356,6 @@ KtNameReferenceExpression(152,168): 'AnnotationTarget'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.annotation.AnnotationTarget

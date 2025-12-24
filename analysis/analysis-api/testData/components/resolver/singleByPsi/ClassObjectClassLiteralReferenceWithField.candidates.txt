@@ -5,7 +5,6 @@ KtNameReferenceExpression(97,98): 'A'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = t.A

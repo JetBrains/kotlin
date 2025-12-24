@@ -463,7 +463,6 @@ KtCallExpression(494,500): 'Test()'
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = Test
@@ -480,7 +479,6 @@ KtNameReferenceExpression(494,498): 'Test'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = Test

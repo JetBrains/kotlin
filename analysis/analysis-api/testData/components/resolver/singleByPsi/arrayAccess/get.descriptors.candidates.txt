@@ -16,7 +16,6 @@ KtArrayAccessExpression(70,77): 'list[0]'
         isSafeNavigation = false
         type = kotlin.collections.MutableList<kotlin.Int>
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
@@ -52,7 +51,6 @@ KtArrayAccessExpression(70,77): 'list[0]'
         expression = list
         isSafeNavigation = false
         type = kotlin.collections.MutableList<kotlin.Int>
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Map<out kotlin.Int, ERROR_TYPE>
         returnType = ERROR_TYPE?
@@ -92,7 +90,6 @@ KtArrayAccessExpression(70,77): 'list[0]'
         expression = list
         isSafeNavigation = false
         type = kotlin.collections.MutableList<kotlin.Int>
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.text.MatchGroupCollection
         returnType = kotlin.text.MatchGroup?

@@ -7,7 +7,6 @@ KtCallExpression(50,57): 'myRun()'
       extensionReceiver = KaImplicitReceiverValue:
         symbol = foo/Foo
         type = foo.Foo
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.Any
         returnType = kotlin.Unit
@@ -24,7 +23,6 @@ KtCallExpression(50,57): 'myRun()'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit

@@ -6,7 +6,6 @@ KtNameReferenceExpression(327,331): 'Test'
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
-        isImplicitInvoke = false
         signature = KaFunctionSignature:
           receiverType = null
           returnType = Test<T>

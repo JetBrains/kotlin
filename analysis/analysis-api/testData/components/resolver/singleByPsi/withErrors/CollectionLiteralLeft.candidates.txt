@@ -27,7 +27,6 @@ KtCollectionLiteralExpression(10,19): '[1, 2, 3]'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Array<kotlin.Int>

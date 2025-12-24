@@ -134,7 +134,6 @@ KtNameReferenceExpression(292,298): 'MyEnum'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MyEnum
@@ -198,7 +197,6 @@ KtNameReferenceExpression(326,332): 'MyEnum'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MyEnum

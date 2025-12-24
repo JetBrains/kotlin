@@ -5,7 +5,6 @@ KtNameReferenceExpression(125,129): 'COMP'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = foo.bar.baz.X.COMP

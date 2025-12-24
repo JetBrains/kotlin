@@ -5,7 +5,6 @@ KtNameReferenceExpression(142,145): 'bar'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit

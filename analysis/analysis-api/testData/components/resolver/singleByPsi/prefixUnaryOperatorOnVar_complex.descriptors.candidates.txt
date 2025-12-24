@@ -11,7 +11,6 @@ KtPrefixExpression(80,83): '++f'
             expression = f
             isSafeNavigation = false
             type = Foo
-          isImplicitInvoke = false
           signature = KaFunctionSignature:
             receiverType = Foo
             returnType = Foo

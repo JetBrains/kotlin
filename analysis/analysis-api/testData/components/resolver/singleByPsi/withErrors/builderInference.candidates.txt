@@ -39,7 +39,6 @@ KtNameReferenceExpression(248,251): 'add'
           visibility: PUBLIC
         type = test.Target<kotlin.String>
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit

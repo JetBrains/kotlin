@@ -101,7 +101,6 @@ KtDotQualifiedExpression(80,94): 'prop.action1()'
         expression = prop
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -148,7 +147,6 @@ KtCallExpression(85,94): 'action1()'
       expression = prop
       isSafeNavigation = false
       type = kotlin.Int
-    isImplicitInvoke = true
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Unit
@@ -198,7 +196,6 @@ KtCallExpression(99,112): 'action1(prop)'
       expression = prop
       isSafeNavigation = false
       type = kotlin.Int
-    isImplicitInvoke = true
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Unit
@@ -308,7 +305,6 @@ KtCallExpression(151,164): 'action2(prop)'
       isSafeNavigation = false
       type = (kotlin.Int) -> kotlin.Unit
     extensionReceiver = null
-    isImplicitInvoke = true
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Unit

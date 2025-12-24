@@ -11,7 +11,6 @@ KtPostfixExpression(138,148): 'variable++'
             isSafeNavigation = false
             type = MyClass
           extensionReceiver = null
-          isImplicitInvoke = false
           signature = KaFunctionSignature:
             receiverType = null
             returnType = MyClass

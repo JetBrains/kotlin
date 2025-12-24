@@ -95,7 +95,6 @@ KtNameReferenceExpression(135,136): 'A'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = A
@@ -168,7 +167,6 @@ KtNameReferenceExpression(150,151): 'A'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = A

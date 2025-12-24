@@ -7,7 +7,6 @@ KtCallableReferenceExpression(102,111): 'this::add'
       isSafeNavigation = false
       type = kotlin.collections.MutableList<kotlin.String>
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Boolean

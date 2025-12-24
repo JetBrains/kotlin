@@ -116,7 +116,6 @@ KtCallExpression(245,254): 'MyClass()'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MyClass
@@ -134,7 +133,6 @@ KtNameReferenceExpression(245,252): 'MyClass'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MyClass
@@ -176,7 +174,6 @@ KtNameReferenceExpression(326,341): 'NestedInheritor'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MyClass.NestedInheritor
@@ -225,7 +222,6 @@ KtDotQualifiedExpression(398,421): 'MyClass.NestedInheritor'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MyClass.NestedInheritor
@@ -244,7 +240,6 @@ KtNameReferenceExpression(398,405): 'MyClass'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MyClass
@@ -263,7 +258,6 @@ KtNameReferenceExpression(406,421): 'NestedInheritor'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MyClass.NestedInheritor
@@ -299,7 +293,6 @@ KtCallExpression(456,491): 'receive<MyClass>(NestedInheritor!!)'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -335,7 +328,6 @@ KtNameReferenceExpression(456,463): 'receive'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -387,7 +379,6 @@ KtNameReferenceExpression(473,488): 'NestedInheritor'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MyClass.NestedInheritor
@@ -417,7 +408,6 @@ KtCallExpression(496,527): 'receive<MyClass>(myClassProp!!)'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -453,7 +443,6 @@ KtNameReferenceExpression(496,503): 'receive'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -537,7 +526,6 @@ KtCallExpression(532,562): 'receive<MyClass>(stringProp!!)'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -574,7 +562,6 @@ KtNameReferenceExpression(532,539): 'receive'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -659,7 +646,6 @@ KtCallExpression(567,607): 'receive<MyClass>(getNestedInheritor()!!)'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -695,7 +681,6 @@ KtNameReferenceExpression(567,574): 'receive'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -783,7 +768,6 @@ KtCallExpression(655,791): 'mapOf<MyClass, Int>(MyClass.myClassProp to 1,  MyCla
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.collections.Map<MyClass, kotlin.Int>
@@ -812,7 +796,6 @@ KtCallExpression(655,791): 'mapOf<MyClass, Int>(MyClass.myClassProp to 1,  MyCla
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.collections.Map<MyClass, kotlin.Int>
@@ -870,7 +853,6 @@ KtCallExpression(655,791): 'mapOf<MyClass, Int>(MyClass.myClassProp to 1,  MyCla
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.collections.Map<MyClass, kotlin.Int>
@@ -900,7 +882,6 @@ KtNameReferenceExpression(655,660): 'mapOf'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.collections.Map<MyClass, kotlin.Int>
@@ -929,7 +910,6 @@ KtNameReferenceExpression(655,660): 'mapOf'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.collections.Map<MyClass, kotlin.Int>
@@ -987,7 +967,6 @@ KtNameReferenceExpression(655,660): 'mapOf'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.collections.Map<MyClass, kotlin.Int>
@@ -1061,7 +1040,6 @@ KtBinaryExpression(675,699): 'MyClass.myClassProp to 1'
         expression = MyClass.myClassProp
         isSafeNavigation = false
         type = MyClass
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = MyClass
         returnType = kotlin.Pair<MyClass, kotlin.Int>
@@ -1111,7 +1089,6 @@ KtNameReferenceExpression(675,682): 'MyClass'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MyClass
@@ -1162,7 +1139,6 @@ KtOperationReferenceExpression(695,697): 'to'
         expression = MyClass.myClassProp
         isSafeNavigation = false
         type = MyClass
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = MyClass
         returnType = kotlin.Pair<MyClass, kotlin.Int>
@@ -1208,7 +1184,6 @@ KtBinaryExpression(702,725): 'MyClass.stringProp to 2'
         expression = MyClass.stringProp
         isSafeNavigation = false
         type = kotlin.String
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.String
         returnType = kotlin.Pair<kotlin.String, kotlin.Int>
@@ -1258,7 +1233,6 @@ KtNameReferenceExpression(702,709): 'MyClass'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MyClass
@@ -1309,7 +1283,6 @@ KtOperationReferenceExpression(721,723): 'to'
         expression = MyClass.stringProp
         isSafeNavigation = false
         type = kotlin.String
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.String
         returnType = kotlin.Pair<kotlin.String, kotlin.Int>
@@ -1355,7 +1328,6 @@ KtBinaryExpression(727,755): 'MyClass.NestedInheritor to 3'
         expression = MyClass.NestedInheritor
         isSafeNavigation = false
         type = MyClass.NestedInheritor
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = MyClass.NestedInheritor
         returnType = kotlin.Pair<MyClass.NestedInheritor, kotlin.Int>
@@ -1384,7 +1356,6 @@ KtDotQualifiedExpression(727,750): 'MyClass.NestedInheritor'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MyClass.NestedInheritor
@@ -1403,7 +1374,6 @@ KtNameReferenceExpression(727,734): 'MyClass'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MyClass
@@ -1422,7 +1392,6 @@ KtNameReferenceExpression(735,750): 'NestedInheritor'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MyClass.NestedInheritor
@@ -1452,7 +1421,6 @@ KtOperationReferenceExpression(751,753): 'to'
         expression = MyClass.NestedInheritor
         isSafeNavigation = false
         type = MyClass.NestedInheritor
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = MyClass.NestedInheritor
         returnType = kotlin.Pair<MyClass.NestedInheritor, kotlin.Int>
@@ -1498,7 +1466,6 @@ KtBinaryExpression(757,790): 'MyClass.getNestedInheritor() to 4'
         expression = MyClass.getNestedInheritor()
         isSafeNavigation = false
         type = MyClass.NestedInheritor
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = MyClass.NestedInheritor
         returnType = kotlin.Pair<MyClass.NestedInheritor, kotlin.Int>
@@ -1530,7 +1497,6 @@ KtDotQualifiedExpression(757,785): 'MyClass.getNestedInheritor()'
         isSafeNavigation = false
         type = MyClass.Companion
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MyClass.NestedInheritor
@@ -1548,7 +1514,6 @@ KtNameReferenceExpression(757,764): 'MyClass'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MyClass
@@ -1570,7 +1535,6 @@ KtCallExpression(765,785): 'getNestedInheritor()'
         isSafeNavigation = false
         type = MyClass.Companion
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MyClass.NestedInheritor
@@ -1591,7 +1555,6 @@ KtNameReferenceExpression(765,783): 'getNestedInheritor'
         isSafeNavigation = false
         type = MyClass.Companion
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MyClass.NestedInheritor
@@ -1623,7 +1586,6 @@ KtOperationReferenceExpression(786,788): 'to'
         expression = MyClass.getNestedInheritor()
         isSafeNavigation = false
         type = MyClass.NestedInheritor
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = MyClass.NestedInheritor
         returnType = kotlin.Pair<MyClass.NestedInheritor, kotlin.Int>
@@ -1669,7 +1631,6 @@ KtArrayAccessExpression(803,819): 'map[myClassProp]'
         isSafeNavigation = false
         type = kotlin.collections.Map<MyClass, kotlin.Int>
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int?
@@ -1705,7 +1666,6 @@ KtArrayAccessExpression(803,819): 'map[myClassProp]'
         expression = map
         isSafeNavigation = false
         type = kotlin.collections.Map<MyClass, kotlin.Int>
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Map<out MyClass, V>
         returnType = V?
@@ -1789,7 +1749,6 @@ KtArrayAccessExpression(831,846): 'map[stringProp]'
         isSafeNavigation = false
         type = kotlin.collections.Map<MyClass, kotlin.Int>
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int?
@@ -1826,7 +1785,6 @@ KtArrayAccessExpression(831,846): 'map[stringProp]'
         expression = map
         isSafeNavigation = false
         type = kotlin.collections.Map<MyClass, kotlin.Int>
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Map<out MyClass, V>
         returnType = V?
@@ -1911,7 +1869,6 @@ KtArrayAccessExpression(858,878): 'map[NestedInheritor]'
         isSafeNavigation = false
         type = kotlin.collections.Map<MyClass, kotlin.Int>
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int?
@@ -1947,7 +1904,6 @@ KtArrayAccessExpression(858,878): 'map[NestedInheritor]'
         expression = map
         isSafeNavigation = false
         type = kotlin.collections.Map<MyClass, kotlin.Int>
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Map<out MyClass, V>
         returnType = V?
@@ -1996,7 +1952,6 @@ KtNameReferenceExpression(862,877): 'NestedInheritor'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MyClass.NestedInheritor
@@ -2029,7 +1984,6 @@ KtArrayAccessExpression(890,915): 'map[getNestedInheritor()]'
         isSafeNavigation = false
         type = kotlin.collections.Map<MyClass, kotlin.Int>
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int?
@@ -2065,7 +2019,6 @@ KtArrayAccessExpression(890,915): 'map[getNestedInheritor()]'
         expression = map
         isSafeNavigation = false
         type = kotlin.collections.Map<MyClass, kotlin.Int>
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Map<out MyClass, kotlin.Int>
         returnType = kotlin.Int?
@@ -2349,7 +2302,6 @@ KtBinaryExpression(1242,1284): 'a !in MyClass.myClassProp..NestedInheritor'
         isSafeNavigation = false
         type = kotlin.ranges.ClosedFloatingPointRange<MyClass>
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -2385,7 +2337,6 @@ KtBinaryExpression(1242,1284): 'a !in MyClass.myClassProp..NestedInheritor'
         expression = MyClass.myClassProp..NestedInheritor
         isSafeNavigation = false
         type = kotlin.ranges.ClosedFloatingPointRange<MyClass>
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = MyClass
         returnType = kotlin.Boolean
@@ -2423,7 +2374,6 @@ KtBinaryExpression(1242,1284): 'a !in MyClass.myClassProp..NestedInheritor'
         expression = MyClass.myClassProp..NestedInheritor
         isSafeNavigation = false
         type = kotlin.ranges.ClosedFloatingPointRange<MyClass>
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.ranges.ClosedFloatingPointRange<MyClass>
         returnType = kotlin.Boolean
@@ -2464,7 +2414,6 @@ KtBinaryExpression(1242,1284): 'a !in MyClass.myClassProp..NestedInheritor'
         expression = MyClass.myClassProp..NestedInheritor
         isSafeNavigation = false
         type = kotlin.ranges.ClosedFloatingPointRange<MyClass>
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.ranges.ClosedFloatingPointRange<MyClass>
         returnType = kotlin.Boolean
@@ -2504,7 +2453,6 @@ KtBinaryExpression(1242,1284): 'a !in MyClass.myClassProp..NestedInheritor'
         expression = MyClass.myClassProp..NestedInheritor
         isSafeNavigation = false
         type = kotlin.ranges.ClosedFloatingPointRange<MyClass>
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.ranges.ClosedRange<kotlin.Byte>
         returnType = kotlin.Boolean
@@ -2542,7 +2490,6 @@ KtBinaryExpression(1242,1284): 'a !in MyClass.myClassProp..NestedInheritor'
         expression = MyClass.myClassProp..NestedInheritor
         isSafeNavigation = false
         type = kotlin.ranges.ClosedFloatingPointRange<MyClass>
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.ranges.ClosedRange<kotlin.Byte>
         returnType = kotlin.Boolean
@@ -2580,7 +2527,6 @@ KtBinaryExpression(1242,1284): 'a !in MyClass.myClassProp..NestedInheritor'
         expression = MyClass.myClassProp..NestedInheritor
         isSafeNavigation = false
         type = kotlin.ranges.ClosedFloatingPointRange<MyClass>
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.ranges.ClosedRange<kotlin.Byte>
         returnType = kotlin.Boolean
@@ -2618,7 +2564,6 @@ KtBinaryExpression(1242,1284): 'a !in MyClass.myClassProp..NestedInheritor'
         expression = MyClass.myClassProp..NestedInheritor
         isSafeNavigation = false
         type = kotlin.ranges.ClosedFloatingPointRange<MyClass>
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.ranges.ClosedRange<kotlin.Double>
         returnType = kotlin.Boolean
@@ -2656,7 +2601,6 @@ KtBinaryExpression(1242,1284): 'a !in MyClass.myClassProp..NestedInheritor'
         expression = MyClass.myClassProp..NestedInheritor
         isSafeNavigation = false
         type = kotlin.ranges.ClosedFloatingPointRange<MyClass>
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.ranges.ClosedRange<kotlin.Float>
         returnType = kotlin.Boolean
@@ -2694,7 +2638,6 @@ KtBinaryExpression(1242,1284): 'a !in MyClass.myClassProp..NestedInheritor'
         expression = MyClass.myClassProp..NestedInheritor
         isSafeNavigation = false
         type = kotlin.ranges.ClosedFloatingPointRange<MyClass>
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.ranges.ClosedRange<kotlin.Int>
         returnType = kotlin.Boolean
@@ -2732,7 +2675,6 @@ KtBinaryExpression(1242,1284): 'a !in MyClass.myClassProp..NestedInheritor'
         expression = MyClass.myClassProp..NestedInheritor
         isSafeNavigation = false
         type = kotlin.ranges.ClosedFloatingPointRange<MyClass>
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.ranges.ClosedRange<kotlin.Int>
         returnType = kotlin.Boolean
@@ -2770,7 +2712,6 @@ KtBinaryExpression(1242,1284): 'a !in MyClass.myClassProp..NestedInheritor'
         expression = MyClass.myClassProp..NestedInheritor
         isSafeNavigation = false
         type = kotlin.ranges.ClosedFloatingPointRange<MyClass>
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.ranges.ClosedRange<kotlin.Int>
         returnType = kotlin.Boolean
@@ -2808,7 +2749,6 @@ KtBinaryExpression(1242,1284): 'a !in MyClass.myClassProp..NestedInheritor'
         expression = MyClass.myClassProp..NestedInheritor
         isSafeNavigation = false
         type = kotlin.ranges.ClosedFloatingPointRange<MyClass>
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.ranges.ClosedRange<kotlin.Long>
         returnType = kotlin.Boolean
@@ -2846,7 +2786,6 @@ KtBinaryExpression(1242,1284): 'a !in MyClass.myClassProp..NestedInheritor'
         expression = MyClass.myClassProp..NestedInheritor
         isSafeNavigation = false
         type = kotlin.ranges.ClosedFloatingPointRange<MyClass>
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.ranges.ClosedRange<kotlin.Long>
         returnType = kotlin.Boolean
@@ -2884,7 +2823,6 @@ KtBinaryExpression(1242,1284): 'a !in MyClass.myClassProp..NestedInheritor'
         expression = MyClass.myClassProp..NestedInheritor
         isSafeNavigation = false
         type = kotlin.ranges.ClosedFloatingPointRange<MyClass>
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.ranges.ClosedRange<kotlin.Long>
         returnType = kotlin.Boolean
@@ -2922,7 +2860,6 @@ KtBinaryExpression(1242,1284): 'a !in MyClass.myClassProp..NestedInheritor'
         expression = MyClass.myClassProp..NestedInheritor
         isSafeNavigation = false
         type = kotlin.ranges.ClosedFloatingPointRange<MyClass>
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.ranges.ClosedRange<kotlin.Short>
         returnType = kotlin.Boolean
@@ -2960,7 +2897,6 @@ KtBinaryExpression(1242,1284): 'a !in MyClass.myClassProp..NestedInheritor'
         expression = MyClass.myClassProp..NestedInheritor
         isSafeNavigation = false
         type = kotlin.ranges.ClosedFloatingPointRange<MyClass>
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.ranges.ClosedRange<kotlin.Short>
         returnType = kotlin.Boolean
@@ -2998,7 +2934,6 @@ KtBinaryExpression(1242,1284): 'a !in MyClass.myClassProp..NestedInheritor'
         expression = MyClass.myClassProp..NestedInheritor
         isSafeNavigation = false
         type = kotlin.ranges.ClosedFloatingPointRange<MyClass>
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.ranges.ClosedRange<kotlin.Short>
         returnType = kotlin.Boolean
@@ -3072,7 +3007,6 @@ KtOperationReferenceExpression(1244,1247): '!in'
         isSafeNavigation = false
         type = kotlin.ranges.ClosedFloatingPointRange<MyClass>
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -3108,7 +3042,6 @@ KtOperationReferenceExpression(1244,1247): '!in'
         expression = MyClass.myClassProp..NestedInheritor
         isSafeNavigation = false
         type = kotlin.ranges.ClosedFloatingPointRange<MyClass>
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = MyClass
         returnType = kotlin.Boolean
@@ -3146,7 +3079,6 @@ KtOperationReferenceExpression(1244,1247): '!in'
         expression = MyClass.myClassProp..NestedInheritor
         isSafeNavigation = false
         type = kotlin.ranges.ClosedFloatingPointRange<MyClass>
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.ranges.ClosedFloatingPointRange<MyClass>
         returnType = kotlin.Boolean
@@ -3187,7 +3119,6 @@ KtOperationReferenceExpression(1244,1247): '!in'
         expression = MyClass.myClassProp..NestedInheritor
         isSafeNavigation = false
         type = kotlin.ranges.ClosedFloatingPointRange<MyClass>
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.ranges.ClosedFloatingPointRange<MyClass>
         returnType = kotlin.Boolean
@@ -3227,7 +3158,6 @@ KtOperationReferenceExpression(1244,1247): '!in'
         expression = MyClass.myClassProp..NestedInheritor
         isSafeNavigation = false
         type = kotlin.ranges.ClosedFloatingPointRange<MyClass>
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.ranges.ClosedRange<kotlin.Byte>
         returnType = kotlin.Boolean
@@ -3265,7 +3195,6 @@ KtOperationReferenceExpression(1244,1247): '!in'
         expression = MyClass.myClassProp..NestedInheritor
         isSafeNavigation = false
         type = kotlin.ranges.ClosedFloatingPointRange<MyClass>
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.ranges.ClosedRange<kotlin.Byte>
         returnType = kotlin.Boolean
@@ -3303,7 +3232,6 @@ KtOperationReferenceExpression(1244,1247): '!in'
         expression = MyClass.myClassProp..NestedInheritor
         isSafeNavigation = false
         type = kotlin.ranges.ClosedFloatingPointRange<MyClass>
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.ranges.ClosedRange<kotlin.Byte>
         returnType = kotlin.Boolean
@@ -3341,7 +3269,6 @@ KtOperationReferenceExpression(1244,1247): '!in'
         expression = MyClass.myClassProp..NestedInheritor
         isSafeNavigation = false
         type = kotlin.ranges.ClosedFloatingPointRange<MyClass>
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.ranges.ClosedRange<kotlin.Double>
         returnType = kotlin.Boolean
@@ -3379,7 +3306,6 @@ KtOperationReferenceExpression(1244,1247): '!in'
         expression = MyClass.myClassProp..NestedInheritor
         isSafeNavigation = false
         type = kotlin.ranges.ClosedFloatingPointRange<MyClass>
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.ranges.ClosedRange<kotlin.Float>
         returnType = kotlin.Boolean
@@ -3417,7 +3343,6 @@ KtOperationReferenceExpression(1244,1247): '!in'
         expression = MyClass.myClassProp..NestedInheritor
         isSafeNavigation = false
         type = kotlin.ranges.ClosedFloatingPointRange<MyClass>
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.ranges.ClosedRange<kotlin.Int>
         returnType = kotlin.Boolean
@@ -3455,7 +3380,6 @@ KtOperationReferenceExpression(1244,1247): '!in'
         expression = MyClass.myClassProp..NestedInheritor
         isSafeNavigation = false
         type = kotlin.ranges.ClosedFloatingPointRange<MyClass>
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.ranges.ClosedRange<kotlin.Int>
         returnType = kotlin.Boolean
@@ -3493,7 +3417,6 @@ KtOperationReferenceExpression(1244,1247): '!in'
         expression = MyClass.myClassProp..NestedInheritor
         isSafeNavigation = false
         type = kotlin.ranges.ClosedFloatingPointRange<MyClass>
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.ranges.ClosedRange<kotlin.Int>
         returnType = kotlin.Boolean
@@ -3531,7 +3454,6 @@ KtOperationReferenceExpression(1244,1247): '!in'
         expression = MyClass.myClassProp..NestedInheritor
         isSafeNavigation = false
         type = kotlin.ranges.ClosedFloatingPointRange<MyClass>
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.ranges.ClosedRange<kotlin.Long>
         returnType = kotlin.Boolean
@@ -3569,7 +3491,6 @@ KtOperationReferenceExpression(1244,1247): '!in'
         expression = MyClass.myClassProp..NestedInheritor
         isSafeNavigation = false
         type = kotlin.ranges.ClosedFloatingPointRange<MyClass>
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.ranges.ClosedRange<kotlin.Long>
         returnType = kotlin.Boolean
@@ -3607,7 +3528,6 @@ KtOperationReferenceExpression(1244,1247): '!in'
         expression = MyClass.myClassProp..NestedInheritor
         isSafeNavigation = false
         type = kotlin.ranges.ClosedFloatingPointRange<MyClass>
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.ranges.ClosedRange<kotlin.Long>
         returnType = kotlin.Boolean
@@ -3645,7 +3565,6 @@ KtOperationReferenceExpression(1244,1247): '!in'
         expression = MyClass.myClassProp..NestedInheritor
         isSafeNavigation = false
         type = kotlin.ranges.ClosedFloatingPointRange<MyClass>
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.ranges.ClosedRange<kotlin.Short>
         returnType = kotlin.Boolean
@@ -3683,7 +3602,6 @@ KtOperationReferenceExpression(1244,1247): '!in'
         expression = MyClass.myClassProp..NestedInheritor
         isSafeNavigation = false
         type = kotlin.ranges.ClosedFloatingPointRange<MyClass>
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.ranges.ClosedRange<kotlin.Short>
         returnType = kotlin.Boolean
@@ -3721,7 +3639,6 @@ KtOperationReferenceExpression(1244,1247): '!in'
         expression = MyClass.myClassProp..NestedInheritor
         isSafeNavigation = false
         type = kotlin.ranges.ClosedFloatingPointRange<MyClass>
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.ranges.ClosedRange<kotlin.Short>
         returnType = kotlin.Boolean
@@ -3760,7 +3677,6 @@ KtBinaryExpression(1248,1284): 'MyClass.myClassProp..NestedInheritor'
         expression = MyClass.myClassProp
         isSafeNavigation = false
         type = MyClass
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = MyClass
         returnType = kotlin.ranges.ClosedFloatingPointRange<MyClass>
@@ -3796,7 +3712,6 @@ KtBinaryExpression(1248,1284): 'MyClass.myClassProp..NestedInheritor'
         expression = MyClass.myClassProp
         isSafeNavigation = false
         type = MyClass
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = MyClass
         returnType = kotlin.ranges.ClosedRange<MyClass>
@@ -3847,7 +3762,6 @@ KtNameReferenceExpression(1248,1255): 'MyClass'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MyClass
@@ -3898,7 +3812,6 @@ KtOperationReferenceExpression(1267,1269): '..'
         expression = MyClass.myClassProp
         isSafeNavigation = false
         type = MyClass
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = MyClass
         returnType = kotlin.ranges.ClosedFloatingPointRange<MyClass>
@@ -3934,7 +3847,6 @@ KtOperationReferenceExpression(1267,1269): '..'
         expression = MyClass.myClassProp
         isSafeNavigation = false
         type = MyClass
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = MyClass
         returnType = kotlin.ranges.ClosedRange<MyClass>
@@ -3964,7 +3876,6 @@ KtNameReferenceExpression(1269,1284): 'NestedInheritor'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MyClass.NestedInheritor

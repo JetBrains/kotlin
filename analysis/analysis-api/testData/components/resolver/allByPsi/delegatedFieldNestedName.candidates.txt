@@ -125,7 +125,6 @@ KtNameReferenceExpression(39,55): 'AnnotationTarget'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.annotation.AnnotationTarget
@@ -341,7 +340,6 @@ KtBinaryExpression(231,240): '0 + outer'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Double
@@ -378,7 +376,6 @@ KtBinaryExpression(231,240): '0 + outer'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Float
@@ -415,7 +412,6 @@ KtBinaryExpression(231,240): '0 + outer'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
@@ -452,7 +448,6 @@ KtBinaryExpression(231,240): '0 + outer'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
@@ -488,7 +483,6 @@ KtBinaryExpression(231,240): '0 + outer'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
@@ -525,7 +519,6 @@ KtBinaryExpression(231,240): '0 + outer'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Long
@@ -566,7 +559,6 @@ KtOperationReferenceExpression(233,234): '+'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Double
@@ -603,7 +595,6 @@ KtOperationReferenceExpression(233,234): '+'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Float
@@ -640,7 +631,6 @@ KtOperationReferenceExpression(233,234): '+'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
@@ -677,7 +667,6 @@ KtOperationReferenceExpression(233,234): '+'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
@@ -713,7 +702,6 @@ KtOperationReferenceExpression(233,234): '+'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
@@ -750,7 +738,6 @@ KtOperationReferenceExpression(233,234): '+'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Long
@@ -905,7 +892,6 @@ KtBinaryExpression(253,262): '1 + outer'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Double
@@ -942,7 +928,6 @@ KtBinaryExpression(253,262): '1 + outer'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Float
@@ -979,7 +964,6 @@ KtBinaryExpression(253,262): '1 + outer'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
@@ -1016,7 +1000,6 @@ KtBinaryExpression(253,262): '1 + outer'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
@@ -1052,7 +1035,6 @@ KtBinaryExpression(253,262): '1 + outer'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
@@ -1089,7 +1071,6 @@ KtBinaryExpression(253,262): '1 + outer'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Long
@@ -1130,7 +1111,6 @@ KtOperationReferenceExpression(255,256): '+'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Double
@@ -1167,7 +1147,6 @@ KtOperationReferenceExpression(255,256): '+'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Float
@@ -1204,7 +1183,6 @@ KtOperationReferenceExpression(255,256): '+'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
@@ -1241,7 +1219,6 @@ KtOperationReferenceExpression(255,256): '+'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
@@ -1277,7 +1254,6 @@ KtOperationReferenceExpression(255,256): '+'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
@@ -1314,7 +1290,6 @@ KtOperationReferenceExpression(255,256): '+'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Long
@@ -1469,7 +1444,6 @@ KtBinaryExpression(275,284): '2 + outer'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Double
@@ -1506,7 +1480,6 @@ KtBinaryExpression(275,284): '2 + outer'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Float
@@ -1543,7 +1516,6 @@ KtBinaryExpression(275,284): '2 + outer'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
@@ -1580,7 +1552,6 @@ KtBinaryExpression(275,284): '2 + outer'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
@@ -1616,7 +1587,6 @@ KtBinaryExpression(275,284): '2 + outer'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
@@ -1653,7 +1623,6 @@ KtBinaryExpression(275,284): '2 + outer'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Long
@@ -1694,7 +1663,6 @@ KtOperationReferenceExpression(277,278): '+'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Double
@@ -1731,7 +1699,6 @@ KtOperationReferenceExpression(277,278): '+'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Float
@@ -1768,7 +1735,6 @@ KtOperationReferenceExpression(277,278): '+'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
@@ -1805,7 +1771,6 @@ KtOperationReferenceExpression(277,278): '+'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
@@ -1841,7 +1806,6 @@ KtOperationReferenceExpression(277,278): '+'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
@@ -1878,7 +1842,6 @@ KtOperationReferenceExpression(277,278): '+'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Long
@@ -1929,7 +1892,6 @@ KtNameReferenceExpression(295,304): 'Companion'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = second.MyClass.Companion
@@ -2049,7 +2011,6 @@ KtBinaryExpression(316,325): '4 + outer'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Double
@@ -2086,7 +2047,6 @@ KtBinaryExpression(316,325): '4 + outer'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Float
@@ -2123,7 +2083,6 @@ KtBinaryExpression(316,325): '4 + outer'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
@@ -2160,7 +2119,6 @@ KtBinaryExpression(316,325): '4 + outer'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
@@ -2196,7 +2154,6 @@ KtBinaryExpression(316,325): '4 + outer'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
@@ -2233,7 +2190,6 @@ KtBinaryExpression(316,325): '4 + outer'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Long
@@ -2274,7 +2230,6 @@ KtOperationReferenceExpression(318,319): '+'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Double
@@ -2311,7 +2266,6 @@ KtOperationReferenceExpression(318,319): '+'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Float
@@ -2348,7 +2302,6 @@ KtOperationReferenceExpression(318,319): '+'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
@@ -2385,7 +2338,6 @@ KtOperationReferenceExpression(318,319): '+'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
@@ -2421,7 +2373,6 @@ KtOperationReferenceExpression(318,319): '+'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
@@ -2458,7 +2409,6 @@ KtOperationReferenceExpression(318,319): '+'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Long
@@ -2613,7 +2563,6 @@ KtBinaryExpression(340,349): '5 + outer'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Double
@@ -2650,7 +2599,6 @@ KtBinaryExpression(340,349): '5 + outer'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Float
@@ -2687,7 +2635,6 @@ KtBinaryExpression(340,349): '5 + outer'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
@@ -2724,7 +2671,6 @@ KtBinaryExpression(340,349): '5 + outer'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
@@ -2760,7 +2706,6 @@ KtBinaryExpression(340,349): '5 + outer'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
@@ -2797,7 +2742,6 @@ KtBinaryExpression(340,349): '5 + outer'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Long
@@ -2838,7 +2782,6 @@ KtOperationReferenceExpression(342,343): '+'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Double
@@ -2875,7 +2818,6 @@ KtOperationReferenceExpression(342,343): '+'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Float
@@ -2912,7 +2854,6 @@ KtOperationReferenceExpression(342,343): '+'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
@@ -2949,7 +2890,6 @@ KtOperationReferenceExpression(342,343): '+'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
@@ -2985,7 +2925,6 @@ KtOperationReferenceExpression(342,343): '+'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
@@ -3022,7 +2961,6 @@ KtOperationReferenceExpression(342,343): '+'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Long
@@ -3073,7 +3011,6 @@ KtNameReferenceExpression(362,374): 'NestedObject'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = second.MyClass.NestedObject
@@ -3205,7 +3142,6 @@ KtBinaryExpression(406,415): '6 + inner'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Double
@@ -3242,7 +3178,6 @@ KtBinaryExpression(406,415): '6 + inner'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Float
@@ -3279,7 +3214,6 @@ KtBinaryExpression(406,415): '6 + inner'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
@@ -3316,7 +3250,6 @@ KtBinaryExpression(406,415): '6 + inner'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
@@ -3353,7 +3286,6 @@ KtBinaryExpression(406,415): '6 + inner'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
@@ -3390,7 +3322,6 @@ KtBinaryExpression(406,415): '6 + inner'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Long
@@ -3427,7 +3358,6 @@ KtBinaryExpression(406,415): '6 + inner'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = java.math.BigDecimal
         returnType = java.math.BigDecimal
@@ -3465,7 +3395,6 @@ KtBinaryExpression(406,415): '6 + inner'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = java.math.BigInteger
         returnType = java.math.BigInteger
@@ -3503,7 +3432,6 @@ KtBinaryExpression(406,415): '6 + inner'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.Array<T>
         returnType = kotlin.Array<T>
@@ -3541,7 +3469,6 @@ KtBinaryExpression(406,415): '6 + inner'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.Array<T>
         returnType = kotlin.Array<T>
@@ -3579,7 +3506,6 @@ KtBinaryExpression(406,415): '6 + inner'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.Array<T>
         returnType = kotlin.Array<T>
@@ -3617,7 +3543,6 @@ KtBinaryExpression(406,415): '6 + inner'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.BooleanArray
         returnType = kotlin.BooleanArray
@@ -3655,7 +3580,6 @@ KtBinaryExpression(406,415): '6 + inner'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.BooleanArray
         returnType = kotlin.BooleanArray
@@ -3693,7 +3617,6 @@ KtBinaryExpression(406,415): '6 + inner'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.BooleanArray
         returnType = kotlin.BooleanArray
@@ -3731,7 +3654,6 @@ KtBinaryExpression(406,415): '6 + inner'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.ByteArray
         returnType = kotlin.ByteArray
@@ -3769,7 +3691,6 @@ KtBinaryExpression(406,415): '6 + inner'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.ByteArray
         returnType = kotlin.ByteArray
@@ -3807,7 +3728,6 @@ KtBinaryExpression(406,415): '6 + inner'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.ByteArray
         returnType = kotlin.ByteArray
@@ -3845,7 +3765,6 @@ KtBinaryExpression(406,415): '6 + inner'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.Char
         returnType = kotlin.String
@@ -3883,7 +3802,6 @@ KtBinaryExpression(406,415): '6 + inner'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.CharArray
         returnType = kotlin.CharArray
@@ -3921,7 +3839,6 @@ KtBinaryExpression(406,415): '6 + inner'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.CharArray
         returnType = kotlin.CharArray
@@ -3959,7 +3876,6 @@ KtBinaryExpression(406,415): '6 + inner'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.CharArray
         returnType = kotlin.CharArray
@@ -3997,7 +3913,6 @@ KtBinaryExpression(406,415): '6 + inner'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.DoubleArray
         returnType = kotlin.DoubleArray
@@ -4035,7 +3950,6 @@ KtBinaryExpression(406,415): '6 + inner'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.DoubleArray
         returnType = kotlin.DoubleArray
@@ -4073,7 +3987,6 @@ KtBinaryExpression(406,415): '6 + inner'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.DoubleArray
         returnType = kotlin.DoubleArray
@@ -4111,7 +4024,6 @@ KtBinaryExpression(406,415): '6 + inner'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.FloatArray
         returnType = kotlin.FloatArray
@@ -4149,7 +4061,6 @@ KtBinaryExpression(406,415): '6 + inner'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.FloatArray
         returnType = kotlin.FloatArray
@@ -4187,7 +4098,6 @@ KtBinaryExpression(406,415): '6 + inner'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.FloatArray
         returnType = kotlin.FloatArray
@@ -4225,7 +4135,6 @@ KtBinaryExpression(406,415): '6 + inner'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.IntArray
         returnType = kotlin.IntArray
@@ -4263,7 +4172,6 @@ KtBinaryExpression(406,415): '6 + inner'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.IntArray
         returnType = kotlin.IntArray
@@ -4301,7 +4209,6 @@ KtBinaryExpression(406,415): '6 + inner'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.IntArray
         returnType = kotlin.IntArray
@@ -4339,7 +4246,6 @@ KtBinaryExpression(406,415): '6 + inner'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.LongArray
         returnType = kotlin.LongArray
@@ -4377,7 +4283,6 @@ KtBinaryExpression(406,415): '6 + inner'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.LongArray
         returnType = kotlin.LongArray
@@ -4415,7 +4320,6 @@ KtBinaryExpression(406,415): '6 + inner'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.LongArray
         returnType = kotlin.LongArray
@@ -4453,7 +4357,6 @@ KtBinaryExpression(406,415): '6 + inner'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.ShortArray
         returnType = kotlin.ShortArray
@@ -4491,7 +4394,6 @@ KtBinaryExpression(406,415): '6 + inner'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.ShortArray
         returnType = kotlin.ShortArray
@@ -4529,7 +4431,6 @@ KtBinaryExpression(406,415): '6 + inner'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.ShortArray
         returnType = kotlin.ShortArray
@@ -4567,7 +4468,6 @@ KtBinaryExpression(406,415): '6 + inner'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.String?
         returnType = kotlin.String
@@ -4605,7 +4505,6 @@ KtBinaryExpression(406,415): '6 + inner'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.UByteArray
         returnType = kotlin.UByteArray
@@ -4643,7 +4542,6 @@ KtBinaryExpression(406,415): '6 + inner'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.UByteArray
         returnType = kotlin.UByteArray
@@ -4681,7 +4579,6 @@ KtBinaryExpression(406,415): '6 + inner'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.UByteArray
         returnType = kotlin.UByteArray
@@ -4719,7 +4616,6 @@ KtBinaryExpression(406,415): '6 + inner'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.UIntArray
         returnType = kotlin.UIntArray
@@ -4757,7 +4653,6 @@ KtBinaryExpression(406,415): '6 + inner'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.UIntArray
         returnType = kotlin.UIntArray
@@ -4795,7 +4690,6 @@ KtBinaryExpression(406,415): '6 + inner'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.UIntArray
         returnType = kotlin.UIntArray
@@ -4833,7 +4727,6 @@ KtBinaryExpression(406,415): '6 + inner'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.ULongArray
         returnType = kotlin.ULongArray
@@ -4871,7 +4764,6 @@ KtBinaryExpression(406,415): '6 + inner'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.ULongArray
         returnType = kotlin.ULongArray
@@ -4909,7 +4801,6 @@ KtBinaryExpression(406,415): '6 + inner'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.ULongArray
         returnType = kotlin.ULongArray
@@ -4947,7 +4838,6 @@ KtBinaryExpression(406,415): '6 + inner'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.UShortArray
         returnType = kotlin.UShortArray
@@ -4985,7 +4875,6 @@ KtBinaryExpression(406,415): '6 + inner'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.UShortArray
         returnType = kotlin.UShortArray
@@ -5023,7 +4912,6 @@ KtBinaryExpression(406,415): '6 + inner'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.UShortArray
         returnType = kotlin.UShortArray
@@ -5061,7 +4949,6 @@ KtBinaryExpression(406,415): '6 + inner'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Collection<T>
         returnType = kotlin.collections.List<T>
@@ -5099,7 +4986,6 @@ KtBinaryExpression(406,415): '6 + inner'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Collection<T>
         returnType = kotlin.collections.List<T>
@@ -5137,7 +5023,6 @@ KtBinaryExpression(406,415): '6 + inner'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Collection<T>
         returnType = kotlin.collections.List<T>
@@ -5175,7 +5060,6 @@ KtBinaryExpression(406,415): '6 + inner'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Collection<T>
         returnType = kotlin.collections.List<T>
@@ -5213,7 +5097,6 @@ KtBinaryExpression(406,415): '6 + inner'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Iterable<T>
         returnType = kotlin.collections.List<T>
@@ -5251,7 +5134,6 @@ KtBinaryExpression(406,415): '6 + inner'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Iterable<T>
         returnType = kotlin.collections.List<T>
@@ -5289,7 +5171,6 @@ KtBinaryExpression(406,415): '6 + inner'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Iterable<T>
         returnType = kotlin.collections.List<T>
@@ -5327,7 +5208,6 @@ KtBinaryExpression(406,415): '6 + inner'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Iterable<T>
         returnType = kotlin.collections.List<T>
@@ -5365,7 +5245,6 @@ KtBinaryExpression(406,415): '6 + inner'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Map<out K, V>
         returnType = kotlin.collections.Map<K, V>
@@ -5403,7 +5282,6 @@ KtBinaryExpression(406,415): '6 + inner'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Map<out K, V>
         returnType = kotlin.collections.Map<K, V>
@@ -5441,7 +5319,6 @@ KtBinaryExpression(406,415): '6 + inner'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Map<out K, V>
         returnType = kotlin.collections.Map<K, V>
@@ -5479,7 +5356,6 @@ KtBinaryExpression(406,415): '6 + inner'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Map<out K, V>
         returnType = kotlin.collections.Map<K, V>
@@ -5517,7 +5393,6 @@ KtBinaryExpression(406,415): '6 + inner'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Map<out K, V>
         returnType = kotlin.collections.Map<K, V>
@@ -5555,7 +5430,6 @@ KtBinaryExpression(406,415): '6 + inner'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Set<T>
         returnType = kotlin.collections.Set<T>
@@ -5593,7 +5467,6 @@ KtBinaryExpression(406,415): '6 + inner'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Set<T>
         returnType = kotlin.collections.Set<T>
@@ -5631,7 +5504,6 @@ KtBinaryExpression(406,415): '6 + inner'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Set<T>
         returnType = kotlin.collections.Set<T>
@@ -5669,7 +5541,6 @@ KtBinaryExpression(406,415): '6 + inner'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Set<T>
         returnType = kotlin.collections.Set<T>
@@ -5707,7 +5578,6 @@ KtBinaryExpression(406,415): '6 + inner'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.sequences.Sequence<T>
         returnType = kotlin.sequences.Sequence<T>
@@ -5745,7 +5615,6 @@ KtBinaryExpression(406,415): '6 + inner'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.sequences.Sequence<T>
         returnType = kotlin.sequences.Sequence<T>
@@ -5783,7 +5652,6 @@ KtBinaryExpression(406,415): '6 + inner'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.sequences.Sequence<T>
         returnType = kotlin.sequences.Sequence<T>
@@ -5821,7 +5689,6 @@ KtBinaryExpression(406,415): '6 + inner'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.sequences.Sequence<T>
         returnType = kotlin.sequences.Sequence<T>
@@ -5863,7 +5730,6 @@ KtOperationReferenceExpression(408,409): '+'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Double
@@ -5900,7 +5766,6 @@ KtOperationReferenceExpression(408,409): '+'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Float
@@ -5937,7 +5802,6 @@ KtOperationReferenceExpression(408,409): '+'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
@@ -5974,7 +5838,6 @@ KtOperationReferenceExpression(408,409): '+'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
@@ -6011,7 +5874,6 @@ KtOperationReferenceExpression(408,409): '+'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
@@ -6048,7 +5910,6 @@ KtOperationReferenceExpression(408,409): '+'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Long
@@ -6085,7 +5946,6 @@ KtOperationReferenceExpression(408,409): '+'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = java.math.BigDecimal
         returnType = java.math.BigDecimal
@@ -6123,7 +5983,6 @@ KtOperationReferenceExpression(408,409): '+'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = java.math.BigInteger
         returnType = java.math.BigInteger
@@ -6161,7 +6020,6 @@ KtOperationReferenceExpression(408,409): '+'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.Array<T>
         returnType = kotlin.Array<T>
@@ -6199,7 +6057,6 @@ KtOperationReferenceExpression(408,409): '+'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.Array<T>
         returnType = kotlin.Array<T>
@@ -6237,7 +6094,6 @@ KtOperationReferenceExpression(408,409): '+'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.Array<T>
         returnType = kotlin.Array<T>
@@ -6275,7 +6131,6 @@ KtOperationReferenceExpression(408,409): '+'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.BooleanArray
         returnType = kotlin.BooleanArray
@@ -6313,7 +6168,6 @@ KtOperationReferenceExpression(408,409): '+'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.BooleanArray
         returnType = kotlin.BooleanArray
@@ -6351,7 +6205,6 @@ KtOperationReferenceExpression(408,409): '+'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.BooleanArray
         returnType = kotlin.BooleanArray
@@ -6389,7 +6242,6 @@ KtOperationReferenceExpression(408,409): '+'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.ByteArray
         returnType = kotlin.ByteArray
@@ -6427,7 +6279,6 @@ KtOperationReferenceExpression(408,409): '+'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.ByteArray
         returnType = kotlin.ByteArray
@@ -6465,7 +6316,6 @@ KtOperationReferenceExpression(408,409): '+'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.ByteArray
         returnType = kotlin.ByteArray
@@ -6503,7 +6353,6 @@ KtOperationReferenceExpression(408,409): '+'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.Char
         returnType = kotlin.String
@@ -6541,7 +6390,6 @@ KtOperationReferenceExpression(408,409): '+'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.CharArray
         returnType = kotlin.CharArray
@@ -6579,7 +6427,6 @@ KtOperationReferenceExpression(408,409): '+'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.CharArray
         returnType = kotlin.CharArray
@@ -6617,7 +6464,6 @@ KtOperationReferenceExpression(408,409): '+'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.CharArray
         returnType = kotlin.CharArray
@@ -6655,7 +6501,6 @@ KtOperationReferenceExpression(408,409): '+'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.DoubleArray
         returnType = kotlin.DoubleArray
@@ -6693,7 +6538,6 @@ KtOperationReferenceExpression(408,409): '+'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.DoubleArray
         returnType = kotlin.DoubleArray
@@ -6731,7 +6575,6 @@ KtOperationReferenceExpression(408,409): '+'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.DoubleArray
         returnType = kotlin.DoubleArray
@@ -6769,7 +6612,6 @@ KtOperationReferenceExpression(408,409): '+'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.FloatArray
         returnType = kotlin.FloatArray
@@ -6807,7 +6649,6 @@ KtOperationReferenceExpression(408,409): '+'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.FloatArray
         returnType = kotlin.FloatArray
@@ -6845,7 +6686,6 @@ KtOperationReferenceExpression(408,409): '+'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.FloatArray
         returnType = kotlin.FloatArray
@@ -6883,7 +6723,6 @@ KtOperationReferenceExpression(408,409): '+'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.IntArray
         returnType = kotlin.IntArray
@@ -6921,7 +6760,6 @@ KtOperationReferenceExpression(408,409): '+'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.IntArray
         returnType = kotlin.IntArray
@@ -6959,7 +6797,6 @@ KtOperationReferenceExpression(408,409): '+'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.IntArray
         returnType = kotlin.IntArray
@@ -6997,7 +6834,6 @@ KtOperationReferenceExpression(408,409): '+'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.LongArray
         returnType = kotlin.LongArray
@@ -7035,7 +6871,6 @@ KtOperationReferenceExpression(408,409): '+'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.LongArray
         returnType = kotlin.LongArray
@@ -7073,7 +6908,6 @@ KtOperationReferenceExpression(408,409): '+'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.LongArray
         returnType = kotlin.LongArray
@@ -7111,7 +6945,6 @@ KtOperationReferenceExpression(408,409): '+'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.ShortArray
         returnType = kotlin.ShortArray
@@ -7149,7 +6982,6 @@ KtOperationReferenceExpression(408,409): '+'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.ShortArray
         returnType = kotlin.ShortArray
@@ -7187,7 +7019,6 @@ KtOperationReferenceExpression(408,409): '+'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.ShortArray
         returnType = kotlin.ShortArray
@@ -7225,7 +7056,6 @@ KtOperationReferenceExpression(408,409): '+'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.String?
         returnType = kotlin.String
@@ -7263,7 +7093,6 @@ KtOperationReferenceExpression(408,409): '+'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.UByteArray
         returnType = kotlin.UByteArray
@@ -7301,7 +7130,6 @@ KtOperationReferenceExpression(408,409): '+'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.UByteArray
         returnType = kotlin.UByteArray
@@ -7339,7 +7167,6 @@ KtOperationReferenceExpression(408,409): '+'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.UByteArray
         returnType = kotlin.UByteArray
@@ -7377,7 +7204,6 @@ KtOperationReferenceExpression(408,409): '+'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.UIntArray
         returnType = kotlin.UIntArray
@@ -7415,7 +7241,6 @@ KtOperationReferenceExpression(408,409): '+'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.UIntArray
         returnType = kotlin.UIntArray
@@ -7453,7 +7278,6 @@ KtOperationReferenceExpression(408,409): '+'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.UIntArray
         returnType = kotlin.UIntArray
@@ -7491,7 +7315,6 @@ KtOperationReferenceExpression(408,409): '+'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.ULongArray
         returnType = kotlin.ULongArray
@@ -7529,7 +7352,6 @@ KtOperationReferenceExpression(408,409): '+'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.ULongArray
         returnType = kotlin.ULongArray
@@ -7567,7 +7389,6 @@ KtOperationReferenceExpression(408,409): '+'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.ULongArray
         returnType = kotlin.ULongArray
@@ -7605,7 +7426,6 @@ KtOperationReferenceExpression(408,409): '+'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.UShortArray
         returnType = kotlin.UShortArray
@@ -7643,7 +7463,6 @@ KtOperationReferenceExpression(408,409): '+'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.UShortArray
         returnType = kotlin.UShortArray
@@ -7681,7 +7500,6 @@ KtOperationReferenceExpression(408,409): '+'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.UShortArray
         returnType = kotlin.UShortArray
@@ -7719,7 +7537,6 @@ KtOperationReferenceExpression(408,409): '+'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Collection<T>
         returnType = kotlin.collections.List<T>
@@ -7757,7 +7574,6 @@ KtOperationReferenceExpression(408,409): '+'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Collection<T>
         returnType = kotlin.collections.List<T>
@@ -7795,7 +7611,6 @@ KtOperationReferenceExpression(408,409): '+'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Collection<T>
         returnType = kotlin.collections.List<T>
@@ -7833,7 +7648,6 @@ KtOperationReferenceExpression(408,409): '+'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Collection<T>
         returnType = kotlin.collections.List<T>
@@ -7871,7 +7685,6 @@ KtOperationReferenceExpression(408,409): '+'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Iterable<T>
         returnType = kotlin.collections.List<T>
@@ -7909,7 +7722,6 @@ KtOperationReferenceExpression(408,409): '+'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Iterable<T>
         returnType = kotlin.collections.List<T>
@@ -7947,7 +7759,6 @@ KtOperationReferenceExpression(408,409): '+'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Iterable<T>
         returnType = kotlin.collections.List<T>
@@ -7985,7 +7796,6 @@ KtOperationReferenceExpression(408,409): '+'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Iterable<T>
         returnType = kotlin.collections.List<T>
@@ -8023,7 +7833,6 @@ KtOperationReferenceExpression(408,409): '+'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Map<out K, V>
         returnType = kotlin.collections.Map<K, V>
@@ -8061,7 +7870,6 @@ KtOperationReferenceExpression(408,409): '+'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Map<out K, V>
         returnType = kotlin.collections.Map<K, V>
@@ -8099,7 +7907,6 @@ KtOperationReferenceExpression(408,409): '+'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Map<out K, V>
         returnType = kotlin.collections.Map<K, V>
@@ -8137,7 +7944,6 @@ KtOperationReferenceExpression(408,409): '+'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Map<out K, V>
         returnType = kotlin.collections.Map<K, V>
@@ -8175,7 +7981,6 @@ KtOperationReferenceExpression(408,409): '+'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Map<out K, V>
         returnType = kotlin.collections.Map<K, V>
@@ -8213,7 +8018,6 @@ KtOperationReferenceExpression(408,409): '+'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Set<T>
         returnType = kotlin.collections.Set<T>
@@ -8251,7 +8055,6 @@ KtOperationReferenceExpression(408,409): '+'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Set<T>
         returnType = kotlin.collections.Set<T>
@@ -8289,7 +8092,6 @@ KtOperationReferenceExpression(408,409): '+'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Set<T>
         returnType = kotlin.collections.Set<T>
@@ -8327,7 +8129,6 @@ KtOperationReferenceExpression(408,409): '+'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Set<T>
         returnType = kotlin.collections.Set<T>
@@ -8365,7 +8166,6 @@ KtOperationReferenceExpression(408,409): '+'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.sequences.Sequence<T>
         returnType = kotlin.sequences.Sequence<T>
@@ -8403,7 +8203,6 @@ KtOperationReferenceExpression(408,409): '+'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.sequences.Sequence<T>
         returnType = kotlin.sequences.Sequence<T>
@@ -8441,7 +8240,6 @@ KtOperationReferenceExpression(408,409): '+'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.sequences.Sequence<T>
         returnType = kotlin.sequences.Sequence<T>
@@ -8479,7 +8277,6 @@ KtOperationReferenceExpression(408,409): '+'
         expression = 6
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.sequences.Sequence<T>
         returnType = kotlin.sequences.Sequence<T>
@@ -8635,7 +8432,6 @@ KtBinaryExpression(428,437): '7 + inner'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Double
@@ -8672,7 +8468,6 @@ KtBinaryExpression(428,437): '7 + inner'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Float
@@ -8709,7 +8504,6 @@ KtBinaryExpression(428,437): '7 + inner'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
@@ -8746,7 +8540,6 @@ KtBinaryExpression(428,437): '7 + inner'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
@@ -8783,7 +8576,6 @@ KtBinaryExpression(428,437): '7 + inner'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
@@ -8820,7 +8612,6 @@ KtBinaryExpression(428,437): '7 + inner'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Long
@@ -8857,7 +8648,6 @@ KtBinaryExpression(428,437): '7 + inner'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = java.math.BigDecimal
         returnType = java.math.BigDecimal
@@ -8895,7 +8685,6 @@ KtBinaryExpression(428,437): '7 + inner'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = java.math.BigInteger
         returnType = java.math.BigInteger
@@ -8933,7 +8722,6 @@ KtBinaryExpression(428,437): '7 + inner'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.Array<T>
         returnType = kotlin.Array<T>
@@ -8971,7 +8759,6 @@ KtBinaryExpression(428,437): '7 + inner'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.Array<T>
         returnType = kotlin.Array<T>
@@ -9009,7 +8796,6 @@ KtBinaryExpression(428,437): '7 + inner'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.Array<T>
         returnType = kotlin.Array<T>
@@ -9047,7 +8833,6 @@ KtBinaryExpression(428,437): '7 + inner'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.BooleanArray
         returnType = kotlin.BooleanArray
@@ -9085,7 +8870,6 @@ KtBinaryExpression(428,437): '7 + inner'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.BooleanArray
         returnType = kotlin.BooleanArray
@@ -9123,7 +8907,6 @@ KtBinaryExpression(428,437): '7 + inner'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.BooleanArray
         returnType = kotlin.BooleanArray
@@ -9161,7 +8944,6 @@ KtBinaryExpression(428,437): '7 + inner'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.ByteArray
         returnType = kotlin.ByteArray
@@ -9199,7 +8981,6 @@ KtBinaryExpression(428,437): '7 + inner'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.ByteArray
         returnType = kotlin.ByteArray
@@ -9237,7 +9018,6 @@ KtBinaryExpression(428,437): '7 + inner'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.ByteArray
         returnType = kotlin.ByteArray
@@ -9275,7 +9055,6 @@ KtBinaryExpression(428,437): '7 + inner'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.Char
         returnType = kotlin.String
@@ -9313,7 +9092,6 @@ KtBinaryExpression(428,437): '7 + inner'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.CharArray
         returnType = kotlin.CharArray
@@ -9351,7 +9129,6 @@ KtBinaryExpression(428,437): '7 + inner'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.CharArray
         returnType = kotlin.CharArray
@@ -9389,7 +9166,6 @@ KtBinaryExpression(428,437): '7 + inner'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.CharArray
         returnType = kotlin.CharArray
@@ -9427,7 +9203,6 @@ KtBinaryExpression(428,437): '7 + inner'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.DoubleArray
         returnType = kotlin.DoubleArray
@@ -9465,7 +9240,6 @@ KtBinaryExpression(428,437): '7 + inner'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.DoubleArray
         returnType = kotlin.DoubleArray
@@ -9503,7 +9277,6 @@ KtBinaryExpression(428,437): '7 + inner'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.DoubleArray
         returnType = kotlin.DoubleArray
@@ -9541,7 +9314,6 @@ KtBinaryExpression(428,437): '7 + inner'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.FloatArray
         returnType = kotlin.FloatArray
@@ -9579,7 +9351,6 @@ KtBinaryExpression(428,437): '7 + inner'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.FloatArray
         returnType = kotlin.FloatArray
@@ -9617,7 +9388,6 @@ KtBinaryExpression(428,437): '7 + inner'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.FloatArray
         returnType = kotlin.FloatArray
@@ -9655,7 +9425,6 @@ KtBinaryExpression(428,437): '7 + inner'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.IntArray
         returnType = kotlin.IntArray
@@ -9693,7 +9462,6 @@ KtBinaryExpression(428,437): '7 + inner'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.IntArray
         returnType = kotlin.IntArray
@@ -9731,7 +9499,6 @@ KtBinaryExpression(428,437): '7 + inner'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.IntArray
         returnType = kotlin.IntArray
@@ -9769,7 +9536,6 @@ KtBinaryExpression(428,437): '7 + inner'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.LongArray
         returnType = kotlin.LongArray
@@ -9807,7 +9573,6 @@ KtBinaryExpression(428,437): '7 + inner'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.LongArray
         returnType = kotlin.LongArray
@@ -9845,7 +9610,6 @@ KtBinaryExpression(428,437): '7 + inner'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.LongArray
         returnType = kotlin.LongArray
@@ -9883,7 +9647,6 @@ KtBinaryExpression(428,437): '7 + inner'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.ShortArray
         returnType = kotlin.ShortArray
@@ -9921,7 +9684,6 @@ KtBinaryExpression(428,437): '7 + inner'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.ShortArray
         returnType = kotlin.ShortArray
@@ -9959,7 +9721,6 @@ KtBinaryExpression(428,437): '7 + inner'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.ShortArray
         returnType = kotlin.ShortArray
@@ -9997,7 +9758,6 @@ KtBinaryExpression(428,437): '7 + inner'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.String?
         returnType = kotlin.String
@@ -10035,7 +9795,6 @@ KtBinaryExpression(428,437): '7 + inner'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.UByteArray
         returnType = kotlin.UByteArray
@@ -10073,7 +9832,6 @@ KtBinaryExpression(428,437): '7 + inner'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.UByteArray
         returnType = kotlin.UByteArray
@@ -10111,7 +9869,6 @@ KtBinaryExpression(428,437): '7 + inner'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.UByteArray
         returnType = kotlin.UByteArray
@@ -10149,7 +9906,6 @@ KtBinaryExpression(428,437): '7 + inner'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.UIntArray
         returnType = kotlin.UIntArray
@@ -10187,7 +9943,6 @@ KtBinaryExpression(428,437): '7 + inner'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.UIntArray
         returnType = kotlin.UIntArray
@@ -10225,7 +9980,6 @@ KtBinaryExpression(428,437): '7 + inner'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.UIntArray
         returnType = kotlin.UIntArray
@@ -10263,7 +10017,6 @@ KtBinaryExpression(428,437): '7 + inner'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.ULongArray
         returnType = kotlin.ULongArray
@@ -10301,7 +10054,6 @@ KtBinaryExpression(428,437): '7 + inner'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.ULongArray
         returnType = kotlin.ULongArray
@@ -10339,7 +10091,6 @@ KtBinaryExpression(428,437): '7 + inner'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.ULongArray
         returnType = kotlin.ULongArray
@@ -10377,7 +10128,6 @@ KtBinaryExpression(428,437): '7 + inner'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.UShortArray
         returnType = kotlin.UShortArray
@@ -10415,7 +10165,6 @@ KtBinaryExpression(428,437): '7 + inner'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.UShortArray
         returnType = kotlin.UShortArray
@@ -10453,7 +10202,6 @@ KtBinaryExpression(428,437): '7 + inner'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.UShortArray
         returnType = kotlin.UShortArray
@@ -10491,7 +10239,6 @@ KtBinaryExpression(428,437): '7 + inner'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Collection<T>
         returnType = kotlin.collections.List<T>
@@ -10529,7 +10276,6 @@ KtBinaryExpression(428,437): '7 + inner'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Collection<T>
         returnType = kotlin.collections.List<T>
@@ -10567,7 +10313,6 @@ KtBinaryExpression(428,437): '7 + inner'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Collection<T>
         returnType = kotlin.collections.List<T>
@@ -10605,7 +10350,6 @@ KtBinaryExpression(428,437): '7 + inner'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Collection<T>
         returnType = kotlin.collections.List<T>
@@ -10643,7 +10387,6 @@ KtBinaryExpression(428,437): '7 + inner'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Iterable<T>
         returnType = kotlin.collections.List<T>
@@ -10681,7 +10424,6 @@ KtBinaryExpression(428,437): '7 + inner'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Iterable<T>
         returnType = kotlin.collections.List<T>
@@ -10719,7 +10461,6 @@ KtBinaryExpression(428,437): '7 + inner'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Iterable<T>
         returnType = kotlin.collections.List<T>
@@ -10757,7 +10498,6 @@ KtBinaryExpression(428,437): '7 + inner'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Iterable<T>
         returnType = kotlin.collections.List<T>
@@ -10795,7 +10535,6 @@ KtBinaryExpression(428,437): '7 + inner'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Map<out K, V>
         returnType = kotlin.collections.Map<K, V>
@@ -10833,7 +10572,6 @@ KtBinaryExpression(428,437): '7 + inner'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Map<out K, V>
         returnType = kotlin.collections.Map<K, V>
@@ -10871,7 +10609,6 @@ KtBinaryExpression(428,437): '7 + inner'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Map<out K, V>
         returnType = kotlin.collections.Map<K, V>
@@ -10909,7 +10646,6 @@ KtBinaryExpression(428,437): '7 + inner'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Map<out K, V>
         returnType = kotlin.collections.Map<K, V>
@@ -10947,7 +10683,6 @@ KtBinaryExpression(428,437): '7 + inner'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Map<out K, V>
         returnType = kotlin.collections.Map<K, V>
@@ -10985,7 +10720,6 @@ KtBinaryExpression(428,437): '7 + inner'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Set<T>
         returnType = kotlin.collections.Set<T>
@@ -11023,7 +10757,6 @@ KtBinaryExpression(428,437): '7 + inner'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Set<T>
         returnType = kotlin.collections.Set<T>
@@ -11061,7 +10794,6 @@ KtBinaryExpression(428,437): '7 + inner'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Set<T>
         returnType = kotlin.collections.Set<T>
@@ -11099,7 +10831,6 @@ KtBinaryExpression(428,437): '7 + inner'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Set<T>
         returnType = kotlin.collections.Set<T>
@@ -11137,7 +10868,6 @@ KtBinaryExpression(428,437): '7 + inner'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.sequences.Sequence<T>
         returnType = kotlin.sequences.Sequence<T>
@@ -11175,7 +10905,6 @@ KtBinaryExpression(428,437): '7 + inner'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.sequences.Sequence<T>
         returnType = kotlin.sequences.Sequence<T>
@@ -11213,7 +10942,6 @@ KtBinaryExpression(428,437): '7 + inner'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.sequences.Sequence<T>
         returnType = kotlin.sequences.Sequence<T>
@@ -11251,7 +10979,6 @@ KtBinaryExpression(428,437): '7 + inner'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.sequences.Sequence<T>
         returnType = kotlin.sequences.Sequence<T>
@@ -11293,7 +11020,6 @@ KtOperationReferenceExpression(430,431): '+'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Double
@@ -11330,7 +11056,6 @@ KtOperationReferenceExpression(430,431): '+'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Float
@@ -11367,7 +11092,6 @@ KtOperationReferenceExpression(430,431): '+'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
@@ -11404,7 +11128,6 @@ KtOperationReferenceExpression(430,431): '+'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
@@ -11441,7 +11164,6 @@ KtOperationReferenceExpression(430,431): '+'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
@@ -11478,7 +11200,6 @@ KtOperationReferenceExpression(430,431): '+'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Long
@@ -11515,7 +11236,6 @@ KtOperationReferenceExpression(430,431): '+'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = java.math.BigDecimal
         returnType = java.math.BigDecimal
@@ -11553,7 +11273,6 @@ KtOperationReferenceExpression(430,431): '+'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = java.math.BigInteger
         returnType = java.math.BigInteger
@@ -11591,7 +11310,6 @@ KtOperationReferenceExpression(430,431): '+'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.Array<T>
         returnType = kotlin.Array<T>
@@ -11629,7 +11347,6 @@ KtOperationReferenceExpression(430,431): '+'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.Array<T>
         returnType = kotlin.Array<T>
@@ -11667,7 +11384,6 @@ KtOperationReferenceExpression(430,431): '+'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.Array<T>
         returnType = kotlin.Array<T>
@@ -11705,7 +11421,6 @@ KtOperationReferenceExpression(430,431): '+'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.BooleanArray
         returnType = kotlin.BooleanArray
@@ -11743,7 +11458,6 @@ KtOperationReferenceExpression(430,431): '+'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.BooleanArray
         returnType = kotlin.BooleanArray
@@ -11781,7 +11495,6 @@ KtOperationReferenceExpression(430,431): '+'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.BooleanArray
         returnType = kotlin.BooleanArray
@@ -11819,7 +11532,6 @@ KtOperationReferenceExpression(430,431): '+'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.ByteArray
         returnType = kotlin.ByteArray
@@ -11857,7 +11569,6 @@ KtOperationReferenceExpression(430,431): '+'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.ByteArray
         returnType = kotlin.ByteArray
@@ -11895,7 +11606,6 @@ KtOperationReferenceExpression(430,431): '+'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.ByteArray
         returnType = kotlin.ByteArray
@@ -11933,7 +11643,6 @@ KtOperationReferenceExpression(430,431): '+'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.Char
         returnType = kotlin.String
@@ -11971,7 +11680,6 @@ KtOperationReferenceExpression(430,431): '+'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.CharArray
         returnType = kotlin.CharArray
@@ -12009,7 +11717,6 @@ KtOperationReferenceExpression(430,431): '+'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.CharArray
         returnType = kotlin.CharArray
@@ -12047,7 +11754,6 @@ KtOperationReferenceExpression(430,431): '+'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.CharArray
         returnType = kotlin.CharArray
@@ -12085,7 +11791,6 @@ KtOperationReferenceExpression(430,431): '+'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.DoubleArray
         returnType = kotlin.DoubleArray
@@ -12123,7 +11828,6 @@ KtOperationReferenceExpression(430,431): '+'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.DoubleArray
         returnType = kotlin.DoubleArray
@@ -12161,7 +11865,6 @@ KtOperationReferenceExpression(430,431): '+'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.DoubleArray
         returnType = kotlin.DoubleArray
@@ -12199,7 +11902,6 @@ KtOperationReferenceExpression(430,431): '+'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.FloatArray
         returnType = kotlin.FloatArray
@@ -12237,7 +11939,6 @@ KtOperationReferenceExpression(430,431): '+'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.FloatArray
         returnType = kotlin.FloatArray
@@ -12275,7 +11976,6 @@ KtOperationReferenceExpression(430,431): '+'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.FloatArray
         returnType = kotlin.FloatArray
@@ -12313,7 +12013,6 @@ KtOperationReferenceExpression(430,431): '+'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.IntArray
         returnType = kotlin.IntArray
@@ -12351,7 +12050,6 @@ KtOperationReferenceExpression(430,431): '+'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.IntArray
         returnType = kotlin.IntArray
@@ -12389,7 +12087,6 @@ KtOperationReferenceExpression(430,431): '+'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.IntArray
         returnType = kotlin.IntArray
@@ -12427,7 +12124,6 @@ KtOperationReferenceExpression(430,431): '+'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.LongArray
         returnType = kotlin.LongArray
@@ -12465,7 +12161,6 @@ KtOperationReferenceExpression(430,431): '+'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.LongArray
         returnType = kotlin.LongArray
@@ -12503,7 +12198,6 @@ KtOperationReferenceExpression(430,431): '+'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.LongArray
         returnType = kotlin.LongArray
@@ -12541,7 +12235,6 @@ KtOperationReferenceExpression(430,431): '+'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.ShortArray
         returnType = kotlin.ShortArray
@@ -12579,7 +12272,6 @@ KtOperationReferenceExpression(430,431): '+'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.ShortArray
         returnType = kotlin.ShortArray
@@ -12617,7 +12309,6 @@ KtOperationReferenceExpression(430,431): '+'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.ShortArray
         returnType = kotlin.ShortArray
@@ -12655,7 +12346,6 @@ KtOperationReferenceExpression(430,431): '+'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.String?
         returnType = kotlin.String
@@ -12693,7 +12383,6 @@ KtOperationReferenceExpression(430,431): '+'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.UByteArray
         returnType = kotlin.UByteArray
@@ -12731,7 +12420,6 @@ KtOperationReferenceExpression(430,431): '+'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.UByteArray
         returnType = kotlin.UByteArray
@@ -12769,7 +12457,6 @@ KtOperationReferenceExpression(430,431): '+'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.UByteArray
         returnType = kotlin.UByteArray
@@ -12807,7 +12494,6 @@ KtOperationReferenceExpression(430,431): '+'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.UIntArray
         returnType = kotlin.UIntArray
@@ -12845,7 +12531,6 @@ KtOperationReferenceExpression(430,431): '+'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.UIntArray
         returnType = kotlin.UIntArray
@@ -12883,7 +12568,6 @@ KtOperationReferenceExpression(430,431): '+'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.UIntArray
         returnType = kotlin.UIntArray
@@ -12921,7 +12605,6 @@ KtOperationReferenceExpression(430,431): '+'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.ULongArray
         returnType = kotlin.ULongArray
@@ -12959,7 +12642,6 @@ KtOperationReferenceExpression(430,431): '+'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.ULongArray
         returnType = kotlin.ULongArray
@@ -12997,7 +12679,6 @@ KtOperationReferenceExpression(430,431): '+'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.ULongArray
         returnType = kotlin.ULongArray
@@ -13035,7 +12716,6 @@ KtOperationReferenceExpression(430,431): '+'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.UShortArray
         returnType = kotlin.UShortArray
@@ -13073,7 +12753,6 @@ KtOperationReferenceExpression(430,431): '+'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.UShortArray
         returnType = kotlin.UShortArray
@@ -13111,7 +12790,6 @@ KtOperationReferenceExpression(430,431): '+'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.UShortArray
         returnType = kotlin.UShortArray
@@ -13149,7 +12827,6 @@ KtOperationReferenceExpression(430,431): '+'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Collection<T>
         returnType = kotlin.collections.List<T>
@@ -13187,7 +12864,6 @@ KtOperationReferenceExpression(430,431): '+'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Collection<T>
         returnType = kotlin.collections.List<T>
@@ -13225,7 +12901,6 @@ KtOperationReferenceExpression(430,431): '+'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Collection<T>
         returnType = kotlin.collections.List<T>
@@ -13263,7 +12938,6 @@ KtOperationReferenceExpression(430,431): '+'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Collection<T>
         returnType = kotlin.collections.List<T>
@@ -13301,7 +12975,6 @@ KtOperationReferenceExpression(430,431): '+'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Iterable<T>
         returnType = kotlin.collections.List<T>
@@ -13339,7 +13012,6 @@ KtOperationReferenceExpression(430,431): '+'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Iterable<T>
         returnType = kotlin.collections.List<T>
@@ -13377,7 +13049,6 @@ KtOperationReferenceExpression(430,431): '+'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Iterable<T>
         returnType = kotlin.collections.List<T>
@@ -13415,7 +13086,6 @@ KtOperationReferenceExpression(430,431): '+'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Iterable<T>
         returnType = kotlin.collections.List<T>
@@ -13453,7 +13123,6 @@ KtOperationReferenceExpression(430,431): '+'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Map<out K, V>
         returnType = kotlin.collections.Map<K, V>
@@ -13491,7 +13160,6 @@ KtOperationReferenceExpression(430,431): '+'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Map<out K, V>
         returnType = kotlin.collections.Map<K, V>
@@ -13529,7 +13197,6 @@ KtOperationReferenceExpression(430,431): '+'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Map<out K, V>
         returnType = kotlin.collections.Map<K, V>
@@ -13567,7 +13234,6 @@ KtOperationReferenceExpression(430,431): '+'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Map<out K, V>
         returnType = kotlin.collections.Map<K, V>
@@ -13605,7 +13271,6 @@ KtOperationReferenceExpression(430,431): '+'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Map<out K, V>
         returnType = kotlin.collections.Map<K, V>
@@ -13643,7 +13308,6 @@ KtOperationReferenceExpression(430,431): '+'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Set<T>
         returnType = kotlin.collections.Set<T>
@@ -13681,7 +13345,6 @@ KtOperationReferenceExpression(430,431): '+'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Set<T>
         returnType = kotlin.collections.Set<T>
@@ -13719,7 +13382,6 @@ KtOperationReferenceExpression(430,431): '+'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Set<T>
         returnType = kotlin.collections.Set<T>
@@ -13757,7 +13419,6 @@ KtOperationReferenceExpression(430,431): '+'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Set<T>
         returnType = kotlin.collections.Set<T>
@@ -13795,7 +13456,6 @@ KtOperationReferenceExpression(430,431): '+'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.sequences.Sequence<T>
         returnType = kotlin.sequences.Sequence<T>
@@ -13833,7 +13493,6 @@ KtOperationReferenceExpression(430,431): '+'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.sequences.Sequence<T>
         returnType = kotlin.sequences.Sequence<T>
@@ -13871,7 +13530,6 @@ KtOperationReferenceExpression(430,431): '+'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.sequences.Sequence<T>
         returnType = kotlin.sequences.Sequence<T>
@@ -13909,7 +13567,6 @@ KtOperationReferenceExpression(430,431): '+'
         expression = 7
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.sequences.Sequence<T>
         returnType = kotlin.sequences.Sequence<T>
@@ -14065,7 +13722,6 @@ KtBinaryExpression(450,459): '8 + inner'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Double
@@ -14102,7 +13758,6 @@ KtBinaryExpression(450,459): '8 + inner'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Float
@@ -14139,7 +13794,6 @@ KtBinaryExpression(450,459): '8 + inner'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
@@ -14176,7 +13830,6 @@ KtBinaryExpression(450,459): '8 + inner'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
@@ -14213,7 +13866,6 @@ KtBinaryExpression(450,459): '8 + inner'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
@@ -14250,7 +13902,6 @@ KtBinaryExpression(450,459): '8 + inner'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Long
@@ -14287,7 +13938,6 @@ KtBinaryExpression(450,459): '8 + inner'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = java.math.BigDecimal
         returnType = java.math.BigDecimal
@@ -14325,7 +13975,6 @@ KtBinaryExpression(450,459): '8 + inner'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = java.math.BigInteger
         returnType = java.math.BigInteger
@@ -14363,7 +14012,6 @@ KtBinaryExpression(450,459): '8 + inner'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.Array<T>
         returnType = kotlin.Array<T>
@@ -14401,7 +14049,6 @@ KtBinaryExpression(450,459): '8 + inner'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.Array<T>
         returnType = kotlin.Array<T>
@@ -14439,7 +14086,6 @@ KtBinaryExpression(450,459): '8 + inner'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.Array<T>
         returnType = kotlin.Array<T>
@@ -14477,7 +14123,6 @@ KtBinaryExpression(450,459): '8 + inner'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.BooleanArray
         returnType = kotlin.BooleanArray
@@ -14515,7 +14160,6 @@ KtBinaryExpression(450,459): '8 + inner'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.BooleanArray
         returnType = kotlin.BooleanArray
@@ -14553,7 +14197,6 @@ KtBinaryExpression(450,459): '8 + inner'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.BooleanArray
         returnType = kotlin.BooleanArray
@@ -14591,7 +14234,6 @@ KtBinaryExpression(450,459): '8 + inner'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.ByteArray
         returnType = kotlin.ByteArray
@@ -14629,7 +14271,6 @@ KtBinaryExpression(450,459): '8 + inner'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.ByteArray
         returnType = kotlin.ByteArray
@@ -14667,7 +14308,6 @@ KtBinaryExpression(450,459): '8 + inner'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.ByteArray
         returnType = kotlin.ByteArray
@@ -14705,7 +14345,6 @@ KtBinaryExpression(450,459): '8 + inner'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.Char
         returnType = kotlin.String
@@ -14743,7 +14382,6 @@ KtBinaryExpression(450,459): '8 + inner'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.CharArray
         returnType = kotlin.CharArray
@@ -14781,7 +14419,6 @@ KtBinaryExpression(450,459): '8 + inner'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.CharArray
         returnType = kotlin.CharArray
@@ -14819,7 +14456,6 @@ KtBinaryExpression(450,459): '8 + inner'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.CharArray
         returnType = kotlin.CharArray
@@ -14857,7 +14493,6 @@ KtBinaryExpression(450,459): '8 + inner'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.DoubleArray
         returnType = kotlin.DoubleArray
@@ -14895,7 +14530,6 @@ KtBinaryExpression(450,459): '8 + inner'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.DoubleArray
         returnType = kotlin.DoubleArray
@@ -14933,7 +14567,6 @@ KtBinaryExpression(450,459): '8 + inner'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.DoubleArray
         returnType = kotlin.DoubleArray
@@ -14971,7 +14604,6 @@ KtBinaryExpression(450,459): '8 + inner'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.FloatArray
         returnType = kotlin.FloatArray
@@ -15009,7 +14641,6 @@ KtBinaryExpression(450,459): '8 + inner'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.FloatArray
         returnType = kotlin.FloatArray
@@ -15047,7 +14678,6 @@ KtBinaryExpression(450,459): '8 + inner'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.FloatArray
         returnType = kotlin.FloatArray
@@ -15085,7 +14715,6 @@ KtBinaryExpression(450,459): '8 + inner'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.IntArray
         returnType = kotlin.IntArray
@@ -15123,7 +14752,6 @@ KtBinaryExpression(450,459): '8 + inner'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.IntArray
         returnType = kotlin.IntArray
@@ -15161,7 +14789,6 @@ KtBinaryExpression(450,459): '8 + inner'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.IntArray
         returnType = kotlin.IntArray
@@ -15199,7 +14826,6 @@ KtBinaryExpression(450,459): '8 + inner'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.LongArray
         returnType = kotlin.LongArray
@@ -15237,7 +14863,6 @@ KtBinaryExpression(450,459): '8 + inner'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.LongArray
         returnType = kotlin.LongArray
@@ -15275,7 +14900,6 @@ KtBinaryExpression(450,459): '8 + inner'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.LongArray
         returnType = kotlin.LongArray
@@ -15313,7 +14937,6 @@ KtBinaryExpression(450,459): '8 + inner'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.ShortArray
         returnType = kotlin.ShortArray
@@ -15351,7 +14974,6 @@ KtBinaryExpression(450,459): '8 + inner'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.ShortArray
         returnType = kotlin.ShortArray
@@ -15389,7 +15011,6 @@ KtBinaryExpression(450,459): '8 + inner'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.ShortArray
         returnType = kotlin.ShortArray
@@ -15427,7 +15048,6 @@ KtBinaryExpression(450,459): '8 + inner'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.String?
         returnType = kotlin.String
@@ -15465,7 +15085,6 @@ KtBinaryExpression(450,459): '8 + inner'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.UByteArray
         returnType = kotlin.UByteArray
@@ -15503,7 +15122,6 @@ KtBinaryExpression(450,459): '8 + inner'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.UByteArray
         returnType = kotlin.UByteArray
@@ -15541,7 +15159,6 @@ KtBinaryExpression(450,459): '8 + inner'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.UByteArray
         returnType = kotlin.UByteArray
@@ -15579,7 +15196,6 @@ KtBinaryExpression(450,459): '8 + inner'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.UIntArray
         returnType = kotlin.UIntArray
@@ -15617,7 +15233,6 @@ KtBinaryExpression(450,459): '8 + inner'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.UIntArray
         returnType = kotlin.UIntArray
@@ -15655,7 +15270,6 @@ KtBinaryExpression(450,459): '8 + inner'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.UIntArray
         returnType = kotlin.UIntArray
@@ -15693,7 +15307,6 @@ KtBinaryExpression(450,459): '8 + inner'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.ULongArray
         returnType = kotlin.ULongArray
@@ -15731,7 +15344,6 @@ KtBinaryExpression(450,459): '8 + inner'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.ULongArray
         returnType = kotlin.ULongArray
@@ -15769,7 +15381,6 @@ KtBinaryExpression(450,459): '8 + inner'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.ULongArray
         returnType = kotlin.ULongArray
@@ -15807,7 +15418,6 @@ KtBinaryExpression(450,459): '8 + inner'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.UShortArray
         returnType = kotlin.UShortArray
@@ -15845,7 +15455,6 @@ KtBinaryExpression(450,459): '8 + inner'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.UShortArray
         returnType = kotlin.UShortArray
@@ -15883,7 +15492,6 @@ KtBinaryExpression(450,459): '8 + inner'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.UShortArray
         returnType = kotlin.UShortArray
@@ -15921,7 +15529,6 @@ KtBinaryExpression(450,459): '8 + inner'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Collection<T>
         returnType = kotlin.collections.List<T>
@@ -15959,7 +15566,6 @@ KtBinaryExpression(450,459): '8 + inner'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Collection<T>
         returnType = kotlin.collections.List<T>
@@ -15997,7 +15603,6 @@ KtBinaryExpression(450,459): '8 + inner'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Collection<T>
         returnType = kotlin.collections.List<T>
@@ -16035,7 +15640,6 @@ KtBinaryExpression(450,459): '8 + inner'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Collection<T>
         returnType = kotlin.collections.List<T>
@@ -16073,7 +15677,6 @@ KtBinaryExpression(450,459): '8 + inner'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Iterable<T>
         returnType = kotlin.collections.List<T>
@@ -16111,7 +15714,6 @@ KtBinaryExpression(450,459): '8 + inner'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Iterable<T>
         returnType = kotlin.collections.List<T>
@@ -16149,7 +15751,6 @@ KtBinaryExpression(450,459): '8 + inner'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Iterable<T>
         returnType = kotlin.collections.List<T>
@@ -16187,7 +15788,6 @@ KtBinaryExpression(450,459): '8 + inner'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Iterable<T>
         returnType = kotlin.collections.List<T>
@@ -16225,7 +15825,6 @@ KtBinaryExpression(450,459): '8 + inner'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Map<out K, V>
         returnType = kotlin.collections.Map<K, V>
@@ -16263,7 +15862,6 @@ KtBinaryExpression(450,459): '8 + inner'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Map<out K, V>
         returnType = kotlin.collections.Map<K, V>
@@ -16301,7 +15899,6 @@ KtBinaryExpression(450,459): '8 + inner'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Map<out K, V>
         returnType = kotlin.collections.Map<K, V>
@@ -16339,7 +15936,6 @@ KtBinaryExpression(450,459): '8 + inner'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Map<out K, V>
         returnType = kotlin.collections.Map<K, V>
@@ -16377,7 +15973,6 @@ KtBinaryExpression(450,459): '8 + inner'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Map<out K, V>
         returnType = kotlin.collections.Map<K, V>
@@ -16415,7 +16010,6 @@ KtBinaryExpression(450,459): '8 + inner'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Set<T>
         returnType = kotlin.collections.Set<T>
@@ -16453,7 +16047,6 @@ KtBinaryExpression(450,459): '8 + inner'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Set<T>
         returnType = kotlin.collections.Set<T>
@@ -16491,7 +16084,6 @@ KtBinaryExpression(450,459): '8 + inner'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Set<T>
         returnType = kotlin.collections.Set<T>
@@ -16529,7 +16121,6 @@ KtBinaryExpression(450,459): '8 + inner'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Set<T>
         returnType = kotlin.collections.Set<T>
@@ -16567,7 +16158,6 @@ KtBinaryExpression(450,459): '8 + inner'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.sequences.Sequence<T>
         returnType = kotlin.sequences.Sequence<T>
@@ -16605,7 +16195,6 @@ KtBinaryExpression(450,459): '8 + inner'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.sequences.Sequence<T>
         returnType = kotlin.sequences.Sequence<T>
@@ -16643,7 +16232,6 @@ KtBinaryExpression(450,459): '8 + inner'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.sequences.Sequence<T>
         returnType = kotlin.sequences.Sequence<T>
@@ -16681,7 +16269,6 @@ KtBinaryExpression(450,459): '8 + inner'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.sequences.Sequence<T>
         returnType = kotlin.sequences.Sequence<T>
@@ -16723,7 +16310,6 @@ KtOperationReferenceExpression(452,453): '+'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Double
@@ -16760,7 +16346,6 @@ KtOperationReferenceExpression(452,453): '+'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Float
@@ -16797,7 +16382,6 @@ KtOperationReferenceExpression(452,453): '+'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
@@ -16834,7 +16418,6 @@ KtOperationReferenceExpression(452,453): '+'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
@@ -16871,7 +16454,6 @@ KtOperationReferenceExpression(452,453): '+'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
@@ -16908,7 +16490,6 @@ KtOperationReferenceExpression(452,453): '+'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Long
@@ -16945,7 +16526,6 @@ KtOperationReferenceExpression(452,453): '+'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = java.math.BigDecimal
         returnType = java.math.BigDecimal
@@ -16983,7 +16563,6 @@ KtOperationReferenceExpression(452,453): '+'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = java.math.BigInteger
         returnType = java.math.BigInteger
@@ -17021,7 +16600,6 @@ KtOperationReferenceExpression(452,453): '+'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.Array<T>
         returnType = kotlin.Array<T>
@@ -17059,7 +16637,6 @@ KtOperationReferenceExpression(452,453): '+'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.Array<T>
         returnType = kotlin.Array<T>
@@ -17097,7 +16674,6 @@ KtOperationReferenceExpression(452,453): '+'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.Array<T>
         returnType = kotlin.Array<T>
@@ -17135,7 +16711,6 @@ KtOperationReferenceExpression(452,453): '+'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.BooleanArray
         returnType = kotlin.BooleanArray
@@ -17173,7 +16748,6 @@ KtOperationReferenceExpression(452,453): '+'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.BooleanArray
         returnType = kotlin.BooleanArray
@@ -17211,7 +16785,6 @@ KtOperationReferenceExpression(452,453): '+'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.BooleanArray
         returnType = kotlin.BooleanArray
@@ -17249,7 +16822,6 @@ KtOperationReferenceExpression(452,453): '+'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.ByteArray
         returnType = kotlin.ByteArray
@@ -17287,7 +16859,6 @@ KtOperationReferenceExpression(452,453): '+'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.ByteArray
         returnType = kotlin.ByteArray
@@ -17325,7 +16896,6 @@ KtOperationReferenceExpression(452,453): '+'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.ByteArray
         returnType = kotlin.ByteArray
@@ -17363,7 +16933,6 @@ KtOperationReferenceExpression(452,453): '+'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.Char
         returnType = kotlin.String
@@ -17401,7 +16970,6 @@ KtOperationReferenceExpression(452,453): '+'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.CharArray
         returnType = kotlin.CharArray
@@ -17439,7 +17007,6 @@ KtOperationReferenceExpression(452,453): '+'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.CharArray
         returnType = kotlin.CharArray
@@ -17477,7 +17044,6 @@ KtOperationReferenceExpression(452,453): '+'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.CharArray
         returnType = kotlin.CharArray
@@ -17515,7 +17081,6 @@ KtOperationReferenceExpression(452,453): '+'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.DoubleArray
         returnType = kotlin.DoubleArray
@@ -17553,7 +17118,6 @@ KtOperationReferenceExpression(452,453): '+'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.DoubleArray
         returnType = kotlin.DoubleArray
@@ -17591,7 +17155,6 @@ KtOperationReferenceExpression(452,453): '+'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.DoubleArray
         returnType = kotlin.DoubleArray
@@ -17629,7 +17192,6 @@ KtOperationReferenceExpression(452,453): '+'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.FloatArray
         returnType = kotlin.FloatArray
@@ -17667,7 +17229,6 @@ KtOperationReferenceExpression(452,453): '+'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.FloatArray
         returnType = kotlin.FloatArray
@@ -17705,7 +17266,6 @@ KtOperationReferenceExpression(452,453): '+'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.FloatArray
         returnType = kotlin.FloatArray
@@ -17743,7 +17303,6 @@ KtOperationReferenceExpression(452,453): '+'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.IntArray
         returnType = kotlin.IntArray
@@ -17781,7 +17340,6 @@ KtOperationReferenceExpression(452,453): '+'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.IntArray
         returnType = kotlin.IntArray
@@ -17819,7 +17377,6 @@ KtOperationReferenceExpression(452,453): '+'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.IntArray
         returnType = kotlin.IntArray
@@ -17857,7 +17414,6 @@ KtOperationReferenceExpression(452,453): '+'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.LongArray
         returnType = kotlin.LongArray
@@ -17895,7 +17451,6 @@ KtOperationReferenceExpression(452,453): '+'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.LongArray
         returnType = kotlin.LongArray
@@ -17933,7 +17488,6 @@ KtOperationReferenceExpression(452,453): '+'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.LongArray
         returnType = kotlin.LongArray
@@ -17971,7 +17525,6 @@ KtOperationReferenceExpression(452,453): '+'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.ShortArray
         returnType = kotlin.ShortArray
@@ -18009,7 +17562,6 @@ KtOperationReferenceExpression(452,453): '+'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.ShortArray
         returnType = kotlin.ShortArray
@@ -18047,7 +17599,6 @@ KtOperationReferenceExpression(452,453): '+'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.ShortArray
         returnType = kotlin.ShortArray
@@ -18085,7 +17636,6 @@ KtOperationReferenceExpression(452,453): '+'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.String?
         returnType = kotlin.String
@@ -18123,7 +17673,6 @@ KtOperationReferenceExpression(452,453): '+'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.UByteArray
         returnType = kotlin.UByteArray
@@ -18161,7 +17710,6 @@ KtOperationReferenceExpression(452,453): '+'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.UByteArray
         returnType = kotlin.UByteArray
@@ -18199,7 +17747,6 @@ KtOperationReferenceExpression(452,453): '+'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.UByteArray
         returnType = kotlin.UByteArray
@@ -18237,7 +17784,6 @@ KtOperationReferenceExpression(452,453): '+'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.UIntArray
         returnType = kotlin.UIntArray
@@ -18275,7 +17821,6 @@ KtOperationReferenceExpression(452,453): '+'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.UIntArray
         returnType = kotlin.UIntArray
@@ -18313,7 +17858,6 @@ KtOperationReferenceExpression(452,453): '+'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.UIntArray
         returnType = kotlin.UIntArray
@@ -18351,7 +17895,6 @@ KtOperationReferenceExpression(452,453): '+'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.ULongArray
         returnType = kotlin.ULongArray
@@ -18389,7 +17932,6 @@ KtOperationReferenceExpression(452,453): '+'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.ULongArray
         returnType = kotlin.ULongArray
@@ -18427,7 +17969,6 @@ KtOperationReferenceExpression(452,453): '+'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.ULongArray
         returnType = kotlin.ULongArray
@@ -18465,7 +18006,6 @@ KtOperationReferenceExpression(452,453): '+'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.UShortArray
         returnType = kotlin.UShortArray
@@ -18503,7 +18043,6 @@ KtOperationReferenceExpression(452,453): '+'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.UShortArray
         returnType = kotlin.UShortArray
@@ -18541,7 +18080,6 @@ KtOperationReferenceExpression(452,453): '+'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.UShortArray
         returnType = kotlin.UShortArray
@@ -18579,7 +18117,6 @@ KtOperationReferenceExpression(452,453): '+'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Collection<T>
         returnType = kotlin.collections.List<T>
@@ -18617,7 +18154,6 @@ KtOperationReferenceExpression(452,453): '+'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Collection<T>
         returnType = kotlin.collections.List<T>
@@ -18655,7 +18191,6 @@ KtOperationReferenceExpression(452,453): '+'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Collection<T>
         returnType = kotlin.collections.List<T>
@@ -18693,7 +18228,6 @@ KtOperationReferenceExpression(452,453): '+'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Collection<T>
         returnType = kotlin.collections.List<T>
@@ -18731,7 +18265,6 @@ KtOperationReferenceExpression(452,453): '+'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Iterable<T>
         returnType = kotlin.collections.List<T>
@@ -18769,7 +18302,6 @@ KtOperationReferenceExpression(452,453): '+'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Iterable<T>
         returnType = kotlin.collections.List<T>
@@ -18807,7 +18339,6 @@ KtOperationReferenceExpression(452,453): '+'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Iterable<T>
         returnType = kotlin.collections.List<T>
@@ -18845,7 +18376,6 @@ KtOperationReferenceExpression(452,453): '+'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Iterable<T>
         returnType = kotlin.collections.List<T>
@@ -18883,7 +18413,6 @@ KtOperationReferenceExpression(452,453): '+'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Map<out K, V>
         returnType = kotlin.collections.Map<K, V>
@@ -18921,7 +18450,6 @@ KtOperationReferenceExpression(452,453): '+'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Map<out K, V>
         returnType = kotlin.collections.Map<K, V>
@@ -18959,7 +18487,6 @@ KtOperationReferenceExpression(452,453): '+'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Map<out K, V>
         returnType = kotlin.collections.Map<K, V>
@@ -18997,7 +18524,6 @@ KtOperationReferenceExpression(452,453): '+'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Map<out K, V>
         returnType = kotlin.collections.Map<K, V>
@@ -19035,7 +18561,6 @@ KtOperationReferenceExpression(452,453): '+'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Map<out K, V>
         returnType = kotlin.collections.Map<K, V>
@@ -19073,7 +18598,6 @@ KtOperationReferenceExpression(452,453): '+'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Set<T>
         returnType = kotlin.collections.Set<T>
@@ -19111,7 +18635,6 @@ KtOperationReferenceExpression(452,453): '+'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Set<T>
         returnType = kotlin.collections.Set<T>
@@ -19149,7 +18672,6 @@ KtOperationReferenceExpression(452,453): '+'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Set<T>
         returnType = kotlin.collections.Set<T>
@@ -19187,7 +18709,6 @@ KtOperationReferenceExpression(452,453): '+'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Set<T>
         returnType = kotlin.collections.Set<T>
@@ -19225,7 +18746,6 @@ KtOperationReferenceExpression(452,453): '+'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.sequences.Sequence<T>
         returnType = kotlin.sequences.Sequence<T>
@@ -19263,7 +18783,6 @@ KtOperationReferenceExpression(452,453): '+'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.sequences.Sequence<T>
         returnType = kotlin.sequences.Sequence<T>
@@ -19301,7 +18820,6 @@ KtOperationReferenceExpression(452,453): '+'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.sequences.Sequence<T>
         returnType = kotlin.sequences.Sequence<T>
@@ -19339,7 +18857,6 @@ KtOperationReferenceExpression(452,453): '+'
         expression = 8
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.sequences.Sequence<T>
         returnType = kotlin.sequences.Sequence<T>
@@ -19519,7 +19036,6 @@ KtBinaryExpression(565,574): '9 + inner'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Double
@@ -19556,7 +19072,6 @@ KtBinaryExpression(565,574): '9 + inner'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Float
@@ -19593,7 +19108,6 @@ KtBinaryExpression(565,574): '9 + inner'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
@@ -19630,7 +19144,6 @@ KtBinaryExpression(565,574): '9 + inner'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
@@ -19666,7 +19179,6 @@ KtBinaryExpression(565,574): '9 + inner'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
@@ -19703,7 +19215,6 @@ KtBinaryExpression(565,574): '9 + inner'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Long
@@ -19744,7 +19255,6 @@ KtOperationReferenceExpression(567,568): '+'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Double
@@ -19781,7 +19291,6 @@ KtOperationReferenceExpression(567,568): '+'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Float
@@ -19818,7 +19327,6 @@ KtOperationReferenceExpression(567,568): '+'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
@@ -19855,7 +19363,6 @@ KtOperationReferenceExpression(567,568): '+'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
@@ -19891,7 +19398,6 @@ KtOperationReferenceExpression(567,568): '+'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
@@ -19928,7 +19434,6 @@ KtOperationReferenceExpression(567,568): '+'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Long
@@ -20102,7 +19607,6 @@ KtBinaryExpression(589,599): '10 + inner'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Double
@@ -20139,7 +19643,6 @@ KtBinaryExpression(589,599): '10 + inner'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Float
@@ -20176,7 +19679,6 @@ KtBinaryExpression(589,599): '10 + inner'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
@@ -20213,7 +19715,6 @@ KtBinaryExpression(589,599): '10 + inner'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
@@ -20249,7 +19750,6 @@ KtBinaryExpression(589,599): '10 + inner'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
@@ -20286,7 +19786,6 @@ KtBinaryExpression(589,599): '10 + inner'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Long
@@ -20327,7 +19826,6 @@ KtOperationReferenceExpression(592,593): '+'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Double
@@ -20364,7 +19862,6 @@ KtOperationReferenceExpression(592,593): '+'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Float
@@ -20401,7 +19898,6 @@ KtOperationReferenceExpression(592,593): '+'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
@@ -20438,7 +19934,6 @@ KtOperationReferenceExpression(592,593): '+'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
@@ -20474,7 +19969,6 @@ KtOperationReferenceExpression(592,593): '+'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
@@ -20511,7 +20005,6 @@ KtOperationReferenceExpression(592,593): '+'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Long

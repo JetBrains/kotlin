@@ -23,7 +23,6 @@ KtDotQualifiedExpression(263,332): 'nums.withIndex().groupBy({ (_, value) -> val
         expression = nums.withIndex()
         isSafeNavigation = false
         type = kotlin.collections.Iterable<kotlin.collections.IndexedValue<kotlin.Int>>
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Iterable<kotlin.collections.IndexedValue<kotlin.Int>>
         returnType = kotlin.collections.Map<kotlin.Int, kotlin.collections.List<kotlin.Int>>

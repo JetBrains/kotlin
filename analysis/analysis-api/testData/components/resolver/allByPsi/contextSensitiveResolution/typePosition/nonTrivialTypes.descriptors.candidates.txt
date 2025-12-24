@@ -308,7 +308,6 @@ KtDotQualifiedExpression(403,418): 'JavaClass.foo()'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MySealed!
@@ -329,7 +328,6 @@ KtCallExpression(413,418): 'foo()'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MySealed!
@@ -347,7 +345,6 @@ KtNameReferenceExpression(413,416): 'foo'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MySealed!
@@ -386,7 +383,6 @@ KtDotQualifiedExpression(441,446): 'foo.x'
         isSafeNavigation = false
         type = MySealed!
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -406,7 +402,6 @@ KtDotQualifiedExpression(441,446): 'foo.x'
         isSafeNavigation = false
         type = ERROR_TYPE
       extensionReceiver = null
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -445,7 +440,6 @@ KtNameReferenceExpression(445,446): 'x'
         isSafeNavigation = false
         type = MySealed!
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -501,7 +495,6 @@ KtDotQualifiedExpression(467,472): 'foo.y'
         isSafeNavigation = false
         type = MySealed!
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -521,7 +514,6 @@ KtDotQualifiedExpression(467,472): 'foo.y'
         isSafeNavigation = false
         type = ERROR_TYPE
       extensionReceiver = null
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -560,7 +552,6 @@ KtNameReferenceExpression(471,472): 'y'
         isSafeNavigation = false
         type = MySealed!
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE

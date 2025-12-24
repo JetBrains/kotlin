@@ -27,7 +27,6 @@ KtCallExpression(51,56): 'foo()'
           visibility: LOCAL
         type = kotlin.Any
       type = kotlin.String
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = kotlin.String
       returnType = kotlin.Unit

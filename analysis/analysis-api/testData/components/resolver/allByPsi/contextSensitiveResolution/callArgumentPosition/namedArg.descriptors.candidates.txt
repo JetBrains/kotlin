@@ -314,7 +314,6 @@ KtCallExpression(486,492): 'TODO()'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Nothing
@@ -331,7 +330,6 @@ KtCallExpression(486,492): 'TODO()'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Nothing
@@ -358,7 +356,6 @@ KtNameReferenceExpression(486,490): 'TODO'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Nothing
@@ -375,7 +372,6 @@ KtNameReferenceExpression(486,490): 'TODO'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Nothing
@@ -417,7 +413,6 @@ KtCallExpression(542,558): 'InheritorClass()'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MyClass.InheritorClass
@@ -435,7 +430,6 @@ KtNameReferenceExpression(542,556): 'InheritorClass'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MyClass.InheritorClass
@@ -501,7 +495,6 @@ KtCallExpression(686,692): 'TODO()'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Nothing
@@ -518,7 +511,6 @@ KtCallExpression(686,692): 'TODO()'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Nothing
@@ -545,7 +537,6 @@ KtNameReferenceExpression(686,690): 'TODO'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Nothing
@@ -562,7 +553,6 @@ KtNameReferenceExpression(686,690): 'TODO'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Nothing
@@ -615,7 +605,6 @@ KtCallExpression(725,734): 'lazy {""}'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Lazy<ERROR_TYPE>
@@ -658,7 +647,6 @@ KtCallExpression(725,734): 'lazy {""}'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Lazy<ERROR_TYPE>
@@ -701,7 +689,6 @@ KtCallExpression(725,734): 'lazy {""}'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Lazy<kotlin.String>
@@ -737,7 +724,6 @@ KtNameReferenceExpression(725,729): 'lazy'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Lazy<ERROR_TYPE>
@@ -780,7 +766,6 @@ KtNameReferenceExpression(725,729): 'lazy'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Lazy<ERROR_TYPE>
@@ -823,7 +808,6 @@ KtNameReferenceExpression(725,729): 'lazy'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Lazy<kotlin.String>
@@ -959,7 +943,6 @@ KtCallExpression(914,1001): 'namedArgumentsHolder('
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -1007,7 +990,6 @@ KtNameReferenceExpression(914,934): 'namedArgumentsHolder'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -1082,7 +1064,6 @@ KtCallExpression(1006,1087): 'namedArgumentsHolder('
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -1130,7 +1111,6 @@ KtNameReferenceExpression(1006,1026): 'namedArgumentsHolder'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -1198,7 +1178,6 @@ KtCallExpression(1092,1123): 'namedArgumentHolder(arg = prop)'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -1232,7 +1211,6 @@ KtNameReferenceExpression(1092,1111): 'namedArgumentHolder'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -1281,7 +1259,6 @@ KtCallExpression(1128,1164): 'namedArgumentHolder(arg = superProp)'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -1315,7 +1292,6 @@ KtNameReferenceExpression(1128,1147): 'namedArgumentHolder'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -1364,7 +1340,6 @@ KtCallExpression(1169,1202): 'namedArgumentHolder(arg = func())'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -1398,7 +1373,6 @@ KtNameReferenceExpression(1169,1188): 'namedArgumentHolder'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -1453,7 +1427,6 @@ KtCallExpression(1207,1245): 'namedArgumentHolder(arg = superFunc())'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -1487,7 +1460,6 @@ KtNameReferenceExpression(1207,1226): 'namedArgumentHolder'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -1542,7 +1514,6 @@ KtCallExpression(1250,1285): 'namedArgumentHolder(arg = lazyProp)'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -1576,7 +1547,6 @@ KtNameReferenceExpression(1250,1269): 'namedArgumentHolder'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit

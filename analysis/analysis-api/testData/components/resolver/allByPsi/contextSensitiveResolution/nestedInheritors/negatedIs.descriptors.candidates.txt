@@ -128,7 +128,6 @@ KtPrefixExpression(231,248): '!USELESS_IS_CHECK'
         isSafeNavigation = false
         type = ERROR_TYPE
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -169,7 +168,6 @@ KtOperationReferenceExpression(231,232): '!'
         isSafeNavigation = false
         type = ERROR_TYPE
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -261,7 +259,6 @@ KtPrefixExpression(285,308): '!REDUNDANT_ELSE_IN_WHEN'
         isSafeNavigation = false
         type = ERROR_TYPE
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -302,7 +299,6 @@ KtOperationReferenceExpression(285,286): '!'
         isSafeNavigation = false
         type = ERROR_TYPE
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE

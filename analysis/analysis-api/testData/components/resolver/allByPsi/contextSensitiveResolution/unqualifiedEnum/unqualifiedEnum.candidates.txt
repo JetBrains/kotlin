@@ -232,7 +232,6 @@ KtBinaryExpression(302,312): 's == FIRST'
         isSafeNavigation = false
         type = test.Sample
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -287,7 +286,6 @@ KtOperationReferenceExpression(304,306): '=='
         isSafeNavigation = false
         type = test.Sample
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -354,7 +352,6 @@ KtBinaryExpression(326,337): 's == SECOND'
         isSafeNavigation = false
         type = test.Sample
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -409,7 +406,6 @@ KtOperationReferenceExpression(328,330): '=='
         isSafeNavigation = false
         type = test.Sample
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -476,7 +472,6 @@ KtBinaryExpression(351,361): 's == THIRD'
         isSafeNavigation = false
         type = test.Sample
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -531,7 +526,6 @@ KtOperationReferenceExpression(353,355): '=='
         isSafeNavigation = false
         type = test.Sample
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -617,7 +611,6 @@ KtDotQualifiedExpression(429,440): 'test.Sample'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = test.Sample
@@ -636,7 +629,6 @@ KtNameReferenceExpression(429,433): 'test'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = test.Sample
@@ -655,7 +647,6 @@ KtNameReferenceExpression(434,440): 'Sample'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = test.Sample
@@ -749,7 +740,6 @@ KtDotQualifiedExpression(504,515): 'test.Sample'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = test.Sample
@@ -768,7 +758,6 @@ KtNameReferenceExpression(504,508): 'test'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = test.Sample
@@ -787,7 +776,6 @@ KtNameReferenceExpression(509,515): 'Sample'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = test.Sample
@@ -934,7 +922,6 @@ KtDotQualifiedExpression(607,618): 'test.Sample'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = test.Sample
@@ -953,7 +940,6 @@ KtNameReferenceExpression(607,611): 'test'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = test.Sample
@@ -972,7 +958,6 @@ KtNameReferenceExpression(612,618): 'Sample'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = test.Sample

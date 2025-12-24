@@ -8,7 +8,6 @@ KtNameReferenceExpression(55,61): 'values'
         isSafeNavigation = false
         type = kotlin.Unit
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Array<test.E>

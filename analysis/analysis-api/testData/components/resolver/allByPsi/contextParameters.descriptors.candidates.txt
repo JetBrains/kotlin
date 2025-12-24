@@ -107,7 +107,6 @@ KtDotQualifiedExpression(130,140): 'this.bar()'
         isSafeNavigation = false
         type = Base
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -134,7 +133,6 @@ KtCallExpression(135,140): 'bar()'
         isSafeNavigation = false
         type = Base
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -155,7 +153,6 @@ KtNameReferenceExpression(135,138): 'bar'
         isSafeNavigation = false
         type = Base
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -179,7 +176,6 @@ KtDotQualifiedExpression(149,158): 'a.foo("")'
         isSafeNavigation = false
         type = ERROR_TYPE
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -199,7 +195,6 @@ KtDotQualifiedExpression(149,158): 'a.foo("")'
         isSafeNavigation = false
         type = ERROR_TYPE
       extensionReceiver = null
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -223,7 +218,6 @@ KtCallExpression(151,158): 'foo("")'
         isSafeNavigation = false
         type = ERROR_TYPE
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -243,7 +237,6 @@ KtCallExpression(151,158): 'foo("")'
         isSafeNavigation = false
         type = ERROR_TYPE
       extensionReceiver = null
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -264,7 +257,6 @@ KtNameReferenceExpression(151,154): 'foo'
         isSafeNavigation = false
         type = ERROR_TYPE
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -353,7 +345,6 @@ KtDotQualifiedExpression(243,253): 'this.bar()'
         isSafeNavigation = false
         type = Base
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -380,7 +371,6 @@ KtCallExpression(248,253): 'bar()'
         isSafeNavigation = false
         type = Base
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -401,7 +391,6 @@ KtNameReferenceExpression(248,251): 'bar'
         isSafeNavigation = false
         type = Base
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -428,7 +417,6 @@ KtDotQualifiedExpression(273,282): 'a.foo("")'
         isSafeNavigation = false
         type = ERROR_TYPE
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -448,7 +436,6 @@ KtDotQualifiedExpression(273,282): 'a.foo("")'
         isSafeNavigation = false
         type = ERROR_TYPE
       extensionReceiver = null
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -472,7 +459,6 @@ KtCallExpression(275,282): 'foo("")'
         isSafeNavigation = false
         type = ERROR_TYPE
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -492,7 +478,6 @@ KtCallExpression(275,282): 'foo("")'
         isSafeNavigation = false
         type = ERROR_TYPE
       extensionReceiver = null
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -513,7 +498,6 @@ KtNameReferenceExpression(275,278): 'foo'
         isSafeNavigation = false
         type = ERROR_TYPE
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -589,7 +573,6 @@ KtCallExpression(349,360): 'funMember()'
         symbol = /Base
         type = Base
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -609,7 +592,6 @@ KtNameReferenceExpression(349,358): 'funMember'
         symbol = /Base
         type = Base
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -688,7 +670,6 @@ KtCallExpression(441,542): 'with(Base()) {'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.String
@@ -744,7 +725,6 @@ KtNameReferenceExpression(441,445): 'with'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.String
@@ -786,7 +766,6 @@ KtCallExpression(446,452): 'Base()'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = Base
@@ -804,7 +783,6 @@ KtNameReferenceExpression(446,450): 'Base'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = Base
@@ -855,7 +833,6 @@ KtCallExpression(464,536): 'with(A()) {'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.String
@@ -909,7 +886,6 @@ KtNameReferenceExpression(464,468): 'with'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.String
@@ -951,7 +927,6 @@ KtCallExpression(469,472): 'A()'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = A
@@ -969,7 +944,6 @@ KtNameReferenceExpression(469,470): 'A'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = A
@@ -1023,7 +997,6 @@ KtCallExpression(488,499): 'funMember()'
           visibility: LOCAL
         type = Base
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -1062,7 +1035,6 @@ KtNameReferenceExpression(488,497): 'funMember'
           visibility: LOCAL
         type = Base
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -1148,7 +1120,6 @@ KtCallExpression(588,635): 'with(Base()) {'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -1201,7 +1172,6 @@ KtNameReferenceExpression(588,592): 'with'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -1243,7 +1213,6 @@ KtCallExpression(593,599): 'Base()'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = Base
@@ -1261,7 +1230,6 @@ KtNameReferenceExpression(593,597): 'Base'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = Base
@@ -1315,7 +1283,6 @@ KtCallExpression(611,629): 'funMember(a = A())'
           visibility: LOCAL
         type = Base
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -1355,7 +1322,6 @@ KtNameReferenceExpression(611,620): 'funMember'
           visibility: LOCAL
         type = Base
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -1386,7 +1352,6 @@ KtCallExpression(625,628): 'A()'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = A
@@ -1404,7 +1369,6 @@ KtNameReferenceExpression(625,626): 'A'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = A

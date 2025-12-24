@@ -5,7 +5,6 @@ KtCallExpression(64,75): 'ALE<String>'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ALE<T>

@@ -70,7 +70,6 @@ KtDotQualifiedExpression(79,98): 'super.equals(other)'
         isSafeNavigation = false
         type = kotlin.Any
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -111,7 +110,6 @@ KtCallExpression(85,98): 'equals(other)'
       isSafeNavigation = false
       type = kotlin.Any
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Boolean
@@ -147,7 +145,6 @@ KtNameReferenceExpression(85,91): 'equals'
         isSafeNavigation = false
         type = kotlin.Any
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -319,7 +316,6 @@ KtDotQualifiedExpression(217,236): 'super.equals(other)'
         isSafeNavigation = false
         type = Another
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -360,7 +356,6 @@ KtCallExpression(223,236): 'equals(other)'
       isSafeNavigation = false
       type = Another
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Boolean
@@ -396,7 +391,6 @@ KtNameReferenceExpression(223,229): 'equals'
         isSafeNavigation = false
         type = Another
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -568,7 +562,6 @@ KtBinaryExpression(318,326): 'm1 == m2'
         isSafeNavigation = false
         type = MyClass
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -621,7 +614,6 @@ KtOperationReferenceExpression(321,323): '=='
         isSafeNavigation = false
         type = MyClass
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -674,7 +666,6 @@ KtBinaryExpression(331,339): 'm1 != m2'
         isSafeNavigation = false
         type = MyClass
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -727,7 +718,6 @@ KtOperationReferenceExpression(334,336): '!='
         isSafeNavigation = false
         type = MyClass
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -780,7 +770,6 @@ KtDotQualifiedExpression(344,357): 'm1.equals(m2)'
         isSafeNavigation = false
         type = MyClass
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -832,7 +821,6 @@ KtCallExpression(347,357): 'equals(m2)'
       isSafeNavigation = false
       type = MyClass
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Boolean
@@ -868,7 +856,6 @@ KtNameReferenceExpression(347,353): 'equals'
         isSafeNavigation = false
         type = MyClass
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -1007,7 +994,6 @@ KtBinaryExpression(391,399): 'm2 == m1'
         isSafeNavigation = false
         type = MyClass
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -1060,7 +1046,6 @@ KtOperationReferenceExpression(394,396): '=='
         isSafeNavigation = false
         type = MyClass
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -1113,7 +1098,6 @@ KtBinaryExpression(404,412): 'm2 != m1'
         isSafeNavigation = false
         type = MyClass
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -1166,7 +1150,6 @@ KtOperationReferenceExpression(407,409): '!='
         isSafeNavigation = false
         type = MyClass
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -1219,7 +1202,6 @@ KtDotQualifiedExpression(417,430): 'm2.equals(m1)'
         isSafeNavigation = false
         type = MyClass
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -1271,7 +1253,6 @@ KtCallExpression(420,430): 'equals(m1)'
       isSafeNavigation = false
       type = MyClass
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Boolean
@@ -1307,7 +1288,6 @@ KtNameReferenceExpression(420,426): 'equals'
         isSafeNavigation = false
         type = MyClass
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -1366,7 +1346,6 @@ KtCallExpression(468,477): 'Another()'
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = Another
@@ -1383,7 +1362,6 @@ KtNameReferenceExpression(468,475): 'Another'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = Another
@@ -1494,7 +1472,6 @@ KtBinaryExpression(530,550): 'another == Another()'
         isSafeNavigation = false
         type = Another
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -1547,7 +1524,6 @@ KtOperationReferenceExpression(538,540): '=='
         isSafeNavigation = false
         type = Another
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -1571,7 +1547,6 @@ KtCallExpression(541,550): 'Another()'
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = Another
@@ -1588,7 +1563,6 @@ KtNameReferenceExpression(541,548): 'Another'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = Another
@@ -1619,7 +1593,6 @@ KtBinaryExpression(555,575): 'another != Another()'
         isSafeNavigation = false
         type = Another
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -1672,7 +1645,6 @@ KtOperationReferenceExpression(563,565): '!='
         isSafeNavigation = false
         type = Another
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -1696,7 +1668,6 @@ KtCallExpression(566,575): 'Another()'
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = Another
@@ -1713,7 +1684,6 @@ KtNameReferenceExpression(566,573): 'Another'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = Another
@@ -1744,7 +1714,6 @@ KtDotQualifiedExpression(580,605): 'another.equals(Another())'
         isSafeNavigation = false
         type = Another
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -1796,7 +1765,6 @@ KtCallExpression(588,605): 'equals(Another())'
       isSafeNavigation = false
       type = Another
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Boolean
@@ -1832,7 +1800,6 @@ KtNameReferenceExpression(588,594): 'equals'
         isSafeNavigation = false
         type = Another
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -1862,7 +1829,6 @@ KtCallExpression(595,604): 'Another()'
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = Another
@@ -1879,7 +1845,6 @@ KtNameReferenceExpression(595,602): 'Another'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = Another
@@ -1901,7 +1866,6 @@ KtCallExpression(623,630): 'Child()'
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = Child
@@ -1918,7 +1882,6 @@ KtNameReferenceExpression(623,628): 'Child'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = Child
@@ -1940,7 +1903,6 @@ KtCallExpression(649,658): 'MyClass()'
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = MyClass
@@ -1957,7 +1919,6 @@ KtNameReferenceExpression(649,656): 'MyClass'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MyClass
@@ -2068,7 +2029,6 @@ KtBinaryExpression(708,724): 'child == myClass'
         isSafeNavigation = false
         type = Child
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -2121,7 +2081,6 @@ KtOperationReferenceExpression(714,716): '=='
         isSafeNavigation = false
         type = Child
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -2174,7 +2133,6 @@ KtDotQualifiedExpression(729,750): 'child.equals(myClass)'
         isSafeNavigation = false
         type = Child
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -2226,7 +2184,6 @@ KtCallExpression(735,750): 'equals(myClass)'
       isSafeNavigation = false
       type = Child
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Boolean
@@ -2262,7 +2219,6 @@ KtNameReferenceExpression(735,741): 'equals'
         isSafeNavigation = false
         type = Child
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -2321,7 +2277,6 @@ KtBinaryExpression(755,771): 'myClass != child'
         isSafeNavigation = false
         type = MyClass
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -2374,7 +2329,6 @@ KtOperationReferenceExpression(763,765): '!='
         isSafeNavigation = false
         type = MyClass
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -2419,7 +2373,6 @@ KtPrefixExpression(776,798): '!myClass.equals(child)'
         isSafeNavigation = false
         type = kotlin.Boolean
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -2439,7 +2392,6 @@ KtOperationReferenceExpression(776,777): '!'
         isSafeNavigation = false
         type = kotlin.Boolean
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -2467,7 +2419,6 @@ KtDotQualifiedExpression(777,798): 'myClass.equals(child)'
         isSafeNavigation = false
         type = MyClass
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -2519,7 +2470,6 @@ KtCallExpression(785,798): 'equals(child)'
       isSafeNavigation = false
       type = MyClass
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Boolean
@@ -2555,7 +2505,6 @@ KtNameReferenceExpression(785,791): 'equals'
         isSafeNavigation = false
         type = MyClass
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -2614,7 +2563,6 @@ KtBinaryExpression(804,820): 'another == child'
         isSafeNavigation = false
         type = Another
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -2667,7 +2615,6 @@ KtOperationReferenceExpression(812,814): '=='
         isSafeNavigation = false
         type = Another
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -2720,7 +2667,6 @@ KtDotQualifiedExpression(825,846): 'another.equals(child)'
         isSafeNavigation = false
         type = Another
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -2772,7 +2718,6 @@ KtCallExpression(833,846): 'equals(child)'
       isSafeNavigation = false
       type = Another
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Boolean
@@ -2808,7 +2753,6 @@ KtNameReferenceExpression(833,839): 'equals'
         isSafeNavigation = false
         type = Another
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -2867,7 +2811,6 @@ KtBinaryExpression(851,867): 'child == another'
         isSafeNavigation = false
         type = Child
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -2920,7 +2863,6 @@ KtOperationReferenceExpression(857,859): '=='
         isSafeNavigation = false
         type = Child
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -2973,7 +2915,6 @@ KtDotQualifiedExpression(872,893): 'child.equals(another)'
         isSafeNavigation = false
         type = Child
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -3025,7 +2966,6 @@ KtCallExpression(878,893): 'equals(another)'
       isSafeNavigation = false
       type = Child
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Boolean
@@ -3061,7 +3001,6 @@ KtNameReferenceExpression(878,884): 'equals'
         isSafeNavigation = false
         type = Child
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -3120,7 +3059,6 @@ KtBinaryExpression(899,917): 'another == myClass'
         isSafeNavigation = false
         type = Another
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -3173,7 +3111,6 @@ KtOperationReferenceExpression(907,909): '=='
         isSafeNavigation = false
         type = Another
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -3226,7 +3163,6 @@ KtDotQualifiedExpression(922,945): 'another.equals(myClass)'
         isSafeNavigation = false
         type = Another
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -3278,7 +3214,6 @@ KtCallExpression(930,945): 'equals(myClass)'
       isSafeNavigation = false
       type = Another
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Boolean
@@ -3314,7 +3249,6 @@ KtNameReferenceExpression(930,936): 'equals'
         isSafeNavigation = false
         type = Another
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -3373,7 +3307,6 @@ KtBinaryExpression(950,968): 'myClass != another'
         isSafeNavigation = false
         type = MyClass
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -3426,7 +3359,6 @@ KtOperationReferenceExpression(958,960): '!='
         isSafeNavigation = false
         type = MyClass
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -3471,7 +3403,6 @@ KtPrefixExpression(973,997): '!myClass.equals(another)'
         isSafeNavigation = false
         type = kotlin.Boolean
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -3491,7 +3422,6 @@ KtOperationReferenceExpression(973,974): '!'
         isSafeNavigation = false
         type = kotlin.Boolean
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -3519,7 +3449,6 @@ KtDotQualifiedExpression(974,997): 'myClass.equals(another)'
         isSafeNavigation = false
         type = MyClass
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -3571,7 +3500,6 @@ KtCallExpression(982,997): 'equals(another)'
       isSafeNavigation = false
       type = MyClass
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Boolean
@@ -3607,7 +3535,6 @@ KtNameReferenceExpression(982,988): 'equals'
         isSafeNavigation = false
         type = MyClass
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean

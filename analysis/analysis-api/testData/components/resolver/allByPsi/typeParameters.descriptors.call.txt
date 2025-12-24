@@ -351,7 +351,6 @@ KtCallExpression(392,405): 'NestedClass()'
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = one.two.Base.NestedClass
@@ -368,7 +367,6 @@ KtNameReferenceExpression(392,403): 'NestedClass'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = one.two.Base.NestedClass
@@ -394,7 +392,6 @@ KtDotQualifiedExpression(422,432): 'c1.Inner()'
         isSafeNavigation = false
         type = one.two.Child<one.two.Base.NestedClass>
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = one.two.Base<one.two.Base.NestedClass>.one.two.Base.Inner
@@ -430,7 +427,6 @@ KtCallExpression(425,432): 'Inner()'
       isSafeNavigation = false
       type = one.two.Child<one.two.Base.NestedClass>
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = one.two.Base<one.two.Base.NestedClass>.one.two.Base.Inner
@@ -450,7 +446,6 @@ KtNameReferenceExpression(425,430): 'Inner'
         isSafeNavigation = false
         type = one.two.Child<one.two.Base.NestedClass>
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = one.two.Base<one.two.Base.NestedClass>.one.two.Base.Inner

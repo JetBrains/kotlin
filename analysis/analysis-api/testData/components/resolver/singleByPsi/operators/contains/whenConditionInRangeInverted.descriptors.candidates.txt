@@ -16,7 +16,6 @@ KtOperationReferenceExpression(177,180): '!in'
         expression = MyClass()
         isSafeNavigation = false
         type = MyClass
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = MyClass
         returnType = kotlin.Boolean
