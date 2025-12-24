@@ -261,9 +261,7 @@ private fun <T : EqualityMode> DescriptorKCallable<*>.toEquatableCallableSignatu
 }
 
 internal val Class<*>.isKotlin: Boolean
-    get() = this == Enum::class.java || // Enum and Comparable JDK classes are immediately mapped to Kotlin classes
-        this == Comparable::class.java ||
-        getAnnotation(Metadata::class.java) != null
+    get() = getAnnotation(Metadata::class.java) != null
 
 @Suppress("UNCHECKED_CAST")
 private val KClass<*>.declaredDescriptorKCallableMembers: Collection<DescriptorKCallable<*>>
