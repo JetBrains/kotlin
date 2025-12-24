@@ -158,12 +158,23 @@ internal object DevirtualizationAnalysis {
             val isRoot get() = parent == this
 
             fun root(): Node {
-                require(parent.isRoot)
-                return parent
+                var r = this
+                while (r.parent !== r) {
+                    r = r.parent
+                }
+
+                var curr = this
+                while (curr.parent !== r) {
+                    val next = curr.parent
+                    curr.parent = r
+                    curr = next
+                }
+
+                return r
             }
 
             fun join(other: Node) {
-                parent = other.root()
+                root().parent = other.root()
             }
 
             class Source(id: Int, val typeId: Int, nameBuilder: () -> String) : Node(id) {
@@ -306,6 +317,7 @@ internal object DevirtualizationAnalysis {
             val order = IntArray(nodesCount)
             val multiNodes = IntArray(nodesCount)
             val visited = CustomBitSet(nodesCount)
+            val potentialExternalVirtualCall = CustomBitSet(nodesCount)
 
             private fun calculateTopologicalSort() {
                 require(directEdges.size == reversedEdges.size)
@@ -339,7 +351,7 @@ internal object DevirtualizationAnalysis {
                 require(index == nodesCount)
             }
 
-            private fun mergeMultiNodes() {
+            private fun squashStronglyConnectedComponents() {
                 visited.clear()
                 var index = 0
                 for (i in order.size - 1 downTo 0) {
@@ -543,9 +555,126 @@ internal object DevirtualizationAnalysis {
                 return result.toIntArray()
             }
 
+            fun squashEquivalentNodes() {
+                // These nodes might receive a final type from external world.
+                constraintGraph.externalVirtualCalls.forEach {
+                    potentialExternalVirtualCall.set(it.returnsNode.root().id)
+                }
+
+                val random = Random(234239874) // Just some number for reproducibility
+                val nodeRandomIds = LongArray(nodes.size) { random.nextLong() }
+
+                val signatureMap = hashMapOf<Long, Node>()
+
+                var seenColor = 0
+                val seenEdgeFrom = IntArray(nodes.size)
+                val castEdges = arrayOfNulls<CustomBitSet>(nodes.size)
+
+                for (i in order.size - 1 downTo 0) {
+                    val nodeIndex = order[i]
+                    val node = nodes[nodeIndex]
+                    if (!node.isRoot) continue
+                    if (node is Node.Source) continue
+                    if (potentialExternalVirtualCall[nodeIndex]) continue
+
+                    if (!node.types.isEmpty) error("Ordinary node types should be empty (${nodeIndex})")
+
+                    if (node.reversedCastEdges == null) {
+                        var singleParent = -1
+                        reversedEdges.forEachEdge(nodeIndex) {
+                            val rootId = nodes[it].root().id
+                            if (rootId == nodeIndex) return@forEachEdge
+
+                            if (singleParent == -1) {
+                                singleParent = rootId
+                            } else if (singleParent != rootId) {
+                                singleParent = -2
+                            }
+                        }
+
+                        if (singleParent >= 0) {
+                            val singleParentNode = nodes[singleParent]
+                            if (singleParentNode !is Node.Source) {
+                                if (!node.types.isEmpty) error("Ordinary node types should be empty (${singleParentNode})")
+                                node.join(singleParentNode)
+                            }
+                            continue
+                        }
+                    }
+
+
+                    ++seenColor
+                    var signature = 0L
+                    var totalEdges = 0
+                    reversedEdges.forEachEdge(nodeIndex) {
+                        val r = nodes[it].root().id
+                        if (seenEdgeFrom[r] != seenColor) {
+                            signature = signature xor nodeRandomIds[r]
+                            seenEdgeFrom[r] = seenColor
+                            ++totalEdges
+                        }
+                    }
+                    node.reversedCastEdges?.forEach {
+                        val r = it.node.root().id
+                        if (seenEdgeFrom[r] != seenColor) {
+                            seenEdgeFrom[r] = seenColor
+                            signature = signature xor mixHash(nodeRandomIds[r], it.suitableTypes.hashCodeLong())
+                            ++totalEdges
+                            castEdges[r] = it.suitableTypes
+                        }
+                    }
+
+
+                    val mergeWith = signatureMap[signature]
+                    if (mergeWith != null) {
+                        var eq = true
+                        reversedEdges.forEachEdge(mergeWith.id) {
+                            val r = nodes[it].root().id
+                            if (seenEdgeFrom[r] == seenColor) {
+                                seenEdgeFrom[r] = 0
+                                --totalEdges
+                            } else if (seenEdgeFrom[r] != 0) {
+                                eq = false
+                            }
+                        }
+                        mergeWith.reversedCastEdges?.forEach {
+                            val r = it.node.root().id
+                            if (seenEdgeFrom[r] == seenColor) {
+                                seenEdgeFrom[r] = 0
+                                --totalEdges
+                                val tp = castEdges[r]
+                                if (tp?.equals(it.suitableTypes) != true) {
+                                    eq = false
+                                }
+                            } else if (seenEdgeFrom[r] != 0){
+                                eq = false
+                            }
+                        }
+
+                        if (eq && totalEdges == 0) node.join(mergeWith)
+                    } else {
+                        signatureMap[signature] = node
+                    }
+                }
+            }
+
+            // Bijective mixer to ensure Hash(A, Mask) ^ Hash(B) doesn't accidentally equal Hash(A) ^ Hash(B, Mask)
+            // Inspired by MurmurHash3 fmix64 by Austin Appleby (https://github.com/aappleby/smhasher/blob/0ff96f7835817a27d0487325b6c16033e2992eb5/src/MurmurHash3.cpp#L81)
+            private fun mixHash(nodeId: Long, maskHash: Long): Long {
+                var k = (nodeId xor maskHash).toULong()
+                k = k xor (k shr 33)
+                k *= 0xff51afd7ed558ccdUL
+                k = k xor (k shr 33)
+                k *= 0xc4ceb9fe1a85ec53UL
+                k = k xor (k shr 33)
+                return k.toLong()
+            }
+
             fun build(): Condensation {
                 calculateTopologicalSort()
-                mergeMultiNodes()
+                squashStronglyConnectedComponents()
+                mergeEdges()
+                squashEquivalentNodes()
                 mergeEdges()
 
                 return Condensation(topologicalOrder())
@@ -566,6 +695,73 @@ internal object DevirtualizationAnalysis {
                     expression.acceptChildrenVoid(this)
                 }
             })
+        }
+
+        private fun propagateVirtualType(directEdges: IntArray) {
+            val processedVirtualNodes = CustomBitSet()
+
+            fun markVirtualNodes(node: Node) {
+                processedVirtualNodes.set(node.id)
+                node.types.set(VIRTUAL_TYPE_ID)
+
+                directEdges.forEachEdge(node.id) {
+                    if (!processedVirtualNodes[it]) {
+                        markVirtualNodes(constraintGraph.nodes[it])
+                    }
+                }
+
+                node.directCastEdges?.forEach {
+                    if (it.suitableTypes[VIRTUAL_TYPE_ID] && !processedVirtualNodes[it.node.id]) {
+                        markVirtualNodes(it.node)
+                    }
+                }
+            }
+
+            constraintGraph.nodes.forEach {
+                if (it.types[VIRTUAL_TYPE_ID] && !processedVirtualNodes[it.id]) {
+                    markVirtualNodes(it)
+                }
+            }
+        }
+
+        /*
+         * A node is called "useful" if any of the nodes which we are trying to devirtualize is reachable from it.
+         * In some cases the number of "useful" nodes is on an order of magnitude less than the total number of nodes.
+         */
+        private fun collectUsefulNodes(reversedEdges: IntArray, nodesMap: Map<DataFlowIR.Node, Node>): CustomBitSet {
+            val usefulNodes = CustomBitSet(constraintGraph.nodes.size)
+
+            fun markReachableFrom(nodeId: Int) {
+                if (usefulNodes[nodeId]) return
+                usefulNodes.set(nodeId)
+
+                reversedEdges.forEachEdge(nodeId) {
+                    if (!usefulNodes[it]) {
+                        markReachableFrom(it)
+                    }
+                }
+                constraintGraph.nodes[nodeId].reversedCastEdges?.forEach {
+                    if (!usefulNodes[it.node.id]) {
+                        markReachableFrom(it.node.id)
+                    }
+                }
+            }
+
+            for (function in moduleDFG.functions.values) {
+                if (!constraintGraph.functions.containsKey(function.symbol)) continue
+                function.body.forEachNonScopeNode { node ->
+                    val virtualCall = node as? DataFlowIR.Node.VirtualCall ?: return@forEachNonScopeNode
+                    assert(nodesMap[virtualCall] != null) { "Node for virtual call $virtualCall has not been built" }
+                    val receiverNode = constraintGraph.virtualCallSiteReceivers[virtualCall]?.root()
+                            ?: error("virtualCallSiteReceivers were not built for virtual call $virtualCall")
+
+                    if (!receiverNode.types[VIRTUAL_TYPE_ID]) {
+                        markReachableFrom(receiverNode.id)
+                    }
+                }
+            }
+
+            return usefulNodes
         }
 
         fun analyze() {
@@ -626,6 +822,22 @@ internal object DevirtualizationAnalysis {
                 +""
             }
 
+            propagateVirtualType(directEdges)
+
+            val usefulNodes = collectUsefulNodes(reversedEdges, nodesMap)
+
+            if (entryPoint == null) {
+                // If a virtual function is called on a receiver coming from external world and
+                // the return type of the function is a final class, then we conservatively assume
+                // that instance of this class could have been created by the call.
+                constraintGraph.externalVirtualCalls.forEach { call ->
+                    val returnsNode = call.returnsNode.root()
+                    if (call.receiverNode.root().types[VIRTUAL_TYPE_ID]) { // Called from external world.
+                        returnsNode.types.set(call.returnType.index)
+                    }
+                }
+            }
+
             topologicalOrder.forEachIndexed { index, node ->
                 node.priority = index
             }
@@ -665,6 +877,8 @@ internal object DevirtualizationAnalysis {
                 for (node in topologicalOrder) {
                     if (node is Node.Source)
                         continue // A source has no incoming edges.
+
+                    if (!usefulNodes[node.id]) continue
 
                     reversedEdges.forEachEdge(node.id) {
                         node.types.or(constraintGraph.nodes[it].types)
@@ -711,6 +925,8 @@ internal object DevirtualizationAnalysis {
                     val node = constraintGraph.nodes[prevFront[i]]
                     directEdges.forEachEdge(node.id) { distNodeId ->
                         val distNode = constraintGraph.nodes[distNodeId]
+                        if (!usefulNodes[distNode.id]) return@forEachEdge
+
                         if (marked[distNode.id])
                             distNode.types.or(node.types)
                         else {
@@ -722,6 +938,7 @@ internal object DevirtualizationAnalysis {
                     }
                     node.directCastEdges?.forEach { edge ->
                         val distNode = edge.node
+                        if (!usefulNodes[distNode.id]) return@forEach
                         if (distNode.types.orWithFilterHasChanged(node.types, edge.suitableTypes) && !marked[distNode.id]) {
                             marked.set(distNode.id)
                             front[frontSize++] = distNode.id
@@ -730,8 +947,6 @@ internal object DevirtualizationAnalysis {
                 }
             }
 
-            if (entryPoint == null)
-                propagateFinalTypesFromExternalVirtualCalls(directEdges)
 
             context.logMultiple {
                 topologicalOrder.forEachIndexed { index, multiNode ->
@@ -823,50 +1038,6 @@ internal object DevirtualizationAnalysis {
                     }
                 }
             }
-        }
-
-        /*
-         * If a virtual function is called on a receiver coming from external world and
-         * the return type of the function is a final class, then we conservatively assume
-         * that instance of this class could have been created by the call.
-         */
-        private fun propagateFinalTypesFromExternalVirtualCalls(directEdges: IntArray) {
-            val nodesCount = constraintGraph.nodes.size
-            constraintGraph.externalVirtualCalls
-                    .groupBy { it.returnType }
-                    .forEach { (type, list) ->
-                        val visited = CustomBitSet(nodesCount)
-                        val stack = mutableListOf<Node>()
-                        list.forEach { call ->
-                            val returnsNode = call.returnsNode.root()
-                            if (call.receiverNode.root().types[VIRTUAL_TYPE_ID] // Called from external world.
-                                    && !returnsNode.types[type.index] && !visited[returnsNode.id]
-                            ) {
-                                returnsNode.types.set(type.index)
-                                stack.push(returnsNode)
-                                visited.set(returnsNode.id)
-                            }
-                        }
-                        while (stack.isNotEmpty()) {
-                            val node = stack.pop()
-                            directEdges.forEachEdge(node.id) { distNodeId ->
-                                val distNode = constraintGraph.nodes[distNodeId]
-                                if (!distNode.types[type.index] && !visited[distNode.id]) {
-                                    distNode.types.set(type.index)
-                                    visited.set(distNode.id)
-                                    stack.push(distNode)
-                                }
-                            }
-                            node.directCastEdges?.forEach { edge ->
-                                val distNode = edge.node
-                                if (!distNode.types[type.index] && !visited[distNode.id] && edge.suitableTypes[type.index]) {
-                                    distNode.types.set(type.index)
-                                    visited.set(distNode.id)
-                                    stack.push(distNode)
-                                }
-                            }
-                        }
-                    }
         }
 
         // Both [directEdges] and [reversedEdges] are the array representation of a graph:
