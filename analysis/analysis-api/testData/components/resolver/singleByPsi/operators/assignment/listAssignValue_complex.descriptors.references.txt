@@ -1,0 +1,6 @@
+KtOperationReferenceExpression(68,70): '+='
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in ROOT) operator fun <R, P> R.plus(other: P): R

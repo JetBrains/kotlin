@@ -1073,6 +1073,12 @@ public class FirIdeNormalAnalysisLibrarySourceModuleResolveCandidatesTestGenerat
   }
 
   @Test
+  @TestMetadata("prefixUnaryOperatorOnVar_complex.kt")
+  public void testPrefixUnaryOperatorOnVar_complex() {
+    runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/prefixUnaryOperatorOnVar_complex.kt");
+  }
+
+  @Test
   @TestMetadata("prefixUnaryOperatorWithArrayAccessConvention.kt")
   public void testPrefixUnaryOperatorWithArrayAccessConvention() {
     runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/prefixUnaryOperatorWithArrayAccessConvention.kt");
@@ -4888,6 +4894,12 @@ public class FirIdeNormalAnalysisLibrarySourceModuleResolveCandidatesTestGenerat
       @TestMetadata("listAssignValue.kt")
       public void testListAssignValue() {
         runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/operators/assignment/listAssignValue.kt");
+      }
+
+      @Test
+      @TestMetadata("listAssignValue_complex.kt")
+      public void testListAssignValue_complex() {
+        runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/operators/assignment/listAssignValue_complex.kt");
       }
 
       @Test
