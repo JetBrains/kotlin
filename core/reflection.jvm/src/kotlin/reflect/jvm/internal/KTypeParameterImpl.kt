@@ -50,7 +50,7 @@ internal class KTypeParameterImpl private constructor(
     constructor(
         container: KTypeParameterOwnerImpl,
         descriptor: TypeParameterDescriptor,
-        kTypeSubstitutor: KTypeSubstitutor = KTypeSubstitutor.EMPTY,
+        typeSubstitutor: KTypeSubstitutor = KTypeSubstitutor.EMPTY,
     ) : this(
         descriptor,
         container,
@@ -60,7 +60,7 @@ internal class KTypeParameterImpl private constructor(
     ) {
         upperBounds = descriptor.upperBounds.map {
             val type = DescriptorKType(it)
-            kTypeSubstitutor.substitute(type).type ?: starProjectionSupertypesAreNotPossible()
+            typeSubstitutor.substitute(type).type ?: starProjectionInTopLevelTypeIsNotNotPossible(containerForDebug = container)
         }
     }
 
