@@ -129,8 +129,12 @@ internal fun stringRepresentation(any: Any?): String = with(any) {
 
             val klass = this@with::class
             klass.memberProperties
-                .filter {
-                    it.name != "token" && it.visibility == KVisibility.PUBLIC && !it.hasAnnotation<Deprecated>()
+                .filter { property ->
+                    property.visibility == KVisibility.PUBLIC &&
+                            !property.hasAnnotation<Deprecated>() &&
+                            property.name != "token" &&
+                            /** The call is already covered as a part of [KaCompoundOperation.operationCall] */
+                            !(klass.isSubclassOf(KaCompoundAccessCall::class) && property.name == KaCompoundAccessCall::operationCall.name)
                 }.ifNotEmpty {
                     joinTo(this@buildString, separator = "\n  ", prefix = ":\n  ") { property ->
                         val name = property.name
@@ -142,7 +146,7 @@ internal fun stringRepresentation(any: Any?): String = with(any) {
                                     sortedCalls(value as Collection<KaCall>)
                                 }
 
-                                KaSymbolResolutionError::class.isSuperclassOf(klass) && name == "candidateSymbols" -> {
+                                KaSymbolResolutionError::class.isSuperclassOf(klass) && name == KaSymbolResolutionError::candidateSymbols.name -> {
                                     sortedSymbols(value as Collection<KaSymbol>)
                                 }
 
@@ -243,14 +247,14 @@ internal fun sortedCalls(collection: Collection<KaCall>): Collection<KaCall> = c
 
 internal fun KaCall.symbols(): List<KaSymbol> = when (this) {
     is KaCompoundVariableAccessCall -> listOfNotNull(
-        variablePartiallyAppliedSymbol.symbol,
-        compoundOperation.operationPartiallyAppliedSymbol.symbol,
+        variableCall.symbol,
+        operationCall.symbol,
     )
 
     is KaCompoundArrayAccessCall -> listOfNotNull(
-        getPartiallyAppliedSymbol.symbol,
-        setPartiallyAppliedSymbol.symbol,
-        compoundOperation.operationPartiallyAppliedSymbol.symbol,
+        getCall.symbol,
+        setCall.symbol,
+        operationCall.symbol,
     )
 
     is KaCallableMemberCall<*, *> -> listOf(symbol)
