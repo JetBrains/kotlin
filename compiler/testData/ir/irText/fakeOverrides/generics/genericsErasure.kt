@@ -2,6 +2,9 @@
 // FIR_IDENTICAL
 // TARGET_BACKEND: JVM
 
+// The test primarily tests reflect dumps (k1 vs new reflect), we don't need kt dumps
+// SKIP_KT_DUMP
+
 // Disable K1 since it reports: CONFLICTING_OVERLOADS: Conflicting overloads: public final fun <A, B> foo4(a: A): Unit defined in Foo, public final fun <B> foo4(a: B): Unit defined in Foo
 // IGNORE_BACKEND_K1: ANY
 

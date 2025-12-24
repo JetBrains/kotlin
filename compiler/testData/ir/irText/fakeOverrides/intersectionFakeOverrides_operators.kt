@@ -1,5 +1,8 @@
 // TARGET_BACKEND: JVM
 
+// The test primarily tests reflect dumps (k1 vs new reflect), we don't need kt dumps
+// SKIP_KT_DUMP
+
 // FILE: main.kt
 public open class B {
     fun plus(a: Any): String = ""

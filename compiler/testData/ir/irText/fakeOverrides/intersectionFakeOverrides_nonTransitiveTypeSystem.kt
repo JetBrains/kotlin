@@ -1,6 +1,9 @@
 // FIR_IDENTICAL
 // TARGET_BACKEND: JVM
 
+// The test primarily tests reflect dumps (k1 vs new reflect), we don't need kt dumps
+// SKIP_KT_DUMP
+
 // FILE: A.java
 public class A {
     public void foo(String a) {}

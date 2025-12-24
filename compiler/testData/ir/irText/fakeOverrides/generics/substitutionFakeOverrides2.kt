@@ -1,6 +1,9 @@
 // TARGET_BACKEND: JVM
 // FIR_IDENTICAL
 
+// The test primarily tests reflect dumps (k1 vs new reflect), we don't need kt dumps
+// SKIP_KT_DUMP
+
 // Skip the check because K1 is wrong (the optimization in the compiler is incorrect: KT-65504 and KT-42020)
 // KOTLIN_REFLECT_DUMP_MISMATCH
 
