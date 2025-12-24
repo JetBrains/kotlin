@@ -1,486 +1,486 @@
 KClass: class A : Java1
   members:
-    open PUBLIC operator fun A.equals(kotlin.Any?): kotlin.Boolean
-    open PUBLIC fun A.foo(): kotlin.Unit
-    open PUBLIC fun A.hashCode(): kotlin.Int
-    open PUBLIC fun A.toString(): kotlin.String
-    open PUBLIC val A.a: kotlin.Int
+    public open operator fun A.equals(kotlin.Any?): kotlin.Boolean
+    public open fun A.foo(): kotlin.Unit
+    public open fun A.hashCode(): kotlin.Int
+    public open fun A.toString(): kotlin.String
+    public open val A.a: kotlin.Int
   declaredMembers:
 KClass: class AA : Java15
   members:
-    open PUBLIC operator fun AA.equals(kotlin.Any?): kotlin.Boolean
-    open PROTECTED fun AA.foo(): kotlin.Unit
-    open PUBLIC fun AA.hashCode(): kotlin.Int
-    open PUBLIC fun AA.toString(): kotlin.String
+    public open operator fun AA.equals(kotlin.Any?): kotlin.Boolean
+    protected open fun AA.foo(): kotlin.Unit
+    public open fun AA.hashCode(): kotlin.Int
+    public open fun AA.toString(): kotlin.String
     final var AA.a: kotlin.Int
   declaredMembers:
-    open PROTECTED fun AA.foo(): kotlin.Unit
+    protected open fun AA.foo(): kotlin.Unit
 KClass: class B : Java1
   members:
-    open PUBLIC operator fun B.equals(kotlin.Any?): kotlin.Boolean
-    open PUBLIC fun B.foo(): kotlin.Unit
-    open PUBLIC fun B.hashCode(): kotlin.Int
-    open PUBLIC fun B.toString(): kotlin.String
-    open PUBLIC val B.a: kotlin.Int
+    public open operator fun B.equals(kotlin.Any?): kotlin.Boolean
+    public open fun B.foo(): kotlin.Unit
+    public open fun B.hashCode(): kotlin.Int
+    public open fun B.toString(): kotlin.String
+    public open val B.a: kotlin.Int
   declaredMembers:
-    open PUBLIC fun B.foo(): kotlin.Unit
+    public open fun B.foo(): kotlin.Unit
 KClass: class BB : Java16
   members:
-    open PUBLIC operator fun BB.equals(kotlin.Any?): kotlin.Boolean
-    open PUBLIC fun BB.hashCode(): kotlin.Int
-    open PUBLIC fun BB.toString(): kotlin.String
-    open INTERNAL val BB.a: kotlin.Int
+    public open operator fun BB.equals(kotlin.Any?): kotlin.Boolean
+    public open fun BB.hashCode(): kotlin.Int
+    public open fun BB.toString(): kotlin.String
+    internal open val BB.a: kotlin.Int
   declaredMembers:
 KClass: class C : Java2
   members:
-    open PUBLIC operator fun C.equals(kotlin.Any?): kotlin.Boolean
-    open PUBLIC fun C.hashCode(): kotlin.Int
-    open PUBLIC fun C.toString(): kotlin.String
+    public open operator fun C.equals(kotlin.Any?): kotlin.Boolean
+    public open fun C.hashCode(): kotlin.Int
+    public open fun C.toString(): kotlin.String
   declaredMembers:
 KClass: class CC : Java17
   members:
-    open PUBLIC operator fun CC.equals(kotlin.Any?): kotlin.Boolean
+    public open operator fun CC.equals(kotlin.Any?): kotlin.Boolean
     open fun CC.foo(): kotlin.Unit
-    open PUBLIC fun CC.hashCode(): kotlin.Int
-    open PUBLIC fun CC.toString(): kotlin.String
-    open INTERNAL val CC.a: kotlin.Int
+    public open fun CC.hashCode(): kotlin.Int
+    public open fun CC.toString(): kotlin.String
+    internal open val CC.a: kotlin.Int
     final var CC.a: kotlin.Int
   declaredMembers:
 KClass: class D : Java2
   members:
-    open PUBLIC operator fun D.equals(kotlin.Any?): kotlin.Boolean
-    final PUBLIC fun D.foo(): kotlin.Unit
-    open PUBLIC fun D.hashCode(): kotlin.Int
-    open PUBLIC fun D.toString(): kotlin.String
-    final PUBLIC val D.a: kotlin.Int
+    public open operator fun D.equals(kotlin.Any?): kotlin.Boolean
+    public final fun D.foo(): kotlin.Unit
+    public open fun D.hashCode(): kotlin.Int
+    public open fun D.toString(): kotlin.String
+    public final val D.a: kotlin.Int
   declaredMembers:
-    final PUBLIC fun D.foo(): kotlin.Unit
-    final PUBLIC val D.a: kotlin.Int
+    public final fun D.foo(): kotlin.Unit
+    public final val D.a: kotlin.Int
 KClass: class DD : Java17
   members:
-    open PUBLIC operator fun DD.equals(kotlin.Any?): kotlin.Boolean
-    open INTERNAL fun DD.foo(): kotlin.Unit
-    open PUBLIC fun DD.hashCode(): kotlin.Int
-    open PUBLIC fun DD.toString(): kotlin.String
-    open INTERNAL val DD.a: kotlin.Int
+    public open operator fun DD.equals(kotlin.Any?): kotlin.Boolean
+    internal open fun DD.foo(): kotlin.Unit
+    public open fun DD.hashCode(): kotlin.Int
+    public open fun DD.toString(): kotlin.String
+    internal open val DD.a: kotlin.Int
     final var DD.a: kotlin.Int
   declaredMembers:
-    open INTERNAL fun DD.foo(): kotlin.Unit
+    internal open fun DD.foo(): kotlin.Unit
 KClass: class DefaultVisibility : Any
   members:
-    open PUBLIC operator fun DefaultVisibility.equals(kotlin.Any?): kotlin.Boolean
-    open PUBLIC fun DefaultVisibility.foo(): kotlin.Unit
-    open PUBLIC fun DefaultVisibility.hashCode(): kotlin.Int
-    open PUBLIC fun DefaultVisibility.toString(): kotlin.String
-    open PUBLIC val DefaultVisibility.a: kotlin.Int
+    public open operator fun DefaultVisibility.equals(kotlin.Any?): kotlin.Boolean
+    public open fun DefaultVisibility.foo(): kotlin.Unit
+    public open fun DefaultVisibility.hashCode(): kotlin.Int
+    public open fun DefaultVisibility.toString(): kotlin.String
+    public open val DefaultVisibility.a: kotlin.Int
   declaredMembers:
-    open PUBLIC fun DefaultVisibility.foo(): kotlin.Unit
-    open PUBLIC val DefaultVisibility.a: kotlin.Int
+    public open fun DefaultVisibility.foo(): kotlin.Unit
+    public open val DefaultVisibility.a: kotlin.Int
 KClass: class E : Java3
   members:
-    open PUBLIC operator fun E.equals(kotlin.Any?): kotlin.Boolean
-    open PROTECTED fun E.foo(): kotlin.Unit
-    open PUBLIC fun E.hashCode(): kotlin.Int
-    open PUBLIC fun E.toString(): kotlin.String
-    open PROTECTED val E.a: kotlin.Int
+    public open operator fun E.equals(kotlin.Any?): kotlin.Boolean
+    protected open fun E.foo(): kotlin.Unit
+    public open fun E.hashCode(): kotlin.Int
+    public open fun E.toString(): kotlin.String
+    protected open val E.a: kotlin.Int
   declaredMembers:
 KClass: class F : Java3
   members:
-    open PUBLIC operator fun F.equals(kotlin.Any?): kotlin.Boolean
-    open PUBLIC fun F.foo(): kotlin.Unit
-    open PUBLIC fun F.hashCode(): kotlin.Int
-    open PUBLIC fun F.toString(): kotlin.String
-    open PUBLIC val F.a: kotlin.Int
+    public open operator fun F.equals(kotlin.Any?): kotlin.Boolean
+    public open fun F.foo(): kotlin.Unit
+    public open fun F.hashCode(): kotlin.Int
+    public open fun F.toString(): kotlin.String
+    public open val F.a: kotlin.Int
   declaredMembers:
-    open PUBLIC fun F.foo(): kotlin.Unit
-    open PUBLIC val F.a: kotlin.Int
+    public open fun F.foo(): kotlin.Unit
+    public open val F.a: kotlin.Int
 KClass: class G : Java4
   members:
-    open PUBLIC operator fun G.equals(kotlin.Any?): kotlin.Boolean
-    open PUBLIC fun G.foo(): kotlin.Unit
-    open PUBLIC fun G.hashCode(): kotlin.Int
-    open PUBLIC fun G.toString(): kotlin.String
-    open PUBLIC val G.a: kotlin.Int
+    public open operator fun G.equals(kotlin.Any?): kotlin.Boolean
+    public open fun G.foo(): kotlin.Unit
+    public open fun G.hashCode(): kotlin.Int
+    public open fun G.toString(): kotlin.String
+    public open val G.a: kotlin.Int
   declaredMembers:
 KClass: class H : Java4
   members:
-    open PUBLIC operator fun H.equals(kotlin.Any?): kotlin.Boolean
-    open PUBLIC fun H.foo(): kotlin.Unit
-    open PUBLIC fun H.hashCode(): kotlin.Int
-    open PUBLIC fun H.toString(): kotlin.String
-    open PUBLIC val H.a: kotlin.Int
+    public open operator fun H.equals(kotlin.Any?): kotlin.Boolean
+    public open fun H.foo(): kotlin.Unit
+    public open fun H.hashCode(): kotlin.Int
+    public open fun H.toString(): kotlin.String
+    public open val H.a: kotlin.Int
   declaredMembers:
-    open PUBLIC fun H.foo(): kotlin.Unit
-    open PUBLIC val H.a: kotlin.Int
+    public open fun H.foo(): kotlin.Unit
+    public open val H.a: kotlin.Int
 KClass: class I : Java5
   members:
-    open PUBLIC operator fun I.equals(kotlin.Any?): kotlin.Boolean
-    open INTERNAL fun I.foo(): kotlin.Unit
-    open PUBLIC fun I.hashCode(): kotlin.Int
-    open PUBLIC fun I.toString(): kotlin.String
-    open INTERNAL val I.a: kotlin.Int
+    public open operator fun I.equals(kotlin.Any?): kotlin.Boolean
+    internal open fun I.foo(): kotlin.Unit
+    public open fun I.hashCode(): kotlin.Int
+    public open fun I.toString(): kotlin.String
+    internal open val I.a: kotlin.Int
   declaredMembers:
 KClass: class InternalVisibility : Any
   members:
-    open PUBLIC operator fun InternalVisibility.equals(kotlin.Any?): kotlin.Boolean
-    open INTERNAL fun InternalVisibility.foo(): kotlin.Unit
-    open PUBLIC fun InternalVisibility.hashCode(): kotlin.Int
-    open PUBLIC fun InternalVisibility.toString(): kotlin.String
-    open INTERNAL val InternalVisibility.a: kotlin.Int
+    public open operator fun InternalVisibility.equals(kotlin.Any?): kotlin.Boolean
+    internal open fun InternalVisibility.foo(): kotlin.Unit
+    public open fun InternalVisibility.hashCode(): kotlin.Int
+    public open fun InternalVisibility.toString(): kotlin.String
+    internal open val InternalVisibility.a: kotlin.Int
   declaredMembers:
-    open INTERNAL fun InternalVisibility.foo(): kotlin.Unit
-    open INTERNAL val InternalVisibility.a: kotlin.Int
+    internal open fun InternalVisibility.foo(): kotlin.Unit
+    internal open val InternalVisibility.a: kotlin.Int
 KClass: class J : Java6
   members:
-    open PUBLIC operator fun J.equals(kotlin.Any?): kotlin.Boolean
-    open PUBLIC fun J.foo(): kotlin.Unit
-    open PUBLIC fun J.hashCode(): kotlin.Int
-    open PUBLIC fun J.toString(): kotlin.String
-    open PUBLIC val J.a: kotlin.Int
-    final PUBLIC var J.a: kotlin.Int
+    public open operator fun J.equals(kotlin.Any?): kotlin.Boolean
+    public open fun J.foo(): kotlin.Unit
+    public open fun J.hashCode(): kotlin.Int
+    public open fun J.toString(): kotlin.String
+    public open val J.a: kotlin.Int
+    public final var J.a: kotlin.Int
   declaredMembers:
 KClass: class Java1 : PublicVisibility
   members:
-    open PUBLIC operator fun Java1.equals(kotlin.Any?): kotlin.Boolean
-    open PUBLIC fun Java1.foo(): kotlin.Unit
-    open PUBLIC fun Java1.hashCode(): kotlin.Int
-    open PUBLIC fun Java1.toString(): kotlin.String
-    open PUBLIC val Java1.a: kotlin.Int
+    public open operator fun Java1.equals(kotlin.Any?): kotlin.Boolean
+    public open fun Java1.foo(): kotlin.Unit
+    public open fun Java1.hashCode(): kotlin.Int
+    public open fun Java1.toString(): kotlin.String
+    public open val Java1.a: kotlin.Int
   declaredMembers:
 KClass: class Java10 : DefaultVisibility
   members:
-    open PUBLIC operator fun Java10.equals(kotlin.Any?): kotlin.Boolean
-    open PUBLIC fun Java10.foo(): kotlin.Unit
-    open PUBLIC fun Java10.hashCode(): kotlin.Int
-    open PUBLIC fun Java10.toString(): kotlin.String
-    open PUBLIC val Java10.a: kotlin.Int
-    final PUBLIC var Java10.a: kotlin.Int
+    public open operator fun Java10.equals(kotlin.Any?): kotlin.Boolean
+    public open fun Java10.foo(): kotlin.Unit
+    public open fun Java10.hashCode(): kotlin.Int
+    public open fun Java10.toString(): kotlin.String
+    public open val Java10.a: kotlin.Int
+    public final var Java10.a: kotlin.Int
   declaredMembers:
-    open PUBLIC fun Java10.foo(): kotlin.Unit
-    final PUBLIC var Java10.a: kotlin.Int
+    public open fun Java10.foo(): kotlin.Unit
+    public final var Java10.a: kotlin.Int
 KClass: class Java11 : ProtectedVisibility
   members:
-    open PUBLIC operator fun Java11.equals(kotlin.Any?): kotlin.Boolean
+    public open operator fun Java11.equals(kotlin.Any?): kotlin.Boolean
     open fun Java11.foo(): kotlin.Unit
-    open PUBLIC fun Java11.hashCode(): kotlin.Int
-    open PUBLIC fun Java11.toString(): kotlin.String
-    open PROTECTED val Java11.a: kotlin.Int
+    public open fun Java11.hashCode(): kotlin.Int
+    public open fun Java11.toString(): kotlin.String
+    protected open val Java11.a: kotlin.Int
     final var Java11.a: kotlin.Int
   declaredMembers:
     open fun Java11.foo(): kotlin.Unit
     final var Java11.a: kotlin.Int
 KClass: class Java12 : InternalVisibility
   members:
-    open PUBLIC operator fun Java12.equals(kotlin.Any?): kotlin.Boolean
+    public open operator fun Java12.equals(kotlin.Any?): kotlin.Boolean
     open fun Java12.foo(): kotlin.Unit
-    open PUBLIC fun Java12.hashCode(): kotlin.Int
-    open PUBLIC fun Java12.toString(): kotlin.String
-    open INTERNAL val Java12.a: kotlin.Int
+    public open fun Java12.hashCode(): kotlin.Int
+    public open fun Java12.toString(): kotlin.String
+    internal open val Java12.a: kotlin.Int
     final var Java12.a: kotlin.Int
   declaredMembers:
     open fun Java12.foo(): kotlin.Unit
     final var Java12.a: kotlin.Int
 KClass: class Java13 : PrivateVisibility
   members:
-    open PUBLIC operator fun Java13.equals(kotlin.Any?): kotlin.Boolean
+    public open operator fun Java13.equals(kotlin.Any?): kotlin.Boolean
     open fun Java13.foo(): kotlin.Unit
-    open PUBLIC fun Java13.hashCode(): kotlin.Int
-    open PUBLIC fun Java13.toString(): kotlin.String
+    public open fun Java13.hashCode(): kotlin.Int
+    public open fun Java13.toString(): kotlin.String
     final var Java13.a: kotlin.Int
   declaredMembers:
     open fun Java13.foo(): kotlin.Unit
     final var Java13.a: kotlin.Int
 KClass: class Java14 : PrivateVisibility
   members:
-    open PUBLIC operator fun Java14.equals(kotlin.Any?): kotlin.Boolean
-    open PRIVATE fun Java14.foo(): kotlin.Unit
-    open PUBLIC fun Java14.hashCode(): kotlin.Int
-    open PUBLIC fun Java14.toString(): kotlin.String
-    final PRIVATE var Java14.a: kotlin.Int
+    public open operator fun Java14.equals(kotlin.Any?): kotlin.Boolean
+    private open fun Java14.foo(): kotlin.Unit
+    public open fun Java14.hashCode(): kotlin.Int
+    public open fun Java14.toString(): kotlin.String
+    private final var Java14.a: kotlin.Int
   declaredMembers:
-    open PRIVATE fun Java14.foo(): kotlin.Unit
-    final PRIVATE var Java14.a: kotlin.Int
+    private open fun Java14.foo(): kotlin.Unit
+    private final var Java14.a: kotlin.Int
 KClass: class Java15 : PrivateVisibility
   members:
-    open PUBLIC operator fun Java15.equals(kotlin.Any?): kotlin.Boolean
+    public open operator fun Java15.equals(kotlin.Any?): kotlin.Boolean
     open fun Java15.foo(): kotlin.Unit
-    open PUBLIC fun Java15.hashCode(): kotlin.Int
-    open PUBLIC fun Java15.toString(): kotlin.String
+    public open fun Java15.hashCode(): kotlin.Int
+    public open fun Java15.toString(): kotlin.String
     final var Java15.a: kotlin.Int
   declaredMembers:
     open fun Java15.foo(): kotlin.Unit
     final var Java15.a: kotlin.Int
 KClass: class Java16 : InternalVisibility
   members:
-    open PUBLIC operator fun Java16.equals(kotlin.Any?): kotlin.Boolean
-    open PRIVATE fun Java16.foo(): kotlin.Unit
-    open PUBLIC fun Java16.hashCode(): kotlin.Int
-    open PUBLIC fun Java16.toString(): kotlin.String
-    open INTERNAL val Java16.a: kotlin.Int
-    final PRIVATE var Java16.a: kotlin.Int
+    public open operator fun Java16.equals(kotlin.Any?): kotlin.Boolean
+    private open fun Java16.foo(): kotlin.Unit
+    public open fun Java16.hashCode(): kotlin.Int
+    public open fun Java16.toString(): kotlin.String
+    internal open val Java16.a: kotlin.Int
+    private final var Java16.a: kotlin.Int
   declaredMembers:
-    open PRIVATE fun Java16.foo(): kotlin.Unit
-    final PRIVATE var Java16.a: kotlin.Int
+    private open fun Java16.foo(): kotlin.Unit
+    private final var Java16.a: kotlin.Int
 KClass: class Java17 : InternalVisibility
   members:
-    open PUBLIC operator fun Java17.equals(kotlin.Any?): kotlin.Boolean
+    public open operator fun Java17.equals(kotlin.Any?): kotlin.Boolean
     open fun Java17.foo(): kotlin.Unit
-    open PUBLIC fun Java17.hashCode(): kotlin.Int
-    open PUBLIC fun Java17.toString(): kotlin.String
-    open INTERNAL val Java17.a: kotlin.Int
+    public open fun Java17.hashCode(): kotlin.Int
+    public open fun Java17.toString(): kotlin.String
+    internal open val Java17.a: kotlin.Int
     final var Java17.a: kotlin.Int
   declaredMembers:
     open fun Java17.foo(): kotlin.Unit
     final var Java17.a: kotlin.Int
 KClass: class Java2 : PrivateVisibility
   members:
-    open PUBLIC operator fun Java2.equals(kotlin.Any?): kotlin.Boolean
-    open PUBLIC fun Java2.hashCode(): kotlin.Int
-    open PUBLIC fun Java2.toString(): kotlin.String
+    public open operator fun Java2.equals(kotlin.Any?): kotlin.Boolean
+    public open fun Java2.hashCode(): kotlin.Int
+    public open fun Java2.toString(): kotlin.String
   declaredMembers:
 KClass: class Java3 : ProtectedVisibility
   members:
-    open PUBLIC operator fun Java3.equals(kotlin.Any?): kotlin.Boolean
-    open PROTECTED fun Java3.foo(): kotlin.Unit
-    open PUBLIC fun Java3.hashCode(): kotlin.Int
-    open PUBLIC fun Java3.toString(): kotlin.String
-    open PROTECTED val Java3.a: kotlin.Int
+    public open operator fun Java3.equals(kotlin.Any?): kotlin.Boolean
+    protected open fun Java3.foo(): kotlin.Unit
+    public open fun Java3.hashCode(): kotlin.Int
+    public open fun Java3.toString(): kotlin.String
+    protected open val Java3.a: kotlin.Int
   declaredMembers:
 KClass: class Java4 : DefaultVisibility
   members:
-    open PUBLIC operator fun Java4.equals(kotlin.Any?): kotlin.Boolean
-    open PUBLIC fun Java4.foo(): kotlin.Unit
-    open PUBLIC fun Java4.hashCode(): kotlin.Int
-    open PUBLIC fun Java4.toString(): kotlin.String
-    open PUBLIC val Java4.a: kotlin.Int
+    public open operator fun Java4.equals(kotlin.Any?): kotlin.Boolean
+    public open fun Java4.foo(): kotlin.Unit
+    public open fun Java4.hashCode(): kotlin.Int
+    public open fun Java4.toString(): kotlin.String
+    public open val Java4.a: kotlin.Int
   declaredMembers:
 KClass: class Java5 : InternalVisibility
   members:
-    open PUBLIC operator fun Java5.equals(kotlin.Any?): kotlin.Boolean
-    open INTERNAL fun Java5.foo(): kotlin.Unit
-    open PUBLIC fun Java5.hashCode(): kotlin.Int
-    open PUBLIC fun Java5.toString(): kotlin.String
-    open INTERNAL val Java5.a: kotlin.Int
+    public open operator fun Java5.equals(kotlin.Any?): kotlin.Boolean
+    internal open fun Java5.foo(): kotlin.Unit
+    public open fun Java5.hashCode(): kotlin.Int
+    public open fun Java5.toString(): kotlin.String
+    internal open val Java5.a: kotlin.Int
   declaredMembers:
 KClass: class Java6 : PublicVisibility
   members:
-    open PUBLIC operator fun Java6.equals(kotlin.Any?): kotlin.Boolean
-    open PUBLIC fun Java6.foo(): kotlin.Unit
-    open PUBLIC fun Java6.hashCode(): kotlin.Int
-    open PUBLIC fun Java6.toString(): kotlin.String
-    open PUBLIC val Java6.a: kotlin.Int
-    final PUBLIC var Java6.a: kotlin.Int
+    public open operator fun Java6.equals(kotlin.Any?): kotlin.Boolean
+    public open fun Java6.foo(): kotlin.Unit
+    public open fun Java6.hashCode(): kotlin.Int
+    public open fun Java6.toString(): kotlin.String
+    public open val Java6.a: kotlin.Int
+    public final var Java6.a: kotlin.Int
   declaredMembers:
-    open PUBLIC fun Java6.foo(): kotlin.Unit
-    final PUBLIC var Java6.a: kotlin.Int
+    public open fun Java6.foo(): kotlin.Unit
+    public final var Java6.a: kotlin.Int
 KClass: class Java7 : InternalVisibility
   members:
-    open PUBLIC operator fun Java7.equals(kotlin.Any?): kotlin.Boolean
-    open PUBLIC fun Java7.foo(): kotlin.Unit
-    open PUBLIC fun Java7.hashCode(): kotlin.Int
-    open PUBLIC fun Java7.toString(): kotlin.String
-    open INTERNAL val Java7.a: kotlin.Int
-    final PUBLIC var Java7.a: kotlin.Int
+    public open operator fun Java7.equals(kotlin.Any?): kotlin.Boolean
+    public open fun Java7.foo(): kotlin.Unit
+    public open fun Java7.hashCode(): kotlin.Int
+    public open fun Java7.toString(): kotlin.String
+    internal open val Java7.a: kotlin.Int
+    public final var Java7.a: kotlin.Int
   declaredMembers:
-    open PUBLIC fun Java7.foo(): kotlin.Unit
-    final PUBLIC var Java7.a: kotlin.Int
+    public open fun Java7.foo(): kotlin.Unit
+    public final var Java7.a: kotlin.Int
 KClass: class Java8 : ProtectedVisibility
   members:
-    open PUBLIC operator fun Java8.equals(kotlin.Any?): kotlin.Boolean
-    open PUBLIC fun Java8.foo(): kotlin.Unit
-    open PUBLIC fun Java8.hashCode(): kotlin.Int
-    open PUBLIC fun Java8.toString(): kotlin.String
-    open PROTECTED val Java8.a: kotlin.Int
-    final PUBLIC var Java8.a: kotlin.Int
+    public open operator fun Java8.equals(kotlin.Any?): kotlin.Boolean
+    public open fun Java8.foo(): kotlin.Unit
+    public open fun Java8.hashCode(): kotlin.Int
+    public open fun Java8.toString(): kotlin.String
+    protected open val Java8.a: kotlin.Int
+    public final var Java8.a: kotlin.Int
   declaredMembers:
-    open PUBLIC fun Java8.foo(): kotlin.Unit
-    final PUBLIC var Java8.a: kotlin.Int
+    public open fun Java8.foo(): kotlin.Unit
+    public final var Java8.a: kotlin.Int
 KClass: class Java9 : PrivateVisibility
   members:
-    open PUBLIC operator fun Java9.equals(kotlin.Any?): kotlin.Boolean
-    open PUBLIC fun Java9.foo(): kotlin.Unit
-    open PUBLIC fun Java9.hashCode(): kotlin.Int
-    open PUBLIC fun Java9.toString(): kotlin.String
-    final PUBLIC var Java9.a: kotlin.Int
+    public open operator fun Java9.equals(kotlin.Any?): kotlin.Boolean
+    public open fun Java9.foo(): kotlin.Unit
+    public open fun Java9.hashCode(): kotlin.Int
+    public open fun Java9.toString(): kotlin.String
+    public final var Java9.a: kotlin.Int
   declaredMembers:
-    open PUBLIC fun Java9.foo(): kotlin.Unit
-    final PUBLIC var Java9.a: kotlin.Int
+    public open fun Java9.foo(): kotlin.Unit
+    public final var Java9.a: kotlin.Int
 KClass: class K : Java6
   members:
-    open PUBLIC operator fun K.equals(kotlin.Any?): kotlin.Boolean
-    open PUBLIC fun K.foo(): kotlin.Unit
-    open PUBLIC fun K.hashCode(): kotlin.Int
-    open PUBLIC fun K.toString(): kotlin.String
-    open PUBLIC val K.a: kotlin.Int
-    final PUBLIC var K.a: kotlin.Int
+    public open operator fun K.equals(kotlin.Any?): kotlin.Boolean
+    public open fun K.foo(): kotlin.Unit
+    public open fun K.hashCode(): kotlin.Int
+    public open fun K.toString(): kotlin.String
+    public open val K.a: kotlin.Int
+    public final var K.a: kotlin.Int
   declaredMembers:
-    open PUBLIC fun K.foo(): kotlin.Unit
-    open PUBLIC val K.a: kotlin.Int
+    public open fun K.foo(): kotlin.Unit
+    public open val K.a: kotlin.Int
 KClass: class L : Java7
   members:
-    open PUBLIC operator fun L.equals(kotlin.Any?): kotlin.Boolean
-    open PUBLIC fun L.foo(): kotlin.Unit
-    open PUBLIC fun L.hashCode(): kotlin.Int
-    open PUBLIC fun L.toString(): kotlin.String
-    open INTERNAL val L.a: kotlin.Int
-    final PUBLIC var L.a: kotlin.Int
+    public open operator fun L.equals(kotlin.Any?): kotlin.Boolean
+    public open fun L.foo(): kotlin.Unit
+    public open fun L.hashCode(): kotlin.Int
+    public open fun L.toString(): kotlin.String
+    internal open val L.a: kotlin.Int
+    public final var L.a: kotlin.Int
   declaredMembers:
 KClass: class M : Java8
   members:
-    open PUBLIC operator fun M.equals(kotlin.Any?): kotlin.Boolean
-    open PUBLIC fun M.foo(): kotlin.Unit
-    open PUBLIC fun M.hashCode(): kotlin.Int
-    open PUBLIC fun M.toString(): kotlin.String
-    open PROTECTED val M.a: kotlin.Int
-    final PUBLIC var M.a: kotlin.Int
+    public open operator fun M.equals(kotlin.Any?): kotlin.Boolean
+    public open fun M.foo(): kotlin.Unit
+    public open fun M.hashCode(): kotlin.Int
+    public open fun M.toString(): kotlin.String
+    protected open val M.a: kotlin.Int
+    public final var M.a: kotlin.Int
   declaredMembers:
 KClass: class N : Java8
   members:
-    open PUBLIC operator fun N.equals(kotlin.Any?): kotlin.Boolean
-    open PUBLIC fun N.foo(): kotlin.Unit
-    open PUBLIC fun N.hashCode(): kotlin.Int
-    open PUBLIC fun N.toString(): kotlin.String
-    open PROTECTED val N.a: kotlin.Int
-    final PUBLIC var N.a: kotlin.Int
+    public open operator fun N.equals(kotlin.Any?): kotlin.Boolean
+    public open fun N.foo(): kotlin.Unit
+    public open fun N.hashCode(): kotlin.Int
+    public open fun N.toString(): kotlin.String
+    protected open val N.a: kotlin.Int
+    public final var N.a: kotlin.Int
   declaredMembers:
-    open PUBLIC fun N.foo(): kotlin.Unit
-    open PROTECTED val N.a: kotlin.Int
+    public open fun N.foo(): kotlin.Unit
+    protected open val N.a: kotlin.Int
 KClass: class O : Java9
   members:
-    open PUBLIC operator fun O.equals(kotlin.Any?): kotlin.Boolean
-    open PUBLIC fun O.foo(): kotlin.Unit
-    open PUBLIC fun O.hashCode(): kotlin.Int
-    open PUBLIC fun O.toString(): kotlin.String
-    final PUBLIC var O.a: kotlin.Int
+    public open operator fun O.equals(kotlin.Any?): kotlin.Boolean
+    public open fun O.foo(): kotlin.Unit
+    public open fun O.hashCode(): kotlin.Int
+    public open fun O.toString(): kotlin.String
+    public final var O.a: kotlin.Int
   declaredMembers:
 KClass: class P : Java9
   members:
-    open PUBLIC operator fun P.equals(kotlin.Any?): kotlin.Boolean
-    open PUBLIC fun P.foo(): kotlin.Unit
-    open PUBLIC fun P.hashCode(): kotlin.Int
-    open PUBLIC fun P.toString(): kotlin.String
-    final PUBLIC var P.a: kotlin.Int
+    public open operator fun P.equals(kotlin.Any?): kotlin.Boolean
+    public open fun P.foo(): kotlin.Unit
+    public open fun P.hashCode(): kotlin.Int
+    public open fun P.toString(): kotlin.String
+    public final var P.a: kotlin.Int
   declaredMembers:
-    open PUBLIC fun P.foo(): kotlin.Unit
+    public open fun P.foo(): kotlin.Unit
 KClass: class PrivateVisibility : Any
   members:
-    open PUBLIC operator fun PrivateVisibility.equals(kotlin.Any?): kotlin.Boolean
-    final PRIVATE fun PrivateVisibility.foo(): kotlin.Unit
-    open PUBLIC fun PrivateVisibility.hashCode(): kotlin.Int
-    open PUBLIC fun PrivateVisibility.toString(): kotlin.String
-    final PRIVATE val PrivateVisibility.a: kotlin.Int
+    public open operator fun PrivateVisibility.equals(kotlin.Any?): kotlin.Boolean
+    private final fun PrivateVisibility.foo(): kotlin.Unit
+    public open fun PrivateVisibility.hashCode(): kotlin.Int
+    public open fun PrivateVisibility.toString(): kotlin.String
+    private final val PrivateVisibility.a: kotlin.Int
   declaredMembers:
-    final PRIVATE fun PrivateVisibility.foo(): kotlin.Unit
-    final PRIVATE val PrivateVisibility.a: kotlin.Int
+    private final fun PrivateVisibility.foo(): kotlin.Unit
+    private final val PrivateVisibility.a: kotlin.Int
 KClass: class ProtectedVisibility : Any
   members:
-    open PUBLIC operator fun ProtectedVisibility.equals(kotlin.Any?): kotlin.Boolean
-    open PROTECTED fun ProtectedVisibility.foo(): kotlin.Unit
-    open PUBLIC fun ProtectedVisibility.hashCode(): kotlin.Int
-    open PUBLIC fun ProtectedVisibility.toString(): kotlin.String
-    open PROTECTED val ProtectedVisibility.a: kotlin.Int
+    public open operator fun ProtectedVisibility.equals(kotlin.Any?): kotlin.Boolean
+    protected open fun ProtectedVisibility.foo(): kotlin.Unit
+    public open fun ProtectedVisibility.hashCode(): kotlin.Int
+    public open fun ProtectedVisibility.toString(): kotlin.String
+    protected open val ProtectedVisibility.a: kotlin.Int
   declaredMembers:
-    open PROTECTED fun ProtectedVisibility.foo(): kotlin.Unit
-    open PROTECTED val ProtectedVisibility.a: kotlin.Int
+    protected open fun ProtectedVisibility.foo(): kotlin.Unit
+    protected open val ProtectedVisibility.a: kotlin.Int
 KClass: class PublicVisibility : Any
   members:
-    open PUBLIC operator fun PublicVisibility.equals(kotlin.Any?): kotlin.Boolean
-    open PUBLIC fun PublicVisibility.foo(): kotlin.Unit
-    open PUBLIC fun PublicVisibility.hashCode(): kotlin.Int
-    open PUBLIC fun PublicVisibility.toString(): kotlin.String
-    open PUBLIC val PublicVisibility.a: kotlin.Int
+    public open operator fun PublicVisibility.equals(kotlin.Any?): kotlin.Boolean
+    public open fun PublicVisibility.foo(): kotlin.Unit
+    public open fun PublicVisibility.hashCode(): kotlin.Int
+    public open fun PublicVisibility.toString(): kotlin.String
+    public open val PublicVisibility.a: kotlin.Int
   declaredMembers:
-    open PUBLIC fun PublicVisibility.foo(): kotlin.Unit
-    open PUBLIC val PublicVisibility.a: kotlin.Int
+    public open fun PublicVisibility.foo(): kotlin.Unit
+    public open val PublicVisibility.a: kotlin.Int
 KClass: class Q : Java10
   members:
-    open PUBLIC operator fun Q.equals(kotlin.Any?): kotlin.Boolean
-    open PUBLIC fun Q.foo(): kotlin.Unit
-    open PUBLIC fun Q.hashCode(): kotlin.Int
-    open PUBLIC fun Q.toString(): kotlin.String
-    open PUBLIC val Q.a: kotlin.Int
-    final PUBLIC var Q.a: kotlin.Int
+    public open operator fun Q.equals(kotlin.Any?): kotlin.Boolean
+    public open fun Q.foo(): kotlin.Unit
+    public open fun Q.hashCode(): kotlin.Int
+    public open fun Q.toString(): kotlin.String
+    public open val Q.a: kotlin.Int
+    public final var Q.a: kotlin.Int
   declaredMembers:
 KClass: class R : Java10
   members:
-    open PUBLIC operator fun R.equals(kotlin.Any?): kotlin.Boolean
-    open PUBLIC fun R.foo(): kotlin.Unit
-    open PUBLIC fun R.hashCode(): kotlin.Int
-    open PUBLIC fun R.toString(): kotlin.String
-    open PUBLIC val R.a: kotlin.Int
-    final PUBLIC var R.a: kotlin.Int
+    public open operator fun R.equals(kotlin.Any?): kotlin.Boolean
+    public open fun R.foo(): kotlin.Unit
+    public open fun R.hashCode(): kotlin.Int
+    public open fun R.toString(): kotlin.String
+    public open val R.a: kotlin.Int
+    public final var R.a: kotlin.Int
   declaredMembers:
-    open PUBLIC fun R.foo(): kotlin.Unit
-    open PUBLIC val R.a: kotlin.Int
+    public open fun R.foo(): kotlin.Unit
+    public open val R.a: kotlin.Int
 KClass: class S : Java11
   members:
-    open PUBLIC operator fun S.equals(kotlin.Any?): kotlin.Boolean
+    public open operator fun S.equals(kotlin.Any?): kotlin.Boolean
     open fun S.foo(): kotlin.Unit
-    open PUBLIC fun S.hashCode(): kotlin.Int
-    open PUBLIC fun S.toString(): kotlin.String
-    open PROTECTED val S.a: kotlin.Int
+    public open fun S.hashCode(): kotlin.Int
+    public open fun S.toString(): kotlin.String
+    protected open val S.a: kotlin.Int
     final var S.a: kotlin.Int
   declaredMembers:
 KClass: class T : Java11
   members:
-    open PUBLIC operator fun T.equals(kotlin.Any?): kotlin.Boolean
-    open PUBLIC fun T.foo(): kotlin.Unit
-    open PUBLIC fun T.hashCode(): kotlin.Int
-    open PUBLIC fun T.toString(): kotlin.String
-    open PROTECTED val T.a: kotlin.Int
+    public open operator fun T.equals(kotlin.Any?): kotlin.Boolean
+    public open fun T.foo(): kotlin.Unit
+    public open fun T.hashCode(): kotlin.Int
+    public open fun T.toString(): kotlin.String
+    protected open val T.a: kotlin.Int
     final var T.a: kotlin.Int
   declaredMembers:
-    open PUBLIC fun T.foo(): kotlin.Unit
-    open PROTECTED val T.a: kotlin.Int
+    public open fun T.foo(): kotlin.Unit
+    protected open val T.a: kotlin.Int
 KPackage: TestKt
-  final PUBLIC fun test(A, B, D, F, G, H, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, AA, CC, DD): kotlin.Unit
+  public final fun test(A, B, D, F, G, H, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, AA, CC, DD): kotlin.Unit
 KClass: class U : Java12
   members:
-    open PUBLIC operator fun U.equals(kotlin.Any?): kotlin.Boolean
+    public open operator fun U.equals(kotlin.Any?): kotlin.Boolean
     open fun U.foo(): kotlin.Unit
-    open PUBLIC fun U.hashCode(): kotlin.Int
-    open PUBLIC fun U.toString(): kotlin.String
-    open INTERNAL val U.a: kotlin.Int
+    public open fun U.hashCode(): kotlin.Int
+    public open fun U.toString(): kotlin.String
+    internal open val U.a: kotlin.Int
     final var U.a: kotlin.Int
   declaredMembers:
 KClass: class V : Java12
   members:
-    open PUBLIC operator fun V.equals(kotlin.Any?): kotlin.Boolean
-    open PUBLIC fun V.foo(): kotlin.Unit
-    open PUBLIC fun V.hashCode(): kotlin.Int
-    open PUBLIC fun V.toString(): kotlin.String
-    open INTERNAL val V.a: kotlin.Int
+    public open operator fun V.equals(kotlin.Any?): kotlin.Boolean
+    public open fun V.foo(): kotlin.Unit
+    public open fun V.hashCode(): kotlin.Int
+    public open fun V.toString(): kotlin.String
+    internal open val V.a: kotlin.Int
     final var V.a: kotlin.Int
   declaredMembers:
-    open PUBLIC fun V.foo(): kotlin.Unit
+    public open fun V.foo(): kotlin.Unit
 KClass: class W : Java13
   members:
-    open PUBLIC operator fun W.equals(kotlin.Any?): kotlin.Boolean
+    public open operator fun W.equals(kotlin.Any?): kotlin.Boolean
     open fun W.foo(): kotlin.Unit
-    open PUBLIC fun W.hashCode(): kotlin.Int
-    open PUBLIC fun W.toString(): kotlin.String
+    public open fun W.hashCode(): kotlin.Int
+    public open fun W.toString(): kotlin.String
     final var W.a: kotlin.Int
   declaredMembers:
 KClass: class X : Java13
   members:
-    open PUBLIC operator fun X.equals(kotlin.Any?): kotlin.Boolean
-    open PUBLIC fun X.foo(): kotlin.Unit
-    open PUBLIC fun X.hashCode(): kotlin.Int
-    open PUBLIC fun X.toString(): kotlin.String
+    public open operator fun X.equals(kotlin.Any?): kotlin.Boolean
+    public open fun X.foo(): kotlin.Unit
+    public open fun X.hashCode(): kotlin.Int
+    public open fun X.toString(): kotlin.String
     final var X.a: kotlin.Int
   declaredMembers:
-    open PUBLIC fun X.foo(): kotlin.Unit
+    public open fun X.foo(): kotlin.Unit
 KClass: class Y : Java14
   members:
-    open PUBLIC operator fun Y.equals(kotlin.Any?): kotlin.Boolean
-    open PUBLIC fun Y.hashCode(): kotlin.Int
-    open PUBLIC fun Y.toString(): kotlin.String
+    public open operator fun Y.equals(kotlin.Any?): kotlin.Boolean
+    public open fun Y.hashCode(): kotlin.Int
+    public open fun Y.toString(): kotlin.String
   declaredMembers:
 KClass: class Z : Java15
   members:
-    open PUBLIC operator fun Z.equals(kotlin.Any?): kotlin.Boolean
+    public open operator fun Z.equals(kotlin.Any?): kotlin.Boolean
     open fun Z.foo(): kotlin.Unit
-    open PUBLIC fun Z.hashCode(): kotlin.Int
-    open PUBLIC fun Z.toString(): kotlin.String
+    public open fun Z.hashCode(): kotlin.Int
+    public open fun Z.toString(): kotlin.String
     final var Z.a: kotlin.Int
   declaredMembers:

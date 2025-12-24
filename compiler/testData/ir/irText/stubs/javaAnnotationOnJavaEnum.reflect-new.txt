@@ -1,26 +1,26 @@
 KClass: class JavaEnum : Enum
   members:
-    final PROTECTED fun JavaEnum.clone(): kotlin.Any
-    final PUBLIC operator fun JavaEnum.compareTo(JavaEnum): kotlin.Int
-    final PUBLIC operator fun JavaEnum.equals(kotlin.Any?): kotlin.Boolean
+    protected final fun JavaEnum.clone(): kotlin.Any
+    public final operator fun JavaEnum.compareTo(JavaEnum): kotlin.Int
+    public final operator fun JavaEnum.equals(kotlin.Any?): kotlin.Boolean
     final fun JavaEnum.finalize(): kotlin.Unit
-    final PUBLIC fun JavaEnum.getDeclaringClass(): java.lang.Class<JavaEnum!>!
-    final PUBLIC fun JavaEnum.hashCode(): kotlin.Int
-    open PUBLIC fun JavaEnum.toString(): kotlin.String
-    final PUBLIC fun valueOf(kotlin.String): JavaEnum
-    final PUBLIC fun values(): kotlin.Array<JavaEnum>
-    final PUBLIC val JavaEnum.name: kotlin.String
-    final PUBLIC val JavaEnum.ordinal: kotlin.Int
-    final PUBLIC val entries: kotlin.enums.EnumEntries<JavaEnum>
+    public final fun JavaEnum.getDeclaringClass(): java.lang.Class<JavaEnum!>!
+    public final fun JavaEnum.hashCode(): kotlin.Int
+    public open fun JavaEnum.toString(): kotlin.String
+    public final fun valueOf(kotlin.String): JavaEnum
+    public final fun values(): kotlin.Array<JavaEnum>
+    public final val JavaEnum.name: kotlin.String
+    public final val JavaEnum.ordinal: kotlin.Int
+    public final val entries: kotlin.enums.EnumEntries<JavaEnum>
   declaredMembers:
-    final PUBLIC fun valueOf(kotlin.String): JavaEnum
-    final PUBLIC fun values(): kotlin.Array<JavaEnum>
-    final PUBLIC val entries: kotlin.enums.EnumEntries<JavaEnum>
+    public final fun valueOf(kotlin.String): JavaEnum
+    public final fun values(): kotlin.Array<JavaEnum>
+    public final val entries: kotlin.enums.EnumEntries<JavaEnum>
 KClass: interface JavaPropertyAnnotation : Annotation, Any
   members:
-    open PUBLIC operator fun JavaPropertyAnnotation.equals(kotlin.Any?): kotlin.Boolean
-    open PUBLIC fun JavaPropertyAnnotation.hashCode(): kotlin.Int
-    open PUBLIC fun JavaPropertyAnnotation.toString(): kotlin.String
+    public open operator fun JavaPropertyAnnotation.equals(kotlin.Any?): kotlin.Boolean
+    public open fun JavaPropertyAnnotation.hashCode(): kotlin.Int
+    public open fun JavaPropertyAnnotation.toString(): kotlin.String
   declaredMembers:
 KPackage: TestKt
-  final PUBLIC fun foo(): kotlin.Unit
+  public final fun foo(): kotlin.Unit

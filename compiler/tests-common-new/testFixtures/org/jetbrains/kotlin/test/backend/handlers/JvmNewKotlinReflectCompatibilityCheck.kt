@@ -227,11 +227,11 @@ class RunInAlienClassLoader {
         kCallables.map { kCallable ->
             val str = kCallable.toString()
             str to buildString {
+                kCallable.visibility?.let { append("${it.toString().lowercase()} ") }
                 if (kCallable.isOpen) append("open ")
                 if (kCallable.isAbstract) append("abstract ")
                 if (kCallable.isFinal) append("final ")
                 if (kCallable.isSuspend) append("suspend ")
-                kCallable.visibility?.let { append("$it ") }
                 if (kCallable is KFunction) {
                     if (kCallable.isOperator) append("operator ")
                     if (kCallable.isInfix) append("infix ")
