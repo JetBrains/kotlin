@@ -1,5 +1,5 @@
 KtCallExpression(135,138): 'i()'
-  KaSimpleFunctionCall:
+  KaImplicitInvokeCall:
     argumentMapping = {}
     contextArguments = []
     dispatchReceiver = null

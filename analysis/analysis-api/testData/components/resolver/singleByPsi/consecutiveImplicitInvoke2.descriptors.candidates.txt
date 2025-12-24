@@ -1,6 +1,6 @@
 KtCallExpression(135,140): 'i()()'
   KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
+    candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
@@ -21,7 +21,7 @@ KtCallExpression(135,140): 'i()()'
     isInBestCandidates = false
 
   KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
+    candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
@@ -42,7 +42,7 @@ KtCallExpression(135,140): 'i()()'
     isInBestCandidates = false
 
   KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
+    candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null

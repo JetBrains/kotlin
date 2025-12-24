@@ -398,7 +398,7 @@ KtDotQualifiedExpression(441,446): 'foo.x'
     isInBestCandidates = false
 
   KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
+    candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -513,7 +513,7 @@ KtDotQualifiedExpression(467,472): 'foo.y'
     isInBestCandidates = false
 
   KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
+    candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:

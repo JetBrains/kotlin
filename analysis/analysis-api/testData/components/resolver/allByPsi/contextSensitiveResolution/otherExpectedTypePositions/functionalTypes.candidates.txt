@@ -301,7 +301,7 @@ KtNameReferenceExpression(453,459): 'MyEnum'
 
 KtCallExpression(462,518): '{ arg: Boolean -> if (arg) enumProp else Option1 }(true)'
   KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
+    candidate = KaImplicitInvokeCall:
       argumentMapping = {
         true -> (KaVariableSignature:
           name = p1

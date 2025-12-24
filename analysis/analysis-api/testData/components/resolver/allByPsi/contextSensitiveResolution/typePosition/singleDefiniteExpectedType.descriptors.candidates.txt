@@ -674,7 +674,7 @@ KtDotQualifiedExpression(700,725): 'instance.prop2.toString()'
     isInBestCandidates = false
 
   KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
+    candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -759,7 +759,7 @@ KtCallExpression(715,725): 'toString()'
     isInBestCandidates = false
 
   KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
+    candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -1058,7 +1058,7 @@ KtDotQualifiedExpression(964,989): 'instance.prop2.toString()'
     isInBestCandidates = false
 
   KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
+    candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -1143,7 +1143,7 @@ KtCallExpression(979,989): 'toString()'
     isInBestCandidates = false
 
   KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
+    candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -1382,7 +1382,7 @@ KtDotQualifiedExpression(1148,1173): 'instance.prop2.toString()'
     isInBestCandidates = false
 
   KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
+    candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -1467,7 +1467,7 @@ KtCallExpression(1163,1173): 'toString()'
     isInBestCandidates = false
 
   KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
+    candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -1913,7 +1913,7 @@ KtDotQualifiedExpression(1639,1664): 'instance.prop2.toString()'
     isInBestCandidates = false
 
   KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
+    candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -1998,7 +1998,7 @@ KtCallExpression(1654,1664): 'toString()'
     isInBestCandidates = false
 
   KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
+    candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -2861,7 +2861,7 @@ KtDotQualifiedExpression(2643,2650): 'i.prop1'
     isInBestCandidates = false
 
   KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
+    candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -2976,7 +2976,7 @@ KtDotQualifiedExpression(2675,2682): 'i.prop2'
     isInBestCandidates = false
 
   KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
+    candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:

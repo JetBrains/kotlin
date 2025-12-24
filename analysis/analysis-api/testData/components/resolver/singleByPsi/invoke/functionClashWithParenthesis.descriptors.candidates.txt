@@ -1,6 +1,6 @@
 KtCallExpression(202,209): '(foo)()'
   KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
+    candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -20,7 +20,7 @@ KtCallExpression(202,209): '(foo)()'
     isInBestCandidates = true
 
   KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
+    candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:

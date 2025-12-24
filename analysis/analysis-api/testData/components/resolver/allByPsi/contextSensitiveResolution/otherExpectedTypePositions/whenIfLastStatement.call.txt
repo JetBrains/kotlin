@@ -230,7 +230,7 @@ KtNameReferenceExpression(400,401): 'T'
   null
 
 KtCallExpression(404,407): 'b()'
-  KaSimpleFunctionCall:
+  KaImplicitInvokeCall:
     argumentMapping = {}
     contextArguments = []
     dispatchReceiver = KaExplicitReceiverValue:

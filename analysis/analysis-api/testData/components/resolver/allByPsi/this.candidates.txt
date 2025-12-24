@@ -2488,7 +2488,7 @@ KtBlockExpression(1266,1284): '{'
 
 KtCallExpression(1272,1282): 'body(this)'
   KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
+    candidate = KaImplicitInvokeCall:
       argumentMapping = {
         this -> (KaVariableSignature:
           name = p2

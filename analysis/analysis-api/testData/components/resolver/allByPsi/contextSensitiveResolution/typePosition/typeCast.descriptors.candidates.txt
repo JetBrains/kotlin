@@ -850,7 +850,7 @@ KtNameReferenceExpression(797,813): 'SealedInheritor1'
 
 KtDotQualifiedExpression(818,836): 'i.prop1.hashCode()'
   KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
+    candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -915,7 +915,7 @@ KtNameReferenceExpression(820,825): 'prop1'
 
 KtCallExpression(826,836): 'hashCode()'
   KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
+    candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -1033,7 +1033,7 @@ KtNameReferenceExpression(847,863): 'SealedInheritor2'
 
 KtDotQualifiedExpression(868,881): 'i.prop2.dec()'
   KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
+    candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -1098,7 +1098,7 @@ KtNameReferenceExpression(870,875): 'prop2'
 
 KtCallExpression(876,881): 'dec()'
   KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
+    candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -1216,7 +1216,7 @@ KtNameReferenceExpression(892,908): 'SealedInheritor1'
 
 KtDotQualifiedExpression(913,931): 'i.prop1.hashCode()'
   KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
+    candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -1281,7 +1281,7 @@ KtNameReferenceExpression(915,920): 'prop1'
 
 KtCallExpression(921,931): 'hashCode()'
   KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
+    candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -1407,7 +1407,7 @@ KtDotQualifiedExpression(980,1020): '(i as SealedInheritor1).prop1.hashCode()'
     isInBestCandidates = false
 
   KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
+    candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -1448,7 +1448,7 @@ KtDotQualifiedExpression(980,1009): '(i as SealedInheritor1).prop1'
     isInBestCandidates = false
 
   KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
+    candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -1566,7 +1566,7 @@ KtCallExpression(1010,1020): 'hashCode()'
     isInBestCandidates = false
 
   KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
+    candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -1664,7 +1664,7 @@ KtNameReferenceExpression(1031,1047): 'SealedInheritor2'
 
 KtDotQualifiedExpression(1052,1065): 'i.prop2.dec()'
   KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
+    candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -1729,7 +1729,7 @@ KtNameReferenceExpression(1054,1059): 'prop2'
 
 KtCallExpression(1060,1065): 'dec()'
   KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
+    candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -1850,7 +1850,7 @@ KtNameReferenceExpression(1084,1100): 'SealedInheritor1'
 
 KtDotQualifiedExpression(1105,1123): 'v.prop1.hashCode()'
   KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
+    candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -1891,7 +1891,7 @@ KtDotQualifiedExpression(1105,1123): 'v.prop1.hashCode()'
 
 KtDotQualifiedExpression(1105,1112): 'v.prop1'
   KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
+    candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -1991,7 +1991,7 @@ KtNameReferenceExpression(1107,1112): 'prop1'
 
 KtCallExpression(1113,1123): 'hashCode()'
   KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
+    candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -2121,7 +2121,7 @@ KtNameReferenceExpression(1156,1172): 'SealedInheritor1'
 
 KtDotQualifiedExpression(1177,1196): 'v2.prop1.hashCode()'
   KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
+    candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -2186,7 +2186,7 @@ KtNameReferenceExpression(1180,1185): 'prop1'
 
 KtCallExpression(1186,1196): 'hashCode()'
   KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
+    candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -2316,7 +2316,7 @@ KtNameReferenceExpression(1234,1250): 'SealedInheritor1'
 
 KtDotQualifiedExpression(1255,1274): 'v3.prop1.hashCode()'
   KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
+    candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -2357,7 +2357,7 @@ KtDotQualifiedExpression(1255,1274): 'v3.prop1.hashCode()'
 
 KtDotQualifiedExpression(1255,1263): 'v3.prop1'
   KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
+    candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -2457,7 +2457,7 @@ KtNameReferenceExpression(1258,1263): 'prop1'
 
 KtCallExpression(1264,1274): 'hashCode()'
   KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
+    candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -2845,7 +2845,7 @@ KtSafeQualifiedExpression(1436,1479): '(i as? SealedInheritor1)?.prop1?.hashCode
     isInBestCandidates = false
 
   KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
+    candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -2886,7 +2886,7 @@ KtSafeQualifiedExpression(1436,1467): '(i as? SealedInheritor1)?.prop1'
     isInBestCandidates = false
 
   KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
+    candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -3004,7 +3004,7 @@ KtCallExpression(1469,1479): 'hashCode()'
     isInBestCandidates = false
 
   KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
+    candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -3102,7 +3102,7 @@ KtNameReferenceExpression(1491,1507): 'SealedInheritor2'
 
 KtSafeQualifiedExpression(1512,1527): 'i?.prop2?.dec()'
   KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
+    candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -3167,7 +3167,7 @@ KtNameReferenceExpression(1515,1520): 'prop2'
 
 KtCallExpression(1522,1527): 'dec()'
   KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
+    candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -3288,7 +3288,7 @@ KtNameReferenceExpression(1547,1563): 'SealedInheritor1'
 
 KtSafeQualifiedExpression(1568,1588): 'v?.prop1?.hashCode()'
   KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
+    candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -3329,7 +3329,7 @@ KtSafeQualifiedExpression(1568,1588): 'v?.prop1?.hashCode()'
 
 KtSafeQualifiedExpression(1568,1576): 'v?.prop1'
   KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
+    candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -3429,7 +3429,7 @@ KtNameReferenceExpression(1571,1576): 'prop1'
 
 KtCallExpression(1578,1588): 'hashCode()'
   KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
+    candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -3562,7 +3562,7 @@ KtNameReferenceExpression(1623,1639): 'SealedInheritor1'
 
 KtSafeQualifiedExpression(1644,1665): 'v2?.prop1?.hashCode()'
   KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
+    candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -3627,7 +3627,7 @@ KtNameReferenceExpression(1648,1653): 'prop1'
 
 KtCallExpression(1655,1665): 'hashCode()'
   KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
+    candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -3760,7 +3760,7 @@ KtNameReferenceExpression(1705,1721): 'SealedInheritor1'
 
 KtSafeQualifiedExpression(1726,1747): 'v3?.prop1?.hashCode()'
   KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
+    candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -3801,7 +3801,7 @@ KtSafeQualifiedExpression(1726,1747): 'v3?.prop1?.hashCode()'
 
 KtSafeQualifiedExpression(1726,1735): 'v3?.prop1'
   KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
+    candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -3901,7 +3901,7 @@ KtNameReferenceExpression(1730,1735): 'prop1'
 
 KtCallExpression(1737,1747): 'hashCode()'
   KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
+    candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:

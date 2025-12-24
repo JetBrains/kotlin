@@ -30,7 +30,7 @@ KtThisExpression(55,59): 'this'
 
 KtNameReferenceExpression(55,59): 'this'
   KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
+    candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -60,7 +60,7 @@ KtThisExpression(78,82): 'this'
 
 KtNameReferenceExpression(78,82): 'this'
   KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
+    candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -207,7 +207,7 @@ KtBlockExpression(180,260): '{'
 
 KtCallExpression(186,191): 'foo()'
   KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
+    candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -342,7 +342,7 @@ KtParenthesizedExpression(204,217): '(((foo)())())'
 
 KtCallExpression(205,216): '((foo)())()'
   KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
+    candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -366,7 +366,7 @@ KtParenthesizedExpression(205,214): '((foo)())'
 
 KtCallExpression(206,213): '(foo)()'
   KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
+    candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -577,7 +577,7 @@ KtValueArgumentList(241,243): '()'
 
 KtCallExpression(248,258): 'property()'
   KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
+    candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:

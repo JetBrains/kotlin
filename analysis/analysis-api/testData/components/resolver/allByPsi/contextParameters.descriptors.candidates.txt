@@ -191,7 +191,7 @@ KtDotQualifiedExpression(149,158): 'a.foo("")'
     isInBestCandidates = false
 
   KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
+    candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -235,7 +235,7 @@ KtCallExpression(151,158): 'foo("")'
     isInBestCandidates = false
 
   KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
+    candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -440,7 +440,7 @@ KtDotQualifiedExpression(273,282): 'a.foo("")'
     isInBestCandidates = false
 
   KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
+    candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -484,7 +484,7 @@ KtCallExpression(275,282): 'foo("")'
     isInBestCandidates = false
 
   KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
+    candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:

@@ -1559,7 +1559,7 @@ KtValueArgumentList(1021,1023): '()'
   null
 
 KtCallExpression(1032,1042): 'thisProp()'
-  KaSimpleFunctionCall:
+  KaImplicitInvokeCall:
     argumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
@@ -1598,7 +1598,7 @@ KtValueArgumentList(1040,1042): '()'
   null
 
 KtCallExpression(1051,1054): 'a()'
-  KaSimpleFunctionCall:
+  KaImplicitInvokeCall:
     argumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
@@ -2382,7 +2382,7 @@ KtValueArgumentList(1182,1184): '()'
   null
 
 KtCallExpression(1193,1196): 'b()'
-  KaSimpleFunctionCall:
+  KaImplicitInvokeCall:
     argumentMapping = {}
     contextArguments = []
     dispatchReceiver = KaExplicitReceiverValue:
@@ -3014,7 +3014,7 @@ KtValueArgumentList(1341,1343): '()'
   null
 
 KtCallExpression(1348,1351): 'a()'
-  KaSimpleFunctionCall:
+  KaImplicitInvokeCall:
     argumentMapping = {}
     contextArguments = []
     dispatchReceiver = null
@@ -3559,7 +3559,7 @@ KtValueArgumentList(1410,1412): '()'
   null
 
 KtCallExpression(1417,1420): 'b()'
-  KaSimpleFunctionCall:
+  KaImplicitInvokeCall:
     argumentMapping = {}
     contextArguments = []
     dispatchReceiver = KaExplicitReceiverValue:

@@ -78,7 +78,7 @@ KtProperty(305,341): 'val EnumOptionAlias = MyEnum.Option1'
 
 KtDotQualifiedExpression(327,341): 'MyEnum.Option1'
   KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
+    candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
@@ -213,7 +213,7 @@ KtNameReferenceExpression(453,459): 'MyEnum'
 
 KtCallExpression(462,518): '{ arg: Boolean -> if (arg) enumProp else Option1 }(true)'
   KaApplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
+    candidate = KaImplicitInvokeCall:
       argumentMapping = {
         true -> (KaVariableSignature:
           name = p1
@@ -249,7 +249,7 @@ KtCallExpression(462,518): '{ arg: Boolean -> if (arg) enumProp else Option1 }(t
     isInBestCandidates = true
 
   KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
+    candidate = KaImplicitInvokeCall:
       argumentMapping = {
         true -> (KaVariableSignature:
           name = value

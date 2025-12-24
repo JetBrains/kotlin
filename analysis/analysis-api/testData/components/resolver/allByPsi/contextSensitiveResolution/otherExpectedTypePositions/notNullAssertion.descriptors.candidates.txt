@@ -126,7 +126,7 @@ KtNameReferenceExpression(235,242): 'MyClass'
 
 KtCallExpression(245,254): 'MyClass()'
   KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
+    candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
@@ -251,7 +251,7 @@ KtProperty(375,421): 'val ClassMemberAlias = MyClass.NestedInheritor'
 
 KtDotQualifiedExpression(398,421): 'MyClass.NestedInheritor'
   KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
+    candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
@@ -1336,7 +1336,7 @@ KtDotQualifiedExpression(675,694): 'MyClass.myClassProp'
     isInBestCandidates = true
 
   KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
+    candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
@@ -1499,7 +1499,7 @@ KtDotQualifiedExpression(702,720): 'MyClass.stringProp'
     isInBestCandidates = true
 
   KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
+    candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
@@ -1642,7 +1642,7 @@ KtBinaryExpression(727,755): 'MyClass.NestedInheritor to 3'
 
 KtDotQualifiedExpression(727,750): 'MyClass.NestedInheritor'
   KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
+    candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
@@ -2877,7 +2877,7 @@ KtDotQualifiedExpression(1248,1267): 'MyClass.myClassProp'
     isInBestCandidates = true
 
   KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
+    candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null

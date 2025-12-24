@@ -192,7 +192,7 @@ KtValueArgument(46,77): 'AnnotationTarget.TYPE_PARAMETER'
 
 KtDotQualifiedExpression(46,77): 'AnnotationTarget.TYPE_PARAMETER'
   KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
+    candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
@@ -234,7 +234,7 @@ KtValueArgument(83,108): 'AnnotationTarget.FUNCTION'
 
 KtDotQualifiedExpression(83,108): 'AnnotationTarget.FUNCTION'
   KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
+    candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
@@ -276,7 +276,7 @@ KtValueArgument(114,146): 'AnnotationTarget.VALUE_PARAMETER'
 
 KtDotQualifiedExpression(114,146): 'AnnotationTarget.VALUE_PARAMETER'
   KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
+    candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
@@ -318,7 +318,7 @@ KtValueArgument(152,173): 'AnnotationTarget.TYPE'
 
 KtDotQualifiedExpression(152,173): 'AnnotationTarget.TYPE'
   KaInapplicableCallCandidateInfo:
-    candidate = KaSimpleFunctionCall:
+    candidate = KaImplicitInvokeCall:
       argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null

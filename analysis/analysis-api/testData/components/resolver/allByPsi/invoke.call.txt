@@ -240,7 +240,7 @@ KtParenthesizedExpression(204,217): '(((foo)())())'
   null
 
 KtCallExpression(205,216): '((foo)())()'
-  KaSimpleFunctionCall:
+  KaImplicitInvokeCall:
     argumentMapping = {}
     contextArguments = []
     dispatchReceiver = KaExplicitReceiverValue:
@@ -262,7 +262,7 @@ KtParenthesizedExpression(205,214): '((foo)())'
   null
 
 KtCallExpression(206,213): '(foo)()'
-  KaSimpleFunctionCall:
+  KaImplicitInvokeCall:
     argumentMapping = {}
     contextArguments = []
     dispatchReceiver = KaExplicitReceiverValue:
@@ -428,7 +428,7 @@ KtValueArgumentList(241,243): '()'
   null
 
 KtCallExpression(248,258): 'property()'
-  KaSimpleFunctionCall:
+  KaImplicitInvokeCall:
     argumentMapping = {}
     contextArguments = []
     dispatchReceiver = KaExplicitReceiverValue:
