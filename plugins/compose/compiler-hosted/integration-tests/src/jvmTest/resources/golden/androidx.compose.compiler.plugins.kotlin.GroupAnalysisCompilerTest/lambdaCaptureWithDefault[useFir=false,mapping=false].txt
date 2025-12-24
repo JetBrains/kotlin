@@ -3,10 +3,12 @@
 // ------------------------------------------
 
 @Composable
-fun Test(text: String) {
-    Wrapper {
-        if (text.isEmpty()) return@Test
-        Text(text)
+fun Test(isEnabled: Boolean = false) {
+    val composition: Composition = remember { TODO() }
+    LaunchedEffect(isEnabled) {
+        disposingComposition {
+            composition.suspendContent { println(isEnabled) }
+        }
     }
 }
 
@@ -17,15 +19,14 @@ fun Test(text: String) {
 ========= FunctionMeta: true, OptimizeGroups: true =========
 TestKt {
     file: Test.kt
-    Test(Ljava/lang/String;Landroidx/compose/runtime/Composer;I)V
+    Test(ZLandroidx/compose/runtime/Composer;II)V
         Root { key: <key>, line: 5 }
-        ReplaceGroup { key: <key>, line: 7 }
 }
 
-TestKt$Test$1$1 {
+TestKt$Test$1$1$1$1 {
     file: Test.kt
     invoke(Landroidx/compose/runtime/Composer;I)V
-        Root { key: null, line: -1 }
+        Root { key: <key>, line: 9 }
 }
 
 TestKt$Test$2 {

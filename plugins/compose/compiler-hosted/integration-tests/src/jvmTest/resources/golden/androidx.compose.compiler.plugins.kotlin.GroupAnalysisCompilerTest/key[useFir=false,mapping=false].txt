@@ -21,16 +21,16 @@ fun targetEnterExit(param: String): String =
 TestKt {
     file: Test.kt
     targetEnterExit(Ljava/lang/String;Landroidx/compose/runtime/Composer;I)Ljava/lang/String;
+        Root { key: <key>, line: 6 }
         ReplaceGroup { key: <key>, line: 7 }
         ReplaceGroup { key: <key>, line: 9 }
-        Root { key: <key>, line: 6 }
 }
 
 ========= FunctionMeta: true, OptimizeGroups: false =========
 TestKt {
     file: Test.kt
     targetEnterExit(Ljava/lang/String;Landroidx/compose/runtime/Composer;I)Ljava/lang/String;
-        ReplaceGroup { key: <key>, line: 8 }
+        Root { key: <key>, line: 6 }
         ReplaceGroup { key: <key>, line: 7 }
-        ReplaceGroup { key: <key>, line: 6 }
+        ReplaceGroup { key: <key>, line: 8 }
 }

@@ -31,9 +31,9 @@ TestKt {
     Test(Ljava/lang/String;Landroidx/compose/runtime/Composer;I)Ljava/lang/String;
         Root { key: <key>, line: 6 }
     TestConditional(Ljava/lang/String;Landroidx/compose/runtime/Composer;I)Ljava/lang/String;
+        Root { key: <key>, line: 10 }
         ReplaceGroup { key: <key>, line: 10 }
         ReplaceGroup { key: <key>, line: 13 }
-        Root { key: <key>, line: 10 }
     TestFunctionThrow(Ljava/lang/String;Landroidx/compose/runtime/Composer;I)Ljava/lang/String;
         Root { key: <key>, line: 19 }
 }
@@ -42,11 +42,11 @@ TestKt {
 TestKt {
     file: Test.kt
     Test(Ljava/lang/String;Landroidx/compose/runtime/Composer;I)Ljava/lang/String;
-        ReplaceGroup { key: <key>, line: 6 }
+        Root { key: <key>, line: 6 }
     TestConditional(Ljava/lang/String;Landroidx/compose/runtime/Composer;I)Ljava/lang/String;
+        Root { key: <key>, line: 10 }
         ReplaceGroup { key: <key>, line: 10 }
         ReplaceGroup { key: <key>, line: 13 }
-        ReplaceGroup { key: <key>, line: 10 }
     TestFunctionThrow(Ljava/lang/String;Landroidx/compose/runtime/Composer;I)Ljava/lang/String;
-        ReplaceGroup { key: <key>, line: 19 }
+        Root { key: <key>, line: 19 }
 }

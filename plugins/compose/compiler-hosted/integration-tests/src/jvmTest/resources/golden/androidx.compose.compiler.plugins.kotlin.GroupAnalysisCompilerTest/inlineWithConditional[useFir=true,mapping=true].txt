@@ -1,0 +1,35 @@
+//
+// Source
+// ------------------------------------------
+
+@Composable
+inline fun Test(isEnabled: Boolean, crossinline content: @Composable () -> Unit) {
+    if (isEnabled) {
+        A()
+        return
+    }
+    content()
+}
+
+@Composable
+inline fun Test(isEnabled: Boolean, p1: Int, crossinline content: @Composable () -> Unit) {
+    Test(isEnabled, content)
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+========= FunctionMeta: true, OptimizeGroups: true =========
+ComposeStackTrace -> $$compose:
+  1:1:void TestKt.Test(boolean,kotlin.jvm.functions.Function2,androidx.compose.runtime.Composer,int):5:5 -> m$<key>
+  1:1:void TestKt.Test(boolean,kotlin.jvm.functions.Function2,androidx.compose.runtime.Composer,int):6:6 -> m$<key>
+  1:1:void TestKt.Test(boolean,kotlin.jvm.functions.Function2,androidx.compose.runtime.Composer,int):9:9 -> m$<key>
+  1:1:void TestKt.Test(boolean,int,kotlin.jvm.functions.Function2,androidx.compose.runtime.Composer,int):15:15 -> m$<key>
+  1:1:void ExtraKt.A(androidx.compose.runtime.Composer,int):4:4 -> m$<key>
+========= FunctionMeta: true, OptimizeGroups: false =========
+ComposeStackTrace -> $$compose:
+  1:1:void TestKt.Test(boolean,kotlin.jvm.functions.Function2,androidx.compose.runtime.Composer,int):5:5 -> m$<key>
+  1:1:void TestKt.Test(boolean,kotlin.jvm.functions.Function2,androidx.compose.runtime.Composer,int):6:6 -> m$<key>
+  1:1:void TestKt.Test(boolean,int,kotlin.jvm.functions.Function2,androidx.compose.runtime.Composer,int):14:14 -> m$<key>
+  1:1:void ExtraKt.A(androidx.compose.runtime.Composer,int):4:4 -> m$<key>

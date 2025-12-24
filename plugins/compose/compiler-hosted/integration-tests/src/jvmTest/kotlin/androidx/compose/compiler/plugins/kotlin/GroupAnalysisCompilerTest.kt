@@ -362,6 +362,58 @@ class GroupAnalysisCompilerTest(
         """
     )
 
+    @Test
+    fun lambdaCaptureWithDefault() = groups(
+        """
+            @Composable
+            fun Test(isEnabled: Boolean = false) {
+                val composition: Composition = remember { TODO() }
+                LaunchedEffect(isEnabled) {
+                    disposingComposition {
+                        composition.suspendContent { println(isEnabled) }
+                    }
+                }
+            }
+        """,
+        """
+            suspend inline fun disposingComposition(f: suspend () -> Composition) {
+                f().dispose()
+            }
+
+            suspend inline fun Composition.suspendContent(noinline content: @Composable () -> Unit): Composition {
+                waitForInit()
+                return this.apply { setContent(content) }
+            }
+
+            suspend fun Composition.waitForInit() {
+            }
+        """
+    )
+
+    @Test
+    fun inlineWithConditional() = groups(
+        """
+            @Composable
+            inline fun Test(isEnabled: Boolean, crossinline content: @Composable () -> Unit) {
+                if (isEnabled) {
+                    A()
+                    return
+                }
+                content()
+            }
+
+            @Composable
+            inline fun Test(isEnabled: Boolean, p1: Int, crossinline content: @Composable () -> Unit) {
+                Test(isEnabled, content)
+            }
+        """,
+        """
+            @Composable fun A() {}
+        """,
+        checkOptimizeGroups = true,
+        allowDuplicatedKeys = true
+    )
+
     @JvmField
     @Rule
     val goldenTransformRule = GoldenTransformRule()
@@ -371,6 +423,7 @@ class GroupAnalysisCompilerTest(
         @Language("kotlin") extra: String = "",
         checkFunctionMeta: Boolean = false,
         checkOptimizeGroups: Boolean = false,
+        allowDuplicatedKeys: Boolean = false,
         dumpIr: Boolean = false
     ) {
         val sources = listOf(
@@ -407,7 +460,7 @@ class GroupAnalysisCompilerTest(
                     }
                 p to buildString {
                     mapping.writeProguardMapping(this)
-                }.trim().redactGroupKeys(regex = MAPPING_REGEX)
+                }.trim().redactGroupKeys(regex = MAPPING_REGEX, allowDuplicatedKeys = allowDuplicatedKeys)
             }
         } else {
             val lambdaKeyCache = LambdaKeyCache()
@@ -419,7 +472,7 @@ class GroupAnalysisCompilerTest(
                             it.fileName == "Test.kt" && it.methods.isNotEmpty()
                         }?.render(lambdaKeyCache)
                     }.joinToString(separator = "\n")
-                p to info.redactGroupKeys(regex = GROUP_DUMP_REGEX)
+                p to info.redactGroupKeys(regex = GROUP_DUMP_REGEX, allowDuplicatedKeys = allowDuplicatedKeys)
             }
         }
 
@@ -473,7 +526,7 @@ class GroupAnalysisCompilerTest(
         }
     }
 
-    private fun String.redactGroupKeys(regex: Regex): String {
+    private fun String.redactGroupKeys(regex: Regex, allowDuplicatedKeys: Boolean): String {
         val counts = mutableMapOf<String, Int>()
         regex.findAll(this).forEach {
             val keyMatch = it.groups[1] ?: error("Match without a key: ${it.value}")
@@ -485,7 +538,7 @@ class GroupAnalysisCompilerTest(
             val keyValue = keyMatch.value
             val value = if (keyValue == "null") {
                 keyValue
-            } else if (counts[keyValue] == 1) {
+            } else if (allowDuplicatedKeys || counts[keyValue] == 1) {
                 "<key>"
             } else {
                 "<!DUPLICATED KEY: $keyValue!>"
