@@ -46,6 +46,24 @@ class MapBuilderTest {
     }
 
     @Test
+    fun buildMapDuplicatesReproducerReduced() {
+        val m = buildMap(capacity = 8) {
+            put(59, 1)
+            put(38, 1)
+            put(67, 1)
+            put(54, 1)
+            put(70, 1)
+            put(44, 1)
+            put(65, 1)
+            remove(59)
+            put(65, 1) // it will be duplicated
+        }
+
+        val duplicates = m.keys.groupingBy { it }.eachCount().filterValues { it > 1 }
+        assertTrue(duplicates.isEmpty(), "Found duplicates: $duplicates")
+    }
+
+    @Test
     fun capacityOverflow() {
         val builderSize = 15
         val giantMapSize = Int.MAX_VALUE - builderSize + 1
