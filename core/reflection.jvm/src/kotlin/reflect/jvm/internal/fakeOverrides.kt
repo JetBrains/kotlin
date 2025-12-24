@@ -237,7 +237,7 @@ private fun <T : EqualityMode> DescriptorKCallable<*>.toEquatableCallableSignatu
     val javaMethod = (this as? KFunction<*>)?.javaMethod
     val javaGenericParameterTypes = javaMethod?.genericParameterTypes.orEmpty().toList()
     val javaParameterTypes = javaMethod?.parameterTypes.orEmpty().toList()
-    val jvmNameIfFunction = javaMethod?.name.orEmpty()
+    val jvmNameIfFunction = javaMethod?.name
     return EquatableCallableSignature(
         kind,
         name,
@@ -292,7 +292,7 @@ internal sealed class EqualityMode {
 internal data class EquatableCallableSignature<T : EqualityMode>(
     val kind: SignatureKind,
     val name: String,
-    val jvmNameIfFunction: String,
+    val jvmNameIfFunction: String?,
     val typeParameters: List<KTypeParameter>,
     val kotlinParameterTypes: List<KType>,
     val javaParameterTypesIfFunction: List<Class<*>>,
@@ -322,7 +322,7 @@ internal data class EquatableCallableSignature<T : EqualityMode>(
         )
 
     override fun hashCode(): Int = when (equalityMode == EqualityMode.JavaSignature && kind == SignatureKind.FUNCTION) {
-        true -> arrayOf<Any>(kind, kotlinParameterTypes.size, isStatic, jvmNameIfFunction).contentHashCode()
+        true -> arrayOf<Any>(kind, kotlinParameterTypes.size, isStatic, jvmNameIfFunction ?: "").contentHashCode()
         false -> arrayOf<Any>(kind, kotlinParameterTypes.size, isStatic, name).contentHashCode()
     }
 
