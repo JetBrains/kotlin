@@ -1,0 +1,32 @@
+KtPrefixExpression(80,83): '++f'
+  KaApplicableCallCandidateInfo:
+    candidate = KaCompoundVariableAccessCall:
+      compoundOperation = KaCompoundUnaryOperation:
+        kind = INC
+        operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          contextArguments = []
+          dispatchReceiver = null
+          extensionReceiver = KaExplicitReceiverValue:
+            expression = f
+            isSafeNavigation = false
+            type = Foo
+          signature = KaFunctionSignature:
+            receiverType = Foo
+            returnType = Foo
+            symbol = /inc(<extension receiver>: R): R
+            valueParameters = []
+            contextParameters = []
+            callableId = /inc
+        precedence = PREFIX
+      variablePartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = f
+          receiverType = null
+          returnType = Foo
+          symbol = var f: Foo
+          contextParameters = []
+          callableId = null
+    isInBestCandidates = true

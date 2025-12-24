@@ -1,0 +1,6 @@
+KtOperationReferenceExpression(80,82): '++'
+  KtSimpleNameReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in ROOT) operator fun <R> R.inc(): R
