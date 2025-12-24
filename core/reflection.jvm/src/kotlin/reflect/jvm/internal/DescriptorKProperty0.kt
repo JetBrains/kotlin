@@ -25,7 +25,7 @@ internal open class DescriptorKProperty0<out V> : KProperty0<V>, DescriptorKProp
     constructor(
         container: KDeclarationContainerImpl,
         descriptor: PropertyDescriptor,
-        overriddenStorage: KCallableOverriddenStorage = KCallableOverriddenStorage.EMPTY,
+        overriddenStorage: KCallableOverriddenStorage,
     ) : super(container, descriptor, overriddenStorage)
 
     constructor(container: KDeclarationContainerImpl, name: String, signature: String, boundReceiver: Any?) : super(
@@ -54,7 +54,7 @@ internal class DescriptorKMutableProperty0<V> : DescriptorKProperty0<V>, KMutabl
     constructor(
         container: KDeclarationContainerImpl,
         descriptor: PropertyDescriptor,
-        overriddenStorage: KCallableOverriddenStorage = KCallableOverriddenStorage.EMPTY,
+        overriddenStorage: KCallableOverriddenStorage,
     ) : super(container, descriptor, overriddenStorage)
 
     constructor(container: KDeclarationContainerImpl, name: String, signature: String, boundReceiver: Any?) : super(

@@ -39,7 +39,7 @@ internal class DescriptorKMutablePropertyN<V> : DescriptorKPropertyN<V>, KMutabl
     constructor(
         container: KDeclarationContainerImpl,
         descriptor: PropertyDescriptor,
-        overriddenStorage: KCallableOverriddenStorage = KCallableOverriddenStorage.EMPTY,
+        overriddenStorage: KCallableOverriddenStorage,
     ) : super(container, descriptor, overriddenStorage)
 
     override val setter: Setter<V> by lazy(PUBLICATION) { Setter(this) }

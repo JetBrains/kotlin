@@ -380,16 +380,16 @@ internal open class CreateKCallableVisitor(private val container: KDeclarationCo
 
         when {
             descriptor.isVar -> when (receiverCount) {
-                -1 -> return DescriptorKMutablePropertyN<Any?>(container, descriptor)
-                0 -> return DescriptorKMutableProperty0<Any?>(container, descriptor)
-                1 -> return DescriptorKMutableProperty1<Any?, Any?>(container, descriptor)
-                2 -> return DescriptorKMutableProperty2<Any?, Any?, Any?>(container, descriptor)
+                -1 -> return DescriptorKMutablePropertyN<Any?>(container, descriptor, KCallableOverriddenStorage.EMPTY)
+                0 -> return DescriptorKMutableProperty0<Any?>(container, descriptor, KCallableOverriddenStorage.EMPTY)
+                1 -> return DescriptorKMutableProperty1<Any?, Any?>(container, descriptor, KCallableOverriddenStorage.EMPTY)
+                2 -> return DescriptorKMutableProperty2<Any?, Any?, Any?>(container, descriptor, KCallableOverriddenStorage.EMPTY)
             }
             else -> when (receiverCount) {
-                -1 -> return DescriptorKPropertyN<Any?>(container, descriptor)
-                0 -> return DescriptorKProperty0<Any?>(container, descriptor)
-                1 -> return DescriptorKProperty1<Any?, Any?>(container, descriptor)
-                2 -> return DescriptorKProperty2<Any?, Any?, Any?>(container, descriptor)
+                -1 -> return DescriptorKPropertyN<Any?>(container, descriptor, KCallableOverriddenStorage.EMPTY)
+                0 -> return DescriptorKProperty0<Any?>(container, descriptor, KCallableOverriddenStorage.EMPTY)
+                1 -> return DescriptorKProperty1<Any?, Any?>(container, descriptor, KCallableOverriddenStorage.EMPTY)
+                2 -> return DescriptorKProperty2<Any?, Any?, Any?>(container, descriptor, KCallableOverriddenStorage.EMPTY)
             }
         }
 
