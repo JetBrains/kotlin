@@ -78,6 +78,27 @@ public interface KaSimpleFunctionCall : KaFunctionCall<KaFunctionSymbol> {
 }
 
 /**
+ * A call to an [implicit invoke call](https://kotlinlang.org/docs/operator-overloading.html#invoke-operator).
+ *
+ * ### Example
+ *
+ * ```kotlin
+ * interface Foo {
+ *     operator fun <T> invoke(t: T)
+ * }
+ *
+ * fun test(f: Foo) {
+ *     f("str")
+ * //  ^^^^^^^^
+ * }
+ * ```
+ *
+ * `f("str")` is the implicit form of `f.invoke("")`
+ */
+@SubclassOptInRequired(KaImplementationDetail::class)
+public interface KaImplicitInvokeCall : KaFunctionCall<KaNamedFunctionSymbol>
+
+/**
  * A call to an [annotation constructor](https://kotlinlang.org/docs/annotations.html#constructors).
  *
  * #### Example

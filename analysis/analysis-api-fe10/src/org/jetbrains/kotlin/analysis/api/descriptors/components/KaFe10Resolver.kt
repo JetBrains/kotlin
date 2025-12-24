@@ -70,6 +70,7 @@ import org.jetbrains.kotlin.types.typeUtil.contains
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.kotlin.utils.checkWithAttachment
+import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 
 internal class KaFe10Resolver(
     override val analysisSessionProvider: () -> KaFe10Session,
@@ -413,7 +414,6 @@ internal class KaFe10Resolver(
                 backingPartiallyAppliedSymbol = this,
                 backingArgumentMapping = emptyMap(),
                 backingTypeArgumentsMapping = emptyMap(),
-                backingIsImplicitInvoke = false,
             )
 
             @Suppress("UNCHECKED_CAST")
@@ -513,6 +513,7 @@ internal class KaFe10Resolver(
     private fun ResolvedCall<*>.toFunctionKtCall(context: BindingContext): KaFunctionCall<*>? {
         val partiallyAppliedSymbol = toPartiallyAppliedFunctionSymbol<KaFunctionSymbol>(context) ?: return null
         val argumentMapping = createArgumentMapping(partiallyAppliedSymbol.signature)
+        val typeArgumentsMapping = toTypeArgumentsMapping(partiallyAppliedSymbol)
         if (partiallyAppliedSymbol.signature.symbol is KaConstructorSymbol) {
             @Suppress("UNCHECKED_CAST")
             val partiallyAppliedConstructorSymbol = partiallyAppliedSymbol as KaPartiallyAppliedFunctionSymbol<KaConstructorSymbol>
@@ -522,23 +523,37 @@ internal class KaFe10Resolver(
                     partiallyAppliedConstructorSymbol,
                     if (callElement.isCallToThis) KaDelegatedConstructorCall.Kind.THIS_CALL else KaDelegatedConstructorCall.Kind.SUPER_CALL,
                     argumentMapping,
-                    toTypeArgumentsMapping(partiallyAppliedSymbol)
+                    typeArgumentsMapping
                 )
                 is KtSuperTypeCallEntry -> return KaBaseDelegatedConstructorCall(
                     partiallyAppliedConstructorSymbol,
                     KaDelegatedConstructorCall.Kind.SUPER_CALL,
                     argumentMapping,
-                    toTypeArgumentsMapping(partiallyAppliedSymbol)
+                    typeArgumentsMapping
                 )
             }
         }
 
-        return KaBaseSimpleFunctionCall(
-            partiallyAppliedSymbol,
-            argumentMapping,
-            toTypeArgumentsMapping(partiallyAppliedSymbol),
-            call.callType == Call.CallType.INVOKE
-        )
+        return if (call.callType == Call.CallType.INVOKE) {
+            val functionSymbol = partiallyAppliedSymbol.symbol
+            requireWithAttachment(
+                functionSymbol is KaNamedFunctionSymbol,
+                { "Expected ${KaNamedFunctionSymbol::class.simpleName}, but got ${functionSymbol::class.simpleName}" },
+            )
+
+            @Suppress("UNCHECKED_CAST")
+            KaBaseImplicitInvokeCall(
+                backingPartiallyAppliedSymbol = partiallyAppliedSymbol as KaPartiallyAppliedFunctionSymbol<KaNamedFunctionSymbol>,
+                backingArgumentMapping = argumentMapping,
+                backingTypeArgumentsMapping = typeArgumentsMapping,
+            )
+        } else {
+            KaBaseSimpleFunctionCall(
+                backingPartiallyAppliedSymbol = partiallyAppliedSymbol,
+                backingArgumentMapping = argumentMapping,
+                backingTypeArgumentsMapping = typeArgumentsMapping,
+            )
+        }
     }
 
     private fun ResolvedCall<*>.toPartiallyAppliedVariableSymbol(context: BindingContext): KaPartiallyAppliedVariableSymbol<KaVariableSymbol>? {
