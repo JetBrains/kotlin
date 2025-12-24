@@ -614,7 +614,7 @@ public interface KaResolver : KaSessionComponent {
      * @see KtResolvableCall.resolveCall
      */
     @KaExperimentalApi
-    public fun KtArrayAccessExpression.resolveCall(): KaFunctionCall<*>?
+    public fun KtArrayAccessExpression.resolveCall(): KaFunctionCall<KaNamedFunctionSymbol>?
 
     /**
      * Resolves the given [KtCollectionLiteralExpression] to a simple function call representing the corresponding
@@ -639,7 +639,7 @@ public interface KaResolver : KaSessionComponent {
      * @see KtResolvableCall.resolveCall
      */
     @KaExperimentalApi
-    public fun KtCollectionLiteralExpression.resolveCall(): KaFunctionCall<*>?
+    public fun KtCollectionLiteralExpression.resolveCall(): KaFunctionCall<KaNamedFunctionSymbol>?
 
     /**
      * Resolves the given [KtEnumEntrySuperclassReferenceExpression] to a delegated constructor call.
@@ -692,7 +692,7 @@ public interface KaResolver : KaSessionComponent {
      * @see KtResolvableCall.resolveCall
      */
     @KaExperimentalApi
-    public fun KtWhenConditionInRange.resolveCall(): KaFunctionCall<*>?
+    public fun KtWhenConditionInRange.resolveCall(): KaFunctionCall<KaNamedFunctionSymbol>?
 
     /**
      * Returns all candidates considered during [overload resolution](https://kotlinlang.org/spec/overload-resolution.html)
@@ -1544,7 +1544,7 @@ public fun KtCallableReferenceExpression.resolveCall(): KaSingleCall<*, *>? {
 @KaExperimentalApi
 @KaContextParameterApi
 context(session: KaSession)
-public fun KtArrayAccessExpression.resolveCall(): KaFunctionCall<*>? {
+public fun KtArrayAccessExpression.resolveCall(): KaFunctionCall<KaNamedFunctionSymbol>? {
     return with(session) {
         resolveCall()
     }
@@ -1576,7 +1576,7 @@ public fun KtArrayAccessExpression.resolveCall(): KaFunctionCall<*>? {
 @KaExperimentalApi
 @KaContextParameterApi
 context(session: KaSession)
-public fun KtCollectionLiteralExpression.resolveCall(): KaFunctionCall<*>? {
+public fun KtCollectionLiteralExpression.resolveCall(): KaFunctionCall<KaNamedFunctionSymbol>? {
     return with(session) {
         resolveCall()
     }
@@ -1643,7 +1643,7 @@ public fun KtEnumEntrySuperclassReferenceExpression.resolveCall(): KaDelegatedCo
 @KaExperimentalApi
 @KaContextParameterApi
 context(session: KaSession)
-public fun KtWhenConditionInRange.resolveCall(): KaFunctionCall<*>? {
+public fun KtWhenConditionInRange.resolveCall(): KaFunctionCall<KaNamedFunctionSymbol>? {
     return with(session) {
         resolveCall()
     }
