@@ -9,29 +9,28 @@ KtCallExpression(76,81): 'f("")'
         contextParameters = []
         callableId = null)
     }
+    contextArguments = []
+    dispatchReceiver = null
+    extensionReceiver = KaExplicitReceiverValue:
+      expression = f
+      isSafeNavigation = false
+      type = Foo
     isImplicitInvoke = true
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      contextArguments = []
-      dispatchReceiver = null
-      extensionReceiver = KaExplicitReceiverValue:
-        expression = f
-        isSafeNavigation = false
-        type = Foo
-      signature = KaFunctionSignature:
-        receiverType = Foo
-        returnType = kotlin.Unit
-        symbol = /invoke(<extension receiver>: Foo, t: T): kotlin.Unit
-        valueParameters = [
-          KaVariableSignature:
-            name = t
-            receiverType = null
-            returnType = kotlin.String
-            symbol = t: T
-            contextParameters = []
-            callableId = null
-        ]
-        contextParameters = []
-        callableId = /invoke
+    signature = KaFunctionSignature:
+      receiverType = Foo
+      returnType = kotlin.Unit
+      symbol = /invoke(<extension receiver>: Foo, t: T): kotlin.Unit
+      valueParameters = [
+        KaVariableSignature:
+          name = t
+          receiverType = null
+          returnType = kotlin.String
+          symbol = t: T
+          contextParameters = []
+          callableId = null
+      ]
+      contextParameters = []
+      callableId = /invoke
     typeArgumentsMapping = {
       T -> (kotlin.String)
     }

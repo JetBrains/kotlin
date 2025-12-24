@@ -60,28 +60,27 @@ KtConstructorDelegationCall(76,84): 'this(10)'
         contextParameters = []
         callableId = null)
     }
+    contextArguments = []
+    dispatchReceiver = KaImplicitReceiverValue:
+      symbol = r/A
+      type = r.A
+    extensionReceiver = null
     kind = THIS_CALL
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      contextArguments = []
-      dispatchReceiver = KaImplicitReceiverValue:
-        symbol = r/A
-        type = r.A
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = r.A.B
-        symbol = <constructor>(<dispatch receiver>: r.A, x: kotlin.Int): r.A.B
-        valueParameters = [
-          KaVariableSignature:
-            name = x
-            receiverType = null
-            returnType = kotlin.Int
-            symbol = x: kotlin.Int
-            contextParameters = []
-            callableId = null
-        ]
-        contextParameters = []
-        callableId = null
+    signature = KaFunctionSignature:
+      receiverType = null
+      returnType = r.A.B
+      symbol = <constructor>(<dispatch receiver>: r.A, x: kotlin.Int): r.A.B
+      valueParameters = [
+        KaVariableSignature:
+          name = x
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = x: kotlin.Int
+          contextParameters = []
+          callableId = null
+      ]
+      contextParameters = []
+      callableId = null
     typeArgumentsMapping = {}
 
 KtConstructorDelegationReferenceExpression(76,80): 'this'
@@ -95,28 +94,27 @@ KtConstructorDelegationReferenceExpression(76,80): 'this'
         contextParameters = []
         callableId = null)
     }
+    contextArguments = []
+    dispatchReceiver = KaImplicitReceiverValue:
+      symbol = r/A
+      type = r.A
+    extensionReceiver = null
     kind = THIS_CALL
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      contextArguments = []
-      dispatchReceiver = KaImplicitReceiverValue:
-        symbol = r/A
-        type = r.A
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = r.A.B
-        symbol = <constructor>(<dispatch receiver>: r.A, x: kotlin.Int): r.A.B
-        valueParameters = [
-          KaVariableSignature:
-            name = x
-            receiverType = null
-            returnType = kotlin.Int
-            symbol = x: kotlin.Int
-            contextParameters = []
-            callableId = null
-        ]
-        contextParameters = []
-        callableId = null
+    signature = KaFunctionSignature:
+      receiverType = null
+      returnType = r.A.B
+      symbol = <constructor>(<dispatch receiver>: r.A, x: kotlin.Int): r.A.B
+      valueParameters = [
+        KaVariableSignature:
+          name = x
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = x: kotlin.Int
+          contextParameters = []
+          callableId = null
+      ]
+      contextParameters = []
+      callableId = null
     typeArgumentsMapping = {}
 
 KtValueArgumentList(80,84): '(10)'

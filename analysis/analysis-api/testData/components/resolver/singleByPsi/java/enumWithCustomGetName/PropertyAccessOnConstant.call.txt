@@ -1,20 +1,19 @@
 KtNameReferenceExpression(54,58): 'name'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = JavaEnum.A
+        isSafeNavigation = false
+        type = JavaEnum
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = JavaEnum.A
-          isSafeNavigation = false
-          type = JavaEnum
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = name
-          receiverType = null
-          returnType = kotlin.String
-          symbol = val name: kotlin.String
-          contextParameters = []
-          callableId = kotlin/Enum.name
+      signature = KaVariableSignature:
+        name = name
+        receiverType = null
+        returnType = kotlin.String
+        symbol = val name: kotlin.String
+        contextParameters = []
+        callableId = kotlin/Enum.name
       simpleAccess = Read
       typeArgumentsMapping = {}

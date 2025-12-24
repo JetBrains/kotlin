@@ -149,26 +149,25 @@ KtCallExpression(152,193): 'take {'
             contextParameters = []
             callableId = null)
         }
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
         isImplicitInvoke = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = null
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = kotlin.Unit
-            symbol = /take(action: kotlin.Function1<T, kotlin.Unit>): kotlin.Unit
-            valueParameters = [
-              KaVariableSignature:
-                name = action
-                receiverType = null
-                returnType = kotlin.Function1<ERROR_TYPE, kotlin.Unit>
-                symbol = action: kotlin.Function1<T, kotlin.Unit>
-                contextParameters = []
-                callableId = null
-            ]
-            contextParameters = []
-            callableId = /take
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /take(action: kotlin.Function1<T, kotlin.Unit>): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = action
+              receiverType = null
+              returnType = kotlin.Function1<ERROR_TYPE, kotlin.Unit>
+              symbol = action: kotlin.Function1<T, kotlin.Unit>
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /take
         typeArgumentsMapping = {
           T -> (ERROR_TYPE)
         }
@@ -190,26 +189,25 @@ KtNameReferenceExpression(152,156): 'take'
             contextParameters = []
             callableId = null)
         }
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
         isImplicitInvoke = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = null
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = kotlin.Unit
-            symbol = /take(action: kotlin.Function1<T, kotlin.Unit>): kotlin.Unit
-            valueParameters = [
-              KaVariableSignature:
-                name = action
-                receiverType = null
-                returnType = kotlin.Function1<ERROR_TYPE, kotlin.Unit>
-                symbol = action: kotlin.Function1<T, kotlin.Unit>
-                contextParameters = []
-                callableId = null
-            ]
-            contextParameters = []
-            callableId = /take
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /take(action: kotlin.Function1<T, kotlin.Unit>): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = action
+              receiverType = null
+              returnType = kotlin.Function1<ERROR_TYPE, kotlin.Unit>
+              symbol = action: kotlin.Function1<T, kotlin.Unit>
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /take
         typeArgumentsMapping = {
           T -> (ERROR_TYPE)
         }

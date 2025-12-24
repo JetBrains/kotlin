@@ -52,11 +52,27 @@ KtSuperTypeList(163,176): 'SealedClass()'
 KtSuperTypeCallEntry(163,176): 'SealedClass()'
   KaDelegatedConstructorCall:
     argumentMapping = {}
+    contextArguments = []
+    dispatchReceiver = null
+    extensionReceiver = null
     kind = SUPER_CALL
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+    signature = KaFunctionSignature:
+      receiverType = null
+      returnType = SealedClass
+      symbol = <constructor>(): SealedClass
+      valueParameters = []
+      contextParameters = []
+      callableId = null
+    typeArgumentsMapping = {}
+
+KtConstructorCalleeExpression(163,174): 'SealedClass'
+  KaSuccessCallInfo:
+    call = KaDelegatedConstructorCall:
+      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
+      kind = SUPER_CALL
       signature = KaFunctionSignature:
         receiverType = null
         returnType = SealedClass
@@ -64,24 +80,6 @@ KtSuperTypeCallEntry(163,176): 'SealedClass()'
         valueParameters = []
         contextParameters = []
         callableId = null
-    typeArgumentsMapping = {}
-
-KtConstructorCalleeExpression(163,174): 'SealedClass'
-  KaSuccessCallInfo:
-    call = KaDelegatedConstructorCall:
-      argumentMapping = {}
-      kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = SealedClass
-          symbol = <constructor>(): SealedClass
-          valueParameters = []
-          contextParameters = []
-          callableId = null
       typeArgumentsMapping = {}
 
 KtTypeReference(163,174): 'SealedClass'
@@ -126,11 +124,27 @@ KtSuperTypeList(225,238): 'SealedClass()'
 KtSuperTypeCallEntry(225,238): 'SealedClass()'
   KaDelegatedConstructorCall:
     argumentMapping = {}
+    contextArguments = []
+    dispatchReceiver = null
+    extensionReceiver = null
     kind = SUPER_CALL
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+    signature = KaFunctionSignature:
+      receiverType = null
+      returnType = SealedClass
+      symbol = <constructor>(): SealedClass
+      valueParameters = []
+      contextParameters = []
+      callableId = null
+    typeArgumentsMapping = {}
+
+KtConstructorCalleeExpression(225,236): 'SealedClass'
+  KaSuccessCallInfo:
+    call = KaDelegatedConstructorCall:
+      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
+      kind = SUPER_CALL
       signature = KaFunctionSignature:
         receiverType = null
         returnType = SealedClass
@@ -138,24 +152,6 @@ KtSuperTypeCallEntry(225,238): 'SealedClass()'
         valueParameters = []
         contextParameters = []
         callableId = null
-    typeArgumentsMapping = {}
-
-KtConstructorCalleeExpression(225,236): 'SealedClass'
-  KaSuccessCallInfo:
-    call = KaDelegatedConstructorCall:
-      argumentMapping = {}
-      kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = SealedClass
-          symbol = <constructor>(): SealedClass
-          valueParameters = []
-          contextParameters = []
-          callableId = null
       typeArgumentsMapping = {}
 
 KtTypeReference(225,236): 'SealedClass'
@@ -203,11 +199,27 @@ KtSuperTypeList(308,321): 'SealedClass()'
 KtSuperTypeCallEntry(308,321): 'SealedClass()'
   KaDelegatedConstructorCall:
     argumentMapping = {}
+    contextArguments = []
+    dispatchReceiver = null
+    extensionReceiver = null
     kind = SUPER_CALL
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+    signature = KaFunctionSignature:
+      receiverType = null
+      returnType = SealedClass
+      symbol = <constructor>(): SealedClass
+      valueParameters = []
+      contextParameters = []
+      callableId = null
+    typeArgumentsMapping = {}
+
+KtConstructorCalleeExpression(308,319): 'SealedClass'
+  KaSuccessCallInfo:
+    call = KaDelegatedConstructorCall:
+      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
+      kind = SUPER_CALL
       signature = KaFunctionSignature:
         receiverType = null
         returnType = SealedClass
@@ -215,24 +227,6 @@ KtSuperTypeCallEntry(308,321): 'SealedClass()'
         valueParameters = []
         contextParameters = []
         callableId = null
-    typeArgumentsMapping = {}
-
-KtConstructorCalleeExpression(308,319): 'SealedClass'
-  KaSuccessCallInfo:
-    call = KaDelegatedConstructorCall:
-      argumentMapping = {}
-      kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = SealedClass
-          symbol = <constructor>(): SealedClass
-          valueParameters = []
-          contextParameters = []
-          callableId = null
       typeArgumentsMapping = {}
 
 KtTypeReference(308,319): 'SealedClass'
@@ -256,11 +250,35 @@ KtSuperTypeList(358,376): 'SealedInheritor1()'
 KtSuperTypeCallEntry(358,376): 'SealedInheritor1()'
   KaDelegatedConstructorCall:
     argumentMapping = {}
+    contextArguments = []
+    dispatchReceiver = null
+    extensionReceiver = null
     kind = SUPER_CALL
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+    signature = KaFunctionSignature:
+      receiverType = null
+      returnType = SealedClass.SealedInheritor1
+      symbol = <constructor>(prop1: kotlin.String): SealedClass.SealedInheritor1
+      valueParameters = [
+        KaVariableSignature:
+          name = prop1
+          receiverType = null
+          returnType = kotlin.String
+          symbol = prop1: kotlin.String
+          contextParameters = []
+          callableId = null
+      ]
+      contextParameters = []
+      callableId = null
+    typeArgumentsMapping = {}
+
+KtConstructorCalleeExpression(358,374): 'SealedInheritor1'
+  KaSuccessCallInfo:
+    call = KaDelegatedConstructorCall:
+      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
+      kind = SUPER_CALL
       signature = KaFunctionSignature:
         receiverType = null
         returnType = SealedClass.SealedInheritor1
@@ -276,32 +294,6 @@ KtSuperTypeCallEntry(358,376): 'SealedInheritor1()'
         ]
         contextParameters = []
         callableId = null
-    typeArgumentsMapping = {}
-
-KtConstructorCalleeExpression(358,374): 'SealedInheritor1'
-  KaSuccessCallInfo:
-    call = KaDelegatedConstructorCall:
-      argumentMapping = {}
-      kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = SealedClass.SealedInheritor1
-          symbol = <constructor>(prop1: kotlin.String): SealedClass.SealedInheritor1
-          valueParameters = [
-            KaVariableSignature:
-              name = prop1
-              receiverType = null
-              returnType = kotlin.String
-              symbol = prop1: kotlin.String
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
       typeArgumentsMapping = {}
 
 KtTypeReference(358,374): 'SealedInheritor1'
@@ -331,11 +323,27 @@ KtSuperTypeList(438,451): 'SealedClass()'
 KtSuperTypeCallEntry(438,451): 'SealedClass()'
   KaDelegatedConstructorCall:
     argumentMapping = {}
+    contextArguments = []
+    dispatchReceiver = null
+    extensionReceiver = null
     kind = SUPER_CALL
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+    signature = KaFunctionSignature:
+      receiverType = null
+      returnType = SealedClass
+      symbol = <constructor>(): SealedClass
+      valueParameters = []
+      contextParameters = []
+      callableId = null
+    typeArgumentsMapping = {}
+
+KtConstructorCalleeExpression(438,449): 'SealedClass'
+  KaSuccessCallInfo:
+    call = KaDelegatedConstructorCall:
+      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
+      kind = SUPER_CALL
       signature = KaFunctionSignature:
         receiverType = null
         returnType = SealedClass
@@ -343,24 +351,6 @@ KtSuperTypeCallEntry(438,451): 'SealedClass()'
         valueParameters = []
         contextParameters = []
         callableId = null
-    typeArgumentsMapping = {}
-
-KtConstructorCalleeExpression(438,449): 'SealedClass'
-  KaSuccessCallInfo:
-    call = KaDelegatedConstructorCall:
-      argumentMapping = {}
-      kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = SealedClass
-          symbol = <constructor>(): SealedClass
-          valueParameters = []
-          contextParameters = []
-          callableId = null
       typeArgumentsMapping = {}
 
 KtTypeReference(438,449): 'SealedClass'
@@ -384,11 +374,35 @@ KtSuperTypeList(501,519): 'SealedInheritor1()'
 KtSuperTypeCallEntry(501,519): 'SealedInheritor1()'
   KaDelegatedConstructorCall:
     argumentMapping = {}
+    contextArguments = []
+    dispatchReceiver = null
+    extensionReceiver = null
     kind = SUPER_CALL
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+    signature = KaFunctionSignature:
+      receiverType = null
+      returnType = SealedClass.SealedInheritor1
+      symbol = <constructor>(prop1: kotlin.String): SealedClass.SealedInheritor1
+      valueParameters = [
+        KaVariableSignature:
+          name = prop1
+          receiverType = null
+          returnType = kotlin.String
+          symbol = prop1: kotlin.String
+          contextParameters = []
+          callableId = null
+      ]
+      contextParameters = []
+      callableId = null
+    typeArgumentsMapping = {}
+
+KtConstructorCalleeExpression(501,517): 'SealedInheritor1'
+  KaSuccessCallInfo:
+    call = KaDelegatedConstructorCall:
+      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
+      kind = SUPER_CALL
       signature = KaFunctionSignature:
         receiverType = null
         returnType = SealedClass.SealedInheritor1
@@ -404,32 +418,6 @@ KtSuperTypeCallEntry(501,519): 'SealedInheritor1()'
         ]
         contextParameters = []
         callableId = null
-    typeArgumentsMapping = {}
-
-KtConstructorCalleeExpression(501,517): 'SealedInheritor1'
-  KaSuccessCallInfo:
-    call = KaDelegatedConstructorCall:
-      argumentMapping = {}
-      kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = SealedClass.SealedInheritor1
-          symbol = <constructor>(prop1: kotlin.String): SealedClass.SealedInheritor1
-          valueParameters = [
-            KaVariableSignature:
-              name = prop1
-              receiverType = null
-              returnType = kotlin.String
-              symbol = prop1: kotlin.String
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
       typeArgumentsMapping = {}
 
 KtTypeReference(501,517): 'SealedInheritor1'
@@ -480,11 +468,27 @@ KtSuperTypeList(588,601): 'SealedClass()'
 KtSuperTypeCallEntry(588,601): 'SealedClass()'
   KaDelegatedConstructorCall:
     argumentMapping = {}
+    contextArguments = []
+    dispatchReceiver = null
+    extensionReceiver = null
     kind = SUPER_CALL
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+    signature = KaFunctionSignature:
+      receiverType = null
+      returnType = SealedClass
+      symbol = <constructor>(): SealedClass
+      valueParameters = []
+      contextParameters = []
+      callableId = null
+    typeArgumentsMapping = {}
+
+KtConstructorCalleeExpression(588,599): 'SealedClass'
+  KaSuccessCallInfo:
+    call = KaDelegatedConstructorCall:
+      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
+      kind = SUPER_CALL
       signature = KaFunctionSignature:
         receiverType = null
         returnType = SealedClass
@@ -492,24 +496,6 @@ KtSuperTypeCallEntry(588,601): 'SealedClass()'
         valueParameters = []
         contextParameters = []
         callableId = null
-    typeArgumentsMapping = {}
-
-KtConstructorCalleeExpression(588,599): 'SealedClass'
-  KaSuccessCallInfo:
-    call = KaDelegatedConstructorCall:
-      argumentMapping = {}
-      kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = SealedClass
-          symbol = <constructor>(): SealedClass
-          valueParameters = []
-          contextParameters = []
-          callableId = null
       typeArgumentsMapping = {}
 
 KtTypeReference(588,599): 'SealedClass'
@@ -578,11 +564,27 @@ KtNameReferenceExpression(728,735): 'Nothing'
 KtCallExpression(738,744): 'TODO()'
   KaSimpleFunctionCall:
     argumentMapping = {}
+    contextArguments = []
+    dispatchReceiver = null
+    extensionReceiver = null
     isImplicitInvoke = false
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+    signature = KaFunctionSignature:
+      receiverType = null
+      returnType = kotlin.Nothing
+      symbol = kotlin/TODO(): kotlin.Nothing
+      valueParameters = []
+      contextParameters = []
+      callableId = kotlin/TODO
+    typeArgumentsMapping = {}
+
+KtNameReferenceExpression(738,742): 'TODO'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
+      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Nothing
@@ -590,24 +592,6 @@ KtCallExpression(738,744): 'TODO()'
         valueParameters = []
         contextParameters = []
         callableId = kotlin/TODO
-    typeArgumentsMapping = {}
-
-KtNameReferenceExpression(738,742): 'TODO'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {}
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Nothing
-          symbol = kotlin/TODO(): kotlin.Nothing
-          valueParameters = []
-          contextParameters = []
-          callableId = kotlin/TODO
       typeArgumentsMapping = {}
 
 KtValueArgumentList(742,744): '()'
@@ -640,18 +624,17 @@ KtBinaryExpressionWithTypeRHS(792,813): 'i as SealedInheritor1'
 KtNameReferenceExpression(792,793): 'i'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = i
-          receiverType = null
-          returnType = SealedClass
-          symbol = i: SealedClass
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = i
+        receiverType = null
+        returnType = SealedClass
+        symbol = i: SealedClass
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -671,98 +654,13 @@ KtDotQualifiedExpression(818,836): 'i.prop1.hashCode()'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
       argumentMapping = {}
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = i.prop1
-          isSafeNavigation = false
-          type = kotlin.String
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = kotlin/Any.hashCode(<dispatch receiver>: kotlin.Any): kotlin.Int
-          valueParameters = []
-          contextParameters = []
-          callableId = kotlin/Any.hashCode
-      typeArgumentsMapping = {}
-
-KtDotQualifiedExpression(818,825): 'i.prop1'
-  KaSuccessCallInfo:
-    call = KaSimpleVariableAccessCall:
-      isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaSmartCastedReceiverValue:
-          original = KaExplicitReceiverValue:
-            expression = i
-            isSafeNavigation = false
-            type = SealedClass
-          type = SealedClass.SealedInheritor1
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = prop1
-          receiverType = null
-          returnType = kotlin.String
-          symbol = val prop1: kotlin.String
-          contextParameters = []
-          callableId = /SealedClass.SealedInheritor1.prop1
-      simpleAccess = Read
-      typeArgumentsMapping = {}
-
-KtNameReferenceExpression(818,819): 'i'
-  KaSuccessCallInfo:
-    call = KaSimpleVariableAccessCall:
-      isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = i
-          receiverType = null
-          returnType = SealedClass
-          symbol = i: SealedClass
-          contextParameters = []
-          callableId = null
-      simpleAccess = Read
-      typeArgumentsMapping = {}
-
-KtNameReferenceExpression(820,825): 'prop1'
-  KaSuccessCallInfo:
-    call = KaSimpleVariableAccessCall:
-      isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaSmartCastedReceiverValue:
-          original = KaExplicitReceiverValue:
-            expression = i
-            isSafeNavigation = false
-            type = SealedClass
-          type = SealedClass.SealedInheritor1
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = prop1
-          receiverType = null
-          returnType = kotlin.String
-          symbol = val prop1: kotlin.String
-          contextParameters = []
-          callableId = /SealedClass.SealedInheritor1.prop1
-      simpleAccess = Read
-      typeArgumentsMapping = {}
-
-KtCallExpression(826,836): 'hashCode()'
-  KaSimpleFunctionCall:
-    argumentMapping = {}
-    isImplicitInvoke = false
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = i.prop1
         isSafeNavigation = false
         type = kotlin.String
       extensionReceiver = null
+      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
@@ -770,27 +668,106 @@ KtCallExpression(826,836): 'hashCode()'
         valueParameters = []
         contextParameters = []
         callableId = kotlin/Any.hashCode
+      typeArgumentsMapping = {}
+
+KtDotQualifiedExpression(818,825): 'i.prop1'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaSmartCastedReceiverValue:
+        original = KaExplicitReceiverValue:
+          expression = i
+          isSafeNavigation = false
+          type = SealedClass
+        type = SealedClass.SealedInheritor1
+      extensionReceiver = null
+      isContextSensitive = false
+      signature = KaVariableSignature:
+        name = prop1
+        receiverType = null
+        returnType = kotlin.String
+        symbol = val prop1: kotlin.String
+        contextParameters = []
+        callableId = /SealedClass.SealedInheritor1.prop1
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+
+KtNameReferenceExpression(818,819): 'i'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      isContextSensitive = false
+      signature = KaVariableSignature:
+        name = i
+        receiverType = null
+        returnType = SealedClass
+        symbol = i: SealedClass
+        contextParameters = []
+        callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+
+KtNameReferenceExpression(820,825): 'prop1'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaSmartCastedReceiverValue:
+        original = KaExplicitReceiverValue:
+          expression = i
+          isSafeNavigation = false
+          type = SealedClass
+        type = SealedClass.SealedInheritor1
+      extensionReceiver = null
+      isContextSensitive = false
+      signature = KaVariableSignature:
+        name = prop1
+        receiverType = null
+        returnType = kotlin.String
+        symbol = val prop1: kotlin.String
+        contextParameters = []
+        callableId = /SealedClass.SealedInheritor1.prop1
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+
+KtCallExpression(826,836): 'hashCode()'
+  KaSimpleFunctionCall:
+    argumentMapping = {}
+    contextArguments = []
+    dispatchReceiver = KaExplicitReceiverValue:
+      expression = i.prop1
+      isSafeNavigation = false
+      type = kotlin.String
+    extensionReceiver = null
+    isImplicitInvoke = false
+    signature = KaFunctionSignature:
+      receiverType = null
+      returnType = kotlin.Int
+      symbol = kotlin/Any.hashCode(<dispatch receiver>: kotlin.Any): kotlin.Int
+      valueParameters = []
+      contextParameters = []
+      callableId = kotlin/Any.hashCode
     typeArgumentsMapping = {}
 
 KtNameReferenceExpression(826,834): 'hashCode'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = i.prop1
+        isSafeNavigation = false
+        type = kotlin.String
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = i.prop1
-          isSafeNavigation = false
-          type = kotlin.String
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = kotlin/Any.hashCode(<dispatch receiver>: kotlin.Any): kotlin.Int
-          valueParameters = []
-          contextParameters = []
-          callableId = kotlin/Any.hashCode
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = kotlin/Any.hashCode(<dispatch receiver>: kotlin.Any): kotlin.Int
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/Any.hashCode
       typeArgumentsMapping = {}
 
 KtValueArgumentList(834,836): '()'
@@ -802,18 +779,17 @@ KtBinaryExpressionWithTypeRHS(842,863): 'i as SealedInheritor2'
 KtNameReferenceExpression(842,843): 'i'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = i
-          receiverType = null
-          returnType = SealedClass
-          symbol = i: SealedClass
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = i
+        receiverType = null
+        returnType = SealedClass
+        symbol = i: SealedClass
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -833,98 +809,13 @@ KtDotQualifiedExpression(868,881): 'i.prop2.dec()'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
       argumentMapping = {}
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = i.prop2
-          isSafeNavigation = false
-          type = kotlin.Int
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = kotlin/Int.dec(<dispatch receiver>: kotlin.Int): kotlin.Int
-          valueParameters = []
-          contextParameters = []
-          callableId = kotlin/Int.dec
-      typeArgumentsMapping = {}
-
-KtDotQualifiedExpression(868,875): 'i.prop2'
-  KaSuccessCallInfo:
-    call = KaSimpleVariableAccessCall:
-      isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaSmartCastedReceiverValue:
-          original = KaExplicitReceiverValue:
-            expression = i
-            isSafeNavigation = false
-            type = SealedClass
-          type = it(SealedClass.SealedInheritor1 & SealedClass.SealedInheritor2)
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = prop2
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = val prop2: kotlin.Int
-          contextParameters = []
-          callableId = /SealedClass.SealedInheritor2.prop2
-      simpleAccess = Read
-      typeArgumentsMapping = {}
-
-KtNameReferenceExpression(868,869): 'i'
-  KaSuccessCallInfo:
-    call = KaSimpleVariableAccessCall:
-      isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = i
-          receiverType = null
-          returnType = SealedClass
-          symbol = i: SealedClass
-          contextParameters = []
-          callableId = null
-      simpleAccess = Read
-      typeArgumentsMapping = {}
-
-KtNameReferenceExpression(870,875): 'prop2'
-  KaSuccessCallInfo:
-    call = KaSimpleVariableAccessCall:
-      isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaSmartCastedReceiverValue:
-          original = KaExplicitReceiverValue:
-            expression = i
-            isSafeNavigation = false
-            type = SealedClass
-          type = it(SealedClass.SealedInheritor1 & SealedClass.SealedInheritor2)
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = prop2
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = val prop2: kotlin.Int
-          contextParameters = []
-          callableId = /SealedClass.SealedInheritor2.prop2
-      simpleAccess = Read
-      typeArgumentsMapping = {}
-
-KtCallExpression(876,881): 'dec()'
-  KaSimpleFunctionCall:
-    argumentMapping = {}
-    isImplicitInvoke = false
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = i.prop2
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
+      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
@@ -932,27 +823,106 @@ KtCallExpression(876,881): 'dec()'
         valueParameters = []
         contextParameters = []
         callableId = kotlin/Int.dec
+      typeArgumentsMapping = {}
+
+KtDotQualifiedExpression(868,875): 'i.prop2'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaSmartCastedReceiverValue:
+        original = KaExplicitReceiverValue:
+          expression = i
+          isSafeNavigation = false
+          type = SealedClass
+        type = it(SealedClass.SealedInheritor1 & SealedClass.SealedInheritor2)
+      extensionReceiver = null
+      isContextSensitive = false
+      signature = KaVariableSignature:
+        name = prop2
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = val prop2: kotlin.Int
+        contextParameters = []
+        callableId = /SealedClass.SealedInheritor2.prop2
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+
+KtNameReferenceExpression(868,869): 'i'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      isContextSensitive = false
+      signature = KaVariableSignature:
+        name = i
+        receiverType = null
+        returnType = SealedClass
+        symbol = i: SealedClass
+        contextParameters = []
+        callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+
+KtNameReferenceExpression(870,875): 'prop2'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaSmartCastedReceiverValue:
+        original = KaExplicitReceiverValue:
+          expression = i
+          isSafeNavigation = false
+          type = SealedClass
+        type = it(SealedClass.SealedInheritor1 & SealedClass.SealedInheritor2)
+      extensionReceiver = null
+      isContextSensitive = false
+      signature = KaVariableSignature:
+        name = prop2
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = val prop2: kotlin.Int
+        contextParameters = []
+        callableId = /SealedClass.SealedInheritor2.prop2
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+
+KtCallExpression(876,881): 'dec()'
+  KaSimpleFunctionCall:
+    argumentMapping = {}
+    contextArguments = []
+    dispatchReceiver = KaExplicitReceiverValue:
+      expression = i.prop2
+      isSafeNavigation = false
+      type = kotlin.Int
+    extensionReceiver = null
+    isImplicitInvoke = false
+    signature = KaFunctionSignature:
+      receiverType = null
+      returnType = kotlin.Int
+      symbol = kotlin/Int.dec(<dispatch receiver>: kotlin.Int): kotlin.Int
+      valueParameters = []
+      contextParameters = []
+      callableId = kotlin/Int.dec
     typeArgumentsMapping = {}
 
 KtNameReferenceExpression(876,879): 'dec'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = i.prop2
+        isSafeNavigation = false
+        type = kotlin.Int
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = i.prop2
-          isSafeNavigation = false
-          type = kotlin.Int
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = kotlin/Int.dec(<dispatch receiver>: kotlin.Int): kotlin.Int
-          valueParameters = []
-          contextParameters = []
-          callableId = kotlin/Int.dec
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = kotlin/Int.dec(<dispatch receiver>: kotlin.Int): kotlin.Int
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/Int.dec
       typeArgumentsMapping = {}
 
 KtValueArgumentList(879,881): '()'
@@ -964,18 +934,17 @@ KtBinaryExpressionWithTypeRHS(887,908): 'i as SealedInheritor1'
 KtNameReferenceExpression(887,888): 'i'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = i
-          receiverType = null
-          returnType = SealedClass
-          symbol = i: SealedClass
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = i
+        receiverType = null
+        returnType = SealedClass
+        symbol = i: SealedClass
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -997,98 +966,13 @@ KtDotQualifiedExpression(913,931): 'i.prop1.hashCode()'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
       argumentMapping = {}
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = i.prop1
-          isSafeNavigation = false
-          type = kotlin.String
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = kotlin/Any.hashCode(<dispatch receiver>: kotlin.Any): kotlin.Int
-          valueParameters = []
-          contextParameters = []
-          callableId = kotlin/Any.hashCode
-      typeArgumentsMapping = {}
-
-KtDotQualifiedExpression(913,920): 'i.prop1'
-  KaSuccessCallInfo:
-    call = KaSimpleVariableAccessCall:
-      isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaSmartCastedReceiverValue:
-          original = KaExplicitReceiverValue:
-            expression = i
-            isSafeNavigation = false
-            type = SealedClass
-          type = it(SealedClass.SealedInheritor1 & SealedClass.SealedInheritor2)
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = prop1
-          receiverType = null
-          returnType = kotlin.String
-          symbol = val prop1: kotlin.String
-          contextParameters = []
-          callableId = /SealedClass.SealedInheritor1.prop1
-      simpleAccess = Read
-      typeArgumentsMapping = {}
-
-KtNameReferenceExpression(913,914): 'i'
-  KaSuccessCallInfo:
-    call = KaSimpleVariableAccessCall:
-      isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = i
-          receiverType = null
-          returnType = SealedClass
-          symbol = i: SealedClass
-          contextParameters = []
-          callableId = null
-      simpleAccess = Read
-      typeArgumentsMapping = {}
-
-KtNameReferenceExpression(915,920): 'prop1'
-  KaSuccessCallInfo:
-    call = KaSimpleVariableAccessCall:
-      isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaSmartCastedReceiverValue:
-          original = KaExplicitReceiverValue:
-            expression = i
-            isSafeNavigation = false
-            type = SealedClass
-          type = it(SealedClass.SealedInheritor1 & SealedClass.SealedInheritor2)
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = prop1
-          receiverType = null
-          returnType = kotlin.String
-          symbol = val prop1: kotlin.String
-          contextParameters = []
-          callableId = /SealedClass.SealedInheritor1.prop1
-      simpleAccess = Read
-      typeArgumentsMapping = {}
-
-KtCallExpression(921,931): 'hashCode()'
-  KaSimpleFunctionCall:
-    argumentMapping = {}
-    isImplicitInvoke = false
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = i.prop1
         isSafeNavigation = false
         type = kotlin.String
       extensionReceiver = null
+      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
@@ -1096,27 +980,106 @@ KtCallExpression(921,931): 'hashCode()'
         valueParameters = []
         contextParameters = []
         callableId = kotlin/Any.hashCode
+      typeArgumentsMapping = {}
+
+KtDotQualifiedExpression(913,920): 'i.prop1'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaSmartCastedReceiverValue:
+        original = KaExplicitReceiverValue:
+          expression = i
+          isSafeNavigation = false
+          type = SealedClass
+        type = it(SealedClass.SealedInheritor1 & SealedClass.SealedInheritor2)
+      extensionReceiver = null
+      isContextSensitive = false
+      signature = KaVariableSignature:
+        name = prop1
+        receiverType = null
+        returnType = kotlin.String
+        symbol = val prop1: kotlin.String
+        contextParameters = []
+        callableId = /SealedClass.SealedInheritor1.prop1
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+
+KtNameReferenceExpression(913,914): 'i'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      isContextSensitive = false
+      signature = KaVariableSignature:
+        name = i
+        receiverType = null
+        returnType = SealedClass
+        symbol = i: SealedClass
+        contextParameters = []
+        callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+
+KtNameReferenceExpression(915,920): 'prop1'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaSmartCastedReceiverValue:
+        original = KaExplicitReceiverValue:
+          expression = i
+          isSafeNavigation = false
+          type = SealedClass
+        type = it(SealedClass.SealedInheritor1 & SealedClass.SealedInheritor2)
+      extensionReceiver = null
+      isContextSensitive = false
+      signature = KaVariableSignature:
+        name = prop1
+        receiverType = null
+        returnType = kotlin.String
+        symbol = val prop1: kotlin.String
+        contextParameters = []
+        callableId = /SealedClass.SealedInheritor1.prop1
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+
+KtCallExpression(921,931): 'hashCode()'
+  KaSimpleFunctionCall:
+    argumentMapping = {}
+    contextArguments = []
+    dispatchReceiver = KaExplicitReceiverValue:
+      expression = i.prop1
+      isSafeNavigation = false
+      type = kotlin.String
+    extensionReceiver = null
+    isImplicitInvoke = false
+    signature = KaFunctionSignature:
+      receiverType = null
+      returnType = kotlin.Int
+      symbol = kotlin/Any.hashCode(<dispatch receiver>: kotlin.Any): kotlin.Int
+      valueParameters = []
+      contextParameters = []
+      callableId = kotlin/Any.hashCode
     typeArgumentsMapping = {}
 
 KtNameReferenceExpression(921,929): 'hashCode'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = i.prop1
+        isSafeNavigation = false
+        type = kotlin.String
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = i.prop1
-          isSafeNavigation = false
-          type = kotlin.String
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = kotlin/Any.hashCode(<dispatch receiver>: kotlin.Any): kotlin.Int
-          valueParameters = []
-          contextParameters = []
-          callableId = kotlin/Any.hashCode
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = kotlin/Any.hashCode(<dispatch receiver>: kotlin.Any): kotlin.Int
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/Any.hashCode
       typeArgumentsMapping = {}
 
 KtValueArgumentList(929,931): '()'
@@ -1147,41 +1110,39 @@ KtDotQualifiedExpression(980,1020): '(i as SealedInheritor1).prop1.hashCode()'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = (i as SealedInheritor1).prop1
+        isSafeNavigation = false
+        type = kotlin.String
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = (i as SealedInheritor1).prop1
-          isSafeNavigation = false
-          type = kotlin.String
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = kotlin/Any.hashCode(<dispatch receiver>: kotlin.Any): kotlin.Int
-          valueParameters = []
-          contextParameters = []
-          callableId = kotlin/Any.hashCode
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = kotlin/Any.hashCode(<dispatch receiver>: kotlin.Any): kotlin.Int
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/Any.hashCode
       typeArgumentsMapping = {}
 
 KtDotQualifiedExpression(980,1009): '(i as SealedInheritor1).prop1'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = i as SealedInheritor1
+        isSafeNavigation = false
+        type = SealedClass.SealedInheritor1
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = i as SealedInheritor1
-          isSafeNavigation = false
-          type = SealedClass.SealedInheritor1
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = prop1
-          receiverType = null
-          returnType = kotlin.String
-          symbol = val prop1: kotlin.String
-          contextParameters = []
-          callableId = /SealedClass.SealedInheritor1.prop1
+      signature = KaVariableSignature:
+        name = prop1
+        receiverType = null
+        returnType = kotlin.String
+        symbol = val prop1: kotlin.String
+        contextParameters = []
+        callableId = /SealedClass.SealedInheritor1.prop1
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -1194,18 +1155,17 @@ KtBinaryExpressionWithTypeRHS(981,1002): 'i as SealedInheritor1'
 KtNameReferenceExpression(981,982): 'i'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = i
-          receiverType = null
-          returnType = SealedClass
-          symbol = i: SealedClass
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = i
+        receiverType = null
+        returnType = SealedClass
+        symbol = i: SealedClass
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -1224,35 +1184,53 @@ KtNameReferenceExpression(986,1002): 'SealedInheritor1'
 KtNameReferenceExpression(1004,1009): 'prop1'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = i as SealedInheritor1
+        isSafeNavigation = false
+        type = SealedClass.SealedInheritor1
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = i as SealedInheritor1
-          isSafeNavigation = false
-          type = SealedClass.SealedInheritor1
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = prop1
-          receiverType = null
-          returnType = kotlin.String
-          symbol = val prop1: kotlin.String
-          contextParameters = []
-          callableId = /SealedClass.SealedInheritor1.prop1
+      signature = KaVariableSignature:
+        name = prop1
+        receiverType = null
+        returnType = kotlin.String
+        symbol = val prop1: kotlin.String
+        contextParameters = []
+        callableId = /SealedClass.SealedInheritor1.prop1
       simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtCallExpression(1010,1020): 'hashCode()'
   KaSimpleFunctionCall:
     argumentMapping = {}
+    contextArguments = []
+    dispatchReceiver = KaExplicitReceiverValue:
+      expression = (i as SealedInheritor1).prop1
+      isSafeNavigation = false
+      type = kotlin.String
+    extensionReceiver = null
     isImplicitInvoke = false
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+    signature = KaFunctionSignature:
+      receiverType = null
+      returnType = kotlin.Int
+      symbol = kotlin/Any.hashCode(<dispatch receiver>: kotlin.Any): kotlin.Int
+      valueParameters = []
+      contextParameters = []
+      callableId = kotlin/Any.hashCode
+    typeArgumentsMapping = {}
+
+KtNameReferenceExpression(1010,1018): 'hashCode'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = (i as SealedInheritor1).prop1
         isSafeNavigation = false
         type = kotlin.String
       extensionReceiver = null
+      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
@@ -1260,27 +1238,6 @@ KtCallExpression(1010,1020): 'hashCode()'
         valueParameters = []
         contextParameters = []
         callableId = kotlin/Any.hashCode
-    typeArgumentsMapping = {}
-
-KtNameReferenceExpression(1010,1018): 'hashCode'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {}
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = (i as SealedInheritor1).prop1
-          isSafeNavigation = false
-          type = kotlin.String
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = kotlin/Any.hashCode(<dispatch receiver>: kotlin.Any): kotlin.Int
-          valueParameters = []
-          contextParameters = []
-          callableId = kotlin/Any.hashCode
       typeArgumentsMapping = {}
 
 KtValueArgumentList(1018,1020): '()'
@@ -1292,18 +1249,17 @@ KtBinaryExpressionWithTypeRHS(1026,1047): 'i as SealedInheritor2'
 KtNameReferenceExpression(1026,1027): 'i'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = i
-          receiverType = null
-          returnType = SealedClass
-          symbol = i: SealedClass
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = i
+        receiverType = null
+        returnType = SealedClass
+        symbol = i: SealedClass
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -1323,98 +1279,13 @@ KtDotQualifiedExpression(1052,1065): 'i.prop2.dec()'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
       argumentMapping = {}
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = i.prop2
-          isSafeNavigation = false
-          type = kotlin.Int
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = kotlin/Int.dec(<dispatch receiver>: kotlin.Int): kotlin.Int
-          valueParameters = []
-          contextParameters = []
-          callableId = kotlin/Int.dec
-      typeArgumentsMapping = {}
-
-KtDotQualifiedExpression(1052,1059): 'i.prop2'
-  KaSuccessCallInfo:
-    call = KaSimpleVariableAccessCall:
-      isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaSmartCastedReceiverValue:
-          original = KaExplicitReceiverValue:
-            expression = i
-            isSafeNavigation = false
-            type = SealedClass
-          type = it(SealedClass.SealedInheritor1 & SealedClass.SealedInheritor2)
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = prop2
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = val prop2: kotlin.Int
-          contextParameters = []
-          callableId = /SealedClass.SealedInheritor2.prop2
-      simpleAccess = Read
-      typeArgumentsMapping = {}
-
-KtNameReferenceExpression(1052,1053): 'i'
-  KaSuccessCallInfo:
-    call = KaSimpleVariableAccessCall:
-      isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = i
-          receiverType = null
-          returnType = SealedClass
-          symbol = i: SealedClass
-          contextParameters = []
-          callableId = null
-      simpleAccess = Read
-      typeArgumentsMapping = {}
-
-KtNameReferenceExpression(1054,1059): 'prop2'
-  KaSuccessCallInfo:
-    call = KaSimpleVariableAccessCall:
-      isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaSmartCastedReceiverValue:
-          original = KaExplicitReceiverValue:
-            expression = i
-            isSafeNavigation = false
-            type = SealedClass
-          type = it(SealedClass.SealedInheritor1 & SealedClass.SealedInheritor2)
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = prop2
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = val prop2: kotlin.Int
-          contextParameters = []
-          callableId = /SealedClass.SealedInheritor2.prop2
-      simpleAccess = Read
-      typeArgumentsMapping = {}
-
-KtCallExpression(1060,1065): 'dec()'
-  KaSimpleFunctionCall:
-    argumentMapping = {}
-    isImplicitInvoke = false
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = i.prop2
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
+      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
@@ -1422,27 +1293,106 @@ KtCallExpression(1060,1065): 'dec()'
         valueParameters = []
         contextParameters = []
         callableId = kotlin/Int.dec
+      typeArgumentsMapping = {}
+
+KtDotQualifiedExpression(1052,1059): 'i.prop2'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaSmartCastedReceiverValue:
+        original = KaExplicitReceiverValue:
+          expression = i
+          isSafeNavigation = false
+          type = SealedClass
+        type = it(SealedClass.SealedInheritor1 & SealedClass.SealedInheritor2)
+      extensionReceiver = null
+      isContextSensitive = false
+      signature = KaVariableSignature:
+        name = prop2
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = val prop2: kotlin.Int
+        contextParameters = []
+        callableId = /SealedClass.SealedInheritor2.prop2
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+
+KtNameReferenceExpression(1052,1053): 'i'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      isContextSensitive = false
+      signature = KaVariableSignature:
+        name = i
+        receiverType = null
+        returnType = SealedClass
+        symbol = i: SealedClass
+        contextParameters = []
+        callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+
+KtNameReferenceExpression(1054,1059): 'prop2'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaSmartCastedReceiverValue:
+        original = KaExplicitReceiverValue:
+          expression = i
+          isSafeNavigation = false
+          type = SealedClass
+        type = it(SealedClass.SealedInheritor1 & SealedClass.SealedInheritor2)
+      extensionReceiver = null
+      isContextSensitive = false
+      signature = KaVariableSignature:
+        name = prop2
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = val prop2: kotlin.Int
+        contextParameters = []
+        callableId = /SealedClass.SealedInheritor2.prop2
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+
+KtCallExpression(1060,1065): 'dec()'
+  KaSimpleFunctionCall:
+    argumentMapping = {}
+    contextArguments = []
+    dispatchReceiver = KaExplicitReceiverValue:
+      expression = i.prop2
+      isSafeNavigation = false
+      type = kotlin.Int
+    extensionReceiver = null
+    isImplicitInvoke = false
+    signature = KaFunctionSignature:
+      receiverType = null
+      returnType = kotlin.Int
+      symbol = kotlin/Int.dec(<dispatch receiver>: kotlin.Int): kotlin.Int
+      valueParameters = []
+      contextParameters = []
+      callableId = kotlin/Int.dec
     typeArgumentsMapping = {}
 
 KtNameReferenceExpression(1060,1063): 'dec'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = i.prop2
+        isSafeNavigation = false
+        type = kotlin.Int
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = i.prop2
-          isSafeNavigation = false
-          type = kotlin.Int
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = kotlin/Int.dec(<dispatch receiver>: kotlin.Int): kotlin.Int
-          valueParameters = []
-          contextParameters = []
-          callableId = kotlin/Int.dec
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = kotlin/Int.dec(<dispatch receiver>: kotlin.Int): kotlin.Int
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/Int.dec
       typeArgumentsMapping = {}
 
 KtValueArgumentList(1063,1065): '()'
@@ -1457,18 +1407,17 @@ KtBinaryExpressionWithTypeRHS(1079,1100): 'i as SealedInheritor1'
 KtNameReferenceExpression(1079,1080): 'i'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = i
-          receiverType = null
-          returnType = SealedClass
-          symbol = i: SealedClass
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = i
+        receiverType = null
+        returnType = SealedClass
+        symbol = i: SealedClass
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -1499,18 +1448,17 @@ KtDotQualifiedExpression(1105,1112): 'v.prop1'
 KtNameReferenceExpression(1105,1106): 'v'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = v
-          receiverType = null
-          returnType = ERROR CLASS: Symbol not found for SealedInheritor1
-          symbol = var v: ERROR CLASS: Symbol not found for SealedInheritor1
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = v
+        receiverType = null
+        returnType = ERROR CLASS: Symbol not found for SealedInheritor1
+        symbol = var v: ERROR CLASS: Symbol not found for SealedInheritor1
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -1550,18 +1498,17 @@ KtBinaryExpressionWithTypeRHS(1151,1172): 'i as SealedInheritor1'
 KtNameReferenceExpression(1151,1152): 'i'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = i
-          receiverType = null
-          returnType = SealedClass
-          symbol = i: SealedClass
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = i
+        receiverType = null
+        returnType = SealedClass
+        symbol = i: SealedClass
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -1592,18 +1539,17 @@ KtDotQualifiedExpression(1177,1185): 'v2.prop1'
 KtNameReferenceExpression(1177,1179): 'v2'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = v2
-          receiverType = null
-          returnType = SealedClass
-          symbol = var v2: SealedClass
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = v2
+        receiverType = null
+        returnType = SealedClass
+        symbol = var v2: SealedClass
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -1645,18 +1591,17 @@ KtBinaryExpressionWithTypeRHS(1229,1250): 'i as SealedInheritor1'
 KtNameReferenceExpression(1229,1230): 'i'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = i
-          receiverType = null
-          returnType = SealedClass
-          symbol = i: SealedClass
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = i
+        receiverType = null
+        returnType = SealedClass
+        symbol = i: SealedClass
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -1687,18 +1632,17 @@ KtDotQualifiedExpression(1255,1263): 'v3.prop1'
 KtNameReferenceExpression(1255,1257): 'v3'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = v3
-          receiverType = null
-          returnType = ERROR CLASS: Symbol not found for SealedInheritor1
-          symbol = var v3: ERROR CLASS: Symbol not found for SealedInheritor1
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = v3
+        receiverType = null
+        returnType = ERROR CLASS: Symbol not found for SealedInheritor1
+        symbol = var v3: ERROR CLASS: Symbol not found for SealedInheritor1
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -1733,26 +1677,25 @@ KtCallExpression(1280,1323): 'consume<SealedClass>(i as SealedInheritor1)'
             contextParameters = []
             callableId = null)
         }
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
         isImplicitInvoke = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = null
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = kotlin.Nothing
-            symbol = /consume(arg: T): kotlin.Nothing
-            valueParameters = [
-              KaVariableSignature:
-                name = arg
-                receiverType = null
-                returnType = SealedClass
-                symbol = arg: T
-                contextParameters = []
-                callableId = null
-            ]
-            contextParameters = []
-            callableId = /consume
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Nothing
+          symbol = /consume(arg: T): kotlin.Nothing
+          valueParameters = [
+            KaVariableSignature:
+              name = arg
+              receiverType = null
+              returnType = SealedClass
+              symbol = arg: T
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /consume
         typeArgumentsMapping = {
           T -> (SealedClass)
         }
@@ -1772,26 +1715,25 @@ KtNameReferenceExpression(1280,1287): 'consume'
             contextParameters = []
             callableId = null)
         }
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
         isImplicitInvoke = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = null
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = kotlin.Nothing
-            symbol = /consume(arg: T): kotlin.Nothing
-            valueParameters = [
-              KaVariableSignature:
-                name = arg
-                receiverType = null
-                returnType = SealedClass
-                symbol = arg: T
-                contextParameters = []
-                callableId = null
-            ]
-            contextParameters = []
-            callableId = /consume
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Nothing
+          symbol = /consume(arg: T): kotlin.Nothing
+          valueParameters = [
+            KaVariableSignature:
+              name = arg
+              receiverType = null
+              returnType = SealedClass
+              symbol = arg: T
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /consume
         typeArgumentsMapping = {
           T -> (SealedClass)
         }
@@ -1825,18 +1767,17 @@ KtBinaryExpressionWithTypeRHS(1301,1322): 'i as SealedInheritor1'
 KtNameReferenceExpression(1301,1302): 'i'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = i
-          receiverType = null
-          returnType = SealedClass
-          symbol = i: SealedClass
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = i
+        receiverType = null
+        returnType = SealedClass
+        symbol = i: SealedClass
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -1867,26 +1808,25 @@ KtCallExpression(1328,1388): 'consume<SealedClass.SealedInheritor1>(i as SealedI
             contextParameters = []
             callableId = null)
         }
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
         isImplicitInvoke = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = null
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = kotlin.Nothing
-            symbol = /consume(arg: T): kotlin.Nothing
-            valueParameters = [
-              KaVariableSignature:
-                name = arg
-                receiverType = null
-                returnType = SealedClass.SealedInheritor1
-                symbol = arg: T
-                contextParameters = []
-                callableId = null
-            ]
-            contextParameters = []
-            callableId = /consume
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Nothing
+          symbol = /consume(arg: T): kotlin.Nothing
+          valueParameters = [
+            KaVariableSignature:
+              name = arg
+              receiverType = null
+              returnType = SealedClass.SealedInheritor1
+              symbol = arg: T
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /consume
         typeArgumentsMapping = {
           T -> (SealedClass.SealedInheritor1)
         }
@@ -1906,26 +1846,25 @@ KtNameReferenceExpression(1328,1335): 'consume'
             contextParameters = []
             callableId = null)
         }
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
         isImplicitInvoke = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = null
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = kotlin.Nothing
-            symbol = /consume(arg: T): kotlin.Nothing
-            valueParameters = [
-              KaVariableSignature:
-                name = arg
-                receiverType = null
-                returnType = SealedClass.SealedInheritor1
-                symbol = arg: T
-                contextParameters = []
-                callableId = null
-            ]
-            contextParameters = []
-            callableId = /consume
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Nothing
+          symbol = /consume(arg: T): kotlin.Nothing
+          valueParameters = [
+            KaVariableSignature:
+              name = arg
+              receiverType = null
+              returnType = SealedClass.SealedInheritor1
+              symbol = arg: T
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /consume
         typeArgumentsMapping = {
           T -> (SealedClass.SealedInheritor1)
         }
@@ -1965,18 +1904,17 @@ KtBinaryExpressionWithTypeRHS(1366,1387): 'i as SealedInheritor1'
 KtNameReferenceExpression(1366,1367): 'i'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = i
-          receiverType = null
-          returnType = SealedClass
-          symbol = i: SealedClass
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = i
+        receiverType = null
+        returnType = SealedClass
+        symbol = i: SealedClass
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -2019,41 +1957,39 @@ KtSafeQualifiedExpression(1436,1479): '(i as? SealedInheritor1)?.prop1?.hashCode
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = (i as? SealedInheritor1)?.prop1
+        isSafeNavigation = true
+        type = kotlin.String
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = (i as? SealedInheritor1)?.prop1
-          isSafeNavigation = true
-          type = kotlin.String
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = kotlin/Any.hashCode(<dispatch receiver>: kotlin.Any): kotlin.Int
-          valueParameters = []
-          contextParameters = []
-          callableId = kotlin/Any.hashCode
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = kotlin/Any.hashCode(<dispatch receiver>: kotlin.Any): kotlin.Int
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/Any.hashCode
       typeArgumentsMapping = {}
 
 KtSafeQualifiedExpression(1436,1467): '(i as? SealedInheritor1)?.prop1'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = i as? SealedInheritor1
+        isSafeNavigation = true
+        type = SealedClass.SealedInheritor1
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = i as? SealedInheritor1
-          isSafeNavigation = true
-          type = SealedClass.SealedInheritor1
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = prop1
-          receiverType = null
-          returnType = kotlin.String
-          symbol = val prop1: kotlin.String
-          contextParameters = []
-          callableId = /SealedClass.SealedInheritor1.prop1
+      signature = KaVariableSignature:
+        name = prop1
+        receiverType = null
+        returnType = kotlin.String
+        symbol = val prop1: kotlin.String
+        contextParameters = []
+        callableId = /SealedClass.SealedInheritor1.prop1
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -2066,18 +2002,17 @@ KtBinaryExpressionWithTypeRHS(1437,1459): 'i as? SealedInheritor1'
 KtNameReferenceExpression(1437,1438): 'i'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = i
-          receiverType = null
-          returnType = SealedClass
-          symbol = i: SealedClass
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = i
+        receiverType = null
+        returnType = SealedClass
+        symbol = i: SealedClass
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -2096,35 +2031,53 @@ KtNameReferenceExpression(1443,1459): 'SealedInheritor1'
 KtNameReferenceExpression(1462,1467): 'prop1'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = i as? SealedInheritor1
+        isSafeNavigation = true
+        type = SealedClass.SealedInheritor1
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = i as? SealedInheritor1
-          isSafeNavigation = true
-          type = SealedClass.SealedInheritor1
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = prop1
-          receiverType = null
-          returnType = kotlin.String
-          symbol = val prop1: kotlin.String
-          contextParameters = []
-          callableId = /SealedClass.SealedInheritor1.prop1
+      signature = KaVariableSignature:
+        name = prop1
+        receiverType = null
+        returnType = kotlin.String
+        symbol = val prop1: kotlin.String
+        contextParameters = []
+        callableId = /SealedClass.SealedInheritor1.prop1
       simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtCallExpression(1469,1479): 'hashCode()'
   KaSimpleFunctionCall:
     argumentMapping = {}
+    contextArguments = []
+    dispatchReceiver = KaExplicitReceiverValue:
+      expression = (i as? SealedInheritor1)?.prop1
+      isSafeNavigation = true
+      type = kotlin.String
+    extensionReceiver = null
     isImplicitInvoke = false
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+    signature = KaFunctionSignature:
+      receiverType = null
+      returnType = kotlin.Int
+      symbol = kotlin/Any.hashCode(<dispatch receiver>: kotlin.Any): kotlin.Int
+      valueParameters = []
+      contextParameters = []
+      callableId = kotlin/Any.hashCode
+    typeArgumentsMapping = {}
+
+KtNameReferenceExpression(1469,1477): 'hashCode'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = (i as? SealedInheritor1)?.prop1
         isSafeNavigation = true
         type = kotlin.String
       extensionReceiver = null
+      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
@@ -2132,27 +2085,6 @@ KtCallExpression(1469,1479): 'hashCode()'
         valueParameters = []
         contextParameters = []
         callableId = kotlin/Any.hashCode
-    typeArgumentsMapping = {}
-
-KtNameReferenceExpression(1469,1477): 'hashCode'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {}
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = (i as? SealedInheritor1)?.prop1
-          isSafeNavigation = true
-          type = kotlin.String
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = kotlin/Any.hashCode(<dispatch receiver>: kotlin.Any): kotlin.Int
-          valueParameters = []
-          contextParameters = []
-          callableId = kotlin/Any.hashCode
       typeArgumentsMapping = {}
 
 KtValueArgumentList(1477,1479): '()'
@@ -2164,18 +2096,17 @@ KtBinaryExpressionWithTypeRHS(1485,1507): 'i as? SealedInheritor2'
 KtNameReferenceExpression(1485,1486): 'i'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = i
-          receiverType = null
-          returnType = SealedClass
-          symbol = i: SealedClass
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = i
+        receiverType = null
+        returnType = SealedClass
+        symbol = i: SealedClass
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -2204,18 +2135,17 @@ KtSafeQualifiedExpression(1512,1520): 'i?.prop2'
 KtNameReferenceExpression(1512,1513): 'i'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = i
-          receiverType = null
-          returnType = SealedClass
-          symbol = i: SealedClass
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = i
+        receiverType = null
+        returnType = SealedClass
+        symbol = i: SealedClass
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -2246,18 +2176,17 @@ KtBinaryExpressionWithTypeRHS(1541,1563): 'i as? SealedInheritor1'
 KtNameReferenceExpression(1541,1542): 'i'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = i
-          receiverType = null
-          returnType = SealedClass
-          symbol = i: SealedClass
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = i
+        receiverType = null
+        returnType = SealedClass
+        symbol = i: SealedClass
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -2277,94 +2206,13 @@ KtSafeQualifiedExpression(1568,1588): 'v?.prop1?.hashCode()'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
       argumentMapping = {}
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = v?.prop1
-          isSafeNavigation = true
-          type = kotlin.String
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = kotlin/Any.hashCode(<dispatch receiver>: kotlin.Any): kotlin.Int
-          valueParameters = []
-          contextParameters = []
-          callableId = kotlin/Any.hashCode
-      typeArgumentsMapping = {}
-
-KtSafeQualifiedExpression(1568,1576): 'v?.prop1'
-  KaSuccessCallInfo:
-    call = KaSimpleVariableAccessCall:
-      isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = v
-          isSafeNavigation = true
-          type = SealedClass.SealedInheritor1
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = prop1
-          receiverType = null
-          returnType = kotlin.String
-          symbol = val prop1: kotlin.String
-          contextParameters = []
-          callableId = /SealedClass.SealedInheritor1.prop1
-      simpleAccess = Read
-      typeArgumentsMapping = {}
-
-KtNameReferenceExpression(1568,1569): 'v'
-  KaSuccessCallInfo:
-    call = KaSimpleVariableAccessCall:
-      isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = v
-          receiverType = null
-          returnType = SealedClass.SealedInheritor1?
-          symbol = var v: SealedClass.SealedInheritor1?
-          contextParameters = []
-          callableId = null
-      simpleAccess = Read
-      typeArgumentsMapping = {}
-
-KtNameReferenceExpression(1571,1576): 'prop1'
-  KaSuccessCallInfo:
-    call = KaSimpleVariableAccessCall:
-      isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = v
-          isSafeNavigation = true
-          type = SealedClass.SealedInheritor1
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = prop1
-          receiverType = null
-          returnType = kotlin.String
-          symbol = val prop1: kotlin.String
-          contextParameters = []
-          callableId = /SealedClass.SealedInheritor1.prop1
-      simpleAccess = Read
-      typeArgumentsMapping = {}
-
-KtCallExpression(1578,1588): 'hashCode()'
-  KaSimpleFunctionCall:
-    argumentMapping = {}
-    isImplicitInvoke = false
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = v?.prop1
         isSafeNavigation = true
         type = kotlin.String
       extensionReceiver = null
+      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
@@ -2372,27 +2220,102 @@ KtCallExpression(1578,1588): 'hashCode()'
         valueParameters = []
         contextParameters = []
         callableId = kotlin/Any.hashCode
+      typeArgumentsMapping = {}
+
+KtSafeQualifiedExpression(1568,1576): 'v?.prop1'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = v
+        isSafeNavigation = true
+        type = SealedClass.SealedInheritor1
+      extensionReceiver = null
+      isContextSensitive = false
+      signature = KaVariableSignature:
+        name = prop1
+        receiverType = null
+        returnType = kotlin.String
+        symbol = val prop1: kotlin.String
+        contextParameters = []
+        callableId = /SealedClass.SealedInheritor1.prop1
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+
+KtNameReferenceExpression(1568,1569): 'v'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      isContextSensitive = false
+      signature = KaVariableSignature:
+        name = v
+        receiverType = null
+        returnType = SealedClass.SealedInheritor1?
+        symbol = var v: SealedClass.SealedInheritor1?
+        contextParameters = []
+        callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+
+KtNameReferenceExpression(1571,1576): 'prop1'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = v
+        isSafeNavigation = true
+        type = SealedClass.SealedInheritor1
+      extensionReceiver = null
+      isContextSensitive = false
+      signature = KaVariableSignature:
+        name = prop1
+        receiverType = null
+        returnType = kotlin.String
+        symbol = val prop1: kotlin.String
+        contextParameters = []
+        callableId = /SealedClass.SealedInheritor1.prop1
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+
+KtCallExpression(1578,1588): 'hashCode()'
+  KaSimpleFunctionCall:
+    argumentMapping = {}
+    contextArguments = []
+    dispatchReceiver = KaExplicitReceiverValue:
+      expression = v?.prop1
+      isSafeNavigation = true
+      type = kotlin.String
+    extensionReceiver = null
+    isImplicitInvoke = false
+    signature = KaFunctionSignature:
+      receiverType = null
+      returnType = kotlin.Int
+      symbol = kotlin/Any.hashCode(<dispatch receiver>: kotlin.Any): kotlin.Int
+      valueParameters = []
+      contextParameters = []
+      callableId = kotlin/Any.hashCode
     typeArgumentsMapping = {}
 
 KtNameReferenceExpression(1578,1586): 'hashCode'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = v?.prop1
+        isSafeNavigation = true
+        type = kotlin.String
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = v?.prop1
-          isSafeNavigation = true
-          type = kotlin.String
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = kotlin/Any.hashCode(<dispatch receiver>: kotlin.Any): kotlin.Int
-          valueParameters = []
-          contextParameters = []
-          callableId = kotlin/Any.hashCode
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = kotlin/Any.hashCode(<dispatch receiver>: kotlin.Any): kotlin.Int
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/Any.hashCode
       typeArgumentsMapping = {}
 
 KtValueArgumentList(1586,1588): '()'
@@ -2419,18 +2342,17 @@ KtBinaryExpressionWithTypeRHS(1617,1639): 'i as? SealedInheritor1'
 KtNameReferenceExpression(1617,1618): 'i'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = i
-          receiverType = null
-          returnType = SealedClass
-          symbol = i: SealedClass
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = i
+        receiverType = null
+        returnType = SealedClass
+        symbol = i: SealedClass
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -2459,18 +2381,17 @@ KtSafeQualifiedExpression(1644,1653): 'v2?.prop1'
 KtNameReferenceExpression(1644,1646): 'v2'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = v2
-          receiverType = null
-          returnType = SealedClass?
-          symbol = var v2: SealedClass?
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = v2
+        receiverType = null
+        returnType = SealedClass?
+        symbol = var v2: SealedClass?
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -2515,18 +2436,17 @@ KtBinaryExpressionWithTypeRHS(1699,1721): 'i as? SealedInheritor1'
 KtNameReferenceExpression(1699,1700): 'i'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = i
-          receiverType = null
-          returnType = SealedClass
-          symbol = i: SealedClass
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = i
+        receiverType = null
+        returnType = SealedClass
+        symbol = i: SealedClass
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -2555,18 +2475,17 @@ KtSafeQualifiedExpression(1726,1735): 'v3?.prop1'
 KtNameReferenceExpression(1726,1728): 'v3'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = v3
-          receiverType = null
-          returnType = ERROR CLASS: Symbol not found for SealedInheritor1?
-          symbol = var v3: ERROR CLASS: Symbol not found for SealedInheritor1?
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = v3
+        receiverType = null
+        returnType = ERROR CLASS: Symbol not found for SealedInheritor1?
+        symbol = var v3: ERROR CLASS: Symbol not found for SealedInheritor1?
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -2599,26 +2518,25 @@ KtCallExpression(1753,1798): 'consume<SealedClass?>(i as? SealedInheritor1)'
         contextParameters = []
         callableId = null)
     }
+    contextArguments = []
+    dispatchReceiver = null
+    extensionReceiver = null
     isImplicitInvoke = false
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      contextArguments = []
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = kotlin.Nothing
-        symbol = /consume(arg: T): kotlin.Nothing
-        valueParameters = [
-          KaVariableSignature:
-            name = arg
-            receiverType = null
-            returnType = SealedClass?
-            symbol = arg: T
-            contextParameters = []
-            callableId = null
-        ]
-        contextParameters = []
-        callableId = /consume
+    signature = KaFunctionSignature:
+      receiverType = null
+      returnType = kotlin.Nothing
+      symbol = /consume(arg: T): kotlin.Nothing
+      valueParameters = [
+        KaVariableSignature:
+          name = arg
+          receiverType = null
+          returnType = SealedClass?
+          symbol = arg: T
+          contextParameters = []
+          callableId = null
+      ]
+      contextParameters = []
+      callableId = /consume
     typeArgumentsMapping = {
       T -> (SealedClass?)
     }
@@ -2635,26 +2553,25 @@ KtNameReferenceExpression(1753,1760): 'consume'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Nothing
-          symbol = /consume(arg: T): kotlin.Nothing
-          valueParameters = [
-            KaVariableSignature:
-              name = arg
-              receiverType = null
-              returnType = SealedClass?
-              symbol = arg: T
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /consume
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Nothing
+        symbol = /consume(arg: T): kotlin.Nothing
+        valueParameters = [
+          KaVariableSignature:
+            name = arg
+            receiverType = null
+            returnType = SealedClass?
+            symbol = arg: T
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /consume
       typeArgumentsMapping = {
         T -> (SealedClass?)
       }
@@ -2689,18 +2606,17 @@ KtBinaryExpressionWithTypeRHS(1775,1797): 'i as? SealedInheritor1'
 KtNameReferenceExpression(1775,1776): 'i'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = i
-          receiverType = null
-          returnType = SealedClass
-          symbol = i: SealedClass
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = i
+        receiverType = null
+        returnType = SealedClass
+        symbol = i: SealedClass
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -2727,26 +2643,25 @@ KtCallExpression(1803,1865): 'consume<SealedClass.SealedInheritor1?>(i as? Seale
         contextParameters = []
         callableId = null)
     }
+    contextArguments = []
+    dispatchReceiver = null
+    extensionReceiver = null
     isImplicitInvoke = false
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      contextArguments = []
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = kotlin.Nothing
-        symbol = /consume(arg: T): kotlin.Nothing
-        valueParameters = [
-          KaVariableSignature:
-            name = arg
-            receiverType = null
-            returnType = SealedClass.SealedInheritor1?
-            symbol = arg: T
-            contextParameters = []
-            callableId = null
-        ]
-        contextParameters = []
-        callableId = /consume
+    signature = KaFunctionSignature:
+      receiverType = null
+      returnType = kotlin.Nothing
+      symbol = /consume(arg: T): kotlin.Nothing
+      valueParameters = [
+        KaVariableSignature:
+          name = arg
+          receiverType = null
+          returnType = SealedClass.SealedInheritor1?
+          symbol = arg: T
+          contextParameters = []
+          callableId = null
+      ]
+      contextParameters = []
+      callableId = /consume
     typeArgumentsMapping = {
       T -> (SealedClass.SealedInheritor1?)
     }
@@ -2763,26 +2678,25 @@ KtNameReferenceExpression(1803,1810): 'consume'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Nothing
-          symbol = /consume(arg: T): kotlin.Nothing
-          valueParameters = [
-            KaVariableSignature:
-              name = arg
-              receiverType = null
-              returnType = SealedClass.SealedInheritor1?
-              symbol = arg: T
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /consume
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Nothing
+        symbol = /consume(arg: T): kotlin.Nothing
+        valueParameters = [
+          KaVariableSignature:
+            name = arg
+            receiverType = null
+            returnType = SealedClass.SealedInheritor1?
+            symbol = arg: T
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /consume
       typeArgumentsMapping = {
         T -> (SealedClass.SealedInheritor1?)
       }
@@ -2823,18 +2737,17 @@ KtBinaryExpressionWithTypeRHS(1842,1864): 'i as? SealedInheritor1'
 KtNameReferenceExpression(1842,1843): 'i'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = i
-          receiverType = null
-          returnType = SealedClass
-          symbol = i: SealedClass
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = i
+        receiverType = null
+        returnType = SealedClass
+        symbol = i: SealedClass
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -2861,26 +2774,25 @@ KtCallExpression(1870,1932): 'consume<SealedClass.SealedInheritor2?>(i as? Seale
         contextParameters = []
         callableId = null)
     }
+    contextArguments = []
+    dispatchReceiver = null
+    extensionReceiver = null
     isImplicitInvoke = false
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      contextArguments = []
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = kotlin.Nothing
-        symbol = /consume(arg: T): kotlin.Nothing
-        valueParameters = [
-          KaVariableSignature:
-            name = arg
-            receiverType = null
-            returnType = SealedClass.SealedInheritor2?
-            symbol = arg: T
-            contextParameters = []
-            callableId = null
-        ]
-        contextParameters = []
-        callableId = /consume
+    signature = KaFunctionSignature:
+      receiverType = null
+      returnType = kotlin.Nothing
+      symbol = /consume(arg: T): kotlin.Nothing
+      valueParameters = [
+        KaVariableSignature:
+          name = arg
+          receiverType = null
+          returnType = SealedClass.SealedInheritor2?
+          symbol = arg: T
+          contextParameters = []
+          callableId = null
+      ]
+      contextParameters = []
+      callableId = /consume
     typeArgumentsMapping = {
       T -> (SealedClass.SealedInheritor2?)
     }
@@ -2897,26 +2809,25 @@ KtNameReferenceExpression(1870,1877): 'consume'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Nothing
-          symbol = /consume(arg: T): kotlin.Nothing
-          valueParameters = [
-            KaVariableSignature:
-              name = arg
-              receiverType = null
-              returnType = SealedClass.SealedInheritor2?
-              symbol = arg: T
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /consume
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Nothing
+        symbol = /consume(arg: T): kotlin.Nothing
+        valueParameters = [
+          KaVariableSignature:
+            name = arg
+            receiverType = null
+            returnType = SealedClass.SealedInheritor2?
+            symbol = arg: T
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /consume
       typeArgumentsMapping = {
         T -> (SealedClass.SealedInheritor2?)
       }
@@ -2957,18 +2868,17 @@ KtBinaryExpressionWithTypeRHS(1909,1931): 'i as? SealedInheritor2'
 KtNameReferenceExpression(1909,1910): 'i'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = i
-          receiverType = null
-          returnType = SealedClass
-          symbol = i: SealedClass
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = i
+        receiverType = null
+        returnType = SealedClass
+        symbol = i: SealedClass
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
 

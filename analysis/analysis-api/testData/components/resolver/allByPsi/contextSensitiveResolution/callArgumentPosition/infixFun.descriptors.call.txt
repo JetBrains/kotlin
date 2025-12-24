@@ -37,11 +37,27 @@ KtSuperTypeList(166,175): 'MyClass()'
 KtSuperTypeCallEntry(166,175): 'MyClass()'
   KaDelegatedConstructorCall:
     argumentMapping = {}
+    contextArguments = []
+    dispatchReceiver = null
+    extensionReceiver = null
     kind = SUPER_CALL
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+    signature = KaFunctionSignature:
+      receiverType = null
+      returnType = MyClass
+      symbol = <constructor>(): MyClass
+      valueParameters = []
+      contextParameters = []
+      callableId = null
+    typeArgumentsMapping = {}
+
+KtConstructorCalleeExpression(166,173): 'MyClass'
+  KaSuccessCallInfo:
+    call = KaDelegatedConstructorCall:
+      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
+      kind = SUPER_CALL
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MyClass
@@ -49,24 +65,6 @@ KtSuperTypeCallEntry(166,175): 'MyClass()'
         valueParameters = []
         contextParameters = []
         callableId = null
-    typeArgumentsMapping = {}
-
-KtConstructorCalleeExpression(166,173): 'MyClass'
-  KaSuccessCallInfo:
-    call = KaDelegatedConstructorCall:
-      argumentMapping = {}
-      kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = MyClass
-          symbol = <constructor>(): MyClass
-          valueParameters = []
-          contextParameters = []
-          callableId = null
       typeArgumentsMapping = {}
 
 KtTypeReference(166,173): 'MyClass'
@@ -79,18 +77,17 @@ KtNameReferenceExpression(166,173): 'MyClass'
   KaSuccessCallInfo:
     call = KaDelegatedConstructorCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = MyClass
-          symbol = <constructor>(): MyClass
-          valueParameters = []
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MyClass
+        symbol = <constructor>(): MyClass
+        valueParameters = []
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
 
 KtValueArgumentList(173,175): '()'
@@ -189,29 +186,28 @@ KtBinaryExpression(310,340): '1 infixEnumConsumer EnumValue1'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = 1
+        isSafeNavigation = false
+        type = kotlin.Int
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = KaExplicitReceiverValue:
-          expression = 1
-          isSafeNavigation = false
-          type = kotlin.Int
-        signature = KaFunctionSignature:
-          receiverType = kotlin.Int
-          returnType = kotlin.Unit
-          symbol = /infixEnumConsumer(<extension receiver>: kotlin.Int, arg: MyEnum): kotlin.Unit
-          valueParameters = [
-            KaVariableSignature:
-              name = arg
-              receiverType = null
-              returnType = MyEnum
-              symbol = arg: MyEnum
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /infixEnumConsumer
+      signature = KaFunctionSignature:
+        receiverType = kotlin.Int
+        returnType = kotlin.Unit
+        symbol = /infixEnumConsumer(<extension receiver>: kotlin.Int, arg: MyEnum): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = arg
+            receiverType = null
+            returnType = MyEnum
+            symbol = arg: MyEnum
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /infixEnumConsumer
       typeArgumentsMapping = {}
 
 KtConstantExpression(310,311): '1'
@@ -229,29 +225,28 @@ KtOperationReferenceExpression(312,329): 'infixEnumConsumer'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = 1
+        isSafeNavigation = false
+        type = kotlin.Int
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = KaExplicitReceiverValue:
-          expression = 1
-          isSafeNavigation = false
-          type = kotlin.Int
-        signature = KaFunctionSignature:
-          receiverType = kotlin.Int
-          returnType = kotlin.Unit
-          symbol = /infixEnumConsumer(<extension receiver>: kotlin.Int, arg: MyEnum): kotlin.Unit
-          valueParameters = [
-            KaVariableSignature:
-              name = arg
-              receiverType = null
-              returnType = MyEnum
-              symbol = arg: MyEnum
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /infixEnumConsumer
+      signature = KaFunctionSignature:
+        receiverType = kotlin.Int
+        returnType = kotlin.Unit
+        symbol = /infixEnumConsumer(<extension receiver>: kotlin.Int, arg: MyEnum): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = arg
+            receiverType = null
+            returnType = MyEnum
+            symbol = arg: MyEnum
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /infixEnumConsumer
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(330,340): 'EnumValue1'
@@ -274,29 +269,28 @@ KtBinaryExpression(354,389): '1 infixEnumConsumer InheritorObject'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = 1
+        isSafeNavigation = false
+        type = kotlin.Int
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = KaExplicitReceiverValue:
-          expression = 1
-          isSafeNavigation = false
-          type = kotlin.Int
-        signature = KaFunctionSignature:
-          receiverType = kotlin.Int
-          returnType = kotlin.Unit
-          symbol = /infixEnumConsumer(<extension receiver>: kotlin.Int, arg: MyEnum): kotlin.Unit
-          valueParameters = [
-            KaVariableSignature:
-              name = arg
-              receiverType = null
-              returnType = MyEnum
-              symbol = arg: MyEnum
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /infixEnumConsumer
+      signature = KaFunctionSignature:
+        receiverType = kotlin.Int
+        returnType = kotlin.Unit
+        symbol = /infixEnumConsumer(<extension receiver>: kotlin.Int, arg: MyEnum): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = arg
+            receiverType = null
+            returnType = MyEnum
+            symbol = arg: MyEnum
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /infixEnumConsumer
       typeArgumentsMapping = {}
 
 KtConstantExpression(354,355): '1'
@@ -314,29 +308,28 @@ KtOperationReferenceExpression(356,373): 'infixEnumConsumer'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = 1
+        isSafeNavigation = false
+        type = kotlin.Int
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = KaExplicitReceiverValue:
-          expression = 1
-          isSafeNavigation = false
-          type = kotlin.Int
-        signature = KaFunctionSignature:
-          receiverType = kotlin.Int
-          returnType = kotlin.Unit
-          symbol = /infixEnumConsumer(<extension receiver>: kotlin.Int, arg: MyEnum): kotlin.Unit
-          valueParameters = [
-            KaVariableSignature:
-              name = arg
-              receiverType = null
-              returnType = MyEnum
-              symbol = arg: MyEnum
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /infixEnumConsumer
+      signature = KaFunctionSignature:
+        receiverType = kotlin.Int
+        returnType = kotlin.Unit
+        symbol = /infixEnumConsumer(<extension receiver>: kotlin.Int, arg: MyEnum): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = arg
+            receiverType = null
+            returnType = MyEnum
+            symbol = arg: MyEnum
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /infixEnumConsumer
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(374,389): 'InheritorObject'
@@ -359,29 +352,28 @@ KtBinaryExpression(403,434): '1 infixConsumer InheritorObject'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = 1
+        isSafeNavigation = false
+        type = kotlin.Int
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = KaExplicitReceiverValue:
-          expression = 1
-          isSafeNavigation = false
-          type = kotlin.Int
-        signature = KaFunctionSignature:
-          receiverType = kotlin.Int
-          returnType = kotlin.Unit
-          symbol = /infixConsumer(<extension receiver>: kotlin.Int, arg: MyClass): kotlin.Unit
-          valueParameters = [
-            KaVariableSignature:
-              name = arg
-              receiverType = null
-              returnType = MyClass
-              symbol = arg: MyClass
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /infixConsumer
+      signature = KaFunctionSignature:
+        receiverType = kotlin.Int
+        returnType = kotlin.Unit
+        symbol = /infixConsumer(<extension receiver>: kotlin.Int, arg: MyClass): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = arg
+            receiverType = null
+            returnType = MyClass
+            symbol = arg: MyClass
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /infixConsumer
       typeArgumentsMapping = {}
 
 KtConstantExpression(403,404): '1'
@@ -399,29 +391,28 @@ KtOperationReferenceExpression(405,418): 'infixConsumer'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = 1
+        isSafeNavigation = false
+        type = kotlin.Int
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = KaExplicitReceiverValue:
-          expression = 1
-          isSafeNavigation = false
-          type = kotlin.Int
-        signature = KaFunctionSignature:
-          receiverType = kotlin.Int
-          returnType = kotlin.Unit
-          symbol = /infixConsumer(<extension receiver>: kotlin.Int, arg: MyClass): kotlin.Unit
-          valueParameters = [
-            KaVariableSignature:
-              name = arg
-              receiverType = null
-              returnType = MyClass
-              symbol = arg: MyClass
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /infixConsumer
+      signature = KaFunctionSignature:
+        receiverType = kotlin.Int
+        returnType = kotlin.Unit
+        symbol = /infixConsumer(<extension receiver>: kotlin.Int, arg: MyClass): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = arg
+            receiverType = null
+            returnType = MyClass
+            symbol = arg: MyClass
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /infixConsumer
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(419,434): 'InheritorObject'

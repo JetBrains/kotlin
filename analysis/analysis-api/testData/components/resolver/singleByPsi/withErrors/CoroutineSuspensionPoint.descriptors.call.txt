@@ -3,47 +3,46 @@ KtNameReferenceExpression(183,194): 'suspendHere'
     candidateCalls = [
       KaSimpleFunctionCall:
         argumentMapping = {}
-        isImplicitInvoke = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = KaImplicitReceiverValue:
-            symbol = KaReceiverParameterSymbol:
+        contextArguments = []
+        dispatchReceiver = KaImplicitReceiverValue:
+          symbol = KaReceiverParameterSymbol:
+            annotations: []
+            callableId: null
+            compilerVisibility: Local
+            contextReceivers: []
+            isActual: false
+            isExpect: false
+            isExtension: false
+            isVal: true
+            location: LOCAL
+            modality: FINAL
+            name: <receiver>
+            origin: SOURCE
+            owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+            receiverParameter: null
+            returnType: KaUsualClassType:
               annotations: []
-              callableId: null
-              compilerVisibility: Local
-              contextReceivers: []
-              isActual: false
-              isExpect: false
-              isExtension: false
-              isVal: true
-              location: LOCAL
-              modality: FINAL
-              name: <receiver>
-              origin: SOURCE
-              owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
-              receiverParameter: null
-              returnType: KaUsualClassType:
-                annotations: []
-                typeArguments: []
-                type: Controller
-              visibility: LOCAL
-            type = Controller
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = kotlin.Unit
-            symbol = /Controller.suspendHere(<dispatch receiver>: Controller, x: ERROR_TYPE): kotlin.Unit
-            valueParameters = [
-              KaVariableSignature:
-                name = x
-                receiverType = null
-                returnType = ERROR_TYPE
-                symbol = x: ERROR_TYPE
-                contextParameters = []
-                callableId = null
-            ]
-            contextParameters = []
-            callableId = /Controller.suspendHere
+              typeArguments: []
+              type: Controller
+            visibility: LOCAL
+          type = Controller
+        extensionReceiver = null
+        isImplicitInvoke = false
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /Controller.suspendHere(<dispatch receiver>: Controller, x: ERROR_TYPE): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = x
+              receiverType = null
+              returnType = ERROR_TYPE
+              symbol = x: ERROR_TYPE
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /Controller.suspendHere
         typeArgumentsMapping = {}
     ]
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'x'>

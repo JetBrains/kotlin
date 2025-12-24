@@ -1,31 +1,30 @@
 KtCallExpression(99,102): 'a()'
   KaSimpleFunctionCall:
     argumentMapping = {}
-    isImplicitInvoke = true
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      contextArguments = [
-        KaImplicitReceiverValue:
-          symbol = <unused var>: A
-          type = A
-      ]
-      dispatchReceiver = null
-      extensionReceiver = KaExplicitReceiverValue:
-        expression = a
-        isSafeNavigation = false
+    contextArguments = [
+      KaImplicitReceiverValue:
+        symbol = <unused var>: A
         type = A
-      signature = KaFunctionSignature:
-        receiverType = A
-        returnType = kotlin.Unit
-        symbol = /invoke(<extension receiver>: A): kotlin.Unit
-        valueParameters = []
-        contextParameters = [
-          KaVariableSignature:
-            name = a
-            receiverType = null
-            returnType = A
-            symbol = a: A
-            contextParameters = []
-            callableId = null
-        ]
-        callableId = /invoke
+    ]
+    dispatchReceiver = null
+    extensionReceiver = KaExplicitReceiverValue:
+      expression = a
+      isSafeNavigation = false
+      type = A
+    isImplicitInvoke = true
+    signature = KaFunctionSignature:
+      receiverType = A
+      returnType = kotlin.Unit
+      symbol = /invoke(<extension receiver>: A): kotlin.Unit
+      valueParameters = []
+      contextParameters = [
+        KaVariableSignature:
+          name = a
+          receiverType = null
+          returnType = A
+          symbol = a: A
+          contextParameters = []
+          callableId = null
+      ]
+      callableId = /invoke
     typeArgumentsMapping = {}

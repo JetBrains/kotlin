@@ -10,24 +10,23 @@ KtNameReferenceExpression(35,46): 'invokeLater'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = javax/swing/SwingUtilities.invokeLater(doRun: java.lang.Runnable!): kotlin.Unit
-          valueParameters = [
-            KaVariableSignature:
-              name = doRun
-              receiverType = null
-              returnType = java.lang.Runnable!
-              symbol = doRun: java.lang.Runnable!
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = javax/swing/SwingUtilities.invokeLater
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = javax/swing/SwingUtilities.invokeLater(doRun: java.lang.Runnable!): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = doRun
+            receiverType = null
+            returnType = java.lang.Runnable!
+            symbol = doRun: java.lang.Runnable!
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = javax/swing/SwingUtilities.invokeLater
       typeArgumentsMapping = {}

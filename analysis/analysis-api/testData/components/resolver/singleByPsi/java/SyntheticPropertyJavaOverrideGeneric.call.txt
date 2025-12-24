@@ -2,21 +2,20 @@
   KtNameReferenceExpression(192,195): 'foo'
     KaSuccessCallInfo:
       call = KaSimpleVariableAccessCall:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = javaClass
+          isSafeNavigation = false
+          type = JavaClass
+        extensionReceiver = null
         isContextSensitive = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = KaExplicitReceiverValue:
-            expression = javaClass
-            isSafeNavigation = false
-            type = JavaClass
-          extensionReceiver = null
-          signature = KaVariableSignature:
-            name = foo
-            receiverType = null
-            returnType = @EnhancedNullability Foo<kotlin.String!>
-            symbol = var foo: @EnhancedNullability Foo<kotlin.String!>
-            contextParameters = []
-            callableId = /JavaClass.foo
+        signature = KaVariableSignature:
+          name = foo
+          receiverType = null
+          returnType = @EnhancedNullability Foo<kotlin.String!>
+          symbol = var foo: @EnhancedNullability Foo<kotlin.String!>
+          contextParameters = []
+          callableId = /JavaClass.foo
         simpleAccess = Read
         typeArgumentsMapping = {}
 
@@ -24,21 +23,20 @@
   KtNameReferenceExpression(211,214): 'foo'
     KaSuccessCallInfo:
       call = KaSimpleVariableAccessCall:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = javaClass
+          isSafeNavigation = false
+          type = JavaClass
+        extensionReceiver = null
         isContextSensitive = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = KaExplicitReceiverValue:
-            expression = javaClass
-            isSafeNavigation = false
-            type = JavaClass
-          extensionReceiver = null
-          signature = KaVariableSignature:
-            name = foo
-            receiverType = null
-            returnType = @EnhancedNullability Foo<kotlin.String!>
-            symbol = var foo: @EnhancedNullability Foo<kotlin.String!>
-            contextParameters = []
-            callableId = /JavaClass.foo
+        signature = KaVariableSignature:
+          name = foo
+          receiverType = null
+          returnType = @EnhancedNullability Foo<kotlin.String!>
+          symbol = var foo: @EnhancedNullability Foo<kotlin.String!>
+          contextParameters = []
+          callableId = /JavaClass.foo
         simpleAccess = Write:
           value = foo
         typeArgumentsMapping = {}
@@ -47,22 +45,21 @@
   KtNameReferenceExpression(329,332): 'foo'
     KaSuccessCallInfo:
       call = KaSimpleVariableAccessCall:
+        contextArguments = []
+        dispatchReceiver = KaSmartCastedReceiverValue:
+          original = KaExplicitReceiverValue:
+            expression = kotlinClass
+            isSafeNavigation = false
+            type = KotlinClass<T>
+          type = it(JavaClass & KotlinClass<T>)
+        extensionReceiver = null
         isContextSensitive = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = KaSmartCastedReceiverValue:
-            original = KaExplicitReceiverValue:
-              expression = kotlinClass
-              isSafeNavigation = false
-              type = KotlinClass<T>
-            type = it(JavaClass & KotlinClass<T>)
-          extensionReceiver = null
-          signature = KaVariableSignature:
-            name = foo
-            receiverType = null
-            returnType = @EnhancedNullability Foo<kotlin.String!>
-            symbol = var foo: @EnhancedNullability Foo<kotlin.String!>
-            contextParameters = []
-            callableId = /JavaClass.foo
+        signature = KaVariableSignature:
+          name = foo
+          receiverType = null
+          returnType = @EnhancedNullability Foo<kotlin.String!>
+          symbol = var foo: @EnhancedNullability Foo<kotlin.String!>
+          contextParameters = []
+          callableId = /JavaClass.foo
         simpleAccess = Read
         typeArgumentsMapping = {}

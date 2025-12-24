@@ -9,27 +9,26 @@ KtArrayAccessExpression(130,136): 'm["a"]'
         contextParameters = []
         callableId = null)
     }
+    contextArguments = []
+    dispatchReceiver = KaExplicitReceiverValue:
+      expression = m
+      isSafeNavigation = false
+      type = MyMap<kotlin.String, kotlin.Int>
+    extensionReceiver = null
     isImplicitInvoke = false
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      contextArguments = []
-      dispatchReceiver = KaExplicitReceiverValue:
-        expression = m
-        isSafeNavigation = false
-        type = MyMap<kotlin.String, kotlin.Int>
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = kotlin.Int
-        symbol = /MyMap.get(<dispatch receiver>: MyMap<K, V>, k: K): V
-        valueParameters = [
-          KaVariableSignature:
-            name = k
-            receiverType = null
-            returnType = kotlin.String
-            symbol = k: K
-            contextParameters = []
-            callableId = null
-        ]
-        contextParameters = []
-        callableId = /MyMap.get
+    signature = KaFunctionSignature:
+      receiverType = null
+      returnType = kotlin.Int
+      symbol = /MyMap.get(<dispatch receiver>: MyMap<K, V>, k: K): V
+      valueParameters = [
+        KaVariableSignature:
+          name = k
+          receiverType = null
+          returnType = kotlin.String
+          symbol = k: K
+          contextParameters = []
+          callableId = null
+      ]
+      contextParameters = []
+      callableId = /MyMap.get
     typeArgumentsMapping = {}

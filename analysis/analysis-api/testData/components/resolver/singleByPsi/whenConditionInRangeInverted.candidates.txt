@@ -10,29 +10,28 @@ KtWhenConditionInRange(177,190): '!in MyClass()'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = MyClass()
+        isSafeNavigation = false
+        type = MyClass
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = MyClass()
-          isSafeNavigation = false
-          type = MyClass
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Boolean
-          symbol = /MyClass.contains(<dispatch receiver>: MyClass, str: kotlin.String): kotlin.Boolean
-          valueParameters = [
-            KaVariableSignature:
-              name = str
-              receiverType = null
-              returnType = kotlin.String
-              symbol = str: kotlin.String
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /MyClass.contains
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Boolean
+        symbol = /MyClass.contains(<dispatch receiver>: MyClass, str: kotlin.String): kotlin.Boolean
+        valueParameters = [
+          KaVariableSignature:
+            name = str
+            receiverType = null
+            returnType = kotlin.String
+            symbol = str: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /MyClass.contains
       typeArgumentsMapping = {}
     diagnostic = ERROR<WRONG_NUMBER_OF_TYPE_ARGUMENTS: No type arguments expected for 'fun contains(str: String): Boolean'.>
     isInBestCandidates = false
@@ -48,29 +47,28 @@ KtWhenConditionInRange(177,190): '!in MyClass()'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = MyClass()
+        isSafeNavigation = false
+        type = MyClass
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = KaExplicitReceiverValue:
-          expression = MyClass()
-          isSafeNavigation = false
-          type = MyClass
-        signature = KaFunctionSignature:
-          receiverType = MyClass
-          returnType = kotlin.Boolean
-          symbol = /contains(<extension receiver>: T, int: kotlin.Int): kotlin.Boolean
-          valueParameters = [
-            KaVariableSignature:
-              name = int
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = int: kotlin.Int
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /contains
+      signature = KaFunctionSignature:
+        receiverType = MyClass
+        returnType = kotlin.Boolean
+        symbol = /contains(<extension receiver>: T, int: kotlin.Int): kotlin.Boolean
+        valueParameters = [
+          KaVariableSignature:
+            name = int
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = int: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /contains
       typeArgumentsMapping = {
         T -> (MyClass)
       }

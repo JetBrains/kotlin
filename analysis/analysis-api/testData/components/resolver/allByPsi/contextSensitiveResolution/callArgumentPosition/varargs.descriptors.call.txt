@@ -58,11 +58,27 @@ KtSuperTypeList(218,227): 'MyClass()'
 KtSuperTypeCallEntry(218,227): 'MyClass()'
   KaDelegatedConstructorCall:
     argumentMapping = {}
+    contextArguments = []
+    dispatchReceiver = null
+    extensionReceiver = null
     kind = SUPER_CALL
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+    signature = KaFunctionSignature:
+      receiverType = null
+      returnType = MyClass
+      symbol = <constructor>(): MyClass
+      valueParameters = []
+      contextParameters = []
+      callableId = null
+    typeArgumentsMapping = {}
+
+KtConstructorCalleeExpression(218,225): 'MyClass'
+  KaSuccessCallInfo:
+    call = KaDelegatedConstructorCall:
+      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
+      kind = SUPER_CALL
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MyClass
@@ -70,24 +86,6 @@ KtSuperTypeCallEntry(218,227): 'MyClass()'
         valueParameters = []
         contextParameters = []
         callableId = null
-    typeArgumentsMapping = {}
-
-KtConstructorCalleeExpression(218,225): 'MyClass'
-  KaSuccessCallInfo:
-    call = KaDelegatedConstructorCall:
-      argumentMapping = {}
-      kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = MyClass
-          symbol = <constructor>(): MyClass
-          valueParameters = []
-          contextParameters = []
-          callableId = null
       typeArgumentsMapping = {}
 
 KtTypeReference(218,225): 'MyClass'
@@ -100,18 +98,17 @@ KtNameReferenceExpression(218,225): 'MyClass'
   KaSuccessCallInfo:
     call = KaDelegatedConstructorCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = MyClass
-          symbol = <constructor>(): MyClass
-          valueParameters = []
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MyClass
+        symbol = <constructor>(): MyClass
+        valueParameters = []
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
 
 KtValueArgumentList(225,227): '()'
@@ -144,11 +141,27 @@ KtSuperTypeList(293,302): 'MyClass()'
 KtSuperTypeCallEntry(293,302): 'MyClass()'
   KaDelegatedConstructorCall:
     argumentMapping = {}
+    contextArguments = []
+    dispatchReceiver = null
+    extensionReceiver = null
     kind = SUPER_CALL
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+    signature = KaFunctionSignature:
+      receiverType = null
+      returnType = MyClass
+      symbol = <constructor>(): MyClass
+      valueParameters = []
+      contextParameters = []
+      callableId = null
+    typeArgumentsMapping = {}
+
+KtConstructorCalleeExpression(293,300): 'MyClass'
+  KaSuccessCallInfo:
+    call = KaDelegatedConstructorCall:
+      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
+      kind = SUPER_CALL
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MyClass
@@ -156,24 +169,6 @@ KtSuperTypeCallEntry(293,302): 'MyClass()'
         valueParameters = []
         contextParameters = []
         callableId = null
-    typeArgumentsMapping = {}
-
-KtConstructorCalleeExpression(293,300): 'MyClass'
-  KaSuccessCallInfo:
-    call = KaDelegatedConstructorCall:
-      argumentMapping = {}
-      kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = MyClass
-          symbol = <constructor>(): MyClass
-          valueParameters = []
-          contextParameters = []
-          callableId = null
       typeArgumentsMapping = {}
 
 KtTypeReference(293,300): 'MyClass'
@@ -186,18 +181,17 @@ KtNameReferenceExpression(293,300): 'MyClass'
   KaSuccessCallInfo:
     call = KaDelegatedConstructorCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = MyClass
-          symbol = <constructor>(): MyClass
-          valueParameters = []
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MyClass
+        symbol = <constructor>(): MyClass
+        valueParameters = []
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
 
 KtValueArgumentList(300,302): '()'
@@ -236,11 +230,27 @@ KtSuperTypeList(389,396): 'Super()'
 KtSuperTypeCallEntry(389,396): 'Super()'
   KaDelegatedConstructorCall:
     argumentMapping = {}
+    contextArguments = []
+    dispatchReceiver = null
+    extensionReceiver = null
     kind = SUPER_CALL
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+    signature = KaFunctionSignature:
+      receiverType = null
+      returnType = Super
+      symbol = <constructor>(): Super
+      valueParameters = []
+      contextParameters = []
+      callableId = null
+    typeArgumentsMapping = {}
+
+KtConstructorCalleeExpression(389,394): 'Super'
+  KaSuccessCallInfo:
+    call = KaDelegatedConstructorCall:
+      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
+      kind = SUPER_CALL
       signature = KaFunctionSignature:
         receiverType = null
         returnType = Super
@@ -248,24 +258,6 @@ KtSuperTypeCallEntry(389,396): 'Super()'
         valueParameters = []
         contextParameters = []
         callableId = null
-    typeArgumentsMapping = {}
-
-KtConstructorCalleeExpression(389,394): 'Super'
-  KaSuccessCallInfo:
-    call = KaDelegatedConstructorCall:
-      argumentMapping = {}
-      kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = Super
-          symbol = <constructor>(): Super
-          valueParameters = []
-          contextParameters = []
-          callableId = null
       typeArgumentsMapping = {}
 
 KtTypeReference(389,394): 'Super'
@@ -278,18 +270,17 @@ KtNameReferenceExpression(389,394): 'Super'
   KaSuccessCallInfo:
     call = KaDelegatedConstructorCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = Super
-          symbol = <constructor>(): Super
-          valueParameters = []
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Super
+        symbol = <constructor>(): Super
+        valueParameters = []
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
 
 KtValueArgumentList(394,396): '()'
@@ -313,11 +304,27 @@ KtNameReferenceExpression(424,431): 'MyClass'
 KtCallExpression(434,440): 'TODO()'
   KaSimpleFunctionCall:
     argumentMapping = {}
+    contextArguments = []
+    dispatchReceiver = null
+    extensionReceiver = null
     isImplicitInvoke = false
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+    signature = KaFunctionSignature:
+      receiverType = null
+      returnType = kotlin.Nothing
+      symbol = kotlin/TODO(): kotlin.Nothing
+      valueParameters = []
+      contextParameters = []
+      callableId = kotlin/TODO
+    typeArgumentsMapping = {}
+
+KtNameReferenceExpression(434,438): 'TODO'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
+      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Nothing
@@ -325,24 +332,6 @@ KtCallExpression(434,440): 'TODO()'
         valueParameters = []
         contextParameters = []
         callableId = kotlin/TODO
-    typeArgumentsMapping = {}
-
-KtNameReferenceExpression(434,438): 'TODO'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {}
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Nothing
-          symbol = kotlin/TODO(): kotlin.Nothing
-          valueParameters = []
-          contextParameters = []
-          callableId = kotlin/TODO
       typeArgumentsMapping = {}
 
 KtValueArgumentList(438,440): '()'
@@ -363,11 +352,27 @@ KtNameReferenceExpression(473,487): 'InheritorClass'
 KtCallExpression(490,506): 'InheritorClass()'
   KaSimpleFunctionCall:
     argumentMapping = {}
+    contextArguments = []
+    dispatchReceiver = null
+    extensionReceiver = null
     isImplicitInvoke = false
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+    signature = KaFunctionSignature:
+      receiverType = null
+      returnType = MyClass.InheritorClass
+      symbol = <constructor>(): MyClass.InheritorClass
+      valueParameters = []
+      contextParameters = []
+      callableId = null
+    typeArgumentsMapping = {}
+
+KtNameReferenceExpression(490,504): 'InheritorClass'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
+      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MyClass.InheritorClass
@@ -375,24 +380,6 @@ KtCallExpression(490,506): 'InheritorClass()'
         valueParameters = []
         contextParameters = []
         callableId = null
-    typeArgumentsMapping = {}
-
-KtNameReferenceExpression(490,504): 'InheritorClass'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {}
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = MyClass.InheritorClass
-          symbol = <constructor>(): MyClass.InheritorClass
-          valueParameters = []
-          contextParameters = []
-          callableId = null
       typeArgumentsMapping = {}
 
 KtValueArgumentList(504,506): '()'
@@ -472,26 +459,25 @@ KtCallExpression(677,686): 'lazy {""}'
         contextParameters = []
         callableId = null)
     }
+    contextArguments = []
+    dispatchReceiver = null
+    extensionReceiver = null
     isImplicitInvoke = false
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      contextArguments = []
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = kotlin.Lazy<kotlin.String>
-        symbol = kotlin/lazy(initializer: kotlin.Function0<T>): kotlin.Lazy<T>
-        valueParameters = [
-          KaVariableSignature:
-            name = initializer
-            receiverType = null
-            returnType = kotlin.Function0<kotlin.String>
-            symbol = initializer: kotlin.Function0<T>
-            contextParameters = []
-            callableId = null
-        ]
-        contextParameters = []
-        callableId = kotlin/lazy
+    signature = KaFunctionSignature:
+      receiverType = null
+      returnType = kotlin.Lazy<kotlin.String>
+      symbol = kotlin/lazy(initializer: kotlin.Function0<T>): kotlin.Lazy<T>
+      valueParameters = [
+        KaVariableSignature:
+          name = initializer
+          receiverType = null
+          returnType = kotlin.Function0<kotlin.String>
+          symbol = initializer: kotlin.Function0<T>
+          contextParameters = []
+          callableId = null
+      ]
+      contextParameters = []
+      callableId = kotlin/lazy
     typeArgumentsMapping = {
       T -> (kotlin.String)
     }
@@ -508,26 +494,25 @@ KtNameReferenceExpression(677,681): 'lazy'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Lazy<kotlin.String>
-          symbol = kotlin/lazy(initializer: kotlin.Function0<T>): kotlin.Lazy<T>
-          valueParameters = [
-            KaVariableSignature:
-              name = initializer
-              receiverType = null
-              returnType = kotlin.Function0<kotlin.String>
-              symbol = initializer: kotlin.Function0<T>
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/lazy
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Lazy<kotlin.String>
+        symbol = kotlin/lazy(initializer: kotlin.Function0<T>): kotlin.Lazy<T>
+        valueParameters = [
+          KaVariableSignature:
+            name = initializer
+            receiverType = null
+            returnType = kotlin.Function0<kotlin.String>
+            symbol = initializer: kotlin.Function0<T>
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/lazy
       typeArgumentsMapping = {
         T -> (kotlin.String)
       }
@@ -565,11 +550,27 @@ KtNameReferenceExpression(707,714): 'MyClass'
 KtCallExpression(717,723): 'TODO()'
   KaSimpleFunctionCall:
     argumentMapping = {}
+    contextArguments = []
+    dispatchReceiver = null
+    extensionReceiver = null
     isImplicitInvoke = false
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+    signature = KaFunctionSignature:
+      receiverType = null
+      returnType = kotlin.Nothing
+      symbol = kotlin/TODO(): kotlin.Nothing
+      valueParameters = []
+      contextParameters = []
+      callableId = kotlin/TODO
+    typeArgumentsMapping = {}
+
+KtNameReferenceExpression(717,721): 'TODO'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
+      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Nothing
@@ -577,24 +578,6 @@ KtCallExpression(717,723): 'TODO()'
         valueParameters = []
         contextParameters = []
         callableId = kotlin/TODO
-    typeArgumentsMapping = {}
-
-KtNameReferenceExpression(717,721): 'TODO'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {}
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Nothing
-          symbol = kotlin/TODO(): kotlin.Nothing
-          valueParameters = []
-          contextParameters = []
-          callableId = kotlin/TODO
       typeArgumentsMapping = {}
 
 KtValueArgumentList(721,723): '()'
@@ -645,18 +628,17 @@ KtNameReferenceExpression(810,811): 'T'
 KtNameReferenceExpression(815,818): 'arg'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = arg
-          receiverType = null
-          returnType = T
-          symbol = vararg arg: T
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = arg
+        receiverType = null
+        returnType = T
+        symbol = vararg arg: T
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -700,26 +682,25 @@ KtCallExpression(868,908): 'receiverVarArg<MyClass>(InheritorObject)'
             contextParameters = []
             callableId = null)
         }
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
         isImplicitInvoke = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = null
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = kotlin.Array<out MyClass>
-            symbol = /receiverVarArg(vararg arg: T): kotlin.Array<out T>
-            valueParameters = [
-              KaVariableSignature:
-                name = arg
-                receiverType = null
-                returnType = MyClass
-                symbol = vararg arg: T
-                contextParameters = []
-                callableId = null
-            ]
-            contextParameters = []
-            callableId = /receiverVarArg
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Array<out MyClass>
+          symbol = /receiverVarArg(vararg arg: T): kotlin.Array<out T>
+          valueParameters = [
+            KaVariableSignature:
+              name = arg
+              receiverType = null
+              returnType = MyClass
+              symbol = vararg arg: T
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /receiverVarArg
         typeArgumentsMapping = {
           T -> (MyClass)
         }
@@ -739,26 +720,25 @@ KtNameReferenceExpression(868,882): 'receiverVarArg'
             contextParameters = []
             callableId = null)
         }
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
         isImplicitInvoke = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = null
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = kotlin.Array<out MyClass>
-            symbol = /receiverVarArg(vararg arg: T): kotlin.Array<out T>
-            valueParameters = [
-              KaVariableSignature:
-                name = arg
-                receiverType = null
-                returnType = MyClass
-                symbol = vararg arg: T
-                contextParameters = []
-                callableId = null
-            ]
-            contextParameters = []
-            callableId = /receiverVarArg
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Array<out MyClass>
+          symbol = /receiverVarArg(vararg arg: T): kotlin.Array<out T>
+          valueParameters = [
+            KaVariableSignature:
+              name = arg
+              receiverType = null
+              returnType = MyClass
+              symbol = vararg arg: T
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /receiverVarArg
         typeArgumentsMapping = {
           T -> (MyClass)
         }
@@ -802,26 +782,25 @@ KtCallExpression(913,939): 'receiverVarArg<MyClass>(i)'
         contextParameters = []
         callableId = null)
     }
+    contextArguments = []
+    dispatchReceiver = null
+    extensionReceiver = null
     isImplicitInvoke = false
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      contextArguments = []
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = kotlin.Array<out MyClass>
-        symbol = /receiverVarArg(vararg arg: T): kotlin.Array<out T>
-        valueParameters = [
-          KaVariableSignature:
-            name = arg
-            receiverType = null
-            returnType = MyClass
-            symbol = vararg arg: T
-            contextParameters = []
-            callableId = null
-        ]
-        contextParameters = []
-        callableId = /receiverVarArg
+    signature = KaFunctionSignature:
+      receiverType = null
+      returnType = kotlin.Array<out MyClass>
+      symbol = /receiverVarArg(vararg arg: T): kotlin.Array<out T>
+      valueParameters = [
+        KaVariableSignature:
+          name = arg
+          receiverType = null
+          returnType = MyClass
+          symbol = vararg arg: T
+          contextParameters = []
+          callableId = null
+      ]
+      contextParameters = []
+      callableId = /receiverVarArg
     typeArgumentsMapping = {
       T -> (MyClass)
     }
@@ -838,26 +817,25 @@ KtNameReferenceExpression(913,927): 'receiverVarArg'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Array<out MyClass>
-          symbol = /receiverVarArg(vararg arg: T): kotlin.Array<out T>
-          valueParameters = [
-            KaVariableSignature:
-              name = arg
-              receiverType = null
-              returnType = MyClass
-              symbol = vararg arg: T
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /receiverVarArg
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Array<out MyClass>
+        symbol = /receiverVarArg(vararg arg: T): kotlin.Array<out T>
+        valueParameters = [
+          KaVariableSignature:
+            name = arg
+            receiverType = null
+            returnType = MyClass
+            symbol = vararg arg: T
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /receiverVarArg
       typeArgumentsMapping = {
         T -> (MyClass)
       }
@@ -886,18 +864,17 @@ KtValueArgument(937,938): 'i'
 KtNameReferenceExpression(937,938): 'i'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = i
-          receiverType = null
-          returnType = MyClass.InheritorClass
-          symbol = i: MyClass.InheritorClass
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = i
+        receiverType = null
+        returnType = MyClass.InheritorClass
+        symbol = i: MyClass.InheritorClass
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -914,26 +891,25 @@ KtCallExpression(944,980): 'receiverVarArg<MyClass>(propMyClass)'
             contextParameters = []
             callableId = null)
         }
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
         isImplicitInvoke = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = null
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = kotlin.Array<out MyClass>
-            symbol = /receiverVarArg(vararg arg: T): kotlin.Array<out T>
-            valueParameters = [
-              KaVariableSignature:
-                name = arg
-                receiverType = null
-                returnType = MyClass
-                symbol = vararg arg: T
-                contextParameters = []
-                callableId = null
-            ]
-            contextParameters = []
-            callableId = /receiverVarArg
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Array<out MyClass>
+          symbol = /receiverVarArg(vararg arg: T): kotlin.Array<out T>
+          valueParameters = [
+            KaVariableSignature:
+              name = arg
+              receiverType = null
+              returnType = MyClass
+              symbol = vararg arg: T
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /receiverVarArg
         typeArgumentsMapping = {
           T -> (MyClass)
         }
@@ -953,26 +929,25 @@ KtNameReferenceExpression(944,958): 'receiverVarArg'
             contextParameters = []
             callableId = null)
         }
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
         isImplicitInvoke = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = null
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = kotlin.Array<out MyClass>
-            symbol = /receiverVarArg(vararg arg: T): kotlin.Array<out T>
-            valueParameters = [
-              KaVariableSignature:
-                name = arg
-                receiverType = null
-                returnType = MyClass
-                symbol = vararg arg: T
-                contextParameters = []
-                callableId = null
-            ]
-            contextParameters = []
-            callableId = /receiverVarArg
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Array<out MyClass>
+          symbol = /receiverVarArg(vararg arg: T): kotlin.Array<out T>
+          valueParameters = [
+            KaVariableSignature:
+              name = arg
+              receiverType = null
+              returnType = MyClass
+              symbol = vararg arg: T
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /receiverVarArg
         typeArgumentsMapping = {
           T -> (MyClass)
         }
@@ -1018,26 +993,25 @@ KtCallExpression(985,1028): 'receiverVarArg<MyClass>(propInheritorClass)'
             contextParameters = []
             callableId = null)
         }
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
         isImplicitInvoke = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = null
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = kotlin.Array<out MyClass>
-            symbol = /receiverVarArg(vararg arg: T): kotlin.Array<out T>
-            valueParameters = [
-              KaVariableSignature:
-                name = arg
-                receiverType = null
-                returnType = MyClass
-                symbol = vararg arg: T
-                contextParameters = []
-                callableId = null
-            ]
-            contextParameters = []
-            callableId = /receiverVarArg
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Array<out MyClass>
+          symbol = /receiverVarArg(vararg arg: T): kotlin.Array<out T>
+          valueParameters = [
+            KaVariableSignature:
+              name = arg
+              receiverType = null
+              returnType = MyClass
+              symbol = vararg arg: T
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /receiverVarArg
         typeArgumentsMapping = {
           T -> (MyClass)
         }
@@ -1057,26 +1031,25 @@ KtNameReferenceExpression(985,999): 'receiverVarArg'
             contextParameters = []
             callableId = null)
         }
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
         isImplicitInvoke = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = null
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = kotlin.Array<out MyClass>
-            symbol = /receiverVarArg(vararg arg: T): kotlin.Array<out T>
-            valueParameters = [
-              KaVariableSignature:
-                name = arg
-                receiverType = null
-                returnType = MyClass
-                symbol = vararg arg: T
-                contextParameters = []
-                callableId = null
-            ]
-            contextParameters = []
-            callableId = /receiverVarArg
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Array<out MyClass>
+          symbol = /receiverVarArg(vararg arg: T): kotlin.Array<out T>
+          valueParameters = [
+            KaVariableSignature:
+              name = arg
+              receiverType = null
+              returnType = MyClass
+              symbol = vararg arg: T
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /receiverVarArg
         typeArgumentsMapping = {
           T -> (MyClass)
         }
@@ -1122,26 +1095,25 @@ KtCallExpression(1033,1077): 'receiverVarArg<MyClass>(propInheritorObject)'
             contextParameters = []
             callableId = null)
         }
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
         isImplicitInvoke = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = null
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = kotlin.Array<out MyClass>
-            symbol = /receiverVarArg(vararg arg: T): kotlin.Array<out T>
-            valueParameters = [
-              KaVariableSignature:
-                name = arg
-                receiverType = null
-                returnType = MyClass
-                symbol = vararg arg: T
-                contextParameters = []
-                callableId = null
-            ]
-            contextParameters = []
-            callableId = /receiverVarArg
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Array<out MyClass>
+          symbol = /receiverVarArg(vararg arg: T): kotlin.Array<out T>
+          valueParameters = [
+            KaVariableSignature:
+              name = arg
+              receiverType = null
+              returnType = MyClass
+              symbol = vararg arg: T
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /receiverVarArg
         typeArgumentsMapping = {
           T -> (MyClass)
         }
@@ -1161,26 +1133,25 @@ KtNameReferenceExpression(1033,1047): 'receiverVarArg'
             contextParameters = []
             callableId = null)
         }
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
         isImplicitInvoke = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = null
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = kotlin.Array<out MyClass>
-            symbol = /receiverVarArg(vararg arg: T): kotlin.Array<out T>
-            valueParameters = [
-              KaVariableSignature:
-                name = arg
-                receiverType = null
-                returnType = MyClass
-                symbol = vararg arg: T
-                contextParameters = []
-                callableId = null
-            ]
-            contextParameters = []
-            callableId = /receiverVarArg
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Array<out MyClass>
+          symbol = /receiverVarArg(vararg arg: T): kotlin.Array<out T>
+          valueParameters = [
+            KaVariableSignature:
+              name = arg
+              receiverType = null
+              returnType = MyClass
+              symbol = vararg arg: T
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /receiverVarArg
         typeArgumentsMapping = {
           T -> (MyClass)
         }
@@ -1226,26 +1197,25 @@ KtCallExpression(1083,1112): 'receiverVarArg<MyClass>(prop)'
             contextParameters = []
             callableId = null)
         }
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
         isImplicitInvoke = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = null
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = kotlin.Array<out MyClass>
-            symbol = /receiverVarArg(vararg arg: T): kotlin.Array<out T>
-            valueParameters = [
-              KaVariableSignature:
-                name = arg
-                receiverType = null
-                returnType = MyClass
-                symbol = vararg arg: T
-                contextParameters = []
-                callableId = null
-            ]
-            contextParameters = []
-            callableId = /receiverVarArg
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Array<out MyClass>
+          symbol = /receiverVarArg(vararg arg: T): kotlin.Array<out T>
+          valueParameters = [
+            KaVariableSignature:
+              name = arg
+              receiverType = null
+              returnType = MyClass
+              symbol = vararg arg: T
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /receiverVarArg
         typeArgumentsMapping = {
           T -> (MyClass)
         }
@@ -1265,26 +1235,25 @@ KtNameReferenceExpression(1083,1097): 'receiverVarArg'
             contextParameters = []
             callableId = null)
         }
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
         isImplicitInvoke = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = null
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = kotlin.Array<out MyClass>
-            symbol = /receiverVarArg(vararg arg: T): kotlin.Array<out T>
-            valueParameters = [
-              KaVariableSignature:
-                name = arg
-                receiverType = null
-                returnType = MyClass
-                symbol = vararg arg: T
-                contextParameters = []
-                callableId = null
-            ]
-            contextParameters = []
-            callableId = /receiverVarArg
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Array<out MyClass>
+          symbol = /receiverVarArg(vararg arg: T): kotlin.Array<out T>
+          valueParameters = [
+            KaVariableSignature:
+              name = arg
+              receiverType = null
+              returnType = MyClass
+              symbol = vararg arg: T
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /receiverVarArg
         typeArgumentsMapping = {
           T -> (MyClass)
         }
@@ -1330,26 +1299,25 @@ KtCallExpression(1117,1151): 'receiverVarArg<MyClass>(constProp)'
             contextParameters = []
             callableId = null)
         }
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
         isImplicitInvoke = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = null
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = kotlin.Array<out MyClass>
-            symbol = /receiverVarArg(vararg arg: T): kotlin.Array<out T>
-            valueParameters = [
-              KaVariableSignature:
-                name = arg
-                receiverType = null
-                returnType = MyClass
-                symbol = vararg arg: T
-                contextParameters = []
-                callableId = null
-            ]
-            contextParameters = []
-            callableId = /receiverVarArg
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Array<out MyClass>
+          symbol = /receiverVarArg(vararg arg: T): kotlin.Array<out T>
+          valueParameters = [
+            KaVariableSignature:
+              name = arg
+              receiverType = null
+              returnType = MyClass
+              symbol = vararg arg: T
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /receiverVarArg
         typeArgumentsMapping = {
           T -> (MyClass)
         }
@@ -1369,26 +1337,25 @@ KtNameReferenceExpression(1117,1131): 'receiverVarArg'
             contextParameters = []
             callableId = null)
         }
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
         isImplicitInvoke = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = null
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = kotlin.Array<out MyClass>
-            symbol = /receiverVarArg(vararg arg: T): kotlin.Array<out T>
-            valueParameters = [
-              KaVariableSignature:
-                name = arg
-                receiverType = null
-                returnType = MyClass
-                symbol = vararg arg: T
-                contextParameters = []
-                callableId = null
-            ]
-            contextParameters = []
-            callableId = /receiverVarArg
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Array<out MyClass>
+          symbol = /receiverVarArg(vararg arg: T): kotlin.Array<out T>
+          valueParameters = [
+            KaVariableSignature:
+              name = arg
+              receiverType = null
+              returnType = MyClass
+              symbol = vararg arg: T
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /receiverVarArg
         typeArgumentsMapping = {
           T -> (MyClass)
         }
@@ -1434,26 +1401,25 @@ KtCallExpression(1156,1189): 'receiverVarArg<MyClass>(lazyProp)'
             contextParameters = []
             callableId = null)
         }
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
         isImplicitInvoke = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = null
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = kotlin.Array<out MyClass>
-            symbol = /receiverVarArg(vararg arg: T): kotlin.Array<out T>
-            valueParameters = [
-              KaVariableSignature:
-                name = arg
-                receiverType = null
-                returnType = MyClass
-                symbol = vararg arg: T
-                contextParameters = []
-                callableId = null
-            ]
-            contextParameters = []
-            callableId = /receiverVarArg
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Array<out MyClass>
+          symbol = /receiverVarArg(vararg arg: T): kotlin.Array<out T>
+          valueParameters = [
+            KaVariableSignature:
+              name = arg
+              receiverType = null
+              returnType = MyClass
+              symbol = vararg arg: T
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /receiverVarArg
         typeArgumentsMapping = {
           T -> (MyClass)
         }
@@ -1473,26 +1439,25 @@ KtNameReferenceExpression(1156,1170): 'receiverVarArg'
             contextParameters = []
             callableId = null)
         }
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
         isImplicitInvoke = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = null
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = kotlin.Array<out MyClass>
-            symbol = /receiverVarArg(vararg arg: T): kotlin.Array<out T>
-            valueParameters = [
-              KaVariableSignature:
-                name = arg
-                receiverType = null
-                returnType = MyClass
-                symbol = vararg arg: T
-                contextParameters = []
-                callableId = null
-            ]
-            contextParameters = []
-            callableId = /receiverVarArg
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Array<out MyClass>
+          symbol = /receiverVarArg(vararg arg: T): kotlin.Array<out T>
+          valueParameters = [
+            KaVariableSignature:
+              name = arg
+              receiverType = null
+              returnType = MyClass
+              symbol = vararg arg: T
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /receiverVarArg
         typeArgumentsMapping = {
           T -> (MyClass)
         }
@@ -1538,26 +1503,25 @@ KtCallExpression(1194,1229): 'receiverVarArg<MyClass>(lambdaProp)'
             contextParameters = []
             callableId = null)
         }
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
         isImplicitInvoke = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = null
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = kotlin.Array<out MyClass>
-            symbol = /receiverVarArg(vararg arg: T): kotlin.Array<out T>
-            valueParameters = [
-              KaVariableSignature:
-                name = arg
-                receiverType = null
-                returnType = MyClass
-                symbol = vararg arg: T
-                contextParameters = []
-                callableId = null
-            ]
-            contextParameters = []
-            callableId = /receiverVarArg
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Array<out MyClass>
+          symbol = /receiverVarArg(vararg arg: T): kotlin.Array<out T>
+          valueParameters = [
+            KaVariableSignature:
+              name = arg
+              receiverType = null
+              returnType = MyClass
+              symbol = vararg arg: T
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /receiverVarArg
         typeArgumentsMapping = {
           T -> (MyClass)
         }
@@ -1577,26 +1541,25 @@ KtNameReferenceExpression(1194,1208): 'receiverVarArg'
             contextParameters = []
             callableId = null)
         }
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
         isImplicitInvoke = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = null
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = kotlin.Array<out MyClass>
-            symbol = /receiverVarArg(vararg arg: T): kotlin.Array<out T>
-            valueParameters = [
-              KaVariableSignature:
-                name = arg
-                receiverType = null
-                returnType = MyClass
-                symbol = vararg arg: T
-                contextParameters = []
-                callableId = null
-            ]
-            contextParameters = []
-            callableId = /receiverVarArg
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Array<out MyClass>
+          symbol = /receiverVarArg(vararg arg: T): kotlin.Array<out T>
+          valueParameters = [
+            KaVariableSignature:
+              name = arg
+              receiverType = null
+              returnType = MyClass
+              symbol = vararg arg: T
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /receiverVarArg
         typeArgumentsMapping = {
           T -> (MyClass)
         }
@@ -1642,26 +1605,25 @@ KtCallExpression(1234,1268): 'receiverVarArg<MyClass>(superProp)'
             contextParameters = []
             callableId = null)
         }
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
         isImplicitInvoke = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = null
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = kotlin.Array<out MyClass>
-            symbol = /receiverVarArg(vararg arg: T): kotlin.Array<out T>
-            valueParameters = [
-              KaVariableSignature:
-                name = arg
-                receiverType = null
-                returnType = MyClass
-                symbol = vararg arg: T
-                contextParameters = []
-                callableId = null
-            ]
-            contextParameters = []
-            callableId = /receiverVarArg
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Array<out MyClass>
+          symbol = /receiverVarArg(vararg arg: T): kotlin.Array<out T>
+          valueParameters = [
+            KaVariableSignature:
+              name = arg
+              receiverType = null
+              returnType = MyClass
+              symbol = vararg arg: T
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /receiverVarArg
         typeArgumentsMapping = {
           T -> (MyClass)
         }
@@ -1681,26 +1643,25 @@ KtNameReferenceExpression(1234,1248): 'receiverVarArg'
             contextParameters = []
             callableId = null)
         }
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
         isImplicitInvoke = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = null
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = kotlin.Array<out MyClass>
-            symbol = /receiverVarArg(vararg arg: T): kotlin.Array<out T>
-            valueParameters = [
-              KaVariableSignature:
-                name = arg
-                receiverType = null
-                returnType = MyClass
-                symbol = vararg arg: T
-                contextParameters = []
-                callableId = null
-            ]
-            contextParameters = []
-            callableId = /receiverVarArg
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Array<out MyClass>
+          symbol = /receiverVarArg(vararg arg: T): kotlin.Array<out T>
+          valueParameters = [
+            KaVariableSignature:
+              name = arg
+              receiverType = null
+              returnType = MyClass
+              symbol = vararg arg: T
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /receiverVarArg
         typeArgumentsMapping = {
           T -> (MyClass)
         }
@@ -1746,26 +1707,25 @@ KtCallExpression(1274,1305): 'receiverVarArg<MyClass>(func())'
             contextParameters = []
             callableId = null)
         }
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
         isImplicitInvoke = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = null
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = kotlin.Array<out MyClass>
-            symbol = /receiverVarArg(vararg arg: T): kotlin.Array<out T>
-            valueParameters = [
-              KaVariableSignature:
-                name = arg
-                receiverType = null
-                returnType = MyClass
-                symbol = vararg arg: T
-                contextParameters = []
-                callableId = null
-            ]
-            contextParameters = []
-            callableId = /receiverVarArg
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Array<out MyClass>
+          symbol = /receiverVarArg(vararg arg: T): kotlin.Array<out T>
+          valueParameters = [
+            KaVariableSignature:
+              name = arg
+              receiverType = null
+              returnType = MyClass
+              symbol = vararg arg: T
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /receiverVarArg
         typeArgumentsMapping = {
           T -> (MyClass)
         }
@@ -1785,26 +1745,25 @@ KtNameReferenceExpression(1274,1288): 'receiverVarArg'
             contextParameters = []
             callableId = null)
         }
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
         isImplicitInvoke = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = null
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = kotlin.Array<out MyClass>
-            symbol = /receiverVarArg(vararg arg: T): kotlin.Array<out T>
-            valueParameters = [
-              KaVariableSignature:
-                name = arg
-                receiverType = null
-                returnType = MyClass
-                symbol = vararg arg: T
-                contextParameters = []
-                callableId = null
-            ]
-            contextParameters = []
-            callableId = /receiverVarArg
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Array<out MyClass>
+          symbol = /receiverVarArg(vararg arg: T): kotlin.Array<out T>
+          valueParameters = [
+            KaVariableSignature:
+              name = arg
+              receiverType = null
+              returnType = MyClass
+              symbol = vararg arg: T
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /receiverVarArg
         typeArgumentsMapping = {
           T -> (MyClass)
         }
@@ -1858,26 +1817,25 @@ KtCallExpression(1310,1346): 'receiverVarArg<MyClass>(superFunc())'
             contextParameters = []
             callableId = null)
         }
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
         isImplicitInvoke = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = null
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = kotlin.Array<out MyClass>
-            symbol = /receiverVarArg(vararg arg: T): kotlin.Array<out T>
-            valueParameters = [
-              KaVariableSignature:
-                name = arg
-                receiverType = null
-                returnType = MyClass
-                symbol = vararg arg: T
-                contextParameters = []
-                callableId = null
-            ]
-            contextParameters = []
-            callableId = /receiverVarArg
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Array<out MyClass>
+          symbol = /receiverVarArg(vararg arg: T): kotlin.Array<out T>
+          valueParameters = [
+            KaVariableSignature:
+              name = arg
+              receiverType = null
+              returnType = MyClass
+              symbol = vararg arg: T
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /receiverVarArg
         typeArgumentsMapping = {
           T -> (MyClass)
         }
@@ -1897,26 +1855,25 @@ KtNameReferenceExpression(1310,1324): 'receiverVarArg'
             contextParameters = []
             callableId = null)
         }
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
         isImplicitInvoke = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = null
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = kotlin.Array<out MyClass>
-            symbol = /receiverVarArg(vararg arg: T): kotlin.Array<out T>
-            valueParameters = [
-              KaVariableSignature:
-                name = arg
-                receiverType = null
-                returnType = MyClass
-                symbol = vararg arg: T
-                contextParameters = []
-                callableId = null
-            ]
-            contextParameters = []
-            callableId = /receiverVarArg
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Array<out MyClass>
+          symbol = /receiverVarArg(vararg arg: T): kotlin.Array<out T>
+          valueParameters = [
+            KaVariableSignature:
+              name = arg
+              receiverType = null
+              returnType = MyClass
+              symbol = vararg arg: T
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /receiverVarArg
         typeArgumentsMapping = {
           T -> (MyClass)
         }

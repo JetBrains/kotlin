@@ -3,55 +3,53 @@ KtCallExpression(134,137): 'x()'
     candidateCalls = [
       KaSimpleFunctionCall:
         argumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = x
+          isSafeNavigation = false
+          type = kotlin.Int
         isImplicitInvoke = true
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = null
-          extensionReceiver = KaExplicitReceiverValue:
-            expression = x
-            isSafeNavigation = false
-            type = kotlin.Int
-          signature = KaFunctionSignature:
-            receiverType = kotlin.Int
-            returnType = kotlin.Unit
-            symbol = invoke(<extension receiver>: kotlin.Int, a: kotlin.String): kotlin.Unit
-            valueParameters = [
-              KaVariableSignature:
-                name = a
-                receiverType = null
-                returnType = kotlin.String
-                symbol = a: kotlin.String
-                contextParameters = []
-                callableId = null
-            ]
-            contextParameters = []
-            callableId = null
+        signature = KaFunctionSignature:
+          receiverType = kotlin.Int
+          returnType = kotlin.Unit
+          symbol = invoke(<extension receiver>: kotlin.Int, a: kotlin.String): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = a
+              receiverType = null
+              returnType = kotlin.String
+              symbol = a: kotlin.String
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = null
         typeArgumentsMapping = {},
       KaSimpleFunctionCall:
         argumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = x
+          isSafeNavigation = false
+          type = kotlin.Int
         isImplicitInvoke = true
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = null
-          extensionReceiver = KaExplicitReceiverValue:
-            expression = x
-            isSafeNavigation = false
-            type = kotlin.Int
-          signature = KaFunctionSignature:
-            receiverType = kotlin.Int
-            returnType = kotlin.Unit
-            symbol = invoke(<extension receiver>: kotlin.Int, b: kotlin.Boolean): kotlin.Unit
-            valueParameters = [
-              KaVariableSignature:
-                name = b
-                receiverType = null
-                returnType = kotlin.Boolean
-                symbol = b: kotlin.Boolean
-                contextParameters = []
-                callableId = null
-            ]
-            contextParameters = []
-            callableId = null
+        signature = KaFunctionSignature:
+          receiverType = kotlin.Int
+          returnType = kotlin.Unit
+          symbol = invoke(<extension receiver>: kotlin.Int, b: kotlin.Boolean): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = b
+              receiverType = null
+              returnType = kotlin.Boolean
+              symbol = b: kotlin.Boolean
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = null
         typeArgumentsMapping = {}
     ]
     diagnostic = ERROR<NONE_APPLICABLE: None of the following candidates is applicable:

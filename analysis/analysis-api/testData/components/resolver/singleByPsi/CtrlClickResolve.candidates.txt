@@ -10,26 +10,25 @@ KtNameReferenceExpression(202,210): 'IntArray'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Array<out kotlin.String>
-          symbol = ctrl_click/IntArray(vararg content: kotlin.String): kotlin.Array<out kotlin.String>
-          valueParameters = [
-            KaVariableSignature:
-              name = content
-              receiverType = null
-              returnType = kotlin.String
-              symbol = vararg content: kotlin.String
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = ctrl_click/IntArray
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Array<out kotlin.String>
+        symbol = ctrl_click/IntArray(vararg content: kotlin.String): kotlin.Array<out kotlin.String>
+        valueParameters = [
+          KaVariableSignature:
+            name = content
+            receiverType = null
+            returnType = kotlin.String
+            symbol = vararg content: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = ctrl_click/IntArray
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -44,26 +43,25 @@ KtNameReferenceExpression(202,210): 'IntArray'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.IntArray
-          symbol = <constructor>(size: kotlin.Int): kotlin.IntArray
-          valueParameters = [
-            KaVariableSignature:
-              name = size
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = size: kotlin.Int
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.IntArray
+        symbol = <constructor>(size: kotlin.Int): kotlin.IntArray
+        valueParameters = [
+          KaVariableSignature:
+            name = size
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = size: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     diagnostic = ERROR<NON_VARARG_SPREAD: The spread operator (*foo) can only be applied in a vararg position.>
     isInBestCandidates = false
@@ -79,33 +77,32 @@ KtNameReferenceExpression(202,210): 'IntArray'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.IntArray
-          symbol = <constructor>(size: kotlin.Int, init: (kotlin.Int) -> kotlin.Int): kotlin.IntArray
-          valueParameters = [
-            KaVariableSignature:
-              name = size
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = size: kotlin.Int
-              contextParameters = []
-              callableId = null,
-            KaVariableSignature:
-              name = init
-              receiverType = null
-              returnType = (kotlin.Int) -> kotlin.Int
-              symbol = init: (kotlin.Int) -> kotlin.Int
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.IntArray
+        symbol = <constructor>(size: kotlin.Int, init: (kotlin.Int) -> kotlin.Int): kotlin.IntArray
+        valueParameters = [
+          KaVariableSignature:
+            name = size
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = size: kotlin.Int
+            contextParameters = []
+            callableId = null,
+          KaVariableSignature:
+            name = init
+            receiverType = null
+            returnType = (kotlin.Int) -> kotlin.Int
+            symbol = init: (kotlin.Int) -> kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     diagnostic = ERROR<NON_VARARG_SPREAD: The spread operator (*foo) can only be applied in a vararg position.>
     isInBestCandidates = false

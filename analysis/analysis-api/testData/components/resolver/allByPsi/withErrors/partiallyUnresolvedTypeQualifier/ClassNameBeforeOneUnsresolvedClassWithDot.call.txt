@@ -137,26 +137,25 @@ KtCallExpression(144,181): 'take {'
             contextParameters = []
             callableId = null)
         }
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
         isImplicitInvoke = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = null
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = kotlin.Unit
-            symbol = /take(action: (T) -> kotlin.Unit): kotlin.Unit
-            valueParameters = [
-              KaVariableSignature:
-                name = action
-                receiverType = null
-                returnType = (ERROR CLASS: Cannot infer argument for type parameter T) -> kotlin.Unit
-                symbol = action: (T) -> kotlin.Unit
-                contextParameters = []
-                callableId = null
-            ]
-            contextParameters = []
-            callableId = /take
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /take(action: (T) -> kotlin.Unit): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = action
+              receiverType = null
+              returnType = (ERROR CLASS: Cannot infer argument for type parameter T) -> kotlin.Unit
+              symbol = action: (T) -> kotlin.Unit
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /take
         typeArgumentsMapping = {
           T -> (ERROR CLASS: Cannot infer argument for type parameter T)
         }
@@ -178,26 +177,25 @@ KtNameReferenceExpression(144,148): 'take'
             contextParameters = []
             callableId = null)
         }
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
         isImplicitInvoke = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = null
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = kotlin.Unit
-            symbol = /take(action: (T) -> kotlin.Unit): kotlin.Unit
-            valueParameters = [
-              KaVariableSignature:
-                name = action
-                receiverType = null
-                returnType = (ERROR CLASS: Cannot infer argument for type parameter T) -> kotlin.Unit
-                symbol = action: (T) -> kotlin.Unit
-                contextParameters = []
-                callableId = null
-            ]
-            contextParameters = []
-            callableId = /take
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /take(action: (T) -> kotlin.Unit): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = action
+              receiverType = null
+              returnType = (ERROR CLASS: Cannot infer argument for type parameter T) -> kotlin.Unit
+              symbol = action: (T) -> kotlin.Unit
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /take
         typeArgumentsMapping = {
           T -> (ERROR CLASS: Cannot infer argument for type parameter T)
         }

@@ -37,11 +37,27 @@ KtNameReferenceExpression(132,139): 'MyClass'
 KtCallExpression(142,151): 'MyClass()'
   KaSimpleFunctionCall:
     argumentMapping = {}
+    contextArguments = []
+    dispatchReceiver = null
+    extensionReceiver = null
     isImplicitInvoke = false
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+    signature = KaFunctionSignature:
+      receiverType = null
+      returnType = MyClass
+      symbol = <constructor>(): MyClass
+      valueParameters = []
+      contextParameters = []
+      callableId = null
+    typeArgumentsMapping = {}
+
+KtNameReferenceExpression(142,149): 'MyClass'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
+      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MyClass
@@ -49,24 +65,6 @@ KtCallExpression(142,151): 'MyClass()'
         valueParameters = []
         contextParameters = []
         callableId = null
-    typeArgumentsMapping = {}
-
-KtNameReferenceExpression(142,149): 'MyClass'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {}
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = MyClass
-          symbol = <constructor>(): MyClass
-          valueParameters = []
-          contextParameters = []
-          callableId = null
       typeArgumentsMapping = {}
 
 KtValueArgumentList(149,151): '()'
@@ -102,21 +100,20 @@ KtNameReferenceExpression(195,202): 'MyClass'
 KtNameReferenceExpression(205,206): 'X'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = X
+        isSafeNavigation = false
+        type = MyClass.Companion
+      extensionReceiver = null
       isContextSensitive = true
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = X
-          isSafeNavigation = false
-          type = MyClass.Companion
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = X
-          receiverType = null
-          returnType = MyClass
-          symbol = val X: MyClass
-          contextParameters = []
-          callableId = /MyClass.Companion.X
+      signature = KaVariableSignature:
+        name = X
+        receiverType = null
+        returnType = MyClass
+        symbol = val X: MyClass
+        contextParameters = []
+        callableId = /MyClass.Companion.X
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -135,21 +132,20 @@ KtNameReferenceExpression(214,221): 'MyClass'
 KtNameReferenceExpression(224,225): 'Y'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = Y
+        isSafeNavigation = false
+        type = MyClass.Companion
+      extensionReceiver = null
       isContextSensitive = true
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = Y
-          isSafeNavigation = false
-          type = MyClass.Companion
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = Y
-          receiverType = null
-          returnType = kotlin.String
-          symbol = val Y: kotlin.String
-          contextParameters = []
-          callableId = /MyClass.Companion.Y
+      signature = KaVariableSignature:
+        name = Y
+        receiverType = null
+        returnType = kotlin.String
+        symbol = val Y: kotlin.String
+        contextParameters = []
+        callableId = /MyClass.Companion.Y
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -171,21 +167,20 @@ KtNameReferenceExpression(238,245): 'MyClass'
 KtNameReferenceExpression(248,249): 'X'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = X
+        isSafeNavigation = false
+        type = MyClass.Companion
+      extensionReceiver = null
       isContextSensitive = true
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = X
-          isSafeNavigation = false
-          type = MyClass.Companion
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = X
-          receiverType = null
-          returnType = MyClass
-          symbol = val X: MyClass
-          contextParameters = []
-          callableId = /MyClass.Companion.X
+      signature = KaVariableSignature:
+        name = X
+        receiverType = null
+        returnType = MyClass
+        symbol = val X: MyClass
+        contextParameters = []
+        callableId = /MyClass.Companion.X
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -207,21 +202,20 @@ KtNameReferenceExpression(261,268): 'MyClass'
 KtNameReferenceExpression(271,272): 'Y'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = Y
+        isSafeNavigation = false
+        type = MyClass.Companion
+      extensionReceiver = null
       isContextSensitive = true
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = Y
-          isSafeNavigation = false
-          type = MyClass.Companion
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = Y
-          receiverType = null
-          returnType = kotlin.String
-          symbol = val Y: kotlin.String
-          contextParameters = []
-          callableId = /MyClass.Companion.Y
+      signature = KaVariableSignature:
+        name = Y
+        receiverType = null
+        returnType = kotlin.String
+        symbol = val Y: kotlin.String
+        contextParameters = []
+        callableId = /MyClass.Companion.Y
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -246,21 +240,20 @@ KtNameReferenceExpression(285,292): 'MyClass'
 KtNameReferenceExpression(295,296): 'X'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = X
+        isSafeNavigation = false
+        type = MyClass.Companion
+      extensionReceiver = null
       isContextSensitive = true
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = X
-          isSafeNavigation = false
-          type = MyClass.Companion
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = X
-          receiverType = null
-          returnType = MyClass
-          symbol = val X: MyClass
-          contextParameters = []
-          callableId = /MyClass.Companion.X
+      signature = KaVariableSignature:
+        name = X
+        receiverType = null
+        returnType = MyClass
+        symbol = val X: MyClass
+        contextParameters = []
+        callableId = /MyClass.Companion.X
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -288,21 +281,20 @@ KtParameterList(332,334): '()'
 KtNameReferenceExpression(337,338): 'X'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = X
+        isSafeNavigation = false
+        type = MyClass.Companion
+      extensionReceiver = null
       isContextSensitive = true
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = X
-          isSafeNavigation = false
-          type = MyClass.Companion
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = X
-          receiverType = null
-          returnType = MyClass
-          symbol = val X: MyClass
-          contextParameters = []
-          callableId = /MyClass.Companion.X
+      signature = KaVariableSignature:
+        name = X
+        receiverType = null
+        returnType = MyClass
+        symbol = val X: MyClass
+        contextParameters = []
+        callableId = /MyClass.Companion.X
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -327,21 +319,20 @@ KtNameReferenceExpression(365,372): 'MyClass'
 KtNameReferenceExpression(375,376): 'X'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = X
+        isSafeNavigation = false
+        type = MyClass.Companion
+      extensionReceiver = null
       isContextSensitive = true
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = X
-          isSafeNavigation = false
-          type = MyClass.Companion
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = X
-          receiverType = null
-          returnType = MyClass
-          symbol = val X: MyClass
-          contextParameters = []
-          callableId = /MyClass.Companion.X
+      signature = KaVariableSignature:
+        name = X
+        receiverType = null
+        returnType = MyClass
+        symbol = val X: MyClass
+        contextParameters = []
+        callableId = /MyClass.Companion.X
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -366,21 +357,20 @@ KtParameterList(408,410): '()'
 KtNameReferenceExpression(413,414): 'Y'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = Y
+        isSafeNavigation = false
+        type = MyClass.Companion
+      extensionReceiver = null
       isContextSensitive = true
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = Y
-          isSafeNavigation = false
-          type = MyClass.Companion
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = Y
-          receiverType = null
-          returnType = kotlin.String
-          symbol = val Y: kotlin.String
-          contextParameters = []
-          callableId = /MyClass.Companion.Y
+      signature = KaVariableSignature:
+        name = Y
+        receiverType = null
+        returnType = kotlin.String
+        symbol = val Y: kotlin.String
+        contextParameters = []
+        callableId = /MyClass.Companion.Y
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -405,21 +395,20 @@ KtNameReferenceExpression(441,448): 'MyClass'
 KtNameReferenceExpression(451,452): 'Y'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = Y
+        isSafeNavigation = false
+        type = MyClass.Companion
+      extensionReceiver = null
       isContextSensitive = true
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = Y
-          isSafeNavigation = false
-          type = MyClass.Companion
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = Y
-          receiverType = null
-          returnType = kotlin.String
-          symbol = val Y: kotlin.String
-          contextParameters = []
-          callableId = /MyClass.Companion.Y
+      signature = KaVariableSignature:
+        name = Y
+        receiverType = null
+        returnType = kotlin.String
+        symbol = val Y: kotlin.String
+        contextParameters = []
+        callableId = /MyClass.Companion.Y
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -453,18 +442,17 @@ KtConstantExpression(489,493): 'null'
 KtBinaryExpression(498,503): 'm = Y'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = m
-          receiverType = null
-          returnType = MyClass?
-          symbol = var m: MyClass?
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = m
+        receiverType = null
+        returnType = MyClass?
+        symbol = var m: MyClass?
+        contextParameters = []
+        callableId = null
       simpleAccess = Write:
         value = Y
       typeArgumentsMapping = {}
@@ -472,18 +460,17 @@ KtBinaryExpression(498,503): 'm = Y'
 KtNameReferenceExpression(498,499): 'm'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = m
-          receiverType = null
-          returnType = MyClass?
-          symbol = var m: MyClass?
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = m
+        receiverType = null
+        returnType = MyClass?
+        symbol = var m: MyClass?
+        contextParameters = []
+        callableId = null
       simpleAccess = Write:
         value = Y
       typeArgumentsMapping = {}
@@ -491,18 +478,17 @@ KtNameReferenceExpression(498,499): 'm'
 KtOperationReferenceExpression(500,501): '='
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = m
-          receiverType = null
-          returnType = MyClass?
-          symbol = var m: MyClass?
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = m
+        receiverType = null
+        returnType = MyClass?
+        symbol = var m: MyClass?
+        contextParameters = []
+        callableId = null
       simpleAccess = Write:
         value = Y
       typeArgumentsMapping = {}
@@ -510,39 +496,37 @@ KtOperationReferenceExpression(500,501): '='
 KtNameReferenceExpression(502,503): 'Y'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = Y
+        isSafeNavigation = false
+        type = MyClass.Companion
+      extensionReceiver = null
       isContextSensitive = true
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = Y
-          isSafeNavigation = false
-          type = MyClass.Companion
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = Y
-          receiverType = null
-          returnType = kotlin.String
-          symbol = val Y: kotlin.String
-          contextParameters = []
-          callableId = /MyClass.Companion.Y
+      signature = KaVariableSignature:
+        name = Y
+        receiverType = null
+        returnType = kotlin.String
+        symbol = val Y: kotlin.String
+        contextParameters = []
+        callableId = /MyClass.Companion.Y
       simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtBinaryExpression(508,513): 'm = X'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = m
-          receiverType = null
-          returnType = MyClass?
-          symbol = var m: MyClass?
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = m
+        receiverType = null
+        returnType = MyClass?
+        symbol = var m: MyClass?
+        contextParameters = []
+        callableId = null
       simpleAccess = Write:
         value = X
       typeArgumentsMapping = {}
@@ -550,18 +534,17 @@ KtBinaryExpression(508,513): 'm = X'
 KtNameReferenceExpression(508,509): 'm'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = m
-          receiverType = null
-          returnType = MyClass?
-          symbol = var m: MyClass?
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = m
+        receiverType = null
+        returnType = MyClass?
+        symbol = var m: MyClass?
+        contextParameters = []
+        callableId = null
       simpleAccess = Write:
         value = X
       typeArgumentsMapping = {}
@@ -569,18 +552,17 @@ KtNameReferenceExpression(508,509): 'm'
 KtOperationReferenceExpression(510,511): '='
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = m
-          receiverType = null
-          returnType = MyClass?
-          symbol = var m: MyClass?
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = m
+        receiverType = null
+        returnType = MyClass?
+        symbol = var m: MyClass?
+        contextParameters = []
+        callableId = null
       simpleAccess = Write:
         value = X
       typeArgumentsMapping = {}
@@ -588,21 +570,20 @@ KtOperationReferenceExpression(510,511): '='
 KtNameReferenceExpression(512,513): 'X'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = X
+        isSafeNavigation = false
+        type = MyClass.Companion
+      extensionReceiver = null
       isContextSensitive = true
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = X
-          isSafeNavigation = false
-          type = MyClass.Companion
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = X
-          receiverType = null
-          returnType = MyClass
-          symbol = val X: MyClass
-          contextParameters = []
-          callableId = /MyClass.Companion.X
+      signature = KaVariableSignature:
+        name = X
+        receiverType = null
+        returnType = MyClass
+        symbol = val X: MyClass
+        contextParameters = []
+        callableId = /MyClass.Companion.X
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -645,18 +626,17 @@ KtContainerNode(556,557): 'b'
 KtNameReferenceExpression(556,557): 'b'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = b
-          receiverType = null
-          returnType = kotlin.Boolean
-          symbol = b: kotlin.Boolean
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = b
+        receiverType = null
+        returnType = kotlin.Boolean
+        symbol = b: kotlin.Boolean
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -669,21 +649,20 @@ KtReturnExpression(559,567): 'return X'
 KtNameReferenceExpression(566,567): 'X'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = X
+        isSafeNavigation = false
+        type = MyClass.Companion
+      extensionReceiver = null
       isContextSensitive = true
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = X
-          isSafeNavigation = false
-          type = MyClass.Companion
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = X
-          receiverType = null
-          returnType = MyClass
-          symbol = val X: MyClass
-          contextParameters = []
-          callableId = /MyClass.Companion.X
+      signature = KaVariableSignature:
+        name = X
+        receiverType = null
+        returnType = MyClass
+        symbol = val X: MyClass
+        contextParameters = []
+        callableId = /MyClass.Companion.X
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -693,20 +672,19 @@ KtReturnExpression(572,580): 'return Y'
 KtNameReferenceExpression(579,580): 'Y'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = Y
+        isSafeNavigation = false
+        type = MyClass.Companion
+      extensionReceiver = null
       isContextSensitive = true
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = Y
-          isSafeNavigation = false
-          type = MyClass.Companion
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = Y
-          receiverType = null
-          returnType = kotlin.String
-          symbol = val Y: kotlin.String
-          contextParameters = []
-          callableId = /MyClass.Companion.Y
+      signature = KaVariableSignature:
+        name = Y
+        receiverType = null
+        returnType = kotlin.String
+        symbol = val Y: kotlin.String
+        contextParameters = []
+        callableId = /MyClass.Companion.Y
       simpleAccess = Read
       typeArgumentsMapping = {}

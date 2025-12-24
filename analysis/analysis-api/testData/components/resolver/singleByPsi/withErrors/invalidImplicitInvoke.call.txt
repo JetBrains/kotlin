@@ -3,32 +3,31 @@ KtDotQualifiedExpression(53,61): 's.action'
     candidateCalls = [
       KaSimpleFunctionCall:
         argumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = action
+          isSafeNavigation = false
+          type = (kotlin.String.() -> kotlin.Unit)?
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = s
+          isSafeNavigation = false
+          type = kotlin.String
         isImplicitInvoke = true
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = KaExplicitReceiverValue:
-            expression = action
-            isSafeNavigation = false
-            type = (kotlin.String.() -> kotlin.Unit)?
-          extensionReceiver = KaExplicitReceiverValue:
-            expression = s
-            isSafeNavigation = false
-            type = kotlin.String
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = kotlin.Unit
-            symbol = kotlin/Function1.invoke(<dispatch receiver>: (P1) -> R, p1: P1): R
-            valueParameters = [
-              KaVariableSignature:
-                name = p1
-                receiverType = null
-                returnType = kotlin.String
-                symbol = p1: P1
-                contextParameters = []
-                callableId = null
-            ]
-            contextParameters = []
-            callableId = kotlin/Function1.invoke
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = kotlin/Function1.invoke(<dispatch receiver>: (P1) -> R, p1: P1): R
+          valueParameters = [
+            KaVariableSignature:
+              name = p1
+              receiverType = null
+              returnType = kotlin.String
+              symbol = p1: P1
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/Function1.invoke
         typeArgumentsMapping = {}
     ]
     diagnostic = ERROR<FUNCTION_CALL_EXPECTED: Function invocation 'action(...)' expected.>

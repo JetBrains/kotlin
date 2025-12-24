@@ -9,26 +9,25 @@ KtCallExpression(45,63): 'Foo<String>("str")'
         contextParameters = []
         callableId = null)
     }
+    contextArguments = []
+    dispatchReceiver = null
+    extensionReceiver = null
     isImplicitInvoke = false
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      contextArguments = []
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = Foo<kotlin.String>
-        symbol = <constructor>(x: T): Foo<T>
-        valueParameters = [
-          KaVariableSignature:
-            name = x
-            receiverType = null
-            returnType = kotlin.String
-            symbol = x: T
-            contextParameters = []
-            callableId = null
-        ]
-        contextParameters = []
-        callableId = null
+    signature = KaFunctionSignature:
+      receiverType = null
+      returnType = Foo<kotlin.String>
+      symbol = <constructor>(x: T): Foo<T>
+      valueParameters = [
+        KaVariableSignature:
+          name = x
+          receiverType = null
+          returnType = kotlin.String
+          symbol = x: T
+          contextParameters = []
+          callableId = null
+      ]
+      contextParameters = []
+      callableId = null
     typeArgumentsMapping = {
       T -> (kotlin.String)
     }

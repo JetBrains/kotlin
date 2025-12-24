@@ -53,18 +53,17 @@ KtConstructorDelegationCall(76,84): 'this(10)'
   KaInapplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       kind = THIS_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = r.A.B
-          symbol = <constructor>(<dispatch receiver>: r.A): r.A.B
-          valueParameters = []
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = r.A.B
+        symbol = <constructor>(<dispatch receiver>: r.A): r.A.B
+        valueParameters = []
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     diagnostic = ERROR<INNER_CLASS_CONSTRUCTOR_NO_RECEIVER: Constructor of the inner class 'inner class B : Any' can only be called with a receiver of the containing class.>
     isInBestCandidates = false
@@ -80,26 +79,25 @@ KtConstructorDelegationCall(76,84): 'this(10)'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       kind = THIS_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = r.A.B
-          symbol = <constructor>(<dispatch receiver>: r.A, x: kotlin.Int): r.A.B
-          valueParameters = [
-            KaVariableSignature:
-              name = x
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = x: kotlin.Int
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = r.A.B
+        symbol = <constructor>(<dispatch receiver>: r.A, x: kotlin.Int): r.A.B
+        valueParameters = [
+          KaVariableSignature:
+            name = x
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = x: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     diagnostic = ERROR<INNER_CLASS_CONSTRUCTOR_NO_RECEIVER: Constructor of the inner class 'inner class B : Any' can only be called with a receiver of the containing class.>
     isInBestCandidates = true
@@ -108,18 +106,17 @@ KtConstructorDelegationReferenceExpression(76,80): 'this'
   KaInapplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       kind = THIS_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = r.A.B
-          symbol = <constructor>(<dispatch receiver>: r.A): r.A.B
-          valueParameters = []
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = r.A.B
+        symbol = <constructor>(<dispatch receiver>: r.A): r.A.B
+        valueParameters = []
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     diagnostic = ERROR<INNER_CLASS_CONSTRUCTOR_NO_RECEIVER: Constructor of the inner class 'inner class B : Any' can only be called with a receiver of the containing class.>
     isInBestCandidates = false
@@ -135,26 +132,25 @@ KtConstructorDelegationReferenceExpression(76,80): 'this'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       kind = THIS_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = r.A.B
-          symbol = <constructor>(<dispatch receiver>: r.A, x: kotlin.Int): r.A.B
-          valueParameters = [
-            KaVariableSignature:
-              name = x
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = x: kotlin.Int
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = r.A.B
+        symbol = <constructor>(<dispatch receiver>: r.A, x: kotlin.Int): r.A.B
+        valueParameters = [
+          KaVariableSignature:
+            name = x
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = x: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     diagnostic = ERROR<INNER_CLASS_CONSTRUCTOR_NO_RECEIVER: Constructor of the inner class 'inner class B : Any' can only be called with a receiver of the containing class.>
     isInBestCandidates = true

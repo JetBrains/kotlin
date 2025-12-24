@@ -49,18 +49,17 @@ KtNameReferenceExpression(174,180): 'MyEnum'
 KtNameReferenceExpression(183,190): 'Option1'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = Option1
-          receiverType = null
-          returnType = MyEnum
-          symbol = /MyEnum.Option1
-          contextParameters = []
-          callableId = /MyEnum.Option1
+      signature = KaVariableSignature:
+        name = Option1
+        receiverType = null
+        returnType = MyEnum
+        symbol = /MyEnum.Option1
+        contextParameters = []
+        callableId = /MyEnum.Option1
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -88,18 +87,17 @@ KtParameterList(248,250): '()'
 KtNameReferenceExpression(253,260): 'Option1'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = Option1
-          receiverType = null
-          returnType = MyEnum
-          symbol = /MyEnum.Option1
-          contextParameters = []
-          callableId = /MyEnum.Option1
+      signature = KaVariableSignature:
+        name = Option1
+        receiverType = null
+        returnType = MyEnum
+        symbol = /MyEnum.Option1
+        contextParameters = []
+        callableId = /MyEnum.Option1
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -109,21 +107,20 @@ KtProperty(270,306): 'val EnumOptionAlias = MyEnum.Option1'
 KtDotQualifiedExpression(292,306): 'MyEnum.Option1'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = MyEnum
+        isSafeNavigation = false
+        type = MyEnum.Companion
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = MyEnum
-          isSafeNavigation = false
-          type = MyEnum.Companion
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = Option1
-          receiverType = null
-          returnType = MyEnum
-          symbol = /MyEnum.Option1
-          contextParameters = []
-          callableId = /MyEnum.Option1
+      signature = KaVariableSignature:
+        name = Option1
+        receiverType = null
+        returnType = MyEnum
+        symbol = /MyEnum.Option1
+        contextParameters = []
+        callableId = /MyEnum.Option1
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -133,21 +130,20 @@ KtNameReferenceExpression(292,298): 'MyEnum'
 KtNameReferenceExpression(299,306): 'Option1'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = MyEnum
+        isSafeNavigation = false
+        type = MyEnum.Companion
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = MyEnum
-          isSafeNavigation = false
-          type = MyEnum.Companion
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = Option1
-          receiverType = null
-          returnType = MyEnum
-          symbol = /MyEnum.Option1
-          contextParameters = []
-          callableId = /MyEnum.Option1
+      signature = KaVariableSignature:
+        name = Option1
+        receiverType = null
+        returnType = MyEnum
+        symbol = /MyEnum.Option1
+        contextParameters = []
+        callableId = /MyEnum.Option1
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -169,21 +165,20 @@ KtNameReferenceExpression(320,326): 'MyEnum'
 KtNameReferenceExpression(329,336): 'Option1'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = Option1
+        isSafeNavigation = false
+        type = MyEnum.Companion
+      extensionReceiver = null
       isContextSensitive = true
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = Option1
-          isSafeNavigation = false
-          type = MyEnum.Companion
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = Option1
-          receiverType = null
-          returnType = MyEnum
-          symbol = /MyEnum.Option1
-          contextParameters = []
-          callableId = /MyEnum.Option1
+      signature = KaVariableSignature:
+        name = Option1
+        receiverType = null
+        returnType = MyEnum
+        symbol = /MyEnum.Option1
+        contextParameters = []
+        callableId = /MyEnum.Option1
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -205,21 +200,20 @@ KtNameReferenceExpression(349,355): 'MyEnum'
 KtNameReferenceExpression(358,366): 'enumProp'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = enumProp
+        isSafeNavigation = false
+        type = MyEnum.Companion
+      extensionReceiver = null
       isContextSensitive = true
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = enumProp
-          isSafeNavigation = false
-          type = MyEnum.Companion
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = enumProp
-          receiverType = null
-          returnType = MyEnum
-          symbol = val enumProp: MyEnum
-          contextParameters = []
-          callableId = /MyEnum.Companion.enumProp
+      signature = KaVariableSignature:
+        name = enumProp
+        receiverType = null
+        returnType = MyEnum
+        symbol = val enumProp: MyEnum
+        contextParameters = []
+        callableId = /MyEnum.Companion.enumProp
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -241,21 +235,20 @@ KtNameReferenceExpression(379,385): 'MyEnum'
 KtNameReferenceExpression(388,398): 'stringProp'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = stringProp
+        isSafeNavigation = false
+        type = MyEnum.Companion
+      extensionReceiver = null
       isContextSensitive = true
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = stringProp
-          isSafeNavigation = false
-          type = MyEnum.Companion
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = stringProp
-          receiverType = null
-          returnType = kotlin.String
-          symbol = val stringProp: kotlin.String
-          contextParameters = []
-          callableId = /MyEnum.Companion.stringProp
+      signature = KaVariableSignature:
+        name = stringProp
+        receiverType = null
+        returnType = kotlin.String
+        symbol = val stringProp: kotlin.String
+        contextParameters = []
+        callableId = /MyEnum.Companion.stringProp
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -280,21 +273,20 @@ KtNameReferenceExpression(434,440): 'MyEnum'
 KtNameReferenceExpression(443,450): 'Option1'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = Option1
+        isSafeNavigation = false
+        type = MyEnum.Companion
+      extensionReceiver = null
       isContextSensitive = true
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = Option1
-          isSafeNavigation = false
-          type = MyEnum.Companion
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = Option1
-          receiverType = null
-          returnType = MyEnum
-          symbol = /MyEnum.Option1
-          contextParameters = []
-          callableId = /MyEnum.Option1
+      signature = KaVariableSignature:
+        name = Option1
+        receiverType = null
+        returnType = MyEnum
+        symbol = /MyEnum.Option1
+        contextParameters = []
+        callableId = /MyEnum.Option1
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -319,21 +311,20 @@ KtNameReferenceExpression(491,497): 'MyEnum'
 KtNameReferenceExpression(500,510): 'stringProp'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = stringProp
+        isSafeNavigation = false
+        type = MyEnum.Companion
+      extensionReceiver = null
       isContextSensitive = true
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = stringProp
-          isSafeNavigation = false
-          type = MyEnum.Companion
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = stringProp
-          receiverType = null
-          returnType = kotlin.String
-          symbol = val stringProp: kotlin.String
-          contextParameters = []
-          callableId = /MyEnum.Companion.stringProp
+      signature = KaVariableSignature:
+        name = stringProp
+        receiverType = null
+        returnType = kotlin.String
+        symbol = val stringProp: kotlin.String
+        contextParameters = []
+        callableId = /MyEnum.Companion.stringProp
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -376,18 +367,17 @@ KtContainerNode(551,552): 'b'
 KtNameReferenceExpression(551,552): 'b'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = b
-          receiverType = null
-          returnType = kotlin.Boolean
-          symbol = b: kotlin.Boolean
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = b
+        receiverType = null
+        returnType = kotlin.Boolean
+        symbol = b: kotlin.Boolean
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -400,21 +390,20 @@ KtReturnExpression(554,568): 'return Option1'
 KtNameReferenceExpression(561,568): 'Option1'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = Option1
+        isSafeNavigation = false
+        type = MyEnum.Companion
+      extensionReceiver = null
       isContextSensitive = true
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = Option1
-          isSafeNavigation = false
-          type = MyEnum.Companion
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = Option1
-          receiverType = null
-          returnType = MyEnum
-          symbol = /MyEnum.Option1
-          contextParameters = []
-          callableId = /MyEnum.Option1
+      signature = KaVariableSignature:
+        name = Option1
+        receiverType = null
+        returnType = MyEnum
+        symbol = /MyEnum.Option1
+        contextParameters = []
+        callableId = /MyEnum.Option1
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -424,20 +413,19 @@ KtReturnExpression(573,587): 'return Option2'
 KtNameReferenceExpression(580,587): 'Option2'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = Option2
+        isSafeNavigation = false
+        type = MyEnum.Companion
+      extensionReceiver = null
       isContextSensitive = true
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = Option2
-          isSafeNavigation = false
-          type = MyEnum.Companion
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = Option2
-          receiverType = null
-          returnType = MyEnum
-          symbol = /MyEnum.Option2
-          contextParameters = []
-          callableId = /MyEnum.Option2
+      signature = KaVariableSignature:
+        name = Option2
+        receiverType = null
+        returnType = MyEnum
+        symbol = /MyEnum.Option2
+        contextParameters = []
+        callableId = /MyEnum.Option2
       simpleAccess = Read
       typeArgumentsMapping = {}

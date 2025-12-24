@@ -2,51 +2,50 @@ KtCallableReferenceExpression(102,107): '::add'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaImplicitReceiverValue:
-          symbol = KaReceiverParameterSymbol:
+      contextArguments = []
+      dispatchReceiver = KaImplicitReceiverValue:
+        symbol = KaReceiverParameterSymbol:
+          annotations: []
+          callableId: null
+          compilerVisibility: Public
+          contextReceivers: []
+          isActual: false
+          isExpect: false
+          isExtension: false
+          isVal: true
+          location: LOCAL
+          modality: FINAL
+          name: <receiver>
+          origin: SOURCE
+          owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+          receiverParameter: null
+          returnType: KaUsualClassType:
             annotations: []
-            callableId: null
-            compilerVisibility: Public
-            contextReceivers: []
-            isActual: false
-            isExpect: false
-            isExtension: false
-            isVal: true
-            location: LOCAL
-            modality: FINAL
-            name: <receiver>
-            origin: SOURCE
-            owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
-            receiverParameter: null
-            returnType: KaUsualClassType:
-              annotations: []
-              typeArguments: [
-                KaUsualClassType:
-                  annotations: []
-                  typeArguments: []
-                  type: kotlin/String
-              ]
-              type: kotlin/collections/MutableList<kotlin/String>
-            visibility: PUBLIC
-          type = kotlin.collections.MutableList<kotlin.String>
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Boolean
-          symbol = kotlin/collections/MutableList.add(<dispatch receiver>: kotlin.collections.MutableList<E>, element: E): kotlin.Boolean
-          valueParameters = [
-            KaVariableSignature:
-              name = element
-              receiverType = null
-              returnType = kotlin.String
-              symbol = element: E
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/collections/MutableList.add
+            typeArguments: [
+              KaUsualClassType:
+                annotations: []
+                typeArguments: []
+                type: kotlin/String
+            ]
+            type: kotlin/collections/MutableList<kotlin/String>
+          visibility: PUBLIC
+        type = kotlin.collections.MutableList<kotlin.String>
+      extensionReceiver = null
+      isImplicitInvoke = false
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Boolean
+        symbol = kotlin/collections/MutableList.add(<dispatch receiver>: kotlin.collections.MutableList<E>, element: E): kotlin.Boolean
+        valueParameters = [
+          KaVariableSignature:
+            name = element
+            receiverType = null
+            returnType = kotlin.String
+            symbol = element: E
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/collections/MutableList.add
       typeArgumentsMapping = {}
     isInBestCandidates = true

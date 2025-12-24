@@ -25,40 +25,39 @@ KtCallExpression(61,99): 'generic<String, String>("a", "b", "c")'
             contextParameters = []
             callableId = null)
         }
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
         isImplicitInvoke = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = null
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = kotlin.Unit
-            symbol = /generic(a: A, b: B, c: C): kotlin.Unit
-            valueParameters = [
-              KaVariableSignature:
-                name = a
-                receiverType = null
-                returnType = kotlin.String
-                symbol = a: A
-                contextParameters = []
-                callableId = null,
-              KaVariableSignature:
-                name = b
-                receiverType = null
-                returnType = kotlin.String
-                symbol = b: B
-                contextParameters = []
-                callableId = null,
-              KaVariableSignature:
-                name = c
-                receiverType = null
-                returnType = kotlin.String
-                symbol = c: C
-                contextParameters = []
-                callableId = null
-            ]
-            contextParameters = []
-            callableId = /generic
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /generic(a: A, b: B, c: C): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = a
+              receiverType = null
+              returnType = kotlin.String
+              symbol = a: A
+              contextParameters = []
+              callableId = null,
+            KaVariableSignature:
+              name = b
+              receiverType = null
+              returnType = kotlin.String
+              symbol = b: B
+              contextParameters = []
+              callableId = null,
+            KaVariableSignature:
+              name = c
+              receiverType = null
+              returnType = kotlin.String
+              symbol = c: C
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /generic
         typeArgumentsMapping = {
           A -> (kotlin.String),
           B -> (kotlin.String),

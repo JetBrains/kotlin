@@ -55,18 +55,17 @@ KtSuperTypeList(150,168): 'SealedGeneric<T>()'
 KtSuperTypeCallEntry(150,168): 'SealedGeneric<T>()'
   KaDelegatedConstructorCall:
     argumentMapping = {}
+    contextArguments = []
+    dispatchReceiver = null
+    extensionReceiver = null
     kind = SUPER_CALL
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      contextArguments = []
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = SealedGeneric<T>
-        symbol = <constructor>(): SealedGeneric<T>
-        valueParameters = []
-        contextParameters = []
-        callableId = null
+    signature = KaFunctionSignature:
+      receiverType = null
+      returnType = SealedGeneric<T>
+      symbol = <constructor>(): SealedGeneric<T>
+      valueParameters = []
+      contextParameters = []
+      callableId = null
     typeArgumentsMapping = {
       T -> (T)
     }
@@ -75,18 +74,17 @@ KtConstructorCalleeExpression(150,166): 'SealedGeneric<T>'
   KaSuccessCallInfo:
     call = KaDelegatedConstructorCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = SealedGeneric<T>
-          symbol = <constructor>(): SealedGeneric<T>
-          valueParameters = []
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = SealedGeneric<T>
+        symbol = <constructor>(): SealedGeneric<T>
+        valueParameters = []
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {
         T -> (T)
       }
@@ -151,18 +149,17 @@ KtSuperTypeList(209,227): 'SealedGeneric<T>()'
 KtSuperTypeCallEntry(209,227): 'SealedGeneric<T>()'
   KaDelegatedConstructorCall:
     argumentMapping = {}
+    contextArguments = []
+    dispatchReceiver = null
+    extensionReceiver = null
     kind = SUPER_CALL
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      contextArguments = []
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = SealedGeneric<T>
-        symbol = <constructor>(): SealedGeneric<T>
-        valueParameters = []
-        contextParameters = []
-        callableId = null
+    signature = KaFunctionSignature:
+      receiverType = null
+      returnType = SealedGeneric<T>
+      symbol = <constructor>(): SealedGeneric<T>
+      valueParameters = []
+      contextParameters = []
+      callableId = null
     typeArgumentsMapping = {
       T -> (T)
     }
@@ -171,18 +168,17 @@ KtConstructorCalleeExpression(209,225): 'SealedGeneric<T>'
   KaSuccessCallInfo:
     call = KaDelegatedConstructorCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = SealedGeneric<T>
-          symbol = <constructor>(): SealedGeneric<T>
-          valueParameters = []
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = SealedGeneric<T>
+        symbol = <constructor>(): SealedGeneric<T>
+        valueParameters = []
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {
         T -> (T)
       }
@@ -292,18 +288,17 @@ KtIsExpression(337,367): 'instance1 is SGOption1<String>'
 KtNameReferenceExpression(337,346): 'instance1'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = instance1
-          receiverType = null
-          returnType = SealedGeneric<*>
-          symbol = instance1: SealedGeneric<*>
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = instance1
+        receiverType = null
+        returnType = SealedGeneric<*>
+        symbol = instance1: SealedGeneric<*>
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -346,64 +341,61 @@ KtReturnExpression(379,401): 'return instance1.prop1'
 KtDotQualifiedExpression(386,401): 'instance1.prop1'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaSmartCastedReceiverValue:
+        original = KaExplicitReceiverValue:
+          expression = instance1
+          isSafeNavigation = false
+          type = SealedGeneric<*>
+        type = SealedGeneric.SGOption1<kotlin.String>
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaSmartCastedReceiverValue:
-          original = KaExplicitReceiverValue:
-            expression = instance1
-            isSafeNavigation = false
-            type = SealedGeneric<*>
-          type = SealedGeneric.SGOption1<kotlin.String>
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = prop1
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = val prop1: kotlin.Int
-          contextParameters = []
-          callableId = /SealedGeneric.SGOption1.prop1
+      signature = KaVariableSignature:
+        name = prop1
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = val prop1: kotlin.Int
+        contextParameters = []
+        callableId = /SealedGeneric.SGOption1.prop1
       simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(386,395): 'instance1'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = instance1
-          receiverType = null
-          returnType = SealedGeneric<*>
-          symbol = instance1: SealedGeneric<*>
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = instance1
+        receiverType = null
+        returnType = SealedGeneric<*>
+        symbol = instance1: SealedGeneric<*>
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(396,401): 'prop1'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaSmartCastedReceiverValue:
+        original = KaExplicitReceiverValue:
+          expression = instance1
+          isSafeNavigation = false
+          type = SealedGeneric<*>
+        type = SealedGeneric.SGOption1<kotlin.String>
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaSmartCastedReceiverValue:
-          original = KaExplicitReceiverValue:
-            expression = instance1
-            isSafeNavigation = false
-            type = SealedGeneric<*>
-          type = SealedGeneric.SGOption1<kotlin.String>
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = prop1
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = val prop1: kotlin.Int
-          contextParameters = []
-          callableId = /SealedGeneric.SGOption1.prop1
+      signature = KaVariableSignature:
+        name = prop1
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = val prop1: kotlin.Int
+        contextParameters = []
+        callableId = /SealedGeneric.SGOption1.prop1
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -419,18 +411,17 @@ KtIsExpression(416,441): 'instance1 is SGOption1<*>'
 KtNameReferenceExpression(416,425): 'instance1'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = instance1
-          receiverType = null
-          returnType = SealedGeneric<*>
-          symbol = instance1: SealedGeneric<*>
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = instance1
+        receiverType = null
+        returnType = SealedGeneric<*>
+        symbol = instance1: SealedGeneric<*>
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -464,64 +455,61 @@ KtReturnExpression(453,475): 'return instance1.prop1'
 KtDotQualifiedExpression(460,475): 'instance1.prop1'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaSmartCastedReceiverValue:
+        original = KaExplicitReceiverValue:
+          expression = instance1
+          isSafeNavigation = false
+          type = SealedGeneric<*>
+        type = SealedGeneric.SGOption1<*>
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaSmartCastedReceiverValue:
-          original = KaExplicitReceiverValue:
-            expression = instance1
-            isSafeNavigation = false
-            type = SealedGeneric<*>
-          type = SealedGeneric.SGOption1<*>
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = prop1
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = val prop1: kotlin.Int
-          contextParameters = []
-          callableId = /SealedGeneric.SGOption1.prop1
+      signature = KaVariableSignature:
+        name = prop1
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = val prop1: kotlin.Int
+        contextParameters = []
+        callableId = /SealedGeneric.SGOption1.prop1
       simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(460,469): 'instance1'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = instance1
-          receiverType = null
-          returnType = SealedGeneric<*>
-          symbol = instance1: SealedGeneric<*>
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = instance1
+        receiverType = null
+        returnType = SealedGeneric<*>
+        symbol = instance1: SealedGeneric<*>
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(470,475): 'prop1'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaSmartCastedReceiverValue:
+        original = KaExplicitReceiverValue:
+          expression = instance1
+          isSafeNavigation = false
+          type = SealedGeneric<*>
+        type = SealedGeneric.SGOption1<*>
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaSmartCastedReceiverValue:
-          original = KaExplicitReceiverValue:
-            expression = instance1
-            isSafeNavigation = false
-            type = SealedGeneric<*>
-          type = SealedGeneric.SGOption1<*>
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = prop1
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = val prop1: kotlin.Int
-          contextParameters = []
-          callableId = /SealedGeneric.SGOption1.prop1
+      signature = KaVariableSignature:
+        name = prop1
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = val prop1: kotlin.Int
+        contextParameters = []
+        callableId = /SealedGeneric.SGOption1.prop1
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -537,18 +525,17 @@ KtIsExpression(490,526): 'instance2 is SGOption2<CharSequence>'
 KtNameReferenceExpression(490,499): 'instance2'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = instance2
-          receiverType = null
-          returnType = SealedGeneric<out kotlin.CharSequence>
-          symbol = instance2: SealedGeneric<out kotlin.CharSequence>
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = instance2
+        receiverType = null
+        returnType = SealedGeneric<out kotlin.CharSequence>
+        symbol = instance2: SealedGeneric<out kotlin.CharSequence>
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -591,64 +578,61 @@ KtReturnExpression(538,560): 'return instance2.prop2'
 KtDotQualifiedExpression(545,560): 'instance2.prop2'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaSmartCastedReceiverValue:
+        original = KaExplicitReceiverValue:
+          expression = instance2
+          isSafeNavigation = false
+          type = SealedGeneric<out kotlin.CharSequence>
+        type = SealedGeneric.SGOption2<kotlin.CharSequence>
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaSmartCastedReceiverValue:
-          original = KaExplicitReceiverValue:
-            expression = instance2
-            isSafeNavigation = false
-            type = SealedGeneric<out kotlin.CharSequence>
-          type = SealedGeneric.SGOption2<kotlin.CharSequence>
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = prop2
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = val prop2: kotlin.Int
-          contextParameters = []
-          callableId = /SealedGeneric.SGOption2.prop2
+      signature = KaVariableSignature:
+        name = prop2
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = val prop2: kotlin.Int
+        contextParameters = []
+        callableId = /SealedGeneric.SGOption2.prop2
       simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(545,554): 'instance2'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = instance2
-          receiverType = null
-          returnType = SealedGeneric<out kotlin.CharSequence>
-          symbol = instance2: SealedGeneric<out kotlin.CharSequence>
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = instance2
+        receiverType = null
+        returnType = SealedGeneric<out kotlin.CharSequence>
+        symbol = instance2: SealedGeneric<out kotlin.CharSequence>
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(555,560): 'prop2'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaSmartCastedReceiverValue:
+        original = KaExplicitReceiverValue:
+          expression = instance2
+          isSafeNavigation = false
+          type = SealedGeneric<out kotlin.CharSequence>
+        type = SealedGeneric.SGOption2<kotlin.CharSequence>
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaSmartCastedReceiverValue:
-          original = KaExplicitReceiverValue:
-            expression = instance2
-            isSafeNavigation = false
-            type = SealedGeneric<out kotlin.CharSequence>
-          type = SealedGeneric.SGOption2<kotlin.CharSequence>
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = prop2
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = val prop2: kotlin.Int
-          contextParameters = []
-          callableId = /SealedGeneric.SGOption2.prop2
+      signature = KaVariableSignature:
+        name = prop2
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = val prop2: kotlin.Int
+        contextParameters = []
+        callableId = /SealedGeneric.SGOption2.prop2
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -664,18 +648,17 @@ KtIsExpression(575,614): 'instance2 is SGOption2<in CharSequence>'
 KtNameReferenceExpression(575,584): 'instance2'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = instance2
-          receiverType = null
-          returnType = SealedGeneric<out kotlin.CharSequence>
-          symbol = instance2: SealedGeneric<out kotlin.CharSequence>
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = instance2
+        receiverType = null
+        returnType = SealedGeneric<out kotlin.CharSequence>
+        symbol = instance2: SealedGeneric<out kotlin.CharSequence>
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -721,64 +704,61 @@ KtReturnExpression(626,648): 'return instance2.prop2'
 KtDotQualifiedExpression(633,648): 'instance2.prop2'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaSmartCastedReceiverValue:
+        original = KaExplicitReceiverValue:
+          expression = instance2
+          isSafeNavigation = false
+          type = SealedGeneric<out kotlin.CharSequence>
+        type = it(SealedGeneric.SGOption2<in kotlin.CharSequence> & SealedGeneric<out kotlin.CharSequence>)
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaSmartCastedReceiverValue:
-          original = KaExplicitReceiverValue:
-            expression = instance2
-            isSafeNavigation = false
-            type = SealedGeneric<out kotlin.CharSequence>
-          type = it(SealedGeneric.SGOption2<in kotlin.CharSequence> & SealedGeneric<out kotlin.CharSequence>)
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = prop2
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = val prop2: kotlin.Int
-          contextParameters = []
-          callableId = /SealedGeneric.SGOption2.prop2
+      signature = KaVariableSignature:
+        name = prop2
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = val prop2: kotlin.Int
+        contextParameters = []
+        callableId = /SealedGeneric.SGOption2.prop2
       simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(633,642): 'instance2'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = instance2
-          receiverType = null
-          returnType = SealedGeneric<out kotlin.CharSequence>
-          symbol = instance2: SealedGeneric<out kotlin.CharSequence>
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = instance2
+        receiverType = null
+        returnType = SealedGeneric<out kotlin.CharSequence>
+        symbol = instance2: SealedGeneric<out kotlin.CharSequence>
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(643,648): 'prop2'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaSmartCastedReceiverValue:
+        original = KaExplicitReceiverValue:
+          expression = instance2
+          isSafeNavigation = false
+          type = SealedGeneric<out kotlin.CharSequence>
+        type = it(SealedGeneric.SGOption2<in kotlin.CharSequence> & SealedGeneric<out kotlin.CharSequence>)
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaSmartCastedReceiverValue:
-          original = KaExplicitReceiverValue:
-            expression = instance2
-            isSafeNavigation = false
-            type = SealedGeneric<out kotlin.CharSequence>
-          type = it(SealedGeneric.SGOption2<in kotlin.CharSequence> & SealedGeneric<out kotlin.CharSequence>)
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = prop2
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = val prop2: kotlin.Int
-          contextParameters = []
-          callableId = /SealedGeneric.SGOption2.prop2
+      signature = KaVariableSignature:
+        name = prop2
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = val prop2: kotlin.Int
+        contextParameters = []
+        callableId = /SealedGeneric.SGOption2.prop2
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -794,18 +774,17 @@ KtIsExpression(663,703): 'instance2 is SGOption2<out CharSequence>'
 KtNameReferenceExpression(663,672): 'instance2'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = instance2
-          receiverType = null
-          returnType = SealedGeneric<out kotlin.CharSequence>
-          symbol = instance2: SealedGeneric<out kotlin.CharSequence>
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = instance2
+        receiverType = null
+        returnType = SealedGeneric<out kotlin.CharSequence>
+        symbol = instance2: SealedGeneric<out kotlin.CharSequence>
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -851,64 +830,61 @@ KtReturnExpression(715,737): 'return instance2.prop2'
 KtDotQualifiedExpression(722,737): 'instance2.prop2'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaSmartCastedReceiverValue:
+        original = KaExplicitReceiverValue:
+          expression = instance2
+          isSafeNavigation = false
+          type = SealedGeneric<out kotlin.CharSequence>
+        type = SealedGeneric.SGOption2<out kotlin.CharSequence>
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaSmartCastedReceiverValue:
-          original = KaExplicitReceiverValue:
-            expression = instance2
-            isSafeNavigation = false
-            type = SealedGeneric<out kotlin.CharSequence>
-          type = SealedGeneric.SGOption2<out kotlin.CharSequence>
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = prop2
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = val prop2: kotlin.Int
-          contextParameters = []
-          callableId = /SealedGeneric.SGOption2.prop2
+      signature = KaVariableSignature:
+        name = prop2
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = val prop2: kotlin.Int
+        contextParameters = []
+        callableId = /SealedGeneric.SGOption2.prop2
       simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(722,731): 'instance2'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = instance2
-          receiverType = null
-          returnType = SealedGeneric<out kotlin.CharSequence>
-          symbol = instance2: SealedGeneric<out kotlin.CharSequence>
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = instance2
+        receiverType = null
+        returnType = SealedGeneric<out kotlin.CharSequence>
+        symbol = instance2: SealedGeneric<out kotlin.CharSequence>
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(732,737): 'prop2'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaSmartCastedReceiverValue:
+        original = KaExplicitReceiverValue:
+          expression = instance2
+          isSafeNavigation = false
+          type = SealedGeneric<out kotlin.CharSequence>
+        type = SealedGeneric.SGOption2<out kotlin.CharSequence>
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaSmartCastedReceiverValue:
-          original = KaExplicitReceiverValue:
-            expression = instance2
-            isSafeNavigation = false
-            type = SealedGeneric<out kotlin.CharSequence>
-          type = SealedGeneric.SGOption2<out kotlin.CharSequence>
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = prop2
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = val prop2: kotlin.Int
-          contextParameters = []
-          callableId = /SealedGeneric.SGOption2.prop2
+      signature = KaVariableSignature:
+        name = prop2
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = val prop2: kotlin.Int
+        contextParameters = []
+        callableId = /SealedGeneric.SGOption2.prop2
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -966,18 +942,17 @@ KtWhenExpression(810,885): 'when(a) {'
 KtNameReferenceExpression(815,816): 'a'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = a
-          receiverType = null
-          returnType = SealedGeneric<T>
-          symbol = a: SealedGeneric<T>
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = a
+        receiverType = null
+        returnType = SealedGeneric<T>
+        symbol = a: SealedGeneric<T>
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -1035,18 +1010,17 @@ KtWhenExpression(891,966): 'when(a) {'
 KtNameReferenceExpression(896,897): 'a'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = a
-          receiverType = null
-          returnType = SealedGeneric<T>
-          symbol = a: SealedGeneric<T>
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = a
+        receiverType = null
+        returnType = SealedGeneric<T>
+        symbol = a: SealedGeneric<T>
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -1185,18 +1159,17 @@ KtWhenExpression(1049,1118): 'when(a) {'
 KtNameReferenceExpression(1054,1055): 'a'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = a
-          receiverType = null
-          returnType = SealedGeneric<kotlin.String>
-          symbol = a: SealedGeneric<kotlin.String>
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = a
+        receiverType = null
+        returnType = SealedGeneric<kotlin.String>
+        symbol = a: SealedGeneric<kotlin.String>
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -1242,18 +1215,17 @@ KtBinaryExpressionWithTypeRHS(1124,1138): 'b as SGOption1'
 KtNameReferenceExpression(1124,1125): 'b'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = b
-          receiverType = null
-          returnType = SealedGeneric<kotlin.String>
-          symbol = b: SealedGeneric<kotlin.String>
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = b
+        receiverType = null
+        returnType = SealedGeneric<kotlin.String>
+        symbol = b: SealedGeneric<kotlin.String>
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -1320,18 +1292,17 @@ KtBinaryExpressionWithTypeRHS(1210,1232): 'a as SGOption1<String>'
 KtNameReferenceExpression(1210,1211): 'a'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = a
-          receiverType = null
-          returnType = SealedGeneric<*>
-          symbol = a: SealedGeneric<*>
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = a
+        receiverType = null
+        returnType = SealedGeneric<*>
+        symbol = a: SealedGeneric<*>
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -1374,18 +1345,17 @@ KtIsExpression(1241,1263): 'b is SGOption1<String>'
 KtNameReferenceExpression(1241,1242): 'b'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = b
-          receiverType = null
-          returnType = SealedGeneric<*>
-          symbol = b: SealedGeneric<*>
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = b
+        receiverType = null
+        returnType = SealedGeneric<*>
+        symbol = b: SealedGeneric<*>
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
 

@@ -24,40 +24,39 @@ KtCallExpression(191,224): 'function(1, { s -> true }, "str")'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = /function(a: O1, b: kotlin.Function1<kotlin.Int, kotlin.Boolean>, c: T1): kotlin.Unit
-          valueParameters = [
-            KaVariableSignature:
-              name = a
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = a: O1
-              contextParameters = []
-              callableId = null,
-            KaVariableSignature:
-              name = b
-              receiverType = null
-              returnType = kotlin.Function1<kotlin.Int, kotlin.Boolean>
-              symbol = b: kotlin.Function1<kotlin.Int, kotlin.Boolean>
-              contextParameters = []
-              callableId = null,
-            KaVariableSignature:
-              name = c
-              receiverType = null
-              returnType = kotlin.String
-              symbol = c: T1
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /function
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /function(a: O1, b: kotlin.Function1<kotlin.Int, kotlin.Boolean>, c: T1): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = a
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = a: O1
+            contextParameters = []
+            callableId = null,
+          KaVariableSignature:
+            name = b
+            receiverType = null
+            returnType = kotlin.Function1<kotlin.Int, kotlin.Boolean>
+            symbol = b: kotlin.Function1<kotlin.Int, kotlin.Boolean>
+            contextParameters = []
+            callableId = null,
+          KaVariableSignature:
+            name = c
+            receiverType = null
+            returnType = kotlin.String
+            symbol = c: T1
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /function
       typeArgumentsMapping = {
         T1 -> (kotlin.String),
         O1 -> (kotlin.Int)
@@ -89,40 +88,39 @@ KtCallExpression(191,224): 'function(1, { s -> true }, "str")'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = /function(a: O2, b: kotlin.Function1<kotlin.String, kotlin.Boolean>, c: T2): kotlin.Unit
-          valueParameters = [
-            KaVariableSignature:
-              name = a
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = a: O2
-              contextParameters = []
-              callableId = null,
-            KaVariableSignature:
-              name = b
-              receiverType = null
-              returnType = kotlin.Function1<kotlin.String, kotlin.Boolean>
-              symbol = b: kotlin.Function1<kotlin.String, kotlin.Boolean>
-              contextParameters = []
-              callableId = null,
-            KaVariableSignature:
-              name = c
-              receiverType = null
-              returnType = kotlin.String
-              symbol = c: T2
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /function
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /function(a: O2, b: kotlin.Function1<kotlin.String, kotlin.Boolean>, c: T2): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = a
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = a: O2
+            contextParameters = []
+            callableId = null,
+          KaVariableSignature:
+            name = b
+            receiverType = null
+            returnType = kotlin.Function1<kotlin.String, kotlin.Boolean>
+            symbol = b: kotlin.Function1<kotlin.String, kotlin.Boolean>
+            contextParameters = []
+            callableId = null,
+          KaVariableSignature:
+            name = c
+            receiverType = null
+            returnType = kotlin.String
+            symbol = c: T2
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /function
       typeArgumentsMapping = {
         T2 -> (kotlin.String),
         O2 -> (kotlin.Int)
@@ -154,40 +152,39 @@ KtCallExpression(191,224): 'function(1, { s -> true }, "str")'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = /function(a: O3, b: kotlin.String, c: T3): kotlin.Unit
-          valueParameters = [
-            KaVariableSignature:
-              name = a
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = a: O3
-              contextParameters = []
-              callableId = null,
-            KaVariableSignature:
-              name = b
-              receiverType = null
-              returnType = kotlin.String
-              symbol = b: kotlin.String
-              contextParameters = []
-              callableId = null,
-            KaVariableSignature:
-              name = c
-              receiverType = null
-              returnType = kotlin.String
-              symbol = c: T3
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /function
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /function(a: O3, b: kotlin.String, c: T3): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = a
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = a: O3
+            contextParameters = []
+            callableId = null,
+          KaVariableSignature:
+            name = b
+            receiverType = null
+            returnType = kotlin.String
+            symbol = b: kotlin.String
+            contextParameters = []
+            callableId = null,
+          KaVariableSignature:
+            name = c
+            receiverType = null
+            returnType = kotlin.String
+            symbol = c: T3
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /function
       typeArgumentsMapping = {
         T3 -> (kotlin.String),
         O3 -> (kotlin.Int)

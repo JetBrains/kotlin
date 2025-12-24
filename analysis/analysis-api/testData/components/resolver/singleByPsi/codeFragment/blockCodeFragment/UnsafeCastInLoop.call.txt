@@ -3,21 +3,20 @@ KtNameReferenceExpression(218,221): 'inc'
     candidateCalls = [
       KaSimpleFunctionCall:
         argumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = num
+          isSafeNavigation = false
+          type = kotlin.Int?
+        extensionReceiver = null
         isImplicitInvoke = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = KaExplicitReceiverValue:
-            expression = num
-            isSafeNavigation = false
-            type = kotlin.Int?
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = kotlin.Int
-            symbol = kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int
-            valueParameters = []
-            contextParameters = []
-            callableId = kotlin/Int.inc
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int
+          valueParameters = []
+          contextParameters = []
+          callableId = kotlin/Int.inc
         typeArgumentsMapping = {}
     ]
     diagnostic = ERROR<UNSAFE_CALL: Only safe (?.) or non-null asserted (!!.) calls are allowed on a nullable receiver of type 'Int?'.>

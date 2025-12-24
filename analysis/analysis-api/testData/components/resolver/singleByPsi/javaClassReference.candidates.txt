@@ -2,33 +2,32 @@ KtCallExpression(31,44): 'Array<String>'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Array<T>
-          symbol = <constructor>(size: kotlin.Int, init: (kotlin.Int) -> T): kotlin.Array<T>
-          valueParameters = [
-            KaVariableSignature:
-              name = size
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = size: kotlin.Int
-              contextParameters = []
-              callableId = null,
-            KaVariableSignature:
-              name = init
-              receiverType = null
-              returnType = (kotlin.Int) -> T
-              symbol = init: (kotlin.Int) -> T
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Array<T>
+        symbol = <constructor>(size: kotlin.Int, init: (kotlin.Int) -> T): kotlin.Array<T>
+        valueParameters = [
+          KaVariableSignature:
+            name = size
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = size: kotlin.Int
+            contextParameters = []
+            callableId = null,
+          KaVariableSignature:
+            name = init
+            receiverType = null
+            returnType = (kotlin.Int) -> T
+            symbol = init: (kotlin.Int) -> T
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {
         T -> (kotlin.String)
       }

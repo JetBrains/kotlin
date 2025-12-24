@@ -271,18 +271,17 @@ KtNameReferenceExpression(314,318): 'Left'
 KtNameReferenceExpression(322,329): 'default'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = default
-          receiverType = null
-          returnType = A
-          symbol = default: A
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = default
+        receiverType = null
+        returnType = A
+        symbol = default: A
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -304,47 +303,46 @@ KtNameReferenceExpression(337,342): 'Right'
 KtNameReferenceExpression(346,351): 'value'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
-      isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaSmartCastedReceiverValue:
-          original = KaImplicitReceiverValue:
-            symbol = KaReceiverParameterSymbol:
+      contextArguments = []
+      dispatchReceiver = KaSmartCastedReceiverValue:
+        original = KaImplicitReceiverValue:
+          symbol = KaReceiverParameterSymbol:
+            annotations: []
+            callableId: null
+            compilerVisibility: Public
+            contextReceivers: []
+            isActual: false
+            isExpect: false
+            isExtension: false
+            isVal: true
+            location: LOCAL
+            modality: FINAL
+            name: <receiver>
+            origin: SOURCE
+            owningCallableSymbol: KaNamedFunctionSymbol(/getOrElse)
+            receiverParameter: null
+            returnType: KaUsualClassType:
               annotations: []
-              callableId: null
-              compilerVisibility: Public
-              contextReceivers: []
-              isActual: false
-              isExpect: false
-              isExtension: false
-              isVal: true
-              location: LOCAL
-              modality: FINAL
-              name: <receiver>
-              origin: SOURCE
-              owningCallableSymbol: KaNamedFunctionSymbol(/getOrElse)
-              receiverParameter: null
-              returnType: KaUsualClassType:
-                annotations: []
-                typeArguments: [
-                  KaTypeParameterType:
-                    annotations: []
-                    type: E
-                  KaTypeParameterType:
-                    annotations: []
-                    type: A
-                ]
-                type: Either<E, A>
-              visibility: PUBLIC
-            type = Either<E, A>
-          type = Either.Right<A>
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = value
-          receiverType = null
-          returnType = A
-          symbol = val value: A
-          contextParameters = []
-          callableId = /Either.Right.value
+              typeArguments: [
+                KaTypeParameterType:
+                  annotations: []
+                  type: E
+                KaTypeParameterType:
+                  annotations: []
+                  type: A
+              ]
+              type: Either<E, A>
+            visibility: PUBLIC
+          type = Either<E, A>
+        type = Either.Right<A>
+      extensionReceiver = null
+      isContextSensitive = false
+      signature = KaVariableSignature:
+        name = value
+        receiverType = null
+        returnType = A
+        symbol = val value: A
+        contextParameters = []
+        callableId = /Either.Right.value
       simpleAccess = Read
       typeArgumentsMapping = {}

@@ -1,19 +1,18 @@
 KtCallExpression(202,209): '(foo)()'
   KaSimpleFunctionCall:
     argumentMapping = {}
+    contextArguments = []
+    dispatchReceiver = KaExplicitReceiverValue:
+      expression = (foo)
+      isSafeNavigation = false
+      type = r.MyClass
+    extensionReceiver = null
     isImplicitInvoke = true
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      contextArguments = []
-      dispatchReceiver = KaExplicitReceiverValue:
-        expression = (foo)
-        isSafeNavigation = false
-        type = r.MyClass
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = r.MyClass
-        symbol = r/MyClass.invoke(<dispatch receiver>: r.MyClass): r.MyClass
-        valueParameters = []
-        contextParameters = []
-        callableId = r/MyClass.invoke
+    signature = KaFunctionSignature:
+      receiverType = null
+      returnType = r.MyClass
+      symbol = r/MyClass.invoke(<dispatch receiver>: r.MyClass): r.MyClass
+      valueParameters = []
+      contextParameters = []
+      callableId = r/MyClass.invoke
     typeArgumentsMapping = {}

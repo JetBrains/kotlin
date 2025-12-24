@@ -2,28 +2,27 @@ KtCallableReferenceExpression(141,150): 'list::add'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = list
+        isSafeNavigation = false
+        type = kotlin.collections.MutableList<kotlin.String>
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = list
-          isSafeNavigation = false
-          type = kotlin.collections.MutableList<kotlin.String>
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Boolean
-          symbol = kotlin/collections/MutableList.add(<dispatch receiver>: kotlin.collections.MutableList<E>, element: E): kotlin.Boolean
-          valueParameters = [
-            KaVariableSignature:
-              name = element
-              receiverType = null
-              returnType = kotlin.String
-              symbol = element: E
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/collections/MutableList.add
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Boolean
+        symbol = kotlin/collections/MutableList.add(<dispatch receiver>: kotlin.collections.MutableList<E>, element: E): kotlin.Boolean
+        valueParameters = [
+          KaVariableSignature:
+            name = element
+            receiverType = null
+            returnType = kotlin.String
+            symbol = element: E
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/collections/MutableList.add
       typeArgumentsMapping = {}
     isInBestCandidates = true

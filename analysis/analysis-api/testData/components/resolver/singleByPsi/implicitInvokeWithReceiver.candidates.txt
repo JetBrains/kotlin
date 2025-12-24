@@ -10,29 +10,28 @@ KtDotQualifiedExpression(107,113): 'a.x(1)'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = a
+        isSafeNavigation = false
+        type = A
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = a
-          isSafeNavigation = false
-          type = A
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = /A.x(<dispatch receiver>: A, b: kotlin.Boolean): kotlin.Unit
-          valueParameters = [
-            KaVariableSignature:
-              name = b
-              receiverType = null
-              returnType = kotlin.Boolean
-              symbol = b: kotlin.Boolean
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /A.x
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /A.x(<dispatch receiver>: A, b: kotlin.Boolean): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = b
+            receiverType = null
+            returnType = kotlin.Boolean
+            symbol = b: kotlin.Boolean
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /A.x
       typeArgumentsMapping = {}
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Boolean' was expected.>
     isInBestCandidates = false
@@ -48,28 +47,27 @@ KtDotQualifiedExpression(107,113): 'a.x(1)'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = x
+        isSafeNavigation = false
+        type = kotlin.Int
       isImplicitInvoke = true
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = KaExplicitReceiverValue:
-          expression = x
-          isSafeNavigation = false
-          type = kotlin.Int
-        signature = KaFunctionSignature:
-          receiverType = kotlin.Int
-          returnType = kotlin.Unit
-          symbol = /invoke(<extension receiver>: kotlin.Int, i: kotlin.Int): kotlin.Unit
-          valueParameters = [
-            KaVariableSignature:
-              name = i
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = i: kotlin.Int
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /invoke
+      signature = KaFunctionSignature:
+        receiverType = kotlin.Int
+        returnType = kotlin.Unit
+        symbol = /invoke(<extension receiver>: kotlin.Int, i: kotlin.Int): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = i
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = i: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /invoke
       typeArgumentsMapping = {}
     isInBestCandidates = true

@@ -16,31 +16,30 @@ KtCallExpression(53,79): 'function(b = "foo", a = 1)'
         contextParameters = []
         callableId = null)
     }
+    contextArguments = []
+    dispatchReceiver = null
+    extensionReceiver = null
     isImplicitInvoke = false
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      contextArguments = []
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = kotlin.Unit
-        symbol = /function(a: kotlin.Int, b: kotlin.String): kotlin.Unit
-        valueParameters = [
-          KaVariableSignature:
-            name = a
-            receiverType = null
-            returnType = kotlin.Int
-            symbol = a: kotlin.Int
-            contextParameters = []
-            callableId = null,
-          KaVariableSignature:
-            name = b
-            receiverType = null
-            returnType = kotlin.String
-            symbol = b: kotlin.String
-            contextParameters = []
-            callableId = null
-        ]
-        contextParameters = []
-        callableId = /function
+    signature = KaFunctionSignature:
+      receiverType = null
+      returnType = kotlin.Unit
+      symbol = /function(a: kotlin.Int, b: kotlin.String): kotlin.Unit
+      valueParameters = [
+        KaVariableSignature:
+          name = a
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = a: kotlin.Int
+          contextParameters = []
+          callableId = null,
+        KaVariableSignature:
+          name = b
+          receiverType = null
+          returnType = kotlin.String
+          symbol = b: kotlin.String
+          contextParameters = []
+          callableId = null
+      ]
+      contextParameters = []
+      callableId = /function
     typeArgumentsMapping = {}

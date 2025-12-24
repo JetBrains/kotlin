@@ -10,25 +10,24 @@ KtNameReferenceExpression(127,136): 'dummyTest'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.String
-          symbol = test/dummyTest(value: test.Test): kotlin.String
-          valueParameters = [
-            KaVariableSignature:
-              name = value
-              receiverType = null
-              returnType = test.Test
-              symbol = value: test.Test
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = test/dummyTest
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.String
+        symbol = test/dummyTest(value: test.Test): kotlin.String
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = test.Test
+            symbol = value: test.Test
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = test/dummyTest
       typeArgumentsMapping = {}
     isInBestCandidates = true

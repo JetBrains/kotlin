@@ -2,21 +2,20 @@
   KtNameReferenceExpression(147,156): 'something'
     KaApplicableCallCandidateInfo:
       candidate = KaSimpleVariableAccessCall:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = javaClass
+          isSafeNavigation = false
+          type = JavaClass
+        extensionReceiver = null
         isContextSensitive = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = KaExplicitReceiverValue:
-            expression = javaClass
-            isSafeNavigation = false
-            type = JavaClass
-          extensionReceiver = null
-          signature = KaVariableSignature:
-            name = something
-            receiverType = null
-            returnType = kotlin.Int
-            symbol = var something: kotlin.Int
-            contextParameters = []
-            callableId = /JavaClass.something
+        signature = KaVariableSignature:
+          name = something
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = var something: kotlin.Int
+          contextParameters = []
+          callableId = /JavaClass.something
         simpleAccess = Read
         typeArgumentsMapping = {}
       isInBestCandidates = true
@@ -25,21 +24,20 @@
   KtNameReferenceExpression(172,181): 'something'
     KaApplicableCallCandidateInfo:
       candidate = KaSimpleVariableAccessCall:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = javaClass
+          isSafeNavigation = false
+          type = JavaClass
+        extensionReceiver = null
         isContextSensitive = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = KaExplicitReceiverValue:
-            expression = javaClass
-            isSafeNavigation = false
-            type = JavaClass
-          extensionReceiver = null
-          signature = KaVariableSignature:
-            name = something
-            receiverType = null
-            returnType = kotlin.Int
-            symbol = var something: kotlin.Int
-            contextParameters = []
-            callableId = /JavaClass.something
+        signature = KaVariableSignature:
+          name = something
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = var something: kotlin.Int
+          contextParameters = []
+          callableId = /JavaClass.something
         simpleAccess = Write:
           value = 1
         typeArgumentsMapping = {}
@@ -49,21 +47,20 @@
   KtNameReferenceExpression(200,209): 'something'
     KaApplicableCallCandidateInfo:
       candidate = KaSimpleVariableAccessCall:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = javaClass
+          isSafeNavigation = false
+          type = JavaClass
+        extensionReceiver = null
         isContextSensitive = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = KaExplicitReceiverValue:
-            expression = javaClass
-            isSafeNavigation = false
-            type = JavaClass
-          extensionReceiver = null
-          signature = KaVariableSignature:
-            name = something
-            receiverType = null
-            returnType = kotlin.Int
-            symbol = var something: kotlin.Int
-            contextParameters = []
-            callableId = /JavaClass.something
+        signature = KaVariableSignature:
+          name = something
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = var something: kotlin.Int
+          contextParameters = []
+          callableId = /JavaClass.something
         simpleAccess = Read
         typeArgumentsMapping = {}
       isInBestCandidates = true
@@ -72,21 +69,20 @@
   KtNameReferenceExpression(229,238): 'something'
     KaApplicableCallCandidateInfo:
       candidate = KaSimpleVariableAccessCall:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = javaClass
+          isSafeNavigation = false
+          type = JavaClass
+        extensionReceiver = null
         isContextSensitive = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = KaExplicitReceiverValue:
-            expression = javaClass
-            isSafeNavigation = false
-            type = JavaClass
-          extensionReceiver = null
-          signature = KaVariableSignature:
-            name = something
-            receiverType = null
-            returnType = kotlin.Int
-            symbol = var something: kotlin.Int
-            contextParameters = []
-            callableId = /JavaClass.something
+        signature = KaVariableSignature:
+          name = something
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = var something: kotlin.Int
+          contextParameters = []
+          callableId = /JavaClass.something
         simpleAccess = Read
         typeArgumentsMapping = {}
       isInBestCandidates = true
@@ -95,21 +91,20 @@
   KtNameReferenceExpression(257,266): 'something'
     KaApplicableCallCandidateInfo:
       candidate = KaSimpleVariableAccessCall:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = javaClass
+          isSafeNavigation = false
+          type = JavaClass
+        extensionReceiver = null
         isContextSensitive = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = KaExplicitReceiverValue:
-            expression = javaClass
-            isSafeNavigation = false
-            type = JavaClass
-          extensionReceiver = null
-          signature = KaVariableSignature:
-            name = something
-            receiverType = null
-            returnType = kotlin.Int
-            symbol = var something: kotlin.Int
-            contextParameters = []
-            callableId = /JavaClass.something
+        signature = KaVariableSignature:
+          name = something
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = var something: kotlin.Int
+          contextParameters = []
+          callableId = /JavaClass.something
         simpleAccess = Write:
           value = --
         typeArgumentsMapping = {}
@@ -119,39 +114,38 @@
   KtNameReferenceExpression(271,280): 'something'
     KaApplicableCallCandidateInfo:
       candidate = KaSimpleVariableAccessCall:
-        isContextSensitive = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = KaImplicitReceiverValue:
-            symbol = KaReceiverParameterSymbol:
+        contextArguments = []
+        dispatchReceiver = KaImplicitReceiverValue:
+          symbol = KaReceiverParameterSymbol:
+            annotations: []
+            callableId: null
+            compilerVisibility: Public
+            contextReceivers: []
+            isActual: false
+            isExpect: false
+            isExtension: false
+            isVal: true
+            location: LOCAL
+            modality: FINAL
+            name: <receiver>
+            origin: SOURCE
+            owningCallableSymbol: KaNamedFunctionSymbol(/foo)
+            receiverParameter: null
+            returnType: KaUsualClassType:
               annotations: []
-              callableId: null
-              compilerVisibility: Public
-              contextReceivers: []
-              isActual: false
-              isExpect: false
-              isExtension: false
-              isVal: true
-              location: LOCAL
-              modality: FINAL
-              name: <receiver>
-              origin: SOURCE
-              owningCallableSymbol: KaNamedFunctionSymbol(/foo)
-              receiverParameter: null
-              returnType: KaUsualClassType:
-                annotations: []
-                typeArguments: []
-                type: JavaClass
-              visibility: PUBLIC
-            type = JavaClass
-          extensionReceiver = null
-          signature = KaVariableSignature:
-            name = something
-            receiverType = null
-            returnType = kotlin.Int
-            symbol = var something: kotlin.Int
-            contextParameters = []
-            callableId = /JavaClass.something
+              typeArguments: []
+              type: JavaClass
+            visibility: PUBLIC
+          type = JavaClass
+        extensionReceiver = null
+        isContextSensitive = false
+        signature = KaVariableSignature:
+          name = something
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = var something: kotlin.Int
+          contextParameters = []
+          callableId = /JavaClass.something
         simpleAccess = Read
         typeArgumentsMapping = {}
       isInBestCandidates = true
@@ -160,44 +154,42 @@
   KtNameReferenceExpression(384,393): 'something'
     KaApplicableCallCandidateInfo:
       candidate = KaSimpleVariableAccessCall:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = kotlinClass
+          isSafeNavigation = false
+          type = KotlinClass
+        extensionReceiver = null
         isContextSensitive = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = KaExplicitReceiverValue:
-            expression = kotlinClass
-            isSafeNavigation = false
-            type = KotlinClass
-          extensionReceiver = null
-          signature = KaVariableSignature:
-            name = something
-            receiverType = null
-            returnType = kotlin.Int
-            symbol = var something: kotlin.Int
-            contextParameters = []
-            callableId = /KotlinClass.something
+        signature = KaVariableSignature:
+          name = something
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = var something: kotlin.Int
+          contextParameters = []
+          callableId = /KotlinClass.something
         simpleAccess = Read
         typeArgumentsMapping = {}
       isInBestCandidates = false
 
     KaApplicableCallCandidateInfo:
       candidate = KaSimpleVariableAccessCall:
+        contextArguments = []
+        dispatchReceiver = KaSmartCastedReceiverValue:
+          original = KaExplicitReceiverValue:
+            expression = kotlinClass
+            isSafeNavigation = false
+            type = KotlinClass
+          type = JavaClass
+        extensionReceiver = null
         isContextSensitive = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = KaSmartCastedReceiverValue:
-            original = KaExplicitReceiverValue:
-              expression = kotlinClass
-              isSafeNavigation = false
-              type = KotlinClass
-            type = JavaClass
-          extensionReceiver = null
-          signature = KaVariableSignature:
-            name = something
-            receiverType = null
-            returnType = kotlin.Int
-            symbol = var something: kotlin.Int
-            contextParameters = []
-            callableId = /JavaClass.something
+        signature = KaVariableSignature:
+          name = something
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = var something: kotlin.Int
+          contextParameters = []
+          callableId = /JavaClass.something
         simpleAccess = Read
         typeArgumentsMapping = {}
       isInBestCandidates = true
@@ -206,23 +198,22 @@
   KtNameReferenceExpression(415,424): 'something'
     KaApplicableCallCandidateInfo:
       candidate = KaSimpleVariableAccessCall:
+        contextArguments = []
+        dispatchReceiver = KaSmartCastedReceiverValue:
+          original = KaExplicitReceiverValue:
+            expression = kotlinClass
+            isSafeNavigation = false
+            type = KotlinClass
+          type = JavaClass
+        extensionReceiver = null
         isContextSensitive = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = KaSmartCastedReceiverValue:
-            original = KaExplicitReceiverValue:
-              expression = kotlinClass
-              isSafeNavigation = false
-              type = KotlinClass
-            type = JavaClass
-          extensionReceiver = null
-          signature = KaVariableSignature:
-            name = something
-            receiverType = null
-            returnType = kotlin.Int
-            symbol = var something: kotlin.Int
-            contextParameters = []
-            callableId = /JavaClass.something
+        signature = KaVariableSignature:
+          name = something
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = var something: kotlin.Int
+          contextParameters = []
+          callableId = /JavaClass.something
         simpleAccess = Write:
           value = 1
         typeArgumentsMapping = {}
@@ -232,21 +223,20 @@
   KtNameReferenceExpression(449,458): 'something'
     KaApplicableCallCandidateInfo:
       candidate = KaSimpleVariableAccessCall:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = kotlinClass
+          isSafeNavigation = false
+          type = JavaClass
+        extensionReceiver = null
         isContextSensitive = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = KaExplicitReceiverValue:
-            expression = kotlinClass
-            isSafeNavigation = false
-            type = JavaClass
-          extensionReceiver = null
-          signature = KaVariableSignature:
-            name = something
-            receiverType = null
-            returnType = kotlin.Int
-            symbol = var something: kotlin.Int
-            contextParameters = []
-            callableId = /JavaClass.something
+        signature = KaVariableSignature:
+          name = something
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = var something: kotlin.Int
+          contextParameters = []
+          callableId = /JavaClass.something
         simpleAccess = Read
         typeArgumentsMapping = {}
       isInBestCandidates = true
@@ -255,21 +245,20 @@
   KtNameReferenceExpression(484,493): 'something'
     KaApplicableCallCandidateInfo:
       candidate = KaSimpleVariableAccessCall:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = kotlinClass
+          isSafeNavigation = false
+          type = JavaClass
+        extensionReceiver = null
         isContextSensitive = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = KaExplicitReceiverValue:
-            expression = kotlinClass
-            isSafeNavigation = false
-            type = JavaClass
-          extensionReceiver = null
-          signature = KaVariableSignature:
-            name = something
-            receiverType = null
-            returnType = kotlin.Int
-            symbol = var something: kotlin.Int
-            contextParameters = []
-            callableId = /JavaClass.something
+        signature = KaVariableSignature:
+          name = something
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = var something: kotlin.Int
+          contextParameters = []
+          callableId = /JavaClass.something
         simpleAccess = Read
         typeArgumentsMapping = {}
       isInBestCandidates = true
@@ -278,21 +267,20 @@
   KtNameReferenceExpression(518,527): 'something'
     KaApplicableCallCandidateInfo:
       candidate = KaSimpleVariableAccessCall:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = kotlinClass
+          isSafeNavigation = false
+          type = JavaClass
+        extensionReceiver = null
         isContextSensitive = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = KaExplicitReceiverValue:
-            expression = kotlinClass
-            isSafeNavigation = false
-            type = JavaClass
-          extensionReceiver = null
-          signature = KaVariableSignature:
-            name = something
-            receiverType = null
-            returnType = kotlin.Int
-            symbol = var something: kotlin.Int
-            contextParameters = []
-            callableId = /JavaClass.something
+        signature = KaVariableSignature:
+          name = something
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = var something: kotlin.Int
+          contextParameters = []
+          callableId = /JavaClass.something
         simpleAccess = Write:
           value = --
         typeArgumentsMapping = {}

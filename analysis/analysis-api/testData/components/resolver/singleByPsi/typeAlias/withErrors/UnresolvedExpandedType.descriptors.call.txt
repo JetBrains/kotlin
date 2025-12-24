@@ -10,24 +10,23 @@ KtNameReferenceExpression(67,70): 'foo'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = main/foo(t: ERROR_TYPE): kotlin.Unit
-          valueParameters = [
-            KaVariableSignature:
-              name = t
-              receiverType = null
-              returnType = ERROR_TYPE
-              symbol = t: ERROR_TYPE
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = main/foo
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = main/foo(t: ERROR_TYPE): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = t
+            receiverType = null
+            returnType = ERROR_TYPE
+            symbol = t: ERROR_TYPE
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = main/foo
       typeArgumentsMapping = {}

@@ -46,11 +46,35 @@ KtBlockExpression(43,60): '{'
 KtCallExpression(49,58): 'foo(s = )'
   KaSimpleFunctionCall:
     argumentMapping = {}
+    contextArguments = []
+    dispatchReceiver = null
+    extensionReceiver = null
     isImplicitInvoke = false
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+    signature = KaFunctionSignature:
+      receiverType = null
+      returnType = kotlin.Unit
+      symbol = /foo(): kotlin.Unit
+      valueParameters = []
+      contextParameters = [
+        KaVariableSignature:
+          name = s
+          receiverType = null
+          returnType = kotlin.String
+          symbol = s: kotlin.String
+          contextParameters = []
+          callableId = null
+      ]
+      callableId = /foo
+    typeArgumentsMapping = {}
+
+KtNameReferenceExpression(49,52): 'foo'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
+      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -66,32 +90,6 @@ KtCallExpression(49,58): 'foo(s = )'
             callableId = null
         ]
         callableId = /foo
-    typeArgumentsMapping = {}
-
-KtNameReferenceExpression(49,52): 'foo'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {}
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = /foo(): kotlin.Unit
-          valueParameters = []
-          contextParameters = [
-            KaVariableSignature:
-              name = s
-              receiverType = null
-              returnType = kotlin.String
-              symbol = s: kotlin.String
-              contextParameters = []
-              callableId = null
-          ]
-          callableId = /foo
       typeArgumentsMapping = {}
 
 KtValueArgumentList(52,58): '(s = )'

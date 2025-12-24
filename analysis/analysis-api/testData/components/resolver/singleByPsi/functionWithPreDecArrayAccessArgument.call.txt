@@ -16,31 +16,30 @@ KtCallExpression(44,64): 'foo(--list[i], list)'
         contextParameters = []
         callableId = null)
     }
+    contextArguments = []
+    dispatchReceiver = null
+    extensionReceiver = null
     isImplicitInvoke = false
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      contextArguments = []
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = kotlin.Unit
-        symbol = /foo(i: kotlin.Int, list: kotlin.collections.MutableList<kotlin.Int>): kotlin.Unit
-        valueParameters = [
-          KaVariableSignature:
-            name = i
-            receiverType = null
-            returnType = kotlin.Int
-            symbol = i: kotlin.Int
-            contextParameters = []
-            callableId = null,
-          KaVariableSignature:
-            name = list
-            receiverType = null
-            returnType = kotlin.collections.MutableList<kotlin.Int>
-            symbol = list: kotlin.collections.MutableList<kotlin.Int>
-            contextParameters = []
-            callableId = null
-        ]
-        contextParameters = []
-        callableId = /foo
+    signature = KaFunctionSignature:
+      receiverType = null
+      returnType = kotlin.Unit
+      symbol = /foo(i: kotlin.Int, list: kotlin.collections.MutableList<kotlin.Int>): kotlin.Unit
+      valueParameters = [
+        KaVariableSignature:
+          name = i
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = i: kotlin.Int
+          contextParameters = []
+          callableId = null,
+        KaVariableSignature:
+          name = list
+          receiverType = null
+          returnType = kotlin.collections.MutableList<kotlin.Int>
+          symbol = list: kotlin.collections.MutableList<kotlin.Int>
+          contextParameters = []
+          callableId = null
+      ]
+      contextParameters = []
+      callableId = /foo
     typeArgumentsMapping = {}

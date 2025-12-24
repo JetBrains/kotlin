@@ -145,40 +145,39 @@ KtNameReferenceExpression(247,251): 'Left'
 KtNameReferenceExpression(255,256): 'x'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
-      isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaSmartCastedReceiverValue:
-          original = KaImplicitReceiverValue:
-            symbol = KaReceiverParameterSymbol:
+      contextArguments = []
+      dispatchReceiver = KaSmartCastedReceiverValue:
+        original = KaImplicitReceiverValue:
+          symbol = KaReceiverParameterSymbol:
+            annotations: []
+            callableId: null
+            compilerVisibility: Public
+            contextReceivers: []
+            isActual: false
+            isExpect: false
+            isExtension: false
+            isVal: true
+            location: LOCAL
+            modality: FINAL
+            name: <receiver>
+            origin: SOURCE
+            owningCallableSymbol: KaNamedFunctionSymbol(/getOrElse1)
+            receiverParameter: null
+            returnType: KaTypeParameterType:
               annotations: []
-              callableId: null
-              compilerVisibility: Public
-              contextReceivers: []
-              isActual: false
-              isExpect: false
-              isExtension: false
-              isVal: true
-              location: LOCAL
-              modality: FINAL
-              name: <receiver>
-              origin: SOURCE
-              owningCallableSymbol: KaNamedFunctionSymbol(/getOrElse1)
-              receiverParameter: null
-              returnType: KaTypeParameterType:
-                annotations: []
-                type: T
-              visibility: PUBLIC
-            type = T
-          type = it(MySealed.Left & T)
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = x
-          receiverType = null
-          returnType = kotlin.String
-          symbol = val x: kotlin.String
-          contextParameters = []
-          callableId = /MySealed.Left.x
+              type: T
+            visibility: PUBLIC
+          type = T
+        type = it(MySealed.Left & T)
+      extensionReceiver = null
+      isContextSensitive = false
+      signature = KaVariableSignature:
+        name = x
+        receiverType = null
+        returnType = kotlin.String
+        symbol = val x: kotlin.String
+        contextParameters = []
+        callableId = /MySealed.Left.x
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -200,40 +199,39 @@ KtNameReferenceExpression(264,269): 'Right'
 KtNameReferenceExpression(273,274): 'y'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
-      isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaSmartCastedReceiverValue:
-          original = KaImplicitReceiverValue:
-            symbol = KaReceiverParameterSymbol:
+      contextArguments = []
+      dispatchReceiver = KaSmartCastedReceiverValue:
+        original = KaImplicitReceiverValue:
+          symbol = KaReceiverParameterSymbol:
+            annotations: []
+            callableId: null
+            compilerVisibility: Public
+            contextReceivers: []
+            isActual: false
+            isExpect: false
+            isExtension: false
+            isVal: true
+            location: LOCAL
+            modality: FINAL
+            name: <receiver>
+            origin: SOURCE
+            owningCallableSymbol: KaNamedFunctionSymbol(/getOrElse1)
+            receiverParameter: null
+            returnType: KaTypeParameterType:
               annotations: []
-              callableId: null
-              compilerVisibility: Public
-              contextReceivers: []
-              isActual: false
-              isExpect: false
-              isExtension: false
-              isVal: true
-              location: LOCAL
-              modality: FINAL
-              name: <receiver>
-              origin: SOURCE
-              owningCallableSymbol: KaNamedFunctionSymbol(/getOrElse1)
-              receiverParameter: null
-              returnType: KaTypeParameterType:
-                annotations: []
-                type: T
-              visibility: PUBLIC
-            type = T
-          type = it(MySealed.Right & T)
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = y
-          receiverType = null
-          returnType = kotlin.String
-          symbol = val y: kotlin.String
-          contextParameters = []
-          callableId = /MySealed.Right.y
+              type: T
+            visibility: PUBLIC
+          type = T
+        type = it(MySealed.Right & T)
+      extensionReceiver = null
+      isContextSensitive = false
+      signature = KaVariableSignature:
+        name = y
+        receiverType = null
+        returnType = kotlin.String
+        symbol = val y: kotlin.String
+        contextParameters = []
+        callableId = /MySealed.Right.y
       simpleAccess = Read
       typeArgumentsMapping = {}
 

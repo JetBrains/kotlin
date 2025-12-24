@@ -10,28 +10,27 @@ KtOperationReferenceExpression(69,71): 'in'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = Foo()
+        isSafeNavigation = false
+        type = Foo
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = Foo()
-          isSafeNavigation = false
-          type = Foo
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Boolean
-          symbol = /Foo.contains(<dispatch receiver>: Foo, v: kotlin.Int): kotlin.Boolean
-          valueParameters = [
-            KaVariableSignature:
-              name = v
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = v: kotlin.Int
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /Foo.contains
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Boolean
+        symbol = /Foo.contains(<dispatch receiver>: Foo, v: kotlin.Int): kotlin.Boolean
+        valueParameters = [
+          KaVariableSignature:
+            name = v
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = v: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /Foo.contains
       typeArgumentsMapping = {}
     isInBestCandidates = true

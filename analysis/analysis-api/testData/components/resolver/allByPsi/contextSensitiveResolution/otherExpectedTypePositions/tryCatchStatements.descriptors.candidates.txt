@@ -26,18 +26,17 @@ KtSuperTypeCallEntry(128,137): 'MyClass()'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = MyClass
-          symbol = <constructor>(): MyClass
-          valueParameters = []
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MyClass
+        symbol = <constructor>(): MyClass
+        valueParameters = []
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -45,18 +44,17 @@ KtConstructorCalleeExpression(128,135): 'MyClass'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = MyClass
-          symbol = <constructor>(): MyClass
-          valueParameters = []
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MyClass
+        symbol = <constructor>(): MyClass
+        valueParameters = []
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -70,18 +68,17 @@ KtNameReferenceExpression(128,135): 'MyClass'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = MyClass
-          symbol = <constructor>(): MyClass
-          valueParameters = []
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MyClass
+        symbol = <constructor>(): MyClass
+        valueParameters = []
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -113,18 +110,17 @@ KtCallExpression(197,206): 'MyClass()'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = MyClass
-          symbol = <constructor>(): MyClass
-          valueParameters = []
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MyClass
+        symbol = <constructor>(): MyClass
+        valueParameters = []
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -132,18 +128,17 @@ KtNameReferenceExpression(197,204): 'MyClass'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = MyClass
-          symbol = <constructor>(): MyClass
-          valueParameters = []
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MyClass
+        symbol = <constructor>(): MyClass
+        valueParameters = []
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -214,18 +209,17 @@ KtSuperTypeCallEntry(372,384): 'Exception(m)'
   KaInapplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Exception
-          symbol = <constructor>(): java.lang.Exception
-          valueParameters = []
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Exception
+        symbol = <constructor>(): java.lang.Exception
+        valueParameters = []
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for public final fun `<init>`(): kotlin.Exception /* = java.lang.Exception */ defined in kotlin.Exception>
     isInBestCandidates = false
@@ -241,26 +235,25 @@ KtSuperTypeCallEntry(372,384): 'Exception(m)'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Exception
-          symbol = <constructor>(cause: kotlin.Throwable!): java.lang.Exception
-          valueParameters = [
-            KaVariableSignature:
-              name = cause
-              receiverType = null
-              returnType = kotlin.Throwable!
-              symbol = cause: kotlin.Throwable!
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Exception
+        symbol = <constructor>(cause: kotlin.Throwable!): java.lang.Exception
+        valueParameters = [
+          KaVariableSignature:
+            name = cause
+            receiverType = null
+            returnType = kotlin.Throwable!
+            symbol = cause: kotlin.Throwable!
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is String but Throwable! was expected>
     isInBestCandidates = false
@@ -276,26 +269,25 @@ KtSuperTypeCallEntry(372,384): 'Exception(m)'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Exception
-          symbol = <constructor>(message: kotlin.String!): java.lang.Exception
-          valueParameters = [
-            KaVariableSignature:
-              name = message
-              receiverType = null
-              returnType = kotlin.String!
-              symbol = message: kotlin.String!
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Exception
+        symbol = <constructor>(message: kotlin.String!): java.lang.Exception
+        valueParameters = [
+          KaVariableSignature:
+            name = message
+            receiverType = null
+            returnType = kotlin.String!
+            symbol = message: kotlin.String!
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -310,33 +302,32 @@ KtSuperTypeCallEntry(372,384): 'Exception(m)'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Exception
-          symbol = <constructor>(message: kotlin.String!, cause: kotlin.Throwable!): java.lang.Exception
-          valueParameters = [
-            KaVariableSignature:
-              name = message
-              receiverType = null
-              returnType = kotlin.String!
-              symbol = message: kotlin.String!
-              contextParameters = []
-              callableId = null,
-            KaVariableSignature:
-              name = cause
-              receiverType = null
-              returnType = kotlin.Throwable!
-              symbol = cause: kotlin.Throwable!
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Exception
+        symbol = <constructor>(message: kotlin.String!, cause: kotlin.Throwable!): java.lang.Exception
+        valueParameters = [
+          KaVariableSignature:
+            name = message
+            receiverType = null
+            returnType = kotlin.String!
+            symbol = message: kotlin.String!
+            contextParameters = []
+            callableId = null,
+          KaVariableSignature:
+            name = cause
+            receiverType = null
+            returnType = kotlin.Throwable!
+            symbol = cause: kotlin.Throwable!
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'cause'>
     isInBestCandidates = false
@@ -352,47 +343,46 @@ KtSuperTypeCallEntry(372,384): 'Exception(m)'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Exception
-          symbol = <constructor>(message: kotlin.String!, cause: kotlin.Throwable!, enableSuppression: kotlin.Boolean, writableStackTrace: kotlin.Boolean): java.lang.Exception
-          valueParameters = [
-            KaVariableSignature:
-              name = message
-              receiverType = null
-              returnType = kotlin.String!
-              symbol = message: kotlin.String!
-              contextParameters = []
-              callableId = null,
-            KaVariableSignature:
-              name = cause
-              receiverType = null
-              returnType = kotlin.Throwable!
-              symbol = cause: kotlin.Throwable!
-              contextParameters = []
-              callableId = null,
-            KaVariableSignature:
-              name = enableSuppression
-              receiverType = null
-              returnType = kotlin.Boolean
-              symbol = enableSuppression: kotlin.Boolean
-              contextParameters = []
-              callableId = null,
-            KaVariableSignature:
-              name = writableStackTrace
-              receiverType = null
-              returnType = kotlin.Boolean
-              symbol = writableStackTrace: kotlin.Boolean
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Exception
+        symbol = <constructor>(message: kotlin.String!, cause: kotlin.Throwable!, enableSuppression: kotlin.Boolean, writableStackTrace: kotlin.Boolean): java.lang.Exception
+        valueParameters = [
+          KaVariableSignature:
+            name = message
+            receiverType = null
+            returnType = kotlin.String!
+            symbol = message: kotlin.String!
+            contextParameters = []
+            callableId = null,
+          KaVariableSignature:
+            name = cause
+            receiverType = null
+            returnType = kotlin.Throwable!
+            symbol = cause: kotlin.Throwable!
+            contextParameters = []
+            callableId = null,
+          KaVariableSignature:
+            name = enableSuppression
+            receiverType = null
+            returnType = kotlin.Boolean
+            symbol = enableSuppression: kotlin.Boolean
+            contextParameters = []
+            callableId = null,
+          KaVariableSignature:
+            name = writableStackTrace
+            receiverType = null
+            returnType = kotlin.Boolean
+            symbol = writableStackTrace: kotlin.Boolean
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'cause'>
     isInBestCandidates = false
@@ -401,18 +391,17 @@ KtConstructorCalleeExpression(372,381): 'Exception'
   KaInapplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Exception
-          symbol = <constructor>(): java.lang.Exception
-          valueParameters = []
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Exception
+        symbol = <constructor>(): java.lang.Exception
+        valueParameters = []
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with <init>>
     isInBestCandidates = false
@@ -428,26 +417,25 @@ KtConstructorCalleeExpression(372,381): 'Exception'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Exception
-          symbol = <constructor>(cause: kotlin.Throwable!): java.lang.Exception
-          valueParameters = [
-            KaVariableSignature:
-              name = cause
-              receiverType = null
-              returnType = kotlin.Throwable!
-              symbol = cause: kotlin.Throwable!
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Exception
+        symbol = <constructor>(cause: kotlin.Throwable!): java.lang.Exception
+        valueParameters = [
+          KaVariableSignature:
+            name = cause
+            receiverType = null
+            returnType = kotlin.Throwable!
+            symbol = cause: kotlin.Throwable!
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with <init>>
     isInBestCandidates = false
@@ -463,26 +451,25 @@ KtConstructorCalleeExpression(372,381): 'Exception'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Exception
-          symbol = <constructor>(message: kotlin.String!): java.lang.Exception
-          valueParameters = [
-            KaVariableSignature:
-              name = message
-              receiverType = null
-              returnType = kotlin.String!
-              symbol = message: kotlin.String!
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Exception
+        symbol = <constructor>(message: kotlin.String!): java.lang.Exception
+        valueParameters = [
+          KaVariableSignature:
+            name = message
+            receiverType = null
+            returnType = kotlin.String!
+            symbol = message: kotlin.String!
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -497,33 +484,32 @@ KtConstructorCalleeExpression(372,381): 'Exception'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Exception
-          symbol = <constructor>(message: kotlin.String!, cause: kotlin.Throwable!): java.lang.Exception
-          valueParameters = [
-            KaVariableSignature:
-              name = message
-              receiverType = null
-              returnType = kotlin.String!
-              symbol = message: kotlin.String!
-              contextParameters = []
-              callableId = null,
-            KaVariableSignature:
-              name = cause
-              receiverType = null
-              returnType = kotlin.Throwable!
-              symbol = cause: kotlin.Throwable!
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Exception
+        symbol = <constructor>(message: kotlin.String!, cause: kotlin.Throwable!): java.lang.Exception
+        valueParameters = [
+          KaVariableSignature:
+            name = message
+            receiverType = null
+            returnType = kotlin.String!
+            symbol = message: kotlin.String!
+            contextParameters = []
+            callableId = null,
+          KaVariableSignature:
+            name = cause
+            receiverType = null
+            returnType = kotlin.Throwable!
+            symbol = cause: kotlin.Throwable!
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'cause'>
     isInBestCandidates = false
@@ -539,47 +525,46 @@ KtConstructorCalleeExpression(372,381): 'Exception'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Exception
-          symbol = <constructor>(message: kotlin.String!, cause: kotlin.Throwable!, enableSuppression: kotlin.Boolean, writableStackTrace: kotlin.Boolean): java.lang.Exception
-          valueParameters = [
-            KaVariableSignature:
-              name = message
-              receiverType = null
-              returnType = kotlin.String!
-              symbol = message: kotlin.String!
-              contextParameters = []
-              callableId = null,
-            KaVariableSignature:
-              name = cause
-              receiverType = null
-              returnType = kotlin.Throwable!
-              symbol = cause: kotlin.Throwable!
-              contextParameters = []
-              callableId = null,
-            KaVariableSignature:
-              name = enableSuppression
-              receiverType = null
-              returnType = kotlin.Boolean
-              symbol = enableSuppression: kotlin.Boolean
-              contextParameters = []
-              callableId = null,
-            KaVariableSignature:
-              name = writableStackTrace
-              receiverType = null
-              returnType = kotlin.Boolean
-              symbol = writableStackTrace: kotlin.Boolean
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Exception
+        symbol = <constructor>(message: kotlin.String!, cause: kotlin.Throwable!, enableSuppression: kotlin.Boolean, writableStackTrace: kotlin.Boolean): java.lang.Exception
+        valueParameters = [
+          KaVariableSignature:
+            name = message
+            receiverType = null
+            returnType = kotlin.String!
+            symbol = message: kotlin.String!
+            contextParameters = []
+            callableId = null,
+          KaVariableSignature:
+            name = cause
+            receiverType = null
+            returnType = kotlin.Throwable!
+            symbol = cause: kotlin.Throwable!
+            contextParameters = []
+            callableId = null,
+          KaVariableSignature:
+            name = enableSuppression
+            receiverType = null
+            returnType = kotlin.Boolean
+            symbol = enableSuppression: kotlin.Boolean
+            contextParameters = []
+            callableId = null,
+          KaVariableSignature:
+            name = writableStackTrace
+            receiverType = null
+            returnType = kotlin.Boolean
+            symbol = writableStackTrace: kotlin.Boolean
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'cause'>
     isInBestCandidates = false
@@ -594,18 +579,17 @@ KtNameReferenceExpression(372,381): 'Exception'
   KaInapplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Exception
-          symbol = <constructor>(): java.lang.Exception
-          valueParameters = []
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Exception
+        symbol = <constructor>(): java.lang.Exception
+        valueParameters = []
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with <init>>
     isInBestCandidates = false
@@ -621,26 +605,25 @@ KtNameReferenceExpression(372,381): 'Exception'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Exception
-          symbol = <constructor>(cause: kotlin.Throwable!): java.lang.Exception
-          valueParameters = [
-            KaVariableSignature:
-              name = cause
-              receiverType = null
-              returnType = kotlin.Throwable!
-              symbol = cause: kotlin.Throwable!
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Exception
+        symbol = <constructor>(cause: kotlin.Throwable!): java.lang.Exception
+        valueParameters = [
+          KaVariableSignature:
+            name = cause
+            receiverType = null
+            returnType = kotlin.Throwable!
+            symbol = cause: kotlin.Throwable!
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with <init>>
     isInBestCandidates = false
@@ -656,26 +639,25 @@ KtNameReferenceExpression(372,381): 'Exception'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Exception
-          symbol = <constructor>(message: kotlin.String!): java.lang.Exception
-          valueParameters = [
-            KaVariableSignature:
-              name = message
-              receiverType = null
-              returnType = kotlin.String!
-              symbol = message: kotlin.String!
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Exception
+        symbol = <constructor>(message: kotlin.String!): java.lang.Exception
+        valueParameters = [
+          KaVariableSignature:
+            name = message
+            receiverType = null
+            returnType = kotlin.String!
+            symbol = message: kotlin.String!
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -690,33 +672,32 @@ KtNameReferenceExpression(372,381): 'Exception'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Exception
-          symbol = <constructor>(message: kotlin.String!, cause: kotlin.Throwable!): java.lang.Exception
-          valueParameters = [
-            KaVariableSignature:
-              name = message
-              receiverType = null
-              returnType = kotlin.String!
-              symbol = message: kotlin.String!
-              contextParameters = []
-              callableId = null,
-            KaVariableSignature:
-              name = cause
-              receiverType = null
-              returnType = kotlin.Throwable!
-              symbol = cause: kotlin.Throwable!
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Exception
+        symbol = <constructor>(message: kotlin.String!, cause: kotlin.Throwable!): java.lang.Exception
+        valueParameters = [
+          KaVariableSignature:
+            name = message
+            receiverType = null
+            returnType = kotlin.String!
+            symbol = message: kotlin.String!
+            contextParameters = []
+            callableId = null,
+          KaVariableSignature:
+            name = cause
+            receiverType = null
+            returnType = kotlin.Throwable!
+            symbol = cause: kotlin.Throwable!
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'cause'>
     isInBestCandidates = false
@@ -732,47 +713,46 @@ KtNameReferenceExpression(372,381): 'Exception'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Exception
-          symbol = <constructor>(message: kotlin.String!, cause: kotlin.Throwable!, enableSuppression: kotlin.Boolean, writableStackTrace: kotlin.Boolean): java.lang.Exception
-          valueParameters = [
-            KaVariableSignature:
-              name = message
-              receiverType = null
-              returnType = kotlin.String!
-              symbol = message: kotlin.String!
-              contextParameters = []
-              callableId = null,
-            KaVariableSignature:
-              name = cause
-              receiverType = null
-              returnType = kotlin.Throwable!
-              symbol = cause: kotlin.Throwable!
-              contextParameters = []
-              callableId = null,
-            KaVariableSignature:
-              name = enableSuppression
-              receiverType = null
-              returnType = kotlin.Boolean
-              symbol = enableSuppression: kotlin.Boolean
-              contextParameters = []
-              callableId = null,
-            KaVariableSignature:
-              name = writableStackTrace
-              receiverType = null
-              returnType = kotlin.Boolean
-              symbol = writableStackTrace: kotlin.Boolean
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Exception
+        symbol = <constructor>(message: kotlin.String!, cause: kotlin.Throwable!, enableSuppression: kotlin.Boolean, writableStackTrace: kotlin.Boolean): java.lang.Exception
+        valueParameters = [
+          KaVariableSignature:
+            name = message
+            receiverType = null
+            returnType = kotlin.String!
+            symbol = message: kotlin.String!
+            contextParameters = []
+            callableId = null,
+          KaVariableSignature:
+            name = cause
+            receiverType = null
+            returnType = kotlin.Throwable!
+            symbol = cause: kotlin.Throwable!
+            contextParameters = []
+            callableId = null,
+          KaVariableSignature:
+            name = enableSuppression
+            receiverType = null
+            returnType = kotlin.Boolean
+            symbol = enableSuppression: kotlin.Boolean
+            contextParameters = []
+            callableId = null,
+          KaVariableSignature:
+            name = writableStackTrace
+            receiverType = null
+            returnType = kotlin.Boolean
+            symbol = writableStackTrace: kotlin.Boolean
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'cause'>
     isInBestCandidates = false
@@ -786,18 +766,17 @@ KtValueArgument(382,383): 'm'
 KtNameReferenceExpression(382,383): 'm'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = m
-          receiverType = null
-          returnType = kotlin.String
-          symbol = m: kotlin.String
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = m
+        receiverType = null
+        returnType = kotlin.String
+        symbol = m: kotlin.String
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -830,18 +809,17 @@ KtSuperTypeCallEntry(406,418): 'Exception(m)'
   KaInapplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Exception
-          symbol = <constructor>(): java.lang.Exception
-          valueParameters = []
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Exception
+        symbol = <constructor>(): java.lang.Exception
+        valueParameters = []
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for public final fun `<init>`(): kotlin.Exception /* = java.lang.Exception */ defined in kotlin.Exception>
     isInBestCandidates = false
@@ -857,26 +835,25 @@ KtSuperTypeCallEntry(406,418): 'Exception(m)'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Exception
-          symbol = <constructor>(cause: kotlin.Throwable!): java.lang.Exception
-          valueParameters = [
-            KaVariableSignature:
-              name = cause
-              receiverType = null
-              returnType = kotlin.Throwable!
-              symbol = cause: kotlin.Throwable!
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Exception
+        symbol = <constructor>(cause: kotlin.Throwable!): java.lang.Exception
+        valueParameters = [
+          KaVariableSignature:
+            name = cause
+            receiverType = null
+            returnType = kotlin.Throwable!
+            symbol = cause: kotlin.Throwable!
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is String but Throwable! was expected>
     isInBestCandidates = false
@@ -892,26 +869,25 @@ KtSuperTypeCallEntry(406,418): 'Exception(m)'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Exception
-          symbol = <constructor>(message: kotlin.String!): java.lang.Exception
-          valueParameters = [
-            KaVariableSignature:
-              name = message
-              receiverType = null
-              returnType = kotlin.String!
-              symbol = message: kotlin.String!
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Exception
+        symbol = <constructor>(message: kotlin.String!): java.lang.Exception
+        valueParameters = [
+          KaVariableSignature:
+            name = message
+            receiverType = null
+            returnType = kotlin.String!
+            symbol = message: kotlin.String!
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -926,33 +902,32 @@ KtSuperTypeCallEntry(406,418): 'Exception(m)'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Exception
-          symbol = <constructor>(message: kotlin.String!, cause: kotlin.Throwable!): java.lang.Exception
-          valueParameters = [
-            KaVariableSignature:
-              name = message
-              receiverType = null
-              returnType = kotlin.String!
-              symbol = message: kotlin.String!
-              contextParameters = []
-              callableId = null,
-            KaVariableSignature:
-              name = cause
-              receiverType = null
-              returnType = kotlin.Throwable!
-              symbol = cause: kotlin.Throwable!
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Exception
+        symbol = <constructor>(message: kotlin.String!, cause: kotlin.Throwable!): java.lang.Exception
+        valueParameters = [
+          KaVariableSignature:
+            name = message
+            receiverType = null
+            returnType = kotlin.String!
+            symbol = message: kotlin.String!
+            contextParameters = []
+            callableId = null,
+          KaVariableSignature:
+            name = cause
+            receiverType = null
+            returnType = kotlin.Throwable!
+            symbol = cause: kotlin.Throwable!
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'cause'>
     isInBestCandidates = false
@@ -968,47 +943,46 @@ KtSuperTypeCallEntry(406,418): 'Exception(m)'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Exception
-          symbol = <constructor>(message: kotlin.String!, cause: kotlin.Throwable!, enableSuppression: kotlin.Boolean, writableStackTrace: kotlin.Boolean): java.lang.Exception
-          valueParameters = [
-            KaVariableSignature:
-              name = message
-              receiverType = null
-              returnType = kotlin.String!
-              symbol = message: kotlin.String!
-              contextParameters = []
-              callableId = null,
-            KaVariableSignature:
-              name = cause
-              receiverType = null
-              returnType = kotlin.Throwable!
-              symbol = cause: kotlin.Throwable!
-              contextParameters = []
-              callableId = null,
-            KaVariableSignature:
-              name = enableSuppression
-              receiverType = null
-              returnType = kotlin.Boolean
-              symbol = enableSuppression: kotlin.Boolean
-              contextParameters = []
-              callableId = null,
-            KaVariableSignature:
-              name = writableStackTrace
-              receiverType = null
-              returnType = kotlin.Boolean
-              symbol = writableStackTrace: kotlin.Boolean
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Exception
+        symbol = <constructor>(message: kotlin.String!, cause: kotlin.Throwable!, enableSuppression: kotlin.Boolean, writableStackTrace: kotlin.Boolean): java.lang.Exception
+        valueParameters = [
+          KaVariableSignature:
+            name = message
+            receiverType = null
+            returnType = kotlin.String!
+            symbol = message: kotlin.String!
+            contextParameters = []
+            callableId = null,
+          KaVariableSignature:
+            name = cause
+            receiverType = null
+            returnType = kotlin.Throwable!
+            symbol = cause: kotlin.Throwable!
+            contextParameters = []
+            callableId = null,
+          KaVariableSignature:
+            name = enableSuppression
+            receiverType = null
+            returnType = kotlin.Boolean
+            symbol = enableSuppression: kotlin.Boolean
+            contextParameters = []
+            callableId = null,
+          KaVariableSignature:
+            name = writableStackTrace
+            receiverType = null
+            returnType = kotlin.Boolean
+            symbol = writableStackTrace: kotlin.Boolean
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'cause'>
     isInBestCandidates = false
@@ -1017,18 +991,17 @@ KtConstructorCalleeExpression(406,415): 'Exception'
   KaInapplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Exception
-          symbol = <constructor>(): java.lang.Exception
-          valueParameters = []
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Exception
+        symbol = <constructor>(): java.lang.Exception
+        valueParameters = []
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with <init>>
     isInBestCandidates = false
@@ -1044,26 +1017,25 @@ KtConstructorCalleeExpression(406,415): 'Exception'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Exception
-          symbol = <constructor>(cause: kotlin.Throwable!): java.lang.Exception
-          valueParameters = [
-            KaVariableSignature:
-              name = cause
-              receiverType = null
-              returnType = kotlin.Throwable!
-              symbol = cause: kotlin.Throwable!
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Exception
+        symbol = <constructor>(cause: kotlin.Throwable!): java.lang.Exception
+        valueParameters = [
+          KaVariableSignature:
+            name = cause
+            receiverType = null
+            returnType = kotlin.Throwable!
+            symbol = cause: kotlin.Throwable!
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with <init>>
     isInBestCandidates = false
@@ -1079,26 +1051,25 @@ KtConstructorCalleeExpression(406,415): 'Exception'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Exception
-          symbol = <constructor>(message: kotlin.String!): java.lang.Exception
-          valueParameters = [
-            KaVariableSignature:
-              name = message
-              receiverType = null
-              returnType = kotlin.String!
-              symbol = message: kotlin.String!
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Exception
+        symbol = <constructor>(message: kotlin.String!): java.lang.Exception
+        valueParameters = [
+          KaVariableSignature:
+            name = message
+            receiverType = null
+            returnType = kotlin.String!
+            symbol = message: kotlin.String!
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1113,33 +1084,32 @@ KtConstructorCalleeExpression(406,415): 'Exception'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Exception
-          symbol = <constructor>(message: kotlin.String!, cause: kotlin.Throwable!): java.lang.Exception
-          valueParameters = [
-            KaVariableSignature:
-              name = message
-              receiverType = null
-              returnType = kotlin.String!
-              symbol = message: kotlin.String!
-              contextParameters = []
-              callableId = null,
-            KaVariableSignature:
-              name = cause
-              receiverType = null
-              returnType = kotlin.Throwable!
-              symbol = cause: kotlin.Throwable!
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Exception
+        symbol = <constructor>(message: kotlin.String!, cause: kotlin.Throwable!): java.lang.Exception
+        valueParameters = [
+          KaVariableSignature:
+            name = message
+            receiverType = null
+            returnType = kotlin.String!
+            symbol = message: kotlin.String!
+            contextParameters = []
+            callableId = null,
+          KaVariableSignature:
+            name = cause
+            receiverType = null
+            returnType = kotlin.Throwable!
+            symbol = cause: kotlin.Throwable!
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'cause'>
     isInBestCandidates = false
@@ -1155,47 +1125,46 @@ KtConstructorCalleeExpression(406,415): 'Exception'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Exception
-          symbol = <constructor>(message: kotlin.String!, cause: kotlin.Throwable!, enableSuppression: kotlin.Boolean, writableStackTrace: kotlin.Boolean): java.lang.Exception
-          valueParameters = [
-            KaVariableSignature:
-              name = message
-              receiverType = null
-              returnType = kotlin.String!
-              symbol = message: kotlin.String!
-              contextParameters = []
-              callableId = null,
-            KaVariableSignature:
-              name = cause
-              receiverType = null
-              returnType = kotlin.Throwable!
-              symbol = cause: kotlin.Throwable!
-              contextParameters = []
-              callableId = null,
-            KaVariableSignature:
-              name = enableSuppression
-              receiverType = null
-              returnType = kotlin.Boolean
-              symbol = enableSuppression: kotlin.Boolean
-              contextParameters = []
-              callableId = null,
-            KaVariableSignature:
-              name = writableStackTrace
-              receiverType = null
-              returnType = kotlin.Boolean
-              symbol = writableStackTrace: kotlin.Boolean
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Exception
+        symbol = <constructor>(message: kotlin.String!, cause: kotlin.Throwable!, enableSuppression: kotlin.Boolean, writableStackTrace: kotlin.Boolean): java.lang.Exception
+        valueParameters = [
+          KaVariableSignature:
+            name = message
+            receiverType = null
+            returnType = kotlin.String!
+            symbol = message: kotlin.String!
+            contextParameters = []
+            callableId = null,
+          KaVariableSignature:
+            name = cause
+            receiverType = null
+            returnType = kotlin.Throwable!
+            symbol = cause: kotlin.Throwable!
+            contextParameters = []
+            callableId = null,
+          KaVariableSignature:
+            name = enableSuppression
+            receiverType = null
+            returnType = kotlin.Boolean
+            symbol = enableSuppression: kotlin.Boolean
+            contextParameters = []
+            callableId = null,
+          KaVariableSignature:
+            name = writableStackTrace
+            receiverType = null
+            returnType = kotlin.Boolean
+            symbol = writableStackTrace: kotlin.Boolean
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'cause'>
     isInBestCandidates = false
@@ -1210,18 +1179,17 @@ KtNameReferenceExpression(406,415): 'Exception'
   KaInapplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Exception
-          symbol = <constructor>(): java.lang.Exception
-          valueParameters = []
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Exception
+        symbol = <constructor>(): java.lang.Exception
+        valueParameters = []
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with <init>>
     isInBestCandidates = false
@@ -1237,26 +1205,25 @@ KtNameReferenceExpression(406,415): 'Exception'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Exception
-          symbol = <constructor>(cause: kotlin.Throwable!): java.lang.Exception
-          valueParameters = [
-            KaVariableSignature:
-              name = cause
-              receiverType = null
-              returnType = kotlin.Throwable!
-              symbol = cause: kotlin.Throwable!
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Exception
+        symbol = <constructor>(cause: kotlin.Throwable!): java.lang.Exception
+        valueParameters = [
+          KaVariableSignature:
+            name = cause
+            receiverType = null
+            returnType = kotlin.Throwable!
+            symbol = cause: kotlin.Throwable!
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with <init>>
     isInBestCandidates = false
@@ -1272,26 +1239,25 @@ KtNameReferenceExpression(406,415): 'Exception'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Exception
-          symbol = <constructor>(message: kotlin.String!): java.lang.Exception
-          valueParameters = [
-            KaVariableSignature:
-              name = message
-              receiverType = null
-              returnType = kotlin.String!
-              symbol = message: kotlin.String!
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Exception
+        symbol = <constructor>(message: kotlin.String!): java.lang.Exception
+        valueParameters = [
+          KaVariableSignature:
+            name = message
+            receiverType = null
+            returnType = kotlin.String!
+            symbol = message: kotlin.String!
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1306,33 +1272,32 @@ KtNameReferenceExpression(406,415): 'Exception'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Exception
-          symbol = <constructor>(message: kotlin.String!, cause: kotlin.Throwable!): java.lang.Exception
-          valueParameters = [
-            KaVariableSignature:
-              name = message
-              receiverType = null
-              returnType = kotlin.String!
-              symbol = message: kotlin.String!
-              contextParameters = []
-              callableId = null,
-            KaVariableSignature:
-              name = cause
-              receiverType = null
-              returnType = kotlin.Throwable!
-              symbol = cause: kotlin.Throwable!
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Exception
+        symbol = <constructor>(message: kotlin.String!, cause: kotlin.Throwable!): java.lang.Exception
+        valueParameters = [
+          KaVariableSignature:
+            name = message
+            receiverType = null
+            returnType = kotlin.String!
+            symbol = message: kotlin.String!
+            contextParameters = []
+            callableId = null,
+          KaVariableSignature:
+            name = cause
+            receiverType = null
+            returnType = kotlin.Throwable!
+            symbol = cause: kotlin.Throwable!
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'cause'>
     isInBestCandidates = false
@@ -1348,47 +1313,46 @@ KtNameReferenceExpression(406,415): 'Exception'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Exception
-          symbol = <constructor>(message: kotlin.String!, cause: kotlin.Throwable!, enableSuppression: kotlin.Boolean, writableStackTrace: kotlin.Boolean): java.lang.Exception
-          valueParameters = [
-            KaVariableSignature:
-              name = message
-              receiverType = null
-              returnType = kotlin.String!
-              symbol = message: kotlin.String!
-              contextParameters = []
-              callableId = null,
-            KaVariableSignature:
-              name = cause
-              receiverType = null
-              returnType = kotlin.Throwable!
-              symbol = cause: kotlin.Throwable!
-              contextParameters = []
-              callableId = null,
-            KaVariableSignature:
-              name = enableSuppression
-              receiverType = null
-              returnType = kotlin.Boolean
-              symbol = enableSuppression: kotlin.Boolean
-              contextParameters = []
-              callableId = null,
-            KaVariableSignature:
-              name = writableStackTrace
-              receiverType = null
-              returnType = kotlin.Boolean
-              symbol = writableStackTrace: kotlin.Boolean
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Exception
+        symbol = <constructor>(message: kotlin.String!, cause: kotlin.Throwable!, enableSuppression: kotlin.Boolean, writableStackTrace: kotlin.Boolean): java.lang.Exception
+        valueParameters = [
+          KaVariableSignature:
+            name = message
+            receiverType = null
+            returnType = kotlin.String!
+            symbol = message: kotlin.String!
+            contextParameters = []
+            callableId = null,
+          KaVariableSignature:
+            name = cause
+            receiverType = null
+            returnType = kotlin.Throwable!
+            symbol = cause: kotlin.Throwable!
+            contextParameters = []
+            callableId = null,
+          KaVariableSignature:
+            name = enableSuppression
+            receiverType = null
+            returnType = kotlin.Boolean
+            symbol = enableSuppression: kotlin.Boolean
+            contextParameters = []
+            callableId = null,
+          KaVariableSignature:
+            name = writableStackTrace
+            receiverType = null
+            returnType = kotlin.Boolean
+            symbol = writableStackTrace: kotlin.Boolean
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'cause'>
     isInBestCandidates = false
@@ -1402,18 +1366,17 @@ KtValueArgument(416,417): 'm'
 KtNameReferenceExpression(416,417): 'm'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = m
-          receiverType = null
-          returnType = kotlin.String
-          symbol = m: kotlin.String
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = m
+        receiverType = null
+        returnType = kotlin.String
+        symbol = m: kotlin.String
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1446,18 +1409,17 @@ KtSuperTypeCallEntry(440,452): 'Exception(m)'
   KaInapplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Exception
-          symbol = <constructor>(): java.lang.Exception
-          valueParameters = []
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Exception
+        symbol = <constructor>(): java.lang.Exception
+        valueParameters = []
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for public final fun `<init>`(): kotlin.Exception /* = java.lang.Exception */ defined in kotlin.Exception>
     isInBestCandidates = false
@@ -1473,26 +1435,25 @@ KtSuperTypeCallEntry(440,452): 'Exception(m)'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Exception
-          symbol = <constructor>(cause: kotlin.Throwable!): java.lang.Exception
-          valueParameters = [
-            KaVariableSignature:
-              name = cause
-              receiverType = null
-              returnType = kotlin.Throwable!
-              symbol = cause: kotlin.Throwable!
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Exception
+        symbol = <constructor>(cause: kotlin.Throwable!): java.lang.Exception
+        valueParameters = [
+          KaVariableSignature:
+            name = cause
+            receiverType = null
+            returnType = kotlin.Throwable!
+            symbol = cause: kotlin.Throwable!
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     diagnostic = ERROR<TYPE_MISMATCH: Type mismatch: inferred type is String but Throwable! was expected>
     isInBestCandidates = false
@@ -1508,26 +1469,25 @@ KtSuperTypeCallEntry(440,452): 'Exception(m)'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Exception
-          symbol = <constructor>(message: kotlin.String!): java.lang.Exception
-          valueParameters = [
-            KaVariableSignature:
-              name = message
-              receiverType = null
-              returnType = kotlin.String!
-              symbol = message: kotlin.String!
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Exception
+        symbol = <constructor>(message: kotlin.String!): java.lang.Exception
+        valueParameters = [
+          KaVariableSignature:
+            name = message
+            receiverType = null
+            returnType = kotlin.String!
+            symbol = message: kotlin.String!
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1542,33 +1502,32 @@ KtSuperTypeCallEntry(440,452): 'Exception(m)'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Exception
-          symbol = <constructor>(message: kotlin.String!, cause: kotlin.Throwable!): java.lang.Exception
-          valueParameters = [
-            KaVariableSignature:
-              name = message
-              receiverType = null
-              returnType = kotlin.String!
-              symbol = message: kotlin.String!
-              contextParameters = []
-              callableId = null,
-            KaVariableSignature:
-              name = cause
-              receiverType = null
-              returnType = kotlin.Throwable!
-              symbol = cause: kotlin.Throwable!
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Exception
+        symbol = <constructor>(message: kotlin.String!, cause: kotlin.Throwable!): java.lang.Exception
+        valueParameters = [
+          KaVariableSignature:
+            name = message
+            receiverType = null
+            returnType = kotlin.String!
+            symbol = message: kotlin.String!
+            contextParameters = []
+            callableId = null,
+          KaVariableSignature:
+            name = cause
+            receiverType = null
+            returnType = kotlin.Throwable!
+            symbol = cause: kotlin.Throwable!
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'cause'>
     isInBestCandidates = false
@@ -1584,47 +1543,46 @@ KtSuperTypeCallEntry(440,452): 'Exception(m)'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Exception
-          symbol = <constructor>(message: kotlin.String!, cause: kotlin.Throwable!, enableSuppression: kotlin.Boolean, writableStackTrace: kotlin.Boolean): java.lang.Exception
-          valueParameters = [
-            KaVariableSignature:
-              name = message
-              receiverType = null
-              returnType = kotlin.String!
-              symbol = message: kotlin.String!
-              contextParameters = []
-              callableId = null,
-            KaVariableSignature:
-              name = cause
-              receiverType = null
-              returnType = kotlin.Throwable!
-              symbol = cause: kotlin.Throwable!
-              contextParameters = []
-              callableId = null,
-            KaVariableSignature:
-              name = enableSuppression
-              receiverType = null
-              returnType = kotlin.Boolean
-              symbol = enableSuppression: kotlin.Boolean
-              contextParameters = []
-              callableId = null,
-            KaVariableSignature:
-              name = writableStackTrace
-              receiverType = null
-              returnType = kotlin.Boolean
-              symbol = writableStackTrace: kotlin.Boolean
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Exception
+        symbol = <constructor>(message: kotlin.String!, cause: kotlin.Throwable!, enableSuppression: kotlin.Boolean, writableStackTrace: kotlin.Boolean): java.lang.Exception
+        valueParameters = [
+          KaVariableSignature:
+            name = message
+            receiverType = null
+            returnType = kotlin.String!
+            symbol = message: kotlin.String!
+            contextParameters = []
+            callableId = null,
+          KaVariableSignature:
+            name = cause
+            receiverType = null
+            returnType = kotlin.Throwable!
+            symbol = cause: kotlin.Throwable!
+            contextParameters = []
+            callableId = null,
+          KaVariableSignature:
+            name = enableSuppression
+            receiverType = null
+            returnType = kotlin.Boolean
+            symbol = enableSuppression: kotlin.Boolean
+            contextParameters = []
+            callableId = null,
+          KaVariableSignature:
+            name = writableStackTrace
+            receiverType = null
+            returnType = kotlin.Boolean
+            symbol = writableStackTrace: kotlin.Boolean
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'cause'>
     isInBestCandidates = false
@@ -1633,18 +1591,17 @@ KtConstructorCalleeExpression(440,449): 'Exception'
   KaInapplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Exception
-          symbol = <constructor>(): java.lang.Exception
-          valueParameters = []
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Exception
+        symbol = <constructor>(): java.lang.Exception
+        valueParameters = []
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with <init>>
     isInBestCandidates = false
@@ -1660,26 +1617,25 @@ KtConstructorCalleeExpression(440,449): 'Exception'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Exception
-          symbol = <constructor>(cause: kotlin.Throwable!): java.lang.Exception
-          valueParameters = [
-            KaVariableSignature:
-              name = cause
-              receiverType = null
-              returnType = kotlin.Throwable!
-              symbol = cause: kotlin.Throwable!
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Exception
+        symbol = <constructor>(cause: kotlin.Throwable!): java.lang.Exception
+        valueParameters = [
+          KaVariableSignature:
+            name = cause
+            receiverType = null
+            returnType = kotlin.Throwable!
+            symbol = cause: kotlin.Throwable!
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with <init>>
     isInBestCandidates = false
@@ -1695,26 +1651,25 @@ KtConstructorCalleeExpression(440,449): 'Exception'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Exception
-          symbol = <constructor>(message: kotlin.String!): java.lang.Exception
-          valueParameters = [
-            KaVariableSignature:
-              name = message
-              receiverType = null
-              returnType = kotlin.String!
-              symbol = message: kotlin.String!
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Exception
+        symbol = <constructor>(message: kotlin.String!): java.lang.Exception
+        valueParameters = [
+          KaVariableSignature:
+            name = message
+            receiverType = null
+            returnType = kotlin.String!
+            symbol = message: kotlin.String!
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1729,33 +1684,32 @@ KtConstructorCalleeExpression(440,449): 'Exception'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Exception
-          symbol = <constructor>(message: kotlin.String!, cause: kotlin.Throwable!): java.lang.Exception
-          valueParameters = [
-            KaVariableSignature:
-              name = message
-              receiverType = null
-              returnType = kotlin.String!
-              symbol = message: kotlin.String!
-              contextParameters = []
-              callableId = null,
-            KaVariableSignature:
-              name = cause
-              receiverType = null
-              returnType = kotlin.Throwable!
-              symbol = cause: kotlin.Throwable!
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Exception
+        symbol = <constructor>(message: kotlin.String!, cause: kotlin.Throwable!): java.lang.Exception
+        valueParameters = [
+          KaVariableSignature:
+            name = message
+            receiverType = null
+            returnType = kotlin.String!
+            symbol = message: kotlin.String!
+            contextParameters = []
+            callableId = null,
+          KaVariableSignature:
+            name = cause
+            receiverType = null
+            returnType = kotlin.Throwable!
+            symbol = cause: kotlin.Throwable!
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'cause'>
     isInBestCandidates = false
@@ -1771,47 +1725,46 @@ KtConstructorCalleeExpression(440,449): 'Exception'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Exception
-          symbol = <constructor>(message: kotlin.String!, cause: kotlin.Throwable!, enableSuppression: kotlin.Boolean, writableStackTrace: kotlin.Boolean): java.lang.Exception
-          valueParameters = [
-            KaVariableSignature:
-              name = message
-              receiverType = null
-              returnType = kotlin.String!
-              symbol = message: kotlin.String!
-              contextParameters = []
-              callableId = null,
-            KaVariableSignature:
-              name = cause
-              receiverType = null
-              returnType = kotlin.Throwable!
-              symbol = cause: kotlin.Throwable!
-              contextParameters = []
-              callableId = null,
-            KaVariableSignature:
-              name = enableSuppression
-              receiverType = null
-              returnType = kotlin.Boolean
-              symbol = enableSuppression: kotlin.Boolean
-              contextParameters = []
-              callableId = null,
-            KaVariableSignature:
-              name = writableStackTrace
-              receiverType = null
-              returnType = kotlin.Boolean
-              symbol = writableStackTrace: kotlin.Boolean
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Exception
+        symbol = <constructor>(message: kotlin.String!, cause: kotlin.Throwable!, enableSuppression: kotlin.Boolean, writableStackTrace: kotlin.Boolean): java.lang.Exception
+        valueParameters = [
+          KaVariableSignature:
+            name = message
+            receiverType = null
+            returnType = kotlin.String!
+            symbol = message: kotlin.String!
+            contextParameters = []
+            callableId = null,
+          KaVariableSignature:
+            name = cause
+            receiverType = null
+            returnType = kotlin.Throwable!
+            symbol = cause: kotlin.Throwable!
+            contextParameters = []
+            callableId = null,
+          KaVariableSignature:
+            name = enableSuppression
+            receiverType = null
+            returnType = kotlin.Boolean
+            symbol = enableSuppression: kotlin.Boolean
+            contextParameters = []
+            callableId = null,
+          KaVariableSignature:
+            name = writableStackTrace
+            receiverType = null
+            returnType = kotlin.Boolean
+            symbol = writableStackTrace: kotlin.Boolean
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'cause'>
     isInBestCandidates = false
@@ -1826,18 +1779,17 @@ KtNameReferenceExpression(440,449): 'Exception'
   KaInapplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Exception
-          symbol = <constructor>(): java.lang.Exception
-          valueParameters = []
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Exception
+        symbol = <constructor>(): java.lang.Exception
+        valueParameters = []
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with <init>>
     isInBestCandidates = false
@@ -1853,26 +1805,25 @@ KtNameReferenceExpression(440,449): 'Exception'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Exception
-          symbol = <constructor>(cause: kotlin.Throwable!): java.lang.Exception
-          valueParameters = [
-            KaVariableSignature:
-              name = cause
-              receiverType = null
-              returnType = kotlin.Throwable!
-              symbol = cause: kotlin.Throwable!
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Exception
+        symbol = <constructor>(cause: kotlin.Throwable!): java.lang.Exception
+        valueParameters = [
+          KaVariableSignature:
+            name = cause
+            receiverType = null
+            returnType = kotlin.Throwable!
+            symbol = cause: kotlin.Throwable!
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with <init>>
     isInBestCandidates = false
@@ -1888,26 +1839,25 @@ KtNameReferenceExpression(440,449): 'Exception'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Exception
-          symbol = <constructor>(message: kotlin.String!): java.lang.Exception
-          valueParameters = [
-            KaVariableSignature:
-              name = message
-              receiverType = null
-              returnType = kotlin.String!
-              symbol = message: kotlin.String!
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Exception
+        symbol = <constructor>(message: kotlin.String!): java.lang.Exception
+        valueParameters = [
+          KaVariableSignature:
+            name = message
+            receiverType = null
+            returnType = kotlin.String!
+            symbol = message: kotlin.String!
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1922,33 +1872,32 @@ KtNameReferenceExpression(440,449): 'Exception'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Exception
-          symbol = <constructor>(message: kotlin.String!, cause: kotlin.Throwable!): java.lang.Exception
-          valueParameters = [
-            KaVariableSignature:
-              name = message
-              receiverType = null
-              returnType = kotlin.String!
-              symbol = message: kotlin.String!
-              contextParameters = []
-              callableId = null,
-            KaVariableSignature:
-              name = cause
-              receiverType = null
-              returnType = kotlin.Throwable!
-              symbol = cause: kotlin.Throwable!
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Exception
+        symbol = <constructor>(message: kotlin.String!, cause: kotlin.Throwable!): java.lang.Exception
+        valueParameters = [
+          KaVariableSignature:
+            name = message
+            receiverType = null
+            returnType = kotlin.String!
+            symbol = message: kotlin.String!
+            contextParameters = []
+            callableId = null,
+          KaVariableSignature:
+            name = cause
+            receiverType = null
+            returnType = kotlin.Throwable!
+            symbol = cause: kotlin.Throwable!
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'cause'>
     isInBestCandidates = false
@@ -1964,47 +1913,46 @@ KtNameReferenceExpression(440,449): 'Exception'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Exception
-          symbol = <constructor>(message: kotlin.String!, cause: kotlin.Throwable!, enableSuppression: kotlin.Boolean, writableStackTrace: kotlin.Boolean): java.lang.Exception
-          valueParameters = [
-            KaVariableSignature:
-              name = message
-              receiverType = null
-              returnType = kotlin.String!
-              symbol = message: kotlin.String!
-              contextParameters = []
-              callableId = null,
-            KaVariableSignature:
-              name = cause
-              receiverType = null
-              returnType = kotlin.Throwable!
-              symbol = cause: kotlin.Throwable!
-              contextParameters = []
-              callableId = null,
-            KaVariableSignature:
-              name = enableSuppression
-              receiverType = null
-              returnType = kotlin.Boolean
-              symbol = enableSuppression: kotlin.Boolean
-              contextParameters = []
-              callableId = null,
-            KaVariableSignature:
-              name = writableStackTrace
-              receiverType = null
-              returnType = kotlin.Boolean
-              symbol = writableStackTrace: kotlin.Boolean
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Exception
+        symbol = <constructor>(message: kotlin.String!, cause: kotlin.Throwable!, enableSuppression: kotlin.Boolean, writableStackTrace: kotlin.Boolean): java.lang.Exception
+        valueParameters = [
+          KaVariableSignature:
+            name = message
+            receiverType = null
+            returnType = kotlin.String!
+            symbol = message: kotlin.String!
+            contextParameters = []
+            callableId = null,
+          KaVariableSignature:
+            name = cause
+            receiverType = null
+            returnType = kotlin.Throwable!
+            symbol = cause: kotlin.Throwable!
+            contextParameters = []
+            callableId = null,
+          KaVariableSignature:
+            name = enableSuppression
+            receiverType = null
+            returnType = kotlin.Boolean
+            symbol = enableSuppression: kotlin.Boolean
+            contextParameters = []
+            callableId = null,
+          KaVariableSignature:
+            name = writableStackTrace
+            receiverType = null
+            returnType = kotlin.Boolean
+            symbol = writableStackTrace: kotlin.Boolean
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'cause'>
     isInBestCandidates = false
@@ -2018,18 +1966,17 @@ KtValueArgument(450,451): 'm'
 KtNameReferenceExpression(450,451): 'm'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = m
-          receiverType = null
-          returnType = kotlin.String
-          symbol = m: kotlin.String
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = m
+        receiverType = null
+        returnType = kotlin.String
+        symbol = m: kotlin.String
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -2107,39 +2054,37 @@ KtCallExpression(507,510): 'b()'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = b
+        isSafeNavigation = false
+        type = kotlin.Function0<T>
+      extensionReceiver = null
       isImplicitInvoke = true
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = b
-          isSafeNavigation = false
-          type = kotlin.Function0<T>
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = T
-          symbol = kotlin/Function0.invoke(<dispatch receiver>: kotlin.Function0<R>): R
-          valueParameters = []
-          contextParameters = []
-          callableId = kotlin/Function0.invoke
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = T
+        symbol = kotlin/Function0.invoke(<dispatch receiver>: kotlin.Function0<R>): R
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/Function0.invoke
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(507,508): 'b'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = b
-          receiverType = null
-          returnType = kotlin.Function0<T>
-          symbol = b: kotlin.Function0<T>
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = b
+        receiverType = null
+        returnType = kotlin.Function0<T>
+        symbol = b: kotlin.Function0<T>
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -2243,18 +2188,17 @@ KtBlockExpression(1070,1102): '{'
 KtNameReferenceExpression(1080,1096): 'ClassMemberAlias'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = ClassMemberAlias
-          receiverType = null
-          returnType = MyClass.NestedInheritor
-          symbol = val ClassMemberAlias: MyClass.NestedInheritor
-          contextParameters = []
-          callableId = /ClassMemberAlias
+      signature = KaVariableSignature:
+        name = ClassMemberAlias
+        receiverType = null
+        returnType = MyClass.NestedInheritor
+        symbol = val ClassMemberAlias: MyClass.NestedInheritor
+        contextParameters = []
+        callableId = /ClassMemberAlias
       simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -2285,26 +2229,25 @@ KtCallExpression(1108,1497): 'receive<MyClass>('
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = /receive(e: T): kotlin.Unit
-          valueParameters = [
-            KaVariableSignature:
-              name = e
-              receiverType = null
-              returnType = MyClass
-              symbol = e: T
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /receive
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /receive(e: T): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = e
+            receiverType = null
+            returnType = MyClass
+            symbol = e: T
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /receive
       typeArgumentsMapping = {
         T -> (MyClass)
       }
@@ -2336,26 +2279,25 @@ KtNameReferenceExpression(1108,1115): 'receive'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = /receive(e: T): kotlin.Unit
-          valueParameters = [
-            KaVariableSignature:
-              name = e
-              receiverType = null
-              returnType = MyClass
-              symbol = e: T
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /receive
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /receive(e: T): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = e
+            receiverType = null
+            returnType = MyClass
+            symbol = e: T
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /receive
       typeArgumentsMapping = {
         T -> (MyClass)
       }
@@ -2496,18 +2438,17 @@ KtBlockExpression(1451,1491): '{'
 KtNameReferenceExpression(1465,1481): 'ClassMemberAlias'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = ClassMemberAlias
-          receiverType = null
-          returnType = MyClass.NestedInheritor
-          symbol = val ClassMemberAlias: MyClass.NestedInheritor
-          contextParameters = []
-          callableId = /ClassMemberAlias
+      signature = KaVariableSignature:
+        name = ClassMemberAlias
+        receiverType = null
+        returnType = MyClass.NestedInheritor
+        symbol = val ClassMemberAlias: MyClass.NestedInheritor
+        contextParameters = []
+        callableId = /ClassMemberAlias
       simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -2540,26 +2481,25 @@ KtCallExpression(1503,1887): 'run<MyClass> {'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = MyClass
-          symbol = /run(b: kotlin.Function0<T>): T
-          valueParameters = [
-            KaVariableSignature:
-              name = b
-              receiverType = null
-              returnType = kotlin.Function0<MyClass>
-              symbol = b: kotlin.Function0<T>
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /run
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MyClass
+        symbol = /run(b: kotlin.Function0<T>): T
+        valueParameters = [
+          KaVariableSignature:
+            name = b
+            receiverType = null
+            returnType = kotlin.Function0<MyClass>
+            symbol = b: kotlin.Function0<T>
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /run
       typeArgumentsMapping = {
         T -> (MyClass)
       }
@@ -2592,26 +2532,25 @@ KtCallExpression(1503,1887): 'run<MyClass> {'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = MyClass
-          symbol = kotlin/run(block: kotlin.Function0<R>): R
-          valueParameters = [
-            KaVariableSignature:
-              name = block
-              receiverType = null
-              returnType = kotlin.Function0<MyClass>
-              symbol = block: kotlin.Function0<R>
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/run
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MyClass
+        symbol = kotlin/run(block: kotlin.Function0<R>): R
+        valueParameters = [
+          KaVariableSignature:
+            name = block
+            receiverType = null
+            returnType = kotlin.Function0<MyClass>
+            symbol = block: kotlin.Function0<R>
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/run
       typeArgumentsMapping = {
         R -> (MyClass)
       }
@@ -2645,26 +2584,25 @@ KtNameReferenceExpression(1503,1506): 'run'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = MyClass
-          symbol = /run(b: kotlin.Function0<T>): T
-          valueParameters = [
-            KaVariableSignature:
-              name = b
-              receiverType = null
-              returnType = kotlin.Function0<MyClass>
-              symbol = b: kotlin.Function0<T>
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /run
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MyClass
+        symbol = /run(b: kotlin.Function0<T>): T
+        valueParameters = [
+          KaVariableSignature:
+            name = b
+            receiverType = null
+            returnType = kotlin.Function0<MyClass>
+            symbol = b: kotlin.Function0<T>
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /run
       typeArgumentsMapping = {
         T -> (MyClass)
       }
@@ -2697,26 +2635,25 @@ KtNameReferenceExpression(1503,1506): 'run'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = MyClass
-          symbol = kotlin/run(block: kotlin.Function0<R>): R
-          valueParameters = [
-            KaVariableSignature:
-              name = block
-              receiverType = null
-              returnType = kotlin.Function0<MyClass>
-              symbol = block: kotlin.Function0<R>
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/run
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MyClass
+        symbol = kotlin/run(block: kotlin.Function0<R>): R
+        valueParameters = [
+          KaVariableSignature:
+            name = block
+            receiverType = null
+            returnType = kotlin.Function0<MyClass>
+            symbol = block: kotlin.Function0<R>
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/run
       typeArgumentsMapping = {
         R -> (MyClass)
       }
@@ -2863,18 +2800,17 @@ KtBlockExpression(1841,1881): '{'
 KtNameReferenceExpression(1855,1871): 'ClassMemberAlias'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = ClassMemberAlias
-          receiverType = null
-          returnType = MyClass.NestedInheritor
-          symbol = val ClassMemberAlias: MyClass.NestedInheritor
-          contextParameters = []
-          callableId = /ClassMemberAlias
+      signature = KaVariableSignature:
+        name = ClassMemberAlias
+        receiverType = null
+        returnType = MyClass.NestedInheritor
+        symbol = val ClassMemberAlias: MyClass.NestedInheritor
+        contextParameters = []
+        callableId = /ClassMemberAlias
       simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true

@@ -2,18 +2,17 @@ KtNameReferenceExpression(46,56): 'emptyArray'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Array<kotlin.String>
-          symbol = kotlin/emptyArray(): kotlin.Array<T>
-          valueParameters = []
-          contextParameters = []
-          callableId = kotlin/emptyArray
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Array<kotlin.String>
+        symbol = kotlin/emptyArray(): kotlin.Array<T>
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/emptyArray
       typeArgumentsMapping = {
         T -> (kotlin.String)
       }

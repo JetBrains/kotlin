@@ -34,25 +34,24 @@ KtAnnotationEntry(38,74): '@Target(AnnotationTarget.EXPRESSION)'
           contextParameters = []
           callableId = null)
       }
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.annotation.Target
-          symbol = <constructor>(vararg allowedTargets: kotlin.annotation.AnnotationTarget): kotlin.annotation.Target
-          valueParameters = [
-            KaVariableSignature:
-              name = allowedTargets
-              receiverType = null
-              returnType = kotlin.annotation.AnnotationTarget
-              symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.annotation.Target
+        symbol = <constructor>(vararg allowedTargets: kotlin.annotation.AnnotationTarget): kotlin.annotation.Target
+        valueParameters = [
+          KaVariableSignature:
+            name = allowedTargets
+            receiverType = null
+            returnType = kotlin.annotation.AnnotationTarget
+            symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -68,25 +67,24 @@ KtConstructorCalleeExpression(39,45): 'Target'
           contextParameters = []
           callableId = null)
       }
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.annotation.Target
-          symbol = <constructor>(vararg allowedTargets: kotlin.annotation.AnnotationTarget): kotlin.annotation.Target
-          valueParameters = [
-            KaVariableSignature:
-              name = allowedTargets
-              receiverType = null
-              returnType = kotlin.annotation.AnnotationTarget
-              symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.annotation.Target
+        symbol = <constructor>(vararg allowedTargets: kotlin.annotation.AnnotationTarget): kotlin.annotation.Target
+        valueParameters = [
+          KaVariableSignature:
+            name = allowedTargets
+            receiverType = null
+            returnType = kotlin.annotation.AnnotationTarget
+            symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -108,25 +106,24 @@ KtNameReferenceExpression(39,45): 'Target'
           contextParameters = []
           callableId = null)
       }
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.annotation.Target
-          symbol = <constructor>(vararg allowedTargets: kotlin.annotation.AnnotationTarget): kotlin.annotation.Target
-          valueParameters = [
-            KaVariableSignature:
-              name = allowedTargets
-              receiverType = null
-              returnType = kotlin.annotation.AnnotationTarget
-              symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.annotation.Target
+        symbol = <constructor>(vararg allowedTargets: kotlin.annotation.AnnotationTarget): kotlin.annotation.Target
+        valueParameters = [
+          KaVariableSignature:
+            name = allowedTargets
+            receiverType = null
+            returnType = kotlin.annotation.AnnotationTarget
+            symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -140,29 +137,28 @@ KtDotQualifiedExpression(46,73): 'AnnotationTarget.EXPRESSION'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = EXPRESSION
+        isSafeNavigation = false
+        type = kotlin.annotation.AnnotationTarget
       isImplicitInvoke = true
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = KaExplicitReceiverValue:
-          expression = EXPRESSION
-          isSafeNavigation = false
-          type = kotlin.annotation.AnnotationTarget
-        signature = KaFunctionSignature:
-          receiverType = kotlin.DeepRecursiveFunction<ERROR_TYPE, ERROR_TYPE>
-          returnType = ERROR_TYPE
-          symbol = kotlin/invoke(<extension receiver>: kotlin.DeepRecursiveFunction<T, R>, value: T): R
-          valueParameters = [
-            KaVariableSignature:
-              name = value
-              receiverType = null
-              returnType = ERROR_TYPE
-              symbol = value: T
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/invoke
+      signature = KaFunctionSignature:
+        receiverType = kotlin.DeepRecursiveFunction<ERROR_TYPE, ERROR_TYPE>
+        returnType = ERROR_TYPE
+        symbol = kotlin/invoke(<extension receiver>: kotlin.DeepRecursiveFunction<T, R>, value: T): R
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = ERROR_TYPE
+            symbol = value: T
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/invoke
       typeArgumentsMapping = {
         T -> (ERROR_TYPE),
         R -> (ERROR_TYPE)
@@ -188,25 +184,24 @@ KtAnnotationEntry(75,113): '@Retention(AnnotationRetention.SOURCE)'
           contextParameters = []
           callableId = null)
       }
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.annotation.Retention
-          symbol = <constructor>(value: kotlin.annotation.AnnotationRetention): kotlin.annotation.Retention
-          valueParameters = [
-            KaVariableSignature:
-              name = value
-              receiverType = null
-              returnType = kotlin.annotation.AnnotationRetention
-              symbol = value: kotlin.annotation.AnnotationRetention
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.annotation.Retention
+        symbol = <constructor>(value: kotlin.annotation.AnnotationRetention): kotlin.annotation.Retention
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.annotation.AnnotationRetention
+            symbol = value: kotlin.annotation.AnnotationRetention
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -222,25 +217,24 @@ KtConstructorCalleeExpression(76,85): 'Retention'
           contextParameters = []
           callableId = null)
       }
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.annotation.Retention
-          symbol = <constructor>(value: kotlin.annotation.AnnotationRetention): kotlin.annotation.Retention
-          valueParameters = [
-            KaVariableSignature:
-              name = value
-              receiverType = null
-              returnType = kotlin.annotation.AnnotationRetention
-              symbol = value: kotlin.annotation.AnnotationRetention
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.annotation.Retention
+        symbol = <constructor>(value: kotlin.annotation.AnnotationRetention): kotlin.annotation.Retention
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.annotation.AnnotationRetention
+            symbol = value: kotlin.annotation.AnnotationRetention
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -262,25 +256,24 @@ KtNameReferenceExpression(76,85): 'Retention'
           contextParameters = []
           callableId = null)
       }
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.annotation.Retention
-          symbol = <constructor>(value: kotlin.annotation.AnnotationRetention): kotlin.annotation.Retention
-          valueParameters = [
-            KaVariableSignature:
-              name = value
-              receiverType = null
-              returnType = kotlin.annotation.AnnotationRetention
-              symbol = value: kotlin.annotation.AnnotationRetention
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.annotation.Retention
+        symbol = <constructor>(value: kotlin.annotation.AnnotationRetention): kotlin.annotation.Retention
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.annotation.AnnotationRetention
+            symbol = value: kotlin.annotation.AnnotationRetention
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -294,29 +287,28 @@ KtDotQualifiedExpression(86,112): 'AnnotationRetention.SOURCE'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = SOURCE
+        isSafeNavigation = false
+        type = kotlin.annotation.AnnotationRetention
       isImplicitInvoke = true
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = KaExplicitReceiverValue:
-          expression = SOURCE
-          isSafeNavigation = false
-          type = kotlin.annotation.AnnotationRetention
-        signature = KaFunctionSignature:
-          receiverType = kotlin.DeepRecursiveFunction<ERROR_TYPE, ERROR_TYPE>
-          returnType = ERROR_TYPE
-          symbol = kotlin/invoke(<extension receiver>: kotlin.DeepRecursiveFunction<T, R>, value: T): R
-          valueParameters = [
-            KaVariableSignature:
-              name = value
-              receiverType = null
-              returnType = ERROR_TYPE
-              symbol = value: T
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/invoke
+      signature = KaFunctionSignature:
+        receiverType = kotlin.DeepRecursiveFunction<ERROR_TYPE, ERROR_TYPE>
+        returnType = ERROR_TYPE
+        symbol = kotlin/invoke(<extension receiver>: kotlin.DeepRecursiveFunction<T, R>, value: T): R
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = ERROR_TYPE
+            symbol = value: T
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/invoke
       typeArgumentsMapping = {
         T -> (ERROR_TYPE),
         R -> (ERROR_TYPE)
@@ -372,25 +364,24 @@ KtAnnotationEntry(172,190): '@Anno(0 + integer)'
           contextParameters = []
           callableId = null)
       }
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = Anno
-          symbol = <constructor>(number: kotlin.Int): Anno
-          valueParameters = [
-            KaVariableSignature:
-              name = number
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = number: kotlin.Int
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(number: kotlin.Int): Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = number
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = number: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -406,25 +397,24 @@ KtConstructorCalleeExpression(173,177): 'Anno'
           contextParameters = []
           callableId = null)
       }
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = Anno
-          symbol = <constructor>(number: kotlin.Int): Anno
-          valueParameters = [
-            KaVariableSignature:
-              name = number
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = number: kotlin.Int
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(number: kotlin.Int): Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = number
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = number: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -446,25 +436,24 @@ KtNameReferenceExpression(173,177): 'Anno'
           contextParameters = []
           callableId = null)
       }
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = Anno
-          symbol = <constructor>(number: kotlin.Int): Anno
-          valueParameters = [
-            KaVariableSignature:
-              name = number
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = number: kotlin.Int
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(number: kotlin.Int): Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = number
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = number: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -486,29 +475,28 @@ KtBinaryExpression(178,189): '0 + integer'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = 0
+        isSafeNavigation = false
+        type = kotlin.Int
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = 0
-          isSafeNavigation = false
-          type = kotlin.Int
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
-          valueParameters = [
-            KaVariableSignature:
-              name = other
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = other: kotlin.Int
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/Int.plus
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+        valueParameters = [
+          KaVariableSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = other: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/Int.plus
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -527,47 +515,45 @@ KtOperationReferenceExpression(180,181): '+'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = 0
+        isSafeNavigation = false
+        type = kotlin.Int
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = 0
-          isSafeNavigation = false
-          type = kotlin.Int
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
-          valueParameters = [
-            KaVariableSignature:
-              name = other
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = other: kotlin.Int
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/Int.plus
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+        valueParameters = [
+          KaVariableSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = other: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/Int.plus
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(182,189): 'integer'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = integer
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = val integer: kotlin.Int
-          contextParameters = []
-          callableId = /integer
+      signature = KaVariableSignature:
+        name = integer
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = val integer: kotlin.Int
+        contextParameters = []
+        callableId = /integer
       simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -576,71 +562,68 @@ KtDotQualifiedExpression(191,226): '(@Anno(integer) usage()).toString()'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = (@Anno(integer) usage())
+        isSafeNavigation = false
+        type = kotlin.Unit
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = (@Anno(integer) usage())
-          isSafeNavigation = false
-          type = kotlin.Unit
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.String
-          symbol = kotlin/Unit.toString(<dispatch receiver>: kotlin.Unit): kotlin.String
-          valueParameters = []
-          contextParameters = []
-          callableId = kotlin/Unit.toString
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.String
+        symbol = kotlin/Unit.toString(<dispatch receiver>: kotlin.Unit): kotlin.String
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/Unit.toString
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = (@Anno(integer) usage())
+        isSafeNavigation = false
+        type = kotlin.Unit
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = KaExplicitReceiverValue:
-          expression = (@Anno(integer) usage())
-          isSafeNavigation = false
-          type = kotlin.Unit
-        signature = KaFunctionSignature:
-          receiverType = kotlin.Any?
-          returnType = kotlin.String
-          symbol = kotlin/toString(<extension receiver>: kotlin.Any?): kotlin.String
-          valueParameters = []
-          contextParameters = []
-          callableId = kotlin/toString
+      signature = KaFunctionSignature:
+        receiverType = kotlin.Any?
+        returnType = kotlin.String
+        symbol = kotlin/toString(<extension receiver>: kotlin.Any?): kotlin.String
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/toString
       typeArgumentsMapping = {}
     isInBestCandidates = false
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = (@Anno(integer) usage())
+        isSafeNavigation = false
+        type = kotlin.Unit
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = KaExplicitReceiverValue:
-          expression = (@Anno(integer) usage())
-          isSafeNavigation = false
-          type = kotlin.Unit
-        signature = KaFunctionSignature:
-          receiverType = kotlin.Byte
-          returnType = kotlin.String
-          symbol = kotlin/text/toString(<extension receiver>: kotlin.Byte, radix: kotlin.Int): kotlin.String
-          valueParameters = [
-            KaVariableSignature:
-              name = radix
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = radix: kotlin.Int
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/text/toString
+      signature = KaFunctionSignature:
+        receiverType = kotlin.Byte
+        returnType = kotlin.String
+        symbol = kotlin/text/toString(<extension receiver>: kotlin.Byte, radix: kotlin.Int): kotlin.String
+        valueParameters = [
+          KaVariableSignature:
+            name = radix
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = radix: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/text/toString
       typeArgumentsMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'radix'>
     isInBestCandidates = false
@@ -648,29 +631,28 @@ KtDotQualifiedExpression(191,226): '(@Anno(integer) usage()).toString()'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = (@Anno(integer) usage())
+        isSafeNavigation = false
+        type = kotlin.Unit
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = KaExplicitReceiverValue:
-          expression = (@Anno(integer) usage())
-          isSafeNavigation = false
-          type = kotlin.Unit
-        signature = KaFunctionSignature:
-          receiverType = kotlin.ByteArray
-          returnType = kotlin.String
-          symbol = kotlin/collections/toString(<extension receiver>: kotlin.ByteArray, charset: java.nio.charset.Charset): kotlin.String
-          valueParameters = [
-            KaVariableSignature:
-              name = charset
-              receiverType = null
-              returnType = java.nio.charset.Charset
-              symbol = charset: java.nio.charset.Charset
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/collections/toString
+      signature = KaFunctionSignature:
+        receiverType = kotlin.ByteArray
+        returnType = kotlin.String
+        symbol = kotlin/collections/toString(<extension receiver>: kotlin.ByteArray, charset: java.nio.charset.Charset): kotlin.String
+        valueParameters = [
+          KaVariableSignature:
+            name = charset
+            receiverType = null
+            returnType = java.nio.charset.Charset
+            symbol = charset: java.nio.charset.Charset
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/collections/toString
       typeArgumentsMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'charset'>
     isInBestCandidates = false
@@ -678,29 +660,28 @@ KtDotQualifiedExpression(191,226): '(@Anno(integer) usage()).toString()'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = (@Anno(integer) usage())
+        isSafeNavigation = false
+        type = kotlin.Unit
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = KaExplicitReceiverValue:
-          expression = (@Anno(integer) usage())
-          isSafeNavigation = false
-          type = kotlin.Unit
-        signature = KaFunctionSignature:
-          receiverType = kotlin.Int
-          returnType = kotlin.String
-          symbol = kotlin/text/toString(<extension receiver>: kotlin.Int, radix: kotlin.Int): kotlin.String
-          valueParameters = [
-            KaVariableSignature:
-              name = radix
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = radix: kotlin.Int
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/text/toString
+      signature = KaFunctionSignature:
+        receiverType = kotlin.Int
+        returnType = kotlin.String
+        symbol = kotlin/text/toString(<extension receiver>: kotlin.Int, radix: kotlin.Int): kotlin.String
+        valueParameters = [
+          KaVariableSignature:
+            name = radix
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = radix: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/text/toString
       typeArgumentsMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'radix'>
     isInBestCandidates = false
@@ -708,29 +689,28 @@ KtDotQualifiedExpression(191,226): '(@Anno(integer) usage()).toString()'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = (@Anno(integer) usage())
+        isSafeNavigation = false
+        type = kotlin.Unit
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = KaExplicitReceiverValue:
-          expression = (@Anno(integer) usage())
-          isSafeNavigation = false
-          type = kotlin.Unit
-        signature = KaFunctionSignature:
-          receiverType = kotlin.Long
-          returnType = kotlin.String
-          symbol = kotlin/text/toString(<extension receiver>: kotlin.Long, radix: kotlin.Int): kotlin.String
-          valueParameters = [
-            KaVariableSignature:
-              name = radix
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = radix: kotlin.Int
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/text/toString
+      signature = KaFunctionSignature:
+        receiverType = kotlin.Long
+        returnType = kotlin.String
+        symbol = kotlin/text/toString(<extension receiver>: kotlin.Long, radix: kotlin.Int): kotlin.String
+        valueParameters = [
+          KaVariableSignature:
+            name = radix
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = radix: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/text/toString
       typeArgumentsMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'radix'>
     isInBestCandidates = false
@@ -738,29 +718,28 @@ KtDotQualifiedExpression(191,226): '(@Anno(integer) usage()).toString()'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = (@Anno(integer) usage())
+        isSafeNavigation = false
+        type = kotlin.Unit
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = KaExplicitReceiverValue:
-          expression = (@Anno(integer) usage())
-          isSafeNavigation = false
-          type = kotlin.Unit
-        signature = KaFunctionSignature:
-          receiverType = kotlin.Short
-          returnType = kotlin.String
-          symbol = kotlin/text/toString(<extension receiver>: kotlin.Short, radix: kotlin.Int): kotlin.String
-          valueParameters = [
-            KaVariableSignature:
-              name = radix
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = radix: kotlin.Int
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/text/toString
+      signature = KaFunctionSignature:
+        receiverType = kotlin.Short
+        returnType = kotlin.String
+        symbol = kotlin/text/toString(<extension receiver>: kotlin.Short, radix: kotlin.Int): kotlin.String
+        valueParameters = [
+          KaVariableSignature:
+            name = radix
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = radix: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/text/toString
       typeArgumentsMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'radix'>
     isInBestCandidates = false
@@ -768,29 +747,28 @@ KtDotQualifiedExpression(191,226): '(@Anno(integer) usage()).toString()'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = (@Anno(integer) usage())
+        isSafeNavigation = false
+        type = kotlin.Unit
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = KaExplicitReceiverValue:
-          expression = (@Anno(integer) usage())
-          isSafeNavigation = false
-          type = kotlin.Unit
-        signature = KaFunctionSignature:
-          receiverType = kotlin.UByte
-          returnType = kotlin.String
-          symbol = kotlin/text/toString(<extension receiver>: kotlin.UByte, radix: kotlin.Int): kotlin.String
-          valueParameters = [
-            KaVariableSignature:
-              name = radix
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = radix: kotlin.Int
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/text/toString
+      signature = KaFunctionSignature:
+        receiverType = kotlin.UByte
+        returnType = kotlin.String
+        symbol = kotlin/text/toString(<extension receiver>: kotlin.UByte, radix: kotlin.Int): kotlin.String
+        valueParameters = [
+          KaVariableSignature:
+            name = radix
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = radix: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/text/toString
       typeArgumentsMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'radix'>
     isInBestCandidates = false
@@ -798,29 +776,28 @@ KtDotQualifiedExpression(191,226): '(@Anno(integer) usage()).toString()'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = (@Anno(integer) usage())
+        isSafeNavigation = false
+        type = kotlin.Unit
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = KaExplicitReceiverValue:
-          expression = (@Anno(integer) usage())
-          isSafeNavigation = false
-          type = kotlin.Unit
-        signature = KaFunctionSignature:
-          receiverType = kotlin.UInt
-          returnType = kotlin.String
-          symbol = kotlin/text/toString(<extension receiver>: kotlin.UInt, radix: kotlin.Int): kotlin.String
-          valueParameters = [
-            KaVariableSignature:
-              name = radix
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = radix: kotlin.Int
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/text/toString
+      signature = KaFunctionSignature:
+        receiverType = kotlin.UInt
+        returnType = kotlin.String
+        symbol = kotlin/text/toString(<extension receiver>: kotlin.UInt, radix: kotlin.Int): kotlin.String
+        valueParameters = [
+          KaVariableSignature:
+            name = radix
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = radix: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/text/toString
       typeArgumentsMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'radix'>
     isInBestCandidates = false
@@ -828,29 +805,28 @@ KtDotQualifiedExpression(191,226): '(@Anno(integer) usage()).toString()'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = (@Anno(integer) usage())
+        isSafeNavigation = false
+        type = kotlin.Unit
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = KaExplicitReceiverValue:
-          expression = (@Anno(integer) usage())
-          isSafeNavigation = false
-          type = kotlin.Unit
-        signature = KaFunctionSignature:
-          receiverType = kotlin.ULong
-          returnType = kotlin.String
-          symbol = kotlin/text/toString(<extension receiver>: kotlin.ULong, radix: kotlin.Int): kotlin.String
-          valueParameters = [
-            KaVariableSignature:
-              name = radix
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = radix: kotlin.Int
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/text/toString
+      signature = KaFunctionSignature:
+        receiverType = kotlin.ULong
+        returnType = kotlin.String
+        symbol = kotlin/text/toString(<extension receiver>: kotlin.ULong, radix: kotlin.Int): kotlin.String
+        valueParameters = [
+          KaVariableSignature:
+            name = radix
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = radix: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/text/toString
       typeArgumentsMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'radix'>
     isInBestCandidates = false
@@ -858,29 +834,28 @@ KtDotQualifiedExpression(191,226): '(@Anno(integer) usage()).toString()'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = (@Anno(integer) usage())
+        isSafeNavigation = false
+        type = kotlin.Unit
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = KaExplicitReceiverValue:
-          expression = (@Anno(integer) usage())
-          isSafeNavigation = false
-          type = kotlin.Unit
-        signature = KaFunctionSignature:
-          receiverType = kotlin.UShort
-          returnType = kotlin.String
-          symbol = kotlin/text/toString(<extension receiver>: kotlin.UShort, radix: kotlin.Int): kotlin.String
-          valueParameters = [
-            KaVariableSignature:
-              name = radix
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = radix: kotlin.Int
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/text/toString
+      signature = KaFunctionSignature:
+        receiverType = kotlin.UShort
+        returnType = kotlin.String
+        symbol = kotlin/text/toString(<extension receiver>: kotlin.UShort, radix: kotlin.Int): kotlin.String
+        valueParameters = [
+          KaVariableSignature:
+            name = radix
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = radix: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/text/toString
       typeArgumentsMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'radix'>
     isInBestCandidates = false
@@ -903,25 +878,24 @@ KtAnnotationEntry(192,206): '@Anno(integer)'
           contextParameters = []
           callableId = null)
       }
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = Anno
-          symbol = <constructor>(number: kotlin.Int): Anno
-          valueParameters = [
-            KaVariableSignature:
-              name = number
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = number: kotlin.Int
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(number: kotlin.Int): Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = number
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = number: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -937,25 +911,24 @@ KtConstructorCalleeExpression(193,197): 'Anno'
           contextParameters = []
           callableId = null)
       }
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = Anno
-          symbol = <constructor>(number: kotlin.Int): Anno
-          valueParameters = [
-            KaVariableSignature:
-              name = number
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = number: kotlin.Int
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(number: kotlin.Int): Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = number
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = number: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -977,25 +950,24 @@ KtNameReferenceExpression(193,197): 'Anno'
           contextParameters = []
           callableId = null)
       }
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = Anno
-          symbol = <constructor>(number: kotlin.Int): Anno
-          valueParameters = [
-            KaVariableSignature:
-              name = number
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = number: kotlin.Int
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Anno
+        symbol = <constructor>(number: kotlin.Int): Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = number
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = number: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1008,18 +980,17 @@ KtValueArgument(198,205): 'integer'
 KtNameReferenceExpression(198,205): 'integer'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = integer
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = val integer: kotlin.Int
-          contextParameters = []
-          callableId = /integer
+      signature = KaVariableSignature:
+        name = integer
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = val integer: kotlin.Int
+        contextParameters = []
+        callableId = /integer
       simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1028,18 +999,17 @@ KtCallExpression(207,214): 'usage()'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = /usage(): kotlin.Unit
-          valueParameters = []
-          contextParameters = []
-          callableId = /usage
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /usage(): kotlin.Unit
+        valueParameters = []
+        contextParameters = []
+        callableId = /usage
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1047,18 +1017,17 @@ KtNameReferenceExpression(207,212): 'usage'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = /usage(): kotlin.Unit
-          valueParameters = []
-          contextParameters = []
-          callableId = /usage
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /usage(): kotlin.Unit
+        valueParameters = []
+        contextParameters = []
+        callableId = /usage
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1069,71 +1038,68 @@ KtCallExpression(216,226): 'toString()'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = (@Anno(integer) usage())
+        isSafeNavigation = false
+        type = kotlin.Unit
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = (@Anno(integer) usage())
-          isSafeNavigation = false
-          type = kotlin.Unit
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.String
-          symbol = kotlin/Unit.toString(<dispatch receiver>: kotlin.Unit): kotlin.String
-          valueParameters = []
-          contextParameters = []
-          callableId = kotlin/Unit.toString
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.String
+        symbol = kotlin/Unit.toString(<dispatch receiver>: kotlin.Unit): kotlin.String
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/Unit.toString
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = (@Anno(integer) usage())
+        isSafeNavigation = false
+        type = kotlin.Unit
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = KaExplicitReceiverValue:
-          expression = (@Anno(integer) usage())
-          isSafeNavigation = false
-          type = kotlin.Unit
-        signature = KaFunctionSignature:
-          receiverType = kotlin.Any?
-          returnType = kotlin.String
-          symbol = kotlin/toString(<extension receiver>: kotlin.Any?): kotlin.String
-          valueParameters = []
-          contextParameters = []
-          callableId = kotlin/toString
+      signature = KaFunctionSignature:
+        receiverType = kotlin.Any?
+        returnType = kotlin.String
+        symbol = kotlin/toString(<extension receiver>: kotlin.Any?): kotlin.String
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/toString
       typeArgumentsMapping = {}
     isInBestCandidates = false
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = (@Anno(integer) usage())
+        isSafeNavigation = false
+        type = kotlin.Unit
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = KaExplicitReceiverValue:
-          expression = (@Anno(integer) usage())
-          isSafeNavigation = false
-          type = kotlin.Unit
-        signature = KaFunctionSignature:
-          receiverType = kotlin.Byte
-          returnType = kotlin.String
-          symbol = kotlin/text/toString(<extension receiver>: kotlin.Byte, radix: kotlin.Int): kotlin.String
-          valueParameters = [
-            KaVariableSignature:
-              name = radix
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = radix: kotlin.Int
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/text/toString
+      signature = KaFunctionSignature:
+        receiverType = kotlin.Byte
+        returnType = kotlin.String
+        symbol = kotlin/text/toString(<extension receiver>: kotlin.Byte, radix: kotlin.Int): kotlin.String
+        valueParameters = [
+          KaVariableSignature:
+            name = radix
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = radix: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/text/toString
       typeArgumentsMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'radix'>
     isInBestCandidates = false
@@ -1141,29 +1107,28 @@ KtCallExpression(216,226): 'toString()'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = (@Anno(integer) usage())
+        isSafeNavigation = false
+        type = kotlin.Unit
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = KaExplicitReceiverValue:
-          expression = (@Anno(integer) usage())
-          isSafeNavigation = false
-          type = kotlin.Unit
-        signature = KaFunctionSignature:
-          receiverType = kotlin.ByteArray
-          returnType = kotlin.String
-          symbol = kotlin/collections/toString(<extension receiver>: kotlin.ByteArray, charset: java.nio.charset.Charset): kotlin.String
-          valueParameters = [
-            KaVariableSignature:
-              name = charset
-              receiverType = null
-              returnType = java.nio.charset.Charset
-              symbol = charset: java.nio.charset.Charset
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/collections/toString
+      signature = KaFunctionSignature:
+        receiverType = kotlin.ByteArray
+        returnType = kotlin.String
+        symbol = kotlin/collections/toString(<extension receiver>: kotlin.ByteArray, charset: java.nio.charset.Charset): kotlin.String
+        valueParameters = [
+          KaVariableSignature:
+            name = charset
+            receiverType = null
+            returnType = java.nio.charset.Charset
+            symbol = charset: java.nio.charset.Charset
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/collections/toString
       typeArgumentsMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'charset'>
     isInBestCandidates = false
@@ -1171,29 +1136,28 @@ KtCallExpression(216,226): 'toString()'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = (@Anno(integer) usage())
+        isSafeNavigation = false
+        type = kotlin.Unit
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = KaExplicitReceiverValue:
-          expression = (@Anno(integer) usage())
-          isSafeNavigation = false
-          type = kotlin.Unit
-        signature = KaFunctionSignature:
-          receiverType = kotlin.Int
-          returnType = kotlin.String
-          symbol = kotlin/text/toString(<extension receiver>: kotlin.Int, radix: kotlin.Int): kotlin.String
-          valueParameters = [
-            KaVariableSignature:
-              name = radix
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = radix: kotlin.Int
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/text/toString
+      signature = KaFunctionSignature:
+        receiverType = kotlin.Int
+        returnType = kotlin.String
+        symbol = kotlin/text/toString(<extension receiver>: kotlin.Int, radix: kotlin.Int): kotlin.String
+        valueParameters = [
+          KaVariableSignature:
+            name = radix
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = radix: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/text/toString
       typeArgumentsMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'radix'>
     isInBestCandidates = false
@@ -1201,29 +1165,28 @@ KtCallExpression(216,226): 'toString()'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = (@Anno(integer) usage())
+        isSafeNavigation = false
+        type = kotlin.Unit
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = KaExplicitReceiverValue:
-          expression = (@Anno(integer) usage())
-          isSafeNavigation = false
-          type = kotlin.Unit
-        signature = KaFunctionSignature:
-          receiverType = kotlin.Long
-          returnType = kotlin.String
-          symbol = kotlin/text/toString(<extension receiver>: kotlin.Long, radix: kotlin.Int): kotlin.String
-          valueParameters = [
-            KaVariableSignature:
-              name = radix
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = radix: kotlin.Int
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/text/toString
+      signature = KaFunctionSignature:
+        receiverType = kotlin.Long
+        returnType = kotlin.String
+        symbol = kotlin/text/toString(<extension receiver>: kotlin.Long, radix: kotlin.Int): kotlin.String
+        valueParameters = [
+          KaVariableSignature:
+            name = radix
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = radix: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/text/toString
       typeArgumentsMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'radix'>
     isInBestCandidates = false
@@ -1231,29 +1194,28 @@ KtCallExpression(216,226): 'toString()'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = (@Anno(integer) usage())
+        isSafeNavigation = false
+        type = kotlin.Unit
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = KaExplicitReceiverValue:
-          expression = (@Anno(integer) usage())
-          isSafeNavigation = false
-          type = kotlin.Unit
-        signature = KaFunctionSignature:
-          receiverType = kotlin.Short
-          returnType = kotlin.String
-          symbol = kotlin/text/toString(<extension receiver>: kotlin.Short, radix: kotlin.Int): kotlin.String
-          valueParameters = [
-            KaVariableSignature:
-              name = radix
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = radix: kotlin.Int
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/text/toString
+      signature = KaFunctionSignature:
+        receiverType = kotlin.Short
+        returnType = kotlin.String
+        symbol = kotlin/text/toString(<extension receiver>: kotlin.Short, radix: kotlin.Int): kotlin.String
+        valueParameters = [
+          KaVariableSignature:
+            name = radix
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = radix: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/text/toString
       typeArgumentsMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'radix'>
     isInBestCandidates = false
@@ -1261,29 +1223,28 @@ KtCallExpression(216,226): 'toString()'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = (@Anno(integer) usage())
+        isSafeNavigation = false
+        type = kotlin.Unit
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = KaExplicitReceiverValue:
-          expression = (@Anno(integer) usage())
-          isSafeNavigation = false
-          type = kotlin.Unit
-        signature = KaFunctionSignature:
-          receiverType = kotlin.UByte
-          returnType = kotlin.String
-          symbol = kotlin/text/toString(<extension receiver>: kotlin.UByte, radix: kotlin.Int): kotlin.String
-          valueParameters = [
-            KaVariableSignature:
-              name = radix
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = radix: kotlin.Int
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/text/toString
+      signature = KaFunctionSignature:
+        receiverType = kotlin.UByte
+        returnType = kotlin.String
+        symbol = kotlin/text/toString(<extension receiver>: kotlin.UByte, radix: kotlin.Int): kotlin.String
+        valueParameters = [
+          KaVariableSignature:
+            name = radix
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = radix: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/text/toString
       typeArgumentsMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'radix'>
     isInBestCandidates = false
@@ -1291,29 +1252,28 @@ KtCallExpression(216,226): 'toString()'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = (@Anno(integer) usage())
+        isSafeNavigation = false
+        type = kotlin.Unit
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = KaExplicitReceiverValue:
-          expression = (@Anno(integer) usage())
-          isSafeNavigation = false
-          type = kotlin.Unit
-        signature = KaFunctionSignature:
-          receiverType = kotlin.UInt
-          returnType = kotlin.String
-          symbol = kotlin/text/toString(<extension receiver>: kotlin.UInt, radix: kotlin.Int): kotlin.String
-          valueParameters = [
-            KaVariableSignature:
-              name = radix
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = radix: kotlin.Int
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/text/toString
+      signature = KaFunctionSignature:
+        receiverType = kotlin.UInt
+        returnType = kotlin.String
+        symbol = kotlin/text/toString(<extension receiver>: kotlin.UInt, radix: kotlin.Int): kotlin.String
+        valueParameters = [
+          KaVariableSignature:
+            name = radix
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = radix: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/text/toString
       typeArgumentsMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'radix'>
     isInBestCandidates = false
@@ -1321,29 +1281,28 @@ KtCallExpression(216,226): 'toString()'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = (@Anno(integer) usage())
+        isSafeNavigation = false
+        type = kotlin.Unit
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = KaExplicitReceiverValue:
-          expression = (@Anno(integer) usage())
-          isSafeNavigation = false
-          type = kotlin.Unit
-        signature = KaFunctionSignature:
-          receiverType = kotlin.ULong
-          returnType = kotlin.String
-          symbol = kotlin/text/toString(<extension receiver>: kotlin.ULong, radix: kotlin.Int): kotlin.String
-          valueParameters = [
-            KaVariableSignature:
-              name = radix
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = radix: kotlin.Int
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/text/toString
+      signature = KaFunctionSignature:
+        receiverType = kotlin.ULong
+        returnType = kotlin.String
+        symbol = kotlin/text/toString(<extension receiver>: kotlin.ULong, radix: kotlin.Int): kotlin.String
+        valueParameters = [
+          KaVariableSignature:
+            name = radix
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = radix: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/text/toString
       typeArgumentsMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'radix'>
     isInBestCandidates = false
@@ -1351,29 +1310,28 @@ KtCallExpression(216,226): 'toString()'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = (@Anno(integer) usage())
+        isSafeNavigation = false
+        type = kotlin.Unit
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = KaExplicitReceiverValue:
-          expression = (@Anno(integer) usage())
-          isSafeNavigation = false
-          type = kotlin.Unit
-        signature = KaFunctionSignature:
-          receiverType = kotlin.UShort
-          returnType = kotlin.String
-          symbol = kotlin/text/toString(<extension receiver>: kotlin.UShort, radix: kotlin.Int): kotlin.String
-          valueParameters = [
-            KaVariableSignature:
-              name = radix
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = radix: kotlin.Int
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/text/toString
+      signature = KaFunctionSignature:
+        receiverType = kotlin.UShort
+        returnType = kotlin.String
+        symbol = kotlin/text/toString(<extension receiver>: kotlin.UShort, radix: kotlin.Int): kotlin.String
+        valueParameters = [
+          KaVariableSignature:
+            name = radix
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = radix: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/text/toString
       typeArgumentsMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'radix'>
     isInBestCandidates = false
@@ -1382,71 +1340,68 @@ KtNameReferenceExpression(216,224): 'toString'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = (@Anno(integer) usage())
+        isSafeNavigation = false
+        type = kotlin.Unit
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = (@Anno(integer) usage())
-          isSafeNavigation = false
-          type = kotlin.Unit
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.String
-          symbol = kotlin/Unit.toString(<dispatch receiver>: kotlin.Unit): kotlin.String
-          valueParameters = []
-          contextParameters = []
-          callableId = kotlin/Unit.toString
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.String
+        symbol = kotlin/Unit.toString(<dispatch receiver>: kotlin.Unit): kotlin.String
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/Unit.toString
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = (@Anno(integer) usage())
+        isSafeNavigation = false
+        type = kotlin.Unit
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = KaExplicitReceiverValue:
-          expression = (@Anno(integer) usage())
-          isSafeNavigation = false
-          type = kotlin.Unit
-        signature = KaFunctionSignature:
-          receiverType = kotlin.Any?
-          returnType = kotlin.String
-          symbol = kotlin/toString(<extension receiver>: kotlin.Any?): kotlin.String
-          valueParameters = []
-          contextParameters = []
-          callableId = kotlin/toString
+      signature = KaFunctionSignature:
+        receiverType = kotlin.Any?
+        returnType = kotlin.String
+        symbol = kotlin/toString(<extension receiver>: kotlin.Any?): kotlin.String
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/toString
       typeArgumentsMapping = {}
     isInBestCandidates = false
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = (@Anno(integer) usage())
+        isSafeNavigation = false
+        type = kotlin.Unit
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = KaExplicitReceiverValue:
-          expression = (@Anno(integer) usage())
-          isSafeNavigation = false
-          type = kotlin.Unit
-        signature = KaFunctionSignature:
-          receiverType = kotlin.Byte
-          returnType = kotlin.String
-          symbol = kotlin/text/toString(<extension receiver>: kotlin.Byte, radix: kotlin.Int): kotlin.String
-          valueParameters = [
-            KaVariableSignature:
-              name = radix
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = radix: kotlin.Int
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/text/toString
+      signature = KaFunctionSignature:
+        receiverType = kotlin.Byte
+        returnType = kotlin.String
+        symbol = kotlin/text/toString(<extension receiver>: kotlin.Byte, radix: kotlin.Int): kotlin.String
+        valueParameters = [
+          KaVariableSignature:
+            name = radix
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = radix: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/text/toString
       typeArgumentsMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'radix'>
     isInBestCandidates = false
@@ -1454,29 +1409,28 @@ KtNameReferenceExpression(216,224): 'toString'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = (@Anno(integer) usage())
+        isSafeNavigation = false
+        type = kotlin.Unit
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = KaExplicitReceiverValue:
-          expression = (@Anno(integer) usage())
-          isSafeNavigation = false
-          type = kotlin.Unit
-        signature = KaFunctionSignature:
-          receiverType = kotlin.ByteArray
-          returnType = kotlin.String
-          symbol = kotlin/collections/toString(<extension receiver>: kotlin.ByteArray, charset: java.nio.charset.Charset): kotlin.String
-          valueParameters = [
-            KaVariableSignature:
-              name = charset
-              receiverType = null
-              returnType = java.nio.charset.Charset
-              symbol = charset: java.nio.charset.Charset
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/collections/toString
+      signature = KaFunctionSignature:
+        receiverType = kotlin.ByteArray
+        returnType = kotlin.String
+        symbol = kotlin/collections/toString(<extension receiver>: kotlin.ByteArray, charset: java.nio.charset.Charset): kotlin.String
+        valueParameters = [
+          KaVariableSignature:
+            name = charset
+            receiverType = null
+            returnType = java.nio.charset.Charset
+            symbol = charset: java.nio.charset.Charset
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/collections/toString
       typeArgumentsMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'charset'>
     isInBestCandidates = false
@@ -1484,29 +1438,28 @@ KtNameReferenceExpression(216,224): 'toString'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = (@Anno(integer) usage())
+        isSafeNavigation = false
+        type = kotlin.Unit
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = KaExplicitReceiverValue:
-          expression = (@Anno(integer) usage())
-          isSafeNavigation = false
-          type = kotlin.Unit
-        signature = KaFunctionSignature:
-          receiverType = kotlin.Int
-          returnType = kotlin.String
-          symbol = kotlin/text/toString(<extension receiver>: kotlin.Int, radix: kotlin.Int): kotlin.String
-          valueParameters = [
-            KaVariableSignature:
-              name = radix
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = radix: kotlin.Int
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/text/toString
+      signature = KaFunctionSignature:
+        receiverType = kotlin.Int
+        returnType = kotlin.String
+        symbol = kotlin/text/toString(<extension receiver>: kotlin.Int, radix: kotlin.Int): kotlin.String
+        valueParameters = [
+          KaVariableSignature:
+            name = radix
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = radix: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/text/toString
       typeArgumentsMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'radix'>
     isInBestCandidates = false
@@ -1514,29 +1467,28 @@ KtNameReferenceExpression(216,224): 'toString'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = (@Anno(integer) usage())
+        isSafeNavigation = false
+        type = kotlin.Unit
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = KaExplicitReceiverValue:
-          expression = (@Anno(integer) usage())
-          isSafeNavigation = false
-          type = kotlin.Unit
-        signature = KaFunctionSignature:
-          receiverType = kotlin.Long
-          returnType = kotlin.String
-          symbol = kotlin/text/toString(<extension receiver>: kotlin.Long, radix: kotlin.Int): kotlin.String
-          valueParameters = [
-            KaVariableSignature:
-              name = radix
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = radix: kotlin.Int
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/text/toString
+      signature = KaFunctionSignature:
+        receiverType = kotlin.Long
+        returnType = kotlin.String
+        symbol = kotlin/text/toString(<extension receiver>: kotlin.Long, radix: kotlin.Int): kotlin.String
+        valueParameters = [
+          KaVariableSignature:
+            name = radix
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = radix: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/text/toString
       typeArgumentsMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'radix'>
     isInBestCandidates = false
@@ -1544,29 +1496,28 @@ KtNameReferenceExpression(216,224): 'toString'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = (@Anno(integer) usage())
+        isSafeNavigation = false
+        type = kotlin.Unit
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = KaExplicitReceiverValue:
-          expression = (@Anno(integer) usage())
-          isSafeNavigation = false
-          type = kotlin.Unit
-        signature = KaFunctionSignature:
-          receiverType = kotlin.Short
-          returnType = kotlin.String
-          symbol = kotlin/text/toString(<extension receiver>: kotlin.Short, radix: kotlin.Int): kotlin.String
-          valueParameters = [
-            KaVariableSignature:
-              name = radix
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = radix: kotlin.Int
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/text/toString
+      signature = KaFunctionSignature:
+        receiverType = kotlin.Short
+        returnType = kotlin.String
+        symbol = kotlin/text/toString(<extension receiver>: kotlin.Short, radix: kotlin.Int): kotlin.String
+        valueParameters = [
+          KaVariableSignature:
+            name = radix
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = radix: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/text/toString
       typeArgumentsMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'radix'>
     isInBestCandidates = false
@@ -1574,29 +1525,28 @@ KtNameReferenceExpression(216,224): 'toString'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = (@Anno(integer) usage())
+        isSafeNavigation = false
+        type = kotlin.Unit
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = KaExplicitReceiverValue:
-          expression = (@Anno(integer) usage())
-          isSafeNavigation = false
-          type = kotlin.Unit
-        signature = KaFunctionSignature:
-          receiverType = kotlin.UByte
-          returnType = kotlin.String
-          symbol = kotlin/text/toString(<extension receiver>: kotlin.UByte, radix: kotlin.Int): kotlin.String
-          valueParameters = [
-            KaVariableSignature:
-              name = radix
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = radix: kotlin.Int
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/text/toString
+      signature = KaFunctionSignature:
+        receiverType = kotlin.UByte
+        returnType = kotlin.String
+        symbol = kotlin/text/toString(<extension receiver>: kotlin.UByte, radix: kotlin.Int): kotlin.String
+        valueParameters = [
+          KaVariableSignature:
+            name = radix
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = radix: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/text/toString
       typeArgumentsMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'radix'>
     isInBestCandidates = false
@@ -1604,29 +1554,28 @@ KtNameReferenceExpression(216,224): 'toString'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = (@Anno(integer) usage())
+        isSafeNavigation = false
+        type = kotlin.Unit
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = KaExplicitReceiverValue:
-          expression = (@Anno(integer) usage())
-          isSafeNavigation = false
-          type = kotlin.Unit
-        signature = KaFunctionSignature:
-          receiverType = kotlin.UInt
-          returnType = kotlin.String
-          symbol = kotlin/text/toString(<extension receiver>: kotlin.UInt, radix: kotlin.Int): kotlin.String
-          valueParameters = [
-            KaVariableSignature:
-              name = radix
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = radix: kotlin.Int
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/text/toString
+      signature = KaFunctionSignature:
+        receiverType = kotlin.UInt
+        returnType = kotlin.String
+        symbol = kotlin/text/toString(<extension receiver>: kotlin.UInt, radix: kotlin.Int): kotlin.String
+        valueParameters = [
+          KaVariableSignature:
+            name = radix
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = radix: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/text/toString
       typeArgumentsMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'radix'>
     isInBestCandidates = false
@@ -1634,29 +1583,28 @@ KtNameReferenceExpression(216,224): 'toString'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = (@Anno(integer) usage())
+        isSafeNavigation = false
+        type = kotlin.Unit
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = KaExplicitReceiverValue:
-          expression = (@Anno(integer) usage())
-          isSafeNavigation = false
-          type = kotlin.Unit
-        signature = KaFunctionSignature:
-          receiverType = kotlin.ULong
-          returnType = kotlin.String
-          symbol = kotlin/text/toString(<extension receiver>: kotlin.ULong, radix: kotlin.Int): kotlin.String
-          valueParameters = [
-            KaVariableSignature:
-              name = radix
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = radix: kotlin.Int
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/text/toString
+      signature = KaFunctionSignature:
+        receiverType = kotlin.ULong
+        returnType = kotlin.String
+        symbol = kotlin/text/toString(<extension receiver>: kotlin.ULong, radix: kotlin.Int): kotlin.String
+        valueParameters = [
+          KaVariableSignature:
+            name = radix
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = radix: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/text/toString
       typeArgumentsMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'radix'>
     isInBestCandidates = false
@@ -1664,29 +1612,28 @@ KtNameReferenceExpression(216,224): 'toString'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = (@Anno(integer) usage())
+        isSafeNavigation = false
+        type = kotlin.Unit
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = KaExplicitReceiverValue:
-          expression = (@Anno(integer) usage())
-          isSafeNavigation = false
-          type = kotlin.Unit
-        signature = KaFunctionSignature:
-          receiverType = kotlin.UShort
-          returnType = kotlin.String
-          symbol = kotlin/text/toString(<extension receiver>: kotlin.UShort, radix: kotlin.Int): kotlin.String
-          valueParameters = [
-            KaVariableSignature:
-              name = radix
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = radix: kotlin.Int
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/text/toString
+      signature = KaFunctionSignature:
+        receiverType = kotlin.UShort
+        returnType = kotlin.String
+        symbol = kotlin/text/toString(<extension receiver>: kotlin.UShort, radix: kotlin.Int): kotlin.String
+        valueParameters = [
+          KaVariableSignature:
+            name = radix
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = radix: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/text/toString
       typeArgumentsMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'radix'>
     isInBestCandidates = false

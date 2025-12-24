@@ -10,24 +10,23 @@ KtNameReferenceExpression(202,210): 'IntArray'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Array<out kotlin.String>
-          symbol = ctrl_click/IntArray(vararg content: kotlin.String): kotlin.Array<out kotlin.String>
-          valueParameters = [
-            KaVariableSignature:
-              name = content
-              receiverType = null
-              returnType = kotlin.String
-              symbol = vararg content: kotlin.String
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = ctrl_click/IntArray
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Array<out kotlin.String>
+        symbol = ctrl_click/IntArray(vararg content: kotlin.String): kotlin.Array<out kotlin.String>
+        valueParameters = [
+          KaVariableSignature:
+            name = content
+            receiverType = null
+            returnType = kotlin.String
+            symbol = vararg content: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = ctrl_click/IntArray
       typeArgumentsMapping = {}

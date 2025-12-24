@@ -1,32 +1,31 @@
 KtNameReferenceExpression(195,209): 'propertyMember'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      contextArguments = [
+        KaImplicitReceiverValue:
+          symbol = a: A
+          type = A
+      ]
+      dispatchReceiver = KaImplicitReceiverValue:
+        symbol = /Base
+        type = Base
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = [
-          KaImplicitReceiverValue:
+      signature = KaVariableSignature:
+        name = propertyMember
+        receiverType = null
+        returnType = kotlin.String
+        symbol = val propertyMember: kotlin.String
+        contextParameters = [
+          KaVariableSignature:
+            name = a
+            receiverType = null
+            returnType = A
             symbol = a: A
-            type = A
+            contextParameters = []
+            callableId = null
         ]
-        dispatchReceiver = KaImplicitReceiverValue:
-          symbol = /Base
-          type = Base
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = propertyMember
-          receiverType = null
-          returnType = kotlin.String
-          symbol = val propertyMember: kotlin.String
-          contextParameters = [
-            KaVariableSignature:
-              name = a
-              receiverType = null
-              returnType = A
-              symbol = a: A
-              contextParameters = []
-              callableId = null
-          ]
-          callableId = /Base.propertyMember
+        callableId = /Base.propertyMember
       simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true

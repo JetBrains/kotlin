@@ -10,29 +10,28 @@ KtArrayAccessExpression(70,77): 'list[0]'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = list
+        isSafeNavigation = false
+        type = kotlin.collections.MutableList<kotlin.Int>
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = list
-          isSafeNavigation = false
-          type = kotlin.collections.MutableList<kotlin.Int>
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = kotlin/collections/MutableList.get(<dispatch receiver>: kotlin.collections.List<E>, index: kotlin.Int): E
-          valueParameters = [
-            KaVariableSignature:
-              name = index
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = index: kotlin.Int
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/collections/MutableList.get
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = kotlin/collections/MutableList.get(<dispatch receiver>: kotlin.collections.List<E>, index: kotlin.Int): E
+        valueParameters = [
+          KaVariableSignature:
+            name = index
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = index: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/collections/MutableList.get
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -47,29 +46,28 @@ KtArrayAccessExpression(70,77): 'list[0]'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = list
+        isSafeNavigation = false
+        type = kotlin.collections.MutableList<kotlin.Int>
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = KaExplicitReceiverValue:
-          expression = list
-          isSafeNavigation = false
-          type = kotlin.collections.MutableList<kotlin.Int>
-        signature = KaFunctionSignature:
-          receiverType = kotlin.collections.Map<out kotlin.Int, ERROR_TYPE>
-          returnType = ERROR_TYPE?
-          symbol = kotlin/collections/get(<extension receiver>: kotlin.collections.Map<out K, V>, key: K): V?
-          valueParameters = [
-            KaVariableSignature:
-              name = key
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = key: K
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/collections/get
+      signature = KaFunctionSignature:
+        receiverType = kotlin.collections.Map<out kotlin.Int, ERROR_TYPE>
+        returnType = ERROR_TYPE?
+        symbol = kotlin/collections/get(<extension receiver>: kotlin.collections.Map<out K, V>, key: K): V?
+        valueParameters = [
+          KaVariableSignature:
+            name = key
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = key: K
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/collections/get
       typeArgumentsMapping = {
         K -> (kotlin.Int),
         V -> (ERROR_TYPE)
@@ -88,29 +86,28 @@ KtArrayAccessExpression(70,77): 'list[0]'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = list
+        isSafeNavigation = false
+        type = kotlin.collections.MutableList<kotlin.Int>
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = KaExplicitReceiverValue:
-          expression = list
-          isSafeNavigation = false
-          type = kotlin.collections.MutableList<kotlin.Int>
-        signature = KaFunctionSignature:
-          receiverType = kotlin.text.MatchGroupCollection
-          returnType = kotlin.text.MatchGroup?
-          symbol = kotlin/text/get(<extension receiver>: kotlin.text.MatchGroupCollection, name: kotlin.String): kotlin.text.MatchGroup?
-          valueParameters = [
-            KaVariableSignature:
-              name = name
-              receiverType = null
-              returnType = kotlin.String
-              symbol = name: kotlin.String
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/text/get
+      signature = KaFunctionSignature:
+        receiverType = kotlin.text.MatchGroupCollection
+        returnType = kotlin.text.MatchGroup?
+        symbol = kotlin/text/get(<extension receiver>: kotlin.text.MatchGroupCollection, name: kotlin.String): kotlin.text.MatchGroup?
+        valueParameters = [
+          KaVariableSignature:
+            name = name
+            receiverType = null
+            returnType = kotlin.String
+            symbol = name: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/text/get
       typeArgumentsMapping = {}
     diagnostic = ERROR<CONSTANT_EXPECTED_TYPE_MISMATCH: The integer literal does not conform to the expected type String>
     isInBestCandidates = false

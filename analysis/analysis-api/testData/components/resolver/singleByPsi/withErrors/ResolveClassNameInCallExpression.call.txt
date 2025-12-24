@@ -3,18 +3,17 @@ KtNameReferenceExpression(327,331): 'Test'
     candidateCalls = [
       KaSimpleFunctionCall:
         argumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
         isImplicitInvoke = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = null
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = Test<T>
-            symbol = <constructor>(): Test<T>
-            valueParameters = []
-            contextParameters = []
-            callableId = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = Test<T>
+          symbol = <constructor>(): Test<T>
+          valueParameters = []
+          contextParameters = []
+          callableId = null
         typeArgumentsMapping = {
           T -> (kotlin.Int)
         }

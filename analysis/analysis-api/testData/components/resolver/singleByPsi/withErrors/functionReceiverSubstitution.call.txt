@@ -3,29 +3,28 @@ KtDotQualifiedExpression(73,80): 'f.foo()'
     candidateCalls = [
       KaSimpleFunctionCall:
         argumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = f
+          isSafeNavigation = false
+          type = Foo<kotlin.String>
         isImplicitInvoke = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = null
-          extensionReceiver = KaExplicitReceiverValue:
-            expression = f
-            isSafeNavigation = false
-            type = Foo<kotlin.String>
-          signature = KaFunctionSignature:
-            receiverType = Foo<kotlin.String>
-            returnType = kotlin.Unit
-            symbol = /foo(<extension receiver>: Foo<A>, i: kotlin.Int): kotlin.Unit
-            valueParameters = [
-              KaVariableSignature:
-                name = i
-                receiverType = null
-                returnType = kotlin.Int
-                symbol = i: kotlin.Int
-                contextParameters = []
-                callableId = null
-            ]
-            contextParameters = []
-            callableId = /foo
+        signature = KaFunctionSignature:
+          receiverType = Foo<kotlin.String>
+          returnType = kotlin.Unit
+          symbol = /foo(<extension receiver>: Foo<A>, i: kotlin.Int): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = i
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = i: kotlin.Int
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /foo
         typeArgumentsMapping = {
           A -> (kotlin.String)
         }

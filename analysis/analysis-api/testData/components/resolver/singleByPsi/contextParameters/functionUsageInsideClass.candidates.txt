@@ -2,31 +2,30 @@ KtCallExpression(181,192): 'funMember()'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
+      contextArguments = [
+        KaImplicitReceiverValue:
+          symbol = a: A
+          type = A
+      ]
+      dispatchReceiver = KaImplicitReceiverValue:
+        symbol = /Base
+        type = Base
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = [
-          KaImplicitReceiverValue:
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /Base.funMember(<dispatch receiver>: Base): kotlin.Unit
+        valueParameters = []
+        contextParameters = [
+          KaVariableSignature:
+            name = a
+            receiverType = null
+            returnType = A
             symbol = a: A
-            type = A
+            contextParameters = []
+            callableId = null
         ]
-        dispatchReceiver = KaImplicitReceiverValue:
-          symbol = /Base
-          type = Base
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = /Base.funMember(<dispatch receiver>: Base): kotlin.Unit
-          valueParameters = []
-          contextParameters = [
-            KaVariableSignature:
-              name = a
-              receiverType = null
-              returnType = A
-              symbol = a: A
-              contextParameters = []
-              callableId = null
-          ]
-          callableId = /Base.funMember
+        callableId = /Base.funMember
       typeArgumentsMapping = {}
     isInBestCandidates = true

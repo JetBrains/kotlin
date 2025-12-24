@@ -10,28 +10,27 @@ KtNameReferenceExpression(166,171): 'check'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = m
+        isSafeNavigation = false
+        type = dependency3.MyInterface
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = m
-          isSafeNavigation = false
-          type = dependency3.MyInterface
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = dependency3/MyInterface.check(<dispatch receiver>: dependency3.MyInterface, list: {dependency2.ListAlias<{dependency1.StringAlias=} kotlin.String>=} kotlin.collections.List<{dependency1.StringAlias=} kotlin.String>): kotlin.Unit
-          valueParameters = [
-            KaVariableSignature:
-              name = list
-              receiverType = null
-              returnType = {dependency2.ListAlias<{dependency1.StringAlias=} kotlin.String>=} kotlin.collections.List<{dependency1.StringAlias=} kotlin.String>
-              symbol = list: {dependency2.ListAlias<{dependency1.StringAlias=} kotlin.String>=} kotlin.collections.List<{dependency1.StringAlias=} kotlin.String>
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = dependency3/MyInterface.check
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = dependency3/MyInterface.check(<dispatch receiver>: dependency3.MyInterface, list: {dependency2.ListAlias<{dependency1.StringAlias=} kotlin.String>=} kotlin.collections.List<{dependency1.StringAlias=} kotlin.String>): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = list
+            receiverType = null
+            returnType = {dependency2.ListAlias<{dependency1.StringAlias=} kotlin.String>=} kotlin.collections.List<{dependency1.StringAlias=} kotlin.String>
+            symbol = list: {dependency2.ListAlias<{dependency1.StringAlias=} kotlin.String>=} kotlin.collections.List<{dependency1.StringAlias=} kotlin.String>
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = dependency3/MyInterface.check
       typeArgumentsMapping = {}
     isInBestCandidates = true
