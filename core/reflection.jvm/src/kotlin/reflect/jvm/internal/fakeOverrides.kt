@@ -44,7 +44,7 @@ internal fun getAllMembers(kClass: KClassImpl<*>): Collection<DescriptorKCallabl
             // static members are not inherited,
             // but the immediate statics in interfaces must appear in the 'members' list
             declaredMember.isStaticMethodInInterface(kClass) -> {
-                check(!isKotlin) { "Kotlin doesn't have statics" }
+                check(!isKotlin) { "Kotlin doesn't have statics. '${declaredMember.name}' appears to be declared static member in '${kClass.simpleName}'" }
                 val signature = declaredMember.toEquatableCallableSignature(EqualityMode.JavaSignature)
                 membersMutable.value[signature] = declaredMember
             }
@@ -71,15 +71,23 @@ private fun <T> addCollectionsOptimizingEmpty(a: Collection<T>, b: Collection<T>
     else -> a + b
 }
 
-private fun nonDenotableSupertypesAreNotPossible(): Nothing = error("Non-denotable supertypes are not possible")
-internal fun starProjectionSupertypesAreNotPossible(): Nothing = error("Star projection supertypes are not possible")
+internal fun starProjectionSupertypesAreNotPossible(containerForDebug: Any): Nothing =
+    error(
+        "Star projection supertypes are not possible. " +
+            "Star projection appeared in the following container: '$containerForDebug'"
+    )
 
 private object CovariantOverrideComparator : Comparator<DescriptorKCallable<*>> {
     override fun compare(a: DescriptorKCallable<*>, b: DescriptorKCallable<*>): Int {
         val typeParametersEliminator = a.typeParameters.substitutedWith(b.typeParameters)
-            ?: error("Intersection overrides can't have different type parameters sizes. It must be a compiler diagnostic")
+            ?: error(
+                "Intersection overrides can't have different type parameters sizes. " +
+                    "It must have been reported by the compiler. " +
+                    "The following members appear to be violating intersection overrides: '$a' '$b'"
+            )
         val aReturnType =
-            typeParametersEliminator.substitute(a.returnType).type ?: starProjectionSupertypesAreNotPossible()
+            typeParametersEliminator.substitute(a.returnType).type
+                ?: starProjectionSupertypesAreNotPossible(containerForDebug = a.name)
         val bReturnType = b.returnType
 
         val aIsSubtypeOfB = aReturnType.isSubtypeOf(bReturnType)
@@ -136,7 +144,11 @@ internal fun computeFakeOverrideMembers(kClass: KClassImpl<*>): FakeOverrideMemb
         }
     }
     for (supertype in kClass.supertypes) {
-        val supertypeKClass = supertype.classifier as? KClass<*> ?: nonDenotableSupertypesAreNotPossible()
+        val supertypeKClass = supertype.classifier as? KClass<*>
+            ?: error(
+                "Non-denotable supertypes are not possible. " +
+                    "Supertype '$supertype' appears non-denotable in class '$kClass'"
+            )
         val substitutor = KTypeSubstitutor.create(supertype)
         val supertypeMembers = supertypeKClass.fakeOverrideMembers // Recursive call
         containsInheritedStatics = containsInheritedStatics || supertypeMembers.containsInheritedStatics
@@ -301,8 +313,18 @@ internal data class EquatableCallableSignature<T : EqualityMode>(
         check(
             kind != SignatureKind.FIELD_IN_JAVA_CLASS ||
                 kotlinParameterTypes.isEmpty() && typeParameters.isEmpty() && javaParameterTypesIfFunction.isEmpty()
-        )
-        check(javaParameterTypesIfFunction.size == javaGenericParameterTypesIfFunction.size)
+        ) {
+            "Inconsistent combination of EquatableCallableSignature values. kind: ${kind}, " +
+                "kotlinParameterTypes.isEmpty(): ${kotlinParameterTypes.isEmpty()}," +
+                "typeParameters.isEmpty(): ${typeParameters.isEmpty()}, " +
+                "javaParameterTypesIfFunction.isEmpty(): ${javaParameterTypesIfFunction.isEmpty()}." +
+                "For member: '$name'"
+        }
+        check(javaParameterTypesIfFunction.size == javaGenericParameterTypesIfFunction.size) {
+            "javaParameterTypesIfFunction.size (${javaParameterTypesIfFunction.size}) and " +
+                "javaGenericParameterTypesIfFunction.size (${javaGenericParameterTypesIfFunction.size}) must be equal. " +
+                "For member: '$name'"
+        }
     }
 
     fun <T : EqualityMode> withEqualityMode(equalityMode: T): EquatableCallableSignature<T> =
@@ -339,7 +361,7 @@ internal data class EquatableCallableSignature<T : EqualityMode>(
         if (this === other) return true
         if (other !is EquatableCallableSignature<*>) return false
         check(equalityMode == other.equalityMode) {
-            "Equality modes must be the same. Please recreate signatures on inheritance"
+            "Equality modes must be the same for member '$name'. Please recreate signatures on inheritance"
         }
         if (kind != other.kind) return false
         if (isStatic != other.isStatic) return false
@@ -347,7 +369,10 @@ internal data class EquatableCallableSignature<T : EqualityMode>(
         if (equalityMode == EqualityMode.JavaSignature && kind == SignatureKind.FUNCTION) {
             if (jvmNameIfFunction != other.jvmNameIfFunction) return false
             if (javaParameterTypesIfFunction.size != other.javaParameterTypesIfFunction.size) return false
-            check(javaParameterTypesIfFunction.size == kotlinParameterTypes.size)
+            check(javaParameterTypesIfFunction.size == kotlinParameterTypes.size) {
+                "javaParameterTypesIfFunction.size (${javaParameterTypesIfFunction.size}) and " +
+                    "kotlinParameterTypes.size (${kotlinParameterTypes.size}) must be equal for member '$name'"
+            }
             for (i in javaParameterTypesIfFunction.indices) {
                 val javaTypeA = javaGenericParameterTypesIfFunction[i]
                 val javaClassA = javaParameterTypesIfFunction[i]
@@ -360,8 +385,10 @@ internal data class EquatableCallableSignature<T : EqualityMode>(
 
                     // Since we don't have type substitutors for Java types, here we abuse KTypes for this purpose
                     // Make types non-flexible and non-mutable to make 'equals' transitive
-                    val kTypeA = kotlinParameterTypes[i].coerceFlexibleTypesAndMutabilityRecursive()
-                    val kTypeB = other.kotlinParameterTypes[i].coerceFlexibleTypesAndMutabilityRecursive()
+                    val kTypeA =
+                        kotlinParameterTypes[i].coerceFlexibleTypesAndMutabilityRecursive(memberNameForDebug = name)
+                    val kTypeB =
+                        other.kotlinParameterTypes[i].coerceFlexibleTypesAndMutabilityRecursive(memberNameForDebug = other.name)
                     if (!areEqualKTypes(kTypeA, kTypeB)) return false
                 } else {
                     if (javaClassA != javaClassB) return false
@@ -376,16 +403,17 @@ internal data class EquatableCallableSignature<T : EqualityMode>(
                 if (typeParameterA.upperBounds.size != typeParameterB.upperBounds.size) return false
                 val equalUpperBounds = typeParameterA.upperBounds
                     .map {
-                        functionTypeParametersEliminator.substitute(it).type ?: starProjectionSupertypesAreNotPossible()
+                        functionTypeParametersEliminator.substitute(it).type
+                            ?: starProjectionSupertypesAreNotPossible(containerForDebug = name)
                     }
-                    .sortedUpperBounds()
-                    .zip(typeParameterB.upperBounds.sortedUpperBounds())
+                    .sortedUpperBounds(memberNameForDebug = name)
+                    .zip(typeParameterB.upperBounds.sortedUpperBounds(memberNameForDebug = other.name))
                     .all { areEqualKTypes(it.first, it.second) }
                 if (!equalUpperBounds) return false
             }
             for (i in kotlinParameterTypes.indices) {
                 val a = functionTypeParametersEliminator.substitute(kotlinParameterTypes[i]).type
-                    ?: starProjectionSupertypesAreNotPossible()
+                    ?: starProjectionSupertypesAreNotPossible(containerForDebug = name)
                 val b = other.kotlinParameterTypes[i]
                 if (!areEqualKTypes(a, b)) return false
             }
@@ -400,11 +428,15 @@ internal data class EquatableCallableSignature<T : EqualityMode>(
  * Type equality is not transitive in Kotlin because of flexible types
  * (e.g. `String?` != `String` but (`String?` == `String!` and `String` == `String!`)
  */
-private fun KType.coerceFlexibleTypesAndMutabilityRecursive(): KType {
-    val classifier = classifier ?: nonDenotableSupertypesAreNotPossible()
+private fun KType.coerceFlexibleTypesAndMutabilityRecursive(memberNameForDebug: String): KType {
+    val classifier = classifier
+        ?: error(
+            "Non-denotable parameter types are not possible. " +
+                "Some parameter types appear non-denotable for member '$memberNameForDebug'"
+        )
     // Recreating type from classifiers erases mutability (e.g., MutableList becomes List)
     return classifier.createType(
-        arguments.map { it.copy(type = it.type?.coerceFlexibleTypesAndMutabilityRecursive()) },
+        arguments.map { it.copy(type = it.type?.coerceFlexibleTypesAndMutabilityRecursive(memberNameForDebug)) },
         nullable = false,
         annotations
     )
@@ -417,9 +449,14 @@ private fun KType.coerceFlexibleTypesAndMutabilityRecursive(): KType {
  * The only false negative case that we are afraid of is when different upper bounds accidentally have the same name.
  * In that case, the list of bounds will be discarded later by areEqualTypes anyway.
  */
-private fun List<KType>.sortedUpperBounds(): List<KType> =
+private fun List<KType>.sortedUpperBounds(memberNameForDebug: String): List<KType> =
     sortedBy {
-        when (val classifier = it.classifier ?: error("upper bounds are always denotable")) {
+        when (
+            val classifier = it.classifier ?: error(
+                "Upper bounds are always denotable. " +
+                    "Upper bounds appear non-denotable for member: '$memberNameForDebug'"
+            )
+        ) {
             is KClass<*> -> classifier.java.name
             is KTypeParameter -> classifier.name
             else -> error("Unknown upper bound classifier: ${classifier::class}")
