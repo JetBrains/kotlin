@@ -51,7 +51,8 @@ public val <S : KaCallableSymbol, C : KaCallableSignature<S>> KaCallableMemberCa
  * annotations.
  */
 @OptIn(KaImplementationDetail::class, KaExperimentalApi::class)
-public sealed interface KaFunctionCall<S : KaFunctionSymbol> : KaSingleCall<S, KaFunctionSignature<S>>,
+@SubclassOptInRequired(KaImplementationDetail::class)
+public interface KaFunctionCall<S : KaFunctionSymbol> : KaSingleCall<S, KaFunctionSignature<S>>,
     KaCallableMemberCall<S, KaFunctionSignature<S>> {
 
     /**
