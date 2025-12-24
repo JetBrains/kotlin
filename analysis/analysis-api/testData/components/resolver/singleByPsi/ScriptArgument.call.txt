@@ -5,6 +5,7 @@ KtNameReferenceExpression(16,20): 'args'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = args
         receiverType = null
@@ -12,5 +13,4 @@ KtNameReferenceExpression(16,20): 'args'
         symbol = val args: kotlin.Array<kotlin.String>
         contextParameters = []
         callableId = kotlin/script/templates/standard/ScriptTemplateWithArgs.args
-      simpleAccess = Read
       typeArgumentsMapping = {}

@@ -35,6 +35,7 @@ KtNameReferenceExpression(62,70): 'javaEnum'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = javaEnum
         receiverType = null
@@ -42,7 +43,6 @@ KtNameReferenceExpression(62,70): 'javaEnum'
         symbol = javaEnum: JavaEnum
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtWhenEntry(78,88): 'FIRST -> 1'
@@ -61,6 +61,7 @@ KtNameReferenceExpression(78,83): 'FIRST'
         type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = FIRST
         receiverType = null
@@ -68,7 +69,6 @@ KtNameReferenceExpression(78,83): 'FIRST'
         symbol = /JavaEnum.FIRST
         contextParameters = []
         callableId = /JavaEnum.FIRST
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtConstantExpression(87,88): '1'
@@ -90,6 +90,7 @@ KtNameReferenceExpression(93,99): 'SECOND'
         type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = SECOND
         receiverType = null
@@ -97,7 +98,6 @@ KtNameReferenceExpression(93,99): 'SECOND'
         symbol = /JavaEnum.SECOND
         contextParameters = []
         callableId = /JavaEnum.SECOND
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtConstantExpression(103,104): '2'

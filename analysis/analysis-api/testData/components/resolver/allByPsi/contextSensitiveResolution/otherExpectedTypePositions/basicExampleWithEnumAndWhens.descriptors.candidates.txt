@@ -65,6 +65,7 @@ KtNameReferenceExpression(198,205): 'problem'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = problem
         receiverType = null
@@ -72,7 +73,6 @@ KtNameReferenceExpression(198,205): 'problem'
         symbol = problem: Problem
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -173,6 +173,7 @@ KtNameReferenceExpression(378,379): 'x'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = x
         receiverType = null
@@ -180,7 +181,6 @@ KtNameReferenceExpression(378,379): 'x'
         symbol = x: kotlin.String
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 

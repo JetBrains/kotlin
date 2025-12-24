@@ -5,6 +5,7 @@ KtNameReferenceExpression(100,109): 'TOP_LEVEL'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = TOP_LEVEL
         receiverType = null
@@ -12,5 +13,4 @@ KtNameReferenceExpression(100,109): 'TOP_LEVEL'
         symbol = val TOP_LEVEL: kotlin.Int
         contextParameters = []
         callableId = test/TOP_LEVEL
-      simpleAccess = Read
       typeArgumentsMapping = {}

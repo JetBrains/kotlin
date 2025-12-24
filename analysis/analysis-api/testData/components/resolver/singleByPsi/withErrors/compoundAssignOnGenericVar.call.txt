@@ -8,6 +8,7 @@ KtNameReferenceExpression(51,56): 'value'
         isSafeNavigation = false
         type = CInt32VarX<kotlin.Int>
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = value
         receiverType = CInt32VarX<kotlin.Int>
@@ -15,7 +16,6 @@ KtNameReferenceExpression(51,56): 'value'
         symbol = var value: T
         contextParameters = []
         callableId = /value
-      simpleAccess = Read
       typeArgumentsMapping = {
         T -> (kotlin.Int)
       }

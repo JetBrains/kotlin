@@ -342,6 +342,7 @@ KtNameReferenceExpression(407,408): 'L'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = L
         receiverType = null
@@ -349,7 +350,6 @@ KtNameReferenceExpression(407,408): 'L'
         symbol = val L: MyEnum
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtProperty(420,656): 'val m2: MyEnum = try {'
@@ -461,6 +461,7 @@ KtNameReferenceExpression(600,601): 'L'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = L
         receiverType = null
@@ -468,7 +469,6 @@ KtNameReferenceExpression(600,601): 'L'
         symbol = val L: MyEnum
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtCatchClause(618,656): 'catch (t: Throwable) {'
@@ -499,6 +499,7 @@ KtNameReferenceExpression(649,650): 'L'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = L
         receiverType = null
@@ -506,7 +507,6 @@ KtNameReferenceExpression(649,650): 'L'
         symbol = val L: MyEnum
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtCallExpression(662,803): 'foo('
@@ -657,6 +657,7 @@ KtNameReferenceExpression(786,787): 'L'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = L
         receiverType = null
@@ -664,7 +665,6 @@ KtNameReferenceExpression(786,787): 'L'
         symbol = val L: MyEnum
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtCallExpression(809,963): 'myRunWithMyEnum {'
@@ -825,6 +825,7 @@ KtNameReferenceExpression(946,947): 'L'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = L
         receiverType = null
@@ -832,7 +833,6 @@ KtNameReferenceExpression(946,947): 'L'
         symbol = val L: MyEnum
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtCallExpression(969,1121): 'myRun<MyEnum> {'
@@ -1012,6 +1012,7 @@ KtNameReferenceExpression(1104,1105): 'L'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = L
         receiverType = null
@@ -1019,5 +1020,4 @@ KtNameReferenceExpression(1104,1105): 'L'
         symbol = val L: MyEnum
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}

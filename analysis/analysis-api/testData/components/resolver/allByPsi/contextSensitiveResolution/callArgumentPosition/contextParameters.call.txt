@@ -291,6 +291,7 @@ KtNameReferenceExpression(318,328): 'EnumValue1'
         type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = EnumValue1
         receiverType = null
@@ -298,7 +299,6 @@ KtNameReferenceExpression(318,328): 'EnumValue1'
         symbol = /MyEnum.EnumValue1
         contextParameters = []
         callableId = /MyEnum.EnumValue1
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtLambdaArgument(329,350): '{'
@@ -863,6 +863,7 @@ KtNameReferenceExpression(526,536): 'EnumValue1'
         type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = EnumValue1
         receiverType = null
@@ -870,7 +871,6 @@ KtNameReferenceExpression(526,536): 'EnumValue1'
         symbol = /MyEnum.EnumValue1
         contextParameters = []
         callableId = /MyEnum.EnumValue1
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtLambdaArgument(538,558): '{'
@@ -918,6 +918,7 @@ KtDotQualifiedExpression(548,552): '"".a'
         isSafeNavigation = false
         type = kotlin.String
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = a
         receiverType = kotlin.String
@@ -933,7 +934,6 @@ KtDotQualifiedExpression(548,552): '"".a'
             callableId = null
         ]
         callableId = /a
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtStringTemplateExpression(548,550): '""'
@@ -972,6 +972,7 @@ KtNameReferenceExpression(551,552): 'a'
         isSafeNavigation = false
         type = kotlin.String
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = a
         receiverType = kotlin.String
@@ -987,5 +988,4 @@ KtNameReferenceExpression(551,552): 'a'
             callableId = null
         ]
         callableId = /a
-      simpleAccess = Read
       typeArgumentsMapping = {}

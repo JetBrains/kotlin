@@ -315,6 +315,7 @@ KtNameReferenceExpression(382,383): 'm'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = m
         receiverType = null
@@ -322,7 +323,6 @@ KtNameReferenceExpression(382,383): 'm'
         symbol = m: kotlin.String
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtClass(385,418): 'class E2(m: String): Exception(m)'
@@ -466,6 +466,7 @@ KtNameReferenceExpression(416,417): 'm'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = m
         receiverType = null
@@ -473,7 +474,6 @@ KtNameReferenceExpression(416,417): 'm'
         symbol = m: kotlin.String
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtClass(419,452): 'class E3(m: String): Exception(m)'
@@ -617,6 +617,7 @@ KtNameReferenceExpression(450,451): 'm'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = m
         receiverType = null
@@ -624,7 +625,6 @@ KtNameReferenceExpression(450,451): 'm'
         symbol = m: kotlin.String
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNamedFunction(454,477): 'fun <T>receive(e: T) {}'
@@ -722,6 +722,7 @@ KtNameReferenceExpression(507,508): 'b'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = b
         receiverType = null
@@ -729,7 +730,6 @@ KtNameReferenceExpression(507,508): 'b'
         symbol = b: kotlin.Function0<T>
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtValueArgumentList(508,510): '()'
@@ -847,6 +847,7 @@ KtNameReferenceExpression(1080,1096): 'ClassMemberAlias'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = ClassMemberAlias
         receiverType = null
@@ -854,7 +855,6 @@ KtNameReferenceExpression(1080,1096): 'ClassMemberAlias'
         symbol = val ClassMemberAlias: MyClass.NestedInheritor
         contextParameters = []
         callableId = /ClassMemberAlias
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtCallExpression(1108,1497): 'receive<MyClass>('
@@ -1120,6 +1120,7 @@ KtNameReferenceExpression(1465,1481): 'ClassMemberAlias'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = ClassMemberAlias
         receiverType = null
@@ -1127,7 +1128,6 @@ KtNameReferenceExpression(1465,1481): 'ClassMemberAlias'
         symbol = val ClassMemberAlias: MyClass.NestedInheritor
         contextParameters = []
         callableId = /ClassMemberAlias
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtCallExpression(1503,1887): 'run<MyClass> {'
@@ -1403,6 +1403,7 @@ KtNameReferenceExpression(1855,1871): 'ClassMemberAlias'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = ClassMemberAlias
         receiverType = null
@@ -1410,5 +1411,4 @@ KtNameReferenceExpression(1855,1871): 'ClassMemberAlias'
         symbol = val ClassMemberAlias: MyClass.NestedInheritor
         contextParameters = []
         callableId = /ClassMemberAlias
-      simpleAccess = Read
       typeArgumentsMapping = {}

@@ -44,6 +44,7 @@ KtNameReferenceExpression(99,107): 'instance'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = instance
         receiverType = null
@@ -51,7 +52,6 @@ KtNameReferenceExpression(99,107): 'instance'
         symbol = instance: JClass
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtWhenEntry(115,145): 'is JCOption1 -> instance.prop1'
@@ -83,6 +83,7 @@ KtNameReferenceExpression(131,139): 'instance'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = instance
         receiverType = null
@@ -90,7 +91,6 @@ KtNameReferenceExpression(131,139): 'instance'
         symbol = instance: JClass
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(140,145): 'prop1'
@@ -127,6 +127,7 @@ KtNameReferenceExpression(167,175): 'instance'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = instance
         receiverType = null
@@ -134,7 +135,6 @@ KtNameReferenceExpression(167,175): 'instance'
         symbol = instance: JClass
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(176,181): 'prop2'
@@ -171,6 +171,7 @@ KtNameReferenceExpression(200,208): 'instance'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = instance
         receiverType = null
@@ -178,7 +179,6 @@ KtNameReferenceExpression(200,208): 'instance'
         symbol = instance: JClass
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(209,213): 'prop'
@@ -232,6 +232,7 @@ KtNameReferenceExpression(282,290): 'instance'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = instance
         receiverType = null
@@ -239,7 +240,6 @@ KtNameReferenceExpression(282,290): 'instance'
         symbol = instance: SealedJClass
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(291,293): 'is'
@@ -277,6 +277,7 @@ KtNameReferenceExpression(322,330): 'instance'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = instance
         receiverType = null
@@ -284,7 +285,6 @@ KtNameReferenceExpression(322,330): 'instance'
         symbol = instance: SealedJClass
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(331,336): 'prop1'
@@ -308,6 +308,7 @@ KtNameReferenceExpression(351,359): 'instance'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = instance
         receiverType = null
@@ -315,7 +316,6 @@ KtNameReferenceExpression(351,359): 'instance'
         symbol = instance: SealedJClass
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(360,362): 'is'
@@ -353,6 +353,7 @@ KtNameReferenceExpression(391,399): 'instance'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = instance
         receiverType = null
@@ -360,7 +361,6 @@ KtNameReferenceExpression(391,399): 'instance'
         symbol = instance: SealedJClass
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(400,405): 'prop2'
@@ -411,6 +411,7 @@ KtNameReferenceExpression(503,511): 'instance'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = instance
         receiverType = null
@@ -418,7 +419,6 @@ KtNameReferenceExpression(503,511): 'instance'
         symbol = instance: SealedJClass
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtWhenEntry(519,549): 'is SCOption1 -> instance.prop1'
@@ -450,6 +450,7 @@ KtNameReferenceExpression(535,543): 'instance'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = instance
         receiverType = null
@@ -457,7 +458,6 @@ KtNameReferenceExpression(535,543): 'instance'
         symbol = instance: SealedJClass
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(544,549): 'prop1'
@@ -494,6 +494,7 @@ KtNameReferenceExpression(570,578): 'instance'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = instance
         receiverType = null
@@ -501,7 +502,6 @@ KtNameReferenceExpression(570,578): 'instance'
         symbol = instance: SealedJClass
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(579,584): 'prop2'
@@ -555,6 +555,7 @@ KtNameReferenceExpression(657,665): 'instance'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = instance
         receiverType = null
@@ -562,7 +563,6 @@ KtNameReferenceExpression(657,665): 'instance'
         symbol = instance: SealedJClass
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(666,668): 'is'
@@ -591,6 +591,7 @@ KtNameReferenceExpression(682,690): 'instance'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = instance
         receiverType = null
@@ -598,7 +599,6 @@ KtNameReferenceExpression(682,690): 'instance'
         symbol = instance: SealedJClass
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(691,696): 'prop1'
@@ -622,6 +622,7 @@ KtNameReferenceExpression(701,709): 'instance'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = instance
         receiverType = null
@@ -629,7 +630,6 @@ KtNameReferenceExpression(701,709): 'instance'
         symbol = instance: SealedJClass
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(710,712): 'is'
@@ -658,6 +658,7 @@ KtNameReferenceExpression(726,734): 'instance'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = instance
         receiverType = null
@@ -665,7 +666,6 @@ KtNameReferenceExpression(726,734): 'instance'
         symbol = instance: SealedJClass
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(735,740): 'prop2'

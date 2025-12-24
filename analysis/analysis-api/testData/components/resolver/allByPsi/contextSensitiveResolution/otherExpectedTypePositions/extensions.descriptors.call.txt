@@ -203,6 +203,7 @@ KtDotQualifiedExpression(232,243): 'MyClass.bar'
           isSafeNavigation = false
           type = MyClass.Companion
         isContextSensitive = false
+        kind = Read
         signature = KaVariableSignature:
           name = bar
           receiverType = MyClass2.Companion
@@ -210,7 +211,6 @@ KtDotQualifiedExpression(232,243): 'MyClass.bar'
           symbol = val bar: MyClass2
           contextParameters = []
           callableId = /bar
-        simpleAccess = Read
         typeArgumentsMapping = {}
     ]
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of receiver type mismatch: 
@@ -230,6 +230,7 @@ KtNameReferenceExpression(240,243): 'bar'
           isSafeNavigation = false
           type = MyClass.Companion
         isContextSensitive = false
+        kind = Read
         signature = KaVariableSignature:
           name = bar
           receiverType = MyClass2.Companion
@@ -237,7 +238,6 @@ KtNameReferenceExpression(240,243): 'bar'
           symbol = val bar: MyClass2
           contextParameters = []
           callableId = /bar
-        simpleAccess = Read
         typeArgumentsMapping = {}
     ]
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of receiver type mismatch: 
@@ -511,6 +511,7 @@ KtDotQualifiedExpression(408,420): 'MyClass2.bar'
         isSafeNavigation = false
         type = MyClass2.Companion
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = bar
         receiverType = MyClass2.Companion
@@ -518,7 +519,6 @@ KtDotQualifiedExpression(408,420): 'MyClass2.bar'
         symbol = val bar: MyClass2
         contextParameters = []
         callableId = /bar
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(408,416): 'MyClass2'
@@ -534,6 +534,7 @@ KtNameReferenceExpression(417,420): 'bar'
         isSafeNavigation = false
         type = MyClass2.Companion
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = bar
         receiverType = MyClass2.Companion
@@ -541,7 +542,6 @@ KtNameReferenceExpression(417,420): 'bar'
         symbol = val bar: MyClass2
         contextParameters = []
         callableId = /bar
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtCallExpression(426,435): 'foo2(bar)'

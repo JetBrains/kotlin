@@ -300,6 +300,7 @@ KtNameReferenceExpression(400,401): 'i'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = i
         receiverType = null
@@ -307,7 +308,6 @@ KtNameReferenceExpression(400,401): 'i'
         symbol = i: kotlin.Int
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(402,404): '=='
@@ -409,6 +409,7 @@ KtNameReferenceExpression(441,442): 'i'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = i
         receiverType = null
@@ -416,7 +417,6 @@ KtNameReferenceExpression(441,442): 'i'
         symbol = i: kotlin.Int
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(443,445): '=='
@@ -518,6 +518,7 @@ KtNameReferenceExpression(478,479): 'i'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = i
         receiverType = null
@@ -525,7 +526,6 @@ KtNameReferenceExpression(478,479): 'i'
         symbol = i: kotlin.Int
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(480,482): '=='
@@ -585,6 +585,7 @@ KtNameReferenceExpression(510,526): 'ClassMemberAlias'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = ClassMemberAlias
         receiverType = null
@@ -592,5 +593,4 @@ KtNameReferenceExpression(510,526): 'ClassMemberAlias'
         symbol = val ClassMemberAlias: MyClass.NestedInheritor
         contextParameters = []
         callableId = /ClassMemberAlias
-      simpleAccess = Read
       typeArgumentsMapping = {}

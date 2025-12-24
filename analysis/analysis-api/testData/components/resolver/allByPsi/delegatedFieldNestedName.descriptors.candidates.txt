@@ -445,6 +445,7 @@ KtNameReferenceExpression(235,240): 'outer'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = outer
         receiverType = null
@@ -452,7 +453,6 @@ KtNameReferenceExpression(235,240): 'outer'
         symbol = val outer: kotlin.Int
         contextParameters = []
         callableId = second/outer
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -669,6 +669,7 @@ KtNameReferenceExpression(257,262): 'outer'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = outer
         receiverType = null
@@ -676,7 +677,6 @@ KtNameReferenceExpression(257,262): 'outer'
         symbol = val outer: kotlin.Int
         contextParameters = []
         callableId = second/outer
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -893,6 +893,7 @@ KtNameReferenceExpression(279,284): 'outer'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = outer
         receiverType = null
@@ -900,7 +901,6 @@ KtNameReferenceExpression(279,284): 'outer'
         symbol = val outer: kotlin.Int
         contextParameters = []
         callableId = second/outer
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1117,6 +1117,7 @@ KtNameReferenceExpression(320,325): 'outer'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = outer
         receiverType = null
@@ -1124,7 +1125,6 @@ KtNameReferenceExpression(320,325): 'outer'
         symbol = val outer: kotlin.Int
         contextParameters = []
         callableId = second/outer
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1341,6 +1341,7 @@ KtNameReferenceExpression(344,349): 'outer'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = outer
         receiverType = null
@@ -1348,7 +1349,6 @@ KtNameReferenceExpression(344,349): 'outer'
         symbol = val outer: kotlin.Int
         contextParameters = []
         callableId = second/outer
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1509,6 +1509,7 @@ KtNameReferenceExpression(410,415): 'inner'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = inner
         receiverType = null
@@ -1516,7 +1517,6 @@ KtNameReferenceExpression(410,415): 'inner'
         symbol = val inner: kotlin.String
         contextParameters = []
         callableId = second/inner
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1665,6 +1665,7 @@ KtNameReferenceExpression(432,437): 'inner'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = inner
         receiverType = null
@@ -1672,7 +1673,6 @@ KtNameReferenceExpression(432,437): 'inner'
         symbol = val inner: kotlin.String
         contextParameters = []
         callableId = second/inner
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1821,6 +1821,7 @@ KtNameReferenceExpression(454,459): 'inner'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = inner
         receiverType = null
@@ -1828,7 +1829,6 @@ KtNameReferenceExpression(454,459): 'inner'
         symbol = val inner: kotlin.String
         contextParameters = []
         callableId = second/inner
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -2071,6 +2071,7 @@ KtNameReferenceExpression(569,574): 'inner'
         type = second.MyClass.Companion
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = inner
         receiverType = null
@@ -2078,7 +2079,6 @@ KtNameReferenceExpression(569,574): 'inner'
         symbol = val inner: kotlin.Int
         contextParameters = []
         callableId = second/MyClass.Companion.inner
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -2088,6 +2088,7 @@ KtNameReferenceExpression(569,574): 'inner'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = inner
         receiverType = null
@@ -2095,7 +2096,6 @@ KtNameReferenceExpression(569,574): 'inner'
         symbol = val inner: kotlin.String
         contextParameters = []
         callableId = second/inner
-      simpleAccess = Read
       typeArgumentsMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
     isInBestCandidates = false
@@ -2315,6 +2315,7 @@ KtNameReferenceExpression(594,599): 'inner'
         type = second.MyClass.Companion
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = inner
         receiverType = null
@@ -2322,7 +2323,6 @@ KtNameReferenceExpression(594,599): 'inner'
         symbol = val inner: kotlin.Int
         contextParameters = []
         callableId = second/MyClass.Companion.inner
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -2332,6 +2332,7 @@ KtNameReferenceExpression(594,599): 'inner'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = inner
         receiverType = null
@@ -2339,7 +2340,6 @@ KtNameReferenceExpression(594,599): 'inner'
         symbol = val inner: kotlin.String
         contextParameters = []
         callableId = second/inner
-      simpleAccess = Read
       typeArgumentsMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'value'>
     isInBestCandidates = false

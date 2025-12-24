@@ -8,6 +8,7 @@ KtNameReferenceExpression(44,45): 'y'
         type = A
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = y
         receiverType = null
@@ -15,5 +16,4 @@ KtNameReferenceExpression(44,45): 'y'
         symbol = val y: kotlin.Int
         contextParameters = []
         callableId = /A.y
-      simpleAccess = Read
       typeArgumentsMapping = {}

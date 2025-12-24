@@ -266,6 +266,7 @@ KtDotQualifiedExpression(285,293): 'MyEnum.X'
         type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = X
         receiverType = null
@@ -273,7 +274,6 @@ KtDotQualifiedExpression(285,293): 'MyEnum.X'
         symbol = /MyEnum.X
         contextParameters = []
         callableId = /MyEnum.X
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(285,291): 'MyEnum'
@@ -289,6 +289,7 @@ KtNameReferenceExpression(292,293): 'X'
         type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = X
         receiverType = null
@@ -296,7 +297,6 @@ KtNameReferenceExpression(292,293): 'X'
         symbol = /MyEnum.X
         contextParameters = []
         callableId = /MyEnum.X
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtProperty(299,414): 'val m1: MyEnum = try {'
@@ -327,6 +327,7 @@ KtNameReferenceExpression(330,331): 'X'
         type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = X
         receiverType = null
@@ -334,7 +335,6 @@ KtNameReferenceExpression(330,331): 'X'
         symbol = /MyEnum.X
         contextParameters = []
         callableId = /MyEnum.X
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtCatchClause(338,375): 'catch(e: Exception) {'
@@ -368,6 +368,7 @@ KtNameReferenceExpression(368,369): 'Y'
         type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = Y
         receiverType = null
@@ -375,7 +376,6 @@ KtNameReferenceExpression(368,369): 'Y'
         symbol = /MyEnum.Y
         contextParameters = []
         callableId = /MyEnum.Y
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtCatchClause(376,414): 'catch (t: Throwable) {'
@@ -406,6 +406,7 @@ KtNameReferenceExpression(407,408): 'L'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = L
         receiverType = null
@@ -413,7 +414,6 @@ KtNameReferenceExpression(407,408): 'L'
         symbol = val L: MyEnum
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtProperty(420,656): 'val m2: MyEnum = try {'
@@ -444,6 +444,7 @@ KtNameReferenceExpression(451,452): 'X'
         type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = X
         receiverType = null
@@ -451,7 +452,6 @@ KtNameReferenceExpression(451,452): 'X'
         symbol = /MyEnum.X
         contextParameters = []
         callableId = /MyEnum.X
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtCatchClause(459,617): 'catch(e: Exception) {'
@@ -491,6 +491,7 @@ KtNameReferenceExpression(507,508): 'X'
         type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = X
         receiverType = null
@@ -498,7 +499,6 @@ KtNameReferenceExpression(507,508): 'X'
         symbol = /MyEnum.X
         contextParameters = []
         callableId = /MyEnum.X
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtCatchClause(519,564): 'catch(e: Exception) {'
@@ -532,6 +532,7 @@ KtNameReferenceExpression(553,554): 'Y'
         type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = Y
         receiverType = null
@@ -539,7 +540,6 @@ KtNameReferenceExpression(553,554): 'Y'
         symbol = /MyEnum.Y
         contextParameters = []
         callableId = /MyEnum.Y
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtCatchClause(565,611): 'catch (t: Throwable) {'
@@ -570,6 +570,7 @@ KtNameReferenceExpression(600,601): 'L'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = L
         receiverType = null
@@ -577,7 +578,6 @@ KtNameReferenceExpression(600,601): 'L'
         symbol = val L: MyEnum
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtCatchClause(618,656): 'catch (t: Throwable) {'
@@ -608,6 +608,7 @@ KtNameReferenceExpression(649,650): 'L'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = L
         receiverType = null
@@ -615,7 +616,6 @@ KtNameReferenceExpression(649,650): 'L'
         symbol = val L: MyEnum
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtCallExpression(662,803): 'foo('
@@ -717,6 +717,7 @@ KtNameReferenceExpression(693,694): 'X'
         type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = X
         receiverType = null
@@ -724,7 +725,6 @@ KtNameReferenceExpression(693,694): 'X'
         symbol = /MyEnum.X
         contextParameters = []
         callableId = /MyEnum.X
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtCatchClause(705,750): 'catch(e: Exception) {'
@@ -758,6 +758,7 @@ KtNameReferenceExpression(739,740): 'Y'
         type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = Y
         receiverType = null
@@ -765,7 +766,6 @@ KtNameReferenceExpression(739,740): 'Y'
         symbol = /MyEnum.Y
         contextParameters = []
         callableId = /MyEnum.Y
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtCatchClause(751,797): 'catch (t: Throwable) {'
@@ -796,6 +796,7 @@ KtNameReferenceExpression(786,787): 'L'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = L
         receiverType = null
@@ -803,7 +804,6 @@ KtNameReferenceExpression(786,787): 'L'
         symbol = val L: MyEnum
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtCallExpression(809,963): 'myRunWithMyEnum {'
@@ -915,6 +915,7 @@ KtNameReferenceExpression(853,854): 'X'
         type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = X
         receiverType = null
@@ -922,7 +923,6 @@ KtNameReferenceExpression(853,854): 'X'
         symbol = /MyEnum.X
         contextParameters = []
         callableId = /MyEnum.X
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtCatchClause(865,910): 'catch(e: Exception) {'
@@ -956,6 +956,7 @@ KtNameReferenceExpression(899,900): 'Y'
         type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = Y
         receiverType = null
@@ -963,7 +964,6 @@ KtNameReferenceExpression(899,900): 'Y'
         symbol = /MyEnum.Y
         contextParameters = []
         callableId = /MyEnum.Y
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtCatchClause(911,957): 'catch (t: Throwable) {'
@@ -994,6 +994,7 @@ KtNameReferenceExpression(946,947): 'L'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = L
         receiverType = null
@@ -1001,7 +1002,6 @@ KtNameReferenceExpression(946,947): 'L'
         symbol = val L: MyEnum
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtCallExpression(969,1121): 'myRun<MyEnum> {'
@@ -1132,6 +1132,7 @@ KtNameReferenceExpression(1011,1012): 'X'
         type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = X
         receiverType = null
@@ -1139,7 +1140,6 @@ KtNameReferenceExpression(1011,1012): 'X'
         symbol = /MyEnum.X
         contextParameters = []
         callableId = /MyEnum.X
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtCatchClause(1023,1068): 'catch(e: Exception) {'
@@ -1173,6 +1173,7 @@ KtNameReferenceExpression(1057,1058): 'Y'
         type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = Y
         receiverType = null
@@ -1180,7 +1181,6 @@ KtNameReferenceExpression(1057,1058): 'Y'
         symbol = /MyEnum.Y
         contextParameters = []
         callableId = /MyEnum.Y
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtCatchClause(1069,1115): 'catch (t: Throwable) {'
@@ -1211,6 +1211,7 @@ KtNameReferenceExpression(1104,1105): 'L'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = L
         receiverType = null
@@ -1218,5 +1219,4 @@ KtNameReferenceExpression(1104,1105): 'L'
         symbol = val L: MyEnum
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}

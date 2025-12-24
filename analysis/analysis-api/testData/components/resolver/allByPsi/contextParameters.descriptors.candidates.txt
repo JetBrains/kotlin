@@ -53,6 +53,7 @@ KtNameReferenceExpression(58,59): 'a'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = a
         receiverType = null
@@ -60,7 +61,6 @@ KtNameReferenceExpression(58,59): 'a'
         symbol = a: kotlin.String
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -284,6 +284,7 @@ KtNameReferenceExpression(151,154): 'foo'
         type = ERROR_TYPE
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = <Error property>
         receiverType = null
@@ -291,7 +292,6 @@ KtNameReferenceExpression(151,154): 'foo'
         symbol = var <Error property>: ERROR_TYPE
         contextParameters = []
         callableId = /<Error class: unknown class>.<Error property>
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = false
 
@@ -533,6 +533,7 @@ KtNameReferenceExpression(275,278): 'foo'
         type = ERROR_TYPE
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = <Error property>
         receiverType = null
@@ -540,7 +541,6 @@ KtNameReferenceExpression(275,278): 'foo'
         symbol = var <Error property>: ERROR_TYPE
         contextParameters = []
         callableId = /<Error class: unknown class>.<Error property>
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = false
 
@@ -632,6 +632,7 @@ KtNameReferenceExpression(369,383): 'propertyMember'
         type = Base
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = propertyMember
         receiverType = null
@@ -639,7 +640,6 @@ KtNameReferenceExpression(369,383): 'propertyMember'
         symbol = val propertyMember: kotlin.String
         contextParameters = []
         callableId = /Base.propertyMember
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1104,6 +1104,7 @@ KtNameReferenceExpression(512,526): 'propertyMember'
         type = Base
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = propertyMember
         receiverType = null
@@ -1111,7 +1112,6 @@ KtNameReferenceExpression(512,526): 'propertyMember'
         symbol = val propertyMember: kotlin.String
         contextParameters = []
         callableId = /Base.propertyMember
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 

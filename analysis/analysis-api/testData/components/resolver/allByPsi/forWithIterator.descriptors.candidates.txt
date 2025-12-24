@@ -113,6 +113,7 @@ KtDotQualifiedExpression(147,166): 'this@iterator.start'
         type = f.IntProgression
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = start
         receiverType = null
@@ -120,7 +121,6 @@ KtDotQualifiedExpression(147,166): 'this@iterator.start'
         symbol = val start: kotlin.Int
         contextParameters = []
         callableId = f/IntProgression.start
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -146,6 +146,7 @@ KtNameReferenceExpression(161,166): 'start'
         type = f.IntProgression
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = start
         receiverType = null
@@ -153,7 +154,6 @@ KtNameReferenceExpression(161,166): 'start'
         symbol = val start: kotlin.Int
         contextParameters = []
         callableId = f/IntProgression.start
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -212,6 +212,7 @@ KtNameReferenceExpression(196,203): 'current'
         type = f.<no name provided>
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = current
         receiverType = null
@@ -219,7 +220,6 @@ KtNameReferenceExpression(196,203): 'current'
         symbol = var current: kotlin.Int
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -270,6 +270,7 @@ KtDotQualifiedExpression(207,224): 'this@iterator.end'
         type = f.IntProgression
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = end
         receiverType = null
@@ -277,7 +278,6 @@ KtDotQualifiedExpression(207,224): 'this@iterator.end'
         symbol = val end: kotlin.Int
         contextParameters = []
         callableId = f/IntProgression.end
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -303,6 +303,7 @@ KtNameReferenceExpression(221,224): 'end'
         type = f.IntProgression
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = end
         receiverType = null
@@ -310,7 +311,6 @@ KtNameReferenceExpression(221,224): 'end'
         symbol = val end: kotlin.Int
         contextParameters = []
         callableId = f/IntProgression.end
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -362,6 +362,7 @@ KtPostfixExpression(256,265): 'current++'
           type = f.<no name provided>
         extensionReceiver = null
         isContextSensitive = false
+        kind = Read
         signature = KaVariableSignature:
           name = current
           receiverType = null
@@ -369,7 +370,6 @@ KtPostfixExpression(256,265): 'current++'
           symbol = var current: kotlin.Int
           contextParameters = []
           callableId = null
-        simpleAccess = Read
         typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -382,6 +382,7 @@ KtNameReferenceExpression(256,263): 'current'
         type = f.<no name provided>
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = current
         receiverType = null
@@ -389,7 +390,6 @@ KtNameReferenceExpression(256,263): 'current'
         symbol = var current: kotlin.Int
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -423,6 +423,7 @@ KtOperationReferenceExpression(263,265): '++'
           type = f.<no name provided>
         extensionReceiver = null
         isContextSensitive = false
+        kind = Read
         signature = KaVariableSignature:
           name = current
           receiverType = null
@@ -430,7 +431,6 @@ KtOperationReferenceExpression(263,265): '++'
           symbol = var current: kotlin.Int
           contextParameters = []
           callableId = null
-        simpleAccess = Read
         typeArgumentsMapping = {}
     isInBestCandidates = true
 

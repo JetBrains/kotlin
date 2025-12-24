@@ -7,6 +7,7 @@ KtCallableReferenceExpression(87,95): 'obj::foo'
       type = Foo
     extensionReceiver = null
     isContextSensitive = false
+    kind = Read
     signature = KaVariableSignature:
       name = foo
       receiverType = null
@@ -14,5 +15,4 @@ KtCallableReferenceExpression(87,95): 'obj::foo'
       symbol = val foo: kotlin.String
       contextParameters = []
       callableId = /Foo.foo
-    simpleAccess = Read
     typeArgumentsMapping = {}

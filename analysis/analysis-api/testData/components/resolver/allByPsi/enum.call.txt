@@ -291,6 +291,7 @@ KtNameReferenceExpression(114,115): 'i'
         type = <anonymous>
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = i
         receiverType = null
@@ -298,7 +299,6 @@ KtNameReferenceExpression(114,115): 'i'
         symbol = val i: kotlin.Int
         contextParameters = []
         callableId = /EnumWithConstructor.i
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtClass(135,262): 'enum class EnumWithoutConstructor {'
@@ -427,6 +427,7 @@ KtDotQualifiedExpression(307,319): 'with.ordinal'
         type = EnumWithConstructor
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = ordinal
         receiverType = null
@@ -434,7 +435,6 @@ KtDotQualifiedExpression(307,319): 'with.ordinal'
         symbol = val ordinal: kotlin.Int
         contextParameters = []
         callableId = kotlin/Enum.ordinal
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(307,311): 'with'
@@ -444,6 +444,7 @@ KtNameReferenceExpression(307,311): 'with'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = with
         receiverType = null
@@ -451,7 +452,6 @@ KtNameReferenceExpression(307,311): 'with'
         symbol = with: EnumWithConstructor
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(312,319): 'ordinal'
@@ -464,6 +464,7 @@ KtNameReferenceExpression(312,319): 'ordinal'
         type = EnumWithConstructor
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = ordinal
         receiverType = null
@@ -471,7 +472,6 @@ KtNameReferenceExpression(312,319): 'ordinal'
         symbol = val ordinal: kotlin.Int
         contextParameters = []
         callableId = kotlin/Enum.ordinal
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtDotQualifiedExpression(325,350): 'EnumWithConstructor.Entry'
@@ -484,6 +484,7 @@ KtDotQualifiedExpression(325,350): 'EnumWithConstructor.Entry'
         type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = Entry
         receiverType = null
@@ -491,7 +492,6 @@ KtDotQualifiedExpression(325,350): 'EnumWithConstructor.Entry'
         symbol = /EnumWithConstructor.Entry
         contextParameters = []
         callableId = /EnumWithConstructor.Entry
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(325,344): 'EnumWithConstructor'
@@ -507,6 +507,7 @@ KtNameReferenceExpression(345,350): 'Entry'
         type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = Entry
         receiverType = null
@@ -514,7 +515,6 @@ KtNameReferenceExpression(345,350): 'Entry'
         symbol = /EnumWithConstructor.Entry
         contextParameters = []
         callableId = /EnumWithConstructor.Entry
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtDotQualifiedExpression(355,385): 'EnumWithConstructor.Entry.name'
@@ -527,6 +527,7 @@ KtDotQualifiedExpression(355,385): 'EnumWithConstructor.Entry.name'
         type = EnumWithConstructor
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = name
         receiverType = null
@@ -534,7 +535,6 @@ KtDotQualifiedExpression(355,385): 'EnumWithConstructor.Entry.name'
         symbol = val name: kotlin.String
         contextParameters = []
         callableId = kotlin/Enum.name
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtDotQualifiedExpression(355,380): 'EnumWithConstructor.Entry'
@@ -547,6 +547,7 @@ KtDotQualifiedExpression(355,380): 'EnumWithConstructor.Entry'
         type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = Entry
         receiverType = null
@@ -554,7 +555,6 @@ KtDotQualifiedExpression(355,380): 'EnumWithConstructor.Entry'
         symbol = /EnumWithConstructor.Entry
         contextParameters = []
         callableId = /EnumWithConstructor.Entry
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(355,374): 'EnumWithConstructor'
@@ -570,6 +570,7 @@ KtNameReferenceExpression(375,380): 'Entry'
         type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = Entry
         receiverType = null
@@ -577,7 +578,6 @@ KtNameReferenceExpression(375,380): 'Entry'
         symbol = /EnumWithConstructor.Entry
         contextParameters = []
         callableId = /EnumWithConstructor.Entry
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(381,385): 'name'
@@ -590,6 +590,7 @@ KtNameReferenceExpression(381,385): 'name'
         type = EnumWithConstructor
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = name
         receiverType = null
@@ -597,7 +598,6 @@ KtNameReferenceExpression(381,385): 'name'
         symbol = val name: kotlin.String
         contextParameters = []
         callableId = kotlin/Enum.name
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtDotQualifiedExpression(390,423): 'EnumWithConstructor.EntryWithBody'
@@ -610,6 +610,7 @@ KtDotQualifiedExpression(390,423): 'EnumWithConstructor.EntryWithBody'
         type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = EntryWithBody
         receiverType = null
@@ -617,7 +618,6 @@ KtDotQualifiedExpression(390,423): 'EnumWithConstructor.EntryWithBody'
         symbol = /EnumWithConstructor.EntryWithBody
         contextParameters = []
         callableId = /EnumWithConstructor.EntryWithBody
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(390,409): 'EnumWithConstructor'
@@ -633,6 +633,7 @@ KtNameReferenceExpression(410,423): 'EntryWithBody'
         type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = EntryWithBody
         receiverType = null
@@ -640,7 +641,6 @@ KtNameReferenceExpression(410,423): 'EntryWithBody'
         symbol = /EnumWithConstructor.EntryWithBody
         contextParameters = []
         callableId = /EnumWithConstructor.EntryWithBody
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtDotQualifiedExpression(428,463): 'EnumWithConstructor.EntryWithBody.i'
@@ -653,6 +653,7 @@ KtDotQualifiedExpression(428,463): 'EnumWithConstructor.EntryWithBody.i'
         type = EnumWithConstructor
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = i
         receiverType = null
@@ -660,7 +661,6 @@ KtDotQualifiedExpression(428,463): 'EnumWithConstructor.EntryWithBody.i'
         symbol = val i: kotlin.Int
         contextParameters = []
         callableId = /EnumWithConstructor.i
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtDotQualifiedExpression(428,461): 'EnumWithConstructor.EntryWithBody'
@@ -673,6 +673,7 @@ KtDotQualifiedExpression(428,461): 'EnumWithConstructor.EntryWithBody'
         type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = EntryWithBody
         receiverType = null
@@ -680,7 +681,6 @@ KtDotQualifiedExpression(428,461): 'EnumWithConstructor.EntryWithBody'
         symbol = /EnumWithConstructor.EntryWithBody
         contextParameters = []
         callableId = /EnumWithConstructor.EntryWithBody
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(428,447): 'EnumWithConstructor'
@@ -696,6 +696,7 @@ KtNameReferenceExpression(448,461): 'EntryWithBody'
         type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = EntryWithBody
         receiverType = null
@@ -703,7 +704,6 @@ KtNameReferenceExpression(448,461): 'EntryWithBody'
         symbol = /EnumWithConstructor.EntryWithBody
         contextParameters = []
         callableId = /EnumWithConstructor.EntryWithBody
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(462,463): 'i'
@@ -716,6 +716,7 @@ KtNameReferenceExpression(462,463): 'i'
         type = EnumWithConstructor
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = i
         receiverType = null
@@ -723,7 +724,6 @@ KtNameReferenceExpression(462,463): 'i'
         symbol = val i: kotlin.Int
         contextParameters = []
         callableId = /EnumWithConstructor.i
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtDotQualifiedExpression(469,499): 'EnumWithoutConstructor.entries'
@@ -736,6 +736,7 @@ KtDotQualifiedExpression(469,499): 'EnumWithoutConstructor.entries'
         type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = entries
         receiverType = null
@@ -743,7 +744,6 @@ KtDotQualifiedExpression(469,499): 'EnumWithoutConstructor.entries'
         symbol = val entries: kotlin.enums.EnumEntries<EnumWithoutConstructor>
         contextParameters = []
         callableId = /EnumWithoutConstructor.entries
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(469,491): 'EnumWithoutConstructor'
@@ -759,6 +759,7 @@ KtNameReferenceExpression(492,499): 'entries'
         type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = entries
         receiverType = null
@@ -766,7 +767,6 @@ KtNameReferenceExpression(492,499): 'entries'
         symbol = val entries: kotlin.enums.EnumEntries<EnumWithoutConstructor>
         contextParameters = []
         callableId = /EnumWithoutConstructor.entries
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtDotQualifiedExpression(504,532): 'EnumWithoutConstructor.Entry'
@@ -779,6 +779,7 @@ KtDotQualifiedExpression(504,532): 'EnumWithoutConstructor.Entry'
         type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = Entry
         receiverType = null
@@ -786,7 +787,6 @@ KtDotQualifiedExpression(504,532): 'EnumWithoutConstructor.Entry'
         symbol = /EnumWithoutConstructor.Entry
         contextParameters = []
         callableId = /EnumWithoutConstructor.Entry
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(504,526): 'EnumWithoutConstructor'
@@ -802,6 +802,7 @@ KtNameReferenceExpression(527,532): 'Entry'
         type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = Entry
         receiverType = null
@@ -809,7 +810,6 @@ KtNameReferenceExpression(527,532): 'Entry'
         symbol = /EnumWithoutConstructor.Entry
         contextParameters = []
         callableId = /EnumWithoutConstructor.Entry
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtDotQualifiedExpression(537,573): 'EnumWithoutConstructor.EntryWithBody'
@@ -822,6 +822,7 @@ KtDotQualifiedExpression(537,573): 'EnumWithoutConstructor.EntryWithBody'
         type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = EntryWithBody
         receiverType = null
@@ -829,7 +830,6 @@ KtDotQualifiedExpression(537,573): 'EnumWithoutConstructor.EntryWithBody'
         symbol = /EnumWithoutConstructor.EntryWithBody
         contextParameters = []
         callableId = /EnumWithoutConstructor.EntryWithBody
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(537,559): 'EnumWithoutConstructor'
@@ -845,6 +845,7 @@ KtNameReferenceExpression(560,573): 'EntryWithBody'
         type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = EntryWithBody
         receiverType = null
@@ -852,5 +853,4 @@ KtNameReferenceExpression(560,573): 'EntryWithBody'
         symbol = /EnumWithoutConstructor.EntryWithBody
         contextParameters = []
         callableId = /EnumWithoutConstructor.EntryWithBody
-      simpleAccess = Read
       typeArgumentsMapping = {}

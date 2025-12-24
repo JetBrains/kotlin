@@ -65,6 +65,7 @@ KtNameReferenceExpression(198,205): 'problem'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = problem
         receiverType = null
@@ -72,7 +73,6 @@ KtNameReferenceExpression(198,205): 'problem'
         symbol = problem: Problem
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -92,6 +92,7 @@ KtNameReferenceExpression(213,223): 'CONNECTION'
         type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = CONNECTION
         receiverType = null
@@ -99,7 +100,6 @@ KtNameReferenceExpression(213,223): 'CONNECTION'
         symbol = /Problem.CONNECTION
         contextParameters = []
         callableId = /Problem.CONNECTION
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -125,6 +125,7 @@ KtNameReferenceExpression(244,258): 'AUTHENTICATION'
         type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = AUTHENTICATION
         receiverType = null
@@ -132,7 +133,6 @@ KtNameReferenceExpression(244,258): 'AUTHENTICATION'
         symbol = /Problem.AUTHENTICATION
         contextParameters = []
         callableId = /Problem.AUTHENTICATION
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -158,6 +158,7 @@ KtNameReferenceExpression(283,291): 'DATABASE'
         type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = DATABASE
         receiverType = null
@@ -165,7 +166,6 @@ KtNameReferenceExpression(283,291): 'DATABASE'
         symbol = /Problem.DATABASE
         contextParameters = []
         callableId = /Problem.DATABASE
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -191,6 +191,7 @@ KtNameReferenceExpression(310,317): 'UNKNOWN'
         type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = UNKNOWN
         receiverType = null
@@ -198,7 +199,6 @@ KtNameReferenceExpression(310,317): 'UNKNOWN'
         symbol = /Problem.UNKNOWN
         contextParameters = []
         callableId = /Problem.UNKNOWN
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -245,6 +245,7 @@ KtNameReferenceExpression(378,379): 'x'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = x
         receiverType = null
@@ -252,7 +253,6 @@ KtNameReferenceExpression(378,379): 'x'
         symbol = x: kotlin.String
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -278,6 +278,7 @@ KtNameReferenceExpression(403,413): 'CONNECTION'
         type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = CONNECTION
         receiverType = null
@@ -285,7 +286,6 @@ KtNameReferenceExpression(403,413): 'CONNECTION'
         symbol = /Problem.CONNECTION
         contextParameters = []
         callableId = /Problem.CONNECTION
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -311,6 +311,7 @@ KtNameReferenceExpression(438,452): 'AUTHENTICATION'
         type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = AUTHENTICATION
         receiverType = null
@@ -318,7 +319,6 @@ KtNameReferenceExpression(438,452): 'AUTHENTICATION'
         symbol = /Problem.AUTHENTICATION
         contextParameters = []
         callableId = /Problem.AUTHENTICATION
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -344,6 +344,7 @@ KtNameReferenceExpression(471,479): 'DATABASE'
         type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = DATABASE
         receiverType = null
@@ -351,7 +352,6 @@ KtNameReferenceExpression(471,479): 'DATABASE'
         symbol = /Problem.DATABASE
         contextParameters = []
         callableId = /Problem.DATABASE
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -368,6 +368,7 @@ KtNameReferenceExpression(492,499): 'UNKNOWN'
         type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = UNKNOWN
         receiverType = null
@@ -375,6 +376,5 @@ KtNameReferenceExpression(492,499): 'UNKNOWN'
         symbol = /Problem.UNKNOWN
         contextParameters = []
         callableId = /Problem.UNKNOWN
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true

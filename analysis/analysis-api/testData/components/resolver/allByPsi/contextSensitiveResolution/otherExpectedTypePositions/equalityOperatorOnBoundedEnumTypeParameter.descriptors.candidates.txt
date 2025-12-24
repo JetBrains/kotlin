@@ -244,6 +244,7 @@ KtNameReferenceExpression(199,200): 'a'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = a
         receiverType = null
@@ -251,7 +252,6 @@ KtNameReferenceExpression(199,200): 'a'
         symbol = a: T
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -351,6 +351,7 @@ KtNameReferenceExpression(218,219): 'a'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = a
         receiverType = null
@@ -358,7 +359,6 @@ KtNameReferenceExpression(218,219): 'a'
         symbol = a: T
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -424,6 +424,7 @@ KtNameReferenceExpression(237,238): 'a'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = a
         receiverType = null
@@ -431,7 +432,6 @@ KtNameReferenceExpression(237,238): 'a'
         symbol = a: T
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -463,6 +463,7 @@ KtNameReferenceExpression(257,258): 'a'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = a
         receiverType = null
@@ -470,7 +471,6 @@ KtNameReferenceExpression(257,258): 'a'
         symbol = a: T
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -536,6 +536,7 @@ KtNameReferenceExpression(277,278): 'a'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = a
         receiverType = null
@@ -543,7 +544,6 @@ KtNameReferenceExpression(277,278): 'a'
         symbol = a: T
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -591,6 +591,7 @@ KtNameReferenceExpression(282,283): 'L'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = L
         receiverType = null
@@ -598,7 +599,6 @@ KtNameReferenceExpression(282,283): 'L'
         symbol = val L: MyEnum
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -644,6 +644,7 @@ KtBinaryExpression(467,473): 'X == a'
         type = ERROR_TYPE
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = <Error property>
         receiverType = null
@@ -651,7 +652,6 @@ KtBinaryExpression(467,473): 'X == a'
         symbol = var <Error property>: ERROR_TYPE
         contextParameters = []
         callableId = /<Error class: unknown class>.<Error property>
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = false
 
@@ -688,6 +688,7 @@ KtOperationReferenceExpression(469,471): '=='
         type = ERROR_TYPE
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = <Error property>
         receiverType = null
@@ -695,7 +696,6 @@ KtOperationReferenceExpression(469,471): '=='
         symbol = var <Error property>: ERROR_TYPE
         contextParameters = []
         callableId = /<Error class: unknown class>.<Error property>
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = false
 
@@ -706,6 +706,7 @@ KtNameReferenceExpression(472,473): 'a'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = a
         receiverType = null
@@ -713,7 +714,6 @@ KtNameReferenceExpression(472,473): 'a'
         symbol = a: T
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -773,6 +773,7 @@ KtNameReferenceExpression(486,487): 'L'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = L
         receiverType = null
@@ -780,7 +781,6 @@ KtNameReferenceExpression(486,487): 'L'
         symbol = val L: MyEnum
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -828,6 +828,7 @@ KtNameReferenceExpression(491,492): 'a'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = a
         receiverType = null
@@ -835,7 +836,6 @@ KtNameReferenceExpression(491,492): 'a'
         symbol = a: T
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -896,6 +896,7 @@ KtNameReferenceExpression(695,696): 'a'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = a
         receiverType = null
@@ -903,7 +904,6 @@ KtNameReferenceExpression(695,696): 'a'
         symbol = a: T
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1084,6 +1084,7 @@ KtNameReferenceExpression(718,719): 'a'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = a
         receiverType = null
@@ -1091,7 +1092,6 @@ KtNameReferenceExpression(718,719): 'a'
         symbol = a: T
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1217,6 +1217,7 @@ KtNameReferenceExpression(726,727): 'L'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = L
         receiverType = null
@@ -1224,7 +1225,6 @@ KtNameReferenceExpression(726,727): 'L'
         symbol = val L: MyEnum
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1287,6 +1287,7 @@ KtNameReferenceExpression(753,754): 'a'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = a
         receiverType = null
@@ -1294,7 +1295,6 @@ KtNameReferenceExpression(753,754): 'a'
         symbol = a: T
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1391,6 +1391,7 @@ KtNameReferenceExpression(774,775): 'a'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = a
         receiverType = null
@@ -1398,7 +1399,6 @@ KtNameReferenceExpression(774,775): 'a'
         symbol = a: T
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1461,6 +1461,7 @@ KtNameReferenceExpression(795,796): 'a'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = a
         receiverType = null
@@ -1468,7 +1469,6 @@ KtNameReferenceExpression(795,796): 'a'
         symbol = a: T
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1497,6 +1497,7 @@ KtNameReferenceExpression(817,818): 'a'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = a
         receiverType = null
@@ -1504,7 +1505,6 @@ KtNameReferenceExpression(817,818): 'a'
         symbol = a: T
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1567,6 +1567,7 @@ KtNameReferenceExpression(839,840): 'a'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = a
         receiverType = null
@@ -1574,7 +1575,6 @@ KtNameReferenceExpression(839,840): 'a'
         symbol = a: T
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1622,6 +1622,7 @@ KtNameReferenceExpression(844,845): 'L'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = L
         receiverType = null
@@ -1629,7 +1630,6 @@ KtNameReferenceExpression(844,845): 'L'
         symbol = val L: MyEnum
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1646,6 +1646,7 @@ KtNameReferenceExpression(869,870): 'a'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = a
         receiverType = null
@@ -1653,7 +1654,6 @@ KtNameReferenceExpression(869,870): 'a'
         symbol = a: T
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1688,6 +1688,7 @@ KtNameReferenceExpression(901,902): 'L'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = L
         receiverType = null
@@ -1695,7 +1696,6 @@ KtNameReferenceExpression(901,902): 'L'
         symbol = val L: MyEnum
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1715,6 +1715,7 @@ KtNameReferenceExpression(934,935): 'a'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = a
         receiverType = null
@@ -1722,7 +1723,6 @@ KtNameReferenceExpression(934,935): 'a'
         symbol = a: T
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1757,6 +1757,7 @@ KtNameReferenceExpression(966,967): 'L'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = L
         receiverType = null
@@ -1764,7 +1765,6 @@ KtNameReferenceExpression(966,967): 'L'
         symbol = val L: MyEnum
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1781,6 +1781,7 @@ KtNameReferenceExpression(991,992): 'a'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = a
         receiverType = null
@@ -1788,7 +1789,6 @@ KtNameReferenceExpression(991,992): 'a'
         symbol = a: T
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -2061,6 +2061,7 @@ KtNameReferenceExpression(1034,1035): 'L'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = L
         receiverType = null
@@ -2068,7 +2069,6 @@ KtNameReferenceExpression(1034,1035): 'L'
         symbol = val L: MyEnum
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -2094,6 +2094,7 @@ KtNameReferenceExpression(1087,1088): 'a'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = a
         receiverType = null
@@ -2101,7 +2102,6 @@ KtNameReferenceExpression(1087,1088): 'a'
         symbol = a: T
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -2374,6 +2374,7 @@ KtNameReferenceExpression(1130,1131): 'L'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = L
         receiverType = null
@@ -2381,7 +2382,6 @@ KtNameReferenceExpression(1130,1131): 'L'
         symbol = val L: MyEnum
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 

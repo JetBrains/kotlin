@@ -80,6 +80,7 @@ KtNameReferenceExpression(192,193): 's'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = s
         receiverType = null
@@ -87,7 +88,6 @@ KtNameReferenceExpression(192,193): 's'
         symbol = s: Simple
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 

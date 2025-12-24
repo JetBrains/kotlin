@@ -210,6 +210,7 @@ KtNameReferenceExpression(314,322): 'instance'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = instance
         receiverType = null
@@ -217,7 +218,6 @@ KtNameReferenceExpression(314,322): 'instance'
         symbol = instance: SealedClass
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -249,6 +249,7 @@ KtNameReferenceExpression(356,364): 'instance'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = instance
         receiverType = null
@@ -256,7 +257,6 @@ KtNameReferenceExpression(356,364): 'instance'
         symbol = instance: SealedClass
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -284,6 +284,7 @@ KtDotQualifiedExpression(395,408): 'instance.prop'
         type = SealedClass.IndirectSealedInheritor
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = prop
         receiverType = null
@@ -291,7 +292,6 @@ KtDotQualifiedExpression(395,408): 'instance.prop'
         symbol = val prop: kotlin.String
         contextParameters = []
         callableId = /SealedClass.SealedInheritor.prop
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -302,6 +302,7 @@ KtNameReferenceExpression(395,403): 'instance'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = instance
         receiverType = null
@@ -309,7 +310,6 @@ KtNameReferenceExpression(395,403): 'instance'
         symbol = instance: SealedClass
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -325,6 +325,7 @@ KtNameReferenceExpression(404,408): 'prop'
         type = SealedClass.IndirectSealedInheritor
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = prop
         receiverType = null
@@ -332,7 +333,6 @@ KtNameReferenceExpression(404,408): 'prop'
         symbol = val prop: kotlin.String
         contextParameters = []
         callableId = /SealedClass.SealedInheritor.prop
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -548,6 +548,7 @@ KtNameReferenceExpression(699,707): 'instance'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = instance
         receiverType = null
@@ -555,7 +556,6 @@ KtNameReferenceExpression(699,707): 'instance'
         symbol = instance: OpenClass
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -587,6 +587,7 @@ KtNameReferenceExpression(752,760): 'instance'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = instance
         receiverType = null
@@ -594,7 +595,6 @@ KtNameReferenceExpression(752,760): 'instance'
         symbol = instance: OpenClass
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -620,6 +620,7 @@ KtNameReferenceExpression(802,810): 'instance'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = instance
         receiverType = null
@@ -627,7 +628,6 @@ KtNameReferenceExpression(802,810): 'instance'
         symbol = instance: OpenClass
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 

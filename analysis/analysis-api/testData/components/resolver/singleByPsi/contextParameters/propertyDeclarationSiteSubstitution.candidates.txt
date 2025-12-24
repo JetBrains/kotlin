@@ -53,6 +53,7 @@ KtNameReferenceExpression(193,196): 'foo'
         type = Another
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = foo
         receiverType = null
@@ -75,6 +76,5 @@ KtNameReferenceExpression(193,196): 'foo'
             callableId = null
         ]
         callableId = /Another.foo
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true

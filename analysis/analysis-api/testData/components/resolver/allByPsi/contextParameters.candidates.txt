@@ -53,6 +53,7 @@ KtNameReferenceExpression(58,59): 'a'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = a
         receiverType = null
@@ -60,7 +61,6 @@ KtNameReferenceExpression(58,59): 'a'
         symbol = a: kotlin.String
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -213,6 +213,7 @@ KtNameReferenceExpression(149,150): 'a'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = a
         receiverType = null
@@ -220,7 +221,6 @@ KtNameReferenceExpression(149,150): 'a'
         symbol = a: A
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -465,6 +465,7 @@ KtNameReferenceExpression(273,274): 'a'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = a
         receiverType = null
@@ -472,7 +473,6 @@ KtNameReferenceExpression(273,274): 'a'
         symbol = a: A
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -666,6 +666,7 @@ KtNameReferenceExpression(369,383): 'propertyMember'
         type = Base
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = propertyMember
         receiverType = null
@@ -681,7 +682,6 @@ KtNameReferenceExpression(369,383): 'propertyMember'
             callableId = null
         ]
         callableId = /Base.propertyMember
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1231,6 +1231,7 @@ KtNameReferenceExpression(512,526): 'propertyMember'
         type = Base
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = propertyMember
         receiverType = null
@@ -1246,7 +1247,6 @@ KtNameReferenceExpression(512,526): 'propertyMember'
             callableId = null
         ]
         callableId = /Base.propertyMember
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 

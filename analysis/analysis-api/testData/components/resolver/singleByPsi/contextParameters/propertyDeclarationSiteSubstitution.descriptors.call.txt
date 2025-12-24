@@ -8,6 +8,7 @@ KtNameReferenceExpression(193,196): 'foo'
         type = Another
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = foo
         receiverType = null
@@ -15,5 +16,4 @@ KtNameReferenceExpression(193,196): 'foo'
         symbol = val foo: kotlin.Long
         contextParameters = []
         callableId = /Another.foo
-      simpleAccess = Read
       typeArgumentsMapping = {}

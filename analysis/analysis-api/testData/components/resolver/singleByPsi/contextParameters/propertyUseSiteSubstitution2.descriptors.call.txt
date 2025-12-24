@@ -37,6 +37,7 @@ KtNameReferenceExpression(170,173): 'foo'
         isSafeNavigation = false
         type = T
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = foo
         receiverType = T
@@ -44,5 +45,4 @@ KtNameReferenceExpression(170,173): 'foo'
         symbol = val foo: kotlin.Boolean
         contextParameters = []
         callableId = /Base.foo
-      simpleAccess = Read
       typeArgumentsMapping = {}

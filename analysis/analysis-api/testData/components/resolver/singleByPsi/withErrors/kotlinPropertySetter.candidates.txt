@@ -8,6 +8,8 @@ KtNameReferenceExpression(51,54): 'foo'
         type = KtClass
       extensionReceiver = null
       isContextSensitive = false
+      kind = Write:
+        value = 42
       signature = KaVariableSignature:
         name = foo
         receiverType = null
@@ -15,7 +17,5 @@ KtNameReferenceExpression(51,54): 'foo'
         symbol = var foo: kotlin.Int
         contextParameters = []
         callableId = /KtClass.foo
-      simpleAccess = Write:
-        value = 42
       typeArgumentsMapping = {}
     isInBestCandidates = true

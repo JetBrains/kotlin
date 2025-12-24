@@ -176,6 +176,7 @@ KtNameReferenceExpression(399,402): 'arg'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = arg
         receiverType = null
@@ -183,7 +184,6 @@ KtNameReferenceExpression(399,402): 'arg'
         symbol = arg: kotlin.Boolean
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -325,6 +325,7 @@ KtNameReferenceExpression(484,487): 'arg'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = arg
         receiverType = null
@@ -332,7 +333,6 @@ KtNameReferenceExpression(484,487): 'arg'
         symbol = arg: kotlin.Boolean
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -421,6 +421,7 @@ KtNameReferenceExpression(594,597): 'arg'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = arg
         receiverType = null
@@ -428,7 +429,6 @@ KtNameReferenceExpression(594,597): 'arg'
         symbol = arg: kotlin.Boolean
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -514,6 +514,7 @@ KtNameReferenceExpression(716,719): 'arg'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = arg
         receiverType = null
@@ -521,7 +522,6 @@ KtNameReferenceExpression(716,719): 'arg'
         symbol = arg: kotlin.Boolean
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -640,6 +640,7 @@ KtNameReferenceExpression(889,892): 'arg'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = arg
         receiverType = null
@@ -647,7 +648,6 @@ KtNameReferenceExpression(889,892): 'arg'
         symbol = arg: kotlin.Boolean
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 

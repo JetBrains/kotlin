@@ -50,6 +50,7 @@ KtNameReferenceExpression(126,127): 'a'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = a
         receiverType = null
@@ -57,7 +58,6 @@ KtNameReferenceExpression(126,127): 'a'
         symbol = a: A
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -77,6 +77,7 @@ KtDotQualifiedExpression(135,138): 'A.A'
         type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = A
         receiverType = null
@@ -84,7 +85,6 @@ KtDotQualifiedExpression(135,138): 'A.A'
         symbol = /A.A
         contextParameters = []
         callableId = /A.A
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -117,6 +117,7 @@ KtNameReferenceExpression(137,138): 'A'
         type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = A
         receiverType = null
@@ -124,7 +125,6 @@ KtNameReferenceExpression(137,138): 'A'
         symbol = /A.A
         contextParameters = []
         callableId = /A.A
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -150,6 +150,7 @@ KtDotQualifiedExpression(150,153): 'A.B'
         type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = B
         receiverType = null
@@ -157,7 +158,6 @@ KtDotQualifiedExpression(150,153): 'A.B'
         symbol = /A.B
         contextParameters = []
         callableId = /A.B
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -190,6 +190,7 @@ KtNameReferenceExpression(152,153): 'B'
         type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = B
         receiverType = null
@@ -197,7 +198,6 @@ KtNameReferenceExpression(152,153): 'B'
         symbol = /A.B
         contextParameters = []
         callableId = /A.B
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 

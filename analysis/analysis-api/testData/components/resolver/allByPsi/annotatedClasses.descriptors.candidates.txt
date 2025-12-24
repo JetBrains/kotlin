@@ -341,6 +341,7 @@ KtNameReferenceExpression(171,175): 'prop'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = prop
         receiverType = null
@@ -348,7 +349,6 @@ KtNameReferenceExpression(171,175): 'prop'
         symbol = val prop: kotlin.String
         contextParameters = []
         callableId = /prop
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -497,6 +497,7 @@ KtNameReferenceExpression(213,217): 'prop'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = prop
         receiverType = null
@@ -504,7 +505,6 @@ KtNameReferenceExpression(213,217): 'prop'
         symbol = val prop: kotlin.String
         contextParameters = []
         callableId = /prop
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -653,6 +653,7 @@ KtNameReferenceExpression(268,272): 'prop'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = prop
         receiverType = null
@@ -660,7 +661,6 @@ KtNameReferenceExpression(268,272): 'prop'
         symbol = val prop: kotlin.String
         contextParameters = []
         callableId = /prop
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -803,6 +803,7 @@ KtNameReferenceExpression(307,311): 'prop'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = prop
         receiverType = null
@@ -810,7 +811,6 @@ KtNameReferenceExpression(307,311): 'prop'
         symbol = val prop: kotlin.String
         contextParameters = []
         callableId = /prop
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -953,6 +953,7 @@ KtNameReferenceExpression(362,366): 'prop'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = prop
         receiverType = null
@@ -960,7 +961,6 @@ KtNameReferenceExpression(362,366): 'prop'
         symbol = val prop: kotlin.String
         contextParameters = []
         callableId = /prop
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1103,6 +1103,7 @@ KtNameReferenceExpression(413,417): 'prop'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = prop
         receiverType = null
@@ -1110,7 +1111,6 @@ KtNameReferenceExpression(413,417): 'prop'
         symbol = val prop: kotlin.String
         contextParameters = []
         callableId = /prop
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1346,6 +1346,7 @@ KtNameReferenceExpression(504,508): 'prop'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = prop
         receiverType = null
@@ -1353,7 +1354,6 @@ KtNameReferenceExpression(504,508): 'prop'
         symbol = val prop: kotlin.String
         contextParameters = []
         callableId = /prop
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1517,6 +1517,7 @@ KtNameReferenceExpression(555,559): 'prop'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = prop
         receiverType = null
@@ -1524,7 +1525,6 @@ KtNameReferenceExpression(555,559): 'prop'
         symbol = val prop: kotlin.String
         contextParameters = []
         callableId = /prop
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1673,6 +1673,7 @@ KtNameReferenceExpression(604,608): 'prop'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = prop
         receiverType = null
@@ -1680,7 +1681,6 @@ KtNameReferenceExpression(604,608): 'prop'
         symbol = val prop: kotlin.String
         contextParameters = []
         callableId = /prop
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1874,6 +1874,7 @@ KtNameReferenceExpression(677,681): 'prop'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = prop
         receiverType = null
@@ -1881,7 +1882,6 @@ KtNameReferenceExpression(677,681): 'prop'
         symbol = val prop: kotlin.String
         contextParameters = []
         callableId = /prop
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -2045,6 +2045,7 @@ KtNameReferenceExpression(728,732): 'prop'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = prop
         receiverType = null
@@ -2052,7 +2053,6 @@ KtNameReferenceExpression(728,732): 'prop'
         symbol = val prop: kotlin.String
         contextParameters = []
         callableId = /prop
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -2201,6 +2201,7 @@ KtNameReferenceExpression(777,781): 'prop'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = prop
         receiverType = null
@@ -2208,7 +2209,6 @@ KtNameReferenceExpression(777,781): 'prop'
         symbol = val prop: kotlin.String
         contextParameters = []
         callableId = /prop
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -2366,6 +2366,7 @@ KtNameReferenceExpression(863,867): 'prop'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = prop
         receiverType = null
@@ -2373,7 +2374,6 @@ KtNameReferenceExpression(863,867): 'prop'
         symbol = val prop: kotlin.String
         contextParameters = []
         callableId = /prop
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -2522,6 +2522,7 @@ KtNameReferenceExpression(905,909): 'prop'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = prop
         receiverType = null
@@ -2529,7 +2530,6 @@ KtNameReferenceExpression(905,909): 'prop'
         symbol = val prop: kotlin.String
         contextParameters = []
         callableId = /prop
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -2678,6 +2678,7 @@ KtNameReferenceExpression(954,958): 'prop'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = prop
         receiverType = null
@@ -2685,7 +2686,6 @@ KtNameReferenceExpression(954,958): 'prop'
         symbol = val prop: kotlin.String
         contextParameters = []
         callableId = /prop
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 

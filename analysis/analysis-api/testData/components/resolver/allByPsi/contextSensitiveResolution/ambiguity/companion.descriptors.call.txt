@@ -155,6 +155,7 @@ KtNameReferenceExpression(257,258): 'x'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = x
         receiverType = null
@@ -162,7 +163,6 @@ KtNameReferenceExpression(257,258): 'x'
         symbol = x: foo.MyEnum
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(259,261): '=='
@@ -210,6 +210,7 @@ KtNameReferenceExpression(262,263): 'A'
         type = foo.Test.Companion
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = A
         receiverType = null
@@ -217,7 +218,6 @@ KtNameReferenceExpression(262,263): 'A'
         symbol = val A: kotlin.Any
         contextParameters = []
         callableId = foo/Test.Companion.A
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNamedFunction(275,345): 'fun test1enum(x: MyEnum): Boolean {'
@@ -296,6 +296,7 @@ KtNameReferenceExpression(326,327): 'x'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = x
         receiverType = null
@@ -303,7 +304,6 @@ KtNameReferenceExpression(326,327): 'x'
         symbol = x: foo.MyEnum
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(328,330): '=='
@@ -427,6 +427,7 @@ KtNameReferenceExpression(407,408): 'x'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = x
         receiverType = null
@@ -434,7 +435,6 @@ KtNameReferenceExpression(407,408): 'x'
         symbol = x: foo.MyEnum
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(409,411): '=='
@@ -483,6 +483,7 @@ KtDotQualifiedExpression(412,423): 'Companion.A'
         type = foo.Test.Companion
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = A
         receiverType = null
@@ -490,7 +491,6 @@ KtDotQualifiedExpression(412,423): 'Companion.A'
         symbol = val A: kotlin.Any
         contextParameters = []
         callableId = foo/Test.Companion.A
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(412,421): 'Companion'
@@ -506,6 +506,7 @@ KtNameReferenceExpression(422,423): 'A'
         type = foo.Test.Companion
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = A
         receiverType = null
@@ -513,7 +514,6 @@ KtNameReferenceExpression(422,423): 'A'
         symbol = val A: kotlin.Any
         contextParameters = []
         callableId = foo/Test.Companion.A
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNamedFunction(435,514): 'fun test2wrong(x: MyEnum): Int = when (x) {'
@@ -553,6 +553,7 @@ KtNameReferenceExpression(474,475): 'x'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = x
         receiverType = null
@@ -560,7 +561,6 @@ KtNameReferenceExpression(474,475): 'x'
         symbol = x: foo.MyEnum
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtWhenEntry(487,493): 'A -> 1'
@@ -578,6 +578,7 @@ KtNameReferenceExpression(487,488): 'A'
         type = foo.Test.Companion
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = A
         receiverType = null
@@ -585,7 +586,6 @@ KtNameReferenceExpression(487,488): 'A'
         symbol = val A: kotlin.Any
         contextParameters = []
         callableId = foo/Test.Companion.A
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtConstantExpression(492,493): '1'
@@ -642,6 +642,7 @@ KtNameReferenceExpression(558,559): 'x'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = x
         receiverType = null
@@ -649,7 +650,6 @@ KtNameReferenceExpression(558,559): 'x'
         symbol = x: foo.MyEnum
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtWhenEntry(571,584): 'MyEnum.A -> 1'
@@ -721,6 +721,7 @@ KtNameReferenceExpression(654,655): 'x'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = x
         receiverType = null
@@ -728,7 +729,6 @@ KtNameReferenceExpression(654,655): 'x'
         symbol = x: foo.MyEnum
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtWhenEntry(667,683): 'Companion.A -> 1'
@@ -747,6 +747,7 @@ KtDotQualifiedExpression(667,678): 'Companion.A'
         type = foo.Test.Companion
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = A
         receiverType = null
@@ -754,7 +755,6 @@ KtDotQualifiedExpression(667,678): 'Companion.A'
         symbol = val A: kotlin.Any
         contextParameters = []
         callableId = foo/Test.Companion.A
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(667,676): 'Companion'
@@ -770,6 +770,7 @@ KtNameReferenceExpression(677,678): 'A'
         type = foo.Test.Companion
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = A
         receiverType = null
@@ -777,7 +778,6 @@ KtNameReferenceExpression(677,678): 'A'
         symbol = val A: kotlin.Any
         contextParameters = []
         callableId = foo/Test.Companion.A
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtConstantExpression(682,683): '1'

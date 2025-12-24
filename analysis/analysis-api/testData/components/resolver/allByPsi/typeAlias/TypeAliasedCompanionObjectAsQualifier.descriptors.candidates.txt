@@ -149,6 +149,7 @@ KtDotQualifiedExpression(190,206): 'MyAlias.property'
         type = test.MyClass.Companion
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = property
         receiverType = null
@@ -156,7 +157,6 @@ KtDotQualifiedExpression(190,206): 'MyAlias.property'
         symbol = val property: kotlin.Int
         contextParameters = []
         callableId = test/MyClass.Companion.property
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -173,6 +173,7 @@ KtNameReferenceExpression(198,206): 'property'
         type = test.MyClass.Companion
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = property
         receiverType = null
@@ -180,7 +181,6 @@ KtNameReferenceExpression(198,206): 'property'
         symbol = val property: kotlin.Int
         contextParameters = []
         callableId = test/MyClass.Companion.property
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -239,6 +239,7 @@ KtCallableReferenceExpression(234,251): 'MyAlias::property'
         type = test.MyClass.Companion
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = property
         receiverType = null
@@ -246,7 +247,6 @@ KtCallableReferenceExpression(234,251): 'MyAlias::property'
         symbol = val property: kotlin.Int
         contextParameters = []
         callableId = test/MyClass.Companion.property
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -263,6 +263,7 @@ KtNameReferenceExpression(243,251): 'property'
         type = test.MyClass.Companion
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = property
         receiverType = null
@@ -270,6 +271,5 @@ KtNameReferenceExpression(243,251): 'property'
         symbol = val property: kotlin.Int
         contextParameters = []
         callableId = test/MyClass.Companion.property
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true

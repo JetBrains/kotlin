@@ -248,6 +248,7 @@ KtNameReferenceExpression(298,299): 's'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = s
         receiverType = null
@@ -255,7 +256,6 @@ KtNameReferenceExpression(298,299): 's'
         symbol = s: Either<kotlin.String, kotlin.Int>
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -281,6 +281,7 @@ KtDotQualifiedExpression(311,325): 's.error.length'
         type = kotlin.String
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = length
         receiverType = null
@@ -288,7 +289,6 @@ KtDotQualifiedExpression(311,325): 's.error.length'
         symbol = val length: kotlin.Int
         contextParameters = []
         callableId = kotlin/String.length
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -304,6 +304,7 @@ KtDotQualifiedExpression(311,318): 's.error'
         type = Either.Left<kotlin.String>
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = error
         receiverType = null
@@ -311,7 +312,6 @@ KtDotQualifiedExpression(311,318): 's.error'
         symbol = val error: E
         contextParameters = []
         callableId = /Either.Left.error
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -322,6 +322,7 @@ KtNameReferenceExpression(311,312): 's'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = s
         receiverType = null
@@ -329,7 +330,6 @@ KtNameReferenceExpression(311,312): 's'
         symbol = s: Either<kotlin.String, kotlin.Int>
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -345,6 +345,7 @@ KtNameReferenceExpression(313,318): 'error'
         type = Either.Left<kotlin.String>
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = error
         receiverType = null
@@ -352,7 +353,6 @@ KtNameReferenceExpression(313,318): 'error'
         symbol = val error: E
         contextParameters = []
         callableId = /Either.Left.error
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -366,6 +366,7 @@ KtNameReferenceExpression(319,325): 'length'
         type = kotlin.String
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = length
         receiverType = null
@@ -373,7 +374,6 @@ KtNameReferenceExpression(319,325): 'length'
         symbol = val length: kotlin.Int
         contextParameters = []
         callableId = kotlin/String.length
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -393,6 +393,7 @@ KtNameReferenceExpression(334,335): 's'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = s
         receiverType = null
@@ -400,7 +401,6 @@ KtNameReferenceExpression(334,335): 's'
         symbol = s: Either<kotlin.String, kotlin.Int>
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -650,6 +650,7 @@ KtDotQualifiedExpression(348,355): 's.value'
         type = Either.Right<kotlin.Int>
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = value
         receiverType = null
@@ -657,7 +658,6 @@ KtDotQualifiedExpression(348,355): 's.value'
         symbol = val value: A
         contextParameters = []
         callableId = /Either.Right.value
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -668,6 +668,7 @@ KtNameReferenceExpression(348,349): 's'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = s
         receiverType = null
@@ -675,7 +676,6 @@ KtNameReferenceExpression(348,349): 's'
         symbol = s: Either<kotlin.String, kotlin.Int>
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -691,6 +691,7 @@ KtNameReferenceExpression(350,355): 'value'
         type = Either.Right<kotlin.Int>
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = value
         receiverType = null
@@ -698,7 +699,6 @@ KtNameReferenceExpression(350,355): 'value'
         symbol = val value: A
         contextParameters = []
         callableId = /Either.Right.value
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -943,6 +943,7 @@ KtNameReferenceExpression(375,376): 's'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = s
         receiverType = null
@@ -950,7 +951,6 @@ KtNameReferenceExpression(375,376): 's'
         symbol = s: Either<kotlin.String, kotlin.Int>
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1000,6 +1000,7 @@ KtNameReferenceExpression(397,398): 's'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = s
         receiverType = null
@@ -1007,7 +1008,6 @@ KtNameReferenceExpression(397,398): 's'
         symbol = s: Either<kotlin.String, kotlin.Int>
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1224,6 +1224,7 @@ KtNameReferenceExpression(455,456): 's'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = s
         receiverType = null
@@ -1231,7 +1232,6 @@ KtNameReferenceExpression(455,456): 's'
         symbol = s: Either<kotlin.String, kotlin.Int>
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1257,6 +1257,7 @@ KtDotQualifiedExpression(473,487): 's.error.length'
         type = kotlin.String
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = length
         receiverType = null
@@ -1264,7 +1265,6 @@ KtDotQualifiedExpression(473,487): 's.error.length'
         symbol = val length: kotlin.Int
         contextParameters = []
         callableId = kotlin/String.length
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1280,6 +1280,7 @@ KtDotQualifiedExpression(473,480): 's.error'
         type = Either.Left<kotlin.String>
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = error
         receiverType = null
@@ -1287,7 +1288,6 @@ KtDotQualifiedExpression(473,480): 's.error'
         symbol = val error: E
         contextParameters = []
         callableId = /Either.Left.error
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1298,6 +1298,7 @@ KtNameReferenceExpression(473,474): 's'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = s
         receiverType = null
@@ -1305,7 +1306,6 @@ KtNameReferenceExpression(473,474): 's'
         symbol = s: Either<kotlin.String, kotlin.Int>
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1321,6 +1321,7 @@ KtNameReferenceExpression(475,480): 'error'
         type = Either.Left<kotlin.String>
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = error
         receiverType = null
@@ -1328,7 +1329,6 @@ KtNameReferenceExpression(475,480): 'error'
         symbol = val error: E
         contextParameters = []
         callableId = /Either.Left.error
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1342,6 +1342,7 @@ KtNameReferenceExpression(481,487): 'length'
         type = kotlin.String
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = length
         receiverType = null
@@ -1349,7 +1350,6 @@ KtNameReferenceExpression(481,487): 'length'
         symbol = val length: kotlin.Int
         contextParameters = []
         callableId = kotlin/String.length
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1585,6 +1585,7 @@ KtSafeQualifiedExpression(499,519): '(s as? Right)?.value'
         type = Either.Right<kotlin.Int>
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = value
         receiverType = null
@@ -1592,7 +1593,6 @@ KtSafeQualifiedExpression(499,519): '(s as? Right)?.value'
         symbol = val value: A
         contextParameters = []
         callableId = /Either.Right.value
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1609,6 +1609,7 @@ KtNameReferenceExpression(500,501): 's'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = s
         receiverType = null
@@ -1616,7 +1617,6 @@ KtNameReferenceExpression(500,501): 's'
         symbol = s: Either<kotlin.String, kotlin.Int>
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1642,6 +1642,7 @@ KtNameReferenceExpression(514,519): 'value'
         type = Either.Right<kotlin.Int>
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = value
         receiverType = null
@@ -1649,7 +1650,6 @@ KtNameReferenceExpression(514,519): 'value'
         symbol = val value: A
         contextParameters = []
         callableId = /Either.Right.value
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 

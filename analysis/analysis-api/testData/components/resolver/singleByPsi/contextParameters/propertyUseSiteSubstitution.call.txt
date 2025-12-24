@@ -53,6 +53,7 @@ KtNameReferenceExpression(150,153): 'foo'
         type = Base<kotlin.Long>
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = foo
         receiverType = null
@@ -75,5 +76,4 @@ KtNameReferenceExpression(150,153): 'foo'
             callableId = null
         ]
         callableId = /Base.foo
-      simpleAccess = Read
       typeArgumentsMapping = {}

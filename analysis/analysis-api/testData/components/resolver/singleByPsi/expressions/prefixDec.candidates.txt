@@ -26,6 +26,7 @@ KtPrefixExpression(138,148): '--variable'
         dispatchReceiver = null
         extensionReceiver = null
         isContextSensitive = false
+        kind = Read
         signature = KaVariableSignature:
           name = variable
           receiverType = null
@@ -33,6 +34,5 @@ KtPrefixExpression(138,148): '--variable'
           symbol = var variable: MyClass
           contextParameters = []
           callableId = /variable
-        simpleAccess = Read
         typeArgumentsMapping = {}
     isInBestCandidates = true

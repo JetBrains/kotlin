@@ -65,6 +65,7 @@ KtDotQualifiedExpression(191,208): 'MyEnum.EnumValue1'
         type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = EnumValue1
         receiverType = null
@@ -72,7 +73,6 @@ KtDotQualifiedExpression(191,208): 'MyEnum.EnumValue1'
         symbol = /MyEnum.EnumValue1
         contextParameters = []
         callableId = /MyEnum.EnumValue1
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -105,6 +105,7 @@ KtNameReferenceExpression(198,208): 'EnumValue1'
         type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = EnumValue1
         receiverType = null
@@ -112,7 +113,6 @@ KtNameReferenceExpression(198,208): 'EnumValue1'
         symbol = /MyEnum.EnumValue1
         contextParameters = []
         callableId = /MyEnum.EnumValue1
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -206,6 +206,7 @@ KtNameReferenceExpression(252,262): 'EnumValue2'
         type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = EnumValue2
         receiverType = null
@@ -213,7 +214,6 @@ KtNameReferenceExpression(252,262): 'EnumValue2'
         symbol = /MyEnum.EnumValue2
         contextParameters = []
         callableId = /MyEnum.EnumValue2
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -298,6 +298,7 @@ KtNameReferenceExpression(280,284): 'arg1'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = arg1
         receiverType = null
@@ -305,7 +306,6 @@ KtNameReferenceExpression(280,284): 'arg1'
         symbol = val arg1: MyEnum
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -390,6 +390,7 @@ KtNameReferenceExpression(302,306): 'arg2'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = arg2
         receiverType = null
@@ -397,7 +398,6 @@ KtNameReferenceExpression(302,306): 'arg2'
         symbol = val arg2: ERROR CLASS: Unresolved name: EnumValue2
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 

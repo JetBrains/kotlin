@@ -26,6 +26,7 @@ KtCallableReferenceExpression(249,257): 'Bar::foo'
         type = Foo
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = foo
         receiverType = Bar
@@ -33,6 +34,5 @@ KtCallableReferenceExpression(249,257): 'Bar::foo'
         symbol = val foo: kotlin.String
         contextParameters = []
         callableId = /Foo.foo
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true

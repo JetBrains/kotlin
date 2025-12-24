@@ -80,6 +80,7 @@ KtNameReferenceExpression(192,193): 's'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = s
         receiverType = null
@@ -87,7 +88,6 @@ KtNameReferenceExpression(192,193): 's'
         symbol = s: Simple
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -148,6 +148,7 @@ KtPrefixExpression(231,248): '!USELESS_IS_CHECK'
         type = ERROR_TYPE
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = <Error property>
         receiverType = null
@@ -155,7 +156,6 @@ KtPrefixExpression(231,248): '!USELESS_IS_CHECK'
         symbol = var <Error property>: ERROR_TYPE
         contextParameters = []
         callableId = /<Error class: unknown class>.<Error property>
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = false
 
@@ -189,6 +189,7 @@ KtOperationReferenceExpression(231,232): '!'
         type = ERROR_TYPE
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = <Error property>
         receiverType = null
@@ -196,7 +197,6 @@ KtOperationReferenceExpression(231,232): '!'
         symbol = var <Error property>: ERROR_TYPE
         contextParameters = []
         callableId = /<Error class: unknown class>.<Error property>
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = false
 
@@ -281,6 +281,7 @@ KtPrefixExpression(285,308): '!REDUNDANT_ELSE_IN_WHEN'
         type = ERROR_TYPE
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = <Error property>
         receiverType = null
@@ -288,7 +289,6 @@ KtPrefixExpression(285,308): '!REDUNDANT_ELSE_IN_WHEN'
         symbol = var <Error property>: ERROR_TYPE
         contextParameters = []
         callableId = /<Error class: unknown class>.<Error property>
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = false
 
@@ -322,6 +322,7 @@ KtOperationReferenceExpression(285,286): '!'
         type = ERROR_TYPE
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = <Error property>
         receiverType = null
@@ -329,7 +330,6 @@ KtOperationReferenceExpression(285,286): '!'
         symbol = var <Error property>: ERROR_TYPE
         contextParameters = []
         callableId = /<Error class: unknown class>.<Error property>
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = false
 

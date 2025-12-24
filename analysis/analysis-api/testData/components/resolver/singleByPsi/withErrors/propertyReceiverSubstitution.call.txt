@@ -8,6 +8,7 @@ KtDotQualifiedExpression(77,82): 'f.foo'
         isSafeNavigation = false
         type = Foo<kotlin.String>
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = foo
         receiverType = Foo<kotlin.String>
@@ -15,7 +16,6 @@ KtDotQualifiedExpression(77,82): 'f.foo'
         symbol = val foo: kotlin.Int
         contextParameters = []
         callableId = /foo
-      simpleAccess = Read
       typeArgumentsMapping = {
         A -> (kotlin.String)
       }

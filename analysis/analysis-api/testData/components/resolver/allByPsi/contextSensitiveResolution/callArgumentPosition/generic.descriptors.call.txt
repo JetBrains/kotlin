@@ -602,6 +602,7 @@ KtNameReferenceExpression(709,712): 'arg'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = arg
         receiverType = null
@@ -609,7 +610,6 @@ KtNameReferenceExpression(709,712): 'arg'
         symbol = arg: T
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNamedFunction(714,1163): 'fun testGeneric() {'

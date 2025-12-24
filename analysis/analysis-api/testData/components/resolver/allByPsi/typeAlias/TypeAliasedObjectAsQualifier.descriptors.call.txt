@@ -136,6 +136,7 @@ KtDotQualifiedExpression(156,172): 'MyAlias.property'
         type = test.MyObject
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = property
         receiverType = null
@@ -143,7 +144,6 @@ KtDotQualifiedExpression(156,172): 'MyAlias.property'
         symbol = val property: kotlin.Int
         contextParameters = []
         callableId = test/MyObject.property
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(156,163): 'MyAlias'
@@ -159,6 +159,7 @@ KtNameReferenceExpression(164,172): 'property'
         type = test.MyObject
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = property
         receiverType = null
@@ -166,7 +167,6 @@ KtNameReferenceExpression(164,172): 'property'
         symbol = val property: kotlin.Int
         contextParameters = []
         callableId = test/MyObject.property
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtCallableReferenceExpression(178,195): 'MyAlias::function'
@@ -220,6 +220,7 @@ KtCallableReferenceExpression(200,217): 'MyAlias::property'
       type = test.MyObject
     extensionReceiver = null
     isContextSensitive = false
+    kind = Read
     signature = KaVariableSignature:
       name = property
       receiverType = null
@@ -227,7 +228,6 @@ KtCallableReferenceExpression(200,217): 'MyAlias::property'
       symbol = val property: kotlin.Int
       contextParameters = []
       callableId = test/MyObject.property
-    simpleAccess = Read
     typeArgumentsMapping = {}
 
 KtNameReferenceExpression(200,207): 'MyAlias'
@@ -243,6 +243,7 @@ KtNameReferenceExpression(209,217): 'property'
         type = test.MyObject
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = property
         receiverType = null
@@ -250,5 +251,4 @@ KtNameReferenceExpression(209,217): 'property'
         symbol = val property: kotlin.Int
         contextParameters = []
         callableId = test/MyObject.property
-      simpleAccess = Read
       typeArgumentsMapping = {}

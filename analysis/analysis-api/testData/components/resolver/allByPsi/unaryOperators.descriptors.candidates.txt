@@ -74,6 +74,7 @@ KtNameReferenceExpression(50,53): 'one'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = one
         receiverType = null
@@ -81,7 +82,6 @@ KtNameReferenceExpression(50,53): 'one'
         symbol = val one: kotlin.Int
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -137,6 +137,7 @@ KtNameReferenceExpression(74,77): 'one'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = one
         receiverType = null
@@ -144,7 +145,6 @@ KtNameReferenceExpression(74,77): 'one'
         symbol = val one: kotlin.Int
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 

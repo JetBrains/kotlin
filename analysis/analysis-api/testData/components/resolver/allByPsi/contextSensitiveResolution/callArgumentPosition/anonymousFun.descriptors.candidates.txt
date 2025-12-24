@@ -1051,6 +1051,7 @@ KtNameReferenceExpression(933,954): 'anonymousEnumConsumer'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = anonymousEnumConsumer
         receiverType = null
@@ -1058,7 +1059,6 @@ KtNameReferenceExpression(933,954): 'anonymousEnumConsumer'
         symbol = val anonymousEnumConsumer: kotlin.Function1<MyEnum, kotlin.Unit>
         contextParameters = []
         callableId = /anonymousEnumConsumer
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1155,6 +1155,7 @@ KtNameReferenceExpression(972,989): 'anonymousConsumer'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = anonymousConsumer
         receiverType = null
@@ -1162,7 +1163,6 @@ KtNameReferenceExpression(972,989): 'anonymousConsumer'
         symbol = val anonymousConsumer: kotlin.Function1<MyClass, kotlin.Unit>
         contextParameters = []
         callableId = /anonymousConsumer
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1259,6 +1259,7 @@ KtNameReferenceExpression(1011,1028): 'anonymousConsumer'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = anonymousConsumer
         receiverType = null
@@ -1266,7 +1267,6 @@ KtNameReferenceExpression(1011,1028): 'anonymousConsumer'
         symbol = val anonymousConsumer: kotlin.Function1<MyClass, kotlin.Unit>
         contextParameters = []
         callableId = /anonymousConsumer
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1363,6 +1363,7 @@ KtNameReferenceExpression(1047,1064): 'anonymousConsumer'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = anonymousConsumer
         receiverType = null
@@ -1370,7 +1371,6 @@ KtNameReferenceExpression(1047,1064): 'anonymousConsumer'
         symbol = val anonymousConsumer: kotlin.Function1<MyClass, kotlin.Unit>
         contextParameters = []
         callableId = /anonymousConsumer
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1467,6 +1467,7 @@ KtNameReferenceExpression(1075,1092): 'anonymousConsumer'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = anonymousConsumer
         receiverType = null
@@ -1474,7 +1475,6 @@ KtNameReferenceExpression(1075,1092): 'anonymousConsumer'
         symbol = val anonymousConsumer: kotlin.Function1<MyClass, kotlin.Unit>
         contextParameters = []
         callableId = /anonymousConsumer
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1571,6 +1571,7 @@ KtNameReferenceExpression(1108,1125): 'anonymousConsumer'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = anonymousConsumer
         receiverType = null
@@ -1578,7 +1579,6 @@ KtNameReferenceExpression(1108,1125): 'anonymousConsumer'
         symbol = val anonymousConsumer: kotlin.Function1<MyClass, kotlin.Unit>
         contextParameters = []
         callableId = /anonymousConsumer
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1675,6 +1675,7 @@ KtNameReferenceExpression(1140,1157): 'anonymousConsumer'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = anonymousConsumer
         receiverType = null
@@ -1682,7 +1683,6 @@ KtNameReferenceExpression(1140,1157): 'anonymousConsumer'
         symbol = val anonymousConsumer: kotlin.Function1<MyClass, kotlin.Unit>
         contextParameters = []
         callableId = /anonymousConsumer
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1779,6 +1779,7 @@ KtNameReferenceExpression(1174,1191): 'anonymousConsumer'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = anonymousConsumer
         receiverType = null
@@ -1786,7 +1787,6 @@ KtNameReferenceExpression(1174,1191): 'anonymousConsumer'
         symbol = val anonymousConsumer: kotlin.Function1<MyClass, kotlin.Unit>
         contextParameters = []
         callableId = /anonymousConsumer
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1883,6 +1883,7 @@ KtNameReferenceExpression(1208,1225): 'anonymousConsumer'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = anonymousConsumer
         receiverType = null
@@ -1890,7 +1891,6 @@ KtNameReferenceExpression(1208,1225): 'anonymousConsumer'
         symbol = val anonymousConsumer: kotlin.Function1<MyClass, kotlin.Unit>
         contextParameters = []
         callableId = /anonymousConsumer
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1993,6 +1993,7 @@ KtNameReferenceExpression(1238,1255): 'anonymousConsumer'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = anonymousConsumer
         receiverType = null
@@ -2000,7 +2001,6 @@ KtNameReferenceExpression(1238,1255): 'anonymousConsumer'
         symbol = val anonymousConsumer: kotlin.Function1<MyClass, kotlin.Unit>
         contextParameters = []
         callableId = /anonymousConsumer
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -2103,6 +2103,7 @@ KtNameReferenceExpression(1273,1290): 'anonymousConsumer'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = anonymousConsumer
         receiverType = null
@@ -2110,7 +2111,6 @@ KtNameReferenceExpression(1273,1290): 'anonymousConsumer'
         symbol = val anonymousConsumer: kotlin.Function1<MyClass, kotlin.Unit>
         contextParameters = []
         callableId = /anonymousConsumer
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 

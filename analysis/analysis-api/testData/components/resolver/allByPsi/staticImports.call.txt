@@ -317,6 +317,7 @@ KtDotQualifiedExpression(487,505): 'TopLevelObject.bar'
         type = one.two.TopLevelObject
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = bar
         receiverType = null
@@ -324,7 +325,6 @@ KtDotQualifiedExpression(487,505): 'TopLevelObject.bar'
         symbol = val bar: kotlin.Int
         contextParameters = []
         callableId = one/two/TopLevelObject.bar
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(487,501): 'TopLevelObject'
@@ -340,6 +340,7 @@ KtNameReferenceExpression(502,505): 'bar'
         type = one.two.TopLevelObject
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = bar
         receiverType = null
@@ -347,7 +348,6 @@ KtNameReferenceExpression(502,505): 'bar'
         symbol = val bar: kotlin.Int
         contextParameters = []
         callableId = one/two/TopLevelObject.bar
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtProperty(510,531): 'val importedBar = bar'
@@ -362,6 +362,7 @@ KtNameReferenceExpression(528,531): 'bar'
         type = one.two.TopLevelObject
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = bar
         receiverType = null
@@ -369,7 +370,6 @@ KtNameReferenceExpression(528,531): 'bar'
         symbol = val bar: kotlin.Int
         contextParameters = []
         callableId = one/two/TopLevelObject.bar
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtProperty(537,591): 'val explicitNestedObject = TopLevelObject.NestedObject'
@@ -588,6 +588,7 @@ KtDotQualifiedExpression(791,822): 'TopLevelObject.NestedObject.doo'
         type = one.two.TopLevelObject.NestedObject
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = doo
         receiverType = null
@@ -595,7 +596,6 @@ KtDotQualifiedExpression(791,822): 'TopLevelObject.NestedObject.doo'
         symbol = var doo: kotlin.String
         contextParameters = []
         callableId = one/two/TopLevelObject.NestedObject.doo
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtDotQualifiedExpression(791,818): 'TopLevelObject.NestedObject'
@@ -617,6 +617,7 @@ KtNameReferenceExpression(819,822): 'doo'
         type = one.two.TopLevelObject.NestedObject
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = doo
         receiverType = null
@@ -624,7 +625,6 @@ KtNameReferenceExpression(819,822): 'doo'
         symbol = var doo: kotlin.String
         contextParameters = []
         callableId = one/two/TopLevelObject.NestedObject.doo
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtProperty(827,867): 'val explicitNestedDoo = NestedObject.doo'
@@ -640,6 +640,7 @@ KtDotQualifiedExpression(851,867): 'NestedObject.doo'
         type = one.two.TopLevelObject.NestedObject
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = doo
         receiverType = null
@@ -647,7 +648,6 @@ KtDotQualifiedExpression(851,867): 'NestedObject.doo'
         symbol = var doo: kotlin.String
         contextParameters = []
         callableId = one/two/TopLevelObject.NestedObject.doo
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(851,863): 'NestedObject'
@@ -663,6 +663,7 @@ KtNameReferenceExpression(864,867): 'doo'
         type = one.two.TopLevelObject.NestedObject
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = doo
         receiverType = null
@@ -670,7 +671,6 @@ KtNameReferenceExpression(864,867): 'doo'
         symbol = var doo: kotlin.String
         contextParameters = []
         callableId = one/two/TopLevelObject.NestedObject.doo
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtProperty(872,893): 'val importedDoo = doo'
@@ -685,6 +685,7 @@ KtNameReferenceExpression(890,893): 'doo'
         type = one.two.TopLevelObject.NestedObject
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = doo
         receiverType = null
@@ -692,7 +693,6 @@ KtNameReferenceExpression(890,893): 'doo'
         symbol = var doo: kotlin.String
         contextParameters = []
         callableId = one/two/TopLevelObject.NestedObject.doo
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtBinaryExpression(899,910): 'doo = "str"'
@@ -704,6 +704,8 @@ KtBinaryExpression(899,910): 'doo = "str"'
         type = one.two.TopLevelObject.NestedObject
       extensionReceiver = null
       isContextSensitive = false
+      kind = Write:
+        value = "str"
       signature = KaVariableSignature:
         name = doo
         receiverType = null
@@ -711,8 +713,6 @@ KtBinaryExpression(899,910): 'doo = "str"'
         symbol = var doo: kotlin.String
         contextParameters = []
         callableId = one/two/TopLevelObject.NestedObject.doo
-      simpleAccess = Write:
-        value = "str"
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(899,902): 'doo'
@@ -724,6 +724,8 @@ KtNameReferenceExpression(899,902): 'doo'
         type = one.two.TopLevelObject.NestedObject
       extensionReceiver = null
       isContextSensitive = false
+      kind = Write:
+        value = "str"
       signature = KaVariableSignature:
         name = doo
         receiverType = null
@@ -731,8 +733,6 @@ KtNameReferenceExpression(899,902): 'doo'
         symbol = var doo: kotlin.String
         contextParameters = []
         callableId = one/two/TopLevelObject.NestedObject.doo
-      simpleAccess = Write:
-        value = "str"
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(903,904): '='
@@ -744,6 +744,8 @@ KtOperationReferenceExpression(903,904): '='
         type = one.two.TopLevelObject.NestedObject
       extensionReceiver = null
       isContextSensitive = false
+      kind = Write:
+        value = "str"
       signature = KaVariableSignature:
         name = doo
         receiverType = null
@@ -751,8 +753,6 @@ KtOperationReferenceExpression(903,904): '='
         symbol = var doo: kotlin.String
         contextParameters = []
         callableId = one/two/TopLevelObject.NestedObject.doo
-      simpleAccess = Write:
-        value = "str"
       typeArgumentsMapping = {}
 
 KtStringTemplateExpression(905,910): '"str"'

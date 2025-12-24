@@ -424,6 +424,7 @@ KtNameReferenceExpression(441,444): 'foo'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = foo
         receiverType = null
@@ -431,7 +432,6 @@ KtNameReferenceExpression(441,444): 'foo'
         symbol = val foo: MySealed!
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -465,6 +465,7 @@ KtNameReferenceExpression(445,446): 'x'
         type = MySealed!
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = <Error property>
         receiverType = null
@@ -472,7 +473,6 @@ KtNameReferenceExpression(445,446): 'x'
         symbol = var <Error property>: ERROR_TYPE
         contextParameters = []
         callableId = /<Error class: unknown class>.<Error property>
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = false
 
@@ -539,6 +539,7 @@ KtNameReferenceExpression(467,470): 'foo'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = foo
         receiverType = null
@@ -546,7 +547,6 @@ KtNameReferenceExpression(467,470): 'foo'
         symbol = val foo: MySealed!
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -580,6 +580,7 @@ KtNameReferenceExpression(471,472): 'y'
         type = MySealed!
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = <Error property>
         receiverType = null
@@ -587,7 +588,6 @@ KtNameReferenceExpression(471,472): 'y'
         symbol = var <Error property>: ERROR_TYPE
         contextParameters = []
         callableId = /<Error class: unknown class>.<Error property>
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = false
 
@@ -601,6 +601,7 @@ KtNameReferenceExpression(583,585): 'mg'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = mg
         receiverType = null
@@ -608,7 +609,6 @@ KtNameReferenceExpression(583,585): 'mg'
         symbol = mg: MyGeneric<kotlin.Any>
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -649,6 +649,7 @@ KtNameReferenceExpression(623,625): 'mg'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = mg
         receiverType = null
@@ -656,7 +657,6 @@ KtNameReferenceExpression(623,625): 'mg'
         symbol = mg: MyGeneric<kotlin.Any>
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -685,6 +685,7 @@ KtNameReferenceExpression(648,650): 'mg'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = mg
         receiverType = null
@@ -692,7 +693,6 @@ KtNameReferenceExpression(648,650): 'mg'
         symbol = mg: MyGeneric<kotlin.Any>
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -724,6 +724,7 @@ KtNameReferenceExpression(673,675): 'mg'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = mg
         receiverType = null
@@ -731,7 +732,6 @@ KtNameReferenceExpression(673,675): 'mg'
         symbol = mg: MyGeneric<kotlin.Any>
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -748,6 +748,7 @@ KtNameReferenceExpression(804,806): 'cs'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = cs
         receiverType = null
@@ -755,7 +756,6 @@ KtNameReferenceExpression(804,806): 'cs'
         symbol = cs: kotlin.CharSequence
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -796,6 +796,7 @@ KtNameReferenceExpression(844,846): 'cs'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = cs
         receiverType = null
@@ -803,7 +804,6 @@ KtNameReferenceExpression(844,846): 'cs'
         symbol = cs: kotlin.CharSequence
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -832,6 +832,7 @@ KtNameReferenceExpression(869,871): 'cs'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = cs
         receiverType = null
@@ -839,7 +840,6 @@ KtNameReferenceExpression(869,871): 'cs'
         symbol = cs: kotlin.CharSequence
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -871,6 +871,7 @@ KtNameReferenceExpression(894,896): 'cs'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = cs
         receiverType = null
@@ -878,7 +879,6 @@ KtNameReferenceExpression(894,896): 'cs'
         symbol = cs: kotlin.CharSequence
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 

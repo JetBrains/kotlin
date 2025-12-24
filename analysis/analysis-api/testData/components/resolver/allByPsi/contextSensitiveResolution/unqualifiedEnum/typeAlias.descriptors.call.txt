@@ -62,6 +62,7 @@ KtNameReferenceExpression(152,153): 'o'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = o
         receiverType = null
@@ -69,7 +70,6 @@ KtNameReferenceExpression(152,153): 'o'
         symbol = o: Other
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtWhenEntry(161,171): 'FIRST -> 1'

@@ -178,6 +178,7 @@ KtNameReferenceExpression(289,290): 'x'
         type = MySealed.Left
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = x
         receiverType = null
@@ -185,7 +186,6 @@ KtNameReferenceExpression(289,290): 'x'
         symbol = val x: kotlin.String
         contextParameters = []
         callableId = /MySealed.Left.x
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtWhenEntry(295,308): 'is Right -> y'
@@ -233,6 +233,7 @@ KtNameReferenceExpression(307,308): 'y'
         type = MySealed.Right
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = y
         receiverType = null
@@ -240,7 +241,6 @@ KtNameReferenceExpression(307,308): 'y'
         symbol = val y: kotlin.String
         contextParameters = []
         callableId = /MySealed.Right.y
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtWhenEntry(313,338): 'is NonSealedSubclass -> z'

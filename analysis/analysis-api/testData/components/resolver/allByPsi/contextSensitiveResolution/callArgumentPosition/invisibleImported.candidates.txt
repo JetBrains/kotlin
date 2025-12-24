@@ -148,6 +148,7 @@ KtNameReferenceExpression(126,127): 'X'
         type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = X
         receiverType = null
@@ -155,7 +156,6 @@ KtNameReferenceExpression(126,127): 'X'
         symbol = b/MyEnum.X
         contextParameters = []
         callableId = b/MyEnum.X
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -243,6 +243,7 @@ KtNameReferenceExpression(137,138): 'Y'
         type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = Y
         receiverType = null
@@ -250,7 +251,6 @@ KtNameReferenceExpression(137,138): 'Y'
         symbol = b/MyEnum.Y
         contextParameters = []
         callableId = b/MyEnum.Y
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -338,6 +338,7 @@ KtNameReferenceExpression(148,149): 'Z'
         type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = Z
         receiverType = null
@@ -345,6 +346,5 @@ KtNameReferenceExpression(148,149): 'Z'
         symbol = b/MyEnum.Z
         contextParameters = []
         callableId = b/MyEnum.Z
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true

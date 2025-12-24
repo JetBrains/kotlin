@@ -277,6 +277,7 @@ KtNameReferenceExpression(322,329): 'default'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = default
         receiverType = null
@@ -284,7 +285,6 @@ KtNameReferenceExpression(322,329): 'default'
         symbol = default: A
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtWhenEntry(334,351): 'is Right -> value'

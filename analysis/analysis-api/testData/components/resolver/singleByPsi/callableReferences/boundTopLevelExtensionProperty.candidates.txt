@@ -8,6 +8,7 @@ KtCallableReferenceExpression(84,92): 'obj::foo'
         isSafeNavigation = false
         type = Foo
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = foo
         receiverType = Foo
@@ -15,6 +16,5 @@ KtCallableReferenceExpression(84,92): 'obj::foo'
         symbol = val foo: kotlin.String
         contextParameters = []
         callableId = /foo
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true

@@ -92,6 +92,7 @@ KtNameReferenceExpression(192,193): 'o'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = o
         receiverType = null
@@ -99,7 +100,6 @@ KtNameReferenceExpression(192,193): 'o'
         symbol = o: Outer
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtWhenEntry(205,215): 'FIRST -> 1'
@@ -137,6 +137,7 @@ KtNameReferenceExpression(240,241): 'i'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = i
         receiverType = null
@@ -144,7 +145,6 @@ KtNameReferenceExpression(240,241): 'i'
         symbol = i: Inner
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtWhenEntry(257,268): 'SECOND -> 2'
@@ -230,6 +230,7 @@ KtNameReferenceExpression(363,364): 'o'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = o
         receiverType = null
@@ -237,7 +238,6 @@ KtNameReferenceExpression(363,364): 'o'
         symbol = o: Outer
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtWhenEntry(376,386): 'FIRST -> 1'
@@ -299,6 +299,7 @@ KtNameReferenceExpression(465,466): 'i'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = i
         receiverType = null
@@ -306,7 +307,6 @@ KtNameReferenceExpression(465,466): 'i'
         symbol = i: Inner
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtWhenEntry(490,501): 'SECOND -> 2'

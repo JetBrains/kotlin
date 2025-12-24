@@ -59,6 +59,7 @@ KtNameReferenceExpression(155,158): 'arg'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = arg
         receiverType = null
@@ -66,7 +67,6 @@ KtNameReferenceExpression(155,158): 'arg'
         symbol = arg: T
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNamedFunction(160,210): 'fun testFunBound() {'
@@ -358,6 +358,7 @@ KtNameReferenceExpression(331,336): 'value'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = value
         receiverType = null
@@ -365,7 +366,6 @@ KtNameReferenceExpression(331,336): 'value'
         symbol = value: T
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(337,339): '=='
@@ -488,6 +488,7 @@ KtNameReferenceExpression(399,404): 'value'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = value
         receiverType = null
@@ -495,7 +496,6 @@ KtNameReferenceExpression(399,404): 'value'
         symbol = value: T
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(405,407): '=='

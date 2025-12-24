@@ -553,6 +553,7 @@ KtDotQualifiedExpression(543,571): 'MyClass::memberProperty.name'
         type = kotlin.reflect.KProperty1<pack.MyClass, kotlin.Int>
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = name
         receiverType = null
@@ -560,7 +561,6 @@ KtDotQualifiedExpression(543,571): 'MyClass::memberProperty.name'
         symbol = val name: kotlin.String
         contextParameters = []
         callableId = kotlin/reflect/KCallable.name
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -571,6 +571,7 @@ KtCallableReferenceExpression(543,566): 'MyClass::memberProperty'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = memberProperty
         receiverType = null
@@ -578,7 +579,6 @@ KtCallableReferenceExpression(543,566): 'MyClass::memberProperty'
         symbol = val memberProperty: kotlin.Int
         contextParameters = []
         callableId = pack/MyClass.memberProperty
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -614,6 +614,7 @@ KtNameReferenceExpression(567,571): 'name'
         type = kotlin.reflect.KProperty1<pack.MyClass, kotlin.Int>
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = name
         receiverType = null
@@ -621,7 +622,6 @@ KtNameReferenceExpression(567,571): 'name'
         symbol = val name: kotlin.String
         contextParameters = []
         callableId = kotlin/reflect/KCallable.name
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -831,6 +831,7 @@ KtDotQualifiedExpression(619,645): 'Child::memberProperty.name'
         type = kotlin.reflect.KProperty1<pack.Child, kotlin.Int>
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = name
         receiverType = null
@@ -838,7 +839,6 @@ KtDotQualifiedExpression(619,645): 'Child::memberProperty.name'
         symbol = val name: kotlin.String
         contextParameters = []
         callableId = kotlin/reflect/KCallable.name
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -849,6 +849,7 @@ KtCallableReferenceExpression(619,640): 'Child::memberProperty'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = memberProperty
         receiverType = null
@@ -856,7 +857,6 @@ KtCallableReferenceExpression(619,640): 'Child::memberProperty'
         symbol = val memberProperty: kotlin.Int
         contextParameters = []
         callableId = pack/MyClass.memberProperty
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -892,6 +892,7 @@ KtNameReferenceExpression(641,645): 'name'
         type = kotlin.reflect.KProperty1<pack.Child, kotlin.Int>
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = name
         receiverType = null
@@ -899,7 +900,6 @@ KtNameReferenceExpression(641,645): 'name'
         symbol = val name: kotlin.String
         contextParameters = []
         callableId = kotlin/reflect/KCallable.name
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -994,6 +994,7 @@ KtCallableReferenceExpression(703,729): 'MyClass::extensionProperty'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = extensionProperty
         receiverType = pack.MyClass
@@ -1001,7 +1002,6 @@ KtCallableReferenceExpression(703,729): 'MyClass::extensionProperty'
         symbol = val extensionProperty: kotlin.String
         contextParameters = []
         callableId = pack/extensionProperty
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1080,6 +1080,7 @@ KtCallableReferenceExpression(782,811): 'pack.Child::extensionProperty'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = extensionProperty
         receiverType = pack.MyClass
@@ -1087,7 +1088,6 @@ KtCallableReferenceExpression(782,811): 'pack.Child::extensionProperty'
         symbol = val extensionProperty: kotlin.String
         contextParameters = []
         callableId = pack/extensionProperty
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1161,6 +1161,7 @@ KtDotQualifiedExpression(817,853): 'ChildWithType::functionWithType.name'
         type = kotlin.reflect.KFunction1<pack.ChildWithType, pack.MyClass?>
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = name
         receiverType = null
@@ -1168,7 +1169,6 @@ KtDotQualifiedExpression(817,853): 'ChildWithType::functionWithType.name'
         symbol = val name: kotlin.String
         contextParameters = []
         callableId = kotlin/reflect/KCallable.name
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1222,6 +1222,7 @@ KtNameReferenceExpression(849,853): 'name'
         type = kotlin.reflect.KFunction1<pack.ChildWithType, pack.MyClass?>
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = name
         receiverType = null
@@ -1229,7 +1230,6 @@ KtNameReferenceExpression(849,853): 'name'
         symbol = val name: kotlin.String
         contextParameters = []
         callableId = kotlin/reflect/KCallable.name
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1277,6 +1277,7 @@ KtCallableReferenceExpression(858,889): 'ChildWithType::propertyWithType'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = propertyWithType
         receiverType = null
@@ -1284,7 +1285,6 @@ KtCallableReferenceExpression(858,889): 'ChildWithType::propertyWithType'
         symbol = var propertyWithType: pack.MyClass?
         contextParameters = []
         callableId = pack/ChildWithType.propertyWithType
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1465,6 +1465,7 @@ KtCallableReferenceExpression(942,960): '::topLevelVariable'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = topLevelVariable
         receiverType = null
@@ -1472,7 +1473,6 @@ KtCallableReferenceExpression(942,960): '::topLevelVariable'
         symbol = var topLevelVariable: kotlin.Int
         contextParameters = []
         callableId = pack/topLevelVariable
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1489,6 +1489,7 @@ KtCallableReferenceExpression(966,979): '::lateinitVar'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = lateinitVar
         receiverType = null
@@ -1496,7 +1497,6 @@ KtCallableReferenceExpression(966,979): '::lateinitVar'
         symbol = var lateinitVar: pack.MyClass
         contextParameters = []
         callableId = pack/lateinitVar
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1585,6 +1585,7 @@ KtNameReferenceExpression(1063,1076): 'classWithType'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = classWithType
         receiverType = null
@@ -1592,7 +1593,6 @@ KtNameReferenceExpression(1063,1076): 'classWithType'
         symbol = classWithType: pack.ClassWithType<T>
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1609,6 +1609,7 @@ KtCallableReferenceExpression(1099,1130): 'classWithType::propertyWithType'
         type = pack.ClassWithType<T>
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = propertyWithType
         receiverType = null
@@ -1616,7 +1617,6 @@ KtCallableReferenceExpression(1099,1130): 'classWithType::propertyWithType'
         symbol = var propertyWithType: T?
         contextParameters = []
         callableId = pack/ClassWithType.propertyWithType
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1627,6 +1627,7 @@ KtNameReferenceExpression(1099,1112): 'classWithType'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = classWithType
         receiverType = null
@@ -1634,7 +1635,6 @@ KtNameReferenceExpression(1099,1112): 'classWithType'
         symbol = classWithType: pack.ClassWithType<T>
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1705,6 +1705,7 @@ KtNameReferenceExpression(1174,1175): 't'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = t
         receiverType = null
@@ -1712,7 +1713,6 @@ KtNameReferenceExpression(1174,1175): 't'
         symbol = val t: pack.ClassWithType<kotlin.Int>?
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1732,6 +1732,7 @@ KtCallableReferenceExpression(1200,1221): 't!!::propertyWithType'
         type = pack.ClassWithType<kotlin.Int>
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = propertyWithType
         receiverType = null
@@ -1739,7 +1740,6 @@ KtCallableReferenceExpression(1200,1221): 't!!::propertyWithType'
         symbol = var propertyWithType: T?
         contextParameters = []
         callableId = pack/ClassWithType.propertyWithType
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1753,6 +1753,7 @@ KtNameReferenceExpression(1200,1201): 't'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = t
         receiverType = null
@@ -1760,7 +1761,6 @@ KtNameReferenceExpression(1200,1201): 't'
         symbol = val t: pack.ClassWithType<kotlin.Int>?
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 

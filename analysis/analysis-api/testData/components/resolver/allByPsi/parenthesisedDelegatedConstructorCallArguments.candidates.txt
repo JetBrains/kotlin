@@ -336,6 +336,7 @@ KtNameReferenceExpression(69,70): 'i'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = i
         receiverType = null
@@ -343,7 +344,6 @@ KtNameReferenceExpression(69,70): 'i'
         symbol = i: T
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -649,6 +649,7 @@ KtNameReferenceExpression(123,124): 'i'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = i
         receiverType = null
@@ -656,7 +657,6 @@ KtNameReferenceExpression(123,124): 'i'
         symbol = i: T
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1248,6 +1248,7 @@ KtNameReferenceExpression(233,238): 'value'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = value
         receiverType = null
@@ -1255,7 +1256,6 @@ KtNameReferenceExpression(233,238): 'value'
         symbol = value: kotlin.Int
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 

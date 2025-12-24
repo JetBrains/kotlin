@@ -148,6 +148,7 @@ KtNameReferenceExpression(188,189): 'X'
         type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = X
         receiverType = null
@@ -155,7 +156,6 @@ KtNameReferenceExpression(188,189): 'X'
         symbol = /MyEnum.X
         contextParameters = []
         callableId = /MyEnum.X
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtCallExpression(195,211): 'foo(WrongEnum.X)'
@@ -553,6 +553,7 @@ KtNameReferenceExpression(354,355): 'X'
             visibility: PUBLIC
           type = A
         isContextSensitive = false
+        kind = Read
         signature = KaVariableSignature:
           name = X
           receiverType = A
@@ -560,7 +561,6 @@ KtNameReferenceExpression(354,355): 'X'
           symbol = val X: kotlin.String
           contextParameters = []
           callableId = /X
-        simpleAccess = Read
         typeArgumentsMapping = {}
     ]
     diagnostic = ERROR<DSL_SCOPE_VIOLATION: 'val A.X: String' cannot be called in this context with an implicit receiver. Use an explicit receiver if necessary.>

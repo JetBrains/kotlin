@@ -149,6 +149,7 @@ KtNameReferenceExpression(144,145): 'X'
         dispatchReceiver = null
         extensionReceiver = null
         isContextSensitive = false
+        kind = Read
         signature = KaVariableSignature:
           name = X
           receiverType = null
@@ -156,13 +157,13 @@ KtNameReferenceExpression(144,145): 'X'
           symbol = val X: b.MyEnum
           contextParameters = []
           callableId = a1/X
-        simpleAccess = Read
         typeArgumentsMapping = {},
       KaSimpleVariableAccessCall:
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         isContextSensitive = false
+        kind = Read
         signature = KaVariableSignature:
           name = X
           receiverType = null
@@ -170,7 +171,6 @@ KtNameReferenceExpression(144,145): 'X'
           symbol = val X: b.MyEnum
           contextParameters = []
           callableId = a2/X
-        simpleAccess = Read
         typeArgumentsMapping = {}
     ]
     diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity: 
@@ -256,6 +256,7 @@ KtNameReferenceExpression(155,156): 'Y'
         dispatchReceiver = null
         extensionReceiver = null
         isContextSensitive = false
+        kind = Read
         signature = KaVariableSignature:
           name = Y
           receiverType = null
@@ -263,13 +264,13 @@ KtNameReferenceExpression(155,156): 'Y'
           symbol = val Y: kotlin.String
           contextParameters = []
           callableId = a1/Y
-        simpleAccess = Read
         typeArgumentsMapping = {},
       KaSimpleVariableAccessCall:
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
         isContextSensitive = false
+        kind = Read
         signature = KaVariableSignature:
           name = Y
           receiverType = null
@@ -277,7 +278,6 @@ KtNameReferenceExpression(155,156): 'Y'
           symbol = val Y: kotlin.String
           contextParameters = []
           callableId = a2/Y
-        simpleAccess = Read
         typeArgumentsMapping = {}
     ]
     diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity: 

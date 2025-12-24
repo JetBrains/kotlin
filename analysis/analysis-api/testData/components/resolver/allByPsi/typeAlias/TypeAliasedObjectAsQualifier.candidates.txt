@@ -156,6 +156,7 @@ KtDotQualifiedExpression(156,172): 'MyAlias.property'
         type = test.MyObject
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = property
         receiverType = null
@@ -163,7 +164,6 @@ KtDotQualifiedExpression(156,172): 'MyAlias.property'
         symbol = val property: kotlin.Int
         contextParameters = []
         callableId = test/MyObject.property
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -196,6 +196,7 @@ KtNameReferenceExpression(164,172): 'property'
         type = test.MyObject
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = property
         receiverType = null
@@ -203,7 +204,6 @@ KtNameReferenceExpression(164,172): 'property'
         symbol = val property: kotlin.Int
         contextParameters = []
         callableId = test/MyObject.property
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -260,6 +260,7 @@ KtCallableReferenceExpression(200,217): 'MyAlias::property'
         type = test.MyObject
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = property
         receiverType = null
@@ -267,7 +268,6 @@ KtCallableReferenceExpression(200,217): 'MyAlias::property'
         symbol = val property: kotlin.Int
         contextParameters = []
         callableId = test/MyObject.property
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 

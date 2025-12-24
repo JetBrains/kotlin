@@ -378,6 +378,7 @@ KtNameReferenceExpression(479,486): 'oldItem'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = oldItem
         receiverType = null
@@ -385,7 +386,6 @@ KtNameReferenceExpression(479,486): 'oldItem'
         symbol = oldItem: T
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(487,489): '=='
@@ -431,6 +431,7 @@ KtNameReferenceExpression(490,497): 'newItem'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = newItem
         receiverType = null
@@ -438,7 +439,6 @@ KtNameReferenceExpression(490,497): 'newItem'
         symbol = newItem: T
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNamedFunction(501,726): 'private fun <T> classAndInterface(): ItemCallback<T> where T : MessagePreview, T : InterfaceWithEquals = object : ItemCallback<T>() {'
@@ -674,6 +674,7 @@ KtNameReferenceExpression(706,713): 'oldItem'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = oldItem
         receiverType = null
@@ -681,7 +682,6 @@ KtNameReferenceExpression(706,713): 'oldItem'
         symbol = oldItem: T
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(714,716): '=='
@@ -727,6 +727,7 @@ KtNameReferenceExpression(717,724): 'newItem'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = newItem
         receiverType = null
@@ -734,7 +735,6 @@ KtNameReferenceExpression(717,724): 'newItem'
         symbol = newItem: T
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNamedFunction(728,895): 'private fun <T : MessagePreview> classOnly() = object : ItemCallback<T>() {'
@@ -922,6 +922,7 @@ KtNameReferenceExpression(875,882): 'oldItem'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = oldItem
         receiverType = null
@@ -929,7 +930,6 @@ KtNameReferenceExpression(875,882): 'oldItem'
         symbol = oldItem: T
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(883,885): '=='
@@ -975,6 +975,7 @@ KtNameReferenceExpression(886,893): 'newItem'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = newItem
         receiverType = null
@@ -982,7 +983,6 @@ KtNameReferenceExpression(886,893): 'newItem'
         symbol = newItem: T
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNamedFunction(897,1031): 'fun check(i: InterfaceWithEquals, m: MessagePreview) {'
@@ -1061,6 +1061,7 @@ KtNameReferenceExpression(956,957): 'i'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = i
         receiverType = null
@@ -1068,7 +1069,6 @@ KtNameReferenceExpression(956,957): 'i'
         symbol = i: InterfaceWithEquals
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(958,960): '=='
@@ -1114,6 +1114,7 @@ KtNameReferenceExpression(961,962): 'm'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = m
         receiverType = null
@@ -1121,7 +1122,6 @@ KtNameReferenceExpression(961,962): 'm'
         symbol = m: MessagePreview
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtBinaryExpression(967,973): 'i != m'
@@ -1167,6 +1167,7 @@ KtNameReferenceExpression(967,968): 'i'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = i
         receiverType = null
@@ -1174,7 +1175,6 @@ KtNameReferenceExpression(967,968): 'i'
         symbol = i: InterfaceWithEquals
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(969,971): '!='
@@ -1220,6 +1220,7 @@ KtNameReferenceExpression(972,973): 'm'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = m
         receiverType = null
@@ -1227,7 +1228,6 @@ KtNameReferenceExpression(972,973): 'm'
         symbol = m: MessagePreview
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtBinaryExpression(979,985): 'm == i'
@@ -1273,6 +1273,7 @@ KtNameReferenceExpression(979,980): 'm'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = m
         receiverType = null
@@ -1280,7 +1281,6 @@ KtNameReferenceExpression(979,980): 'm'
         symbol = m: MessagePreview
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(981,983): '=='
@@ -1326,6 +1326,7 @@ KtNameReferenceExpression(984,985): 'i'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = i
         receiverType = null
@@ -1333,7 +1334,6 @@ KtNameReferenceExpression(984,985): 'i'
         symbol = i: InterfaceWithEquals
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtBinaryExpression(990,996): 'm != i'
@@ -1379,6 +1379,7 @@ KtNameReferenceExpression(990,991): 'm'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = m
         receiverType = null
@@ -1386,7 +1387,6 @@ KtNameReferenceExpression(990,991): 'm'
         symbol = m: MessagePreview
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(992,994): '!='
@@ -1432,6 +1432,7 @@ KtNameReferenceExpression(995,996): 'i'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = i
         receiverType = null
@@ -1439,7 +1440,6 @@ KtNameReferenceExpression(995,996): 'i'
         symbol = i: InterfaceWithEquals
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtDotQualifiedExpression(1002,1013): 'i.equals(m)'
@@ -1485,6 +1485,7 @@ KtNameReferenceExpression(1002,1003): 'i'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = i
         receiverType = null
@@ -1492,7 +1493,6 @@ KtNameReferenceExpression(1002,1003): 'i'
         symbol = i: InterfaceWithEquals
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtCallExpression(1004,1013): 'equals(m)'
@@ -1579,6 +1579,7 @@ KtNameReferenceExpression(1011,1012): 'm'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = m
         receiverType = null
@@ -1586,7 +1587,6 @@ KtNameReferenceExpression(1011,1012): 'm'
         symbol = m: MessagePreview
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtDotQualifiedExpression(1018,1029): 'm.equals(i)'
@@ -1632,6 +1632,7 @@ KtNameReferenceExpression(1018,1019): 'm'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = m
         receiverType = null
@@ -1639,7 +1640,6 @@ KtNameReferenceExpression(1018,1019): 'm'
         symbol = m: MessagePreview
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtCallExpression(1020,1029): 'equals(i)'
@@ -1726,6 +1726,7 @@ KtNameReferenceExpression(1027,1028): 'i'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = i
         receiverType = null
@@ -1733,5 +1734,4 @@ KtNameReferenceExpression(1027,1028): 'i'
         symbol = i: InterfaceWithEquals
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}

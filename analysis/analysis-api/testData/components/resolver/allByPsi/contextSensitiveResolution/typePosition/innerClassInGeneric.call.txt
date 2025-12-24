@@ -401,6 +401,7 @@ KtNameReferenceExpression(307,308): 'x'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = x
         receiverType = null
@@ -408,7 +409,6 @@ KtNameReferenceExpression(307,308): 'x'
         symbol = x: A<kotlin.Int>
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(309,311): 'is'
@@ -454,6 +454,7 @@ KtNameReferenceExpression(334,335): 'x'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = x
         receiverType = null
@@ -461,7 +462,6 @@ KtNameReferenceExpression(334,335): 'x'
         symbol = x: A<kotlin.Int>
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(336,338): 'is'
@@ -516,6 +516,7 @@ KtNameReferenceExpression(363,364): 'x'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = x
         receiverType = null
@@ -523,7 +524,6 @@ KtNameReferenceExpression(363,364): 'x'
         symbol = x: A<kotlin.Int>
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(365,367): 'is'
@@ -566,6 +566,7 @@ KtNameReferenceExpression(404,405): 'x'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = x
         receiverType = null
@@ -573,7 +574,6 @@ KtNameReferenceExpression(404,405): 'x'
         symbol = x: A<kotlin.Int>
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(406,408): 'is'
@@ -609,6 +609,7 @@ KtNameReferenceExpression(426,427): 'x'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = x
         receiverType = null
@@ -616,7 +617,6 @@ KtNameReferenceExpression(426,427): 'x'
         symbol = x: A<kotlin.Int>
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(428,430): 'is'
@@ -652,6 +652,7 @@ KtNameReferenceExpression(448,449): 'x'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = x
         receiverType = null
@@ -659,7 +660,6 @@ KtNameReferenceExpression(448,449): 'x'
         symbol = x: A<kotlin.Int>
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(450,452): 'is'

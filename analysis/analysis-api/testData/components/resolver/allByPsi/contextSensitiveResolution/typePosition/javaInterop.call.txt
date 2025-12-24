@@ -44,6 +44,7 @@ KtNameReferenceExpression(99,107): 'instance'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = instance
         receiverType = null
@@ -51,7 +52,6 @@ KtNameReferenceExpression(99,107): 'instance'
         symbol = instance: JClass
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtWhenEntry(115,145): 'is JCOption1 -> instance.prop1'
@@ -83,6 +83,7 @@ KtNameReferenceExpression(131,139): 'instance'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = instance
         receiverType = null
@@ -90,7 +91,6 @@ KtNameReferenceExpression(131,139): 'instance'
         symbol = instance: JClass
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(140,145): 'prop1'
@@ -127,6 +127,7 @@ KtNameReferenceExpression(167,175): 'instance'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = instance
         receiverType = null
@@ -134,7 +135,6 @@ KtNameReferenceExpression(167,175): 'instance'
         symbol = instance: JClass
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(176,181): 'prop2'
@@ -171,6 +171,7 @@ KtNameReferenceExpression(200,208): 'instance'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = instance
         receiverType = null
@@ -178,7 +179,6 @@ KtNameReferenceExpression(200,208): 'instance'
         symbol = instance: JClass
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(209,213): 'prop'
@@ -232,6 +232,7 @@ KtNameReferenceExpression(282,290): 'instance'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = instance
         receiverType = null
@@ -239,7 +240,6 @@ KtNameReferenceExpression(282,290): 'instance'
         symbol = instance: SealedJClass
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(291,293): 'is'
@@ -275,6 +275,7 @@ KtDotQualifiedExpression(322,336): 'instance.prop1'
         type = SealedJClass.SCOption1
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = prop1
         receiverType = null
@@ -282,7 +283,6 @@ KtDotQualifiedExpression(322,336): 'instance.prop1'
         symbol = var prop1: kotlin.Int
         contextParameters = []
         callableId = /SealedJClass.SCOption1.prop1
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(322,330): 'instance'
@@ -292,6 +292,7 @@ KtNameReferenceExpression(322,330): 'instance'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = instance
         receiverType = null
@@ -299,7 +300,6 @@ KtNameReferenceExpression(322,330): 'instance'
         symbol = instance: SealedJClass
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(331,336): 'prop1'
@@ -314,6 +314,7 @@ KtNameReferenceExpression(331,336): 'prop1'
         type = SealedJClass.SCOption1
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = prop1
         receiverType = null
@@ -321,7 +322,6 @@ KtNameReferenceExpression(331,336): 'prop1'
         symbol = var prop1: kotlin.Int
         contextParameters = []
         callableId = /SealedJClass.SCOption1.prop1
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtIfExpression(347,411): 'if (instance is SCOption2) {'
@@ -340,6 +340,7 @@ KtNameReferenceExpression(351,359): 'instance'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = instance
         receiverType = null
@@ -347,7 +348,6 @@ KtNameReferenceExpression(351,359): 'instance'
         symbol = instance: SealedJClass
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(360,362): 'is'
@@ -383,6 +383,7 @@ KtDotQualifiedExpression(391,405): 'instance.prop2'
         type = SealedJClass.SCOption2
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = prop2
         receiverType = null
@@ -390,7 +391,6 @@ KtDotQualifiedExpression(391,405): 'instance.prop2'
         symbol = var prop2: kotlin.Int
         contextParameters = []
         callableId = /SealedJClass.SCOption2.prop2
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(391,399): 'instance'
@@ -400,6 +400,7 @@ KtNameReferenceExpression(391,399): 'instance'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = instance
         receiverType = null
@@ -407,7 +408,6 @@ KtNameReferenceExpression(391,399): 'instance'
         symbol = instance: SealedJClass
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(400,405): 'prop2'
@@ -422,6 +422,7 @@ KtNameReferenceExpression(400,405): 'prop2'
         type = SealedJClass.SCOption2
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = prop2
         receiverType = null
@@ -429,7 +430,6 @@ KtNameReferenceExpression(400,405): 'prop2'
         symbol = var prop2: kotlin.Int
         contextParameters = []
         callableId = /SealedJClass.SCOption2.prop2
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtReturnExpression(416,424): 'return 0'
@@ -475,6 +475,7 @@ KtNameReferenceExpression(503,511): 'instance'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = instance
         receiverType = null
@@ -482,7 +483,6 @@ KtNameReferenceExpression(503,511): 'instance'
         symbol = instance: SealedJClass
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtWhenEntry(519,549): 'is SCOption1 -> instance.prop1'
@@ -512,6 +512,7 @@ KtDotQualifiedExpression(535,549): 'instance.prop1'
         type = SealedJClass.SCOption1
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = prop1
         receiverType = null
@@ -519,7 +520,6 @@ KtDotQualifiedExpression(535,549): 'instance.prop1'
         symbol = var prop1: kotlin.Int
         contextParameters = []
         callableId = /SealedJClass.SCOption1.prop1
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(535,543): 'instance'
@@ -529,6 +529,7 @@ KtNameReferenceExpression(535,543): 'instance'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = instance
         receiverType = null
@@ -536,7 +537,6 @@ KtNameReferenceExpression(535,543): 'instance'
         symbol = instance: SealedJClass
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(544,549): 'prop1'
@@ -551,6 +551,7 @@ KtNameReferenceExpression(544,549): 'prop1'
         type = SealedJClass.SCOption1
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = prop1
         receiverType = null
@@ -558,7 +559,6 @@ KtNameReferenceExpression(544,549): 'prop1'
         symbol = var prop1: kotlin.Int
         contextParameters = []
         callableId = /SealedJClass.SCOption1.prop1
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtWhenEntry(554,584): 'is SCOption2 -> instance.prop2'
@@ -588,6 +588,7 @@ KtDotQualifiedExpression(570,584): 'instance.prop2'
         type = SealedJClass.SCOption2
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = prop2
         receiverType = null
@@ -595,7 +596,6 @@ KtDotQualifiedExpression(570,584): 'instance.prop2'
         symbol = var prop2: kotlin.Int
         contextParameters = []
         callableId = /SealedJClass.SCOption2.prop2
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(570,578): 'instance'
@@ -605,6 +605,7 @@ KtNameReferenceExpression(570,578): 'instance'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = instance
         receiverType = null
@@ -612,7 +613,6 @@ KtNameReferenceExpression(570,578): 'instance'
         symbol = instance: SealedJClass
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(579,584): 'prop2'
@@ -627,6 +627,7 @@ KtNameReferenceExpression(579,584): 'prop2'
         type = SealedJClass.SCOption2
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = prop2
         receiverType = null
@@ -634,7 +635,6 @@ KtNameReferenceExpression(579,584): 'prop2'
         symbol = var prop2: kotlin.Int
         contextParameters = []
         callableId = /SealedJClass.SCOption2.prop2
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNamedFunction(588,756): 'fun testSealedJClassInWhen(instance: SealedJClass): Int = when {'
@@ -683,6 +683,7 @@ KtNameReferenceExpression(657,665): 'instance'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = instance
         receiverType = null
@@ -690,7 +691,6 @@ KtNameReferenceExpression(657,665): 'instance'
         symbol = instance: SealedJClass
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(666,668): 'is'
@@ -717,6 +717,7 @@ KtDotQualifiedExpression(682,696): 'instance.prop1'
         type = SealedJClass.SCOption1
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = prop1
         receiverType = null
@@ -724,7 +725,6 @@ KtDotQualifiedExpression(682,696): 'instance.prop1'
         symbol = var prop1: kotlin.Int
         contextParameters = []
         callableId = /SealedJClass.SCOption1.prop1
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(682,690): 'instance'
@@ -734,6 +734,7 @@ KtNameReferenceExpression(682,690): 'instance'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = instance
         receiverType = null
@@ -741,7 +742,6 @@ KtNameReferenceExpression(682,690): 'instance'
         symbol = instance: SealedJClass
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(691,696): 'prop1'
@@ -756,6 +756,7 @@ KtNameReferenceExpression(691,696): 'prop1'
         type = SealedJClass.SCOption1
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = prop1
         receiverType = null
@@ -763,7 +764,6 @@ KtNameReferenceExpression(691,696): 'prop1'
         symbol = var prop1: kotlin.Int
         contextParameters = []
         callableId = /SealedJClass.SCOption1.prop1
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtWhenEntry(701,740): 'instance is SCOption2 -> instance.prop2'
@@ -782,6 +782,7 @@ KtNameReferenceExpression(701,709): 'instance'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = instance
         receiverType = null
@@ -789,7 +790,6 @@ KtNameReferenceExpression(701,709): 'instance'
         symbol = instance: SealedJClass
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(710,712): 'is'
@@ -816,6 +816,7 @@ KtDotQualifiedExpression(726,740): 'instance.prop2'
         type = SealedJClass.SCOption2
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = prop2
         receiverType = null
@@ -823,7 +824,6 @@ KtDotQualifiedExpression(726,740): 'instance.prop2'
         symbol = var prop2: kotlin.Int
         contextParameters = []
         callableId = /SealedJClass.SCOption2.prop2
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(726,734): 'instance'
@@ -833,6 +833,7 @@ KtNameReferenceExpression(726,734): 'instance'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = instance
         receiverType = null
@@ -840,7 +841,6 @@ KtNameReferenceExpression(726,734): 'instance'
         symbol = instance: SealedJClass
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(735,740): 'prop2'
@@ -855,6 +855,7 @@ KtNameReferenceExpression(735,740): 'prop2'
         type = SealedJClass.SCOption2
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = prop2
         receiverType = null
@@ -862,7 +863,6 @@ KtNameReferenceExpression(735,740): 'prop2'
         symbol = var prop2: kotlin.Int
         contextParameters = []
         callableId = /SealedJClass.SCOption2.prop2
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtWhenEntry(745,754): 'else -> 0'

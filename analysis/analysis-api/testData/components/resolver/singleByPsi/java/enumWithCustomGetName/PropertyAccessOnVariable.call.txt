@@ -8,6 +8,7 @@ KtNameReferenceExpression(62,66): 'name'
         type = JavaEnum
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = name
         receiverType = null
@@ -15,5 +16,4 @@ KtNameReferenceExpression(62,66): 'name'
         symbol = val name: kotlin.String
         contextParameters = []
         callableId = kotlin/Enum.name
-      simpleAccess = Read
       typeArgumentsMapping = {}

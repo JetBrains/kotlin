@@ -5,6 +5,7 @@ KtNameReferenceExpression(72,75): 'obj'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = obj
         receiverType = null
@@ -12,6 +13,5 @@ KtNameReferenceExpression(72,75): 'obj'
         symbol = obj: Foo
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true

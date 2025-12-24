@@ -71,6 +71,7 @@ KtNameReferenceExpression(168,169): 's'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = s
         receiverType = null
@@ -78,7 +79,6 @@ KtNameReferenceExpression(168,169): 's'
         symbol = s: test.Sample
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtWhenEntry(181,191): 'FIRST -> 1'
@@ -97,6 +97,7 @@ KtNameReferenceExpression(181,186): 'FIRST'
         type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = FIRST
         receiverType = null
@@ -104,7 +105,6 @@ KtNameReferenceExpression(181,186): 'FIRST'
         symbol = test/Sample.FIRST
         contextParameters = []
         callableId = test/Sample.FIRST
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtConstantExpression(190,191): '1'
@@ -126,6 +126,7 @@ KtNameReferenceExpression(200,206): 'SECOND'
         type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = SECOND
         receiverType = null
@@ -133,7 +134,6 @@ KtNameReferenceExpression(200,206): 'SECOND'
         symbol = test/Sample.SECOND
         contextParameters = []
         callableId = test/Sample.SECOND
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtConstantExpression(210,211): '2'
@@ -155,6 +155,7 @@ KtNameReferenceExpression(220,225): 'THIRD'
         type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = THIRD
         receiverType = null
@@ -162,7 +163,6 @@ KtNameReferenceExpression(220,225): 'THIRD'
         symbol = test/Sample.THIRD
         contextParameters = []
         callableId = test/Sample.THIRD
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtConstantExpression(229,230): '3'
@@ -253,6 +253,7 @@ KtNameReferenceExpression(302,303): 's'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = s
         receiverType = null
@@ -260,7 +261,6 @@ KtNameReferenceExpression(302,303): 's'
         symbol = s: test.Sample
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(304,306): '=='
@@ -309,6 +309,7 @@ KtNameReferenceExpression(307,312): 'FIRST'
         type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = FIRST
         receiverType = null
@@ -316,7 +317,6 @@ KtNameReferenceExpression(307,312): 'FIRST'
         symbol = test/Sample.FIRST
         contextParameters = []
         callableId = test/Sample.FIRST
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtConstantExpression(316,317): '1'
@@ -371,6 +371,7 @@ KtNameReferenceExpression(326,327): 's'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = s
         receiverType = null
@@ -378,7 +379,6 @@ KtNameReferenceExpression(326,327): 's'
         symbol = s: test.Sample
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(328,330): '=='
@@ -427,6 +427,7 @@ KtNameReferenceExpression(331,337): 'SECOND'
         type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = SECOND
         receiverType = null
@@ -434,7 +435,6 @@ KtNameReferenceExpression(331,337): 'SECOND'
         symbol = test/Sample.SECOND
         contextParameters = []
         callableId = test/Sample.SECOND
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtConstantExpression(341,342): '2'
@@ -489,6 +489,7 @@ KtNameReferenceExpression(351,352): 's'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = s
         receiverType = null
@@ -496,7 +497,6 @@ KtNameReferenceExpression(351,352): 's'
         symbol = s: test.Sample
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(353,355): '=='
@@ -545,6 +545,7 @@ KtNameReferenceExpression(356,361): 'THIRD'
         type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = THIRD
         receiverType = null
@@ -552,7 +553,6 @@ KtNameReferenceExpression(356,361): 'THIRD'
         symbol = test/Sample.THIRD
         contextParameters = []
         callableId = test/Sample.THIRD
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtConstantExpression(365,366): '3'
@@ -583,6 +583,7 @@ KtDotQualifiedExpression(429,447): 'test.Sample.SECOND'
         type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = SECOND
         receiverType = null
@@ -590,7 +591,6 @@ KtDotQualifiedExpression(429,447): 'test.Sample.SECOND'
         symbol = test/Sample.SECOND
         contextParameters = []
         callableId = test/Sample.SECOND
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtDotQualifiedExpression(429,440): 'test.Sample'
@@ -612,6 +612,7 @@ KtNameReferenceExpression(441,447): 'SECOND'
         type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = SECOND
         receiverType = null
@@ -619,7 +620,6 @@ KtNameReferenceExpression(441,447): 'SECOND'
         symbol = test/Sample.SECOND
         contextParameters = []
         callableId = test/Sample.SECOND
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNamedFunction(453,667): 'fun priority(s: Sample): Int {'
@@ -665,6 +665,7 @@ KtDotQualifiedExpression(504,521): 'test.Sample.THIRD'
         type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = THIRD
         receiverType = null
@@ -672,7 +673,6 @@ KtDotQualifiedExpression(504,521): 'test.Sample.THIRD'
         symbol = test/Sample.THIRD
         contextParameters = []
         callableId = test/Sample.THIRD
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtDotQualifiedExpression(504,515): 'test.Sample'
@@ -694,6 +694,7 @@ KtNameReferenceExpression(516,521): 'THIRD'
         type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = THIRD
         receiverType = null
@@ -701,7 +702,6 @@ KtNameReferenceExpression(516,521): 'THIRD'
         symbol = test/Sample.THIRD
         contextParameters = []
         callableId = test/Sample.THIRD
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtReturnExpression(530,661): 'return when (s) {'
@@ -717,6 +717,7 @@ KtNameReferenceExpression(543,544): 's'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = s
         receiverType = null
@@ -724,7 +725,6 @@ KtNameReferenceExpression(543,544): 's'
         symbol = s: test.Sample
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtWhenEntry(560,570): 'FIRST -> 3'
@@ -740,6 +740,7 @@ KtNameReferenceExpression(560,565): 'FIRST'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = FIRST
         receiverType = null
@@ -747,7 +748,6 @@ KtNameReferenceExpression(560,565): 'FIRST'
         symbol = val FIRST: test.Sample
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtConstantExpression(569,570): '3'
@@ -768,6 +768,7 @@ KtNameReferenceExpression(583,589): 'SECOND'
         type = test.Container
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = SECOND
         receiverType = null
@@ -775,7 +776,6 @@ KtNameReferenceExpression(583,589): 'SECOND'
         symbol = val SECOND: test.Sample
         contextParameters = []
         callableId = test/Container.SECOND
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtConstantExpression(593,594): '2'
@@ -797,6 +797,7 @@ KtDotQualifiedExpression(607,624): 'test.Sample.FIRST'
         type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = FIRST
         receiverType = null
@@ -804,7 +805,6 @@ KtDotQualifiedExpression(607,624): 'test.Sample.FIRST'
         symbol = test/Sample.FIRST
         contextParameters = []
         callableId = test/Sample.FIRST
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtDotQualifiedExpression(607,618): 'test.Sample'
@@ -826,6 +826,7 @@ KtNameReferenceExpression(619,624): 'FIRST'
         type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = FIRST
         receiverType = null
@@ -833,7 +834,6 @@ KtNameReferenceExpression(619,624): 'FIRST'
         symbol = test/Sample.FIRST
         contextParameters = []
         callableId = test/Sample.FIRST
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtConstantExpression(628,629): '1'

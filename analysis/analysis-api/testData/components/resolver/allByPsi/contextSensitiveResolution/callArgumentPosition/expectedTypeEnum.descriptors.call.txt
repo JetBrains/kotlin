@@ -59,6 +59,7 @@ KtNameReferenceExpression(139,140): 'x'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = x
         receiverType = null
@@ -66,7 +67,6 @@ KtNameReferenceExpression(139,140): 'x'
         symbol = x: X
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNamedFunction(141,167): 'fun <T> receive(arg: T) {}'

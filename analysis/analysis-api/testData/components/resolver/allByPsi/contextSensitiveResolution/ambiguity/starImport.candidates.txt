@@ -80,6 +80,7 @@ KtNameReferenceExpression(139,140): 's'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = s
         receiverType = null
@@ -87,7 +88,6 @@ KtNameReferenceExpression(139,140): 's'
         symbol = s: bar.Sealed
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -242,6 +242,7 @@ KtNameReferenceExpression(237,247): 'CompanionB'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = CompanionB
         receiverType = null
@@ -249,7 +250,6 @@ KtNameReferenceExpression(237,247): 'CompanionB'
         symbol = val CompanionB: kotlin.Int
         contextParameters = []
         callableId = foo/CompanionB
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -335,6 +335,7 @@ KtNameReferenceExpression(343,344): 's'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = s
         receiverType = null
@@ -342,7 +343,6 @@ KtNameReferenceExpression(343,344): 's'
         symbol = s: bar.Sealed
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -526,6 +526,7 @@ KtDotQualifiedExpression(429,450): 'bar.Sealed.CompanionA'
         type = bar.Sealed.Companion
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = CompanionA
         receiverType = null
@@ -533,7 +534,6 @@ KtDotQualifiedExpression(429,450): 'bar.Sealed.CompanionA'
         symbol = val CompanionA: bar.Sealed
         contextParameters = []
         callableId = bar/Sealed.Companion.CompanionA
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -604,6 +604,7 @@ KtNameReferenceExpression(440,450): 'CompanionA'
         type = bar.Sealed.Companion
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = CompanionA
         receiverType = null
@@ -611,7 +612,6 @@ KtNameReferenceExpression(440,450): 'CompanionA'
         symbol = val CompanionA: bar.Sealed
         contextParameters = []
         callableId = bar/Sealed.Companion.CompanionA
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -634,6 +634,7 @@ KtDotQualifiedExpression(460,481): 'bar.Sealed.CompanionB'
         type = bar.Sealed.Companion
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = CompanionB
         receiverType = null
@@ -641,7 +642,6 @@ KtDotQualifiedExpression(460,481): 'bar.Sealed.CompanionB'
         symbol = val CompanionB: bar.Sealed
         contextParameters = []
         callableId = bar/Sealed.Companion.CompanionB
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -712,6 +712,7 @@ KtNameReferenceExpression(471,481): 'CompanionB'
         type = bar.Sealed.Companion
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = CompanionB
         receiverType = null
@@ -719,7 +720,6 @@ KtNameReferenceExpression(471,481): 'CompanionB'
         symbol = val CompanionB: bar.Sealed
         contextParameters = []
         callableId = bar/Sealed.Companion.CompanionB
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -829,6 +829,7 @@ KtNameReferenceExpression(601,602): 's'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = s
         receiverType = null
@@ -836,7 +837,6 @@ KtNameReferenceExpression(601,602): 's'
         symbol = s: bar.Sealed
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1001,6 +1001,7 @@ KtDotQualifiedExpression(693,707): 'foo.CompanionB'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = CompanionB
         receiverType = null
@@ -1008,7 +1009,6 @@ KtDotQualifiedExpression(693,707): 'foo.CompanionB'
         symbol = val CompanionB: kotlin.Int
         contextParameters = []
         callableId = foo/CompanionB
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1022,6 +1022,7 @@ KtNameReferenceExpression(697,707): 'CompanionB'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = CompanionB
         receiverType = null
@@ -1029,7 +1030,6 @@ KtNameReferenceExpression(697,707): 'CompanionB'
         symbol = val CompanionB: kotlin.Int
         contextParameters = []
         callableId = foo/CompanionB
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1130,6 +1130,7 @@ KtNameReferenceExpression(803,804): 's'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = s
         receiverType = null
@@ -1137,7 +1138,6 @@ KtNameReferenceExpression(803,804): 's'
         symbol = s: bar.Sealed
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1199,6 +1199,7 @@ KtNameReferenceExpression(863,864): 's'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = s
         receiverType = null
@@ -1206,7 +1207,6 @@ KtNameReferenceExpression(863,864): 's'
         symbol = s: bar.Sealed
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1268,6 +1268,7 @@ KtNameReferenceExpression(924,925): 's'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = s
         receiverType = null
@@ -1275,7 +1276,6 @@ KtNameReferenceExpression(924,925): 's'
         symbol = s: bar.Sealed
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1343,6 +1343,7 @@ KtNameReferenceExpression(992,993): 's'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = s
         receiverType = null
@@ -1350,7 +1351,6 @@ KtNameReferenceExpression(992,993): 's'
         symbol = s: bar.Sealed
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1418,6 +1418,7 @@ KtNameReferenceExpression(1062,1063): 's'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = s
         receiverType = null
@@ -1425,7 +1426,6 @@ KtNameReferenceExpression(1062,1063): 's'
         symbol = s: bar.Sealed
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1493,6 +1493,7 @@ KtNameReferenceExpression(1129,1130): 's'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = s
         receiverType = null
@@ -1500,7 +1501,6 @@ KtNameReferenceExpression(1129,1130): 's'
         symbol = s: bar.Sealed
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1568,6 +1568,7 @@ KtNameReferenceExpression(1190,1191): 's'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = s
         receiverType = null
@@ -1575,7 +1576,6 @@ KtNameReferenceExpression(1190,1191): 's'
         symbol = s: bar.Sealed
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1637,6 +1637,7 @@ KtNameReferenceExpression(1247,1248): 's'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = s
         receiverType = null
@@ -1644,7 +1645,6 @@ KtNameReferenceExpression(1247,1248): 's'
         symbol = s: bar.Sealed
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1737,6 +1737,7 @@ KtNameReferenceExpression(1311,1312): 's'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = s
         receiverType = null
@@ -1744,7 +1745,6 @@ KtNameReferenceExpression(1311,1312): 's'
         symbol = s: bar.Sealed
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1875,6 +1875,7 @@ KtNameReferenceExpression(1360,1361): 's'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = s
         receiverType = null
@@ -1882,7 +1883,6 @@ KtNameReferenceExpression(1360,1361): 's'
         symbol = s: bar.Sealed
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -2051,6 +2051,7 @@ KtNameReferenceExpression(1418,1419): 's'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = s
         receiverType = null
@@ -2058,7 +2059,6 @@ KtNameReferenceExpression(1418,1419): 's'
         symbol = s: bar.Sealed
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -2211,6 +2211,7 @@ KtNameReferenceExpression(1468,1469): 's'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = s
         receiverType = null
@@ -2218,7 +2219,6 @@ KtNameReferenceExpression(1468,1469): 's'
         symbol = s: bar.Sealed
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -2387,6 +2387,7 @@ KtNameReferenceExpression(1524,1525): 's'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = s
         receiverType = null
@@ -2394,7 +2395,6 @@ KtNameReferenceExpression(1524,1525): 's'
         symbol = s: bar.Sealed
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -2525,6 +2525,7 @@ KtNameReferenceExpression(1582,1583): 's'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = s
         receiverType = null
@@ -2532,7 +2533,6 @@ KtNameReferenceExpression(1582,1583): 's'
         symbol = s: bar.Sealed
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -2583,6 +2583,7 @@ KtDotQualifiedExpression(1587,1604): 'Sealed.CompanionA'
         type = bar.Sealed.Companion
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = CompanionA
         receiverType = null
@@ -2590,7 +2591,6 @@ KtDotQualifiedExpression(1587,1604): 'Sealed.CompanionA'
         symbol = val CompanionA: bar.Sealed
         contextParameters = []
         callableId = bar/Sealed.Companion.CompanionA
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -2623,6 +2623,7 @@ KtNameReferenceExpression(1594,1604): 'CompanionA'
         type = bar.Sealed.Companion
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = CompanionA
         receiverType = null
@@ -2630,7 +2631,6 @@ KtNameReferenceExpression(1594,1604): 'CompanionA'
         symbol = val CompanionA: bar.Sealed
         contextParameters = []
         callableId = bar/Sealed.Companion.CompanionA
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -2705,6 +2705,7 @@ KtNameReferenceExpression(1649,1650): 's'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = s
         receiverType = null
@@ -2712,7 +2713,6 @@ KtNameReferenceExpression(1649,1650): 's'
         symbol = s: bar.Sealed
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -2865,6 +2865,7 @@ KtNameReferenceExpression(1708,1709): 's'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = s
         receiverType = null
@@ -2872,7 +2873,6 @@ KtNameReferenceExpression(1708,1709): 's'
         symbol = s: bar.Sealed
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -3003,6 +3003,7 @@ KtNameReferenceExpression(1757,1758): 's'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = s
         receiverType = null
@@ -3010,7 +3011,6 @@ KtNameReferenceExpression(1757,1758): 's'
         symbol = s: bar.Sealed
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -3179,6 +3179,7 @@ KtNameReferenceExpression(1815,1816): 's'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = s
         receiverType = null
@@ -3186,7 +3187,6 @@ KtNameReferenceExpression(1815,1816): 's'
         symbol = s: bar.Sealed
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 

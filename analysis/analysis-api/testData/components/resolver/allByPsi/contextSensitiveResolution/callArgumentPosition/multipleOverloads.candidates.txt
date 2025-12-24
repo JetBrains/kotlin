@@ -764,6 +764,7 @@ KtDotQualifiedExpression(325,334): 'MyEnum1.X'
         type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = X
         receiverType = null
@@ -771,7 +772,6 @@ KtDotQualifiedExpression(325,334): 'MyEnum1.X'
         symbol = /MyEnum1.X
         contextParameters = []
         callableId = /MyEnum1.X
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -804,6 +804,7 @@ KtNameReferenceExpression(333,334): 'X'
         type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = X
         receiverType = null
@@ -811,7 +812,6 @@ KtNameReferenceExpression(333,334): 'X'
         symbol = /MyEnum1.X
         contextParameters = []
         callableId = /MyEnum1.X
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1045,6 +1045,7 @@ KtDotQualifiedExpression(347,356): 'MyEnum1.X'
         type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = X
         receiverType = null
@@ -1052,7 +1053,6 @@ KtDotQualifiedExpression(347,356): 'MyEnum1.X'
         symbol = /MyEnum1.X
         contextParameters = []
         callableId = /MyEnum1.X
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1085,6 +1085,7 @@ KtNameReferenceExpression(355,356): 'X'
         type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = X
         receiverType = null
@@ -1092,7 +1093,6 @@ KtNameReferenceExpression(355,356): 'X'
         symbol = /MyEnum1.X
         contextParameters = []
         callableId = /MyEnum1.X
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1180,6 +1180,7 @@ KtNameReferenceExpression(368,369): 'X'
         type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = X
         receiverType = null
@@ -1187,7 +1188,6 @@ KtNameReferenceExpression(368,369): 'X'
         symbol = /MyEnum3.X
         contextParameters = []
         callableId = /MyEnum3.X
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1353,6 +1353,7 @@ KtNameReferenceExpression(382,383): 'X'
         type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = X
         receiverType = null
@@ -1360,7 +1361,6 @@ KtNameReferenceExpression(382,383): 'X'
         symbol = /MyEnum3.X
         contextParameters = []
         callableId = /MyEnum3.X
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -2131,6 +2131,7 @@ KtDotQualifiedExpression(493,502): 'MyEnum3.X'
         type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = X
         receiverType = null
@@ -2138,7 +2139,6 @@ KtDotQualifiedExpression(493,502): 'MyEnum3.X'
         symbol = /MyEnum3.X
         contextParameters = []
         callableId = /MyEnum3.X
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -2171,6 +2171,7 @@ KtNameReferenceExpression(501,502): 'X'
         type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = X
         receiverType = null
@@ -2178,6 +2179,5 @@ KtNameReferenceExpression(501,502): 'X'
         symbol = /MyEnum3.X
         contextParameters = []
         callableId = /MyEnum3.X
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true

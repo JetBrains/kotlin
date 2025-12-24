@@ -296,6 +296,8 @@ KtBinaryExpression(498,503): 'm = Y'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Write:
+        value = Y
       signature = KaVariableSignature:
         name = m
         receiverType = null
@@ -303,8 +305,6 @@ KtBinaryExpression(498,503): 'm = Y'
         symbol = var m: MyClass?
         contextParameters = []
         callableId = null
-      simpleAccess = Write:
-        value = Y
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -315,6 +315,8 @@ KtNameReferenceExpression(498,499): 'm'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Write:
+        value = Y
       signature = KaVariableSignature:
         name = m
         receiverType = null
@@ -322,8 +324,6 @@ KtNameReferenceExpression(498,499): 'm'
         symbol = var m: MyClass?
         contextParameters = []
         callableId = null
-      simpleAccess = Write:
-        value = Y
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -334,6 +334,8 @@ KtOperationReferenceExpression(500,501): '='
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Write:
+        value = Y
       signature = KaVariableSignature:
         name = m
         receiverType = null
@@ -341,8 +343,6 @@ KtOperationReferenceExpression(500,501): '='
         symbol = var m: MyClass?
         contextParameters = []
         callableId = null
-      simpleAccess = Write:
-        value = Y
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -356,6 +356,8 @@ KtBinaryExpression(508,513): 'm = X'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Write:
+        value = X
       signature = KaVariableSignature:
         name = m
         receiverType = null
@@ -363,8 +365,6 @@ KtBinaryExpression(508,513): 'm = X'
         symbol = var m: MyClass?
         contextParameters = []
         callableId = null
-      simpleAccess = Write:
-        value = X
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -375,6 +375,8 @@ KtNameReferenceExpression(508,509): 'm'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Write:
+        value = X
       signature = KaVariableSignature:
         name = m
         receiverType = null
@@ -382,8 +384,6 @@ KtNameReferenceExpression(508,509): 'm'
         symbol = var m: MyClass?
         contextParameters = []
         callableId = null
-      simpleAccess = Write:
-        value = X
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -394,6 +394,8 @@ KtOperationReferenceExpression(510,511): '='
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Write:
+        value = X
       signature = KaVariableSignature:
         name = m
         receiverType = null
@@ -401,8 +403,6 @@ KtOperationReferenceExpression(510,511): '='
         symbol = var m: MyClass?
         contextParameters = []
         callableId = null
-      simpleAccess = Write:
-        value = X
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -452,6 +452,7 @@ KtNameReferenceExpression(556,557): 'b'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = b
         receiverType = null
@@ -459,7 +460,6 @@ KtNameReferenceExpression(556,557): 'b'
         symbol = b: kotlin.Boolean
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 

@@ -62,6 +62,7 @@ KtNameReferenceExpression(152,153): 'o'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = o
         receiverType = null
@@ -69,7 +70,6 @@ KtNameReferenceExpression(152,153): 'o'
         symbol = o: {Other=} Some
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtWhenEntry(161,171): 'FIRST -> 1'
@@ -88,6 +88,7 @@ KtNameReferenceExpression(161,166): 'FIRST'
         type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = FIRST
         receiverType = null
@@ -95,7 +96,6 @@ KtNameReferenceExpression(161,166): 'FIRST'
         symbol = /Some.FIRST
         contextParameters = []
         callableId = /Some.FIRST
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtConstantExpression(170,171): '1'
@@ -117,6 +117,7 @@ KtNameReferenceExpression(176,182): 'SECOND'
         type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = SECOND
         receiverType = null
@@ -124,7 +125,6 @@ KtNameReferenceExpression(176,182): 'SECOND'
         symbol = /Some.SECOND
         contextParameters = []
         callableId = /Some.SECOND
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtConstantExpression(186,187): '2'

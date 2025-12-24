@@ -53,6 +53,7 @@ KtNameReferenceExpression(137,138): 'a'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = a
         receiverType = null
@@ -60,7 +61,6 @@ KtNameReferenceExpression(137,138): 'a'
         symbol = a: A
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtWhenEntry(150,160): 'A.A -> "A"'

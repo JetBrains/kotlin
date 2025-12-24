@@ -2594,6 +2594,7 @@ KtNameReferenceExpression(1272,1276): 'body'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = body
         receiverType = null
@@ -2601,7 +2602,6 @@ KtNameReferenceExpression(1272,1276): 'body'
         symbol = body: kotlin.Function2<T, T, kotlin.Unit>
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 

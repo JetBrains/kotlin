@@ -145,6 +145,7 @@ KtNameReferenceExpression(126,127): 'X'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = X
         receiverType = null
@@ -152,7 +153,6 @@ KtNameReferenceExpression(126,127): 'X'
         symbol = val X: b.MyEnum
         contextParameters = []
         callableId = a/X
-      simpleAccess = Read
       typeArgumentsMapping = {}
     diagnostic = ERROR<INVISIBLE_MEMBER: Cannot access 'X': it is private in file>
     isInBestCandidates = true
@@ -240,6 +240,7 @@ KtNameReferenceExpression(137,138): 'Y'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = Y
         receiverType = null
@@ -247,7 +248,6 @@ KtNameReferenceExpression(137,138): 'Y'
         symbol = val Y: kotlin.String
         contextParameters = []
         callableId = a/Y
-      simpleAccess = Read
       typeArgumentsMapping = {}
     diagnostic = ERROR<INVISIBLE_MEMBER: Cannot access 'Y': it is private in file>
     isInBestCandidates = true

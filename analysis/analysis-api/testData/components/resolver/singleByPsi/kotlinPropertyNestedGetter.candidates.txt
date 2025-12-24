@@ -8,6 +8,7 @@ KtNameReferenceExpression(53,61): 'instance'
         type = KtClass
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = instance
         receiverType = null
@@ -15,6 +16,5 @@ KtNameReferenceExpression(53,61): 'instance'
         symbol = val instance: KtSubClass
         contextParameters = []
         callableId = /KtClass.instance
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true

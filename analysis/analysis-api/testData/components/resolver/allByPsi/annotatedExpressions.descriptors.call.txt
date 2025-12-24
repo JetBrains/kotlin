@@ -473,6 +473,7 @@ KtNameReferenceExpression(182,189): 'integer'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = integer
         receiverType = null
@@ -480,7 +481,6 @@ KtNameReferenceExpression(182,189): 'integer'
         symbol = val integer: kotlin.Int
         contextParameters = []
         callableId = /integer
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtDotQualifiedExpression(191,226): '(@Anno(integer) usage()).toString()'
@@ -623,6 +623,7 @@ KtNameReferenceExpression(198,205): 'integer'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = integer
         receiverType = null
@@ -630,7 +631,6 @@ KtNameReferenceExpression(198,205): 'integer'
         symbol = val integer: kotlin.Int
         contextParameters = []
         callableId = /integer
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtCallExpression(207,214): 'usage()'

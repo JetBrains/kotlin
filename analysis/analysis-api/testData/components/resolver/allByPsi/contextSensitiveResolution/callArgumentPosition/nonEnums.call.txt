@@ -343,6 +343,7 @@ KtNameReferenceExpression(331,340): 'MAX_VALUE'
         type = kotlin.Int.Companion
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = MAX_VALUE
         receiverType = null
@@ -350,7 +351,6 @@ KtNameReferenceExpression(331,340): 'MAX_VALUE'
         symbol = val MAX_VALUE: kotlin.Int
         contextParameters = []
         callableId = kotlin/Int.Companion.MAX_VALUE
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtCallExpression(347,365): 'expectMyClass(FOO)'
@@ -434,6 +434,7 @@ KtNameReferenceExpression(361,364): 'FOO'
         type = MyClass.Companion
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = FOO
         receiverType = null
@@ -441,7 +442,6 @@ KtNameReferenceExpression(361,364): 'FOO'
         symbol = val FOO: MyClass
         contextParameters = []
         callableId = /MyClass.Companion.FOO
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtCallExpression(370,392): 'expectMyClass(id(FOO))'
@@ -600,6 +600,7 @@ KtNameReferenceExpression(387,390): 'FOO'
         type = MyClass.Companion
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = FOO
         receiverType = null
@@ -607,7 +608,6 @@ KtNameReferenceExpression(387,390): 'FOO'
         symbol = val FOO: MyClass
         contextParameters = []
         callableId = /MyClass.Companion.FOO
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtCallExpression(398,430): 'expectMyClass(FOR_TYPE_MISMATCH)'
@@ -698,6 +698,7 @@ KtNameReferenceExpression(412,429): 'FOR_TYPE_MISMATCH'
         type = MyClass.Companion
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = FOR_TYPE_MISMATCH
         receiverType = null
@@ -705,7 +706,6 @@ KtNameReferenceExpression(412,429): 'FOR_TYPE_MISMATCH'
         symbol = val FOR_TYPE_MISMATCH: kotlin.String
         contextParameters = []
         callableId = /MyClass.Companion.FOR_TYPE_MISMATCH
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtCallExpression(435,471): 'expectMyClass(id(FOR_TYPE_MISMATCH))'
@@ -871,6 +871,7 @@ KtNameReferenceExpression(452,469): 'FOR_TYPE_MISMATCH'
         type = MyClass.Companion
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = FOR_TYPE_MISMATCH
         receiverType = null
@@ -878,7 +879,6 @@ KtNameReferenceExpression(452,469): 'FOR_TYPE_MISMATCH'
         symbol = val FOR_TYPE_MISMATCH: kotlin.String
         contextParameters = []
         callableId = /MyClass.Companion.FOR_TYPE_MISMATCH
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtCallExpression(477,495): 'expectMyClass(Bar)'
@@ -1467,6 +1467,7 @@ KtNameReferenceExpression(629,637): 'INSTANCE'
         type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = INSTANCE
         receiverType = null
@@ -1474,5 +1475,4 @@ KtNameReferenceExpression(629,637): 'INSTANCE'
         symbol = var INSTANCE: JavaClass!
         contextParameters = []
         callableId = /JavaClass.INSTANCE
-      simpleAccess = Read
       typeArgumentsMapping = {}

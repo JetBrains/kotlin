@@ -206,6 +206,7 @@ KtNameReferenceExpression(196,199): 'foo'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = foo
         receiverType = null
@@ -213,7 +214,6 @@ KtNameReferenceExpression(196,199): 'foo'
         symbol = val foo: r.MyClass
         contextParameters = []
         callableId = r/foo
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtDotQualifiedExpression(204,226): '(((foo)())()).invoke()'
@@ -290,6 +290,7 @@ KtNameReferenceExpression(207,210): 'foo'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = foo
         receiverType = null
@@ -297,7 +298,6 @@ KtNameReferenceExpression(207,210): 'foo'
         symbol = val foo: r.MyClass
         contextParameters = []
         callableId = r/foo
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtValueArgumentList(211,213): '()'
@@ -375,6 +375,7 @@ KtNameReferenceExpression(231,234): 'foo'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = foo
         receiverType = null
@@ -382,7 +383,6 @@ KtNameReferenceExpression(231,234): 'foo'
         symbol = val foo: r.MyClass
         contextParameters = []
         callableId = r/foo
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtCallExpression(235,243): 'invoke()'
@@ -453,6 +453,7 @@ KtNameReferenceExpression(248,256): 'property'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = property
         receiverType = null
@@ -460,7 +461,6 @@ KtNameReferenceExpression(248,256): 'property'
         symbol = val property: r.MyClass
         contextParameters = []
         callableId = r/property
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtValueArgumentList(256,258): '()'

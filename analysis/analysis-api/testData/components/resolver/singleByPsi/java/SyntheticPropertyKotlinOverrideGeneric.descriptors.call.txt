@@ -9,6 +9,7 @@
           type = KotlinClass
         extensionReceiver = null
         isContextSensitive = false
+        kind = Read
         signature = KaVariableSignature:
           name = foo
           receiverType = null
@@ -16,7 +17,6 @@
           symbol = var foo: Foo<kotlin.Any>
           contextParameters = []
           callableId = /KotlinClass.foo
-        simpleAccess = Read
         typeArgumentsMapping = {}
 
 <caret_2>:
@@ -30,6 +30,8 @@
           type = KotlinClass
         extensionReceiver = null
         isContextSensitive = false
+        kind = Write:
+          value = foo
         signature = KaVariableSignature:
           name = foo
           receiverType = null
@@ -37,8 +39,6 @@
           symbol = var foo: Foo<kotlin.Any>
           contextParameters = []
           callableId = /KotlinClass.foo
-        simpleAccess = Write:
-          value = foo
         typeArgumentsMapping = {}
 
 <caret_3>:
@@ -54,6 +54,7 @@
           type = KotlinClass
         extensionReceiver = null
         isContextSensitive = false
+        kind = Read
         signature = KaVariableSignature:
           name = foo
           receiverType = null
@@ -61,5 +62,4 @@
           symbol = var foo: Foo<kotlin.Any>
           contextParameters = []
           callableId = /KotlinClass.foo
-        simpleAccess = Read
         typeArgumentsMapping = {}
