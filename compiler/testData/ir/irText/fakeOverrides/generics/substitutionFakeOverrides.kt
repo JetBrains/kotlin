@@ -12,21 +12,21 @@ public class Jaba<T> {
 }
 
 // FILE: main.kt
-class A : Jaba<Int?>(), I2 { // Duplicated foo's
+class A : Jaba<Int?>(), I2 {
 }
 
-class B : Jaba<Int>(), I2 { // Duplicated foo's
+class B : Jaba<Int>(), I2 {
 }
 
-class C : Jaba<String>(), KotlinInterface // Collapsed foo
+class C : Jaba<String>(), KotlinInterface
 
-abstract class D : Jaba<String>(), KotlinInterface // Collapsed foo
+abstract class D : Jaba<String>(), KotlinInterface
 
-abstract class E : Jaba<String?>(), KotlinInterface // Mistakenly duplicated foo's: KT-82502
+abstract class E : Jaba<String?>(), KotlinInterface // Mistakenly duplicated foo's in K1: KT-82502
 
-class F : Jaba<String?>(), KotlinInterface2 // Mistakenly duplicated foo's: KT-82502
+class F : Jaba<String?>(), KotlinInterface2 // Mistakenly duplicated foo's in K1: KT-82502
 
-class G : Jaba<String?>(), KotlinInterface2 { // Mistakenly duplicated foo's: KT-82502
+class G : Jaba<String?>(), KotlinInterface2 { // Mistakenly duplicated foo's in K1: KT-82502
     override fun foo(t: String) {}
 }
 
