@@ -28,11 +28,27 @@ KtSuperTypeList(122,132): 'MySealed()'
 KtSuperTypeCallEntry(122,132): 'MySealed()'
   KaDelegatedConstructorCall:
     argumentMapping = {}
+    contextArguments = []
+    dispatchReceiver = null
+    extensionReceiver = null
     kind = SUPER_CALL
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+    signature = KaFunctionSignature:
+      receiverType = null
+      returnType = MySealed
+      symbol = <constructor>(): MySealed
+      valueParameters = []
+      contextParameters = []
+      callableId = null
+    typeArgumentsMapping = {}
+
+KtConstructorCalleeExpression(122,130): 'MySealed'
+  KaSuccessCallInfo:
+    call = KaDelegatedConstructorCall:
+      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
+      kind = SUPER_CALL
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MySealed
@@ -40,24 +56,6 @@ KtSuperTypeCallEntry(122,132): 'MySealed()'
         valueParameters = []
         contextParameters = []
         callableId = null
-    typeArgumentsMapping = {}
-
-KtConstructorCalleeExpression(122,130): 'MySealed'
-  KaSuccessCallInfo:
-    call = KaDelegatedConstructorCall:
-      argumentMapping = {}
-      kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = MySealed
-          symbol = <constructor>(): MySealed
-          valueParameters = []
-          contextParameters = []
-          callableId = null
       typeArgumentsMapping = {}
 
 KtTypeReference(122,130): 'MySealed'
@@ -84,11 +82,27 @@ KtSuperTypeList(153,163): 'MySealed()'
 KtSuperTypeCallEntry(153,163): 'MySealed()'
   KaDelegatedConstructorCall:
     argumentMapping = {}
+    contextArguments = []
+    dispatchReceiver = null
+    extensionReceiver = null
     kind = SUPER_CALL
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+    signature = KaFunctionSignature:
+      receiverType = null
+      returnType = MySealed
+      symbol = <constructor>(): MySealed
+      valueParameters = []
+      contextParameters = []
+      callableId = null
+    typeArgumentsMapping = {}
+
+KtConstructorCalleeExpression(153,161): 'MySealed'
+  KaSuccessCallInfo:
+    call = KaDelegatedConstructorCall:
+      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
+      kind = SUPER_CALL
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MySealed
@@ -96,24 +110,6 @@ KtSuperTypeCallEntry(153,163): 'MySealed()'
         valueParameters = []
         contextParameters = []
         callableId = null
-    typeArgumentsMapping = {}
-
-KtConstructorCalleeExpression(153,161): 'MySealed'
-  KaSuccessCallInfo:
-    call = KaDelegatedConstructorCall:
-      argumentMapping = {}
-      kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = MySealed
-          symbol = <constructor>(): MySealed
-          valueParameters = []
-          contextParameters = []
-          callableId = null
       typeArgumentsMapping = {}
 
 KtTypeReference(153,161): 'MySealed'
@@ -224,11 +220,27 @@ KtNameReferenceExpression(263,264): 'T'
 KtCallExpression(267,273): 'TODO()'
   KaSimpleFunctionCall:
     argumentMapping = {}
+    contextArguments = []
+    dispatchReceiver = null
+    extensionReceiver = null
     isImplicitInvoke = false
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+    signature = KaFunctionSignature:
+      receiverType = null
+      returnType = kotlin.Nothing
+      symbol = kotlin/TODO(): kotlin.Nothing
+      valueParameters = []
+      contextParameters = []
+      callableId = kotlin/TODO
+    typeArgumentsMapping = {}
+
+KtNameReferenceExpression(267,271): 'TODO'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
+      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Nothing
@@ -236,24 +248,6 @@ KtCallExpression(267,273): 'TODO()'
         valueParameters = []
         contextParameters = []
         callableId = kotlin/TODO
-    typeArgumentsMapping = {}
-
-KtNameReferenceExpression(267,271): 'TODO'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {}
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Nothing
-          symbol = kotlin/TODO(): kotlin.Nothing
-          valueParameters = []
-          contextParameters = []
-          callableId = kotlin/TODO
       typeArgumentsMapping = {}
 
 KtValueArgumentList(271,273): '()'
@@ -295,11 +289,27 @@ KtNameReferenceExpression(293,294): 'X'
 KtCallExpression(297,303): 'TODO()'
   KaSimpleFunctionCall:
     argumentMapping = {}
+    contextArguments = []
+    dispatchReceiver = null
+    extensionReceiver = null
     isImplicitInvoke = false
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+    signature = KaFunctionSignature:
+      receiverType = null
+      returnType = kotlin.Nothing
+      symbol = kotlin/TODO(): kotlin.Nothing
+      valueParameters = []
+      contextParameters = []
+      callableId = kotlin/TODO
+    typeArgumentsMapping = {}
+
+KtNameReferenceExpression(297,301): 'TODO'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
+      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Nothing
@@ -307,24 +317,6 @@ KtCallExpression(297,303): 'TODO()'
         valueParameters = []
         contextParameters = []
         callableId = kotlin/TODO
-    typeArgumentsMapping = {}
-
-KtNameReferenceExpression(297,301): 'TODO'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {}
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Nothing
-          symbol = kotlin/TODO(): kotlin.Nothing
-          valueParameters = []
-          contextParameters = []
-          callableId = kotlin/TODO
       typeArgumentsMapping = {}
 
 KtValueArgumentList(301,303): '()'
@@ -377,26 +369,25 @@ KtCallExpression(356,433): 'myRunWithMySealed {'
         contextParameters = []
         callableId = null)
     }
+    contextArguments = []
+    dispatchReceiver = null
+    extensionReceiver = null
     isImplicitInvoke = false
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      contextArguments = []
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = kotlin.Unit
-        symbol = /myRunWithMySealed(b: () -> MySealed): kotlin.Unit
-        valueParameters = [
-          KaVariableSignature:
-            name = b
-            receiverType = null
-            returnType = () -> MySealed
-            symbol = b: () -> MySealed
-            contextParameters = []
-            callableId = null
-        ]
-        contextParameters = []
-        callableId = /myRunWithMySealed
+    signature = KaFunctionSignature:
+      receiverType = null
+      returnType = kotlin.Unit
+      symbol = /myRunWithMySealed(b: () -> MySealed): kotlin.Unit
+      valueParameters = [
+        KaVariableSignature:
+          name = b
+          receiverType = null
+          returnType = () -> MySealed
+          symbol = b: () -> MySealed
+          contextParameters = []
+          callableId = null
+      ]
+      contextParameters = []
+      callableId = /myRunWithMySealed
     typeArgumentsMapping = {}
 
 KtNameReferenceExpression(356,373): 'myRunWithMySealed'
@@ -414,26 +405,25 @@ KtNameReferenceExpression(356,373): 'myRunWithMySealed'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = /myRunWithMySealed(b: () -> MySealed): kotlin.Unit
-          valueParameters = [
-            KaVariableSignature:
-              name = b
-              receiverType = null
-              returnType = () -> MySealed
-              symbol = b: () -> MySealed
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /myRunWithMySealed
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /myRunWithMySealed(b: () -> MySealed): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = b
+            receiverType = null
+            returnType = () -> MySealed
+            symbol = b: () -> MySealed
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /myRunWithMySealed
       typeArgumentsMapping = {}
 
 KtLambdaArgument(374,433): '{'
@@ -457,18 +447,17 @@ KtContainerNode(388,389): 'b'
 KtNameReferenceExpression(388,389): 'b'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = b
-          receiverType = null
-          returnType = kotlin.Boolean
-          symbol = b: kotlin.Boolean
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = b
+        receiverType = null
+        returnType = kotlin.Boolean
+        symbol = b: kotlin.Boolean
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -504,26 +493,25 @@ KtCallExpression(439,524): 'myRunWithMySealed {'
         contextParameters = []
         callableId = null)
     }
+    contextArguments = []
+    dispatchReceiver = null
+    extensionReceiver = null
     isImplicitInvoke = false
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      contextArguments = []
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = kotlin.Unit
-        symbol = /myRunWithMySealed(b: () -> MySealed): kotlin.Unit
-        valueParameters = [
-          KaVariableSignature:
-            name = b
-            receiverType = null
-            returnType = () -> MySealed
-            symbol = b: () -> MySealed
-            contextParameters = []
-            callableId = null
-        ]
-        contextParameters = []
-        callableId = /myRunWithMySealed
+    signature = KaFunctionSignature:
+      receiverType = null
+      returnType = kotlin.Unit
+      symbol = /myRunWithMySealed(b: () -> MySealed): kotlin.Unit
+      valueParameters = [
+        KaVariableSignature:
+          name = b
+          receiverType = null
+          returnType = () -> MySealed
+          symbol = b: () -> MySealed
+          contextParameters = []
+          callableId = null
+      ]
+      contextParameters = []
+      callableId = /myRunWithMySealed
     typeArgumentsMapping = {}
 
 KtNameReferenceExpression(439,456): 'myRunWithMySealed'
@@ -541,26 +529,25 @@ KtNameReferenceExpression(439,456): 'myRunWithMySealed'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = /myRunWithMySealed(b: () -> MySealed): kotlin.Unit
-          valueParameters = [
-            KaVariableSignature:
-              name = b
-              receiverType = null
-              returnType = () -> MySealed
-              symbol = b: () -> MySealed
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /myRunWithMySealed
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /myRunWithMySealed(b: () -> MySealed): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = b
+            receiverType = null
+            returnType = () -> MySealed
+            symbol = b: () -> MySealed
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /myRunWithMySealed
       typeArgumentsMapping = {}
 
 KtLambdaArgument(457,524): '{'
@@ -584,18 +571,17 @@ KtContainerNode(471,472): 'b'
 KtNameReferenceExpression(471,472): 'b'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = b
-          receiverType = null
-          returnType = kotlin.Boolean
-          symbol = b: kotlin.Boolean
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = b
+        receiverType = null
+        returnType = kotlin.Boolean
+        symbol = b: kotlin.Boolean
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -622,26 +608,25 @@ KtCallExpression(499,504): 'id(X)'
         contextParameters = []
         callableId = null)
     }
+    contextArguments = []
+    dispatchReceiver = null
+    extensionReceiver = null
     isImplicitInvoke = false
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      contextArguments = []
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = MySealed
-        symbol = /id(x: X): X
-        valueParameters = [
-          KaVariableSignature:
-            name = x
-            receiverType = null
-            returnType = MySealed
-            symbol = x: X
-            contextParameters = []
-            callableId = null
-        ]
-        contextParameters = []
-        callableId = /id
+    signature = KaFunctionSignature:
+      receiverType = null
+      returnType = MySealed
+      symbol = /id(x: X): X
+      valueParameters = [
+        KaVariableSignature:
+          name = x
+          receiverType = null
+          returnType = MySealed
+          symbol = x: X
+          contextParameters = []
+          callableId = null
+      ]
+      contextParameters = []
+      callableId = /id
     typeArgumentsMapping = {
       X -> (MySealed)
     }
@@ -658,26 +643,25 @@ KtNameReferenceExpression(499,501): 'id'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = MySealed
-          symbol = /id(x: X): X
-          valueParameters = [
-            KaVariableSignature:
-              name = x
-              receiverType = null
-              returnType = MySealed
-              symbol = x: X
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /id
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MySealed
+        symbol = /id(x: X): X
+        valueParameters = [
+          KaVariableSignature:
+            name = x
+            receiverType = null
+            returnType = MySealed
+            symbol = x: X
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /id
       typeArgumentsMapping = {
         X -> (MySealed)
       }
@@ -702,26 +686,25 @@ KtCallExpression(513,518): 'id(Y)'
         contextParameters = []
         callableId = null)
     }
+    contextArguments = []
+    dispatchReceiver = null
+    extensionReceiver = null
     isImplicitInvoke = false
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      contextArguments = []
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = MySealed
-        symbol = /id(x: X): X
-        valueParameters = [
-          KaVariableSignature:
-            name = x
-            receiverType = null
-            returnType = MySealed
-            symbol = x: X
-            contextParameters = []
-            callableId = null
-        ]
-        contextParameters = []
-        callableId = /id
+    signature = KaFunctionSignature:
+      receiverType = null
+      returnType = MySealed
+      symbol = /id(x: X): X
+      valueParameters = [
+        KaVariableSignature:
+          name = x
+          receiverType = null
+          returnType = MySealed
+          symbol = x: X
+          contextParameters = []
+          callableId = null
+      ]
+      contextParameters = []
+      callableId = /id
     typeArgumentsMapping = {
       X -> (MySealed)
     }
@@ -738,26 +721,25 @@ KtNameReferenceExpression(513,515): 'id'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = MySealed
-          symbol = /id(x: X): X
-          valueParameters = [
-            KaVariableSignature:
-              name = x
-              receiverType = null
-              returnType = MySealed
-              symbol = x: X
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /id
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MySealed
+        symbol = /id(x: X): X
+        valueParameters = [
+          KaVariableSignature:
+            name = x
+            receiverType = null
+            returnType = MySealed
+            symbol = x: X
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /id
       typeArgumentsMapping = {
         X -> (MySealed)
       }
@@ -785,26 +767,25 @@ KtCallExpression(530,593): 'myRun<MySealed> {'
         contextParameters = []
         callableId = null)
     }
+    contextArguments = []
+    dispatchReceiver = null
+    extensionReceiver = null
     isImplicitInvoke = false
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      contextArguments = []
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = MySealed
-        symbol = /myRun(b: () -> T): T
-        valueParameters = [
-          KaVariableSignature:
-            name = b
-            receiverType = null
-            returnType = () -> MySealed
-            symbol = b: () -> T
-            contextParameters = []
-            callableId = null
-        ]
-        contextParameters = []
-        callableId = /myRun
+    signature = KaFunctionSignature:
+      receiverType = null
+      returnType = MySealed
+      symbol = /myRun(b: () -> T): T
+      valueParameters = [
+        KaVariableSignature:
+          name = b
+          receiverType = null
+          returnType = () -> MySealed
+          symbol = b: () -> T
+          contextParameters = []
+          callableId = null
+      ]
+      contextParameters = []
+      callableId = /myRun
     typeArgumentsMapping = {
       T -> (MySealed)
     }
@@ -824,26 +805,25 @@ KtNameReferenceExpression(530,535): 'myRun'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = MySealed
-          symbol = /myRun(b: () -> T): T
-          valueParameters = [
-            KaVariableSignature:
-              name = b
-              receiverType = null
-              returnType = () -> MySealed
-              symbol = b: () -> T
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /myRun
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MySealed
+        symbol = /myRun(b: () -> T): T
+        valueParameters = [
+          KaVariableSignature:
+            name = b
+            receiverType = null
+            returnType = () -> MySealed
+            symbol = b: () -> T
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /myRun
       typeArgumentsMapping = {
         T -> (MySealed)
       }
@@ -884,18 +864,17 @@ KtContainerNode(560,561): 'b'
 KtNameReferenceExpression(560,561): 'b'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = b
-          receiverType = null
-          returnType = kotlin.Boolean
-          symbol = b: kotlin.Boolean
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = b
+        receiverType = null
+        returnType = kotlin.Boolean
+        symbol = b: kotlin.Boolean
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -931,26 +910,25 @@ KtCallExpression(598,682): 'foo('
         contextParameters = []
         callableId = null)
     }
+    contextArguments = []
+    dispatchReceiver = null
+    extensionReceiver = null
     isImplicitInvoke = false
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      contextArguments = []
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = kotlin.Unit
-        symbol = /foo(a: MySealed): kotlin.Unit
-        valueParameters = [
-          KaVariableSignature:
-            name = a
-            receiverType = null
-            returnType = MySealed
-            symbol = a: MySealed
-            contextParameters = []
-            callableId = null
-        ]
-        contextParameters = []
-        callableId = /foo
+    signature = KaFunctionSignature:
+      receiverType = null
+      returnType = kotlin.Unit
+      symbol = /foo(a: MySealed): kotlin.Unit
+      valueParameters = [
+        KaVariableSignature:
+          name = a
+          receiverType = null
+          returnType = MySealed
+          symbol = a: MySealed
+          contextParameters = []
+          callableId = null
+      ]
+      contextParameters = []
+      callableId = /foo
     typeArgumentsMapping = {}
 
 KtNameReferenceExpression(598,601): 'foo'
@@ -968,26 +946,25 @@ KtNameReferenceExpression(598,601): 'foo'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = /foo(a: MySealed): kotlin.Unit
-          valueParameters = [
-            KaVariableSignature:
-              name = a
-              receiverType = null
-              returnType = MySealed
-              symbol = a: MySealed
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /foo
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /foo(a: MySealed): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = a
+            receiverType = null
+            returnType = MySealed
+            symbol = a: MySealed
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /foo
       typeArgumentsMapping = {}
 
 KtValueArgumentList(601,682): '('
@@ -1010,26 +987,25 @@ KtCallExpression(611,676): 'myRun {'
         contextParameters = []
         callableId = null)
     }
+    contextArguments = []
+    dispatchReceiver = null
+    extensionReceiver = null
     isImplicitInvoke = false
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      contextArguments = []
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = MySealed
-        symbol = /myRun(b: () -> T): T
-        valueParameters = [
-          KaVariableSignature:
-            name = b
-            receiverType = null
-            returnType = () -> MySealed
-            symbol = b: () -> T
-            contextParameters = []
-            callableId = null
-        ]
-        contextParameters = []
-        callableId = /myRun
+    signature = KaFunctionSignature:
+      receiverType = null
+      returnType = MySealed
+      symbol = /myRun(b: () -> T): T
+      valueParameters = [
+        KaVariableSignature:
+          name = b
+          receiverType = null
+          returnType = () -> MySealed
+          symbol = b: () -> T
+          contextParameters = []
+          callableId = null
+      ]
+      contextParameters = []
+      callableId = /myRun
     typeArgumentsMapping = {
       T -> (MySealed)
     }
@@ -1049,26 +1025,25 @@ KtNameReferenceExpression(611,616): 'myRun'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = MySealed
-          symbol = /myRun(b: () -> T): T
-          valueParameters = [
-            KaVariableSignature:
-              name = b
-              receiverType = null
-              returnType = () -> MySealed
-              symbol = b: () -> T
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /myRun
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MySealed
+        symbol = /myRun(b: () -> T): T
+        valueParameters = [
+          KaVariableSignature:
+            name = b
+            receiverType = null
+            returnType = () -> MySealed
+            symbol = b: () -> T
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /myRun
       typeArgumentsMapping = {
         T -> (MySealed)
       }
@@ -1094,18 +1069,17 @@ KtContainerNode(635,636): 'b'
 KtNameReferenceExpression(635,636): 'b'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = b
-          receiverType = null
-          returnType = kotlin.Boolean
-          symbol = b: kotlin.Boolean
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = b
+        receiverType = null
+        returnType = kotlin.Boolean
+        symbol = b: kotlin.Boolean
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -1153,26 +1127,25 @@ KtCallExpression(706,759): 'myRun {'
         contextParameters = []
         callableId = null)
     }
+    contextArguments = []
+    dispatchReceiver = null
+    extensionReceiver = null
     isImplicitInvoke = false
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      contextArguments = []
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = MySealed
-        symbol = /myRun(b: () -> T): T
-        valueParameters = [
-          KaVariableSignature:
-            name = b
-            receiverType = null
-            returnType = () -> MySealed
-            symbol = b: () -> T
-            contextParameters = []
-            callableId = null
-        ]
-        contextParameters = []
-        callableId = /myRun
+    signature = KaFunctionSignature:
+      receiverType = null
+      returnType = MySealed
+      symbol = /myRun(b: () -> T): T
+      valueParameters = [
+        KaVariableSignature:
+          name = b
+          receiverType = null
+          returnType = () -> MySealed
+          symbol = b: () -> T
+          contextParameters = []
+          callableId = null
+      ]
+      contextParameters = []
+      callableId = /myRun
     typeArgumentsMapping = {
       T -> (MySealed)
     }
@@ -1192,26 +1165,25 @@ KtNameReferenceExpression(706,711): 'myRun'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = MySealed
-          symbol = /myRun(b: () -> T): T
-          valueParameters = [
-            KaVariableSignature:
-              name = b
-              receiverType = null
-              returnType = () -> MySealed
-              symbol = b: () -> T
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /myRun
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MySealed
+        symbol = /myRun(b: () -> T): T
+        valueParameters = [
+          KaVariableSignature:
+            name = b
+            receiverType = null
+            returnType = () -> MySealed
+            symbol = b: () -> T
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /myRun
       typeArgumentsMapping = {
         T -> (MySealed)
       }
@@ -1237,18 +1209,17 @@ KtContainerNode(726,727): 'b'
 KtNameReferenceExpression(726,727): 'b'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = b
-          receiverType = null
-          returnType = kotlin.Boolean
-          symbol = b: kotlin.Boolean
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = b
+        receiverType = null
+        returnType = kotlin.Boolean
+        symbol = b: kotlin.Boolean
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -1286,26 +1257,25 @@ KtCallExpression(765,818): 'myRun {'
             contextParameters = []
             callableId = null)
         }
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
         isImplicitInvoke = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = null
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = ERROR CLASS: Cannot infer argument for type parameter T
-            symbol = /myRun(b: () -> T): T
-            valueParameters = [
-              KaVariableSignature:
-                name = b
-                receiverType = null
-                returnType = () -> ERROR CLASS: Cannot infer argument for type parameter T
-                symbol = b: () -> T
-                contextParameters = []
-                callableId = null
-            ]
-            contextParameters = []
-            callableId = /myRun
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = ERROR CLASS: Cannot infer argument for type parameter T
+          symbol = /myRun(b: () -> T): T
+          valueParameters = [
+            KaVariableSignature:
+              name = b
+              receiverType = null
+              returnType = () -> ERROR CLASS: Cannot infer argument for type parameter T
+              symbol = b: () -> T
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /myRun
         typeArgumentsMapping = {
           T -> (ERROR CLASS: Cannot infer argument for type parameter T)
         }
@@ -1328,26 +1298,25 @@ KtNameReferenceExpression(765,770): 'myRun'
             contextParameters = []
             callableId = null)
         }
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
         isImplicitInvoke = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = null
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = ERROR CLASS: Cannot infer argument for type parameter T
-            symbol = /myRun(b: () -> T): T
-            valueParameters = [
-              KaVariableSignature:
-                name = b
-                receiverType = null
-                returnType = () -> ERROR CLASS: Cannot infer argument for type parameter T
-                symbol = b: () -> T
-                contextParameters = []
-                callableId = null
-            ]
-            contextParameters = []
-            callableId = /myRun
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = ERROR CLASS: Cannot infer argument for type parameter T
+          symbol = /myRun(b: () -> T): T
+          valueParameters = [
+            KaVariableSignature:
+              name = b
+              receiverType = null
+              returnType = () -> ERROR CLASS: Cannot infer argument for type parameter T
+              symbol = b: () -> T
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /myRun
         typeArgumentsMapping = {
           T -> (ERROR CLASS: Cannot infer argument for type parameter T)
         }
@@ -1375,18 +1344,17 @@ KtContainerNode(785,786): 'b'
 KtNameReferenceExpression(785,786): 'b'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = b
-          receiverType = null
-          returnType = kotlin.Boolean
-          symbol = b: kotlin.Boolean
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = b
+        receiverType = null
+        returnType = kotlin.Boolean
+        symbol = b: kotlin.Boolean
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -1428,26 +1396,25 @@ KtCallExpression(823,885): 'myRun {'
             contextParameters = []
             callableId = null)
         }
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
         isImplicitInvoke = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = null
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = MySealed.X
-            symbol = /myRun(b: () -> T): T
-            valueParameters = [
-              KaVariableSignature:
-                name = b
-                receiverType = null
-                returnType = () -> MySealed.X
-                symbol = b: () -> T
-                contextParameters = []
-                callableId = null
-            ]
-            contextParameters = []
-            callableId = /myRun
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = MySealed.X
+          symbol = /myRun(b: () -> T): T
+          valueParameters = [
+            KaVariableSignature:
+              name = b
+              receiverType = null
+              returnType = () -> MySealed.X
+              symbol = b: () -> T
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /myRun
         typeArgumentsMapping = {
           T -> (MySealed.X)
         }
@@ -1470,26 +1437,25 @@ KtNameReferenceExpression(823,828): 'myRun'
             contextParameters = []
             callableId = null)
         }
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
         isImplicitInvoke = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = null
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = MySealed.X
-            symbol = /myRun(b: () -> T): T
-            valueParameters = [
-              KaVariableSignature:
-                name = b
-                receiverType = null
-                returnType = () -> MySealed.X
-                symbol = b: () -> T
-                contextParameters = []
-                callableId = null
-            ]
-            contextParameters = []
-            callableId = /myRun
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = MySealed.X
+          symbol = /myRun(b: () -> T): T
+          valueParameters = [
+            KaVariableSignature:
+              name = b
+              receiverType = null
+              returnType = () -> MySealed.X
+              symbol = b: () -> T
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /myRun
         typeArgumentsMapping = {
           T -> (MySealed.X)
         }
@@ -1517,18 +1483,17 @@ KtContainerNode(843,844): 'b'
 KtNameReferenceExpression(843,844): 'b'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = b
-          receiverType = null
-          returnType = kotlin.Boolean
-          symbol = b: kotlin.Boolean
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = b
+        receiverType = null
+        returnType = kotlin.Boolean
+        symbol = b: kotlin.Boolean
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
 

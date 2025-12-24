@@ -79,26 +79,25 @@ KtSuperTypeCallEntry(86,93): 'Base(x)'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = r.A.Base
-          symbol = <constructor>(<dispatch receiver>: r.A, x: kotlin.Int): r.A.Base
-          valueParameters = [
-            KaVariableSignature:
-              name = x
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = x: kotlin.Int
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = r.A.Base
+        symbol = <constructor>(<dispatch receiver>: r.A, x: kotlin.Int): r.A.Base
+        valueParameters = [
+          KaVariableSignature:
+            name = x
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = x: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     diagnostic = ERROR<INNER_CLASS_CONSTRUCTOR_NO_RECEIVER: Constructor of the inner class 'inner class Base : Any' can only be called with a receiver of the containing class.>
     isInBestCandidates = true
@@ -115,26 +114,25 @@ KtConstructorCalleeExpression(86,90): 'Base'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = r.A.Base
-          symbol = <constructor>(<dispatch receiver>: r.A, x: kotlin.Int): r.A.Base
-          valueParameters = [
-            KaVariableSignature:
-              name = x
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = x: kotlin.Int
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = r.A.Base
+        symbol = <constructor>(<dispatch receiver>: r.A, x: kotlin.Int): r.A.Base
+        valueParameters = [
+          KaVariableSignature:
+            name = x
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = x: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     diagnostic = ERROR<INNER_CLASS_CONSTRUCTOR_NO_RECEIVER: Constructor of the inner class 'inner class Base : Any' can only be called with a receiver of the containing class.>
     isInBestCandidates = true
@@ -157,18 +155,17 @@ KtValueArgument(91,92): 'x'
 KtNameReferenceExpression(91,92): 'x'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = x
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = x: kotlin.Int
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = x
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = x: kotlin.Int
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true

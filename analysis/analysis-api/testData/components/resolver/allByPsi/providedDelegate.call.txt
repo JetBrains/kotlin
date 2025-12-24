@@ -148,18 +148,17 @@ KtReturnExpression(239,258): 'return MyDelegate()'
 KtCallExpression(246,258): 'MyDelegate()'
   KaSimpleFunctionCall:
     argumentMapping = {}
+    contextArguments = []
+    dispatchReceiver = null
+    extensionReceiver = null
     isImplicitInvoke = false
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      contextArguments = []
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = myPack.MyDelegate<T>
-        symbol = <constructor>(): myPack.MyDelegate<T>
-        valueParameters = []
-        contextParameters = []
-        callableId = null
+    signature = KaFunctionSignature:
+      receiverType = null
+      returnType = myPack.MyDelegate<T>
+      symbol = <constructor>(): myPack.MyDelegate<T>
+      valueParameters = []
+      contextParameters = []
+      callableId = null
     typeArgumentsMapping = {
       T -> (T)
     }
@@ -168,18 +167,17 @@ KtNameReferenceExpression(246,256): 'MyDelegate'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = myPack.MyDelegate<T>
-          symbol = <constructor>(): myPack.MyDelegate<T>
-          valueParameters = []
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = myPack.MyDelegate<T>
+        symbol = <constructor>(): myPack.MyDelegate<T>
+        valueParameters = []
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {
         T -> (T)
       }
@@ -328,18 +326,17 @@ KtPropertyDelegate(443,463): 'by ResourceID<Int>()'
 KtCallExpression(446,463): 'ResourceID<Int>()'
   KaSimpleFunctionCall:
     argumentMapping = {}
+    contextArguments = []
+    dispatchReceiver = null
+    extensionReceiver = null
     isImplicitInvoke = false
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      contextArguments = []
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = myPack.ResourceID<kotlin.Int>
-        symbol = <constructor>(): myPack.ResourceID<T>
-        valueParameters = []
-        contextParameters = []
-        callableId = null
+    signature = KaFunctionSignature:
+      receiverType = null
+      returnType = myPack.ResourceID<kotlin.Int>
+      symbol = <constructor>(): myPack.ResourceID<T>
+      valueParameters = []
+      contextParameters = []
+      callableId = null
     typeArgumentsMapping = {
       T -> (kotlin.Int)
     }
@@ -348,18 +345,17 @@ KtNameReferenceExpression(446,456): 'ResourceID'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = myPack.ResourceID<kotlin.Int>
-          symbol = <constructor>(): myPack.ResourceID<T>
-          valueParameters = []
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = myPack.ResourceID<kotlin.Int>
+        symbol = <constructor>(): myPack.ResourceID<T>
+        valueParameters = []
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {
         T -> (kotlin.Int)
       }

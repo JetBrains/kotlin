@@ -1,17 +1,16 @@
 KtNameReferenceExpression(16,20): 'args'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = args
-          receiverType = null
-          returnType = kotlin.Array<kotlin.String>
-          symbol = val args: kotlin.Array<kotlin.String>
-          contextParameters = []
-          callableId = kotlin/script/templates/standard/ScriptTemplateWithArgs.args
+      signature = KaVariableSignature:
+        name = args
+        receiverType = null
+        returnType = kotlin.Array<kotlin.String>
+        symbol = val args: kotlin.Array<kotlin.String>
+        contextParameters = []
+        callableId = kotlin/script/templates/standard/ScriptTemplateWithArgs.args
       simpleAccess = Read
       typeArgumentsMapping = {}

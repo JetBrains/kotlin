@@ -89,18 +89,17 @@ KtSuperTypeCallEntry(269,278): 'MyClass()'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = MyClass
-          symbol = <constructor>(): MyClass
-          valueParameters = []
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MyClass
+        symbol = <constructor>(): MyClass
+        valueParameters = []
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -108,18 +107,17 @@ KtConstructorCalleeExpression(269,276): 'MyClass'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = MyClass
-          symbol = <constructor>(): MyClass
-          valueParameters = []
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MyClass
+        symbol = <constructor>(): MyClass
+        valueParameters = []
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -171,18 +169,17 @@ KtNameReferenceExpression(300,301): 'X'
 KtNameReferenceExpression(304,305): 'x'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = x
-          receiverType = null
-          returnType = X
-          symbol = x: X
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = x
+        receiverType = null
+        returnType = X
+        symbol = x: X
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -260,44 +257,42 @@ KtCallExpression(386,392): 'TODO()'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Nothing
-          symbol = kotlin/TODO(): kotlin.Nothing
-          valueParameters = []
-          contextParameters = []
-          callableId = kotlin/TODO
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Nothing
+        symbol = kotlin/TODO(): kotlin.Nothing
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/TODO
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Nothing
-          symbol = kotlin/TODO(reason: kotlin.String): kotlin.Nothing
-          valueParameters = [
-            KaVariableSignature:
-              name = reason
-              receiverType = null
-              returnType = kotlin.String
-              symbol = reason: kotlin.String
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/TODO
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Nothing
+        symbol = kotlin/TODO(reason: kotlin.String): kotlin.Nothing
+        valueParameters = [
+          KaVariableSignature:
+            name = reason
+            receiverType = null
+            returnType = kotlin.String
+            symbol = reason: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/TODO
       typeArgumentsMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'reason'.>
     isInBestCandidates = false
@@ -306,44 +301,42 @@ KtNameReferenceExpression(386,390): 'TODO'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Nothing
-          symbol = kotlin/TODO(): kotlin.Nothing
-          valueParameters = []
-          contextParameters = []
-          callableId = kotlin/TODO
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Nothing
+        symbol = kotlin/TODO(): kotlin.Nothing
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/TODO
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Nothing
-          symbol = kotlin/TODO(reason: kotlin.String): kotlin.Nothing
-          valueParameters = [
-            KaVariableSignature:
-              name = reason
-              receiverType = null
-              returnType = kotlin.String
-              symbol = reason: kotlin.String
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/TODO
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Nothing
+        symbol = kotlin/TODO(reason: kotlin.String): kotlin.Nothing
+        valueParameters = [
+          KaVariableSignature:
+            name = reason
+            receiverType = null
+            returnType = kotlin.String
+            symbol = reason: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/TODO
       typeArgumentsMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'reason'.>
     isInBestCandidates = false
@@ -424,44 +417,42 @@ KtCallExpression(503,509): 'TODO()'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Nothing
-          symbol = kotlin/TODO(): kotlin.Nothing
-          valueParameters = []
-          contextParameters = []
-          callableId = kotlin/TODO
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Nothing
+        symbol = kotlin/TODO(): kotlin.Nothing
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/TODO
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Nothing
-          symbol = kotlin/TODO(reason: kotlin.String): kotlin.Nothing
-          valueParameters = [
-            KaVariableSignature:
-              name = reason
-              receiverType = null
-              returnType = kotlin.String
-              symbol = reason: kotlin.String
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/TODO
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Nothing
+        symbol = kotlin/TODO(reason: kotlin.String): kotlin.Nothing
+        valueParameters = [
+          KaVariableSignature:
+            name = reason
+            receiverType = null
+            returnType = kotlin.String
+            symbol = reason: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/TODO
       typeArgumentsMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'reason'.>
     isInBestCandidates = false
@@ -470,44 +461,42 @@ KtNameReferenceExpression(503,507): 'TODO'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Nothing
-          symbol = kotlin/TODO(): kotlin.Nothing
-          valueParameters = []
-          contextParameters = []
-          callableId = kotlin/TODO
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Nothing
+        symbol = kotlin/TODO(): kotlin.Nothing
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/TODO
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Nothing
-          symbol = kotlin/TODO(reason: kotlin.String): kotlin.Nothing
-          valueParameters = [
-            KaVariableSignature:
-              name = reason
-              receiverType = null
-              returnType = kotlin.String
-              symbol = reason: kotlin.String
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/TODO
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Nothing
+        symbol = kotlin/TODO(reason: kotlin.String): kotlin.Nothing
+        valueParameters = [
+          KaVariableSignature:
+            name = reason
+            receiverType = null
+            returnType = kotlin.String
+            symbol = reason: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/TODO
       typeArgumentsMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'reason'.>
     isInBestCandidates = false
@@ -549,44 +538,42 @@ KtCallExpression(558,564): 'TODO()'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Nothing
-          symbol = kotlin/TODO(): kotlin.Nothing
-          valueParameters = []
-          contextParameters = []
-          callableId = kotlin/TODO
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Nothing
+        symbol = kotlin/TODO(): kotlin.Nothing
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/TODO
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Nothing
-          symbol = kotlin/TODO(reason: kotlin.String): kotlin.Nothing
-          valueParameters = [
-            KaVariableSignature:
-              name = reason
-              receiverType = null
-              returnType = kotlin.String
-              symbol = reason: kotlin.String
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/TODO
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Nothing
+        symbol = kotlin/TODO(reason: kotlin.String): kotlin.Nothing
+        valueParameters = [
+          KaVariableSignature:
+            name = reason
+            receiverType = null
+            returnType = kotlin.String
+            symbol = reason: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/TODO
       typeArgumentsMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'reason'.>
     isInBestCandidates = false
@@ -595,44 +582,42 @@ KtNameReferenceExpression(558,562): 'TODO'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Nothing
-          symbol = kotlin/TODO(): kotlin.Nothing
-          valueParameters = []
-          contextParameters = []
-          callableId = kotlin/TODO
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Nothing
+        symbol = kotlin/TODO(): kotlin.Nothing
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/TODO
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Nothing
-          symbol = kotlin/TODO(reason: kotlin.String): kotlin.Nothing
-          valueParameters = [
-            KaVariableSignature:
-              name = reason
-              receiverType = null
-              returnType = kotlin.String
-              symbol = reason: kotlin.String
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/TODO
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Nothing
+        symbol = kotlin/TODO(reason: kotlin.String): kotlin.Nothing
+        valueParameters = [
+          KaVariableSignature:
+            name = reason
+            receiverType = null
+            returnType = kotlin.String
+            symbol = reason: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/TODO
       typeArgumentsMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'reason'.>
     isInBestCandidates = false
@@ -704,44 +689,42 @@ KtCallExpression(646,652): 'TODO()'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Nothing
-          symbol = kotlin/TODO(): kotlin.Nothing
-          valueParameters = []
-          contextParameters = []
-          callableId = kotlin/TODO
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Nothing
+        symbol = kotlin/TODO(): kotlin.Nothing
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/TODO
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Nothing
-          symbol = kotlin/TODO(reason: kotlin.String): kotlin.Nothing
-          valueParameters = [
-            KaVariableSignature:
-              name = reason
-              receiverType = null
-              returnType = kotlin.String
-              symbol = reason: kotlin.String
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/TODO
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Nothing
+        symbol = kotlin/TODO(reason: kotlin.String): kotlin.Nothing
+        valueParameters = [
+          KaVariableSignature:
+            name = reason
+            receiverType = null
+            returnType = kotlin.String
+            symbol = reason: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/TODO
       typeArgumentsMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'reason'.>
     isInBestCandidates = false
@@ -750,44 +733,42 @@ KtNameReferenceExpression(646,650): 'TODO'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Nothing
-          symbol = kotlin/TODO(): kotlin.Nothing
-          valueParameters = []
-          contextParameters = []
-          callableId = kotlin/TODO
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Nothing
+        symbol = kotlin/TODO(): kotlin.Nothing
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/TODO
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Nothing
-          symbol = kotlin/TODO(reason: kotlin.String): kotlin.Nothing
-          valueParameters = [
-            KaVariableSignature:
-              name = reason
-              receiverType = null
-              returnType = kotlin.String
-              symbol = reason: kotlin.String
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/TODO
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Nothing
+        symbol = kotlin/TODO(reason: kotlin.String): kotlin.Nothing
+        valueParameters = [
+          KaVariableSignature:
+            name = reason
+            receiverType = null
+            returnType = kotlin.String
+            symbol = reason: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/TODO
       typeArgumentsMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'reason'.>
     isInBestCandidates = false
@@ -871,44 +852,42 @@ KtCallExpression(768,774): 'TODO()'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Nothing
-          symbol = kotlin/TODO(): kotlin.Nothing
-          valueParameters = []
-          contextParameters = []
-          callableId = kotlin/TODO
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Nothing
+        symbol = kotlin/TODO(): kotlin.Nothing
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/TODO
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Nothing
-          symbol = kotlin/TODO(reason: kotlin.String): kotlin.Nothing
-          valueParameters = [
-            KaVariableSignature:
-              name = reason
-              receiverType = null
-              returnType = kotlin.String
-              symbol = reason: kotlin.String
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/TODO
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Nothing
+        symbol = kotlin/TODO(reason: kotlin.String): kotlin.Nothing
+        valueParameters = [
+          KaVariableSignature:
+            name = reason
+            receiverType = null
+            returnType = kotlin.String
+            symbol = reason: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/TODO
       typeArgumentsMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'reason'.>
     isInBestCandidates = false
@@ -917,44 +896,42 @@ KtNameReferenceExpression(768,772): 'TODO'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Nothing
-          symbol = kotlin/TODO(): kotlin.Nothing
-          valueParameters = []
-          contextParameters = []
-          callableId = kotlin/TODO
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Nothing
+        symbol = kotlin/TODO(): kotlin.Nothing
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/TODO
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Nothing
-          symbol = kotlin/TODO(reason: kotlin.String): kotlin.Nothing
-          valueParameters = [
-            KaVariableSignature:
-              name = reason
-              receiverType = null
-              returnType = kotlin.String
-              symbol = reason: kotlin.String
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/TODO
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Nothing
+        symbol = kotlin/TODO(reason: kotlin.String): kotlin.Nothing
+        valueParameters = [
+          KaVariableSignature:
+            name = reason
+            receiverType = null
+            returnType = kotlin.String
+            symbol = reason: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/TODO
       typeArgumentsMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'reason'.>
     isInBestCandidates = false
@@ -1038,44 +1015,42 @@ KtCallExpression(897,903): 'TODO()'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Nothing
-          symbol = kotlin/TODO(): kotlin.Nothing
-          valueParameters = []
-          contextParameters = []
-          callableId = kotlin/TODO
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Nothing
+        symbol = kotlin/TODO(): kotlin.Nothing
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/TODO
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Nothing
-          symbol = kotlin/TODO(reason: kotlin.String): kotlin.Nothing
-          valueParameters = [
-            KaVariableSignature:
-              name = reason
-              receiverType = null
-              returnType = kotlin.String
-              symbol = reason: kotlin.String
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/TODO
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Nothing
+        symbol = kotlin/TODO(reason: kotlin.String): kotlin.Nothing
+        valueParameters = [
+          KaVariableSignature:
+            name = reason
+            receiverType = null
+            returnType = kotlin.String
+            symbol = reason: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/TODO
       typeArgumentsMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'reason'.>
     isInBestCandidates = false
@@ -1084,44 +1059,42 @@ KtNameReferenceExpression(897,901): 'TODO'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Nothing
-          symbol = kotlin/TODO(): kotlin.Nothing
-          valueParameters = []
-          contextParameters = []
-          callableId = kotlin/TODO
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Nothing
+        symbol = kotlin/TODO(): kotlin.Nothing
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/TODO
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Nothing
-          symbol = kotlin/TODO(reason: kotlin.String): kotlin.Nothing
-          valueParameters = [
-            KaVariableSignature:
-              name = reason
-              receiverType = null
-              returnType = kotlin.String
-              symbol = reason: kotlin.String
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/TODO
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Nothing
+        symbol = kotlin/TODO(reason: kotlin.String): kotlin.Nothing
+        valueParameters = [
+          KaVariableSignature:
+            name = reason
+            receiverType = null
+            returnType = kotlin.String
+            symbol = reason: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/TODO
       typeArgumentsMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'reason'.>
     isInBestCandidates = false
@@ -1199,44 +1172,42 @@ KtCallExpression(998,1004): 'TODO()'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Nothing
-          symbol = kotlin/TODO(): kotlin.Nothing
-          valueParameters = []
-          contextParameters = []
-          callableId = kotlin/TODO
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Nothing
+        symbol = kotlin/TODO(): kotlin.Nothing
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/TODO
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Nothing
-          symbol = kotlin/TODO(reason: kotlin.String): kotlin.Nothing
-          valueParameters = [
-            KaVariableSignature:
-              name = reason
-              receiverType = null
-              returnType = kotlin.String
-              symbol = reason: kotlin.String
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/TODO
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Nothing
+        symbol = kotlin/TODO(reason: kotlin.String): kotlin.Nothing
+        valueParameters = [
+          KaVariableSignature:
+            name = reason
+            receiverType = null
+            returnType = kotlin.String
+            symbol = reason: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/TODO
       typeArgumentsMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'reason'.>
     isInBestCandidates = false
@@ -1245,44 +1216,42 @@ KtNameReferenceExpression(998,1002): 'TODO'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Nothing
-          symbol = kotlin/TODO(): kotlin.Nothing
-          valueParameters = []
-          contextParameters = []
-          callableId = kotlin/TODO
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Nothing
+        symbol = kotlin/TODO(): kotlin.Nothing
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/TODO
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Nothing
-          symbol = kotlin/TODO(reason: kotlin.String): kotlin.Nothing
-          valueParameters = [
-            KaVariableSignature:
-              name = reason
-              receiverType = null
-              returnType = kotlin.String
-              symbol = reason: kotlin.String
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/TODO
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Nothing
+        symbol = kotlin/TODO(reason: kotlin.String): kotlin.Nothing
+        valueParameters = [
+          KaVariableSignature:
+            name = reason
+            receiverType = null
+            returnType = kotlin.String
+            symbol = reason: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/TODO
       typeArgumentsMapping = {}
     diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'reason'.>
     isInBestCandidates = false
@@ -1323,26 +1292,25 @@ KtCallExpression(1052,1066): 'id(EnumValue1)'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = MyEnum
-          symbol = /id(x: X): X
-          valueParameters = [
-            KaVariableSignature:
-              name = x
-              receiverType = null
-              returnType = MyEnum
-              symbol = x: X
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /id
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MyEnum
+        symbol = /id(x: X): X
+        valueParameters = [
+          KaVariableSignature:
+            name = x
+            receiverType = null
+            returnType = MyEnum
+            symbol = x: X
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /id
       typeArgumentsMapping = {
         X -> (MyEnum)
       }
@@ -1360,26 +1328,25 @@ KtNameReferenceExpression(1052,1054): 'id'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = MyEnum
-          symbol = /id(x: X): X
-          valueParameters = [
-            KaVariableSignature:
-              name = x
-              receiverType = null
-              returnType = MyEnum
-              symbol = x: X
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /id
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MyEnum
+        symbol = /id(x: X): X
+        valueParameters = [
+          KaVariableSignature:
+            name = x
+            receiverType = null
+            returnType = MyEnum
+            symbol = x: X
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /id
       typeArgumentsMapping = {
         X -> (MyEnum)
       }
@@ -1394,21 +1361,20 @@ KtValueArgument(1055,1065): 'EnumValue1'
 KtNameReferenceExpression(1055,1065): 'EnumValue1'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = EnumValue1
+        isSafeNavigation = false
+        type = kotlin.Unit
+      extensionReceiver = null
       isContextSensitive = true
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = EnumValue1
-          isSafeNavigation = false
-          type = kotlin.Unit
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = EnumValue1
-          receiverType = null
-          returnType = MyEnum
-          symbol = /MyEnum.EnumValue1
-          contextParameters = []
-          callableId = /MyEnum.EnumValue1
+      signature = KaVariableSignature:
+        name = EnumValue1
+        receiverType = null
+        returnType = MyEnum
+        symbol = /MyEnum.EnumValue1
+        contextParameters = []
+        callableId = /MyEnum.EnumValue1
       simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1437,26 +1403,25 @@ KtCallExpression(1089,1108): 'id(InheritorObject)'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = MyClass
-          symbol = /id(x: X): X
-          valueParameters = [
-            KaVariableSignature:
-              name = x
-              receiverType = null
-              returnType = MyClass
-              symbol = x: X
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /id
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MyClass
+        symbol = /id(x: X): X
+        valueParameters = [
+          KaVariableSignature:
+            name = x
+            receiverType = null
+            returnType = MyClass
+            symbol = x: X
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /id
       typeArgumentsMapping = {
         X -> (MyClass)
       }
@@ -1474,26 +1439,25 @@ KtNameReferenceExpression(1089,1091): 'id'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = MyClass
-          symbol = /id(x: X): X
-          valueParameters = [
-            KaVariableSignature:
-              name = x
-              receiverType = null
-              returnType = MyClass
-              symbol = x: X
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /id
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MyClass
+        symbol = /id(x: X): X
+        valueParameters = [
+          KaVariableSignature:
+            name = x
+            receiverType = null
+            returnType = MyClass
+            symbol = x: X
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /id
       typeArgumentsMapping = {
         X -> (MyClass)
       }
@@ -1509,18 +1473,17 @@ KtNameReferenceExpression(1092,1107): 'InheritorObject'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = MyClass.InheritorObject
-          symbol = <constructor>(): MyClass.InheritorObject
-          valueParameters = []
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MyClass.InheritorObject
+        symbol = <constructor>(): MyClass.InheritorObject
+        valueParameters = []
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
@@ -1537,26 +1500,25 @@ KtCallExpression(1114,1145): 'receive<MyEnum>(id(EnumValue1))'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = /receive(arg: T): kotlin.Unit
-          valueParameters = [
-            KaVariableSignature:
-              name = arg
-              receiverType = null
-              returnType = MyEnum
-              symbol = arg: T
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /receive
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /receive(arg: T): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = arg
+            receiverType = null
+            returnType = MyEnum
+            symbol = arg: T
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /receive
       typeArgumentsMapping = {
         T -> (MyEnum)
       }
@@ -1574,26 +1536,25 @@ KtNameReferenceExpression(1114,1121): 'receive'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = /receive(arg: T): kotlin.Unit
-          valueParameters = [
-            KaVariableSignature:
-              name = arg
-              receiverType = null
-              returnType = MyEnum
-              symbol = arg: T
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /receive
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /receive(arg: T): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = arg
+            receiverType = null
+            returnType = MyEnum
+            symbol = arg: T
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /receive
       typeArgumentsMapping = {
         T -> (MyEnum)
       }
@@ -1632,26 +1593,25 @@ KtCallExpression(1130,1144): 'id(EnumValue1)'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = MyEnum
-          symbol = /id(x: X): X
-          valueParameters = [
-            KaVariableSignature:
-              name = x
-              receiverType = null
-              returnType = MyEnum
-              symbol = x: X
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /id
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MyEnum
+        symbol = /id(x: X): X
+        valueParameters = [
+          KaVariableSignature:
+            name = x
+            receiverType = null
+            returnType = MyEnum
+            symbol = x: X
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /id
       typeArgumentsMapping = {
         X -> (MyEnum)
       }
@@ -1669,26 +1629,25 @@ KtNameReferenceExpression(1130,1132): 'id'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = MyEnum
-          symbol = /id(x: X): X
-          valueParameters = [
-            KaVariableSignature:
-              name = x
-              receiverType = null
-              returnType = MyEnum
-              symbol = x: X
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /id
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MyEnum
+        symbol = /id(x: X): X
+        valueParameters = [
+          KaVariableSignature:
+            name = x
+            receiverType = null
+            returnType = MyEnum
+            symbol = x: X
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /id
       typeArgumentsMapping = {
         X -> (MyEnum)
       }
@@ -1703,21 +1662,20 @@ KtValueArgument(1133,1143): 'EnumValue1'
 KtNameReferenceExpression(1133,1143): 'EnumValue1'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = EnumValue1
+        isSafeNavigation = false
+        type = kotlin.Unit
+      extensionReceiver = null
       isContextSensitive = true
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = EnumValue1
-          isSafeNavigation = false
-          type = kotlin.Unit
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = EnumValue1
-          receiverType = null
-          returnType = MyEnum
-          symbol = /MyEnum.EnumValue1
-          contextParameters = []
-          callableId = /MyEnum.EnumValue1
+      signature = KaVariableSignature:
+        name = EnumValue1
+        receiverType = null
+        returnType = MyEnum
+        symbol = /MyEnum.EnumValue1
+        contextParameters = []
+        callableId = /MyEnum.EnumValue1
       simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1734,26 +1692,25 @@ KtCallExpression(1150,1187): 'receive<MyClass>(id(InheritorObject))'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = /receive(arg: T): kotlin.Unit
-          valueParameters = [
-            KaVariableSignature:
-              name = arg
-              receiverType = null
-              returnType = MyClass
-              symbol = arg: T
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /receive
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /receive(arg: T): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = arg
+            receiverType = null
+            returnType = MyClass
+            symbol = arg: T
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /receive
       typeArgumentsMapping = {
         T -> (MyClass)
       }
@@ -1771,26 +1728,25 @@ KtNameReferenceExpression(1150,1157): 'receive'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = /receive(arg: T): kotlin.Unit
-          valueParameters = [
-            KaVariableSignature:
-              name = arg
-              receiverType = null
-              returnType = MyClass
-              symbol = arg: T
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /receive
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /receive(arg: T): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = arg
+            receiverType = null
+            returnType = MyClass
+            symbol = arg: T
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /receive
       typeArgumentsMapping = {
         T -> (MyClass)
       }
@@ -1829,26 +1785,25 @@ KtCallExpression(1167,1186): 'id(InheritorObject)'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = MyClass
-          symbol = /id(x: X): X
-          valueParameters = [
-            KaVariableSignature:
-              name = x
-              receiverType = null
-              returnType = MyClass
-              symbol = x: X
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /id
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MyClass
+        symbol = /id(x: X): X
+        valueParameters = [
+          KaVariableSignature:
+            name = x
+            receiverType = null
+            returnType = MyClass
+            symbol = x: X
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /id
       typeArgumentsMapping = {
         X -> (MyClass)
       }
@@ -1866,26 +1821,25 @@ KtNameReferenceExpression(1167,1169): 'id'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = MyClass
-          symbol = /id(x: X): X
-          valueParameters = [
-            KaVariableSignature:
-              name = x
-              receiverType = null
-              returnType = MyClass
-              symbol = x: X
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /id
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MyClass
+        symbol = /id(x: X): X
+        valueParameters = [
+          KaVariableSignature:
+            name = x
+            receiverType = null
+            returnType = MyClass
+            symbol = x: X
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /id
       typeArgumentsMapping = {
         X -> (MyClass)
       }
@@ -1901,18 +1855,17 @@ KtNameReferenceExpression(1170,1185): 'InheritorObject'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = MyClass.InheritorObject
-          symbol = <constructor>(): MyClass.InheritorObject
-          valueParameters = []
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MyClass.InheritorObject
+        symbol = <constructor>(): MyClass.InheritorObject
+        valueParameters = []
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
@@ -1929,26 +1882,25 @@ KtCallExpression(1193,1222): 'testNullable(InheritorObject)'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.String
-          symbol = /testNullable(instance: MyClass?): kotlin.String
-          valueParameters = [
-            KaVariableSignature:
-              name = instance
-              receiverType = null
-              returnType = MyClass?
-              symbol = instance: MyClass?
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /testNullable
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.String
+        symbol = /testNullable(instance: MyClass?): kotlin.String
+        valueParameters = [
+          KaVariableSignature:
+            name = instance
+            receiverType = null
+            returnType = MyClass?
+            symbol = instance: MyClass?
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /testNullable
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1964,26 +1916,25 @@ KtNameReferenceExpression(1193,1205): 'testNullable'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.String
-          symbol = /testNullable(instance: MyClass?): kotlin.String
-          valueParameters = [
-            KaVariableSignature:
-              name = instance
-              receiverType = null
-              returnType = MyClass?
-              symbol = instance: MyClass?
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /testNullable
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.String
+        symbol = /testNullable(instance: MyClass?): kotlin.String
+        valueParameters = [
+          KaVariableSignature:
+            name = instance
+            receiverType = null
+            returnType = MyClass?
+            symbol = instance: MyClass?
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /testNullable
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1997,18 +1948,17 @@ KtNameReferenceExpression(1206,1221): 'InheritorObject'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = MyClass.InheritorObject
-          symbol = <constructor>(): MyClass.InheritorObject
-          valueParameters = []
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MyClass.InheritorObject
+        symbol = <constructor>(): MyClass.InheritorObject
+        valueParameters = []
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
@@ -2025,26 +1975,25 @@ KtCallExpression(1227,1266): 'testTypeParam<MyClass>(InheritorObject)'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.String
-          symbol = /testTypeParam(instance: T): kotlin.String
-          valueParameters = [
-            KaVariableSignature:
-              name = instance
-              receiverType = null
-              returnType = MyClass
-              symbol = instance: T
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /testTypeParam
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.String
+        symbol = /testTypeParam(instance: T): kotlin.String
+        valueParameters = [
+          KaVariableSignature:
+            name = instance
+            receiverType = null
+            returnType = MyClass
+            symbol = instance: T
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /testTypeParam
       typeArgumentsMapping = {
         T -> (MyClass)
       }
@@ -2062,26 +2011,25 @@ KtNameReferenceExpression(1227,1240): 'testTypeParam'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.String
-          symbol = /testTypeParam(instance: T): kotlin.String
-          valueParameters = [
-            KaVariableSignature:
-              name = instance
-              receiverType = null
-              returnType = MyClass
-              symbol = instance: T
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /testTypeParam
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.String
+        symbol = /testTypeParam(instance: T): kotlin.String
+        valueParameters = [
+          KaVariableSignature:
+            name = instance
+            receiverType = null
+            returnType = MyClass
+            symbol = instance: T
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /testTypeParam
       typeArgumentsMapping = {
         T -> (MyClass)
       }
@@ -2112,18 +2060,17 @@ KtNameReferenceExpression(1250,1265): 'InheritorObject'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = MyClass.InheritorObject
-          symbol = <constructor>(): MyClass.InheritorObject
-          valueParameters = []
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MyClass.InheritorObject
+        symbol = <constructor>(): MyClass.InheritorObject
+        valueParameters = []
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
     isInBestCandidates = false
@@ -2140,26 +2087,25 @@ KtCallExpression(1272,1302): 'testTypeParam(InheritorObject)'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.String
-          symbol = /testTypeParam(instance: T): kotlin.String
-          valueParameters = [
-            KaVariableSignature:
-              name = instance
-              receiverType = null
-              returnType = ERROR CLASS: Cannot infer argument for type parameter T
-              symbol = instance: T
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /testTypeParam
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.String
+        symbol = /testTypeParam(instance: T): kotlin.String
+        valueParameters = [
+          KaVariableSignature:
+            name = instance
+            receiverType = null
+            returnType = ERROR CLASS: Cannot infer argument for type parameter T
+            symbol = instance: T
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /testTypeParam
       typeArgumentsMapping = {
         T -> (ERROR CLASS: Cannot infer argument for type parameter T)
       }
@@ -2178,26 +2124,25 @@ KtNameReferenceExpression(1272,1285): 'testTypeParam'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.String
-          symbol = /testTypeParam(instance: T): kotlin.String
-          valueParameters = [
-            KaVariableSignature:
-              name = instance
-              receiverType = null
-              returnType = ERROR CLASS: Cannot infer argument for type parameter T
-              symbol = instance: T
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /testTypeParam
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.String
+        symbol = /testTypeParam(instance: T): kotlin.String
+        valueParameters = [
+          KaVariableSignature:
+            name = instance
+            receiverType = null
+            returnType = ERROR CLASS: Cannot infer argument for type parameter T
+            symbol = instance: T
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /testTypeParam
       typeArgumentsMapping = {
         T -> (ERROR CLASS: Cannot infer argument for type parameter T)
       }
@@ -2225,26 +2170,25 @@ KtCallExpression(1307,1354): 'testTypeParamWithMultipleBound(InheritorObject)'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.String
-          symbol = /testTypeParamWithMultipleBound(instance: T): kotlin.String
-          valueParameters = [
-            KaVariableSignature:
-              name = instance
-              receiverType = null
-              returnType = ERROR CLASS: Cannot infer argument for type parameter T
-              symbol = instance: T
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /testTypeParamWithMultipleBound
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.String
+        symbol = /testTypeParamWithMultipleBound(instance: T): kotlin.String
+        valueParameters = [
+          KaVariableSignature:
+            name = instance
+            receiverType = null
+            returnType = ERROR CLASS: Cannot infer argument for type parameter T
+            symbol = instance: T
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /testTypeParamWithMultipleBound
       typeArgumentsMapping = {
         T -> (ERROR CLASS: Cannot infer argument for type parameter T)
       }
@@ -2263,26 +2207,25 @@ KtNameReferenceExpression(1307,1337): 'testTypeParamWithMultipleBound'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.String
-          symbol = /testTypeParamWithMultipleBound(instance: T): kotlin.String
-          valueParameters = [
-            KaVariableSignature:
-              name = instance
-              receiverType = null
-              returnType = ERROR CLASS: Cannot infer argument for type parameter T
-              symbol = instance: T
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /testTypeParamWithMultipleBound
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.String
+        symbol = /testTypeParamWithMultipleBound(instance: T): kotlin.String
+        valueParameters = [
+          KaVariableSignature:
+            name = instance
+            receiverType = null
+            returnType = ERROR CLASS: Cannot infer argument for type parameter T
+            symbol = instance: T
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /testTypeParamWithMultipleBound
       typeArgumentsMapping = {
         T -> (ERROR CLASS: Cannot infer argument for type parameter T)
       }
@@ -2310,26 +2253,25 @@ KtCallExpression(1359,1409): 'testDefinitelyNotNullIntersection(InheritorObject)
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.String
-          symbol = /testDefinitelyNotNullIntersection(instance: T & Any): kotlin.String
-          valueParameters = [
-            KaVariableSignature:
-              name = instance
-              receiverType = null
-              returnType = ERROR CLASS: Cannot infer argument for type parameter T
-              symbol = instance: T & Any
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /testDefinitelyNotNullIntersection
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.String
+        symbol = /testDefinitelyNotNullIntersection(instance: T & Any): kotlin.String
+        valueParameters = [
+          KaVariableSignature:
+            name = instance
+            receiverType = null
+            returnType = ERROR CLASS: Cannot infer argument for type parameter T
+            symbol = instance: T & Any
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /testDefinitelyNotNullIntersection
       typeArgumentsMapping = {
         T -> (ERROR CLASS: Cannot infer argument for type parameter T)
       }
@@ -2348,26 +2290,25 @@ KtNameReferenceExpression(1359,1392): 'testDefinitelyNotNullIntersection'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.String
-          symbol = /testDefinitelyNotNullIntersection(instance: T & Any): kotlin.String
-          valueParameters = [
-            KaVariableSignature:
-              name = instance
-              receiverType = null
-              returnType = ERROR CLASS: Cannot infer argument for type parameter T
-              symbol = instance: T & Any
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /testDefinitelyNotNullIntersection
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.String
+        symbol = /testDefinitelyNotNullIntersection(instance: T & Any): kotlin.String
+        valueParameters = [
+          KaVariableSignature:
+            name = instance
+            receiverType = null
+            returnType = ERROR CLASS: Cannot infer argument for type parameter T
+            symbol = instance: T & Any
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /testDefinitelyNotNullIntersection
       typeArgumentsMapping = {
         T -> (ERROR CLASS: Cannot infer argument for type parameter T)
       }
@@ -2395,26 +2336,25 @@ KtCallExpression(1414,1451): 'testFakeIntersection(InheritorObject)'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.String
-          symbol = /testFakeIntersection(instance: T): kotlin.String
-          valueParameters = [
-            KaVariableSignature:
-              name = instance
-              receiverType = null
-              returnType = ERROR CLASS: Cannot infer argument for type parameter T
-              symbol = instance: T
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /testFakeIntersection
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.String
+        symbol = /testFakeIntersection(instance: T): kotlin.String
+        valueParameters = [
+          KaVariableSignature:
+            name = instance
+            receiverType = null
+            returnType = ERROR CLASS: Cannot infer argument for type parameter T
+            symbol = instance: T
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /testFakeIntersection
       typeArgumentsMapping = {
         T -> (ERROR CLASS: Cannot infer argument for type parameter T)
       }
@@ -2433,26 +2373,25 @@ KtNameReferenceExpression(1414,1434): 'testFakeIntersection'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.String
-          symbol = /testFakeIntersection(instance: T): kotlin.String
-          valueParameters = [
-            KaVariableSignature:
-              name = instance
-              receiverType = null
-              returnType = ERROR CLASS: Cannot infer argument for type parameter T
-              symbol = instance: T
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /testFakeIntersection
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.String
+        symbol = /testFakeIntersection(instance: T): kotlin.String
+        valueParameters = [
+          KaVariableSignature:
+            name = instance
+            receiverType = null
+            returnType = ERROR CLASS: Cannot infer argument for type parameter T
+            symbol = instance: T
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /testFakeIntersection
       typeArgumentsMapping = {
         T -> (ERROR CLASS: Cannot infer argument for type parameter T)
       }
@@ -2480,26 +2419,25 @@ KtCallExpression(1456,1500): 'testReverseFakeIntersection(InheritorObject)'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.String
-          symbol = /testReverseFakeIntersection(instance: T): kotlin.String
-          valueParameters = [
-            KaVariableSignature:
-              name = instance
-              receiverType = null
-              returnType = ERROR CLASS: Cannot infer argument for type parameter T
-              symbol = instance: T
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /testReverseFakeIntersection
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.String
+        symbol = /testReverseFakeIntersection(instance: T): kotlin.String
+        valueParameters = [
+          KaVariableSignature:
+            name = instance
+            receiverType = null
+            returnType = ERROR CLASS: Cannot infer argument for type parameter T
+            symbol = instance: T
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /testReverseFakeIntersection
       typeArgumentsMapping = {
         T -> (ERROR CLASS: Cannot infer argument for type parameter T)
       }
@@ -2518,26 +2456,25 @@ KtNameReferenceExpression(1456,1483): 'testReverseFakeIntersection'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.String
-          symbol = /testReverseFakeIntersection(instance: T): kotlin.String
-          valueParameters = [
-            KaVariableSignature:
-              name = instance
-              receiverType = null
-              returnType = ERROR CLASS: Cannot infer argument for type parameter T
-              symbol = instance: T
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /testReverseFakeIntersection
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.String
+        symbol = /testReverseFakeIntersection(instance: T): kotlin.String
+        valueParameters = [
+          KaVariableSignature:
+            name = instance
+            receiverType = null
+            returnType = ERROR CLASS: Cannot infer argument for type parameter T
+            symbol = instance: T
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /testReverseFakeIntersection
       typeArgumentsMapping = {
         T -> (ERROR CLASS: Cannot infer argument for type parameter T)
       }
@@ -2565,26 +2502,25 @@ KtCallExpression(1505,1545): 'testRegularIntersection(InheritorObject)'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.String
-          symbol = /testRegularIntersection(instance: T): kotlin.String
-          valueParameters = [
-            KaVariableSignature:
-              name = instance
-              receiverType = null
-              returnType = ERROR CLASS: Cannot infer argument for type parameter T
-              symbol = instance: T
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /testRegularIntersection
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.String
+        symbol = /testRegularIntersection(instance: T): kotlin.String
+        valueParameters = [
+          KaVariableSignature:
+            name = instance
+            receiverType = null
+            returnType = ERROR CLASS: Cannot infer argument for type parameter T
+            symbol = instance: T
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /testRegularIntersection
       typeArgumentsMapping = {
         T -> (ERROR CLASS: Cannot infer argument for type parameter T)
       }
@@ -2603,26 +2539,25 @@ KtNameReferenceExpression(1505,1528): 'testRegularIntersection'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.String
-          symbol = /testRegularIntersection(instance: T): kotlin.String
-          valueParameters = [
-            KaVariableSignature:
-              name = instance
-              receiverType = null
-              returnType = ERROR CLASS: Cannot infer argument for type parameter T
-              symbol = instance: T
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /testRegularIntersection
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.String
+        symbol = /testRegularIntersection(instance: T): kotlin.String
+        valueParameters = [
+          KaVariableSignature:
+            name = instance
+            receiverType = null
+            returnType = ERROR CLASS: Cannot infer argument for type parameter T
+            symbol = instance: T
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /testRegularIntersection
       typeArgumentsMapping = {
         T -> (ERROR CLASS: Cannot infer argument for type parameter T)
       }

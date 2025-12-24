@@ -5,13 +5,11 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.resolution
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.resolution.KaCompoundOperation
-import org.jetbrains.kotlin.analysis.api.resolution.KaCompoundVariableAccessCall
-import org.jetbrains.kotlin.analysis.api.resolution.KaPartiallyAppliedVariableSymbol
-import org.jetbrains.kotlin.analysis.api.resolution.KaVariableAccessCall
+import org.jetbrains.kotlin.analysis.api.resolution.*
 import org.jetbrains.kotlin.analysis.api.symbols.KaVariableSymbol
 
 @KaImplementationDetail
@@ -23,11 +21,17 @@ class KaBaseCompoundVariableAccessCall(
 
     @Deprecated("Use 'variableCall' instead")
     override val variablePartiallyAppliedSymbol: KaPartiallyAppliedVariableSymbol<KaVariableSymbol>
-        get() = withValidityAssertion { backingVariableCall.partiallyAppliedSymbol }
+        get() = withValidityAssertion { backingVariableCall.asPartiallyAppliedSymbol }
 
     override val variableCall: KaVariableAccessCall
         get() = withValidityAssertion { backingVariableCall }
 
     override val compoundOperation: KaCompoundOperation
         get() = withValidityAssertion { backingCompoundOperation }
+
+    @KaExperimentalApi
+    override val calls: List<KaSingleCall<*, *>>
+        get() = withValidityAssertion {
+            listOf(backingVariableCall, backingCompoundOperation.operationCall)
+        }
 }

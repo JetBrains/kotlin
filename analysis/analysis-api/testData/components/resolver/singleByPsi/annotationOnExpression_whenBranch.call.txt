@@ -9,23 +9,22 @@ KtAnnotationEntry(54,78): '@Suppress("DEPRECATION")'
         contextParameters = []
         callableId = null)
     }
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      contextArguments = []
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = kotlin.Suppress
-        symbol = <constructor>(vararg names: kotlin.String): kotlin.Suppress
-        valueParameters = [
-          KaVariableSignature:
-            name = names
-            receiverType = null
-            returnType = kotlin.String
-            symbol = vararg names: kotlin.String
-            contextParameters = []
-            callableId = null
-        ]
-        contextParameters = []
-        callableId = null
+    contextArguments = []
+    dispatchReceiver = null
+    extensionReceiver = null
+    signature = KaFunctionSignature:
+      receiverType = null
+      returnType = kotlin.Suppress
+      symbol = <constructor>(vararg names: kotlin.String): kotlin.Suppress
+      valueParameters = [
+        KaVariableSignature:
+          name = names
+          receiverType = null
+          returnType = kotlin.String
+          symbol = vararg names: kotlin.String
+          contextParameters = []
+          callableId = null
+      ]
+      contextParameters = []
+      callableId = null
     typeArgumentsMapping = {}

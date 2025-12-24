@@ -82,26 +82,25 @@ KtCallExpression(140,146): 'foo(X)'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = b/foo(a: b.MyEnum): kotlin.Unit
-          valueParameters = [
-            KaVariableSignature:
-              name = a
-              receiverType = null
-              returnType = b.MyEnum
-              symbol = a: b.MyEnum
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = b/foo
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = b/foo(a: b.MyEnum): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = a
+            receiverType = null
+            returnType = b.MyEnum
+            symbol = a: b.MyEnum
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = b/foo
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -117,26 +116,25 @@ KtNameReferenceExpression(140,143): 'foo'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = b/foo(a: b.MyEnum): kotlin.Unit
-          valueParameters = [
-            KaVariableSignature:
-              name = a
-              receiverType = null
-              returnType = b.MyEnum
-              symbol = a: b.MyEnum
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = b/foo
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = b/foo(a: b.MyEnum): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = a
+            receiverType = null
+            returnType = b.MyEnum
+            symbol = a: b.MyEnum
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = b/foo
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -149,18 +147,17 @@ KtValueArgument(144,145): 'X'
 KtNameReferenceExpression(144,145): 'X'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = X
-          receiverType = null
-          returnType = b.MyEnum
-          symbol = val X: b.MyEnum
-          contextParameters = []
-          callableId = a1/X
+      signature = KaVariableSignature:
+        name = X
+        receiverType = null
+        returnType = b.MyEnum
+        symbol = val X: b.MyEnum
+        contextParameters = []
+        callableId = a1/X
       simpleAccess = Read
       typeArgumentsMapping = {}
     diagnostic = ERROR<NONE_APPLICABLE: None of the following functions can be called with the arguments supplied: 
@@ -170,18 +167,17 @@ KtNameReferenceExpression(144,145): 'X'
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = X
-          receiverType = null
-          returnType = b.MyEnum
-          symbol = val X: b.MyEnum
-          contextParameters = []
-          callableId = a2/X
+      signature = KaVariableSignature:
+        name = X
+        receiverType = null
+        returnType = b.MyEnum
+        symbol = val X: b.MyEnum
+        contextParameters = []
+        callableId = a2/X
       simpleAccess = Read
       typeArgumentsMapping = {}
     diagnostic = ERROR<NONE_APPLICABLE: None of the following functions can be called with the arguments supplied: 
@@ -201,26 +197,25 @@ KtCallExpression(151,157): 'foo(Y)'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = b/foo(a: b.MyEnum): kotlin.Unit
-          valueParameters = [
-            KaVariableSignature:
-              name = a
-              receiverType = null
-              returnType = b.MyEnum
-              symbol = a: b.MyEnum
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = b/foo
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = b/foo(a: b.MyEnum): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = a
+            receiverType = null
+            returnType = b.MyEnum
+            symbol = a: b.MyEnum
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = b/foo
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -236,26 +231,25 @@ KtNameReferenceExpression(151,154): 'foo'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = b/foo(a: b.MyEnum): kotlin.Unit
-          valueParameters = [
-            KaVariableSignature:
-              name = a
-              receiverType = null
-              returnType = b.MyEnum
-              symbol = a: b.MyEnum
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = b/foo
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = b/foo(a: b.MyEnum): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = a
+            receiverType = null
+            returnType = b.MyEnum
+            symbol = a: b.MyEnum
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = b/foo
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -268,18 +262,17 @@ KtValueArgument(155,156): 'Y'
 KtNameReferenceExpression(155,156): 'Y'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = Y
-          receiverType = null
-          returnType = kotlin.String
-          symbol = val Y: kotlin.String
-          contextParameters = []
-          callableId = a1/Y
+      signature = KaVariableSignature:
+        name = Y
+        receiverType = null
+        returnType = kotlin.String
+        symbol = val Y: kotlin.String
+        contextParameters = []
+        callableId = a1/Y
       simpleAccess = Read
       typeArgumentsMapping = {}
     diagnostic = ERROR<NONE_APPLICABLE: None of the following functions can be called with the arguments supplied: 
@@ -289,18 +282,17 @@ KtNameReferenceExpression(155,156): 'Y'
 
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = Y
-          receiverType = null
-          returnType = kotlin.String
-          symbol = val Y: kotlin.String
-          contextParameters = []
-          callableId = a2/Y
+      signature = KaVariableSignature:
+        name = Y
+        receiverType = null
+        returnType = kotlin.String
+        symbol = val Y: kotlin.String
+        contextParameters = []
+        callableId = a2/Y
       simpleAccess = Read
       typeArgumentsMapping = {}
     diagnostic = ERROR<NONE_APPLICABLE: None of the following functions can be called with the arguments supplied: 
@@ -320,26 +312,25 @@ KtCallExpression(162,168): 'foo(Z)'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = b/foo(a: b.MyEnum): kotlin.Unit
-          valueParameters = [
-            KaVariableSignature:
-              name = a
-              receiverType = null
-              returnType = b.MyEnum
-              symbol = a: b.MyEnum
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = b/foo
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = b/foo(a: b.MyEnum): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = a
+            receiverType = null
+            returnType = b.MyEnum
+            symbol = a: b.MyEnum
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = b/foo
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -355,26 +346,25 @@ KtNameReferenceExpression(162,165): 'foo'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = b/foo(a: b.MyEnum): kotlin.Unit
-          valueParameters = [
-            KaVariableSignature:
-              name = a
-              receiverType = null
-              returnType = b.MyEnum
-              symbol = a: b.MyEnum
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = b/foo
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = b/foo(a: b.MyEnum): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = a
+            receiverType = null
+            returnType = b.MyEnum
+            symbol = a: b.MyEnum
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = b/foo
       typeArgumentsMapping = {}
     isInBestCandidates = true
 

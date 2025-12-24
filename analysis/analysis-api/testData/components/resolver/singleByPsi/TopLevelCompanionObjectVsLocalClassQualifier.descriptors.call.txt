@@ -2,16 +2,15 @@ KtNameReferenceExpression(92,100): 'Conflict'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = test.Conflict
-          symbol = <constructor>(): test.Conflict
-          valueParameters = []
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = test.Conflict
+        symbol = <constructor>(): test.Conflict
+        valueParameters = []
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}

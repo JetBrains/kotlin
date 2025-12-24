@@ -125,18 +125,17 @@ KtSuperTypeCallEntry(186,195): 'Base<C>()'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = one.two.Base<C>
-          symbol = <constructor>(): one.two.Base<B>
-          valueParameters = []
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = one.two.Base<C>
+        symbol = <constructor>(): one.two.Base<B>
+        valueParameters = []
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {
         B -> (C)
       }
@@ -146,18 +145,17 @@ KtConstructorCalleeExpression(186,193): 'Base<C>'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = one.two.Base<C>
-          symbol = <constructor>(): one.two.Base<B>
-          valueParameters = []
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = one.two.Base<C>
+        symbol = <constructor>(): one.two.Base<B>
+        valueParameters = []
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {
         B -> (C)
       }
@@ -344,18 +342,17 @@ KtCallExpression(392,405): 'NestedClass()'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = one.two.Base.NestedClass
-          symbol = <constructor>(): one.two.Base.NestedClass
-          valueParameters = []
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = one.two.Base.NestedClass
+        symbol = <constructor>(): one.two.Base.NestedClass
+        valueParameters = []
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -363,18 +360,17 @@ KtNameReferenceExpression(392,403): 'NestedClass'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = one.two.Base.NestedClass
-          symbol = <constructor>(): one.two.Base.NestedClass
-          valueParameters = []
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = one.two.Base.NestedClass
+        symbol = <constructor>(): one.two.Base.NestedClass
+        valueParameters = []
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -388,39 +384,37 @@ KtDotQualifiedExpression(422,432): 'c1.Inner()'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = c1
+        isSafeNavigation = false
+        type = one.two.Child<one.two.Base.NestedClass>
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = c1
-          isSafeNavigation = false
-          type = one.two.Child<one.two.Base.NestedClass>
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = one.two.Base.Inner<B>
-          symbol = <constructor>(<dispatch receiver>: one.two.Base<B>): one.two.Base.Inner<B>
-          valueParameters = []
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = one.two.Base.Inner<B>
+        symbol = <constructor>(<dispatch receiver>: one.two.Base<B>): one.two.Base.Inner<B>
+        valueParameters = []
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(422,424): 'c1'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = c1
-          receiverType = null
-          returnType = one.two.Child<one.two.Base.NestedClass>
-          symbol = c1: one.two.Child<one.two.Base.NestedClass>
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = c1
+        receiverType = null
+        returnType = one.two.Child<one.two.Base.NestedClass>
+        symbol = c1: one.two.Child<one.two.Base.NestedClass>
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -429,21 +423,20 @@ KtCallExpression(425,432): 'Inner()'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = c1
+        isSafeNavigation = false
+        type = one.two.Child<one.two.Base.NestedClass>
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = c1
-          isSafeNavigation = false
-          type = one.two.Child<one.two.Base.NestedClass>
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = one.two.Base.Inner<B>
-          symbol = <constructor>(<dispatch receiver>: one.two.Base<B>): one.two.Base.Inner<B>
-          valueParameters = []
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = one.two.Base.Inner<B>
+        symbol = <constructor>(<dispatch receiver>: one.two.Base<B>): one.two.Base.Inner<B>
+        valueParameters = []
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -451,21 +444,20 @@ KtNameReferenceExpression(425,430): 'Inner'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = c1
+        isSafeNavigation = false
+        type = one.two.Child<one.two.Base.NestedClass>
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = c1
-          isSafeNavigation = false
-          type = one.two.Child<one.two.Base.NestedClass>
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = one.two.Base.Inner<B>
-          symbol = <constructor>(<dispatch receiver>: one.two.Base<B>): one.two.Base.Inner<B>
-          valueParameters = []
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = one.two.Base.Inner<B>
+        symbol = <constructor>(<dispatch receiver>: one.two.Base<B>): one.two.Base.Inner<B>
+        valueParameters = []
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
 

@@ -76,18 +76,17 @@ KtWhenExpression(187,325): 'when(s) {'
 KtNameReferenceExpression(192,193): 's'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = s
-          receiverType = null
-          returnType = Simple
-          symbol = s: Simple
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = s
+        receiverType = null
+        returnType = Simple
+        symbol = s: Simple
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
 

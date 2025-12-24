@@ -1,19 +1,18 @@
 KtCallableReferenceExpression(87,95): 'obj::foo'
   KaSimpleVariableAccessCall:
+    contextArguments = []
+    dispatchReceiver = KaExplicitReceiverValue:
+      expression = obj
+      isSafeNavigation = false
+      type = Foo
+    extensionReceiver = null
     isContextSensitive = false
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      contextArguments = []
-      dispatchReceiver = KaExplicitReceiverValue:
-        expression = obj
-        isSafeNavigation = false
-        type = Foo
-      extensionReceiver = null
-      signature = KaVariableSignature:
-        name = foo
-        receiverType = null
-        returnType = kotlin.String
-        symbol = val foo: kotlin.String
-        contextParameters = []
-        callableId = /Foo.foo
+    signature = KaVariableSignature:
+      name = foo
+      receiverType = null
+      returnType = kotlin.String
+      symbol = val foo: kotlin.String
+      contextParameters = []
+      callableId = /Foo.foo
     simpleAccess = Read
     typeArgumentsMapping = {}

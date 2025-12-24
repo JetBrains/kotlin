@@ -37,11 +37,27 @@ KtSuperTypeList(166,175): 'MyClass()'
 KtSuperTypeCallEntry(166,175): 'MyClass()'
   KaDelegatedConstructorCall:
     argumentMapping = {}
+    contextArguments = []
+    dispatchReceiver = null
+    extensionReceiver = null
     kind = SUPER_CALL
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+    signature = KaFunctionSignature:
+      receiverType = null
+      returnType = MyClass
+      symbol = <constructor>(): MyClass
+      valueParameters = []
+      contextParameters = []
+      callableId = null
+    typeArgumentsMapping = {}
+
+KtConstructorCalleeExpression(166,173): 'MyClass'
+  KaSuccessCallInfo:
+    call = KaDelegatedConstructorCall:
+      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
+      kind = SUPER_CALL
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MyClass
@@ -49,24 +65,6 @@ KtSuperTypeCallEntry(166,175): 'MyClass()'
         valueParameters = []
         contextParameters = []
         callableId = null
-    typeArgumentsMapping = {}
-
-KtConstructorCalleeExpression(166,173): 'MyClass'
-  KaSuccessCallInfo:
-    call = KaDelegatedConstructorCall:
-      argumentMapping = {}
-      kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = MyClass
-          symbol = <constructor>(): MyClass
-          valueParameters = []
-          contextParameters = []
-          callableId = null
       typeArgumentsMapping = {}
 
 KtTypeReference(166,173): 'MyClass'
@@ -108,11 +106,27 @@ KtNameReferenceExpression(220,227): 'MyClass'
 KtCallExpression(230,236): 'TODO()'
   KaSimpleFunctionCall:
     argumentMapping = {}
+    contextArguments = []
+    dispatchReceiver = null
+    extensionReceiver = null
     isImplicitInvoke = false
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+    signature = KaFunctionSignature:
+      receiverType = null
+      returnType = kotlin.Nothing
+      symbol = kotlin/TODO(): kotlin.Nothing
+      valueParameters = []
+      contextParameters = []
+      callableId = kotlin/TODO
+    typeArgumentsMapping = {}
+
+KtNameReferenceExpression(230,234): 'TODO'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
+      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Nothing
@@ -120,24 +134,6 @@ KtCallExpression(230,236): 'TODO()'
         valueParameters = []
         contextParameters = []
         callableId = kotlin/TODO
-    typeArgumentsMapping = {}
-
-KtNameReferenceExpression(230,234): 'TODO'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {}
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Nothing
-          symbol = kotlin/TODO(): kotlin.Nothing
-          valueParameters = []
-          contextParameters = []
-          callableId = kotlin/TODO
       typeArgumentsMapping = {}
 
 KtValueArgumentList(234,236): '()'
@@ -164,21 +160,20 @@ KtNameReferenceExpression(282,288): 'MyEnum'
 KtNameReferenceExpression(291,301): 'EnumValue1'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = EnumValue1
+        isSafeNavigation = false
+        type = kotlin.Unit
+      extensionReceiver = null
       isContextSensitive = true
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = EnumValue1
-          isSafeNavigation = false
-          type = kotlin.Unit
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = EnumValue1
-          receiverType = null
-          returnType = MyEnum
-          symbol = /MyEnum.EnumValue1
-          contextParameters = []
-          callableId = /MyEnum.EnumValue1
+      signature = KaVariableSignature:
+        name = EnumValue1
+        receiverType = null
+        returnType = MyEnum
+        symbol = /MyEnum.EnumValue1
+        contextParameters = []
+        callableId = /MyEnum.EnumValue1
       simpleAccess = Read
       typeArgumentsMapping = {}
 

@@ -11,26 +11,25 @@ KtCallExpression(43,66): 'generic<Int, String>(5)'
             contextParameters = []
             callableId = null)
         }
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
         isImplicitInvoke = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = null
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = kotlin.Unit
-            symbol = /generic(a: A): kotlin.Unit
-            valueParameters = [
-              KaVariableSignature:
-                name = a
-                receiverType = null
-                returnType = kotlin.Int
-                symbol = a: A
-                contextParameters = []
-                callableId = null
-            ]
-            contextParameters = []
-            callableId = /generic
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /generic(a: A): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = a
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = a: A
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /generic
         typeArgumentsMapping = {
           A -> (kotlin.Int)
         }

@@ -24,43 +24,42 @@ KtArrayAccessExpression(93,110): 'c[1, "foo", 3.14]'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = c
+        isSafeNavigation = false
+        type = C
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = c
-          isSafeNavigation = false
-          type = C
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = /C.set(<dispatch receiver>: C, a: kotlin.Int, b: kotlin.String, value: kotlin.Boolean): kotlin.Unit
-          valueParameters = [
-            KaVariableSignature:
-              name = a
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = a: kotlin.Int
-              contextParameters = []
-              callableId = null,
-            KaVariableSignature:
-              name = b
-              receiverType = null
-              returnType = kotlin.String
-              symbol = b: kotlin.String
-              contextParameters = []
-              callableId = null,
-            KaVariableSignature:
-              name = value
-              receiverType = null
-              returnType = kotlin.Boolean
-              symbol = value: kotlin.Boolean
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /C.set
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /C.set(<dispatch receiver>: C, a: kotlin.Int, b: kotlin.String, value: kotlin.Boolean): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = a
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = a: kotlin.Int
+            contextParameters = []
+            callableId = null,
+          KaVariableSignature:
+            name = b
+            receiverType = null
+            returnType = kotlin.String
+            symbol = b: kotlin.String
+            contextParameters = []
+            callableId = null,
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.Boolean
+            symbol = value: kotlin.Boolean
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /C.set
       typeArgumentsMapping = {}
     diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for 'fun set(a: Int, b: String, value: Boolean): Unit'.>
     isInBestCandidates = true

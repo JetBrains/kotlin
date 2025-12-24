@@ -37,11 +37,27 @@ KtSuperTypeList(189,199): 'MySealed()'
 KtSuperTypeCallEntry(189,199): 'MySealed()'
   KaDelegatedConstructorCall:
     argumentMapping = {}
+    contextArguments = []
+    dispatchReceiver = null
+    extensionReceiver = null
     kind = SUPER_CALL
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+    signature = KaFunctionSignature:
+      receiverType = null
+      returnType = MySealed
+      symbol = <constructor>(): MySealed
+      valueParameters = []
+      contextParameters = []
+      callableId = null
+    typeArgumentsMapping = {}
+
+KtConstructorCalleeExpression(189,197): 'MySealed'
+  KaSuccessCallInfo:
+    call = KaDelegatedConstructorCall:
+      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
+      kind = SUPER_CALL
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MySealed
@@ -49,24 +65,6 @@ KtSuperTypeCallEntry(189,199): 'MySealed()'
         valueParameters = []
         contextParameters = []
         callableId = null
-    typeArgumentsMapping = {}
-
-KtConstructorCalleeExpression(189,197): 'MySealed'
-  KaSuccessCallInfo:
-    call = KaDelegatedConstructorCall:
-      argumentMapping = {}
-      kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = MySealed
-          symbol = <constructor>(): MySealed
-          valueParameters = []
-          contextParameters = []
-          callableId = null
       typeArgumentsMapping = {}
 
 KtTypeReference(189,197): 'MySealed'
@@ -79,18 +77,17 @@ KtNameReferenceExpression(189,197): 'MySealed'
   KaSuccessCallInfo:
     call = KaDelegatedConstructorCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = MySealed
-          symbol = <constructor>(): MySealed
-          valueParameters = []
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MySealed
+        symbol = <constructor>(): MySealed
+        valueParameters = []
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
 
 KtValueArgumentList(197,199): '()'
@@ -184,33 +181,32 @@ KtCallExpression(299,350): 'with<MyEnum, Unit>(EnumValue1){'
             contextParameters = []
             callableId = null)
         }
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
         isImplicitInvoke = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = null
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = kotlin.Unit
-            symbol = kotlin/with(receiver: T, block: kotlin.Function1<T, R>): R
-            valueParameters = [
-              KaVariableSignature:
-                name = receiver
-                receiverType = null
-                returnType = MyEnum
-                symbol = receiver: T
-                contextParameters = []
-                callableId = null,
-              KaVariableSignature:
-                name = block
-                receiverType = null
-                returnType = kotlin.Function1<MyEnum, kotlin.Unit>
-                symbol = block: kotlin.Function1<T, R>
-                contextParameters = []
-                callableId = null
-            ]
-            contextParameters = []
-            callableId = kotlin/with
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = kotlin/with(receiver: T, block: kotlin.Function1<T, R>): R
+          valueParameters = [
+            KaVariableSignature:
+              name = receiver
+              receiverType = null
+              returnType = MyEnum
+              symbol = receiver: T
+              contextParameters = []
+              callableId = null,
+            KaVariableSignature:
+              name = block
+              receiverType = null
+              returnType = kotlin.Function1<MyEnum, kotlin.Unit>
+              symbol = block: kotlin.Function1<T, R>
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/with
         typeArgumentsMapping = {
           T -> (MyEnum),
           R -> (kotlin.Unit)
@@ -240,33 +236,32 @@ KtNameReferenceExpression(299,303): 'with'
             contextParameters = []
             callableId = null)
         }
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
         isImplicitInvoke = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = null
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = kotlin.Unit
-            symbol = kotlin/with(receiver: T, block: kotlin.Function1<T, R>): R
-            valueParameters = [
-              KaVariableSignature:
-                name = receiver
-                receiverType = null
-                returnType = MyEnum
-                symbol = receiver: T
-                contextParameters = []
-                callableId = null,
-              KaVariableSignature:
-                name = block
-                receiverType = null
-                returnType = kotlin.Function1<MyEnum, kotlin.Unit>
-                symbol = block: kotlin.Function1<T, R>
-                contextParameters = []
-                callableId = null
-            ]
-            contextParameters = []
-            callableId = kotlin/with
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = kotlin/with(receiver: T, block: kotlin.Function1<T, R>): R
+          valueParameters = [
+            KaVariableSignature:
+              name = receiver
+              receiverType = null
+              returnType = MyEnum
+              symbol = receiver: T
+              contextParameters = []
+              callableId = null,
+            KaVariableSignature:
+              name = block
+              receiverType = null
+              returnType = kotlin.Function1<MyEnum, kotlin.Unit>
+              symbol = block: kotlin.Function1<T, R>
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/with
         typeArgumentsMapping = {
           T -> (MyEnum),
           R -> (kotlin.Unit)
@@ -329,33 +324,31 @@ KtCallExpression(339,344): 'foo()'
     candidateCalls = [
       KaSimpleFunctionCall:
         argumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
         isImplicitInvoke = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = null
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = kotlin.Unit
-            symbol = /foo(): kotlin.Unit
-            valueParameters = []
-            contextParameters = []
-            callableId = /foo
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /foo(): kotlin.Unit
+          valueParameters = []
+          contextParameters = []
+          callableId = /foo
         typeArgumentsMapping = {},
       KaSimpleFunctionCall:
         argumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
         isImplicitInvoke = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = null
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = kotlin.Unit
-            symbol = /foo(): kotlin.Unit
-            valueParameters = []
-            contextParameters = []
-            callableId = /foo
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /foo(): kotlin.Unit
+          valueParameters = []
+          contextParameters = []
+          callableId = /foo
         typeArgumentsMapping = {}
     ]
     diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity: 
@@ -367,33 +360,31 @@ KtNameReferenceExpression(339,342): 'foo'
     candidateCalls = [
       KaSimpleFunctionCall:
         argumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
         isImplicitInvoke = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = null
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = kotlin.Unit
-            symbol = /foo(): kotlin.Unit
-            valueParameters = []
-            contextParameters = []
-            callableId = /foo
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /foo(): kotlin.Unit
+          valueParameters = []
+          contextParameters = []
+          callableId = /foo
         typeArgumentsMapping = {},
       KaSimpleFunctionCall:
         argumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
         isImplicitInvoke = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = null
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = kotlin.Unit
-            symbol = /foo(): kotlin.Unit
-            valueParameters = []
-            contextParameters = []
-            callableId = /foo
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /foo(): kotlin.Unit
+          valueParameters = []
+          contextParameters = []
+          callableId = /foo
         typeArgumentsMapping = {}
     ]
     diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity: 
@@ -425,33 +416,32 @@ KtCallExpression(356,414): 'with<MySealed, Unit>(InheritorObject){'
             contextParameters = []
             callableId = null)
         }
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
         isImplicitInvoke = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = null
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = kotlin.Unit
-            symbol = kotlin/with(receiver: T, block: kotlin.Function1<T, R>): R
-            valueParameters = [
-              KaVariableSignature:
-                name = receiver
-                receiverType = null
-                returnType = MySealed
-                symbol = receiver: T
-                contextParameters = []
-                callableId = null,
-              KaVariableSignature:
-                name = block
-                receiverType = null
-                returnType = kotlin.Function1<MySealed, kotlin.Unit>
-                symbol = block: kotlin.Function1<T, R>
-                contextParameters = []
-                callableId = null
-            ]
-            contextParameters = []
-            callableId = kotlin/with
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = kotlin/with(receiver: T, block: kotlin.Function1<T, R>): R
+          valueParameters = [
+            KaVariableSignature:
+              name = receiver
+              receiverType = null
+              returnType = MySealed
+              symbol = receiver: T
+              contextParameters = []
+              callableId = null,
+            KaVariableSignature:
+              name = block
+              receiverType = null
+              returnType = kotlin.Function1<MySealed, kotlin.Unit>
+              symbol = block: kotlin.Function1<T, R>
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/with
         typeArgumentsMapping = {
           T -> (MySealed),
           R -> (kotlin.Unit)
@@ -481,33 +471,32 @@ KtNameReferenceExpression(356,360): 'with'
             contextParameters = []
             callableId = null)
         }
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
         isImplicitInvoke = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = null
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = kotlin.Unit
-            symbol = kotlin/with(receiver: T, block: kotlin.Function1<T, R>): R
-            valueParameters = [
-              KaVariableSignature:
-                name = receiver
-                receiverType = null
-                returnType = MySealed
-                symbol = receiver: T
-                contextParameters = []
-                callableId = null,
-              KaVariableSignature:
-                name = block
-                receiverType = null
-                returnType = kotlin.Function1<MySealed, kotlin.Unit>
-                symbol = block: kotlin.Function1<T, R>
-                contextParameters = []
-                callableId = null
-            ]
-            contextParameters = []
-            callableId = kotlin/with
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = kotlin/with(receiver: T, block: kotlin.Function1<T, R>): R
+          valueParameters = [
+            KaVariableSignature:
+              name = receiver
+              receiverType = null
+              returnType = MySealed
+              symbol = receiver: T
+              contextParameters = []
+              callableId = null,
+            KaVariableSignature:
+              name = block
+              receiverType = null
+              returnType = kotlin.Function1<MySealed, kotlin.Unit>
+              symbol = block: kotlin.Function1<T, R>
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/with
         typeArgumentsMapping = {
           T -> (MySealed),
           R -> (kotlin.Unit)
@@ -570,33 +559,31 @@ KtCallExpression(403,408): 'foo()'
     candidateCalls = [
       KaSimpleFunctionCall:
         argumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
         isImplicitInvoke = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = null
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = kotlin.Unit
-            symbol = /foo(): kotlin.Unit
-            valueParameters = []
-            contextParameters = []
-            callableId = /foo
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /foo(): kotlin.Unit
+          valueParameters = []
+          contextParameters = []
+          callableId = /foo
         typeArgumentsMapping = {},
       KaSimpleFunctionCall:
         argumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
         isImplicitInvoke = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = null
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = kotlin.Unit
-            symbol = /foo(): kotlin.Unit
-            valueParameters = []
-            contextParameters = []
-            callableId = /foo
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /foo(): kotlin.Unit
+          valueParameters = []
+          contextParameters = []
+          callableId = /foo
         typeArgumentsMapping = {}
     ]
     diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity: 
@@ -608,33 +595,31 @@ KtNameReferenceExpression(403,406): 'foo'
     candidateCalls = [
       KaSimpleFunctionCall:
         argumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
         isImplicitInvoke = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = null
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = kotlin.Unit
-            symbol = /foo(): kotlin.Unit
-            valueParameters = []
-            contextParameters = []
-            callableId = /foo
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /foo(): kotlin.Unit
+          valueParameters = []
+          contextParameters = []
+          callableId = /foo
         typeArgumentsMapping = {},
       KaSimpleFunctionCall:
         argumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
         isImplicitInvoke = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = null
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = kotlin.Unit
-            symbol = /foo(): kotlin.Unit
-            valueParameters = []
-            contextParameters = []
-            callableId = /foo
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /foo(): kotlin.Unit
+          valueParameters = []
+          contextParameters = []
+          callableId = /foo
         typeArgumentsMapping = {}
     ]
     diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity: 
@@ -723,33 +708,32 @@ KtCallExpression(507,558): 'with<MyEnum, Unit>(EnumValue1) {'
             contextParameters = []
             callableId = null)
         }
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
         isImplicitInvoke = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = null
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = kotlin.Unit
-            symbol = kotlin/with(receiver: T, block: kotlin.Function1<T, R>): R
-            valueParameters = [
-              KaVariableSignature:
-                name = receiver
-                receiverType = null
-                returnType = MyEnum
-                symbol = receiver: T
-                contextParameters = []
-                callableId = null,
-              KaVariableSignature:
-                name = block
-                receiverType = null
-                returnType = kotlin.Function1<MyEnum, kotlin.Unit>
-                symbol = block: kotlin.Function1<T, R>
-                contextParameters = []
-                callableId = null
-            ]
-            contextParameters = []
-            callableId = kotlin/with
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = kotlin/with(receiver: T, block: kotlin.Function1<T, R>): R
+          valueParameters = [
+            KaVariableSignature:
+              name = receiver
+              receiverType = null
+              returnType = MyEnum
+              symbol = receiver: T
+              contextParameters = []
+              callableId = null,
+            KaVariableSignature:
+              name = block
+              receiverType = null
+              returnType = kotlin.Function1<MyEnum, kotlin.Unit>
+              symbol = block: kotlin.Function1<T, R>
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/with
         typeArgumentsMapping = {
           T -> (MyEnum),
           R -> (kotlin.Unit)
@@ -779,33 +763,32 @@ KtNameReferenceExpression(507,511): 'with'
             contextParameters = []
             callableId = null)
         }
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
         isImplicitInvoke = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = null
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = kotlin.Unit
-            symbol = kotlin/with(receiver: T, block: kotlin.Function1<T, R>): R
-            valueParameters = [
-              KaVariableSignature:
-                name = receiver
-                receiverType = null
-                returnType = MyEnum
-                symbol = receiver: T
-                contextParameters = []
-                callableId = null,
-              KaVariableSignature:
-                name = block
-                receiverType = null
-                returnType = kotlin.Function1<MyEnum, kotlin.Unit>
-                symbol = block: kotlin.Function1<T, R>
-                contextParameters = []
-                callableId = null
-            ]
-            contextParameters = []
-            callableId = kotlin/with
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = kotlin/with(receiver: T, block: kotlin.Function1<T, R>): R
+          valueParameters = [
+            KaVariableSignature:
+              name = receiver
+              receiverType = null
+              returnType = MyEnum
+              symbol = receiver: T
+              contextParameters = []
+              callableId = null,
+            KaVariableSignature:
+              name = block
+              receiverType = null
+              returnType = kotlin.Function1<MyEnum, kotlin.Unit>
+              symbol = block: kotlin.Function1<T, R>
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/with
         typeArgumentsMapping = {
           T -> (MyEnum),
           R -> (kotlin.Unit)
@@ -866,21 +849,20 @@ KtBlockExpression(548,552): '"".a'
 KtDotQualifiedExpression(548,552): '"".a'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = ""
+        isSafeNavigation = false
+        type = kotlin.String
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = KaExplicitReceiverValue:
-          expression = ""
-          isSafeNavigation = false
-          type = kotlin.String
-        signature = KaVariableSignature:
-          name = a
-          receiverType = kotlin.String
-          returnType = kotlin.String
-          symbol = val a: kotlin.String
-          contextParameters = []
-          callableId = /a
+      signature = KaVariableSignature:
+        name = a
+        receiverType = kotlin.String
+        returnType = kotlin.String
+        symbol = val a: kotlin.String
+        contextParameters = []
+        callableId = /a
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -890,20 +872,19 @@ KtStringTemplateExpression(548,550): '""'
 KtNameReferenceExpression(551,552): 'a'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = ""
+        isSafeNavigation = false
+        type = kotlin.String
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = KaExplicitReceiverValue:
-          expression = ""
-          isSafeNavigation = false
-          type = kotlin.String
-        signature = KaVariableSignature:
-          name = a
-          receiverType = kotlin.String
-          returnType = kotlin.String
-          symbol = val a: kotlin.String
-          contextParameters = []
-          callableId = /a
+      signature = KaVariableSignature:
+        name = a
+        receiverType = kotlin.String
+        returnType = kotlin.String
+        symbol = val a: kotlin.String
+        contextParameters = []
+        callableId = /a
       simpleAccess = Read
       typeArgumentsMapping = {}

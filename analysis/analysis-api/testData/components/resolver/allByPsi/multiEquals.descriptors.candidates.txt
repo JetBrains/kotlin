@@ -230,18 +230,17 @@ KtSuperTypeCallEntry(388,405): 'ItemCallback<T>()'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = ItemCallback<T>
-          symbol = <constructor>(): ItemCallback<T>
-          valueParameters = []
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = ItemCallback<T>
+        symbol = <constructor>(): ItemCallback<T>
+        valueParameters = []
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -249,18 +248,17 @@ KtConstructorCalleeExpression(388,403): 'ItemCallback<T>'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = ItemCallback<T>
-          symbol = <constructor>(): ItemCallback<T>
-          valueParameters = []
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = ItemCallback<T>
+        symbol = <constructor>(): ItemCallback<T>
+        valueParameters = []
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -274,18 +272,17 @@ KtNameReferenceExpression(388,400): 'ItemCallback'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = ItemCallback<T>
-          symbol = <constructor>(): ItemCallback<T>
-          valueParameters = []
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = ItemCallback<T>
+        symbol = <constructor>(): ItemCallback<T>
+        valueParameters = []
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -364,47 +361,45 @@ KtBinaryExpression(479,497): 'oldItem == newItem'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = oldItem
+        isSafeNavigation = false
+        type = T
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = oldItem
-          isSafeNavigation = false
-          type = T
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Boolean
-          symbol = /InterfaceWithEquals.equals(<dispatch receiver>: InterfaceWithEquals, other: kotlin.Any?): kotlin.Boolean
-          valueParameters = [
-            KaVariableSignature:
-              name = other
-              receiverType = null
-              returnType = kotlin.Any?
-              symbol = other: kotlin.Any?
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /InterfaceWithEquals.equals
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Boolean
+        symbol = /InterfaceWithEquals.equals(<dispatch receiver>: InterfaceWithEquals, other: kotlin.Any?): kotlin.Boolean
+        valueParameters = [
+          KaVariableSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.Any?
+            symbol = other: kotlin.Any?
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /InterfaceWithEquals.equals
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(479,486): 'oldItem'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = oldItem
-          receiverType = null
-          returnType = T
-          symbol = oldItem: T
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = oldItem
+        receiverType = null
+        returnType = T
+        symbol = oldItem: T
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -421,47 +416,45 @@ KtOperationReferenceExpression(487,489): '=='
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = oldItem
+        isSafeNavigation = false
+        type = T
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = oldItem
-          isSafeNavigation = false
-          type = T
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Boolean
-          symbol = /InterfaceWithEquals.equals(<dispatch receiver>: InterfaceWithEquals, other: kotlin.Any?): kotlin.Boolean
-          valueParameters = [
-            KaVariableSignature:
-              name = other
-              receiverType = null
-              returnType = kotlin.Any?
-              symbol = other: kotlin.Any?
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /InterfaceWithEquals.equals
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Boolean
+        symbol = /InterfaceWithEquals.equals(<dispatch receiver>: InterfaceWithEquals, other: kotlin.Any?): kotlin.Boolean
+        valueParameters = [
+          KaVariableSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.Any?
+            symbol = other: kotlin.Any?
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /InterfaceWithEquals.equals
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(490,497): 'newItem'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = newItem
-          receiverType = null
-          returnType = T
-          symbol = newItem: T
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = newItem
+        receiverType = null
+        returnType = T
+        symbol = newItem: T
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -551,18 +544,17 @@ KtSuperTypeCallEntry(615,632): 'ItemCallback<T>()'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = ItemCallback<T>
-          symbol = <constructor>(): ItemCallback<T>
-          valueParameters = []
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = ItemCallback<T>
+        symbol = <constructor>(): ItemCallback<T>
+        valueParameters = []
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -570,18 +562,17 @@ KtConstructorCalleeExpression(615,630): 'ItemCallback<T>'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = ItemCallback<T>
-          symbol = <constructor>(): ItemCallback<T>
-          valueParameters = []
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = ItemCallback<T>
+        symbol = <constructor>(): ItemCallback<T>
+        valueParameters = []
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -595,18 +586,17 @@ KtNameReferenceExpression(615,627): 'ItemCallback'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = ItemCallback<T>
-          symbol = <constructor>(): ItemCallback<T>
-          valueParameters = []
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = ItemCallback<T>
+        symbol = <constructor>(): ItemCallback<T>
+        valueParameters = []
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -685,47 +675,45 @@ KtBinaryExpression(706,724): 'oldItem == newItem'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = oldItem
+        isSafeNavigation = false
+        type = T
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = oldItem
-          isSafeNavigation = false
-          type = T
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Boolean
-          symbol = /MessagePreview.equals(<dispatch receiver>: MessagePreview, other: kotlin.Any?): kotlin.Boolean
-          valueParameters = [
-            KaVariableSignature:
-              name = other
-              receiverType = null
-              returnType = kotlin.Any?
-              symbol = other: kotlin.Any?
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /MessagePreview.equals
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Boolean
+        symbol = /MessagePreview.equals(<dispatch receiver>: MessagePreview, other: kotlin.Any?): kotlin.Boolean
+        valueParameters = [
+          KaVariableSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.Any?
+            symbol = other: kotlin.Any?
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /MessagePreview.equals
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(706,713): 'oldItem'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = oldItem
-          receiverType = null
-          returnType = T
-          symbol = oldItem: T
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = oldItem
+        receiverType = null
+        returnType = T
+        symbol = oldItem: T
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -742,47 +730,45 @@ KtOperationReferenceExpression(714,716): '=='
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = oldItem
+        isSafeNavigation = false
+        type = T
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = oldItem
-          isSafeNavigation = false
-          type = T
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Boolean
-          symbol = /MessagePreview.equals(<dispatch receiver>: MessagePreview, other: kotlin.Any?): kotlin.Boolean
-          valueParameters = [
-            KaVariableSignature:
-              name = other
-              receiverType = null
-              returnType = kotlin.Any?
-              symbol = other: kotlin.Any?
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /MessagePreview.equals
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Boolean
+        symbol = /MessagePreview.equals(<dispatch receiver>: MessagePreview, other: kotlin.Any?): kotlin.Boolean
+        valueParameters = [
+          KaVariableSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.Any?
+            symbol = other: kotlin.Any?
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /MessagePreview.equals
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(717,724): 'newItem'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = newItem
-          receiverType = null
-          returnType = T
-          symbol = newItem: T
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = newItem
+        receiverType = null
+        returnType = T
+        symbol = newItem: T
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -824,18 +810,17 @@ KtSuperTypeCallEntry(784,801): 'ItemCallback<T>()'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = ItemCallback<T>
-          symbol = <constructor>(): ItemCallback<T>
-          valueParameters = []
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = ItemCallback<T>
+        symbol = <constructor>(): ItemCallback<T>
+        valueParameters = []
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -843,18 +828,17 @@ KtConstructorCalleeExpression(784,799): 'ItemCallback<T>'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = ItemCallback<T>
-          symbol = <constructor>(): ItemCallback<T>
-          valueParameters = []
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = ItemCallback<T>
+        symbol = <constructor>(): ItemCallback<T>
+        valueParameters = []
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -868,18 +852,17 @@ KtNameReferenceExpression(784,796): 'ItemCallback'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = ItemCallback<T>
-          symbol = <constructor>(): ItemCallback<T>
-          valueParameters = []
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = ItemCallback<T>
+        symbol = <constructor>(): ItemCallback<T>
+        valueParameters = []
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -958,47 +941,45 @@ KtBinaryExpression(875,893): 'oldItem == newItem'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = oldItem
+        isSafeNavigation = false
+        type = T
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = oldItem
-          isSafeNavigation = false
-          type = T
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Boolean
-          symbol = /MessagePreview.equals(<dispatch receiver>: MessagePreview, other: kotlin.Any?): kotlin.Boolean
-          valueParameters = [
-            KaVariableSignature:
-              name = other
-              receiverType = null
-              returnType = kotlin.Any?
-              symbol = other: kotlin.Any?
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /MessagePreview.equals
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Boolean
+        symbol = /MessagePreview.equals(<dispatch receiver>: MessagePreview, other: kotlin.Any?): kotlin.Boolean
+        valueParameters = [
+          KaVariableSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.Any?
+            symbol = other: kotlin.Any?
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /MessagePreview.equals
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(875,882): 'oldItem'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = oldItem
-          receiverType = null
-          returnType = T
-          symbol = oldItem: T
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = oldItem
+        receiverType = null
+        returnType = T
+        symbol = oldItem: T
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1015,47 +996,45 @@ KtOperationReferenceExpression(883,885): '=='
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = oldItem
+        isSafeNavigation = false
+        type = T
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = oldItem
-          isSafeNavigation = false
-          type = T
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Boolean
-          symbol = /MessagePreview.equals(<dispatch receiver>: MessagePreview, other: kotlin.Any?): kotlin.Boolean
-          valueParameters = [
-            KaVariableSignature:
-              name = other
-              receiverType = null
-              returnType = kotlin.Any?
-              symbol = other: kotlin.Any?
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /MessagePreview.equals
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Boolean
+        symbol = /MessagePreview.equals(<dispatch receiver>: MessagePreview, other: kotlin.Any?): kotlin.Boolean
+        valueParameters = [
+          KaVariableSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.Any?
+            symbol = other: kotlin.Any?
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /MessagePreview.equals
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(886,893): 'newItem'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = newItem
-          receiverType = null
-          returnType = T
-          symbol = newItem: T
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = newItem
+        receiverType = null
+        returnType = T
+        symbol = newItem: T
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1105,47 +1084,45 @@ KtBinaryExpression(956,962): 'i == m'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = i
+        isSafeNavigation = false
+        type = InterfaceWithEquals
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = i
-          isSafeNavigation = false
-          type = InterfaceWithEquals
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Boolean
-          symbol = /InterfaceWithEquals.equals(<dispatch receiver>: InterfaceWithEquals, other: kotlin.Any?): kotlin.Boolean
-          valueParameters = [
-            KaVariableSignature:
-              name = other
-              receiverType = null
-              returnType = kotlin.Any?
-              symbol = other: kotlin.Any?
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /InterfaceWithEquals.equals
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Boolean
+        symbol = /InterfaceWithEquals.equals(<dispatch receiver>: InterfaceWithEquals, other: kotlin.Any?): kotlin.Boolean
+        valueParameters = [
+          KaVariableSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.Any?
+            symbol = other: kotlin.Any?
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /InterfaceWithEquals.equals
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(956,957): 'i'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = i
-          receiverType = null
-          returnType = InterfaceWithEquals
-          symbol = i: InterfaceWithEquals
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = i
+        receiverType = null
+        returnType = InterfaceWithEquals
+        symbol = i: InterfaceWithEquals
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1162,47 +1139,45 @@ KtOperationReferenceExpression(958,960): '=='
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = i
+        isSafeNavigation = false
+        type = InterfaceWithEquals
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = i
-          isSafeNavigation = false
-          type = InterfaceWithEquals
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Boolean
-          symbol = /InterfaceWithEquals.equals(<dispatch receiver>: InterfaceWithEquals, other: kotlin.Any?): kotlin.Boolean
-          valueParameters = [
-            KaVariableSignature:
-              name = other
-              receiverType = null
-              returnType = kotlin.Any?
-              symbol = other: kotlin.Any?
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /InterfaceWithEquals.equals
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Boolean
+        symbol = /InterfaceWithEquals.equals(<dispatch receiver>: InterfaceWithEquals, other: kotlin.Any?): kotlin.Boolean
+        valueParameters = [
+          KaVariableSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.Any?
+            symbol = other: kotlin.Any?
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /InterfaceWithEquals.equals
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(961,962): 'm'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = m
-          receiverType = null
-          returnType = MessagePreview
-          symbol = m: MessagePreview
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = m
+        receiverType = null
+        returnType = MessagePreview
+        symbol = m: MessagePreview
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1219,47 +1194,45 @@ KtBinaryExpression(967,973): 'i != m'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = i
+        isSafeNavigation = false
+        type = InterfaceWithEquals
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = i
-          isSafeNavigation = false
-          type = InterfaceWithEquals
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Boolean
-          symbol = /InterfaceWithEquals.equals(<dispatch receiver>: InterfaceWithEquals, other: kotlin.Any?): kotlin.Boolean
-          valueParameters = [
-            KaVariableSignature:
-              name = other
-              receiverType = null
-              returnType = kotlin.Any?
-              symbol = other: kotlin.Any?
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /InterfaceWithEquals.equals
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Boolean
+        symbol = /InterfaceWithEquals.equals(<dispatch receiver>: InterfaceWithEquals, other: kotlin.Any?): kotlin.Boolean
+        valueParameters = [
+          KaVariableSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.Any?
+            symbol = other: kotlin.Any?
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /InterfaceWithEquals.equals
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(967,968): 'i'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = i
-          receiverType = null
-          returnType = InterfaceWithEquals
-          symbol = i: InterfaceWithEquals
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = i
+        receiverType = null
+        returnType = InterfaceWithEquals
+        symbol = i: InterfaceWithEquals
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1276,47 +1249,45 @@ KtOperationReferenceExpression(969,971): '!='
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = i
+        isSafeNavigation = false
+        type = InterfaceWithEquals
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = i
-          isSafeNavigation = false
-          type = InterfaceWithEquals
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Boolean
-          symbol = /InterfaceWithEquals.equals(<dispatch receiver>: InterfaceWithEquals, other: kotlin.Any?): kotlin.Boolean
-          valueParameters = [
-            KaVariableSignature:
-              name = other
-              receiverType = null
-              returnType = kotlin.Any?
-              symbol = other: kotlin.Any?
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /InterfaceWithEquals.equals
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Boolean
+        symbol = /InterfaceWithEquals.equals(<dispatch receiver>: InterfaceWithEquals, other: kotlin.Any?): kotlin.Boolean
+        valueParameters = [
+          KaVariableSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.Any?
+            symbol = other: kotlin.Any?
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /InterfaceWithEquals.equals
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(972,973): 'm'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = m
-          receiverType = null
-          returnType = MessagePreview
-          symbol = m: MessagePreview
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = m
+        receiverType = null
+        returnType = MessagePreview
+        symbol = m: MessagePreview
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1333,47 +1304,45 @@ KtBinaryExpression(979,985): 'm == i'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = m
+        isSafeNavigation = false
+        type = MessagePreview
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = m
-          isSafeNavigation = false
-          type = MessagePreview
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Boolean
-          symbol = /MessagePreview.equals(<dispatch receiver>: MessagePreview, other: kotlin.Any?): kotlin.Boolean
-          valueParameters = [
-            KaVariableSignature:
-              name = other
-              receiverType = null
-              returnType = kotlin.Any?
-              symbol = other: kotlin.Any?
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /MessagePreview.equals
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Boolean
+        symbol = /MessagePreview.equals(<dispatch receiver>: MessagePreview, other: kotlin.Any?): kotlin.Boolean
+        valueParameters = [
+          KaVariableSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.Any?
+            symbol = other: kotlin.Any?
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /MessagePreview.equals
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(979,980): 'm'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = m
-          receiverType = null
-          returnType = MessagePreview
-          symbol = m: MessagePreview
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = m
+        receiverType = null
+        returnType = MessagePreview
+        symbol = m: MessagePreview
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1390,47 +1359,45 @@ KtOperationReferenceExpression(981,983): '=='
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = m
+        isSafeNavigation = false
+        type = MessagePreview
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = m
-          isSafeNavigation = false
-          type = MessagePreview
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Boolean
-          symbol = /MessagePreview.equals(<dispatch receiver>: MessagePreview, other: kotlin.Any?): kotlin.Boolean
-          valueParameters = [
-            KaVariableSignature:
-              name = other
-              receiverType = null
-              returnType = kotlin.Any?
-              symbol = other: kotlin.Any?
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /MessagePreview.equals
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Boolean
+        symbol = /MessagePreview.equals(<dispatch receiver>: MessagePreview, other: kotlin.Any?): kotlin.Boolean
+        valueParameters = [
+          KaVariableSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.Any?
+            symbol = other: kotlin.Any?
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /MessagePreview.equals
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(984,985): 'i'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = i
-          receiverType = null
-          returnType = InterfaceWithEquals
-          symbol = i: InterfaceWithEquals
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = i
+        receiverType = null
+        returnType = InterfaceWithEquals
+        symbol = i: InterfaceWithEquals
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1447,47 +1414,45 @@ KtBinaryExpression(990,996): 'm != i'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = m
+        isSafeNavigation = false
+        type = MessagePreview
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = m
-          isSafeNavigation = false
-          type = MessagePreview
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Boolean
-          symbol = /MessagePreview.equals(<dispatch receiver>: MessagePreview, other: kotlin.Any?): kotlin.Boolean
-          valueParameters = [
-            KaVariableSignature:
-              name = other
-              receiverType = null
-              returnType = kotlin.Any?
-              symbol = other: kotlin.Any?
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /MessagePreview.equals
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Boolean
+        symbol = /MessagePreview.equals(<dispatch receiver>: MessagePreview, other: kotlin.Any?): kotlin.Boolean
+        valueParameters = [
+          KaVariableSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.Any?
+            symbol = other: kotlin.Any?
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /MessagePreview.equals
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(990,991): 'm'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = m
-          receiverType = null
-          returnType = MessagePreview
-          symbol = m: MessagePreview
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = m
+        receiverType = null
+        returnType = MessagePreview
+        symbol = m: MessagePreview
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1504,47 +1469,45 @@ KtOperationReferenceExpression(992,994): '!='
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = m
+        isSafeNavigation = false
+        type = MessagePreview
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = m
-          isSafeNavigation = false
-          type = MessagePreview
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Boolean
-          symbol = /MessagePreview.equals(<dispatch receiver>: MessagePreview, other: kotlin.Any?): kotlin.Boolean
-          valueParameters = [
-            KaVariableSignature:
-              name = other
-              receiverType = null
-              returnType = kotlin.Any?
-              symbol = other: kotlin.Any?
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /MessagePreview.equals
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Boolean
+        symbol = /MessagePreview.equals(<dispatch receiver>: MessagePreview, other: kotlin.Any?): kotlin.Boolean
+        valueParameters = [
+          KaVariableSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.Any?
+            symbol = other: kotlin.Any?
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /MessagePreview.equals
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(995,996): 'i'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = i
-          receiverType = null
-          returnType = InterfaceWithEquals
-          symbol = i: InterfaceWithEquals
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = i
+        receiverType = null
+        returnType = InterfaceWithEquals
+        symbol = i: InterfaceWithEquals
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1561,47 +1524,45 @@ KtDotQualifiedExpression(1002,1013): 'i.equals(m)'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = i
+        isSafeNavigation = false
+        type = InterfaceWithEquals
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = i
-          isSafeNavigation = false
-          type = InterfaceWithEquals
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Boolean
-          symbol = /InterfaceWithEquals.equals(<dispatch receiver>: InterfaceWithEquals, other: kotlin.Any?): kotlin.Boolean
-          valueParameters = [
-            KaVariableSignature:
-              name = other
-              receiverType = null
-              returnType = kotlin.Any?
-              symbol = other: kotlin.Any?
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /InterfaceWithEquals.equals
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Boolean
+        symbol = /InterfaceWithEquals.equals(<dispatch receiver>: InterfaceWithEquals, other: kotlin.Any?): kotlin.Boolean
+        valueParameters = [
+          KaVariableSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.Any?
+            symbol = other: kotlin.Any?
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /InterfaceWithEquals.equals
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(1002,1003): 'i'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = i
-          receiverType = null
-          returnType = InterfaceWithEquals
-          symbol = i: InterfaceWithEquals
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = i
+        receiverType = null
+        returnType = InterfaceWithEquals
+        symbol = i: InterfaceWithEquals
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1618,29 +1579,28 @@ KtCallExpression(1004,1013): 'equals(m)'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = i
+        isSafeNavigation = false
+        type = InterfaceWithEquals
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = i
-          isSafeNavigation = false
-          type = InterfaceWithEquals
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Boolean
-          symbol = /InterfaceWithEquals.equals(<dispatch receiver>: InterfaceWithEquals, other: kotlin.Any?): kotlin.Boolean
-          valueParameters = [
-            KaVariableSignature:
-              name = other
-              receiverType = null
-              returnType = kotlin.Any?
-              symbol = other: kotlin.Any?
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /InterfaceWithEquals.equals
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Boolean
+        symbol = /InterfaceWithEquals.equals(<dispatch receiver>: InterfaceWithEquals, other: kotlin.Any?): kotlin.Boolean
+        valueParameters = [
+          KaVariableSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.Any?
+            symbol = other: kotlin.Any?
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /InterfaceWithEquals.equals
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1656,29 +1616,28 @@ KtNameReferenceExpression(1004,1010): 'equals'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = i
+        isSafeNavigation = false
+        type = InterfaceWithEquals
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = i
-          isSafeNavigation = false
-          type = InterfaceWithEquals
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Boolean
-          symbol = /InterfaceWithEquals.equals(<dispatch receiver>: InterfaceWithEquals, other: kotlin.Any?): kotlin.Boolean
-          valueParameters = [
-            KaVariableSignature:
-              name = other
-              receiverType = null
-              returnType = kotlin.Any?
-              symbol = other: kotlin.Any?
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /InterfaceWithEquals.equals
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Boolean
+        symbol = /InterfaceWithEquals.equals(<dispatch receiver>: InterfaceWithEquals, other: kotlin.Any?): kotlin.Boolean
+        valueParameters = [
+          KaVariableSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.Any?
+            symbol = other: kotlin.Any?
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /InterfaceWithEquals.equals
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1691,18 +1650,17 @@ KtValueArgument(1011,1012): 'm'
 KtNameReferenceExpression(1011,1012): 'm'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = m
-          receiverType = null
-          returnType = MessagePreview
-          symbol = m: MessagePreview
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = m
+        receiverType = null
+        returnType = MessagePreview
+        symbol = m: MessagePreview
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1719,47 +1677,45 @@ KtDotQualifiedExpression(1018,1029): 'm.equals(i)'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = m
+        isSafeNavigation = false
+        type = MessagePreview
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = m
-          isSafeNavigation = false
-          type = MessagePreview
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Boolean
-          symbol = /MessagePreview.equals(<dispatch receiver>: MessagePreview, other: kotlin.Any?): kotlin.Boolean
-          valueParameters = [
-            KaVariableSignature:
-              name = other
-              receiverType = null
-              returnType = kotlin.Any?
-              symbol = other: kotlin.Any?
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /MessagePreview.equals
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Boolean
+        symbol = /MessagePreview.equals(<dispatch receiver>: MessagePreview, other: kotlin.Any?): kotlin.Boolean
+        valueParameters = [
+          KaVariableSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.Any?
+            symbol = other: kotlin.Any?
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /MessagePreview.equals
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(1018,1019): 'm'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = m
-          receiverType = null
-          returnType = MessagePreview
-          symbol = m: MessagePreview
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = m
+        receiverType = null
+        returnType = MessagePreview
+        symbol = m: MessagePreview
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -1776,29 +1732,28 @@ KtCallExpression(1020,1029): 'equals(i)'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = m
+        isSafeNavigation = false
+        type = MessagePreview
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = m
-          isSafeNavigation = false
-          type = MessagePreview
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Boolean
-          symbol = /MessagePreview.equals(<dispatch receiver>: MessagePreview, other: kotlin.Any?): kotlin.Boolean
-          valueParameters = [
-            KaVariableSignature:
-              name = other
-              receiverType = null
-              returnType = kotlin.Any?
-              symbol = other: kotlin.Any?
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /MessagePreview.equals
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Boolean
+        symbol = /MessagePreview.equals(<dispatch receiver>: MessagePreview, other: kotlin.Any?): kotlin.Boolean
+        valueParameters = [
+          KaVariableSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.Any?
+            symbol = other: kotlin.Any?
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /MessagePreview.equals
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1814,29 +1769,28 @@ KtNameReferenceExpression(1020,1026): 'equals'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = m
+        isSafeNavigation = false
+        type = MessagePreview
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = m
-          isSafeNavigation = false
-          type = MessagePreview
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Boolean
-          symbol = /MessagePreview.equals(<dispatch receiver>: MessagePreview, other: kotlin.Any?): kotlin.Boolean
-          valueParameters = [
-            KaVariableSignature:
-              name = other
-              receiverType = null
-              returnType = kotlin.Any?
-              symbol = other: kotlin.Any?
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /MessagePreview.equals
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Boolean
+        symbol = /MessagePreview.equals(<dispatch receiver>: MessagePreview, other: kotlin.Any?): kotlin.Boolean
+        valueParameters = [
+          KaVariableSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.Any?
+            symbol = other: kotlin.Any?
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /MessagePreview.equals
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1849,18 +1803,17 @@ KtValueArgument(1027,1028): 'i'
 KtNameReferenceExpression(1027,1028): 'i'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = i
-          receiverType = null
-          returnType = InterfaceWithEquals
-          symbol = i: InterfaceWithEquals
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = i
+        receiverType = null
+        returnType = InterfaceWithEquals
+        symbol = i: InterfaceWithEquals
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true

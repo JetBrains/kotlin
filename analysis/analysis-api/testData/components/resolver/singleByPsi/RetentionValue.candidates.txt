@@ -1,21 +1,20 @@
 KtNameReferenceExpression(31,37): 'SOURCE'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = AnnotationRetention
+        isSafeNavigation = false
+        type = kotlin.Unit
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = AnnotationRetention
-          isSafeNavigation = false
-          type = kotlin.Unit
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = SOURCE
-          receiverType = null
-          returnType = kotlin.annotation.AnnotationRetention
-          symbol = kotlin/annotation/AnnotationRetention.SOURCE
-          contextParameters = []
-          callableId = kotlin/annotation/AnnotationRetention.SOURCE
+      signature = KaVariableSignature:
+        name = SOURCE
+        receiverType = null
+        returnType = kotlin.annotation.AnnotationRetention
+        symbol = kotlin/annotation/AnnotationRetention.SOURCE
+        contextParameters = []
+        callableId = kotlin/annotation/AnnotationRetention.SOURCE
       simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true

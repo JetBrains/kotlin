@@ -55,29 +55,28 @@ KtBinaryExpression(27,35): 'this + a'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = this
+        isSafeNavigation = false
+        type = kotlin.Int
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = this
-          isSafeNavigation = false
-          type = kotlin.Int
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
-          valueParameters = [
-            KaVariableSignature:
-              name = other
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = other: kotlin.Int
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/Int.plus
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+        valueParameters = [
+          KaVariableSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = other: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/Int.plus
       typeArgumentsMapping = {}
 
 KtThisExpression(27,31): 'this'
@@ -98,46 +97,44 @@ KtOperationReferenceExpression(32,33): '+'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = this
+        isSafeNavigation = false
+        type = kotlin.Int
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = this
-          isSafeNavigation = false
-          type = kotlin.Int
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
-          valueParameters = [
-            KaVariableSignature:
-              name = other
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = other: kotlin.Int
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/Int.plus
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+        valueParameters = [
+          KaVariableSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = other: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/Int.plus
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(34,35): 'a'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = a
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = a: kotlin.Int
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = a
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = a: kotlin.Int
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -201,18 +198,17 @@ KtOperationReferenceExpression(76,78): '?:'
 KtNameReferenceExpression(79,80): 'b'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = b
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = b: kotlin.Int
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = b
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = b: kotlin.Int
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -237,29 +233,28 @@ KtDotQualifiedExpression(100,154): '(1.foo(2).bar(3) as? Int)?.foo(4.bar(5).bar(
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = (1.foo(2).bar(3) as? Int)?.foo(4.bar(5).bar(6))
+        isSafeNavigation = false
+        type = kotlin.Int?
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = KaExplicitReceiverValue:
-          expression = (1.foo(2).bar(3) as? Int)?.foo(4.bar(5).bar(6))
-          isSafeNavigation = false
-          type = kotlin.Int?
-        signature = KaFunctionSignature:
-          receiverType = kotlin.Int?
-          returnType = kotlin.Int
-          symbol = /bar(<extension receiver>: kotlin.Int?, b: kotlin.Int): kotlin.Int
-          valueParameters = [
-            KaVariableSignature:
-              name = b
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = b: kotlin.Int
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /bar
+      signature = KaFunctionSignature:
+        receiverType = kotlin.Int?
+        returnType = kotlin.Int
+        symbol = /bar(<extension receiver>: kotlin.Int?, b: kotlin.Int): kotlin.Int
+        valueParameters = [
+          KaVariableSignature:
+            name = b
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = b: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /bar
       typeArgumentsMapping = {}
 
 KtSafeQualifiedExpression(100,147): '(1.foo(2).bar(3) as? Int)?.foo(4.bar(5).bar(6))'
@@ -274,29 +269,28 @@ KtSafeQualifiedExpression(100,147): '(1.foo(2).bar(3) as? Int)?.foo(4.bar(5).bar
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = (1.foo(2).bar(3) as? Int)
+        isSafeNavigation = true
+        type = kotlin.Int?
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = KaExplicitReceiverValue:
-          expression = (1.foo(2).bar(3) as? Int)
-          isSafeNavigation = true
-          type = kotlin.Int?
-        signature = KaFunctionSignature:
-          receiverType = kotlin.Int
-          returnType = kotlin.Int
-          symbol = /foo(<extension receiver>: kotlin.Int, a: kotlin.Int): kotlin.Int
-          valueParameters = [
-            KaVariableSignature:
-              name = a
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = a: kotlin.Int
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /foo
+      signature = KaFunctionSignature:
+        receiverType = kotlin.Int
+        returnType = kotlin.Int
+        symbol = /foo(<extension receiver>: kotlin.Int, a: kotlin.Int): kotlin.Int
+        valueParameters = [
+          KaVariableSignature:
+            name = a
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = a: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /foo
       typeArgumentsMapping = {}
 
 KtParenthesizedExpression(100,125): '(1.foo(2).bar(3) as? Int)'
@@ -317,29 +311,28 @@ KtDotQualifiedExpression(101,116): '1.foo(2).bar(3)'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = 1.foo(2)
+        isSafeNavigation = false
+        type = kotlin.Int
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = KaExplicitReceiverValue:
-          expression = 1.foo(2)
-          isSafeNavigation = false
-          type = kotlin.Int
-        signature = KaFunctionSignature:
-          receiverType = kotlin.Int?
-          returnType = kotlin.Int
-          symbol = /bar(<extension receiver>: kotlin.Int?, b: kotlin.Int): kotlin.Int
-          valueParameters = [
-            KaVariableSignature:
-              name = b
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = b: kotlin.Int
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /bar
+      signature = KaFunctionSignature:
+        receiverType = kotlin.Int?
+        returnType = kotlin.Int
+        symbol = /bar(<extension receiver>: kotlin.Int?, b: kotlin.Int): kotlin.Int
+        valueParameters = [
+          KaVariableSignature:
+            name = b
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = b: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /bar
       typeArgumentsMapping = {}
 
 KtDotQualifiedExpression(101,109): '1.foo(2)'
@@ -354,29 +347,28 @@ KtDotQualifiedExpression(101,109): '1.foo(2)'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = 1
+        isSafeNavigation = false
+        type = kotlin.Int
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = KaExplicitReceiverValue:
-          expression = 1
-          isSafeNavigation = false
-          type = kotlin.Int
-        signature = KaFunctionSignature:
-          receiverType = kotlin.Int
-          returnType = kotlin.Int
-          symbol = /foo(<extension receiver>: kotlin.Int, a: kotlin.Int): kotlin.Int
-          valueParameters = [
-            KaVariableSignature:
-              name = a
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = a: kotlin.Int
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /foo
+      signature = KaFunctionSignature:
+        receiverType = kotlin.Int
+        returnType = kotlin.Int
+        symbol = /foo(<extension receiver>: kotlin.Int, a: kotlin.Int): kotlin.Int
+        valueParameters = [
+          KaVariableSignature:
+            name = a
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = a: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /foo
       typeArgumentsMapping = {}
 
 KtConstantExpression(101,102): '1'
@@ -393,14 +385,49 @@ KtCallExpression(103,109): 'foo(2)'
         contextParameters = []
         callableId = null)
     }
+    contextArguments = []
+    dispatchReceiver = null
+    extensionReceiver = KaExplicitReceiverValue:
+      expression = 1
+      isSafeNavigation = false
+      type = kotlin.Int
     isImplicitInvoke = false
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+    signature = KaFunctionSignature:
+      receiverType = kotlin.Int
+      returnType = kotlin.Int
+      symbol = /foo(<extension receiver>: kotlin.Int, a: kotlin.Int): kotlin.Int
+      valueParameters = [
+        KaVariableSignature:
+          name = a
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = a: kotlin.Int
+          contextParameters = []
+          callableId = null
+      ]
+      contextParameters = []
+      callableId = /foo
+    typeArgumentsMapping = {}
+
+KtNameReferenceExpression(103,106): 'foo'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      argumentMapping = {
+        2 -> (KaVariableSignature:
+          name = a
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = a: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
         expression = 1
         isSafeNavigation = false
         type = kotlin.Int
+      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.Int
         returnType = kotlin.Int
@@ -416,43 +443,6 @@ KtCallExpression(103,109): 'foo(2)'
         ]
         contextParameters = []
         callableId = /foo
-    typeArgumentsMapping = {}
-
-KtNameReferenceExpression(103,106): 'foo'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {
-        2 -> (KaVariableSignature:
-          name = a
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = a: kotlin.Int
-          contextParameters = []
-          callableId = null)
-      }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = KaExplicitReceiverValue:
-          expression = 1
-          isSafeNavigation = false
-          type = kotlin.Int
-        signature = KaFunctionSignature:
-          receiverType = kotlin.Int
-          returnType = kotlin.Int
-          symbol = /foo(<extension receiver>: kotlin.Int, a: kotlin.Int): kotlin.Int
-          valueParameters = [
-            KaVariableSignature:
-              name = a
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = a: kotlin.Int
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /foo
       typeArgumentsMapping = {}
 
 KtValueArgumentList(106,109): '(2)'
@@ -475,14 +465,49 @@ KtCallExpression(110,116): 'bar(3)'
         contextParameters = []
         callableId = null)
     }
+    contextArguments = []
+    dispatchReceiver = null
+    extensionReceiver = KaExplicitReceiverValue:
+      expression = 1.foo(2)
+      isSafeNavigation = false
+      type = kotlin.Int
     isImplicitInvoke = false
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+    signature = KaFunctionSignature:
+      receiverType = kotlin.Int?
+      returnType = kotlin.Int
+      symbol = /bar(<extension receiver>: kotlin.Int?, b: kotlin.Int): kotlin.Int
+      valueParameters = [
+        KaVariableSignature:
+          name = b
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = b: kotlin.Int
+          contextParameters = []
+          callableId = null
+      ]
+      contextParameters = []
+      callableId = /bar
+    typeArgumentsMapping = {}
+
+KtNameReferenceExpression(110,113): 'bar'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      argumentMapping = {
+        3 -> (KaVariableSignature:
+          name = b
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = b: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
         expression = 1.foo(2)
         isSafeNavigation = false
         type = kotlin.Int
+      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.Int?
         returnType = kotlin.Int
@@ -498,43 +523,6 @@ KtCallExpression(110,116): 'bar(3)'
         ]
         contextParameters = []
         callableId = /bar
-    typeArgumentsMapping = {}
-
-KtNameReferenceExpression(110,113): 'bar'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {
-        3 -> (KaVariableSignature:
-          name = b
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = b: kotlin.Int
-          contextParameters = []
-          callableId = null)
-      }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = KaExplicitReceiverValue:
-          expression = 1.foo(2)
-          isSafeNavigation = false
-          type = kotlin.Int
-        signature = KaFunctionSignature:
-          receiverType = kotlin.Int?
-          returnType = kotlin.Int
-          symbol = /bar(<extension receiver>: kotlin.Int?, b: kotlin.Int): kotlin.Int
-          valueParameters = [
-            KaVariableSignature:
-              name = b
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = b: kotlin.Int
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /bar
       typeArgumentsMapping = {}
 
 KtValueArgumentList(113,116): '(3)'
@@ -569,14 +557,49 @@ KtCallExpression(127,147): 'foo(4.bar(5).bar(6))'
         contextParameters = []
         callableId = null)
     }
+    contextArguments = []
+    dispatchReceiver = null
+    extensionReceiver = KaExplicitReceiverValue:
+      expression = (1.foo(2).bar(3) as? Int)
+      isSafeNavigation = true
+      type = kotlin.Int?
     isImplicitInvoke = false
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+    signature = KaFunctionSignature:
+      receiverType = kotlin.Int
+      returnType = kotlin.Int
+      symbol = /foo(<extension receiver>: kotlin.Int, a: kotlin.Int): kotlin.Int
+      valueParameters = [
+        KaVariableSignature:
+          name = a
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = a: kotlin.Int
+          contextParameters = []
+          callableId = null
+      ]
+      contextParameters = []
+      callableId = /foo
+    typeArgumentsMapping = {}
+
+KtNameReferenceExpression(127,130): 'foo'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      argumentMapping = {
+        4.bar(5).bar(6) -> (KaVariableSignature:
+          name = a
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = a: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
         expression = (1.foo(2).bar(3) as? Int)
         isSafeNavigation = true
         type = kotlin.Int?
+      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.Int
         returnType = kotlin.Int
@@ -592,43 +615,6 @@ KtCallExpression(127,147): 'foo(4.bar(5).bar(6))'
         ]
         contextParameters = []
         callableId = /foo
-    typeArgumentsMapping = {}
-
-KtNameReferenceExpression(127,130): 'foo'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {
-        4.bar(5).bar(6) -> (KaVariableSignature:
-          name = a
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = a: kotlin.Int
-          contextParameters = []
-          callableId = null)
-      }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = KaExplicitReceiverValue:
-          expression = (1.foo(2).bar(3) as? Int)
-          isSafeNavigation = true
-          type = kotlin.Int?
-        signature = KaFunctionSignature:
-          receiverType = kotlin.Int
-          returnType = kotlin.Int
-          symbol = /foo(<extension receiver>: kotlin.Int, a: kotlin.Int): kotlin.Int
-          valueParameters = [
-            KaVariableSignature:
-              name = a
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = a: kotlin.Int
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /foo
       typeArgumentsMapping = {}
 
 KtValueArgumentList(130,147): '(4.bar(5).bar(6))'
@@ -649,29 +635,28 @@ KtDotQualifiedExpression(131,146): '4.bar(5).bar(6)'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = 4.bar(5)
+        isSafeNavigation = false
+        type = kotlin.Int
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = KaExplicitReceiverValue:
-          expression = 4.bar(5)
-          isSafeNavigation = false
-          type = kotlin.Int
-        signature = KaFunctionSignature:
-          receiverType = kotlin.Int?
-          returnType = kotlin.Int
-          symbol = /bar(<extension receiver>: kotlin.Int?, b: kotlin.Int): kotlin.Int
-          valueParameters = [
-            KaVariableSignature:
-              name = b
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = b: kotlin.Int
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /bar
+      signature = KaFunctionSignature:
+        receiverType = kotlin.Int?
+        returnType = kotlin.Int
+        symbol = /bar(<extension receiver>: kotlin.Int?, b: kotlin.Int): kotlin.Int
+        valueParameters = [
+          KaVariableSignature:
+            name = b
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = b: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /bar
       typeArgumentsMapping = {}
 
 KtDotQualifiedExpression(131,139): '4.bar(5)'
@@ -686,29 +671,28 @@ KtDotQualifiedExpression(131,139): '4.bar(5)'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = 4
+        isSafeNavigation = false
+        type = kotlin.Int
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = KaExplicitReceiverValue:
-          expression = 4
-          isSafeNavigation = false
-          type = kotlin.Int
-        signature = KaFunctionSignature:
-          receiverType = kotlin.Int?
-          returnType = kotlin.Int
-          symbol = /bar(<extension receiver>: kotlin.Int?, b: kotlin.Int): kotlin.Int
-          valueParameters = [
-            KaVariableSignature:
-              name = b
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = b: kotlin.Int
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /bar
+      signature = KaFunctionSignature:
+        receiverType = kotlin.Int?
+        returnType = kotlin.Int
+        symbol = /bar(<extension receiver>: kotlin.Int?, b: kotlin.Int): kotlin.Int
+        valueParameters = [
+          KaVariableSignature:
+            name = b
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = b: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /bar
       typeArgumentsMapping = {}
 
 KtConstantExpression(131,132): '4'
@@ -725,14 +709,49 @@ KtCallExpression(133,139): 'bar(5)'
         contextParameters = []
         callableId = null)
     }
+    contextArguments = []
+    dispatchReceiver = null
+    extensionReceiver = KaExplicitReceiverValue:
+      expression = 4
+      isSafeNavigation = false
+      type = kotlin.Int
     isImplicitInvoke = false
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+    signature = KaFunctionSignature:
+      receiverType = kotlin.Int?
+      returnType = kotlin.Int
+      symbol = /bar(<extension receiver>: kotlin.Int?, b: kotlin.Int): kotlin.Int
+      valueParameters = [
+        KaVariableSignature:
+          name = b
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = b: kotlin.Int
+          contextParameters = []
+          callableId = null
+      ]
+      contextParameters = []
+      callableId = /bar
+    typeArgumentsMapping = {}
+
+KtNameReferenceExpression(133,136): 'bar'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      argumentMapping = {
+        5 -> (KaVariableSignature:
+          name = b
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = b: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
         expression = 4
         isSafeNavigation = false
         type = kotlin.Int
+      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.Int?
         returnType = kotlin.Int
@@ -748,43 +767,6 @@ KtCallExpression(133,139): 'bar(5)'
         ]
         contextParameters = []
         callableId = /bar
-    typeArgumentsMapping = {}
-
-KtNameReferenceExpression(133,136): 'bar'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {
-        5 -> (KaVariableSignature:
-          name = b
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = b: kotlin.Int
-          contextParameters = []
-          callableId = null)
-      }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = KaExplicitReceiverValue:
-          expression = 4
-          isSafeNavigation = false
-          type = kotlin.Int
-        signature = KaFunctionSignature:
-          receiverType = kotlin.Int?
-          returnType = kotlin.Int
-          symbol = /bar(<extension receiver>: kotlin.Int?, b: kotlin.Int): kotlin.Int
-          valueParameters = [
-            KaVariableSignature:
-              name = b
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = b: kotlin.Int
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /bar
       typeArgumentsMapping = {}
 
 KtValueArgumentList(136,139): '(5)'
@@ -807,14 +789,49 @@ KtCallExpression(140,146): 'bar(6)'
         contextParameters = []
         callableId = null)
     }
+    contextArguments = []
+    dispatchReceiver = null
+    extensionReceiver = KaExplicitReceiverValue:
+      expression = 4.bar(5)
+      isSafeNavigation = false
+      type = kotlin.Int
     isImplicitInvoke = false
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+    signature = KaFunctionSignature:
+      receiverType = kotlin.Int?
+      returnType = kotlin.Int
+      symbol = /bar(<extension receiver>: kotlin.Int?, b: kotlin.Int): kotlin.Int
+      valueParameters = [
+        KaVariableSignature:
+          name = b
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = b: kotlin.Int
+          contextParameters = []
+          callableId = null
+      ]
+      contextParameters = []
+      callableId = /bar
+    typeArgumentsMapping = {}
+
+KtNameReferenceExpression(140,143): 'bar'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      argumentMapping = {
+        6 -> (KaVariableSignature:
+          name = b
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = b: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
         expression = 4.bar(5)
         isSafeNavigation = false
         type = kotlin.Int
+      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.Int?
         returnType = kotlin.Int
@@ -830,43 +847,6 @@ KtCallExpression(140,146): 'bar(6)'
         ]
         contextParameters = []
         callableId = /bar
-    typeArgumentsMapping = {}
-
-KtNameReferenceExpression(140,143): 'bar'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {
-        6 -> (KaVariableSignature:
-          name = b
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = b: kotlin.Int
-          contextParameters = []
-          callableId = null)
-      }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = KaExplicitReceiverValue:
-          expression = 4.bar(5)
-          isSafeNavigation = false
-          type = kotlin.Int
-        signature = KaFunctionSignature:
-          receiverType = kotlin.Int?
-          returnType = kotlin.Int
-          symbol = /bar(<extension receiver>: kotlin.Int?, b: kotlin.Int): kotlin.Int
-          valueParameters = [
-            KaVariableSignature:
-              name = b
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = b: kotlin.Int
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /bar
       typeArgumentsMapping = {}
 
 KtValueArgumentList(143,146): '(6)'
@@ -889,14 +869,49 @@ KtCallExpression(148,154): 'bar(0)'
         contextParameters = []
         callableId = null)
     }
+    contextArguments = []
+    dispatchReceiver = null
+    extensionReceiver = KaExplicitReceiverValue:
+      expression = (1.foo(2).bar(3) as? Int)?.foo(4.bar(5).bar(6))
+      isSafeNavigation = false
+      type = kotlin.Int?
     isImplicitInvoke = false
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+    signature = KaFunctionSignature:
+      receiverType = kotlin.Int?
+      returnType = kotlin.Int
+      symbol = /bar(<extension receiver>: kotlin.Int?, b: kotlin.Int): kotlin.Int
+      valueParameters = [
+        KaVariableSignature:
+          name = b
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = b: kotlin.Int
+          contextParameters = []
+          callableId = null
+      ]
+      contextParameters = []
+      callableId = /bar
+    typeArgumentsMapping = {}
+
+KtNameReferenceExpression(148,151): 'bar'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      argumentMapping = {
+        0 -> (KaVariableSignature:
+          name = b
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = b: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = KaExplicitReceiverValue:
         expression = (1.foo(2).bar(3) as? Int)?.foo(4.bar(5).bar(6))
         isSafeNavigation = false
         type = kotlin.Int?
+      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.Int?
         returnType = kotlin.Int
@@ -912,43 +927,6 @@ KtCallExpression(148,154): 'bar(0)'
         ]
         contextParameters = []
         callableId = /bar
-    typeArgumentsMapping = {}
-
-KtNameReferenceExpression(148,151): 'bar'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {
-        0 -> (KaVariableSignature:
-          name = b
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = b: kotlin.Int
-          contextParameters = []
-          callableId = null)
-      }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = KaExplicitReceiverValue:
-          expression = (1.foo(2).bar(3) as? Int)?.foo(4.bar(5).bar(6))
-          isSafeNavigation = false
-          type = kotlin.Int?
-        signature = KaFunctionSignature:
-          receiverType = kotlin.Int?
-          returnType = kotlin.Int
-          symbol = /bar(<extension receiver>: kotlin.Int?, b: kotlin.Int): kotlin.Int
-          valueParameters = [
-            KaVariableSignature:
-              name = b
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = b: kotlin.Int
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /bar
       typeArgumentsMapping = {}
 
 KtValueArgumentList(151,154): '(0)'

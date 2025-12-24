@@ -1,21 +1,20 @@
 KtNameReferenceExpression(53,61): 'instance'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = ktClass
+        isSafeNavigation = false
+        type = KtClass
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = ktClass
-          isSafeNavigation = false
-          type = KtClass
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = instance
-          receiverType = null
-          returnType = KtSubClass
-          symbol = val instance: KtSubClass
-          contextParameters = []
-          callableId = /KtClass.instance
+      signature = KaVariableSignature:
+        name = instance
+        receiverType = null
+        returnType = KtSubClass
+        symbol = val instance: KtSubClass
+        contextParameters = []
+        callableId = /KtClass.instance
       simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true

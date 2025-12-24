@@ -10,25 +10,24 @@ KtNameReferenceExpression(74,81): 'valueOf'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = java.lang.annotation.RetentionPolicy
-          symbol = java/lang/annotation/RetentionPolicy.valueOf(value: kotlin.String): java.lang.annotation.RetentionPolicy
-          valueParameters = [
-            KaVariableSignature:
-              name = value
-              receiverType = null
-              returnType = kotlin.String
-              symbol = value: kotlin.String
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = java/lang/annotation/RetentionPolicy.valueOf
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = java.lang.annotation.RetentionPolicy
+        symbol = java/lang/annotation/RetentionPolicy.valueOf(value: kotlin.String): java.lang.annotation.RetentionPolicy
+        valueParameters = [
+          KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.String
+            symbol = value: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = java/lang/annotation/RetentionPolicy.valueOf
       typeArgumentsMapping = {}
     isInBestCandidates = true

@@ -28,29 +28,28 @@ KtBinaryExpression(18,23): '1 > 2'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = 1
+        isSafeNavigation = false
+        type = kotlin.Int
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = 1
-          isSafeNavigation = false
-          type = kotlin.Int
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = kotlin/Int.compareTo(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
-          valueParameters = [
-            KaVariableSignature:
-              name = other
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = other: kotlin.Int
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/Int.compareTo
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = kotlin/Int.compareTo(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+        valueParameters = [
+          KaVariableSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = other: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/Int.compareTo
       typeArgumentsMapping = {}
 
 KtConstantExpression(18,19): '1'
@@ -68,29 +67,28 @@ KtOperationReferenceExpression(20,21): '>'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = 1
+        isSafeNavigation = false
+        type = kotlin.Int
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = 1
-          isSafeNavigation = false
-          type = kotlin.Int
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = kotlin/Int.compareTo(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
-          valueParameters = [
-            KaVariableSignature:
-              name = other
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = other: kotlin.Int
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/Int.compareTo
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = kotlin/Int.compareTo(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+        valueParameters = [
+          KaVariableSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = other: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/Int.compareTo
       typeArgumentsMapping = {}
 
 KtConstantExpression(22,23): '2'
@@ -108,29 +106,28 @@ KtBinaryExpression(28,46): '1.compareTo(2) > 0'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = 1.compareTo(2)
+        isSafeNavigation = false
+        type = kotlin.Int
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = 1.compareTo(2)
-          isSafeNavigation = false
-          type = kotlin.Int
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = kotlin/Int.compareTo(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
-          valueParameters = [
-            KaVariableSignature:
-              name = other
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = other: kotlin.Int
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/Int.compareTo
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = kotlin/Int.compareTo(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+        valueParameters = [
+          KaVariableSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = other: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/Int.compareTo
       typeArgumentsMapping = {}
 
 KtDotQualifiedExpression(28,42): '1.compareTo(2)'
@@ -145,29 +142,28 @@ KtDotQualifiedExpression(28,42): '1.compareTo(2)'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = 1
+        isSafeNavigation = false
+        type = kotlin.Int
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = 1
-          isSafeNavigation = false
-          type = kotlin.Int
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = kotlin/Int.compareTo(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
-          valueParameters = [
-            KaVariableSignature:
-              name = other
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = other: kotlin.Int
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/Int.compareTo
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = kotlin/Int.compareTo(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+        valueParameters = [
+          KaVariableSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = other: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/Int.compareTo
       typeArgumentsMapping = {}
 
 KtConstantExpression(28,29): '1'
@@ -184,14 +180,49 @@ KtCallExpression(30,42): 'compareTo(2)'
         contextParameters = []
         callableId = null)
     }
+    contextArguments = []
+    dispatchReceiver = KaExplicitReceiverValue:
+      expression = 1
+      isSafeNavigation = false
+      type = kotlin.Int
+    extensionReceiver = null
     isImplicitInvoke = false
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+    signature = KaFunctionSignature:
+      receiverType = null
+      returnType = kotlin.Int
+      symbol = kotlin/Int.compareTo(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+      valueParameters = [
+        KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = other: kotlin.Int
+          contextParameters = []
+          callableId = null
+      ]
+      contextParameters = []
+      callableId = kotlin/Int.compareTo
+    typeArgumentsMapping = {}
+
+KtNameReferenceExpression(30,39): 'compareTo'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      argumentMapping = {
+        2 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = other: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = 1
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
+      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
@@ -207,43 +238,6 @@ KtCallExpression(30,42): 'compareTo(2)'
         ]
         contextParameters = []
         callableId = kotlin/Int.compareTo
-    typeArgumentsMapping = {}
-
-KtNameReferenceExpression(30,39): 'compareTo'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {
-        2 -> (KaVariableSignature:
-          name = other
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = other: kotlin.Int
-          contextParameters = []
-          callableId = null)
-      }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = 1
-          isSafeNavigation = false
-          type = kotlin.Int
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = kotlin/Int.compareTo(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
-          valueParameters = [
-            KaVariableSignature:
-              name = other
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = other: kotlin.Int
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/Int.compareTo
       typeArgumentsMapping = {}
 
 KtValueArgumentList(39,42): '(2)'
@@ -267,29 +261,28 @@ KtOperationReferenceExpression(43,44): '>'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = 1.compareTo(2)
+        isSafeNavigation = false
+        type = kotlin.Int
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = 1.compareTo(2)
-          isSafeNavigation = false
-          type = kotlin.Int
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = kotlin/Int.compareTo(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
-          valueParameters = [
-            KaVariableSignature:
-              name = other
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = other: kotlin.Int
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/Int.compareTo
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = kotlin/Int.compareTo(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+        valueParameters = [
+          KaVariableSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = other: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/Int.compareTo
       typeArgumentsMapping = {}
 
 KtConstantExpression(45,46): '0'
@@ -307,29 +300,28 @@ KtBinaryExpression(52,61): '"3" < "4"'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = "3"
+        isSafeNavigation = false
+        type = kotlin.String
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = "3"
-          isSafeNavigation = false
-          type = kotlin.String
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = kotlin/String.compareTo(<dispatch receiver>: kotlin.String, other: kotlin.String): kotlin.Int
-          valueParameters = [
-            KaVariableSignature:
-              name = other
-              receiverType = null
-              returnType = kotlin.String
-              symbol = other: kotlin.String
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/String.compareTo
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = kotlin/String.compareTo(<dispatch receiver>: kotlin.String, other: kotlin.String): kotlin.Int
+        valueParameters = [
+          KaVariableSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.String
+            symbol = other: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/String.compareTo
       typeArgumentsMapping = {}
 
 KtStringTemplateExpression(52,55): '"3"'
@@ -350,29 +342,28 @@ KtOperationReferenceExpression(56,57): '<'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = "3"
+        isSafeNavigation = false
+        type = kotlin.String
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = "3"
-          isSafeNavigation = false
-          type = kotlin.String
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = kotlin/String.compareTo(<dispatch receiver>: kotlin.String, other: kotlin.String): kotlin.Int
-          valueParameters = [
-            KaVariableSignature:
-              name = other
-              receiverType = null
-              returnType = kotlin.String
-              symbol = other: kotlin.String
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/String.compareTo
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = kotlin/String.compareTo(<dispatch receiver>: kotlin.String, other: kotlin.String): kotlin.Int
+        valueParameters = [
+          KaVariableSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.String
+            symbol = other: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/String.compareTo
       typeArgumentsMapping = {}
 
 KtStringTemplateExpression(58,61): '"4"'
@@ -393,11 +384,27 @@ KtProperty(85,108): 'val myClass = MyClass()'
 KtCallExpression(99,108): 'MyClass()'
   KaSimpleFunctionCall:
     argumentMapping = {}
+    contextArguments = []
+    dispatchReceiver = null
+    extensionReceiver = null
     isImplicitInvoke = false
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+    signature = KaFunctionSignature:
+      receiverType = null
+      returnType = MyClass
+      symbol = <constructor>(): MyClass
+      valueParameters = []
+      contextParameters = []
+      callableId = null
+    typeArgumentsMapping = {}
+
+KtNameReferenceExpression(99,106): 'MyClass'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
+      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MyClass
@@ -405,24 +412,6 @@ KtCallExpression(99,108): 'MyClass()'
         valueParameters = []
         contextParameters = []
         callableId = null
-    typeArgumentsMapping = {}
-
-KtNameReferenceExpression(99,106): 'MyClass'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {}
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = MyClass
-          symbol = <constructor>(): MyClass
-          valueParameters = []
-          contextParameters = []
-          callableId = null
       typeArgumentsMapping = {}
 
 KtValueArgumentList(106,108): '()'
@@ -440,178 +429,13 @@ KtBinaryExpression(113,130): 'myClass >= number'
           contextParameters = []
           callableId = null)
       }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = myClass
-          isSafeNavigation = false
-          type = MyClass
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = /MyClass.compareTo(<dispatch receiver>: MyClass, i: kotlin.Int): kotlin.Int
-          valueParameters = [
-            KaVariableSignature:
-              name = i
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = i: kotlin.Int
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /MyClass.compareTo
-      typeArgumentsMapping = {}
-
-KtNameReferenceExpression(113,120): 'myClass'
-  KaSuccessCallInfo:
-    call = KaSimpleVariableAccessCall:
-      isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = myClass
-          receiverType = null
-          returnType = MyClass
-          symbol = val myClass: MyClass
-          contextParameters = []
-          callableId = null
-      simpleAccess = Read
-      typeArgumentsMapping = {}
-
-KtOperationReferenceExpression(121,123): '>='
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {
-        number -> (KaVariableSignature:
-          name = i
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = i: kotlin.Int
-          contextParameters = []
-          callableId = null)
-      }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = myClass
-          isSafeNavigation = false
-          type = MyClass
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = /MyClass.compareTo(<dispatch receiver>: MyClass, i: kotlin.Int): kotlin.Int
-          valueParameters = [
-            KaVariableSignature:
-              name = i
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = i: kotlin.Int
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /MyClass.compareTo
-      typeArgumentsMapping = {}
-
-KtNameReferenceExpression(124,130): 'number'
-  KaSuccessCallInfo:
-    call = KaSimpleVariableAccessCall:
-      isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = number
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = val number: kotlin.Int
-          contextParameters = []
-          callableId = null
-      simpleAccess = Read
-      typeArgumentsMapping = {}
-
-KtDotQualifiedExpression(135,160): 'myClass.compareTo(number)'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {
-        number -> (KaVariableSignature:
-          name = i
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = i: kotlin.Int
-          contextParameters = []
-          callableId = null)
-      }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = myClass
-          isSafeNavigation = false
-          type = MyClass
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = /MyClass.compareTo(<dispatch receiver>: MyClass, i: kotlin.Int): kotlin.Int
-          valueParameters = [
-            KaVariableSignature:
-              name = i
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = i: kotlin.Int
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /MyClass.compareTo
-      typeArgumentsMapping = {}
-
-KtNameReferenceExpression(135,142): 'myClass'
-  KaSuccessCallInfo:
-    call = KaSimpleVariableAccessCall:
-      isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = myClass
-          receiverType = null
-          returnType = MyClass
-          symbol = val myClass: MyClass
-          contextParameters = []
-          callableId = null
-      simpleAccess = Read
-      typeArgumentsMapping = {}
-
-KtCallExpression(143,160): 'compareTo(number)'
-  KaSimpleFunctionCall:
-    argumentMapping = {
-      number -> (KaVariableSignature:
-        name = i
-        receiverType = null
-        returnType = kotlin.Int
-        symbol = i: kotlin.Int
-        contextParameters = []
-        callableId = null)
-    }
-    isImplicitInvoke = false
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
         expression = myClass
         isSafeNavigation = false
         type = MyClass
       extensionReceiver = null
+      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
@@ -627,6 +451,164 @@ KtCallExpression(143,160): 'compareTo(number)'
         ]
         contextParameters = []
         callableId = /MyClass.compareTo
+      typeArgumentsMapping = {}
+
+KtNameReferenceExpression(113,120): 'myClass'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      isContextSensitive = false
+      signature = KaVariableSignature:
+        name = myClass
+        receiverType = null
+        returnType = MyClass
+        symbol = val myClass: MyClass
+        contextParameters = []
+        callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+
+KtOperationReferenceExpression(121,123): '>='
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      argumentMapping = {
+        number -> (KaVariableSignature:
+          name = i
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = i: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = myClass
+        isSafeNavigation = false
+        type = MyClass
+      extensionReceiver = null
+      isImplicitInvoke = false
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = /MyClass.compareTo(<dispatch receiver>: MyClass, i: kotlin.Int): kotlin.Int
+        valueParameters = [
+          KaVariableSignature:
+            name = i
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = i: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /MyClass.compareTo
+      typeArgumentsMapping = {}
+
+KtNameReferenceExpression(124,130): 'number'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      isContextSensitive = false
+      signature = KaVariableSignature:
+        name = number
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = val number: kotlin.Int
+        contextParameters = []
+        callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+
+KtDotQualifiedExpression(135,160): 'myClass.compareTo(number)'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      argumentMapping = {
+        number -> (KaVariableSignature:
+          name = i
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = i: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = myClass
+        isSafeNavigation = false
+        type = MyClass
+      extensionReceiver = null
+      isImplicitInvoke = false
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = /MyClass.compareTo(<dispatch receiver>: MyClass, i: kotlin.Int): kotlin.Int
+        valueParameters = [
+          KaVariableSignature:
+            name = i
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = i: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /MyClass.compareTo
+      typeArgumentsMapping = {}
+
+KtNameReferenceExpression(135,142): 'myClass'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      isContextSensitive = false
+      signature = KaVariableSignature:
+        name = myClass
+        receiverType = null
+        returnType = MyClass
+        symbol = val myClass: MyClass
+        contextParameters = []
+        callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+
+KtCallExpression(143,160): 'compareTo(number)'
+  KaSimpleFunctionCall:
+    argumentMapping = {
+      number -> (KaVariableSignature:
+        name = i
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = i: kotlin.Int
+        contextParameters = []
+        callableId = null)
+    }
+    contextArguments = []
+    dispatchReceiver = KaExplicitReceiverValue:
+      expression = myClass
+      isSafeNavigation = false
+      type = MyClass
+    extensionReceiver = null
+    isImplicitInvoke = false
+    signature = KaFunctionSignature:
+      receiverType = null
+      returnType = kotlin.Int
+      symbol = /MyClass.compareTo(<dispatch receiver>: MyClass, i: kotlin.Int): kotlin.Int
+      valueParameters = [
+        KaVariableSignature:
+          name = i
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = i: kotlin.Int
+          contextParameters = []
+          callableId = null
+      ]
+      contextParameters = []
+      callableId = /MyClass.compareTo
     typeArgumentsMapping = {}
 
 KtNameReferenceExpression(143,152): 'compareTo'
@@ -641,29 +623,28 @@ KtNameReferenceExpression(143,152): 'compareTo'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = myClass
+        isSafeNavigation = false
+        type = MyClass
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = myClass
-          isSafeNavigation = false
-          type = MyClass
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = /MyClass.compareTo(<dispatch receiver>: MyClass, i: kotlin.Int): kotlin.Int
-          valueParameters = [
-            KaVariableSignature:
-              name = i
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = i: kotlin.Int
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /MyClass.compareTo
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = /MyClass.compareTo(<dispatch receiver>: MyClass, i: kotlin.Int): kotlin.Int
+        valueParameters = [
+          KaVariableSignature:
+            name = i
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = i: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /MyClass.compareTo
       typeArgumentsMapping = {}
 
 KtValueArgumentList(152,160): '(number)'
@@ -675,18 +656,17 @@ KtValueArgument(153,159): 'number'
 KtNameReferenceExpression(153,159): 'number'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = number
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = val number: kotlin.Int
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = number
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = val number: kotlin.Int
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -729,17 +709,16 @@ KtNameReferenceExpression(216,219): 'Int'
 KtNameReferenceExpression(222,223): 'i'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = i
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = i: kotlin.Int
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = i
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = i: kotlin.Int
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}

@@ -1,21 +1,20 @@
 KtNameReferenceExpression(51,56): 'value'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = foo
+        isSafeNavigation = false
+        type = CInt32VarX<kotlin.Int>
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = KaExplicitReceiverValue:
-          expression = foo
-          isSafeNavigation = false
-          type = CInt32VarX<kotlin.Int>
-        signature = KaVariableSignature:
-          name = value
-          receiverType = CInt32VarX<kotlin.Int>
-          returnType = kotlin.Int
-          symbol = var value: T
-          contextParameters = []
-          callableId = /value
+      signature = KaVariableSignature:
+        name = value
+        receiverType = CInt32VarX<kotlin.Int>
+        returnType = kotlin.Int
+        symbol = var value: T
+        contextParameters = []
+        callableId = /value
       simpleAccess = Write:
         value = 42
       typeArgumentsMapping = {

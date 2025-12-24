@@ -121,8 +121,44 @@ KtNameReferenceExpression(238,248): 'InnerAlias'
 KtCallExpression(251,263): 'InnerClass()'
   KaSimpleFunctionCall:
     argumentMapping = {}
+    contextArguments = []
+    dispatchReceiver = KaImplicitReceiverValue:
+      symbol = KaReceiverParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Public
+        contextReceivers: []
+        isActual: false
+        isExpect: false
+        isExtension: false
+        isVal: true
+        location: LOCAL
+        modality: FINAL
+        name: <receiver>
+        origin: SOURCE
+        owningCallableSymbol: KaNamedFunctionSymbol(one/two/foo)
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: one/two/TopLevelClass
+        visibility: PUBLIC
+      type = one.two.TopLevelClass
+    extensionReceiver = null
     isImplicitInvoke = false
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+    signature = KaFunctionSignature:
+      receiverType = null
+      returnType = one.two.TopLevelClass.InnerClass
+      symbol = <constructor>(<dispatch receiver>: one.two.TopLevelClass): one.two.TopLevelClass.InnerClass
+      valueParameters = []
+      contextParameters = []
+      callableId = null
+    typeArgumentsMapping = {}
+
+KtNameReferenceExpression(251,261): 'InnerClass'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:
         symbol = KaReceiverParameterSymbol:
@@ -147,6 +183,7 @@ KtCallExpression(251,263): 'InnerClass()'
           visibility: PUBLIC
         type = one.two.TopLevelClass
       extensionReceiver = null
+      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = one.two.TopLevelClass.InnerClass
@@ -154,45 +191,6 @@ KtCallExpression(251,263): 'InnerClass()'
         valueParameters = []
         contextParameters = []
         callableId = null
-    typeArgumentsMapping = {}
-
-KtNameReferenceExpression(251,261): 'InnerClass'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {}
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaImplicitReceiverValue:
-          symbol = KaReceiverParameterSymbol:
-            annotations: []
-            callableId: null
-            compilerVisibility: Public
-            contextReceivers: []
-            isActual: false
-            isExpect: false
-            isExtension: false
-            isVal: true
-            location: LOCAL
-            modality: FINAL
-            name: <receiver>
-            origin: SOURCE
-            owningCallableSymbol: KaNamedFunctionSymbol(one/two/foo)
-            receiverParameter: null
-            returnType: KaUsualClassType:
-              annotations: []
-              typeArguments: []
-              type: one/two/TopLevelClass
-            visibility: PUBLIC
-          type = one.two.TopLevelClass
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = one.two.TopLevelClass.InnerClass
-          symbol = <constructor>(<dispatch receiver>: one.two.TopLevelClass): one.two.TopLevelClass.InnerClass
-          valueParameters = []
-          contextParameters = []
-          callableId = null
       typeArgumentsMapping = {}
 
 KtValueArgumentList(261,263): '()'

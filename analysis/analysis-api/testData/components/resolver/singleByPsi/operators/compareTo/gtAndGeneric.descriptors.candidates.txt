@@ -10,29 +10,28 @@ KtOperationReferenceExpression(97,98): '>'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = m
+        isSafeNavigation = false
+        type = MyClass
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = KaExplicitReceiverValue:
-          expression = m
-          isSafeNavigation = false
-          type = MyClass
-        signature = KaFunctionSignature:
-          receiverType = MyClass
-          returnType = kotlin.Int
-          symbol = /compareTo(<extension receiver>: T, int: kotlin.Int): kotlin.Int
-          valueParameters = [
-            KaVariableSignature:
-              name = int
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = int: kotlin.Int
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /compareTo
+      signature = KaFunctionSignature:
+        receiverType = MyClass
+        returnType = kotlin.Int
+        symbol = /compareTo(<extension receiver>: T, int: kotlin.Int): kotlin.Int
+        valueParameters = [
+          KaVariableSignature:
+            name = int
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = int: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /compareTo
       typeArgumentsMapping = {
         T -> (MyClass)
       }

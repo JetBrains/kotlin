@@ -1,21 +1,20 @@
 KtNameReferenceExpression(193,196): 'foo'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = another
+        isSafeNavigation = false
+        type = Another
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = another
-          isSafeNavigation = false
-          type = Another
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = foo
-          receiverType = null
-          returnType = kotlin.Long
-          symbol = val foo: kotlin.Long
-          contextParameters = []
-          callableId = /Another.foo
+      signature = KaVariableSignature:
+        name = foo
+        receiverType = null
+        returnType = kotlin.Long
+        symbol = val foo: kotlin.Long
+        contextParameters = []
+        callableId = /Another.foo
       simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true

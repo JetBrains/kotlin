@@ -10,28 +10,27 @@ KtArrayAccessExpression(238,249): 'variable[0]'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = variable
+        isSafeNavigation = false
+        type = MyClass
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = variable
-          isSafeNavigation = false
-          type = MyClass
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = MyClass
-          symbol = /MyClass.get(<dispatch receiver>: MyClass, i: kotlin.Int): MyClass
-          valueParameters = [
-            KaVariableSignature:
-              name = i
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = i: kotlin.Int
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /MyClass.get
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MyClass
+        symbol = /MyClass.get(<dispatch receiver>: MyClass, i: kotlin.Int): MyClass
+        valueParameters = [
+          KaVariableSignature:
+            name = i
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = i: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /MyClass.get
       typeArgumentsMapping = {}
     isInBestCandidates = true

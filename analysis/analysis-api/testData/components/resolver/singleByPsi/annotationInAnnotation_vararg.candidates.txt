@@ -17,25 +17,24 @@ KtCallExpression(131,153): 'Annotation("v1", "v2")'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = Annotation
-          symbol = <constructor>(vararg strings: kotlin.String): Annotation
-          valueParameters = [
-            KaVariableSignature:
-              name = strings
-              receiverType = null
-              returnType = kotlin.String
-              symbol = vararg strings: kotlin.String
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Annotation
+        symbol = <constructor>(vararg strings: kotlin.String): Annotation
+        valueParameters = [
+          KaVariableSignature:
+            name = strings
+            receiverType = null
+            returnType = kotlin.String
+            symbol = vararg strings: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true

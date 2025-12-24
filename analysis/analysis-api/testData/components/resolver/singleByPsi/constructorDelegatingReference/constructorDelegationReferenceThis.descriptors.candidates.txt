@@ -10,26 +10,25 @@ KtConstructorDelegationReferenceExpression(90,94): 'this'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       kind = THIS_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = r.BaseClass
-          symbol = <constructor>(i: kotlin.Int): r.BaseClass
-          valueParameters = [
-            KaVariableSignature:
-              name = i
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = i: kotlin.Int
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = r.BaseClass
+        symbol = <constructor>(i: kotlin.Int): r.BaseClass
+        valueParameters = [
+          KaVariableSignature:
+            name = i
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = i: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -44,26 +43,25 @@ KtConstructorDelegationReferenceExpression(90,94): 'this'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       kind = THIS_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = r.BaseClass
-          symbol = <constructor>(s: kotlin.String): r.BaseClass
-          valueParameters = [
-            KaVariableSignature:
-              name = s
-              receiverType = null
-              returnType = kotlin.String
-              symbol = s: kotlin.String
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = r.BaseClass
+        symbol = <constructor>(s: kotlin.String): r.BaseClass
+        valueParameters = [
+          KaVariableSignature:
+            name = s
+            receiverType = null
+            returnType = kotlin.String
+            symbol = s: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with <init>>
     isInBestCandidates = false

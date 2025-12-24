@@ -48,18 +48,17 @@ KtCallExpression(49,58): 'foo(s = )'
     candidateCalls = [
       KaSimpleFunctionCall:
         argumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
         isImplicitInvoke = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = null
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = kotlin.Unit
-            symbol = /foo(): kotlin.Unit
-            valueParameters = []
-            contextParameters = []
-            callableId = /foo
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /foo(): kotlin.Unit
+          valueParameters = []
+          contextParameters = []
+          callableId = /foo
         typeArgumentsMapping = {}
     ]
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with foo>
@@ -69,18 +68,17 @@ KtNameReferenceExpression(49,52): 'foo'
     candidateCalls = [
       KaSimpleFunctionCall:
         argumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
         isImplicitInvoke = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = null
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = kotlin.Unit
-            symbol = /foo(): kotlin.Unit
-            valueParameters = []
-            contextParameters = []
-            callableId = /foo
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /foo(): kotlin.Unit
+          valueParameters = []
+          contextParameters = []
+          callableId = /foo
         typeArgumentsMapping = {}
     ]
     diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with foo>

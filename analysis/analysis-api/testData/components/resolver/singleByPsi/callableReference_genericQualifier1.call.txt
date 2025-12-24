@@ -3,18 +3,17 @@ KtCallExpression(71,80): 'Test<Bar>'
     candidateCalls = [
       KaSimpleFunctionCall:
         argumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
         isImplicitInvoke = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = null
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = test.Test<T>
-            symbol = <constructor>(): test.Test<T>
-            valueParameters = []
-            contextParameters = []
-            callableId = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = test.Test<T>
+          symbol = <constructor>(): test.Test<T>
+          valueParameters = []
+          contextParameters = []
+          callableId = null
         typeArgumentsMapping = {
           T -> (test.Bar)
         }

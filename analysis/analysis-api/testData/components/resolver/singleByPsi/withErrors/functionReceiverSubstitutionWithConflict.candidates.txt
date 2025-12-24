@@ -2,29 +2,28 @@ KtDotQualifiedExpression(106,113): 'f.foo()'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = f
+        isSafeNavigation = false
+        type = Foo<kotlin.String>
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = KaExplicitReceiverValue:
-          expression = f
-          isSafeNavigation = false
-          type = Foo<kotlin.String>
-        signature = KaFunctionSignature:
-          receiverType = Foo<kotlin.String>
-          returnType = kotlin.Unit
-          symbol = /foo(<extension receiver>: Foo<A>, i: kotlin.Int): kotlin.Unit
-          valueParameters = [
-            KaVariableSignature:
-              name = i
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = i: kotlin.Int
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /foo
+      signature = KaFunctionSignature:
+        receiverType = Foo<kotlin.String>
+        returnType = kotlin.Unit
+        symbol = /foo(<extension receiver>: Foo<A>, i: kotlin.Int): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = i
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = i: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /foo
       typeArgumentsMapping = {
         A -> (kotlin.String)
       }
@@ -34,29 +33,28 @@ KtDotQualifiedExpression(106,113): 'f.foo()'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = f
+        isSafeNavigation = false
+        type = Foo<kotlin.String>
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = KaExplicitReceiverValue:
-          expression = f
-          isSafeNavigation = false
-          type = Foo<kotlin.String>
-        signature = KaFunctionSignature:
-          receiverType = Foo<kotlin.String>
-          returnType = kotlin.Unit
-          symbol = /foo(<extension receiver>: Foo<B>, s: kotlin.String): kotlin.Unit
-          valueParameters = [
-            KaVariableSignature:
-              name = s
-              receiverType = null
-              returnType = kotlin.String
-              symbol = s: kotlin.String
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /foo
+      signature = KaFunctionSignature:
+        receiverType = Foo<kotlin.String>
+        returnType = kotlin.Unit
+        symbol = /foo(<extension receiver>: Foo<B>, s: kotlin.String): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = s
+            receiverType = null
+            returnType = kotlin.String
+            symbol = s: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /foo
       typeArgumentsMapping = {
         B -> (kotlin.String)
       }

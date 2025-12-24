@@ -2,16 +2,15 @@ KtNameReferenceExpression(93,95): 'AA'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = AA
-          symbol = <constructor>(): AA
-          valueParameters = []
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = AA
+        symbol = <constructor>(): AA
+        valueParameters = []
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}

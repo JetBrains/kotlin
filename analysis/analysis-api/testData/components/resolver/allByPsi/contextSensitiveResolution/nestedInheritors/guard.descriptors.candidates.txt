@@ -53,18 +53,17 @@ KtSuperTypeCallEntry(161,174): 'SealedClass()'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = SealedClass
-          symbol = <constructor>(): SealedClass
-          valueParameters = []
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = SealedClass
+        symbol = <constructor>(): SealedClass
+        valueParameters = []
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -72,18 +71,17 @@ KtConstructorCalleeExpression(161,172): 'SealedClass'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = SealedClass
-          symbol = <constructor>(): SealedClass
-          valueParameters = []
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = SealedClass
+        symbol = <constructor>(): SealedClass
+        valueParameters = []
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -97,18 +95,17 @@ KtNameReferenceExpression(161,172): 'SealedClass'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = SealedClass
-          symbol = <constructor>(): SealedClass
-          valueParameters = []
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = SealedClass
+        symbol = <constructor>(): SealedClass
+        valueParameters = []
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -125,26 +122,25 @@ KtSuperTypeCallEntry(210,227): 'SealedInheritor()'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = SealedClass.SealedInheritor
-          symbol = <constructor>(prop: kotlin.String): SealedClass.SealedInheritor
-          valueParameters = [
-            KaVariableSignature:
-              name = prop
-              receiverType = null
-              returnType = kotlin.String
-              symbol = prop: kotlin.String
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = SealedClass.SealedInheritor
+        symbol = <constructor>(prop: kotlin.String): SealedClass.SealedInheritor
+        valueParameters = [
+          KaVariableSignature:
+            name = prop
+            receiverType = null
+            returnType = kotlin.String
+            symbol = prop: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -152,26 +148,25 @@ KtConstructorCalleeExpression(210,225): 'SealedInheritor'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = SealedClass.SealedInheritor
-          symbol = <constructor>(prop: kotlin.String): SealedClass.SealedInheritor
-          valueParameters = [
-            KaVariableSignature:
-              name = prop
-              receiverType = null
-              returnType = kotlin.String
-              symbol = prop: kotlin.String
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = SealedClass.SealedInheritor
+        symbol = <constructor>(prop: kotlin.String): SealedClass.SealedInheritor
+        valueParameters = [
+          KaVariableSignature:
+            name = prop
+            receiverType = null
+            returnType = kotlin.String
+            symbol = prop: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -185,26 +180,25 @@ KtNameReferenceExpression(210,225): 'SealedInheritor'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = SealedClass.SealedInheritor
-          symbol = <constructor>(prop: kotlin.String): SealedClass.SealedInheritor
-          valueParameters = [
-            KaVariableSignature:
-              name = prop
-              receiverType = null
-              returnType = kotlin.String
-              symbol = prop: kotlin.String
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = SealedClass.SealedInheritor
+        symbol = <constructor>(prop: kotlin.String): SealedClass.SealedInheritor
+        valueParameters = [
+          KaVariableSignature:
+            name = prop
+            receiverType = null
+            returnType = kotlin.String
+            symbol = prop: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -250,18 +244,17 @@ KtWhenExpression(308,436): 'when (instance) {'
 KtNameReferenceExpression(314,322): 'instance'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = instance
-          receiverType = null
-          returnType = SealedClass
-          symbol = instance: SealedClass
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = instance
+        receiverType = null
+        returnType = SealedClass
+        symbol = instance: SealedClass
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -308,18 +301,17 @@ KtDotQualifiedExpression(395,408): 'instance.prop'
 KtNameReferenceExpression(395,403): 'instance'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = instance
-          receiverType = null
-          returnType = SealedClass
-          symbol = instance: SealedClass
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = instance
+        receiverType = null
+        returnType = SealedClass
+        symbol = instance: SealedClass
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -382,18 +374,17 @@ KtSuperTypeCallEntry(530,541): 'OpenClass()'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = OpenClass
-          symbol = <constructor>(): OpenClass
-          valueParameters = []
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = OpenClass
+        symbol = <constructor>(): OpenClass
+        valueParameters = []
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -401,18 +392,17 @@ KtConstructorCalleeExpression(530,539): 'OpenClass'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = OpenClass
-          symbol = <constructor>(): OpenClass
-          valueParameters = []
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = OpenClass
+        symbol = <constructor>(): OpenClass
+        valueParameters = []
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -426,18 +416,17 @@ KtNameReferenceExpression(530,539): 'OpenClass'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = OpenClass
-          symbol = <constructor>(): OpenClass
-          valueParameters = []
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = OpenClass
+        symbol = <constructor>(): OpenClass
+        valueParameters = []
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -454,26 +443,25 @@ KtSuperTypeCallEntry(588,616): 'SealedInheritorOfOpenClass()'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = OpenClass.SealedInheritorOfOpenClass
-          symbol = <constructor>(prop: kotlin.String): OpenClass.SealedInheritorOfOpenClass
-          valueParameters = [
-            KaVariableSignature:
-              name = prop
-              receiverType = null
-              returnType = kotlin.String
-              symbol = prop: kotlin.String
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = OpenClass.SealedInheritorOfOpenClass
+        symbol = <constructor>(prop: kotlin.String): OpenClass.SealedInheritorOfOpenClass
+        valueParameters = [
+          KaVariableSignature:
+            name = prop
+            receiverType = null
+            returnType = kotlin.String
+            symbol = prop: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -481,26 +469,25 @@ KtConstructorCalleeExpression(588,614): 'SealedInheritorOfOpenClass'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = OpenClass.SealedInheritorOfOpenClass
-          symbol = <constructor>(prop: kotlin.String): OpenClass.SealedInheritorOfOpenClass
-          valueParameters = [
-            KaVariableSignature:
-              name = prop
-              receiverType = null
-              returnType = kotlin.String
-              symbol = prop: kotlin.String
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = OpenClass.SealedInheritorOfOpenClass
+        symbol = <constructor>(prop: kotlin.String): OpenClass.SealedInheritorOfOpenClass
+        valueParameters = [
+          KaVariableSignature:
+            name = prop
+            receiverType = null
+            returnType = kotlin.String
+            symbol = prop: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -514,26 +501,25 @@ KtNameReferenceExpression(588,614): 'SealedInheritorOfOpenClass'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = OpenClass.SealedInheritorOfOpenClass
-          symbol = <constructor>(prop: kotlin.String): OpenClass.SealedInheritorOfOpenClass
-          valueParameters = [
-            KaVariableSignature:
-              name = prop
-              receiverType = null
-              returnType = kotlin.String
-              symbol = prop: kotlin.String
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = OpenClass.SealedInheritorOfOpenClass
+        symbol = <constructor>(prop: kotlin.String): OpenClass.SealedInheritorOfOpenClass
+        valueParameters = [
+          KaVariableSignature:
+            name = prop
+            receiverType = null
+            returnType = kotlin.String
+            symbol = prop: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -579,18 +565,17 @@ KtWhenExpression(693,843): 'when (instance) {'
 KtNameReferenceExpression(699,707): 'instance'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = instance
-          receiverType = null
-          returnType = OpenClass
-          symbol = instance: OpenClass
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = instance
+        receiverType = null
+        returnType = OpenClass
+        symbol = instance: OpenClass
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
@@ -637,18 +622,17 @@ KtDotQualifiedExpression(802,815): 'instance.prop'
 KtNameReferenceExpression(802,810): 'instance'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = instance
-          receiverType = null
-          returnType = OpenClass
-          symbol = instance: OpenClass
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = instance
+        receiverType = null
+        returnType = OpenClass
+        symbol = instance: OpenClass
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true

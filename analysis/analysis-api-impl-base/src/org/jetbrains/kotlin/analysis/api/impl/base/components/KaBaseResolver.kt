@@ -86,16 +86,16 @@ abstract class KaBaseResolver<T : KaSession> : KaBaseSessionComponent<T>(), KaRe
         }
     }
 
-    final override fun KtResolvableCall.resolveCall(): KaCall? = tryResolveCall() as? KaCall
+    final override fun KtResolvableCall.resolveCall(): KaCallResolutionSuccess? = tryResolveCall() as? KaCallResolutionSuccess
 
-    private inline fun <reified R : KaCall> KtResolvableCall.resolveCallSafe(): R? = resolveCall() as? R
+    private inline fun <reified R : KaCallResolutionSuccess> KtResolvableCall.resolveCallSafe(): R? = resolveCall() as? R
 
     final override fun KtAnnotationEntry.resolveCall(): KaAnnotationCall? = resolveCallSafe()
     final override fun KtSuperTypeCallEntry.resolveCall(): KaFunctionCall<KaConstructorSymbol>? = resolveCallSafe()
     final override fun KtConstructorDelegationCall.resolveCall(): KaDelegatedConstructorCall? = resolveCallSafe()
     final override fun KtConstructorDelegationReferenceExpression.resolveCall(): KaDelegatedConstructorCall? = resolveCallSafe()
-    final override fun KtCallElement.resolveCall(): KaCallableMemberCall<*, *>? = resolveCallSafe()
-    final override fun KtCallableReferenceExpression.resolveCall(): KaCallableMemberCall<*, *>? = resolveCallSafe()
+    final override fun KtCallElement.resolveCall(): KaSingleCall<*, *>? = resolveCallSafe()
+    final override fun KtCallableReferenceExpression.resolveCall(): KaSingleCall<*, *>? = resolveCallSafe()
     final override fun KtArrayAccessExpression.resolveCall(): KaSimpleFunctionCall? = resolveCallSafe()
     final override fun KtCollectionLiteralExpression.resolveCall(): KaSimpleFunctionCall? = resolveCallSafe()
     final override fun KtEnumEntrySuperclassReferenceExpression.resolveCall(): KaDelegatedConstructorCall? = resolveCallSafe()
@@ -103,11 +103,15 @@ abstract class KaBaseResolver<T : KaSession> : KaBaseSessionComponent<T>(), KaRe
 
     final override fun KtElement.resolveToCall(): KaCallInfo? = withPsiValidityAssertion {
         when (val attempt = tryResolveCallImpl()) {
-            is KaCallResolutionError -> KaBaseErrorCallInfo(attempt.candidateCalls, attempt.diagnostic)
-            is KaCall -> KaBaseSuccessCallInfo(attempt)
+            is KaCallResolutionError -> KaBaseErrorCallInfo(attempt.candidateCalls.map { it.asKaCall }, attempt.diagnostic)
+            is KaCallResolutionSuccess -> KaBaseSuccessCallInfo(attempt.asKaCall)
             null -> null
         }
     }
+
+    private val KaCallResolutionSuccess.asKaCall: KaCall
+        // All implementations are the same, just the top of the hierarchy is different
+        get() = this as KaCall
 
     private fun KtElement.collectCallCandidatesImpl(): List<KaCallCandidateInfo> {
         val unwrappedElement = unwrapResolvableCall()

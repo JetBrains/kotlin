@@ -220,18 +220,17 @@ KtContainerNode(551,552): 'b'
 KtNameReferenceExpression(551,552): 'b'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = b
-          receiverType = null
-          returnType = kotlin.Boolean
-          symbol = b: kotlin.Boolean
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = b
+        receiverType = null
+        returnType = kotlin.Boolean
+        symbol = b: kotlin.Boolean
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true

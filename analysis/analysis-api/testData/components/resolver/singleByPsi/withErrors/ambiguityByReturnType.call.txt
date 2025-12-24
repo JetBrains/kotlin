@@ -14,29 +14,28 @@ KtCallExpression(208,319): 'sumOf { c ->'
             contextParameters = []
             callableId = null)
         }
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = listOf(19, 20, 21)
+          isSafeNavigation = false
+          type = kotlin.collections.List<kotlin.Int>
         isImplicitInvoke = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = null
-          extensionReceiver = KaExplicitReceiverValue:
-            expression = listOf(19, 20, 21)
-            isSafeNavigation = false
-            type = kotlin.collections.List<kotlin.Int>
-          signature = KaFunctionSignature:
-            receiverType = kotlin.collections.Iterable<kotlin.Int>
-            returnType = kotlin.Int
-            symbol = kotlin/collections/sumOf(<extension receiver>: kotlin.collections.Iterable<T>, selector: (T) -> kotlin.Int): kotlin.Int
-            valueParameters = [
-              KaVariableSignature:
-                name = selector
-                receiverType = null
-                returnType = (kotlin.Int) -> kotlin.Int
-                symbol = selector: (T) -> kotlin.Int
-                contextParameters = []
-                callableId = null
-            ]
-            contextParameters = []
-            callableId = kotlin/collections/sumOf
+        signature = KaFunctionSignature:
+          receiverType = kotlin.collections.Iterable<kotlin.Int>
+          returnType = kotlin.Int
+          symbol = kotlin/collections/sumOf(<extension receiver>: kotlin.collections.Iterable<T>, selector: (T) -> kotlin.Int): kotlin.Int
+          valueParameters = [
+            KaVariableSignature:
+              name = selector
+              receiverType = null
+              returnType = (kotlin.Int) -> kotlin.Int
+              symbol = selector: (T) -> kotlin.Int
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/collections/sumOf
         typeArgumentsMapping = {
           T -> (kotlin.Int)
         },
@@ -53,29 +52,28 @@ KtCallExpression(208,319): 'sumOf { c ->'
             contextParameters = []
             callableId = null)
         }
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = listOf(19, 20, 21)
+          isSafeNavigation = false
+          type = kotlin.collections.List<kotlin.Int>
         isImplicitInvoke = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = null
-          extensionReceiver = KaExplicitReceiverValue:
-            expression = listOf(19, 20, 21)
-            isSafeNavigation = false
-            type = kotlin.collections.List<kotlin.Int>
-          signature = KaFunctionSignature:
-            receiverType = kotlin.collections.Iterable<kotlin.Int>
-            returnType = kotlin.UInt
-            symbol = kotlin/collections/sumOf(<extension receiver>: kotlin.collections.Iterable<T>, selector: (T) -> kotlin.UInt): kotlin.UInt
-            valueParameters = [
-              KaVariableSignature:
-                name = selector
-                receiverType = null
-                returnType = (kotlin.Int) -> kotlin.UInt
-                symbol = selector: (T) -> kotlin.UInt
-                contextParameters = []
-                callableId = null
-            ]
-            contextParameters = []
-            callableId = kotlin/collections/sumOf
+        signature = KaFunctionSignature:
+          receiverType = kotlin.collections.Iterable<kotlin.Int>
+          returnType = kotlin.UInt
+          symbol = kotlin/collections/sumOf(<extension receiver>: kotlin.collections.Iterable<T>, selector: (T) -> kotlin.UInt): kotlin.UInt
+          valueParameters = [
+            KaVariableSignature:
+              name = selector
+              receiverType = null
+              returnType = (kotlin.Int) -> kotlin.UInt
+              symbol = selector: (T) -> kotlin.UInt
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/collections/sumOf
         typeArgumentsMapping = {
           T -> (kotlin.Int)
         }

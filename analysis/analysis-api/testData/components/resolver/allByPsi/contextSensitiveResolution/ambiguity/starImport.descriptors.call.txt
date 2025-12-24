@@ -76,18 +76,17 @@ KtWhenExpression(133,298): 'when (s) {'
 KtNameReferenceExpression(139,140): 's'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = s
-          receiverType = null
-          returnType = bar.Sealed
-          symbol = s: bar.Sealed
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = s
+        receiverType = null
+        returnType = bar.Sealed
+        symbol = s: bar.Sealed
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -194,18 +193,17 @@ KtWhenConditionWithExpression(237,247): 'CompanionB'
 KtNameReferenceExpression(237,247): 'CompanionB'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = CompanionB
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = val CompanionB: kotlin.Int
-          contextParameters = []
-          callableId = foo/CompanionB
+      signature = KaVariableSignature:
+        name = CompanionB
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = val CompanionB: kotlin.Int
+        contextParameters = []
+        callableId = foo/CompanionB
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -287,18 +285,17 @@ KtWhenExpression(337,554): 'when (s) {'
 KtNameReferenceExpression(343,344): 's'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = s
-          receiverType = null
-          returnType = bar.Sealed
-          symbol = s: bar.Sealed
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = s
+        receiverType = null
+        returnType = bar.Sealed
+        symbol = s: bar.Sealed
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -395,21 +392,20 @@ KtWhenConditionWithExpression(429,450): 'bar.Sealed.CompanionA'
 KtDotQualifiedExpression(429,450): 'bar.Sealed.CompanionA'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = bar.Sealed
+        isSafeNavigation = false
+        type = bar.Sealed.Companion
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = bar.Sealed
-          isSafeNavigation = false
-          type = bar.Sealed.Companion
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = CompanionA
-          receiverType = null
-          returnType = bar.Sealed
-          symbol = val CompanionA: bar.Sealed
-          contextParameters = []
-          callableId = bar/Sealed.Companion.CompanionA
+      signature = KaVariableSignature:
+        name = CompanionA
+        receiverType = null
+        returnType = bar.Sealed
+        symbol = val CompanionA: bar.Sealed
+        contextParameters = []
+        callableId = bar/Sealed.Companion.CompanionA
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -425,21 +421,20 @@ KtNameReferenceExpression(433,439): 'Sealed'
 KtNameReferenceExpression(440,450): 'CompanionA'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = bar.Sealed
+        isSafeNavigation = false
+        type = bar.Sealed.Companion
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = bar.Sealed
-          isSafeNavigation = false
-          type = bar.Sealed.Companion
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = CompanionA
-          receiverType = null
-          returnType = bar.Sealed
-          symbol = val CompanionA: bar.Sealed
-          contextParameters = []
-          callableId = bar/Sealed.Companion.CompanionA
+      signature = KaVariableSignature:
+        name = CompanionA
+        receiverType = null
+        returnType = bar.Sealed
+        symbol = val CompanionA: bar.Sealed
+        contextParameters = []
+        callableId = bar/Sealed.Companion.CompanionA
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -455,21 +450,20 @@ KtWhenConditionWithExpression(460,481): 'bar.Sealed.CompanionB'
 KtDotQualifiedExpression(460,481): 'bar.Sealed.CompanionB'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = bar.Sealed
+        isSafeNavigation = false
+        type = bar.Sealed.Companion
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = bar.Sealed
-          isSafeNavigation = false
-          type = bar.Sealed.Companion
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = CompanionB
-          receiverType = null
-          returnType = bar.Sealed
-          symbol = val CompanionB: bar.Sealed
-          contextParameters = []
-          callableId = bar/Sealed.Companion.CompanionB
+      signature = KaVariableSignature:
+        name = CompanionB
+        receiverType = null
+        returnType = bar.Sealed
+        symbol = val CompanionB: bar.Sealed
+        contextParameters = []
+        callableId = bar/Sealed.Companion.CompanionB
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -485,21 +479,20 @@ KtNameReferenceExpression(464,470): 'Sealed'
 KtNameReferenceExpression(471,481): 'CompanionB'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = bar.Sealed
+        isSafeNavigation = false
+        type = bar.Sealed.Companion
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = bar.Sealed
-          isSafeNavigation = false
-          type = bar.Sealed.Companion
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = CompanionB
-          receiverType = null
-          returnType = bar.Sealed
-          symbol = val CompanionB: bar.Sealed
-          contextParameters = []
-          callableId = bar/Sealed.Companion.CompanionB
+      signature = KaVariableSignature:
+        name = CompanionB
+        receiverType = null
+        returnType = bar.Sealed
+        symbol = val CompanionB: bar.Sealed
+        contextParameters = []
+        callableId = bar/Sealed.Companion.CompanionB
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -605,18 +598,17 @@ KtWhenExpression(595,764): 'when (s) {'
 KtNameReferenceExpression(601,602): 's'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = s
-          receiverType = null
-          returnType = bar.Sealed
-          symbol = s: bar.Sealed
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = s
+        receiverType = null
+        returnType = bar.Sealed
+        symbol = s: bar.Sealed
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -713,18 +705,17 @@ KtWhenConditionWithExpression(693,707): 'foo.CompanionB'
 KtDotQualifiedExpression(693,707): 'foo.CompanionB'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = CompanionB
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = val CompanionB: kotlin.Int
-          contextParameters = []
-          callableId = foo/CompanionB
+      signature = KaVariableSignature:
+        name = CompanionB
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = val CompanionB: kotlin.Int
+        contextParameters = []
+        callableId = foo/CompanionB
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -734,18 +725,17 @@ KtNameReferenceExpression(693,696): 'foo'
 KtNameReferenceExpression(697,707): 'CompanionB'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = CompanionB
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = val CompanionB: kotlin.Int
-          contextParameters = []
-          callableId = foo/CompanionB
+      signature = KaVariableSignature:
+        name = CompanionB
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = val CompanionB: kotlin.Int
+        contextParameters = []
+        callableId = foo/CompanionB
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -842,18 +832,17 @@ KtBinaryExpressionWithTypeRHS(803,809): 's as A'
 KtNameReferenceExpression(803,804): 's'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = s
-          receiverType = null
-          returnType = bar.Sealed
-          symbol = s: bar.Sealed
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = s
+        receiverType = null
+        returnType = bar.Sealed
+        symbol = s: bar.Sealed
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -911,18 +900,17 @@ KtBinaryExpressionWithTypeRHS(863,869): 's as B'
 KtNameReferenceExpression(863,864): 's'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = s
-          receiverType = null
-          returnType = bar.Sealed
-          symbol = s: bar.Sealed
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = s
+        receiverType = null
+        returnType = bar.Sealed
+        symbol = s: bar.Sealed
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -980,18 +968,17 @@ KtBinaryExpressionWithTypeRHS(924,937): 's as Sealed.A'
 KtNameReferenceExpression(924,925): 's'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = s
-          receiverType = null
-          returnType = bar.Sealed
-          symbol = s: bar.Sealed
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = s
+        receiverType = null
+        returnType = bar.Sealed
+        symbol = s: bar.Sealed
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -1055,18 +1042,17 @@ KtBinaryExpressionWithTypeRHS(992,1005): 's as Sealed.B'
 KtNameReferenceExpression(992,993): 's'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = s
-          receiverType = null
-          returnType = bar.Sealed
-          symbol = s: bar.Sealed
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = s
+        receiverType = null
+        returnType = bar.Sealed
+        symbol = s: bar.Sealed
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -1130,18 +1116,17 @@ KtBinaryExpressionWithTypeRHS(1062,1072): 's as foo.A'
 KtNameReferenceExpression(1062,1063): 's'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = s
-          receiverType = null
-          returnType = bar.Sealed
-          symbol = s: bar.Sealed
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = s
+        receiverType = null
+        returnType = bar.Sealed
+        symbol = s: bar.Sealed
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -1205,18 +1190,17 @@ KtBinaryExpressionWithTypeRHS(1129,1139): 's as foo.B'
 KtNameReferenceExpression(1129,1130): 's'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = s
-          receiverType = null
-          returnType = bar.Sealed
-          symbol = s: bar.Sealed
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = s
+        receiverType = null
+        returnType = bar.Sealed
+        symbol = s: bar.Sealed
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -1280,18 +1264,17 @@ KtBinaryExpressionWithTypeRHS(1190,1196): 's as C'
 KtNameReferenceExpression(1190,1191): 's'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = s
-          receiverType = null
-          returnType = bar.Sealed
-          symbol = s: bar.Sealed
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = s
+        receiverType = null
+        returnType = bar.Sealed
+        symbol = s: bar.Sealed
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -1351,18 +1334,17 @@ KtBinaryExpressionWithTypeRHS(1247,1253): 's as D'
 KtNameReferenceExpression(1247,1248): 's'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = s
-          receiverType = null
-          returnType = bar.Sealed
-          symbol = s: bar.Sealed
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = s
+        receiverType = null
+        returnType = bar.Sealed
+        symbol = s: bar.Sealed
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -1425,46 +1407,44 @@ KtBinaryExpression(1311,1317): 's == A'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = s
+        isSafeNavigation = false
+        type = bar.Sealed
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = s
-          isSafeNavigation = false
-          type = bar.Sealed
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Boolean
-          symbol = kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
-          valueParameters = [
-            KaVariableSignature:
-              name = other
-              receiverType = null
-              returnType = kotlin.Any?
-              symbol = other: kotlin.Any?
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/Any.equals
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Boolean
+        symbol = kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+        valueParameters = [
+          KaVariableSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.Any?
+            symbol = other: kotlin.Any?
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/Any.equals
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(1311,1312): 's'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = s
-          receiverType = null
-          returnType = bar.Sealed
-          symbol = s: bar.Sealed
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = s
+        receiverType = null
+        returnType = bar.Sealed
+        symbol = s: bar.Sealed
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -1480,29 +1460,28 @@ KtOperationReferenceExpression(1313,1315): '=='
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = s
+        isSafeNavigation = false
+        type = bar.Sealed
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = s
-          isSafeNavigation = false
-          type = bar.Sealed
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Boolean
-          symbol = kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
-          valueParameters = [
-            KaVariableSignature:
-              name = other
-              receiverType = null
-              returnType = kotlin.Any?
-              symbol = other: kotlin.Any?
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/Any.equals
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Boolean
+        symbol = kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+        valueParameters = [
+          KaVariableSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.Any?
+            symbol = other: kotlin.Any?
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/Any.equals
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(1316,1317): 'A'
@@ -1547,46 +1526,44 @@ KtBinaryExpression(1360,1373): 's == Sealed.A'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = s
+        isSafeNavigation = false
+        type = bar.Sealed
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = s
-          isSafeNavigation = false
-          type = bar.Sealed
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Boolean
-          symbol = kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
-          valueParameters = [
-            KaVariableSignature:
-              name = other
-              receiverType = null
-              returnType = kotlin.Any?
-              symbol = other: kotlin.Any?
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/Any.equals
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Boolean
+        symbol = kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+        valueParameters = [
+          KaVariableSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.Any?
+            symbol = other: kotlin.Any?
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/Any.equals
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(1360,1361): 's'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = s
-          receiverType = null
-          returnType = bar.Sealed
-          symbol = s: bar.Sealed
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = s
+        receiverType = null
+        returnType = bar.Sealed
+        symbol = s: bar.Sealed
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -1602,29 +1579,28 @@ KtOperationReferenceExpression(1362,1364): '=='
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = s
+        isSafeNavigation = false
+        type = bar.Sealed
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = s
-          isSafeNavigation = false
-          type = bar.Sealed
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Boolean
-          symbol = kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
-          valueParameters = [
-            KaVariableSignature:
-              name = other
-              receiverType = null
-              returnType = kotlin.Any?
-              symbol = other: kotlin.Any?
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/Any.equals
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Boolean
+        symbol = kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+        valueParameters = [
+          KaVariableSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.Any?
+            symbol = other: kotlin.Any?
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/Any.equals
       typeArgumentsMapping = {}
 
 KtDotQualifiedExpression(1365,1373): 'Sealed.A'
@@ -1675,46 +1651,44 @@ KtBinaryExpression(1418,1428): 's == foo.A'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = s
+        isSafeNavigation = false
+        type = bar.Sealed
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = s
-          isSafeNavigation = false
-          type = bar.Sealed
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Boolean
-          symbol = kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
-          valueParameters = [
-            KaVariableSignature:
-              name = other
-              receiverType = null
-              returnType = kotlin.Any?
-              symbol = other: kotlin.Any?
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/Any.equals
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Boolean
+        symbol = kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+        valueParameters = [
+          KaVariableSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.Any?
+            symbol = other: kotlin.Any?
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/Any.equals
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(1418,1419): 's'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = s
-          receiverType = null
-          returnType = bar.Sealed
-          symbol = s: bar.Sealed
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = s
+        receiverType = null
+        returnType = bar.Sealed
+        symbol = s: bar.Sealed
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -1730,29 +1704,28 @@ KtOperationReferenceExpression(1420,1422): '=='
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = s
+        isSafeNavigation = false
+        type = bar.Sealed
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = s
-          isSafeNavigation = false
-          type = bar.Sealed
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Boolean
-          symbol = kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
-          valueParameters = [
-            KaVariableSignature:
-              name = other
-              receiverType = null
-              returnType = kotlin.Any?
-              symbol = other: kotlin.Any?
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/Any.equals
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Boolean
+        symbol = kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+        valueParameters = [
+          KaVariableSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.Any?
+            symbol = other: kotlin.Any?
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/Any.equals
       typeArgumentsMapping = {}
 
 KtDotQualifiedExpression(1423,1428): 'foo.A'
@@ -1803,46 +1776,44 @@ KtBinaryExpression(1468,1481): 's == Sealed.C'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = s
+        isSafeNavigation = false
+        type = bar.Sealed
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = s
-          isSafeNavigation = false
-          type = bar.Sealed
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Boolean
-          symbol = kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
-          valueParameters = [
-            KaVariableSignature:
-              name = other
-              receiverType = null
-              returnType = kotlin.Any?
-              symbol = other: kotlin.Any?
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/Any.equals
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Boolean
+        symbol = kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+        valueParameters = [
+          KaVariableSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.Any?
+            symbol = other: kotlin.Any?
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/Any.equals
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(1468,1469): 's'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = s
-          receiverType = null
-          returnType = bar.Sealed
-          symbol = s: bar.Sealed
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = s
+        receiverType = null
+        returnType = bar.Sealed
+        symbol = s: bar.Sealed
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -1858,29 +1829,28 @@ KtOperationReferenceExpression(1470,1472): '=='
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = s
+        isSafeNavigation = false
+        type = bar.Sealed
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = s
-          isSafeNavigation = false
-          type = bar.Sealed
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Boolean
-          symbol = kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
-          valueParameters = [
-            KaVariableSignature:
-              name = other
-              receiverType = null
-              returnType = kotlin.Any?
-              symbol = other: kotlin.Any?
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/Any.equals
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Boolean
+        symbol = kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+        valueParameters = [
+          KaVariableSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.Any?
+            symbol = other: kotlin.Any?
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/Any.equals
       typeArgumentsMapping = {}
 
 KtDotQualifiedExpression(1473,1481): 'Sealed.C'
@@ -1931,46 +1901,44 @@ KtBinaryExpression(1524,1539): 's == CompanionA'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = s
+        isSafeNavigation = false
+        type = bar.Sealed
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = s
-          isSafeNavigation = false
-          type = bar.Sealed
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Boolean
-          symbol = kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
-          valueParameters = [
-            KaVariableSignature:
-              name = other
-              receiverType = null
-              returnType = kotlin.Any?
-              symbol = other: kotlin.Any?
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/Any.equals
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Boolean
+        symbol = kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+        valueParameters = [
+          KaVariableSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.Any?
+            symbol = other: kotlin.Any?
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/Any.equals
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(1524,1525): 's'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = s
-          receiverType = null
-          returnType = bar.Sealed
-          symbol = s: bar.Sealed
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = s
+        receiverType = null
+        returnType = bar.Sealed
+        symbol = s: bar.Sealed
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -1986,29 +1954,28 @@ KtOperationReferenceExpression(1526,1528): '=='
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = s
+        isSafeNavigation = false
+        type = bar.Sealed
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = s
-          isSafeNavigation = false
-          type = bar.Sealed
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Boolean
-          symbol = kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
-          valueParameters = [
-            KaVariableSignature:
-              name = other
-              receiverType = null
-              returnType = kotlin.Any?
-              symbol = other: kotlin.Any?
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/Any.equals
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Boolean
+        symbol = kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+        valueParameters = [
+          KaVariableSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.Any?
+            symbol = other: kotlin.Any?
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/Any.equals
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(1529,1539): 'CompanionA'
@@ -2053,46 +2020,44 @@ KtBinaryExpression(1582,1604): 's == Sealed.CompanionA'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = s
+        isSafeNavigation = false
+        type = bar.Sealed
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = s
-          isSafeNavigation = false
-          type = bar.Sealed
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Boolean
-          symbol = kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
-          valueParameters = [
-            KaVariableSignature:
-              name = other
-              receiverType = null
-              returnType = kotlin.Any?
-              symbol = other: kotlin.Any?
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/Any.equals
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Boolean
+        symbol = kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+        valueParameters = [
+          KaVariableSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.Any?
+            symbol = other: kotlin.Any?
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/Any.equals
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(1582,1583): 's'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = s
-          receiverType = null
-          returnType = bar.Sealed
-          symbol = s: bar.Sealed
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = s
+        receiverType = null
+        returnType = bar.Sealed
+        symbol = s: bar.Sealed
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -2108,49 +2073,47 @@ KtOperationReferenceExpression(1584,1586): '=='
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = s
+        isSafeNavigation = false
+        type = bar.Sealed
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = s
-          isSafeNavigation = false
-          type = bar.Sealed
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Boolean
-          symbol = kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
-          valueParameters = [
-            KaVariableSignature:
-              name = other
-              receiverType = null
-              returnType = kotlin.Any?
-              symbol = other: kotlin.Any?
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/Any.equals
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Boolean
+        symbol = kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+        valueParameters = [
+          KaVariableSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.Any?
+            symbol = other: kotlin.Any?
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/Any.equals
       typeArgumentsMapping = {}
 
 KtDotQualifiedExpression(1587,1604): 'Sealed.CompanionA'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = Sealed
+        isSafeNavigation = false
+        type = bar.Sealed.Companion
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = Sealed
-          isSafeNavigation = false
-          type = bar.Sealed.Companion
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = CompanionA
-          receiverType = null
-          returnType = bar.Sealed
-          symbol = val CompanionA: bar.Sealed
-          contextParameters = []
-          callableId = bar/Sealed.Companion.CompanionA
+      signature = KaVariableSignature:
+        name = CompanionA
+        receiverType = null
+        returnType = bar.Sealed
+        symbol = val CompanionA: bar.Sealed
+        contextParameters = []
+        callableId = bar/Sealed.Companion.CompanionA
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -2160,21 +2123,20 @@ KtNameReferenceExpression(1587,1593): 'Sealed'
 KtNameReferenceExpression(1594,1604): 'CompanionA'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = Sealed
+        isSafeNavigation = false
+        type = bar.Sealed.Companion
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = Sealed
-          isSafeNavigation = false
-          type = bar.Sealed.Companion
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = CompanionA
-          receiverType = null
-          returnType = bar.Sealed
-          symbol = val CompanionA: bar.Sealed
-          contextParameters = []
-          callableId = bar/Sealed.Companion.CompanionA
+      signature = KaVariableSignature:
+        name = CompanionA
+        receiverType = null
+        returnType = bar.Sealed
+        symbol = val CompanionA: bar.Sealed
+        contextParameters = []
+        callableId = bar/Sealed.Companion.CompanionA
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -2217,46 +2179,44 @@ KtBinaryExpression(1649,1668): 's == foo.CompanionA'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = s
+        isSafeNavigation = false
+        type = bar.Sealed
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = s
-          isSafeNavigation = false
-          type = bar.Sealed
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Boolean
-          symbol = kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
-          valueParameters = [
-            KaVariableSignature:
-              name = other
-              receiverType = null
-              returnType = kotlin.Any?
-              symbol = other: kotlin.Any?
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/Any.equals
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Boolean
+        symbol = kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+        valueParameters = [
+          KaVariableSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.Any?
+            symbol = other: kotlin.Any?
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/Any.equals
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(1649,1650): 's'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = s
-          receiverType = null
-          returnType = bar.Sealed
-          symbol = s: bar.Sealed
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = s
+        receiverType = null
+        returnType = bar.Sealed
+        symbol = s: bar.Sealed
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -2272,29 +2232,28 @@ KtOperationReferenceExpression(1651,1653): '=='
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = s
+        isSafeNavigation = false
+        type = bar.Sealed
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = s
-          isSafeNavigation = false
-          type = bar.Sealed
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Boolean
-          symbol = kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
-          valueParameters = [
-            KaVariableSignature:
-              name = other
-              receiverType = null
-              returnType = kotlin.Any?
-              symbol = other: kotlin.Any?
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/Any.equals
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Boolean
+        symbol = kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+        valueParameters = [
+          KaVariableSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.Any?
+            symbol = other: kotlin.Any?
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/Any.equals
       typeArgumentsMapping = {}
 
 KtDotQualifiedExpression(1654,1668): 'foo.CompanionA'
@@ -2345,46 +2304,44 @@ KtBinaryExpression(1708,1714): 's == F'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = s
+        isSafeNavigation = false
+        type = bar.Sealed
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = s
-          isSafeNavigation = false
-          type = bar.Sealed
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Boolean
-          symbol = kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
-          valueParameters = [
-            KaVariableSignature:
-              name = other
-              receiverType = null
-              returnType = kotlin.Any?
-              symbol = other: kotlin.Any?
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/Any.equals
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Boolean
+        symbol = kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+        valueParameters = [
+          KaVariableSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.Any?
+            symbol = other: kotlin.Any?
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/Any.equals
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(1708,1709): 's'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = s
-          receiverType = null
-          returnType = bar.Sealed
-          symbol = s: bar.Sealed
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = s
+        receiverType = null
+        returnType = bar.Sealed
+        symbol = s: bar.Sealed
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -2400,29 +2357,28 @@ KtOperationReferenceExpression(1710,1712): '=='
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = s
+        isSafeNavigation = false
+        type = bar.Sealed
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = s
-          isSafeNavigation = false
-          type = bar.Sealed
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Boolean
-          symbol = kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
-          valueParameters = [
-            KaVariableSignature:
-              name = other
-              receiverType = null
-              returnType = kotlin.Any?
-              symbol = other: kotlin.Any?
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/Any.equals
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Boolean
+        symbol = kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+        valueParameters = [
+          KaVariableSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.Any?
+            symbol = other: kotlin.Any?
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/Any.equals
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(1713,1714): 'F'
@@ -2467,46 +2423,44 @@ KtBinaryExpression(1757,1770): 's == Sealed.F'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = s
+        isSafeNavigation = false
+        type = bar.Sealed
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = s
-          isSafeNavigation = false
-          type = bar.Sealed
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Boolean
-          symbol = kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
-          valueParameters = [
-            KaVariableSignature:
-              name = other
-              receiverType = null
-              returnType = kotlin.Any?
-              symbol = other: kotlin.Any?
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/Any.equals
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Boolean
+        symbol = kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+        valueParameters = [
+          KaVariableSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.Any?
+            symbol = other: kotlin.Any?
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/Any.equals
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(1757,1758): 's'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = s
-          receiverType = null
-          returnType = bar.Sealed
-          symbol = s: bar.Sealed
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = s
+        receiverType = null
+        returnType = bar.Sealed
+        symbol = s: bar.Sealed
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -2522,29 +2476,28 @@ KtOperationReferenceExpression(1759,1761): '=='
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = s
+        isSafeNavigation = false
+        type = bar.Sealed
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = s
-          isSafeNavigation = false
-          type = bar.Sealed
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Boolean
-          symbol = kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
-          valueParameters = [
-            KaVariableSignature:
-              name = other
-              receiverType = null
-              returnType = kotlin.Any?
-              symbol = other: kotlin.Any?
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/Any.equals
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Boolean
+        symbol = kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+        valueParameters = [
+          KaVariableSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.Any?
+            symbol = other: kotlin.Any?
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/Any.equals
       typeArgumentsMapping = {}
 
 KtDotQualifiedExpression(1762,1770): 'Sealed.F'
@@ -2595,46 +2548,44 @@ KtBinaryExpression(1815,1825): 's == foo.F'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = s
+        isSafeNavigation = false
+        type = bar.Sealed
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = s
-          isSafeNavigation = false
-          type = bar.Sealed
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Boolean
-          symbol = kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
-          valueParameters = [
-            KaVariableSignature:
-              name = other
-              receiverType = null
-              returnType = kotlin.Any?
-              symbol = other: kotlin.Any?
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/Any.equals
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Boolean
+        symbol = kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+        valueParameters = [
+          KaVariableSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.Any?
+            symbol = other: kotlin.Any?
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/Any.equals
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(1815,1816): 's'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = s
-          receiverType = null
-          returnType = bar.Sealed
-          symbol = s: bar.Sealed
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = s
+        receiverType = null
+        returnType = bar.Sealed
+        symbol = s: bar.Sealed
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -2650,29 +2601,28 @@ KtOperationReferenceExpression(1817,1819): '=='
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = s
+        isSafeNavigation = false
+        type = bar.Sealed
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = s
-          isSafeNavigation = false
-          type = bar.Sealed
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Boolean
-          symbol = kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
-          valueParameters = [
-            KaVariableSignature:
-              name = other
-              receiverType = null
-              returnType = kotlin.Any?
-              symbol = other: kotlin.Any?
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/Any.equals
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Boolean
+        symbol = kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+        valueParameters = [
+          KaVariableSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.Any?
+            symbol = other: kotlin.Any?
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/Any.equals
       typeArgumentsMapping = {}
 
 KtDotQualifiedExpression(1820,1825): 'foo.F'

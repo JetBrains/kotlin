@@ -1,15 +1,14 @@
 KtAnnotationEntry(35,40): '@Anno'
   KaAnnotationCall:
     argumentMapping = {}
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      contextArguments = []
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = Anno
-        symbol = <constructor>(): Anno
-        valueParameters = []
-        contextParameters = []
-        callableId = null
+    contextArguments = []
+    dispatchReceiver = null
+    extensionReceiver = null
+    signature = KaFunctionSignature:
+      receiverType = null
+      returnType = Anno
+      symbol = <constructor>(): Anno
+      valueParameters = []
+      contextParameters = []
+      callableId = null
     typeArgumentsMapping = {}

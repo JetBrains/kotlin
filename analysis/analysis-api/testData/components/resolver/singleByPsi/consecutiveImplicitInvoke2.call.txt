@@ -1,19 +1,18 @@
 KtCallExpression(135,140): 'i()()'
   KaSimpleFunctionCall:
     argumentMapping = {}
+    contextArguments = []
+    dispatchReceiver = null
+    extensionReceiver = KaExplicitReceiverValue:
+      expression = i()
+      isSafeNavigation = false
+      type = kotlin.Long
     isImplicitInvoke = true
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      contextArguments = []
-      dispatchReceiver = null
-      extensionReceiver = KaExplicitReceiverValue:
-        expression = i()
-        isSafeNavigation = false
-        type = kotlin.Long
-      signature = KaFunctionSignature:
-        receiverType = kotlin.Long
-        returnType = kotlin.Double
-        symbol = /invoke(<extension receiver>: kotlin.Long): kotlin.Double
-        valueParameters = []
-        contextParameters = []
-        callableId = /invoke
+    signature = KaFunctionSignature:
+      receiverType = kotlin.Long
+      returnType = kotlin.Double
+      symbol = /invoke(<extension receiver>: kotlin.Long): kotlin.Double
+      valueParameters = []
+      contextParameters = []
+      callableId = /invoke
     typeArgumentsMapping = {}

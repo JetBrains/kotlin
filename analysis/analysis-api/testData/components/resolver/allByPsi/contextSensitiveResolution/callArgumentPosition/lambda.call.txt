@@ -58,11 +58,27 @@ KtSuperTypeList(217,226): 'MyClass()'
 KtSuperTypeCallEntry(217,226): 'MyClass()'
   KaDelegatedConstructorCall:
     argumentMapping = {}
+    contextArguments = []
+    dispatchReceiver = null
+    extensionReceiver = null
     kind = SUPER_CALL
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+    signature = KaFunctionSignature:
+      receiverType = null
+      returnType = MyClass
+      symbol = <constructor>(): MyClass
+      valueParameters = []
+      contextParameters = []
+      callableId = null
+    typeArgumentsMapping = {}
+
+KtConstructorCalleeExpression(217,224): 'MyClass'
+  KaSuccessCallInfo:
+    call = KaDelegatedConstructorCall:
+      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
+      kind = SUPER_CALL
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MyClass
@@ -70,24 +86,6 @@ KtSuperTypeCallEntry(217,226): 'MyClass()'
         valueParameters = []
         contextParameters = []
         callableId = null
-    typeArgumentsMapping = {}
-
-KtConstructorCalleeExpression(217,224): 'MyClass'
-  KaSuccessCallInfo:
-    call = KaDelegatedConstructorCall:
-      argumentMapping = {}
-      kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = MyClass
-          symbol = <constructor>(): MyClass
-          valueParameters = []
-          contextParameters = []
-          callableId = null
       typeArgumentsMapping = {}
 
 KtTypeReference(217,224): 'MyClass'
@@ -129,11 +127,27 @@ KtSuperTypeList(292,301): 'MyClass()'
 KtSuperTypeCallEntry(292,301): 'MyClass()'
   KaDelegatedConstructorCall:
     argumentMapping = {}
+    contextArguments = []
+    dispatchReceiver = null
+    extensionReceiver = null
     kind = SUPER_CALL
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+    signature = KaFunctionSignature:
+      receiverType = null
+      returnType = MyClass
+      symbol = <constructor>(): MyClass
+      valueParameters = []
+      contextParameters = []
+      callableId = null
+    typeArgumentsMapping = {}
+
+KtConstructorCalleeExpression(292,299): 'MyClass'
+  KaSuccessCallInfo:
+    call = KaDelegatedConstructorCall:
+      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
+      kind = SUPER_CALL
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MyClass
@@ -141,24 +155,6 @@ KtSuperTypeCallEntry(292,301): 'MyClass()'
         valueParameters = []
         contextParameters = []
         callableId = null
-    typeArgumentsMapping = {}
-
-KtConstructorCalleeExpression(292,299): 'MyClass'
-  KaSuccessCallInfo:
-    call = KaDelegatedConstructorCall:
-      argumentMapping = {}
-      kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = MyClass
-          symbol = <constructor>(): MyClass
-          valueParameters = []
-          contextParameters = []
-          callableId = null
       typeArgumentsMapping = {}
 
 KtTypeReference(292,299): 'MyClass'
@@ -206,11 +202,27 @@ KtSuperTypeList(388,395): 'Super()'
 KtSuperTypeCallEntry(388,395): 'Super()'
   KaDelegatedConstructorCall:
     argumentMapping = {}
+    contextArguments = []
+    dispatchReceiver = null
+    extensionReceiver = null
     kind = SUPER_CALL
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+    signature = KaFunctionSignature:
+      receiverType = null
+      returnType = Super
+      symbol = <constructor>(): Super
+      valueParameters = []
+      contextParameters = []
+      callableId = null
+    typeArgumentsMapping = {}
+
+KtConstructorCalleeExpression(388,393): 'Super'
+  KaSuccessCallInfo:
+    call = KaDelegatedConstructorCall:
+      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
+      kind = SUPER_CALL
       signature = KaFunctionSignature:
         receiverType = null
         returnType = Super
@@ -218,24 +230,6 @@ KtSuperTypeCallEntry(388,395): 'Super()'
         valueParameters = []
         contextParameters = []
         callableId = null
-    typeArgumentsMapping = {}
-
-KtConstructorCalleeExpression(388,393): 'Super'
-  KaSuccessCallInfo:
-    call = KaDelegatedConstructorCall:
-      argumentMapping = {}
-      kind = SUPER_CALL
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = Super
-          symbol = <constructor>(): Super
-          valueParameters = []
-          contextParameters = []
-          callableId = null
       typeArgumentsMapping = {}
 
 KtTypeReference(388,393): 'Super'
@@ -268,11 +262,27 @@ KtNameReferenceExpression(423,430): 'MyClass'
 KtCallExpression(433,439): 'TODO()'
   KaSimpleFunctionCall:
     argumentMapping = {}
+    contextArguments = []
+    dispatchReceiver = null
+    extensionReceiver = null
     isImplicitInvoke = false
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+    signature = KaFunctionSignature:
+      receiverType = null
+      returnType = kotlin.Nothing
+      symbol = kotlin/TODO(): kotlin.Nothing
+      valueParameters = []
+      contextParameters = []
+      callableId = kotlin/TODO
+    typeArgumentsMapping = {}
+
+KtNameReferenceExpression(433,437): 'TODO'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
+      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Nothing
@@ -280,24 +290,6 @@ KtCallExpression(433,439): 'TODO()'
         valueParameters = []
         contextParameters = []
         callableId = kotlin/TODO
-    typeArgumentsMapping = {}
-
-KtNameReferenceExpression(433,437): 'TODO'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {}
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Nothing
-          symbol = kotlin/TODO(): kotlin.Nothing
-          valueParameters = []
-          contextParameters = []
-          callableId = kotlin/TODO
       typeArgumentsMapping = {}
 
 KtValueArgumentList(437,439): '()'
@@ -318,11 +310,27 @@ KtNameReferenceExpression(472,486): 'InheritorClass'
 KtCallExpression(489,505): 'InheritorClass()'
   KaSimpleFunctionCall:
     argumentMapping = {}
+    contextArguments = []
+    dispatchReceiver = null
+    extensionReceiver = null
     isImplicitInvoke = false
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+    signature = KaFunctionSignature:
+      receiverType = null
+      returnType = MyClass.InheritorClass
+      symbol = <constructor>(): MyClass.InheritorClass
+      valueParameters = []
+      contextParameters = []
+      callableId = null
+    typeArgumentsMapping = {}
+
+KtNameReferenceExpression(489,503): 'InheritorClass'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
+      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MyClass.InheritorClass
@@ -330,24 +338,6 @@ KtCallExpression(489,505): 'InheritorClass()'
         valueParameters = []
         contextParameters = []
         callableId = null
-    typeArgumentsMapping = {}
-
-KtNameReferenceExpression(489,503): 'InheritorClass'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {}
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = MyClass.InheritorClass
-          symbol = <constructor>(): MyClass.InheritorClass
-          valueParameters = []
-          contextParameters = []
-          callableId = null
       typeArgumentsMapping = {}
 
 KtValueArgumentList(503,505): '()'
@@ -427,26 +417,25 @@ KtCallExpression(676,685): 'lazy {""}'
         contextParameters = []
         callableId = null)
     }
+    contextArguments = []
+    dispatchReceiver = null
+    extensionReceiver = null
     isImplicitInvoke = false
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      contextArguments = []
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = kotlin.Lazy<kotlin.String>
-        symbol = kotlin/lazy(initializer: () -> T): kotlin.Lazy<T>
-        valueParameters = [
-          KaVariableSignature:
-            name = initializer
-            receiverType = null
-            returnType = () -> kotlin.String
-            symbol = initializer: () -> T
-            contextParameters = []
-            callableId = null
-        ]
-        contextParameters = []
-        callableId = kotlin/lazy
+    signature = KaFunctionSignature:
+      receiverType = null
+      returnType = kotlin.Lazy<kotlin.String>
+      symbol = kotlin/lazy(initializer: () -> T): kotlin.Lazy<T>
+      valueParameters = [
+        KaVariableSignature:
+          name = initializer
+          receiverType = null
+          returnType = () -> kotlin.String
+          symbol = initializer: () -> T
+          contextParameters = []
+          callableId = null
+      ]
+      contextParameters = []
+      callableId = kotlin/lazy
     typeArgumentsMapping = {
       T -> (kotlin.String)
     }
@@ -463,26 +452,25 @@ KtNameReferenceExpression(676,680): 'lazy'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Lazy<kotlin.String>
-          symbol = kotlin/lazy(initializer: () -> T): kotlin.Lazy<T>
-          valueParameters = [
-            KaVariableSignature:
-              name = initializer
-              receiverType = null
-              returnType = () -> kotlin.String
-              symbol = initializer: () -> T
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/lazy
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Lazy<kotlin.String>
+        symbol = kotlin/lazy(initializer: () -> T): kotlin.Lazy<T>
+        valueParameters = [
+          KaVariableSignature:
+            name = initializer
+            receiverType = null
+            returnType = () -> kotlin.String
+            symbol = initializer: () -> T
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/lazy
       typeArgumentsMapping = {
         T -> (kotlin.String)
       }
@@ -535,11 +523,27 @@ KtNameReferenceExpression(749,756): 'MyClass'
 KtCallExpression(759,765): 'TODO()'
   KaSimpleFunctionCall:
     argumentMapping = {}
+    contextArguments = []
+    dispatchReceiver = null
+    extensionReceiver = null
     isImplicitInvoke = false
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+    signature = KaFunctionSignature:
+      receiverType = null
+      returnType = kotlin.Nothing
+      symbol = kotlin/TODO(): kotlin.Nothing
+      valueParameters = []
+      contextParameters = []
+      callableId = kotlin/TODO
+    typeArgumentsMapping = {}
+
+KtNameReferenceExpression(759,763): 'TODO'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      argumentMapping = {}
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
+      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Nothing
@@ -547,24 +551,6 @@ KtCallExpression(759,765): 'TODO()'
         valueParameters = []
         contextParameters = []
         callableId = kotlin/TODO
-    typeArgumentsMapping = {}
-
-KtNameReferenceExpression(759,763): 'TODO'
-  KaSuccessCallInfo:
-    call = KaSimpleFunctionCall:
-      argumentMapping = {}
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Nothing
-          symbol = kotlin/TODO(): kotlin.Nothing
-          valueParameters = []
-          contextParameters = []
-          callableId = kotlin/TODO
       typeArgumentsMapping = {}
 
 KtValueArgumentList(763,765): '()'
@@ -623,46 +609,44 @@ KtCallExpression(830,855): 'lMyClass(InheritorObject)'
         contextParameters = []
         callableId = null)
     }
+    contextArguments = []
+    dispatchReceiver = KaExplicitReceiverValue:
+      expression = lMyClass
+      isSafeNavigation = false
+      type = (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
+    extensionReceiver = null
     isImplicitInvoke = true
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      contextArguments = []
-      dispatchReceiver = KaExplicitReceiverValue:
-        expression = lMyClass
-        isSafeNavigation = false
-        type = (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = kotlin.Unit
-        symbol = kotlin/Function1.invoke(<dispatch receiver>: (P1) -> R, p1: P1): R
-        valueParameters = [
-          KaVariableSignature:
-            name = arg
-            receiverType = null
-            returnType = @R|kotlin.ParameterName|(name = String(arg))  MyClass
-            symbol = p1: P1
-            contextParameters = []
-            callableId = null
-        ]
-        contextParameters = []
-        callableId = kotlin/Function1.invoke
+    signature = KaFunctionSignature:
+      receiverType = null
+      returnType = kotlin.Unit
+      symbol = kotlin/Function1.invoke(<dispatch receiver>: (P1) -> R, p1: P1): R
+      valueParameters = [
+        KaVariableSignature:
+          name = arg
+          receiverType = null
+          returnType = @R|kotlin.ParameterName|(name = String(arg))  MyClass
+          symbol = p1: P1
+          contextParameters = []
+          callableId = null
+      ]
+      contextParameters = []
+      callableId = kotlin/Function1.invoke
     typeArgumentsMapping = {}
 
 KtNameReferenceExpression(830,838): 'lMyClass'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = lMyClass
-          receiverType = null
-          returnType = (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
-          symbol = lMyClass: (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = lMyClass
+        receiverType = null
+        returnType = (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
+        symbol = lMyClass: (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -686,46 +670,44 @@ KtCallExpression(860,881): 'lMyClass(propMyClass)'
         contextParameters = []
         callableId = null)
     }
+    contextArguments = []
+    dispatchReceiver = KaExplicitReceiverValue:
+      expression = lMyClass
+      isSafeNavigation = false
+      type = (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
+    extensionReceiver = null
     isImplicitInvoke = true
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      contextArguments = []
-      dispatchReceiver = KaExplicitReceiverValue:
-        expression = lMyClass
-        isSafeNavigation = false
-        type = (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = kotlin.Unit
-        symbol = kotlin/Function1.invoke(<dispatch receiver>: (P1) -> R, p1: P1): R
-        valueParameters = [
-          KaVariableSignature:
-            name = arg
-            receiverType = null
-            returnType = @R|kotlin.ParameterName|(name = String(arg))  MyClass
-            symbol = p1: P1
-            contextParameters = []
-            callableId = null
-        ]
-        contextParameters = []
-        callableId = kotlin/Function1.invoke
+    signature = KaFunctionSignature:
+      receiverType = null
+      returnType = kotlin.Unit
+      symbol = kotlin/Function1.invoke(<dispatch receiver>: (P1) -> R, p1: P1): R
+      valueParameters = [
+        KaVariableSignature:
+          name = arg
+          receiverType = null
+          returnType = @R|kotlin.ParameterName|(name = String(arg))  MyClass
+          symbol = p1: P1
+          contextParameters = []
+          callableId = null
+      ]
+      contextParameters = []
+      callableId = kotlin/Function1.invoke
     typeArgumentsMapping = {}
 
 KtNameReferenceExpression(860,868): 'lMyClass'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = lMyClass
-          receiverType = null
-          returnType = (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
-          symbol = lMyClass: (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = lMyClass
+        receiverType = null
+        returnType = (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
+        symbol = lMyClass: (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -738,21 +720,20 @@ KtValueArgument(869,880): 'propMyClass'
 KtNameReferenceExpression(869,880): 'propMyClass'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = propMyClass
+        isSafeNavigation = false
+        type = MyClass.Companion
+      extensionReceiver = null
       isContextSensitive = true
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = propMyClass
-          isSafeNavigation = false
-          type = MyClass.Companion
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = propMyClass
-          receiverType = null
-          returnType = MyClass
-          symbol = val propMyClass: MyClass
-          contextParameters = []
-          callableId = /MyClass.Companion.propMyClass
+      signature = KaVariableSignature:
+        name = propMyClass
+        receiverType = null
+        returnType = MyClass
+        symbol = val propMyClass: MyClass
+        contextParameters = []
+        callableId = /MyClass.Companion.propMyClass
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -767,46 +748,44 @@ KtCallExpression(886,914): 'lMyClass(propInheritorClass)'
         contextParameters = []
         callableId = null)
     }
+    contextArguments = []
+    dispatchReceiver = KaExplicitReceiverValue:
+      expression = lMyClass
+      isSafeNavigation = false
+      type = (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
+    extensionReceiver = null
     isImplicitInvoke = true
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      contextArguments = []
-      dispatchReceiver = KaExplicitReceiverValue:
-        expression = lMyClass
-        isSafeNavigation = false
-        type = (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = kotlin.Unit
-        symbol = kotlin/Function1.invoke(<dispatch receiver>: (P1) -> R, p1: P1): R
-        valueParameters = [
-          KaVariableSignature:
-            name = arg
-            receiverType = null
-            returnType = @R|kotlin.ParameterName|(name = String(arg))  MyClass
-            symbol = p1: P1
-            contextParameters = []
-            callableId = null
-        ]
-        contextParameters = []
-        callableId = kotlin/Function1.invoke
+    signature = KaFunctionSignature:
+      receiverType = null
+      returnType = kotlin.Unit
+      symbol = kotlin/Function1.invoke(<dispatch receiver>: (P1) -> R, p1: P1): R
+      valueParameters = [
+        KaVariableSignature:
+          name = arg
+          receiverType = null
+          returnType = @R|kotlin.ParameterName|(name = String(arg))  MyClass
+          symbol = p1: P1
+          contextParameters = []
+          callableId = null
+      ]
+      contextParameters = []
+      callableId = kotlin/Function1.invoke
     typeArgumentsMapping = {}
 
 KtNameReferenceExpression(886,894): 'lMyClass'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = lMyClass
-          receiverType = null
-          returnType = (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
-          symbol = lMyClass: (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = lMyClass
+        receiverType = null
+        returnType = (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
+        symbol = lMyClass: (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -819,21 +798,20 @@ KtValueArgument(895,913): 'propInheritorClass'
 KtNameReferenceExpression(895,913): 'propInheritorClass'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = propInheritorClass
+        isSafeNavigation = false
+        type = MyClass.Companion
+      extensionReceiver = null
       isContextSensitive = true
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = propInheritorClass
-          isSafeNavigation = false
-          type = MyClass.Companion
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = propInheritorClass
-          receiverType = null
-          returnType = MyClass.InheritorClass
-          symbol = val propInheritorClass: MyClass.InheritorClass
-          contextParameters = []
-          callableId = /MyClass.Companion.propInheritorClass
+      signature = KaVariableSignature:
+        name = propInheritorClass
+        receiverType = null
+        returnType = MyClass.InheritorClass
+        symbol = val propInheritorClass: MyClass.InheritorClass
+        contextParameters = []
+        callableId = /MyClass.Companion.propInheritorClass
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -848,46 +826,44 @@ KtCallExpression(919,948): 'lMyClass(propInheritorObject)'
         contextParameters = []
         callableId = null)
     }
+    contextArguments = []
+    dispatchReceiver = KaExplicitReceiverValue:
+      expression = lMyClass
+      isSafeNavigation = false
+      type = (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
+    extensionReceiver = null
     isImplicitInvoke = true
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      contextArguments = []
-      dispatchReceiver = KaExplicitReceiverValue:
-        expression = lMyClass
-        isSafeNavigation = false
-        type = (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = kotlin.Unit
-        symbol = kotlin/Function1.invoke(<dispatch receiver>: (P1) -> R, p1: P1): R
-        valueParameters = [
-          KaVariableSignature:
-            name = arg
-            receiverType = null
-            returnType = @R|kotlin.ParameterName|(name = String(arg))  MyClass
-            symbol = p1: P1
-            contextParameters = []
-            callableId = null
-        ]
-        contextParameters = []
-        callableId = kotlin/Function1.invoke
+    signature = KaFunctionSignature:
+      receiverType = null
+      returnType = kotlin.Unit
+      symbol = kotlin/Function1.invoke(<dispatch receiver>: (P1) -> R, p1: P1): R
+      valueParameters = [
+        KaVariableSignature:
+          name = arg
+          receiverType = null
+          returnType = @R|kotlin.ParameterName|(name = String(arg))  MyClass
+          symbol = p1: P1
+          contextParameters = []
+          callableId = null
+      ]
+      contextParameters = []
+      callableId = kotlin/Function1.invoke
     typeArgumentsMapping = {}
 
 KtNameReferenceExpression(919,927): 'lMyClass'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = lMyClass
-          receiverType = null
-          returnType = (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
-          symbol = lMyClass: (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = lMyClass
+        receiverType = null
+        returnType = (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
+        symbol = lMyClass: (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -900,21 +876,20 @@ KtValueArgument(928,947): 'propInheritorObject'
 KtNameReferenceExpression(928,947): 'propInheritorObject'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = propInheritorObject
+        isSafeNavigation = false
+        type = MyClass.Companion
+      extensionReceiver = null
       isContextSensitive = true
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = propInheritorObject
-          isSafeNavigation = false
-          type = MyClass.Companion
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = propInheritorObject
-          receiverType = null
-          returnType = MyClass.InheritorObject
-          symbol = val propInheritorObject: MyClass.InheritorObject
-          contextParameters = []
-          callableId = /MyClass.Companion.propInheritorObject
+      signature = KaVariableSignature:
+        name = propInheritorObject
+        receiverType = null
+        returnType = MyClass.InheritorObject
+        symbol = val propInheritorObject: MyClass.InheritorObject
+        contextParameters = []
+        callableId = /MyClass.Companion.propInheritorObject
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -931,29 +906,28 @@ KtCallExpression(954,976): 'lMyClass(NestedObject)'
             contextParameters = []
             callableId = null)
         }
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = lMyClass
+          isSafeNavigation = false
+          type = (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
+        extensionReceiver = null
         isImplicitInvoke = true
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = KaExplicitReceiverValue:
-            expression = lMyClass
-            isSafeNavigation = false
-            type = (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = kotlin.Unit
-            symbol = kotlin/Function1.invoke(<dispatch receiver>: (P1) -> R, p1: P1): R
-            valueParameters = [
-              KaVariableSignature:
-                name = arg
-                receiverType = null
-                returnType = @R|kotlin.ParameterName|(name = String(arg))  MyClass
-                symbol = p1: P1
-                contextParameters = []
-                callableId = null
-            ]
-            contextParameters = []
-            callableId = kotlin/Function1.invoke
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = kotlin/Function1.invoke(<dispatch receiver>: (P1) -> R, p1: P1): R
+          valueParameters = [
+            KaVariableSignature:
+              name = arg
+              receiverType = null
+              returnType = @R|kotlin.ParameterName|(name = String(arg))  MyClass
+              symbol = p1: P1
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/Function1.invoke
         typeArgumentsMapping = {}
     ]
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'MyClass.NestedObject', but 'MyClass' was expected.>
@@ -961,18 +935,17 @@ KtCallExpression(954,976): 'lMyClass(NestedObject)'
 KtNameReferenceExpression(954,962): 'lMyClass'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = lMyClass
-          receiverType = null
-          returnType = (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
-          symbol = lMyClass: (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = lMyClass
+        receiverType = null
+        returnType = (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
+        symbol = lMyClass: (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -998,29 +971,28 @@ KtCallExpression(981,995): 'lMyClass(prop)'
             contextParameters = []
             callableId = null)
         }
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = lMyClass
+          isSafeNavigation = false
+          type = (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
+        extensionReceiver = null
         isImplicitInvoke = true
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = KaExplicitReceiverValue:
-            expression = lMyClass
-            isSafeNavigation = false
-            type = (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = kotlin.Unit
-            symbol = kotlin/Function1.invoke(<dispatch receiver>: (P1) -> R, p1: P1): R
-            valueParameters = [
-              KaVariableSignature:
-                name = arg
-                receiverType = null
-                returnType = @R|kotlin.ParameterName|(name = String(arg))  MyClass
-                symbol = p1: P1
-                contextParameters = []
-                callableId = null
-            ]
-            contextParameters = []
-            callableId = kotlin/Function1.invoke
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = kotlin/Function1.invoke(<dispatch receiver>: (P1) -> R, p1: P1): R
+          valueParameters = [
+            KaVariableSignature:
+              name = arg
+              receiverType = null
+              returnType = @R|kotlin.ParameterName|(name = String(arg))  MyClass
+              symbol = p1: P1
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/Function1.invoke
         typeArgumentsMapping = {}
     ]
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
@@ -1028,18 +1000,17 @@ KtCallExpression(981,995): 'lMyClass(prop)'
 KtNameReferenceExpression(981,989): 'lMyClass'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = lMyClass
-          receiverType = null
-          returnType = (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
-          symbol = lMyClass: (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = lMyClass
+        receiverType = null
+        returnType = (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
+        symbol = lMyClass: (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -1052,21 +1023,20 @@ KtValueArgument(990,994): 'prop'
 KtNameReferenceExpression(990,994): 'prop'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = prop
+        isSafeNavigation = false
+        type = MyClass.Companion
+      extensionReceiver = null
       isContextSensitive = true
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = prop
-          isSafeNavigation = false
-          type = MyClass.Companion
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = prop
-          receiverType = null
-          returnType = kotlin.String
-          symbol = val prop: kotlin.String
-          contextParameters = []
-          callableId = /MyClass.Companion.prop
+      signature = KaVariableSignature:
+        name = prop
+        receiverType = null
+        returnType = kotlin.String
+        symbol = val prop: kotlin.String
+        contextParameters = []
+        callableId = /MyClass.Companion.prop
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -1083,29 +1053,28 @@ KtCallExpression(1000,1019): 'lMyClass(superProp)'
             contextParameters = []
             callableId = null)
         }
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = lMyClass
+          isSafeNavigation = false
+          type = (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
+        extensionReceiver = null
         isImplicitInvoke = true
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = KaExplicitReceiverValue:
-            expression = lMyClass
-            isSafeNavigation = false
-            type = (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = kotlin.Unit
-            symbol = kotlin/Function1.invoke(<dispatch receiver>: (P1) -> R, p1: P1): R
-            valueParameters = [
-              KaVariableSignature:
-                name = arg
-                receiverType = null
-                returnType = @R|kotlin.ParameterName|(name = String(arg))  MyClass
-                symbol = p1: P1
-                contextParameters = []
-                callableId = null
-            ]
-            contextParameters = []
-            callableId = kotlin/Function1.invoke
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = kotlin/Function1.invoke(<dispatch receiver>: (P1) -> R, p1: P1): R
+          valueParameters = [
+            KaVariableSignature:
+              name = arg
+              receiverType = null
+              returnType = @R|kotlin.ParameterName|(name = String(arg))  MyClass
+              symbol = p1: P1
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/Function1.invoke
         typeArgumentsMapping = {}
     ]
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
@@ -1113,18 +1082,17 @@ KtCallExpression(1000,1019): 'lMyClass(superProp)'
 KtNameReferenceExpression(1000,1008): 'lMyClass'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = lMyClass
-          receiverType = null
-          returnType = (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
-          symbol = lMyClass: (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = lMyClass
+        receiverType = null
+        returnType = (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
+        symbol = lMyClass: (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -1137,21 +1105,20 @@ KtValueArgument(1009,1018): 'superProp'
 KtNameReferenceExpression(1009,1018): 'superProp'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = superProp
+        isSafeNavigation = false
+        type = MyClass.Companion
+      extensionReceiver = null
       isContextSensitive = true
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = superProp
-          isSafeNavigation = false
-          type = MyClass.Companion
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = superProp
-          receiverType = null
-          returnType = kotlin.String
-          symbol = val superProp: kotlin.String
-          contextParameters = []
-          callableId = /Super.superProp
+      signature = KaVariableSignature:
+        name = superProp
+        receiverType = null
+        returnType = kotlin.String
+        symbol = val superProp: kotlin.String
+        contextParameters = []
+        callableId = /Super.superProp
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -1168,29 +1135,28 @@ KtCallExpression(1024,1043): 'lMyClass(constProp)'
             contextParameters = []
             callableId = null)
         }
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = lMyClass
+          isSafeNavigation = false
+          type = (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
+        extensionReceiver = null
         isImplicitInvoke = true
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = KaExplicitReceiverValue:
-            expression = lMyClass
-            isSafeNavigation = false
-            type = (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = kotlin.Unit
-            symbol = kotlin/Function1.invoke(<dispatch receiver>: (P1) -> R, p1: P1): R
-            valueParameters = [
-              KaVariableSignature:
-                name = arg
-                receiverType = null
-                returnType = @R|kotlin.ParameterName|(name = String(arg))  MyClass
-                symbol = p1: P1
-                contextParameters = []
-                callableId = null
-            ]
-            contextParameters = []
-            callableId = kotlin/Function1.invoke
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = kotlin/Function1.invoke(<dispatch receiver>: (P1) -> R, p1: P1): R
+          valueParameters = [
+            KaVariableSignature:
+              name = arg
+              receiverType = null
+              returnType = @R|kotlin.ParameterName|(name = String(arg))  MyClass
+              symbol = p1: P1
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/Function1.invoke
         typeArgumentsMapping = {}
     ]
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
@@ -1198,18 +1164,17 @@ KtCallExpression(1024,1043): 'lMyClass(constProp)'
 KtNameReferenceExpression(1024,1032): 'lMyClass'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = lMyClass
-          receiverType = null
-          returnType = (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
-          symbol = lMyClass: (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = lMyClass
+        receiverType = null
+        returnType = (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
+        symbol = lMyClass: (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -1222,21 +1187,20 @@ KtValueArgument(1033,1042): 'constProp'
 KtNameReferenceExpression(1033,1042): 'constProp'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = constProp
+        isSafeNavigation = false
+        type = MyClass.Companion
+      extensionReceiver = null
       isContextSensitive = true
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = constProp
-          isSafeNavigation = false
-          type = MyClass.Companion
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = constProp
-          receiverType = null
-          returnType = kotlin.String
-          symbol = val constProp: kotlin.String
-          contextParameters = []
-          callableId = /MyClass.Companion.constProp
+      signature = KaVariableSignature:
+        name = constProp
+        receiverType = null
+        returnType = kotlin.String
+        symbol = val constProp: kotlin.String
+        contextParameters = []
+        callableId = /MyClass.Companion.constProp
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -1253,29 +1217,28 @@ KtCallExpression(1048,1066): 'lMyClass(lazyProp)'
             contextParameters = []
             callableId = null)
         }
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = lMyClass
+          isSafeNavigation = false
+          type = (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
+        extensionReceiver = null
         isImplicitInvoke = true
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = KaExplicitReceiverValue:
-            expression = lMyClass
-            isSafeNavigation = false
-            type = (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = kotlin.Unit
-            symbol = kotlin/Function1.invoke(<dispatch receiver>: (P1) -> R, p1: P1): R
-            valueParameters = [
-              KaVariableSignature:
-                name = arg
-                receiverType = null
-                returnType = @R|kotlin.ParameterName|(name = String(arg))  MyClass
-                symbol = p1: P1
-                contextParameters = []
-                callableId = null
-            ]
-            contextParameters = []
-            callableId = kotlin/Function1.invoke
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = kotlin/Function1.invoke(<dispatch receiver>: (P1) -> R, p1: P1): R
+          valueParameters = [
+            KaVariableSignature:
+              name = arg
+              receiverType = null
+              returnType = @R|kotlin.ParameterName|(name = String(arg))  MyClass
+              symbol = p1: P1
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/Function1.invoke
         typeArgumentsMapping = {}
     ]
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
@@ -1283,18 +1246,17 @@ KtCallExpression(1048,1066): 'lMyClass(lazyProp)'
 KtNameReferenceExpression(1048,1056): 'lMyClass'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = lMyClass
-          receiverType = null
-          returnType = (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
-          symbol = lMyClass: (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = lMyClass
+        receiverType = null
+        returnType = (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
+        symbol = lMyClass: (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -1307,21 +1269,20 @@ KtValueArgument(1057,1065): 'lazyProp'
 KtNameReferenceExpression(1057,1065): 'lazyProp'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = lazyProp
+        isSafeNavigation = false
+        type = MyClass.Companion
+      extensionReceiver = null
       isContextSensitive = true
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = lazyProp
-          isSafeNavigation = false
-          type = MyClass.Companion
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = lazyProp
-          receiverType = null
-          returnType = kotlin.String
-          symbol = val lazyProp: kotlin.String
-          contextParameters = []
-          callableId = /MyClass.Companion.lazyProp
+      signature = KaVariableSignature:
+        name = lazyProp
+        receiverType = null
+        returnType = kotlin.String
+        symbol = val lazyProp: kotlin.String
+        contextParameters = []
+        callableId = /MyClass.Companion.lazyProp
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -1338,29 +1299,28 @@ KtCallExpression(1071,1091): 'lMyClass(lambdaProp)'
             contextParameters = []
             callableId = null)
         }
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = lMyClass
+          isSafeNavigation = false
+          type = (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
+        extensionReceiver = null
         isImplicitInvoke = true
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = KaExplicitReceiverValue:
-            expression = lMyClass
-            isSafeNavigation = false
-            type = (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = kotlin.Unit
-            symbol = kotlin/Function1.invoke(<dispatch receiver>: (P1) -> R, p1: P1): R
-            valueParameters = [
-              KaVariableSignature:
-                name = arg
-                receiverType = null
-                returnType = @R|kotlin.ParameterName|(name = String(arg))  MyClass
-                symbol = p1: P1
-                contextParameters = []
-                callableId = null
-            ]
-            contextParameters = []
-            callableId = kotlin/Function1.invoke
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = kotlin/Function1.invoke(<dispatch receiver>: (P1) -> R, p1: P1): R
+          valueParameters = [
+            KaVariableSignature:
+              name = arg
+              receiverType = null
+              returnType = @R|kotlin.ParameterName|(name = String(arg))  MyClass
+              symbol = p1: P1
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = kotlin/Function1.invoke
         typeArgumentsMapping = {}
     ]
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is '() -> MyClass.InheritorObject', but 'MyClass' was expected.>
@@ -1368,18 +1328,17 @@ KtCallExpression(1071,1091): 'lMyClass(lambdaProp)'
 KtNameReferenceExpression(1071,1079): 'lMyClass'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = lMyClass
-          receiverType = null
-          returnType = (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
-          symbol = lMyClass: (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = lMyClass
+        receiverType = null
+        returnType = (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
+        symbol = lMyClass: (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -1392,21 +1351,20 @@ KtValueArgument(1080,1090): 'lambdaProp'
 KtNameReferenceExpression(1080,1090): 'lambdaProp'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = lambdaProp
+        isSafeNavigation = false
+        type = MyClass.Companion
+      extensionReceiver = null
       isContextSensitive = true
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = lambdaProp
-          isSafeNavigation = false
-          type = MyClass.Companion
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = lambdaProp
-          receiverType = null
-          returnType = () -> MyClass.InheritorObject
-          symbol = val lambdaProp: () -> MyClass.InheritorObject
-          contextParameters = []
-          callableId = /MyClass.Companion.lambdaProp
+      signature = KaVariableSignature:
+        name = lambdaProp
+        receiverType = null
+        returnType = () -> MyClass.InheritorObject
+        symbol = val lambdaProp: () -> MyClass.InheritorObject
+        contextParameters = []
+        callableId = /MyClass.Companion.lambdaProp
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -1421,46 +1379,44 @@ KtCallExpression(1097,1123): 'lMyClass(InheritorClass())'
         contextParameters = []
         callableId = null)
     }
+    contextArguments = []
+    dispatchReceiver = KaExplicitReceiverValue:
+      expression = lMyClass
+      isSafeNavigation = false
+      type = (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
+    extensionReceiver = null
     isImplicitInvoke = true
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      contextArguments = []
-      dispatchReceiver = KaExplicitReceiverValue:
-        expression = lMyClass
-        isSafeNavigation = false
-        type = (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = kotlin.Unit
-        symbol = kotlin/Function1.invoke(<dispatch receiver>: (P1) -> R, p1: P1): R
-        valueParameters = [
-          KaVariableSignature:
-            name = arg
-            receiverType = null
-            returnType = @R|kotlin.ParameterName|(name = String(arg))  MyClass
-            symbol = p1: P1
-            contextParameters = []
-            callableId = null
-        ]
-        contextParameters = []
-        callableId = kotlin/Function1.invoke
+    signature = KaFunctionSignature:
+      receiverType = null
+      returnType = kotlin.Unit
+      symbol = kotlin/Function1.invoke(<dispatch receiver>: (P1) -> R, p1: P1): R
+      valueParameters = [
+        KaVariableSignature:
+          name = arg
+          receiverType = null
+          returnType = @R|kotlin.ParameterName|(name = String(arg))  MyClass
+          symbol = p1: P1
+          contextParameters = []
+          callableId = null
+      ]
+      contextParameters = []
+      callableId = kotlin/Function1.invoke
     typeArgumentsMapping = {}
 
 KtNameReferenceExpression(1097,1105): 'lMyClass'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = lMyClass
-          receiverType = null
-          returnType = (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
-          symbol = lMyClass: (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = lMyClass
+        receiverType = null
+        returnType = (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
+        symbol = lMyClass: (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -1494,46 +1450,44 @@ KtCallExpression(1128,1144): 'lMyClass(func())'
         contextParameters = []
         callableId = null)
     }
+    contextArguments = []
+    dispatchReceiver = KaExplicitReceiverValue:
+      expression = lMyClass
+      isSafeNavigation = false
+      type = (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
+    extensionReceiver = null
     isImplicitInvoke = true
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      contextArguments = []
-      dispatchReceiver = KaExplicitReceiverValue:
-        expression = lMyClass
-        isSafeNavigation = false
-        type = (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = kotlin.Unit
-        symbol = kotlin/Function1.invoke(<dispatch receiver>: (P1) -> R, p1: P1): R
-        valueParameters = [
-          KaVariableSignature:
-            name = arg
-            receiverType = null
-            returnType = @R|kotlin.ParameterName|(name = String(arg))  MyClass
-            symbol = p1: P1
-            contextParameters = []
-            callableId = null
-        ]
-        contextParameters = []
-        callableId = kotlin/Function1.invoke
+    signature = KaFunctionSignature:
+      receiverType = null
+      returnType = kotlin.Unit
+      symbol = kotlin/Function1.invoke(<dispatch receiver>: (P1) -> R, p1: P1): R
+      valueParameters = [
+        KaVariableSignature:
+          name = arg
+          receiverType = null
+          returnType = @R|kotlin.ParameterName|(name = String(arg))  MyClass
+          symbol = p1: P1
+          contextParameters = []
+          callableId = null
+      ]
+      contextParameters = []
+      callableId = kotlin/Function1.invoke
     typeArgumentsMapping = {}
 
 KtNameReferenceExpression(1128,1136): 'lMyClass'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = lMyClass
-          receiverType = null
-          returnType = (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
-          symbol = lMyClass: (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = lMyClass
+        receiverType = null
+        returnType = (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
+        symbol = lMyClass: (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
 
@@ -1567,46 +1521,44 @@ KtCallExpression(1149,1170): 'lMyClass(superFunc())'
         contextParameters = []
         callableId = null)
     }
+    contextArguments = []
+    dispatchReceiver = KaExplicitReceiverValue:
+      expression = lMyClass
+      isSafeNavigation = false
+      type = (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
+    extensionReceiver = null
     isImplicitInvoke = true
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      contextArguments = []
-      dispatchReceiver = KaExplicitReceiverValue:
-        expression = lMyClass
-        isSafeNavigation = false
-        type = (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = kotlin.Unit
-        symbol = kotlin/Function1.invoke(<dispatch receiver>: (P1) -> R, p1: P1): R
-        valueParameters = [
-          KaVariableSignature:
-            name = arg
-            receiverType = null
-            returnType = @R|kotlin.ParameterName|(name = String(arg))  MyClass
-            symbol = p1: P1
-            contextParameters = []
-            callableId = null
-        ]
-        contextParameters = []
-        callableId = kotlin/Function1.invoke
+    signature = KaFunctionSignature:
+      receiverType = null
+      returnType = kotlin.Unit
+      symbol = kotlin/Function1.invoke(<dispatch receiver>: (P1) -> R, p1: P1): R
+      valueParameters = [
+        KaVariableSignature:
+          name = arg
+          receiverType = null
+          returnType = @R|kotlin.ParameterName|(name = String(arg))  MyClass
+          symbol = p1: P1
+          contextParameters = []
+          callableId = null
+      ]
+      contextParameters = []
+      callableId = kotlin/Function1.invoke
     typeArgumentsMapping = {}
 
 KtNameReferenceExpression(1149,1157): 'lMyClass'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = lMyClass
-          receiverType = null
-          returnType = (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
-          symbol = lMyClass: (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = lMyClass
+        receiverType = null
+        returnType = (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
+        symbol = lMyClass: (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
 

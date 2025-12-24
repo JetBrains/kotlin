@@ -413,19 +413,19 @@ public interface KaResolver : KaSessionComponent {
      * ```kotlin
      * fun KaSession.resolveSymbol(expression: KtCallExpression): KaSymbol? {
      *   val successfulCall = expression.resolveCall() ?: return null
-     *   val callableCall = successfulCall as? KaCallableMemberCall ?: return null
+     *   val callableCall = successfulCall as? KaSingleCall<*, *> ?: return null
      *   return callableCall.symbol
      * }
      * ```
      *
-     * Returns the resolved [KaCall] on success; otherwise, `null`
+     * Returns the resolved [KaCallResolutionSuccess] on success; otherwise, `null`
      *
      * @see tryResolveCall
      * @see collectCallCandidates
      */
     @KaExperimentalApi
     @OptIn(KtExperimentalApi::class)
-    public fun KtResolvableCall.resolveCall(): KaCall?
+    public fun KtResolvableCall.resolveCall(): KaCallResolutionSuccess?
 
     /**
      * Resolves the given [KtAnnotationEntry] to an annotation constructor call.
@@ -543,7 +543,7 @@ public interface KaResolver : KaSessionComponent {
      * }
      * ```
      *
-     * Returns the corresponding [KaCallableMemberCall] if resolution succeeds;
+     * Returns the corresponding [KaSingleCall] if resolution succeeds;
      * otherwise, it returns `null` (e.g., when unresolved or ambiguous).
      *
      * This is a specialized counterpart of [KtResolvableCall.resolveCall] focused specifically on call elements
@@ -552,7 +552,7 @@ public interface KaResolver : KaSessionComponent {
      * @see KtResolvableCall.resolveCall
      */
     @KaExperimentalApi
-    public fun KtCallElement.resolveCall(): KaCallableMemberCall<*, *>?
+    public fun KtCallElement.resolveCall(): KaSingleCall<*, *>?
 
     /**
      * Resolves the given [KtCallableReferenceExpression] to a callable member call.
@@ -566,7 +566,7 @@ public interface KaResolver : KaSessionComponent {
      * //        ^^^^^^
      * ```
      *
-     * Returns the corresponding [KaCallableMemberCall] if resolution succeeds;
+     * Returns the corresponding [KaSingleCall] if resolution succeeds;
      * otherwise, it returns `null` (e.g., when unresolved or ambiguous).
      *
      * This is a specialized counterpart of [KtResolvableCall.resolveCall] focused specifically on callable reference expressions
@@ -575,7 +575,7 @@ public interface KaResolver : KaSessionComponent {
      * @see KtResolvableCall.resolveCall
      */
     @KaExperimentalApi
-    public fun KtCallableReferenceExpression.resolveCall(): KaCallableMemberCall<*, *>?
+    public fun KtCallableReferenceExpression.resolveCall(): KaSingleCall<*, *>?
 
     /**
      * Resolves the given [KtArrayAccessExpression] to a simple function call representing `get`/`set` operator invocation.
@@ -1291,12 +1291,12 @@ public fun KtResolvableCall.tryResolveCall(): KaCallResolutionAttempt? {
  * ```kotlin
  * fun KaSession.resolveSymbol(expression: KtCallExpression): KaSymbol? {
  *   val successfulCall = expression.resolveCall() ?: return null
- *   val callableCall = successfulCall as? KaCallableMemberCall ?: return null
+ *   val callableCall = successfulCall as? KaSingleCall<*, *> ?: return null
  *   return callableCall.symbol
  * }
  * ```
  *
- * Returns the resolved [KaCall] on success; otherwise, `null`
+ * Returns the resolved [KaCallResolutionSuccess] on success; otherwise, `null`
  *
  * @see tryResolveCall
  * @see collectCallCandidates
@@ -1306,7 +1306,7 @@ public fun KtResolvableCall.tryResolveCall(): KaCallResolutionAttempt? {
 @OptIn(KtExperimentalApi::class)
 @KaContextParameterApi
 context(session: KaSession)
-public fun KtResolvableCall.resolveCall(): KaCall? {
+public fun KtResolvableCall.resolveCall(): KaCallResolutionSuccess? {
     return with(session) {
         resolveCall()
     }
@@ -1456,7 +1456,7 @@ public fun KtConstructorDelegationReferenceExpression.resolveCall(): KaDelegated
  * }
  * ```
  *
- * Returns the corresponding [KaCallableMemberCall] if resolution succeeds;
+ * Returns the corresponding [KaSingleCall] if resolution succeeds;
  * otherwise, it returns `null` (e.g., when unresolved or ambiguous).
  *
  * This is a specialized counterpart of [KtResolvableCall.resolveCall] focused specifically on call elements
@@ -1468,7 +1468,7 @@ public fun KtConstructorDelegationReferenceExpression.resolveCall(): KaDelegated
 @KaExperimentalApi
 @KaContextParameterApi
 context(session: KaSession)
-public fun KtCallElement.resolveCall(): KaCallableMemberCall<*, *>? {
+public fun KtCallElement.resolveCall(): KaSingleCall<*, *>? {
     return with(session) {
         resolveCall()
     }
@@ -1486,7 +1486,7 @@ public fun KtCallElement.resolveCall(): KaCallableMemberCall<*, *>? {
  * //        ^^^^^^
  * ```
  *
- * Returns the corresponding [KaCallableMemberCall] if resolution succeeds;
+ * Returns the corresponding [KaSingleCall] if resolution succeeds;
  * otherwise, it returns `null` (e.g., when unresolved or ambiguous).
  *
  * This is a specialized counterpart of [KtResolvableCall.resolveCall] focused specifically on callable reference expressions
@@ -1498,7 +1498,7 @@ public fun KtCallElement.resolveCall(): KaCallableMemberCall<*, *>? {
 @KaExperimentalApi
 @KaContextParameterApi
 context(session: KaSession)
-public fun KtCallableReferenceExpression.resolveCall(): KaCallableMemberCall<*, *>? {
+public fun KtCallableReferenceExpression.resolveCall(): KaSingleCall<*, *>? {
     return with(session) {
         resolveCall()
     }

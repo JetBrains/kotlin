@@ -3,18 +3,17 @@ KtCallExpression(39,64): 'generic<String, String>()'
     candidateCalls = [
       KaSimpleFunctionCall:
         argumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
         isImplicitInvoke = false
-        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-          contextArguments = []
-          dispatchReceiver = null
-          extensionReceiver = null
-          signature = KaFunctionSignature:
-            receiverType = null
-            returnType = kotlin.Unit
-            symbol = /generic(): kotlin.Unit
-            valueParameters = []
-            contextParameters = []
-            callableId = /generic
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /generic(): kotlin.Unit
+          valueParameters = []
+          contextParameters = []
+          callableId = /generic
         typeArgumentsMapping = {
           A -> (kotlin.String)
         }

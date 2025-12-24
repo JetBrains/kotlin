@@ -40,29 +40,28 @@ KtBinaryExpression(39,44): '1..<5'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = 1
+        isSafeNavigation = false
+        type = kotlin.Int
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = 1
-          isSafeNavigation = false
-          type = kotlin.Int
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.ranges.IntRange
-          symbol = kotlin/Int.rangeUntil(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.ranges.IntRange
-          valueParameters = [
-            KaVariableSignature:
-              name = other
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = other: kotlin.Int
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/Int.rangeUntil
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.ranges.IntRange
+        symbol = kotlin/Int.rangeUntil(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.ranges.IntRange
+        valueParameters = [
+          KaVariableSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = other: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/Int.rangeUntil
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -81,29 +80,28 @@ KtOperationReferenceExpression(40,43): '..<'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = 1
+        isSafeNavigation = false
+        type = kotlin.Int
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = 1
-          isSafeNavigation = false
-          type = kotlin.Int
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.ranges.IntRange
-          symbol = kotlin/Int.rangeUntil(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.ranges.IntRange
-          valueParameters = [
-            KaVariableSignature:
-              name = other
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = other: kotlin.Int
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/Int.rangeUntil
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.ranges.IntRange
+        symbol = kotlin/Int.rangeUntil(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.ranges.IntRange
+        valueParameters = [
+          KaVariableSignature:
+            name = other
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = other: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/Int.rangeUntil
       typeArgumentsMapping = {}
     isInBestCandidates = true
 

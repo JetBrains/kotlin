@@ -10,25 +10,24 @@ KtCallExpression(39,55): 'uintArrayOf(42u)'
           contextParameters = []
           callableId = null)
       }
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.UIntArray
-          symbol = kotlin/uintArrayOf(vararg elements: kotlin.UInt): kotlin.UIntArray
-          valueParameters = [
-            KaVariableSignature:
-              name = elements
-              receiverType = null
-              returnType = kotlin.UInt
-              symbol = vararg elements: kotlin.UInt
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = kotlin/uintArrayOf
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.UIntArray
+        symbol = kotlin/uintArrayOf(vararg elements: kotlin.UInt): kotlin.UIntArray
+        valueParameters = [
+          KaVariableSignature:
+            name = elements
+            receiverType = null
+            returnType = kotlin.UInt
+            symbol = vararg elements: kotlin.UInt
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/uintArrayOf
       typeArgumentsMapping = {}
     isInBestCandidates = true

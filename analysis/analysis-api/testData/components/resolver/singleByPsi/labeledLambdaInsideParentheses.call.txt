@@ -16,31 +16,30 @@ KtCallExpression(16,32): 'bar(2, l@{ it })'
         contextParameters = []
         callableId = null)
     }
+    contextArguments = []
+    dispatchReceiver = null
+    extensionReceiver = null
     isImplicitInvoke = false
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      contextArguments = []
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = kotlin.Unit
-        symbol = /bar(a: kotlin.Int, b: (kotlin.Int) -> kotlin.Int): kotlin.Unit
-        valueParameters = [
-          KaVariableSignature:
-            name = a
-            receiverType = null
-            returnType = kotlin.Int
-            symbol = a: kotlin.Int
-            contextParameters = []
-            callableId = null,
-          KaVariableSignature:
-            name = b
-            receiverType = null
-            returnType = (kotlin.Int) -> kotlin.Int
-            symbol = b: (kotlin.Int) -> kotlin.Int
-            contextParameters = []
-            callableId = null
-        ]
-        contextParameters = []
-        callableId = /bar
+    signature = KaFunctionSignature:
+      receiverType = null
+      returnType = kotlin.Unit
+      symbol = /bar(a: kotlin.Int, b: (kotlin.Int) -> kotlin.Int): kotlin.Unit
+      valueParameters = [
+        KaVariableSignature:
+          name = a
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = a: kotlin.Int
+          contextParameters = []
+          callableId = null,
+        KaVariableSignature:
+          name = b
+          receiverType = null
+          returnType = (kotlin.Int) -> kotlin.Int
+          symbol = b: (kotlin.Int) -> kotlin.Int
+          contextParameters = []
+          callableId = null
+      ]
+      contextParameters = []
+      callableId = /bar
     typeArgumentsMapping = {}

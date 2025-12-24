@@ -1,19 +1,18 @@
 KtCallExpression(68,71): 'x()'
   KaSimpleFunctionCall:
     argumentMapping = {}
+    contextArguments = []
+    dispatchReceiver = null
+    extensionReceiver = KaExplicitReceiverValue:
+      expression = x
+      isSafeNavigation = false
+      type = kotlin.Int
     isImplicitInvoke = true
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      contextArguments = []
-      dispatchReceiver = null
-      extensionReceiver = KaExplicitReceiverValue:
-        expression = x
-        isSafeNavigation = false
-        type = kotlin.Int
-      signature = KaFunctionSignature:
-        receiverType = kotlin.Int
-        returnType = kotlin.String
-        symbol = /invoke(<extension receiver>: kotlin.Int): kotlin.String
-        valueParameters = []
-        contextParameters = []
-        callableId = /invoke
+    signature = KaFunctionSignature:
+      receiverType = kotlin.Int
+      returnType = kotlin.String
+      symbol = /invoke(<extension receiver>: kotlin.Int): kotlin.String
+      valueParameters = []
+      contextParameters = []
+      callableId = /invoke
     typeArgumentsMapping = {}

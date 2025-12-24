@@ -26,17 +26,16 @@ KtAnnotationEntry(36,41): '@Anno'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
       argumentMapping = {}
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = one.Anno
-          symbol = <constructor>(): one.Anno
-          valueParameters = []
-          contextParameters = []
-          callableId = null
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = one.Anno
+        symbol = <constructor>(): one.Anno
+        valueParameters = []
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -44,17 +43,16 @@ KtConstructorCalleeExpression(37,41): 'Anno'
   KaApplicableCallCandidateInfo:
     candidate = KaAnnotationCall:
       argumentMapping = {}
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = one.Anno
-          symbol = <constructor>(): one.Anno
-          valueParameters = []
-          contextParameters = []
-          callableId = null
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = one.Anno
+        symbol = <constructor>(): one.Anno
+        valueParameters = []
+        contextParameters = []
+        callableId = null
       typeArgumentsMapping = {}
     isInBestCandidates = true
 

@@ -10,50 +10,49 @@ KtNameReferenceExpression(248,251): 'add'
           contextParameters = []
           callableId = null)
       }
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaImplicitReceiverValue:
-          symbol = KaReceiverParameterSymbol:
+      contextArguments = []
+      dispatchReceiver = KaImplicitReceiverValue:
+        symbol = KaReceiverParameterSymbol:
+          annotations: []
+          callableId: null
+          compilerVisibility: Public
+          contextReceivers: []
+          isActual: false
+          isExpect: false
+          isExtension: false
+          isVal: true
+          location: LOCAL
+          modality: FINAL
+          name: <receiver>
+          origin: SOURCE
+          owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+          receiverParameter: null
+          returnType: KaUsualClassType:
             annotations: []
-            callableId: null
-            compilerVisibility: Public
-            contextReceivers: []
-            isActual: false
-            isExpect: false
-            isExtension: false
-            isVal: true
-            location: LOCAL
-            modality: FINAL
-            name: <receiver>
-            origin: SOURCE
-            owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
-            receiverParameter: null
-            returnType: KaUsualClassType:
-              annotations: []
-              typeArguments: [
-                KaUsualClassType:
-                  annotations: []
-                  typeArguments: []
-                  type: kotlin/String
-              ]
-              type: test/Target<kotlin/String>
-            visibility: PUBLIC
-          type = test.Target<kotlin.String>
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = test/Target.add(<dispatch receiver>: test.Target<T>, t: T): kotlin.Unit
-          valueParameters = [
-            KaVariableSignature:
-              name = t
-              receiverType = null
-              returnType = kotlin.String
-              symbol = t: T
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = test/Target.add
+            typeArguments: [
+              KaUsualClassType:
+                annotations: []
+                typeArguments: []
+                type: kotlin/String
+            ]
+            type: test/Target<kotlin/String>
+          visibility: PUBLIC
+        type = test.Target<kotlin.String>
+      extensionReceiver = null
+      isImplicitInvoke = false
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = test/Target.add(<dispatch receiver>: test.Target<T>, t: T): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = t
+            receiverType = null
+            returnType = kotlin.String
+            symbol = t: T
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = test/Target.add
       typeArgumentsMapping = {}

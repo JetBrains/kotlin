@@ -16,34 +16,33 @@ KtCallExpression(47,55): 'x(1, "")'
         contextParameters = []
         callableId = null)
     }
+    contextArguments = []
+    dispatchReceiver = KaExplicitReceiverValue:
+      expression = x
+      isSafeNavigation = false
+      type = (@R|kotlin.ParameterName|(name = String(a))  kotlin.Int, @R|kotlin.ParameterName|(name = String(b))  kotlin.String) -> kotlin.Unit
+    extensionReceiver = null
     isImplicitInvoke = true
-    partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-      contextArguments = []
-      dispatchReceiver = KaExplicitReceiverValue:
-        expression = x
-        isSafeNavigation = false
-        type = (@R|kotlin.ParameterName|(name = String(a))  kotlin.Int, @R|kotlin.ParameterName|(name = String(b))  kotlin.String) -> kotlin.Unit
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = kotlin.Unit
-        symbol = kotlin/Function2.invoke(<dispatch receiver>: (P1, P2) -> R, p1: P1, p2: P2): R
-        valueParameters = [
-          KaVariableSignature:
-            name = a
-            receiverType = null
-            returnType = @R|kotlin.ParameterName|(name = String(a))  kotlin.Int
-            symbol = p1: P1
-            contextParameters = []
-            callableId = null,
-          KaVariableSignature:
-            name = b
-            receiverType = null
-            returnType = @R|kotlin.ParameterName|(name = String(b))  kotlin.String
-            symbol = p2: P2
-            contextParameters = []
-            callableId = null
-        ]
-        contextParameters = []
-        callableId = kotlin/Function2.invoke
+    signature = KaFunctionSignature:
+      receiverType = null
+      returnType = kotlin.Unit
+      symbol = kotlin/Function2.invoke(<dispatch receiver>: (P1, P2) -> R, p1: P1, p2: P2): R
+      valueParameters = [
+        KaVariableSignature:
+          name = a
+          receiverType = null
+          returnType = @R|kotlin.ParameterName|(name = String(a))  kotlin.Int
+          symbol = p1: P1
+          contextParameters = []
+          callableId = null,
+        KaVariableSignature:
+          name = b
+          receiverType = null
+          returnType = @R|kotlin.ParameterName|(name = String(b))  kotlin.String
+          symbol = p2: P2
+          contextParameters = []
+          callableId = null
+      ]
+      contextParameters = []
+      callableId = kotlin/Function2.invoke
     typeArgumentsMapping = {}

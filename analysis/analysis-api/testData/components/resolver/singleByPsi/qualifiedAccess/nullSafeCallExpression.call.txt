@@ -1,20 +1,19 @@
 KtNameReferenceExpression(50,52): 'aa'
   KaSuccessCallInfo:
     call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = a
+        isSafeNavigation = true
+        type = A
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = a
-          isSafeNavigation = true
-          type = A
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = aa
-          receiverType = null
-          returnType = A?
-          symbol = val aa: A?
-          contextParameters = []
-          callableId = /A.aa
+      signature = KaVariableSignature:
+        name = aa
+        receiverType = null
+        returnType = A?
+        symbol = val aa: A?
+        contextParameters = []
+        callableId = /A.aa
       simpleAccess = Read
       typeArgumentsMapping = {}

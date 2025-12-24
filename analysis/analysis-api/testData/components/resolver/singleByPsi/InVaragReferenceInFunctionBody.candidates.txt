@@ -1,18 +1,17 @@
 KtNameReferenceExpression(64,65): 'a'
   KaApplicableCallCandidateInfo:
     candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
       isContextSensitive = false
-      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = a
-          receiverType = null
-          returnType = test.A
-          symbol = vararg a: test.A
-          contextParameters = []
-          callableId = null
+      signature = KaVariableSignature:
+        name = a
+        receiverType = null
+        returnType = test.A
+        symbol = vararg a: test.A
+        contextParameters = []
+        callableId = null
       simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true

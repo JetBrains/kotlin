@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnostic
 import org.jetbrains.kotlin.analysis.api.fir.*
+import org.jetbrains.kotlin.analysis.api.fir.components.KaFirResolver.CompoundArrayAccessContext
 import org.jetbrains.kotlin.analysis.api.fir.references.ClassicKDocReferenceResolver
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirArrayOfSymbolProvider.arrayOf
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirArrayOfSymbolProvider.arrayOfSymbol
@@ -84,7 +85,6 @@ import org.jetbrains.kotlin.toKtPsiSourceElement
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.util.OperatorNameConventions.EQUALS
-import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.kotlin.utils.exceptions.*
@@ -464,17 +464,18 @@ internal class KaFirResolver(
                 )
             }
 
-            val candidateCalls = mutableListOf<KaCall>()
+            val candidateCalls = mutableListOf<KaSingleCall<*, *>>()
             if (diagnostic is ConeDiagnosticWithCandidates) {
-                diagnostic.candidates.mapNotNullTo(candidateCalls) {
+                diagnostic.candidates.flatMapTo(candidateCalls) {
                     if (it is Candidate) {
-                        createKaCall(psi, call, calleeReference, it, resolveFragmentOfCall)
+                        createKaCall(psi, call, calleeReference, it, resolveFragmentOfCall)?.calls.orEmpty()
                     } else {
-                        null
+                        emptyList()
                     }
                 }
             } else {
-                candidateCalls.addIfNotNull(createKaCall(psi, call, calleeReference, null, resolveFragmentOfCall))
+                val resolvedCall = createKaCall(psi, call, calleeReference, null, resolveFragmentOfCall)
+                candidateCalls += resolvedCall?.calls.orEmpty()
             }
 
             return KaBaseCallResolutionError(
@@ -619,7 +620,7 @@ internal class KaFirResolver(
         fir: FirResolvable,
         candidate: Candidate?,
         resolveFragmentOfCall: Boolean,
-    ): KaCall? = createKaCall(
+    ): KaCallResolutionSuccess? = createKaCall(
         psi = psi,
         fir = fir,
         calleeReference = fir.calleeReference,
@@ -659,7 +660,7 @@ internal class KaFirResolver(
         calleeReference: FirReference,
         candidate: Candidate?,
         resolveFragmentOfCall: Boolean,
-    ): KaCall? {
+    ): KaCallResolutionSuccess? {
         val targetSymbol = candidate?.symbol
             ?: calleeReference.toResolvedBaseSymbol()
             ?: return null
@@ -959,7 +960,7 @@ internal class KaFirResolver(
         resolveFragmentOfCall: Boolean,
         contextProvider: (FirFunctionCall, KtArrayAccessExpression) -> CompoundArrayAccessContext?,
         compoundOperationProvider: (KaFunctionCall<KaNamedFunctionSymbol>) -> KaCompoundOperation,
-    ): KaCall? {
+    ): KaCallResolutionSuccess? {
         if (fir !is FirFunctionCall || fir.calleeReference.name != OperatorNameConventions.SET || accessExpression !is KtArrayAccessExpression) {
             return null
         }
@@ -987,7 +988,7 @@ internal class KaFirResolver(
         typeArgumentsMapping: Map<KaTypeParameterSymbol, KaType>,
         compoundOperationProvider: (KaFunctionCall<KaNamedFunctionSymbol>) -> KaCompoundOperation,
         rhsExpression: KtExpression?,
-    ): KaCall? {
+    ): KaCallResolutionSuccess? {
         if (fir !is FirVariableAssignment || accessExpression !is KtQualifiedExpression && accessExpression !is KtNameReferenceExpression) {
             return null
         }
@@ -1019,7 +1020,7 @@ internal class KaFirResolver(
         typeArgumentsMapping: Map<KaTypeParameterSymbol, KaType>,
         contextProvider: (FirFunctionCall, KtArrayAccessExpression) -> CompoundArrayAccessContext?,
         compoundOperationProvider: (KaFunctionCall<KaNamedFunctionSymbol>) -> KaCompoundOperation,
-    ): KaCall? = createKaCallForArrayAccessConvention(
+    ): KaCallResolutionSuccess? = createKaCallForArrayAccessConvention(
         fir = fir,
         accessExpression = accessExpression,
         resolveFragmentOfCall = resolveFragmentOfCall,
@@ -1039,7 +1040,7 @@ internal class KaFirResolver(
         fir: FirElement,
         resolveFragmentOfCall: Boolean,
         typeArgumentsMapping: Map<KaTypeParameterSymbol, KaType>,
-    ): KaCall? {
+    ): KaCallResolutionSuccess? {
         return when (psi) {
             is KtBinaryExpression if psi.operationToken in KtTokens.AUGMENTED_ASSIGNMENTS -> {
                 val rightOperandPsi = deparenthesize(psi.right) ?: return null
@@ -1351,7 +1352,7 @@ internal class KaFirResolver(
      * Maps [typeArguments] to the type parameters of [symbol].
      *
      * If too many type arguments are provided, a mapping is still created. Extra type arguments are simply ignored. If this wasn't the
-     * case, the resulting [KaCall] would contain no type arguments at all, which can cause problems later. If too few type arguments are
+     * case, the resulting [KaCallResolutionSuccess] would contain no type arguments at all, which can cause problems later. If too few type arguments are
      * provided, an empty map is returned defensively so that [toFirTypeArgumentsMapping] doesn't conjure any error types. If you want to map
      * too few type arguments meaningfully, please provide filler types explicitly.
      */
@@ -1550,10 +1551,10 @@ internal class KaFirResolver(
     }
 
     private fun KaCallResolutionAttempt?.toKtCallCandidateInfos(): List<KaCallCandidateInfo> = when (this) {
-        is KaCall -> listOf(KaBaseApplicableCallCandidateInfo(this, isInBestCandidates = true))
+        is KaCallResolutionSuccess -> listOf(KaBaseApplicableCallCandidateInfo(this as KaCall, isInBestCandidates = true))
         is KaCallResolutionError -> candidateCalls.map {
             KaBaseInapplicableCallCandidateInfo(
-                backingCandidate = it,
+                backingCandidate = it as KaCall,
                 isInBestCandidates = true,
                 diagnostic = diagnostic,
             )
@@ -1574,7 +1575,7 @@ internal class KaFirResolver(
 
         if (candidate.isSuccessful) {
             return KaBaseApplicableCallCandidateInfo(
-                call,
+                call as KaCall,
                 isInBestCandidates = if (isUnwrappedImplicitInvokeCall) {
                     (call as? KaSimpleFunctionCall)?.isImplicitInvoke == true
                 } else {
@@ -1589,7 +1590,7 @@ internal class KaFirResolver(
             ?: KaNonBoundToPsiErrorDiagnostic(factoryName = FirErrors.OTHER_ERROR.name, diagnostic.reason, token)
 
         return KaBaseInapplicableCallCandidateInfo(
-            backingCandidate = call,
+            backingCandidate = call as KaCall,
             isInBestCandidates = isInBestCandidates,
             diagnostic = kaDiagnostic,
         )
