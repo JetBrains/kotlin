@@ -152,7 +152,7 @@ internal abstract class DescriptorKProperty<out V> private constructor(
         override val name: String get() = "<get-${property.name}>"
 
         final override fun shallowCopy(overriddenStorage: KCallableOverriddenStorage): DescriptorKCallable<V> =
-            error("Unused")
+            error("Property accessors can only be copied by copying the corresponding property")
 
         override val descriptor: PropertyGetterDescriptor by ReflectProperties.lazySoft {
             property.descriptor.getter ?: DescriptorFactory.createDefaultGetter(property.descriptor, Annotations.EMPTY).apply {
@@ -180,7 +180,7 @@ internal abstract class DescriptorKProperty<out V> private constructor(
         override val name: String get() = "<set-${property.name}>"
 
         final override fun shallowCopy(overriddenStorage: KCallableOverriddenStorage): DescriptorKCallable<Unit> =
-            error("Unused")
+            error("Property accessors can only be copied by copying the corresponding property")
 
         override val descriptor: PropertySetterDescriptor by ReflectProperties.lazySoft {
             property.descriptor.setter ?: DescriptorFactory.createDefaultSetter(property.descriptor, Annotations.EMPTY, Annotations.EMPTY)
