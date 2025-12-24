@@ -162,7 +162,7 @@ public interface KaResolver : KaSessionComponent {
     public fun KtConstructorDelegationReferenceExpression.resolveSymbol(): KaConstructorSymbol?
 
     /**
-     * Resolves the callable symbol targeted by the given [KtCallElement].
+     * Resolves the function symbol targeted by the given [KtCallElement].
      *
      * #### Example
      *
@@ -175,7 +175,7 @@ public interface KaResolver : KaSessionComponent {
      * }
      * ```
      *
-     * Calling `resolveSymbol()` on the [KtCallElement] (`foo(42)`) returns the [KaCallableSymbol] of `foo`
+     * Calling `resolveSymbol()` on the [KtCallElement] (`foo(42)`) returns the [KaFunctionSymbol] of `foo`
      * if resolution succeeds; otherwise, it returns `null` (e.g., when unresolved or ambiguous).
      *
      * This is a specialized counterpart of [KtResolvable.resolveSymbol] focused specifically on call elements
@@ -184,7 +184,7 @@ public interface KaResolver : KaSessionComponent {
      * @see KtResolvable.resolveSymbol
      */
     @KaExperimentalApi
-    public fun KtCallElement.resolveSymbol(): KaCallableSymbol?
+    public fun KtCallElement.resolveSymbol(): KaFunctionSymbol?
 
     /**
      * Resolves the callable symbol targeted by the given [KtCallableReferenceExpression].
@@ -530,7 +530,7 @@ public interface KaResolver : KaSessionComponent {
     public fun KtConstructorDelegationReferenceExpression.resolveCall(): KaDelegatedConstructorCall?
 
     /**
-     * Resolves the given [KtCallElement] to a callable member call.
+     * Resolves the given [KtCallElement] to a function call.
      *
      * #### Example
      *
@@ -552,7 +552,7 @@ public interface KaResolver : KaSessionComponent {
      * @see KtResolvableCall.resolveCall
      */
     @KaExperimentalApi
-    public fun KtCallElement.resolveCall(): KaSingleCall<*, *>?
+    public fun KtCallElement.resolveCall(): KaFunctionCall<*>?
 
     /**
      * Resolves the given [KtCallableReferenceExpression] to a callable member call.
@@ -977,7 +977,7 @@ public fun KtConstructorDelegationReferenceExpression.resolveSymbol(): KaConstru
 }
 
 /**
- * Resolves the callable symbol targeted by the given [KtCallElement].
+ * Resolves the function symbol targeted by the given [KtCallElement].
  *
  * #### Example
  *
@@ -990,7 +990,7 @@ public fun KtConstructorDelegationReferenceExpression.resolveSymbol(): KaConstru
  * }
  * ```
  *
- * Calling `resolveSymbol()` on the [KtCallElement] (`foo(42)`) returns the [KaCallableSymbol] of `foo`
+ * Calling `resolveSymbol()` on the [KtCallElement] (`foo(42)`) returns the [KaFunctionSymbol] of `foo`
  * if resolution succeeds; otherwise, it returns `null` (e.g., when unresolved or ambiguous).
  *
  * This is a specialized counterpart of [KtResolvable.resolveSymbol] focused specifically on call elements
@@ -1002,7 +1002,7 @@ public fun KtConstructorDelegationReferenceExpression.resolveSymbol(): KaConstru
 @KaExperimentalApi
 @KaContextParameterApi
 context(session: KaSession)
-public fun KtCallElement.resolveSymbol(): KaCallableSymbol? {
+public fun KtCallElement.resolveSymbol(): KaFunctionSymbol? {
     return with(session) {
         resolveSymbol()
     }
@@ -1443,7 +1443,7 @@ public fun KtConstructorDelegationReferenceExpression.resolveCall(): KaDelegated
 }
 
 /**
- * Resolves the given [KtCallElement] to a callable member call.
+ * Resolves the given [KtCallElement] to a function call.
  *
  * #### Example
  *
@@ -1468,7 +1468,7 @@ public fun KtConstructorDelegationReferenceExpression.resolveCall(): KaDelegated
 @KaExperimentalApi
 @KaContextParameterApi
 context(session: KaSession)
-public fun KtCallElement.resolveCall(): KaSingleCall<*, *>? {
+public fun KtCallElement.resolveCall(): KaFunctionCall<*>? {
     return with(session) {
         resolveCall()
     }
