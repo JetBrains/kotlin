@@ -39,7 +39,7 @@ internal abstract class DescriptorKProperty<out V> private constructor(
     overriddenStorage: KCallableOverriddenStorage,
 ) : DescriptorKCallable<V>(overriddenStorage), ReflectKProperty<V> {
     constructor(container: KDeclarationContainerImpl, name: String, signature: String, boundReceiver: Any?) : this(
-        container, name, signature, null, boundReceiver, KCallableOverriddenStorage.ZERO
+        container, name, signature, null, boundReceiver, KCallableOverriddenStorage.EMPTY
     )
 
     constructor(
@@ -128,7 +128,7 @@ internal abstract class DescriptorKProperty<out V> private constructor(
         ReflectionObjectRenderer.renderProperty(this)
 
     abstract class Accessor<out PropertyType, out ReturnType> :
-        DescriptorKCallable<ReturnType>(KCallableOverriddenStorage.ZERO),
+        DescriptorKCallable<ReturnType>(KCallableOverriddenStorage.EMPTY),
         KProperty.Accessor<PropertyType>,
         KFunction<ReturnType> {
         abstract override val property: DescriptorKProperty<PropertyType>

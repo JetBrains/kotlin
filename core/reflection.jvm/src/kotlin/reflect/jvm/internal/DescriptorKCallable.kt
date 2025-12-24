@@ -149,7 +149,7 @@ internal data class KCallableOverriddenStorage(
     val forceIsInline: Boolean,
 ) {
     companion object Companion {
-        val ZERO = KCallableOverriddenStorage(
+        val EMPTY = KCallableOverriddenStorage(
             null,
             KTypeSubstitutor.EMPTY,
             null,
