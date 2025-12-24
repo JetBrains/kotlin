@@ -308,10 +308,17 @@ internal class KaFe10Resolver(
 
     private fun KaCallResolutionAttempt?.toKaCallCandidateInfos(): List<KaCallCandidateInfo> = when (this) {
         null -> emptyList()
-        is KaCall -> listOf(KaBaseApplicableCallCandidateInfo(backingCandidate = this, isInBestCandidates = true))
+
+        is KaCall, is KaSingleCall<*, *>, is KaMultiCall -> listOf(
+            KaBaseApplicableCallCandidateInfo(
+                backingCandidate = this as KaCall,
+                isInBestCandidates = true,
+            )
+        )
+
         is KaCallResolutionError -> candidateCalls.map {
             KaBaseInapplicableCallCandidateInfo(
-                backingCandidate = it,
+                backingCandidate = it as KaCall,
                 isInBestCandidates = true,
                 diagnostic = diagnostic,
             )
@@ -334,16 +341,16 @@ internal class KaFe10Resolver(
         }
 
         return when (this) {
-            is KaCall -> listOf(
+            is KaCall, is KaSingleCall<*, *>, is KaMultiCall -> listOf(
                 KaBaseApplicableCallCandidateInfo(
-                    backingCandidate = this,
+                    backingCandidate = this as KaCall,
                     isInBestCandidates = this.isInBestCandidates(),
                 ),
             )
 
             is KaCallResolutionError -> candidateCalls.map {
                 KaBaseInapplicableCallCandidateInfo(
-                    backingCandidate = it,
+                    backingCandidate = it as KaCall,
                     isInBestCandidates = it.isInBestCandidates(),
                     diagnostic = diagnostic,
                 )
@@ -703,6 +710,7 @@ internal class KaFe10Resolver(
         resolvedCalls: List<ResolvedCall<*>>,
         diagnostics: Diagnostics = context.diagnostics,
     ): KaCallResolutionAttempt {
+        kaCall as KaCallResolutionAttempt
         val failedResolveCall = resolvedCalls.firstOrNull { !it.status.isSuccess } ?: return kaCall
 
         val diagnostic = getDiagnosticToReport(context, psi, kaCall, diagnostics)?.let { KaFe10Diagnostic(it, token) }
@@ -710,7 +718,7 @@ internal class KaFe10Resolver(
 
         return KaBaseCallResolutionError(
             backedDiagnostic = diagnostic,
-            backingCandidateCalls = listOf(kaCall)
+            backingCandidateCalls = kaCall.calls
         )
     }
 

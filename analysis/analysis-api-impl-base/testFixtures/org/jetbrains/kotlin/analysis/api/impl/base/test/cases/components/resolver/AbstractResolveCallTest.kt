@@ -43,7 +43,7 @@ abstract class AbstractResolveCallTest : AbstractResolveByElementTest() {
     private fun Any.asCallInfo(): KaCallInfo? = when (this) {
         is KaCallInfo -> this
         is KaCall -> KaBaseSuccessCallInfo(this)
-        is KaCallResolutionError -> KaBaseErrorCallInfo(candidateCalls, diagnostic)
+        is KaCallResolutionError -> KaBaseErrorCallInfo(candidateCalls.map { it as KaCall }, diagnostic)
         else -> error("Unknown type: ${this::class.simpleName}")
     }
 

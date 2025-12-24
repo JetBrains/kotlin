@@ -29,7 +29,7 @@ class KaBaseCompoundUnaryOperation(
 
     @Deprecated("Use 'operationCall' instead")
     override val operationPartiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaNamedFunctionSymbol>
-        get() = withValidityAssertion { backingOperationCall.partiallyAppliedSymbol }
+        get() = withValidityAssertion { backingOperationCall.asPartiallyAppliedSymbol }
 
     override val operationCall: KaFunctionCall<KaNamedFunctionSymbol>
         get() = withValidityAssertion { backingOperationCall }

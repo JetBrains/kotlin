@@ -9,15 +9,15 @@ import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnostic
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.resolution.KaCall
 import org.jetbrains.kotlin.analysis.api.resolution.KaCallResolutionError
+import org.jetbrains.kotlin.analysis.api.resolution.KaSingleCall
 
 @KaImplementationDetail
 class KaBaseCallResolutionError(
     private val backedDiagnostic: KaDiagnostic,
-    private val backingCandidateCalls: List<KaCall>,
+    private val backingCandidateCalls: List<KaSingleCall<*, *>>,
 ) : KaCallResolutionError {
     override val token: KaLifetimeToken get() = backedDiagnostic.token
     override val diagnostic: KaDiagnostic get() = withValidityAssertion { backedDiagnostic }
-    override val candidateCalls: List<KaCall> get() = withValidityAssertion { backingCandidateCalls }
+    override val candidateCalls: List<KaSingleCall<*, *>> get() = withValidityAssertion { backingCandidateCalls }
 }

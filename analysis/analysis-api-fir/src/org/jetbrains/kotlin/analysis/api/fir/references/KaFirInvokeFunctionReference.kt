@@ -23,7 +23,6 @@ internal class KaFirInvokeFunctionReference(expression: KtCallExpression) : KtIn
         return expression.resolveToCall()?.calls.orEmpty().mapNotNull { call ->
             (call as? KaSimpleFunctionCall)
                 ?.takeIf { it.isImplicitInvoke }
-                ?.partiallyAppliedSymbol
                 ?.symbol
                 ?.takeUnless { it is KaNamedFunctionSymbol && it.isBuiltinFunctionInvoke }
         }

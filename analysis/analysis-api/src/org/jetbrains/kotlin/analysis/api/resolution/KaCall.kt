@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.resolution
 
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.signatures.KaCallableSignature
 import org.jetbrains.kotlin.analysis.api.signatures.KaFunctionSignature
 import org.jetbrains.kotlin.analysis.api.signatures.KaVariableSignature
@@ -18,7 +19,7 @@ import org.jetbrains.kotlin.psi.KtExpression
  * A call to a function, a simple/compound access to a property, or a simple/compound access through `get` and `set` convention.
  */
 @OptIn(KaImplementationDetail::class, KaExperimentalApi::class)
-public sealed interface KaCall : KaCallResolutionAttempt
+public sealed interface KaCall : KaLifetimeOwner
 
 /**
  * A call to a function, or a simple/compound access to a property.
@@ -49,12 +50,18 @@ public val <S : KaCallableSymbol, C : KaCallableSignature<S>> KaCallableMemberCa
  * A call to a function within Kotlin code. This includes calls to regular functions, constructors, constructors of superclasses, and
  * annotations.
  */
-public sealed interface KaFunctionCall<S : KaFunctionSymbol> : KaCallableMemberCall<S, KaFunctionSignature<S>> {
+@OptIn(KaImplementationDetail::class, KaExperimentalApi::class)
+public sealed interface KaFunctionCall<S : KaFunctionSymbol> : KaSingleCall<S, KaFunctionSignature<S>>,
+    KaCallableMemberCall<S, KaFunctionSignature<S>> {
+
     /**
      * A mapping from the call's argument expressions to their associated parameter symbols in a stable order. In case of `vararg`
      * parameters, multiple arguments may be mapped to the same [KaValueParameterSymbol].
      */
     public val argumentMapping: Map<KtExpression, KaVariableSignature<KaValueParameterSymbol>>
+
+    @Deprecated("Use the content of the `partiallyAppliedSymbol` directly instead")
+    override val partiallyAppliedSymbol: KaPartiallyAppliedSymbol<S, KaFunctionSignature<S>>
 }
 
 /**
@@ -122,7 +129,13 @@ public interface KaDelegatedConstructorCall : KaFunctionCall<KaConstructorSymbol
 /**
  * An access to variables (including properties).
  */
-public sealed interface KaVariableAccessCall : KaCallableMemberCall<KaVariableSymbol, KaVariableSignature<KaVariableSymbol>>
+@OptIn(KaImplementationDetail::class, KaExperimentalApi::class)
+public sealed interface KaVariableAccessCall : KaSingleCall<KaVariableSymbol, KaVariableSignature<KaVariableSymbol>>,
+    KaCallableMemberCall<KaVariableSymbol, KaVariableSignature<KaVariableSymbol>> {
+
+    @Deprecated("Use the content of the `partiallyAppliedSymbol` directly instead")
+    override val partiallyAppliedSymbol: KaPartiallyAppliedSymbol<KaVariableSymbol, KaVariableSignature<KaVariableSymbol>>
+}
 
 /**
  * A simple read or write to a variable or property.
@@ -207,8 +220,9 @@ public interface KaCompoundAccessCall {
  * `m += "a"` is a simple `KaFunctionCall` to `MutableList.plusAssign`, not a `KaCompoundVariableAccessCall`. However, the dispatch receiver
  * of this call, `m`, is a simple read access represented as a `KaVariableAccessCall`.
  */
+@OptIn(KaExperimentalApi::class)
 @SubclassOptInRequired(KaImplementationDetail::class)
-public interface KaCompoundVariableAccessCall : KaCall, KaCompoundAccessCall {
+public interface KaCompoundVariableAccessCall : KaMultiCall, KaCall, KaCompoundAccessCall {
     /**
      * Represents a symbol of the mutated variable.
      */
@@ -268,8 +282,9 @@ public interface KaCompoundVariableAccessCall : KaCall, KaCompoundAccessCall {
  * The above call is represented as a simple `KaFunctionCall` to `MutableList.plusAssign`, with the dispatch receiver referencing the
  * expression `m["a"]`, which is again a simple `KaFunctionCall` to `ThrowingMap.get`.
  */
+@OptIn(KaExperimentalApi::class)
 @SubclassOptInRequired(KaImplementationDetail::class)
-public interface KaCompoundArrayAccessCall : KaCall, KaCompoundAccessCall {
+public interface KaCompoundArrayAccessCall : KaMultiCall, KaCall, KaCompoundAccessCall {
     /**
      * The arguments representing the indices in the [index access operator](https://kotlinlang.org/docs/operator-overloading.html#indexed-access-operator)
      * call.

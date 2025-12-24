@@ -133,6 +133,8 @@ internal fun stringRepresentation(any: Any?): String = with(any) {
                     property.visibility == KVisibility.PUBLIC &&
                             !property.hasAnnotation<Deprecated>() &&
                             property.name != "token" &&
+                            // The multi-call already renders all calls via other properties
+                            !(klass.isSubclassOf(KaMultiCall::class) && property.name == KaMultiCall::calls.name) &&
                             /** The call is already covered as a part of [KaCompoundOperation.operationCall] */
                             !(klass.isSubclassOf(KaCompoundAccessCall::class) && property.name == KaCompoundAccessCall::operationCall.name)
                 }.ifNotEmpty {
@@ -432,6 +434,14 @@ internal fun assertConsistency(testServices: TestServices, call: KaCall) {
     val assertions = testServices.assertions
     val typeArgumentsMapping = call.typeArgumentsMapping
     val symbol = call.symbol
+
+    if (call is KaSingleCall<*, *>) {
+        val partiallyAppliedSymbol = call.partiallyAppliedSymbol
+        assertions.assertEquals(call.signature, partiallyAppliedSymbol.signature)
+        assertions.assertEquals(call.dispatchReceiver, partiallyAppliedSymbol.dispatchReceiver)
+        assertions.assertEquals(call.extensionReceiver, partiallyAppliedSymbol.extensionReceiver)
+        assertions.assertEquals(call.contextArguments, partiallyAppliedSymbol.contextArguments)
+    }
 
     val typeParameters = symbol.typeParameters
     for (parameterSymbol in typeParameters) {

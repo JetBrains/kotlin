@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.resolution.KaPartiallyAppliedSymbol
 import org.jetbrains.kotlin.analysis.api.resolution.KaReceiverValue
+import org.jetbrains.kotlin.analysis.api.resolution.KaSingleCall
 import org.jetbrains.kotlin.analysis.api.signatures.KaCallableSignature
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 
@@ -30,3 +31,6 @@ class KaBasePartiallyAppliedSymbol<out S : KaCallableSymbol, out C : KaCallableS
     override val extensionReceiver: KaReceiverValue? get() = withValidityAssertion { backingExtensionReceiver }
     override val contextArguments: List<KaReceiverValue> get() = withValidityAssertion { backingContextArguments }
 }
+
+internal val <S : KaCallableSymbol, C : KaCallableSignature<S>> KaSingleCall<S, C>.asPartiallyAppliedSymbol: KaPartiallyAppliedSymbol<S, C>
+    get() = KaBasePartiallyAppliedSymbol(signature, dispatchReceiver, extensionReceiver, contextArguments)

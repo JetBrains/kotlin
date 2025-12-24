@@ -640,7 +640,7 @@ public abstract interface class org/jetbrains/kotlin/analysis/api/resolution/KaA
 public abstract interface class org/jetbrains/kotlin/analysis/api/resolution/KaApplicableCallCandidateInfo : org/jetbrains/kotlin/analysis/api/resolution/KaCallCandidateInfo {
 }
 
-public abstract interface class org/jetbrains/kotlin/analysis/api/resolution/KaCall : org/jetbrains/kotlin/analysis/api/resolution/KaCallResolutionAttempt {
+public abstract interface class org/jetbrains/kotlin/analysis/api/resolution/KaCall : org/jetbrains/kotlin/analysis/api/lifetime/KaLifetimeOwner {
 }
 
 public abstract interface class org/jetbrains/kotlin/analysis/api/resolution/KaCallCandidateInfo : org/jetbrains/kotlin/analysis/api/lifetime/KaLifetimeOwner {
@@ -675,7 +675,7 @@ public abstract interface class org/jetbrains/kotlin/analysis/api/resolution/KaC
 	public fun getOperationCall ()Lorg/jetbrains/kotlin/analysis/api/resolution/KaFunctionCall;
 }
 
-public abstract interface class org/jetbrains/kotlin/analysis/api/resolution/KaCompoundArrayAccessCall : org/jetbrains/kotlin/analysis/api/resolution/KaCall, org/jetbrains/kotlin/analysis/api/resolution/KaCompoundAccessCall {
+public abstract interface class org/jetbrains/kotlin/analysis/api/resolution/KaCompoundArrayAccessCall : org/jetbrains/kotlin/analysis/api/resolution/KaCall, org/jetbrains/kotlin/analysis/api/resolution/KaCompoundAccessCall, org/jetbrains/kotlin/analysis/api/resolution/KaMultiCall {
 	public abstract fun getGetCall ()Lorg/jetbrains/kotlin/analysis/api/resolution/KaFunctionCall;
 	public abstract fun getGetPartiallyAppliedSymbol ()Lorg/jetbrains/kotlin/analysis/api/resolution/KaPartiallyAppliedSymbol;
 	public abstract fun getIndexArguments ()Ljava/util/List;
@@ -688,7 +688,7 @@ public abstract interface class org/jetbrains/kotlin/analysis/api/resolution/KaC
 	public abstract fun getOperationPartiallyAppliedSymbol ()Lorg/jetbrains/kotlin/analysis/api/resolution/KaPartiallyAppliedSymbol;
 }
 
-public abstract interface class org/jetbrains/kotlin/analysis/api/resolution/KaCompoundVariableAccessCall : org/jetbrains/kotlin/analysis/api/resolution/KaCall, org/jetbrains/kotlin/analysis/api/resolution/KaCompoundAccessCall {
+public abstract interface class org/jetbrains/kotlin/analysis/api/resolution/KaCompoundVariableAccessCall : org/jetbrains/kotlin/analysis/api/resolution/KaCall, org/jetbrains/kotlin/analysis/api/resolution/KaCompoundAccessCall, org/jetbrains/kotlin/analysis/api/resolution/KaMultiCall {
 	public abstract fun getVariableCall ()Lorg/jetbrains/kotlin/analysis/api/resolution/KaVariableAccessCall;
 	public abstract fun getVariablePartiallyAppliedSymbol ()Lorg/jetbrains/kotlin/analysis/api/resolution/KaPartiallyAppliedSymbol;
 }
@@ -715,8 +715,9 @@ public abstract interface class org/jetbrains/kotlin/analysis/api/resolution/KaE
 	public abstract fun isSafeNavigation ()Z
 }
 
-public abstract interface class org/jetbrains/kotlin/analysis/api/resolution/KaFunctionCall : org/jetbrains/kotlin/analysis/api/resolution/KaCallableMemberCall {
+public abstract interface class org/jetbrains/kotlin/analysis/api/resolution/KaFunctionCall : org/jetbrains/kotlin/analysis/api/resolution/KaCallableMemberCall, org/jetbrains/kotlin/analysis/api/resolution/KaSingleCall {
 	public abstract fun getArgumentMapping ()Ljava/util/Map;
+	public abstract fun getPartiallyAppliedSymbol ()Lorg/jetbrains/kotlin/analysis/api/resolution/KaPartiallyAppliedSymbol;
 }
 
 public abstract interface class org/jetbrains/kotlin/analysis/api/resolution/KaImplicitReceiverValue : org/jetbrains/kotlin/analysis/api/resolution/KaReceiverValue {
@@ -767,7 +768,8 @@ public abstract interface class org/jetbrains/kotlin/analysis/api/resolution/KaS
 	public abstract fun getCall ()Lorg/jetbrains/kotlin/analysis/api/resolution/KaCall;
 }
 
-public abstract interface class org/jetbrains/kotlin/analysis/api/resolution/KaVariableAccessCall : org/jetbrains/kotlin/analysis/api/resolution/KaCallableMemberCall {
+public abstract interface class org/jetbrains/kotlin/analysis/api/resolution/KaVariableAccessCall : org/jetbrains/kotlin/analysis/api/resolution/KaCallableMemberCall, org/jetbrains/kotlin/analysis/api/resolution/KaSingleCall {
+	public abstract fun getPartiallyAppliedSymbol ()Lorg/jetbrains/kotlin/analysis/api/resolution/KaPartiallyAppliedSymbol;
 }
 
 public abstract interface class org/jetbrains/kotlin/analysis/api/scopes/KaScope : org/jetbrains/kotlin/analysis/api/scopes/KaScopeLike {

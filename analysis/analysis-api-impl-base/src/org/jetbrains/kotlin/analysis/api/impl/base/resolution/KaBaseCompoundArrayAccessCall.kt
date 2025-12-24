@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.resolution
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
@@ -29,15 +30,21 @@ class KaBaseCompoundArrayAccessCall(
 
     @Deprecated("Use 'getCall' instead")
     override val getPartiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaNamedFunctionSymbol>
-        get() = withValidityAssertion { getCall.partiallyAppliedSymbol }
+        get() = withValidityAssertion { getCall.asPartiallyAppliedSymbol }
 
     override val getCall: KaFunctionCall<KaNamedFunctionSymbol>
         get() = withValidityAssertion { backingGetCall }
 
     @Deprecated("Use 'setCall' instead")
     override val setPartiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaNamedFunctionSymbol>
-        get() = withValidityAssertion { setCall.partiallyAppliedSymbol }
+        get() = withValidityAssertion { setCall.asPartiallyAppliedSymbol }
 
     override val setCall: KaFunctionCall<KaNamedFunctionSymbol>
         get() = withValidityAssertion { backingSetCall }
+
+    @KaExperimentalApi
+    override val calls: List<KaSingleCall<*, *>>
+        get() = withValidityAssertion {
+            listOf(backingGetCall, backingCompoundAccess.operationCall, backingSetCall)
+        }
 }
