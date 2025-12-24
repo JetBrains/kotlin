@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.resolution.KaImplicitInvokeCall
 import org.jetbrains.kotlin.analysis.api.resolution.KaPartiallyAppliedFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.resolution.KaReceiverValue
-import org.jetbrains.kotlin.analysis.api.resolution.KaSimpleFunctionCall
 import org.jetbrains.kotlin.analysis.api.signatures.KaFunctionSignature
 import org.jetbrains.kotlin.analysis.api.signatures.KaVariableSignature
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
@@ -29,7 +28,7 @@ class KaBaseImplicitInvokeCall(
     private val backingPartiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaNamedFunctionSymbol>,
     private val backingArgumentMapping: Map<KtExpression, KaVariableSignature<KaValueParameterSymbol>>,
     private val backingTypeArgumentsMapping: Map<KaTypeParameterSymbol, KaType>,
-) : KaImplicitInvokeCall, KaSimpleFunctionCall {
+) : KaImplicitInvokeCall, @Suppress("DEPRECATION") org.jetbrains.kotlin.analysis.api.resolution.KaSimpleFunctionCall {
     override val token: KaLifetimeToken
         get() = backingPartiallyAppliedSymbol.token
 

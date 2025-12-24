@@ -443,8 +443,8 @@ internal fun assertConsistency(testServices: TestServices, call: KaCall) {
         assertions.assertEquals(call.contextArguments, partiallyAppliedSymbol.contextArguments)
     }
 
+    @Suppress("DEPRECATION")
     if (call is KaSimpleFunctionCall) {
-        @Suppress("DEPRECATION")
         assertions.assertEquals(call is KaImplicitInvokeCall, call.isImplicitInvoke)
     }
 

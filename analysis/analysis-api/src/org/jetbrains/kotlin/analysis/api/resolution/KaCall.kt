@@ -68,6 +68,13 @@ public interface KaFunctionCall<S : KaFunctionSymbol> : KaSingleCall<S, KaFuncti
 /**
  * A simple, direct call to a function, without any delegation or special syntax involved.
  */
+@Deprecated(
+    message = "Use 'KaFunctionCall' instead",
+    replaceWith = ReplaceWith(
+        expression = "KaFunctionCall<*>",
+        imports = ["org.jetbrains.kotlin.analysis.api.resolution.KaFunctionCall"],
+    )
+)
 @SubclassOptInRequired(KaImplementationDetail::class)
 public interface KaSimpleFunctionCall : KaFunctionCall<KaFunctionSymbol> {
     /**
