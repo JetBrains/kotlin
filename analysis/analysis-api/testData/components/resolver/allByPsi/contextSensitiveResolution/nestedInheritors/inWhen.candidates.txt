@@ -220,6 +220,7 @@ KtNameReferenceExpression(269,270): 'b'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = b
         receiverType = null
@@ -227,7 +228,6 @@ KtNameReferenceExpression(269,270): 'b'
         symbol = b: kotlin.Boolean
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -238,6 +238,7 @@ KtNameReferenceExpression(274,281): 'myClass'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = myClass
         receiverType = null
@@ -245,7 +246,6 @@ KtNameReferenceExpression(274,281): 'myClass'
         symbol = myClass: MyClass
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -406,6 +406,7 @@ KtNameReferenceExpression(445,446): 'b'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = b
         receiverType = null
@@ -413,7 +414,6 @@ KtNameReferenceExpression(445,446): 'b'
         symbol = b: kotlin.Boolean
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -424,6 +424,7 @@ KtNameReferenceExpression(450,458): 'subClass'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = subClass
         receiverType = null
@@ -431,7 +432,6 @@ KtNameReferenceExpression(450,458): 'subClass'
         symbol = subClass: MyClass.NestedInheritor
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -606,6 +606,7 @@ KtNameReferenceExpression(636,638): 'b1'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = b1
         receiverType = null
@@ -613,7 +614,6 @@ KtNameReferenceExpression(636,638): 'b1'
         symbol = b1: kotlin.Boolean
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -624,6 +624,7 @@ KtNameReferenceExpression(642,650): 'subClass'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = subClass
         receiverType = null
@@ -631,7 +632,6 @@ KtNameReferenceExpression(642,650): 'subClass'
         symbol = subClass: MyClass.NestedInheritor
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -648,6 +648,7 @@ KtNameReferenceExpression(663,665): 'b2'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = b2
         receiverType = null
@@ -655,7 +656,6 @@ KtNameReferenceExpression(663,665): 'b2'
         symbol = b2: kotlin.Boolean
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1100,6 +1100,7 @@ KtNameReferenceExpression(1058,1060): 'b1'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = b1
         receiverType = null
@@ -1107,7 +1108,6 @@ KtNameReferenceExpression(1058,1060): 'b1'
         symbol = b1: kotlin.Boolean
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1118,6 +1118,7 @@ KtNameReferenceExpression(1064,1073): 'subClass1'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = subClass1
         receiverType = null
@@ -1125,7 +1126,6 @@ KtNameReferenceExpression(1064,1073): 'subClass1'
         symbol = subClass1: OtherClass.A
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1142,6 +1142,7 @@ KtNameReferenceExpression(1086,1088): 'b2'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = b2
         receiverType = null
@@ -1149,7 +1150,6 @@ KtNameReferenceExpression(1086,1088): 'b2'
         symbol = b2: kotlin.Boolean
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1160,6 +1160,7 @@ KtNameReferenceExpression(1092,1101): 'subClass2'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = subClass2
         receiverType = null
@@ -1167,7 +1168,6 @@ KtNameReferenceExpression(1092,1101): 'subClass2'
         symbol = subClass2: OtherClass.B
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1406,6 +1406,7 @@ KtNameReferenceExpression(1355,1356): 'b'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = b
         receiverType = null
@@ -1413,7 +1414,6 @@ KtNameReferenceExpression(1355,1356): 'b'
         symbol = b: kotlin.Boolean
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1424,6 +1424,7 @@ KtNameReferenceExpression(1360,1369): 'openClass'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = openClass
         receiverType = null
@@ -1431,7 +1432,6 @@ KtNameReferenceExpression(1360,1369): 'openClass'
         symbol = openClass: OpenClass
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1592,6 +1592,7 @@ KtNameReferenceExpression(1557,1558): 'b'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = b
         receiverType = null
@@ -1599,7 +1600,6 @@ KtNameReferenceExpression(1557,1558): 'b'
         symbol = b: kotlin.Boolean
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1610,6 +1610,7 @@ KtNameReferenceExpression(1562,1570): 'subClass'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = subClass
         receiverType = null
@@ -1617,7 +1618,6 @@ KtNameReferenceExpression(1562,1570): 'subClass'
         symbol = subClass: OpenClass.NestedInheritorOfOpenClass
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 

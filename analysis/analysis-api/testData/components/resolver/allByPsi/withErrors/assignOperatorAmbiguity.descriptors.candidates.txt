@@ -506,6 +506,7 @@ KtNameReferenceExpression(505,508): 'foo'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = foo
         receiverType = null
@@ -513,7 +514,6 @@ KtNameReferenceExpression(505,508): 'foo'
         symbol = var foo: Test
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -533,6 +533,7 @@ KtNameReferenceExpression(518,521): 'foo'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = foo
         receiverType = null
@@ -540,7 +541,6 @@ KtNameReferenceExpression(518,521): 'foo'
         symbol = var foo: Test
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -560,6 +560,7 @@ KtNameReferenceExpression(531,534): 'foo'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = foo
         receiverType = null
@@ -567,7 +568,6 @@ KtNameReferenceExpression(531,534): 'foo'
         symbol = var foo: Test
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -587,6 +587,7 @@ KtNameReferenceExpression(544,547): 'foo'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = foo
         receiverType = null
@@ -594,7 +595,6 @@ KtNameReferenceExpression(544,547): 'foo'
         symbol = var foo: Test
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -614,6 +614,7 @@ KtNameReferenceExpression(557,560): 'foo'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = foo
         receiverType = null
@@ -621,7 +622,6 @@ KtNameReferenceExpression(557,560): 'foo'
         symbol = var foo: Test
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 

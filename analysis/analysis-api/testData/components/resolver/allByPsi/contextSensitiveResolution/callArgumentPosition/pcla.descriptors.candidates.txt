@@ -471,6 +471,7 @@ KtNameReferenceExpression(315,316): 'm'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = m
         receiverType = null
@@ -478,7 +479,6 @@ KtNameReferenceExpression(315,316): 'm'
         symbol = m: MyEnum
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -615,6 +615,7 @@ KtNameReferenceExpression(332,333): 'X'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = <Error property>
         receiverType = null
@@ -622,7 +623,6 @@ KtNameReferenceExpression(332,333): 'X'
         symbol = var <Error property>: ERROR_TYPE
         contextParameters = []
         callableId = /<Error class: unknown class>.<Error property>
-      simpleAccess = Read
       typeArgumentsMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: X>
     isInBestCandidates = true
@@ -850,6 +850,7 @@ KtNameReferenceExpression(371,372): 'X'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = <Error property>
         receiverType = null
@@ -857,7 +858,6 @@ KtNameReferenceExpression(371,372): 'X'
         symbol = var <Error property>: ERROR_TYPE
         contextParameters = []
         callableId = /<Error class: unknown class>.<Error property>
-      simpleAccess = Read
       typeArgumentsMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: X>
     isInBestCandidates = true
@@ -995,6 +995,7 @@ KtNameReferenceExpression(388,389): 'm'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = m
         receiverType = null
@@ -1002,7 +1003,6 @@ KtNameReferenceExpression(388,389): 'm'
         symbol = m: MyEnum
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1458,6 +1458,7 @@ KtNameReferenceExpression(482,483): 'X'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = <Error property>
         receiverType = null
@@ -1465,7 +1466,6 @@ KtNameReferenceExpression(482,483): 'X'
         symbol = var <Error property>: ERROR_TYPE
         contextParameters = []
         callableId = /<Error class: unknown class>.<Error property>
-      simpleAccess = Read
       typeArgumentsMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: X>
     isInBestCandidates = true

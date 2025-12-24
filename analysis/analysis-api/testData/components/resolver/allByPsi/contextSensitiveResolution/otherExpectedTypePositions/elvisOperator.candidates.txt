@@ -313,6 +313,7 @@ KtNameReferenceExpression(436,447): 'myClassProp'
         type = MyClass.Companion
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = myClassProp
         receiverType = null
@@ -320,7 +321,6 @@ KtNameReferenceExpression(436,447): 'myClassProp'
         symbol = val myClassProp: MyClass
         contextParameters = []
         callableId = /MyClass.Companion.myClassProp
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -371,6 +371,7 @@ KtNameReferenceExpression(491,501): 'stringProp'
         type = MyClass.Companion
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = stringProp
         receiverType = null
@@ -378,7 +379,6 @@ KtNameReferenceExpression(491,501): 'stringProp'
         symbol = val stringProp: kotlin.String
         contextParameters = []
         callableId = /MyClass.Companion.stringProp
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -556,6 +556,7 @@ KtNameReferenceExpression(607,618): 'myClassProp'
         type = MyClass.Companion
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = myClassProp
         receiverType = null
@@ -563,7 +564,6 @@ KtNameReferenceExpression(607,618): 'myClassProp'
         symbol = val myClassProp: MyClass
         contextParameters = []
         callableId = /MyClass.Companion.myClassProp
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -697,6 +697,7 @@ KtNameReferenceExpression(660,670): 'stringProp'
         type = MyClass.Companion
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = stringProp
         receiverType = null
@@ -704,7 +705,6 @@ KtNameReferenceExpression(660,670): 'stringProp'
         symbol = val stringProp: kotlin.String
         contextParameters = []
         callableId = /MyClass.Companion.stringProp
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 

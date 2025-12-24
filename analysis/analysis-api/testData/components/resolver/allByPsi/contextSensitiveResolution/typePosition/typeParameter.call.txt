@@ -171,6 +171,7 @@ KtNameReferenceExpression(255,256): 'x'
         type = it(MySealed.Left & T)
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = x
         receiverType = null
@@ -178,7 +179,6 @@ KtNameReferenceExpression(255,256): 'x'
         symbol = val x: kotlin.String
         contextParameters = []
         callableId = /MySealed.Left.x
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtWhenEntry(261,274): 'is Right -> y'
@@ -225,6 +225,7 @@ KtNameReferenceExpression(273,274): 'y'
         type = it(MySealed.Right & T)
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = y
         receiverType = null
@@ -232,7 +233,6 @@ KtNameReferenceExpression(273,274): 'y'
         symbol = val y: kotlin.String
         contextParameters = []
         callableId = /MySealed.Right.y
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNamedFunction(278,390): 'fun <T> T.getOrElse2() where T : MySealed, T : CharSequence = when (this) {'

@@ -175,6 +175,7 @@ KtNameReferenceExpression(284,285): 'z'
         type = Left
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = z
         receiverType = null
@@ -182,7 +183,6 @@ KtNameReferenceExpression(284,285): 'z'
         symbol = val z: kotlin.String
         contextParameters = []
         callableId = /Left.z
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtWhenEntry(290,303): 'is Right -> y'

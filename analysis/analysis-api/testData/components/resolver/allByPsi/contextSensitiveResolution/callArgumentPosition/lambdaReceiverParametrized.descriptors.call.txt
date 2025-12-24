@@ -809,6 +809,7 @@ KtNameReferenceExpression(920,921): 'i'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = i
         receiverType = null
@@ -816,7 +817,6 @@ KtNameReferenceExpression(920,921): 'i'
         symbol = i: MyClass
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(922,924): '=='
@@ -1014,6 +1014,7 @@ KtNameReferenceExpression(998,999): 'i'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = i
         receiverType = null
@@ -1021,7 +1022,6 @@ KtNameReferenceExpression(998,999): 'i'
         symbol = i: MyClass
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(1000,1002): '=='
@@ -1219,6 +1219,7 @@ KtNameReferenceExpression(1072,1073): 'i'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = i
         receiverType = null
@@ -1226,7 +1227,6 @@ KtNameReferenceExpression(1072,1073): 'i'
         symbol = i: MyClass
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(1074,1076): '=='
@@ -1424,6 +1424,7 @@ KtNameReferenceExpression(1153,1154): 'i'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = i
         receiverType = null
@@ -1431,7 +1432,6 @@ KtNameReferenceExpression(1153,1154): 'i'
         symbol = i: MyClass
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(1155,1157): '=='
@@ -1629,6 +1629,7 @@ KtNameReferenceExpression(1236,1237): 'i'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = i
         receiverType = null
@@ -1636,7 +1637,6 @@ KtNameReferenceExpression(1236,1237): 'i'
         symbol = i: MyClass
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(1238,1240): '=='
@@ -1834,6 +1834,7 @@ KtNameReferenceExpression(1303,1304): 'i'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = i
         receiverType = null
@@ -1841,7 +1842,6 @@ KtNameReferenceExpression(1303,1304): 'i'
         symbol = i: MyClass
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(1305,1307): '=='
@@ -2039,6 +2039,7 @@ KtNameReferenceExpression(1375,1376): 'i'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = i
         receiverType = null
@@ -2046,7 +2047,6 @@ KtNameReferenceExpression(1375,1376): 'i'
         symbol = i: MyClass
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(1377,1379): '=='
@@ -2244,6 +2244,7 @@ KtNameReferenceExpression(1447,1448): 'i'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = i
         receiverType = null
@@ -2251,7 +2252,6 @@ KtNameReferenceExpression(1447,1448): 'i'
         symbol = i: MyClass
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(1449,1451): '=='
@@ -2449,6 +2449,7 @@ KtNameReferenceExpression(1519,1520): 'i'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = i
         receiverType = null
@@ -2456,7 +2457,6 @@ KtNameReferenceExpression(1519,1520): 'i'
         symbol = i: MyClass
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(1521,1523): '=='
@@ -2654,6 +2654,7 @@ KtNameReferenceExpression(1594,1595): 'i'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = i
         receiverType = null
@@ -2661,7 +2662,6 @@ KtNameReferenceExpression(1594,1595): 'i'
         symbol = i: MyClass
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(1596,1598): '=='
@@ -2859,6 +2859,7 @@ KtNameReferenceExpression(1668,1669): 'i'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = i
         receiverType = null
@@ -2866,7 +2867,6 @@ KtNameReferenceExpression(1668,1669): 'i'
         symbol = i: MyClass
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(1670,1672): '=='
@@ -3072,6 +3072,7 @@ KtNameReferenceExpression(1737,1738): 'i'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = i
         receiverType = null
@@ -3079,7 +3080,6 @@ KtNameReferenceExpression(1737,1738): 'i'
         symbol = i: MyClass
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(1739,1741): '=='
@@ -3285,6 +3285,7 @@ KtNameReferenceExpression(1811,1812): 'i'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = i
         receiverType = null
@@ -3292,7 +3293,6 @@ KtNameReferenceExpression(1811,1812): 'i'
         symbol = i: MyClass
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(1813,1815): '=='

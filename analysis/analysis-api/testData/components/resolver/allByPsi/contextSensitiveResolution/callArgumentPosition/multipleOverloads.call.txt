@@ -635,6 +635,7 @@ KtDotQualifiedExpression(325,334): 'MyEnum1.X'
         type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = X
         receiverType = null
@@ -642,7 +643,6 @@ KtDotQualifiedExpression(325,334): 'MyEnum1.X'
         symbol = /MyEnum1.X
         contextParameters = []
         callableId = /MyEnum1.X
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(325,332): 'MyEnum1'
@@ -658,6 +658,7 @@ KtNameReferenceExpression(333,334): 'X'
         type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = X
         receiverType = null
@@ -665,7 +666,6 @@ KtNameReferenceExpression(333,334): 'X'
         symbol = /MyEnum1.X
         contextParameters = []
         callableId = /MyEnum1.X
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtCallExpression(340,358): 'foo(id(MyEnum1.X))'
@@ -824,6 +824,7 @@ KtDotQualifiedExpression(347,356): 'MyEnum1.X'
         type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = X
         receiverType = null
@@ -831,7 +832,6 @@ KtDotQualifiedExpression(347,356): 'MyEnum1.X'
         symbol = /MyEnum1.X
         contextParameters = []
         callableId = /MyEnum1.X
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(347,354): 'MyEnum1'
@@ -847,6 +847,7 @@ KtNameReferenceExpression(355,356): 'X'
         type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = X
         receiverType = null
@@ -854,7 +855,6 @@ KtNameReferenceExpression(355,356): 'X'
         symbol = /MyEnum1.X
         contextParameters = []
         callableId = /MyEnum1.X
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtCallExpression(364,370): 'bar(X)'
@@ -938,6 +938,7 @@ KtNameReferenceExpression(368,369): 'X'
         type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = X
         receiverType = null
@@ -945,7 +946,6 @@ KtNameReferenceExpression(368,369): 'X'
         symbol = /MyEnum3.X
         contextParameters = []
         callableId = /MyEnum3.X
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtCallExpression(375,385): 'bar(id(X))'
@@ -1104,6 +1104,7 @@ KtNameReferenceExpression(382,383): 'X'
         type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = X
         receiverType = null
@@ -1111,7 +1112,6 @@ KtNameReferenceExpression(382,383): 'X'
         symbol = /MyEnum3.X
         contextParameters = []
         callableId = /MyEnum3.X
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNamedFunction(389,505): 'fun main2() {'
@@ -1607,6 +1607,7 @@ KtDotQualifiedExpression(493,502): 'MyEnum3.X'
         type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = X
         receiverType = null
@@ -1614,7 +1615,6 @@ KtDotQualifiedExpression(493,502): 'MyEnum3.X'
         symbol = /MyEnum3.X
         contextParameters = []
         callableId = /MyEnum3.X
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(493,500): 'MyEnum3'
@@ -1630,6 +1630,7 @@ KtNameReferenceExpression(501,502): 'X'
         type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = X
         receiverType = null
@@ -1637,5 +1638,4 @@ KtNameReferenceExpression(501,502): 'X'
         symbol = /MyEnum3.X
         contextParameters = []
         callableId = /MyEnum3.X
-      simpleAccess = Read
       typeArgumentsMapping = {}

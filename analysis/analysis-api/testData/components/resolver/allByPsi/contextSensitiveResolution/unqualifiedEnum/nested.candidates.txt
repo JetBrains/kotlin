@@ -92,6 +92,7 @@ KtNameReferenceExpression(192,193): 'o'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = o
         receiverType = null
@@ -99,7 +100,6 @@ KtNameReferenceExpression(192,193): 'o'
         symbol = o: Outer
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -119,6 +119,7 @@ KtNameReferenceExpression(205,210): 'FIRST'
         type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = FIRST
         receiverType = null
@@ -126,7 +127,6 @@ KtNameReferenceExpression(205,210): 'FIRST'
         symbol = /Outer.FIRST
         contextParameters = []
         callableId = /Outer.FIRST
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -149,6 +149,7 @@ KtNameReferenceExpression(224,230): 'SECOND'
         type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = SECOND
         receiverType = null
@@ -156,7 +157,6 @@ KtNameReferenceExpression(224,230): 'SECOND'
         symbol = /Outer.SECOND
         contextParameters = []
         callableId = /Outer.SECOND
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -170,6 +170,7 @@ KtNameReferenceExpression(240,241): 'i'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = i
         receiverType = null
@@ -177,7 +178,6 @@ KtNameReferenceExpression(240,241): 'i'
         symbol = i: Inner
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -197,6 +197,7 @@ KtNameReferenceExpression(257,263): 'SECOND'
         type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = SECOND
         receiverType = null
@@ -204,7 +205,6 @@ KtNameReferenceExpression(257,263): 'SECOND'
         symbol = /Inner.SECOND
         contextParameters = []
         callableId = /Inner.SECOND
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -227,6 +227,7 @@ KtNameReferenceExpression(281,286): 'THIRD'
         type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = THIRD
         receiverType = null
@@ -234,7 +235,6 @@ KtNameReferenceExpression(281,286): 'THIRD'
         symbol = /Inner.THIRD
         contextParameters = []
         callableId = /Inner.THIRD
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -296,6 +296,7 @@ KtNameReferenceExpression(363,364): 'o'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = o
         receiverType = null
@@ -303,7 +304,6 @@ KtNameReferenceExpression(363,364): 'o'
         symbol = o: Outer
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -323,6 +323,7 @@ KtNameReferenceExpression(376,381): 'FIRST'
         type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = FIRST
         receiverType = null
@@ -330,7 +331,6 @@ KtNameReferenceExpression(376,381): 'FIRST'
         symbol = /Outer.FIRST
         contextParameters = []
         callableId = /Outer.FIRST
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -353,6 +353,7 @@ KtNameReferenceExpression(395,401): 'SECOND'
         type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = SECOND
         receiverType = null
@@ -360,7 +361,6 @@ KtNameReferenceExpression(395,401): 'SECOND'
         symbol = /Outer.SECOND
         contextParameters = []
         callableId = /Outer.SECOND
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -398,6 +398,7 @@ KtNameReferenceExpression(465,466): 'i'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = i
         receiverType = null
@@ -405,7 +406,6 @@ KtNameReferenceExpression(465,466): 'i'
         symbol = i: Inner
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -425,6 +425,7 @@ KtNameReferenceExpression(490,496): 'SECOND'
         type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = SECOND
         receiverType = null
@@ -432,7 +433,6 @@ KtNameReferenceExpression(490,496): 'SECOND'
         symbol = /Inner.SECOND
         contextParameters = []
         callableId = /Inner.SECOND
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -455,6 +455,7 @@ KtNameReferenceExpression(522,527): 'THIRD'
         type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = THIRD
         receiverType = null
@@ -462,7 +463,6 @@ KtNameReferenceExpression(522,527): 'THIRD'
         symbol = /Inner.THIRD
         contextParameters = []
         callableId = /Inner.THIRD
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 

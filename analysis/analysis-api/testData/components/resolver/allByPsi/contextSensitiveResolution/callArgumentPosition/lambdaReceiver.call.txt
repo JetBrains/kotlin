@@ -806,6 +806,7 @@ KtNameReferenceExpression(919,930): 'propMyClass'
         type = MyClass.Companion
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = propMyClass
         receiverType = null
@@ -813,7 +814,6 @@ KtNameReferenceExpression(919,930): 'propMyClass'
         symbol = val propMyClass: MyClass
         contextParameters = []
         callableId = /MyClass.Companion.propMyClass
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtCallExpression(937,982): 'receiveLambda<MyClass> { propInheritorClass }'
@@ -922,6 +922,7 @@ KtNameReferenceExpression(962,980): 'propInheritorClass'
         type = MyClass.Companion
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = propInheritorClass
         receiverType = null
@@ -929,7 +930,6 @@ KtNameReferenceExpression(962,980): 'propInheritorClass'
         symbol = val propInheritorClass: MyClass.InheritorClass
         contextParameters = []
         callableId = /MyClass.Companion.propInheritorClass
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtCallExpression(987,1033): 'receiveLambda<MyClass> { propInheritorObject }'
@@ -1038,6 +1038,7 @@ KtNameReferenceExpression(1012,1031): 'propInheritorObject'
         type = MyClass.Companion
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = propInheritorObject
         receiverType = null
@@ -1045,7 +1046,6 @@ KtNameReferenceExpression(1012,1031): 'propInheritorObject'
         symbol = val propInheritorObject: MyClass.InheritorObject
         contextParameters = []
         callableId = /MyClass.Companion.propInheritorObject
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtCallExpression(1039,1070): 'receiveLambda<MyClass> { prop }'
@@ -1161,6 +1161,7 @@ KtNameReferenceExpression(1064,1068): 'prop'
         type = MyClass.Companion
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = prop
         receiverType = null
@@ -1168,7 +1169,6 @@ KtNameReferenceExpression(1064,1068): 'prop'
         symbol = val prop: kotlin.String
         contextParameters = []
         callableId = /MyClass.Companion.prop
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtCallExpression(1075,1111): 'receiveLambda<MyClass> { superProp }'
@@ -1284,6 +1284,7 @@ KtNameReferenceExpression(1100,1109): 'superProp'
         type = MyClass.Companion
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = superProp
         receiverType = null
@@ -1291,7 +1292,6 @@ KtNameReferenceExpression(1100,1109): 'superProp'
         symbol = val superProp: kotlin.String
         contextParameters = []
         callableId = /Super.superProp
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtCallExpression(1116,1152): 'receiveLambda<MyClass> { constProp }'
@@ -1407,6 +1407,7 @@ KtNameReferenceExpression(1141,1150): 'constProp'
         type = MyClass.Companion
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = constProp
         receiverType = null
@@ -1414,7 +1415,6 @@ KtNameReferenceExpression(1141,1150): 'constProp'
         symbol = val constProp: kotlin.String
         contextParameters = []
         callableId = /MyClass.Companion.constProp
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtCallExpression(1157,1194): 'receiveLambda<MyClass> { lambdaProp }'
@@ -1530,6 +1530,7 @@ KtNameReferenceExpression(1182,1192): 'lambdaProp'
         type = MyClass.Companion
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = lambdaProp
         receiverType = null
@@ -1537,7 +1538,6 @@ KtNameReferenceExpression(1182,1192): 'lambdaProp'
         symbol = val lambdaProp: () -> MyClass.InheritorObject
         contextParameters = []
         callableId = /MyClass.Companion.lambdaProp
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtCallExpression(1199,1234): 'receiveLambda<MyClass> { lazyProp }'
@@ -1653,6 +1653,7 @@ KtNameReferenceExpression(1224,1232): 'lazyProp'
         type = MyClass.Companion
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = lazyProp
         receiverType = null
@@ -1660,7 +1661,6 @@ KtNameReferenceExpression(1224,1232): 'lazyProp'
         symbol = val lazyProp: kotlin.String
         contextParameters = []
         callableId = /MyClass.Companion.lazyProp
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtCallExpression(1239,1277): 'receiveLambda<MyClass> { NestedObject}'

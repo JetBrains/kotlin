@@ -349,6 +349,7 @@ KtNameReferenceExpression(321,322): 'b'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = b
         receiverType = null
@@ -356,7 +357,6 @@ KtNameReferenceExpression(321,322): 'b'
         symbol = b: kotlin.Boolean
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtContainerNodeForControlStructureBody(324,348): 'return@myRunWithMyEnum X'
@@ -477,6 +477,7 @@ KtNameReferenceExpression(400,401): 'b'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = b
         receiverType = null
@@ -484,7 +485,6 @@ KtNameReferenceExpression(400,401): 'b'
         symbol = b: kotlin.Boolean
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtContainerNodeForControlStructureBody(403,431): 'return@myRunWithMyEnum id(X)'
@@ -788,6 +788,7 @@ KtNameReferenceExpression(485,486): 'b'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = b
         receiverType = null
@@ -795,7 +796,6 @@ KtNameReferenceExpression(485,486): 'b'
         symbol = b: kotlin.Boolean
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtContainerNodeForControlStructureBody(488,502): 'return@myRun X'
@@ -997,6 +997,7 @@ KtNameReferenceExpression(560,561): 'b'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = b
         receiverType = null
@@ -1004,7 +1005,6 @@ KtNameReferenceExpression(560,561): 'b'
         symbol = b: kotlin.Boolean
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtContainerNodeForControlStructureBody(563,577): 'return@myRun X'
@@ -1141,6 +1141,7 @@ KtNameReferenceExpression(649,650): 'b'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = b
         receiverType = null
@@ -1148,7 +1149,6 @@ KtNameReferenceExpression(649,650): 'b'
         symbol = b: kotlin.Boolean
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtContainerNodeForControlStructureBody(652,666): 'return@myRun X'
@@ -1280,6 +1280,7 @@ KtNameReferenceExpression(708,709): 'b'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = b
         receiverType = null
@@ -1287,7 +1288,6 @@ KtNameReferenceExpression(708,709): 'b'
         symbol = b: kotlin.Boolean
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtContainerNodeForControlStructureBody(711,725): 'return@myRun X'
@@ -1412,6 +1412,7 @@ KtNameReferenceExpression(766,767): 'b'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = b
         receiverType = null
@@ -1419,7 +1420,6 @@ KtNameReferenceExpression(766,767): 'b'
         symbol = b: kotlin.Boolean
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtContainerNodeForControlStructureBody(769,790): 'return@myRun MyEnum.X'

@@ -11,8 +11,8 @@ import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.resolution.KaPartiallyAppliedVariableSymbol
 import org.jetbrains.kotlin.analysis.api.resolution.KaReceiverValue
-import org.jetbrains.kotlin.analysis.api.resolution.KaSimpleVariableAccess
 import org.jetbrains.kotlin.analysis.api.resolution.KaSimpleVariableAccessCall
+import org.jetbrains.kotlin.analysis.api.resolution.KaVariableAccessCall
 import org.jetbrains.kotlin.analysis.api.signatures.KaVariableSignature
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaVariableSymbol
@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.analysis.api.types.KaType
 class KaBaseSimpleVariableAccessCall(
     private val backingPartiallyAppliedSymbol: KaPartiallyAppliedVariableSymbol<KaVariableSymbol>,
     private val backingTypeArgumentsMapping: Map<KaTypeParameterSymbol, KaType>,
-    private val backingSimpleAccess: KaSimpleVariableAccess,
+    private val backingKind: KaVariableAccessCall.Kind,
     private val backingIsContextSensitive: Boolean,
 ) : KaSimpleVariableAccessCall {
     override val token: KaLifetimeToken get() = backingPartiallyAppliedSymbol.token
@@ -45,6 +45,14 @@ class KaBaseSimpleVariableAccessCall(
         get() = withValidityAssertion { backingPartiallyAppliedSymbol.contextArguments }
 
     override val typeArgumentsMapping: Map<KaTypeParameterSymbol, KaType> get() = withValidityAssertion { backingTypeArgumentsMapping }
-    override val simpleAccess: KaSimpleVariableAccess get() = withValidityAssertion { backingSimpleAccess }
+
+    override val kind: KaVariableAccessCall.Kind
+        get() = withValidityAssertion { backingKind }
+
+    @Suppress("DEPRECATION")
+    @Deprecated("Use 'kind' instead", replaceWith = ReplaceWith("kind"))
+    override val simpleAccess: org.jetbrains.kotlin.analysis.api.resolution.KaSimpleVariableAccess
+        get() = withValidityAssertion { backingKind as org.jetbrains.kotlin.analysis.api.resolution.KaSimpleVariableAccess }
+
     override val isContextSensitive: Boolean get() = withValidityAssertion { backingIsContextSensitive }
 }

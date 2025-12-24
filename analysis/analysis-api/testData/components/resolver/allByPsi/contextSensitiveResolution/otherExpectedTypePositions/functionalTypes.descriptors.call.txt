@@ -146,6 +146,7 @@ KtNameReferenceExpression(399,402): 'arg'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = arg
         receiverType = null
@@ -153,7 +154,6 @@ KtNameReferenceExpression(399,402): 'arg'
         symbol = arg: kotlin.Boolean
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtContainerNodeForControlStructureBody(404,412): 'enumProp'
@@ -256,6 +256,7 @@ KtNameReferenceExpression(484,487): 'arg'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = arg
         receiverType = null
@@ -263,7 +264,6 @@ KtNameReferenceExpression(484,487): 'arg'
         symbol = arg: kotlin.Boolean
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtContainerNodeForControlStructureBody(489,497): 'enumProp'
@@ -357,6 +357,7 @@ KtNameReferenceExpression(594,597): 'arg'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = arg
         receiverType = null
@@ -364,7 +365,6 @@ KtNameReferenceExpression(594,597): 'arg'
         symbol = arg: kotlin.Boolean
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtContainerNodeForControlStructureBody(599,607): 'enumProp'
@@ -455,6 +455,7 @@ KtNameReferenceExpression(716,719): 'arg'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = arg
         receiverType = null
@@ -462,7 +463,6 @@ KtNameReferenceExpression(716,719): 'arg'
         symbol = arg: kotlin.Boolean
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtContainerNodeForControlStructureBody(721,729): 'enumProp'
@@ -586,6 +586,7 @@ KtNameReferenceExpression(889,892): 'arg'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = arg
         receiverType = null
@@ -593,7 +594,6 @@ KtNameReferenceExpression(889,892): 'arg'
         symbol = arg: kotlin.Boolean
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtContainerNodeForControlStructureBody(894,902): 'enumProp'

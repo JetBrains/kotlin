@@ -234,6 +234,7 @@ KtNameReferenceExpression(551,552): 'b'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = b
         receiverType = null
@@ -241,7 +242,6 @@ KtNameReferenceExpression(551,552): 'b'
         symbol = b: kotlin.Boolean
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtContainerNodeForControlStructureBody(554,568): 'return Option1'

@@ -218,6 +218,7 @@ KtNameReferenceExpression(188,189): 'L'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = L
         receiverType = null
@@ -225,7 +226,6 @@ KtNameReferenceExpression(188,189): 'L'
         symbol = val L: MyEnum
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtCallExpression(195,210): 'foo(UNRESOLVED)'

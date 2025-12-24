@@ -9,6 +9,7 @@
           type = JavaClass
         extensionReceiver = null
         isContextSensitive = false
+        kind = Read
         signature = KaVariableSignature:
           name = foo
           receiverType = null
@@ -16,7 +17,6 @@
           symbol = var foo: @EnhancedNullability Foo<kotlin.String!>
           contextParameters = []
           callableId = /JavaClass.foo
-        simpleAccess = Read
         typeArgumentsMapping = {}
       isInBestCandidates = true
 
@@ -31,6 +31,8 @@
           type = JavaClass
         extensionReceiver = null
         isContextSensitive = false
+        kind = Write:
+          value = foo
         signature = KaVariableSignature:
           name = foo
           receiverType = null
@@ -38,8 +40,6 @@
           symbol = var foo: @EnhancedNullability Foo<kotlin.String!>
           contextParameters = []
           callableId = /JavaClass.foo
-        simpleAccess = Write:
-          value = foo
         typeArgumentsMapping = {}
       isInBestCandidates = true
 
@@ -54,6 +54,7 @@
           type = KotlinClass<T>
         extensionReceiver = null
         isContextSensitive = false
+        kind = Read
         signature = KaVariableSignature:
           name = foo
           receiverType = null
@@ -61,7 +62,6 @@
           symbol = var foo: Foo<T>
           contextParameters = []
           callableId = /KotlinClass.foo
-        simpleAccess = Read
         typeArgumentsMapping = {}
       isInBestCandidates = false
 
@@ -76,6 +76,7 @@
           type = it(JavaClass & KotlinClass<T>)
         extensionReceiver = null
         isContextSensitive = false
+        kind = Read
         signature = KaVariableSignature:
           name = foo
           receiverType = null
@@ -83,6 +84,5 @@
           symbol = var foo: @EnhancedNullability Foo<kotlin.String!>
           contextParameters = []
           callableId = /JavaClass.foo
-        simpleAccess = Read
         typeArgumentsMapping = {}
       isInBestCandidates = true

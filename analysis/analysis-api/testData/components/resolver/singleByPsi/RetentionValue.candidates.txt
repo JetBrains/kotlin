@@ -8,6 +8,7 @@ KtNameReferenceExpression(31,37): 'SOURCE'
         type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = SOURCE
         receiverType = null
@@ -15,6 +16,5 @@ KtNameReferenceExpression(31,37): 'SOURCE'
         symbol = kotlin/annotation/AnnotationRetention.SOURCE
         contextParameters = []
         callableId = kotlin/annotation/AnnotationRetention.SOURCE
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true

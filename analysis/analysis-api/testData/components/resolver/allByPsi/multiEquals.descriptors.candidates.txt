@@ -393,6 +393,7 @@ KtNameReferenceExpression(479,486): 'oldItem'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = oldItem
         receiverType = null
@@ -400,7 +401,6 @@ KtNameReferenceExpression(479,486): 'oldItem'
         symbol = oldItem: T
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -448,6 +448,7 @@ KtNameReferenceExpression(490,497): 'newItem'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = newItem
         receiverType = null
@@ -455,7 +456,6 @@ KtNameReferenceExpression(490,497): 'newItem'
         symbol = newItem: T
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -707,6 +707,7 @@ KtNameReferenceExpression(706,713): 'oldItem'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = oldItem
         receiverType = null
@@ -714,7 +715,6 @@ KtNameReferenceExpression(706,713): 'oldItem'
         symbol = oldItem: T
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -762,6 +762,7 @@ KtNameReferenceExpression(717,724): 'newItem'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = newItem
         receiverType = null
@@ -769,7 +770,6 @@ KtNameReferenceExpression(717,724): 'newItem'
         symbol = newItem: T
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -973,6 +973,7 @@ KtNameReferenceExpression(875,882): 'oldItem'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = oldItem
         receiverType = null
@@ -980,7 +981,6 @@ KtNameReferenceExpression(875,882): 'oldItem'
         symbol = oldItem: T
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1028,6 +1028,7 @@ KtNameReferenceExpression(886,893): 'newItem'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = newItem
         receiverType = null
@@ -1035,7 +1036,6 @@ KtNameReferenceExpression(886,893): 'newItem'
         symbol = newItem: T
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1116,6 +1116,7 @@ KtNameReferenceExpression(956,957): 'i'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = i
         receiverType = null
@@ -1123,7 +1124,6 @@ KtNameReferenceExpression(956,957): 'i'
         symbol = i: InterfaceWithEquals
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1171,6 +1171,7 @@ KtNameReferenceExpression(961,962): 'm'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = m
         receiverType = null
@@ -1178,7 +1179,6 @@ KtNameReferenceExpression(961,962): 'm'
         symbol = m: MessagePreview
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1226,6 +1226,7 @@ KtNameReferenceExpression(967,968): 'i'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = i
         receiverType = null
@@ -1233,7 +1234,6 @@ KtNameReferenceExpression(967,968): 'i'
         symbol = i: InterfaceWithEquals
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1281,6 +1281,7 @@ KtNameReferenceExpression(972,973): 'm'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = m
         receiverType = null
@@ -1288,7 +1289,6 @@ KtNameReferenceExpression(972,973): 'm'
         symbol = m: MessagePreview
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1336,6 +1336,7 @@ KtNameReferenceExpression(979,980): 'm'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = m
         receiverType = null
@@ -1343,7 +1344,6 @@ KtNameReferenceExpression(979,980): 'm'
         symbol = m: MessagePreview
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1391,6 +1391,7 @@ KtNameReferenceExpression(984,985): 'i'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = i
         receiverType = null
@@ -1398,7 +1399,6 @@ KtNameReferenceExpression(984,985): 'i'
         symbol = i: InterfaceWithEquals
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1446,6 +1446,7 @@ KtNameReferenceExpression(990,991): 'm'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = m
         receiverType = null
@@ -1453,7 +1454,6 @@ KtNameReferenceExpression(990,991): 'm'
         symbol = m: MessagePreview
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1501,6 +1501,7 @@ KtNameReferenceExpression(995,996): 'i'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = i
         receiverType = null
@@ -1508,7 +1509,6 @@ KtNameReferenceExpression(995,996): 'i'
         symbol = i: InterfaceWithEquals
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1556,6 +1556,7 @@ KtNameReferenceExpression(1002,1003): 'i'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = i
         receiverType = null
@@ -1563,7 +1564,6 @@ KtNameReferenceExpression(1002,1003): 'i'
         symbol = i: InterfaceWithEquals
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1654,6 +1654,7 @@ KtNameReferenceExpression(1011,1012): 'm'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = m
         receiverType = null
@@ -1661,7 +1662,6 @@ KtNameReferenceExpression(1011,1012): 'm'
         symbol = m: MessagePreview
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1709,6 +1709,7 @@ KtNameReferenceExpression(1018,1019): 'm'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = m
         receiverType = null
@@ -1716,7 +1717,6 @@ KtNameReferenceExpression(1018,1019): 'm'
         symbol = m: MessagePreview
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1807,6 +1807,7 @@ KtNameReferenceExpression(1027,1028): 'i'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = i
         receiverType = null
@@ -1814,6 +1815,5 @@ KtNameReferenceExpression(1027,1028): 'i'
         symbol = i: InterfaceWithEquals
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true

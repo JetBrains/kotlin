@@ -206,6 +206,7 @@ KtNameReferenceExpression(339,340): 'i'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = i
         receiverType = null
@@ -213,7 +214,6 @@ KtNameReferenceExpression(339,340): 'i'
         symbol = i: OperatorHolder
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(341,342): '+'
@@ -262,6 +262,7 @@ KtNameReferenceExpression(343,353): 'EnumValue1'
         type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = EnumValue1
         receiverType = null
@@ -269,7 +270,6 @@ KtNameReferenceExpression(343,353): 'EnumValue1'
         symbol = /MyEnum.EnumValue1
         contextParameters = []
         callableId = /MyEnum.EnumValue1
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtBinaryExpression(358,377): 'i + InheritorObject'
@@ -315,6 +315,7 @@ KtNameReferenceExpression(358,359): 'i'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = i
         receiverType = null
@@ -322,7 +323,6 @@ KtNameReferenceExpression(358,359): 'i'
         symbol = i: OperatorHolder
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(360,361): '+'
@@ -409,6 +409,7 @@ KtNameReferenceExpression(382,383): 'i'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = i
         receiverType = null
@@ -416,7 +417,6 @@ KtNameReferenceExpression(382,383): 'i'
         symbol = i: OperatorHolder
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(384,385): '-'

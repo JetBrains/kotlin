@@ -149,6 +149,7 @@ KtNameReferenceExpression(264,265): 'x'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = x
         receiverType = null
@@ -156,7 +157,6 @@ KtNameReferenceExpression(264,265): 'x'
         symbol = x: Tuple
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -197,6 +197,7 @@ KtNameReferenceExpression(303,304): 'x'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = x
         receiverType = null
@@ -204,7 +205,6 @@ KtNameReferenceExpression(303,304): 'x'
         symbol = x: Tuple
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -236,6 +236,7 @@ KtNameReferenceExpression(337,338): 'y'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = y
         receiverType = null
@@ -243,7 +244,6 @@ KtNameReferenceExpression(337,338): 'y'
         symbol = y: NonDataTuple
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -350,6 +350,7 @@ KtNameReferenceExpression(463,464): 'x'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = x
         receiverType = null
@@ -357,7 +358,6 @@ KtNameReferenceExpression(463,464): 'x'
         symbol = x: kotlin.collections.List<Tuple>
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -398,6 +398,7 @@ KtNameReferenceExpression(498,499): 'x'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = x
         receiverType = null
@@ -405,7 +406,6 @@ KtNameReferenceExpression(498,499): 'x'
         symbol = x: kotlin.collections.List<Tuple>
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -446,6 +446,7 @@ KtNameReferenceExpression(536,537): 'y'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = y
         receiverType = null
@@ -453,7 +454,6 @@ KtNameReferenceExpression(536,537): 'y'
         symbol = y: NonDataTuple
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 

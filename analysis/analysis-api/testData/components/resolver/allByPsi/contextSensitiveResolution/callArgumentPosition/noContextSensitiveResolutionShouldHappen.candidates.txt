@@ -151,6 +151,7 @@ KtNameReferenceExpression(188,189): 'X'
         type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = X
         receiverType = null
@@ -158,7 +159,6 @@ KtNameReferenceExpression(188,189): 'X'
         symbol = /MyEnum.X
         contextParameters = []
         callableId = /MyEnum.X
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -658,6 +658,7 @@ KtNameReferenceExpression(354,355): 'X'
           visibility: PUBLIC
         type = B
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = X
         receiverType = A
@@ -665,7 +666,6 @@ KtNameReferenceExpression(354,355): 'X'
         symbol = val X: kotlin.String
         contextParameters = []
         callableId = /X
-      simpleAccess = Read
       typeArgumentsMapping = {}
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
     val A.X: String>

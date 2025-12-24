@@ -1157,6 +1157,7 @@ KtNameReferenceExpression(919,930): 'propMyClass'
         type = MyClass.Companion
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = propMyClass
         receiverType = null
@@ -1164,7 +1165,6 @@ KtNameReferenceExpression(919,930): 'propMyClass'
         symbol = val propMyClass: MyClass
         contextParameters = []
         callableId = /MyClass.Companion.propMyClass
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1277,6 +1277,7 @@ KtNameReferenceExpression(962,980): 'propInheritorClass'
         type = MyClass.Companion
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = propInheritorClass
         receiverType = null
@@ -1284,7 +1285,6 @@ KtNameReferenceExpression(962,980): 'propInheritorClass'
         symbol = val propInheritorClass: MyClass.InheritorClass
         contextParameters = []
         callableId = /MyClass.Companion.propInheritorClass
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1397,6 +1397,7 @@ KtNameReferenceExpression(1012,1031): 'propInheritorObject'
         type = MyClass.Companion
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = propInheritorObject
         receiverType = null
@@ -1404,7 +1405,6 @@ KtNameReferenceExpression(1012,1031): 'propInheritorObject'
         symbol = val propInheritorObject: MyClass.InheritorObject
         contextParameters = []
         callableId = /MyClass.Companion.propInheritorObject
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1519,6 +1519,7 @@ KtNameReferenceExpression(1064,1068): 'prop'
         type = MyClass.Companion
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = prop
         receiverType = null
@@ -1526,7 +1527,6 @@ KtNameReferenceExpression(1064,1068): 'prop'
         symbol = val prop: kotlin.String
         contextParameters = []
         callableId = /MyClass.Companion.prop
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1641,6 +1641,7 @@ KtNameReferenceExpression(1100,1109): 'superProp'
         type = MyClass.Companion
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = superProp
         receiverType = null
@@ -1648,7 +1649,6 @@ KtNameReferenceExpression(1100,1109): 'superProp'
         symbol = val superProp: kotlin.String
         contextParameters = []
         callableId = /Super.superProp
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1763,6 +1763,7 @@ KtNameReferenceExpression(1141,1150): 'constProp'
         type = MyClass.Companion
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = constProp
         receiverType = null
@@ -1770,7 +1771,6 @@ KtNameReferenceExpression(1141,1150): 'constProp'
         symbol = val constProp: kotlin.String
         contextParameters = []
         callableId = /MyClass.Companion.constProp
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1885,6 +1885,7 @@ KtNameReferenceExpression(1182,1192): 'lambdaProp'
         type = MyClass.Companion
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = lambdaProp
         receiverType = null
@@ -1892,7 +1893,6 @@ KtNameReferenceExpression(1182,1192): 'lambdaProp'
         symbol = val lambdaProp: () -> MyClass.InheritorObject
         contextParameters = []
         callableId = /MyClass.Companion.lambdaProp
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -2007,6 +2007,7 @@ KtNameReferenceExpression(1224,1232): 'lazyProp'
         type = MyClass.Companion
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = lazyProp
         receiverType = null
@@ -2014,7 +2015,6 @@ KtNameReferenceExpression(1224,1232): 'lazyProp'
         symbol = val lazyProp: kotlin.String
         contextParameters = []
         callableId = /MyClass.Companion.lazyProp
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 

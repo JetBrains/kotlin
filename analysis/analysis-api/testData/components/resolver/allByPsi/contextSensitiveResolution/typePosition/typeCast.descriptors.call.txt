@@ -742,6 +742,7 @@ KtNameReferenceExpression(792,793): 'i'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = i
         receiverType = null
@@ -749,7 +750,6 @@ KtNameReferenceExpression(792,793): 'i'
         symbol = i: SealedClass
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(794,796): 'as'
@@ -781,6 +781,7 @@ KtNameReferenceExpression(818,819): 'i'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = i
         receiverType = null
@@ -788,7 +789,6 @@ KtNameReferenceExpression(818,819): 'i'
         symbol = i: SealedClass
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(820,825): 'prop1'
@@ -815,6 +815,7 @@ KtNameReferenceExpression(842,843): 'i'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = i
         receiverType = null
@@ -822,7 +823,6 @@ KtNameReferenceExpression(842,843): 'i'
         symbol = i: SealedClass
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(844,846): 'as'
@@ -854,6 +854,7 @@ KtNameReferenceExpression(868,869): 'i'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = i
         receiverType = null
@@ -861,7 +862,6 @@ KtNameReferenceExpression(868,869): 'i'
         symbol = i: SealedClass
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(870,875): 'prop2'
@@ -888,6 +888,7 @@ KtNameReferenceExpression(887,888): 'i'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = i
         receiverType = null
@@ -895,7 +896,6 @@ KtNameReferenceExpression(887,888): 'i'
         symbol = i: SealedClass
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(889,891): 'as'
@@ -927,6 +927,7 @@ KtNameReferenceExpression(913,914): 'i'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = i
         receiverType = null
@@ -934,7 +935,6 @@ KtNameReferenceExpression(913,914): 'i'
         symbol = i: SealedClass
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(915,920): 'prop1'
@@ -991,6 +991,7 @@ KtNameReferenceExpression(981,982): 'i'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = i
         receiverType = null
@@ -998,7 +999,6 @@ KtNameReferenceExpression(981,982): 'i'
         symbol = i: SealedClass
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(983,985): 'as'
@@ -1037,6 +1037,7 @@ KtNameReferenceExpression(1026,1027): 'i'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = i
         receiverType = null
@@ -1044,7 +1045,6 @@ KtNameReferenceExpression(1026,1027): 'i'
         symbol = i: SealedClass
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(1028,1030): 'as'
@@ -1076,6 +1076,7 @@ KtNameReferenceExpression(1052,1053): 'i'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = i
         receiverType = null
@@ -1083,7 +1084,6 @@ KtNameReferenceExpression(1052,1053): 'i'
         symbol = i: SealedClass
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(1054,1059): 'prop2'
@@ -1113,6 +1113,7 @@ KtNameReferenceExpression(1079,1080): 'i'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = i
         receiverType = null
@@ -1120,7 +1121,6 @@ KtNameReferenceExpression(1079,1080): 'i'
         symbol = i: SealedClass
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(1081,1083): 'as'
@@ -1150,6 +1150,7 @@ KtNameReferenceExpression(1105,1106): 'v'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = v
         receiverType = null
@@ -1157,7 +1158,6 @@ KtNameReferenceExpression(1105,1106): 'v'
         symbol = var v: ERROR_TYPE
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(1107,1112): 'prop1'
@@ -1194,6 +1194,7 @@ KtNameReferenceExpression(1151,1152): 'i'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = i
         receiverType = null
@@ -1201,7 +1202,6 @@ KtNameReferenceExpression(1151,1152): 'i'
         symbol = i: SealedClass
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(1153,1155): 'as'
@@ -1233,6 +1233,7 @@ KtNameReferenceExpression(1177,1179): 'v2'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = v2
         receiverType = null
@@ -1240,7 +1241,6 @@ KtNameReferenceExpression(1177,1179): 'v2'
         symbol = var v2: SealedClass
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(1180,1185): 'prop1'
@@ -1281,6 +1281,7 @@ KtNameReferenceExpression(1229,1230): 'i'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = i
         receiverType = null
@@ -1288,7 +1289,6 @@ KtNameReferenceExpression(1229,1230): 'i'
         symbol = i: SealedClass
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(1231,1233): 'as'
@@ -1318,6 +1318,7 @@ KtNameReferenceExpression(1255,1257): 'v3'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = v3
         receiverType = null
@@ -1325,7 +1326,6 @@ KtNameReferenceExpression(1255,1257): 'v3'
         symbol = var v3: ERROR_TYPE
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(1258,1263): 'prop1'
@@ -1447,6 +1447,7 @@ KtNameReferenceExpression(1301,1302): 'i'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = i
         receiverType = null
@@ -1454,7 +1455,6 @@ KtNameReferenceExpression(1301,1302): 'i'
         symbol = i: SealedClass
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(1303,1305): 'as'
@@ -1584,6 +1584,7 @@ KtNameReferenceExpression(1366,1367): 'i'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = i
         receiverType = null
@@ -1591,7 +1592,6 @@ KtNameReferenceExpression(1366,1367): 'i'
         symbol = i: SealedClass
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(1368,1370): 'as'
@@ -1648,6 +1648,7 @@ KtNameReferenceExpression(1437,1438): 'i'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = i
         receiverType = null
@@ -1655,7 +1656,6 @@ KtNameReferenceExpression(1437,1438): 'i'
         symbol = i: SealedClass
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(1439,1442): 'as?'
@@ -1694,6 +1694,7 @@ KtNameReferenceExpression(1485,1486): 'i'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = i
         receiverType = null
@@ -1701,7 +1702,6 @@ KtNameReferenceExpression(1485,1486): 'i'
         symbol = i: SealedClass
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(1487,1490): 'as?'
@@ -1733,6 +1733,7 @@ KtNameReferenceExpression(1512,1513): 'i'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = i
         receiverType = null
@@ -1740,7 +1741,6 @@ KtNameReferenceExpression(1512,1513): 'i'
         symbol = i: SealedClass
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(1515,1520): 'prop2'
@@ -1770,6 +1770,7 @@ KtNameReferenceExpression(1541,1542): 'i'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = i
         receiverType = null
@@ -1777,7 +1778,6 @@ KtNameReferenceExpression(1541,1542): 'i'
         symbol = i: SealedClass
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(1543,1546): 'as?'
@@ -1807,6 +1807,7 @@ KtNameReferenceExpression(1568,1569): 'v'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = v
         receiverType = null
@@ -1814,7 +1815,6 @@ KtNameReferenceExpression(1568,1569): 'v'
         symbol = var v: ERROR_TYPE?
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(1571,1576): 'prop1'
@@ -1854,6 +1854,7 @@ KtNameReferenceExpression(1617,1618): 'i'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = i
         receiverType = null
@@ -1861,7 +1862,6 @@ KtNameReferenceExpression(1617,1618): 'i'
         symbol = i: SealedClass
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(1619,1622): 'as?'
@@ -1893,6 +1893,7 @@ KtNameReferenceExpression(1644,1646): 'v2'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = v2
         receiverType = null
@@ -1900,7 +1901,6 @@ KtNameReferenceExpression(1644,1646): 'v2'
         symbol = var v2: SealedClass?
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(1648,1653): 'prop1'
@@ -1944,6 +1944,7 @@ KtNameReferenceExpression(1699,1700): 'i'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = i
         receiverType = null
@@ -1951,7 +1952,6 @@ KtNameReferenceExpression(1699,1700): 'i'
         symbol = i: SealedClass
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(1701,1704): 'as?'
@@ -1981,6 +1981,7 @@ KtNameReferenceExpression(1726,1728): 'v3'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = v3
         receiverType = null
@@ -1988,7 +1989,6 @@ KtNameReferenceExpression(1726,1728): 'v3'
         symbol = var v3: ERROR_TYPE?
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(1730,1735): 'prop1'
@@ -2113,6 +2113,7 @@ KtNameReferenceExpression(1775,1776): 'i'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = i
         receiverType = null
@@ -2120,7 +2121,6 @@ KtNameReferenceExpression(1775,1776): 'i'
         symbol = i: SealedClass
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(1777,1780): 'as?'
@@ -2253,6 +2253,7 @@ KtNameReferenceExpression(1842,1843): 'i'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = i
         receiverType = null
@@ -2260,7 +2261,6 @@ KtNameReferenceExpression(1842,1843): 'i'
         symbol = i: SealedClass
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(1844,1847): 'as?'
@@ -2393,6 +2393,7 @@ KtNameReferenceExpression(1909,1910): 'i'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = i
         receiverType = null
@@ -2400,7 +2401,6 @@ KtNameReferenceExpression(1909,1910): 'i'
         symbol = i: SealedClass
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(1911,1914): 'as?'

@@ -26,6 +26,7 @@ KtPostfixExpression(31,34): 'i++'
         dispatchReceiver = null
         extensionReceiver = null
         isContextSensitive = false
+        kind = Read
         signature = KaVariableSignature:
           name = i
           receiverType = null
@@ -33,5 +34,4 @@ KtPostfixExpression(31,34): 'i++'
           symbol = var i: kotlin.Int
           contextParameters = []
           callableId = null
-        simpleAccess = Read
         typeArgumentsMapping = {}

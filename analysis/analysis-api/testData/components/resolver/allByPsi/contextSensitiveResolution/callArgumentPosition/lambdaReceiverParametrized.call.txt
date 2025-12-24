@@ -767,6 +767,7 @@ KtNameReferenceExpression(920,921): 'i'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = i
         receiverType = null
@@ -774,7 +775,6 @@ KtNameReferenceExpression(920,921): 'i'
         symbol = i: MyClass
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(922,924): '=='
@@ -970,6 +970,7 @@ KtNameReferenceExpression(998,999): 'i'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = i
         receiverType = null
@@ -977,7 +978,6 @@ KtNameReferenceExpression(998,999): 'i'
         symbol = i: MyClass
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(1000,1002): '=='
@@ -1026,6 +1026,7 @@ KtNameReferenceExpression(1003,1014): 'propMyClass'
         type = MyClass.Companion
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = propMyClass
         receiverType = null
@@ -1033,7 +1034,6 @@ KtNameReferenceExpression(1003,1014): 'propMyClass'
         symbol = val propMyClass: MyClass
         contextParameters = []
         callableId = /MyClass.Companion.propMyClass
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtCallExpression(1021,1097): 'receiveParametrizedLambda<MyClass> { i: MyClass -> i == propInheritorClass }'
@@ -1190,6 +1190,7 @@ KtNameReferenceExpression(1072,1073): 'i'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = i
         receiverType = null
@@ -1197,7 +1198,6 @@ KtNameReferenceExpression(1072,1073): 'i'
         symbol = i: MyClass
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(1074,1076): '=='
@@ -1246,6 +1246,7 @@ KtNameReferenceExpression(1077,1095): 'propInheritorClass'
         type = MyClass.Companion
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = propInheritorClass
         receiverType = null
@@ -1253,7 +1254,6 @@ KtNameReferenceExpression(1077,1095): 'propInheritorClass'
         symbol = val propInheritorClass: MyClass.InheritorClass
         contextParameters = []
         callableId = /MyClass.Companion.propInheritorClass
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtCallExpression(1102,1179): 'receiveParametrizedLambda<MyClass> { i: MyClass -> i == propInheritorObject }'
@@ -1410,6 +1410,7 @@ KtNameReferenceExpression(1153,1154): 'i'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = i
         receiverType = null
@@ -1417,7 +1418,6 @@ KtNameReferenceExpression(1153,1154): 'i'
         symbol = i: MyClass
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(1155,1157): '=='
@@ -1466,6 +1466,7 @@ KtNameReferenceExpression(1158,1177): 'propInheritorObject'
         type = MyClass.Companion
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = propInheritorObject
         receiverType = null
@@ -1473,7 +1474,6 @@ KtNameReferenceExpression(1158,1177): 'propInheritorObject'
         symbol = val propInheritorObject: MyClass.InheritorObject
         contextParameters = []
         callableId = /MyClass.Companion.propInheritorObject
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtCallExpression(1185,1247): 'receiveParametrizedLambda<MyClass> { i: MyClass -> i == prop }'
@@ -1630,6 +1630,7 @@ KtNameReferenceExpression(1236,1237): 'i'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = i
         receiverType = null
@@ -1637,7 +1638,6 @@ KtNameReferenceExpression(1236,1237): 'i'
         symbol = i: MyClass
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(1238,1240): '=='
@@ -1686,6 +1686,7 @@ KtNameReferenceExpression(1241,1245): 'prop'
         type = MyClass.Companion
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = prop
         receiverType = null
@@ -1693,7 +1694,6 @@ KtNameReferenceExpression(1241,1245): 'prop'
         symbol = val prop: kotlin.String
         contextParameters = []
         callableId = /MyClass.Companion.prop
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtCallExpression(1252,1319): 'receiveParametrizedLambda<MyClass> { i: MyClass -> i == superProp }'
@@ -1850,6 +1850,7 @@ KtNameReferenceExpression(1303,1304): 'i'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = i
         receiverType = null
@@ -1857,7 +1858,6 @@ KtNameReferenceExpression(1303,1304): 'i'
         symbol = i: MyClass
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(1305,1307): '=='
@@ -1906,6 +1906,7 @@ KtNameReferenceExpression(1308,1317): 'superProp'
         type = MyClass.Companion
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = superProp
         receiverType = null
@@ -1913,7 +1914,6 @@ KtNameReferenceExpression(1308,1317): 'superProp'
         symbol = val superProp: kotlin.String
         contextParameters = []
         callableId = /Super.superProp
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtCallExpression(1324,1391): 'receiveParametrizedLambda<MyClass> { i: MyClass -> i == constProp }'
@@ -2070,6 +2070,7 @@ KtNameReferenceExpression(1375,1376): 'i'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = i
         receiverType = null
@@ -2077,7 +2078,6 @@ KtNameReferenceExpression(1375,1376): 'i'
         symbol = i: MyClass
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(1377,1379): '=='
@@ -2126,6 +2126,7 @@ KtNameReferenceExpression(1380,1389): 'constProp'
         type = MyClass.Companion
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = constProp
         receiverType = null
@@ -2133,7 +2134,6 @@ KtNameReferenceExpression(1380,1389): 'constProp'
         symbol = val constProp: kotlin.String
         contextParameters = []
         callableId = /MyClass.Companion.constProp
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtCallExpression(1396,1462): 'receiveParametrizedLambda<MyClass> { i: MyClass -> i == lazyProp }'
@@ -2290,6 +2290,7 @@ KtNameReferenceExpression(1447,1448): 'i'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = i
         receiverType = null
@@ -2297,7 +2298,6 @@ KtNameReferenceExpression(1447,1448): 'i'
         symbol = i: MyClass
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(1449,1451): '=='
@@ -2346,6 +2346,7 @@ KtNameReferenceExpression(1452,1460): 'lazyProp'
         type = MyClass.Companion
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = lazyProp
         receiverType = null
@@ -2353,7 +2354,6 @@ KtNameReferenceExpression(1452,1460): 'lazyProp'
         symbol = val lazyProp: kotlin.String
         contextParameters = []
         callableId = /MyClass.Companion.lazyProp
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtCallExpression(1468,1538): 'receiveParametrizedLambda<MyClass> { i: MyClass -> i == NestedObject }'
@@ -2510,6 +2510,7 @@ KtNameReferenceExpression(1519,1520): 'i'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = i
         receiverType = null
@@ -2517,7 +2518,6 @@ KtNameReferenceExpression(1519,1520): 'i'
         symbol = i: MyClass
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(1521,1523): '=='
@@ -2713,6 +2713,7 @@ KtNameReferenceExpression(1594,1595): 'i'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = i
         receiverType = null
@@ -2720,7 +2721,6 @@ KtNameReferenceExpression(1594,1595): 'i'
         symbol = i: MyClass
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(1596,1598): '=='
@@ -2769,6 +2769,7 @@ KtNameReferenceExpression(1599,1609): 'lambdaProp'
         type = MyClass.Companion
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = lambdaProp
         receiverType = null
@@ -2776,7 +2777,6 @@ KtNameReferenceExpression(1599,1609): 'lambdaProp'
         symbol = val lambdaProp: () -> MyClass.InheritorObject
         contextParameters = []
         callableId = /MyClass.Companion.lambdaProp
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtCallExpression(1617,1681): 'receiveParametrizedLambda<MyClass> { i: MyClass -> i == func() }'
@@ -2933,6 +2933,7 @@ KtNameReferenceExpression(1668,1669): 'i'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = i
         receiverType = null
@@ -2940,7 +2941,6 @@ KtNameReferenceExpression(1668,1669): 'i'
         symbol = i: MyClass
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(1670,1672): '=='
@@ -3146,6 +3146,7 @@ KtNameReferenceExpression(1737,1738): 'i'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = i
         receiverType = null
@@ -3153,7 +3154,6 @@ KtNameReferenceExpression(1737,1738): 'i'
         symbol = i: MyClass
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(1739,1741): '=='
@@ -3359,6 +3359,7 @@ KtNameReferenceExpression(1811,1812): 'i'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = i
         receiverType = null
@@ -3366,7 +3367,6 @@ KtNameReferenceExpression(1811,1812): 'i'
         symbol = i: MyClass
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(1813,1815): '=='

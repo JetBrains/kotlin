@@ -206,6 +206,7 @@ KtNameReferenceExpression(40,44): 'list'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = list
         receiverType = null
@@ -213,7 +214,6 @@ KtNameReferenceExpression(40,44): 'list'
         symbol = list: kotlin.collections.MutableList<kotlin.Int>
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -423,6 +423,7 @@ KtNameReferenceExpression(74,78): 'list'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = list
         receiverType = null
@@ -430,7 +431,6 @@ KtNameReferenceExpression(74,78): 'list'
         symbol = list: kotlin.collections.MutableList<kotlin.Int>
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -487,6 +487,7 @@ KtNameReferenceExpression(106,110): 'list'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = list
         receiverType = null
@@ -494,7 +495,6 @@ KtNameReferenceExpression(106,110): 'list'
         symbol = list: kotlin.collections.MutableList<kotlin.Int>
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -585,6 +585,7 @@ KtNameReferenceExpression(115,128): 'implicitIndex'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = implicitIndex
         receiverType = null
@@ -592,7 +593,6 @@ KtNameReferenceExpression(115,128): 'implicitIndex'
         symbol = val implicitIndex: kotlin.Int
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -850,6 +850,7 @@ KtNameReferenceExpression(159,163): 'list'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = list
         receiverType = null
@@ -857,7 +858,6 @@ KtNameReferenceExpression(159,163): 'list'
         symbol = list: kotlin.collections.MutableList<kotlin.Int>
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1151,6 +1151,7 @@ KtNameReferenceExpression(178,182): 'list'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = list
         receiverType = null
@@ -1158,7 +1159,6 @@ KtNameReferenceExpression(178,182): 'list'
         symbol = list: kotlin.collections.MutableList<kotlin.Int>
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1684,6 +1684,7 @@ KtNameReferenceExpression(247,251): 'list'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = list
         receiverType = null
@@ -1691,7 +1692,6 @@ KtNameReferenceExpression(247,251): 'list'
         symbol = list: kotlin.collections.MutableList<kotlin.Int>
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1705,6 +1705,7 @@ KtNameReferenceExpression(252,253): 'i'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = i
         receiverType = null
@@ -1712,7 +1713,6 @@ KtNameReferenceExpression(252,253): 'i'
         symbol = i: kotlin.Int
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1726,6 +1726,7 @@ KtNameReferenceExpression(256,260): 'list'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = list
         receiverType = null
@@ -1733,7 +1734,6 @@ KtNameReferenceExpression(256,260): 'list'
         symbol = list: kotlin.collections.MutableList<kotlin.Int>
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1986,6 +1986,7 @@ KtNameReferenceExpression(269,273): 'list'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = list
         receiverType = null
@@ -1993,7 +1994,6 @@ KtNameReferenceExpression(269,273): 'list'
         symbol = list: kotlin.collections.MutableList<kotlin.Int>
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 

@@ -138,6 +138,7 @@ KtNameReferenceExpression(276,281): 'lEnum'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = lEnum
         receiverType = null
@@ -145,7 +146,6 @@ KtNameReferenceExpression(276,281): 'lEnum'
         symbol = lEnum: kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyEnum, kotlin.Unit>
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -202,6 +202,7 @@ KtNameReferenceExpression(298,303): 'lEnum'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = lEnum
         receiverType = null
@@ -209,7 +210,6 @@ KtNameReferenceExpression(298,303): 'lEnum'
         symbol = lEnum: kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyEnum, kotlin.Unit>
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 

@@ -632,6 +632,7 @@ KtNameReferenceExpression(815,818): 'arg'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = arg
         receiverType = null
@@ -639,7 +640,6 @@ KtNameReferenceExpression(815,818): 'arg'
         symbol = vararg arg: T
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNamedFunction(820,1348): 'fun testVarArg(i: MyClass.InheritorClass) {'
@@ -868,6 +868,7 @@ KtNameReferenceExpression(937,938): 'i'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = i
         receiverType = null
@@ -875,7 +876,6 @@ KtNameReferenceExpression(937,938): 'i'
         symbol = i: MyClass.InheritorClass
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtCallExpression(944,980): 'receiverVarArg<MyClass>(propMyClass)'

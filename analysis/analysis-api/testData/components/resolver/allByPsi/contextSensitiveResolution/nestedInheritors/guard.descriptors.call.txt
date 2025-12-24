@@ -240,6 +240,7 @@ KtNameReferenceExpression(314,322): 'instance'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = instance
         receiverType = null
@@ -247,7 +248,6 @@ KtNameReferenceExpression(314,322): 'instance'
         symbol = instance: SealedClass
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtWhenEntry(334,408): 'is SealedInheritor if instance is IndirectSealedInheritor -> instance.prop'
@@ -300,6 +300,7 @@ KtNameReferenceExpression(395,403): 'instance'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = instance
         receiverType = null
@@ -307,7 +308,6 @@ KtNameReferenceExpression(395,403): 'instance'
         symbol = instance: SealedClass
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(404,408): 'prop'
@@ -557,6 +557,7 @@ KtNameReferenceExpression(699,707): 'instance'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = instance
         receiverType = null
@@ -564,7 +565,6 @@ KtNameReferenceExpression(699,707): 'instance'
         symbol = instance: OpenClass
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtWhenEntry(719,815): 'is SealedInheritorOfOpenClass if instance is IndirectSealedInheritorOfOpenClass -> instance.prop'
@@ -617,6 +617,7 @@ KtNameReferenceExpression(802,810): 'instance'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = instance
         receiverType = null
@@ -624,7 +625,6 @@ KtNameReferenceExpression(802,810): 'instance'
         symbol = instance: OpenClass
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(811,815): 'prop'

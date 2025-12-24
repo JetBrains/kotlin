@@ -8,6 +8,7 @@ KtNameReferenceExpression(47,53): 'length'
         type = {kotlin.text.StringBuilder=} java.lang.StringBuilder
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = length
         receiverType = null
@@ -15,6 +16,5 @@ KtNameReferenceExpression(47,53): 'length'
         symbol = val length: kotlin.Int
         contextParameters = []
         callableId = java/lang/StringBuilder.length
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true

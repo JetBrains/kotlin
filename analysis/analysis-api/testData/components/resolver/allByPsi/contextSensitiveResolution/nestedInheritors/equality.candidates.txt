@@ -168,6 +168,7 @@ KtNameReferenceExpression(304,312): 'settings'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = settings
         receiverType = null
@@ -175,7 +176,6 @@ KtNameReferenceExpression(304,312): 'settings'
         symbol = settings: Settings
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -368,6 +368,7 @@ KtNameReferenceExpression(354,367): 'basicSettings'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = basicSettings
         receiverType = null
@@ -375,7 +376,6 @@ KtNameReferenceExpression(354,367): 'basicSettings'
         symbol = basicSettings: Settings.BasicSettings
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -568,6 +568,7 @@ KtNameReferenceExpression(414,427): 'basicSettings'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = basicSettings
         receiverType = null
@@ -575,7 +576,6 @@ KtNameReferenceExpression(414,427): 'basicSettings'
         symbol = basicSettings: Settings.BasicSettings
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -952,6 +952,7 @@ KtNameReferenceExpression(707,715): 'settings'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = settings
         receiverType = null
@@ -959,7 +960,6 @@ KtNameReferenceExpression(707,715): 'settings'
         symbol = settings: OpenSettings
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1152,6 +1152,7 @@ KtNameReferenceExpression(761,774): 'basicSettings'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = basicSettings
         receiverType = null
@@ -1159,7 +1160,6 @@ KtNameReferenceExpression(761,774): 'basicSettings'
         symbol = basicSettings: OpenSettings.OpenBasicSettings
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1336,6 +1336,7 @@ KtNameReferenceExpression(825,838): 'basicSettings'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = basicSettings
         receiverType = null
@@ -1343,7 +1344,6 @@ KtNameReferenceExpression(825,838): 'basicSettings'
         symbol = basicSettings: OpenSettings.OpenBasicSettings
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 

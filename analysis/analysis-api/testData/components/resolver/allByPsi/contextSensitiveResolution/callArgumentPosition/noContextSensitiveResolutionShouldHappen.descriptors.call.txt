@@ -576,6 +576,7 @@ KtNameReferenceExpression(354,355): 'X'
           visibility: LOCAL
         type = A
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = X
         receiverType = A
@@ -583,5 +584,4 @@ KtNameReferenceExpression(354,355): 'X'
         symbol = val X: kotlin.String
         contextParameters = []
         callableId = /X
-      simpleAccess = Read
       typeArgumentsMapping = {}

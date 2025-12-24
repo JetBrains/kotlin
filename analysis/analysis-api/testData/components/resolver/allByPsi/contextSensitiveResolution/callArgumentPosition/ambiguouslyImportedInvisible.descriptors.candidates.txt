@@ -151,6 +151,7 @@ KtNameReferenceExpression(144,145): 'X'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = X
         receiverType = null
@@ -158,7 +159,6 @@ KtNameReferenceExpression(144,145): 'X'
         symbol = val X: b.MyEnum
         contextParameters = []
         callableId = a1/X
-      simpleAccess = Read
       typeArgumentsMapping = {}
     diagnostic = ERROR<NONE_APPLICABLE: None of the following functions can be called with the arguments supplied: 
     private val X: MyEnum defined in a1 in file other1.kt
@@ -171,6 +171,7 @@ KtNameReferenceExpression(144,145): 'X'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = X
         receiverType = null
@@ -178,7 +179,6 @@ KtNameReferenceExpression(144,145): 'X'
         symbol = val X: b.MyEnum
         contextParameters = []
         callableId = a2/X
-      simpleAccess = Read
       typeArgumentsMapping = {}
     diagnostic = ERROR<NONE_APPLICABLE: None of the following functions can be called with the arguments supplied: 
     private val X: MyEnum defined in a1 in file other1.kt
@@ -266,6 +266,7 @@ KtNameReferenceExpression(155,156): 'Y'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = Y
         receiverType = null
@@ -273,7 +274,6 @@ KtNameReferenceExpression(155,156): 'Y'
         symbol = val Y: kotlin.String
         contextParameters = []
         callableId = a1/Y
-      simpleAccess = Read
       typeArgumentsMapping = {}
     diagnostic = ERROR<NONE_APPLICABLE: None of the following functions can be called with the arguments supplied: 
     private val Y: String defined in a1 in file other1.kt
@@ -286,6 +286,7 @@ KtNameReferenceExpression(155,156): 'Y'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = Y
         receiverType = null
@@ -293,7 +294,6 @@ KtNameReferenceExpression(155,156): 'Y'
         symbol = val Y: kotlin.String
         contextParameters = []
         callableId = a2/Y
-      simpleAccess = Read
       typeArgumentsMapping = {}
     diagnostic = ERROR<NONE_APPLICABLE: None of the following functions can be called with the arguments supplied: 
     private val Y: String defined in a1 in file other1.kt

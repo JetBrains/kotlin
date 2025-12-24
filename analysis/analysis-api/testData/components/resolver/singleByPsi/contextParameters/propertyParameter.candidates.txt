@@ -5,6 +5,7 @@ KtNameReferenceExpression(102,107): 'param'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = param
         receiverType = null
@@ -12,6 +13,5 @@ KtNameReferenceExpression(102,107): 'param'
         symbol = param: Context
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true

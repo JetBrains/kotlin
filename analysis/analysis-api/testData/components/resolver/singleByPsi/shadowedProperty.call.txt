@@ -7,6 +7,7 @@ KtNameReferenceExpression(107,115): 'property'
         type = pack.Foo
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = property
         receiverType = null
@@ -14,5 +15,4 @@ KtNameReferenceExpression(107,115): 'property'
         symbol = val property: kotlin.String
         contextParameters = []
         callableId = pack/Foo.property
-      simpleAccess = Read
       typeArgumentsMapping = {}

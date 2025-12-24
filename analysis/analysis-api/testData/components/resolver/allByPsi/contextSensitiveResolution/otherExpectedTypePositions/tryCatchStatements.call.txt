@@ -271,6 +271,7 @@ KtNameReferenceExpression(382,383): 'm'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = m
         receiverType = null
@@ -278,7 +279,6 @@ KtNameReferenceExpression(382,383): 'm'
         symbol = m: kotlin.String
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtClass(385,418): 'class E2(m: String): Exception(m)'
@@ -392,6 +392,7 @@ KtNameReferenceExpression(416,417): 'm'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = m
         receiverType = null
@@ -399,7 +400,6 @@ KtNameReferenceExpression(416,417): 'm'
         symbol = m: kotlin.String
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtClass(419,452): 'class E3(m: String): Exception(m)'
@@ -513,6 +513,7 @@ KtNameReferenceExpression(450,451): 'm'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = m
         receiverType = null
@@ -520,7 +521,6 @@ KtNameReferenceExpression(450,451): 'm'
         symbol = m: kotlin.String
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNamedFunction(454,477): 'fun <T>receive(e: T) {}'
@@ -618,6 +618,7 @@ KtNameReferenceExpression(507,508): 'b'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = b
         receiverType = null
@@ -625,7 +626,6 @@ KtNameReferenceExpression(507,508): 'b'
         symbol = b: () -> T
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtValueArgumentList(508,510): '()'
@@ -702,6 +702,7 @@ KtNameReferenceExpression(802,813): 'myClassProp'
         type = MyClass.Companion
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = myClassProp
         receiverType = null
@@ -709,7 +710,6 @@ KtNameReferenceExpression(802,813): 'myClassProp'
         symbol = val myClassProp: MyClass
         contextParameters = []
         callableId = /MyClass.Companion.myClassProp
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtCatchClause(820,1061): 'catch (e: E2) {'
@@ -748,6 +748,7 @@ KtNameReferenceExpression(932,942): 'stringProp'
         type = MyClass.Companion
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = stringProp
         receiverType = null
@@ -755,7 +756,6 @@ KtNameReferenceExpression(932,942): 'stringProp'
         symbol = val stringProp: kotlin.String
         contextParameters = []
         callableId = /MyClass.Companion.stringProp
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtFinallySection(1062,1102): 'finally {'
@@ -771,6 +771,7 @@ KtNameReferenceExpression(1080,1096): 'ClassMemberAlias'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = ClassMemberAlias
         receiverType = null
@@ -778,7 +779,6 @@ KtNameReferenceExpression(1080,1096): 'ClassMemberAlias'
         symbol = val ClassMemberAlias: MyClass.NestedInheritor
         contextParameters = []
         callableId = /ClassMemberAlias
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtCallExpression(1108,1497): 'receive<MyClass>('
@@ -956,6 +956,7 @@ KtNameReferenceExpression(1257,1268): 'myClassProp'
         type = MyClass.Companion
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = myClassProp
         receiverType = null
@@ -963,7 +964,6 @@ KtNameReferenceExpression(1257,1268): 'myClassProp'
         symbol = val myClassProp: MyClass
         contextParameters = []
         callableId = /MyClass.Companion.myClassProp
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtCatchClause(1279,1350): 'catch (e: E2) {'
@@ -1002,6 +1002,7 @@ KtNameReferenceExpression(1330,1340): 'stringProp'
         type = MyClass.Companion
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = stringProp
         receiverType = null
@@ -1009,7 +1010,6 @@ KtNameReferenceExpression(1330,1340): 'stringProp'
         symbol = val stringProp: kotlin.String
         contextParameters = []
         callableId = /MyClass.Companion.stringProp
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtCatchClause(1351,1442): 'catch (e: E3) {'
@@ -1072,6 +1072,7 @@ KtNameReferenceExpression(1465,1481): 'ClassMemberAlias'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = ClassMemberAlias
         receiverType = null
@@ -1079,7 +1080,6 @@ KtNameReferenceExpression(1465,1481): 'ClassMemberAlias'
         symbol = val ClassMemberAlias: MyClass.NestedInheritor
         contextParameters = []
         callableId = /ClassMemberAlias
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtCallExpression(1503,1887): 'run<MyClass> {'
@@ -1267,6 +1267,7 @@ KtNameReferenceExpression(1649,1660): 'myClassProp'
         type = MyClass.Companion
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = myClassProp
         receiverType = null
@@ -1274,7 +1275,6 @@ KtNameReferenceExpression(1649,1660): 'myClassProp'
         symbol = val myClassProp: MyClass
         contextParameters = []
         callableId = /MyClass.Companion.myClassProp
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtCatchClause(1671,1741): 'catch(e: E2) {'
@@ -1313,6 +1313,7 @@ KtNameReferenceExpression(1721,1731): 'stringProp'
         type = MyClass.Companion
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = stringProp
         receiverType = null
@@ -1320,7 +1321,6 @@ KtNameReferenceExpression(1721,1731): 'stringProp'
         symbol = val stringProp: kotlin.String
         contextParameters = []
         callableId = /MyClass.Companion.stringProp
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtCatchClause(1742,1832): 'catch(e: E3) {'
@@ -1383,6 +1383,7 @@ KtNameReferenceExpression(1855,1871): 'ClassMemberAlias'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = ClassMemberAlias
         receiverType = null
@@ -1390,5 +1391,4 @@ KtNameReferenceExpression(1855,1871): 'ClassMemberAlias'
         symbol = val ClassMemberAlias: MyClass.NestedInheritor
         contextParameters = []
         callableId = /ClassMemberAlias
-      simpleAccess = Read
       typeArgumentsMapping = {}

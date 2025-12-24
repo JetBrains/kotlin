@@ -8,6 +8,8 @@ KtNameReferenceExpression(76,79): 'foo'
         type = JavaClass
       extensionReceiver = null
       isContextSensitive = false
+      kind = Write:
+        value = 42
       signature = KaVariableSignature:
         name = foo
         receiverType = null
@@ -15,6 +17,4 @@ KtNameReferenceExpression(76,79): 'foo'
         symbol = var foo: kotlin.Int
         contextParameters = []
         callableId = /JavaClass.foo
-      simpleAccess = Write:
-        value = 42
       typeArgumentsMapping = {}

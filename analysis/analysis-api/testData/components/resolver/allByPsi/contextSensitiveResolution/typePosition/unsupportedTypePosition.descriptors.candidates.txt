@@ -749,6 +749,7 @@ KtNameReferenceExpression(862,870): 'instance'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = instance
         receiverType = null
@@ -756,7 +757,6 @@ KtNameReferenceExpression(862,870): 'instance'
         symbol = instance: SealedClass
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -785,6 +785,7 @@ KtNameReferenceExpression(918,926): 'instance'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = instance
         receiverType = null
@@ -792,7 +793,6 @@ KtNameReferenceExpression(918,926): 'instance'
         symbol = instance: SealedClass
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -848,6 +848,7 @@ KtNameReferenceExpression(1026,1029): 'arg'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = arg
         receiverType = null
@@ -855,7 +856,6 @@ KtNameReferenceExpression(1026,1029): 'arg'
         symbol = arg: SealedClass
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 

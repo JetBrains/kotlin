@@ -8,6 +8,7 @@ KtNameReferenceExpression(50,52): 'aa'
         type = A
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = aa
         receiverType = null
@@ -15,6 +16,5 @@ KtNameReferenceExpression(50,52): 'aa'
         symbol = val aa: A?
         contextParameters = []
         callableId = /A.aa
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true

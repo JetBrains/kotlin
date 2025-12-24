@@ -566,6 +566,7 @@ KtNameReferenceExpression(586,594): 'instance'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = instance
         receiverType = null
@@ -573,7 +574,6 @@ KtNameReferenceExpression(586,594): 'instance'
         symbol = instance: T
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -602,6 +602,7 @@ KtNameReferenceExpression(625,633): 'instance'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = instance
         receiverType = null
@@ -609,7 +610,6 @@ KtNameReferenceExpression(625,633): 'instance'
         symbol = instance: T
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -723,6 +723,7 @@ KtNameReferenceExpression(700,708): 'instance'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = instance
         receiverType = null
@@ -730,7 +731,6 @@ KtNameReferenceExpression(700,708): 'instance'
         symbol = instance: T
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -828,6 +828,7 @@ KtNameReferenceExpression(715,723): 'toString'
         type = ERROR_TYPE
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = <Error property>
         receiverType = null
@@ -835,7 +836,6 @@ KtNameReferenceExpression(715,723): 'toString'
         symbol = var <Error property>: ERROR_TYPE
         contextParameters = []
         callableId = /<Error class: unknown class>.<Error property>
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = false
 
@@ -950,6 +950,7 @@ KtNameReferenceExpression(850,858): 'instance'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = instance
         receiverType = null
@@ -957,7 +958,6 @@ KtNameReferenceExpression(850,858): 'instance'
         symbol = instance: T
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -986,6 +986,7 @@ KtNameReferenceExpression(889,897): 'instance'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = instance
         receiverType = null
@@ -993,7 +994,6 @@ KtNameReferenceExpression(889,897): 'instance'
         symbol = instance: T
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1107,6 +1107,7 @@ KtNameReferenceExpression(964,972): 'instance'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = instance
         receiverType = null
@@ -1114,7 +1115,6 @@ KtNameReferenceExpression(964,972): 'instance'
         symbol = instance: T
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1212,6 +1212,7 @@ KtNameReferenceExpression(979,987): 'toString'
         type = ERROR_TYPE
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = <Error property>
         receiverType = null
@@ -1219,7 +1220,6 @@ KtNameReferenceExpression(979,987): 'toString'
         symbol = var <Error property>: ERROR_TYPE
         contextParameters = []
         callableId = /<Error class: unknown class>.<Error property>
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = false
 
@@ -1295,6 +1295,7 @@ KtNameReferenceExpression(1067,1075): 'instance'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = instance
         receiverType = null
@@ -1302,7 +1303,6 @@ KtNameReferenceExpression(1067,1075): 'instance'
         symbol = instance: SealedClass?
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1331,6 +1331,7 @@ KtNameReferenceExpression(1106,1114): 'instance'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = instance
         receiverType = null
@@ -1338,7 +1339,6 @@ KtNameReferenceExpression(1106,1114): 'instance'
         symbol = instance: SealedClass?
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1431,6 +1431,7 @@ KtNameReferenceExpression(1148,1156): 'instance'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = instance
         receiverType = null
@@ -1438,7 +1439,6 @@ KtNameReferenceExpression(1148,1156): 'instance'
         symbol = instance: SealedClass?
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1536,6 +1536,7 @@ KtNameReferenceExpression(1163,1171): 'toString'
         type = ERROR_TYPE
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = <Error property>
         receiverType = null
@@ -1543,7 +1544,6 @@ KtNameReferenceExpression(1163,1171): 'toString'
         symbol = var <Error property>: ERROR_TYPE
         contextParameters = []
         callableId = /<Error class: unknown class>.<Error property>
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = false
 
@@ -1703,6 +1703,7 @@ KtNameReferenceExpression(1379,1382): 'arg'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = arg
         receiverType = null
@@ -1710,7 +1711,6 @@ KtNameReferenceExpression(1379,1382): 'arg'
         symbol = arg: SealedClass
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1826,6 +1826,7 @@ KtNameReferenceExpression(1558,1566): 'instance'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = instance
         receiverType = null
@@ -1833,7 +1834,6 @@ KtNameReferenceExpression(1558,1566): 'instance'
         symbol = instance: T & Any
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1862,6 +1862,7 @@ KtNameReferenceExpression(1597,1605): 'instance'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = instance
         receiverType = null
@@ -1869,7 +1870,6 @@ KtNameReferenceExpression(1597,1605): 'instance'
         symbol = instance: T & Any
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1962,6 +1962,7 @@ KtNameReferenceExpression(1639,1647): 'instance'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = instance
         receiverType = null
@@ -1969,7 +1970,6 @@ KtNameReferenceExpression(1639,1647): 'instance'
         symbol = instance: T & Any
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -2067,6 +2067,7 @@ KtNameReferenceExpression(1654,1662): 'toString'
         type = ERROR_TYPE
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = <Error property>
         receiverType = null
@@ -2074,7 +2075,6 @@ KtNameReferenceExpression(1654,1662): 'toString'
         symbol = var <Error property>: ERROR_TYPE
         contextParameters = []
         callableId = /<Error class: unknown class>.<Error property>
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = false
 
@@ -2159,6 +2159,7 @@ KtNameReferenceExpression(1745,1753): 'instance'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = instance
         receiverType = null
@@ -2166,7 +2167,6 @@ KtNameReferenceExpression(1745,1753): 'instance'
         symbol = instance: kotlin.Any
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -2195,6 +2195,7 @@ KtNameReferenceExpression(1776,1784): 'instance'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = instance
         receiverType = null
@@ -2202,7 +2203,6 @@ KtNameReferenceExpression(1776,1784): 'instance'
         symbol = instance: kotlin.Any
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -2243,6 +2243,7 @@ KtNameReferenceExpression(1843,1851): 'instance'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = instance
         receiverType = null
@@ -2250,7 +2251,6 @@ KtNameReferenceExpression(1843,1851): 'instance'
         symbol = instance: kotlin.Any
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -2279,6 +2279,7 @@ KtNameReferenceExpression(1889,1897): 'instance'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = instance
         receiverType = null
@@ -2286,7 +2287,6 @@ KtNameReferenceExpression(1889,1897): 'instance'
         symbol = instance: kotlin.Any
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -2318,6 +2318,7 @@ KtNameReferenceExpression(1943,1951): 'instance'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = instance
         receiverType = null
@@ -2325,7 +2326,6 @@ KtNameReferenceExpression(1943,1951): 'instance'
         symbol = instance: kotlin.Any
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -2399,6 +2399,7 @@ KtNameReferenceExpression(2079,2087): 'instance'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = instance
         receiverType = null
@@ -2406,7 +2407,6 @@ KtNameReferenceExpression(2079,2087): 'instance'
         symbol = instance: kotlin.Any
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -2435,6 +2435,7 @@ KtNameReferenceExpression(2110,2118): 'instance'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = instance
         receiverType = null
@@ -2442,7 +2443,6 @@ KtNameReferenceExpression(2110,2118): 'instance'
         symbol = instance: kotlin.Any
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -2477,6 +2477,7 @@ KtNameReferenceExpression(2149,2157): 'instance'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = instance
         receiverType = null
@@ -2484,7 +2485,6 @@ KtNameReferenceExpression(2149,2157): 'instance'
         symbol = instance: kotlin.Any
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -2513,6 +2513,7 @@ KtNameReferenceExpression(2195,2203): 'instance'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = instance
         receiverType = null
@@ -2520,7 +2521,6 @@ KtNameReferenceExpression(2195,2203): 'instance'
         symbol = instance: kotlin.Any
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -2552,6 +2552,7 @@ KtNameReferenceExpression(2249,2257): 'instance'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = instance
         receiverType = null
@@ -2559,7 +2560,6 @@ KtNameReferenceExpression(2249,2257): 'instance'
         symbol = instance: kotlin.Any
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -2660,6 +2660,7 @@ KtNameReferenceExpression(2433,2441): 'instance'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = instance
         receiverType = null
@@ -2667,7 +2668,6 @@ KtNameReferenceExpression(2433,2441): 'instance'
         symbol = instance: T
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -2696,6 +2696,7 @@ KtNameReferenceExpression(2471,2479): 'instance'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = instance
         receiverType = null
@@ -2703,7 +2704,6 @@ KtNameReferenceExpression(2471,2479): 'instance'
         symbol = instance: T
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -2735,6 +2735,7 @@ KtNameReferenceExpression(2512,2520): 'instance'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = instance
         receiverType = null
@@ -2742,7 +2743,6 @@ KtNameReferenceExpression(2512,2520): 'instance'
         symbol = instance: T
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -2792,6 +2792,7 @@ KtDotQualifiedExpression(2598,2615): 'JClass.staticProp'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = staticProp
         receiverType = null
@@ -2799,7 +2800,6 @@ KtDotQualifiedExpression(2598,2615): 'JClass.staticProp'
         symbol = var staticProp: SealedJClass!
         contextParameters = []
         callableId = /JClass.staticProp
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -2813,6 +2813,7 @@ KtNameReferenceExpression(2605,2615): 'staticProp'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = staticProp
         receiverType = null
@@ -2820,7 +2821,6 @@ KtNameReferenceExpression(2605,2615): 'staticProp'
         symbol = var staticProp: SealedJClass!
         contextParameters = []
         callableId = /JClass.staticProp
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -2887,6 +2887,7 @@ KtNameReferenceExpression(2643,2644): 'i'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = i
         receiverType = null
@@ -2894,7 +2895,6 @@ KtNameReferenceExpression(2643,2644): 'i'
         symbol = val i: SealedJClass!
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -2928,6 +2928,7 @@ KtNameReferenceExpression(2645,2650): 'prop1'
         type = SealedJClass!
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = <Error property>
         receiverType = null
@@ -2935,7 +2936,6 @@ KtNameReferenceExpression(2645,2650): 'prop1'
         symbol = var <Error property>: ERROR_TYPE
         contextParameters = []
         callableId = /<Error class: unknown class>.<Error property>
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = false
 
@@ -3002,6 +3002,7 @@ KtNameReferenceExpression(2675,2676): 'i'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = i
         receiverType = null
@@ -3009,7 +3010,6 @@ KtNameReferenceExpression(2675,2676): 'i'
         symbol = val i: SealedJClass!
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -3043,6 +3043,7 @@ KtNameReferenceExpression(2677,2682): 'prop2'
         type = SealedJClass!
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = <Error property>
         receiverType = null
@@ -3050,7 +3051,6 @@ KtNameReferenceExpression(2677,2682): 'prop2'
         symbol = var <Error property>: ERROR_TYPE
         contextParameters = []
         callableId = /<Error class: unknown class>.<Error property>
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = false
 
@@ -3211,6 +3211,7 @@ KtDotQualifiedExpression(2842,2847): 'arg.a'
         type = ITestContravariant2<CapturedType(in SealedClass)>
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = a
         receiverType = null
@@ -3218,7 +3219,6 @@ KtDotQualifiedExpression(2842,2847): 'arg.a'
         symbol = val a: @R|kotlin.UnsafeVariance|()  T
         contextParameters = []
         callableId = /ITestContravariant2.a
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -3229,6 +3229,7 @@ KtNameReferenceExpression(2842,2845): 'arg'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = arg
         receiverType = null
@@ -3236,7 +3237,6 @@ KtNameReferenceExpression(2842,2845): 'arg'
         symbol = arg: ITestContravariant2<in SealedClass>
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -3250,6 +3250,7 @@ KtNameReferenceExpression(2846,2847): 'a'
         type = ITestContravariant2<CapturedType(in SealedClass)>
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = a
         receiverType = null
@@ -3257,7 +3258,6 @@ KtNameReferenceExpression(2846,2847): 'a'
         symbol = val a: @R|kotlin.UnsafeVariance|()  T
         contextParameters = []
         callableId = /ITestContravariant2.a
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 

@@ -248,6 +248,7 @@ KtNameReferenceExpression(314,322): 'instance'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = instance
         receiverType = null
@@ -255,7 +256,6 @@ KtNameReferenceExpression(314,322): 'instance'
         symbol = instance: SealedClass
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -305,6 +305,7 @@ KtNameReferenceExpression(395,403): 'instance'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = instance
         receiverType = null
@@ -312,7 +313,6 @@ KtNameReferenceExpression(395,403): 'instance'
         symbol = instance: SealedClass
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -569,6 +569,7 @@ KtNameReferenceExpression(699,707): 'instance'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = instance
         receiverType = null
@@ -576,7 +577,6 @@ KtNameReferenceExpression(699,707): 'instance'
         symbol = instance: OpenClass
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -626,6 +626,7 @@ KtNameReferenceExpression(802,810): 'instance'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = instance
         receiverType = null
@@ -633,7 +634,6 @@ KtNameReferenceExpression(802,810): 'instance'
         symbol = instance: OpenClass
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 

@@ -286,6 +286,7 @@ KtNameReferenceExpression(400,401): 'i'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = i
         receiverType = null
@@ -293,7 +294,6 @@ KtNameReferenceExpression(400,401): 'i'
         symbol = i: kotlin.Int
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(402,404): '=='
@@ -393,6 +393,7 @@ KtNameReferenceExpression(441,442): 'i'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = i
         receiverType = null
@@ -400,7 +401,6 @@ KtNameReferenceExpression(441,442): 'i'
         symbol = i: kotlin.Int
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(443,445): '=='
@@ -455,6 +455,7 @@ KtNameReferenceExpression(449,460): 'myClassProp'
         type = MyClass.Companion
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = myClassProp
         receiverType = null
@@ -462,7 +463,6 @@ KtNameReferenceExpression(449,460): 'myClassProp'
         symbol = val myClassProp: MyClass
         contextParameters = []
         callableId = /MyClass.Companion.myClassProp
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtContainerNodeForControlStructureBody(474,526): 'if (i == 2) stringProp'
@@ -517,6 +517,7 @@ KtNameReferenceExpression(478,479): 'i'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = i
         receiverType = null
@@ -524,7 +525,6 @@ KtNameReferenceExpression(478,479): 'i'
         symbol = i: kotlin.Int
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(480,482): '=='
@@ -579,6 +579,7 @@ KtNameReferenceExpression(486,496): 'stringProp'
         type = MyClass.Companion
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = stringProp
         receiverType = null
@@ -586,7 +587,6 @@ KtNameReferenceExpression(486,496): 'stringProp'
         symbol = val stringProp: kotlin.String
         contextParameters = []
         callableId = /MyClass.Companion.stringProp
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtContainerNodeForControlStructureBody(510,526): 'ClassMemberAlias'
@@ -599,6 +599,7 @@ KtNameReferenceExpression(510,526): 'ClassMemberAlias'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = ClassMemberAlias
         receiverType = null
@@ -606,5 +607,4 @@ KtNameReferenceExpression(510,526): 'ClassMemberAlias'
         symbol = val ClassMemberAlias: MyClass.NestedInheritor
         contextParameters = []
         callableId = /ClassMemberAlias
-      simpleAccess = Read
       typeArgumentsMapping = {}

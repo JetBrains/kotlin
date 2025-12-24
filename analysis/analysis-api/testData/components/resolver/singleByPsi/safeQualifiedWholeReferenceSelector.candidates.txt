@@ -8,6 +8,7 @@ KtSafeQualifiedExpression(45,49): 'a?.y'
         type = A
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = y
         receiverType = null
@@ -15,6 +16,5 @@ KtSafeQualifiedExpression(45,49): 'a?.y'
         symbol = val y: kotlin.Int
         contextParameters = []
         callableId = /A.y
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true

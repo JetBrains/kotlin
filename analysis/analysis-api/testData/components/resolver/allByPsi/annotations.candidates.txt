@@ -2030,6 +2030,7 @@ KtNameReferenceExpression(800,814): 'stringConstant'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = stringConstant
         receiverType = null
@@ -2037,7 +2038,6 @@ KtNameReferenceExpression(800,814): 'stringConstant'
         symbol = val stringConstant: kotlin.String
         contextParameters = []
         callableId = one/stringConstant
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 

@@ -5,6 +5,7 @@ KtNameReferenceExpression(16,26): '`$$result`'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = $$result
         receiverType = null
@@ -12,6 +13,5 @@ KtNameReferenceExpression(16,26): '`$$result`'
         symbol = val $$result: kotlin.Int
         contextParameters = []
         callableId = /$$result
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true

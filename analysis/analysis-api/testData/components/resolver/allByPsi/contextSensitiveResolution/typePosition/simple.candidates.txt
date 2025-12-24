@@ -157,6 +157,7 @@ KtNameReferenceExpression(246,247): 'x'
         type = MySealed.Left
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = x
         receiverType = null
@@ -164,7 +165,6 @@ KtNameReferenceExpression(246,247): 'x'
         symbol = val x: kotlin.String
         contextParameters = []
         callableId = /MySealed.Left.x
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -213,6 +213,7 @@ KtNameReferenceExpression(264,265): 'y'
         type = MySealed.Right
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = y
         receiverType = null
@@ -220,6 +221,5 @@ KtNameReferenceExpression(264,265): 'y'
         symbol = val y: kotlin.String
         contextParameters = []
         callableId = /MySealed.Right.y
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true

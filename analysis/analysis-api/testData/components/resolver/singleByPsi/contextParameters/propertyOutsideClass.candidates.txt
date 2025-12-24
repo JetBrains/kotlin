@@ -49,6 +49,7 @@ KtNameReferenceExpression(245,259): 'propertyMember'
         type = Base
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = propertyMember
         receiverType = null
@@ -64,6 +65,5 @@ KtNameReferenceExpression(245,259): 'propertyMember'
             callableId = null
         ]
         callableId = /Base.propertyMember
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true

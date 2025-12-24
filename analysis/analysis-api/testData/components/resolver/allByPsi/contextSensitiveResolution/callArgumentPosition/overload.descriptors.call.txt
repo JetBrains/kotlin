@@ -118,6 +118,7 @@ KtNameReferenceExpression(223,226): 'arg'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = arg
         receiverType = null
@@ -125,7 +126,6 @@ KtNameReferenceExpression(223,226): 'arg'
         symbol = arg: MyEnum
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNamedFunction(227,259): 'fun overload(arg: MyClass) = arg'
@@ -153,6 +153,7 @@ KtNameReferenceExpression(256,259): 'arg'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = arg
         receiverType = null
@@ -160,7 +161,6 @@ KtNameReferenceExpression(256,259): 'arg'
         symbol = arg: MyClass
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNamedFunction(260,374): 'fun test() {'

@@ -5,6 +5,7 @@ KtNameReferenceExpression(141,142): 'x'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = x
         receiverType = null
@@ -12,5 +13,4 @@ KtNameReferenceExpression(141,142): 'x'
         symbol = var x: kotlin.Any
         contextParameters = []
         callableId = /x
-      simpleAccess = Read
       typeArgumentsMapping = {}

@@ -89,6 +89,7 @@ KtNameReferenceExpression(174,175): 'f'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = f
         receiverType = null
@@ -96,7 +97,6 @@ KtNameReferenceExpression(174,175): 'f'
         symbol = f: first.First
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtWhenEntry(183,191): 'ONE -> 1'
@@ -112,6 +112,7 @@ KtNameReferenceExpression(183,186): 'ONE'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = ONE
         receiverType = null
@@ -119,7 +120,6 @@ KtNameReferenceExpression(183,186): 'ONE'
         symbol = val ONE: second.Second
         contextParameters = []
         callableId = second/ONE
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtConstantExpression(190,191): '1'
@@ -167,6 +167,7 @@ KtNameReferenceExpression(235,236): 's'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = s
         receiverType = null
@@ -174,7 +175,6 @@ KtNameReferenceExpression(235,236): 's'
         symbol = s: second.Second
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtWhenEntry(244,254): 'THREE -> 3'
@@ -190,6 +190,7 @@ KtNameReferenceExpression(244,249): 'THREE'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = THREE
         receiverType = null
@@ -197,7 +198,6 @@ KtNameReferenceExpression(244,249): 'THREE'
         symbol = val THREE: first.First
         contextParameters = []
         callableId = first/THREE
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtConstantExpression(253,254): '3'

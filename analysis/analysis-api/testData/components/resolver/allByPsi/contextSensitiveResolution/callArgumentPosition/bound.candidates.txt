@@ -59,6 +59,7 @@ KtNameReferenceExpression(155,158): 'arg'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = arg
         receiverType = null
@@ -66,7 +67,6 @@ KtNameReferenceExpression(155,158): 'arg'
         symbol = arg: T
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -274,6 +274,7 @@ KtNameReferenceExpression(258,268): 'EnumValue1'
         type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = EnumValue1
         receiverType = null
@@ -281,7 +282,6 @@ KtNameReferenceExpression(258,268): 'EnumValue1'
         symbol = /MyEnum.EnumValue1
         contextParameters = []
         callableId = /MyEnum.EnumValue1
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -368,6 +368,7 @@ KtNameReferenceExpression(331,336): 'value'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = value
         receiverType = null
@@ -375,7 +376,6 @@ KtNameReferenceExpression(331,336): 'value'
         symbol = value: T
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -426,6 +426,7 @@ KtNameReferenceExpression(340,350): 'EnumValue1'
         type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = EnumValue1
         receiverType = null
@@ -433,7 +434,6 @@ KtNameReferenceExpression(340,350): 'EnumValue1'
         symbol = /MyEnum.EnumValue1
         contextParameters = []
         callableId = /MyEnum.EnumValue1
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -517,6 +517,7 @@ KtNameReferenceExpression(399,404): 'value'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = value
         receiverType = null
@@ -524,7 +525,6 @@ KtNameReferenceExpression(399,404): 'value'
         symbol = value: T
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -575,6 +575,7 @@ KtNameReferenceExpression(408,418): 'EnumValue1'
         type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = EnumValue1
         receiverType = null
@@ -582,6 +583,5 @@ KtNameReferenceExpression(408,418): 'EnumValue1'
         symbol = /MyEnum.EnumValue1
         contextParameters = []
         callableId = /MyEnum.EnumValue1
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true

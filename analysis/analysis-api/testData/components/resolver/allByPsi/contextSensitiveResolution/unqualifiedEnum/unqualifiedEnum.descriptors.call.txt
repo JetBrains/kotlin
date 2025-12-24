@@ -71,6 +71,7 @@ KtNameReferenceExpression(168,169): 's'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = s
         receiverType = null
@@ -78,7 +79,6 @@ KtNameReferenceExpression(168,169): 's'
         symbol = s: test.Sample
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtWhenEntry(181,191): 'FIRST -> 1'
@@ -208,6 +208,7 @@ KtNameReferenceExpression(302,303): 's'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = s
         receiverType = null
@@ -215,7 +216,6 @@ KtNameReferenceExpression(302,303): 's'
         symbol = s: test.Sample
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(304,306): '=='
@@ -311,6 +311,7 @@ KtNameReferenceExpression(326,327): 's'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = s
         receiverType = null
@@ -318,7 +319,6 @@ KtNameReferenceExpression(326,327): 's'
         symbol = s: test.Sample
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(328,330): '=='
@@ -414,6 +414,7 @@ KtNameReferenceExpression(351,352): 's'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = s
         receiverType = null
@@ -421,7 +422,6 @@ KtNameReferenceExpression(351,352): 's'
         symbol = s: test.Sample
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(353,355): '=='
@@ -559,6 +559,7 @@ KtNameReferenceExpression(543,544): 's'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = s
         receiverType = null
@@ -566,7 +567,6 @@ KtNameReferenceExpression(543,544): 's'
         symbol = s: test.Sample
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtWhenEntry(560,570): 'FIRST -> 3'
@@ -582,6 +582,7 @@ KtNameReferenceExpression(560,565): 'FIRST'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = FIRST
         receiverType = null
@@ -589,7 +590,6 @@ KtNameReferenceExpression(560,565): 'FIRST'
         symbol = val FIRST: test.Sample
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtConstantExpression(569,570): '3'
@@ -610,6 +610,7 @@ KtNameReferenceExpression(583,589): 'SECOND'
         type = test.Container
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = SECOND
         receiverType = null
@@ -617,7 +618,6 @@ KtNameReferenceExpression(583,589): 'SECOND'
         symbol = val SECOND: test.Sample
         contextParameters = []
         callableId = test/Container.SECOND
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtConstantExpression(593,594): '2'

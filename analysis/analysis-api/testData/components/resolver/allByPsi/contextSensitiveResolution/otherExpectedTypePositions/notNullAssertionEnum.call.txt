@@ -71,6 +71,7 @@ KtNameReferenceExpression(216,223): 'Option1'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = Option1
         receiverType = null
@@ -78,7 +79,6 @@ KtNameReferenceExpression(216,223): 'Option1'
         symbol = /MyEnum.Option1
         contextParameters = []
         callableId = /MyEnum.Option1
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtProperty(232,259): 'val stringProp: String = ""'
@@ -109,6 +109,7 @@ KtNameReferenceExpression(286,293): 'Option1'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = Option1
         receiverType = null
@@ -116,7 +117,6 @@ KtNameReferenceExpression(286,293): 'Option1'
         symbol = /MyEnum.Option1
         contextParameters = []
         callableId = /MyEnum.Option1
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNamedFunction(303,326): 'fun <T>receive(e: T) {}'
@@ -159,6 +159,7 @@ KtDotQualifiedExpression(349,363): 'MyEnum.Option1'
         type = MyEnum.Companion
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = Option1
         receiverType = null
@@ -166,7 +167,6 @@ KtDotQualifiedExpression(349,363): 'MyEnum.Option1'
         symbol = /MyEnum.Option1
         contextParameters = []
         callableId = /MyEnum.Option1
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(349,355): 'MyEnum'
@@ -182,6 +182,7 @@ KtNameReferenceExpression(356,363): 'Option1'
         type = MyEnum.Companion
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = Option1
         receiverType = null
@@ -189,7 +190,6 @@ KtNameReferenceExpression(356,363): 'Option1'
         symbol = /MyEnum.Option1
         contextParameters = []
         callableId = /MyEnum.Option1
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNamedFunction(365,593): 'fun testNotNullAssertion() {'
@@ -226,6 +226,7 @@ KtNameReferenceExpression(416,423): 'Option1'
         type = MyEnum.Companion
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = Option1
         receiverType = null
@@ -233,7 +234,6 @@ KtNameReferenceExpression(416,423): 'Option1'
         symbol = /MyEnum.Option1
         contextParameters = []
         callableId = /MyEnum.Option1
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(423,425): '!!'
@@ -264,6 +264,7 @@ KtNameReferenceExpression(448,456): 'enumProp'
         type = MyEnum.Companion
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = enumProp
         receiverType = null
@@ -271,7 +272,6 @@ KtNameReferenceExpression(448,456): 'enumProp'
         symbol = val enumProp: MyEnum
         contextParameters = []
         callableId = /MyEnum.Companion.enumProp
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(456,458): '!!'
@@ -304,6 +304,7 @@ KtNameReferenceExpression(481,491): 'stringProp'
         type = MyEnum.Companion
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = stringProp
         receiverType = null
@@ -311,7 +312,6 @@ KtNameReferenceExpression(481,491): 'stringProp'
         symbol = val stringProp: kotlin.String
         contextParameters = []
         callableId = /MyEnum.Companion.stringProp
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(491,493): '!!'
@@ -422,6 +422,7 @@ KtNameReferenceExpression(515,522): 'Option1'
         type = MyEnum.Companion
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = Option1
         receiverType = null
@@ -429,7 +430,6 @@ KtNameReferenceExpression(515,522): 'Option1'
         symbol = /MyEnum.Option1
         contextParameters = []
         callableId = /MyEnum.Option1
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(522,524): '!!'
@@ -538,6 +538,7 @@ KtNameReferenceExpression(546,554): 'enumProp'
         type = MyEnum.Companion
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = enumProp
         receiverType = null
@@ -545,7 +546,6 @@ KtNameReferenceExpression(546,554): 'enumProp'
         symbol = val enumProp: MyEnum
         contextParameters = []
         callableId = /MyEnum.Companion.enumProp
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(554,556): '!!'
@@ -661,6 +661,7 @@ KtNameReferenceExpression(578,588): 'stringProp'
         type = MyEnum.Companion
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = stringProp
         receiverType = null
@@ -668,7 +669,6 @@ KtNameReferenceExpression(578,588): 'stringProp'
         symbol = val stringProp: kotlin.String
         contextParameters = []
         callableId = /MyEnum.Companion.stringProp
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(588,590): '!!'

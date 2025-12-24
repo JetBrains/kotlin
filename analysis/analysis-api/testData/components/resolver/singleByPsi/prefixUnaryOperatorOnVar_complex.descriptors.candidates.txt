@@ -26,6 +26,7 @@ KtPrefixExpression(80,83): '++f'
         dispatchReceiver = null
         extensionReceiver = null
         isContextSensitive = false
+        kind = Read
         signature = KaVariableSignature:
           name = f
           receiverType = null
@@ -33,6 +34,5 @@ KtPrefixExpression(80,83): '++f'
           symbol = var f: Foo
           contextParameters = []
           callableId = null
-        simpleAccess = Read
         typeArgumentsMapping = {}
     isInBestCandidates = true

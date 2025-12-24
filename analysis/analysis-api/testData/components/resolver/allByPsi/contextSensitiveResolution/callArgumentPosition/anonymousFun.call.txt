@@ -667,6 +667,7 @@ KtNameReferenceExpression(933,954): 'anonymousEnumConsumer'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = anonymousEnumConsumer
         receiverType = null
@@ -674,7 +675,6 @@ KtNameReferenceExpression(933,954): 'anonymousEnumConsumer'
         symbol = val anonymousEnumConsumer: (MyEnum) -> kotlin.Unit
         contextParameters = []
         callableId = /anonymousEnumConsumer
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtValueArgumentList(954,966): '(EnumValue1)'
@@ -693,6 +693,7 @@ KtNameReferenceExpression(955,965): 'EnumValue1'
         type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = EnumValue1
         receiverType = null
@@ -700,7 +701,6 @@ KtNameReferenceExpression(955,965): 'EnumValue1'
         symbol = /MyEnum.EnumValue1
         contextParameters = []
         callableId = /MyEnum.EnumValue1
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtCallExpression(972,1006): 'anonymousConsumer(InheritorObject)'
@@ -745,6 +745,7 @@ KtNameReferenceExpression(972,989): 'anonymousConsumer'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = anonymousConsumer
         receiverType = null
@@ -752,7 +753,6 @@ KtNameReferenceExpression(972,989): 'anonymousConsumer'
         symbol = val anonymousConsumer: (MyClass) -> kotlin.Unit
         contextParameters = []
         callableId = /anonymousConsumer
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtValueArgumentList(989,1006): '(InheritorObject)'
@@ -806,6 +806,7 @@ KtNameReferenceExpression(1011,1028): 'anonymousConsumer'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = anonymousConsumer
         receiverType = null
@@ -813,7 +814,6 @@ KtNameReferenceExpression(1011,1028): 'anonymousConsumer'
         symbol = val anonymousConsumer: (MyClass) -> kotlin.Unit
         contextParameters = []
         callableId = /anonymousConsumer
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtValueArgumentList(1028,1041): '(propMyClass)'
@@ -832,6 +832,7 @@ KtNameReferenceExpression(1029,1040): 'propMyClass'
         type = MyClass.Companion
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = propMyClass
         receiverType = null
@@ -839,7 +840,6 @@ KtNameReferenceExpression(1029,1040): 'propMyClass'
         symbol = val propMyClass: MyClass
         contextParameters = []
         callableId = /MyClass.Companion.propMyClass
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtCallExpression(1047,1070): 'anonymousConsumer(prop)'
@@ -888,6 +888,7 @@ KtNameReferenceExpression(1047,1064): 'anonymousConsumer'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = anonymousConsumer
         receiverType = null
@@ -895,7 +896,6 @@ KtNameReferenceExpression(1047,1064): 'anonymousConsumer'
         symbol = val anonymousConsumer: (MyClass) -> kotlin.Unit
         contextParameters = []
         callableId = /anonymousConsumer
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtValueArgumentList(1064,1070): '(prop)'
@@ -914,6 +914,7 @@ KtNameReferenceExpression(1065,1069): 'prop'
         type = MyClass.Companion
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = prop
         receiverType = null
@@ -921,7 +922,6 @@ KtNameReferenceExpression(1065,1069): 'prop'
         symbol = val prop: kotlin.String
         contextParameters = []
         callableId = /MyClass.Companion.prop
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtCallExpression(1075,1103): 'anonymousConsumer(constProp)'
@@ -970,6 +970,7 @@ KtNameReferenceExpression(1075,1092): 'anonymousConsumer'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = anonymousConsumer
         receiverType = null
@@ -977,7 +978,6 @@ KtNameReferenceExpression(1075,1092): 'anonymousConsumer'
         symbol = val anonymousConsumer: (MyClass) -> kotlin.Unit
         contextParameters = []
         callableId = /anonymousConsumer
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtValueArgumentList(1092,1103): '(constProp)'
@@ -996,6 +996,7 @@ KtNameReferenceExpression(1093,1102): 'constProp'
         type = MyClass.Companion
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = constProp
         receiverType = null
@@ -1003,7 +1004,6 @@ KtNameReferenceExpression(1093,1102): 'constProp'
         symbol = val constProp: kotlin.String
         contextParameters = []
         callableId = /MyClass.Companion.constProp
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtCallExpression(1108,1135): 'anonymousConsumer(lazyProp)'
@@ -1052,6 +1052,7 @@ KtNameReferenceExpression(1108,1125): 'anonymousConsumer'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = anonymousConsumer
         receiverType = null
@@ -1059,7 +1060,6 @@ KtNameReferenceExpression(1108,1125): 'anonymousConsumer'
         symbol = val anonymousConsumer: (MyClass) -> kotlin.Unit
         contextParameters = []
         callableId = /anonymousConsumer
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtValueArgumentList(1125,1135): '(lazyProp)'
@@ -1078,6 +1078,7 @@ KtNameReferenceExpression(1126,1134): 'lazyProp'
         type = MyClass.Companion
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = lazyProp
         receiverType = null
@@ -1085,7 +1086,6 @@ KtNameReferenceExpression(1126,1134): 'lazyProp'
         symbol = val lazyProp: kotlin.String
         contextParameters = []
         callableId = /MyClass.Companion.lazyProp
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtCallExpression(1140,1169): 'anonymousConsumer(lambdaProp)'
@@ -1134,6 +1134,7 @@ KtNameReferenceExpression(1140,1157): 'anonymousConsumer'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = anonymousConsumer
         receiverType = null
@@ -1141,7 +1142,6 @@ KtNameReferenceExpression(1140,1157): 'anonymousConsumer'
         symbol = val anonymousConsumer: (MyClass) -> kotlin.Unit
         contextParameters = []
         callableId = /anonymousConsumer
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtValueArgumentList(1157,1169): '(lambdaProp)'
@@ -1160,6 +1160,7 @@ KtNameReferenceExpression(1158,1168): 'lambdaProp'
         type = MyClass.Companion
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = lambdaProp
         receiverType = null
@@ -1167,7 +1168,6 @@ KtNameReferenceExpression(1158,1168): 'lambdaProp'
         symbol = val lambdaProp: () -> MyClass.InheritorObject
         contextParameters = []
         callableId = /MyClass.Companion.lambdaProp
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtCallExpression(1174,1202): 'anonymousConsumer(superProp)'
@@ -1216,6 +1216,7 @@ KtNameReferenceExpression(1174,1191): 'anonymousConsumer'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = anonymousConsumer
         receiverType = null
@@ -1223,7 +1224,6 @@ KtNameReferenceExpression(1174,1191): 'anonymousConsumer'
         symbol = val anonymousConsumer: (MyClass) -> kotlin.Unit
         contextParameters = []
         callableId = /anonymousConsumer
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtValueArgumentList(1191,1202): '(superProp)'
@@ -1242,6 +1242,7 @@ KtNameReferenceExpression(1192,1201): 'superProp'
         type = MyClass.Companion
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = superProp
         receiverType = null
@@ -1249,7 +1250,6 @@ KtNameReferenceExpression(1192,1201): 'superProp'
         symbol = val superProp: kotlin.String
         contextParameters = []
         callableId = /Super.superProp
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtCallExpression(1208,1233): 'anonymousConsumer(func())'
@@ -1294,6 +1294,7 @@ KtNameReferenceExpression(1208,1225): 'anonymousConsumer'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = anonymousConsumer
         receiverType = null
@@ -1301,7 +1302,6 @@ KtNameReferenceExpression(1208,1225): 'anonymousConsumer'
         symbol = val anonymousConsumer: (MyClass) -> kotlin.Unit
         contextParameters = []
         callableId = /anonymousConsumer
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtValueArgumentList(1225,1233): '(func())'
@@ -1365,6 +1365,7 @@ KtNameReferenceExpression(1238,1255): 'anonymousConsumer'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = anonymousConsumer
         receiverType = null
@@ -1372,7 +1373,6 @@ KtNameReferenceExpression(1238,1255): 'anonymousConsumer'
         symbol = val anonymousConsumer: (MyClass) -> kotlin.Unit
         contextParameters = []
         callableId = /anonymousConsumer
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtValueArgumentList(1255,1268): '(superFunc())'
@@ -1440,6 +1440,7 @@ KtNameReferenceExpression(1273,1290): 'anonymousConsumer'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = anonymousConsumer
         receiverType = null
@@ -1447,7 +1448,6 @@ KtNameReferenceExpression(1273,1290): 'anonymousConsumer'
         symbol = val anonymousConsumer: (MyClass) -> kotlin.Unit
         contextParameters = []
         callableId = /anonymousConsumer
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtValueArgumentList(1290,1302): '(lambdaProp)'
@@ -1466,6 +1466,7 @@ KtNameReferenceExpression(1291,1301): 'lambdaProp'
         type = MyClass.Companion
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = lambdaProp
         receiverType = null
@@ -1473,5 +1474,4 @@ KtNameReferenceExpression(1291,1301): 'lambdaProp'
         symbol = val lambdaProp: () -> MyClass.InheritorObject
         contextParameters = []
         callableId = /MyClass.Companion.lambdaProp
-      simpleAccess = Read
       typeArgumentsMapping = {}

@@ -393,6 +393,7 @@ KtDotQualifiedExpression(441,446): 'foo.x'
         type = MySealed.Left
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = x
         receiverType = null
@@ -400,7 +401,6 @@ KtDotQualifiedExpression(441,446): 'foo.x'
         symbol = val x: kotlin.String
         contextParameters = []
         callableId = /MySealed.Left.x
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(441,444): 'foo'
@@ -410,6 +410,7 @@ KtNameReferenceExpression(441,444): 'foo'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = foo
         receiverType = null
@@ -417,7 +418,6 @@ KtNameReferenceExpression(441,444): 'foo'
         symbol = val foo: MySealed!
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(445,446): 'x'
@@ -432,6 +432,7 @@ KtNameReferenceExpression(445,446): 'x'
         type = MySealed.Left
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = x
         receiverType = null
@@ -439,7 +440,6 @@ KtNameReferenceExpression(445,446): 'x'
         symbol = val x: kotlin.String
         contextParameters = []
         callableId = /MySealed.Left.x
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtWhenEntry(455,472): 'is Right -> foo.y'
@@ -469,6 +469,7 @@ KtDotQualifiedExpression(467,472): 'foo.y'
         type = MySealed.Right
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = y
         receiverType = null
@@ -476,7 +477,6 @@ KtDotQualifiedExpression(467,472): 'foo.y'
         symbol = val y: kotlin.String
         contextParameters = []
         callableId = /MySealed.Right.y
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(467,470): 'foo'
@@ -486,6 +486,7 @@ KtNameReferenceExpression(467,470): 'foo'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = foo
         receiverType = null
@@ -493,7 +494,6 @@ KtNameReferenceExpression(467,470): 'foo'
         symbol = val foo: MySealed!
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(471,472): 'y'
@@ -508,6 +508,7 @@ KtNameReferenceExpression(471,472): 'y'
         type = MySealed.Right
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = y
         receiverType = null
@@ -515,7 +516,6 @@ KtNameReferenceExpression(471,472): 'y'
         symbol = val y: kotlin.String
         contextParameters = []
         callableId = /MySealed.Right.y
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtBinaryExpressionWithTypeRHS(583,612): 'mg as MyGenericSealed<String>'
@@ -528,6 +528,7 @@ KtNameReferenceExpression(583,585): 'mg'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = mg
         receiverType = null
@@ -535,7 +536,6 @@ KtNameReferenceExpression(583,585): 'mg'
         symbol = mg: MyGeneric<kotlin.Any>
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(586,588): 'as'
@@ -575,6 +575,7 @@ KtNameReferenceExpression(623,625): 'mg'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = mg
         receiverType = null
@@ -582,7 +583,6 @@ KtNameReferenceExpression(623,625): 'mg'
         symbol = mg: MyGeneric<kotlin.Any>
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtWhenEntry(637,652): 'is Left -> mg.x'
@@ -612,6 +612,7 @@ KtDotQualifiedExpression(648,652): 'mg.x'
         type = it(MyGenericSealed.Left & MyGeneric<kotlin.Any>)
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = x
         receiverType = null
@@ -619,7 +620,6 @@ KtDotQualifiedExpression(648,652): 'mg.x'
         symbol = val x: kotlin.String
         contextParameters = []
         callableId = /MyGenericSealed.Left.x
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(648,650): 'mg'
@@ -629,6 +629,7 @@ KtNameReferenceExpression(648,650): 'mg'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = mg
         receiverType = null
@@ -636,7 +637,6 @@ KtNameReferenceExpression(648,650): 'mg'
         symbol = mg: MyGeneric<kotlin.Any>
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(651,652): 'x'
@@ -651,6 +651,7 @@ KtNameReferenceExpression(651,652): 'x'
         type = it(MyGenericSealed.Left & MyGeneric<kotlin.Any>)
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = x
         receiverType = null
@@ -658,7 +659,6 @@ KtNameReferenceExpression(651,652): 'x'
         symbol = val x: kotlin.String
         contextParameters = []
         callableId = /MyGenericSealed.Left.x
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtWhenEntry(661,677): 'is Right -> mg.y'
@@ -688,6 +688,7 @@ KtDotQualifiedExpression(673,677): 'mg.y'
         type = it(MyGenericSealed.Right & MyGeneric<kotlin.Any>)
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = y
         receiverType = null
@@ -695,7 +696,6 @@ KtDotQualifiedExpression(673,677): 'mg.y'
         symbol = val y: kotlin.String
         contextParameters = []
         callableId = /MyGenericSealed.Right.y
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(673,675): 'mg'
@@ -705,6 +705,7 @@ KtNameReferenceExpression(673,675): 'mg'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = mg
         receiverType = null
@@ -712,7 +713,6 @@ KtNameReferenceExpression(673,675): 'mg'
         symbol = mg: MyGeneric<kotlin.Any>
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(676,677): 'y'
@@ -727,6 +727,7 @@ KtNameReferenceExpression(676,677): 'y'
         type = it(MyGenericSealed.Right & MyGeneric<kotlin.Any>)
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = y
         receiverType = null
@@ -734,7 +735,6 @@ KtNameReferenceExpression(676,677): 'y'
         symbol = val y: kotlin.String
         contextParameters = []
         callableId = /MyGenericSealed.Right.y
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtBinaryExpressionWithTypeRHS(804,833): 'cs as MyGenericSealed<String>'
@@ -747,6 +747,7 @@ KtNameReferenceExpression(804,806): 'cs'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = cs
         receiverType = null
@@ -754,7 +755,6 @@ KtNameReferenceExpression(804,806): 'cs'
         symbol = cs: kotlin.CharSequence
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(807,809): 'as'
@@ -794,6 +794,7 @@ KtNameReferenceExpression(844,846): 'cs'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = cs
         receiverType = null
@@ -801,7 +802,6 @@ KtNameReferenceExpression(844,846): 'cs'
         symbol = cs: kotlin.CharSequence
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtWhenEntry(858,873): 'is Left -> cs.x'
@@ -833,6 +833,7 @@ KtNameReferenceExpression(869,871): 'cs'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = cs
         receiverType = null
@@ -840,7 +841,6 @@ KtNameReferenceExpression(869,871): 'cs'
         symbol = cs: kotlin.CharSequence
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(872,873): 'x'
@@ -877,6 +877,7 @@ KtNameReferenceExpression(894,896): 'cs'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = cs
         receiverType = null
@@ -884,7 +885,6 @@ KtNameReferenceExpression(894,896): 'cs'
         symbol = cs: kotlin.CharSequence
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(897,898): 'y'

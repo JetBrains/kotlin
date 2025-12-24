@@ -392,6 +392,7 @@ KtNameReferenceExpression(343,344): 's'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = s
         receiverType = null
@@ -399,7 +400,6 @@ KtNameReferenceExpression(343,344): 's'
         symbol = s: foo.Sealed
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtWhenEntry(352,358): 'A -> 1'
@@ -523,6 +523,7 @@ KtNameReferenceExpression(477,478): 's'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = s
         receiverType = null
@@ -530,7 +531,6 @@ KtNameReferenceExpression(477,478): 's'
         symbol = s: foo.Sealed
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtWhenEntry(486,499): 'Sealed.A -> 1'
@@ -618,6 +618,7 @@ KtNameReferenceExpression(583,584): 's'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = s
         receiverType = null
@@ -625,7 +626,6 @@ KtNameReferenceExpression(583,584): 's'
         symbol = s: foo.Sealed
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtWhenEntry(592,602): 'foo.A -> 1'
@@ -716,6 +716,7 @@ KtNameReferenceExpression(675,676): 's'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = s
         receiverType = null
@@ -723,7 +724,6 @@ KtNameReferenceExpression(675,676): 's'
         symbol = s: foo.Sealed
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(677,679): 'as'
@@ -784,6 +784,7 @@ KtNameReferenceExpression(735,736): 's'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = s
         receiverType = null
@@ -791,7 +792,6 @@ KtNameReferenceExpression(735,736): 's'
         symbol = s: foo.Sealed
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(737,739): 'as'
@@ -852,6 +852,7 @@ KtNameReferenceExpression(796,797): 's'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = s
         receiverType = null
@@ -859,7 +860,6 @@ KtNameReferenceExpression(796,797): 's'
         symbol = s: foo.Sealed
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(798,800): 'as'
@@ -926,6 +926,7 @@ KtNameReferenceExpression(864,865): 's'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = s
         receiverType = null
@@ -933,7 +934,6 @@ KtNameReferenceExpression(864,865): 's'
         symbol = s: foo.Sealed
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(866,868): 'as'
@@ -1000,6 +1000,7 @@ KtNameReferenceExpression(934,935): 's'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = s
         receiverType = null
@@ -1007,7 +1008,6 @@ KtNameReferenceExpression(934,935): 's'
         symbol = s: foo.Sealed
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(936,938): 'as'
@@ -1074,6 +1074,7 @@ KtNameReferenceExpression(1001,1002): 's'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = s
         receiverType = null
@@ -1081,7 +1082,6 @@ KtNameReferenceExpression(1001,1002): 's'
         symbol = s: foo.Sealed
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(1003,1005): 'as'
@@ -1148,6 +1148,7 @@ KtNameReferenceExpression(1062,1063): 's'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = s
         receiverType = null
@@ -1155,7 +1156,6 @@ KtNameReferenceExpression(1062,1063): 's'
         symbol = s: foo.Sealed
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(1064,1066): 'as'
@@ -1216,6 +1216,7 @@ KtNameReferenceExpression(1119,1120): 's'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = s
         receiverType = null
@@ -1223,7 +1224,6 @@ KtNameReferenceExpression(1119,1120): 's'
         symbol = s: foo.Sealed
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(1121,1123): 'as'
@@ -1314,6 +1314,7 @@ KtNameReferenceExpression(1183,1184): 's'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = s
         receiverType = null
@@ -1321,7 +1322,6 @@ KtNameReferenceExpression(1183,1184): 's'
         symbol = s: foo.Sealed
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(1185,1187): '=='
@@ -1433,6 +1433,7 @@ KtNameReferenceExpression(1232,1233): 's'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = s
         receiverType = null
@@ -1440,7 +1441,6 @@ KtNameReferenceExpression(1232,1233): 's'
         symbol = s: foo.Sealed
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(1234,1236): '=='
@@ -1558,6 +1558,7 @@ KtNameReferenceExpression(1290,1291): 's'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = s
         receiverType = null
@@ -1565,7 +1566,6 @@ KtNameReferenceExpression(1290,1291): 's'
         symbol = s: foo.Sealed
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(1292,1294): '=='
@@ -1683,6 +1683,7 @@ KtNameReferenceExpression(1339,1340): 's'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = s
         receiverType = null
@@ -1690,7 +1691,6 @@ KtNameReferenceExpression(1339,1340): 's'
         symbol = s: foo.Sealed
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(1341,1343): '=='

@@ -175,6 +175,7 @@ KtNameReferenceExpression(284,285): 'z'
         type = it(Left & MySealed)
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = z
         receiverType = null
@@ -182,7 +183,6 @@ KtNameReferenceExpression(284,285): 'z'
         symbol = val z: kotlin.String
         contextParameters = []
         callableId = /Left.z
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtWhenEntry(290,303): 'is Right -> y'
@@ -230,6 +230,7 @@ KtNameReferenceExpression(302,303): 'y'
         type = MySealed.Right
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = y
         receiverType = null
@@ -237,7 +238,6 @@ KtNameReferenceExpression(302,303): 'y'
         symbol = val y: kotlin.String
         contextParameters = []
         callableId = /MySealed.Right.y
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtWhenEntry(308,318): 'else -> ""'

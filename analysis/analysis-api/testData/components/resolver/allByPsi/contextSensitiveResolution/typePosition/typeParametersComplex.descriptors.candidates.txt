@@ -320,6 +320,7 @@ KtNameReferenceExpression(337,346): 'instance1'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = instance1
         receiverType = null
@@ -327,7 +328,6 @@ KtNameReferenceExpression(337,346): 'instance1'
         symbol = instance1: SealedGeneric<*>
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -377,6 +377,7 @@ KtNameReferenceExpression(386,395): 'instance1'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = instance1
         receiverType = null
@@ -384,7 +385,6 @@ KtNameReferenceExpression(386,395): 'instance1'
         symbol = instance1: SealedGeneric<*>
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -407,6 +407,7 @@ KtNameReferenceExpression(416,425): 'instance1'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = instance1
         receiverType = null
@@ -414,7 +415,6 @@ KtNameReferenceExpression(416,425): 'instance1'
         symbol = instance1: SealedGeneric<*>
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -455,6 +455,7 @@ KtNameReferenceExpression(460,469): 'instance1'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = instance1
         receiverType = null
@@ -462,7 +463,6 @@ KtNameReferenceExpression(460,469): 'instance1'
         symbol = instance1: SealedGeneric<*>
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -485,6 +485,7 @@ KtNameReferenceExpression(490,499): 'instance2'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = instance2
         receiverType = null
@@ -492,7 +493,6 @@ KtNameReferenceExpression(490,499): 'instance2'
         symbol = instance2: SealedGeneric<out kotlin.CharSequence>
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -542,6 +542,7 @@ KtNameReferenceExpression(545,554): 'instance2'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = instance2
         receiverType = null
@@ -549,7 +550,6 @@ KtNameReferenceExpression(545,554): 'instance2'
         symbol = instance2: SealedGeneric<out kotlin.CharSequence>
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -572,6 +572,7 @@ KtNameReferenceExpression(575,584): 'instance2'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = instance2
         receiverType = null
@@ -579,7 +580,6 @@ KtNameReferenceExpression(575,584): 'instance2'
         symbol = instance2: SealedGeneric<out kotlin.CharSequence>
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -632,6 +632,7 @@ KtNameReferenceExpression(633,642): 'instance2'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = instance2
         receiverType = null
@@ -639,7 +640,6 @@ KtNameReferenceExpression(633,642): 'instance2'
         symbol = instance2: SealedGeneric<out kotlin.CharSequence>
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -662,6 +662,7 @@ KtNameReferenceExpression(663,672): 'instance2'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = instance2
         receiverType = null
@@ -669,7 +670,6 @@ KtNameReferenceExpression(663,672): 'instance2'
         symbol = instance2: SealedGeneric<out kotlin.CharSequence>
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -722,6 +722,7 @@ KtNameReferenceExpression(722,731): 'instance2'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = instance2
         receiverType = null
@@ -729,7 +730,6 @@ KtNameReferenceExpression(722,731): 'instance2'
         symbol = instance2: SealedGeneric<out kotlin.CharSequence>
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -794,6 +794,7 @@ KtNameReferenceExpression(815,816): 'a'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = a
         receiverType = null
@@ -801,7 +802,6 @@ KtNameReferenceExpression(815,816): 'a'
         symbol = a: SealedGeneric<T>
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -863,6 +863,7 @@ KtNameReferenceExpression(896,897): 'a'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = a
         receiverType = null
@@ -870,7 +871,6 @@ KtNameReferenceExpression(896,897): 'a'
         symbol = a: SealedGeneric<T>
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1013,6 +1013,7 @@ KtNameReferenceExpression(1054,1055): 'a'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = a
         receiverType = null
@@ -1020,7 +1021,6 @@ KtNameReferenceExpression(1054,1055): 'a'
         symbol = a: SealedGeneric<kotlin.String>
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1070,6 +1070,7 @@ KtNameReferenceExpression(1124,1125): 'b'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = b
         receiverType = null
@@ -1077,7 +1078,6 @@ KtNameReferenceExpression(1124,1125): 'b'
         symbol = b: SealedGeneric<kotlin.String>
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1148,6 +1148,7 @@ KtNameReferenceExpression(1210,1211): 'a'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = a
         receiverType = null
@@ -1155,7 +1156,6 @@ KtNameReferenceExpression(1210,1211): 'a'
         symbol = a: SealedGeneric<*>
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1202,6 +1202,7 @@ KtNameReferenceExpression(1241,1242): 'b'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = b
         receiverType = null
@@ -1209,7 +1210,6 @@ KtNameReferenceExpression(1241,1242): 'b'
         symbol = b: SealedGeneric<*>
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 

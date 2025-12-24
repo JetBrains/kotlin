@@ -133,6 +133,7 @@ KtNameReferenceExpression(402,413): 'OptionAlias'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = OptionAlias
         receiverType = null
@@ -140,7 +141,6 @@ KtNameReferenceExpression(402,413): 'OptionAlias'
         symbol = val OptionAlias: MyEnum
         contextParameters = []
         callableId = /OptionAlias
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtProperty(414,448): 'val tlEnumProp3: MyEnum = enumProp'
@@ -210,6 +210,8 @@ KtBinaryExpression(546,557): 'm = Option1'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Write:
+        value = Option1
       signature = KaVariableSignature:
         name = m
         receiverType = null
@@ -217,8 +219,6 @@ KtBinaryExpression(546,557): 'm = Option1'
         symbol = var m: MyEnum
         contextParameters = []
         callableId = null
-      simpleAccess = Write:
-        value = Option1
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(546,547): 'm'
@@ -228,6 +228,8 @@ KtNameReferenceExpression(546,547): 'm'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Write:
+        value = Option1
       signature = KaVariableSignature:
         name = m
         receiverType = null
@@ -235,8 +237,6 @@ KtNameReferenceExpression(546,547): 'm'
         symbol = var m: MyEnum
         contextParameters = []
         callableId = null
-      simpleAccess = Write:
-        value = Option1
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(548,549): '='
@@ -246,6 +246,8 @@ KtOperationReferenceExpression(548,549): '='
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Write:
+        value = Option1
       signature = KaVariableSignature:
         name = m
         receiverType = null
@@ -253,8 +255,6 @@ KtOperationReferenceExpression(548,549): '='
         symbol = var m: MyEnum
         contextParameters = []
         callableId = null
-      simpleAccess = Write:
-        value = Option1
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(550,557): 'Option1'
@@ -269,6 +269,8 @@ KtBinaryExpression(562,577): 'm = OptionAlias'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Write:
+        value = OptionAlias
       signature = KaVariableSignature:
         name = m
         receiverType = null
@@ -276,8 +278,6 @@ KtBinaryExpression(562,577): 'm = OptionAlias'
         symbol = var m: MyEnum
         contextParameters = []
         callableId = null
-      simpleAccess = Write:
-        value = OptionAlias
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(562,563): 'm'
@@ -287,6 +287,8 @@ KtNameReferenceExpression(562,563): 'm'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Write:
+        value = OptionAlias
       signature = KaVariableSignature:
         name = m
         receiverType = null
@@ -294,8 +296,6 @@ KtNameReferenceExpression(562,563): 'm'
         symbol = var m: MyEnum
         contextParameters = []
         callableId = null
-      simpleAccess = Write:
-        value = OptionAlias
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(564,565): '='
@@ -305,6 +305,8 @@ KtOperationReferenceExpression(564,565): '='
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Write:
+        value = OptionAlias
       signature = KaVariableSignature:
         name = m
         receiverType = null
@@ -312,8 +314,6 @@ KtOperationReferenceExpression(564,565): '='
         symbol = var m: MyEnum
         contextParameters = []
         callableId = null
-      simpleAccess = Write:
-        value = OptionAlias
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(566,577): 'OptionAlias'
@@ -323,6 +323,7 @@ KtNameReferenceExpression(566,577): 'OptionAlias'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = OptionAlias
         receiverType = null
@@ -330,7 +331,6 @@ KtNameReferenceExpression(566,577): 'OptionAlias'
         symbol = val OptionAlias: MyEnum
         contextParameters = []
         callableId = /OptionAlias
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtBinaryExpression(582,596): 'm = stringProp'
@@ -340,6 +340,8 @@ KtBinaryExpression(582,596): 'm = stringProp'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Write:
+        value = stringProp
       signature = KaVariableSignature:
         name = m
         receiverType = null
@@ -347,8 +349,6 @@ KtBinaryExpression(582,596): 'm = stringProp'
         symbol = var m: MyEnum
         contextParameters = []
         callableId = null
-      simpleAccess = Write:
-        value = stringProp
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(582,583): 'm'
@@ -358,6 +358,8 @@ KtNameReferenceExpression(582,583): 'm'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Write:
+        value = stringProp
       signature = KaVariableSignature:
         name = m
         receiverType = null
@@ -365,8 +367,6 @@ KtNameReferenceExpression(582,583): 'm'
         symbol = var m: MyEnum
         contextParameters = []
         callableId = null
-      simpleAccess = Write:
-        value = stringProp
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(584,585): '='
@@ -376,6 +376,8 @@ KtOperationReferenceExpression(584,585): '='
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Write:
+        value = stringProp
       signature = KaVariableSignature:
         name = m
         receiverType = null
@@ -383,8 +385,6 @@ KtOperationReferenceExpression(584,585): '='
         symbol = var m: MyEnum
         contextParameters = []
         callableId = null
-      simpleAccess = Write:
-        value = stringProp
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(586,596): 'stringProp'

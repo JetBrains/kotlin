@@ -113,6 +113,7 @@ KtDotQualifiedExpression(46,73): 'AnnotationTarget.EXPRESSION'
         type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = EXPRESSION
         receiverType = null
@@ -120,7 +121,6 @@ KtDotQualifiedExpression(46,73): 'AnnotationTarget.EXPRESSION'
         symbol = kotlin/annotation/AnnotationTarget.EXPRESSION
         contextParameters = []
         callableId = kotlin/annotation/AnnotationTarget.EXPRESSION
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -153,6 +153,7 @@ KtNameReferenceExpression(63,73): 'EXPRESSION'
         type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = EXPRESSION
         receiverType = null
@@ -160,7 +161,6 @@ KtNameReferenceExpression(63,73): 'EXPRESSION'
         symbol = kotlin/annotation/AnnotationTarget.EXPRESSION
         contextParameters = []
         callableId = kotlin/annotation/AnnotationTarget.EXPRESSION
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -255,6 +255,7 @@ KtDotQualifiedExpression(86,112): 'AnnotationRetention.SOURCE'
         type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = SOURCE
         receiverType = null
@@ -262,7 +263,6 @@ KtDotQualifiedExpression(86,112): 'AnnotationRetention.SOURCE'
         symbol = kotlin/annotation/AnnotationRetention.SOURCE
         contextParameters = []
         callableId = kotlin/annotation/AnnotationRetention.SOURCE
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -295,6 +295,7 @@ KtNameReferenceExpression(106,112): 'SOURCE'
         type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = SOURCE
         receiverType = null
@@ -302,7 +303,6 @@ KtNameReferenceExpression(106,112): 'SOURCE'
         symbol = kotlin/annotation/AnnotationRetention.SOURCE
         contextParameters = []
         callableId = kotlin/annotation/AnnotationRetention.SOURCE
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -871,6 +871,7 @@ KtNameReferenceExpression(182,189): 'integer'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = integer
         receiverType = null
@@ -878,7 +879,6 @@ KtNameReferenceExpression(182,189): 'integer'
         symbol = val integer: kotlin.Int
         contextParameters = []
         callableId = /integer
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1017,6 +1017,7 @@ KtNameReferenceExpression(198,205): 'integer'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = integer
         receiverType = null
@@ -1024,7 +1025,6 @@ KtNameReferenceExpression(198,205): 'integer'
         symbol = val integer: kotlin.Int
         contextParameters = []
         callableId = /integer
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 

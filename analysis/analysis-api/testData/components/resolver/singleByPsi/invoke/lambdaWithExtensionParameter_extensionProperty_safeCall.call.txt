@@ -8,6 +8,7 @@ KtNameReferenceExpression(96,102): 'action'
         isSafeNavigation = true
         type = test.Foo
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = action
         receiverType = test.Foo
@@ -15,5 +16,4 @@ KtNameReferenceExpression(96,102): 'action'
         symbol = val action: () -> kotlin.Unit
         contextParameters = []
         callableId = test/action
-      simpleAccess = Read
       typeArgumentsMapping = {}

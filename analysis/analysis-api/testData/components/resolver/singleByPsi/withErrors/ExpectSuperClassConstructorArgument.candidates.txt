@@ -5,6 +5,7 @@ KtNameReferenceExpression(173,176): 'obj'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = obj
         receiverType = null
@@ -12,6 +13,5 @@ KtNameReferenceExpression(173,176): 'obj'
         symbol = obj: kotlin.Any
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true

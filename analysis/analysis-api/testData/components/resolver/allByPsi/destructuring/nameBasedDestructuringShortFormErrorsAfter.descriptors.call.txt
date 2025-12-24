@@ -92,6 +92,7 @@ KtNameReferenceExpression(202,203): 'x'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = x
         receiverType = null
@@ -99,7 +100,6 @@ KtNameReferenceExpression(202,203): 'x'
         symbol = x: Tuple
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtIfExpression(210,239): 'if (true) { var (first) = x }'
@@ -130,6 +130,7 @@ KtNameReferenceExpression(236,237): 'x'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = x
         receiverType = null
@@ -137,7 +138,6 @@ KtNameReferenceExpression(236,237): 'x'
         symbol = x: Tuple
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtIfExpression(244,281): 'if (true) { val (first: String) = x }'
@@ -177,6 +177,7 @@ KtNameReferenceExpression(278,279): 'x'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = x
         receiverType = null
@@ -184,7 +185,6 @@ KtNameReferenceExpression(278,279): 'x'
         symbol = x: Tuple
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtIfExpression(286,311): 'if (true) { val (first) }'
@@ -257,6 +257,7 @@ KtNameReferenceExpression(354,355): 'x'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = x
         receiverType = null
@@ -264,7 +265,6 @@ KtNameReferenceExpression(354,355): 'x'
         symbol = x: Tuple
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtIfExpression(362,420): 'if (true) { val (first: Int = a, second: String = b) = x }'
@@ -322,6 +322,7 @@ KtNameReferenceExpression(417,418): 'x'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = x
         receiverType = null
@@ -329,7 +330,6 @@ KtNameReferenceExpression(417,418): 'x'
         symbol = x: Tuple
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtIfExpression(425,450): 'if (true) { val (_) = x }'
@@ -360,6 +360,7 @@ KtNameReferenceExpression(447,448): 'x'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = x
         receiverType = null
@@ -367,7 +368,6 @@ KtNameReferenceExpression(447,448): 'x'
         symbol = x: Tuple
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtIfExpression(455,488): 'if (true) { val (_: String) = x }'
@@ -407,6 +407,7 @@ KtNameReferenceExpression(485,486): 'x'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = x
         receiverType = null
@@ -414,7 +415,6 @@ KtNameReferenceExpression(485,486): 'x'
         symbol = x: Tuple
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtIfExpression(509,543): 'if (true) { val (aa = first) = x }'
@@ -448,6 +448,7 @@ KtNameReferenceExpression(540,541): 'x'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = x
         receiverType = null
@@ -455,7 +456,6 @@ KtNameReferenceExpression(540,541): 'x'
         symbol = x: Tuple
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtIfExpression(548,590): 'if (true) { val (aa: String = first) = x }'
@@ -498,6 +498,7 @@ KtNameReferenceExpression(587,588): 'x'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = x
         receiverType = null
@@ -505,7 +506,6 @@ KtNameReferenceExpression(587,588): 'x'
         symbol = x: Tuple
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtIfExpression(595,624): 'if (true) { val (a = first) }'
@@ -587,6 +587,7 @@ KtNameReferenceExpression(684,685): 'x'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = x
         receiverType = null
@@ -594,7 +595,6 @@ KtNameReferenceExpression(684,685): 'x'
         symbol = x: Tuple
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNamedFunction(691,1046): 'fun loop(x: List<Tuple>) {'
@@ -658,6 +658,7 @@ KtNameReferenceExpression(747,748): 'x'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = x
         receiverType = null
@@ -665,7 +666,6 @@ KtNameReferenceExpression(747,748): 'x'
         symbol = x: kotlin.collections.List<Tuple>
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtContainerNodeForControlStructureBody(750,752): '{}'
@@ -696,6 +696,7 @@ KtNameReferenceExpression(773,774): 'x'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = x
         receiverType = null
@@ -703,7 +704,6 @@ KtNameReferenceExpression(773,774): 'x'
         symbol = x: kotlin.collections.List<Tuple>
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtContainerNodeForControlStructureBody(776,778): '{}'
@@ -743,6 +743,7 @@ KtNameReferenceExpression(807,808): 'x'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = x
         receiverType = null
@@ -750,7 +751,6 @@ KtNameReferenceExpression(807,808): 'x'
         symbol = x: kotlin.collections.List<Tuple>
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtContainerNodeForControlStructureBody(810,812): '{}'
@@ -802,6 +802,7 @@ KtNameReferenceExpression(845,846): 'x'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = x
         receiverType = null
@@ -809,7 +810,6 @@ KtNameReferenceExpression(845,846): 'x'
         symbol = x: kotlin.collections.List<Tuple>
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtContainerNodeForControlStructureBody(848,850): '{}'
@@ -840,6 +840,7 @@ KtNameReferenceExpression(867,868): 'x'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = x
         receiverType = null
@@ -847,7 +848,6 @@ KtNameReferenceExpression(867,868): 'x'
         symbol = x: kotlin.collections.List<Tuple>
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtContainerNodeForControlStructureBody(870,872): '{}'
@@ -887,6 +887,7 @@ KtNameReferenceExpression(897,898): 'x'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = x
         receiverType = null
@@ -894,7 +895,6 @@ KtNameReferenceExpression(897,898): 'x'
         symbol = x: kotlin.collections.List<Tuple>
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtContainerNodeForControlStructureBody(900,902): '{}'
@@ -928,6 +928,7 @@ KtNameReferenceExpression(945,946): 'x'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = x
         receiverType = null
@@ -935,7 +936,6 @@ KtNameReferenceExpression(945,946): 'x'
         symbol = x: kotlin.collections.List<Tuple>
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtContainerNodeForControlStructureBody(948,950): '{}'
@@ -978,6 +978,7 @@ KtNameReferenceExpression(984,985): 'x'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = x
         receiverType = null
@@ -985,7 +986,6 @@ KtNameReferenceExpression(984,985): 'x'
         symbol = x: kotlin.collections.List<Tuple>
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtContainerNodeForControlStructureBody(987,989): '{}'
@@ -1043,6 +1043,7 @@ KtNameReferenceExpression(1039,1040): 'x'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = x
         receiverType = null
@@ -1050,7 +1051,6 @@ KtNameReferenceExpression(1039,1040): 'x'
         symbol = x: kotlin.collections.List<Tuple>
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtContainerNodeForControlStructureBody(1042,1044): '{}'

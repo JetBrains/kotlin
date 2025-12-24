@@ -4,6 +4,7 @@ KtCallableReferenceExpression(87,92): '::foo'
     dispatchReceiver = null
     extensionReceiver = null
     isContextSensitive = false
+    kind = Read
     signature = KaVariableSignature:
       name = foo
       receiverType = null
@@ -26,5 +27,4 @@ KtCallableReferenceExpression(87,92): '::foo'
           callableId = null
       ]
       callableId = /foo
-    simpleAccess = Read
     typeArgumentsMapping = {}

@@ -146,6 +146,7 @@ KtDotQualifiedExpression(46,77): 'AnnotationTarget.TYPE_PARAMETER'
         type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = TYPE_PARAMETER
         receiverType = null
@@ -153,7 +154,6 @@ KtDotQualifiedExpression(46,77): 'AnnotationTarget.TYPE_PARAMETER'
         symbol = kotlin/annotation/AnnotationTarget.TYPE_PARAMETER
         contextParameters = []
         callableId = kotlin/annotation/AnnotationTarget.TYPE_PARAMETER
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(46,62): 'AnnotationTarget'
@@ -169,6 +169,7 @@ KtNameReferenceExpression(63,77): 'TYPE_PARAMETER'
         type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = TYPE_PARAMETER
         receiverType = null
@@ -176,7 +177,6 @@ KtNameReferenceExpression(63,77): 'TYPE_PARAMETER'
         symbol = kotlin/annotation/AnnotationTarget.TYPE_PARAMETER
         contextParameters = []
         callableId = kotlin/annotation/AnnotationTarget.TYPE_PARAMETER
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtValueArgument(83,108): 'AnnotationTarget.FUNCTION'
@@ -192,6 +192,7 @@ KtDotQualifiedExpression(83,108): 'AnnotationTarget.FUNCTION'
         type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = FUNCTION
         receiverType = null
@@ -199,7 +200,6 @@ KtDotQualifiedExpression(83,108): 'AnnotationTarget.FUNCTION'
         symbol = kotlin/annotation/AnnotationTarget.FUNCTION
         contextParameters = []
         callableId = kotlin/annotation/AnnotationTarget.FUNCTION
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(83,99): 'AnnotationTarget'
@@ -215,6 +215,7 @@ KtNameReferenceExpression(100,108): 'FUNCTION'
         type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = FUNCTION
         receiverType = null
@@ -222,7 +223,6 @@ KtNameReferenceExpression(100,108): 'FUNCTION'
         symbol = kotlin/annotation/AnnotationTarget.FUNCTION
         contextParameters = []
         callableId = kotlin/annotation/AnnotationTarget.FUNCTION
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtValueArgument(114,146): 'AnnotationTarget.VALUE_PARAMETER'
@@ -238,6 +238,7 @@ KtDotQualifiedExpression(114,146): 'AnnotationTarget.VALUE_PARAMETER'
         type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = VALUE_PARAMETER
         receiverType = null
@@ -245,7 +246,6 @@ KtDotQualifiedExpression(114,146): 'AnnotationTarget.VALUE_PARAMETER'
         symbol = kotlin/annotation/AnnotationTarget.VALUE_PARAMETER
         contextParameters = []
         callableId = kotlin/annotation/AnnotationTarget.VALUE_PARAMETER
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(114,130): 'AnnotationTarget'
@@ -261,6 +261,7 @@ KtNameReferenceExpression(131,146): 'VALUE_PARAMETER'
         type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = VALUE_PARAMETER
         receiverType = null
@@ -268,7 +269,6 @@ KtNameReferenceExpression(131,146): 'VALUE_PARAMETER'
         symbol = kotlin/annotation/AnnotationTarget.VALUE_PARAMETER
         contextParameters = []
         callableId = kotlin/annotation/AnnotationTarget.VALUE_PARAMETER
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtValueArgument(152,173): 'AnnotationTarget.TYPE'
@@ -284,6 +284,7 @@ KtDotQualifiedExpression(152,173): 'AnnotationTarget.TYPE'
         type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = TYPE
         receiverType = null
@@ -291,7 +292,6 @@ KtDotQualifiedExpression(152,173): 'AnnotationTarget.TYPE'
         symbol = kotlin/annotation/AnnotationTarget.TYPE
         contextParameters = []
         callableId = kotlin/annotation/AnnotationTarget.TYPE
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(152,168): 'AnnotationTarget'
@@ -307,6 +307,7 @@ KtNameReferenceExpression(169,173): 'TYPE'
         type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = TYPE
         receiverType = null
@@ -314,7 +315,6 @@ KtNameReferenceExpression(169,173): 'TYPE'
         symbol = kotlin/annotation/AnnotationTarget.TYPE
         contextParameters = []
         callableId = kotlin/annotation/AnnotationTarget.TYPE
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtPrimaryConstructor(198,220): '(val position: String)'
@@ -450,6 +450,7 @@ KtNameReferenceExpression(276,280): 'prop'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = prop
         receiverType = null
@@ -457,7 +458,6 @@ KtNameReferenceExpression(276,280): 'prop'
         symbol = val prop: kotlin.String
         contextParameters = []
         callableId = lowlevel/prop
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtTypeParameterList(287,394): '<@Anno("type parameter $prop") T : @Anno("bound type $prop") List<@Anno("nested bound type $prop") String>>'
@@ -563,6 +563,7 @@ KtNameReferenceExpression(311,315): 'prop'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = prop
         receiverType = null
@@ -570,7 +571,6 @@ KtNameReferenceExpression(311,315): 'prop'
         symbol = val prop: kotlin.String
         contextParameters = []
         callableId = lowlevel/prop
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtTypeReference(322,393): '@Anno("bound type $prop") List<@Anno("nested bound type $prop") String>'
@@ -673,6 +673,7 @@ KtNameReferenceExpression(341,345): 'prop'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = prop
         receiverType = null
@@ -680,7 +681,6 @@ KtNameReferenceExpression(341,345): 'prop'
         symbol = val prop: kotlin.String
         contextParameters = []
         callableId = lowlevel/prop
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtUserType(348,393): 'List<@Anno("nested bound type $prop") String>'
@@ -795,6 +795,7 @@ KtNameReferenceExpression(379,383): 'prop'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = prop
         receiverType = null
@@ -802,7 +803,6 @@ KtNameReferenceExpression(379,383): 'prop'
         symbol = val prop: kotlin.String
         contextParameters = []
         callableId = lowlevel/prop
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtUserType(386,392): 'String'
@@ -914,6 +914,7 @@ KtNameReferenceExpression(421,425): 'prop'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = prop
         receiverType = null
@@ -921,7 +922,6 @@ KtNameReferenceExpression(421,425): 'prop'
         symbol = val prop: kotlin.String
         contextParameters = []
         callableId = lowlevel/prop
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtAnnotationEntry(428,456): '@Anno("receiver type $prop")'
@@ -1018,6 +1018,7 @@ KtNameReferenceExpression(450,454): 'prop'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = prop
         receiverType = null
@@ -1025,7 +1026,6 @@ KtNameReferenceExpression(450,454): 'prop'
         symbol = val prop: kotlin.String
         contextParameters = []
         callableId = lowlevel/prop
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtUserType(457,551): 'List<@Anno("nested receiver type $prop") List<@Anno("nested nested receiver type $prop") Int>>'
@@ -1140,6 +1140,7 @@ KtNameReferenceExpression(491,495): 'prop'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = prop
         receiverType = null
@@ -1147,7 +1148,6 @@ KtNameReferenceExpression(491,495): 'prop'
         symbol = val prop: kotlin.String
         contextParameters = []
         callableId = lowlevel/prop
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtUserType(498,550): 'List<@Anno("nested nested receiver type $prop") Int>'
@@ -1262,6 +1262,7 @@ KtNameReferenceExpression(539,543): 'prop'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = prop
         receiverType = null
@@ -1269,7 +1270,6 @@ KtNameReferenceExpression(539,543): 'prop'
         symbol = val prop: kotlin.String
         contextParameters = []
         callableId = lowlevel/prop
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtUserType(546,549): 'Int'
@@ -1381,6 +1381,7 @@ KtNameReferenceExpression(579,583): 'prop'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = prop
         receiverType = null
@@ -1388,7 +1389,6 @@ KtNameReferenceExpression(579,583): 'prop'
         symbol = val prop: kotlin.String
         contextParameters = []
         callableId = lowlevel/prop
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtTypeReference(593,728): '@Anno("parameter type $prop") Collection<@Anno("nested parameter type $prop") List<@Anno("nested nested parameter type $prop") String>>'
@@ -1491,6 +1491,7 @@ KtNameReferenceExpression(616,620): 'prop'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = prop
         receiverType = null
@@ -1498,7 +1499,6 @@ KtNameReferenceExpression(616,620): 'prop'
         symbol = val prop: kotlin.String
         contextParameters = []
         callableId = lowlevel/prop
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtUserType(623,728): 'Collection<@Anno("nested parameter type $prop") List<@Anno("nested nested parameter type $prop") String>>'
@@ -1613,6 +1613,7 @@ KtNameReferenceExpression(664,668): 'prop'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = prop
         receiverType = null
@@ -1620,7 +1621,6 @@ KtNameReferenceExpression(664,668): 'prop'
         symbol = val prop: kotlin.String
         contextParameters = []
         callableId = lowlevel/prop
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtUserType(671,727): 'List<@Anno("nested nested parameter type $prop") String>'
@@ -1735,6 +1735,7 @@ KtNameReferenceExpression(713,717): 'prop'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = prop
         receiverType = null
@@ -1742,7 +1743,6 @@ KtNameReferenceExpression(713,717): 'prop'
         symbol = val prop: kotlin.String
         contextParameters = []
         callableId = lowlevel/prop
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtUserType(720,726): 'String'
@@ -1854,6 +1854,7 @@ KtNameReferenceExpression(755,759): 'prop'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = prop
         receiverType = null
@@ -1861,7 +1862,6 @@ KtNameReferenceExpression(755,759): 'prop'
         symbol = val prop: kotlin.String
         contextParameters = []
         callableId = lowlevel/prop
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtUserType(762,852): 'List<@Anno("nested return type $prop") List<@Anno("nested nested return type $prop") Int>>'
@@ -1976,6 +1976,7 @@ KtNameReferenceExpression(794,798): 'prop'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = prop
         receiverType = null
@@ -1983,7 +1984,6 @@ KtNameReferenceExpression(794,798): 'prop'
         symbol = val prop: kotlin.String
         contextParameters = []
         callableId = lowlevel/prop
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtUserType(801,851): 'List<@Anno("nested nested return type $prop") Int>'
@@ -2098,6 +2098,7 @@ KtNameReferenceExpression(840,844): 'prop'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = prop
         receiverType = null
@@ -2105,7 +2106,6 @@ KtNameReferenceExpression(840,844): 'prop'
         symbol = val prop: kotlin.String
         contextParameters = []
         callableId = lowlevel/prop
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtUserType(847,850): 'Int'
@@ -2223,6 +2223,7 @@ KtNameReferenceExpression(895,899): 'prop'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = prop
         receiverType = null
@@ -2230,7 +2231,6 @@ KtNameReferenceExpression(895,899): 'prop'
         symbol = val prop: kotlin.String
         contextParameters = []
         callableId = lowlevel/prop
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNullableType(902,956): 'Collection<@Anno("nested constraint type $prop") Int>?'
@@ -2348,6 +2348,7 @@ KtNameReferenceExpression(944,948): 'prop'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = prop
         receiverType = null
@@ -2355,7 +2356,6 @@ KtNameReferenceExpression(944,948): 'prop'
         symbol = val prop: kotlin.String
         contextParameters = []
         callableId = lowlevel/prop
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtUserType(951,954): 'Int'

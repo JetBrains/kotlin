@@ -156,6 +156,7 @@ KtNameReferenceExpression(69,70): 'i'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = i
         receiverType = null
@@ -163,7 +164,6 @@ KtNameReferenceExpression(69,70): 'i'
         symbol = i: T
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtSecondaryConstructor(79,128): 'constructor(i: T, value: Int) : this(i = (((i))))'
@@ -288,6 +288,7 @@ KtNameReferenceExpression(123,124): 'i'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = i
         receiverType = null
@@ -295,7 +296,6 @@ KtNameReferenceExpression(123,124): 'i'
         symbol = i: T
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtClass(132,301): 'class B : A<(((Int)))> {'
@@ -526,6 +526,7 @@ KtNameReferenceExpression(233,238): 'value'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = value
         receiverType = null
@@ -533,7 +534,6 @@ KtNameReferenceExpression(233,238): 'value'
         symbol = value: kotlin.Int
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtSecondaryConstructor(247,299): 'constructor(value: String) : super(i = ((5)) as Int)'

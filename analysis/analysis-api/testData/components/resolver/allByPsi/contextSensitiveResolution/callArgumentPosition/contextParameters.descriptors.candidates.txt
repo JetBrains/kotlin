@@ -844,6 +844,7 @@ KtDotQualifiedExpression(548,552): '"".a'
         isSafeNavigation = false
         type = kotlin.String
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = a
         receiverType = kotlin.String
@@ -851,7 +852,6 @@ KtDotQualifiedExpression(548,552): '"".a'
         symbol = val a: kotlin.String
         contextParameters = []
         callableId = /a
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -868,6 +868,7 @@ KtNameReferenceExpression(551,552): 'a'
         isSafeNavigation = false
         type = kotlin.String
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = a
         receiverType = kotlin.String
@@ -875,6 +876,5 @@ KtNameReferenceExpression(551,552): 'a'
         symbol = val a: kotlin.String
         contextParameters = []
         callableId = /a
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true

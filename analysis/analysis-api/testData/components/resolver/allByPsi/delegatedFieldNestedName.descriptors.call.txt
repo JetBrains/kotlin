@@ -405,6 +405,7 @@ KtNameReferenceExpression(235,240): 'outer'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = outer
         receiverType = null
@@ -412,7 +413,6 @@ KtNameReferenceExpression(235,240): 'outer'
         symbol = val outer: kotlin.Int
         contextParameters = []
         callableId = second/outer
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtUserType(242,291): 'Base<@Anno(1 + outer) Base<@Anno(2 + outer) Int>>'
@@ -622,6 +622,7 @@ KtNameReferenceExpression(257,262): 'outer'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = outer
         receiverType = null
@@ -629,7 +630,6 @@ KtNameReferenceExpression(257,262): 'outer'
         symbol = val outer: kotlin.Int
         contextParameters = []
         callableId = second/outer
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtUserType(264,290): 'Base<@Anno(2 + outer) Int>'
@@ -839,6 +839,7 @@ KtNameReferenceExpression(279,284): 'outer'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = outer
         receiverType = null
@@ -846,7 +847,6 @@ KtNameReferenceExpression(279,284): 'outer'
         symbol = val outer: kotlin.Int
         contextParameters = []
         callableId = second/outer
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtUserType(286,289): 'Int'
@@ -1056,6 +1056,7 @@ KtNameReferenceExpression(320,325): 'outer'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = outer
         receiverType = null
@@ -1063,7 +1064,6 @@ KtNameReferenceExpression(320,325): 'outer'
         symbol = val outer: kotlin.Int
         contextParameters = []
         callableId = second/outer
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtUserType(327,358): 'Second<@Anno(5 + outer) String>'
@@ -1273,6 +1273,7 @@ KtNameReferenceExpression(344,349): 'outer'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = outer
         receiverType = null
@@ -1280,7 +1281,6 @@ KtNameReferenceExpression(344,349): 'outer'
         symbol = val outer: kotlin.Int
         contextParameters = []
         callableId = second/outer
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtUserType(351,357): 'String'
@@ -1436,6 +1436,7 @@ KtNameReferenceExpression(410,415): 'inner'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = inner
         receiverType = null
@@ -1443,7 +1444,6 @@ KtNameReferenceExpression(410,415): 'inner'
         symbol = val inner: kotlin.String
         contextParameters = []
         callableId = second/inner
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtUserType(417,466): 'Base<@Anno(7 + inner) Base<@Anno(8 + inner) Int>>'
@@ -1587,6 +1587,7 @@ KtNameReferenceExpression(432,437): 'inner'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = inner
         receiverType = null
@@ -1594,7 +1595,6 @@ KtNameReferenceExpression(432,437): 'inner'
         symbol = val inner: kotlin.String
         contextParameters = []
         callableId = second/inner
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtUserType(439,465): 'Base<@Anno(8 + inner) Int>'
@@ -1738,6 +1738,7 @@ KtNameReferenceExpression(454,459): 'inner'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = inner
         receiverType = null
@@ -1745,7 +1746,6 @@ KtNameReferenceExpression(454,459): 'inner'
         symbol = val inner: kotlin.String
         contextParameters = []
         callableId = second/inner
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtUserType(461,464): 'Int'
@@ -1981,6 +1981,7 @@ KtNameReferenceExpression(569,574): 'inner'
         type = second.MyClass.Companion
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = inner
         receiverType = null
@@ -1988,7 +1989,6 @@ KtNameReferenceExpression(569,574): 'inner'
         symbol = val inner: kotlin.Int
         contextParameters = []
         callableId = second/MyClass.Companion.inner
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtUserType(576,608): 'Second<@Anno(10 + inner) String>'
@@ -2200,6 +2200,7 @@ KtNameReferenceExpression(594,599): 'inner'
         type = second.MyClass.Companion
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = inner
         receiverType = null
@@ -2207,7 +2208,6 @@ KtNameReferenceExpression(594,599): 'inner'
         symbol = val inner: kotlin.Int
         contextParameters = []
         callableId = second/MyClass.Companion.inner
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtUserType(601,607): 'String'

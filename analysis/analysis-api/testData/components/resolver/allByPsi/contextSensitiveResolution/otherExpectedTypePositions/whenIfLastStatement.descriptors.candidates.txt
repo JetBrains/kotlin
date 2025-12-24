@@ -278,6 +278,7 @@ KtNameReferenceExpression(404,405): 'b'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = b
         receiverType = null
@@ -285,7 +286,6 @@ KtNameReferenceExpression(404,405): 'b'
         symbol = b: kotlin.Function0<T>
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -375,6 +375,7 @@ KtNameReferenceExpression(467,468): 'i'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = i
         receiverType = null
@@ -382,7 +383,6 @@ KtNameReferenceExpression(467,468): 'i'
         symbol = i: kotlin.Int
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -491,6 +491,7 @@ KtNameReferenceExpression(560,561): 'i'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = i
         receiverType = null
@@ -498,7 +499,6 @@ KtNameReferenceExpression(560,561): 'i'
         symbol = i: kotlin.Int
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -564,6 +564,7 @@ KtNameReferenceExpression(641,657): 'ClassMemberAlias'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = ClassMemberAlias
         receiverType = null
@@ -571,7 +572,6 @@ KtNameReferenceExpression(641,657): 'ClassMemberAlias'
         symbol = val ClassMemberAlias: MyClass.NestedInheritor
         contextParameters = []
         callableId = /ClassMemberAlias
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -637,6 +637,7 @@ KtNameReferenceExpression(693,694): 'i'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = i
         receiverType = null
@@ -644,7 +645,6 @@ KtNameReferenceExpression(693,694): 'i'
         symbol = i: kotlin.Int
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -710,6 +710,7 @@ KtNameReferenceExpression(772,788): 'ClassMemberAlias'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = ClassMemberAlias
         receiverType = null
@@ -717,7 +718,6 @@ KtNameReferenceExpression(772,788): 'ClassMemberAlias'
         symbol = val ClassMemberAlias: MyClass.NestedInheritor
         contextParameters = []
         callableId = /ClassMemberAlias
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -902,6 +902,7 @@ KtNameReferenceExpression(824,825): 'i'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = i
         receiverType = null
@@ -909,7 +910,6 @@ KtNameReferenceExpression(824,825): 'i'
         symbol = i: kotlin.Int
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1018,6 +1018,7 @@ KtNameReferenceExpression(941,942): 'i'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = i
         receiverType = null
@@ -1025,7 +1026,6 @@ KtNameReferenceExpression(941,942): 'i'
         symbol = i: kotlin.Int
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1134,6 +1134,7 @@ KtNameReferenceExpression(1050,1051): 'i'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = i
         receiverType = null
@@ -1141,7 +1142,6 @@ KtNameReferenceExpression(1050,1051): 'i'
         symbol = i: kotlin.Int
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1262,6 +1262,7 @@ KtNameReferenceExpression(1153,1154): 'i'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = i
         receiverType = null
@@ -1269,7 +1270,6 @@ KtNameReferenceExpression(1153,1154): 'i'
         symbol = i: kotlin.Int
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1335,6 +1335,7 @@ KtNameReferenceExpression(1256,1272): 'ClassMemberAlias'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = ClassMemberAlias
         receiverType = null
@@ -1342,7 +1343,6 @@ KtNameReferenceExpression(1256,1272): 'ClassMemberAlias'
         symbol = val ClassMemberAlias: MyClass.NestedInheritor
         contextParameters = []
         callableId = /ClassMemberAlias
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1613,6 +1613,7 @@ KtNameReferenceExpression(1311,1312): 'i'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = i
         receiverType = null
@@ -1620,7 +1621,6 @@ KtNameReferenceExpression(1311,1312): 'i'
         symbol = i: kotlin.Int
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1729,6 +1729,7 @@ KtNameReferenceExpression(1428,1429): 'i'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = i
         receiverType = null
@@ -1736,7 +1737,6 @@ KtNameReferenceExpression(1428,1429): 'i'
         symbol = i: kotlin.Int
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1802,6 +1802,7 @@ KtNameReferenceExpression(1533,1549): 'ClassMemberAlias'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = ClassMemberAlias
         receiverType = null
@@ -1809,6 +1810,5 @@ KtNameReferenceExpression(1533,1549): 'ClassMemberAlias'
         symbol = val ClassMemberAlias: MyClass.NestedInheritor
         contextParameters = []
         callableId = /ClassMemberAlias
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true

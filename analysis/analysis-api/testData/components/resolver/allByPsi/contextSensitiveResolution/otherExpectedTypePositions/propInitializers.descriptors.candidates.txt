@@ -131,6 +131,7 @@ KtNameReferenceExpression(402,413): 'OptionAlias'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = OptionAlias
         receiverType = null
@@ -138,7 +139,6 @@ KtNameReferenceExpression(402,413): 'OptionAlias'
         symbol = val OptionAlias: MyEnum
         contextParameters = []
         callableId = /OptionAlias
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -203,6 +203,8 @@ KtBinaryExpression(546,557): 'm = Option1'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Write:
+        value = Option1
       signature = KaVariableSignature:
         name = m
         receiverType = null
@@ -210,8 +212,6 @@ KtBinaryExpression(546,557): 'm = Option1'
         symbol = var m: MyEnum
         contextParameters = []
         callableId = null
-      simpleAccess = Write:
-        value = Option1
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -222,6 +222,8 @@ KtNameReferenceExpression(546,547): 'm'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Write:
+        value = Option1
       signature = KaVariableSignature:
         name = m
         receiverType = null
@@ -229,8 +231,6 @@ KtNameReferenceExpression(546,547): 'm'
         symbol = var m: MyEnum
         contextParameters = []
         callableId = null
-      simpleAccess = Write:
-        value = Option1
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -241,6 +241,8 @@ KtOperationReferenceExpression(548,549): '='
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Write:
+        value = Option1
       signature = KaVariableSignature:
         name = m
         receiverType = null
@@ -248,8 +250,6 @@ KtOperationReferenceExpression(548,549): '='
         symbol = var m: MyEnum
         contextParameters = []
         callableId = null
-      simpleAccess = Write:
-        value = Option1
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -263,6 +263,8 @@ KtBinaryExpression(562,577): 'm = OptionAlias'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Write:
+        value = OptionAlias
       signature = KaVariableSignature:
         name = m
         receiverType = null
@@ -270,8 +272,6 @@ KtBinaryExpression(562,577): 'm = OptionAlias'
         symbol = var m: MyEnum
         contextParameters = []
         callableId = null
-      simpleAccess = Write:
-        value = OptionAlias
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -282,6 +282,8 @@ KtNameReferenceExpression(562,563): 'm'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Write:
+        value = OptionAlias
       signature = KaVariableSignature:
         name = m
         receiverType = null
@@ -289,8 +291,6 @@ KtNameReferenceExpression(562,563): 'm'
         symbol = var m: MyEnum
         contextParameters = []
         callableId = null
-      simpleAccess = Write:
-        value = OptionAlias
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -301,6 +301,8 @@ KtOperationReferenceExpression(564,565): '='
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Write:
+        value = OptionAlias
       signature = KaVariableSignature:
         name = m
         receiverType = null
@@ -308,8 +310,6 @@ KtOperationReferenceExpression(564,565): '='
         symbol = var m: MyEnum
         contextParameters = []
         callableId = null
-      simpleAccess = Write:
-        value = OptionAlias
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -320,6 +320,7 @@ KtNameReferenceExpression(566,577): 'OptionAlias'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = OptionAlias
         receiverType = null
@@ -327,7 +328,6 @@ KtNameReferenceExpression(566,577): 'OptionAlias'
         symbol = val OptionAlias: MyEnum
         contextParameters = []
         callableId = /OptionAlias
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -338,6 +338,8 @@ KtBinaryExpression(582,596): 'm = stringProp'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Write:
+        value = stringProp
       signature = KaVariableSignature:
         name = m
         receiverType = null
@@ -345,8 +347,6 @@ KtBinaryExpression(582,596): 'm = stringProp'
         symbol = var m: MyEnum
         contextParameters = []
         callableId = null
-      simpleAccess = Write:
-        value = stringProp
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -357,6 +357,8 @@ KtNameReferenceExpression(582,583): 'm'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Write:
+        value = stringProp
       signature = KaVariableSignature:
         name = m
         receiverType = null
@@ -364,8 +366,6 @@ KtNameReferenceExpression(582,583): 'm'
         symbol = var m: MyEnum
         contextParameters = []
         callableId = null
-      simpleAccess = Write:
-        value = stringProp
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -376,6 +376,8 @@ KtOperationReferenceExpression(584,585): '='
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Write:
+        value = stringProp
       signature = KaVariableSignature:
         name = m
         receiverType = null
@@ -383,8 +385,6 @@ KtOperationReferenceExpression(584,585): '='
         symbol = var m: MyEnum
         contextParameters = []
         callableId = null
-      simpleAccess = Write:
-        value = stringProp
       typeArgumentsMapping = {}
     isInBestCandidates = true
 

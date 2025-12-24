@@ -9,6 +9,7 @@ KtNameReferenceExpression(63,64): 'i'
           type = A
         extensionReceiver = null
         isContextSensitive = false
+        kind = Read
         signature = KaVariableSignature:
           name = i
           receiverType = null
@@ -16,7 +17,6 @@ KtNameReferenceExpression(63,64): 'i'
           symbol = val i: kotlin.Int
           contextParameters = []
           callableId = /A.i
-        simpleAccess = Read
         typeArgumentsMapping = {}
     ]
     diagnostic = ERROR<INVISIBLE_MEMBER: Cannot access 'i': it is private in 'A'>

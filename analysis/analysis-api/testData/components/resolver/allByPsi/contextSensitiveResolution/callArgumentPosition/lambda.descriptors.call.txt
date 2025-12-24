@@ -682,6 +682,7 @@ KtNameReferenceExpression(830,838): 'lMyClass'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = lMyClass
         receiverType = null
@@ -689,7 +690,6 @@ KtNameReferenceExpression(830,838): 'lMyClass'
         symbol = lMyClass: kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtValueArgumentList(838,855): '(InheritorObject)'
@@ -745,6 +745,7 @@ KtNameReferenceExpression(860,868): 'lMyClass'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = lMyClass
         receiverType = null
@@ -752,7 +753,6 @@ KtNameReferenceExpression(860,868): 'lMyClass'
         symbol = lMyClass: kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtValueArgumentList(868,881): '(propMyClass)'
@@ -808,6 +808,7 @@ KtNameReferenceExpression(886,894): 'lMyClass'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = lMyClass
         receiverType = null
@@ -815,7 +816,6 @@ KtNameReferenceExpression(886,894): 'lMyClass'
         symbol = lMyClass: kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtValueArgumentList(894,914): '(propInheritorClass)'
@@ -871,6 +871,7 @@ KtNameReferenceExpression(919,927): 'lMyClass'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = lMyClass
         receiverType = null
@@ -878,7 +879,6 @@ KtNameReferenceExpression(919,927): 'lMyClass'
         symbol = lMyClass: kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtValueArgumentList(927,948): '(propInheritorObject)'
@@ -934,6 +934,7 @@ KtNameReferenceExpression(954,962): 'lMyClass'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = lMyClass
         receiverType = null
@@ -941,7 +942,6 @@ KtNameReferenceExpression(954,962): 'lMyClass'
         symbol = lMyClass: kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtValueArgumentList(962,976): '(NestedObject)'
@@ -997,6 +997,7 @@ KtNameReferenceExpression(981,989): 'lMyClass'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = lMyClass
         receiverType = null
@@ -1004,7 +1005,6 @@ KtNameReferenceExpression(981,989): 'lMyClass'
         symbol = lMyClass: kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtValueArgumentList(989,995): '(prop)'
@@ -1060,6 +1060,7 @@ KtNameReferenceExpression(1000,1008): 'lMyClass'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = lMyClass
         receiverType = null
@@ -1067,7 +1068,6 @@ KtNameReferenceExpression(1000,1008): 'lMyClass'
         symbol = lMyClass: kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtValueArgumentList(1008,1019): '(superProp)'
@@ -1123,6 +1123,7 @@ KtNameReferenceExpression(1024,1032): 'lMyClass'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = lMyClass
         receiverType = null
@@ -1130,7 +1131,6 @@ KtNameReferenceExpression(1024,1032): 'lMyClass'
         symbol = lMyClass: kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtValueArgumentList(1032,1043): '(constProp)'
@@ -1186,6 +1186,7 @@ KtNameReferenceExpression(1048,1056): 'lMyClass'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = lMyClass
         receiverType = null
@@ -1193,7 +1194,6 @@ KtNameReferenceExpression(1048,1056): 'lMyClass'
         symbol = lMyClass: kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtValueArgumentList(1056,1066): '(lazyProp)'
@@ -1249,6 +1249,7 @@ KtNameReferenceExpression(1071,1079): 'lMyClass'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = lMyClass
         receiverType = null
@@ -1256,7 +1257,6 @@ KtNameReferenceExpression(1071,1079): 'lMyClass'
         symbol = lMyClass: kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtValueArgumentList(1079,1091): '(lambdaProp)'
@@ -1312,6 +1312,7 @@ KtNameReferenceExpression(1097,1105): 'lMyClass'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = lMyClass
         receiverType = null
@@ -1319,7 +1320,6 @@ KtNameReferenceExpression(1097,1105): 'lMyClass'
         symbol = lMyClass: kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtValueArgumentList(1105,1123): '(InheritorClass())'
@@ -1383,6 +1383,7 @@ KtNameReferenceExpression(1128,1136): 'lMyClass'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = lMyClass
         receiverType = null
@@ -1390,7 +1391,6 @@ KtNameReferenceExpression(1128,1136): 'lMyClass'
         symbol = lMyClass: kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtValueArgumentList(1136,1144): '(func())'
@@ -1454,6 +1454,7 @@ KtNameReferenceExpression(1149,1157): 'lMyClass'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = lMyClass
         receiverType = null
@@ -1461,7 +1462,6 @@ KtNameReferenceExpression(1149,1157): 'lMyClass'
         symbol = lMyClass: kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtValueArgumentList(1157,1170): '(superFunc())'

@@ -698,6 +698,7 @@ KtNameReferenceExpression(315,320): 'value'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = value
         receiverType = null
@@ -705,7 +706,6 @@ KtNameReferenceExpression(315,320): 'value'
         symbol = var value: kotlin.Int
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtWhenEntry(334,340): '1 -> 1'
@@ -837,6 +837,7 @@ KtPrefixExpression(382,389): '++value'
         dispatchReceiver = null
         extensionReceiver = null
         isContextSensitive = false
+        kind = Read
         signature = KaVariableSignature:
           name = value
           receiverType = null
@@ -844,7 +845,6 @@ KtPrefixExpression(382,389): '++value'
           symbol = var value: kotlin.Int
           contextParameters = []
           callableId = null
-        simpleAccess = Read
         typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(382,384): '++'
@@ -875,6 +875,7 @@ KtOperationReferenceExpression(382,384): '++'
         dispatchReceiver = null
         extensionReceiver = null
         isContextSensitive = false
+        kind = Read
         signature = KaVariableSignature:
           name = value
           receiverType = null
@@ -882,7 +883,6 @@ KtOperationReferenceExpression(382,384): '++'
           symbol = var value: kotlin.Int
           contextParameters = []
           callableId = null
-        simpleAccess = Read
         typeArgumentsMapping = {}
 
 KtNameReferenceExpression(384,389): 'value'
@@ -892,6 +892,7 @@ KtNameReferenceExpression(384,389): 'value'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = value
         receiverType = null
@@ -899,7 +900,6 @@ KtNameReferenceExpression(384,389): 'value'
         symbol = var value: kotlin.Int
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtCallExpression(400,426): 'fooVararg((5), (5 as Int))'

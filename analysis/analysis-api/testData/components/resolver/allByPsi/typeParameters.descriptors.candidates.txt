@@ -419,6 +419,7 @@ KtNameReferenceExpression(422,424): 'c1'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = c1
         receiverType = null
@@ -426,7 +427,6 @@ KtNameReferenceExpression(422,424): 'c1'
         symbol = c1: one.two.Child<one.two.Base.NestedClass>
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 

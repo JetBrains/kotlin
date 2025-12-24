@@ -416,6 +416,7 @@ KtNameReferenceExpression(513,524): 'myClassProp'
         type = MyClass.Companion
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = myClassProp
         receiverType = null
@@ -423,7 +424,6 @@ KtNameReferenceExpression(513,524): 'myClassProp'
         symbol = val myClassProp: MyClass
         contextParameters = []
         callableId = /MyClass.Companion.myClassProp
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(524,526): '!!'
@@ -539,6 +539,7 @@ KtNameReferenceExpression(549,559): 'stringProp'
         type = MyClass.Companion
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = stringProp
         receiverType = null
@@ -546,7 +547,6 @@ KtNameReferenceExpression(549,559): 'stringProp'
         symbol = val stringProp: kotlin.String
         contextParameters = []
         callableId = /MyClass.Companion.stringProp
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(559,561): '!!'
@@ -891,6 +891,7 @@ KtDotQualifiedExpression(675,694): 'MyClass.myClassProp'
         type = MyClass.Companion
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = myClassProp
         receiverType = null
@@ -898,7 +899,6 @@ KtDotQualifiedExpression(675,694): 'MyClass.myClassProp'
         symbol = val myClassProp: MyClass
         contextParameters = []
         callableId = /MyClass.Companion.myClassProp
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(675,682): 'MyClass'
@@ -914,6 +914,7 @@ KtNameReferenceExpression(683,694): 'myClassProp'
         type = MyClass.Companion
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = myClassProp
         receiverType = null
@@ -921,7 +922,6 @@ KtNameReferenceExpression(683,694): 'myClassProp'
         symbol = val myClassProp: MyClass
         contextParameters = []
         callableId = /MyClass.Companion.myClassProp
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(695,697): 'to'
@@ -1018,6 +1018,7 @@ KtDotQualifiedExpression(702,720): 'MyClass.stringProp'
         type = MyClass.Companion
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = stringProp
         receiverType = null
@@ -1025,7 +1026,6 @@ KtDotQualifiedExpression(702,720): 'MyClass.stringProp'
         symbol = val stringProp: kotlin.String
         contextParameters = []
         callableId = /MyClass.Companion.stringProp
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(702,709): 'MyClass'
@@ -1041,6 +1041,7 @@ KtNameReferenceExpression(710,720): 'stringProp'
         type = MyClass.Companion
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = stringProp
         receiverType = null
@@ -1048,7 +1049,6 @@ KtNameReferenceExpression(710,720): 'stringProp'
         symbol = val stringProp: kotlin.String
         contextParameters = []
         callableId = /MyClass.Companion.stringProp
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(721,723): 'to'
@@ -1380,6 +1380,7 @@ KtNameReferenceExpression(803,806): 'map'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = map
         receiverType = null
@@ -1387,7 +1388,6 @@ KtNameReferenceExpression(803,806): 'map'
         symbol = val map: kotlin.collections.Map<MyClass, kotlin.Int>
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtContainerNode(806,819): '[myClassProp]'
@@ -1403,6 +1403,7 @@ KtNameReferenceExpression(807,818): 'myClassProp'
         type = MyClass.Companion
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = myClassProp
         receiverType = null
@@ -1410,7 +1411,6 @@ KtNameReferenceExpression(807,818): 'myClassProp'
         symbol = val myClassProp: MyClass
         contextParameters = []
         callableId = /MyClass.Companion.myClassProp
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtReturnExpression(824,846): 'return map[stringProp]'
@@ -1462,6 +1462,7 @@ KtNameReferenceExpression(831,834): 'map'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = map
         receiverType = null
@@ -1469,7 +1470,6 @@ KtNameReferenceExpression(831,834): 'map'
         symbol = val map: kotlin.collections.Map<MyClass, kotlin.Int>
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtContainerNode(834,846): '[stringProp]'
@@ -1485,6 +1485,7 @@ KtNameReferenceExpression(835,845): 'stringProp'
         type = MyClass.Companion
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = stringProp
         receiverType = null
@@ -1492,7 +1493,6 @@ KtNameReferenceExpression(835,845): 'stringProp'
         symbol = val stringProp: kotlin.String
         contextParameters = []
         callableId = /MyClass.Companion.stringProp
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtReturnExpression(851,878): 'return map[NestedInheritor]'
@@ -1540,6 +1540,7 @@ KtNameReferenceExpression(858,861): 'map'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = map
         receiverType = null
@@ -1547,7 +1548,6 @@ KtNameReferenceExpression(858,861): 'map'
         symbol = val map: kotlin.collections.Map<MyClass, kotlin.Int>
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtContainerNode(861,878): '[NestedInheritor]'
@@ -1601,6 +1601,7 @@ KtNameReferenceExpression(890,893): 'map'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = map
         receiverType = null
@@ -1608,7 +1609,6 @@ KtNameReferenceExpression(890,893): 'map'
         symbol = val map: kotlin.collections.Map<MyClass, kotlin.Int>
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtContainerNode(893,915): '[getNestedInheritor()]'
@@ -1833,6 +1833,7 @@ KtNameReferenceExpression(1226,1237): 'myClassProp'
         type = MyClass.Companion
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = myClassProp
         receiverType = null
@@ -1840,7 +1841,6 @@ KtNameReferenceExpression(1226,1237): 'myClassProp'
         symbol = val myClassProp: MyClass
         contextParameters = []
         callableId = /MyClass.Companion.myClassProp
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtBinaryExpression(1242,1284): 'a !in MyClass.myClassProp..NestedInheritor'
@@ -1886,6 +1886,7 @@ KtNameReferenceExpression(1242,1243): 'a'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = a
         receiverType = null
@@ -1893,7 +1894,6 @@ KtNameReferenceExpression(1242,1243): 'a'
         symbol = val a: MyClass
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(1244,1247): '!in'
@@ -1978,6 +1978,7 @@ KtDotQualifiedExpression(1248,1267): 'MyClass.myClassProp'
         type = MyClass.Companion
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = myClassProp
         receiverType = null
@@ -1985,7 +1986,6 @@ KtDotQualifiedExpression(1248,1267): 'MyClass.myClassProp'
         symbol = val myClassProp: MyClass
         contextParameters = []
         callableId = /MyClass.Companion.myClassProp
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(1248,1255): 'MyClass'
@@ -2001,6 +2001,7 @@ KtNameReferenceExpression(1256,1267): 'myClassProp'
         type = MyClass.Companion
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = myClassProp
         receiverType = null
@@ -2008,7 +2009,6 @@ KtNameReferenceExpression(1256,1267): 'myClassProp'
         symbol = val myClassProp: MyClass
         contextParameters = []
         callableId = /MyClass.Companion.myClassProp
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(1267,1269): '..'

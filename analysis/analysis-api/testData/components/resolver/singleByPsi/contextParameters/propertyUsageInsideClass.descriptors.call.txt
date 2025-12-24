@@ -7,6 +7,7 @@ KtNameReferenceExpression(195,209): 'propertyMember'
         type = Base
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = propertyMember
         receiverType = null
@@ -14,5 +15,4 @@ KtNameReferenceExpression(195,209): 'propertyMember'
         symbol = val propertyMember: kotlin.String
         contextParameters = []
         callableId = /Base.propertyMember
-      simpleAccess = Read
       typeArgumentsMapping = {}

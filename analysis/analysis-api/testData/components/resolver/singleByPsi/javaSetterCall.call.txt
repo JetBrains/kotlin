@@ -8,6 +8,8 @@ KtNameReferenceExpression(74,77): 'foo'
         type = DeclSite
       extensionReceiver = null
       isContextSensitive = false
+      kind = Write:
+        value = 0
       signature = KaVariableSignature:
         name = foo
         receiverType = null
@@ -15,6 +17,4 @@ KtNameReferenceExpression(74,77): 'foo'
         symbol = var foo: kotlin.Int
         contextParameters = []
         callableId = /DeclSite.foo
-      simpleAccess = Write:
-        value = 0
       typeArgumentsMapping = {}

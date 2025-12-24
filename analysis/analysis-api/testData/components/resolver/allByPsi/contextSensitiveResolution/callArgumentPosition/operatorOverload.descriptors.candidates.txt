@@ -225,6 +225,7 @@ KtNameReferenceExpression(339,340): 'i'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = i
         receiverType = null
@@ -232,7 +233,6 @@ KtNameReferenceExpression(339,340): 'i'
         symbol = i: OperatorHolder
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -320,6 +320,7 @@ KtNameReferenceExpression(358,359): 'i'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = i
         receiverType = null
@@ -327,7 +328,6 @@ KtNameReferenceExpression(358,359): 'i'
         symbol = i: OperatorHolder
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -415,6 +415,7 @@ KtNameReferenceExpression(382,383): 'i'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = i
         receiverType = null
@@ -422,7 +423,6 @@ KtNameReferenceExpression(382,383): 'i'
         symbol = i: OperatorHolder
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 

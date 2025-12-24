@@ -255,6 +255,7 @@ KtNameReferenceExpression(196,199): 'foo'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = foo
         receiverType = null
@@ -262,7 +263,6 @@ KtNameReferenceExpression(196,199): 'foo'
         symbol = val foo: r.MyClass
         contextParameters = []
         callableId = r/foo
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -362,6 +362,7 @@ KtNameReferenceExpression(207,210): 'foo'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = foo
         receiverType = null
@@ -369,7 +370,6 @@ KtNameReferenceExpression(207,210): 'foo'
         symbol = val foo: r.MyClass
         contextParameters = []
         callableId = r/foo
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -452,6 +452,7 @@ KtNameReferenceExpression(231,234): 'foo'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = foo
         receiverType = null
@@ -459,7 +460,6 @@ KtNameReferenceExpression(231,234): 'foo'
         symbol = val foo: r.MyClass
         contextParameters = []
         callableId = r/foo
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -536,6 +536,7 @@ KtNameReferenceExpression(248,256): 'property'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = property
         receiverType = null
@@ -543,7 +544,6 @@ KtNameReferenceExpression(248,256): 'property'
         symbol = val property: r.MyClass
         contextParameters = []
         callableId = r/property
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 

@@ -80,6 +80,7 @@ KtNameReferenceExpression(139,140): 's'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = s
         receiverType = null
@@ -87,7 +88,6 @@ KtNameReferenceExpression(139,140): 's'
         symbol = s: bar.Sealed
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtWhenEntry(148,154): 'A -> 1'
@@ -197,6 +197,7 @@ KtNameReferenceExpression(237,247): 'CompanionB'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = CompanionB
         receiverType = null
@@ -204,7 +205,6 @@ KtNameReferenceExpression(237,247): 'CompanionB'
         symbol = val CompanionB: kotlin.Int
         contextParameters = []
         callableId = foo/CompanionB
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtConstantExpression(251,252): '7'
@@ -289,6 +289,7 @@ KtNameReferenceExpression(343,344): 's'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = s
         receiverType = null
@@ -296,7 +297,6 @@ KtNameReferenceExpression(343,344): 's'
         symbol = s: bar.Sealed
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtWhenEntry(352,369): 'bar.Sealed.A -> 1'
@@ -399,6 +399,7 @@ KtDotQualifiedExpression(429,450): 'bar.Sealed.CompanionA'
         type = bar.Sealed.Companion
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = CompanionA
         receiverType = null
@@ -406,7 +407,6 @@ KtDotQualifiedExpression(429,450): 'bar.Sealed.CompanionA'
         symbol = val CompanionA: bar.Sealed
         contextParameters = []
         callableId = bar/Sealed.Companion.CompanionA
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtDotQualifiedExpression(429,439): 'bar.Sealed'
@@ -428,6 +428,7 @@ KtNameReferenceExpression(440,450): 'CompanionA'
         type = bar.Sealed.Companion
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = CompanionA
         receiverType = null
@@ -435,7 +436,6 @@ KtNameReferenceExpression(440,450): 'CompanionA'
         symbol = val CompanionA: bar.Sealed
         contextParameters = []
         callableId = bar/Sealed.Companion.CompanionA
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtConstantExpression(454,455): '6'
@@ -457,6 +457,7 @@ KtDotQualifiedExpression(460,481): 'bar.Sealed.CompanionB'
         type = bar.Sealed.Companion
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = CompanionB
         receiverType = null
@@ -464,7 +465,6 @@ KtDotQualifiedExpression(460,481): 'bar.Sealed.CompanionB'
         symbol = val CompanionB: bar.Sealed
         contextParameters = []
         callableId = bar/Sealed.Companion.CompanionB
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtDotQualifiedExpression(460,470): 'bar.Sealed'
@@ -486,6 +486,7 @@ KtNameReferenceExpression(471,481): 'CompanionB'
         type = bar.Sealed.Companion
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = CompanionB
         receiverType = null
@@ -493,7 +494,6 @@ KtNameReferenceExpression(471,481): 'CompanionB'
         symbol = val CompanionB: bar.Sealed
         contextParameters = []
         callableId = bar/Sealed.Companion.CompanionB
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtConstantExpression(485,486): '7'
@@ -602,6 +602,7 @@ KtNameReferenceExpression(601,602): 's'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = s
         receiverType = null
@@ -609,7 +610,6 @@ KtNameReferenceExpression(601,602): 's'
         symbol = s: bar.Sealed
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtWhenEntry(610,620): 'foo.A -> 1'
@@ -709,6 +709,7 @@ KtDotQualifiedExpression(693,707): 'foo.CompanionB'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = CompanionB
         receiverType = null
@@ -716,7 +717,6 @@ KtDotQualifiedExpression(693,707): 'foo.CompanionB'
         symbol = val CompanionB: kotlin.Int
         contextParameters = []
         callableId = foo/CompanionB
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(693,696): 'foo'
@@ -729,6 +729,7 @@ KtNameReferenceExpression(697,707): 'CompanionB'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = CompanionB
         receiverType = null
@@ -736,7 +737,6 @@ KtNameReferenceExpression(697,707): 'CompanionB'
         symbol = val CompanionB: kotlin.Int
         contextParameters = []
         callableId = foo/CompanionB
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtConstantExpression(711,712): '7'
@@ -836,6 +836,7 @@ KtNameReferenceExpression(803,804): 's'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = s
         receiverType = null
@@ -843,7 +844,6 @@ KtNameReferenceExpression(803,804): 's'
         symbol = s: bar.Sealed
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(805,807): 'as'
@@ -904,6 +904,7 @@ KtNameReferenceExpression(863,864): 's'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = s
         receiverType = null
@@ -911,7 +912,6 @@ KtNameReferenceExpression(863,864): 's'
         symbol = s: bar.Sealed
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(865,867): 'as'
@@ -972,6 +972,7 @@ KtNameReferenceExpression(924,925): 's'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = s
         receiverType = null
@@ -979,7 +980,6 @@ KtNameReferenceExpression(924,925): 's'
         symbol = s: bar.Sealed
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(926,928): 'as'
@@ -1046,6 +1046,7 @@ KtNameReferenceExpression(992,993): 's'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = s
         receiverType = null
@@ -1053,7 +1054,6 @@ KtNameReferenceExpression(992,993): 's'
         symbol = s: bar.Sealed
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(994,996): 'as'
@@ -1120,6 +1120,7 @@ KtNameReferenceExpression(1062,1063): 's'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = s
         receiverType = null
@@ -1127,7 +1128,6 @@ KtNameReferenceExpression(1062,1063): 's'
         symbol = s: bar.Sealed
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(1064,1066): 'as'
@@ -1194,6 +1194,7 @@ KtNameReferenceExpression(1129,1130): 's'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = s
         receiverType = null
@@ -1201,7 +1202,6 @@ KtNameReferenceExpression(1129,1130): 's'
         symbol = s: bar.Sealed
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(1131,1133): 'as'
@@ -1268,6 +1268,7 @@ KtNameReferenceExpression(1190,1191): 's'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = s
         receiverType = null
@@ -1275,7 +1276,6 @@ KtNameReferenceExpression(1190,1191): 's'
         symbol = s: bar.Sealed
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(1192,1194): 'as'
@@ -1338,6 +1338,7 @@ KtNameReferenceExpression(1247,1248): 's'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = s
         receiverType = null
@@ -1345,7 +1346,6 @@ KtNameReferenceExpression(1247,1248): 's'
         symbol = s: bar.Sealed
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(1249,1251): 'as'
@@ -1438,6 +1438,7 @@ KtNameReferenceExpression(1311,1312): 's'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = s
         receiverType = null
@@ -1445,7 +1446,6 @@ KtNameReferenceExpression(1311,1312): 's'
         symbol = s: bar.Sealed
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(1313,1315): '=='
@@ -1557,6 +1557,7 @@ KtNameReferenceExpression(1360,1361): 's'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = s
         receiverType = null
@@ -1564,7 +1565,6 @@ KtNameReferenceExpression(1360,1361): 's'
         symbol = s: bar.Sealed
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(1362,1364): '=='
@@ -1682,6 +1682,7 @@ KtNameReferenceExpression(1418,1419): 's'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = s
         receiverType = null
@@ -1689,7 +1690,6 @@ KtNameReferenceExpression(1418,1419): 's'
         symbol = s: bar.Sealed
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(1420,1422): '=='
@@ -1807,6 +1807,7 @@ KtNameReferenceExpression(1468,1469): 's'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = s
         receiverType = null
@@ -1814,7 +1815,6 @@ KtNameReferenceExpression(1468,1469): 's'
         symbol = s: bar.Sealed
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(1470,1472): '=='
@@ -1932,6 +1932,7 @@ KtNameReferenceExpression(1524,1525): 's'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = s
         receiverType = null
@@ -1939,7 +1940,6 @@ KtNameReferenceExpression(1524,1525): 's'
         symbol = s: bar.Sealed
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(1526,1528): '=='
@@ -2051,6 +2051,7 @@ KtNameReferenceExpression(1582,1583): 's'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = s
         receiverType = null
@@ -2058,7 +2059,6 @@ KtNameReferenceExpression(1582,1583): 's'
         symbol = s: bar.Sealed
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(1584,1586): '=='
@@ -2107,6 +2107,7 @@ KtDotQualifiedExpression(1587,1604): 'Sealed.CompanionA'
         type = bar.Sealed.Companion
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = CompanionA
         receiverType = null
@@ -2114,7 +2115,6 @@ KtDotQualifiedExpression(1587,1604): 'Sealed.CompanionA'
         symbol = val CompanionA: bar.Sealed
         contextParameters = []
         callableId = bar/Sealed.Companion.CompanionA
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(1587,1593): 'Sealed'
@@ -2130,6 +2130,7 @@ KtNameReferenceExpression(1594,1604): 'CompanionA'
         type = bar.Sealed.Companion
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = CompanionA
         receiverType = null
@@ -2137,7 +2138,6 @@ KtNameReferenceExpression(1594,1604): 'CompanionA'
         symbol = val CompanionA: bar.Sealed
         contextParameters = []
         callableId = bar/Sealed.Companion.CompanionA
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNamedFunction(1605,1668): 'fun equality3topLevel(s: Sealed): Boolean = s == foo.CompanionA'
@@ -2210,6 +2210,7 @@ KtNameReferenceExpression(1649,1650): 's'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = s
         receiverType = null
@@ -2217,7 +2218,6 @@ KtNameReferenceExpression(1649,1650): 's'
         symbol = s: bar.Sealed
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(1651,1653): '=='
@@ -2335,6 +2335,7 @@ KtNameReferenceExpression(1708,1709): 's'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = s
         receiverType = null
@@ -2342,7 +2343,6 @@ KtNameReferenceExpression(1708,1709): 's'
         symbol = s: bar.Sealed
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(1710,1712): '=='
@@ -2454,6 +2454,7 @@ KtNameReferenceExpression(1757,1758): 's'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = s
         receiverType = null
@@ -2461,7 +2462,6 @@ KtNameReferenceExpression(1757,1758): 's'
         symbol = s: bar.Sealed
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(1759,1761): '=='
@@ -2579,6 +2579,7 @@ KtNameReferenceExpression(1815,1816): 's'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = s
         receiverType = null
@@ -2586,7 +2587,6 @@ KtNameReferenceExpression(1815,1816): 's'
         symbol = s: bar.Sealed
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(1817,1819): '=='

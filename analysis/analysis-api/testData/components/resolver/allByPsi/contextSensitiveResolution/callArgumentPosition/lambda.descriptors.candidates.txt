@@ -1024,6 +1024,7 @@ KtNameReferenceExpression(830,838): 'lMyClass'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = lMyClass
         receiverType = null
@@ -1031,7 +1032,6 @@ KtNameReferenceExpression(830,838): 'lMyClass'
         symbol = lMyClass: kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1128,6 +1128,7 @@ KtNameReferenceExpression(860,868): 'lMyClass'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = lMyClass
         receiverType = null
@@ -1135,7 +1136,6 @@ KtNameReferenceExpression(860,868): 'lMyClass'
         symbol = lMyClass: kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1232,6 +1232,7 @@ KtNameReferenceExpression(886,894): 'lMyClass'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = lMyClass
         receiverType = null
@@ -1239,7 +1240,6 @@ KtNameReferenceExpression(886,894): 'lMyClass'
         symbol = lMyClass: kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1336,6 +1336,7 @@ KtNameReferenceExpression(919,927): 'lMyClass'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = lMyClass
         receiverType = null
@@ -1343,7 +1344,6 @@ KtNameReferenceExpression(919,927): 'lMyClass'
         symbol = lMyClass: kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1440,6 +1440,7 @@ KtNameReferenceExpression(954,962): 'lMyClass'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = lMyClass
         receiverType = null
@@ -1447,7 +1448,6 @@ KtNameReferenceExpression(954,962): 'lMyClass'
         symbol = lMyClass: kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1544,6 +1544,7 @@ KtNameReferenceExpression(981,989): 'lMyClass'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = lMyClass
         receiverType = null
@@ -1551,7 +1552,6 @@ KtNameReferenceExpression(981,989): 'lMyClass'
         symbol = lMyClass: kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1648,6 +1648,7 @@ KtNameReferenceExpression(1000,1008): 'lMyClass'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = lMyClass
         receiverType = null
@@ -1655,7 +1656,6 @@ KtNameReferenceExpression(1000,1008): 'lMyClass'
         symbol = lMyClass: kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1752,6 +1752,7 @@ KtNameReferenceExpression(1024,1032): 'lMyClass'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = lMyClass
         receiverType = null
@@ -1759,7 +1760,6 @@ KtNameReferenceExpression(1024,1032): 'lMyClass'
         symbol = lMyClass: kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1856,6 +1856,7 @@ KtNameReferenceExpression(1048,1056): 'lMyClass'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = lMyClass
         receiverType = null
@@ -1863,7 +1864,6 @@ KtNameReferenceExpression(1048,1056): 'lMyClass'
         symbol = lMyClass: kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -1960,6 +1960,7 @@ KtNameReferenceExpression(1071,1079): 'lMyClass'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = lMyClass
         receiverType = null
@@ -1967,7 +1968,6 @@ KtNameReferenceExpression(1071,1079): 'lMyClass'
         symbol = lMyClass: kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -2064,6 +2064,7 @@ KtNameReferenceExpression(1097,1105): 'lMyClass'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = lMyClass
         receiverType = null
@@ -2071,7 +2072,6 @@ KtNameReferenceExpression(1097,1105): 'lMyClass'
         symbol = lMyClass: kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -2174,6 +2174,7 @@ KtNameReferenceExpression(1128,1136): 'lMyClass'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = lMyClass
         receiverType = null
@@ -2181,7 +2182,6 @@ KtNameReferenceExpression(1128,1136): 'lMyClass'
         symbol = lMyClass: kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -2284,6 +2284,7 @@ KtNameReferenceExpression(1149,1157): 'lMyClass'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = lMyClass
         receiverType = null
@@ -2291,7 +2292,6 @@ KtNameReferenceExpression(1149,1157): 'lMyClass'
         symbol = lMyClass: kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 

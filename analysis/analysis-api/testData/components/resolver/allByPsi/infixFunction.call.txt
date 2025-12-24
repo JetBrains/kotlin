@@ -131,6 +131,7 @@ KtNameReferenceExpression(44,45): 'i'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = i
         receiverType = null
@@ -138,7 +139,6 @@ KtNameReferenceExpression(44,45): 'i'
         symbol = i: kotlin.Int
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNamedFunction(47,251): 'fun usage(parameter: Int) {'
@@ -208,6 +208,7 @@ KtNameReferenceExpression(98,107): 'parameter'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = parameter
         receiverType = null
@@ -215,7 +216,6 @@ KtNameReferenceExpression(98,107): 'parameter'
         symbol = parameter: kotlin.Int
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(108,115): 'myMinus'
@@ -339,6 +339,7 @@ KtNameReferenceExpression(145,157): 'newParameter'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = newParameter
         receiverType = null
@@ -346,7 +347,6 @@ KtNameReferenceExpression(145,157): 'newParameter'
         symbol = val newParameter: kotlin.Int
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(158,159): '+'
@@ -473,6 +473,7 @@ KtNameReferenceExpression(195,207): 'newParameter'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = newParameter
         receiverType = null
@@ -480,7 +481,6 @@ KtNameReferenceExpression(195,207): 'newParameter'
         symbol = val newParameter: kotlin.Int
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtCallExpression(208,249): 'plus(parameter.myMinus(oneMoreParameter))'
@@ -603,6 +603,7 @@ KtNameReferenceExpression(213,222): 'parameter'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = parameter
         receiverType = null
@@ -610,7 +611,6 @@ KtNameReferenceExpression(213,222): 'parameter'
         symbol = parameter: kotlin.Int
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtCallExpression(223,248): 'myMinus(oneMoreParameter)'
@@ -697,6 +697,7 @@ KtNameReferenceExpression(231,247): 'oneMoreParameter'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = oneMoreParameter
         receiverType = null
@@ -704,5 +705,4 @@ KtNameReferenceExpression(231,247): 'oneMoreParameter'
         symbol = val oneMoreParameter: kotlin.Int
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}

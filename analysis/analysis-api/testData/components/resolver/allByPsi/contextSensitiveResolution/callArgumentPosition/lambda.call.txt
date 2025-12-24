@@ -640,6 +640,7 @@ KtNameReferenceExpression(830,838): 'lMyClass'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = lMyClass
         receiverType = null
@@ -647,7 +648,6 @@ KtNameReferenceExpression(830,838): 'lMyClass'
         symbol = lMyClass: (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtValueArgumentList(838,855): '(InheritorObject)'
@@ -701,6 +701,7 @@ KtNameReferenceExpression(860,868): 'lMyClass'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = lMyClass
         receiverType = null
@@ -708,7 +709,6 @@ KtNameReferenceExpression(860,868): 'lMyClass'
         symbol = lMyClass: (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtValueArgumentList(868,881): '(propMyClass)'
@@ -727,6 +727,7 @@ KtNameReferenceExpression(869,880): 'propMyClass'
         type = MyClass.Companion
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = propMyClass
         receiverType = null
@@ -734,7 +735,6 @@ KtNameReferenceExpression(869,880): 'propMyClass'
         symbol = val propMyClass: MyClass
         contextParameters = []
         callableId = /MyClass.Companion.propMyClass
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtCallExpression(886,914): 'lMyClass(propInheritorClass)'
@@ -779,6 +779,7 @@ KtNameReferenceExpression(886,894): 'lMyClass'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = lMyClass
         receiverType = null
@@ -786,7 +787,6 @@ KtNameReferenceExpression(886,894): 'lMyClass'
         symbol = lMyClass: (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtValueArgumentList(894,914): '(propInheritorClass)'
@@ -805,6 +805,7 @@ KtNameReferenceExpression(895,913): 'propInheritorClass'
         type = MyClass.Companion
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = propInheritorClass
         receiverType = null
@@ -812,7 +813,6 @@ KtNameReferenceExpression(895,913): 'propInheritorClass'
         symbol = val propInheritorClass: MyClass.InheritorClass
         contextParameters = []
         callableId = /MyClass.Companion.propInheritorClass
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtCallExpression(919,948): 'lMyClass(propInheritorObject)'
@@ -857,6 +857,7 @@ KtNameReferenceExpression(919,927): 'lMyClass'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = lMyClass
         receiverType = null
@@ -864,7 +865,6 @@ KtNameReferenceExpression(919,927): 'lMyClass'
         symbol = lMyClass: (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtValueArgumentList(927,948): '(propInheritorObject)'
@@ -883,6 +883,7 @@ KtNameReferenceExpression(928,947): 'propInheritorObject'
         type = MyClass.Companion
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = propInheritorObject
         receiverType = null
@@ -890,7 +891,6 @@ KtNameReferenceExpression(928,947): 'propInheritorObject'
         symbol = val propInheritorObject: MyClass.InheritorObject
         contextParameters = []
         callableId = /MyClass.Companion.propInheritorObject
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtCallExpression(954,976): 'lMyClass(NestedObject)'
@@ -939,6 +939,7 @@ KtNameReferenceExpression(954,962): 'lMyClass'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = lMyClass
         receiverType = null
@@ -946,7 +947,6 @@ KtNameReferenceExpression(954,962): 'lMyClass'
         symbol = lMyClass: (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtValueArgumentList(962,976): '(NestedObject)'
@@ -1004,6 +1004,7 @@ KtNameReferenceExpression(981,989): 'lMyClass'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = lMyClass
         receiverType = null
@@ -1011,7 +1012,6 @@ KtNameReferenceExpression(981,989): 'lMyClass'
         symbol = lMyClass: (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtValueArgumentList(989,995): '(prop)'
@@ -1030,6 +1030,7 @@ KtNameReferenceExpression(990,994): 'prop'
         type = MyClass.Companion
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = prop
         receiverType = null
@@ -1037,7 +1038,6 @@ KtNameReferenceExpression(990,994): 'prop'
         symbol = val prop: kotlin.String
         contextParameters = []
         callableId = /MyClass.Companion.prop
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtCallExpression(1000,1019): 'lMyClass(superProp)'
@@ -1086,6 +1086,7 @@ KtNameReferenceExpression(1000,1008): 'lMyClass'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = lMyClass
         receiverType = null
@@ -1093,7 +1094,6 @@ KtNameReferenceExpression(1000,1008): 'lMyClass'
         symbol = lMyClass: (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtValueArgumentList(1008,1019): '(superProp)'
@@ -1112,6 +1112,7 @@ KtNameReferenceExpression(1009,1018): 'superProp'
         type = MyClass.Companion
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = superProp
         receiverType = null
@@ -1119,7 +1120,6 @@ KtNameReferenceExpression(1009,1018): 'superProp'
         symbol = val superProp: kotlin.String
         contextParameters = []
         callableId = /Super.superProp
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtCallExpression(1024,1043): 'lMyClass(constProp)'
@@ -1168,6 +1168,7 @@ KtNameReferenceExpression(1024,1032): 'lMyClass'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = lMyClass
         receiverType = null
@@ -1175,7 +1176,6 @@ KtNameReferenceExpression(1024,1032): 'lMyClass'
         symbol = lMyClass: (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtValueArgumentList(1032,1043): '(constProp)'
@@ -1194,6 +1194,7 @@ KtNameReferenceExpression(1033,1042): 'constProp'
         type = MyClass.Companion
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = constProp
         receiverType = null
@@ -1201,7 +1202,6 @@ KtNameReferenceExpression(1033,1042): 'constProp'
         symbol = val constProp: kotlin.String
         contextParameters = []
         callableId = /MyClass.Companion.constProp
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtCallExpression(1048,1066): 'lMyClass(lazyProp)'
@@ -1250,6 +1250,7 @@ KtNameReferenceExpression(1048,1056): 'lMyClass'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = lMyClass
         receiverType = null
@@ -1257,7 +1258,6 @@ KtNameReferenceExpression(1048,1056): 'lMyClass'
         symbol = lMyClass: (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtValueArgumentList(1056,1066): '(lazyProp)'
@@ -1276,6 +1276,7 @@ KtNameReferenceExpression(1057,1065): 'lazyProp'
         type = MyClass.Companion
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = lazyProp
         receiverType = null
@@ -1283,7 +1284,6 @@ KtNameReferenceExpression(1057,1065): 'lazyProp'
         symbol = val lazyProp: kotlin.String
         contextParameters = []
         callableId = /MyClass.Companion.lazyProp
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtCallExpression(1071,1091): 'lMyClass(lambdaProp)'
@@ -1332,6 +1332,7 @@ KtNameReferenceExpression(1071,1079): 'lMyClass'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = lMyClass
         receiverType = null
@@ -1339,7 +1340,6 @@ KtNameReferenceExpression(1071,1079): 'lMyClass'
         symbol = lMyClass: (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtValueArgumentList(1079,1091): '(lambdaProp)'
@@ -1358,6 +1358,7 @@ KtNameReferenceExpression(1080,1090): 'lambdaProp'
         type = MyClass.Companion
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = lambdaProp
         receiverType = null
@@ -1365,7 +1366,6 @@ KtNameReferenceExpression(1080,1090): 'lambdaProp'
         symbol = val lambdaProp: () -> MyClass.InheritorObject
         contextParameters = []
         callableId = /MyClass.Companion.lambdaProp
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtCallExpression(1097,1123): 'lMyClass(InheritorClass())'
@@ -1410,6 +1410,7 @@ KtNameReferenceExpression(1097,1105): 'lMyClass'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = lMyClass
         receiverType = null
@@ -1417,7 +1418,6 @@ KtNameReferenceExpression(1097,1105): 'lMyClass'
         symbol = lMyClass: (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtValueArgumentList(1105,1123): '(InheritorClass())'
@@ -1481,6 +1481,7 @@ KtNameReferenceExpression(1128,1136): 'lMyClass'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = lMyClass
         receiverType = null
@@ -1488,7 +1489,6 @@ KtNameReferenceExpression(1128,1136): 'lMyClass'
         symbol = lMyClass: (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtValueArgumentList(1136,1144): '(func())'
@@ -1552,6 +1552,7 @@ KtNameReferenceExpression(1149,1157): 'lMyClass'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = lMyClass
         receiverType = null
@@ -1559,7 +1560,6 @@ KtNameReferenceExpression(1149,1157): 'lMyClass'
         symbol = lMyClass: (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtValueArgumentList(1157,1170): '(superFunc())'

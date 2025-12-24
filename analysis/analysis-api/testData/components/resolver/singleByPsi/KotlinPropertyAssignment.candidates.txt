@@ -9,6 +9,7 @@
           type = A
         extensionReceiver = null
         isContextSensitive = false
+        kind = Read
         signature = KaVariableSignature:
           name = something
           receiverType = null
@@ -16,7 +17,6 @@
           symbol = var something: kotlin.Int
           contextParameters = []
           callableId = /A.something
-        simpleAccess = Read
         typeArgumentsMapping = {}
       isInBestCandidates = true
 
@@ -31,6 +31,8 @@
           type = A
         extensionReceiver = null
         isContextSensitive = false
+        kind = Write:
+          value = 1
         signature = KaVariableSignature:
           name = something
           receiverType = null
@@ -38,8 +40,6 @@
           symbol = var something: kotlin.Int
           contextParameters = []
           callableId = /A.something
-        simpleAccess = Write:
-          value = 1
         typeArgumentsMapping = {}
       isInBestCandidates = true
 
@@ -54,6 +54,7 @@
           type = A
         extensionReceiver = null
         isContextSensitive = false
+        kind = Read
         signature = KaVariableSignature:
           name = something
           receiverType = null
@@ -61,7 +62,6 @@
           symbol = var something: kotlin.Int
           contextParameters = []
           callableId = /A.something
-        simpleAccess = Read
         typeArgumentsMapping = {}
       isInBestCandidates = true
 
@@ -76,6 +76,7 @@
           type = A
         extensionReceiver = null
         isContextSensitive = false
+        kind = Read
         signature = KaVariableSignature:
           name = something
           receiverType = null
@@ -83,7 +84,6 @@
           symbol = var something: kotlin.Int
           contextParameters = []
           callableId = /A.something
-        simpleAccess = Read
         typeArgumentsMapping = {}
       isInBestCandidates = true
 
@@ -98,6 +98,8 @@
           type = A
         extensionReceiver = null
         isContextSensitive = false
+        kind = Write:
+          value = --
         signature = KaVariableSignature:
           name = something
           receiverType = null
@@ -105,8 +107,6 @@
           symbol = var something: kotlin.Int
           contextParameters = []
           callableId = /A.something
-        simpleAccess = Write:
-          value = --
         typeArgumentsMapping = {}
       isInBestCandidates = true
 
@@ -139,6 +139,7 @@
           type = A
         extensionReceiver = null
         isContextSensitive = false
+        kind = Read
         signature = KaVariableSignature:
           name = something
           receiverType = null
@@ -146,6 +147,5 @@
           symbol = var something: kotlin.Int
           contextParameters = []
           callableId = /A.something
-        simpleAccess = Read
         typeArgumentsMapping = {}
       isInBestCandidates = true

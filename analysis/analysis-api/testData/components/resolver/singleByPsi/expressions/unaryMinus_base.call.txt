@@ -5,6 +5,7 @@ KtNameReferenceExpression(192,200): 'variable'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = variable
         receiverType = null
@@ -12,5 +13,4 @@ KtNameReferenceExpression(192,200): 'variable'
         symbol = var variable: MyClass
         contextParameters = []
         callableId = /variable
-      simpleAccess = Read
       typeArgumentsMapping = {}

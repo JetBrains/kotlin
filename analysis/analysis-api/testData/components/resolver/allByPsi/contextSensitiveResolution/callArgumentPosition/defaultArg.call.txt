@@ -167,6 +167,7 @@ KtNameReferenceExpression(291,301): 'EnumValue1'
         type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = EnumValue1
         receiverType = null
@@ -174,7 +175,6 @@ KtNameReferenceExpression(291,301): 'EnumValue1'
         symbol = /MyEnum.EnumValue1
         contextParameters = []
         callableId = /MyEnum.EnumValue1
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtParameter(307,343): 'sealedArg: MyClass = InheritorObject'

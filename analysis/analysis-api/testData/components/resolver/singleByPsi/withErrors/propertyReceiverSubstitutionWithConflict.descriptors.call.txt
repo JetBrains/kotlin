@@ -9,6 +9,7 @@ KtDotQualifiedExpression(118,123): 'f.foo'
           isSafeNavigation = false
           type = Foo<kotlin.String>
         isContextSensitive = false
+        kind = Read
         signature = KaVariableSignature:
           name = foo
           receiverType = Foo<TypeVariable(A)>
@@ -16,7 +17,6 @@ KtDotQualifiedExpression(118,123): 'f.foo'
           symbol = val foo: kotlin.Int
           contextParameters = []
           callableId = /foo
-        simpleAccess = Read
         typeArgumentsMapping = {},
       KaSimpleVariableAccessCall:
         contextArguments = []
@@ -26,6 +26,7 @@ KtDotQualifiedExpression(118,123): 'f.foo'
           isSafeNavigation = false
           type = Foo<kotlin.String>
         isContextSensitive = false
+        kind = Read
         signature = KaVariableSignature:
           name = foo
           receiverType = Foo<TypeVariable(B)>
@@ -33,7 +34,6 @@ KtDotQualifiedExpression(118,123): 'f.foo'
           symbol = val foo: kotlin.String
           contextParameters = []
           callableId = /foo
-        simpleAccess = Read
         typeArgumentsMapping = {}
     ]
     diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity: 

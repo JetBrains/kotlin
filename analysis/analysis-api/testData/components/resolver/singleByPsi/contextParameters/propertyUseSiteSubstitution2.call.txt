@@ -60,6 +60,7 @@ KtNameReferenceExpression(170,173): 'foo'
         isSafeNavigation = false
         type = T
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = foo
         receiverType = T
@@ -75,5 +76,4 @@ KtNameReferenceExpression(170,173): 'foo'
             callableId = null
         ]
         callableId = /Base.foo
-      simpleAccess = Read
       typeArgumentsMapping = {}

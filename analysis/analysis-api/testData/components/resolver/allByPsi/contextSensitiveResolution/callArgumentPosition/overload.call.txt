@@ -104,6 +104,7 @@ KtNameReferenceExpression(223,226): 'arg'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = arg
         receiverType = null
@@ -111,7 +112,6 @@ KtNameReferenceExpression(223,226): 'arg'
         symbol = arg: MyEnum
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNamedFunction(227,259): 'fun overload(arg: MyClass) = arg'
@@ -139,6 +139,7 @@ KtNameReferenceExpression(256,259): 'arg'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = arg
         receiverType = null
@@ -146,7 +147,6 @@ KtNameReferenceExpression(256,259): 'arg'
         symbol = arg: MyClass
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNamedFunction(260,374): 'fun test() {'
@@ -873,6 +873,7 @@ KtNameReferenceExpression(516,526): 'EnumValue1'
         type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = EnumValue1
         receiverType = null
@@ -880,7 +881,6 @@ KtNameReferenceExpression(516,526): 'EnumValue1'
         symbol = /MyEnum.EnumValue1
         contextParameters = []
         callableId = /MyEnum.EnumValue1
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNamedFunction(530,584): 'fun overload3(arg: MyEnum) { println("Enum version") }'
@@ -1184,6 +1184,7 @@ KtNameReferenceExpression(689,699): 'EnumValue1'
         type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = true
+      kind = Read
       signature = KaVariableSignature:
         name = EnumValue1
         receiverType = null
@@ -1191,5 +1192,4 @@ KtNameReferenceExpression(689,699): 'EnumValue1'
         symbol = /MyEnum.EnumValue1
         contextParameters = []
         callableId = /MyEnum.EnumValue1
-      simpleAccess = Read
       typeArgumentsMapping = {}

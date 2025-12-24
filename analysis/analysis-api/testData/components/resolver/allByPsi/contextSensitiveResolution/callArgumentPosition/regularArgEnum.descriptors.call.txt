@@ -226,6 +226,7 @@ KtNameReferenceExpression(280,284): 'arg1'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = arg1
         receiverType = null
@@ -233,7 +234,6 @@ KtNameReferenceExpression(280,284): 'arg1'
         symbol = val arg1: MyEnum
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtCallExpression(290,307): 'receiveEnum(arg2)'
@@ -314,6 +314,7 @@ KtNameReferenceExpression(302,306): 'arg2'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = arg2
         receiverType = null
@@ -321,7 +322,6 @@ KtNameReferenceExpression(302,306): 'arg2'
         symbol = val arg2: ERROR_TYPE
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtCallExpression(312,329): 'receiveEnum(arg3)'

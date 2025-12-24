@@ -35,6 +35,7 @@ KtNameReferenceExpression(62,70): 'javaEnum'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = javaEnum
         receiverType = null
@@ -42,7 +43,6 @@ KtNameReferenceExpression(62,70): 'javaEnum'
         symbol = javaEnum: JavaEnum
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 

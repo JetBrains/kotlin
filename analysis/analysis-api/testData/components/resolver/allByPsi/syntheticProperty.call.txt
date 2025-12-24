@@ -118,6 +118,7 @@ KtDotQualifiedExpression(84,103): 'javaClass.something'
         type = JavaClass
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = something
         receiverType = null
@@ -125,7 +126,6 @@ KtDotQualifiedExpression(84,103): 'javaClass.something'
         symbol = var something: kotlin.Int
         contextParameters = []
         callableId = /JavaClass.something
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(84,93): 'javaClass'
@@ -135,6 +135,7 @@ KtNameReferenceExpression(84,93): 'javaClass'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = javaClass
         receiverType = null
@@ -142,7 +143,6 @@ KtNameReferenceExpression(84,93): 'javaClass'
         symbol = javaClass: JavaClass
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(94,103): 'something'
@@ -155,6 +155,7 @@ KtNameReferenceExpression(94,103): 'something'
         type = JavaClass
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = something
         receiverType = null
@@ -162,7 +163,6 @@ KtNameReferenceExpression(94,103): 'something'
         symbol = var something: kotlin.Int
         contextParameters = []
         callableId = /JavaClass.something
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtBinaryExpression(109,132): 'javaClass.something = 1'
@@ -175,6 +175,8 @@ KtBinaryExpression(109,132): 'javaClass.something = 1'
         type = JavaClass
       extensionReceiver = null
       isContextSensitive = false
+      kind = Write:
+        value = 1
       signature = KaVariableSignature:
         name = something
         receiverType = null
@@ -182,8 +184,6 @@ KtBinaryExpression(109,132): 'javaClass.something = 1'
         symbol = var something: kotlin.Int
         contextParameters = []
         callableId = /JavaClass.something
-      simpleAccess = Write:
-        value = 1
       typeArgumentsMapping = {}
 
 KtDotQualifiedExpression(109,128): 'javaClass.something'
@@ -196,6 +196,8 @@ KtDotQualifiedExpression(109,128): 'javaClass.something'
         type = JavaClass
       extensionReceiver = null
       isContextSensitive = false
+      kind = Write:
+        value = 1
       signature = KaVariableSignature:
         name = something
         receiverType = null
@@ -203,8 +205,6 @@ KtDotQualifiedExpression(109,128): 'javaClass.something'
         symbol = var something: kotlin.Int
         contextParameters = []
         callableId = /JavaClass.something
-      simpleAccess = Write:
-        value = 1
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(109,118): 'javaClass'
@@ -214,6 +214,7 @@ KtNameReferenceExpression(109,118): 'javaClass'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = javaClass
         receiverType = null
@@ -221,7 +222,6 @@ KtNameReferenceExpression(109,118): 'javaClass'
         symbol = javaClass: JavaClass
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(119,128): 'something'
@@ -234,6 +234,8 @@ KtNameReferenceExpression(119,128): 'something'
         type = JavaClass
       extensionReceiver = null
       isContextSensitive = false
+      kind = Write:
+        value = 1
       signature = KaVariableSignature:
         name = something
         receiverType = null
@@ -241,8 +243,6 @@ KtNameReferenceExpression(119,128): 'something'
         symbol = var something: kotlin.Int
         contextParameters = []
         callableId = /JavaClass.something
-      simpleAccess = Write:
-        value = 1
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(129,130): '='
@@ -255,6 +255,8 @@ KtOperationReferenceExpression(129,130): '='
         type = JavaClass
       extensionReceiver = null
       isContextSensitive = false
+      kind = Write:
+        value = 1
       signature = KaVariableSignature:
         name = something
         receiverType = null
@@ -262,8 +264,6 @@ KtOperationReferenceExpression(129,130): '='
         symbol = var something: kotlin.Int
         contextParameters = []
         callableId = /JavaClass.something
-      simpleAccess = Write:
-        value = 1
       typeArgumentsMapping = {}
 
 KtConstantExpression(131,132): '1'
@@ -316,6 +316,7 @@ KtBinaryExpression(137,161): 'javaClass.something += 1'
           type = JavaClass
         extensionReceiver = null
         isContextSensitive = false
+        kind = Read
         signature = KaVariableSignature:
           name = something
           receiverType = null
@@ -323,7 +324,6 @@ KtBinaryExpression(137,161): 'javaClass.something += 1'
           symbol = var something: kotlin.Int
           contextParameters = []
           callableId = /JavaClass.something
-        simpleAccess = Read
         typeArgumentsMapping = {}
 
 KtDotQualifiedExpression(137,156): 'javaClass.something'
@@ -336,6 +336,7 @@ KtDotQualifiedExpression(137,156): 'javaClass.something'
         type = JavaClass
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = something
         receiverType = null
@@ -343,7 +344,6 @@ KtDotQualifiedExpression(137,156): 'javaClass.something'
         symbol = var something: kotlin.Int
         contextParameters = []
         callableId = /JavaClass.something
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(137,146): 'javaClass'
@@ -353,6 +353,7 @@ KtNameReferenceExpression(137,146): 'javaClass'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = javaClass
         receiverType = null
@@ -360,7 +361,6 @@ KtNameReferenceExpression(137,146): 'javaClass'
         symbol = javaClass: JavaClass
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(147,156): 'something'
@@ -373,6 +373,7 @@ KtNameReferenceExpression(147,156): 'something'
         type = JavaClass
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = something
         receiverType = null
@@ -380,7 +381,6 @@ KtNameReferenceExpression(147,156): 'something'
         symbol = var something: kotlin.Int
         contextParameters = []
         callableId = /JavaClass.something
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(157,159): '+='
@@ -430,6 +430,7 @@ KtOperationReferenceExpression(157,159): '+='
           type = JavaClass
         extensionReceiver = null
         isContextSensitive = false
+        kind = Read
         signature = KaVariableSignature:
           name = something
           receiverType = null
@@ -437,7 +438,6 @@ KtOperationReferenceExpression(157,159): '+='
           symbol = var something: kotlin.Int
           contextParameters = []
           callableId = /JavaClass.something
-        simpleAccess = Read
         typeArgumentsMapping = {}
 
 KtConstantExpression(160,161): '1'
@@ -474,6 +474,7 @@ KtPostfixExpression(166,187): 'javaClass.something++'
           type = JavaClass
         extensionReceiver = null
         isContextSensitive = false
+        kind = Read
         signature = KaVariableSignature:
           name = something
           receiverType = null
@@ -481,7 +482,6 @@ KtPostfixExpression(166,187): 'javaClass.something++'
           symbol = var something: kotlin.Int
           contextParameters = []
           callableId = /JavaClass.something
-        simpleAccess = Read
         typeArgumentsMapping = {}
 
 KtDotQualifiedExpression(166,185): 'javaClass.something'
@@ -494,6 +494,7 @@ KtDotQualifiedExpression(166,185): 'javaClass.something'
         type = JavaClass
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = something
         receiverType = null
@@ -501,7 +502,6 @@ KtDotQualifiedExpression(166,185): 'javaClass.something'
         symbol = var something: kotlin.Int
         contextParameters = []
         callableId = /JavaClass.something
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(166,175): 'javaClass'
@@ -511,6 +511,7 @@ KtNameReferenceExpression(166,175): 'javaClass'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = javaClass
         receiverType = null
@@ -518,7 +519,6 @@ KtNameReferenceExpression(166,175): 'javaClass'
         symbol = javaClass: JavaClass
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(176,185): 'something'
@@ -531,6 +531,7 @@ KtNameReferenceExpression(176,185): 'something'
         type = JavaClass
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = something
         receiverType = null
@@ -538,7 +539,6 @@ KtNameReferenceExpression(176,185): 'something'
         symbol = var something: kotlin.Int
         contextParameters = []
         callableId = /JavaClass.something
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(185,187): '++'
@@ -572,6 +572,7 @@ KtOperationReferenceExpression(185,187): '++'
           type = JavaClass
         extensionReceiver = null
         isContextSensitive = false
+        kind = Read
         signature = KaVariableSignature:
           name = something
           receiverType = null
@@ -579,7 +580,6 @@ KtOperationReferenceExpression(185,187): '++'
           symbol = var something: kotlin.Int
           contextParameters = []
           callableId = /JavaClass.something
-        simpleAccess = Read
         typeArgumentsMapping = {}
 
 KtPrefixExpression(192,213): '--javaClass.something'
@@ -613,6 +613,7 @@ KtPrefixExpression(192,213): '--javaClass.something'
           type = JavaClass
         extensionReceiver = null
         isContextSensitive = false
+        kind = Read
         signature = KaVariableSignature:
           name = something
           receiverType = null
@@ -620,7 +621,6 @@ KtPrefixExpression(192,213): '--javaClass.something'
           symbol = var something: kotlin.Int
           contextParameters = []
           callableId = /JavaClass.something
-        simpleAccess = Read
         typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(192,194): '--'
@@ -654,6 +654,7 @@ KtOperationReferenceExpression(192,194): '--'
           type = JavaClass
         extensionReceiver = null
         isContextSensitive = false
+        kind = Read
         signature = KaVariableSignature:
           name = something
           receiverType = null
@@ -661,7 +662,6 @@ KtOperationReferenceExpression(192,194): '--'
           symbol = var something: kotlin.Int
           contextParameters = []
           callableId = /JavaClass.something
-        simpleAccess = Read
         typeArgumentsMapping = {}
 
 KtDotQualifiedExpression(194,213): 'javaClass.something'
@@ -674,6 +674,7 @@ KtDotQualifiedExpression(194,213): 'javaClass.something'
         type = JavaClass
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = something
         receiverType = null
@@ -681,7 +682,6 @@ KtDotQualifiedExpression(194,213): 'javaClass.something'
         symbol = var something: kotlin.Int
         contextParameters = []
         callableId = /JavaClass.something
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(194,203): 'javaClass'
@@ -691,6 +691,7 @@ KtNameReferenceExpression(194,203): 'javaClass'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = javaClass
         receiverType = null
@@ -698,7 +699,6 @@ KtNameReferenceExpression(194,203): 'javaClass'
         symbol = javaClass: JavaClass
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(204,213): 'something'
@@ -711,6 +711,8 @@ KtNameReferenceExpression(204,213): 'something'
         type = JavaClass
       extensionReceiver = null
       isContextSensitive = false
+      kind = Write:
+        value = --
       signature = KaVariableSignature:
         name = something
         receiverType = null
@@ -718,8 +720,6 @@ KtNameReferenceExpression(204,213): 'something'
         symbol = var something: kotlin.Int
         contextParameters = []
         callableId = /JavaClass.something
-      simpleAccess = Write:
-        value = --
       typeArgumentsMapping = {}
 
 KtPostfixExpression(219,230): 'something++'
@@ -771,6 +771,7 @@ KtPostfixExpression(219,230): 'something++'
           type = JavaClass
         extensionReceiver = null
         isContextSensitive = false
+        kind = Read
         signature = KaVariableSignature:
           name = something
           receiverType = null
@@ -778,7 +779,6 @@ KtPostfixExpression(219,230): 'something++'
           symbol = var something: kotlin.Int
           contextParameters = []
           callableId = /JavaClass.something
-        simpleAccess = Read
         typeArgumentsMapping = {}
 
 KtNameReferenceExpression(219,228): 'something'
@@ -809,6 +809,7 @@ KtNameReferenceExpression(219,228): 'something'
         type = JavaClass
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = something
         receiverType = null
@@ -816,7 +817,6 @@ KtNameReferenceExpression(219,228): 'something'
         symbol = var something: kotlin.Int
         contextParameters = []
         callableId = /JavaClass.something
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(228,230): '++'
@@ -868,6 +868,7 @@ KtOperationReferenceExpression(228,230): '++'
           type = JavaClass
         extensionReceiver = null
         isContextSensitive = false
+        kind = Read
         signature = KaVariableSignature:
           name = something
           receiverType = null
@@ -875,7 +876,6 @@ KtOperationReferenceExpression(228,230): '++'
           symbol = var something: kotlin.Int
           contextParameters = []
           callableId = /JavaClass.something
-        simpleAccess = Read
         typeArgumentsMapping = {}
 
 KtPostfixExpression(235,248): '(something)++'
@@ -927,6 +927,7 @@ KtPostfixExpression(235,248): '(something)++'
           type = JavaClass
         extensionReceiver = null
         isContextSensitive = false
+        kind = Read
         signature = KaVariableSignature:
           name = something
           receiverType = null
@@ -934,7 +935,6 @@ KtPostfixExpression(235,248): '(something)++'
           symbol = var something: kotlin.Int
           contextParameters = []
           callableId = /JavaClass.something
-        simpleAccess = Read
         typeArgumentsMapping = {}
 
 KtParenthesizedExpression(235,246): '(something)'
@@ -968,6 +968,7 @@ KtNameReferenceExpression(236,245): 'something'
         type = JavaClass
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = something
         receiverType = null
@@ -975,7 +976,6 @@ KtNameReferenceExpression(236,245): 'something'
         symbol = var something: kotlin.Int
         contextParameters = []
         callableId = /JavaClass.something
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(246,248): '++'
@@ -1027,6 +1027,7 @@ KtOperationReferenceExpression(246,248): '++'
           type = JavaClass
         extensionReceiver = null
         isContextSensitive = false
+        kind = Read
         signature = KaVariableSignature:
           name = something
           receiverType = null
@@ -1034,7 +1035,6 @@ KtOperationReferenceExpression(246,248): '++'
           symbol = var something: kotlin.Int
           contextParameters = []
           callableId = /JavaClass.something
-        simpleAccess = Read
         typeArgumentsMapping = {}
 
 KtBinaryExpression(253,268): '(something) = 1'
@@ -1065,6 +1065,8 @@ KtBinaryExpression(253,268): '(something) = 1'
         type = JavaClass
       extensionReceiver = null
       isContextSensitive = false
+      kind = Write:
+        value = 1
       signature = KaVariableSignature:
         name = something
         receiverType = null
@@ -1072,8 +1074,6 @@ KtBinaryExpression(253,268): '(something) = 1'
         symbol = var something: kotlin.Int
         contextParameters = []
         callableId = /JavaClass.something
-      simpleAccess = Write:
-        value = 1
       typeArgumentsMapping = {}
 
 KtParenthesizedExpression(253,264): '(something)'
@@ -1107,6 +1107,8 @@ KtNameReferenceExpression(254,263): 'something'
         type = JavaClass
       extensionReceiver = null
       isContextSensitive = false
+      kind = Write:
+        value = 1
       signature = KaVariableSignature:
         name = something
         receiverType = null
@@ -1114,8 +1116,6 @@ KtNameReferenceExpression(254,263): 'something'
         symbol = var something: kotlin.Int
         contextParameters = []
         callableId = /JavaClass.something
-      simpleAccess = Write:
-        value = 1
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(265,266): '='
@@ -1146,6 +1146,8 @@ KtOperationReferenceExpression(265,266): '='
         type = JavaClass
       extensionReceiver = null
       isContextSensitive = false
+      kind = Write:
+        value = 1
       signature = KaVariableSignature:
         name = something
         receiverType = null
@@ -1153,8 +1155,6 @@ KtOperationReferenceExpression(265,266): '='
         symbol = var something: kotlin.Int
         contextParameters = []
         callableId = /JavaClass.something
-      simpleAccess = Write:
-        value = 1
       typeArgumentsMapping = {}
 
 KtConstantExpression(267,268): '1'
@@ -1170,6 +1170,8 @@ KtBinaryExpression(273,298): '(javaClass.something) = 1'
         type = JavaClass
       extensionReceiver = null
       isContextSensitive = false
+      kind = Write:
+        value = 1
       signature = KaVariableSignature:
         name = something
         receiverType = null
@@ -1177,8 +1179,6 @@ KtBinaryExpression(273,298): '(javaClass.something) = 1'
         symbol = var something: kotlin.Int
         contextParameters = []
         callableId = /JavaClass.something
-      simpleAccess = Write:
-        value = 1
       typeArgumentsMapping = {}
 
 KtParenthesizedExpression(273,294): '(javaClass.something)'
@@ -1194,6 +1194,8 @@ KtDotQualifiedExpression(274,293): 'javaClass.something'
         type = JavaClass
       extensionReceiver = null
       isContextSensitive = false
+      kind = Write:
+        value = 1
       signature = KaVariableSignature:
         name = something
         receiverType = null
@@ -1201,8 +1203,6 @@ KtDotQualifiedExpression(274,293): 'javaClass.something'
         symbol = var something: kotlin.Int
         contextParameters = []
         callableId = /JavaClass.something
-      simpleAccess = Write:
-        value = 1
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(274,283): 'javaClass'
@@ -1212,6 +1212,7 @@ KtNameReferenceExpression(274,283): 'javaClass'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = javaClass
         receiverType = null
@@ -1219,7 +1220,6 @@ KtNameReferenceExpression(274,283): 'javaClass'
         symbol = javaClass: JavaClass
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtNameReferenceExpression(284,293): 'something'
@@ -1232,6 +1232,8 @@ KtNameReferenceExpression(284,293): 'something'
         type = JavaClass
       extensionReceiver = null
       isContextSensitive = false
+      kind = Write:
+        value = 1
       signature = KaVariableSignature:
         name = something
         receiverType = null
@@ -1239,8 +1241,6 @@ KtNameReferenceExpression(284,293): 'something'
         symbol = var something: kotlin.Int
         contextParameters = []
         callableId = /JavaClass.something
-      simpleAccess = Write:
-        value = 1
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(295,296): '='
@@ -1253,6 +1253,8 @@ KtOperationReferenceExpression(295,296): '='
         type = JavaClass
       extensionReceiver = null
       isContextSensitive = false
+      kind = Write:
+        value = 1
       signature = KaVariableSignature:
         name = something
         receiverType = null
@@ -1260,8 +1262,6 @@ KtOperationReferenceExpression(295,296): '='
         symbol = var something: kotlin.Int
         contextParameters = []
         callableId = /JavaClass.something
-      simpleAccess = Write:
-        value = 1
       typeArgumentsMapping = {}
 
 KtConstantExpression(297,298): '1'

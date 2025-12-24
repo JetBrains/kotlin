@@ -6,6 +6,7 @@ KtNameReferenceExpression(88,91): 'foo'
         dispatchReceiver = null
         extensionReceiver = null
         isContextSensitive = false
+        kind = Read
         signature = KaVariableSignature:
           name = foo
           receiverType = null
@@ -28,7 +29,6 @@ KtNameReferenceExpression(88,91): 'foo'
               callableId = null
           ]
           callableId = /foo
-        simpleAccess = Read
         typeArgumentsMapping = {}
     ]
     diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'string: String' found.>

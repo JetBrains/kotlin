@@ -308,6 +308,7 @@ KtNameReferenceExpression(169,177): 'constant'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = constant
         receiverType = null
@@ -315,7 +316,6 @@ KtNameReferenceExpression(169,177): 'constant'
         symbol = val constant: kotlin.Int
         contextParameters = []
         callableId = util/constant
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtUserType(179,234): 'List<@Anno(1 + constant) List<@Anno(2 + constant) Int>>'
@@ -505,6 +505,7 @@ KtNameReferenceExpression(194,202): 'constant'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = constant
         receiverType = null
@@ -512,7 +513,6 @@ KtNameReferenceExpression(194,202): 'constant'
         symbol = val constant: kotlin.Int
         contextParameters = []
         callableId = util/constant
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtUserType(204,233): 'List<@Anno(2 + constant) Int>'
@@ -702,6 +702,7 @@ KtNameReferenceExpression(219,227): 'constant'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = constant
         receiverType = null
@@ -709,7 +710,6 @@ KtNameReferenceExpression(219,227): 'constant'
         symbol = val constant: kotlin.Int
         contextParameters = []
         callableId = util/constant
-      simpleAccess = Read
       typeArgumentsMapping = {}
 
 KtUserType(229,232): 'Int'
@@ -728,6 +728,7 @@ KtNameReferenceExpression(245,249): 'pair'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = pair
         receiverType = null
@@ -735,5 +736,4 @@ KtNameReferenceExpression(245,249): 'pair'
         symbol = val pair: util.MyPair
         contextParameters = []
         callableId = util/pair
-      simpleAccess = Read
       typeArgumentsMapping = {}

@@ -99,6 +99,7 @@ KtNameReferenceExpression(79,84): 'other'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = other
         receiverType = null
@@ -106,7 +107,6 @@ KtNameReferenceExpression(79,84): 'other'
         symbol = other: kotlin.Any?
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -257,6 +257,7 @@ KtNameReferenceExpression(168,169): 'm'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = m
         receiverType = null
@@ -264,7 +265,6 @@ KtNameReferenceExpression(168,169): 'm'
         symbol = m: MyClass?
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -278,6 +278,7 @@ KtNameReferenceExpression(173,175): 'm2'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = m2
         receiverType = null
@@ -285,7 +286,6 @@ KtNameReferenceExpression(173,175): 'm2'
         symbol = m2: MyClass?
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -305,6 +305,7 @@ KtNameReferenceExpression(188,189): 'f'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = f
         receiverType = null
@@ -312,7 +313,6 @@ KtNameReferenceExpression(188,189): 'f'
         symbol = val f: MyClass?
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -326,6 +326,7 @@ KtNameReferenceExpression(193,195): 'm2'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = m2
         receiverType = null
@@ -333,7 +334,6 @@ KtNameReferenceExpression(193,195): 'm2'
         symbol = m2: MyClass?
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -347,6 +347,7 @@ KtNameReferenceExpression(200,202): 'm2'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = m2
         receiverType = null
@@ -354,7 +355,6 @@ KtNameReferenceExpression(200,202): 'm2'
         symbol = m2: MyClass?
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
 
@@ -368,6 +368,7 @@ KtNameReferenceExpression(206,207): 'm'
       dispatchReceiver = null
       extensionReceiver = null
       isContextSensitive = false
+      kind = Read
       signature = KaVariableSignature:
         name = m
         receiverType = null
@@ -375,6 +376,5 @@ KtNameReferenceExpression(206,207): 'm'
         symbol = m: MyClass?
         contextParameters = []
         callableId = null
-      simpleAccess = Read
       typeArgumentsMapping = {}
     isInBestCandidates = true
