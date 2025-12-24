@@ -1,4 +1,5 @@
 // TARGET_BACKEND: WASM
+// ^^ JS target doesnb't support simpleName for external classes
 
 // FILE: reflectionOnExternals.js
 class Outer { }

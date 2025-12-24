@@ -1,12 +1,11 @@
 // LANGUAGE: +ContextParameters
-// TARGET_BACKEND: WASM
 
 external interface Context {
     fun action(): String
 }
 
 fun get(): Context =
-    js("({ action: () => 'OK' })")
+    js("({ action: function () { return 'OK' } })")
 
 context(c: Context)
 fun test(): String = c.action()

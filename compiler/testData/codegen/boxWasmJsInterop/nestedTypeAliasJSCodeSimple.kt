@@ -1,5 +1,4 @@
 // LANGUAGE: +NestedTypeAliases
-// TARGET_BACKEND: WASM
 
 external interface I {
     val x: Int

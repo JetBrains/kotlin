@@ -14291,6 +14291,9 @@ abstract interface kotlin.js/RegExpMatch { // kotlin.js/RegExpMatch|null[0]
 }
 
 // Targets: [js]
+sealed interface <#A: out kotlin/Any> kotlin.js/JsReference // kotlin.js/JsReference|null[0]
+
+// Targets: [js]
 final class kotlin.js/Date { // kotlin.js/Date|null[0]
     constructor <init>() // kotlin.js/Date.<init>|<init>(){}[0]
     constructor <init>(kotlin/Int, kotlin/Int) // kotlin.js/Date.<init>|<init>(kotlin.Int;kotlin.Int){}[0]
@@ -15114,10 +15117,10 @@ final inline fun (kotlin/Throwable).kotlin.js/asJsException(): kotlin/Throwable 
 final inline fun /withType(kotlin/String, dynamic): dynamic // /withType|withType(kotlin.String;<dynamic>){}[0]
 
 // Targets: [js]
-final inline fun <#A: kotlin/Any> (#A).kotlin.js/toJsReference(): kotlin/Any // kotlin.js/toJsReference|toJsReference@0:0(){0§<kotlin.Any>}[0]
+final inline fun <#A: kotlin/Any> (#A).kotlin.js/toJsReference(): kotlin.js/JsReference<#A> // kotlin.js/toJsReference|toJsReference@0:0(){0§<kotlin.Any>}[0]
 
 // Targets: [js]
-final inline fun <#A: kotlin/Any> (kotlin/Any).kotlin.js/get(): #A // kotlin.js/get|get@kotlin.Any(){0§<kotlin.Any>}[0]
+final inline fun <#A: kotlin/Any> (kotlin.js/JsReference<#A>).kotlin.js/get(): #A // kotlin.js/get|get@kotlin.js.JsReference<0:0>(){0§<kotlin.Any>}[0]
 
 // Targets: [js]
 final inline fun <#A: kotlin/Any> (kotlin/Any).kotlin.js/unsafeCast(): #A // kotlin.js/unsafeCast|unsafeCast@kotlin.Any(){0§<kotlin.Any>}[0]

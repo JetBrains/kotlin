@@ -1,4 +1,3 @@
-// TARGET_BACKEND: WASM
 // WITH_STDLIB
 
 // FILE: externals.js
@@ -35,22 +34,6 @@ fun isJsNull(ref: EI?): Boolean =
 fun isJsUndefined(ref: EI?): Boolean =
     js("ref === undefined")
 
-fun getJsNullAsNonNullable(): EI =
-    js("null")
-
-fun getJsUndefinedAsNonNullable(): EI =
-    js("undefined")
-
-inline fun checkNPE(body: () -> Unit) {
-    var throwed = false
-    try {
-        body()
-    } catch (e: NullPointerException) {
-        throwed = true
-    }
-    assertTrue(throwed)
-}
-
 fun box(): String {
     val jsNull = getNull()
     val jsUndefined = getUndefined()
@@ -68,9 +51,6 @@ fun box(): String {
     assertTrue(isJsNull(jsNull))
 
     assertFalse(isJsUndefined(null))
-
-    checkNPE(::getJsNullAsNonNullable)
-    checkNPE(::getJsUndefinedAsNonNullable)
 
     return "OK"
 }

@@ -1,5 +1,6 @@
 // LANGUAGE: +NestedTypeAliases
-// TARGET_BACKEND: WASM
+// ES_MODULES
+// WITH_STDLIB
 
 // FILE: nestedTypeAliasSimple.kt
 external interface I {

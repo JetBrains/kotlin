@@ -1,5 +1,6 @@
 // LANGUAGE: +NestedTypeAliases
 // TARGET_BACKEND: WASM
+// ^^ KT-83093
 // !OPT_IN: kotlin.wasm.js.ExperimentalJsExport
 
 // FILE: jsExport.kt

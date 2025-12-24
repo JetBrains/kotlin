@@ -1,5 +1,6 @@
 // LANGUAGE: +ContextParameters
 // TARGET_BACKEND: WASM
+// ^^ KT-83093
 
 // FILE: jsExport.kt
 external interface ContextA { fun value(): String }

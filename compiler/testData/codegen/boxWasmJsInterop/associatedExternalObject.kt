@@ -1,5 +1,5 @@
 // TARGET_BACKEND: WASM
-
+// ^^ KT-82941 for JS target
 // FILE: findAssociatedExternalObject.js
 
 const JS_OBJECT = {}
