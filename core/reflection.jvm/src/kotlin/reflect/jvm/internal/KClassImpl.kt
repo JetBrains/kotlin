@@ -375,7 +375,7 @@ internal class KClassImpl<T : Any>(
         private fun useK1ImplementationForFakeOverrides() =
             !newFakeOverridesImplementation || useK1Implementation ||
                 // Collections are hard to support because of https://youtrack.jetbrains.com/issue/KT-11754
-                isSubclassOf(Collection::class) ||
+                isSubclassOf(Iterable::class) ||
                 isSubclassOf(Map::class) ||
                 isSubclassOf(CharSequence::class) ||
                 isSubclassOf(Number::class)
