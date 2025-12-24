@@ -4,18 +4,107 @@ KtOperationReferenceExpression(250,252): '+='
       compoundOperation = KaCompoundAssignOperation:
         kind = PLUS_ASSIGN
         operand = MyClass()
-        operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        operationCall = KaSimpleFunctionCall:
+          argumentMapping = {
+            variable[0] -> (KaVariableSignature:
+              name = v
+              receiverType = null
+              returnType = MyClass
+              symbol = v: MyClass
+              contextParameters = []
+              callableId = null)
+          }
+          isImplicitInvoke = false
+          partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+            contextArguments = []
+            dispatchReceiver = KaExplicitReceiverValue:
+              expression = variable[0]
+              isSafeNavigation = false
+              type = MyClass
+            extensionReceiver = null
+            signature = KaFunctionSignature:
+              receiverType = null
+              returnType = MyClass
+              symbol = /MyClass.plus(<dispatch receiver>: MyClass, v: MyClass): MyClass
+              valueParameters = [
+                KaVariableSignature:
+                  name = v
+                  receiverType = null
+                  returnType = MyClass
+                  symbol = v: MyClass
+                  contextParameters = []
+                  callableId = null
+              ]
+              contextParameters = []
+              callableId = /MyClass.plus
+          typeArgumentsMapping = {}
+      getCall = KaSimpleFunctionCall:
+        argumentMapping = {
+          0 -> (KaVariableSignature:
+            name = i
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = i: kotlin.Int
+            contextParameters = []
+            callableId = null)
+        }
+        isImplicitInvoke = false
+        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
           contextArguments = []
           dispatchReceiver = KaExplicitReceiverValue:
-            expression = variable[0]
+            expression = variable
             isSafeNavigation = false
             type = MyClass
           extensionReceiver = null
           signature = KaFunctionSignature:
             receiverType = null
             returnType = MyClass
-            symbol = /MyClass.plus(<dispatch receiver>: MyClass, v: MyClass): MyClass
+            symbol = /MyClass.get(<dispatch receiver>: MyClass, i: kotlin.Int): MyClass
             valueParameters = [
+              KaVariableSignature:
+                name = i
+                receiverType = null
+                returnType = kotlin.Int
+                symbol = i: kotlin.Int
+                contextParameters = []
+                callableId = null
+            ]
+            contextParameters = []
+            callableId = /MyClass.get
+        typeArgumentsMapping = {}
+      indexArguments = [
+        0
+      ]
+      setCall = KaSimpleFunctionCall:
+        argumentMapping = {
+          0 -> (KaVariableSignature:
+            name = v
+            receiverType = null
+            returnType = MyClass
+            symbol = v: MyClass
+            contextParameters = []
+            callableId = null)
+        }
+        isImplicitInvoke = false
+        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          contextArguments = []
+          dispatchReceiver = KaExplicitReceiverValue:
+            expression = variable
+            isSafeNavigation = false
+            type = MyClass
+          extensionReceiver = null
+          signature = KaFunctionSignature:
+            receiverType = null
+            returnType = kotlin.Unit
+            symbol = /MyClass.set(<dispatch receiver>: MyClass, i: kotlin.Int, v: MyClass): kotlin.Unit
+            valueParameters = [
+              KaVariableSignature:
+                name = i
+                receiverType = null
+                returnType = kotlin.Int
+                symbol = i: kotlin.Int
+                contextParameters = []
+                callableId = null,
               KaVariableSignature:
                 name = v
                 receiverType = null
@@ -25,59 +114,6 @@ KtOperationReferenceExpression(250,252): '+='
                 callableId = null
             ]
             contextParameters = []
-            callableId = /MyClass.plus
-      getPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = variable
-          isSafeNavigation = false
-          type = MyClass
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = MyClass
-          symbol = /MyClass.get(<dispatch receiver>: MyClass, i: kotlin.Int): MyClass
-          valueParameters = [
-            KaVariableSignature:
-              name = i
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = i: kotlin.Int
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /MyClass.get
-      indexArguments = [
-        0
-      ]
-      setPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = variable
-          isSafeNavigation = false
-          type = MyClass
-        extensionReceiver = null
-        signature = KaFunctionSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = /MyClass.set(<dispatch receiver>: MyClass, i: kotlin.Int, v: MyClass): kotlin.Unit
-          valueParameters = [
-            KaVariableSignature:
-              name = i
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = i: kotlin.Int
-              contextParameters = []
-              callableId = null,
-            KaVariableSignature:
-              name = v
-              receiverType = null
-              returnType = MyClass
-              symbol = v: MyClass
-              contextParameters = []
-              callableId = null
-          ]
-          contextParameters = []
-          callableId = /MyClass.set
+            callableId = /MyClass.set
+        typeArgumentsMapping = {}
     isInBestCandidates = true

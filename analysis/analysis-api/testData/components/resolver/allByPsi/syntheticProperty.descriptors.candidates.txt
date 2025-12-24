@@ -1074,42 +1074,50 @@ KtBinaryExpression(137,161): 'javaClass.something += 1'
       compoundOperation = KaCompoundAssignOperation:
         kind = PLUS_ASSIGN
         operand = 1
-        operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        operationCall = KaSimpleFunctionCall:
+          argumentMapping = {}
+          isImplicitInvoke = false
+          partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+            contextArguments = []
+            dispatchReceiver = KaExplicitReceiverValue:
+              expression = javaClass.something
+              isSafeNavigation = false
+              type = kotlin.Int
+            extensionReceiver = null
+            signature = KaFunctionSignature:
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+              valueParameters = [
+                KaVariableSignature:
+                  name = other
+                  receiverType = null
+                  returnType = kotlin.Int
+                  symbol = other: kotlin.Int
+                  contextParameters = []
+                  callableId = null
+              ]
+              contextParameters = []
+              callableId = kotlin/Int.plus
+          typeArgumentsMapping = {}
+      variableCall = KaSimpleVariableAccessCall:
+        isContextSensitive = false
+        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
           contextArguments = []
           dispatchReceiver = KaExplicitReceiverValue:
-            expression = javaClass.something
+            expression = javaClass
             isSafeNavigation = false
-            type = kotlin.Int
+            type = JavaClass
           extensionReceiver = null
-          signature = KaFunctionSignature:
+          signature = KaVariableSignature:
+            name = something
             receiverType = null
             returnType = kotlin.Int
-            symbol = kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
-            valueParameters = [
-              KaVariableSignature:
-                name = other
-                receiverType = null
-                returnType = kotlin.Int
-                symbol = other: kotlin.Int
-                contextParameters = []
-                callableId = null
-            ]
+            symbol = var something: kotlin.Int
             contextParameters = []
-            callableId = kotlin/Int.plus
-      variablePartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = javaClass
-          isSafeNavigation = false
-          type = JavaClass
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = something
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = var something: kotlin.Int
-          contextParameters = []
-          callableId = /JavaClass.something
+            callableId = /JavaClass.something
+        simpleAccess = Read
+        typeArgumentsMapping = {}
     isInBestCandidates = true
 
 KtDotQualifiedExpression(137,156): 'javaClass.something'
@@ -1256,42 +1264,50 @@ KtOperationReferenceExpression(157,159): '+='
       compoundOperation = KaCompoundAssignOperation:
         kind = PLUS_ASSIGN
         operand = 1
-        operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        operationCall = KaSimpleFunctionCall:
+          argumentMapping = {}
+          isImplicitInvoke = false
+          partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+            contextArguments = []
+            dispatchReceiver = KaExplicitReceiverValue:
+              expression = javaClass.something
+              isSafeNavigation = false
+              type = kotlin.Int
+            extensionReceiver = null
+            signature = KaFunctionSignature:
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
+              valueParameters = [
+                KaVariableSignature:
+                  name = other
+                  receiverType = null
+                  returnType = kotlin.Int
+                  symbol = other: kotlin.Int
+                  contextParameters = []
+                  callableId = null
+              ]
+              contextParameters = []
+              callableId = kotlin/Int.plus
+          typeArgumentsMapping = {}
+      variableCall = KaSimpleVariableAccessCall:
+        isContextSensitive = false
+        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
           contextArguments = []
           dispatchReceiver = KaExplicitReceiverValue:
-            expression = javaClass.something
+            expression = javaClass
             isSafeNavigation = false
-            type = kotlin.Int
+            type = JavaClass
           extensionReceiver = null
-          signature = KaFunctionSignature:
+          signature = KaVariableSignature:
+            name = something
             receiverType = null
             returnType = kotlin.Int
-            symbol = kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
-            valueParameters = [
-              KaVariableSignature:
-                name = other
-                receiverType = null
-                returnType = kotlin.Int
-                symbol = other: kotlin.Int
-                contextParameters = []
-                callableId = null
-            ]
+            symbol = var something: kotlin.Int
             contextParameters = []
-            callableId = kotlin/Int.plus
-      variablePartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = javaClass
-          isSafeNavigation = false
-          type = JavaClass
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = something
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = var something: kotlin.Int
-          contextParameters = []
-          callableId = /JavaClass.something
+            callableId = /JavaClass.something
+        simpleAccess = Read
+        typeArgumentsMapping = {}
     isInBestCandidates = true
 
 KtConstantExpression(160,161): '1'
@@ -1302,35 +1318,43 @@ KtPostfixExpression(166,187): 'javaClass.something++'
     candidate = KaCompoundVariableAccessCall:
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC
-        operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        operationCall = KaSimpleFunctionCall:
+          argumentMapping = {}
+          isImplicitInvoke = false
+          partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+            contextArguments = []
+            dispatchReceiver = KaExplicitReceiverValue:
+              expression = javaClass.something
+              isSafeNavigation = false
+              type = kotlin.Int
+            extensionReceiver = null
+            signature = KaFunctionSignature:
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int
+              valueParameters = []
+              contextParameters = []
+              callableId = kotlin/Int.inc
+          typeArgumentsMapping = {}
+        precedence = POSTFIX
+      variableCall = KaSimpleVariableAccessCall:
+        isContextSensitive = false
+        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
           contextArguments = []
           dispatchReceiver = KaExplicitReceiverValue:
-            expression = javaClass.something
+            expression = javaClass
             isSafeNavigation = false
-            type = kotlin.Int
+            type = JavaClass
           extensionReceiver = null
-          signature = KaFunctionSignature:
+          signature = KaVariableSignature:
+            name = something
             receiverType = null
             returnType = kotlin.Int
-            symbol = kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int
-            valueParameters = []
+            symbol = var something: kotlin.Int
             contextParameters = []
-            callableId = kotlin/Int.inc
-        precedence = POSTFIX
-      variablePartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = javaClass
-          isSafeNavigation = false
-          type = JavaClass
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = something
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = var something: kotlin.Int
-          contextParameters = []
-          callableId = /JavaClass.something
+            callableId = /JavaClass.something
+        simpleAccess = Read
+        typeArgumentsMapping = {}
     isInBestCandidates = true
 
 KtDotQualifiedExpression(166,185): 'javaClass.something'
@@ -1476,35 +1500,43 @@ KtOperationReferenceExpression(185,187): '++'
     candidate = KaCompoundVariableAccessCall:
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC
-        operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        operationCall = KaSimpleFunctionCall:
+          argumentMapping = {}
+          isImplicitInvoke = false
+          partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+            contextArguments = []
+            dispatchReceiver = KaExplicitReceiverValue:
+              expression = javaClass.something
+              isSafeNavigation = false
+              type = kotlin.Int
+            extensionReceiver = null
+            signature = KaFunctionSignature:
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int
+              valueParameters = []
+              contextParameters = []
+              callableId = kotlin/Int.inc
+          typeArgumentsMapping = {}
+        precedence = POSTFIX
+      variableCall = KaSimpleVariableAccessCall:
+        isContextSensitive = false
+        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
           contextArguments = []
           dispatchReceiver = KaExplicitReceiverValue:
-            expression = javaClass.something
+            expression = javaClass
             isSafeNavigation = false
-            type = kotlin.Int
+            type = JavaClass
           extensionReceiver = null
-          signature = KaFunctionSignature:
+          signature = KaVariableSignature:
+            name = something
             receiverType = null
             returnType = kotlin.Int
-            symbol = kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int
-            valueParameters = []
+            symbol = var something: kotlin.Int
             contextParameters = []
-            callableId = kotlin/Int.inc
-        precedence = POSTFIX
-      variablePartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = javaClass
-          isSafeNavigation = false
-          type = JavaClass
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = something
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = var something: kotlin.Int
-          contextParameters = []
-          callableId = /JavaClass.something
+            callableId = /JavaClass.something
+        simpleAccess = Read
+        typeArgumentsMapping = {}
     isInBestCandidates = true
 
 KtPrefixExpression(192,213): '--javaClass.something'
@@ -1512,35 +1544,43 @@ KtPrefixExpression(192,213): '--javaClass.something'
     candidate = KaCompoundVariableAccessCall:
       compoundOperation = KaCompoundUnaryOperation:
         kind = DEC
-        operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        operationCall = KaSimpleFunctionCall:
+          argumentMapping = {}
+          isImplicitInvoke = false
+          partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+            contextArguments = []
+            dispatchReceiver = KaExplicitReceiverValue:
+              expression = javaClass.something
+              isSafeNavigation = false
+              type = kotlin.Int
+            extensionReceiver = null
+            signature = KaFunctionSignature:
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = kotlin/Int.dec(<dispatch receiver>: kotlin.Int): kotlin.Int
+              valueParameters = []
+              contextParameters = []
+              callableId = kotlin/Int.dec
+          typeArgumentsMapping = {}
+        precedence = PREFIX
+      variableCall = KaSimpleVariableAccessCall:
+        isContextSensitive = false
+        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
           contextArguments = []
           dispatchReceiver = KaExplicitReceiverValue:
-            expression = javaClass.something
+            expression = javaClass
             isSafeNavigation = false
-            type = kotlin.Int
+            type = JavaClass
           extensionReceiver = null
-          signature = KaFunctionSignature:
+          signature = KaVariableSignature:
+            name = something
             receiverType = null
             returnType = kotlin.Int
-            symbol = kotlin/Int.dec(<dispatch receiver>: kotlin.Int): kotlin.Int
-            valueParameters = []
+            symbol = var something: kotlin.Int
             contextParameters = []
-            callableId = kotlin/Int.dec
-        precedence = PREFIX
-      variablePartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = javaClass
-          isSafeNavigation = false
-          type = JavaClass
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = something
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = var something: kotlin.Int
-          contextParameters = []
-          callableId = /JavaClass.something
+            callableId = /JavaClass.something
+        simpleAccess = Read
+        typeArgumentsMapping = {}
     isInBestCandidates = true
 
 KtOperationReferenceExpression(192,194): '--'
@@ -1548,35 +1588,43 @@ KtOperationReferenceExpression(192,194): '--'
     candidate = KaCompoundVariableAccessCall:
       compoundOperation = KaCompoundUnaryOperation:
         kind = DEC
-        operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        operationCall = KaSimpleFunctionCall:
+          argumentMapping = {}
+          isImplicitInvoke = false
+          partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+            contextArguments = []
+            dispatchReceiver = KaExplicitReceiverValue:
+              expression = javaClass.something
+              isSafeNavigation = false
+              type = kotlin.Int
+            extensionReceiver = null
+            signature = KaFunctionSignature:
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = kotlin/Int.dec(<dispatch receiver>: kotlin.Int): kotlin.Int
+              valueParameters = []
+              contextParameters = []
+              callableId = kotlin/Int.dec
+          typeArgumentsMapping = {}
+        precedence = PREFIX
+      variableCall = KaSimpleVariableAccessCall:
+        isContextSensitive = false
+        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
           contextArguments = []
           dispatchReceiver = KaExplicitReceiverValue:
-            expression = javaClass.something
+            expression = javaClass
             isSafeNavigation = false
-            type = kotlin.Int
+            type = JavaClass
           extensionReceiver = null
-          signature = KaFunctionSignature:
+          signature = KaVariableSignature:
+            name = something
             receiverType = null
             returnType = kotlin.Int
-            symbol = kotlin/Int.dec(<dispatch receiver>: kotlin.Int): kotlin.Int
-            valueParameters = []
+            symbol = var something: kotlin.Int
             contextParameters = []
-            callableId = kotlin/Int.dec
-        precedence = PREFIX
-      variablePartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaExplicitReceiverValue:
-          expression = javaClass
-          isSafeNavigation = false
-          type = JavaClass
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = something
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = var something: kotlin.Int
-          contextParameters = []
-          callableId = /JavaClass.something
+            callableId = /JavaClass.something
+        simpleAccess = Read
+        typeArgumentsMapping = {}
     isInBestCandidates = true
 
 KtDotQualifiedExpression(194,213): 'javaClass.something'
@@ -1722,53 +1770,61 @@ KtPostfixExpression(219,230): 'something++'
     candidate = KaCompoundVariableAccessCall:
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC
-        operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        operationCall = KaSimpleFunctionCall:
+          argumentMapping = {}
+          isImplicitInvoke = false
+          partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+            contextArguments = []
+            dispatchReceiver = KaExplicitReceiverValue:
+              expression = something
+              isSafeNavigation = false
+              type = kotlin.Int
+            extensionReceiver = null
+            signature = KaFunctionSignature:
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int
+              valueParameters = []
+              contextParameters = []
+              callableId = kotlin/Int.inc
+          typeArgumentsMapping = {}
+        precedence = POSTFIX
+      variableCall = KaSimpleVariableAccessCall:
+        isContextSensitive = false
+        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
           contextArguments = []
-          dispatchReceiver = KaExplicitReceiverValue:
-            expression = something
-            isSafeNavigation = false
-            type = kotlin.Int
+          dispatchReceiver = KaImplicitReceiverValue:
+            symbol = KaReceiverParameterSymbol:
+              annotations: []
+              callableId: null
+              compilerVisibility: Local
+              contextReceivers: []
+              isActual: false
+              isExpect: false
+              isExtension: false
+              isVal: true
+              location: LOCAL
+              modality: FINAL
+              name: <receiver>
+              origin: SOURCE
+              owningCallableSymbol: KaNamedFunctionSymbol(/foo)
+              receiverParameter: null
+              returnType: KaUsualClassType:
+                annotations: []
+                typeArguments: []
+                type: JavaClass
+              visibility: LOCAL
+            type = JavaClass
           extensionReceiver = null
-          signature = KaFunctionSignature:
+          signature = KaVariableSignature:
+            name = something
             receiverType = null
             returnType = kotlin.Int
-            symbol = kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int
-            valueParameters = []
+            symbol = var something: kotlin.Int
             contextParameters = []
-            callableId = kotlin/Int.inc
-        precedence = POSTFIX
-      variablePartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaImplicitReceiverValue:
-          symbol = KaReceiverParameterSymbol:
-            annotations: []
-            callableId: null
-            compilerVisibility: Local
-            contextReceivers: []
-            isActual: false
-            isExpect: false
-            isExtension: false
-            isVal: true
-            location: LOCAL
-            modality: FINAL
-            name: <receiver>
-            origin: SOURCE
-            owningCallableSymbol: KaNamedFunctionSymbol(/foo)
-            receiverParameter: null
-            returnType: KaUsualClassType:
-              annotations: []
-              typeArguments: []
-              type: JavaClass
-            visibility: LOCAL
-          type = JavaClass
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = something
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = var something: kotlin.Int
-          contextParameters = []
-          callableId = /JavaClass.something
+            callableId = /JavaClass.something
+        simpleAccess = Read
+        typeArgumentsMapping = {}
     isInBestCandidates = true
 
 KtNameReferenceExpression(219,228): 'something'
@@ -1816,53 +1872,61 @@ KtOperationReferenceExpression(228,230): '++'
     candidate = KaCompoundVariableAccessCall:
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC
-        operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        operationCall = KaSimpleFunctionCall:
+          argumentMapping = {}
+          isImplicitInvoke = false
+          partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+            contextArguments = []
+            dispatchReceiver = KaExplicitReceiverValue:
+              expression = something
+              isSafeNavigation = false
+              type = kotlin.Int
+            extensionReceiver = null
+            signature = KaFunctionSignature:
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int
+              valueParameters = []
+              contextParameters = []
+              callableId = kotlin/Int.inc
+          typeArgumentsMapping = {}
+        precedence = POSTFIX
+      variableCall = KaSimpleVariableAccessCall:
+        isContextSensitive = false
+        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
           contextArguments = []
-          dispatchReceiver = KaExplicitReceiverValue:
-            expression = something
-            isSafeNavigation = false
-            type = kotlin.Int
+          dispatchReceiver = KaImplicitReceiverValue:
+            symbol = KaReceiverParameterSymbol:
+              annotations: []
+              callableId: null
+              compilerVisibility: Local
+              contextReceivers: []
+              isActual: false
+              isExpect: false
+              isExtension: false
+              isVal: true
+              location: LOCAL
+              modality: FINAL
+              name: <receiver>
+              origin: SOURCE
+              owningCallableSymbol: KaNamedFunctionSymbol(/foo)
+              receiverParameter: null
+              returnType: KaUsualClassType:
+                annotations: []
+                typeArguments: []
+                type: JavaClass
+              visibility: LOCAL
+            type = JavaClass
           extensionReceiver = null
-          signature = KaFunctionSignature:
+          signature = KaVariableSignature:
+            name = something
             receiverType = null
             returnType = kotlin.Int
-            symbol = kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int
-            valueParameters = []
+            symbol = var something: kotlin.Int
             contextParameters = []
-            callableId = kotlin/Int.inc
-        precedence = POSTFIX
-      variablePartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaImplicitReceiverValue:
-          symbol = KaReceiverParameterSymbol:
-            annotations: []
-            callableId: null
-            compilerVisibility: Local
-            contextReceivers: []
-            isActual: false
-            isExpect: false
-            isExtension: false
-            isVal: true
-            location: LOCAL
-            modality: FINAL
-            name: <receiver>
-            origin: SOURCE
-            owningCallableSymbol: KaNamedFunctionSymbol(/foo)
-            receiverParameter: null
-            returnType: KaUsualClassType:
-              annotations: []
-              typeArguments: []
-              type: JavaClass
-            visibility: LOCAL
-          type = JavaClass
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = something
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = var something: kotlin.Int
-          contextParameters = []
-          callableId = /JavaClass.something
+            callableId = /JavaClass.something
+        simpleAccess = Read
+        typeArgumentsMapping = {}
     isInBestCandidates = true
 
 KtPostfixExpression(235,248): '(something)++'
@@ -1870,53 +1934,61 @@ KtPostfixExpression(235,248): '(something)++'
     candidate = KaCompoundVariableAccessCall:
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC
-        operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        operationCall = KaSimpleFunctionCall:
+          argumentMapping = {}
+          isImplicitInvoke = false
+          partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+            contextArguments = []
+            dispatchReceiver = KaExplicitReceiverValue:
+              expression = (something)
+              isSafeNavigation = false
+              type = kotlin.Int
+            extensionReceiver = null
+            signature = KaFunctionSignature:
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int
+              valueParameters = []
+              contextParameters = []
+              callableId = kotlin/Int.inc
+          typeArgumentsMapping = {}
+        precedence = POSTFIX
+      variableCall = KaSimpleVariableAccessCall:
+        isContextSensitive = false
+        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
           contextArguments = []
-          dispatchReceiver = KaExplicitReceiverValue:
-            expression = (something)
-            isSafeNavigation = false
-            type = kotlin.Int
+          dispatchReceiver = KaImplicitReceiverValue:
+            symbol = KaReceiverParameterSymbol:
+              annotations: []
+              callableId: null
+              compilerVisibility: Local
+              contextReceivers: []
+              isActual: false
+              isExpect: false
+              isExtension: false
+              isVal: true
+              location: LOCAL
+              modality: FINAL
+              name: <receiver>
+              origin: SOURCE
+              owningCallableSymbol: KaNamedFunctionSymbol(/foo)
+              receiverParameter: null
+              returnType: KaUsualClassType:
+                annotations: []
+                typeArguments: []
+                type: JavaClass
+              visibility: LOCAL
+            type = JavaClass
           extensionReceiver = null
-          signature = KaFunctionSignature:
+          signature = KaVariableSignature:
+            name = something
             receiverType = null
             returnType = kotlin.Int
-            symbol = kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int
-            valueParameters = []
+            symbol = var something: kotlin.Int
             contextParameters = []
-            callableId = kotlin/Int.inc
-        precedence = POSTFIX
-      variablePartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaImplicitReceiverValue:
-          symbol = KaReceiverParameterSymbol:
-            annotations: []
-            callableId: null
-            compilerVisibility: Local
-            contextReceivers: []
-            isActual: false
-            isExpect: false
-            isExtension: false
-            isVal: true
-            location: LOCAL
-            modality: FINAL
-            name: <receiver>
-            origin: SOURCE
-            owningCallableSymbol: KaNamedFunctionSymbol(/foo)
-            receiverParameter: null
-            returnType: KaUsualClassType:
-              annotations: []
-              typeArguments: []
-              type: JavaClass
-            visibility: LOCAL
-          type = JavaClass
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = something
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = var something: kotlin.Int
-          contextParameters = []
-          callableId = /JavaClass.something
+            callableId = /JavaClass.something
+        simpleAccess = Read
+        typeArgumentsMapping = {}
     isInBestCandidates = true
 
 KtParenthesizedExpression(235,246): '(something)'
@@ -1967,53 +2039,61 @@ KtOperationReferenceExpression(246,248): '++'
     candidate = KaCompoundVariableAccessCall:
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC
-        operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        operationCall = KaSimpleFunctionCall:
+          argumentMapping = {}
+          isImplicitInvoke = false
+          partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+            contextArguments = []
+            dispatchReceiver = KaExplicitReceiverValue:
+              expression = (something)
+              isSafeNavigation = false
+              type = kotlin.Int
+            extensionReceiver = null
+            signature = KaFunctionSignature:
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int
+              valueParameters = []
+              contextParameters = []
+              callableId = kotlin/Int.inc
+          typeArgumentsMapping = {}
+        precedence = POSTFIX
+      variableCall = KaSimpleVariableAccessCall:
+        isContextSensitive = false
+        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
           contextArguments = []
-          dispatchReceiver = KaExplicitReceiverValue:
-            expression = (something)
-            isSafeNavigation = false
-            type = kotlin.Int
+          dispatchReceiver = KaImplicitReceiverValue:
+            symbol = KaReceiverParameterSymbol:
+              annotations: []
+              callableId: null
+              compilerVisibility: Local
+              contextReceivers: []
+              isActual: false
+              isExpect: false
+              isExtension: false
+              isVal: true
+              location: LOCAL
+              modality: FINAL
+              name: <receiver>
+              origin: SOURCE
+              owningCallableSymbol: KaNamedFunctionSymbol(/foo)
+              receiverParameter: null
+              returnType: KaUsualClassType:
+                annotations: []
+                typeArguments: []
+                type: JavaClass
+              visibility: LOCAL
+            type = JavaClass
           extensionReceiver = null
-          signature = KaFunctionSignature:
+          signature = KaVariableSignature:
+            name = something
             receiverType = null
             returnType = kotlin.Int
-            symbol = kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int
-            valueParameters = []
+            symbol = var something: kotlin.Int
             contextParameters = []
-            callableId = kotlin/Int.inc
-        precedence = POSTFIX
-      variablePartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
-        contextArguments = []
-        dispatchReceiver = KaImplicitReceiverValue:
-          symbol = KaReceiverParameterSymbol:
-            annotations: []
-            callableId: null
-            compilerVisibility: Local
-            contextReceivers: []
-            isActual: false
-            isExpect: false
-            isExtension: false
-            isVal: true
-            location: LOCAL
-            modality: FINAL
-            name: <receiver>
-            origin: SOURCE
-            owningCallableSymbol: KaNamedFunctionSymbol(/foo)
-            receiverParameter: null
-            returnType: KaUsualClassType:
-              annotations: []
-              typeArguments: []
-              type: JavaClass
-            visibility: LOCAL
-          type = JavaClass
-        extensionReceiver = null
-        signature = KaVariableSignature:
-          name = something
-          receiverType = null
-          returnType = kotlin.Int
-          symbol = var something: kotlin.Int
-          contextParameters = []
-          callableId = /JavaClass.something
+            callableId = /JavaClass.something
+        simpleAccess = Read
+        typeArgumentsMapping = {}
     isInBestCandidates = true
 
 KtBinaryExpression(253,268): '(something) = 1'
