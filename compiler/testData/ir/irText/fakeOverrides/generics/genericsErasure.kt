@@ -8,23 +8,29 @@
 // Disable K1 since it reports: CONFLICTING_OVERLOADS: Conflicting overloads: public final fun <A, B> foo4(a: A): Unit defined in Foo, public final fun <B> foo4(a: B): Unit defined in Foo
 // IGNORE_BACKEND_K1: ANY
 
-// Reflect dumps mismtach because foo2 don't match in new implementation.
-// We don't consider it super valid case because of @Suppress("CONFLICTING_OVERLOADS")
+// K1 reflect thinks that there is only one foo2, new reflect thinks that there are two foo2.
+// KT-83380
 // KOTLIN_REFLECT_DUMP_MISMATCH
 
-class Foo {
+// FILE: main.kt
+class Foo : I1, I2 {
     @JvmName("a1") fun <A> foo1(a: A) where A : Number = Unit
     @JvmName("b1") fun foo1(a: Number) = Unit
 
-    // Different members from the K1 reflection perspective (I think it's a bug). Can override each other
-    @Suppress("CONFLICTING_OVERLOADS") fun <A> foo2(a: A) where A : java.io.Serializable, A : CharSequence = Unit
-    @Suppress("CONFLICTING_OVERLOADS") fun <A> foo2(a: A) where A : CharSequence, A : java.io.Serializable = Unit
+    @JvmName("b3") fun <A, B> foo3(a: B) = Unit
 
-    // Different members from the K1 reflection perspective. Can't override each other
-    @Suppress("CONFLICTING_OVERLOADS") @JvmName("a3") fun <A, B> foo3(a: A) = Unit
-    @Suppress("CONFLICTING_OVERLOADS") @JvmName("b3") fun <A, B> foo3(a: B) = Unit
-
-    // Different members from the K1 reflect perspective
     @JvmName("a4") fun <A, B> foo4(a: A) = Unit
     @JvmName("b4") fun <B> foo4(a: B) = Unit
+}
+
+// FILE: I1.java
+public interface I1 {
+    public default <A extends java.io.Serializable & CharSequence> void foo2(A a) {}
+
+    public default <A, B> void foo3(A a) {}
+}
+
+// FILE: I2.java
+public interface I2 {
+    public default <A extends CharSequence & java.io.Serializable> void foo2(A a) {}
 }
