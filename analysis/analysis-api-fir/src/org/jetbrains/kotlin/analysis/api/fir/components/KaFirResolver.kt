@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnostic
 import org.jetbrains.kotlin.analysis.api.fir.*
-import org.jetbrains.kotlin.analysis.api.fir.components.KaFirResolver.CompoundArrayAccessContext
 import org.jetbrains.kotlin.analysis.api.fir.references.ClassicKDocReferenceResolver
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirArrayOfSymbolProvider.arrayOf
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirArrayOfSymbolProvider.arrayOfSymbol
@@ -884,7 +883,7 @@ internal class KaFirResolver(
                 KaBaseSimpleVariableAccessCall(
                     backingPartiallyAppliedSymbol = partiallyAppliedSymbol as KaPartiallyAppliedVariableSymbol<KaVariableSymbol>,
                     backingTypeArgumentsMapping = typeArgumentsMapping,
-                    backingSimpleAccess = KaBaseSimpleVariableWriteAccess(value = rhs),
+                    backingKind = KaBaseVariableWriteAccess(value = rhs),
                     backingIsContextSensitive = calleeReference.isContextSensitive,
                 )
             }
@@ -895,7 +894,7 @@ internal class KaFirResolver(
                     KaBaseSimpleVariableAccessCall(
                         backingPartiallyAppliedSymbol = partiallyAppliedSymbol as KaPartiallyAppliedVariableSymbol<KaVariableSymbol>,
                         backingTypeArgumentsMapping = typeArgumentsMapping,
-                        backingSimpleAccess = KaBaseSimpleVariableReadAccess,
+                        backingKind = KaBaseVariableReadAccess,
                         backingIsContextSensitive = calleeReference.isContextSensitive,
                     )
                 }
@@ -998,7 +997,7 @@ internal class KaFirResolver(
         val variableAccessCall = KaBaseSimpleVariableAccessCall(
             backingPartiallyAppliedSymbol = variableSymbol,
             backingTypeArgumentsMapping = typeArgumentsMapping,
-            backingSimpleAccess = KaBaseSimpleVariableReadAccess,
+            backingKind = KaBaseVariableReadAccess,
             backingIsContextSensitive = fir.calleeReference?.isContextSensitive == true,
         )
 

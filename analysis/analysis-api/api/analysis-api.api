@@ -769,7 +769,18 @@ public abstract interface class org/jetbrains/kotlin/analysis/api/resolution/KaS
 }
 
 public abstract interface class org/jetbrains/kotlin/analysis/api/resolution/KaVariableAccessCall : org/jetbrains/kotlin/analysis/api/resolution/KaCallableMemberCall, org/jetbrains/kotlin/analysis/api/resolution/KaSingleCall {
+	public abstract fun getKind ()Lorg/jetbrains/kotlin/analysis/api/resolution/KaVariableAccessCall$Kind;
 	public abstract fun getPartiallyAppliedSymbol ()Lorg/jetbrains/kotlin/analysis/api/resolution/KaPartiallyAppliedSymbol;
+}
+
+public abstract interface class org/jetbrains/kotlin/analysis/api/resolution/KaVariableAccessCall$Kind {
+}
+
+public abstract interface class org/jetbrains/kotlin/analysis/api/resolution/KaVariableAccessCall$Kind$Read : org/jetbrains/kotlin/analysis/api/resolution/KaVariableAccessCall$Kind {
+}
+
+public abstract interface class org/jetbrains/kotlin/analysis/api/resolution/KaVariableAccessCall$Kind$Write : org/jetbrains/kotlin/analysis/api/resolution/KaVariableAccessCall$Kind {
+	public abstract fun getValue ()Lorg/jetbrains/kotlin/psi/KtExpression;
 }
 
 public abstract interface class org/jetbrains/kotlin/analysis/api/scopes/KaScope : org/jetbrains/kotlin/analysis/api/scopes/KaScopeLike {

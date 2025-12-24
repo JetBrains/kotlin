@@ -368,12 +368,11 @@ internal class KaFe10Resolver(
             KtTokens.EQ -> {
                 val resolvedCall = left.getResolvedCall(context) ?: return null
                 resolvedCalls += resolvedCall
-                val partiallyAppliedSymbol =
-                    resolvedCall.toPartiallyAppliedVariableSymbol(context) ?: return null
+                val partiallyAppliedSymbol = resolvedCall.toPartiallyAppliedVariableSymbol(context) ?: return null
                 KaBaseSimpleVariableAccessCall(
-                    partiallyAppliedSymbol,
-                    resolvedCall.toTypeArgumentsMapping(partiallyAppliedSymbol),
-                    KaBaseSimpleVariableWriteAccess(right),
+                    backingPartiallyAppliedSymbol = partiallyAppliedSymbol,
+                    backingTypeArgumentsMapping = resolvedCall.toTypeArgumentsMapping(partiallyAppliedSymbol),
+                    backingKind = KaBaseVariableWriteAccess(right),
                     backingIsContextSensitive = false,
                 )
             }
@@ -425,7 +424,7 @@ internal class KaFe10Resolver(
         get() = KaBaseSimpleVariableAccessCall(
             backingPartiallyAppliedSymbol = this,
             backingTypeArgumentsMapping = emptyMap(),
-            backingSimpleAccess = KaBaseSimpleVariableReadAccess,
+            backingKind = KaBaseVariableReadAccess,
             backingIsContextSensitive = false,
         )
 
@@ -504,9 +503,9 @@ internal class KaFe10Resolver(
     private fun ResolvedCall<*>.toPropertyRead(context: BindingContext): KaVariableAccessCall? {
         val partiallyAppliedSymbol = toPartiallyAppliedVariableSymbol(context) ?: return null
         return KaBaseSimpleVariableAccessCall(
-            partiallyAppliedSymbol,
-            toTypeArgumentsMapping(partiallyAppliedSymbol),
-            KaBaseSimpleVariableReadAccess,
+            backingPartiallyAppliedSymbol = partiallyAppliedSymbol,
+            backingTypeArgumentsMapping = toTypeArgumentsMapping(partiallyAppliedSymbol),
+            backingKind = KaBaseVariableReadAccess,
             backingIsContextSensitive = false,
         )
     }

@@ -141,6 +141,36 @@ public sealed interface KaVariableAccessCall : KaSingleCall<KaVariableSymbol, Ka
      */
     @KaExperimentalApi
     public val isContextSensitive: Boolean
+
+    /**
+     * The kind of access to the variable (read or write), alongside additional information
+     */
+    public val kind: Kind
+
+    /**
+     * Determines the kind of access to the [variable][KaVariableAccessCall] (read or write), alongside additional information
+     *
+     * @see KaVariableAccessCall
+     */
+    public sealed interface Kind {
+        /**
+         * The [variable access][KaVariableAccessCall] reads the variable.
+         */
+        @SubclassOptInRequired(KaImplementationDetail::class)
+        public interface Read : Kind
+
+        /**
+         * The [variable access][KaVariableAccessCall] writes to the variable.
+         */
+        @SubclassOptInRequired(KaImplementationDetail::class)
+        public interface Write : Kind {
+            /**
+             * A [KtExpression] that represents the new value which is assigned to this variable, or `null` if the assignment is incomplete and
+             * lacks the new value.
+             */
+            public val value: KtExpression?
+        }
+    }
 }
 
 /**
@@ -151,7 +181,8 @@ public interface KaSimpleVariableAccessCall : KaVariableAccessCall {
     /**
      * The kind of access to the variable (read or write), alongside additional information.
      */
-    public val simpleAccess: KaSimpleVariableAccess
+    @Deprecated("Use 'kind' instead", ReplaceWith("kind"))
+    public val simpleAccess: @Suppress("DEPRECATION") KaSimpleVariableAccess
 }
 
 /**
