@@ -96,10 +96,10 @@ abstract class KaBaseResolver<T : KaSession> : KaBaseSessionComponent<T>(), KaRe
     final override fun KtConstructorDelegationReferenceExpression.resolveCall(): KaDelegatedConstructorCall? = resolveCallSafe()
     final override fun KtCallElement.resolveCall(): KaSingleCall<*, *>? = resolveCallSafe()
     final override fun KtCallableReferenceExpression.resolveCall(): KaSingleCall<*, *>? = resolveCallSafe()
-    final override fun KtArrayAccessExpression.resolveCall(): KaSimpleFunctionCall? = resolveCallSafe()
-    final override fun KtCollectionLiteralExpression.resolveCall(): KaSimpleFunctionCall? = resolveCallSafe()
+    final override fun KtArrayAccessExpression.resolveCall(): KaFunctionCall<*>? = resolveCallSafe()
+    final override fun KtCollectionLiteralExpression.resolveCall(): KaFunctionCall<*>? = resolveCallSafe()
     final override fun KtEnumEntrySuperclassReferenceExpression.resolveCall(): KaDelegatedConstructorCall? = resolveCallSafe()
-    final override fun KtWhenConditionInRange.resolveCall(): KaSimpleFunctionCall? = resolveCallSafe()
+    final override fun KtWhenConditionInRange.resolveCall(): KaFunctionCall<*>? = resolveCallSafe()
 
     final override fun KtElement.resolveToCall(): KaCallInfo? = withPsiValidityAssertion {
         when (val attempt = tryResolveCallImpl()) {

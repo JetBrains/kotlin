@@ -814,7 +814,7 @@ internal class KaFe10Resolver(
                     reportedPsi is KtLambdaExpression || reportedPsi is KtLambdaArgument -> true
             // errors on value to set using array access convention
             isCallArgError &&
-                    kaCall is KaSimpleFunctionCall && (reportedPsiParent as? KtBinaryExpression)?.right == reportedPsi -> true
+                    kaCall is KaFunctionCall<*> && (reportedPsiParent as? KtBinaryExpression)?.right == reportedPsi -> true
             else -> false
         }
     }
