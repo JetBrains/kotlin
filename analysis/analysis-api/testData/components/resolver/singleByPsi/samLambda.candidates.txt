@@ -15,7 +15,6 @@ KtCallExpression(143,162): 'test { uiMethod() }'
         symbol = /Test
         type = Test
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit

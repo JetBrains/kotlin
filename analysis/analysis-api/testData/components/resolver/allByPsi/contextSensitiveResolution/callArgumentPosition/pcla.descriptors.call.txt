@@ -142,7 +142,6 @@ KtCallExpression(257,263): 'TODO()'
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Nothing
@@ -159,7 +158,6 @@ KtNameReferenceExpression(257,261): 'TODO'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Nothing
@@ -210,7 +208,6 @@ KtCallExpression(290,340): 'generate {'
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = MyEnum
@@ -248,7 +245,6 @@ KtNameReferenceExpression(290,298): 'generate'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MyEnum
@@ -320,7 +316,6 @@ KtCallExpression(309,317): 'yield(m)'
         visibility: LOCAL
       type = Controller<MyEnum>
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Boolean
@@ -379,7 +374,6 @@ KtNameReferenceExpression(309,314): 'yield'
           visibility: LOCAL
         type = Controller<MyEnum>
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -460,7 +454,6 @@ KtCallExpression(326,334): 'yield(X)'
         visibility: LOCAL
       type = Controller<MyEnum>
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Boolean
@@ -519,7 +512,6 @@ KtNameReferenceExpression(326,331): 'yield'
           visibility: LOCAL
         type = Controller<MyEnum>
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -580,7 +572,6 @@ KtCallExpression(346,396): 'generate {'
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = MyEnum
@@ -618,7 +609,6 @@ KtNameReferenceExpression(346,354): 'generate'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MyEnum
@@ -690,7 +680,6 @@ KtCallExpression(365,373): 'yield(X)'
         visibility: LOCAL
       type = Controller<MyEnum>
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Boolean
@@ -749,7 +738,6 @@ KtNameReferenceExpression(365,370): 'yield'
           visibility: LOCAL
         type = Controller<MyEnum>
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -833,7 +821,6 @@ KtCallExpression(382,390): 'yield(m)'
         visibility: LOCAL
       type = Controller<MyEnum>
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Boolean
@@ -892,7 +879,6 @@ KtNameReferenceExpression(382,387): 'yield'
           visibility: LOCAL
         type = Controller<MyEnum>
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -961,7 +947,6 @@ KtCallExpression(418,451): 'generate {'
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = MyEnum
@@ -998,7 +983,6 @@ KtNameReferenceExpression(418,426): 'generate'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MyEnum
@@ -1070,7 +1054,6 @@ KtCallExpression(437,445): 'yield(X)'
         visibility: LOCAL
       type = Controller<MyEnum>
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Boolean
@@ -1129,7 +1112,6 @@ KtNameReferenceExpression(437,442): 'yield'
           visibility: LOCAL
         type = Controller<MyEnum>
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -1176,7 +1158,6 @@ KtCallExpression(457,490): 'generate {'
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
-        isImplicitInvoke = false
         signature = KaFunctionSignature:
           receiverType = null
           returnType = ERROR_TYPE
@@ -1216,7 +1197,6 @@ KtNameReferenceExpression(457,465): 'generate'
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
-        isImplicitInvoke = false
         signature = KaFunctionSignature:
           receiverType = null
           returnType = ERROR_TYPE
@@ -1290,7 +1270,6 @@ KtCallExpression(476,484): 'yield(X)'
         visibility: LOCAL
       type = Controller<TypeVariable(S)>
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Boolean
@@ -1349,7 +1328,6 @@ KtNameReferenceExpression(476,481): 'yield'
           visibility: LOCAL
         type = Controller<TypeVariable(S)>
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean

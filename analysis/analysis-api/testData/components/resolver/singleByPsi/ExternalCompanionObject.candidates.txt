@@ -5,7 +5,6 @@ KtNameReferenceExpression(48,57): 'Companion'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = dependency.C.Companion

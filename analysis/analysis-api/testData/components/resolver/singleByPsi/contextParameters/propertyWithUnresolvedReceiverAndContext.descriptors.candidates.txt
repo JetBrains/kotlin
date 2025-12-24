@@ -25,7 +25,6 @@ KtNameReferenceExpression(112,115): 'foo'
           visibility: LOCAL
         type = ERROR_TYPE
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE

@@ -8,7 +8,6 @@ KtOperationReferenceExpression(191,192): '-'
         isSafeNavigation = false
         type = MyClass
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MyClass

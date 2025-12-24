@@ -7,7 +7,6 @@ KtCallExpression(93,99): 'peek()'
       isSafeNavigation = false
       type = F
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = F

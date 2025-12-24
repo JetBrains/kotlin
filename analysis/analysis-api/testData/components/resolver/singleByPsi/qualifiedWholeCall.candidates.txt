@@ -16,7 +16,6 @@ KtDotQualifiedExpression(48,54): 'A.y(1)'
         isSafeNavigation = false
         type = A
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit

@@ -179,7 +179,6 @@ KtCallExpression(214,220): 'TODO()'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Nothing
@@ -196,7 +195,6 @@ KtCallExpression(214,220): 'TODO()'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Nothing
@@ -223,7 +221,6 @@ KtNameReferenceExpression(214,218): 'TODO'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Nothing
@@ -240,7 +237,6 @@ KtNameReferenceExpression(214,218): 'TODO'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Nothing
@@ -309,7 +305,6 @@ KtDotQualifiedExpression(265,275): 'MySealed.X'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MySealed.X
@@ -328,7 +323,6 @@ KtNameReferenceExpression(265,273): 'MySealed'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MySealed
@@ -347,7 +341,6 @@ KtNameReferenceExpression(274,275): 'X'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MySealed.X
@@ -383,7 +376,6 @@ KtBinaryExpression(285,291): 'a == X'
         isSafeNavigation = false
         type = T
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -438,7 +430,6 @@ KtOperationReferenceExpression(287,289): '=='
         isSafeNavigation = false
         type = T
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -464,7 +455,6 @@ KtNameReferenceExpression(290,291): 'X'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MySealed.X
@@ -506,7 +496,6 @@ KtBinaryExpression(304,310): 'a == Y'
         isSafeNavigation = false
         type = T
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -561,7 +550,6 @@ KtOperationReferenceExpression(306,308): '=='
         isSafeNavigation = false
         type = T
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -587,7 +575,6 @@ KtNameReferenceExpression(309,310): 'Y'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MySealed.Y
@@ -629,7 +616,6 @@ KtBinaryExpression(323,329): 'a != X'
         isSafeNavigation = false
         type = T
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -684,7 +670,6 @@ KtOperationReferenceExpression(325,327): '!='
         isSafeNavigation = false
         type = T
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -710,7 +695,6 @@ KtNameReferenceExpression(328,329): 'X'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MySealed.X
@@ -752,7 +736,6 @@ KtBinaryExpression(342,348): 'a != Y'
         isSafeNavigation = false
         type = T
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -807,7 +790,6 @@ KtOperationReferenceExpression(344,346): '!='
         isSafeNavigation = false
         type = T
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -833,7 +815,6 @@ KtNameReferenceExpression(347,348): 'Y'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MySealed.Y
@@ -888,7 +869,6 @@ KtNameReferenceExpression(367,368): 'X'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MySealed.X
@@ -943,7 +923,6 @@ KtNameReferenceExpression(387,388): 'Y'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MySealed.Y
@@ -998,7 +977,6 @@ KtNameReferenceExpression(407,408): 'X'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MySealed.X
@@ -1053,7 +1031,6 @@ KtNameReferenceExpression(427,428): 'Y'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MySealed.Y
@@ -1095,7 +1072,6 @@ KtBinaryExpression(441,447): 'a == L'
         isSafeNavigation = false
         type = T
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -1150,7 +1126,6 @@ KtOperationReferenceExpression(443,445): '=='
         isSafeNavigation = false
         type = T
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -1262,7 +1237,6 @@ KtCallExpression(485,490): 'id(a)'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = T
@@ -1298,7 +1272,6 @@ KtNameReferenceExpression(485,487): 'id'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = T
@@ -1385,7 +1358,6 @@ KtBinaryExpression(685,691): 'X == a'
         isSafeNavigation = false
         type = ERROR CLASS: Unresolved name: X
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -1425,7 +1397,6 @@ KtOperationReferenceExpression(687,689): '=='
         isSafeNavigation = false
         type = ERROR CLASS: Unresolved name: X
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -1492,7 +1463,6 @@ KtBinaryExpression(704,710): 'L == a'
         isSafeNavigation = false
         type = MySealed.X
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -1547,7 +1517,6 @@ KtOperationReferenceExpression(706,708): '=='
         isSafeNavigation = false
         type = MySealed.X
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -1614,7 +1583,6 @@ KtBinaryExpression(913,923): 'a == id(X)'
         isSafeNavigation = false
         type = T
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -1669,7 +1637,6 @@ KtOperationReferenceExpression(915,917): '=='
         isSafeNavigation = false
         type = T
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -1703,7 +1670,6 @@ KtCallExpression(918,923): 'id(X)'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Any?
@@ -1739,7 +1705,6 @@ KtNameReferenceExpression(918,920): 'id'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Any?
@@ -1799,7 +1764,6 @@ KtBinaryExpression(936,946): 'a == id(L)'
         isSafeNavigation = false
         type = T
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -1854,7 +1818,6 @@ KtOperationReferenceExpression(938,940): '=='
         isSafeNavigation = false
         type = T
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -1888,7 +1851,6 @@ KtCallExpression(941,946): 'id(L)'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MySealed.X
@@ -1924,7 +1886,6 @@ KtNameReferenceExpression(941,943): 'id'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MySealed.X
@@ -2002,7 +1963,6 @@ KtBinaryExpression(971,977): 'a == X'
         isSafeNavigation = false
         type = T
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -2057,7 +2017,6 @@ KtOperationReferenceExpression(973,975): '=='
         isSafeNavigation = false
         type = T
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -2083,7 +2042,6 @@ KtNameReferenceExpression(976,977): 'X'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MySealed.X
@@ -2122,7 +2080,6 @@ KtBinaryExpression(992,998): 'a != Y'
         isSafeNavigation = false
         type = T
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -2177,7 +2134,6 @@ KtOperationReferenceExpression(994,996): '!='
         isSafeNavigation = false
         type = T
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -2203,7 +2159,6 @@ KtNameReferenceExpression(997,998): 'Y'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MySealed.Y
@@ -2258,7 +2213,6 @@ KtNameReferenceExpression(1037,1038): 'X'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MySealed.X
@@ -2297,7 +2251,6 @@ KtBinaryExpression(1053,1059): 'a == L'
         isSafeNavigation = false
         type = T
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -2352,7 +2305,6 @@ KtOperationReferenceExpression(1055,1057): '=='
         isSafeNavigation = false
         type = T
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -2471,7 +2423,6 @@ KtNameReferenceExpression(1107,1108): 'Y'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MySealed.Y
@@ -2520,7 +2471,6 @@ KtNameReferenceExpression(1144,1145): 'X'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MySealed.X
@@ -2548,7 +2498,6 @@ KtNameReferenceExpression(1160,1161): 'Y'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MySealed.Y
@@ -2639,7 +2588,6 @@ KtNameReferenceExpression(1234,1235): 'X'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MySealed.X
@@ -2667,7 +2615,6 @@ KtNameReferenceExpression(1250,1251): 'Y'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MySealed.Y
@@ -2763,7 +2710,6 @@ KtCallExpression(1316,1321): 'id(X)'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Any?
@@ -2799,7 +2745,6 @@ KtNameReferenceExpression(1316,1318): 'id'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Any?
@@ -2853,7 +2798,6 @@ KtCallExpression(1336,1341): 'id(Y)'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Any?
@@ -2889,7 +2833,6 @@ KtNameReferenceExpression(1336,1338): 'id'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Any?
@@ -2937,7 +2880,6 @@ KtCallExpression(1343,1348): 'id(L)'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MySealed.X
@@ -2973,7 +2915,6 @@ KtNameReferenceExpression(1343,1345): 'id'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MySealed.X
@@ -3072,7 +3013,6 @@ KtCallExpression(1412,1417): 'id(X)'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Any?
@@ -3108,7 +3048,6 @@ KtNameReferenceExpression(1412,1414): 'id'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Any?
@@ -3162,7 +3101,6 @@ KtCallExpression(1432,1437): 'id(Y)'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Any?
@@ -3198,7 +3136,6 @@ KtNameReferenceExpression(1432,1434): 'id'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Any?
@@ -3246,7 +3183,6 @@ KtCallExpression(1439,1444): 'id(L)'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MySealed.X
@@ -3282,7 +3218,6 @@ KtNameReferenceExpression(1439,1441): 'id'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MySealed.X

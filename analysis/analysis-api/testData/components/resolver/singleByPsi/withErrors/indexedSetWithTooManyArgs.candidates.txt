@@ -30,7 +30,6 @@ KtArrayAccessExpression(93,110): 'c[1, "foo", 3.14]'
         isSafeNavigation = false
         type = C
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit

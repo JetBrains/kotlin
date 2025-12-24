@@ -8,7 +8,6 @@ KtNameReferenceExpression(77,83): 'invoke'
         isSafeNavigation = false
         type = A
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit

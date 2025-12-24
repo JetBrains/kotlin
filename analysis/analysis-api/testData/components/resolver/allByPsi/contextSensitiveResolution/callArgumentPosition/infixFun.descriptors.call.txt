@@ -192,7 +192,6 @@ KtBinaryExpression(310,340): '1 infixEnumConsumer EnumValue1'
         expression = 1
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.Int
         returnType = kotlin.Unit
@@ -231,7 +230,6 @@ KtOperationReferenceExpression(312,329): 'infixEnumConsumer'
         expression = 1
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.Int
         returnType = kotlin.Unit
@@ -275,7 +273,6 @@ KtBinaryExpression(354,389): '1 infixEnumConsumer InheritorObject'
         expression = 1
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.Int
         returnType = kotlin.Unit
@@ -314,7 +311,6 @@ KtOperationReferenceExpression(356,373): 'infixEnumConsumer'
         expression = 1
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.Int
         returnType = kotlin.Unit
@@ -358,7 +354,6 @@ KtBinaryExpression(403,434): '1 infixConsumer InheritorObject'
         expression = 1
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.Int
         returnType = kotlin.Unit
@@ -397,7 +392,6 @@ KtOperationReferenceExpression(405,418): 'infixConsumer'
         expression = 1
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.Int
         returnType = kotlin.Unit

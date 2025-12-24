@@ -113,7 +113,6 @@ KtCallExpression(197,206): 'MyClass()'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MyClass
@@ -131,7 +130,6 @@ KtNameReferenceExpression(197,204): 'MyClass'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MyClass
@@ -2060,7 +2058,6 @@ KtCallExpression(507,510): 'b()'
         isSafeNavigation = false
         type = kotlin.Function0<T>
       extensionReceiver = null
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = null
         returnType = T
@@ -2232,7 +2229,6 @@ KtCallExpression(1108,1497): 'receive<MyClass>('
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -2282,7 +2278,6 @@ KtNameReferenceExpression(1108,1115): 'receive'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -2484,7 +2479,6 @@ KtCallExpression(1503,1887): 'run<MyClass> {'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MyClass
@@ -2535,7 +2529,6 @@ KtCallExpression(1503,1887): 'run<MyClass> {'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MyClass
@@ -2587,7 +2580,6 @@ KtNameReferenceExpression(1503,1506): 'run'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MyClass
@@ -2638,7 +2630,6 @@ KtNameReferenceExpression(1503,1506): 'run'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MyClass

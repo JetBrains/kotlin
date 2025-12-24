@@ -86,7 +86,6 @@ KtDotQualifiedExpression(327,341): 'MyEnum.Option1'
         expression = Option1
         isSafeNavigation = false
         type = MyEnum
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = kotlin.DeepRecursiveFunction<ERROR_TYPE, ERROR_TYPE>
         returnType = ERROR_TYPE
@@ -229,7 +228,6 @@ KtCallExpression(462,518): '{ arg: Boolean -> if (arg) enumProp else Option1 }(t
         isSafeNavigation = false
         type = kotlin.Function1<kotlin.Boolean, MyEnum>
       extensionReceiver = null
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MyEnum
@@ -265,7 +263,6 @@ KtCallExpression(462,518): '{ arg: Boolean -> if (arg) enumProp else Option1 }(t
         expression = { arg: Boolean -> if (arg) enumProp else Option1 }
         isSafeNavigation = false
         type = kotlin.Function1<kotlin.Boolean, MyEnum>
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = kotlin.DeepRecursiveFunction<kotlin.Boolean, ERROR_TYPE>
         returnType = ERROR_TYPE
@@ -726,7 +723,6 @@ KtBinaryExpression(975,1005): 'contextOf<MyEnum>() == Option1'
         isSafeNavigation = false
         type = @R|kotlin.internal.NoInfer|()  MyEnum
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -752,7 +748,6 @@ KtCallExpression(975,994): 'contextOf<MyEnum>()'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = @R|kotlin.internal.NoInfer|()  MyEnum
@@ -780,7 +775,6 @@ KtNameReferenceExpression(975,984): 'contextOf'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = @R|kotlin.internal.NoInfer|()  MyEnum
@@ -837,7 +831,6 @@ KtOperationReferenceExpression(995,997): '=='
         isSafeNavigation = false
         type = @R|kotlin.internal.NoInfer|()  MyEnum
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean

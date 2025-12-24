@@ -13,7 +13,6 @@ KtNameReferenceExpression(78,85): 'suspend'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.coroutines.SuspendFunction0<kotlin.Unit>

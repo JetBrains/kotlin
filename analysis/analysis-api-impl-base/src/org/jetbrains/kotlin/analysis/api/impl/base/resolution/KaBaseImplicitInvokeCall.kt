@@ -51,6 +51,15 @@ class KaBaseImplicitInvokeCall(
         get() = withValidityAssertion { backingPartiallyAppliedSymbol.contextArguments }
 
     override val typeArgumentsMapping: Map<KaTypeParameterSymbol, KaType> get() = withValidityAssertion { backingTypeArgumentsMapping }
+
+
+    @Deprecated(
+        "Check whether the call is instance of the 'KaImplicitInvokeCall' instead",
+        replaceWith = ReplaceWith(
+            "this is KaImplicitInvokeCall",
+            "org.jetbrains.kotlin.analysis.api.resolution.KaImplicitInvokeCall"
+        )
+    )
     override val isImplicitInvoke: Boolean get() = withValidityAssertion { true }
     override val argumentMapping: Map<KtExpression, KaVariableSignature<KaValueParameterSymbol>> get() = withValidityAssertion { backingArgumentMapping }
 }

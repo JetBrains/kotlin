@@ -145,7 +145,6 @@ KtCallExpression(251,263): 'InnerClass()'
         visibility: LOCAL
       type = one.two.TopLevelClass
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = one.two.TopLevelClass.InnerClass
@@ -183,7 +182,6 @@ KtNameReferenceExpression(251,261): 'InnerClass'
           visibility: LOCAL
         type = one.two.TopLevelClass
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = one.two.TopLevelClass.InnerClass

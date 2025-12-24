@@ -16,7 +16,6 @@ KtOperationReferenceExpression(97,98): '>'
         isSafeNavigation = false
         type = MyClass
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
@@ -53,7 +52,6 @@ KtOperationReferenceExpression(97,98): '>'
         expression = m
         isSafeNavigation = false
         type = MyClass
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = MyClass
         returnType = kotlin.Int

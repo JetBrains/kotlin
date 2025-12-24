@@ -16,7 +16,6 @@ KtNameReferenceExpression(35,46): 'invokeLater'
         isSafeNavigation = false
         type = kotlin.Unit
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit

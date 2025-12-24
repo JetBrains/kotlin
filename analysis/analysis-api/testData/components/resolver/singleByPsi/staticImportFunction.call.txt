@@ -6,7 +6,6 @@ KtCallExpression(95,100): 'foo()'
       symbol = one/two/TopLevelObject
       type = one.two.TopLevelObject
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Unit

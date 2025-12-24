@@ -8,7 +8,6 @@ KtCallExpression(82,88): 'foo(1)'
         isSafeNavigation = false
         type = Foo
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
@@ -37,7 +36,6 @@ KtCallExpression(82,88): 'foo(1)'
         isSafeNavigation = false
         type = Foo
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int

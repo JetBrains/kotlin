@@ -15,7 +15,6 @@ KtCallExpression(165,169): 'x(1)'
       isSafeNavigation = false
       type = kotlin.Function1<@R|kotlin.ParameterName|(name = String(first)) @R|kotlin.ParameterName|(name = String(second))  kotlin.Int, kotlin.Unit>
     extensionReceiver = null
-    isImplicitInvoke = true
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Unit

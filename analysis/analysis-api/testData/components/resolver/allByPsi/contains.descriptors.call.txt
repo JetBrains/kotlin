@@ -147,7 +147,6 @@ KtBinaryExpression(126,140): '1 in MyClass()'
         expression = MyClass()
         isSafeNavigation = false
         type = MyClass
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = MyClass
         returnType = kotlin.Boolean
@@ -188,7 +187,6 @@ KtOperationReferenceExpression(128,130): 'in'
         expression = MyClass()
         isSafeNavigation = false
         type = MyClass
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = MyClass
         returnType = kotlin.Boolean
@@ -214,7 +212,6 @@ KtCallExpression(131,140): 'MyClass()'
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = MyClass
@@ -231,7 +228,6 @@ KtNameReferenceExpression(131,138): 'MyClass'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MyClass
@@ -262,7 +258,6 @@ KtDotQualifiedExpression(145,166): 'MyClass().contains(2)'
         expression = MyClass()
         isSafeNavigation = false
         type = MyClass
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = MyClass
         returnType = kotlin.Boolean
@@ -288,7 +283,6 @@ KtCallExpression(145,154): 'MyClass()'
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = MyClass
@@ -305,7 +299,6 @@ KtNameReferenceExpression(145,152): 'MyClass'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MyClass
@@ -335,7 +328,6 @@ KtCallExpression(155,166): 'contains(2)'
       expression = MyClass()
       isSafeNavigation = false
       type = MyClass
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = MyClass
       returnType = kotlin.Boolean
@@ -373,7 +365,6 @@ KtNameReferenceExpression(155,163): 'contains'
         expression = MyClass()
         isSafeNavigation = false
         type = MyClass
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = MyClass
         returnType = kotlin.Boolean
@@ -420,7 +411,6 @@ KtBinaryExpression(171,186): '2 !in MyClass()'
         expression = MyClass()
         isSafeNavigation = false
         type = MyClass
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = MyClass
         returnType = kotlin.Boolean
@@ -461,7 +451,6 @@ KtOperationReferenceExpression(173,176): '!in'
         expression = MyClass()
         isSafeNavigation = false
         type = MyClass
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = MyClass
         returnType = kotlin.Boolean
@@ -487,7 +476,6 @@ KtCallExpression(177,186): 'MyClass()'
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = MyClass
@@ -504,7 +492,6 @@ KtNameReferenceExpression(177,184): 'MyClass'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MyClass
@@ -543,7 +530,6 @@ KtWhenConditionInRange(211,223): 'in MyClass()'
       expression = MyClass()
       isSafeNavigation = false
       type = MyClass
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = MyClass
       returnType = kotlin.Boolean
@@ -581,7 +567,6 @@ KtOperationReferenceExpression(211,213): 'in'
         expression = MyClass()
         isSafeNavigation = false
         type = MyClass
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = MyClass
         returnType = kotlin.Boolean
@@ -607,7 +592,6 @@ KtCallExpression(214,223): 'MyClass()'
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = MyClass
@@ -624,7 +608,6 @@ KtNameReferenceExpression(214,221): 'MyClass'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MyClass
@@ -669,7 +652,6 @@ KtWhenConditionInRange(270,283): '!in MyClass()'
       expression = MyClass()
       isSafeNavigation = false
       type = MyClass
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = MyClass
       returnType = kotlin.Boolean
@@ -707,7 +689,6 @@ KtOperationReferenceExpression(270,273): '!in'
         expression = MyClass()
         isSafeNavigation = false
         type = MyClass
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = MyClass
         returnType = kotlin.Boolean
@@ -733,7 +714,6 @@ KtCallExpression(274,283): 'MyClass()'
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = MyClass
@@ -750,7 +730,6 @@ KtNameReferenceExpression(274,281): 'MyClass'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MyClass

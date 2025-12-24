@@ -486,7 +486,6 @@ KtCollectionLiteralExpression(264,270): '[X, Y]'
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
-        isImplicitInvoke = false
         signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Array<MyEnum>
@@ -692,7 +691,6 @@ KtCollectionLiteralExpression(346,349): '[X]'
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
-        isImplicitInvoke = false
         signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Array<MyEnum>
@@ -864,7 +862,6 @@ KtCallExpression(371,381): 'arrayOf(X)'
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
-        isImplicitInvoke = false
         signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Array<MyEnum>
@@ -902,7 +899,6 @@ KtNameReferenceExpression(371,378): 'arrayOf'
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
-        isImplicitInvoke = false
         signature = KaFunctionSignature:
           receiverType = null
           returnType = kotlin.Array<MyEnum>

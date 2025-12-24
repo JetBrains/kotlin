@@ -320,7 +320,6 @@ KtCallExpression(433,439): 'TODO()'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Nothing
@@ -337,7 +336,6 @@ KtCallExpression(433,439): 'TODO()'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Nothing
@@ -364,7 +362,6 @@ KtNameReferenceExpression(433,437): 'TODO'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Nothing
@@ -381,7 +378,6 @@ KtNameReferenceExpression(433,437): 'TODO'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Nothing
@@ -423,7 +419,6 @@ KtCallExpression(489,505): 'InheritorClass()'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MyClass.InheritorClass
@@ -441,7 +436,6 @@ KtNameReferenceExpression(489,503): 'InheritorClass'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MyClass.InheritorClass
@@ -533,7 +527,6 @@ KtCallExpression(676,685): 'lazy {""}'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Lazy<ERROR_TYPE>
@@ -576,7 +569,6 @@ KtCallExpression(676,685): 'lazy {""}'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Lazy<ERROR_TYPE>
@@ -619,7 +611,6 @@ KtCallExpression(676,685): 'lazy {""}'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Lazy<kotlin.String>
@@ -655,7 +646,6 @@ KtNameReferenceExpression(676,680): 'lazy'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Lazy<ERROR_TYPE>
@@ -698,7 +688,6 @@ KtNameReferenceExpression(676,680): 'lazy'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Lazy<ERROR_TYPE>
@@ -741,7 +730,6 @@ KtNameReferenceExpression(676,680): 'lazy'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Lazy<kotlin.String>
@@ -814,7 +802,6 @@ KtCallExpression(759,765): 'TODO()'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Nothing
@@ -831,7 +818,6 @@ KtCallExpression(759,765): 'TODO()'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Nothing
@@ -858,7 +844,6 @@ KtNameReferenceExpression(759,763): 'TODO'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Nothing
@@ -875,7 +860,6 @@ KtNameReferenceExpression(759,763): 'TODO'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Nothing
@@ -958,7 +942,6 @@ KtCallExpression(830,855): 'lMyClass(InheritorObject)'
         isSafeNavigation = false
         type = kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
       extensionReceiver = null
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -994,7 +977,6 @@ KtCallExpression(830,855): 'lMyClass(InheritorObject)'
         expression = lMyClass
         isSafeNavigation = false
         type = kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = kotlin.DeepRecursiveFunction<ERROR_TYPE, ERROR_TYPE>
         returnType = ERROR_TYPE
@@ -1062,7 +1044,6 @@ KtCallExpression(860,881): 'lMyClass(propMyClass)'
         isSafeNavigation = false
         type = kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
       extensionReceiver = null
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -1098,7 +1079,6 @@ KtCallExpression(860,881): 'lMyClass(propMyClass)'
         expression = lMyClass
         isSafeNavigation = false
         type = kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = kotlin.DeepRecursiveFunction<ERROR_TYPE, ERROR_TYPE>
         returnType = ERROR_TYPE
@@ -1166,7 +1146,6 @@ KtCallExpression(886,914): 'lMyClass(propInheritorClass)'
         isSafeNavigation = false
         type = kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
       extensionReceiver = null
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -1202,7 +1181,6 @@ KtCallExpression(886,914): 'lMyClass(propInheritorClass)'
         expression = lMyClass
         isSafeNavigation = false
         type = kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = kotlin.DeepRecursiveFunction<ERROR_TYPE, ERROR_TYPE>
         returnType = ERROR_TYPE
@@ -1270,7 +1248,6 @@ KtCallExpression(919,948): 'lMyClass(propInheritorObject)'
         isSafeNavigation = false
         type = kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
       extensionReceiver = null
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -1306,7 +1283,6 @@ KtCallExpression(919,948): 'lMyClass(propInheritorObject)'
         expression = lMyClass
         isSafeNavigation = false
         type = kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = kotlin.DeepRecursiveFunction<ERROR_TYPE, ERROR_TYPE>
         returnType = ERROR_TYPE
@@ -1374,7 +1350,6 @@ KtCallExpression(954,976): 'lMyClass(NestedObject)'
         isSafeNavigation = false
         type = kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
       extensionReceiver = null
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -1410,7 +1385,6 @@ KtCallExpression(954,976): 'lMyClass(NestedObject)'
         expression = lMyClass
         isSafeNavigation = false
         type = kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = kotlin.DeepRecursiveFunction<ERROR_TYPE, ERROR_TYPE>
         returnType = ERROR_TYPE
@@ -1478,7 +1452,6 @@ KtCallExpression(981,995): 'lMyClass(prop)'
         isSafeNavigation = false
         type = kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
       extensionReceiver = null
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -1514,7 +1487,6 @@ KtCallExpression(981,995): 'lMyClass(prop)'
         expression = lMyClass
         isSafeNavigation = false
         type = kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = kotlin.DeepRecursiveFunction<ERROR_TYPE, ERROR_TYPE>
         returnType = ERROR_TYPE
@@ -1582,7 +1554,6 @@ KtCallExpression(1000,1019): 'lMyClass(superProp)'
         isSafeNavigation = false
         type = kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
       extensionReceiver = null
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -1618,7 +1589,6 @@ KtCallExpression(1000,1019): 'lMyClass(superProp)'
         expression = lMyClass
         isSafeNavigation = false
         type = kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = kotlin.DeepRecursiveFunction<ERROR_TYPE, ERROR_TYPE>
         returnType = ERROR_TYPE
@@ -1686,7 +1656,6 @@ KtCallExpression(1024,1043): 'lMyClass(constProp)'
         isSafeNavigation = false
         type = kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
       extensionReceiver = null
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -1722,7 +1691,6 @@ KtCallExpression(1024,1043): 'lMyClass(constProp)'
         expression = lMyClass
         isSafeNavigation = false
         type = kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = kotlin.DeepRecursiveFunction<ERROR_TYPE, ERROR_TYPE>
         returnType = ERROR_TYPE
@@ -1790,7 +1758,6 @@ KtCallExpression(1048,1066): 'lMyClass(lazyProp)'
         isSafeNavigation = false
         type = kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
       extensionReceiver = null
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -1826,7 +1793,6 @@ KtCallExpression(1048,1066): 'lMyClass(lazyProp)'
         expression = lMyClass
         isSafeNavigation = false
         type = kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = kotlin.DeepRecursiveFunction<ERROR_TYPE, ERROR_TYPE>
         returnType = ERROR_TYPE
@@ -1894,7 +1860,6 @@ KtCallExpression(1071,1091): 'lMyClass(lambdaProp)'
         isSafeNavigation = false
         type = kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
       extensionReceiver = null
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -1930,7 +1895,6 @@ KtCallExpression(1071,1091): 'lMyClass(lambdaProp)'
         expression = lMyClass
         isSafeNavigation = false
         type = kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = kotlin.DeepRecursiveFunction<ERROR_TYPE, ERROR_TYPE>
         returnType = ERROR_TYPE
@@ -1998,7 +1962,6 @@ KtCallExpression(1097,1123): 'lMyClass(InheritorClass())'
         isSafeNavigation = false
         type = kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
       extensionReceiver = null
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -2034,7 +1997,6 @@ KtCallExpression(1097,1123): 'lMyClass(InheritorClass())'
         expression = lMyClass
         isSafeNavigation = false
         type = kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = kotlin.DeepRecursiveFunction<ERROR_TYPE, ERROR_TYPE>
         returnType = ERROR_TYPE
@@ -2108,7 +2070,6 @@ KtCallExpression(1128,1144): 'lMyClass(func())'
         isSafeNavigation = false
         type = kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
       extensionReceiver = null
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -2144,7 +2105,6 @@ KtCallExpression(1128,1144): 'lMyClass(func())'
         expression = lMyClass
         isSafeNavigation = false
         type = kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = kotlin.DeepRecursiveFunction<ERROR_TYPE, ERROR_TYPE>
         returnType = ERROR_TYPE
@@ -2218,7 +2178,6 @@ KtCallExpression(1149,1170): 'lMyClass(superFunc())'
         isSafeNavigation = false
         type = kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
       extensionReceiver = null
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -2254,7 +2213,6 @@ KtCallExpression(1149,1170): 'lMyClass(superFunc())'
         expression = lMyClass
         isSafeNavigation = false
         type = kotlin.Function1<@R|kotlin.ParameterName|(name = String(arg))  MyClass, kotlin.Unit>
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = kotlin.DeepRecursiveFunction<ERROR_TYPE, ERROR_TYPE>
         returnType = ERROR_TYPE

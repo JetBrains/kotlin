@@ -82,7 +82,6 @@ KtCallExpression(184,190): 'foo(X)'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -116,7 +115,6 @@ KtNameReferenceExpression(184,187): 'foo'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -159,7 +157,6 @@ KtCallExpression(195,211): 'foo(WrongEnum.X)'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -193,7 +190,6 @@ KtNameReferenceExpression(195,198): 'foo'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -510,7 +506,6 @@ KtCallExpression(350,356): 'foo(X)'
             type: B
           visibility: LOCAL
         type = B
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = A
         returnType = kotlin.Unit
@@ -536,7 +531,6 @@ KtCallExpression(350,356): 'foo(X)'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -584,7 +578,6 @@ KtNameReferenceExpression(350,353): 'foo'
             type: B
           visibility: LOCAL
         type = B
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = A
         returnType = kotlin.Unit
@@ -610,7 +603,6 @@ KtNameReferenceExpression(350,353): 'foo'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit

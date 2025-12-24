@@ -80,7 +80,6 @@ KtDotQualifiedExpression(167,185): 'MyAlias.function()'
         isSafeNavigation = false
         type = test.MyClass.Companion
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -98,7 +97,6 @@ KtNameReferenceExpression(167,174): 'MyAlias'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = test.MyClass
@@ -120,7 +118,6 @@ KtCallExpression(175,185): 'function()'
         isSafeNavigation = false
         type = test.MyClass.Companion
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -141,7 +138,6 @@ KtNameReferenceExpression(175,183): 'function'
         isSafeNavigation = false
         type = test.MyClass.Companion
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -183,7 +179,6 @@ KtNameReferenceExpression(190,197): 'MyAlias'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = test.MyClass
@@ -226,7 +221,6 @@ KtCallableReferenceExpression(212,229): 'MyAlias::function'
         isSafeNavigation = false
         type = test.MyClass.Companion
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -244,7 +238,6 @@ KtNameReferenceExpression(212,219): 'MyAlias'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = test.MyClass
@@ -287,7 +280,6 @@ KtNameReferenceExpression(234,241): 'MyAlias'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = test.MyClass

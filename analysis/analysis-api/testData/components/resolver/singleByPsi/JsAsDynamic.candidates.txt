@@ -8,7 +8,6 @@ KtNameReferenceExpression(100,109): 'asDynamic'
         expression = "some"
         isSafeNavigation = false
         type = kotlin.String
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.Any?
         returnType = dynamic

@@ -8,7 +8,6 @@ KtNameReferenceExpression(140,151): 'materialize'
         isSafeNavigation = false
         type = test.MyClass
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = test.MyClass

@@ -427,7 +427,6 @@ KtBinaryExpression(348,359): 's.value * 1'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
@@ -524,7 +523,6 @@ KtOperationReferenceExpression(356,357): '*'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
@@ -599,7 +597,6 @@ KtDotQualifiedExpression(397,409): 's.hashCode()'
         isSafeNavigation = false
         type = Either<kotlin.String, kotlin.Int>
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
@@ -635,7 +632,6 @@ KtCallExpression(399,409): 'hashCode()'
       isSafeNavigation = false
       type = Either<kotlin.String, kotlin.Int>
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Int
@@ -655,7 +651,6 @@ KtNameReferenceExpression(399,407): 'hashCode'
         isSafeNavigation = false
         type = Either<kotlin.String, kotlin.Int>
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
@@ -692,7 +687,6 @@ KtBinaryExpression(425,443): '1 == "".hashCode()'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -731,7 +725,6 @@ KtOperationReferenceExpression(427,429): '=='
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -759,7 +752,6 @@ KtDotQualifiedExpression(430,443): '"".hashCode()'
         isSafeNavigation = false
         type = kotlin.String
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
@@ -781,7 +773,6 @@ KtCallExpression(433,443): 'hashCode()'
       isSafeNavigation = false
       type = kotlin.String
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Int
@@ -801,7 +792,6 @@ KtNameReferenceExpression(433,441): 'hashCode'
         isSafeNavigation = false
         type = kotlin.String
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
@@ -971,7 +961,6 @@ KtSafeQualifiedExpression(499,527): '(s as? Right)?.value?.div(1)'
         isSafeNavigation = true
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
@@ -1081,7 +1070,6 @@ KtCallExpression(521,527): 'div(1)'
       isSafeNavigation = true
       type = kotlin.Int
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Int
@@ -1117,7 +1105,6 @@ KtNameReferenceExpression(521,524): 'div'
         isSafeNavigation = true
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int

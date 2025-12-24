@@ -31,7 +31,6 @@ KtCallableReferenceExpression(246,251): '::add'
           visibility: LOCAL
         type = kotlin.collections.MutableList<PartData>
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean

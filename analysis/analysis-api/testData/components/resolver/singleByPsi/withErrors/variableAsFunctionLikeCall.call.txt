@@ -7,7 +7,6 @@ KtCallExpression(68,71): 'x()'
       expression = x
       isSafeNavigation = false
       type = kotlin.Int
-    isImplicitInvoke = true
     signature = KaFunctionSignature:
       receiverType = kotlin.Int
       returnType = kotlin.String

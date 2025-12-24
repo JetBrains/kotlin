@@ -13,7 +13,6 @@ KtCallExpression(131,172): 'Annotation(strings = arrayOf("v1", "v2"))'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = Annotation

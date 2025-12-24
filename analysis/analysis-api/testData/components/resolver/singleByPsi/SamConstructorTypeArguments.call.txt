@@ -13,7 +13,6 @@ KtNameReferenceExpression(18,28): 'Comparator'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = java.util.Comparator<ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(coneType=kotlin.Int, relevantFeature=null) kotlin.Int!>

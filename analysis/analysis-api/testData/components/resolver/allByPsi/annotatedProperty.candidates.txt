@@ -209,7 +209,6 @@ KtNameReferenceExpression(44,60): 'AnnotationTarget'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.annotation.AnnotationTarget
@@ -273,7 +272,6 @@ KtNameReferenceExpression(75,91): 'AnnotationTarget'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.annotation.AnnotationTarget
@@ -337,7 +335,6 @@ KtNameReferenceExpression(112,128): 'AnnotationTarget'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.annotation.AnnotationTarget
@@ -401,7 +398,6 @@ KtNameReferenceExpression(143,159): 'AnnotationTarget'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.annotation.AnnotationTarget
@@ -465,7 +461,6 @@ KtNameReferenceExpression(181,197): 'AnnotationTarget'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.annotation.AnnotationTarget
@@ -529,7 +524,6 @@ KtNameReferenceExpression(219,235): 'AnnotationTarget'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.annotation.AnnotationTarget
@@ -593,7 +587,6 @@ KtNameReferenceExpression(257,273): 'AnnotationTarget'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.annotation.AnnotationTarget

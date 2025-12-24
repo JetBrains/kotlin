@@ -8,7 +8,6 @@ KtCallableReferenceExpression(72,80): 'obj::foo'
         expression = obj
         isSafeNavigation = false
         type = Foo
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = Foo
         returnType = kotlin.Unit

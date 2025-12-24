@@ -8,7 +8,6 @@ KtNameReferenceExpression(62,69): 'getName'
         isSafeNavigation = false
         type = JavaEnum
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.String!

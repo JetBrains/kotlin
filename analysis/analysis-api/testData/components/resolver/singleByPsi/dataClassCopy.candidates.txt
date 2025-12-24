@@ -16,7 +16,6 @@ KtNameReferenceExpression(82,86): 'copy'
         isSafeNavigation = false
         type = Data
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = Data

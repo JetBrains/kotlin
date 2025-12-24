@@ -184,7 +184,6 @@ KtBinaryExpression(196,224): 'current <= this@iterator.end'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
@@ -241,7 +240,6 @@ KtOperationReferenceExpression(204,206): '<='
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
@@ -345,7 +343,6 @@ KtPostfixExpression(256,265): 'current++'
             isSafeNavigation = false
             type = kotlin.Int
           extensionReceiver = null
-          isImplicitInvoke = false
           signature = KaFunctionSignature:
             receiverType = null
             returnType = kotlin.Int
@@ -406,7 +403,6 @@ KtOperationReferenceExpression(263,265): '++'
             isSafeNavigation = false
             type = kotlin.Int
           extensionReceiver = null
-          isImplicitInvoke = false
           signature = KaFunctionSignature:
             receiverType = null
             returnType = kotlin.Int
@@ -474,7 +470,6 @@ KtCallExpression(297,318): 'IntProgression(1, 10)'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = f.IntProgression
@@ -521,7 +516,6 @@ KtCallExpression(297,318): 'IntProgression(1, 10)'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.ranges.IntProgression
@@ -577,7 +571,6 @@ KtNameReferenceExpression(297,311): 'IntProgression'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = f.IntProgression
@@ -624,7 +617,6 @@ KtNameReferenceExpression(297,311): 'IntProgression'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.ranges.IntProgression

@@ -8,7 +8,6 @@ KtNameReferenceExpression(93,95): 'AA'
         isSafeNavigation = false
         type = AA.Companion
       extensionReceiver = null
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -25,7 +24,6 @@ KtNameReferenceExpression(93,95): 'AA'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = AA

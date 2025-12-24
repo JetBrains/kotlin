@@ -349,7 +349,6 @@ KtDotQualifiedExpression(234,244): 'this.baz()'
         isSafeNavigation = false
         type = <anonymous>
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -376,7 +375,6 @@ KtCallExpression(239,244): 'baz()'
         isSafeNavigation = false
         type = <anonymous>
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -397,7 +395,6 @@ KtNameReferenceExpression(239,242): 'baz'
         isSafeNavigation = false
         type = <anonymous>
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -520,7 +517,6 @@ KtNameReferenceExpression(325,344): 'EnumWithConstructor'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = EnumWithConstructor
@@ -610,7 +606,6 @@ KtNameReferenceExpression(355,374): 'EnumWithConstructor'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = EnumWithConstructor
@@ -700,7 +695,6 @@ KtNameReferenceExpression(390,409): 'EnumWithConstructor'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = EnumWithConstructor
@@ -790,7 +784,6 @@ KtNameReferenceExpression(428,447): 'EnumWithConstructor'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = EnumWithConstructor
@@ -880,7 +873,6 @@ KtNameReferenceExpression(469,491): 'EnumWithoutConstructor'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = EnumWithoutConstructor
@@ -941,7 +933,6 @@ KtNameReferenceExpression(504,526): 'EnumWithoutConstructor'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = EnumWithoutConstructor
@@ -1002,7 +993,6 @@ KtNameReferenceExpression(537,559): 'EnumWithoutConstructor'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = EnumWithoutConstructor

@@ -16,7 +16,6 @@ KtDotQualifiedExpression(137,160): 'handler.act(::callback)'
         isSafeNavigation = false
         type = test.pkg.MyHandler
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit

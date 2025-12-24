@@ -39,7 +39,6 @@ KtCallExpression(66,71): 'foo()'
       symbol = one/MyClass
       type = one.MyClass
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Unit
@@ -58,7 +57,6 @@ KtNameReferenceExpression(66,69): 'foo'
         symbol = one/MyClass
         type = one.MyClass
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -81,7 +79,6 @@ KtDotQualifiedExpression(80,90): 'this.foo()'
         isSafeNavigation = false
         type = one.MyClass
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -106,7 +103,6 @@ KtCallExpression(85,90): 'foo()'
       isSafeNavigation = false
       type = one.MyClass
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Unit
@@ -126,7 +122,6 @@ KtNameReferenceExpression(85,88): 'foo'
         isSafeNavigation = false
         type = one.MyClass
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -149,7 +144,6 @@ KtDotQualifiedExpression(99,117): 'this@MyClass.foo()'
         isSafeNavigation = false
         type = one.MyClass
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -180,7 +174,6 @@ KtCallExpression(112,117): 'foo()'
       isSafeNavigation = false
       type = one.MyClass
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Unit
@@ -200,7 +193,6 @@ KtNameReferenceExpression(112,115): 'foo'
         isSafeNavigation = false
         type = one.MyClass
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -245,7 +237,6 @@ KtCallExpression(203,208): 'foo()'
       symbol = one/MyClass.InnerOuter
       type = one.MyClass.InnerOuter
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Unit
@@ -264,7 +255,6 @@ KtNameReferenceExpression(203,206): 'foo'
         symbol = one/MyClass.InnerOuter
         type = one.MyClass.InnerOuter
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -287,7 +277,6 @@ KtDotQualifiedExpression(221,231): 'this.foo()'
         isSafeNavigation = false
         type = one.MyClass.InnerOuter
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -312,7 +301,6 @@ KtCallExpression(226,231): 'foo()'
       isSafeNavigation = false
       type = one.MyClass.InnerOuter
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Unit
@@ -332,7 +320,6 @@ KtNameReferenceExpression(226,229): 'foo'
         isSafeNavigation = false
         type = one.MyClass.InnerOuter
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -355,7 +342,6 @@ KtDotQualifiedExpression(244,265): 'this@InnerOuter.foo()'
         isSafeNavigation = false
         type = one.MyClass.InnerOuter
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -386,7 +372,6 @@ KtCallExpression(260,265): 'foo()'
       isSafeNavigation = false
       type = one.MyClass.InnerOuter
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Unit
@@ -406,7 +391,6 @@ KtNameReferenceExpression(260,263): 'foo'
         isSafeNavigation = false
         type = one.MyClass.InnerOuter
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -429,7 +413,6 @@ KtDotQualifiedExpression(278,296): 'this@MyClass.foo()'
         isSafeNavigation = false
         type = one.MyClass
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -460,7 +443,6 @@ KtCallExpression(291,296): 'foo()'
       isSafeNavigation = false
       type = one.MyClass
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Unit
@@ -480,7 +462,6 @@ KtNameReferenceExpression(291,294): 'foo'
         isSafeNavigation = false
         type = one.MyClass
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -525,7 +506,6 @@ KtCallExpression(403,408): 'foo()'
       symbol = one/MyClass.InnerOuter.InnerNested
       type = one.MyClass.InnerOuter.InnerNested
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Unit
@@ -544,7 +524,6 @@ KtNameReferenceExpression(403,406): 'foo'
         symbol = one/MyClass.InnerOuter.InnerNested
         type = one.MyClass.InnerOuter.InnerNested
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -567,7 +546,6 @@ KtDotQualifiedExpression(425,435): 'this.foo()'
         isSafeNavigation = false
         type = one.MyClass.InnerOuter.InnerNested
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -592,7 +570,6 @@ KtCallExpression(430,435): 'foo()'
       isSafeNavigation = false
       type = one.MyClass.InnerOuter.InnerNested
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Unit
@@ -612,7 +589,6 @@ KtNameReferenceExpression(430,433): 'foo'
         isSafeNavigation = false
         type = one.MyClass.InnerOuter.InnerNested
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -635,7 +611,6 @@ KtDotQualifiedExpression(452,474): 'this@InnerNested.foo()'
         isSafeNavigation = false
         type = one.MyClass.InnerOuter.InnerNested
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -666,7 +641,6 @@ KtCallExpression(469,474): 'foo()'
       isSafeNavigation = false
       type = one.MyClass.InnerOuter.InnerNested
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Unit
@@ -686,7 +660,6 @@ KtNameReferenceExpression(469,472): 'foo'
         isSafeNavigation = false
         type = one.MyClass.InnerOuter.InnerNested
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -709,7 +682,6 @@ KtDotQualifiedExpression(491,512): 'this@InnerOuter.foo()'
         isSafeNavigation = false
         type = one.MyClass.InnerOuter
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -740,7 +712,6 @@ KtCallExpression(507,512): 'foo()'
       isSafeNavigation = false
       type = one.MyClass.InnerOuter
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Unit
@@ -760,7 +731,6 @@ KtNameReferenceExpression(507,510): 'foo'
         isSafeNavigation = false
         type = one.MyClass.InnerOuter
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -783,7 +753,6 @@ KtDotQualifiedExpression(529,547): 'this@MyClass.foo()'
         isSafeNavigation = false
         type = one.MyClass
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -814,7 +783,6 @@ KtCallExpression(542,547): 'foo()'
       isSafeNavigation = false
       type = one.MyClass
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Unit
@@ -834,7 +802,6 @@ KtNameReferenceExpression(542,545): 'foo'
         isSafeNavigation = false
         type = one.MyClass
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -916,7 +883,6 @@ KtCallExpression(625,630): 'foo()'
         visibility: LOCAL
       type = one.MyClass
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Unit
@@ -954,7 +920,6 @@ KtNameReferenceExpression(625,628): 'foo'
           visibility: LOCAL
         type = one.MyClass
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -977,7 +942,6 @@ KtDotQualifiedExpression(651,661): 'this.foo()'
         isSafeNavigation = false
         type = one.MyClass
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -1002,7 +966,6 @@ KtCallExpression(656,661): 'foo()'
       isSafeNavigation = false
       type = one.MyClass
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Unit
@@ -1022,7 +985,6 @@ KtNameReferenceExpression(656,659): 'foo'
         isSafeNavigation = false
         type = one.MyClass
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -1045,7 +1007,6 @@ KtDotQualifiedExpression(682,697): 'this@anon.foo()'
         isSafeNavigation = false
         type = one.MyClass
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -1076,7 +1037,6 @@ KtCallExpression(692,697): 'foo()'
       isSafeNavigation = false
       type = one.MyClass
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Unit
@@ -1096,7 +1056,6 @@ KtNameReferenceExpression(692,695): 'foo'
         isSafeNavigation = false
         type = one.MyClass
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -1119,7 +1078,6 @@ KtDotQualifiedExpression(718,740): 'this@InnerNested.foo()'
         isSafeNavigation = false
         type = one.MyClass.InnerOuter.InnerNested
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -1150,7 +1108,6 @@ KtCallExpression(735,740): 'foo()'
       isSafeNavigation = false
       type = one.MyClass.InnerOuter.InnerNested
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Unit
@@ -1170,7 +1127,6 @@ KtNameReferenceExpression(735,738): 'foo'
         isSafeNavigation = false
         type = one.MyClass.InnerOuter.InnerNested
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -1193,7 +1149,6 @@ KtDotQualifiedExpression(761,782): 'this@InnerOuter.foo()'
         isSafeNavigation = false
         type = one.MyClass.InnerOuter
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -1224,7 +1179,6 @@ KtCallExpression(777,782): 'foo()'
       isSafeNavigation = false
       type = one.MyClass.InnerOuter
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Unit
@@ -1244,7 +1198,6 @@ KtNameReferenceExpression(777,780): 'foo'
         isSafeNavigation = false
         type = one.MyClass.InnerOuter
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -1267,7 +1220,6 @@ KtDotQualifiedExpression(803,821): 'this@MyClass.foo()'
         isSafeNavigation = false
         type = one.MyClass
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -1298,7 +1250,6 @@ KtCallExpression(816,821): 'foo()'
       isSafeNavigation = false
       type = one.MyClass
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Unit
@@ -1318,7 +1269,6 @@ KtNameReferenceExpression(816,819): 'foo'
         isSafeNavigation = false
         type = one.MyClass
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -1354,7 +1304,6 @@ KtCallExpression(857,1107): 'myWith { t ->'
     extensionReceiver = KaImplicitReceiverValue:
       symbol = one/MyClass.InnerOuter.InnerNested
       type = one.MyClass.InnerOuter.InnerNested
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = one.MyClass.InnerOuter.InnerNested
       returnType = kotlin.Unit
@@ -1398,7 +1347,6 @@ KtNameReferenceExpression(857,863): 'myWith'
       extensionReceiver = KaImplicitReceiverValue:
         symbol = one/MyClass.InnerOuter.InnerNested
         type = one.MyClass.InnerOuter.InnerNested
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = one.MyClass.InnerOuter.InnerNested
         returnType = kotlin.Unit
@@ -1463,7 +1411,6 @@ KtCallExpression(891,896): 'foo()'
         visibility: LOCAL
       type = one.MyClass.InnerOuter.InnerNested
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Unit
@@ -1501,7 +1448,6 @@ KtNameReferenceExpression(891,894): 'foo'
           visibility: LOCAL
         type = one.MyClass.InnerOuter.InnerNested
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -1524,7 +1470,6 @@ KtDotQualifiedExpression(917,927): 'this.foo()'
         isSafeNavigation = false
         type = one.MyClass.InnerOuter.InnerNested
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -1549,7 +1494,6 @@ KtCallExpression(922,927): 'foo()'
       isSafeNavigation = false
       type = one.MyClass.InnerOuter.InnerNested
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Unit
@@ -1569,7 +1513,6 @@ KtNameReferenceExpression(922,925): 'foo'
         isSafeNavigation = false
         type = one.MyClass.InnerOuter.InnerNested
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -1592,7 +1535,6 @@ KtDotQualifiedExpression(948,965): 'this@myWith.foo()'
         isSafeNavigation = false
         type = one.MyClass.InnerOuter.InnerNested
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -1623,7 +1565,6 @@ KtCallExpression(960,965): 'foo()'
       isSafeNavigation = false
       type = one.MyClass.InnerOuter.InnerNested
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Unit
@@ -1643,7 +1584,6 @@ KtNameReferenceExpression(960,963): 'foo'
         isSafeNavigation = false
         type = one.MyClass.InnerOuter.InnerNested
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -1666,7 +1606,6 @@ KtDotQualifiedExpression(986,1008): 'this@InnerNested.foo()'
         isSafeNavigation = false
         type = one.MyClass.InnerOuter.InnerNested
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -1697,7 +1636,6 @@ KtCallExpression(1003,1008): 'foo()'
       isSafeNavigation = false
       type = one.MyClass.InnerOuter.InnerNested
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Unit
@@ -1717,7 +1655,6 @@ KtNameReferenceExpression(1003,1006): 'foo'
         isSafeNavigation = false
         type = one.MyClass.InnerOuter.InnerNested
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -1740,7 +1677,6 @@ KtDotQualifiedExpression(1029,1050): 'this@InnerOuter.foo()'
         isSafeNavigation = false
         type = one.MyClass.InnerOuter
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -1771,7 +1707,6 @@ KtCallExpression(1045,1050): 'foo()'
       isSafeNavigation = false
       type = one.MyClass.InnerOuter
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Unit
@@ -1791,7 +1726,6 @@ KtNameReferenceExpression(1045,1048): 'foo'
         isSafeNavigation = false
         type = one.MyClass.InnerOuter
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -1814,7 +1748,6 @@ KtDotQualifiedExpression(1071,1089): 'this@MyClass.foo()'
         isSafeNavigation = false
         type = one.MyClass
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -1845,7 +1778,6 @@ KtCallExpression(1084,1089): 'foo()'
       isSafeNavigation = false
       type = one.MyClass
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Unit
@@ -1865,7 +1797,6 @@ KtNameReferenceExpression(1084,1087): 'foo'
         isSafeNavigation = false
         type = one.MyClass
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -1896,7 +1827,6 @@ KtCallExpression(1125,1194): 'myWith label@{'
     extensionReceiver = KaImplicitReceiverValue:
       symbol = one/MyClass.InnerOuter.InnerNested
       type = one.MyClass.InnerOuter.InnerNested
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = one.MyClass.InnerOuter.InnerNested
       returnType = kotlin.Unit
@@ -1935,7 +1865,6 @@ KtNameReferenceExpression(1125,1131): 'myWith'
       extensionReceiver = KaImplicitReceiverValue:
         symbol = one/MyClass.InnerOuter.InnerNested
         type = one.MyClass.InnerOuter.InnerNested
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = one.MyClass.InnerOuter.InnerNested
         returnType = kotlin.Unit
@@ -1986,7 +1915,6 @@ KtDotQualifiedExpression(1160,1176): 'this@label.foo()'
         isSafeNavigation = false
         type = one.MyClass.InnerOuter.InnerNested
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -2017,7 +1945,6 @@ KtCallExpression(1171,1176): 'foo()'
       isSafeNavigation = false
       type = one.MyClass.InnerOuter.InnerNested
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Unit
@@ -2037,7 +1964,6 @@ KtNameReferenceExpression(1171,1174): 'foo'
         isSafeNavigation = false
         type = one.MyClass.InnerOuter.InnerNested
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -2156,7 +2082,6 @@ KtCallExpression(1272,1282): 'body(this)'
           type: T
         visibility: LOCAL
       type = T
-    isImplicitInvoke = true
     signature = KaFunctionSignature:
       receiverType = T
       returnType = kotlin.Unit

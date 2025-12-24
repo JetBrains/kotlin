@@ -293,7 +293,6 @@ KtCallExpression(462,518): '{ arg: Boolean -> if (arg) enumProp else Option1 }(t
       isSafeNavigation = false
       type = (kotlin.Boolean) -> ERROR CLASS: Cannot infer argument for type parameter K
     extensionReceiver = null
-    isImplicitInvoke = true
     signature = KaFunctionSignature:
       receiverType = null
       returnType = ERROR CLASS: Cannot infer argument for type parameter K
@@ -872,7 +871,6 @@ KtBinaryExpression(975,1005): 'contextOf<MyEnum>() == Option1'
         isSafeNavigation = false
         type = @NoInfer MyEnum
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -900,7 +898,6 @@ KtCallExpression(975,994): 'contextOf<MyEnum>()'
     ]
     dispatchReceiver = null
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = @NoInfer MyEnum
@@ -931,7 +928,6 @@ KtNameReferenceExpression(975,984): 'contextOf'
       ]
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = @NoInfer MyEnum
@@ -987,7 +983,6 @@ KtOperationReferenceExpression(995,997): '=='
         isSafeNavigation = false
         type = @NoInfer MyEnum
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean

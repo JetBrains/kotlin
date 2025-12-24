@@ -10,7 +10,6 @@ KtDotQualifiedExpression(162,171): 'b.clear()'
           type = main.B?
         type = main.B
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -32,7 +31,6 @@ KtDotQualifiedExpression(162,171): 'b.clear()'
           isSafeNavigation = false
           type = main.B?
         type = main.B
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.text.StringBuilder
         returnType = kotlin.text.StringBuilder

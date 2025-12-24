@@ -183,7 +183,6 @@ KtBinaryExpression(302,312): 's == FIRST'
         isSafeNavigation = false
         type = test.Sample
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -236,7 +235,6 @@ KtOperationReferenceExpression(304,306): '=='
         isSafeNavigation = false
         type = test.Sample
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -286,7 +284,6 @@ KtBinaryExpression(326,337): 's == SECOND'
         isSafeNavigation = false
         type = test.Sample
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -339,7 +336,6 @@ KtOperationReferenceExpression(328,330): '=='
         isSafeNavigation = false
         type = test.Sample
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -389,7 +385,6 @@ KtBinaryExpression(351,361): 's == THIRD'
         isSafeNavigation = false
         type = test.Sample
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean
@@ -442,7 +437,6 @@ KtOperationReferenceExpression(353,355): '=='
         isSafeNavigation = false
         type = test.Sample
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean

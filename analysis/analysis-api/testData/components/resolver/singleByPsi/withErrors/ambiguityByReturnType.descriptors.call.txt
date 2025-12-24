@@ -20,7 +20,6 @@ KtCallExpression(208,319): 'sumOf { c ->'
           expression = listOf(19, 20, 21)
           isSafeNavigation = false
           type = kotlin.collections.List<kotlin.Int>
-        isImplicitInvoke = false
         signature = KaFunctionSignature:
           receiverType = kotlin.collections.Iterable<TypeVariable(T)>
           returnType = kotlin.Int
@@ -56,7 +55,6 @@ KtCallExpression(208,319): 'sumOf { c ->'
           expression = listOf(19, 20, 21)
           isSafeNavigation = false
           type = kotlin.collections.List<kotlin.Int>
-        isImplicitInvoke = false
         signature = KaFunctionSignature:
           receiverType = kotlin.collections.Iterable<TypeVariable(T)>
           returnType = kotlin.UInt

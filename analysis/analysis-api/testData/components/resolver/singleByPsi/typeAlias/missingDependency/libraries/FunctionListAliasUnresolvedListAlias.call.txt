@@ -16,7 +16,6 @@ KtNameReferenceExpression(157,162): 'check'
         isSafeNavigation = false
         type = library3.MyInterface
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit

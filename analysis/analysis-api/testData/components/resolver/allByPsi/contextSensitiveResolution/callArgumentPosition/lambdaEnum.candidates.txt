@@ -127,7 +127,6 @@ KtCallExpression(276,293): 'lEnum(EnumValue1)'
         isSafeNavigation = false
         type = (@R|kotlin.ParameterName|(name = String(arg))  MyEnum) -> kotlin.Unit
       extensionReceiver = null
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -209,7 +208,6 @@ KtCallExpression(298,315): 'lEnum(EnumValue2)'
         isSafeNavigation = false
         type = (@R|kotlin.ParameterName|(name = String(arg))  MyEnum) -> kotlin.Unit
       extensionReceiver = null
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -333,7 +331,6 @@ KtCallExpression(387,423): 'receiveLambda<MyEnum> { EnumValue1 }'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -369,7 +366,6 @@ KtNameReferenceExpression(387,400): 'receiveLambda'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -453,7 +449,6 @@ KtCallExpression(428,464): 'receiveLambda<MyEnum> { EnumValue3 }'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -489,7 +484,6 @@ KtNameReferenceExpression(428,441): 'receiveLambda'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -573,7 +567,6 @@ KtCallExpression(469,499): 'receiveLambda<MyEnum> { prop }'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -610,7 +603,6 @@ KtNameReferenceExpression(469,482): 'receiveLambda'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit

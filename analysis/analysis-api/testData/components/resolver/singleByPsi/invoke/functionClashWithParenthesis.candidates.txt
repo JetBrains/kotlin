@@ -8,7 +8,6 @@ KtCallExpression(202,209): '(foo)()'
         isSafeNavigation = false
         type = r.MyClass
       extensionReceiver = null
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = null
         returnType = r.MyClass
@@ -28,7 +27,6 @@ KtCallExpression(202,209): '(foo)()'
         isSafeNavigation = false
         type = r.MyClass
       extensionReceiver = null
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = null
         returnType = r.MyClass
@@ -54,7 +52,6 @@ KtCallExpression(202,209): '(foo)()'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
@@ -71,7 +68,6 @@ KtCallExpression(202,209): '(foo)()'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int

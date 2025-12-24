@@ -134,7 +134,6 @@ KtDotQualifiedExpression(23,44): 'AnnotationTarget.TYPE'
         expression = TYPE
         isSafeNavigation = false
         type = kotlin.annotation.AnnotationTarget
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = kotlin.DeepRecursiveFunction<ERROR_TYPE, ERROR_TYPE>
         returnType = ERROR_TYPE

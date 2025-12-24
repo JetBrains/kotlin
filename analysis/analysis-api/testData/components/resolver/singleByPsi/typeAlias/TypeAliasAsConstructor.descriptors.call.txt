@@ -5,7 +5,6 @@ KtNameReferenceExpression(76,83): 'MyAlias'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = test.MyAlias

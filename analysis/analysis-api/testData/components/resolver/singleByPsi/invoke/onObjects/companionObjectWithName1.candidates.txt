@@ -5,7 +5,6 @@ KtNameReferenceExpression(127,133): 'Helper'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = Foo.Helper

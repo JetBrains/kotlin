@@ -7,7 +7,6 @@ KtCallExpression(89,94): 'foo()'
       isSafeNavigation = false
       type = Context
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Unit

@@ -5,7 +5,6 @@ KtNameReferenceExpression(141,149): 'Conflict'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = test.Conflict
@@ -22,7 +21,6 @@ KtNameReferenceExpression(141,149): 'Conflict'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = test.Conflict

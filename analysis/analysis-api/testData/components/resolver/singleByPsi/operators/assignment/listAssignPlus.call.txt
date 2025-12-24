@@ -16,7 +16,6 @@ KtOperationReferenceExpression(54,56): '+='
         expression = l
         isSafeNavigation = false
         type = kotlin.collections.MutableList<kotlin.Int>
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.MutableCollection<in kotlin.Int>
         returnType = kotlin.Unit

@@ -13,7 +13,6 @@ KtCallExpression(45,63): 'Foo<String>("str")'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = Foo<kotlin.String>

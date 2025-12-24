@@ -16,7 +16,6 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
         expression = listOf(1, 2, 3)
         isSafeNavigation = false
         type = kotlin.collections.List<kotlin.Int>
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.Array<out ERROR_TYPE>
         returnType = kotlin.Unit
@@ -55,7 +54,6 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
         expression = listOf(1, 2, 3)
         isSafeNavigation = false
         type = kotlin.collections.List<kotlin.Int>
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.BooleanArray
         returnType = kotlin.Unit
@@ -92,7 +90,6 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
         expression = listOf(1, 2, 3)
         isSafeNavigation = false
         type = kotlin.collections.List<kotlin.Int>
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.ByteArray
         returnType = kotlin.Unit
@@ -129,7 +126,6 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
         expression = listOf(1, 2, 3)
         isSafeNavigation = false
         type = kotlin.collections.List<kotlin.Int>
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.CharArray
         returnType = kotlin.Unit
@@ -166,7 +162,6 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
         expression = listOf(1, 2, 3)
         isSafeNavigation = false
         type = kotlin.collections.List<kotlin.Int>
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.CharSequence
         returnType = kotlin.Unit
@@ -203,7 +198,6 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
         expression = listOf(1, 2, 3)
         isSafeNavigation = false
         type = kotlin.collections.List<kotlin.Int>
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.DoubleArray
         returnType = kotlin.Unit
@@ -240,7 +234,6 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
         expression = listOf(1, 2, 3)
         isSafeNavigation = false
         type = kotlin.collections.List<kotlin.Int>
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.FloatArray
         returnType = kotlin.Unit
@@ -277,7 +270,6 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
         expression = listOf(1, 2, 3)
         isSafeNavigation = false
         type = kotlin.collections.List<kotlin.Int>
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.IntArray
         returnType = kotlin.Unit
@@ -314,7 +306,6 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
         expression = listOf(1, 2, 3)
         isSafeNavigation = false
         type = kotlin.collections.List<kotlin.Int>
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.LongArray
         returnType = kotlin.Unit
@@ -351,7 +342,6 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
         expression = listOf(1, 2, 3)
         isSafeNavigation = false
         type = kotlin.collections.List<kotlin.Int>
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.ShortArray
         returnType = kotlin.Unit
@@ -388,7 +378,6 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
         expression = listOf(1, 2, 3)
         isSafeNavigation = false
         type = kotlin.collections.List<kotlin.Int>
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.UByteArray
         returnType = kotlin.Unit
@@ -425,7 +414,6 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
         expression = listOf(1, 2, 3)
         isSafeNavigation = false
         type = kotlin.collections.List<kotlin.Int>
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.UIntArray
         returnType = kotlin.Unit
@@ -462,7 +450,6 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
         expression = listOf(1, 2, 3)
         isSafeNavigation = false
         type = kotlin.collections.List<kotlin.Int>
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.ULongArray
         returnType = kotlin.Unit
@@ -499,7 +486,6 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
         expression = listOf(1, 2, 3)
         isSafeNavigation = false
         type = kotlin.collections.List<kotlin.Int>
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.UShortArray
         returnType = kotlin.Unit
@@ -536,7 +522,6 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
         expression = listOf(1, 2, 3)
         isSafeNavigation = false
         type = kotlin.collections.List<kotlin.Int>
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Iterable<kotlin.Int>
         returnType = kotlin.Unit
@@ -574,7 +559,6 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
         expression = listOf(1, 2, 3)
         isSafeNavigation = false
         type = kotlin.collections.List<kotlin.Int>
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Iterator<ERROR_TYPE>
         returnType = kotlin.Unit
@@ -613,7 +597,6 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
         expression = listOf(1, 2, 3)
         isSafeNavigation = false
         type = kotlin.collections.List<kotlin.Int>
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.List<kotlin.Int>
         returnType = kotlin.Unit
@@ -649,7 +632,6 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
         expression = listOf(1, 2, 3)
         isSafeNavigation = false
         type = kotlin.collections.List<kotlin.Int>
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Map<out ERROR_TYPE, ERROR_TYPE>
         returnType = kotlin.Unit
@@ -689,7 +671,6 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
         expression = listOf(1, 2, 3)
         isSafeNavigation = false
         type = kotlin.collections.List<kotlin.Int>
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Map<out ERROR_TYPE, ERROR_TYPE>
         returnType = kotlin.Unit
@@ -729,7 +710,6 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
         expression = listOf(1, 2, 3)
         isSafeNavigation = false
         type = kotlin.collections.List<kotlin.Int>
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.sequences.Sequence<ERROR_TYPE>
         returnType = kotlin.Unit

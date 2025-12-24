@@ -142,7 +142,6 @@ KtCallExpression(226,333): 'receiveMyClass('
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -179,7 +178,6 @@ KtNameReferenceExpression(226,240): 'receiveMyClass'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -259,7 +257,6 @@ KtNameReferenceExpression(302,317): 'NestedInheritor'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MyClass.NestedInheritor
@@ -328,7 +325,6 @@ KtCallExpression(402,510): 'receiveMyClass('
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -365,7 +361,6 @@ KtNameReferenceExpression(402,416): 'receiveMyClass'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -445,7 +440,6 @@ KtNameReferenceExpression(479,494): 'NestedInheritor'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MyClass.NestedInheritor
@@ -527,7 +521,6 @@ KtCallExpression(593,735): 'receiveMyClass('
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -565,7 +558,6 @@ KtNameReferenceExpression(593,607): 'receiveMyClass'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -666,7 +658,6 @@ KtNameReferenceExpression(669,684): 'NestedInheritor'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MyClass.NestedInheritor
@@ -1021,7 +1012,6 @@ KtCallExpression(1012,1139): 'receiveOtherClass('
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -1059,7 +1049,6 @@ KtNameReferenceExpression(1012,1029): 'receiveOtherClass'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -1181,7 +1170,6 @@ KtNameReferenceExpression(1122,1123): 'C'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = OtherClass.C
@@ -1328,7 +1316,6 @@ KtCallExpression(1310,1432): 'receiveOpenClass('
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -1365,7 +1352,6 @@ KtNameReferenceExpression(1310,1326): 'receiveOpenClass'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -1445,7 +1431,6 @@ KtNameReferenceExpression(1390,1416): 'NestedInheritorOfOpenClass'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = OpenClass.NestedInheritorOfOpenClass
@@ -1514,7 +1499,6 @@ KtCallExpression(1512,1633): 'receiveOpenClass('
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -1551,7 +1535,6 @@ KtNameReferenceExpression(1512,1528): 'receiveOpenClass'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit

@@ -392,7 +392,6 @@ KtDotQualifiedExpression(344,352): 'Sealed.A'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = foo.Sealed.A
@@ -411,7 +410,6 @@ KtNameReferenceExpression(344,350): 'Sealed'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = foo.Sealed
@@ -430,7 +428,6 @@ KtNameReferenceExpression(351,352): 'A'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = foo.Sealed.A
@@ -461,7 +458,6 @@ KtDotQualifiedExpression(386,394): 'Sealed.A'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = foo.Sealed.A
@@ -480,7 +476,6 @@ KtNameReferenceExpression(386,392): 'Sealed'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = foo.Sealed
@@ -499,7 +494,6 @@ KtNameReferenceExpression(393,394): 'A'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = foo.Sealed.A
@@ -614,7 +608,6 @@ KtNameReferenceExpression(520,521): 'C'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = foo.Sealed.C
@@ -807,7 +800,6 @@ KtDotQualifiedExpression(750,758): 'Sealed.C'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = foo.Sealed.C
@@ -826,7 +818,6 @@ KtNameReferenceExpression(750,756): 'Sealed'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = foo.Sealed
@@ -845,7 +836,6 @@ KtNameReferenceExpression(757,758): 'C'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = foo.Sealed.C
@@ -942,7 +932,6 @@ KtNameReferenceExpression(827,833): 'Sealed'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = foo.Sealed
@@ -1081,7 +1070,6 @@ KtNameReferenceExpression(1038,1039): 'A'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = foo.Test.A
@@ -1127,7 +1115,6 @@ KtNameReferenceExpression(1079,1080): 'C'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = foo.Sealed.C
@@ -1191,7 +1178,6 @@ KtNameReferenceExpression(1147,1157): 'CompanionA'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = foo.Test.CompanionA
@@ -1308,7 +1294,6 @@ KtDotQualifiedExpression(1306,1312): 'Test.A'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = foo.Test.A
@@ -1327,7 +1312,6 @@ KtNameReferenceExpression(1306,1310): 'Test'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = foo.Test
@@ -1346,7 +1330,6 @@ KtNameReferenceExpression(1311,1312): 'A'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = foo.Test.A
@@ -1398,7 +1381,6 @@ KtDotQualifiedExpression(1357,1365): 'Sealed.C'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = foo.Sealed.C
@@ -1417,7 +1399,6 @@ KtNameReferenceExpression(1357,1363): 'Sealed'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = foo.Sealed
@@ -1436,7 +1417,6 @@ KtNameReferenceExpression(1364,1365): 'C'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = foo.Sealed.C
@@ -1512,7 +1492,6 @@ KtDotQualifiedExpression(1446,1461): 'Test.CompanionA'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = foo.Test.CompanionA
@@ -1531,7 +1510,6 @@ KtNameReferenceExpression(1446,1450): 'Test'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = foo.Test
@@ -1550,7 +1528,6 @@ KtNameReferenceExpression(1451,1461): 'CompanionA'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = foo.Test.CompanionA
@@ -1695,7 +1672,6 @@ KtDotQualifiedExpression(1616,1624): 'Sealed.A'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = foo.Sealed.A
@@ -1714,7 +1690,6 @@ KtNameReferenceExpression(1616,1622): 'Sealed'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = foo.Sealed
@@ -1733,7 +1708,6 @@ KtNameReferenceExpression(1623,1624): 'A'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = foo.Sealed.A
@@ -1785,7 +1759,6 @@ KtDotQualifiedExpression(1671,1679): 'Sealed.C'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = foo.Sealed.C
@@ -1804,7 +1777,6 @@ KtNameReferenceExpression(1671,1677): 'Sealed'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = foo.Sealed
@@ -1823,7 +1795,6 @@ KtNameReferenceExpression(1678,1679): 'C'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = foo.Sealed.C
@@ -1920,7 +1891,6 @@ KtNameReferenceExpression(1760,1766): 'Sealed'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = foo.Sealed
@@ -1990,7 +1960,6 @@ KtNameReferenceExpression(1795,1801): 'Sealed'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = foo.Sealed

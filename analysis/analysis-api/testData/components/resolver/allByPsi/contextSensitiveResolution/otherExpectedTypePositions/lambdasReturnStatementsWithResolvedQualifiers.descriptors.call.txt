@@ -251,7 +251,6 @@ KtCallExpression(267,273): 'TODO()'
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Nothing
@@ -268,7 +267,6 @@ KtNameReferenceExpression(267,271): 'TODO'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Nothing
@@ -320,7 +318,6 @@ KtCallExpression(297,303): 'TODO()'
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Nothing
@@ -337,7 +334,6 @@ KtNameReferenceExpression(297,301): 'TODO'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Nothing
@@ -400,7 +396,6 @@ KtCallExpression(356,433): 'myRunWithMySealed {'
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Unit
@@ -436,7 +431,6 @@ KtNameReferenceExpression(356,373): 'myRunWithMySealed'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -528,7 +522,6 @@ KtCallExpression(439,524): 'myRunWithMySealed {'
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Unit
@@ -564,7 +557,6 @@ KtNameReferenceExpression(439,456): 'myRunWithMySealed'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -645,7 +637,6 @@ KtCallExpression(499,504): 'id(X)'
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
-        isImplicitInvoke = false
         signature = KaFunctionSignature:
           receiverType = null
           returnType = MySealed
@@ -683,7 +674,6 @@ KtNameReferenceExpression(499,501): 'id'
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
-        isImplicitInvoke = false
         signature = KaFunctionSignature:
           receiverType = null
           returnType = MySealed
@@ -732,7 +722,6 @@ KtCallExpression(513,518): 'id(Y)'
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
-        isImplicitInvoke = false
         signature = KaFunctionSignature:
           receiverType = null
           returnType = MySealed
@@ -770,7 +759,6 @@ KtNameReferenceExpression(513,515): 'id'
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
-        isImplicitInvoke = false
         signature = KaFunctionSignature:
           receiverType = null
           returnType = MySealed
@@ -820,7 +808,6 @@ KtCallExpression(530,593): 'myRun<MySealed> {'
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = MySealed
@@ -858,7 +845,6 @@ KtNameReferenceExpression(530,535): 'myRun'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MySealed
@@ -967,7 +953,6 @@ KtCallExpression(598,682): 'foo('
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Unit
@@ -1003,7 +988,6 @@ KtNameReferenceExpression(598,601): 'foo'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -1044,7 +1028,6 @@ KtCallExpression(611,676): 'myRun {'
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = MySealed
@@ -1082,7 +1065,6 @@ KtNameReferenceExpression(611,616): 'myRun'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MySealed
@@ -1188,7 +1170,6 @@ KtCallExpression(706,759): 'myRun {'
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = MySealed
@@ -1226,7 +1207,6 @@ KtNameReferenceExpression(706,711): 'myRun'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MySealed
@@ -1322,7 +1302,6 @@ KtCallExpression(765,818): 'myRun {'
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
-        isImplicitInvoke = false
         signature = KaFunctionSignature:
           receiverType = null
           returnType = ERROR_TYPE
@@ -1363,7 +1342,6 @@ KtNameReferenceExpression(765,770): 'myRun'
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
-        isImplicitInvoke = false
         signature = KaFunctionSignature:
           receiverType = null
           returnType = ERROR_TYPE
@@ -1459,7 +1437,6 @@ KtCallExpression(823,885): 'myRun {'
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = MySealed.X
@@ -1497,7 +1474,6 @@ KtNameReferenceExpression(823,828): 'myRun'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MySealed.X

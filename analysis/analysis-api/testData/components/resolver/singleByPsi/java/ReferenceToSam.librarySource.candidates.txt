@@ -16,7 +16,6 @@ KtNameReferenceExpression(83,94): 'setListener'
         isSafeNavigation = false
         type = JavaTest.SomeJavaClass
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit

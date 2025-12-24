@@ -74,6 +74,13 @@ public interface KaSimpleFunctionCall : KaFunctionCall<KaFunctionSymbol> {
      * Whether this function call is an [implicit invoke call](https://kotlinlang.org/docs/operator-overloading.html#invoke-operator) on a
      * value that has an `invoke` member function.
      */
+    @Deprecated(
+        message = "Check whether the call is instance of the 'KaImplicitInvokeCall' instead",
+        replaceWith = ReplaceWith(
+            "this is KaImplicitInvokeCall",
+            imports = ["org.jetbrains.kotlin.analysis.api.resolution.KaImplicitInvokeCall"]
+        ),
+    )
     public val isImplicitInvoke: Boolean
 }
 

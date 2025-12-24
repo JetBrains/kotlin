@@ -168,7 +168,6 @@ KtCallExpression(202,208): 'foo(3)'
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Unit
@@ -201,7 +200,6 @@ KtNameReferenceExpression(202,205): 'foo'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -242,7 +240,6 @@ KtCallExpression(213,223): 'foo(((5)))'
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Unit
@@ -275,7 +272,6 @@ KtNameReferenceExpression(213,216): 'foo'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -322,7 +318,6 @@ KtCallExpression(228,242): 'foo(x = ((5)))'
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Unit
@@ -355,7 +350,6 @@ KtNameReferenceExpression(228,231): 'foo'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -408,7 +402,6 @@ KtCallExpression(247,266): 'foo((((5 as Int))))'
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Unit
@@ -441,7 +434,6 @@ KtNameReferenceExpression(247,250): 'foo'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -506,7 +498,6 @@ KtCallExpression(271,294): 'foo(x = (((5 as Int))))'
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Unit
@@ -539,7 +530,6 @@ KtNameReferenceExpression(271,274): 'foo'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -613,7 +603,6 @@ KtCallExpression(300,368): 'foo((((when (((value))) {'
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Unit
@@ -649,7 +638,6 @@ KtNameReferenceExpression(300,303): 'foo'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -740,7 +728,6 @@ KtCallExpression(374,394): 'foo(((((++value)))))'
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Unit
@@ -773,7 +760,6 @@ KtNameReferenceExpression(374,377): 'foo'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -822,7 +808,6 @@ KtPrefixExpression(382,389): '++value'
             isSafeNavigation = false
             type = kotlin.Int
           extensionReceiver = null
-          isImplicitInvoke = false
           signature = KaFunctionSignature:
             receiverType = null
             returnType = kotlin.Int
@@ -860,7 +845,6 @@ KtOperationReferenceExpression(382,384): '++'
             isSafeNavigation = false
             type = kotlin.Int
           extensionReceiver = null
-          isImplicitInvoke = false
           signature = KaFunctionSignature:
             receiverType = null
             returnType = kotlin.Int
@@ -923,7 +907,6 @@ KtCallExpression(400,426): 'fooVararg((5), (5 as Int))'
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Unit
@@ -963,7 +946,6 @@ KtNameReferenceExpression(400,409): 'fooVararg'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -1031,7 +1013,6 @@ KtCallExpression(431,458): 'fooVararg(*(intArrayOf(5)))'
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Unit
@@ -1064,7 +1045,6 @@ KtNameReferenceExpression(431,440): 'fooVararg'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -1105,7 +1085,6 @@ KtCallExpression(443,456): 'intArrayOf(5)'
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.IntArray
@@ -1138,7 +1117,6 @@ KtNameReferenceExpression(443,453): 'intArrayOf'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.IntArray
@@ -1179,7 +1157,6 @@ KtCallExpression(463,493): 'fooVararg(x = (intArrayOf(5)))'
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Unit
@@ -1212,7 +1189,6 @@ KtNameReferenceExpression(463,472): 'fooVararg'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -1259,7 +1235,6 @@ KtCallExpression(478,491): 'intArrayOf(5)'
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.IntArray
@@ -1292,7 +1267,6 @@ KtNameReferenceExpression(478,488): 'intArrayOf'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.IntArray
@@ -1333,7 +1307,6 @@ KtCallExpression(499,523): 'fooLambda((({ _ -> 5})))'
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Unit
@@ -1366,7 +1339,6 @@ KtNameReferenceExpression(499,508): 'fooLambda'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -1428,7 +1400,6 @@ KtCallExpression(529,554): 'fooSam((((MySam { 5 }))))'
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Unit
@@ -1461,7 +1432,6 @@ KtNameReferenceExpression(529,535): 'fooSam'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -1508,7 +1478,6 @@ KtCallExpression(539,550): 'MySam { 5 }'
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = MySam
@@ -1541,7 +1510,6 @@ KtNameReferenceExpression(539,544): 'MySam'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MySam

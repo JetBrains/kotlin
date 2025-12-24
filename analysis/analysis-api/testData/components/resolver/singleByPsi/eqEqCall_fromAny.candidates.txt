@@ -16,7 +16,6 @@ KtBinaryExpression(38,46): 'b1 == b2'
         isSafeNavigation = false
         type = B
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean

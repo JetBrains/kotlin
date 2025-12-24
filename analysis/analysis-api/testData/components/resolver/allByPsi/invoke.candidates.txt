@@ -80,7 +80,6 @@ KtCallExpression(124,133): 'MyClass()'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = r.MyClass
@@ -98,7 +97,6 @@ KtNameReferenceExpression(124,131): 'MyClass'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = r.MyClass
@@ -128,7 +126,6 @@ KtCallExpression(156,165): 'MyClass()'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = r.MyClass
@@ -146,7 +143,6 @@ KtNameReferenceExpression(156,163): 'MyClass'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = r.MyClass
@@ -179,7 +175,6 @@ KtCallExpression(186,191): 'foo()'
         isSafeNavigation = false
         type = r.MyClass
       extensionReceiver = null
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = null
         returnType = r.MyClass
@@ -196,7 +191,6 @@ KtCallExpression(186,191): 'foo()'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
@@ -217,7 +211,6 @@ KtNameReferenceExpression(186,189): 'foo'
         isSafeNavigation = false
         type = r.MyClass
       extensionReceiver = null
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = null
         returnType = r.MyClass
@@ -234,7 +227,6 @@ KtNameReferenceExpression(186,189): 'foo'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
@@ -276,7 +268,6 @@ KtDotQualifiedExpression(204,226): '(((foo)())()).invoke()'
         isSafeNavigation = false
         type = r.MyClass
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = r.MyClass
@@ -300,7 +291,6 @@ KtCallExpression(205,216): '((foo)())()'
         isSafeNavigation = false
         type = r.MyClass
       extensionReceiver = null
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = null
         returnType = r.MyClass
@@ -324,7 +314,6 @@ KtCallExpression(206,213): '(foo)()'
         isSafeNavigation = false
         type = r.MyClass
       extensionReceiver = null
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = null
         returnType = r.MyClass
@@ -341,7 +330,6 @@ KtCallExpression(206,213): '(foo)()'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
@@ -389,7 +377,6 @@ KtCallExpression(218,226): 'invoke()'
         isSafeNavigation = false
         type = r.MyClass
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = r.MyClass
@@ -410,7 +397,6 @@ KtNameReferenceExpression(218,224): 'invoke'
         isSafeNavigation = false
         type = r.MyClass
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = r.MyClass
@@ -434,7 +420,6 @@ KtDotQualifiedExpression(231,243): 'foo.invoke()'
         isSafeNavigation = false
         type = r.MyClass
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = r.MyClass
@@ -473,7 +458,6 @@ KtCallExpression(235,243): 'invoke()'
         isSafeNavigation = false
         type = r.MyClass
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = r.MyClass
@@ -494,7 +478,6 @@ KtNameReferenceExpression(235,241): 'invoke'
         isSafeNavigation = false
         type = r.MyClass
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = r.MyClass
@@ -518,7 +501,6 @@ KtCallExpression(248,258): 'property()'
         isSafeNavigation = false
         type = r.MyClass
       extensionReceiver = null
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = null
         returnType = r.MyClass

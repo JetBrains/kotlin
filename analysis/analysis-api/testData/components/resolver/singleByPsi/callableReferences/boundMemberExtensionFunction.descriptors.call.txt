@@ -25,7 +25,6 @@ KtCallableReferenceExpression(230,238): 'Bar::foo'
         visibility: LOCAL
       type = Foo
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = Bar
       returnType = kotlin.Unit

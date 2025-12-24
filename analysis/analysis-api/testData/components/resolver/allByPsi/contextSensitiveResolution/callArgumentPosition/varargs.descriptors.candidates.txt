@@ -320,7 +320,6 @@ KtCallExpression(434,440): 'TODO()'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Nothing
@@ -337,7 +336,6 @@ KtCallExpression(434,440): 'TODO()'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Nothing
@@ -364,7 +362,6 @@ KtNameReferenceExpression(434,438): 'TODO'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Nothing
@@ -381,7 +378,6 @@ KtNameReferenceExpression(434,438): 'TODO'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Nothing
@@ -423,7 +419,6 @@ KtCallExpression(490,506): 'InheritorClass()'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MyClass.InheritorClass
@@ -441,7 +436,6 @@ KtNameReferenceExpression(490,504): 'InheritorClass'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MyClass.InheritorClass
@@ -533,7 +527,6 @@ KtCallExpression(677,686): 'lazy {""}'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Lazy<ERROR_TYPE>
@@ -576,7 +569,6 @@ KtCallExpression(677,686): 'lazy {""}'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Lazy<ERROR_TYPE>
@@ -619,7 +611,6 @@ KtCallExpression(677,686): 'lazy {""}'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Lazy<kotlin.String>
@@ -655,7 +646,6 @@ KtNameReferenceExpression(677,681): 'lazy'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Lazy<ERROR_TYPE>
@@ -698,7 +688,6 @@ KtNameReferenceExpression(677,681): 'lazy'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Lazy<ERROR_TYPE>
@@ -741,7 +730,6 @@ KtNameReferenceExpression(677,681): 'lazy'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Lazy<kotlin.String>
@@ -799,7 +787,6 @@ KtCallExpression(717,723): 'TODO()'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Nothing
@@ -816,7 +803,6 @@ KtCallExpression(717,723): 'TODO()'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Nothing
@@ -843,7 +829,6 @@ KtNameReferenceExpression(717,721): 'TODO'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Nothing
@@ -860,7 +845,6 @@ KtNameReferenceExpression(717,721): 'TODO'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Nothing
@@ -985,7 +969,6 @@ KtCallExpression(868,908): 'receiverVarArg<MyClass>(InheritorObject)'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Array<out MyClass>
@@ -1022,7 +1005,6 @@ KtNameReferenceExpression(868,882): 'receiverVarArg'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Array<out MyClass>
@@ -1083,7 +1065,6 @@ KtCallExpression(913,939): 'receiverVarArg<MyClass>(i)'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Array<out MyClass>
@@ -1119,7 +1100,6 @@ KtNameReferenceExpression(913,927): 'receiverVarArg'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Array<out MyClass>
@@ -1194,7 +1174,6 @@ KtCallExpression(944,980): 'receiverVarArg<MyClass>(propMyClass)'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Array<out MyClass>
@@ -1231,7 +1210,6 @@ KtNameReferenceExpression(944,958): 'receiverVarArg'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Array<out MyClass>
@@ -1292,7 +1270,6 @@ KtCallExpression(985,1028): 'receiverVarArg<MyClass>(propInheritorClass)'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Array<out MyClass>
@@ -1329,7 +1306,6 @@ KtNameReferenceExpression(985,999): 'receiverVarArg'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Array<out MyClass>
@@ -1390,7 +1366,6 @@ KtCallExpression(1033,1077): 'receiverVarArg<MyClass>(propInheritorObject)'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Array<out MyClass>
@@ -1427,7 +1402,6 @@ KtNameReferenceExpression(1033,1047): 'receiverVarArg'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Array<out MyClass>
@@ -1488,7 +1462,6 @@ KtCallExpression(1083,1112): 'receiverVarArg<MyClass>(prop)'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Array<out MyClass>
@@ -1525,7 +1498,6 @@ KtNameReferenceExpression(1083,1097): 'receiverVarArg'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Array<out MyClass>
@@ -1586,7 +1558,6 @@ KtCallExpression(1117,1151): 'receiverVarArg<MyClass>(constProp)'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Array<out MyClass>
@@ -1623,7 +1594,6 @@ KtNameReferenceExpression(1117,1131): 'receiverVarArg'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Array<out MyClass>
@@ -1684,7 +1654,6 @@ KtCallExpression(1156,1189): 'receiverVarArg<MyClass>(lazyProp)'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Array<out MyClass>
@@ -1721,7 +1690,6 @@ KtNameReferenceExpression(1156,1170): 'receiverVarArg'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Array<out MyClass>
@@ -1782,7 +1750,6 @@ KtCallExpression(1194,1229): 'receiverVarArg<MyClass>(lambdaProp)'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Array<out MyClass>
@@ -1819,7 +1786,6 @@ KtNameReferenceExpression(1194,1208): 'receiverVarArg'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Array<out MyClass>
@@ -1880,7 +1846,6 @@ KtCallExpression(1234,1268): 'receiverVarArg<MyClass>(superProp)'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Array<out MyClass>
@@ -1917,7 +1882,6 @@ KtNameReferenceExpression(1234,1248): 'receiverVarArg'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Array<out MyClass>
@@ -1978,7 +1942,6 @@ KtCallExpression(1274,1305): 'receiverVarArg<MyClass>(func())'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Array<out MyClass>
@@ -2015,7 +1978,6 @@ KtNameReferenceExpression(1274,1288): 'receiverVarArg'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Array<out MyClass>
@@ -2082,7 +2044,6 @@ KtCallExpression(1310,1346): 'receiverVarArg<MyClass>(superFunc())'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Array<out MyClass>
@@ -2119,7 +2080,6 @@ KtNameReferenceExpression(1310,1324): 'receiverVarArg'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Array<out MyClass>

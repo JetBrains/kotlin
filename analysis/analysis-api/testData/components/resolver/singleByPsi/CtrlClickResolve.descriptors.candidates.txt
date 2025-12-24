@@ -13,7 +13,6 @@ KtNameReferenceExpression(202,210): 'IntArray'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Array<out kotlin.String>
@@ -46,7 +45,6 @@ KtNameReferenceExpression(202,210): 'IntArray'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.IntArray
@@ -80,7 +78,6 @@ KtNameReferenceExpression(202,210): 'IntArray'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.IntArray

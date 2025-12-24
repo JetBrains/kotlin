@@ -6,7 +6,6 @@ KtCallExpression(71,80): 'Test<Bar>'
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
-        isImplicitInvoke = false
         signature = KaFunctionSignature:
           receiverType = null
           returnType = test.Test<T>

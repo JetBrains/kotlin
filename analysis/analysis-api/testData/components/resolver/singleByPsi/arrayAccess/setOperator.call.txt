@@ -22,7 +22,6 @@ KtArrayAccessExpression(68,72): '1[2]'
       expression = 1
       isSafeNavigation = false
       type = kotlin.Int
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = kotlin.Int
       returnType = kotlin.Int

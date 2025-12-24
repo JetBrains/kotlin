@@ -27,7 +27,6 @@ KtCallExpression(61,99): 'generic<String, String>("a", "b", "c")'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit

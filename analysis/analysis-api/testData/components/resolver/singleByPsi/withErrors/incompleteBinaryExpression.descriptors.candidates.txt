@@ -8,7 +8,6 @@ KtBinaryExpression(17,24): '"dsd" +'
         isSafeNavigation = false
         type = kotlin.String
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.String

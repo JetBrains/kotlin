@@ -710,7 +710,6 @@ KtCallExpression(738,744): 'TODO()'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Nothing
@@ -727,7 +726,6 @@ KtCallExpression(738,744): 'TODO()'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Nothing
@@ -754,7 +752,6 @@ KtNameReferenceExpression(738,742): 'TODO'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Nothing
@@ -771,7 +768,6 @@ KtNameReferenceExpression(738,742): 'TODO'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Nothing
@@ -858,7 +854,6 @@ KtDotQualifiedExpression(818,836): 'i.prop1.hashCode()'
         isSafeNavigation = false
         type = ERROR_TYPE
       extensionReceiver = null
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -878,7 +873,6 @@ KtDotQualifiedExpression(818,836): 'i.prop1.hashCode()'
         isSafeNavigation = false
         type = ERROR_TYPE
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -923,7 +917,6 @@ KtCallExpression(826,836): 'hashCode()'
         isSafeNavigation = false
         type = ERROR_TYPE
       extensionReceiver = null
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -943,7 +936,6 @@ KtCallExpression(826,836): 'hashCode()'
         isSafeNavigation = false
         type = ERROR_TYPE
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -964,7 +956,6 @@ KtNameReferenceExpression(826,834): 'hashCode'
         isSafeNavigation = false
         type = ERROR_TYPE
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -1041,7 +1032,6 @@ KtDotQualifiedExpression(868,881): 'i.prop2.dec()'
         isSafeNavigation = false
         type = ERROR_TYPE
       extensionReceiver = null
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -1061,7 +1051,6 @@ KtDotQualifiedExpression(868,881): 'i.prop2.dec()'
         isSafeNavigation = false
         type = ERROR_TYPE
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -1106,7 +1095,6 @@ KtCallExpression(876,881): 'dec()'
         isSafeNavigation = false
         type = ERROR_TYPE
       extensionReceiver = null
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -1126,7 +1114,6 @@ KtCallExpression(876,881): 'dec()'
         isSafeNavigation = false
         type = ERROR_TYPE
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -1147,7 +1134,6 @@ KtNameReferenceExpression(876,879): 'dec'
         isSafeNavigation = false
         type = ERROR_TYPE
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -1224,7 +1210,6 @@ KtDotQualifiedExpression(913,931): 'i.prop1.hashCode()'
         isSafeNavigation = false
         type = ERROR_TYPE
       extensionReceiver = null
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -1244,7 +1229,6 @@ KtDotQualifiedExpression(913,931): 'i.prop1.hashCode()'
         isSafeNavigation = false
         type = ERROR_TYPE
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -1289,7 +1273,6 @@ KtCallExpression(921,931): 'hashCode()'
         isSafeNavigation = false
         type = ERROR_TYPE
       extensionReceiver = null
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -1309,7 +1292,6 @@ KtCallExpression(921,931): 'hashCode()'
         isSafeNavigation = false
         type = ERROR_TYPE
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -1330,7 +1312,6 @@ KtNameReferenceExpression(921,929): 'hashCode'
         isSafeNavigation = false
         type = ERROR_TYPE
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -1395,7 +1376,6 @@ KtDotQualifiedExpression(980,1020): '(i as SealedInheritor1).prop1.hashCode()'
         isSafeNavigation = false
         type = ERROR_TYPE
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -1415,7 +1395,6 @@ KtDotQualifiedExpression(980,1020): '(i as SealedInheritor1).prop1.hashCode()'
         isSafeNavigation = false
         type = ERROR_TYPE
       extensionReceiver = null
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -1436,7 +1415,6 @@ KtDotQualifiedExpression(980,1009): '(i as SealedInheritor1).prop1'
         isSafeNavigation = false
         type = ERROR_TYPE
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -1456,7 +1434,6 @@ KtDotQualifiedExpression(980,1009): '(i as SealedInheritor1).prop1'
         isSafeNavigation = false
         type = ERROR_TYPE
       extensionReceiver = null
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -1513,7 +1490,6 @@ KtNameReferenceExpression(1004,1009): 'prop1'
         isSafeNavigation = false
         type = ERROR_TYPE
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -1554,7 +1530,6 @@ KtCallExpression(1010,1020): 'hashCode()'
         isSafeNavigation = false
         type = ERROR_TYPE
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -1574,7 +1549,6 @@ KtCallExpression(1010,1020): 'hashCode()'
         isSafeNavigation = false
         type = ERROR_TYPE
       extensionReceiver = null
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -1595,7 +1569,6 @@ KtNameReferenceExpression(1010,1018): 'hashCode'
         isSafeNavigation = false
         type = ERROR_TYPE
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -1672,7 +1645,6 @@ KtDotQualifiedExpression(1052,1065): 'i.prop2.dec()'
         isSafeNavigation = false
         type = ERROR_TYPE
       extensionReceiver = null
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -1692,7 +1664,6 @@ KtDotQualifiedExpression(1052,1065): 'i.prop2.dec()'
         isSafeNavigation = false
         type = ERROR_TYPE
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -1737,7 +1708,6 @@ KtCallExpression(1060,1065): 'dec()'
         isSafeNavigation = false
         type = ERROR_TYPE
       extensionReceiver = null
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -1757,7 +1727,6 @@ KtCallExpression(1060,1065): 'dec()'
         isSafeNavigation = false
         type = ERROR_TYPE
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -1778,7 +1747,6 @@ KtNameReferenceExpression(1060,1063): 'dec'
         isSafeNavigation = false
         type = ERROR_TYPE
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -1858,7 +1826,6 @@ KtDotQualifiedExpression(1105,1123): 'v.prop1.hashCode()'
         isSafeNavigation = false
         type = ERROR_TYPE
       extensionReceiver = null
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -1878,7 +1845,6 @@ KtDotQualifiedExpression(1105,1123): 'v.prop1.hashCode()'
         isSafeNavigation = false
         type = ERROR_TYPE
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -1899,7 +1865,6 @@ KtDotQualifiedExpression(1105,1112): 'v.prop1'
         isSafeNavigation = false
         type = ERROR_TYPE
       extensionReceiver = null
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -1919,7 +1884,6 @@ KtDotQualifiedExpression(1105,1112): 'v.prop1'
         isSafeNavigation = false
         type = ERROR_TYPE
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -1958,7 +1922,6 @@ KtNameReferenceExpression(1107,1112): 'prop1'
         isSafeNavigation = false
         type = ERROR_TYPE
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -1999,7 +1962,6 @@ KtCallExpression(1113,1123): 'hashCode()'
         isSafeNavigation = false
         type = ERROR_TYPE
       extensionReceiver = null
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -2019,7 +1981,6 @@ KtCallExpression(1113,1123): 'hashCode()'
         isSafeNavigation = false
         type = ERROR_TYPE
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -2040,7 +2001,6 @@ KtNameReferenceExpression(1113,1121): 'hashCode'
         isSafeNavigation = false
         type = ERROR_TYPE
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -2129,7 +2089,6 @@ KtDotQualifiedExpression(1177,1196): 'v2.prop1.hashCode()'
         isSafeNavigation = false
         type = ERROR_TYPE
       extensionReceiver = null
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -2149,7 +2108,6 @@ KtDotQualifiedExpression(1177,1196): 'v2.prop1.hashCode()'
         isSafeNavigation = false
         type = ERROR_TYPE
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -2194,7 +2152,6 @@ KtCallExpression(1186,1196): 'hashCode()'
         isSafeNavigation = false
         type = ERROR_TYPE
       extensionReceiver = null
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -2214,7 +2171,6 @@ KtCallExpression(1186,1196): 'hashCode()'
         isSafeNavigation = false
         type = ERROR_TYPE
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -2235,7 +2191,6 @@ KtNameReferenceExpression(1186,1194): 'hashCode'
         isSafeNavigation = false
         type = ERROR_TYPE
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -2324,7 +2279,6 @@ KtDotQualifiedExpression(1255,1274): 'v3.prop1.hashCode()'
         isSafeNavigation = false
         type = ERROR_TYPE
       extensionReceiver = null
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -2344,7 +2298,6 @@ KtDotQualifiedExpression(1255,1274): 'v3.prop1.hashCode()'
         isSafeNavigation = false
         type = ERROR_TYPE
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -2365,7 +2318,6 @@ KtDotQualifiedExpression(1255,1263): 'v3.prop1'
         isSafeNavigation = false
         type = ERROR_TYPE
       extensionReceiver = null
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -2385,7 +2337,6 @@ KtDotQualifiedExpression(1255,1263): 'v3.prop1'
         isSafeNavigation = false
         type = ERROR_TYPE
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -2424,7 +2375,6 @@ KtNameReferenceExpression(1258,1263): 'prop1'
         isSafeNavigation = false
         type = ERROR_TYPE
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -2465,7 +2415,6 @@ KtCallExpression(1264,1274): 'hashCode()'
         isSafeNavigation = false
         type = ERROR_TYPE
       extensionReceiver = null
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -2485,7 +2434,6 @@ KtCallExpression(1264,1274): 'hashCode()'
         isSafeNavigation = false
         type = ERROR_TYPE
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -2506,7 +2454,6 @@ KtNameReferenceExpression(1264,1272): 'hashCode'
         isSafeNavigation = false
         type = ERROR_TYPE
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -2555,7 +2502,6 @@ KtCallExpression(1280,1323): 'consume<SealedClass>(i as SealedInheritor1)'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Nothing
@@ -2592,7 +2538,6 @@ KtNameReferenceExpression(1280,1287): 'consume'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Nothing
@@ -2683,7 +2628,6 @@ KtCallExpression(1328,1388): 'consume<SealedClass.SealedInheritor1>(i as SealedI
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Nothing
@@ -2720,7 +2664,6 @@ KtNameReferenceExpression(1328,1335): 'consume'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Nothing
@@ -2833,7 +2776,6 @@ KtSafeQualifiedExpression(1436,1479): '(i as? SealedInheritor1)?.prop1?.hashCode
         isSafeNavigation = true
         type = ERROR_TYPE?
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -2853,7 +2795,6 @@ KtSafeQualifiedExpression(1436,1479): '(i as? SealedInheritor1)?.prop1?.hashCode
         isSafeNavigation = false
         type = ERROR_TYPE
       extensionReceiver = null
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -2874,7 +2815,6 @@ KtSafeQualifiedExpression(1436,1467): '(i as? SealedInheritor1)?.prop1'
         isSafeNavigation = true
         type = ERROR_TYPE?
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -2894,7 +2834,6 @@ KtSafeQualifiedExpression(1436,1467): '(i as? SealedInheritor1)?.prop1'
         isSafeNavigation = false
         type = ERROR_TYPE
       extensionReceiver = null
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -2951,7 +2890,6 @@ KtNameReferenceExpression(1462,1467): 'prop1'
         isSafeNavigation = true
         type = ERROR_TYPE?
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -2992,7 +2930,6 @@ KtCallExpression(1469,1479): 'hashCode()'
         isSafeNavigation = true
         type = ERROR_TYPE?
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -3012,7 +2949,6 @@ KtCallExpression(1469,1479): 'hashCode()'
         isSafeNavigation = false
         type = ERROR_TYPE
       extensionReceiver = null
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -3033,7 +2969,6 @@ KtNameReferenceExpression(1469,1477): 'hashCode'
         isSafeNavigation = true
         type = ERROR_TYPE?
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -3110,7 +3045,6 @@ KtSafeQualifiedExpression(1512,1527): 'i?.prop2?.dec()'
         isSafeNavigation = false
         type = ERROR_TYPE
       extensionReceiver = null
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -3130,7 +3064,6 @@ KtSafeQualifiedExpression(1512,1527): 'i?.prop2?.dec()'
         isSafeNavigation = true
         type = ERROR_TYPE
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -3175,7 +3108,6 @@ KtCallExpression(1522,1527): 'dec()'
         isSafeNavigation = false
         type = ERROR_TYPE
       extensionReceiver = null
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -3195,7 +3127,6 @@ KtCallExpression(1522,1527): 'dec()'
         isSafeNavigation = true
         type = ERROR_TYPE
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -3216,7 +3147,6 @@ KtNameReferenceExpression(1522,1525): 'dec'
         isSafeNavigation = true
         type = ERROR_TYPE
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -3296,7 +3226,6 @@ KtSafeQualifiedExpression(1568,1588): 'v?.prop1?.hashCode()'
         isSafeNavigation = false
         type = ERROR_TYPE
       extensionReceiver = null
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -3316,7 +3245,6 @@ KtSafeQualifiedExpression(1568,1588): 'v?.prop1?.hashCode()'
         isSafeNavigation = true
         type = ERROR_TYPE?
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -3337,7 +3265,6 @@ KtSafeQualifiedExpression(1568,1576): 'v?.prop1'
         isSafeNavigation = false
         type = ERROR_TYPE
       extensionReceiver = null
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -3357,7 +3284,6 @@ KtSafeQualifiedExpression(1568,1576): 'v?.prop1'
         isSafeNavigation = true
         type = ERROR_TYPE?
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -3396,7 +3322,6 @@ KtNameReferenceExpression(1571,1576): 'prop1'
         isSafeNavigation = true
         type = ERROR_TYPE?
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -3437,7 +3362,6 @@ KtCallExpression(1578,1588): 'hashCode()'
         isSafeNavigation = false
         type = ERROR_TYPE
       extensionReceiver = null
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -3457,7 +3381,6 @@ KtCallExpression(1578,1588): 'hashCode()'
         isSafeNavigation = true
         type = ERROR_TYPE?
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -3478,7 +3401,6 @@ KtNameReferenceExpression(1578,1586): 'hashCode'
         isSafeNavigation = true
         type = ERROR_TYPE?
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -3570,7 +3492,6 @@ KtSafeQualifiedExpression(1644,1665): 'v2?.prop1?.hashCode()'
         isSafeNavigation = false
         type = ERROR_TYPE
       extensionReceiver = null
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -3590,7 +3511,6 @@ KtSafeQualifiedExpression(1644,1665): 'v2?.prop1?.hashCode()'
         isSafeNavigation = true
         type = ERROR_TYPE
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -3635,7 +3555,6 @@ KtCallExpression(1655,1665): 'hashCode()'
         isSafeNavigation = false
         type = ERROR_TYPE
       extensionReceiver = null
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -3655,7 +3574,6 @@ KtCallExpression(1655,1665): 'hashCode()'
         isSafeNavigation = true
         type = ERROR_TYPE
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -3676,7 +3594,6 @@ KtNameReferenceExpression(1655,1663): 'hashCode'
         isSafeNavigation = true
         type = ERROR_TYPE
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -3768,7 +3685,6 @@ KtSafeQualifiedExpression(1726,1747): 'v3?.prop1?.hashCode()'
         isSafeNavigation = false
         type = ERROR_TYPE
       extensionReceiver = null
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -3788,7 +3704,6 @@ KtSafeQualifiedExpression(1726,1747): 'v3?.prop1?.hashCode()'
         isSafeNavigation = true
         type = ERROR_TYPE?
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -3809,7 +3724,6 @@ KtSafeQualifiedExpression(1726,1735): 'v3?.prop1'
         isSafeNavigation = false
         type = ERROR_TYPE
       extensionReceiver = null
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -3829,7 +3743,6 @@ KtSafeQualifiedExpression(1726,1735): 'v3?.prop1'
         isSafeNavigation = true
         type = ERROR_TYPE?
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -3868,7 +3781,6 @@ KtNameReferenceExpression(1730,1735): 'prop1'
         isSafeNavigation = true
         type = ERROR_TYPE?
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -3909,7 +3821,6 @@ KtCallExpression(1737,1747): 'hashCode()'
         isSafeNavigation = false
         type = ERROR_TYPE
       extensionReceiver = null
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -3929,7 +3840,6 @@ KtCallExpression(1737,1747): 'hashCode()'
         isSafeNavigation = true
         type = ERROR_TYPE?
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -3950,7 +3860,6 @@ KtNameReferenceExpression(1737,1745): 'hashCode'
         isSafeNavigation = true
         type = ERROR_TYPE?
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -3999,7 +3908,6 @@ KtCallExpression(1753,1798): 'consume<SealedClass?>(i as? SealedInheritor1)'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Nothing
@@ -4036,7 +3944,6 @@ KtNameReferenceExpression(1753,1760): 'consume'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Nothing
@@ -4130,7 +4037,6 @@ KtCallExpression(1803,1865): 'consume<SealedClass.SealedInheritor1?>(i as? Seale
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Nothing
@@ -4167,7 +4073,6 @@ KtNameReferenceExpression(1803,1810): 'consume'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Nothing
@@ -4267,7 +4172,6 @@ KtCallExpression(1870,1932): 'consume<SealedClass.SealedInheritor2?>(i as? Seale
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Nothing
@@ -4304,7 +4208,6 @@ KtNameReferenceExpression(1870,1877): 'consume'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Nothing

@@ -16,7 +16,6 @@ KtOperationReferenceExpression(184,186): '=='
         isSafeNavigation = false
         type = Child
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Boolean

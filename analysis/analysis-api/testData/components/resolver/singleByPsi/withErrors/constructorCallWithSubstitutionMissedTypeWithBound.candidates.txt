@@ -5,7 +5,6 @@ KtCallExpression(74,79): 'Foo()'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = Foo<ERROR CLASS: Cannot infer argument for type parameter T>

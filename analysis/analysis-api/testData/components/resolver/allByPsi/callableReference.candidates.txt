@@ -365,7 +365,6 @@ KtDotQualifiedExpression(497,538): 'MyClass::memberFunction.invoke(MyClass())'
         isSafeNavigation = false
         type = kotlin.reflect.KFunction1<pack.MyClass, kotlin.Int>
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
@@ -391,7 +390,6 @@ KtCallableReferenceExpression(497,520): 'MyClass::memberFunction'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
@@ -409,7 +407,6 @@ KtNameReferenceExpression(497,504): 'MyClass'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = pack.MyClass
@@ -442,7 +439,6 @@ KtCallExpression(521,538): 'invoke(MyClass())'
         isSafeNavigation = false
         type = kotlin.reflect.KFunction1<pack.MyClass, kotlin.Int>
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
@@ -479,7 +475,6 @@ KtNameReferenceExpression(521,527): 'invoke'
         isSafeNavigation = false
         type = kotlin.reflect.KFunction1<pack.MyClass, kotlin.Int>
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
@@ -511,7 +506,6 @@ KtCallExpression(528,537): 'MyClass()'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = pack.MyClass
@@ -529,7 +523,6 @@ KtNameReferenceExpression(528,535): 'MyClass'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = pack.MyClass
@@ -589,7 +582,6 @@ KtNameReferenceExpression(543,550): 'MyClass'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = pack.MyClass
@@ -643,7 +635,6 @@ KtDotQualifiedExpression(577,614): 'Child::memberFunction.invoke(Child())'
         isSafeNavigation = false
         type = kotlin.reflect.KFunction1<pack.Child, kotlin.Int>
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
@@ -669,7 +660,6 @@ KtCallableReferenceExpression(577,598): 'Child::memberFunction'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
@@ -687,7 +677,6 @@ KtNameReferenceExpression(577,582): 'Child'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = pack.Child
@@ -720,7 +709,6 @@ KtCallExpression(599,614): 'invoke(Child())'
         isSafeNavigation = false
         type = kotlin.reflect.KFunction1<pack.Child, kotlin.Int>
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
@@ -757,7 +745,6 @@ KtNameReferenceExpression(599,605): 'invoke'
         isSafeNavigation = false
         type = kotlin.reflect.KFunction1<pack.Child, kotlin.Int>
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
@@ -789,7 +776,6 @@ KtCallExpression(606,613): 'Child()'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = pack.Child
@@ -807,7 +793,6 @@ KtNameReferenceExpression(606,611): 'Child'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = pack.Child
@@ -867,7 +852,6 @@ KtNameReferenceExpression(619,624): 'Child'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = pack.Child
@@ -913,7 +897,6 @@ KtCallableReferenceExpression(659,690): 'pack.MyClass::extensionFunction'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = pack.MyClass
         returnType = kotlin.String
@@ -931,7 +914,6 @@ KtDotQualifiedExpression(659,671): 'pack.MyClass'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = pack.MyClass
@@ -950,7 +932,6 @@ KtNameReferenceExpression(659,663): 'pack'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = pack.MyClass
@@ -969,7 +950,6 @@ KtNameReferenceExpression(664,671): 'MyClass'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = pack.MyClass
@@ -1012,7 +992,6 @@ KtNameReferenceExpression(703,710): 'MyClass'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = pack.MyClass
@@ -1037,7 +1016,6 @@ KtCallableReferenceExpression(744,768): 'Child::extensionFunction'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = pack.MyClass
         returnType = kotlin.String
@@ -1055,7 +1033,6 @@ KtNameReferenceExpression(744,749): 'Child'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = pack.Child
@@ -1098,7 +1075,6 @@ KtDotQualifiedExpression(782,792): 'pack.Child'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = pack.Child
@@ -1117,7 +1093,6 @@ KtNameReferenceExpression(782,786): 'pack'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = pack.Child
@@ -1136,7 +1111,6 @@ KtNameReferenceExpression(787,792): 'Child'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = pack.Child
@@ -1179,7 +1153,6 @@ KtCallableReferenceExpression(817,848): 'ChildWithType::functionWithType'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = pack.MyClass?
@@ -1197,7 +1170,6 @@ KtNameReferenceExpression(817,830): 'ChildWithType'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = pack.ChildWithType
@@ -1251,7 +1223,6 @@ KtDotQualifiedExpression(858,913): 'ChildWithType::propertyWithType.invoke(Child
         isSafeNavigation = false
         type = kotlin.reflect.KMutableProperty1<pack.ChildWithType, pack.MyClass?>
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = pack.MyClass?
@@ -1295,7 +1266,6 @@ KtNameReferenceExpression(858,871): 'ChildWithType'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = pack.ChildWithType
@@ -1328,7 +1298,6 @@ KtCallExpression(890,913): 'invoke(ChildWithType())'
         isSafeNavigation = false
         type = kotlin.reflect.KMutableProperty1<pack.ChildWithType, pack.MyClass?>
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = pack.MyClass?
@@ -1365,7 +1334,6 @@ KtNameReferenceExpression(890,896): 'invoke'
         isSafeNavigation = false
         type = kotlin.reflect.KMutableProperty1<pack.ChildWithType, pack.MyClass?>
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = pack.MyClass?
@@ -1397,7 +1365,6 @@ KtCallExpression(897,912): 'ChildWithType()'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = pack.ChildWithType
@@ -1415,7 +1382,6 @@ KtNameReferenceExpression(897,910): 'ChildWithType'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = pack.ChildWithType
@@ -1436,7 +1402,6 @@ KtCallableReferenceExpression(919,937): '::topLevelFunction'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -1567,7 +1532,6 @@ KtCallableReferenceExpression(1063,1094): 'classWithType::functionWithType'
         isSafeNavigation = false
         type = pack.ClassWithType<T>
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = T?
@@ -1684,7 +1648,6 @@ KtCallableReferenceExpression(1174,1195): 't!!::functionWithType'
         isSafeNavigation = false
         type = pack.ClassWithType<kotlin.Int>
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int?

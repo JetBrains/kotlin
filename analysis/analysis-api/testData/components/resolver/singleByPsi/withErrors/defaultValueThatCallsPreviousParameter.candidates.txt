@@ -16,7 +16,6 @@ KtNameReferenceExpression(270,279): 'getString'
         isSafeNavigation = false
         type = test.pkg.Context
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.String!

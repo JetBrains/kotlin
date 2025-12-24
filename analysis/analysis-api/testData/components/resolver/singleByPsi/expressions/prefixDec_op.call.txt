@@ -11,7 +11,6 @@ KtOperationReferenceExpression(138,140): '--'
             isSafeNavigation = false
             type = MyClass
           extensionReceiver = null
-          isImplicitInvoke = false
           signature = KaFunctionSignature:
             receiverType = null
             returnType = MyClass

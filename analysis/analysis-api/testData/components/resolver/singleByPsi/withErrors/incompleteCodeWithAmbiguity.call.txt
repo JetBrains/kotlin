@@ -6,7 +6,6 @@ KtCallExpression(89,100): 'Foo<String>'
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
-        isImplicitInvoke = false
         signature = KaFunctionSignature:
           receiverType = null
           returnType = Foo<T>
@@ -30,7 +29,6 @@ KtCallExpression(89,100): 'Foo<String>'
         contextArguments = []
         dispatchReceiver = null
         extensionReceiver = null
-        isImplicitInvoke = false
         signature = KaFunctionSignature:
           receiverType = null
           returnType = Foo<T>

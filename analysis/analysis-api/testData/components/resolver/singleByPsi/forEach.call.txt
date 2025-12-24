@@ -16,7 +16,6 @@ KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
         expression = listOf(1, 2, 3)
         isSafeNavigation = false
         type = kotlin.collections.List<kotlin.Int>
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.Iterable<kotlin.Int>
         returnType = kotlin.Unit

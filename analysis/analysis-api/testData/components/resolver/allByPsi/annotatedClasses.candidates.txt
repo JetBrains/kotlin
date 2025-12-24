@@ -122,7 +122,6 @@ KtNameReferenceExpression(23,39): 'AnnotationTarget'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.annotation.AnnotationTarget

@@ -80,7 +80,6 @@ KtDotQualifiedExpression(167,185): 'MyAlias.function()'
         isSafeNavigation = false
         type = test.MyClass.Companion
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -102,7 +101,6 @@ KtCallExpression(175,185): 'function()'
       isSafeNavigation = false
       type = test.MyClass.Companion
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Unit
@@ -122,7 +120,6 @@ KtNameReferenceExpression(175,183): 'function'
         isSafeNavigation = false
         type = test.MyClass.Companion
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -187,7 +184,6 @@ KtCallableReferenceExpression(212,229): 'MyAlias::function'
       isSafeNavigation = false
       type = test.MyClass.Companion
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Unit

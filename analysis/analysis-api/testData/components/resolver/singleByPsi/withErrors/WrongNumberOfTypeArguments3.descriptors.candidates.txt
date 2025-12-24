@@ -5,7 +5,6 @@ KtNameReferenceExpression(51,53): 'DD'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = foo.DD<ERROR_TYPE, ERROR_TYPE>

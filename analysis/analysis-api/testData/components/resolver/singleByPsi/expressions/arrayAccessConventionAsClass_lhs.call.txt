@@ -15,7 +15,6 @@ KtArrayAccessExpression(238,249): 'variable[0]'
       isSafeNavigation = false
       type = MyClass
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = MyClass

@@ -8,7 +8,6 @@ KtNameReferenceExpression(172,175): 'foo'
         isSafeNavigation = false
         type = test.WithGeneratedCompanion.Companion
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int

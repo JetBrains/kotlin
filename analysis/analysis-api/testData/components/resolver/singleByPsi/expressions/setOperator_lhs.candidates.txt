@@ -23,7 +23,6 @@ KtArrayAccessExpression(93,104): 'variable[0]'
         isSafeNavigation = false
         type = MyClass
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit

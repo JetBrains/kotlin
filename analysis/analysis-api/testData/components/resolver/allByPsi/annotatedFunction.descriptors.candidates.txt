@@ -200,7 +200,6 @@ KtDotQualifiedExpression(46,77): 'AnnotationTarget.TYPE_PARAMETER'
         expression = TYPE_PARAMETER
         isSafeNavigation = false
         type = kotlin.annotation.AnnotationTarget
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = kotlin.DeepRecursiveFunction<ERROR_TYPE, ERROR_TYPE>
         returnType = ERROR_TYPE
@@ -242,7 +241,6 @@ KtDotQualifiedExpression(83,108): 'AnnotationTarget.FUNCTION'
         expression = FUNCTION
         isSafeNavigation = false
         type = kotlin.annotation.AnnotationTarget
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = kotlin.DeepRecursiveFunction<ERROR_TYPE, ERROR_TYPE>
         returnType = ERROR_TYPE
@@ -284,7 +282,6 @@ KtDotQualifiedExpression(114,146): 'AnnotationTarget.VALUE_PARAMETER'
         expression = VALUE_PARAMETER
         isSafeNavigation = false
         type = kotlin.annotation.AnnotationTarget
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = kotlin.DeepRecursiveFunction<ERROR_TYPE, ERROR_TYPE>
         returnType = ERROR_TYPE
@@ -326,7 +323,6 @@ KtDotQualifiedExpression(152,173): 'AnnotationTarget.TYPE'
         expression = TYPE
         isSafeNavigation = false
         type = kotlin.annotation.AnnotationTarget
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = kotlin.DeepRecursiveFunction<ERROR_TYPE, ERROR_TYPE>
         returnType = ERROR_TYPE

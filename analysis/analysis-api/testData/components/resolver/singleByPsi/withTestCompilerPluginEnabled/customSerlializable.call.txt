@@ -16,7 +16,6 @@ KtNameReferenceExpression(331,351): 'serializeFirstTarget'
         isSafeNavigation = false
         type = test.Serializer
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit

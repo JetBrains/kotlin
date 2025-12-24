@@ -23,7 +23,6 @@ KtNameReferenceExpression(54,57): 'set'
         isSafeNavigation = false
         type = kotlin.collections.MutableList<kotlin.Int>
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
@@ -73,7 +72,6 @@ KtNameReferenceExpression(54,57): 'set'
         expression = l
         isSafeNavigation = false
         type = kotlin.collections.MutableList<kotlin.Int>
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.collections.MutableMap<kotlin.Int, kotlin.Int>
         returnType = kotlin.Unit
@@ -127,7 +125,6 @@ KtNameReferenceExpression(54,57): 'set'
         expression = l
         isSafeNavigation = false
         type = kotlin.collections.MutableList<kotlin.Int>
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.text.StringBuilder
         returnType = kotlin.Unit

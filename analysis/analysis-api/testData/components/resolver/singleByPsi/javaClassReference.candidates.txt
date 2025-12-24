@@ -5,7 +5,6 @@ KtCallExpression(31,44): 'Array<String>'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Array<T>

@@ -390,7 +390,6 @@ KtBinaryExpression(178,189): '0 + integer'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
@@ -429,7 +428,6 @@ KtOperationReferenceExpression(180,181): '+'
         isSafeNavigation = false
         type = kotlin.Int
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int
@@ -474,7 +472,6 @@ KtDotQualifiedExpression(191,226): '(@Anno(integer) usage()).toString()'
         isSafeNavigation = false
         type = kotlin.Unit
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.String
@@ -591,7 +588,6 @@ KtCallExpression(207,214): 'usage()'
     contextArguments = []
     dispatchReceiver = null
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Unit
@@ -608,7 +604,6 @@ KtNameReferenceExpression(207,212): 'usage'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -630,7 +625,6 @@ KtCallExpression(216,226): 'toString()'
       isSafeNavigation = false
       type = kotlin.Unit
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.String
@@ -650,7 +644,6 @@ KtNameReferenceExpression(216,224): 'toString'
         isSafeNavigation = false
         type = kotlin.Unit
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.String

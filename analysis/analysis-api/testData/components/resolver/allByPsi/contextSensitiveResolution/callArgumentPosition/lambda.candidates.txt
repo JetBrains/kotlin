@@ -275,7 +275,6 @@ KtCallExpression(433,439): 'TODO()'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Nothing
@@ -292,7 +291,6 @@ KtCallExpression(433,439): 'TODO()'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Nothing
@@ -319,7 +317,6 @@ KtNameReferenceExpression(433,437): 'TODO'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Nothing
@@ -336,7 +333,6 @@ KtNameReferenceExpression(433,437): 'TODO'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Nothing
@@ -378,7 +374,6 @@ KtCallExpression(489,505): 'InheritorClass()'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MyClass.InheritorClass
@@ -396,7 +391,6 @@ KtNameReferenceExpression(489,503): 'InheritorClass'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MyClass.InheritorClass
@@ -429,7 +423,6 @@ KtNameReferenceExpression(557,572): 'InheritorObject'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MyClass.InheritorObject
@@ -504,7 +497,6 @@ KtCallExpression(676,685): 'lazy {""}'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Lazy<kotlin.String>
@@ -539,7 +531,6 @@ KtCallExpression(676,685): 'lazy {""}'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Lazy<kotlin.String>
@@ -582,7 +573,6 @@ KtCallExpression(676,685): 'lazy {""}'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Lazy<kotlin.String>
@@ -626,7 +616,6 @@ KtNameReferenceExpression(676,680): 'lazy'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Lazy<kotlin.String>
@@ -661,7 +650,6 @@ KtNameReferenceExpression(676,680): 'lazy'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Lazy<kotlin.String>
@@ -704,7 +692,6 @@ KtNameReferenceExpression(676,680): 'lazy'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Lazy<kotlin.String>
@@ -767,7 +754,6 @@ KtNameReferenceExpression(712,727): 'InheritorObject'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MyClass.InheritorObject
@@ -801,7 +787,6 @@ KtCallExpression(759,765): 'TODO()'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Nothing
@@ -818,7 +803,6 @@ KtCallExpression(759,765): 'TODO()'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Nothing
@@ -845,7 +829,6 @@ KtNameReferenceExpression(759,763): 'TODO'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Nothing
@@ -862,7 +845,6 @@ KtNameReferenceExpression(759,763): 'TODO'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Nothing
@@ -945,7 +927,6 @@ KtCallExpression(830,855): 'lMyClass(InheritorObject)'
         isSafeNavigation = false
         type = (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
       extensionReceiver = null
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -995,7 +976,6 @@ KtNameReferenceExpression(839,854): 'InheritorObject'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MyClass.InheritorObject
@@ -1025,7 +1005,6 @@ KtCallExpression(860,881): 'lMyClass(propMyClass)'
         isSafeNavigation = false
         type = (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
       extensionReceiver = null
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -1107,7 +1086,6 @@ KtCallExpression(886,914): 'lMyClass(propInheritorClass)'
         isSafeNavigation = false
         type = (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
       extensionReceiver = null
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -1189,7 +1167,6 @@ KtCallExpression(919,948): 'lMyClass(propInheritorObject)'
         isSafeNavigation = false
         type = (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
       extensionReceiver = null
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -1271,7 +1248,6 @@ KtCallExpression(954,976): 'lMyClass(NestedObject)'
         isSafeNavigation = false
         type = (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
       extensionReceiver = null
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -1321,7 +1297,6 @@ KtNameReferenceExpression(963,975): 'NestedObject'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = MyClass.NestedObject
@@ -1351,7 +1326,6 @@ KtCallExpression(981,995): 'lMyClass(prop)'
         isSafeNavigation = false
         type = (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
       extensionReceiver = null
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -1433,7 +1407,6 @@ KtCallExpression(1000,1019): 'lMyClass(superProp)'
         isSafeNavigation = false
         type = (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
       extensionReceiver = null
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -1515,7 +1488,6 @@ KtCallExpression(1024,1043): 'lMyClass(constProp)'
         isSafeNavigation = false
         type = (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
       extensionReceiver = null
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -1597,7 +1569,6 @@ KtCallExpression(1048,1066): 'lMyClass(lazyProp)'
         isSafeNavigation = false
         type = (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
       extensionReceiver = null
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -1679,7 +1650,6 @@ KtCallExpression(1071,1091): 'lMyClass(lambdaProp)'
         isSafeNavigation = false
         type = (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
       extensionReceiver = null
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -1761,7 +1731,6 @@ KtCallExpression(1097,1123): 'lMyClass(InheritorClass())'
         isSafeNavigation = false
         type = (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
       extensionReceiver = null
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -1831,7 +1800,6 @@ KtCallExpression(1128,1144): 'lMyClass(func())'
         isSafeNavigation = false
         type = (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
       extensionReceiver = null
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit
@@ -1901,7 +1869,6 @@ KtCallExpression(1149,1170): 'lMyClass(superFunc())'
         isSafeNavigation = false
         type = (@R|kotlin.ParameterName|(name = String(arg))  MyClass) -> kotlin.Unit
       extensionReceiver = null
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit

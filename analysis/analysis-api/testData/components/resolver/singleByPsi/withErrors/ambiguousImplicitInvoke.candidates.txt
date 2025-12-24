@@ -8,7 +8,6 @@ KtCallExpression(134,137): 'x()'
         expression = x
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = kotlin.Int
         returnType = kotlin.Unit
@@ -37,7 +36,6 @@ KtCallExpression(134,137): 'x()'
         expression = x
         isSafeNavigation = false
         type = kotlin.Int
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = kotlin.Int
         returnType = kotlin.Unit
@@ -63,7 +61,6 @@ KtCallExpression(134,137): 'x()'
       contextArguments = []
       dispatchReceiver = null
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Unit

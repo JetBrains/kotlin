@@ -16,7 +16,6 @@ KtArrayAccessExpression(146,152): 'm["a"]'
         isSafeNavigation = false
         type = MyMap<kotlin.String, A>
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = A

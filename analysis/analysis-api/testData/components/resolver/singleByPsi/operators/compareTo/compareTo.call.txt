@@ -16,7 +16,6 @@ KtNameReferenceExpression(114,123): 'compareTo'
         isSafeNavigation = false
         type = MyClass
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = kotlin.Int

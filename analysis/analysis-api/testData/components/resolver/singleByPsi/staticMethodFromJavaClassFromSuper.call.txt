@@ -6,7 +6,6 @@ KtCallExpression(81,86): 'foo()'
       symbol = /Child
       type = kotlin.Unit
     extensionReceiver = null
-    isImplicitInvoke = false
     signature = KaFunctionSignature:
       receiverType = null
       returnType = kotlin.Unit

@@ -8,7 +8,6 @@ KtCallExpression(89,94): 'foo()'
         isSafeNavigation = false
         type = ERROR_TYPE
       extensionReceiver = null
-      isImplicitInvoke = true
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE
@@ -28,7 +27,6 @@ KtCallExpression(89,94): 'foo()'
         isSafeNavigation = false
         type = ERROR_TYPE
       extensionReceiver = null
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = null
         returnType = ERROR_TYPE

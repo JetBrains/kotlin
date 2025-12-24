@@ -12,7 +12,6 @@ KtOperationReferenceExpression(195,197): '+='
             isSafeNavigation = false
             type = test.WithOperator
           extensionReceiver = null
-          isImplicitInvoke = false
           signature = KaFunctionSignature:
             receiverType = null
             returnType = test.WithOperator

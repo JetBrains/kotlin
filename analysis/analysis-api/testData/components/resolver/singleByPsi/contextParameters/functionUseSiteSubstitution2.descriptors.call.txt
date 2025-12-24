@@ -50,7 +50,6 @@ KtDotQualifiedExpression(257,274): 's.foo(this@usage)'
         expression = s
         isSafeNavigation = false
         type = kotlin.String
-      isImplicitInvoke = false
       signature = KaFunctionSignature:
         receiverType = kotlin.String
         returnType = kotlin.Unit
