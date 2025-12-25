@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // JSPECIFY_STATE: strict
 // ISSUE: KT-83314
 
