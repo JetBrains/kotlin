@@ -154,6 +154,24 @@ public class LLReversedWasmJsDiagnosticsFe10TestGenerated extends AbstractLLReve
     }
 
     @Test
+    @TestMetadata("jsReferenceCastCheck.kt")
+    public void testJsReferenceCastCheck() {
+      runTest("compiler/testData/diagnostics/wasmTests/jsInterop/jsReferenceCastCheck.kt");
+    }
+
+    @Test
+    @TestMetadata("jsReferenceEqualityCheck.kt")
+    public void testJsReferenceEqualityCheck() {
+      runTest("compiler/testData/diagnostics/wasmTests/jsInterop/jsReferenceEqualityCheck.kt");
+    }
+
+    @Test
+    @TestMetadata("jsReferenceIsCheck.kt")
+    public void testJsReferenceIsCheck() {
+      runTest("compiler/testData/diagnostics/wasmTests/jsInterop/jsReferenceIsCheck.kt");
+    }
+
+    @Test
     @TestMetadata("nestedExternal.kt")
     public void testNestedExternal() {
       runTest("compiler/testData/diagnostics/wasmTests/jsInterop/nestedExternal.kt");
