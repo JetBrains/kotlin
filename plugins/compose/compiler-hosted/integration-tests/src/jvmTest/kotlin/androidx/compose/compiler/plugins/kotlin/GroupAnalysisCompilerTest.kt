@@ -456,7 +456,7 @@ class GroupAnalysisCompilerTest(
                 classLoader.allGeneratedFiles
                     .filter { it.relativePath.endsWith(".class") }
                     .forEach { file ->
-                        mapping.append(file.asByteArray())
+                        mapping.append(file.relativePath, file.asByteArray())
                     }
                 p to buildString {
                     mapping.writeProguardMapping(this)
@@ -468,7 +468,7 @@ class GroupAnalysisCompilerTest(
                 val info = classLoader.allGeneratedFiles
                     .filter { it.relativePath.endsWith(".class") }
                     .mapNotNull { file ->
-                        classInfoFromBytecode(lambdaKeyCache, ErrorReporter.Default, file.asByteArray()).takeIf {
+                        classInfoFromBytecode(lambdaKeyCache, ErrorReporter.Default, file.relativePath, file.asByteArray())?.takeIf {
                             it.fileName == "Test.kt" && it.methods.isNotEmpty()
                         }?.render(lambdaKeyCache)
                     }.joinToString(separator = "\n")

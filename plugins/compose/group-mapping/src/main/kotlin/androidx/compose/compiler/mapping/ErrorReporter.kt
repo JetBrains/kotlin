@@ -6,11 +6,16 @@
 package androidx.compose.compiler.mapping
 
 interface ErrorReporter {
-    fun reportError(e: Throwable)
+    fun reportAnalysisError(e: Throwable)
+    fun reportClassReadError(fileName: String, e: Throwable)
 
     companion object Default : ErrorReporter {
-        override fun reportError(e: Throwable) {
+        override fun reportAnalysisError(e: Throwable) {
             throw e
+        }
+
+        override fun reportClassReadError(fileName: String, e: Throwable) {
+            error("Failed to read $fileName: ${e.message}")
         }
     }
 }
