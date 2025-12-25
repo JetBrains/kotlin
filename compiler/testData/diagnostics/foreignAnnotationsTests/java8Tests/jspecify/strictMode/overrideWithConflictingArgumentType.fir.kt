@@ -1,5 +1,6 @@
 // JSPECIFY_STATE: strict
 // ISSUE: KT-83314
+// ISSUE: KT-83384
 
 // FILE: BoxBase.java
 import org.jspecify.annotations.*;
