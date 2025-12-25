@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.gradle
 
 import com.android.build.api.variant.ApplicationAndroidComponentsExtension
 import org.gradle.api.logging.LogLevel
-import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.kotlin.dsl.getByType
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.compose.compiler.gradle.ComposeCompilerGradlePluginExtension
@@ -668,6 +667,12 @@ class ComposeIT : KGPBaseTest() {
                         it.shrinkResources = true
                     }
                 }
+                // Known dependency that is compiled with JDK 25
+                // Tests for CMP-9459
+                dependencies.add(
+                    "implementation",
+                    "org.bouncycastle:bcprov-jdk18on:1.83"
+                )
             }
 
             build("assembleRelease") {
