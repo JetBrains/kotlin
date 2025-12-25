@@ -234,13 +234,24 @@ abstract class AbstractSignatureParts<TAnnotation : Any> {
                 (isCovariant && overrides.any { !this@computeIndexedQualifiers.isEqual(it) })
 
         val computedResult = Array(if (forceOnlyHeadTypeConstructor) 1 else indexedThisType.size) { index ->
-            // Specifically, for JSpecify, when the return type is covariant, a default qualifier should be used to determine
-            // nullity rather than the override's types. This is true in general for JSpecify, but that is not working yet (KT-71441).
             val defaultQualifier by lazy(mode = LazyThreadSafetyMode.NONE) { indexedThisType[index].extractDefaultQualifier() }
-            if (isK2 && defaultQualifier?.preferQualifierOverSupertype == true) {
-                return@Array indexedThisType[index].extractQualifiersFromAnnotations(defaultQualifier)
-            } else if (index > 0 && onlyHeadTypeConstructor) {
-                return@Array JavaTypeQualifiers.NONE
+
+            // Argument types enhancement when only the head type is expected to be enhanced
+            if (index > 0 && onlyHeadTypeConstructor) {
+                return@Array when {
+                    // `forceOnlyHeadTypeConstructor` currently is only used for a part of a second round of type parameter bounds enhancement.
+                    // In that case, we just should enhance the head type.
+                    // See org.jetbrains.kotlin.fir.java.enhancement.FirSignatureEnhancement.enhanceTypeParameterBoundsSecondRound
+                    !forceOnlyHeadTypeConstructor && isK2 && defaultQualifier?.preferQualifierOverSupertype == true ->
+                        // Specifically, for JSpecify, when the return type is covariant, a default qualifier should be used to determine
+                        // nullity rather than the override's types. This is true in general for JSpecify, but that is not working yet (KT-71441).
+                        // Generally, it's controversial because the argument might contradict to overridden type, but it's been requested
+                        // by the JSpecify team at KT-78541.
+                        // TODO: Let's reconsider this behavior at some point (KT-83384)
+                        indexedThisType[index].extractQualifiersFromAnnotations(defaultQualifier)
+                    else ->
+                        JavaTypeQualifiers.NONE
+                }
             }
 
             val qualifiers = indexedThisType[index].extractQualifiersFromAnnotations(defaultQualifier)
