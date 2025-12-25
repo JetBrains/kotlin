@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.fir.checkers
 
-import org.jetbrains.kotlin.fir.FirPlatformSpecificCastChecker
-import org.jetbrains.kotlin.fir.FirPlatformSpecificEqualityChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.*
 import org.jetbrains.kotlin.fir.analysis.diagnostics.CliFrontendDiagnostics
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
@@ -101,9 +99,6 @@ fun FirSessionConfigurator.registerWasmJsCheckers() {
 
     useCheckers(WasmJsDeclarationCheckers)
     useCheckers(WasmJsExpressionCheckers)
-
-    registerComponent(FirPlatformSpecificCastChecker::class, FirWasmJsCastChecker)
-    registerComponent(FirPlatformSpecificEqualityChecker::class, FirWasmJsEqualityChecker)
 }
 
 fun FirSessionConfigurator.registerWasmWasiCheckers() {

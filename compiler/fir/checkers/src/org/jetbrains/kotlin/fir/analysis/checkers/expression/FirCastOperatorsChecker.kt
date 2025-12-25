@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory0
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactoryForDeprecation1
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
@@ -33,15 +35,9 @@ object FirCastOperatorsChecker : FirTypeOperatorCallChecker(MppCheckerKind.Commo
             reporter.reportOn(expression.conversionTypeRef.source, FirErrors.DYNAMIC_NOT_ALLOWED)
         }
 
-        val checkApplicability: (TypeInfo) -> Applicability = when (expression.operation) {
-            FirOperation.IS, FirOperation.NOT_IS -> { typeInfo -> checkIsApplicability(typeInfo, r, expression) }
-            FirOperation.AS, FirOperation.SAFE_AS -> { typeInfo -> checkAsApplicability(typeInfo, r, expression) }
-            else -> error("Invalid operator of FirTypeOperatorCall")
-        }
-
         val rUserType = expression.conversionTypeRef.coneType.finalApproximationOrSelf()
 
-        when (val it = checkApplicability(l.originalTypeInfo)) {
+        when (val it = checkApplicability(expression,l.originalTypeInfo, r)) {
             Applicability.APPLICABLE -> {}
             // CAST_ERASED may not be the case if we factor in the smartcast data.
             Applicability.CAST_ERASED if l.argument is FirSmartCastExpression -> {}
@@ -54,10 +50,17 @@ object FirCastOperatorsChecker : FirTypeOperatorCallChecker(MppCheckerKind.Commo
             return
         }
 
-        when (val it = checkApplicability(l.smartCastTypeInfo)) {
+        when (val it = checkApplicability(expression, l.smartCastTypeInfo, r)) {
             Applicability.APPLICABLE -> {}
             else -> return reporter.reportInapplicabilityDiagnostic(expression, it, l, r.type, rUserType, forceWarning = true)
         }
+    }
+
+    context(context: CheckerContext)
+    private fun checkApplicability(expression: FirTypeOperatorCall, l: TypeInfo, r: TypeInfo) : Applicability = when (expression.operation) {
+        FirOperation.IS, FirOperation.NOT_IS -> checkIsApplicability(l, r, expression)
+        FirOperation.AS, FirOperation.SAFE_AS -> checkAsApplicability(l, r, expression)
+        else -> error("Invalid operator of FirTypeOperatorCall")
     }
 
     context(context: CheckerContext)
@@ -161,7 +164,7 @@ object FirCastOperatorsChecker : FirTypeOperatorCallChecker(MppCheckerKind.Commo
         forceWarning: Boolean = false,
     ) {
         when (applicability) {
-            Applicability.IMPOSSIBLE_CAST -> getImpossibilityDiagnostic(l.originalTypeInfo, r)?.let {
+            Applicability.IMPOSSIBLE_CAST -> getImpossibleCastDiagnostic(expression, l.originalType, r)?.let {
                 reportOn(expression.source, it)
             }
             Applicability.USELESS_CAST -> getUselessCastDiagnostic()?.let {
@@ -169,7 +172,7 @@ object FirCastOperatorsChecker : FirTypeOperatorCallChecker(MppCheckerKind.Commo
             }
             Applicability.IMPOSSIBLE_IS_CHECK -> when {
                 forceWarning -> reportOn(expression.source, FirErrors.USELESS_IS_CHECK, expression.operation != FirOperation.IS)
-                else -> getImpossibleIsCheckDiagnostic(l.originalTypeInfo, r)?.let {
+                else -> getImpossibleIsCheckDiagnostic(expression, l.originalType, r)?.let {
                     reportOn(expression.source, it, expression.operation != FirOperation.IS)
                 }
             }
@@ -207,16 +210,36 @@ object FirCastOperatorsChecker : FirTypeOperatorCallChecker(MppCheckerKind.Commo
     }
 
     context(context: CheckerContext)
-    private fun getImpossibilityDiagnostic(l: TypeInfo, rType: ConeKotlinType) = when {
-        !LanguageFeature.EnableDfaWarningsInK2.isEnabled() -> null
-        context.session.firPlatformSpecificCastChecker.shouldSuppressImpossibleCast(context.session, l.type, rType) -> null
-        else -> FirErrors.CAST_NEVER_SUCCEEDS
+    private fun getImpossibleCastDiagnostic(expression: FirTypeOperatorCall, lType: ConeKotlinType, rType: ConeKotlinType): KtDiagnosticFactory0? {
+        fun isGenerallyApplicable(l: ConeKotlinType, r: ConeKotlinType) =
+            checkApplicability(expression, l.toTypeInfo(context.session), r.toTypeInfo(context.session)) != Applicability.IMPOSSIBLE_CAST
+
+        return when {
+            !LanguageFeature.EnableDfaWarningsInK2.isEnabled() -> null
+            context.session.firPlatformSpecificCastChecker.shouldSuppressImpossibleCast(
+                context.session,
+                lType,
+                rType,
+                ::isGenerallyApplicable
+            ) -> null
+            else -> FirErrors.CAST_NEVER_SUCCEEDS
+        }
     }
 
     context(context: CheckerContext)
-    private fun getImpossibleIsCheckDiagnostic(l: TypeInfo, rType: ConeKotlinType) = when {
-        context.session.firPlatformSpecificCastChecker.shouldSuppressImpossibleIsCheck(context.session, l.type, rType) -> null
-        else -> FirErrors.IMPOSSIBLE_IS_CHECK
+    private fun getImpossibleIsCheckDiagnostic(expression: FirTypeOperatorCall, lType: ConeKotlinType, rType: ConeKotlinType): KtDiagnosticFactoryForDeprecation1<Boolean>? {
+        fun isGenerallyApplicable(l: ConeKotlinType, r: ConeKotlinType) =
+            checkApplicability(expression, l.toTypeInfo(context.session), r.toTypeInfo(context.session)) != Applicability.IMPOSSIBLE_IS_CHECK
+
+        return when {
+            context.session.firPlatformSpecificCastChecker.shouldSuppressImpossibleIsCheck(
+                context.session,
+                lType,
+                rType,
+                ::isGenerallyApplicable
+            ) -> null
+            else -> FirErrors.IMPOSSIBLE_IS_CHECK
+        }
     }
 
     context(context: CheckerContext)

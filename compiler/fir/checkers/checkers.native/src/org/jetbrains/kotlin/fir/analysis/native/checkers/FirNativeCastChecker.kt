@@ -11,11 +11,21 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 
 object FirNativeCastChecker : FirPlatformSpecificCastChecker() {
-    override fun shouldSuppressImpossibleCast(session: FirSession, fromType: ConeKotlinType, toType: ConeKotlinType): Boolean {
+    override fun shouldSuppressImpossibleCast(
+        session: FirSession,
+        fromType: ConeKotlinType,
+        toType: ConeKotlinType,
+        generalApplicabilityChecker: (fromType: ConeKotlinType, toType: ConeKotlinType) -> Boolean
+    ): Boolean {
         return isCastToAForwardDeclaration(session, toType)
     }
 
-    override fun shouldSuppressImpossibleIsCheck(session: FirSession, fromType: ConeKotlinType, toType: ConeKotlinType): Boolean {
+    override fun shouldSuppressImpossibleIsCheck(
+        session: FirSession,
+        fromType: ConeKotlinType,
+        toType: ConeKotlinType,
+        generalApplicabilityChecker: (fromType: ConeKotlinType, toType: ConeKotlinType) -> Boolean
+    ): Boolean {
         return false
     }
 

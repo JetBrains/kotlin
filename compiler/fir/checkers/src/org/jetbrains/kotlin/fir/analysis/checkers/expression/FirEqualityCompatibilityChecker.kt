@@ -34,13 +34,7 @@ object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker(MppCheck
 
         checkSenselessness(l.smartCastType, r.smartCastType, expression)
 
-        val checkApplicability: (TypeInfo, TypeInfo) -> Applicability = when (expression.operation) {
-            FirOperation.EQ, FirOperation.NOT_EQ -> { a, b -> checkEqualityApplicability(a, b) }
-            FirOperation.IDENTITY, FirOperation.NOT_IDENTITY -> { a, b -> checkIdentityApplicability(a, b) }
-            else -> error("Invalid operator of FirEqualityOperatorCall")
-        }
-
-        checkApplicability(l.originalTypeInfo, r.originalTypeInfo).ifInapplicable {
+        checkApplicability(expression.operation, l.originalTypeInfo, r.originalTypeInfo).ifInapplicable {
             // K1 checks consist of 2 parts: reporting a
             // diagnostic if the intersection is empty,
             // and otherwise reporting a diagnostic if
@@ -63,13 +57,20 @@ object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker(MppCheck
             return
         }
 
-        checkApplicability(l.smartCastTypeInfo, r.smartCastTypeInfo).ifInapplicable {
+        checkApplicability(expression.operation, l.smartCastTypeInfo, r.smartCastTypeInfo).ifInapplicable {
             return reporter.reportInapplicabilityDiagnostic(
                 expression, it, expression.operation, forceWarning = true,
                 l.smartCastTypeInfo, r.smartCastTypeInfo,
                 l.userType, r.userType,
             )
         }
+    }
+
+    context(context: CheckerContext)
+    private fun checkApplicability(operation: FirOperation, l: TypeInfo, r: TypeInfo): Applicability = when (operation) {
+        FirOperation.EQ, FirOperation.NOT_EQ -> { checkEqualityApplicability(l, r) }
+        FirOperation.IDENTITY, FirOperation.NOT_IDENTITY -> { checkIdentityApplicability(l, r) }
+        else -> error("Invalid operator of FirEqualityOperatorCall")
     }
 
     context(context: CheckerContext)
@@ -133,10 +134,24 @@ object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker(MppCheck
     }
 
     context(context: CheckerContext)
-    private fun getGeneralInapplicabilityDiagnostic(forceWarning: Boolean, lType: ConeKotlinType, rType: ConeKotlinType): KtDiagnosticFactory3<String, ConeKotlinType, ConeKotlinType>? = when {
-        forceWarning -> FirErrors.EQUALITY_NOT_APPLICABLE_WARNING
-        context.session.firPlatformSpecificEqualityChecker.shouldSuppressInapplicableEquality(lType, rType) -> null
-        else -> FirErrors.EQUALITY_NOT_APPLICABLE
+    private fun getGeneralInapplicabilityDiagnostic(
+        forceWarning: Boolean,
+        operation: FirOperation,
+        lType: ConeKotlinType,
+        rType: ConeKotlinType,
+    ): KtDiagnosticFactory3<String, ConeKotlinType, ConeKotlinType>? {
+        fun isGenerallyApplicable(l: ConeKotlinType, r: ConeKotlinType): Boolean =
+            checkApplicability(operation, l.toTypeInfo(context.session), r.toTypeInfo(context.session)) == Applicability.APPLICABLE
+
+        return when {
+            context.session.firPlatformSpecificEqualityChecker.shouldSuppressInapplicableEquality(
+                lType,
+                rType,
+                ::isGenerallyApplicable
+            ) -> null
+            forceWarning -> FirErrors.EQUALITY_NOT_APPLICABLE_WARNING
+            else -> FirErrors.EQUALITY_NOT_APPLICABLE
+        }
     }
 
     context(context: CheckerContext)
@@ -233,7 +248,7 @@ object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker(MppCheck
             rUserType
         )
         applicability == Applicability.GENERALLY_INAPPLICABLE ->
-            getGeneralInapplicabilityDiagnostic(forceWarning, lUserType, rUserType)?.let {
+            getGeneralInapplicabilityDiagnostic(forceWarning, expression.operation, lUserType, rUserType)?.let {
                 reportOn(
                     expression.source,
                     it,

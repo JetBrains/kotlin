@@ -1,5 +1,6 @@
 // TARGET_BACKEND: WASM
 // MODULE: main
+// LANGUAGE: +TurnTypeCheckWarningsIntoErrors
 
 // FILE: jsType.js
 
@@ -27,8 +28,6 @@ fun testTypeOperations(obj: JsReference<C>) : String? {
         return "!is Any"
     if (obj !is C)
         return "!is C"
-    if (obj is String)
-        return "is String"
     if (obj != c)
         return "!= C"
     if (obj !== c)
@@ -36,19 +35,20 @@ fun testTypeOperations(obj: JsReference<C>) : String? {
     return null
 }
 
-// same checks as above, but with another formal type of the object
-// unfortunately, we have to duplicate the code as external types cannot be used as reified type arguments
+// similar checks as above, but with another formal type of the object
 fun testTypeOperations(obj: JsReference<String>) : String? {
     if (obj !is Any)
         return "!is Any"
-    if (obj !is C)
-        return "!is C"
     if (obj is String)
         return "is String"
     if (obj != c)
         return "!= C"
-    if (obj !== c)
-        return "!== C"
+    // these checks are forbidden by FE checks, although actual runtime code would return 'true' due
+    //  to previous unsafe casts
+//    if (obj !is C)
+//        return "!is C"
+//    if (obj !== c)
+//        return "!== C"
     return null
 }
 
@@ -57,6 +57,8 @@ fun testTypeOperations(obj: JsAny) : String? {
         return "!is Any"
     if (obj !is C)
         return "!is C"
+    if (obj is String)
+        return "is String"
     if (obj != c)
         return "!= C"
     if (obj !== c)

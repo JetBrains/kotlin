@@ -8,10 +8,18 @@ package org.jetbrains.kotlin.fir
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 
 abstract class FirPlatformSpecificEqualityChecker : FirSessionComponent {
-    abstract fun shouldSuppressInapplicableEquality(leftType: ConeKotlinType, rightType: ConeKotlinType): Boolean
+    abstract fun shouldSuppressInapplicableEquality(
+        leftType: ConeKotlinType,
+        rightType: ConeKotlinType,
+        generalApplicabilityChecker: (fromType: ConeKotlinType, toType: ConeKotlinType) -> Boolean,
+    ): Boolean
 
     object Default : FirPlatformSpecificEqualityChecker() {
-        override fun shouldSuppressInapplicableEquality(leftType: ConeKotlinType, rightType: ConeKotlinType): Boolean {
+        override fun shouldSuppressInapplicableEquality(
+            leftType: ConeKotlinType,
+            rightType: ConeKotlinType,
+            generalApplicabilityChecker: (fromType: ConeKotlinType, toType: ConeKotlinType) -> Boolean
+        ): Boolean {
             return false
         }
     }

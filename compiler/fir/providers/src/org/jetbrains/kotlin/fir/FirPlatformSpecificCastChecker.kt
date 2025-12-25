@@ -8,15 +8,36 @@ package org.jetbrains.kotlin.fir
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 
 abstract class FirPlatformSpecificCastChecker : FirSessionComponent {
-    abstract fun shouldSuppressImpossibleCast(session: FirSession, fromType: ConeKotlinType, toType: ConeKotlinType): Boolean
-    abstract fun shouldSuppressImpossibleIsCheck(session: FirSession, fromType: ConeKotlinType, toType: ConeKotlinType): Boolean
+    abstract fun shouldSuppressImpossibleCast(
+        session: FirSession,
+        fromType: ConeKotlinType,
+        toType: ConeKotlinType,
+        generalApplicabilityChecker: (fromType: ConeKotlinType, toType: ConeKotlinType) -> Boolean,
+    ): Boolean
+
+    abstract fun shouldSuppressImpossibleIsCheck(
+        session: FirSession,
+        fromType: ConeKotlinType,
+        toType: ConeKotlinType,
+        generalApplicabilityChecker: (fromType: ConeKotlinType, toType: ConeKotlinType) -> Boolean,
+    ): Boolean
 
     object Default : FirPlatformSpecificCastChecker() {
-        override fun shouldSuppressImpossibleCast(session: FirSession, fromType: ConeKotlinType, toType: ConeKotlinType): Boolean {
+        override fun shouldSuppressImpossibleCast(
+            session: FirSession,
+            fromType: ConeKotlinType,
+            toType: ConeKotlinType,
+            generalApplicabilityChecker: (fromType: ConeKotlinType, toType: ConeKotlinType) -> Boolean
+        ): Boolean {
             return false
         }
 
-        override fun shouldSuppressImpossibleIsCheck(session: FirSession, fromType: ConeKotlinType, toType: ConeKotlinType): Boolean {
+        override fun shouldSuppressImpossibleIsCheck(
+            session: FirSession,
+            fromType: ConeKotlinType,
+            toType: ConeKotlinType,
+            generalApplicabilityChecker: (fromType: ConeKotlinType, toType: ConeKotlinType) -> Boolean
+        ): Boolean {
             return false
         }
     }
