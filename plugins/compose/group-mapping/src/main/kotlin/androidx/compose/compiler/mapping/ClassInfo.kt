@@ -56,10 +56,21 @@ internal fun MethodId(methodInsnNode: MethodInsnNode): MethodId = MethodId(
     methodDescriptor = methodInsnNode.desc
 )
 
-fun classInfoFromBytecode(keyCache: LambdaKeyCache, reporter: ErrorReporter, bytecode: ByteArray): ClassInfo {
-    val reader = ClassReader(bytecode)
-    val node = ClassNode(ASM9)
-    reader.accept(node, 0)
+fun classInfoFromBytecode(
+    keyCache: LambdaKeyCache,
+    reporter: ErrorReporter,
+    fileName: String,
+    bytecode: ByteArray,
+): ClassInfo? {
+    val node = try {
+        val reader = ClassReader(bytecode)
+        val node = ClassNode(ASM9)
+        reader.accept(node, 0)
+        node
+    } catch (e: Exception) {
+        reporter.reportClassReadError(fileName, e)
+        return null
+    }
     return buildClassInfo(keyCache, reporter, node)
 }
 

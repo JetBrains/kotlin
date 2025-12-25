@@ -15,6 +15,7 @@ import com.android.build.api.variant.ScopedArtifacts
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.file.*
+import org.gradle.api.logging.LogLevel
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
@@ -151,11 +152,26 @@ internal abstract class ProduceMappingFileTask @Inject constructor(
             val errorOutput: RegularFileProperty
         }
 
+        class LogLine(
+            val message: String,
+            val level: LogLevel
+        )
+
         override fun execute() {
-            val errors = mutableListOf<String>()
+            val errors = mutableListOf<LogLine>()
             val mapping = ComposeMapping(object : ErrorReporter {
-                override fun reportError(e: Throwable) {
-                    errors.add(e.message.orEmpty())
+                override fun reportAnalysisError(e: Throwable) {
+                    if (e.message != null) {
+                        errors.add(LogLine(e.message.orEmpty(), LogLevel.WARN))
+                    }
+                }
+
+                override fun reportClassReadError(fileName: String, e: Throwable) {
+                    if (e.message != null) {
+                        errors.add(
+                            LogLine("Failed to read class $fileName. ${e.message.orEmpty()}", LogLevel.INFO)
+                        )
+                    }
                 }
             })
 
@@ -166,7 +182,7 @@ internal abstract class ProduceMappingFileTask @Inject constructor(
                             val bytes = zipFile.getInputStream(entry).use {
                                 it.readBytes()
                             }
-                            mapping.append(bytes)
+                            mapping.append(entry.name, bytes)
                         }
                     }
                 }
@@ -175,7 +191,7 @@ internal abstract class ProduceMappingFileTask @Inject constructor(
 
             parameters.projectFiles.forEach { file ->
                 val bytes = file.readBytes()
-                mapping.append(bytes)
+                mapping.append(file.name, bytes)
             }
 
             parameters.output.get().asFile.apply {
@@ -186,8 +202,10 @@ internal abstract class ProduceMappingFileTask @Inject constructor(
 
             parameters.errorOutput.get().asFile.apply {
                 bufferedWriter().use { writer ->
-                    errors.forEach {
-                        writer.appendLine(it)
+                    errors.forEach { line ->
+                        writer.append(line.level.name)
+                        writer.append(": ")
+                        writer.appendLine(line.message)
                     }
                 }
             }
@@ -209,12 +227,29 @@ internal abstract class ReportMappingErrorsTask : DefaultTask() {
         file.useLines {
             it.forEach { line ->
                 if (line.isEmpty()) return@forEach
-                logger.warn(
-                    "warning: Failed to collect Compose mapping ($line). Please report to Google through " +
-                            "https://goo.gle/compose-feedback"
-                )
+
+                if (line.startsWith(WARN_PREFIX)) {
+                    val message = line.removePrefix(WARN_PREFIX)
+                    logger.warn(
+                        "warning: Failed to collect Compose stack trace mapping ($message). Please report to Google through " +
+                                "https://goo.gle/compose-feedback"
+                    )
+                } else if (line.startsWith(INFO_PREFIX)) {
+                    val message = line.removePrefix(INFO_PREFIX)
+                    logger.info("Compose mapping: $message.")
+                } else {
+                    logger.warn(
+                        "warning: Unknown error output while collecting Compose stack trace mapping: $line"
+                    )
+                }
+
             }
         }
+    }
+
+    companion object {
+        private val WARN_PREFIX = "${LogLevel.WARN.name}: "
+        private val INFO_PREFIX = "${LogLevel.INFO.name}: "
     }
 }
 
