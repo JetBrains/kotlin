@@ -85,6 +85,7 @@ internal class LLFirWasmSessionFactory(project: Project) : LLFirAbstractSessionF
         val target = ktModule.targetPlatform.getWasmTarget()
         with(FirWasmSessionFactory.of(target)) {
             registerWasmComponents()
+            registerWasmPlatformSpecificCheckerComponents()
         }
     }
 

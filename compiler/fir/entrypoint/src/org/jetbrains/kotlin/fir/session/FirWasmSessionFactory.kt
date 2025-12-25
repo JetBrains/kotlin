@@ -6,8 +6,12 @@
 package org.jetbrains.kotlin.fir.session
 
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.fir.FirPlatformSpecificCastChecker
+import org.jetbrains.kotlin.fir.FirPlatformSpecificEqualityChecker
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.SessionConfiguration
+import org.jetbrains.kotlin.fir.analysis.wasm.checkers.FirWasmJsCastChecker
+import org.jetbrains.kotlin.fir.analysis.wasm.checkers.FirWasmJsEqualityChecker
 import org.jetbrains.kotlin.fir.checkers.registerWasmJsCheckers
 import org.jetbrains.kotlin.fir.checkers.registerWasmWasiCheckers
 import org.jetbrains.kotlin.fir.scopes.FirDefaultImportsProviderHolder
@@ -25,6 +29,14 @@ sealed class FirWasmSessionFactory : AbstractFirKlibSessionFactory<Nothing?>() {
 
         override fun FirSessionConfigurator.registerPlatformCheckers() {
             registerWasmJsCheckers()
+            registerComponent(FirPlatformSpecificCastChecker::class, FirWasmJsCastChecker)
+            registerComponent(FirPlatformSpecificEqualityChecker::class, FirWasmJsEqualityChecker)
+        }
+
+        // used from LLFirWasmSessionFactory which currently do not use FirSessionConfigurator and thus registerPlatformCheckers()
+        override fun FirSession.registerWasmPlatformSpecificCheckerComponents() {
+            register(FirPlatformSpecificCastChecker::class, FirWasmJsCastChecker)
+            register(FirPlatformSpecificEqualityChecker::class, FirWasmJsEqualityChecker)
         }
     }
 
@@ -35,6 +47,8 @@ sealed class FirWasmSessionFactory : AbstractFirKlibSessionFactory<Nothing?>() {
         override fun FirSessionConfigurator.registerPlatformCheckers() {
             registerWasmWasiCheckers()
         }
+
+        override fun FirSession.registerWasmPlatformSpecificCheckerComponents() {}
     }
 
     companion object {
@@ -73,6 +87,8 @@ sealed class FirWasmSessionFactory : AbstractFirKlibSessionFactory<Nothing?>() {
         register(FirEnumEntriesSupport(this))
         register(FirDefaultImportsProviderHolder.of(defaultImportsProvider))
     }
+
+    abstract fun FirSession.registerWasmPlatformSpecificCheckerComponents()
 
     // ==================================== Utilities ====================================
 }

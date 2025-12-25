@@ -25,6 +25,9 @@ object JsStandardClassIds {
     val Date = "Date".jsId()
 
     @JvmField
+    val JsAny = "JsAny".jsId()
+
+    @JvmField
     val JsReference = "JsReference".jsId()
 
     object Annotations {
