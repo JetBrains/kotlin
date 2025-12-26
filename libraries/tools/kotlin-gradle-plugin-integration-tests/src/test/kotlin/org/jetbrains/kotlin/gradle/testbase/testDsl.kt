@@ -10,7 +10,6 @@ import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.GradleRunner
 import org.gradle.testkit.runner.internal.DefaultGradleRunner
-import org.gradle.tooling.GradleConnector
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.gradle.report.BuildReportType
@@ -578,11 +577,6 @@ private fun commonBuildSetup(
     gradleVersion: GradleVersion,
     kotlinDaemonDebugPort: Int? = null,
 ): List<String> {
-    val jdkLocations = allJdkProperties
-        .map { System.getProperty(it) }
-        .sortedWith(compareBy { it.toString() })
-        .joinToString(separator = ",")
-
     val gradleJvmOptions =
         collectGradleJvmOptions(enableGradleDaemonMemoryLimitInMb, buildOptions.fileLeaksReportFile, connectSubprocessVMToDebugger)
     val kotlinDaemonJvmArgs = collectKotlinJvmArgs(enableKotlinDaemonMemoryLimitInMb, kotlinDaemonDebugPort)
@@ -596,33 +590,47 @@ private fun commonBuildSetup(
         joinToString(separator = " ")
     }
 
-    return buildOptions.toArguments(gradleVersion) + buildArguments + listOfNotNull(
-        // Required toolchains should be pre-installed via repo. Tests should not download any JDKs
-        "-Porg.gradle.java.installations.auto-download=false",
-        "-Dorg.gradle.java.installations.auto-detect=false",
-        "-Porg.gradle.java.installations.paths=$jdkLocations",
-        // Disable automatic download of android SDK.
-        // It should be downloaded in dependencies/android-sdk to enable caching and prevent sdk installation failures.
-        "-Pandroid.builder.sdkDownload=false",
-        // Decreasing Gradle daemon idle timeout to 1 min from default 3 hours.
-        // This should help with OOM on CI when agents do not have enough free memory available.
-        "-Dorg.gradle.daemon.idletimeout=60000",
-        if (gradleJvmOptions.isNotEmpty()) {
-            "-Dorg.gradle.jvmargs=${gradleJvmOptions.joinToJvmArgsString()}"
-        } else null,
-        if (enableBuildCacheDebug) "-Dorg.gradle.caching.debug=true" else null,
-        if (enableBuildScan) "--scan" else null,
-        if (enableOfflineMode) "--offline" else null,
-        if (kotlinDaemonJvmArgs.isNotEmpty()) {
-            // do not enclose as KGP transforms arguments like "-Xmx1024m" to -"-Xmx1024m": KT-72870
-            "-Pkotlin.daemon.jvmargs=${kotlinDaemonJvmArgs.joinToJvmArgsString(enclose = false)}"
-        } else null,
-        // Configure a non-default directory to be able to track Kotlin daemons started from the tests
-        // Useful for the tests like KGPDaemonsBaseTest
-        if (buildOptions.customKotlinDaemonRunFilesDirectory != null) {
-            @Suppress("DEPRECATION")
-            "-D${CompilerSystemProperties.COMPILE_DAEMON_CUSTOM_RUN_FILES_PATH_FOR_TESTS.property}=${buildOptions.customKotlinDaemonRunFilesDirectory.absolutePath}"
-        } else null,
+    return buildOptions.toArguments(gradleVersion) +
+            buildArguments +
+            jdkToolchainConfiguration(gradleVersion) +
+            listOfNotNull(
+                // Disable automatic download of android SDK.
+                // It should be downloaded in dependencies/android-sdk to enable caching and prevent sdk installation failures.
+                "-Pandroid.builder.sdkDownload=false",
+                // Decreasing Gradle daemon idle timeout to 1 min from default 3 hours.
+                // This should help with OOM on CI when agents do not have enough free memory available.
+                "-Dorg.gradle.daemon.idletimeout=60000",
+                if (gradleJvmOptions.isNotEmpty()) {
+                    "-Dorg.gradle.jvmargs=${gradleJvmOptions.joinToJvmArgsString()}"
+                } else null,
+                if (enableBuildCacheDebug) "-Dorg.gradle.caching.debug=true" else null,
+                if (enableBuildScan) "--scan" else null,
+                if (enableOfflineMode) "--offline" else null,
+                if (kotlinDaemonJvmArgs.isNotEmpty()) {
+                    // do not enclose as KGP transforms arguments like "-Xmx1024m" to -"-Xmx1024m": KT-72870
+                    "-Pkotlin.daemon.jvmargs=${kotlinDaemonJvmArgs.joinToJvmArgsString(enclose = false)}"
+                } else null,
+                // Configure a non-default directory to be able to track Kotlin daemons started from the tests
+                // Useful for the tests like KGPDaemonsBaseTest
+                if (buildOptions.customKotlinDaemonRunFilesDirectory != null) {
+                    @Suppress("DEPRECATION")
+                    "-D${CompilerSystemProperties.COMPILE_DAEMON_CUSTOM_RUN_FILES_PATH_FOR_TESTS.property}=${buildOptions.customKotlinDaemonRunFilesDirectory.absolutePath}"
+                } else null,
+            )
+}
+
+// Required toolchains should be pre-installed via repo. Tests should not download any JDKs
+private fun jdkToolchainConfiguration(gradleVersion: GradleVersion): List<String> {
+    val paramType = if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_9_0)) "-P" else "-D"
+    val jdkLocations = allJdkProperties
+        .map { System.getProperty(it) }
+        .sortedWith(compareBy { it.toString() })
+        .joinToString(separator = ",")
+
+    return listOf(
+        "${paramType}org.gradle.java.installations.auto-download=false",
+        "${paramType}org.gradle.java.installations.auto-detect=false",
+        "${paramType}org.gradle.java.installations.paths=$jdkLocations",
     )
 }
 

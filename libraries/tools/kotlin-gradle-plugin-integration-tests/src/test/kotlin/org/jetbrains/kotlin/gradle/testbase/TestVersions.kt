@@ -34,6 +34,7 @@ interface TestVersions {
         const val G_8_14 = "8.14"
         const val G_9_0 = "9.0.0"
         const val G_9_1 = "9.1.0"
+        const val G_9_2 = "9.2.1"
 
         /**
          * Check [org.jetbrains.kotlin.gradle.GradleCompatibilityIT.testIncompatibleGradleVersion]
@@ -42,7 +43,7 @@ interface TestVersions {
 
         // Should be the same as GradleCompatibilityCheck.minSupportedGradleVersion
         const val MIN_SUPPORTED = MINIMALLY_SUPPORTED_GRADLE_VERSION
-        const val MAX_SUPPORTED = G_9_1
+        const val MAX_SUPPORTED = G_9_2
     }
 
     object Kotlin {
@@ -65,7 +66,7 @@ interface TestVersions {
         const val AGP_810 = "8.10.1"
         const val AGP_811 = "8.11.2"
         const val AGP_812 = "8.12.3"
-        const val AGP_813 = "8.13.1"
+        const val AGP_813 = "8.13.2"
         const val AGP_90 = "9.0.0-beta04"
 
         // Should be in sync with KotlinMultiplatformAndroidGradlePluginCompatibilityHealthCheck
@@ -88,10 +89,10 @@ interface TestVersions {
         AGP_88(AGP.AGP_88, GradleVersion.version(Gradle.G_8_10), GradleVersion.version(Gradle.G_8_14), JavaVersion.VERSION_17),
         AGP_89(AGP.AGP_89, GradleVersion.version(Gradle.G_8_11), GradleVersion.version(Gradle.G_8_14), JavaVersion.VERSION_17),
         AGP_810(AGP.AGP_810, GradleVersion.version(Gradle.G_8_12), GradleVersion.version(Gradle.G_8_14), JavaVersion.VERSION_17),
-        AGP_811(AGP.AGP_811, GradleVersion.version(Gradle.G_8_13), GradleVersion.version(Gradle.G_9_0), JavaVersion.VERSION_17),
-        AGP_812(AGP.AGP_812, GradleVersion.version(Gradle.G_8_13), GradleVersion.version(Gradle.G_9_0), JavaVersion.VERSION_17),
-        AGP_813(AGP.AGP_813, GradleVersion.version(Gradle.G_8_13), GradleVersion.version(Gradle.G_9_0), JavaVersion.VERSION_17),
-        AGP_90(AGP.AGP_90, GradleVersion.version(Gradle.G_8_14), GradleVersion.version(Gradle.G_9_1), JavaVersion.VERSION_17),
+        AGP_811(AGP.AGP_811, GradleVersion.version(Gradle.G_8_13), GradleVersion.version(Gradle.G_9_1), JavaVersion.VERSION_17),
+        AGP_812(AGP.AGP_812, GradleVersion.version(Gradle.G_8_13), GradleVersion.version(Gradle.G_9_1), JavaVersion.VERSION_17),
+        AGP_813(AGP.AGP_813, GradleVersion.version(Gradle.G_8_13), GradleVersion.version(Gradle.G_9_1), JavaVersion.VERSION_17),
+        AGP_90(AGP.AGP_90, GradleVersion.version(Gradle.G_8_14), GradleVersion.version(Gradle.G_9_2), JavaVersion.VERSION_17),
         ;
 
         companion object {
@@ -103,10 +104,6 @@ interface TestVersions {
 
     object COCOAPODS {
         const val VERSION = "1.16.2"
-    }
-
-    object AppleGradlePlugin {
-        const val V222_0_21 = "222.4550-0.21"
     }
 
     object ThirdPartyDependencies {
