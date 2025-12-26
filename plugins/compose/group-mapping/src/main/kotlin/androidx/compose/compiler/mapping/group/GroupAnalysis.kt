@@ -26,7 +26,7 @@ internal fun analyzeGroups(
 
     val isComposable = methodNode.isComposable()
     val tokens = tokenizeBytecode(methodNode.instructions, isComposable).getOrElse { e ->
-        reporter.reportError(IllegalStateException("Failed to tokenize $methodId", e))
+        reporter.reportAnalysisError(IllegalStateException("Failed to tokenize $methodId", e))
         return methodNode.emptyGroup(isComposable)
     }
 
@@ -35,7 +35,7 @@ internal fun analyzeGroups(
     }
 
     return parseGroupInfoFromTokens(keyCache, methodNode, tokens, isComposable).getOrElse { e ->
-        reporter.reportError(IllegalStateException("Failed to parse $methodId", e))
+        reporter.reportAnalysisError(IllegalStateException("Failed to parse $methodId", e))
         return methodNode.emptyGroup(isComposable)
     }
 }
