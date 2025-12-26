@@ -64,6 +64,42 @@ class MapBuilderTest {
     }
 
     @Test
+    fun buildMapDuplicatesMinimalProbeDistance() {
+        /**
+         * 0: 0, 13
+         * 1: 5, 18, 26
+         * 2: 10, 31
+         * 3: 2, 23
+         * 4: 15, 28
+         * 5: 7, 20
+         * 6: 12, 33
+         * 7: 4, 25
+         * 8: 9, 17, 30
+         * 9: 1, 22
+         * 10: 14, 27
+         * 11: 6, 19
+         * 12: 11, 32
+         * 13: 3, 24
+         * 14: 16, 29
+         * 15: 8, 21
+         */
+        val m = buildMap(capacity = 8) {
+            put(4, 1)   // hash == 7
+            put(25, 1)  // hash == 7
+            put(12, 1)  // hash == 6
+            put(33, 1)  // hash == 6
+            put(7, 1)   // hash == 5
+            put(15, 1)  // hash == 4
+            put(2, 1)   // hash == 3
+            remove(4)
+            put(2, 1)
+        }
+
+        val duplicates = m.keys.groupingBy { it }.eachCount().filterValues { it > 1 }
+        assertTrue(duplicates.isEmpty(), "Found duplicates: $duplicates")
+    }
+
+    @Test
     fun capacityOverflow() {
         val builderSize = 15
         val giantMapSize = Int.MAX_VALUE - builderSize + 1
