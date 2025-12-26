@@ -372,14 +372,10 @@ internal class MapBuilder<K, V> private constructor(
         var hash = removedHash
         var hole = removedHash // will try to patch the hole in hash array
         var probeDistance = 0
-        var patchAttemptsLeft = (maxProbeDistance * 2).coerceAtMost(hashSize / 2) // don't spend too much effort
-        while (true) {
+        var iterationsLeft = hashSize
+        while (iterationsLeft-- > 0) {
             if (hash-- == 0) hash = hashSize - 1
-            if (++probeDistance > maxProbeDistance) {
-                // too far away -- can release the hole, bad case will not happen
-                hashArray[hole] = 0
-                return
-            }
+            probeDistance++
             val index = hashArray[hash]
             if (index == 0) {
                 // end of chain -- can release the hole, bad case will not happen
@@ -409,13 +405,8 @@ internal class MapBuilder<K, V> private constructor(
                     probeDistance = 0
                 }
             }
-            // check how long we're patching holes
-            if (--patchAttemptsLeft < 0) {
-                // just place tombstone into the hole
-                hashArray[hole] = TOMBSTONE
-                return
-            }
         }
+        hashArray[hole] = TOMBSTONE
     }
 
     internal fun containsEntry(entry: Map.Entry<K, V>): Boolean {
