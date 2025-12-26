@@ -284,6 +284,7 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = UnresolvedReference::class
         val reference: String
         val operator: String?
+        val receiverTypeMessage: String?
     }
 
     interface UnresolvedReferenceWrongReceiver : KaFirDiagnostic<PsiElement> {
