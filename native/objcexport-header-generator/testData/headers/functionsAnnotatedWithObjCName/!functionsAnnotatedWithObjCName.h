@@ -20,8 +20,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 __attribute__((objc_subclassing_restricted))
 @interface FooKt : Base
-+ (NSString *)myKotlinFunctionA __attribute__((swift_name("myKotlinFunctionA()")));
-+ (NSString *)myObjcFunctionB __attribute__((swift_name("myObjcFunctionB()")));
++ (NSString *)myKotlinFunctionA;
++ (NSString *)myObjcFunctionB;
 + (NSString *)myObjcFunctionC __attribute__((swift_name("mySwiftFunctionC()")));
 @end
 

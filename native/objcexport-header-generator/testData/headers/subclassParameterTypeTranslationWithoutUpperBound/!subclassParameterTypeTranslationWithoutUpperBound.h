@@ -22,7 +22,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface Success<T> : Base
 - (instancetype)initWithData:(T _Nullable)data __attribute__((swift_name("init(data:)"))) __attribute__((objc_designated_initializer));
-@property (readonly) T _Nullable data __attribute__((swift_name("data")));
+@property (readonly) T _Nullable data;
 @end
 
 __attribute__((objc_subclassing_restricted))

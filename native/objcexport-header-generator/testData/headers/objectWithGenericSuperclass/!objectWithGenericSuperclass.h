@@ -23,7 +23,7 @@ NS_ASSUME_NONNULL_BEGIN
 #endif
 
 @interface A<T1, T2> : Base
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
+- (instancetype)init __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 @end
 
@@ -35,10 +35,10 @@ __attribute__((objc_subclassing_restricted))
 @interface Foo : A<Int *, NSString *> <I>
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
-- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
+- (instancetype)init __attribute__((objc_designated_initializer)) __attribute__((unavailable));
 + (instancetype)new __attribute__((unavailable));
 + (instancetype)foo __attribute__((swift_name("init()")));
-@property (class, readonly, getter=shared) Foo *shared __attribute__((swift_name("shared")));
+@property (class, readonly, getter=shared) Foo *shared;
 @end
 
 #pragma pop_macro("_Nullable_result")
