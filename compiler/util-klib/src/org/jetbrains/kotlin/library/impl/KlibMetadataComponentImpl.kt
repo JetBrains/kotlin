@@ -20,7 +20,9 @@ internal class KlibMetadataComponentImpl(
     override val moduleHeaderData get() = layoutReader.readInPlace { it.moduleHeaderFile.readBytes() }
 
     override fun getPackageFragmentNames(packageFqName: String) = layoutReader.readInPlace { layout ->
-        val fileList: List<String> = layout.getPackageFragmentsDir(packageFqName).listFiles.mapNotNull { file ->
+        val packageFragmentsDir = layout.getPackageFragmentsDir(packageFqName)
+        if (!packageFragmentsDir.exists) return@readInPlace emptySet()
+        val fileList: List<String> = packageFragmentsDir.listFiles.mapNotNull { file ->
             file.name
                 .substringBeforeLast(KLIB_METADATA_FILE_EXTENSION_WITH_DOT, missingDelimiterValue = "")
                 .takeIf { it.isNotEmpty() }
