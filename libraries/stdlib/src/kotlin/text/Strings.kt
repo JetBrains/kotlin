@@ -1417,7 +1417,7 @@ public fun CharSequence.splitToSequence(vararg delimiters: String, ignoreCase: B
 public fun CharSequence.split(vararg delimiters: String, ignoreCase: Boolean = false, limit: Int = 0): List<String> {
     if (delimiters.size == 1) {
         val delimiter = delimiters[0]
-        if (!delimiter.isEmpty()) {
+        if (delimiter.isNotEmpty()) {
             return split(delimiter, ignoreCase, limit)
         }
     }
