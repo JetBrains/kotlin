@@ -19,14 +19,14 @@ FILE: test.kt
     public final fun <H> expectThroughTV(a: R|H|, b: R|H|): R|kotlin/Unit| {
     }
     public final fun test(): R|kotlin/Unit| {
-        Q|Utils|.R|/Utils.expectFlexible*s|(<collectionLiteralCall>())
-        Q|Utils|.R|/Utils.expectFlexible*s|(<collectionLiteralCall>(Int(42)))
-        Q|Utils|.R|/Utils.expectFlexible*s|(<collectionLiteralCall>(String(42)))
-        Q|Utils|.R|/Utils.expectFlexibleGeneric*s<CS errors: /Utils.expectFlexibleGeneric>#|<<ERROR TYPE REF: Cannot infer argument for type parameter K>>(<collectionLiteralCall>())
-        Q|Utils|.R|/Utils.expectFlexibleGeneric*s<CS errors: /Utils.expectFlexibleGeneric>#|<<ERROR TYPE REF: Cannot infer argument for type parameter K>>(<collectionLiteralCall>(Int(42), String(42)))
-        Q|Utils|.R|/Utils.expectFlexibleGeneric*s|<R|ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(coneType=kotlin/String, relevantFeature=null) kotlin/String!|>(<collectionLiteralCall>())
+        Q|Utils|.R|/Utils.expectFlexible*s|(Q|C.Companion|.R|/C.Companion.of|<R|kotlin/String!|>())
+        Q|Utils|.R|/Utils.expectFlexible*s<Inapplicable(INAPPLICABLE): /Utils.expectFlexible>#|(Q|C.Companion|.R|/C.Companion.of|<R|kotlin/Int|>(vararg(Int(42))))
+        Q|Utils|.R|/Utils.expectFlexible*s|(Q|C.Companion|.R|/C.Companion.of|<R|kotlin/String!|>(vararg(String(42))))
+        Q|Utils|.R|/Utils.expectFlexibleGeneric*s<CS errors: /Utils.expectFlexibleGeneric>#|<<ERROR TYPE REF: Cannot infer argument for type parameter K>>(Q|C.Companion|.R|/C.Companion.of|<<ERROR TYPE REF: Cannot infer argument for type parameter K>>())
+        Q|Utils|.R|/Utils.expectFlexibleGeneric*s|<R|ft<it(kotlin/Comparable<*> & java/io/Serializable), it(kotlin/Comparable<*>? & java/io/Serializable?)>|>(Q|C.Companion|.R|/C.Companion.of|<R|ft<it(kotlin/Comparable<*> & java/io/Serializable), it(kotlin/Comparable<*>? & java/io/Serializable?)>|>(vararg(Int(42), String(42))))
+        Q|Utils|.R|/Utils.expectFlexibleGeneric*s|<R|ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(coneType=kotlin/String, relevantFeature=null) kotlin/String!|>(Q|C.Companion|.R|/C.Companion.of|<R|kotlin/String!|>())
         R|/expectThroughTV<CS errors: /expectThroughTV>#|<<ERROR TYPE REF: Cannot infer argument for type parameter H>>(Q|Utils|.R|/Utils.flexible*s|<<ERROR TYPE REF: Cannot infer argument for type parameter G>>(), <collectionLiteralCall>(Int(42)))
-        R|/expectThroughTV|<R|C<kotlin/Int!>!|>(Q|Utils|.R|/Utils.flexible*s|<R|ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(coneType=kotlin/Int, relevantFeature=null) kotlin/Int!|>(), <collectionLiteralCall>(Int(42)))
-        R|/expectThroughTV|<R|C<kotlin/String!>!|>(Q|Utils|.R|/Utils.flexible*s|<R|ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(coneType=kotlin/String, relevantFeature=null) kotlin/String!|>(), <collectionLiteralCall>(Int(42)))
-        R|/expectThroughTV|<R|C<kotlin/String!>!|>(Q|Utils|.R|/Utils.flexible*s|<R|ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(coneType=kotlin/String, relevantFeature=null) kotlin/String!|>(), <collectionLiteralCall>())
+        R|/expectThroughTV|<R|C<kotlin/Int!>!|>(Q|Utils|.R|/Utils.flexible*s|<R|ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(coneType=kotlin/Int, relevantFeature=null) kotlin/Int!|>(), Q|C.Companion|.R|/C.Companion.of|<R|kotlin/Int!|>(vararg(Int(42))))
+        R|/expectThroughTV<Inapplicable(INAPPLICABLE): /expectThroughTV>#|<R|C<kotlin/String!>!|>(Q|Utils|.R|/Utils.flexible*s|<R|ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(coneType=kotlin/String, relevantFeature=null) kotlin/String!|>(), Q|C.Companion|.R|/C.Companion.of|<R|kotlin/Int|>(vararg(Int(42))))
+        R|/expectThroughTV|<R|C<kotlin/String!>!|>(Q|Utils|.R|/Utils.flexible*s|<R|ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(coneType=kotlin/String, relevantFeature=null) kotlin/String!|>(), Q|C.Companion|.R|/C.Companion.of|<R|kotlin/String!|>())
     }

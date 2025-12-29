@@ -29,11 +29,18 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
+import org.jetbrains.kotlin.fir.types.ConeCapturedType
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
+import org.jetbrains.kotlin.fir.types.ConeDefinitelyNotNullType
+import org.jetbrains.kotlin.fir.types.ConeDynamicType
 import org.jetbrains.kotlin.fir.types.ConeErrorType
+import org.jetbrains.kotlin.fir.types.ConeFlexibleType
+import org.jetbrains.kotlin.fir.types.ConeIntegerLiteralType
+import org.jetbrains.kotlin.fir.types.ConeIntersectionType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeLookupTagBasedType
-import org.jetbrains.kotlin.fir.types.constructType
+import org.jetbrains.kotlin.fir.types.ConeStubType
+import org.jetbrains.kotlin.fir.types.ConeTypeVariableType
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 
@@ -167,12 +174,20 @@ fun ResolutionContext.runResolutionForDanglingCollectionLiteral(collectionLitera
 context(resolutionContext: ResolutionContext)
 fun ConeKotlinType.getClassRepresentativeForCollectionLiteralResolution(): FirRegularClassSymbol? {
     return when (this) {
+        is ConeFlexibleType -> lowerBound.getClassRepresentativeForCollectionLiteralResolution()
+        is ConeDynamicType,
+        is ConeIntersectionType,
+        is ConeStubType,
+        is ConeTypeVariableType,
+        is ConeIntegerLiteralType,
+        is ConeCapturedType,
+        is ConeDefinitelyNotNullType, // `original` is anyway a type that already returns null
+            -> null
         is ConeLookupTagBasedType ->
             when (val symbol = lookupTag.toSymbol()) {
                 is FirTypeParameterSymbol, is FirAnonymousObjectSymbol, null -> null
                 is FirRegularClassSymbol -> symbol
                 is FirTypeAliasSymbol -> fullyExpandedType().getClassRepresentativeForCollectionLiteralResolution()
             }
-        else -> null
     }
 }

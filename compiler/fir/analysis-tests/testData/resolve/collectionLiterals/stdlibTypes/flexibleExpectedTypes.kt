@@ -26,18 +26,18 @@ public class Utils {
 // FILE: main.kt
 
 fun test() {
-    Utils.<!CANNOT_INFER_PARAMETER_TYPE!>acceptList<!>(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[]<!>)
-    Utils.<!CANNOT_INFER_PARAMETER_TYPE!>acceptList<!>(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[1, 2, 3]<!>)
-    Utils.<!CANNOT_INFER_PARAMETER_TYPE!>acceptArray<!>(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[]<!>)
-    Utils.<!CANNOT_INFER_PARAMETER_TYPE!>acceptArray<!>(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[1, 2, 3]<!>)
-    Utils.<!CANNOT_INFER_PARAMETER_TYPE!>acceptSet<!>(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[]<!>)
-    Utils.<!CANNOT_INFER_PARAMETER_TYPE!>acceptSet<!>(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[1, 2, 3]<!>)
-    Utils.acceptListString(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[]<!>)
-    Utils.acceptListString(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[1, 2, 3]<!>)
-    Utils.acceptListString(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>["42"]<!>)
-    Utils.acceptIntArray(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[]<!>)
-    Utils.acceptIntArray(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[1, 2, 3]<!>)
-    Utils.acceptIntArray(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>["42"]<!>)
+    Utils.<!CANNOT_INFER_PARAMETER_TYPE!>acceptList<!>(<!CANNOT_INFER_PARAMETER_TYPE!>[]<!>)
+    Utils.acceptList([1, 2, 3])
+    Utils.<!CANNOT_INFER_PARAMETER_TYPE!>acceptArray<!>(<!CANNOT_INFER_PARAMETER_TYPE!>[]<!>)
+    Utils.acceptArray([1, 2, 3])
+    Utils.<!CANNOT_INFER_PARAMETER_TYPE!>acceptSet<!>(<!CANNOT_INFER_PARAMETER_TYPE!>[]<!>)
+    Utils.acceptSet([1, 2, 3])
+    Utils.acceptListString([])
+    Utils.acceptListString(<!ARGUMENT_TYPE_MISMATCH, JAVA_TYPE_MISMATCH!>[1, 2, 3]<!>)
+    Utils.acceptListString(["42"])
+    Utils.acceptIntArray([])
+    Utils.acceptIntArray([1, 2, 3])
+    Utils.acceptIntArray([<!ARGUMENT_TYPE_MISMATCH!>"42"<!>])
 }
 
 /* GENERATED_FIR_TAGS: collectionLiteral, flexibleType, functionDeclaration, integerLiteral, javaFunction, stringLiteral */

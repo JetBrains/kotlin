@@ -26,18 +26,18 @@ class C<T> {
 fun <H> expectThroughTV(a: H, b: H) {}
 
 fun test() {
-    Utils.expectFlexible(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[]<!>)
-    Utils.expectFlexible(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[42]<!>)
-    Utils.expectFlexible(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>["42"]<!>)
+    Utils.expectFlexible([])
+    Utils.expectFlexible(<!ARGUMENT_TYPE_MISMATCH!>[42]<!>)
+    Utils.expectFlexible(["42"])
 
-    Utils.<!CANNOT_INFER_PARAMETER_TYPE!>expectFlexibleGeneric<!>(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[]<!>)
-    Utils.<!CANNOT_INFER_PARAMETER_TYPE!>expectFlexibleGeneric<!>(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[42, "42"]<!>)
-    Utils.expectFlexibleGeneric<String>(<!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[]<!>)
+    Utils.<!CANNOT_INFER_PARAMETER_TYPE!>expectFlexibleGeneric<!>(<!CANNOT_INFER_PARAMETER_TYPE!>[]<!>)
+    Utils.expectFlexibleGeneric([42, "42"])
+    Utils.expectFlexibleGeneric<String>([])
 
     <!CANNOT_INFER_PARAMETER_TYPE!>expectThroughTV<!>(Utils.<!CANNOT_INFER_PARAMETER_TYPE!>flexible<!>(), <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[42]<!>)
-    expectThroughTV(Utils.flexible<Int>(), <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[42]<!>)
-    expectThroughTV(Utils.flexible<String>(), <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[42]<!>)
-    expectThroughTV(Utils.flexible<String>(), <!UNSUPPORTED_COLLECTION_LITERAL_TYPE!>[]<!>)
+    expectThroughTV(Utils.flexible<Int>(), [42])
+    expectThroughTV(Utils.flexible<String>(), <!ARGUMENT_TYPE_MISMATCH!>[42]<!>)
+    expectThroughTV(Utils.flexible<String>(), [])
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, collectionLiteral, companionObject, functionDeclaration, integerLiteral,
