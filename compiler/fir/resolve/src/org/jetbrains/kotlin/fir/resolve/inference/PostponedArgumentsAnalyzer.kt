@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.candidate.*
 import org.jetbrains.kotlin.fir.resolve.calls.stages.ArgumentCheckingProcessor
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.lastStatement
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedReferenceError
+import org.jetbrains.kotlin.fir.resolve.getClassRepresentativeForCollectionLiteralResolution
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeLambdaArgumentConstraintPositionWithCoercionToUnit
 import org.jetbrains.kotlin.fir.resolve.isImplicitUnitForEmptyLambda
 import org.jetbrains.kotlin.fir.resolve.lambdaWithExplicitEmptyReturns
@@ -229,6 +230,10 @@ class PostponedArgumentsAnalyzer(
     ) {
         val originalExpression = atom.expression
 
+        val classForResolution = context(resolutionContext) {
+            substitutedExpectedType?.getClassRepresentativeForCollectionLiteralResolution()
+        }
+
         val newExpression: FirFunctionCall? = sequenceOf(
             ::CollectionLiteralResolverThroughCompanion,
             ::CollectionLiteralResolverForStdlibType,
@@ -236,7 +241,7 @@ class PostponedArgumentsAnalyzer(
             resolver(resolutionContext).resolveCollectionLiteral(
                 atom,
                 topLevelCandidate,
-                substitutedExpectedType,
+                classForResolution,
             )
         }
 

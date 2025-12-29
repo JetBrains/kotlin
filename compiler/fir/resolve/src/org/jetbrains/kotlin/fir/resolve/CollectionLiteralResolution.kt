@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeErrorType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeLookupTagBasedType
+import org.jetbrains.kotlin.fir.types.constructType
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 
@@ -42,7 +43,7 @@ abstract class CollectionLiteralResolver(protected val context: ResolutionContex
     fun resolveCollectionLiteral(
         collectionLiteralAtom: ConeCollectionLiteralAtom,
         topLevelCandidate: Candidate,
-        expectedType: ConeKotlinType?,
+        expectedType: FirRegularClassSymbol?,
     ): FirFunctionCall? {
         var call = prepareRawCall(collectionLiteralAtom.expression, topLevelCandidate, expectedType) ?: return null
         call = components.callResolver.resolveCallAndSelectCandidate(call, ResolutionMode.ContextDependent, topLevelCandidate)
@@ -61,23 +62,11 @@ abstract class CollectionLiteralResolver(protected val context: ResolutionContex
     protected abstract fun prepareRawCall(
         collectionLiteral: FirCollectionLiteral,
         topLevelCandidate: Candidate,
-        expectedType: ConeKotlinType?
+        expectedClass: FirRegularClassSymbol?
     ): FirFunctionCall?
 }
 
 class CollectionLiteralResolverThroughCompanion(context: ResolutionContext) : CollectionLiteralResolver(context) {
-
-    private fun ConeKotlinType.getClassRepresentativeForCollectionLiteralResolution(): FirRegularClassSymbol? = context(context) {
-        when (this) {
-            is ConeLookupTagBasedType ->
-                when (val symbol = lookupTag.toSymbol()) {
-                    is FirTypeParameterSymbol, is FirAnonymousObjectSymbol, null -> null
-                    is FirRegularClassSymbol -> symbol
-                    is FirTypeAliasSymbol -> fullyExpandedType().getClassRepresentativeForCollectionLiteralResolution()
-                }
-            else -> null
-        }
-    }
 
     private fun FirCallableSymbol<*>.canBeMainOperatorOfOverload(outerClass: FirRegularClassSymbol): Boolean {
         return when {
@@ -94,13 +83,12 @@ class CollectionLiteralResolverThroughCompanion(context: ResolutionContext) : Co
     /**
      * @return if there is a suitable operator `of` overload, companion object where it is defined
      */
-    private val ConeKotlinType.companionObjectIfDefinedOperatorOf: FirRegularClassSymbol?
+    private val FirRegularClassSymbol.companionObjectIfDefinedOperatorOf: FirRegularClassSymbol?
         get() {
-            val classSymbol = getClassRepresentativeForCollectionLiteralResolution() ?: return null
-            val companionObjectSymbol = classSymbol.resolvedCompanionObjectSymbol ?: return null
+            val companionObjectSymbol = resolvedCompanionObjectSymbol ?: return null
             var overloadFound = false
             companionObjectSymbol.processAllDeclaredCallables(context.session) { declaration ->
-                if (declaration.canBeMainOperatorOfOverload(classSymbol))
+                if (declaration.canBeMainOperatorOfOverload(this))
                     overloadFound = true
             }
             return overloadFound.ifTrue { companionObjectSymbol }
@@ -109,9 +97,9 @@ class CollectionLiteralResolverThroughCompanion(context: ResolutionContext) : Co
     override fun prepareRawCall(
         collectionLiteral: FirCollectionLiteral,
         topLevelCandidate: Candidate,
-        expectedType: ConeKotlinType?
+        expectedClass: FirRegularClassSymbol?
     ): FirFunctionCall? {
-        val companion = expectedType?.companionObjectIfDefinedOperatorOf ?: return null
+        val companion = expectedClass?.companionObjectIfDefinedOperatorOf ?: return null
 
         val functionCall = buildFunctionCall {
             explicitReceiver =
@@ -136,10 +124,10 @@ class CollectionLiteralResolverForStdlibType(context: ResolutionContext) : Colle
     override fun prepareRawCall(
         collectionLiteral: FirCollectionLiteral,
         topLevelCandidate: Candidate,
-        expectedType: ConeKotlinType?,
+        expectedClass: FirRegularClassSymbol?,
     ): FirFunctionCall? {
-        if (expectedType == null) return null
-        val (packageName, functionName) = toCollectionOfFactoryPackageAndName(expectedType, context.session) ?: return null
+        if (expectedClass == null) return null
+        val (packageName, functionName) = toCollectionOfFactoryPackageAndName(expectedClass, context.session) ?: return null
 
         return buildFunctionCall {
             explicitReceiver = buildResolvedQualifier {
@@ -174,4 +162,17 @@ fun ResolutionContext.runResolutionForDanglingCollectionLiteral(collectionLitera
     }
 
     collectionLiteral.replaceArgumentList(newArgumentList)
+}
+
+context(resolutionContext: ResolutionContext)
+fun ConeKotlinType.getClassRepresentativeForCollectionLiteralResolution(): FirRegularClassSymbol? {
+    return when (this) {
+        is ConeLookupTagBasedType ->
+            when (val symbol = lookupTag.toSymbol()) {
+                is FirTypeParameterSymbol, is FirAnonymousObjectSymbol, null -> null
+                is FirRegularClassSymbol -> symbol
+                is FirTypeAliasSymbol -> fullyExpandedType().getClassRepresentativeForCollectionLiteralResolution()
+            }
+        else -> null
+    }
 }
