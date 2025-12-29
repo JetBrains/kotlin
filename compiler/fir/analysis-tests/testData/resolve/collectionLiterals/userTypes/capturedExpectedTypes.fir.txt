@@ -1,0 +1,27 @@
+FILE: capturedExpectedTypes.kt
+    public final class C : R|kotlin/Any| {
+        public constructor(): R|C| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final companion object Companion : R|kotlin/Any| {
+            private constructor(): R|C.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final operator fun of(vararg xs: R|kotlin/IntArray|): R|C| {
+                ^of R|/C.C|()
+            }
+
+        }
+
+    }
+    public abstract interface Setter<U> : R|kotlin/Any| {
+        public abstract fun set(u: R|U|): R|kotlin/Unit|
+
+    }
+    public final fun test(d: R|Setter<in C>|, e: R|Setter<out C>|, f: R|Setter<*>|): R|kotlin/Unit| {
+        R|<local>/d|.R|SubstitutionOverride</Setter.set: R|kotlin/Unit|>|(<collectionLiteralCall>())
+        R|<local>/e|.R|SubstitutionOverride</Setter.set: R|kotlin/Unit|>|(<collectionLiteralCall>())
+        R|<local>/f|.R|SubstitutionOverride</Setter.set: R|kotlin/Unit|>|(<collectionLiteralCall>())
+    }
