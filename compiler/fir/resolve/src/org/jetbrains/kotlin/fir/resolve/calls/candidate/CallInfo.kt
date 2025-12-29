@@ -66,7 +66,7 @@ open class CallInfo(
      * This is important for Analysis API because it will trigger resolution on already resolved expressions,
      * and we wouldn't otherwise have access to named arguments.
      *
-     * @see FirCallResolver.collectAllCandidates
+     * @see org.jetbrains.kotlin.fir.resolve.calls.FirCallResolver.collectAllCandidates
      */
     val arguments: List<FirExpression>
         get() = (argumentList as? FirResolvedArgumentList)?.originalArgumentList?.arguments ?: argumentList.arguments
