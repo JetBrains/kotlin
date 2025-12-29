@@ -80,14 +80,14 @@ class FirCallResolver(
         functionCall: FirFunctionCall,
         resolutionMode: ResolutionMode,
         // When resolving collection literal call, the constraint system is a clone of the outer constraint system
-        containingCallCandidateForBaseCS: Candidate? = null,
+        containingCallCandidateForCL: Candidate? = null,
     ): FirFunctionCall {
         val name = functionCall.calleeReference.name
         val result = collectCandidates(
             functionCall, name,
             origin = functionCall.origin,
             resolutionMode = resolutionMode,
-            containingCallCandidateForBaseCS = containingCallCandidateForBaseCS
+            containingCallCandidateForCL = containingCallCandidateForCL
         )
 
         var forceCandidates: Collection<Candidate>? = null
@@ -226,7 +226,7 @@ class FirCallResolver(
         collector: CandidateCollector? = null,
         callSite: FirElement = qualifiedAccess,
         resolutionMode: ResolutionMode,
-        containingCallCandidateForBaseCS: Candidate? = null,
+        containingCallCandidateForCL: Candidate? = null,
     ): ResolutionResult {
         val explicitReceiver = qualifiedAccess.explicitReceiver
         val argumentList = (qualifiedAccess as? FirFunctionCall)?.argumentList ?: FirEmptyArgumentList
@@ -251,9 +251,9 @@ class FirCallResolver(
         )
         towerResolver.reset()
 
-        val candidateFactory = when (containingCallCandidateForBaseCS) {
+        val candidateFactory = when (containingCallCandidateForCL) {
             null -> CandidateFactory(resolutionContext, info)
-            else -> CandidateFactory.createForCollectionLiterals(resolutionContext, containingCallCandidateForBaseCS, info)
+            else -> CandidateFactory.createForCollectionLiterals(resolutionContext, containingCallCandidateForCL, info)
         }
 
         val resultCollector: CandidateCollector = towerResolver.runResolver(info, resolutionContext, collector, candidateFactory)
