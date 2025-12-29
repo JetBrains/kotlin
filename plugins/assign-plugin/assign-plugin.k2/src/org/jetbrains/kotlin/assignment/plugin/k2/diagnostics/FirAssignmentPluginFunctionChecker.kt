@@ -15,9 +15,9 @@ import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirSimpleFunctionC
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
 import org.jetbrains.kotlin.fir.declarations.utils.isExtension
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.isUnit
-import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
 import org.jetbrains.kotlin.types.expressions.OperatorConventions.ASSIGN_METHOD
 
@@ -33,6 +33,7 @@ object FirAssignmentPluginFunctionChecker : FirSimpleFunctionChecker(MppCheckerK
         } else {
             declaration.dispatchReceiverType?.toRegularClassSymbol()
         }
+        if (receiverClassSymbol == null) return
         if (!context.session.annotationMatchingService.isAnnotated(receiverClassSymbol)) return
         if (!declaration.returnTypeRef.coneType.isUnit) {
             reporter.reportOn(declaration.source, DECLARATION_ERROR_ASSIGN_METHOD_SHOULD_RETURN_UNIT)
