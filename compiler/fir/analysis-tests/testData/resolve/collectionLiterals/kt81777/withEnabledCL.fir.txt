@@ -4,10 +4,7 @@ FILE: withEnabledCL.kt
             ^ Unit
         }
         )
-        lval withParam: R|kotlin/collections/List<(kotlin/Int) -> kotlin/Unit>| = Q|kotlin/collections|.<Unresolved name: listOf>#(fun <anonymous>(it: <ERROR TYPE REF: Cannot infer type for parameter it>): <ERROR TYPE REF: Cannot infer type variable TypeVariable(_R)> <inline=Unknown>  {
-            ^ Unit
-        }
-        )
+        lval withParam: R|kotlin/collections/List<(kotlin/Int) -> kotlin/Unit>| = ERROR_EXPR(CS errors: _synthetic/ACCEPT_SPECIFIC_TYPE_CALL)
         lval withParamOfSpecifiedType: R|kotlin/collections/List<(kotlin/Int) -> kotlin/Unit>| = Q|kotlin/collections|.<Unresolved name: listOf>#(fun <anonymous>(it: R|kotlin/Any|): R|kotlin/Unit| <inline=Unknown>  {
             ^ Unit
         }
@@ -16,10 +13,7 @@ FILE: withEnabledCL.kt
             ^ Int(42)
         }
         )
-        lval withReturnAndParam: R|kotlin/collections/List<(kotlin/Int) -> kotlin/Int>| = Q|kotlin/collections|.<Unresolved name: listOf>#(fun <anonymous>(x: <ERROR TYPE REF: Cannot infer type for parameter x>): <ERROR TYPE REF: Cannot infer type for parameter x> <inline=Unknown>  {
-            ^ R|<local>/x|
-        }
-        )
+        lval withReturnAndParam: R|kotlin/collections/List<(kotlin/Int) -> kotlin/Int>| = ERROR_EXPR(CS errors: _synthetic/ACCEPT_SPECIFIC_TYPE_CALL)
         <collectionLiteralCall>(fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
             ^ Unit
         }
@@ -83,7 +77,7 @@ FILE: withEnabledCL.kt
     }
     public final fun testWithCallables(): R|kotlin/Unit| {
         lval callable: R|kotlin/collections/List<() -> kotlin/Unit>| = Q|kotlin/collections|.<Unresolved name: listOf>#(::R|/skip|)
-        lval withParam: R|kotlin/collections/List<(kotlin/Int) -> kotlin/Unit>| = Q|kotlin/collections|.<Unresolved name: listOf>#(::R|/consume<ERROR CLASS: Cannot infer argument for type parameter T>|)
+        lval withParam: R|kotlin/collections/List<(kotlin/Int) -> kotlin/Unit>| = ERROR_EXPR(CS errors: _synthetic/ACCEPT_SPECIFIC_TYPE_CALL)
         lval withReturn: R|kotlin/collections/List<() -> kotlin/Int>| = Q|kotlin/collections|.<Unresolved name: listOf>#(::R|/const42|)
-        lval withReturnAndParam: R|kotlin/collections/List<(kotlin/Int) -> kotlin/Int>| = Q|kotlin/collections|.<Unresolved name: listOf>#(::R|/id<ERROR CLASS: Cannot infer argument for type parameter T>|)
+        lval withReturnAndParam: R|kotlin/collections/List<(kotlin/Int) -> kotlin/Int>| = ERROR_EXPR(CS errors: _synthetic/ACCEPT_SPECIFIC_TYPE_CALL)
     }

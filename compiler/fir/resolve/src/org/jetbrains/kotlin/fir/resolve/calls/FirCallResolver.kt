@@ -248,6 +248,7 @@ class FirCallResolver(
             origin = origin,
             resolutionMode = resolutionMode,
             implicitInvokeMode = if (qualifiedAccess is FirImplicitInvokeCall) ImplicitInvokeMode.Regular else ImplicitInvokeMode.None,
+            isCollectionLiteralCall = containingCallCandidateForCL != null
         )
         towerResolver.reset()
 
