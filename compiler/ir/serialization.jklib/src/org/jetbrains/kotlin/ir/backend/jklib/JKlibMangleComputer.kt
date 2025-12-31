@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.ir.descriptors.IrPropertyDelegateDescriptor
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrScriptSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
-import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
@@ -28,7 +27,7 @@ import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 
 /*
- * TODO:
+ * TODO(jDramaix):
  *  Most of the code in this file is copied from `IrMangleComputer.kt` and `DescriptorMangleComputer.kt` in the Kotlin compiler. This
  *  copying is needed to redefine `mangleTypeArguments` from `BaseKotlinMangleComputer`, so that effective variance is always used when
  *  computing type signature, see `mangleTypeArgumentsUsingEffectiveVariance`. These changes are required to fix differences in type
@@ -51,7 +50,7 @@ open class JKlibIrMangleComputerBase(
         /*Session=*/Nothing?,
         >(builder, mode, allowOutOfScopeTypeParameters) {
 
-    fun mangleTypeArgumentsUsingEffectiveVariance(tBuilder: StringBuilder, type: IrType, declarationSiteSession: Nothing?):Unit =
+    fun mangleTypeArgumentsUsingEffectiveVariance(tBuilder: StringBuilder, type: IrType, declarationSiteSession: Nothing?): Unit =
         with(getTypeSystemContext(declarationSiteSession)) {
             val typeArguments = type.getArguments().zip(type.typeConstructor().getParameters())
             if (typeArguments.isEmpty()) return
@@ -127,7 +126,7 @@ open class JKlibIrMangleComputerBase(
 
     override fun isUnit(type: IrType) = type.isUnit()
 
-    @OptIn(UnsafeDuringIrConstructionAPI::class)
+
     final override fun getEffectiveParent(typeParameter: IrTypeParameterSymbol): IrDeclaration = typeParameter.owner.run {
         when (val irParent = parent) {
             is IrSimpleFunction -> irParent.correspondingPropertySymbol?.owner ?: irParent
@@ -138,17 +137,14 @@ open class JKlibIrMangleComputerBase(
 
     override fun renderDeclaration(declaration: IrDeclaration) = declaration.render()
 
-    @OptIn(UnsafeDuringIrConstructionAPI::class)
     override fun getTypeParameterName(typeParameter: IrTypeParameterSymbol) = typeParameter.owner.name.asString()
 
     final override fun isVararg(valueParameter: IrValueParameter) = valueParameter.varargElementType != null
 
     final override fun getValueParameterType(valueParameter: IrValueParameter) = valueParameter.type
 
-    @OptIn(UnsafeDuringIrConstructionAPI::class)
     final override fun getIndexOfTypeParameter(typeParameter: IrTypeParameterSymbol, container: IrDeclaration) = typeParameter.owner.index
-
-    @OptIn(UnsafeDuringIrConstructionAPI::class)
+    
     final override fun mangleType(tBuilder: StringBuilder, type: IrType, declarationSiteSession: Nothing?) {
         when (type) {
             is IrSimpleType -> {
@@ -242,7 +238,7 @@ open class JKlibIrMangleComputerBase(
         private val IrProperty.isSyntheticForJavaField: Boolean
             get() = origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB && getter == null && setter == null
 
-        @OptIn(UnsafeDuringIrConstructionAPI::class)
+
         override fun visitField(declaration: IrField) {
             val prop = declaration.correspondingPropertySymbol
             if (compatibleMode || prop == null) { // act as used to be (KT-48912)
@@ -257,7 +253,7 @@ open class JKlibIrMangleComputerBase(
             declaration.mangleSimpleDeclaration(declaration.name.asString())
         }
 
-        @OptIn(UnsafeDuringIrConstructionAPI::class)
+
         override fun visitAnonymousInitializer(declaration: IrAnonymousInitializer) {
             val klass = declaration.parentAsClass
             val anonInitializers = klass.declarations.filterIsInstance<IrAnonymousInitializer>()
@@ -283,7 +279,7 @@ open class JKlibIrMangleComputerBase(
             builder.appendSignature(declaration.index)
         }
 
-        @OptIn(UnsafeDuringIrConstructionAPI::class)
+
         override fun visitSimpleFunction(declaration: IrSimpleFunction) {
             val container = declaration.correspondingPropertySymbol?.owner ?: declaration
             val isStatic = declaration.dispatchReceiverParameter == null &&
@@ -319,7 +315,7 @@ open class JKlibDescriptorMangleComputerBase(builder: StringBuilder, mode: Mangl
             /*FunctionDeclaration=*/FunctionDescriptor,
             /*Session=*/Nothing?,
             >(builder, mode) {
-    fun mangleTypeArgumentsUsingEffectiveVariance(tBuilder: StringBuilder, type: KotlinType, declarationSiteSession: Nothing?):Unit =
+    fun mangleTypeArgumentsUsingEffectiveVariance(tBuilder: StringBuilder, type: KotlinType, declarationSiteSession: Nothing?): Unit =
         with(getTypeSystemContext(declarationSiteSession)) {
             val typeArguments = type.getArguments().zip(type.typeConstructor().getParameters())
             if (typeArguments.isEmpty()) return
