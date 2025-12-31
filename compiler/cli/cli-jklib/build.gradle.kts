@@ -3,7 +3,6 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":compiler:ir.psi2ir"))
     implementation(project(":compiler:cli-common"))
     implementation(project(":compiler:cli"))
     implementation(project(":compiler:ir.backend.common"))

@@ -5,13 +5,11 @@
 
 package org.jetbrains.kotlin.cli.jklib
 
-import org.jetbrains.kotlin.config.AnalysisFlags
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.JvmTarget
-import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.fir.FirModuleData
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.SessionConfiguration
+import org.jetbrains.kotlin.cli.common.SessionConstructionUtils
+import org.jetbrains.kotlin.cli.common.SessionWithSources
+import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
+import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.checkers.registerJvmCheckers
 import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
 import org.jetbrains.kotlin.fir.deserialization.SingleModuleDataProvider
@@ -21,24 +19,20 @@ import org.jetbrains.kotlin.fir.java.JavaSymbolProvider
 import org.jetbrains.kotlin.fir.java.deserialization.FirJvmClasspathBuiltinSymbolProvider
 import org.jetbrains.kotlin.fir.java.deserialization.JvmClassFileBasedSymbolProvider
 import org.jetbrains.kotlin.fir.java.deserialization.OptionalAnnotationClassesProvider
-import org.jetbrains.kotlin.fir.languageVersionSettings
-import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirCloneableSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.scopes.wrapScopeWithJvmMapped
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
-import org.jetbrains.kotlin.fir.session.FirAbstractSessionFactory
-import org.jetbrains.kotlin.fir.session.FirJvmIncrementalCompilationSymbolProviders
-import org.jetbrains.kotlin.fir.session.FirSessionConfigurator
-import org.jetbrains.kotlin.fir.session.FirSharableJavaComponents
-import org.jetbrains.kotlin.fir.session.KlibBasedSymbolProvider
+import org.jetbrains.kotlin.fir.session.*
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
-import org.jetbrains.kotlin.fir.session.registerJavaComponents
 import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.library.metadata.resolver.KotlinResolvedLibrary
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
+import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 @OptIn(SessionConfiguration::class)
 object FirJKlibSessionFactory : FirAbstractSessionFactory<FirJKlibSessionFactory.Context>() {
@@ -247,4 +241,85 @@ object FirJKlibSessionFactory : FirAbstractSessionFactory<FirJKlibSessionFactory
             ) { kotlinClassFinder.findBuiltInsData(it) }
         }
     }
+}
+
+/**
+ * Creates library session and sources session for klib compilation Number of created session
+ * depends on mode of MPP:
+ * - disabled
+ * - legacy (one platform and one common module)
+ * - HMPP (multiple number of modules)
+ */
+internal fun <F> prepareJKlibSessions(
+    projectEnvironment: VfsBasedProjectEnvironment,
+    files: List<F>,
+    configuration: CompilerConfiguration,
+    rootModuleName: Name,
+    resolvedLibraries: List<KotlinResolvedLibrary>,
+    libraryList: DependencyListForCliModule,
+    extensionRegistrars: List<FirExtensionRegistrar>,
+    metadataCompilationMode: Boolean,
+    librariesScope: AbstractProjectFileSearchScope,
+    isCommonSource: (F) -> Boolean,
+    fileBelongsToModule: (F, String) -> Boolean,
+): List<SessionWithSources<F>> {
+    val predefinedJavaComponents = FirSharableJavaComponents(firCachesFactoryForCliMode)
+    val packagePartProviderForLibraries = projectEnvironment.getPackagePartProvider(librariesScope)
+
+    return SessionConstructionUtils.prepareSessions(
+        files,
+        configuration,
+        rootModuleName,
+        NativePlatforms.unspecifiedNativePlatform,
+        metadataCompilationMode,
+        libraryList,
+        extensionRegistrars,
+        isCommonSource,
+        isScript = { false },
+        fileBelongsToModule,
+        createSharedLibrarySession = {
+            FirJKlibSessionFactory.createSharedLibrarySession(
+                rootModuleName,
+                projectEnvironment,
+                extensionRegistrars,
+                packagePartProviderForLibraries,
+                configuration.languageVersionSettings,
+                predefinedJavaComponents = predefinedJavaComponents,
+            )
+        },
+        createLibrarySession = { sharedLibrarySession ->
+            FirJKlibSessionFactory.createLibrarySession(
+                resolvedLibraries.map { it.library },
+                sharedLibrarySession,
+                libraryList.moduleDataProvider,
+                projectEnvironment,
+                extensionRegistrars,
+                librariesScope,
+                packagePartProviderForLibraries,
+                configuration.languageVersionSettings,
+                predefinedJavaComponents = predefinedJavaComponents,
+            )
+        },
+        createSourceSession = { _, moduleData, isForLeafHmppModule, sessionConfigurator ->
+            FirJKlibSessionFactory.createSourceSession(
+                moduleData = moduleData,
+                javaSourcesScope = projectEnvironment.getSearchScopeForProjectJavaSources(),
+                projectEnvironment = projectEnvironment,
+                createIncrementalCompilationSymbolProviders = { null },
+                extensionRegistrars = extensionRegistrars,
+                configuration = configuration,
+                predefinedJavaComponents = predefinedJavaComponents,
+                needRegisterJavaElementFinder = true,
+                packagePartProvider = packagePartProviderForLibraries,
+                init = sessionConfigurator,
+                isForLeafHmppModule = isForLeafHmppModule,
+            )
+        },
+        createMetadataSessionFactoryContextForHmppCommonLibrarySession = {
+            AbstractFirMetadataSessionFactory.Context(
+                createJvmContext = { shouldNotBeCalled() },
+                createJsContext = { shouldNotBeCalled() }
+            )
+        }
+    )
 }

@@ -11,14 +11,10 @@ import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContextImpl
 import org.jetbrains.kotlin.backend.common.linkage.issues.checkNoUnboundSymbols
-import org.jetbrains.kotlin.backend.common.overrides.IrLinkerFakeOverrideProvider
 import org.jetbrains.kotlin.backend.common.serialization.*
-import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDescriptor
-import org.jetbrains.kotlin.cli.common.messages.getLogger
 import org.jetbrains.kotlin.backend.jvm.JvmGeneratorExtensionsImpl
 import org.jetbrains.kotlin.backend.jvm.JvmIrDeserializerImpl
-import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltIns
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInsPackageFragmentProvider
 import org.jetbrains.kotlin.cli.common.*
@@ -31,6 +27,7 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.EXCEPTIO
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageUtil
 import org.jetbrains.kotlin.cli.common.messages.OutputMessageUtil
+import org.jetbrains.kotlin.cli.common.messages.getLogger
 import org.jetbrains.kotlin.cli.common.modules.ModuleBuilder
 import org.jetbrains.kotlin.cli.jvm.compiler.*
 import org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.convertToIrAndActualizeForJvm
@@ -52,31 +49,19 @@ import org.jetbrains.kotlin.fir.DependencyListForCliModule
 import org.jetbrains.kotlin.fir.backend.jvm.JvmFir2IrExtensions
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.pipeline.*
-import org.jetbrains.kotlin.fir.session.AbstractFirMetadataSessionFactory
-import org.jetbrains.kotlin.fir.session.FirSharableJavaComponents
-import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
-import org.jetbrains.kotlin.fir.session.firCachesFactoryForCliMode
 import org.jetbrains.kotlin.frontend.java.di.createContainerForLazyResolveWithJava
 import org.jetbrains.kotlin.frontend.java.di.initialize
 import org.jetbrains.kotlin.idea.MainFunctionDetector
 import org.jetbrains.kotlin.incremental.components.*
 import org.jetbrains.kotlin.ir.*
-import org.jetbrains.kotlin.ir.declarations.IrField
-import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.backend.jklib.JKlibDescriptorMangler
+import org.jetbrains.kotlin.ir.backend.jklib.JKlibIrLinker
+import org.jetbrains.kotlin.ir.backend.jklib.JKlibModuleSerializer
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.ir.descriptors.IrDescriptorBasedFunctionFactory
-import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
-import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
-import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
-import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.SymbolTable
-import org.jetbrains.kotlin.ir.util.getNameWithAssert
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
@@ -84,23 +69,17 @@ import org.jetbrains.kotlin.library.impl.buildKotlinLibrary
 import org.jetbrains.kotlin.library.loader.KlibLoader
 import org.jetbrains.kotlin.library.loader.reportLoadingProblemsIfAny
 import org.jetbrains.kotlin.library.metadata.KlibMetadataFactories
-import org.jetbrains.kotlin.library.metadata.resolver.KotlinResolvedLibrary
 import org.jetbrains.kotlin.library.metadata.resolver.impl.KotlinResolvedLibraryImpl
-import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
-import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.load.java.lazy.ModuleClassResolver
-import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaPackageFragment
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.impl.VirtualFileBoundJavaClass
 import org.jetbrains.kotlin.load.kotlin.JavaFlexibleTypeDeserializer
 import org.jetbrains.kotlin.metadata.builtins.BuiltInsBinaryVersion
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
-import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import org.jetbrains.kotlin.psi2ir.descriptors.IrBuiltInsOverDescriptors
 import org.jetbrains.kotlin.psi2ir.generators.DeclarationStubGeneratorImpl
 import org.jetbrains.kotlin.psi2ir.generators.TypeTranslatorImpl
@@ -113,18 +92,13 @@ import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.util.klibMetadataVersionOrDefault
 import org.jetbrains.kotlin.utils.KotlinPaths
 import org.jetbrains.kotlin.utils.PathUtil
-import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
-import org.jetbrains.kotlin.utils.memoryOptimizedMap
 import java.util.*
-import org.jetbrains.kotlin.ir.backend.jklib.JKlibDescriptorMangler
-import org.jetbrains.kotlin.ir.backend.jklib.JKlibIrMangler
-import org.jetbrains.kotlin.ir.backend.jklib.JKlibModuleSerializer
 
 /**
  * This class is the entry-point for compiling Kotlin code into a Klib with references to jars.
  *
  */
-@OptIn(UnsafeDuringIrConstructionAPI::class, ObsoleteDescriptorBasedAPI::class)
+@OptIn(ObsoleteDescriptorBasedAPI::class)
 class K2JKlibCompiler : CLICompiler<K2JKlibCompilerArguments>() {
     private lateinit var klibFactories: KlibMetadataFactories
     private lateinit var storageManager: StorageManager
@@ -141,246 +115,12 @@ class K2JKlibCompiler : CLICompiler<K2JKlibCompilerArguments>() {
         arguments: K2JKlibCompilerArguments,
         services: Services,
     ) {
-        // No specific arguments yet
     }
 
     override fun MutableList<String>.addPlatformOptions(arguments: K2JKlibCompilerArguments) {}
 
     enum class OutputKind {
         LIBRARY, IR,
-    }
-
-    @UnsafeDuringIrConstructionAPI
-    class JKlibLinker(
-        module: ModuleDescriptor,
-        messageCollector: MessageCollector,
-        irBuiltIns: IrBuiltIns,
-        symbolTable: SymbolTable,
-        val stubGenerator: DeclarationStubGeneratorImpl,
-        val mangler: JKlibDescriptorMangler,
-    ) : KotlinIrLinker(module, messageCollector, irBuiltIns, symbolTable, emptyList()) {
-        override val returnUnboundSymbolsIfSignatureNotFound
-            get() = false
-
-        private val javaName = Name.identifier("java")
-
-        private fun DeclarationDescriptor.isJavaDescriptor(): Boolean {
-            if (this is PackageFragmentDescriptor) {
-                return this is LazyJavaPackageFragment || fqName.startsWith(javaName)
-            }
-
-            return this is JavaClassDescriptor || this is JavaCallableMemberDescriptor || (containingDeclaration?.isJavaDescriptor() == true)
-        }
-
-        override fun platformSpecificSymbol(symbol: IrSymbol): Boolean {
-            return symbol.descriptor.isJavaDescriptor()
-        }
-
-        private fun DeclarationDescriptor.isCleanDescriptor(): Boolean {
-            if (this is PropertyAccessorDescriptor) return correspondingProperty.isCleanDescriptor()
-            return this is DeserializedDescriptor
-        }
-
-        private fun declareJavaFieldStub(symbol: IrFieldSymbol): IrField {
-            return with(stubGenerator) {
-                val old = stubGenerator.unboundSymbolGeneration
-                try {
-                    stubGenerator.unboundSymbolGeneration = true
-                    generateFieldStub(symbol.descriptor)
-                } finally {
-                    stubGenerator.unboundSymbolGeneration = old
-                }
-            }
-        }
-
-        override val fakeOverrideBuilder = IrLinkerFakeOverrideProvider(
-            linker = this,
-            symbolTable = symbolTable,
-            mangler = JKlibIrMangler(),
-            typeSystem = IrTypeSystemContextImpl(builtIns),
-            friendModules = emptyMap(),
-            partialLinkageSupport = partialLinkageSupport,
-        )
-
-        override fun isBuiltInModule(moduleDescriptor: ModuleDescriptor): Boolean =
-            moduleDescriptor === moduleDescriptor.builtIns.builtInsModule
-
-        override fun createModuleDeserializer(
-            moduleDescriptor: ModuleDescriptor,
-            klib: KotlinLibrary?,
-            strategyResolver: (String) -> DeserializationStrategy,
-        ): IrModuleDeserializer {
-            if (klib == null) {
-                return MetadataJVMModuleDeserializer(moduleDescriptor, emptyList())
-            }
-
-            val libraryAbiVersion = klib.versions.abiVersion ?: KotlinAbiVersion.CURRENT
-            return JKlibModuleDeserializer(
-                moduleDescriptor,
-                klib,
-                strategyResolver,
-                libraryAbiVersion,
-            )
-        }
-
-        private val mappedClassSymbols = mutableMapOf<FqName, IrClassSymbol>()
-
-        private fun FqName.isMappedType(): Boolean {
-            return (JavaToKotlinClassMap.mapJavaToKotlin(this) ?: JavaToKotlinClassMap.mapKotlinToJava(toUnsafe())) != null
-        }
-
-        private fun withKotlinBuiltinsHack(idSig: IdSignature, f: () -> IrSymbol?): IrSymbol? {
-            val symbol = f()
-            if (idSig is IdSignature.CommonSignature) {
-                val fqName = FqName("${idSig.packageFqName}.${idSig.declarationFqName}")
-                if (symbol != null) {
-                    if (symbol is IrClassSymbol && fqName.isMappedType() && fqName !in mappedClassSymbols) {
-                        mappedClassSymbols[fqName] = symbol
-                    }
-                    return symbol
-                }
-
-                val funName = idSig.nameSegments.last()
-                for (declaration in mappedClassSymbols.values.flatMap { it.owner.declarations }) {
-                    if (declaration.getNameWithAssert().asString() == funName) {
-                        return declaration.symbol
-                    }
-                }
-                return null
-            }
-            return symbol
-        }
-
-        private inner class MetadataJVMModuleDeserializer(
-            moduleDescriptor: ModuleDescriptor,
-            dependencies: List<IrModuleDeserializer>,
-        ) : IrModuleDeserializer(moduleDescriptor, KotlinAbiVersion.CURRENT) {
-            override val klib: KotlinLibrary get() = error("'klib' is not available for ${this::class.java}")
-
-            override fun contains(idSig: IdSignature): Boolean = true
-
-            private val descriptorFinder = DescriptorByIdSignatureFinderImpl(
-                moduleDescriptor,
-                mangler,
-                DescriptorByIdSignatureFinderImpl.LookupMode.MODULE_ONLY,
-            )
-
-            private fun resolveDescriptor(idSig: IdSignature): DeclarationDescriptor? = descriptorFinder.findDescriptorBySignature(idSig)
-
-            override fun tryDeserializeIrSymbol(
-                idSig: IdSignature,
-                symbolKind: BinarySymbolData.SymbolKind,
-            ): IrSymbol? = withKotlinBuiltinsHack(idSig) {
-                val descriptor = resolveDescriptor(idSig) ?: return@withKotlinBuiltinsHack null
-
-                val declaration = stubGenerator.run {
-                    when (symbolKind) {
-                        BinarySymbolData.SymbolKind.CLASS_SYMBOL -> generateClassStub(descriptor as ClassDescriptor)
-                        BinarySymbolData.SymbolKind.PROPERTY_SYMBOL -> generatePropertyStub(descriptor as PropertyDescriptor)
-                        BinarySymbolData.SymbolKind.FUNCTION_SYMBOL -> generateFunctionStub(descriptor as FunctionDescriptor)
-                        BinarySymbolData.SymbolKind.CONSTRUCTOR_SYMBOL -> generateConstructorStub(descriptor as ClassConstructorDescriptor)
-                        BinarySymbolData.SymbolKind.ENUM_ENTRY_SYMBOL -> generateEnumEntryStub(descriptor as ClassDescriptor)
-                        BinarySymbolData.SymbolKind.TYPEALIAS_SYMBOL -> generateTypeAliasStub(descriptor as TypeAliasDescriptor)
-                        BinarySymbolData.SymbolKind.STANDALONE_FIELD_SYMBOL -> generateFieldStub(descriptor as PropertyDescriptor)
-                        else -> error("Unexpected type $symbolKind for sig $idSig")
-                    }
-                }
-
-                return@withKotlinBuiltinsHack declaration.symbol
-            }
-
-            override fun deserializedSymbolNotFound(idSig: IdSignature): Nothing = error("No descriptor found for $idSig")
-
-            override fun declareIrSymbol(symbol: IrSymbol) {
-                if (symbol is IrFieldSymbol) {
-                    declareJavaFieldStub(symbol)
-                } else {
-                    stubGenerator.generateMemberStub(symbol.descriptor)
-                }
-            }
-
-            override val moduleFragment: IrModuleFragment = IrModuleFragmentImpl(moduleDescriptor)
-            override val moduleDependencies: Collection<IrModuleDeserializer> = dependencies
-
-            override val kind
-                get() = IrModuleDeserializerKind.SYNTHETIC
-        }
-
-        private val deserializedFilesInKlibOrder = mutableMapOf<IrModuleFragment, List<IrFile>>()
-
-        private inner class JKlibModuleDeserializer(
-            moduleDescriptor: ModuleDescriptor,
-            override val klib: KotlinLibrary,
-            strategyResolver: (String) -> DeserializationStrategy,
-            libraryAbiVersion: KotlinAbiVersion,
-        ) : BasicIrModuleDeserializer(
-            this,
-            moduleDescriptor,
-            strategyResolver,
-            libraryAbiVersion,
-        ) {
-
-            override fun init(delegate: IrModuleDeserializer) {
-                super.init(delegate)
-                deserializedFilesInKlibOrder[moduleFragment] = fileDeserializationStates.memoryOptimizedMap { it.file }
-            }
-
-            private val descriptorSignatures = mutableMapOf<DeclarationDescriptor, IdSignature>()
-
-            private val descriptorByIdSignatureFinder = DescriptorByIdSignatureFinderImpl(
-                moduleDescriptor,
-                mangler,
-                DescriptorByIdSignatureFinderImpl.LookupMode.MODULE_ONLY,
-            )
-
-            private val deserializedSymbols = mutableMapOf<IdSignature, IrSymbol>()
-
-            override fun tryDeserializeIrSymbol(
-                idSig: IdSignature,
-                symbolKind: BinarySymbolData.SymbolKind,
-            ): IrSymbol? = withKotlinBuiltinsHack(idSig) {
-                super.tryDeserializeIrSymbol(idSig, symbolKind)?.let {
-                    return@withKotlinBuiltinsHack it
-                }
-                deserializedSymbols[idSig]?.let {
-                    return@withKotlinBuiltinsHack it
-                }
-                val descriptor = descriptorByIdSignatureFinder.findDescriptorBySignature(idSig) ?: return@withKotlinBuiltinsHack null
-                descriptorSignatures[descriptor] = idSig
-                return@withKotlinBuiltinsHack (stubGenerator.generateMemberStub(descriptor) as IrSymbolOwner).symbol
-            }
-        }
-
-        override fun createCurrentModuleDeserializer(
-            moduleFragment: IrModuleFragment,
-            dependencies: Collection<IrModuleDeserializer>,
-        ): IrModuleDeserializer = JvmCurrentModuleDeserializer(moduleFragment, dependencies)
-
-        private inner class JvmCurrentModuleDeserializer(
-            moduleFragment: IrModuleFragment,
-            dependencies: Collection<IrModuleDeserializer>,
-        ) : CurrentModuleDeserializer(moduleFragment, dependencies) {
-            override fun declareIrSymbol(symbol: IrSymbol) {
-                val descriptor = symbol.descriptor
-
-                if (descriptor.isJavaDescriptor()) {
-                    // Wrap java declaration with lazy ir
-                    if (symbol is IrFieldSymbol) {
-                        declareJavaFieldStub(symbol)
-                    } else {
-                        stubGenerator.generateMemberStub(descriptor)
-                    }
-                    return
-                }
-
-                if (descriptor.isCleanDescriptor()) {
-                    stubGenerator.generateMemberStub(descriptor)
-                    return
-                }
-
-                super.declareIrSymbol(symbol)
-            }
-        }
     }
 
     public override fun doExecute(
@@ -495,7 +235,6 @@ class K2JKlibCompiler : CLICompiler<K2JKlibCompilerArguments>() {
         return compileIr(arguments, rootDisposable, klibDestination)
     }
 
-    @OptIn(InternalSymbolFinderAPI::class)
     fun compileIr(
         arguments: K2JKlibCompilerArguments,
         disposable: Disposable,
@@ -547,7 +286,7 @@ class K2JKlibCompiler : CLICompiler<K2JKlibCompilerArguments>() {
             DescriptorByIdSignatureFinderImpl(mainModule, mangler),
             JvmGeneratorExtensionsImpl(configuration),
         ).apply { unboundSymbolGeneration = true }
-        val linker = JKlibLinker(
+        val linker = JKlibIrLinker(
             module = mainModule,
             messageCollector = messageCollector,
             irBuiltIns = irBuiltIns,
@@ -877,85 +616,4 @@ private class SourceOrBinaryModuleClassResolver(private val sourceScope: GlobalS
         else compiledCodeResolver
         return resolver.resolveClass(javaClass)
     }
-}
-
-/**
- * Creates library session and sources session for klib compilation Number of created session
- * depends on mode of MPP:
- * - disabled
- * - legacy (one platform and one common module)
- * - HMPP (multiple number of modules)
- */
-fun <F> prepareJKlibSessions(
-    projectEnvironment: VfsBasedProjectEnvironment,
-    files: List<F>,
-    configuration: CompilerConfiguration,
-    rootModuleName: Name,
-    resolvedLibraries: List<KotlinResolvedLibrary>,
-    libraryList: DependencyListForCliModule,
-    extensionRegistrars: List<FirExtensionRegistrar>,
-    metadataCompilationMode: Boolean,
-    librariesScope: AbstractProjectFileSearchScope,
-    isCommonSource: (F) -> Boolean,
-    fileBelongsToModule: (F, String) -> Boolean,
-): List<SessionWithSources<F>> {
-    val predefinedJavaComponents = FirSharableJavaComponents(firCachesFactoryForCliMode)
-    val packagePartProviderForLibraries = projectEnvironment.getPackagePartProvider(librariesScope)
-
-    return SessionConstructionUtils.prepareSessions(
-        files,
-        configuration,
-        rootModuleName,
-        NativePlatforms.unspecifiedNativePlatform,
-        metadataCompilationMode,
-        libraryList,
-        extensionRegistrars,
-        isCommonSource,
-        isScript = { false },
-        fileBelongsToModule,
-        createSharedLibrarySession = {
-            FirJKlibSessionFactory.createSharedLibrarySession(
-                rootModuleName,
-                projectEnvironment,
-                extensionRegistrars,
-                packagePartProviderForLibraries,
-                configuration.languageVersionSettings,
-                predefinedJavaComponents = predefinedJavaComponents,
-            )
-        },
-        createLibrarySession = { sharedLibrarySession ->
-            FirJKlibSessionFactory.createLibrarySession(
-                resolvedLibraries.map { it.library },
-                sharedLibrarySession,
-                libraryList.moduleDataProvider,
-                projectEnvironment,
-                extensionRegistrars,
-                librariesScope,
-                packagePartProviderForLibraries,
-                configuration.languageVersionSettings,
-                predefinedJavaComponents = predefinedJavaComponents,
-            )
-        },
-        createSourceSession = { _, moduleData, isForLeafHmppModule, sessionConfigurator ->
-            FirJKlibSessionFactory.createSourceSession(
-                moduleData = moduleData,
-                javaSourcesScope = projectEnvironment.getSearchScopeForProjectJavaSources(),
-                projectEnvironment = projectEnvironment,
-                createIncrementalCompilationSymbolProviders = { null },
-                extensionRegistrars = extensionRegistrars,
-                configuration = configuration,
-                predefinedJavaComponents = predefinedJavaComponents,
-                needRegisterJavaElementFinder = true,
-                packagePartProvider = packagePartProviderForLibraries,
-                init = sessionConfigurator,
-                isForLeafHmppModule = isForLeafHmppModule,
-            )
-        },
-        createMetadataSessionFactoryContextForHmppCommonLibrarySession = {
-            AbstractFirMetadataSessionFactory.Context(
-                createJvmContext = { shouldNotBeCalled() },
-                createJsContext = { shouldNotBeCalled() }
-            )
-        }
-    )
 }

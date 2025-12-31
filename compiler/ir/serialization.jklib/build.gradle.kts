@@ -5,12 +5,12 @@ plugins {
 dependencies {
     implementation(project(":compiler:ir.serialization.common"))
     implementation(project(":compiler:cli-base"))
-
+    implementation(project(":compiler:ir.psi2ir"))
     compileOnly(intellijCore())
 }
-
-optInToUnsafeDuringIrConstructionAPI()
 
 sourceSets {
     "main" { projectDefault() }
 }
+
+optInToUnsafeDuringIrConstructionAPI()
