@@ -11,7 +11,6 @@ CHOSEN for fixation: TypeVariable(T) --- Readiness(
     	false REIFIED
     	 true HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
     	 true HAS_PROPER_NON_ILT_CONSTRAINT
-    	false HAS_PROPER_NON_ILT_EQUALITY_CONSTRAINT
     )
      >: kotlin/String
      = kotlin/String (inferred during fixation)
@@ -29,7 +28,6 @@ TypeVariable(Id) --- Readiness(
     	false REIFIED
     	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
     	false HAS_PROPER_NON_ILT_CONSTRAINT
-    	false HAS_PROPER_NON_ILT_EQUALITY_CONSTRAINT
     )
      >: MyRecordId
      = MyRecordId (inferred during fixation)
@@ -47,7 +45,6 @@ CHOSEN for fixation: TypeVariable(T) --- Readiness(
     	false REIFIED
     	 true HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
     	 true HAS_PROPER_NON_ILT_CONSTRAINT
-    	false HAS_PROPER_NON_ILT_EQUALITY_CONSTRAINT
     )
      >: kotlin/String
      = kotlin/String (inferred during fixation)
@@ -65,7 +62,6 @@ TypeVariable(Id) --- Readiness(
     	false REIFIED
     	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
     	false HAS_PROPER_NON_ILT_CONSTRAINT
-    	false HAS_PROPER_NON_ILT_EQUALITY_CONSTRAINT
     )
      >: MyRecordId
      = MyRecordId (inferred during fixation)
@@ -83,7 +79,6 @@ CHOSEN for fixation: TypeVariable(Id) --- Readiness(
     	false REIFIED
     	 true HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
     	 true HAS_PROPER_NON_ILT_CONSTRAINT
-    	false HAS_PROPER_NON_ILT_EQUALITY_CONSTRAINT
     )
      >: MyRecordId
      = MyRecordId (inferred during fixation)

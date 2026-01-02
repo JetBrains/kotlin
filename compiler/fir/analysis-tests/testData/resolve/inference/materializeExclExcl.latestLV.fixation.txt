@@ -11,7 +11,6 @@ CHOSEN for fixation: TypeVariable(T) --- Readiness(
     	false REIFIED
     	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
     	false HAS_PROPER_NON_ILT_CONSTRAINT
-    	false HAS_PROPER_NON_ILT_EQUALITY_CONSTRAINT
     )
 ********************************
 CHOSEN for fixation: TypeVariable(R) --- Readiness(
@@ -27,7 +26,6 @@ CHOSEN for fixation: TypeVariable(R) --- Readiness(
     	false REIFIED
     	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
     	false HAS_PROPER_NON_ILT_CONSTRAINT
-    	false HAS_PROPER_NON_ILT_EQUALITY_CONSTRAINT
     )
      >: TypeVariable(T)?
      >: kotlin/Nothing?
@@ -44,7 +42,6 @@ TypeVariable(T) --- Readiness(
     	false REIFIED
     	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
     	false HAS_PROPER_NON_ILT_CONSTRAINT
-    	false HAS_PROPER_NON_ILT_EQUALITY_CONSTRAINT
     )
      <: TypeVariable(R)
 ********************************
@@ -61,7 +58,6 @@ CHOSEN for fixation: TypeVariable(K) --- Readiness(
     	false REIFIED
     	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
     	 true HAS_PROPER_NON_ILT_CONSTRAINT
-    	false HAS_PROPER_NON_ILT_EQUALITY_CONSTRAINT
     )
      >: TypeVariable(R) & Any
      >: TypeVariable(T) & Any
@@ -83,7 +79,6 @@ TypeVariable(R) --- Readiness(
     	false REIFIED
     	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
     	 true HAS_PROPER_NON_ILT_CONSTRAINT
-    	false HAS_PROPER_NON_ILT_EQUALITY_CONSTRAINT
     )
      >: TypeVariable(T)?
      >: kotlin/Nothing?
@@ -104,7 +99,6 @@ TypeVariable(T) --- Readiness(
     	false REIFIED
     	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
     	 true HAS_PROPER_NON_ILT_CONSTRAINT
-    	false HAS_PROPER_NON_ILT_EQUALITY_CONSTRAINT
     )
      <: kotlin/String?
      <: kotlin/String?
@@ -123,7 +117,6 @@ CHOSEN for fixation: TypeVariable(R) --- Readiness(
     	false REIFIED
     	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
     	 true HAS_PROPER_NON_ILT_CONSTRAINT
-    	false HAS_PROPER_NON_ILT_EQUALITY_CONSTRAINT
     )
      >: TypeVariable(T)?
      >: kotlin/Nothing?
@@ -145,7 +138,6 @@ TypeVariable(T) --- Readiness(
     	false REIFIED
     	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
     	 true HAS_PROPER_NON_ILT_CONSTRAINT
-    	false HAS_PROPER_NON_ILT_EQUALITY_CONSTRAINT
     )
      <: kotlin/String?
      <: kotlin/String?
@@ -164,7 +156,6 @@ CHOSEN for fixation: TypeVariable(T) --- Readiness(
     	false REIFIED
     	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
     	 true HAS_PROPER_NON_ILT_CONSTRAINT
-    	false HAS_PROPER_NON_ILT_EQUALITY_CONSTRAINT
     )
      <: kotlin/String?
      <: kotlin/String?

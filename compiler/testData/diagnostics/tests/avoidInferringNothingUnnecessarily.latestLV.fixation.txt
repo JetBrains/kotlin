@@ -11,7 +11,6 @@ CHOSEN for fixation: TypeVariable(K) --- Readiness(
     	false REIFIED
     	 true HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
     	 true HAS_PROPER_NON_ILT_CONSTRAINT
-    	 true HAS_PROPER_NON_ILT_EQUALITY_CONSTRAINT
     )
      >: T & Any
      = T
@@ -30,7 +29,6 @@ CHOSEN for fixation: TypeVariable(T) --- Readiness(
     	false REIFIED
     	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
     	 true HAS_PROPER_NON_ILT_CONSTRAINT
-    	false HAS_PROPER_NON_ILT_EQUALITY_CONSTRAINT
     )
      <: kotlin/Any
      >: kotlin/Nothing

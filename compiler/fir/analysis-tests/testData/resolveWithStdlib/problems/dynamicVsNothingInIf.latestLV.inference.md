@@ -56,7 +56,6 @@ parse#(R|<local>/data|)
    	false REIFIED
    	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
    	false HAS_PROPER_NON_ILT_CONSTRAINT
-   	false HAS_PROPER_NON_ILT_EQUALITY_CONSTRAINT
    )`
 
 ### Call 3
@@ -104,7 +103,6 @@ when () {
    	false REIFIED
    	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
    	 true HAS_PROPER_NON_ILT_CONSTRAINT
-   	 true HAS_PROPER_NON_ILT_EQUALITY_CONSTRAINT
    )`
     1. `TypeVariable(T)` is `Readiness(
        	 true ALLOWED
@@ -119,7 +117,6 @@ when () {
        	false REIFIED
        	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
        	 true HAS_PROPER_NON_ILT_CONSTRAINT
-       	false HAS_PROPER_NON_ILT_EQUALITY_CONSTRAINT
        )`
 2. `TypeVariable(K) == dynamic` _from Fix variable K_
 3. Combine `TypeVariable(T) <: TypeVariable(K)` with `TypeVariable(K) == dynamic`
@@ -137,7 +134,6 @@ when () {
    	false REIFIED
    	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
    	 true HAS_PROPER_NON_ILT_CONSTRAINT
-   	false HAS_PROPER_NON_ILT_EQUALITY_CONSTRAINT
    )`
 5. `TypeVariable(T) == dynamic` _from Fix variable T_
 

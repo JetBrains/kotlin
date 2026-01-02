@@ -11,7 +11,6 @@ CHOSEN for fixation: TypeVariable(C) --- Readiness(
     	false REIFIED
     	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
     	false HAS_PROPER_NON_ILT_CONSTRAINT
-    	false HAS_PROPER_NON_ILT_EQUALITY_CONSTRAINT
     )
      <: Marker<TypeVariable(C)>
 ********************************
@@ -28,7 +27,6 @@ CHOSEN for fixation: TypeVariable(K) --- Readiness(
     	false REIFIED
     	 true HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
     	 true HAS_PROPER_NON_ILT_CONSTRAINT
-    	false HAS_PROPER_NON_ILT_EQUALITY_CONSTRAINT
     )
      >: MyClass<F>
      >: MyClass<TypeVariable(C)>
@@ -47,7 +45,6 @@ TypeVariable(C) --- Readiness(
     	false REIFIED
     	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
     	false HAS_PROPER_NON_ILT_CONSTRAINT
-    	false HAS_PROPER_NON_ILT_EQUALITY_CONSTRAINT
     )
      <: Marker<TypeVariable(C)>
      <: F (inferred during fixation)
@@ -68,7 +65,6 @@ CHOSEN for fixation: TypeVariable(C) --- Readiness(
     	false REIFIED
     	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
     	 true HAS_PROPER_NON_ILT_CONSTRAINT
-    	 true HAS_PROPER_NON_ILT_EQUALITY_CONSTRAINT
     )
      <: Marker<TypeVariable(C)>
      = F

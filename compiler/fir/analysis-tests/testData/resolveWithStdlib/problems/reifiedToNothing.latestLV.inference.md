@@ -84,7 +84,6 @@ parse#(R|/decode|(R|<local>/token|))
    	false REIFIED
    	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
    	false HAS_PROPER_NON_ILT_CONSTRAINT
-   	false HAS_PROPER_NON_ILT_EQUALITY_CONSTRAINT
    )`
 
 ### Call 5
@@ -124,7 +123,6 @@ catch (e: R|{kotlin/Exception=} java/lang/Exception|) {
    	false REIFIED
    	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
    	false HAS_PROPER_NON_ILT_CONSTRAINT
-   	false HAS_PROPER_NON_ILT_EQUALITY_CONSTRAINT
    )`
     1. `TypeVariable(P)` is `Readiness(
        	false ALLOWED
@@ -139,7 +137,6 @@ catch (e: R|{kotlin/Exception=} java/lang/Exception|) {
        	false REIFIED
        	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
        	false HAS_PROPER_NON_ILT_CONSTRAINT
-       	false HAS_PROPER_NON_ILT_EQUALITY_CONSTRAINT
        )`
 
 ### Call 2
@@ -188,7 +185,6 @@ ifTrue#(R|<local>/flag|, <L> = ifTrue@fun <implicit>.<anonymous>(): <implicit> <
    	 true REIFIED
    	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
    	 true HAS_PROPER_NON_ILT_CONSTRAINT
-   	false HAS_PROPER_NON_ILT_EQUALITY_CONSTRAINT
    )`
     1. `TypeVariable(T)` is `Readiness(
        	 true ALLOWED
@@ -203,7 +199,6 @@ ifTrue#(R|<local>/flag|, <L> = ifTrue@fun <implicit>.<anonymous>(): <implicit> <
        	false REIFIED
        	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
        	 true HAS_PROPER_NON_ILT_CONSTRAINT
-       	false HAS_PROPER_NON_ILT_EQUALITY_CONSTRAINT
        )`
     2. `TypeVariable(K)` is `Readiness(
        	 true ALLOWED
@@ -218,7 +213,6 @@ ifTrue#(R|<local>/flag|, <L> = ifTrue@fun <implicit>.<anonymous>(): <implicit> <
        	false REIFIED
        	false HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
        	 true HAS_PROPER_NON_ILT_CONSTRAINT
-       	false HAS_PROPER_NON_ILT_EQUALITY_CONSTRAINT
        )`
 9. `TypeVariable(P) == Result` _from Fix variable P_
 10. Combine `TypeVariable(P) == Result` with `TypeVariable(P) <: TypeVariable(K)`
@@ -238,7 +232,6 @@ ifTrue#(R|<local>/flag|, <L> = ifTrue@fun <implicit>.<anonymous>(): <implicit> <
     	false REIFIED
     	 true HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
     	 true HAS_PROPER_NON_ILT_CONSTRAINT
-    	false HAS_PROPER_NON_ILT_EQUALITY_CONSTRAINT
     )`
     1. `TypeVariable(K)` is `Readiness(
        	 true ALLOWED
@@ -253,7 +246,6 @@ ifTrue#(R|<local>/flag|, <L> = ifTrue@fun <implicit>.<anonymous>(): <implicit> <
        	false REIFIED
        	 true HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
        	 true HAS_PROPER_NON_ILT_CONSTRAINT
-       	false HAS_PROPER_NON_ILT_EQUALITY_CONSTRAINT
        )`
 13. `TypeVariable(T) == Result` _from Fix variable T_
 14. Choose `TypeVariable(K)` with `Readiness(
@@ -269,6 +261,5 @@ ifTrue#(R|<local>/flag|, <L> = ifTrue@fun <implicit>.<anonymous>(): <implicit> <
     	false REIFIED
     	 true HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT
     	 true HAS_PROPER_NON_ILT_CONSTRAINT
-    	false HAS_PROPER_NON_ILT_EQUALITY_CONSTRAINT
     )`
 15. `TypeVariable(K) == Result?` _from Fix variable K_

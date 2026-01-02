@@ -70,10 +70,6 @@ class VariableReadinessCalculator(
         // ILT type = Integer literal type = yet unknown choice from Byte/Short/Int/Long (at least two of them)
         // Any proper constraint can be here which isn't bound to ILT type
         HAS_PROPER_NON_ILT_CONSTRAINT,
-
-        // Any proper constraint `T = ...` can be here which isn't bound to ILT type
-        // When this one is true, HAS_PROPER_NON_ILT_CONSTRAINT is also true
-        HAS_PROPER_NON_ILT_EQUALITY_CONSTRAINT,
         ;
 
         init {
@@ -129,8 +125,7 @@ class VariableReadinessCalculator(
         readiness[Q.REIFIED] = isReified()
         readiness[Q.HAS_PROPER_NON_NOTHING_NON_ILT_LOWER_CONSTRAINT] = hasLowerNonNothingNonIltProperConstraint()
 
-        val (hasProperNonIltEqualityConstraint, hasProperNonIltConstraint) = computeIltConstraintsRelatedFlags()
-        readiness[Q.HAS_PROPER_NON_ILT_EQUALITY_CONSTRAINT] = hasProperNonIltEqualityConstraint
+        val (_, hasProperNonIltConstraint) = computeIltConstraintsRelatedFlags()
         readiness[Q.HAS_PROPER_NON_ILT_CONSTRAINT] = hasProperNonIltConstraint
 
         return readiness
