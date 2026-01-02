@@ -48,7 +48,6 @@ class VariableReadinessCalculator(
         // A proper trivial constraint from arguments, except for `T >: Nothing(?)`
         // It does however include `T = Nothing(?)` and `T <: Nothing(?)`
         HAS_PROPER_NON_TRIVIAL_CONSTRAINTS,
-        HAS_NO_RELATION_TO_ANY_OUTPUT_TYPE,
         HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND,
 
         // K1 used this for reified type parameters, mainly to get `discriminateNothingForReifiedParameter.kt` working.
@@ -118,7 +117,6 @@ class VariableReadinessCalculator(
             readiness[Q.HAS_PROPER_CONSTRAINTS] && !areAllProperConstraintsSelfTypeBased
         readiness[Q.HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES] = !hasDependencyToOtherTypeVariables()
         readiness[Q.HAS_PROPER_NON_TRIVIAL_CONSTRAINTS] = !allConstraintsTrivialOrNonProper()
-        readiness[Q.HAS_NO_RELATION_TO_ANY_OUTPUT_TYPE] = !dependencyProvider.isVariableRelatedToAnyOutputType(this)
         readiness[Q.HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND] =
             !hasOnlyIncorporatedConstraintsFromDeclaredUpperBound()
 
