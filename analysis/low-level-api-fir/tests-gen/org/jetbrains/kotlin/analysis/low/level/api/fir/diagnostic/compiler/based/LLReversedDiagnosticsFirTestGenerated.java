@@ -2794,6 +2794,12 @@ public class LLReversedDiagnosticsFirTestGenerated extends AbstractLLReversedDia
       }
 
       @Test
+      @TestMetadata("callableReferenceCompatibility.kt")
+      public void testCallableReferenceCompatibility() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/callableReferenceCompatibility.kt");
+      }
+
+      @Test
       @TestMetadata("contextLambda.kt")
       public void testContextLambda() {
         runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/contextLambda.kt");
