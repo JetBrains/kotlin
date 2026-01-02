@@ -26,7 +26,7 @@ interface NumberHolder {
 
 class FinalNumberHolder : NumberHolder {
     override val number: Number
-        <!NON_FINAL_PROPERTY_WITH_EXPLICIT_BACKING_FIELD!>field = 0f<!>
+        field = 0f
 }
 
 /* GENERATED_FIR_TAGS: additiveExpression, assignment, classDeclaration, explicitBackingField, functionDeclaration,
