@@ -10684,6 +10684,12 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
       }
 
       @Test
+      @TestMetadata("inapplicableWhen.kt")
+      public void testInapplicableWhen() {
+        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/inference/inapplicableWhen.kt");
+      }
+
+      @Test
       @TestMetadata("plusAssignWithLambdaInRhs.kt")
       public void testPlusAssignWithLambdaInRhs() {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/inference/plusAssignWithLambdaInRhs.kt");
