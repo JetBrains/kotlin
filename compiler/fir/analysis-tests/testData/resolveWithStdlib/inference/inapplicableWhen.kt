@@ -5,14 +5,14 @@ class Foo
 enum class E { A, B }
 
 fun test(foo: Foo, enum: E): Pair<Foo, Foo> {
-    return <!INAPPLICABLE_CANDIDATE("fun <K> WHEN_CALL(vararg branches: K): K")!>when (enum) {
+    return when (enum) {
         E.A -> foo to foo
         E.B -> foo.<!UNRESOLVED_REFERENCE!>bar<!>() <!CANNOT_INFER_PARAMETER_TYPE, CANNOT_INFER_PARAMETER_TYPE!>to<!> foo
-    }<!>
+    }
 }
 
 fun test2(foo: Foo, enum: E): Pair<Foo, Foo> {
-    return (foo.<!UNRESOLVED_REFERENCE!>bar<!>() <!CANNOT_INFER_PARAMETER_TYPE, CANNOT_INFER_PARAMETER_TYPE!>to<!> foo)<!INAPPLICABLE_CANDIDATE("fun <K> CHECK_NOT_NULL_CALL(arg: K?): K & Any"), UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>
+    return (foo.<!UNRESOLVED_REFERENCE!>bar<!>() <!CANNOT_INFER_PARAMETER_TYPE, CANNOT_INFER_PARAMETER_TYPE!>to<!> foo)<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, enumDeclaration, enumEntry, equalityExpression, functionDeclaration, smartcast,

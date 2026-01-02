@@ -325,7 +325,7 @@ private fun ConeInapplicableCandidateError.mapInapplicableCandidateError(
                 session,
             )
 
-            else -> genericDiagnostic
+            else -> genericDiagnostic.takeIf { candidate.symbol !is FirSyntheticFunctionSymbol }
         }
     }.distinct()
     return if (diagnostics.size > 1) {
