@@ -380,6 +380,8 @@ interface TypeSystemInferenceExtensionContext : TypeSystemContext, TypeSystemBui
     val isK2: Boolean
 
     val allowSemiFixationToOtherTypeVariables: Boolean get() = false
+
+    val lexicographicVariableReadinessCalculation: Boolean get() = false
 }
 
 

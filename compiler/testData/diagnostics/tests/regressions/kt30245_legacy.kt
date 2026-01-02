@@ -1,6 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_ANONYMOUS_PARAMETER -UNUSED_PARAMETER -UNUSED_EXPRESSION
-// LANGUAGE: +LexicographicVariableReadinessCalculation
+// LANGUAGE: -LexicographicVariableReadinessCalculation
 
 class Sample
 
