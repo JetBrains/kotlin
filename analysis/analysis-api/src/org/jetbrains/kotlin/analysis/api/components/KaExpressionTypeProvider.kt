@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -147,9 +147,9 @@ public interface KaExpressionTypeProvider : KaSessionComponent {
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(s: KaSession)
+context(session: KaSession)
 public val KtExpression.expressionType: KaType?
-    get() = with(s) { expressionType }
+    get() = with(session) { expressionType }
 
 /**
  * The return type of the given [KtDeclarationWithReturnType].
@@ -168,9 +168,9 @@ public val KtExpression.expressionType: KaType?
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(s: KaSession)
+context(session: KaSession)
 public val KtDeclarationWithReturnType.returnType: KaType
-    get() = with(s) { returnType }
+    get() = with(session) { returnType }
 
 /**
  * The return type of the given [KtDeclaration].
@@ -181,10 +181,10 @@ public val KtDeclarationWithReturnType.returnType: KaType
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated("Use `KtDeclarationWithReturnType.returnType` overload instead")
 @KaContextParameterApi
-context(s: KaSession)
+context(session: KaSession)
 public val KtDeclaration.returnType: KaType
     @Suppress("DEPRECATION")
-    get() = with(s) { returnType }
+    get() = with(session) { returnType }
 
 /**
  * The function type of the given [KtFunction].
@@ -200,9 +200,9 @@ public val KtDeclaration.returnType: KaType
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(s: KaSession)
+context(session: KaSession)
 public val KtFunction.functionType: KaType
-    get() = with(s) { functionType }
+    get() = with(session) { functionType }
 
 /**
  * The expected [KaType] for the given [PsiElement] if it is an expression, or `null` if the element does not have an expected type.
@@ -212,9 +212,9 @@ public val KtFunction.functionType: KaType
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(s: KaSession)
+context(session: KaSession)
 public val PsiElement.expectedType: KaType?
-    get() = with(s) { expectedType }
+    get() = with(session) { expectedType }
 
 /**
  * Whether this expression is *definitely null*, based on the declared nullability and smart cast types derived from data-flow analysis
@@ -244,9 +244,9 @@ public val PsiElement.expectedType: KaType?
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(s: KaSession)
+context(session: KaSession)
 public val KtExpression.isDefinitelyNull: Boolean
-    get() = with(s) { isDefinitelyNull }
+    get() = with(session) { isDefinitelyNull }
 
 /**
  * Whether this expression is *definitely not null*.
@@ -255,6 +255,6 @@ public val KtExpression.isDefinitelyNull: Boolean
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(s: KaSession)
+context(session: KaSession)
 public val KtExpression.isDefinitelyNotNull: Boolean
-    get() = with(s) { isDefinitelyNotNull }
+    get() = with(session) { isDefinitelyNotNull }

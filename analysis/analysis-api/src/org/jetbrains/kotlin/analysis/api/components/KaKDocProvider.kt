@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -133,9 +133,9 @@ public interface KaKDocProvider : KaSessionComponent {
 @KaNonPublicApi
 @KtNonPublicApi
 @KaContextParameterApi
-context(s: KaSession)
+context(session: KaSession)
 public fun KtDeclaration.findKDoc(): KDocCommentDescriptor? {
-    return with(s) {
+    return with(session) {
         findKDoc()
     }
 }
@@ -168,9 +168,9 @@ public fun KtDeclaration.findKDoc(): KDocCommentDescriptor? {
 @KaNonPublicApi
 @KtNonPublicApi
 @KaContextParameterApi
-context(s: KaSession)
+context(session: KaSession)
 public fun KaDeclarationSymbol.findKDoc(): KDocCommentDescriptor? {
-    return with(s) {
+    return with(session) {
         findKDoc()
     }
 }

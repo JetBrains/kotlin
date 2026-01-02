@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -48,9 +48,9 @@ public interface KaRenderer : KaSessionComponent {
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
 @KaContextParameterApi
-context(s: KaSession)
+context(session: KaSession)
 public fun KaDeclarationSymbol.render(renderer: KaDeclarationRenderer = KaDeclarationRendererForSource.WITH_QUALIFIED_NAMES): String {
-    return with(s) {
+    return with(session) {
         render(
             renderer = renderer,
         )
@@ -68,9 +68,9 @@ public fun KaDeclarationSymbol.render(renderer: KaDeclarationRenderer = KaDeclar
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
 @KaContextParameterApi
-context(s: KaSession)
+context(session: KaSession)
 public fun KaType.render(renderer: KaTypeRenderer = KaTypeRendererForSource.WITH_QUALIFIED_NAMES, position: Variance): String {
-    return with(s) {
+    return with(session) {
         render(
             renderer = renderer,
             position = position,

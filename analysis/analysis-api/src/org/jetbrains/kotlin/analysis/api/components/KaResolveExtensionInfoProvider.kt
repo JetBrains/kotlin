@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -64,9 +64,9 @@ public interface KaResolveExtensionInfoProvider : KaSessionComponent {
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
 @KaContextParameterApi
-context(s: KaSession)
+context(session: KaSession)
 public val resolveExtensionScopeWithTopLevelDeclarations: KaScope
-    get() = with(s) { resolveExtensionScopeWithTopLevelDeclarations }
+    get() = with(session) { resolveExtensionScopeWithTopLevelDeclarations }
 
 /**
  * Whether the given [VirtualFile] is provided by a [KaResolveExtension].
@@ -76,9 +76,9 @@ public val resolveExtensionScopeWithTopLevelDeclarations: KaScope
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
 @KaContextParameterApi
-context(s: KaSession)
+context(session: KaSession)
 public val VirtualFile.isResolveExtensionFile: Boolean
-    get() = with(s) { isResolveExtensionFile }
+    get() = with(session) { isResolveExtensionFile }
 
 /**
  * Whether the given [KtElement] is provided by a [KaResolveExtension].
@@ -88,9 +88,9 @@ public val VirtualFile.isResolveExtensionFile: Boolean
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
 @KaContextParameterApi
-context(s: KaSession)
+context(session: KaSession)
 public val KtElement.isFromResolveExtension: Boolean
-    get() = with(s) { isFromResolveExtension }
+    get() = with(session) { isFromResolveExtension }
 
 /**
  * A list of [PsiElement]s which are used as navigation targets in place of this [KtElement] provided by a [KaResolveExtension].
@@ -105,6 +105,6 @@ public val KtElement.isFromResolveExtension: Boolean
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
 @KaContextParameterApi
-context(s: KaSession)
+context(session: KaSession)
 public val KtElement.resolveExtensionNavigationElements: Collection<PsiElement>
-    get() = with(s) { resolveExtensionNavigationElements }
+    get() = with(session) { resolveExtensionNavigationElements }

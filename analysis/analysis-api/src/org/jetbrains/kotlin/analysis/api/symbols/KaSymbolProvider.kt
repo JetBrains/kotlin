@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -211,9 +211,9 @@ public interface KaSymbolProvider : KaSessionComponent {
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(s: KaSession)
+context(session: KaSession)
 public val KtDeclaration.symbol: KaDeclarationSymbol
-    get() = with(s) { symbol }
+    get() = with(session) { symbol }
 
 /**
  * A [KaVariableSymbol] for the given [KtParameter].
@@ -234,9 +234,9 @@ public val KtDeclaration.symbol: KaDeclarationSymbol
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(s: KaSession)
+context(session: KaSession)
 public val KtParameter.symbol: KaVariableSymbol
-    get() = with(s) { symbol }
+    get() = with(session) { symbol }
 
 /**
  * A [KaFunctionSymbol] for the given [KtNamedFunction].
@@ -245,54 +245,54 @@ public val KtParameter.symbol: KaVariableSymbol
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(s: KaSession)
+context(session: KaSession)
 public val KtNamedFunction.symbol: KaFunctionSymbol
-    get() = with(s) { symbol }
+    get() = with(session) { symbol }
 
 /**
  * A [KaConstructorSymbol] for the given [KtConstructor].
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(s: KaSession)
+context(session: KaSession)
 public val KtConstructor<*>.symbol: KaConstructorSymbol
-    get() = with(s) { symbol }
+    get() = with(session) { symbol }
 
 /**
  * A [KaTypeParameterSymbol] for the given [KtTypeParameter].
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(s: KaSession)
+context(session: KaSession)
 public val KtTypeParameter.symbol: KaTypeParameterSymbol
-    get() = with(s) { symbol }
+    get() = with(session) { symbol }
 
 /**
  * A [KaTypeAliasSymbol] for the given [KtTypeAlias].
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(s: KaSession)
+context(session: KaSession)
 public val KtTypeAlias.symbol: KaTypeAliasSymbol
-    get() = with(s) { symbol }
+    get() = with(session) { symbol }
 
 /**
  * A [KaEnumEntrySymbol] for the given [KtEnumEntry].
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(s: KaSession)
+context(session: KaSession)
 public val KtEnumEntry.symbol: KaEnumEntrySymbol
-    get() = with(s) { symbol }
+    get() = with(session) { symbol }
 
 /**
  * A [KaAnonymousFunctionSymbol] for the given [KtFunctionLiteral].
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(s: KaSession)
+context(session: KaSession)
 public val KtFunctionLiteral.symbol: KaAnonymousFunctionSymbol
-    get() = with(s) { symbol }
+    get() = with(session) { symbol }
 
 /**
  * A [KaVariableSymbol] for the given [KtProperty].
@@ -301,18 +301,18 @@ public val KtFunctionLiteral.symbol: KaAnonymousFunctionSymbol
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(s: KaSession)
+context(session: KaSession)
 public val KtProperty.symbol: KaVariableSymbol
-    get() = with(s) { symbol }
+    get() = with(session) { symbol }
 
 /**
  * A [KaAnonymousObjectSymbol] for the given [KtObjectLiteralExpression].
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(s: KaSession)
+context(session: KaSession)
 public val KtObjectLiteralExpression.symbol: KaAnonymousObjectSymbol
-    get() = with(s) { symbol }
+    get() = with(session) { symbol }
 
 /**
  * A [KaClassSymbol] for the given [KtClassOrObject], or `null` for [KtEnumEntry] declarations.
@@ -321,9 +321,9 @@ public val KtObjectLiteralExpression.symbol: KaAnonymousObjectSymbol
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(s: KaSession)
+context(session: KaSession)
 public val KtClassOrObject.classSymbol: KaClassSymbol?
-    get() = with(s) { classSymbol }
+    get() = with(session) { classSymbol }
 
 /**
  * A [KaClassSymbol] for the given [KtObjectDeclaration].
@@ -333,36 +333,36 @@ public val KtClassOrObject.classSymbol: KaClassSymbol?
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(s: KaSession)
+context(session: KaSession)
 public val KtObjectDeclaration.symbol: KaClassSymbol
-    get() = with(s) { symbol }
+    get() = with(session) { symbol }
 
 /**
  * A [KaNamedClassSymbol] for the given named [KtClassOrObject], or `null` for [KtEnumEntry] declarations and object literals.
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(s: KaSession)
+context(session: KaSession)
 public val KtClassOrObject.namedClassSymbol: KaNamedClassSymbol?
-    get() = with(s) { namedClassSymbol }
+    get() = with(session) { namedClassSymbol }
 
 /**
  * A [KaPropertyAccessorSymbol] for the given [KtPropertyAccessor].
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(s: KaSession)
+context(session: KaSession)
 public val KtPropertyAccessor.symbol: KaPropertyAccessorSymbol
-    get() = with(s) { symbol }
+    get() = with(session) { symbol }
 
 /**
  * A [KaClassInitializerSymbol] for the given [KtClassInitializer].
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(s: KaSession)
+context(session: KaSession)
 public val KtClassInitializer.symbol: KaClassInitializerSymbol
-    get() = with(s) { symbol }
+    get() = with(session) { symbol }
 
 /**
  * A [KaVariableSymbol] that corresponds to the local variable introduced by the given [KtDestructuringDeclarationEntry].
@@ -381,36 +381,36 @@ public val KtClassInitializer.symbol: KaClassInitializerSymbol
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(s: KaSession)
+context(session: KaSession)
 public val KtDestructuringDeclarationEntry.symbol: KaVariableSymbol
-    get() = with(s) { symbol }
+    get() = with(session) { symbol }
 
 /**
  * A [KaDestructuringDeclarationSymbol] for the given [KtDestructuringDeclaration].
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(s: KaSession)
+context(session: KaSession)
 public val KtDestructuringDeclaration.symbol: KaDestructuringDeclarationSymbol
-    get() = with(s) { symbol }
+    get() = with(session) { symbol }
 
 /**
  * A [KaFileSymbol] for a [KtFile].
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(s: KaSession)
+context(session: KaSession)
 public val KtFile.symbol: KaFileSymbol
-    get() = with(s) { symbol }
+    get() = with(session) { symbol }
 
 /**
  * A [KaScriptSymbol] for a [KtScript].
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(s: KaSession)
+context(session: KaSession)
 public val KtScript.symbol: KaScriptSymbol
-    get() = with(s) { symbol }
+    get() = with(session) { symbol }
 
 /**
  * Represents [KtContextReceiver] as a [KaContextParameterSymbol].
@@ -422,9 +422,9 @@ public val KtScript.symbol: KaScriptSymbol
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
 @KaContextParameterApi
-context(s: KaSession)
+context(session: KaSession)
 public val KtContextReceiver.symbol: KaContextParameterSymbol
-    get() = with(s) { symbol }
+    get() = with(session) { symbol }
 
 /**
  * Returns a [KaPackageSymbol] corresponding to the given [fqName] if that package exists and is visible from the current use site, or
@@ -432,9 +432,9 @@ public val KtContextReceiver.symbol: KaContextParameterSymbol
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(s: KaSession)
+context(session: KaSession)
 public fun findPackage(fqName: FqName): KaPackageSymbol? {
-    return with(s) {
+    return with(session) {
         findPackage(
             fqName = fqName,
         )
@@ -446,9 +446,9 @@ public fun findPackage(fqName: FqName): KaPackageSymbol? {
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(s: KaSession)
+context(session: KaSession)
 public fun findClass(classId: ClassId): KaClassSymbol? {
-    return with(s) {
+    return with(session) {
         findClass(
             classId = classId,
         )
@@ -460,9 +460,9 @@ public fun findClass(classId: ClassId): KaClassSymbol? {
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(s: KaSession)
+context(session: KaSession)
 public fun findTypeAlias(classId: ClassId): KaTypeAliasSymbol? {
-    return with(s) {
+    return with(session) {
         findTypeAlias(
             classId = classId,
         )
@@ -476,9 +476,9 @@ public fun findTypeAlias(classId: ClassId): KaTypeAliasSymbol? {
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(s: KaSession)
+context(session: KaSession)
 public fun findClassLike(classId: ClassId): KaClassLikeSymbol? {
-    return with(s) {
+    return with(session) {
         findClassLike(
             classId = classId,
         )
@@ -491,9 +491,9 @@ public fun findClassLike(classId: ClassId): KaClassLikeSymbol? {
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(s: KaSession)
+context(session: KaSession)
 public fun findTopLevelCallables(packageFqName: FqName, name: Name): Sequence<KaCallableSymbol> {
-    return with(s) {
+    return with(session) {
         findTopLevelCallables(
             packageFqName = packageFqName,
             name = name,
@@ -506,6 +506,6 @@ public fun findTopLevelCallables(packageFqName: FqName, name: Name): Sequence<Ka
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(s: KaSession)
+context(session: KaSession)
 public val rootPackageSymbol: KaPackageSymbol
-    get() = with(s) { rootPackageSymbol }
+    get() = with(session) { rootPackageSymbol }

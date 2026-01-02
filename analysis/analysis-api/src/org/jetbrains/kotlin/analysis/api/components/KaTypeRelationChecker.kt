@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -139,12 +139,12 @@ public enum class KaSubtypingErrorTypePolicy {
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(s: KaSession)
+context(session: KaSession)
 public fun KaType.semanticallyEquals(
     other: KaType,
     errorTypePolicy: KaSubtypingErrorTypePolicy = KaSubtypingErrorTypePolicy.STRICT,
 ): Boolean {
-    return with(s) {
+    return with(session) {
         semanticallyEquals(
             other = other,
             errorTypePolicy = errorTypePolicy,
@@ -157,12 +157,12 @@ public fun KaType.semanticallyEquals(
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(s: KaSession)
+context(session: KaSession)
 public fun KaType.isSubtypeOf(
     supertype: KaType,
     errorTypePolicy: KaSubtypingErrorTypePolicy = KaSubtypingErrorTypePolicy.STRICT,
 ): Boolean {
-    return with(s) {
+    return with(session) {
         isSubtypeOf(
             supertype = supertype,
             errorTypePolicy = errorTypePolicy,
@@ -196,12 +196,12 @@ public fun KaType.isSubtypeOf(
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(s: KaSession)
+context(session: KaSession)
 public fun KaType.isSubtypeOf(
     classId: ClassId,
     errorTypePolicy: KaSubtypingErrorTypePolicy = KaSubtypingErrorTypePolicy.STRICT,
 ): Boolean {
-    return with(s) {
+    return with(session) {
         isSubtypeOf(
             classId = classId,
             errorTypePolicy = errorTypePolicy,
@@ -229,12 +229,12 @@ public fun KaType.isSubtypeOf(
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(s: KaSession)
+context(session: KaSession)
 public fun KaType.isSubtypeOf(
     symbol: KaClassLikeSymbol,
     errorTypePolicy: KaSubtypingErrorTypePolicy = KaSubtypingErrorTypePolicy.STRICT,
 ): Boolean {
-    return with(s) {
+    return with(session) {
         isSubtypeOf(
             symbol = symbol,
             errorTypePolicy = errorTypePolicy,
@@ -251,9 +251,9 @@ public fun KaType.isSubtypeOf(
 @KaExperimentalApi
 @KaK1Unsupported
 @KaContextParameterApi
-context(s: KaSession)
+context(session: KaSession)
 public fun KaCallableSymbol.canBeCalledAsExtensionOn(receiverType: KaType): Boolean {
-    return with(s) {
+    return with(session) {
         canBeCalledAsExtensionOn(
             receiverType = receiverType,
         )

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -76,7 +76,7 @@ public inline fun KaSession.buildSubstitutor(
  */
 @KaCustomContextParameterBridge
 @KaExperimentalApi
-context(s: KaSession)
+context(session: KaSession)
 public inline fun buildSubstitutor(
     build: KaSubstitutorBuilder.() -> Unit,
 ): KaSubstitutor {
@@ -85,7 +85,7 @@ public inline fun buildSubstitutor(
         callsInPlace(build, InvocationKind.EXACTLY_ONCE)
     }
 
-    return s.buildSubstitutor(build)
+    return session.buildSubstitutor(build)
 }
 
 @KaExperimentalApi
@@ -130,9 +130,9 @@ public class KaSubstitutorBuilder
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
 @KaContextParameterApi
-context(s: KaSession)
+context(session: KaSession)
 public fun createSubstitutor(mappings: Map<KaTypeParameterSymbol, KaType>): KaSubstitutor {
-    return with(s) {
+    return with(session) {
         createSubstitutor(
             mappings = mappings,
         )
@@ -163,9 +163,9 @@ public fun createSubstitutor(mappings: Map<KaTypeParameterSymbol, KaType>): KaSu
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
 @KaContextParameterApi
-context(s: KaSession)
+context(session: KaSession)
 public fun createInheritanceTypeSubstitutor(subClass: KaClassSymbol, superClass: KaClassSymbol): KaSubstitutor? {
-    return with(s) {
+    return with(session) {
         createInheritanceTypeSubstitutor(
             subClass = subClass,
             superClass = superClass,

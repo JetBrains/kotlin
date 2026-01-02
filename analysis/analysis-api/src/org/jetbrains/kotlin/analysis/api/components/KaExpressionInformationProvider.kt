@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -115,10 +115,10 @@ public interface KaExpressionInformationProvider : KaSessionComponent {
 @Deprecated("The API is obsolete. Use `resolveSymbol()` instead.", ReplaceWith("resolveSymbol()"))
 @KaIdeApi
 @KaContextParameterApi
-context(s: KaSession)
+context(session: KaSession)
 public val KtReturnExpression.targetSymbol: KaCallableSymbol?
     @Suppress("DEPRECATION")
-    get() = with(s) { targetSymbol }
+    get() = with(session) { targetSymbol }
 
 /**
  * Computes the missing cases of the given [KtWhenExpression].
@@ -155,9 +155,9 @@ public val KtReturnExpression.targetSymbol: KaCallableSymbol?
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaIdeApi
 @KaContextParameterApi
-context(s: KaSession)
+context(session: KaSession)
 public fun KtWhenExpression.computeMissingCases(): List<WhenMissingCase> {
-    return with(s) {
+    return with(session) {
         computeMissingCases()
     }
 }
@@ -185,9 +185,9 @@ public fun KtWhenExpression.computeMissingCases(): List<WhenMissingCase> {
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
-context(s: KaSession)
+context(session: KaSession)
 public val KtExpression.isUsedAsExpression: Boolean
-    get() = with(s) { isUsedAsExpression }
+    get() = with(session) { isUsedAsExpression }
 
 /**
  * Whether the value of the given [KtExpression] is used as the resulting expression of some lambda block.
@@ -213,6 +213,6 @@ public val KtExpression.isUsedAsExpression: Boolean
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
 @KaContextParameterApi
-context(s: KaSession)
+context(session: KaSession)
 public val KtExpression.isUsedAsResultOfLambda: Boolean
-    get() = with(s) { isUsedAsResultOfLambda }
+    get() = with(session) { isUsedAsResultOfLambda }
