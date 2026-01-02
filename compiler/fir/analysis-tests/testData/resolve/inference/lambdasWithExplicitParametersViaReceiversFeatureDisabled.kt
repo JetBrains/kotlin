@@ -6,7 +6,7 @@ val l1: String.() -> String = fun(x: String) = ""
 val l2: String.() -> String = { x: String -> "" }
 
 val l3: String.() -> String = fun(x) = x
-val l4: String.() -> String <!INITIALIZER_TYPE_MISMATCH!>=<!> { <!CANNOT_INFER_VALUE_PARAMETER_TYPE!>x<!> -> x }
+val l4: String.() -> String = { x -> x }
 
 val l5: String.(Int) -> String = fun(x: String, y) = ""
 val l6: String.(Int) -> String = { x: String, y -> "" }

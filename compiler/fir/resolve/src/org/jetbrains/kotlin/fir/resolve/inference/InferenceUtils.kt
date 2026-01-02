@@ -73,12 +73,7 @@ fun extractLambdaInfoFromFunctionType(
             isExtensionFunctionType &&
             valueParametersTypesIncludingReceiver.size == argumentValueParameters.size
         ) {
-            // (T, ...) -> V can be converter to T.(...) -> V
-            val firstValueParameter = argumentValueParameters.firstOrNull()
-            val extensionParameter = valueParametersTypesIncludingReceiver.firstOrNull()
-            if (firstValueParameter?.returnTypeRef?.coneTypeSafe<ConeKotlinType>() == extensionParameter) {
-                coerceFirstParameterToExtensionReceiver = true
-            }
+            coerceFirstParameterToExtensionReceiver = true
         }
 
         if (coerceFirstParameterToExtensionReceiver) {
