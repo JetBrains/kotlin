@@ -19803,6 +19803,12 @@ public class LLPartialDiagnosticsFe10TestGenerated extends AbstractLLPartialDiag
         }
 
         @Test
+        @TestMetadata("approximateBeforeFixation2.kt")
+        public void testApproximateBeforeFixation2() {
+          runTest("compiler/testData/diagnostics/tests/inference/capturedTypes/approximateBeforeFixation2.kt");
+        }
+
+        @Test
         @TestMetadata("approximateContravariantCapturedTypes.kt")
         public void testApproximateContravariantCapturedTypes() {
           runTest("compiler/testData/diagnostics/tests/inference/capturedTypes/approximateContravariantCapturedTypes.kt");
@@ -21204,6 +21210,22 @@ public class LLPartialDiagnosticsFe10TestGenerated extends AbstractLLPartialDiag
         @TestMetadata("substitutingSuperTypes2.kt")
         public void testSubstitutingSuperTypes2() {
           runTest("compiler/testData/diagnostics/tests/inference/emptyIntersectionTypes/substitutingSuperTypes2.kt");
+        }
+      }
+
+      @Nested
+      @TestMetadata("compiler/testData/diagnostics/tests/inference/fixationOrder")
+      @TestDataPath("$PROJECT_ROOT")
+      public class FixationOrder {
+        @Test
+        public void testAllFilesPresentInFixationOrder() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inference/fixationOrder"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|partialBody|fir|ll|latestLV)\\.kts?$"), true);
+        }
+
+        @Test
+        @TestMetadata("onesForOutputTypesPostponed.kt")
+        public void testOnesForOutputTypesPostponed() {
+          runTest("compiler/testData/diagnostics/tests/inference/fixationOrder/onesForOutputTypesPostponed.kt");
         }
       }
 
