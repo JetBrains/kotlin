@@ -37928,6 +37928,12 @@ public class LLReversedDiagnosticsFe10TestGenerated extends AbstractLLReversedDi
       }
 
       @Test
+      @TestMetadata("kt30245_legacy.kt")
+      public void testKt30245_legacy() {
+        runTest("compiler/testData/diagnostics/tests/regressions/kt30245_legacy.kt");
+      }
+
+      @Test
       @TestMetadata("kt306.kt")
       public void testKt306() {
         runTest("compiler/testData/diagnostics/tests/regressions/kt306.kt");
