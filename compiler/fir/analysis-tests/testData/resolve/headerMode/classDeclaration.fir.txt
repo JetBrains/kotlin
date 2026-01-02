@@ -17,9 +17,6 @@ FILE: classDeclaration.kt
          {
         }
 
-        private final fun funC(): R|kotlin/String| {
-        }
-
         public final fun funD(): R|kotlin/Int| {
         }
 

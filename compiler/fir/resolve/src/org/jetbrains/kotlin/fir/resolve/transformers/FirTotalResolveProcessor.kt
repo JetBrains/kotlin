@@ -16,6 +16,9 @@ import org.jetbrains.kotlin.fir.resolve.transformers.contracts.FirContractResolv
 import org.jetbrains.kotlin.fir.resolve.transformers.mpp.FirExpectActualMatcherProcessor
 import org.jetbrains.kotlin.fir.resolve.transformers.plugin.*
 import org.jetbrains.kotlin.fir.withFileAnalysisExceptionWrapping
+import org.jetbrains.kotlin.config.AnalysisFlags
+import org.jetbrains.kotlin.fir.languageVersionSettings
+import org.jetbrains.kotlin.fir.resolve.optimization.FirAggressivePruningProcessor
 
 class FirTotalResolveProcessor(private val session: FirSession) {
     val scopeSession: ScopeSession = ScopeSession()
@@ -87,7 +90,14 @@ fun FirResolvePhase.createCompilerProcessorByPhase(
         IMPLICIT_TYPES_BODY_RESOLVE -> FirImplicitTypeBodyResolveProcessor(session, scopeSession)
         CONSTANT_EVALUATION -> FirConstantEvaluationProcessor(session, scopeSession)
         ANNOTATION_ARGUMENTS -> FirAnnotationArgumentsProcessor(session, scopeSession)
-        BODY_RESOLVE -> FirBodyResolveProcessor(session, scopeSession)
+        BODY_RESOLVE -> {
+            val processor = FirBodyResolveProcessor(session, scopeSession)
+            if (session.languageVersionSettings.getFlag(AnalysisFlags.headerMode)) {
+                FirAggressivePruningProcessor(processor)
+            } else {
+                processor
+            }
+        }
         EXPECT_ACTUAL_MATCHING -> FirExpectActualMatcherProcessor(session, scopeSession)
     }
 }
