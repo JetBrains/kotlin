@@ -20,5 +20,14 @@ open class B : A() {
         set(value) {}
 }
 
+interface NumberHolder {
+    val number: Number
+}
+
+class FinalNumberHolder : NumberHolder {
+    override val number: Number
+        <!NON_FINAL_PROPERTY_WITH_EXPLICIT_BACKING_FIELD!>field = 0f<!>
+}
+
 /* GENERATED_FIR_TAGS: additiveExpression, assignment, classDeclaration, explicitBackingField, functionDeclaration,
 getter, integerLiteral, override, propertyDeclaration, setter */

@@ -29,3 +29,18 @@ FILE: overriddenPropertiesWithExplicitBackingFields.kt
             }
 
     }
+    public abstract interface NumberHolder : R|kotlin/Any| {
+        public abstract val number: R|kotlin/Number|
+            public get(): R|kotlin/Number|
+
+    }
+    public final class FinalNumberHolder : R|NumberHolder| {
+        public constructor(): R|FinalNumberHolder| {
+            super<R|kotlin/Any|>()
+        }
+
+        public open override val number: R|kotlin/Number|
+            private final backing field field: R|kotlin/Float| = Float(0.0)
+            public get(): R|kotlin/Number|
+
+    }
