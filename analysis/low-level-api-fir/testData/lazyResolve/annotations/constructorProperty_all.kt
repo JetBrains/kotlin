@@ -9,6 +9,7 @@ class MyC<caret>lass(
     @all:ParameterPropertyAndField
     @all:Get
     @all:Everything
+    @all:Deprecated("Obsolete")
     var prop: Int,
 )
 

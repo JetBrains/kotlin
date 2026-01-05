@@ -1,11 +1,11 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] constructorProperty_all.kt
     public final? [ResolvedTo(RAW_FIR)] class MyClass : R|kotlin/Any| {
-        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/MyClass.prop] @ALL:Param[Unresolved]() @ALL:Property[Unresolved]() @ALL:Field[Unresolved]() @ALL:PropertyAndField[Unresolved]() @ALL:ParameterPropertyAndField[Unresolved]() @ALL:Get[Unresolved]() @ALL:Everything[Unresolved]() prop: Int): R|MyClass| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/MyClass.prop] @ALL:Param[Unresolved]() @ALL:Property[Unresolved]() @ALL:Field[Unresolved]() @ALL:PropertyAndField[Unresolved]() @ALL:ParameterPropertyAndField[Unresolved]() @ALL:Get[Unresolved]() @ALL:Everything[Unresolved]() @ALL:Deprecated[Unresolved](LAZY_EXPRESSION) prop: Int): R|MyClass| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        @ALL:Param[Unresolved]() @ALL:Property[Unresolved]() @ALL:Field[Unresolved]() @ALL:PropertyAndField[Unresolved]() @ALL:ParameterPropertyAndField[Unresolved]() @ALL:Get[Unresolved]() @ALL:Everything[Unresolved]() public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] var prop: Int = R|<local>/prop|
+        @ALL:Param[Unresolved]() @ALL:Property[Unresolved]() @ALL:Field[Unresolved]() @ALL:PropertyAndField[Unresolved]() @ALL:ParameterPropertyAndField[Unresolved]() @ALL:Get[Unresolved]() @ALL:Everything[Unresolved]() @ALL:Deprecated[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] var prop: Int = R|<local>/prop|
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] get(): Int
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] set([ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit|
 
@@ -56,11 +56,11 @@ FILE: [ResolvedTo(RAW_FIR)] constructorProperty_all.kt
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] constructorProperty_all.kt
     public final? [ResolvedTo(RAW_FIR)] class MyClass : R|kotlin/Any| {
-        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/MyClass.prop] @ALL:Param[Unresolved]() @ALL:Property[Unresolved]() @ALL:Field[Unresolved]() @ALL:PropertyAndField[Unresolved]() @ALL:ParameterPropertyAndField[Unresolved]() @ALL:Get[Unresolved]() @ALL:Everything[Unresolved]() prop: Int): R|MyClass| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/MyClass.prop] @ALL:Param[Unresolved]() @ALL:Property[Unresolved]() @ALL:Field[Unresolved]() @ALL:PropertyAndField[Unresolved]() @ALL:ParameterPropertyAndField[Unresolved]() @ALL:Get[Unresolved]() @ALL:Everything[Unresolved]() @ALL:Deprecated[Unresolved](LAZY_EXPRESSION) prop: Int): R|MyClass| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        @ALL:Param[Unresolved]() @ALL:Property[Unresolved]() @ALL:Field[Unresolved]() @ALL:PropertyAndField[Unresolved]() @ALL:ParameterPropertyAndField[Unresolved]() @ALL:Get[Unresolved]() @ALL:Everything[Unresolved]() public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] var prop: Int = R|<local>/prop|
+        @ALL:Param[Unresolved]() @ALL:Property[Unresolved]() @ALL:Field[Unresolved]() @ALL:PropertyAndField[Unresolved]() @ALL:ParameterPropertyAndField[Unresolved]() @ALL:Get[Unresolved]() @ALL:Everything[Unresolved]() @ALL:Deprecated[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] var prop: Int = R|<local>/prop|
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] get(): Int
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] set([ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit|
 
@@ -111,11 +111,11 @@ FILE: [ResolvedTo(IMPORTS)] constructorProperty_all.kt
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] constructorProperty_all.kt
     public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class MyClass : R|kotlin/Any| {
-        public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingClassKey=MyClass] constructor([ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [CorrespondingProperty=/MyClass.prop] @ALL:Param[Unresolved]() @ALL:Property[Unresolved]() @ALL:Field[Unresolved]() @ALL:PropertyAndField[Unresolved]() @ALL:ParameterPropertyAndField[Unresolved]() @ALL:Get[Unresolved]() @ALL:Everything[Unresolved]() prop: Int): R|MyClass| {
+        public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingClassKey=MyClass] constructor([ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [CorrespondingProperty=/MyClass.prop] @ALL:Param[Unresolved]() @ALL:Property[Unresolved]() @ALL:Field[Unresolved]() @ALL:PropertyAndField[Unresolved]() @ALL:ParameterPropertyAndField[Unresolved]() @ALL:Get[Unresolved]() @ALL:Everything[Unresolved]() @ALL:R|kotlin/Deprecated|[CompilerRequiredAnnotations](String(Obsolete)) prop: Int): R|MyClass| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        @ALL:Param[Unresolved]() @ALL:Property[Unresolved]() @ALL:Field[Unresolved]() @ALL:PropertyAndField[Unresolved]() @ALL:ParameterPropertyAndField[Unresolved]() @ALL:Get[Unresolved]() @ALL:Everything[Unresolved]() public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [IsFromPrimaryConstructor=true] var prop: Int = R|<local>/prop|
+        @ALL:Param[Unresolved]() @ALL:Property[Unresolved]() @ALL:Field[Unresolved]() @ALL:PropertyAndField[Unresolved]() @ALL:ParameterPropertyAndField[Unresolved]() @ALL:Get[Unresolved]() @ALL:Everything[Unresolved]() @ALL:R|kotlin/Deprecated|[CompilerRequiredAnnotations](String(Obsolete)) public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [IsFromPrimaryConstructor=true] var prop: Int = R|<local>/prop|
             public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingClassKey=MyClass] get(): Int
             public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingClassKey=MyClass] set([ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] value: Int): R|kotlin/Unit|
 
@@ -166,11 +166,11 @@ FILE: [ResolvedTo(IMPORTS)] constructorProperty_all.kt
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] constructorProperty_all.kt
     public final? [ResolvedTo(COMPANION_GENERATION)] class MyClass : R|kotlin/Any| {
-        public? [ResolvedTo(COMPANION_GENERATION)] [ContainingClassKey=MyClass] constructor([ResolvedTo(COMPANION_GENERATION)] [CorrespondingProperty=/MyClass.prop] @ALL:Param[Unresolved]() @ALL:Property[Unresolved]() @ALL:Field[Unresolved]() @ALL:PropertyAndField[Unresolved]() @ALL:ParameterPropertyAndField[Unresolved]() @ALL:Get[Unresolved]() @ALL:Everything[Unresolved]() prop: Int): R|MyClass| {
+        public? [ResolvedTo(COMPANION_GENERATION)] [ContainingClassKey=MyClass] constructor([ResolvedTo(COMPANION_GENERATION)] [CorrespondingProperty=/MyClass.prop] @ALL:Param[Unresolved]() @ALL:Property[Unresolved]() @ALL:Field[Unresolved]() @ALL:PropertyAndField[Unresolved]() @ALL:ParameterPropertyAndField[Unresolved]() @ALL:Get[Unresolved]() @ALL:Everything[Unresolved]() @ALL:R|kotlin/Deprecated|[CompilerRequiredAnnotations](String(Obsolete)) prop: Int): R|MyClass| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        @ALL:Param[Unresolved]() @ALL:Property[Unresolved]() @ALL:Field[Unresolved]() @ALL:PropertyAndField[Unresolved]() @ALL:ParameterPropertyAndField[Unresolved]() @ALL:Get[Unresolved]() @ALL:Everything[Unresolved]() public? final? [ResolvedTo(COMPANION_GENERATION)] [IsFromPrimaryConstructor=true] var prop: Int = R|<local>/prop|
+        @ALL:Param[Unresolved]() @ALL:Property[Unresolved]() @ALL:Field[Unresolved]() @ALL:PropertyAndField[Unresolved]() @ALL:ParameterPropertyAndField[Unresolved]() @ALL:Get[Unresolved]() @ALL:Everything[Unresolved]() @ALL:R|kotlin/Deprecated|[CompilerRequiredAnnotations](String(Obsolete)) public? final? [ResolvedTo(COMPANION_GENERATION)] [IsFromPrimaryConstructor=true] var prop: Int = R|<local>/prop|
             public? [ResolvedTo(COMPANION_GENERATION)] [ContainingClassKey=MyClass] get(): Int
             public? [ResolvedTo(COMPANION_GENERATION)] [ContainingClassKey=MyClass] set([ResolvedTo(COMPANION_GENERATION)] value: Int): R|kotlin/Unit|
 
@@ -221,11 +221,11 @@ FILE: [ResolvedTo(IMPORTS)] constructorProperty_all.kt
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] constructorProperty_all.kt
     public final? [ResolvedTo(SUPER_TYPES)] class MyClass : R|kotlin/Any| {
-        public? [ResolvedTo(SUPER_TYPES)] [ContainingClassKey=MyClass] constructor([ResolvedTo(SUPER_TYPES)] [CorrespondingProperty=/MyClass.prop] @ALL:Param[Unresolved]() @ALL:Property[Unresolved]() @ALL:Field[Unresolved]() @ALL:PropertyAndField[Unresolved]() @ALL:ParameterPropertyAndField[Unresolved]() @ALL:Get[Unresolved]() @ALL:Everything[Unresolved]() prop: Int): R|MyClass| {
+        public? [ResolvedTo(SUPER_TYPES)] [ContainingClassKey=MyClass] constructor([ResolvedTo(SUPER_TYPES)] [CorrespondingProperty=/MyClass.prop] @ALL:Param[Unresolved]() @ALL:Property[Unresolved]() @ALL:Field[Unresolved]() @ALL:PropertyAndField[Unresolved]() @ALL:ParameterPropertyAndField[Unresolved]() @ALL:Get[Unresolved]() @ALL:Everything[Unresolved]() @ALL:R|kotlin/Deprecated|[CompilerRequiredAnnotations](String(Obsolete)) prop: Int): R|MyClass| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        @ALL:Param[Unresolved]() @ALL:Property[Unresolved]() @ALL:Field[Unresolved]() @ALL:PropertyAndField[Unresolved]() @ALL:ParameterPropertyAndField[Unresolved]() @ALL:Get[Unresolved]() @ALL:Everything[Unresolved]() public? final? [ResolvedTo(SUPER_TYPES)] [IsFromPrimaryConstructor=true] var prop: Int = R|<local>/prop|
+        @ALL:Param[Unresolved]() @ALL:Property[Unresolved]() @ALL:Field[Unresolved]() @ALL:PropertyAndField[Unresolved]() @ALL:ParameterPropertyAndField[Unresolved]() @ALL:Get[Unresolved]() @ALL:Everything[Unresolved]() @ALL:R|kotlin/Deprecated|[CompilerRequiredAnnotations](String(Obsolete)) public? final? [ResolvedTo(SUPER_TYPES)] [IsFromPrimaryConstructor=true] var prop: Int = R|<local>/prop|
             public? [ResolvedTo(SUPER_TYPES)] [ContainingClassKey=MyClass] get(): Int
             public? [ResolvedTo(SUPER_TYPES)] [ContainingClassKey=MyClass] set([ResolvedTo(SUPER_TYPES)] value: Int): R|kotlin/Unit|
 
@@ -280,8 +280,8 @@ FILE: [ResolvedTo(IMPORTS)] constructorProperty_all.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        @ALL:R|Property|[Types]() @ALL:R|PropertyAndField|[Types]() @ALL:R|ParameterPropertyAndField|[Types]() @ALL:R|Everything|[Types]() field:@R|Field|[Types]() @R|PropertyAndField|[Types]() @R|ParameterPropertyAndField|[Types]() @R|Everything|[Types]() public? final? [ResolvedTo(TYPES)] [IsFromPrimaryConstructor=true] var prop: R|kotlin/Int| = R|<local>/prop|
-            @R|Get|[Types]() @R|Everything|[Types]() public? [ResolvedTo(TYPES)] [ContainingClassKey=MyClass] get(): R|kotlin/Int|
+        @ALL:R|Property|[Types]() @ALL:R|PropertyAndField|[Types]() @ALL:R|ParameterPropertyAndField|[Types]() @ALL:R|Everything|[Types]() @ALL:R|kotlin/Deprecated|[Types](String(Obsolete)) field:@R|Field|[Types]() @R|PropertyAndField|[Types]() @R|ParameterPropertyAndField|[Types]() @R|Everything|[Types]() public? final? [ResolvedTo(TYPES)] [IsFromPrimaryConstructor=true] var prop: R|kotlin/Int| = R|<local>/prop|
+            @R|Get|[Types]() @R|Everything|[Types]() @R|kotlin/Deprecated|[Types](String(Obsolete)) public? [ResolvedTo(TYPES)] [ContainingClassKey=MyClass] get(): R|kotlin/Int|
             public? [ResolvedTo(TYPES)] [ContainingClassKey=MyClass] set([ResolvedTo(TYPES)] @R|Param|[Types]() @R|ParameterPropertyAndField|[Types]() @R|Everything|[Types]() value: R|kotlin/Int|): R|kotlin/Unit|
 
     }
@@ -335,8 +335,8 @@ FILE: [ResolvedTo(IMPORTS)] constructorProperty_all.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        @ALL:R|Property|[Types]() @ALL:R|PropertyAndField|[Types]() @ALL:R|ParameterPropertyAndField|[Types]() @ALL:R|Everything|[Types]() field:@R|Field|[Types]() @R|PropertyAndField|[Types]() @R|ParameterPropertyAndField|[Types]() @R|Everything|[Types]() public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] var prop: R|kotlin/Int| = R|<local>/prop|
-            @R|Get|[Types]() @R|Everything|[Types]() public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] get(): R|kotlin/Int|
+        @ALL:R|Property|[Types]() @ALL:R|PropertyAndField|[Types]() @ALL:R|ParameterPropertyAndField|[Types]() @ALL:R|Everything|[Types]() @ALL:R|kotlin/Deprecated|[Types](String(Obsolete)) field:@R|Field|[Types]() @R|PropertyAndField|[Types]() @R|ParameterPropertyAndField|[Types]() @R|Everything|[Types]() public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] var prop: R|kotlin/Int| = R|<local>/prop|
+            @R|Get|[Types]() @R|Everything|[Types]() @R|kotlin/Deprecated|[Types](String(Obsolete)) public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] get(): R|kotlin/Int|
             public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] set([ResolvedTo(STATUS)] @R|Param|[Types]() @R|ParameterPropertyAndField|[Types]() @R|Everything|[Types]() value: R|kotlin/Int|): R|kotlin/Unit|
 
     }
@@ -390,8 +390,8 @@ FILE: [ResolvedTo(IMPORTS)] constructorProperty_all.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        @ALL:R|Property|[Types]() @ALL:R|PropertyAndField|[Types]() @ALL:R|ParameterPropertyAndField|[Types]() @ALL:R|Everything|[Types]() field:@R|Field|[Types]() @R|PropertyAndField|[Types]() @R|ParameterPropertyAndField|[Types]() @R|Everything|[Types]() public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [IsFromPrimaryConstructor=true] var prop: R|kotlin/Int| = R|<local>/prop|
-            @R|Get|[Types]() @R|Everything|[Types]() public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=MyClass] get(): R|kotlin/Int|
+        @ALL:R|Property|[Types]() @ALL:R|PropertyAndField|[Types]() @ALL:R|ParameterPropertyAndField|[Types]() @ALL:R|Everything|[Types]() @ALL:R|kotlin/Deprecated|[Types](String(Obsolete)) field:@R|Field|[Types]() @R|PropertyAndField|[Types]() @R|ParameterPropertyAndField|[Types]() @R|Everything|[Types]() public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [IsFromPrimaryConstructor=true] var prop: R|kotlin/Int| = R|<local>/prop|
+            @R|Get|[Types]() @R|Everything|[Types]() @R|kotlin/Deprecated|[Types](String(Obsolete)) public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=MyClass] get(): R|kotlin/Int|
             public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=MyClass] set([ResolvedTo(EXPECT_ACTUAL_MATCHING)] @R|Param|[Types]() @R|ParameterPropertyAndField|[Types]() @R|Everything|[Types]() value: R|kotlin/Int|): R|kotlin/Unit|
 
     }
@@ -445,8 +445,8 @@ FILE: [ResolvedTo(IMPORTS)] constructorProperty_all.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        @ALL:R|Property|[Types]() @ALL:R|PropertyAndField|[Types]() @ALL:R|ParameterPropertyAndField|[Types]() @ALL:R|Everything|[Types]() field:@R|Field|[Types]() @R|PropertyAndField|[Types]() @R|ParameterPropertyAndField|[Types]() @R|Everything|[Types]() public final [ResolvedTo(CONTRACTS)] [IsFromPrimaryConstructor=true] var prop: R|kotlin/Int| = R|<local>/prop|
-            @R|Get|[Types]() @R|Everything|[Types]() public [ResolvedTo(CONTRACTS)] [ContainingClassKey=MyClass] get(): R|kotlin/Int|
+        @ALL:R|Property|[Types]() @ALL:R|PropertyAndField|[Types]() @ALL:R|ParameterPropertyAndField|[Types]() @ALL:R|Everything|[Types]() @ALL:R|kotlin/Deprecated|[Types](String(Obsolete)) field:@R|Field|[Types]() @R|PropertyAndField|[Types]() @R|ParameterPropertyAndField|[Types]() @R|Everything|[Types]() public final [ResolvedTo(CONTRACTS)] [IsFromPrimaryConstructor=true] var prop: R|kotlin/Int| = R|<local>/prop|
+            @R|Get|[Types]() @R|Everything|[Types]() @R|kotlin/Deprecated|[Types](String(Obsolete)) public [ResolvedTo(CONTRACTS)] [ContainingClassKey=MyClass] get(): R|kotlin/Int|
             public [ResolvedTo(CONTRACTS)] [ContainingClassKey=MyClass] set([ResolvedTo(CONTRACTS)] @R|Param|[Types]() @R|ParameterPropertyAndField|[Types]() @R|Everything|[Types]() value: R|kotlin/Int|): R|kotlin/Unit|
 
     }
@@ -500,8 +500,8 @@ FILE: [ResolvedTo(IMPORTS)] constructorProperty_all.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        @ALL:R|Property|[Types]() @ALL:R|PropertyAndField|[Types]() @ALL:R|ParameterPropertyAndField|[Types]() @ALL:R|Everything|[Types]() field:@R|Field|[Types]() @R|PropertyAndField|[Types]() @R|ParameterPropertyAndField|[Types]() @R|Everything|[Types]() public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [IsFromPrimaryConstructor=true] var prop: R|kotlin/Int| = R|<local>/prop|
-            @R|Get|[Types]() @R|Everything|[Types]() public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=MyClass] get(): R|kotlin/Int|
+        @ALL:R|Property|[Types]() @ALL:R|PropertyAndField|[Types]() @ALL:R|ParameterPropertyAndField|[Types]() @ALL:R|Everything|[Types]() @ALL:R|kotlin/Deprecated|[Types](String(Obsolete)) field:@R|Field|[Types]() @R|PropertyAndField|[Types]() @R|ParameterPropertyAndField|[Types]() @R|Everything|[Types]() public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [IsFromPrimaryConstructor=true] var prop: R|kotlin/Int| = R|<local>/prop|
+            @R|Get|[Types]() @R|Everything|[Types]() @R|kotlin/Deprecated|[Types](String(Obsolete)) public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=MyClass] get(): R|kotlin/Int|
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=MyClass] set([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] @R|Param|[Types]() @R|ParameterPropertyAndField|[Types]() @R|Everything|[Types]() value: R|kotlin/Int|): R|kotlin/Unit|
 
     }
@@ -555,8 +555,8 @@ FILE: [ResolvedTo(IMPORTS)] constructorProperty_all.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        @ALL:R|Property|[Types]() @ALL:R|PropertyAndField|[Types]() @ALL:R|ParameterPropertyAndField|[Types]() @ALL:R|Everything|[Types]() field:@R|Field|[Types]() @R|PropertyAndField|[Types]() @R|ParameterPropertyAndField|[Types]() @R|Everything|[Types]() public final [ResolvedTo(CONSTANT_EVALUATION)] [IsFromPrimaryConstructor=true] var prop: R|kotlin/Int| = R|<local>/prop|
-            @R|Get|[Types]() @R|Everything|[Types]() public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=MyClass] get(): R|kotlin/Int|
+        @ALL:R|Property|[Types]() @ALL:R|PropertyAndField|[Types]() @ALL:R|ParameterPropertyAndField|[Types]() @ALL:R|Everything|[Types]() @ALL:R|kotlin/Deprecated|[Types](String(Obsolete)) field:@R|Field|[Types]() @R|PropertyAndField|[Types]() @R|ParameterPropertyAndField|[Types]() @R|Everything|[Types]() public final [ResolvedTo(CONSTANT_EVALUATION)] [IsFromPrimaryConstructor=true] var prop: R|kotlin/Int| = R|<local>/prop|
+            @R|Get|[Types]() @R|Everything|[Types]() @R|kotlin/Deprecated|[Types](String(Obsolete)) public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=MyClass] get(): R|kotlin/Int|
             public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=MyClass] set([ResolvedTo(CONSTANT_EVALUATION)] @R|Param|[Types]() @R|ParameterPropertyAndField|[Types]() @R|Everything|[Types]() value: R|kotlin/Int|): R|kotlin/Unit|
 
     }
@@ -610,8 +610,8 @@ FILE: [ResolvedTo(IMPORTS)] constructorProperty_all.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        @ALL:R|Property|[Types]() @ALL:R|PropertyAndField|[Types]() @ALL:R|ParameterPropertyAndField|[Types]() @ALL:R|Everything|[Types]() field:@R|Field|[Types]() @R|PropertyAndField|[Types]() @R|ParameterPropertyAndField|[Types]() @R|Everything|[Types]() public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [IsFromPrimaryConstructor=true] var prop: R|kotlin/Int| = R|<local>/prop|
-            @R|Get|[Types]() @R|Everything|[Types]() public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=MyClass] get(): R|kotlin/Int|
+        @ALL:R|Property|[Types]() @ALL:R|PropertyAndField|[Types]() @ALL:R|ParameterPropertyAndField|[Types]() @ALL:R|Everything|[Types]() @ALL:R|kotlin/Deprecated|[Types](message = String(Obsolete)) field:@R|Field|[Types]() @R|PropertyAndField|[Types]() @R|ParameterPropertyAndField|[Types]() @R|Everything|[Types]() public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [IsFromPrimaryConstructor=true] var prop: R|kotlin/Int| = R|<local>/prop|
+            @R|Get|[Types]() @R|Everything|[Types]() @R|kotlin/Deprecated|[Types](message = String(Obsolete)) public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=MyClass] get(): R|kotlin/Int|
             public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=MyClass] set([ResolvedTo(ANNOTATION_ARGUMENTS)] @R|Param|[Types]() @R|ParameterPropertyAndField|[Types]() @R|Everything|[Types]() value: R|kotlin/Int|): R|kotlin/Unit|
 
     }
@@ -665,8 +665,8 @@ FILE: [ResolvedTo(IMPORTS)] constructorProperty_all.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        @ALL:R|Property|[Types]() @ALL:R|PropertyAndField|[Types]() @ALL:R|ParameterPropertyAndField|[Types]() @ALL:R|Everything|[Types]() field:@R|Field|[Types]() @R|PropertyAndField|[Types]() @R|ParameterPropertyAndField|[Types]() @R|Everything|[Types]() public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] var prop: R|kotlin/Int| = R|<local>/prop|
-            @R|Get|[Types]() @R|Everything|[Types]() public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] get(): R|kotlin/Int|
+        @ALL:R|Property|[Types]() @ALL:R|PropertyAndField|[Types]() @ALL:R|ParameterPropertyAndField|[Types]() @ALL:R|Everything|[Types]() @ALL:R|kotlin/Deprecated|[Types](message = String(Obsolete)) field:@R|Field|[Types]() @R|PropertyAndField|[Types]() @R|ParameterPropertyAndField|[Types]() @R|Everything|[Types]() public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] var prop: R|kotlin/Int| = R|<local>/prop|
+            @R|Get|[Types]() @R|Everything|[Types]() @R|kotlin/Deprecated|[Types](message = String(Obsolete)) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] get(): R|kotlin/Int|
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] set([ResolvedTo(BODY_RESOLVE)] @R|Param|[Types]() @R|ParameterPropertyAndField|[Types]() @R|Everything|[Types]() value: R|kotlin/Int|): R|kotlin/Unit|
 
     }
@@ -720,8 +720,8 @@ FILE: [ResolvedTo(BODY_RESOLVE)] constructorProperty_all.kt
             super<R|kotlin/Any|>()
         }
 
-        @ALL:R|Property|[Types]() @ALL:R|PropertyAndField|[Types]() @ALL:R|ParameterPropertyAndField|[Types]() @ALL:R|Everything|[Types]() field:@R|Field|[Types]() @R|PropertyAndField|[Types]() @R|ParameterPropertyAndField|[Types]() @R|Everything|[Types]() public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] var prop: R|kotlin/Int| = R|<local>/prop|
-            @R|Get|[Types]() @R|Everything|[Types]() public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] get(): R|kotlin/Int|
+        @ALL:R|Property|[Types]() @ALL:R|PropertyAndField|[Types]() @ALL:R|ParameterPropertyAndField|[Types]() @ALL:R|Everything|[Types]() @ALL:R|kotlin/Deprecated|[Types](message = String(Obsolete)) field:@R|Field|[Types]() @R|PropertyAndField|[Types]() @R|ParameterPropertyAndField|[Types]() @R|Everything|[Types]() public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] var prop: R|kotlin/Int| = R|<local>/prop|
+            @R|Get|[Types]() @R|Everything|[Types]() @R|kotlin/Deprecated|[Types](message = String(Obsolete)) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] get(): R|kotlin/Int|
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] set([ResolvedTo(BODY_RESOLVE)] @R|Param|[Types]() @R|ParameterPropertyAndField|[Types]() @R|Everything|[Types]() value: R|kotlin/Int|): R|kotlin/Unit|
 
     }

@@ -9,6 +9,7 @@ class MyClass(
     @all:ParameterPropertyAndField
     @all:Get
     @all:Everything
+    @all:Deprecated("Obsolete")
     var pr<caret>op: Int,
 )
 

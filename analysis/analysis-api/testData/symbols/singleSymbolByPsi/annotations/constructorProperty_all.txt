@@ -20,6 +20,8 @@ KaValueParameterSymbol:
         psi: KtAnnotationEntry
       Everything()
         psi: KtAnnotationEntry
+      kotlin/Deprecated(message = "Obsolete")
+        psi: KtAnnotationEntry
     ]
     backingFieldSymbol: KaBackingFieldSymbol:
       annotations: [
@@ -68,6 +70,8 @@ KaValueParameterSymbol:
         Get()
           psi: KtAnnotationEntry
         Everything()
+          psi: KtAnnotationEntry
+        kotlin/Deprecated(message = "Obsolete")
           psi: KtAnnotationEntry
       ]
       callableId: null
