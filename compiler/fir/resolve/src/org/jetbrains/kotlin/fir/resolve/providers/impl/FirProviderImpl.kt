@@ -41,7 +41,7 @@ class FirProviderImpl(val session: FirSession, val kotlinScopeProvider: FirKotli
     }
 
     override fun getFirScriptByFilePath(path: String): FirScriptSymbol? {
-        return state.scriptByFilePathMap[path]
+        return state.scriptByFilePathMap[toSystemIndependentScriptPath(path)]
     }
 
     override fun getFirReplSnippetContainerFile(symbol: FirReplSnippetSymbol): FirFile? {
@@ -120,7 +120,7 @@ class FirProviderImpl(val session: FirSession, val kotlinScopeProvider: FirKotli
     private class FirRecorderData(
         val state: State,
         val file: FirFile,
-        val nameConflictsTracker: FirNameConflictsTracker?
+        val nameConflictsTracker: FirNameConflictsTracker?,
     )
 
     private object FirRecorder : FirDefaultVisitor<Unit, FirRecorderData>() {
@@ -161,7 +161,7 @@ class FirProviderImpl(val session: FirSession, val kotlinScopeProvider: FirKotli
 
         override fun visitPropertyAccessor(
             propertyAccessor: FirPropertyAccessor,
-            data: FirRecorderData
+            data: FirRecorderData,
         ) {
             val symbol = propertyAccessor.symbol
             data.state.callableContainerMap[symbol] = data.file
@@ -170,7 +170,7 @@ class FirProviderImpl(val session: FirSession, val kotlinScopeProvider: FirKotli
         private inline fun <reified D : FirCallableDeclaration, S : FirCallableSymbol<D>> registerCallable(
             symbol: S,
             data: FirRecorderData,
-            map: MutableMap<CallableId, List<S>>
+            map: MutableMap<CallableId, List<S>>,
         ) {
             // TODO: KT-78984: we shouldn't call this function for symbols with callableId == null
             val callableId = symbol.callableId
@@ -204,7 +204,7 @@ class FirProviderImpl(val session: FirSession, val kotlinScopeProvider: FirKotli
         override fun visitScript(script: FirScript, data: FirRecorderData) {
             val symbol = script.symbol
             data.state.scriptContainerMap[symbol] = data.file
-            data.file.sourceFile?.path?.let { data.state.scriptByFilePathMap[it] = symbol }
+            data.file.sourceFile?.path?.let { data.state.scriptByFilePathMap[toSystemIndependentScriptPath(it)] = symbol }
             script.acceptChildren(this, data)
         }
 
@@ -287,7 +287,7 @@ class FirProviderImpl(val session: FirSession, val kotlinScopeProvider: FirKotli
             title: String,
             a: Map<K, V>,
             b: Map<K, V>,
-            equal: (old: V?, new: V?) -> Boolean = { old, new -> old === new }
+            equal: (old: V?, new: V?) -> Boolean = { old, new -> old === new },
         ) {
             var hasTitle = false
             val unionKeys = a.keys + b.keys
@@ -351,7 +351,8 @@ class FirProviderImpl(val session: FirSession, val kotlinScopeProvider: FirKotli
     override fun getClassNamesInPackage(fqName: FqName): Set<Name> {
         return state.classesInPackage[fqName] ?: emptySet()
     }
-
 }
 
 private const val rebuildIndex = true
+
+private fun toSystemIndependentScriptPath(path: String): String = path.replace('\\', '/')
