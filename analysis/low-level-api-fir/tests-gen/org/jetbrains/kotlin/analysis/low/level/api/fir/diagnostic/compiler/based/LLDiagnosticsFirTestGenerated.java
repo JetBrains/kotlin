@@ -3787,9 +3787,27 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
         }
 
         @Test
+        @TestMetadata("baseSpecificity.kt")
+        public void testBaseSpecificity() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/specificity/baseSpecificity.kt");
+        }
+
+        @Test
+        @TestMetadata("callableReference.kt")
+        public void testCallableReference() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/specificity/callableReference.kt");
+        }
+
+        @Test
         @TestMetadata("generics.kt")
         public void testGenerics() {
           runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/specificity/generics.kt");
+        }
+
+        @Test
+        @TestMetadata("implicitInvokeCall.kt")
+        public void testImplicitInvokeCall() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/specificity/implicitInvokeCall.kt");
         }
 
         @Test
@@ -3799,15 +3817,21 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
         }
 
         @Test
-        @TestMetadata("newSpecificity.kt")
-        public void testNewSpecificity() {
-          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/specificity/newSpecificity.kt");
+        @TestMetadata("overrides.kt")
+        public void testOverrides() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/specificity/overrides.kt");
         }
 
         @Test
-        @TestMetadata("three.kt")
-        public void testThree() {
-          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/specificity/three.kt");
+        @TestMetadata("specificityInExpectAndActual.kt")
+        public void testSpecificityInExpectAndActual() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/specificity/specificityInExpectAndActual.kt");
+        }
+
+        @Test
+        @TestMetadata("subtyping.kt")
+        public void testSubtyping() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/specificity/subtyping.kt");
         }
 
         @Test

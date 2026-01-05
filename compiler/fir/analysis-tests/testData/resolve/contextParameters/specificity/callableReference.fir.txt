@@ -1,0 +1,124 @@
+FILE: callableReference.kt
+    public final class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class B : R|kotlin/Any| {
+        public constructor(): R|B| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final fun foo0(): R|kotlin/Unit| {
+    }
+    context(a: R|A|)
+    public final fun foo0(): R|kotlin/Unit| {
+    }
+    context(a: R|A|)
+    public final val foo1: R|() -> kotlin/Int|
+        public get(): R|() -> kotlin/Int| {
+            ^ fun <anonymous>(): R|kotlin/Int| <inline=NoInline>  {
+                ^ Int(42)
+            }
+
+        }
+    public final val foo1: R|@ContextFunctionTypeParams(1) context(A) () -> kotlin/Int|
+        public get(): R|@ContextFunctionTypeParams(1) context(A) () -> kotlin/Int| {
+            ^ context(<unused var>: R|A|) fun <anonymous>(): R|kotlin/Int| <inline=NoInline>  {
+                ^ Int(42)
+            }
+
+        }
+    context(a: R|A|)
+    public final val foo2: R|kotlin/Int|
+        public get(): R|kotlin/Int| {
+            ^ Int(42)
+        }
+    context(b: R|B|)
+    public final val foo2: R|kotlin/Int|
+        public get(): R|kotlin/Int| {
+            ^ Int(42)
+        }
+    context(a: R|A|)
+    public final val foo3: R|kotlin/Int|
+        public get(): R|kotlin/Int| {
+            ^ Int(42)
+        }
+    context(b: R|B|)
+    public final val foo3: R|kotlin/String|
+        public get(): R|kotlin/String| {
+            ^ String(42)
+        }
+    context(a: R|A|)
+    public final fun foo4(): R|kotlin/Int| {
+        ^foo4 Int(42)
+    }
+    context(b: R|B|)
+    public final fun foo4(): R|kotlin/String| {
+        ^foo4 String(42)
+    }
+    public final fun usage(): R|kotlin/Unit| {
+        local final fun <A, R> context(context: R|A|, block: R|@ContextFunctionTypeParams(1) context(A) () -> R|): R|R| {
+            ^context R|<local>/block|.R|SubstitutionOverride<kotlin/Function1.invoke: R|R|>|(R|<local>/context|)
+        }
+
+        R|/foo0|()
+        lval t00: <ERROR TYPE REF: Ambiguity: foo0, [/foo0, /foo0]> = ::<Ambiguity: foo0, [/foo0, /foo0]>#
+        lval t01: R|() -> kotlin/Unit| = ::R|/foo0|
+        lval t02: R|@ContextFunctionTypeParams(1) context(A) () -> kotlin/Unit| = ::R|/foo0|
+        R|<local>/context|<R|A|, R|kotlin/Unit|>(R|/A.A|(), <L> = context(<unused var>: R|A|) context@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            lval t03: <ERROR TYPE REF: Ambiguity: foo0, [/foo0, /foo0]> = ::<Ambiguity: foo0, [/foo0, /foo0]>#
+            lval t04: R|() -> kotlin/Unit| = ::R|/foo0|
+            lval t05: R|@ContextFunctionTypeParams(1) context(A) () -> kotlin/Unit| = ::R|/foo0|
+        }
+        )
+        lval t10: <ERROR TYPE REF: Ambiguity: foo1, [/foo1, /foo1]> = ::<Ambiguity: foo1, [/foo1, /foo1]>#
+        lval t12: R|@ContextFunctionTypeParams(1) context(A) () -> () -> kotlin/Int| = ::<Ambiguity: foo1, [/foo1, /foo1]>#
+        lval t13: R|() -> context(A) () -> kotlin/Int| = ::R|/foo1|
+        R|<local>/context|<R|A|, R|kotlin/Unit|>(R|/A.A|(), <L> = context(<unused var>: R|A|) context@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            lval t14: <ERROR TYPE REF: Ambiguity: foo1, [/foo1, /foo1]> = ::<Ambiguity: foo1, [/foo1, /foo1]>#
+            lval t15: R|@ContextFunctionTypeParams(1) context(A) () -> () -> kotlin/Int| = ::<Ambiguity: foo1, [/foo1, /foo1]>#
+            lval t16: R|() -> () -> kotlin/Int| = ::R|/foo1|
+            lval t17: R|() -> context(A) () -> kotlin/Int| = ::R|/foo1|
+        }
+        )
+        lval t20: <ERROR TYPE REF: Ambiguity: foo2, [/foo2, /foo2]> = ::<Ambiguity: foo2, [/foo2, /foo2]>#
+        lval t21: R|() -> kotlin/Int| = ::<Ambiguity: foo2, [/foo2, /foo2]>#
+        lval t22: R|@ContextFunctionTypeParams(1) context(A) () -> kotlin/Int| = ::<Ambiguity: foo2, [/foo2, /foo2]>#
+        lval t23: R|@ContextFunctionTypeParams(1) context(B) () -> kotlin/Int| = ::<Ambiguity: foo2, [/foo2, /foo2]>#
+        R|<local>/context|<R|A|, R|kotlin/Unit|>(R|/A.A|(), <L> = context(<unused var>: R|A|) context@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            lval t24: <ERROR TYPE REF: Ambiguity: foo2, [/foo2, /foo2]> = ::<Ambiguity: foo2, [/foo2, /foo2]>#
+            lval t25: R|() -> kotlin/Int| = ::<Ambiguity: foo2, [/foo2, /foo2]>#
+            lval t26: R|@ContextFunctionTypeParams(1) context(A) () -> kotlin/Int| = ::<Ambiguity: foo2, [/foo2, /foo2]>#
+            lval t27: R|@ContextFunctionTypeParams(1) context(B) () -> kotlin/Int| = ::<Ambiguity: foo2, [/foo2, /foo2]>#
+        }
+        )
+        lval t30: <ERROR TYPE REF: Ambiguity: foo3, [/foo3, /foo3]> = ::<Ambiguity: foo3, [/foo3, /foo3]>#
+        lval t31: R|() -> kotlin/Int| = ::R|/foo3|
+        lval t32: R|() -> kotlin/String| = ::R|/foo3|
+        lval t33: R|@ContextFunctionTypeParams(1) context(A) () -> kotlin/Int| = ::<Ambiguity: foo3, [/foo3, /foo3]>#
+        lval t34: R|@ContextFunctionTypeParams(1) context(B) () -> kotlin/String| = ::<Ambiguity: foo3, [/foo3, /foo3]>#
+        R|<local>/context|<R|A|, R|kotlin/Unit|>(R|/A.A|(), <L> = context(<unused var>: R|A|) context@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            lval t35: <ERROR TYPE REF: Ambiguity: foo3, [/foo3, /foo3]> = ::<Ambiguity: foo3, [/foo3, /foo3]>#
+            lval t36: R|() -> kotlin/Int| = ::R|/foo3|
+            lval t37: R|() -> kotlin/String| = ::R|/foo3|
+            lval t38: R|@ContextFunctionTypeParams(1) context(A) () -> kotlin/Int| = ::<Ambiguity: foo3, [/foo3, /foo3]>#
+            lval t39: R|@ContextFunctionTypeParams(1) context(B) () -> kotlin/String| = ::<Ambiguity: foo3, [/foo3, /foo3]>#
+        }
+        )
+        lval t40: <ERROR TYPE REF: Ambiguity: foo4, [/foo4, /foo4]> = ::<Ambiguity: foo4, [/foo4, /foo4]>#
+        lval t41: R|() -> kotlin/Int| = ::<Ambiguity: foo4, [/foo4, /foo4]>#
+        lval t42: R|() -> kotlin/String| = ::<Ambiguity: foo4, [/foo4, /foo4]>#
+        lval t43: R|@ContextFunctionTypeParams(1) context(A) () -> kotlin/Int| = ::R|/foo4|
+        lval t44: R|@ContextFunctionTypeParams(1) context(B) () -> kotlin/String| = ::R|/foo4|
+        R|<local>/context|<R|A|, R|kotlin/Unit|>(R|/A.A|(), <L> = context(<unused var>: R|A|) context@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            lval t45: <ERROR TYPE REF: Ambiguity: foo4, [/foo4, /foo4]> = ::<Ambiguity: foo4, [/foo4, /foo4]>#
+            lval t46: R|() -> kotlin/Int| = ::<Ambiguity: foo4, [/foo4, /foo4]>#
+            lval t47: R|() -> kotlin/String| = ::<Ambiguity: foo4, [/foo4, /foo4]>#
+            lval t48: R|@ContextFunctionTypeParams(1) context(A) () -> kotlin/Int| = ::R|/foo4|
+            lval t49: R|@ContextFunctionTypeParams(1) context(B) () -> kotlin/String| = ::R|/foo4|
+        }
+        )
+    }

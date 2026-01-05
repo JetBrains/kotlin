@@ -1,0 +1,103 @@
+FILE: subtyping.kt
+    public final class ResolvedA : R|kotlin/Any| {
+        public constructor(): R|ResolvedA| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class ResolvedB : R|kotlin/Any| {
+        public constructor(): R|ResolvedB| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final fun expectA(vararg a: R|kotlin/Array<out ResolvedA>|): R|kotlin/Unit| {
+    }
+    public final fun expectB(vararg b: R|kotlin/Array<out ResolvedB>|): R|kotlin/Unit| {
+    }
+    public open class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public open class B : R|A| {
+        public constructor(): R|B| {
+            super<R|A|>()
+        }
+
+    }
+    public final class C : R|B| {
+        public constructor(): R|C| {
+            super<R|B|>()
+        }
+
+    }
+    context(ctx: R|A|)
+    public final fun foo1(): R|kotlin/Unit| {
+    }
+    context(ctx: R|B|)
+    public final fun foo1(): R|kotlin/Unit| {
+    }
+    context(ctx: R|C|)
+    public final fun foo1(): R|kotlin/Unit| {
+    }
+    context(a: R|A|)
+    public final fun foo2(b: R|C|): R|ResolvedA| {
+        ^foo2 R|/ResolvedA.ResolvedA|()
+    }
+    context(b: R|A|)
+    public final fun foo2(a: R|B|): R|ResolvedB| {
+        ^foo2 R|/ResolvedB.ResolvedB|()
+    }
+    context(a: R|A|)
+    public final fun foo3(b: R|C| = R|/C.C|()): R|ResolvedA| {
+        ^foo3 R|/ResolvedA.ResolvedA|()
+    }
+    context(b: R|A|)
+    public final fun foo3(a: R|B| = R|/B.B|()): R|ResolvedB| {
+        ^foo3 R|/ResolvedB.ResolvedB|()
+    }
+    public final fun test0(): R|kotlin/Unit| {
+        context(R|/A.A|()) R|/foo1|()
+        context(R|/B.B|()) R|/foo1|()
+        context(R|/C.C|()) R|/foo1|()
+        <Ambiguity: foo2, [/foo2, /foo2]>#(R|/B.B|(), R|/C.C|())
+        <Ambiguity: foo2, [/foo2, /foo2]>#(R|/C.C|(), R|/C.C|())
+        lval b0: R|ResolvedB| = context(R|/B.B|()) R|/foo2|(R|/B.B|())
+        <Ambiguity: foo3, [/foo3, /foo3]>#(R|/B.B|(), R|/C.C|())
+        <Ambiguity: foo3, [/foo3, /foo3]>#(R|/C.C|(), R|/C.C|())
+        lval b1: R|ResolvedB| = context(R|/B.B|()) R|/foo3|(R|/B.B|())
+        lval a2: R|ResolvedA| = context(R|/C.C|()) R|/foo3|()
+        lval b2: R|ResolvedB| = context(R|/C.C|()) R|/foo3|()
+        R|/expectA|(vararg(R|<local>/a2|))
+        R|/expectB|(vararg(R|<local>/b0|, R|<local>/b1|, R|<local>/b2|))
+    }
+    context(ctx: R|A|)
+    public final fun test1(): R|kotlin/Unit| {
+        context(R|<local>/ctx|) R|/foo1|()
+        context(R|<local>/ctx|) R|/foo1|()
+        lval a0: R|ResolvedA| = context(R|<local>/ctx|) R|/foo2|(R|/C.C|())
+        lval a1: R|ResolvedA| = context(R|<local>/ctx|) R|/foo2<Inapplicable(INAPPLICABLE): /foo2>#|(R|/B.B|())
+        lval b2: R|ResolvedB| = context(R|<local>/ctx|) R|/foo2|(R|/B.B|())
+        lval a3: R|ResolvedA| = context(R|<local>/ctx|) R|/foo2|(R|/C.C|())
+        lval b4: R|ResolvedB| = context(R|<local>/ctx|) R|/foo2|(R|/B.B|())
+        lval a5: R|ResolvedA| = context(R|<local>/ctx|) R|/foo3|(R|/C.C|())
+        lval b6: R|ResolvedB| = context(R|/B.B|()) R|/foo3|()
+        lval b7: R|ResolvedB| = context(R|<local>/ctx|) R|/foo3|(R|/B.B|())
+        lval a8: R|ResolvedA| = context(R|<local>/ctx|) R|/foo3|(R|/C.C|())
+        lval b9: R|ResolvedB| = context(R|<local>/ctx|) R|/foo3|(R|/B.B|())
+        <Ambiguity: foo3, [/foo3, /foo3]>#()
+        R|/expectA|(vararg(R|<local>/a0|, R|<local>/a1|, R|<local>/a3|, R|<local>/a5|, R|<local>/a8|))
+        R|/expectB|(vararg(R|<local>/b2|, R|<local>/b4|, R|<local>/b6|, R|<local>/b7|, R|<local>/b9|))
+    }
+    context(ctx: R|B|)
+    public final fun test2(): R|kotlin/Unit| {
+        <Ambiguity: foo1, [/foo1, /foo1]>#()
+        context(R|<local>/ctx|) R|/foo1|()
+    }
+    context(ctx: R|C|)
+    public final fun test3(): R|kotlin/Unit| {
+        <Ambiguity: foo1, [/foo1, /foo1, /foo1]>#()
+        context(R|<local>/ctx|) R|/foo1|()
+    }
