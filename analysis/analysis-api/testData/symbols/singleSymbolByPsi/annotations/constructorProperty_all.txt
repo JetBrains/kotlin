@@ -244,11 +244,11 @@ KaValueParameterSymbol:
     getContainingFileSymbol: KaFileSymbol(constructorProperty_all.kt)
     getContainingJvmClassName: MyClass
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
-    getterDeprecationStatus: null
+    deprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=null)
+    getterDeprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=null)
     javaGetterName: getProp
     javaSetterName: setProp
-    setterDeprecationStatus: null
+    setterDeprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=null)
     isInline: false
     importableFqName: null
   hasDeclaredDefaultValue: false
@@ -274,5 +274,5 @@ KaValueParameterSymbol:
   getContainingFileSymbol: KaFileSymbol(constructorProperty_all.kt)
   getContainingJvmClassName: MyClass
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=null)
   importableFqName: null

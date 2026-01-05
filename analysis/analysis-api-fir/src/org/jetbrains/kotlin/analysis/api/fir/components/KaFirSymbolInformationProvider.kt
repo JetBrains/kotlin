@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -27,10 +27,10 @@ import org.jetbrains.kotlin.fir.resolve.calls.noJavaOrigin
 import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.resolve.ReturnValueStatus
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationInfo
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
 import org.jetbrains.kotlin.resolve.deprecation.SimpleDeprecationInfo
-import org.jetbrains.kotlin.resolve.ReturnValueStatus
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 internal class KaFirSymbolInformationProvider(
@@ -65,9 +65,19 @@ internal class KaFirSymbolInformationProvider(
             }
 
             return when (firSymbol) {
-                is FirPropertySymbol -> firSymbol.getDeprecationForCallSite(analysisSession.firSession, AnnotationUseSiteTarget.PROPERTY)
-                is FirBackingFieldSymbol -> firSymbol.getDeprecationForCallSite(analysisSession.firSession, AnnotationUseSiteTarget.FIELD)
-                else -> firSymbol.getDeprecationForCallSite(analysisSession.firSession)
+                is FirPropertySymbol -> firSymbol.getDeprecationForCallSite(
+                    analysisSession.firSession,
+                    AnnotationUseSiteTarget.PROPERTY,
+                    AnnotationUseSiteTarget.ALL,
+                )
+
+                is FirBackingFieldSymbol -> firSymbol.getDeprecationForCallSite(
+                    analysisSession.firSession,
+                    AnnotationUseSiteTarget.FIELD,
+                    AnnotationUseSiteTarget.ALL,
+                )
+
+                else -> firSymbol.getDeprecationForCallSite(analysisSession.firSession, AnnotationUseSiteTarget.ALL)
             }?.toDeprecationInfo()
         }
 
@@ -110,6 +120,7 @@ internal class KaFirSymbolInformationProvider(
                 analysisSession.firSession,
                 AnnotationUseSiteTarget.PROPERTY_GETTER,
                 AnnotationUseSiteTarget.PROPERTY,
+                AnnotationUseSiteTarget.ALL,
             )?.toDeprecationInfo()
         }
 
@@ -120,6 +131,7 @@ internal class KaFirSymbolInformationProvider(
                 analysisSession.firSession,
                 AnnotationUseSiteTarget.PROPERTY_SETTER,
                 AnnotationUseSiteTarget.PROPERTY,
+                AnnotationUseSiteTarget.ALL,
             )?.toDeprecationInfo()
         }
 
