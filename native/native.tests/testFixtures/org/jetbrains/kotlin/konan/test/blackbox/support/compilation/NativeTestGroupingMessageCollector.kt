@@ -73,6 +73,7 @@ internal class NativeTestGroupingMessageCollector(
                     || isKlibResolver(message)
                     || isContextReceiversWarning(message)
                     || isK1LanguageVersionWarning(message)
+                    || isArgumentPassedMultipleTimesWarning(message)
                 -> {
                 // These warnings are known and should not be reported as errors.
                 severity
@@ -122,6 +123,8 @@ internal class NativeTestGroupingMessageCollector(
 
     private fun isK1LanguageVersionWarning(message: String): Boolean = message.matches(K1_LANGUAGE_VERSIONS_WARNING_REGEX)
 
+    private fun isArgumentPassedMultipleTimesWarning(message: String): Boolean = message.matches(ARGUMENT_PASSED_MULTIPLE_TIMES_WARNING_REGEX)
+
     override fun hasErrors() = hasWarningsWithRaisedSeverity || super.hasErrors()
 
     companion object {
@@ -134,6 +137,7 @@ internal class NativeTestGroupingMessageCollector(
 
         private val K1_LANGUAGE_VERSIONS_WARNING_REGEX = Regex("Language version 1.[0-9.]+ is deprecated and its support will be removed in a future version of Kotlin")
         private val PARTIAL_LINKAGE_WARNING_REGEX = Regex("^<[^<>]+>( @ (?:(?!: ).)+)?: .*")
+        private val ARGUMENT_PASSED_MULTIPLE_TIMES_WARNING_REGEX = Regex("Argument '.*' is passed multiple times: .*")
 
         private fun parseLanguageFeatureArg(arg: String): String? =
             substringAfter(arg, "-XXLanguage:-") ?: substringAfter(arg, "-XXLanguage:+")
