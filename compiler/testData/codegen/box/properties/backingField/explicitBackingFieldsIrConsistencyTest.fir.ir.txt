@@ -11,7 +11,7 @@ FILE fqName:<root> fileName:/explicitBackingFieldsIrConsistencyTest.kt
         correspondingProperty: PROPERTY name:p visibility:public modality:FINAL [val]
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-p> (): kotlin.Any declared in <root>.A'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:p type:<root>.V visibility:private [final]' type=kotlin.Any origin=null
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:p type:<root>.V visibility:private [final]' type=<root>.V origin=null
               receiver: GET_VAR '<this>: <root>.A declared in <root>.A.<get-p>' type=<root>.A origin=null
     CONSTRUCTOR visibility:public returnType:<root>.A [primary]
       BLOCK_BODY

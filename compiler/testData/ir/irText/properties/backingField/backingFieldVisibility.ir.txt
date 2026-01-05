@@ -12,7 +12,7 @@ FILE fqName:<root> fileName:/backingFieldVisibility.kt
         correspondingProperty: PROPERTY name:a visibility:public modality:FINAL [val]
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-a> (): kotlin.Number declared in <root>.A'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a type:kotlin.Int visibility:private [final]' type=kotlin.Number origin=null
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: <root>.A declared in <root>.A.<get-a>' type=<root>.A origin=null
     PROPERTY name:b visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:b type:kotlin.Int visibility:internal [final]
@@ -29,7 +29,7 @@ FILE fqName:<root> fileName:/backingFieldVisibility.kt
         correspondingProperty: PROPERTY name:b visibility:public modality:FINAL [val]
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-b> (): kotlin.Number declared in <root>.A'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:b type:kotlin.Int visibility:internal [final]' type=kotlin.Number origin=null
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:b type:kotlin.Int visibility:internal [final]' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: <root>.A declared in <root>.A.<get-b>' type=<root>.A origin=null
     PROPERTY name:c visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:c type:kotlin.Int visibility:private [final]

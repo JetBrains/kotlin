@@ -21,7 +21,7 @@ FILE fqName:<root> fileName:/explicitBackingFieldType.kt
         correspondingProperty: PROPERTY name:it visibility:public modality:FINAL [val]
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-it> (): kotlin.Number declared in <root>.A'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:it type:kotlin.Int visibility:private [final]' type=kotlin.Number origin=null
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:it type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: <root>.A declared in <root>.A.<get-it>' type=<root>.A origin=null
     PROPERTY name:invertedTypes visibility:public modality:FINAL [var]
       annotations:
@@ -56,7 +56,7 @@ FILE fqName:<root> fileName:/explicitBackingFieldType.kt
         BLOCK_BODY
           SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:invertedTypes type:kotlin.Number visibility:private' type=kotlin.Unit origin=null
             receiver: GET_VAR '<this>: <root>.A declared in <root>.A.<set-invertedTypes>' type=<root>.A origin=null
-            value: GET_VAR '<set-?>: kotlin.Int declared in <root>.A.<set-invertedTypes>' type=kotlin.Int origin=null
+            value: GET_VAR '<set-?>: kotlin.Int declared in <root>.A.<set-invertedTypes>' type=kotlin.Number origin=null
     PROPERTY name:p visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:p type:kotlin.Int visibility:private [final]
         EXPRESSION_BODY
