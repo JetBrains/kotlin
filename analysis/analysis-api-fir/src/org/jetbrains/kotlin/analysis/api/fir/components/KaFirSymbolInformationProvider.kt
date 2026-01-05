@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.calls.FirSimpleSyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.calls.noJavaOrigin
 import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.ReturnValueStatus
@@ -77,6 +78,13 @@ internal class KaFirSymbolInformationProvider(
                     AnnotationUseSiteTarget.ALL,
                 )
 
+                is FirPropertyAccessorSymbol -> firSymbol.propertySymbol.getDeprecationForCallSite(
+                    analysisSession.firSession,
+                    if (firSymbol.isGetter) AnnotationUseSiteTarget.PROPERTY_GETTER else AnnotationUseSiteTarget.PROPERTY_SETTER,
+                    AnnotationUseSiteTarget.PROPERTY,
+                    AnnotationUseSiteTarget.ALL,
+                )
+
                 else -> firSymbol.getDeprecationForCallSite(analysisSession.firSession, AnnotationUseSiteTarget.ALL)
             }?.toDeprecationInfo()
         }
@@ -115,24 +123,12 @@ internal class KaFirSymbolInformationProvider(
 
     override val KaPropertySymbol.getterDeprecationStatus: DeprecationInfo?
         get() = withValidityAssertion {
-            require(this is KaFirSymbol<*>)
-            return firSymbol.getDeprecationForCallSite(
-                analysisSession.firSession,
-                AnnotationUseSiteTarget.PROPERTY_GETTER,
-                AnnotationUseSiteTarget.PROPERTY,
-                AnnotationUseSiteTarget.ALL,
-            )?.toDeprecationInfo()
+            this.getter?.deprecationStatus
         }
 
     override val KaPropertySymbol.setterDeprecationStatus: DeprecationInfo?
         get() = withValidityAssertion {
-            require(this is KaFirSymbol<*>)
-            return firSymbol.getDeprecationForCallSite(
-                analysisSession.firSession,
-                AnnotationUseSiteTarget.PROPERTY_SETTER,
-                AnnotationUseSiteTarget.PROPERTY,
-                AnnotationUseSiteTarget.ALL,
-            )?.toDeprecationInfo()
+            this.setter?.deprecationStatus
         }
 
     private fun FirDeprecationInfo.toDeprecationInfo(): DeprecationInfo {

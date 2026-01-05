@@ -101,7 +101,7 @@ KaValueParameterSymbol:
       getContainingFileSymbol: KaFileSymbol(constructorProperty_all.kt)
       getContainingJvmClassName: MyClass
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=null)
       importableFqName: null
     hasBackingField: true
     hasGetter: true
@@ -233,7 +233,7 @@ KaValueParameterSymbol:
       getContainingFileSymbol: KaFileSymbol(constructorProperty_all.kt)
       getContainingJvmClassName: MyClass
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=true, message=null)
       importableFqName: null
     typeParameters: []
     visibility: PUBLIC
