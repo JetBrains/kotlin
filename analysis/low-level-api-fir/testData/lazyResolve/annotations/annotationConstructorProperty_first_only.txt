@@ -1,0 +1,587 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] annotationConstructorProperty_first_only.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class MyClass : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/MyClass.prop] @Param[Unresolved]() @Property[Unresolved]() @PropertyAndField[Unresolved]() @ParameterPropertyAndField[Unresolved]() @Everything[Unresolved]() prop: Int): R|MyClass| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        @Param[Unresolved]() @Property[Unresolved]() @PropertyAndField[Unresolved]() @ParameterPropertyAndField[Unresolved]() @Everything[Unresolved]() public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val prop: Int = R|<local>/prop|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] get(): Int
+
+    }
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Param : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Param] constructor(): R|Param| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Property : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Property] constructor(): R|Property| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class PropertyAndField : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=PropertyAndField] constructor(): R|PropertyAndField| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class ParameterPropertyAndField : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ParameterPropertyAndField] constructor(): R|ParameterPropertyAndField| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Everything : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Everything] constructor(): R|Everything| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] annotationConstructorProperty_first_only.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class MyClass : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/MyClass.prop] @Param[Unresolved]() @Property[Unresolved]() @PropertyAndField[Unresolved]() @ParameterPropertyAndField[Unresolved]() @Everything[Unresolved]() prop: Int): R|MyClass| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        @Param[Unresolved]() @Property[Unresolved]() @PropertyAndField[Unresolved]() @ParameterPropertyAndField[Unresolved]() @Everything[Unresolved]() public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val prop: Int = R|<local>/prop|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] get(): Int
+
+    }
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Param : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Param] constructor(): R|Param| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Property : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Property] constructor(): R|Property| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class PropertyAndField : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=PropertyAndField] constructor(): R|PropertyAndField| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class ParameterPropertyAndField : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ParameterPropertyAndField] constructor(): R|ParameterPropertyAndField| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Everything : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Everything] constructor(): R|Everything| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] annotationConstructorProperty_first_only.kt
+    public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class MyClass : R|kotlin/Annotation| {
+        public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingClassKey=MyClass] constructor([ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [CorrespondingProperty=/MyClass.prop] @Param[Unresolved]() @Property[Unresolved]() @PropertyAndField[Unresolved]() @ParameterPropertyAndField[Unresolved]() @Everything[Unresolved]() prop: Int): R|MyClass| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        @Param[Unresolved]() @Property[Unresolved]() @PropertyAndField[Unresolved]() @ParameterPropertyAndField[Unresolved]() @Everything[Unresolved]() public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [IsFromPrimaryConstructor=true] val prop: Int = R|<local>/prop|
+            public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingClassKey=MyClass] get(): Int
+
+    }
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Param : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Param] constructor(): R|Param| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Property : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Property] constructor(): R|Property| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class PropertyAndField : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=PropertyAndField] constructor(): R|PropertyAndField| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class ParameterPropertyAndField : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ParameterPropertyAndField] constructor(): R|ParameterPropertyAndField| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Everything : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Everything] constructor(): R|Everything| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] annotationConstructorProperty_first_only.kt
+    public final? [ResolvedTo(COMPANION_GENERATION)] annotation class MyClass : R|kotlin/Annotation| {
+        public? [ResolvedTo(COMPANION_GENERATION)] [ContainingClassKey=MyClass] constructor([ResolvedTo(COMPANION_GENERATION)] [CorrespondingProperty=/MyClass.prop] @Param[Unresolved]() @Property[Unresolved]() @PropertyAndField[Unresolved]() @ParameterPropertyAndField[Unresolved]() @Everything[Unresolved]() prop: Int): R|MyClass| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        @Param[Unresolved]() @Property[Unresolved]() @PropertyAndField[Unresolved]() @ParameterPropertyAndField[Unresolved]() @Everything[Unresolved]() public? final? [ResolvedTo(COMPANION_GENERATION)] [IsFromPrimaryConstructor=true] val prop: Int = R|<local>/prop|
+            public? [ResolvedTo(COMPANION_GENERATION)] [ContainingClassKey=MyClass] get(): Int
+
+    }
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Param : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Param] constructor(): R|Param| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Property : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Property] constructor(): R|Property| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class PropertyAndField : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=PropertyAndField] constructor(): R|PropertyAndField| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class ParameterPropertyAndField : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ParameterPropertyAndField] constructor(): R|ParameterPropertyAndField| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Everything : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Everything] constructor(): R|Everything| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] annotationConstructorProperty_first_only.kt
+    public final? [ResolvedTo(SUPER_TYPES)] annotation class MyClass : R|kotlin/Annotation| {
+        public? [ResolvedTo(SUPER_TYPES)] [ContainingClassKey=MyClass] constructor([ResolvedTo(SUPER_TYPES)] [CorrespondingProperty=/MyClass.prop] @Param[Unresolved]() @Property[Unresolved]() @PropertyAndField[Unresolved]() @ParameterPropertyAndField[Unresolved]() @Everything[Unresolved]() prop: Int): R|MyClass| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        @Param[Unresolved]() @Property[Unresolved]() @PropertyAndField[Unresolved]() @ParameterPropertyAndField[Unresolved]() @Everything[Unresolved]() public? final? [ResolvedTo(SUPER_TYPES)] [IsFromPrimaryConstructor=true] val prop: Int = R|<local>/prop|
+            public? [ResolvedTo(SUPER_TYPES)] [ContainingClassKey=MyClass] get(): Int
+
+    }
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Param : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Param] constructor(): R|Param| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Property : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Property] constructor(): R|Property| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class PropertyAndField : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=PropertyAndField] constructor(): R|PropertyAndField| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class ParameterPropertyAndField : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ParameterPropertyAndField] constructor(): R|ParameterPropertyAndField| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Everything : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Everything] constructor(): R|Everything| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] annotationConstructorProperty_first_only.kt
+    public final? [ResolvedTo(TYPES)] annotation class MyClass : R|kotlin/Annotation| {
+        public? [ResolvedTo(TYPES)] [ContainingClassKey=MyClass] constructor([ResolvedTo(TYPES)] [CorrespondingProperty=/MyClass.prop] @R|Param|[Types]() @R|ParameterPropertyAndField|[Types]() @R|Everything|[Types]() prop: R|kotlin/Int|): R|MyClass| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        @R|Property|[Types]() @R|PropertyAndField|[Types]() public? final? [ResolvedTo(TYPES)] [IsFromPrimaryConstructor=true] val prop: R|kotlin/Int| = R|<local>/prop|
+            public? [ResolvedTo(TYPES)] [ContainingClassKey=MyClass] get(): R|kotlin/Int|
+
+    }
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Param : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Param] constructor(): R|Param| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Property : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Property] constructor(): R|Property| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class PropertyAndField : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=PropertyAndField] constructor(): R|PropertyAndField| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class ParameterPropertyAndField : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ParameterPropertyAndField] constructor(): R|ParameterPropertyAndField| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Everything : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Everything] constructor(): R|Everything| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] annotationConstructorProperty_first_only.kt
+    public final [ResolvedTo(STATUS)] annotation class MyClass : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/MyClass.prop] @R|Param|[Types]() @R|ParameterPropertyAndField|[Types]() @R|Everything|[Types]() prop: R|kotlin/Int|): R|MyClass| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        @R|Property|[Types]() @R|PropertyAndField|[Types]() public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val prop: R|kotlin/Int| = R|<local>/prop|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] get(): R|kotlin/Int|
+
+    }
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Param : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Param] constructor(): R|Param| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Property : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Property] constructor(): R|Property| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class PropertyAndField : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=PropertyAndField] constructor(): R|PropertyAndField| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class ParameterPropertyAndField : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ParameterPropertyAndField] constructor(): R|ParameterPropertyAndField| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Everything : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Everything] constructor(): R|Everything| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] annotationConstructorProperty_first_only.kt
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] annotation class MyClass : R|kotlin/Annotation| {
+        public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=MyClass] constructor([ResolvedTo(EXPECT_ACTUAL_MATCHING)] [CorrespondingProperty=/MyClass.prop] @R|Param|[Types]() @R|ParameterPropertyAndField|[Types]() @R|Everything|[Types]() prop: R|kotlin/Int|): R|MyClass| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        @R|Property|[Types]() @R|PropertyAndField|[Types]() public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [IsFromPrimaryConstructor=true] val prop: R|kotlin/Int| = R|<local>/prop|
+            public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=MyClass] get(): R|kotlin/Int|
+
+    }
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Param : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Param] constructor(): R|Param| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Property : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Property] constructor(): R|Property| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class PropertyAndField : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=PropertyAndField] constructor(): R|PropertyAndField| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class ParameterPropertyAndField : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ParameterPropertyAndField] constructor(): R|ParameterPropertyAndField| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Everything : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Everything] constructor(): R|Everything| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] annotationConstructorProperty_first_only.kt
+    public final [ResolvedTo(CONTRACTS)] annotation class MyClass : R|kotlin/Annotation| {
+        public [ResolvedTo(CONTRACTS)] [ContainingClassKey=MyClass] constructor([ResolvedTo(CONTRACTS)] [CorrespondingProperty=/MyClass.prop] @R|Param|[Types]() @R|ParameterPropertyAndField|[Types]() @R|Everything|[Types]() prop: R|kotlin/Int|): R|MyClass| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        @R|Property|[Types]() @R|PropertyAndField|[Types]() public final [ResolvedTo(CONTRACTS)] [IsFromPrimaryConstructor=true] val prop: R|kotlin/Int| = R|<local>/prop|
+            public [ResolvedTo(CONTRACTS)] [ContainingClassKey=MyClass] get(): R|kotlin/Int|
+
+    }
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Param : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Param] constructor(): R|Param| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Property : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Property] constructor(): R|Property| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class PropertyAndField : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=PropertyAndField] constructor(): R|PropertyAndField| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class ParameterPropertyAndField : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ParameterPropertyAndField] constructor(): R|ParameterPropertyAndField| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Everything : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Everything] constructor(): R|Everything| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] annotationConstructorProperty_first_only.kt
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] annotation class MyClass : R|kotlin/Annotation| {
+        public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=MyClass] constructor([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [CorrespondingProperty=/MyClass.prop] @R|Param|[Types]() @R|ParameterPropertyAndField|[Types]() @R|Everything|[Types]() prop: R|kotlin/Int|): R|MyClass| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        @R|Property|[Types]() @R|PropertyAndField|[Types]() public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val prop: R|kotlin/Int| = R|<local>/prop|
+            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=MyClass] get(): R|kotlin/Int|
+
+    }
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Param : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Param] constructor(): R|Param| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Property : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Property] constructor(): R|Property| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class PropertyAndField : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=PropertyAndField] constructor(): R|PropertyAndField| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class ParameterPropertyAndField : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ParameterPropertyAndField] constructor(): R|ParameterPropertyAndField| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Everything : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Everything] constructor(): R|Everything| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] annotationConstructorProperty_first_only.kt
+    public final [ResolvedTo(CONSTANT_EVALUATION)] annotation class MyClass : R|kotlin/Annotation| {
+        public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=MyClass] constructor([ResolvedTo(CONSTANT_EVALUATION)] [CorrespondingProperty=/MyClass.prop] @R|Param|[Types]() @R|ParameterPropertyAndField|[Types]() @R|Everything|[Types]() prop: R|kotlin/Int|): R|MyClass| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        @R|Property|[Types]() @R|PropertyAndField|[Types]() public final [ResolvedTo(CONSTANT_EVALUATION)] [IsFromPrimaryConstructor=true] val prop: R|kotlin/Int| = R|<local>/prop|
+            public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=MyClass] get(): R|kotlin/Int|
+
+    }
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Param : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Param] constructor(): R|Param| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Property : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Property] constructor(): R|Property| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class PropertyAndField : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=PropertyAndField] constructor(): R|PropertyAndField| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class ParameterPropertyAndField : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ParameterPropertyAndField] constructor(): R|ParameterPropertyAndField| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Everything : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Everything] constructor(): R|Everything| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] annotationConstructorProperty_first_only.kt
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] annotation class MyClass : R|kotlin/Annotation| {
+        public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=MyClass] constructor([ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=/MyClass.prop] @R|Param|[Types]() @R|ParameterPropertyAndField|[Types]() @R|Everything|[Types]() prop: R|kotlin/Int|): R|MyClass| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        @R|Property|[Types]() @R|PropertyAndField|[Types]() public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [IsFromPrimaryConstructor=true] val prop: R|kotlin/Int| = R|<local>/prop|
+            public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=MyClass] get(): R|kotlin/Int|
+
+    }
+    @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|) public final [ResolvedTo(STATUS)] annotation class Param : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Param] constructor(): R|Param| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|) public final [ResolvedTo(STATUS)] annotation class Property : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Property] constructor(): R|Property| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|) public final [ResolvedTo(STATUS)] annotation class PropertyAndField : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=PropertyAndField] constructor(): R|PropertyAndField| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|) public final [ResolvedTo(STATUS)] annotation class ParameterPropertyAndField : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=ParameterPropertyAndField] constructor(): R|ParameterPropertyAndField| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|) public final [ResolvedTo(STATUS)] annotation class Everything : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Everything] constructor(): R|Everything| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] annotationConstructorProperty_first_only.kt
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] annotation class MyClass : R|kotlin/Annotation| {
+        public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=MyClass] constructor([ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=/MyClass.prop] @R|Param|[Types]() @R|ParameterPropertyAndField|[Types]() @R|Everything|[Types]() prop: R|kotlin/Int|): R|MyClass| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        @R|Property|[Types]() @R|PropertyAndField|[Types]() public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val prop: R|kotlin/Int| = R|<local>/prop|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] get(): R|kotlin/Int|
+
+    }
+    @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|) public final [ResolvedTo(STATUS)] annotation class Param : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Param] constructor(): R|Param| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|) public final [ResolvedTo(STATUS)] annotation class Property : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Property] constructor(): R|Property| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|) public final [ResolvedTo(STATUS)] annotation class PropertyAndField : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=PropertyAndField] constructor(): R|PropertyAndField| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|) public final [ResolvedTo(STATUS)] annotation class ParameterPropertyAndField : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=ParameterPropertyAndField] constructor(): R|ParameterPropertyAndField| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|) public final [ResolvedTo(STATUS)] annotation class Everything : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Everything] constructor(): R|Everything| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] annotationConstructorProperty_first_only.kt
+    public final [ResolvedTo(BODY_RESOLVE)] annotation class MyClass : R|kotlin/Annotation| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/MyClass.prop] @R|Param|[Types]() @R|ParameterPropertyAndField|[Types]() @R|Everything|[Types]() prop: R|kotlin/Int|): R|MyClass| {
+            super<R|kotlin/Any|>()
+        }
+
+        @R|Property|[Types]() @R|PropertyAndField|[Types]() public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val prop: R|kotlin/Int| = R|<local>/prop|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] get(): R|kotlin/Int|
+
+    }
+    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|)) public final [ResolvedTo(BODY_RESOLVE)] annotation class Param : R|kotlin/Annotation| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Param] constructor(): R|Param| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|)) public final [ResolvedTo(BODY_RESOLVE)] annotation class Property : R|kotlin/Annotation| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Property] constructor(): R|Property| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|)) public final [ResolvedTo(BODY_RESOLVE)] annotation class PropertyAndField : R|kotlin/Annotation| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=PropertyAndField] constructor(): R|PropertyAndField| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|)) public final [ResolvedTo(BODY_RESOLVE)] annotation class ParameterPropertyAndField : R|kotlin/Annotation| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=ParameterPropertyAndField] constructor(): R|ParameterPropertyAndField| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|)) public final [ResolvedTo(BODY_RESOLVE)] annotation class Everything : R|kotlin/Annotation| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Everything] constructor(): R|Everything| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
