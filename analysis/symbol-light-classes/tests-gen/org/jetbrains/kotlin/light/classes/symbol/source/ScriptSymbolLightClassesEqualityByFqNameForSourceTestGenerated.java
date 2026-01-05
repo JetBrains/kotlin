@@ -65,6 +65,26 @@ public class ScriptSymbolLightClassesEqualityByFqNameForSourceTestGenerated exte
   }
 
   @Nested
+  @TestMetadata("compiler/testData/asJava/lightClasses/lightClassByFqName/k2")
+  @TestDataPath("$PROJECT_ROOT")
+  public class K2 {
+    @Test
+    public void testAllFilesPresentInK2() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/lightClassByFqName/k2"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/asJava/lightClasses/lightClassByFqName/k2/annotations")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Annotations {
+      @Test
+      public void testAllFilesPresentInAnnotations() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/lightClassByFqName/k2/annotations"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
+      }
+    }
+  }
+
+  @Nested
   @TestMetadata("compiler/testData/asJava/lightClasses/lightClassByFqName/nullabilityAnnotations")
   @TestDataPath("$PROJECT_ROOT")
   public class NullabilityAnnotations {
