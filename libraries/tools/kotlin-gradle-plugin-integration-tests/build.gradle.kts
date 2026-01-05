@@ -251,7 +251,7 @@ if (project.kotlinBuildProperties.isTeamcityBuild) {
         val tasksByGradleVersion = gradleVersions.map { gradleVersion ->
             tasks.register<Test>("${taskPrefix}TestsForGradle_${gradleVersion.replace(".", "_")}") {
                 group = gradleVersionTaskGroup
-                description = "Runs all tests for Kotlin Gradle plugins against Gradle $gradleVersion"
+                description = "Runs all tests for Kotlin Gradle plugins against Gradle $gradleVersion. (random change to reset cache)"
                 maxParallelForks = maxParallelTestForks
 
                 systemProperty("gradle.integration.tests.gradle.version.filter", gradleVersion)
