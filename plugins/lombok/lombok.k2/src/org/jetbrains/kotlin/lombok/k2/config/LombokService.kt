@@ -102,7 +102,7 @@ class LombokService(session: FirSession, configFile: File?) : FirExtensionSessio
     fun getRequiredArgsConstructor(symbol: FirBasedSymbol<*>): RequiredArgsConstructor? = requiredArgsConstructorCache.getValue(symbol)
     fun getData(symbol: FirBasedSymbol<*>): Data? = dataCache.getValue(symbol)
     fun getValue(symbol: FirBasedSymbol<*>): Value? = valueCache.getValue(symbol)
-    fun getBuilder(symbol: FirBasedSymbol<*>): Builder? = builderCache.getValue(symbol)
+    fun getBuilder(symbol: FirBasedSymbol<*>): Builder? = if (getSuperBuilder(symbol) != null) null else builderCache.getValue(symbol)
     fun getSuperBuilder(symbol: FirBasedSymbol<*>): SuperBuilder? = superBuilderCache.getValue(symbol)
     fun getSingular(symbol: FirBasedSymbol<*>): Singular? = singularCache.getValue(symbol)
 }
