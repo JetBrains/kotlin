@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
+import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.getNameWithAssert
@@ -33,7 +34,6 @@ import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaPackageFragment
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi2ir.generators.DeclarationStubGeneratorImpl
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
@@ -42,7 +42,7 @@ class JKlibIrLinker(
     messageCollector: MessageCollector,
     irBuiltIns: IrBuiltIns,
     symbolTable: SymbolTable,
-    val stubGenerator: DeclarationStubGeneratorImpl,
+    val stubGenerator: DeclarationStubGenerator,
     val mangler: JKlibDescriptorMangler,
 ) : KotlinIrLinker(module, messageCollector, irBuiltIns, symbolTable, emptyList()) {
     override val returnUnboundSymbolsIfSignatureNotFound

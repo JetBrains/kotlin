@@ -5,20 +5,21 @@
 
 package org.jetbrains.kotlin.ir.backend.jklib
 
-import org.jetbrains.kotlin.backend.common.serialization.mangle.KotlinExportChecker
 import org.jetbrains.kotlin.backend.common.serialization.mangle.KotlinMangleComputer
 import org.jetbrains.kotlin.backend.common.serialization.mangle.MangleConstant
 import org.jetbrains.kotlin.backend.common.serialization.mangle.MangleMode
-import org.jetbrains.kotlin.backend.common.serialization.mangle.descriptor.DescriptorBasedKotlinManglerImpl
-import org.jetbrains.kotlin.backend.common.serialization.mangle.descriptor.DescriptorExportCheckerVisitor
-import org.jetbrains.kotlin.backend.common.serialization.mangle.ir.IrBasedKotlinManglerImpl
-import org.jetbrains.kotlin.backend.common.serialization.mangle.ir.IrExportCheckerVisitor
+import org.jetbrains.kotlin.backend.common.serialization.mangle.descriptor.DescriptorMangleComputer
+import org.jetbrains.kotlin.backend.common.serialization.mangle.ir.IrMangleComputer
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.CompositeAnnotations
 import org.jetbrains.kotlin.idea.MainFunctionDetector
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
+import org.jetbrains.kotlin.ir.backend.jvm.serialization.BaseJvmIrMangler
+import org.jetbrains.kotlin.ir.backend.jvm.serialization.BaseJvmIrMangler.JvmIrManglerComputer
+import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmDescriptorMangler
+import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmDescriptorMangler.JvmDescriptorManglerComputer
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.IrType
@@ -29,39 +30,35 @@ import org.jetbrains.kotlin.load.java.JSPECIFY_NULL_MARKED_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
-import org.jetbrains.kotlin.load.java.lazy.descriptors.isJavaField
 import org.jetbrains.kotlin.load.java.typeEnhancement.ENHANCED_NULLABILITY_ANNOTATIONS
 import org.jetbrains.kotlin.load.java.typeEnhancement.hasEnhancedNullability
 import org.jetbrains.kotlin.load.kotlin.*
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
+import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.SimpleType
 import org.jetbrains.kotlin.types.TypeUtils
-import org.jetbrains.kotlin.types.checker.SimpleClassicTypeSystemContext
+import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.types.typeUtil.replaceAnnotations
 
 /*
- * TODO(jDramaix):
- *  Code in this file is mostly copied from `JvmMangler.kt` in the Kotlin compiler. The difference is that these custom manglers aim to
- *  compute plain JVM signatures for Java methods. For example instead of this:
+ * The manglers defined in this file compute plain JVM signatures for Java methods.
+ * For example instead of this:
  *  ```
  *  java/lang/Comparator.thenComparing(java.util.function.Function<in|1:0?,out|0:0?>?){0§<kotlin.Comparable<in|0:0?>?>}
  *  ```
- *  We will get:
+ *  We will compute:
  *  ```
- *  java/util/Comparator.thenComparing(Ljava/util/function/Function;)Ljava/util/Comparator;
+ *  Ljava/util/Comparator.thenComparing(Ljava/util/function/Function;)Ljava/util/Comparator;
  *  ```
- *  This logic aims to fix signature differences between K1 and K2. And thus, when the K1 klib deserialization part of the K2CL pipeline
- *  transitions to K2, code in this file should no longer be needed.
+ * This logic aims to fix signature differences between K1 and K2.
+ * When the klib deserialization part transitions to K2, code in this file should no longer be needed and we could
+ * directly reuse manglers from Kotlin/JVM.
  */
 
-class JKlibIrMangler : IrBasedKotlinManglerImpl() {
-    private class JKlibIrExportChecker(compatibleMode: Boolean) : IrExportCheckerVisitor(compatibleMode) {
-        override fun IrDeclaration.isPlatformSpecificExported() = false
-    }
-
+class JKlibIrMangler : BaseJvmIrMangler() {
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     override fun IrDeclaration.signatureString(compatibleMode: Boolean): String {
         if (!getPackageFragment().packageFqName.asString().isKotlinPackage() && isJavaBackedCallable()) {
@@ -69,15 +66,15 @@ class JKlibIrMangler : IrBasedKotlinManglerImpl() {
                 return it
             }
         }
-        // Copied from `super`
         return getMangleComputer(MangleMode.SIGNATURE, compatibleMode).computeMangle(this)
     }
 
     private class JKlibIrManglerComputer(builder: StringBuilder, mode: MangleMode, compatibleMode: Boolean) :
-        JKlibIrMangleComputerBase(builder, mode, compatibleMode) {
-        override fun copy(newMode: MangleMode): JKlibIrMangleComputerBase =
+        JvmIrManglerComputer(builder, mode, compatibleMode) {
+        override fun copy(newMode: MangleMode): IrMangleComputer =
             JKlibIrManglerComputer(builder, newMode, compatibleMode)
 
+        // TODO should we return false here ? if not we can directly ruse
         override fun addReturnTypeSpecialCase(function: IrFunction): Boolean = false
 
         override fun mangleTypePlatformSpecific(type: IrType, tBuilder: StringBuilder) {
@@ -85,66 +82,50 @@ class JKlibIrMangler : IrBasedKotlinManglerImpl() {
                 tBuilder.append(MangleConstant.ENHANCED_NULLABILITY_MARK)
             }
         }
+
+        override fun getVariance(typeArgument: TypeArgumentMarker, typeParameter: TypeParameterMarker, c: TypeSystemContext): TypeVariance {
+            with(c) {
+                return AbstractTypeChecker.effectiveVariance(
+                    typeParameter.getVariance(), typeArgument.getVariance()
+                ) ?: typeArgument.getVariance()
+            }
+        }
     }
-
-    override fun getExportChecker(compatibleMode: Boolean): KotlinExportChecker<IrDeclaration> = JKlibIrExportChecker(compatibleMode)
-
     override fun getMangleComputer(mode: MangleMode, compatibleMode: Boolean): KotlinMangleComputer<IrDeclaration> =
         JKlibIrManglerComputer(StringBuilder(256), mode, compatibleMode)
 }
 
-class JKlibDescriptorMangler(private val mainDetector: MainFunctionDetector?) : DescriptorBasedKotlinManglerImpl() {
-    private object ExportChecker : DescriptorExportCheckerVisitor() {
-        override fun DeclarationDescriptor.isPlatformSpecificExported() = true
-    }
+class JKlibDescriptorMangler(private val mainDetector: MainFunctionDetector?) : JvmDescriptorMangler(mainDetector) {
 
     override fun DeclarationDescriptor.signatureString(compatibleMode: Boolean): String {
-        if (this.containingPackage()?.asString()?.isKotlinPackage() == false && this is JavaCallableMemberDescriptor || containingDeclaration is JavaClassDescriptor) {
+        if (this.containingPackage()?.asString()
+                ?.isKotlinPackage() == false && this is JavaCallableMemberDescriptor || containingDeclaration is JavaClassDescriptor
+        ) {
             (this as? CallableDescriptor)?.computeJvmSignatureSafe()?.let {
                 return it
             }
         }
-        // Copied from `super`
         return getMangleComputer(MangleMode.SIGNATURE, compatibleMode).computeMangle(this)
     }
 
     private class JKlibDescriptorManglerComputer(
         builder: StringBuilder,
         private val mainDetector: MainFunctionDetector?,
-        mode: MangleMode
-    ) : JKlibDescriptorMangleComputerBase(builder, mode) {
+        mode: MangleMode,
+    ) : JvmDescriptorManglerComputer(builder, mainDetector, mode) {
+        // TODO is it needed ?
         override fun addReturnTypeSpecialCase(function: FunctionDescriptor): Boolean = false
 
-        override fun copy(newMode: MangleMode): JKlibDescriptorMangleComputerBase = JKlibDescriptorManglerComputer(builder, mainDetector, newMode)
+        override fun copy(newMode: MangleMode): DescriptorMangleComputer = JKlibDescriptorManglerComputer(builder, mainDetector, newMode)
 
-        private fun isMainFunction(descriptor: FunctionDescriptor): Boolean =
-            mainDetector != null && mainDetector.isMain(descriptor)
-
-        override fun FunctionDescriptor.platformSpecificSuffix(): String? =
-            if (isMainFunction(this)) source.containingFile.name else null
-
-        override fun PropertyDescriptor.platformSpecificSuffix(): String? {
-            // Since LV 1.4 there is a feature PreferJavaFieldOverload which allows to have java and kotlin
-            // properties with the same signature on the same level.
-            // For more details see JvmPlatformOverloadsSpecificityComparator.kt
-            return if (isJavaField) MangleConstant.JAVA_FIELD_SUFFIX else null
-        }
-
-        override fun visitModuleDeclaration(descriptor: ModuleDescriptor) {
-            // In general, having module descriptor as `containingDeclaration` for regular declaration is considered an error (in JS/Native)
-            // because there should be `PackageFragmentDescriptor` in between
-            // but on JVM there is `SyntheticJavaPropertyDescriptor` whose parent is a module. So let just skip it.
-        }
-
-        override fun mangleTypePlatformSpecific(type: KotlinType, tBuilder: StringBuilder) {
-            // Disambiguate between 'double' and '@NotNull java.lang.Double' types in mixed Java/Kotlin class hierarchies
-            if (SimpleClassicTypeSystemContext.hasEnhancedNullability(type)) {
-                tBuilder.appendSignature(MangleConstant.ENHANCED_NULLABILITY_MARK)
+        override fun getVariance(typeArgument: TypeArgumentMarker, typeParameter: TypeParameterMarker, c: TypeSystemContext): TypeVariance {
+            with(c) {
+                return AbstractTypeChecker.effectiveVariance(
+                    typeParameter.getVariance(), typeArgument.getVariance()
+                ) ?: typeArgument.getVariance()
             }
         }
     }
-
-    override fun getExportChecker(compatibleMode: Boolean): KotlinExportChecker<DeclarationDescriptor> = ExportChecker
 
     override fun getMangleComputer(mode: MangleMode, compatibleMode: Boolean): KotlinMangleComputer<DeclarationDescriptor> =
         JKlibDescriptorManglerComputer(StringBuilder(256), mainDetector, mode)
