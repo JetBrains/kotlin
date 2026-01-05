@@ -88,7 +88,7 @@ static inline KInt objCIndexToKotlinOrThrow(NSUInteger index) {
 
 @implementation NSArray (NSArrayToKotlin)
 -(KRef)toKotlin:(KRef*)OBJ_RESULT {
-  RETURN_RESULT_OF(invokeAndAssociate, Kotlin_NSArrayAsKList_create, objc_retain(self));
+  RETURN_RESULT_OF(invokeAndAssociate, Kotlin_NSArrayAsKList_create, kotlin::CallWithThreadState<kotlin::ThreadState::kNative>(objc_retain, (id) self));
 }
 
 -(void)releaseAsAssociatedObject {
@@ -101,7 +101,7 @@ static inline KInt objCIndexToKotlinOrThrow(NSUInteger index) {
 
 @implementation NSMutableArray (NSArrayToKotlin)
 -(KRef)toKotlin:(KRef*)OBJ_RESULT {
-  RETURN_RESULT_OF(invokeAndAssociate, Kotlin_NSMutableArrayAsKMutableList_create, objc_retain(self));
+  RETURN_RESULT_OF(invokeAndAssociate, Kotlin_NSMutableArrayAsKMutableList_create, kotlin::CallWithThreadState<kotlin::ThreadState::kNative>(objc_retain, (id) self));
 }
 
 -(void)releaseAsAssociatedObject {
@@ -115,7 +115,7 @@ static inline KInt objCIndexToKotlinOrThrow(NSUInteger index) {
 
 @implementation NSSet (NSSetToKotlin)
 -(KRef)toKotlin:(KRef*)OBJ_RESULT {
-  RETURN_RESULT_OF(invokeAndAssociate, Kotlin_NSSetAsKSet_create, objc_retain(self));
+  RETURN_RESULT_OF(invokeAndAssociate, Kotlin_NSSetAsKSet_create, kotlin::CallWithThreadState<kotlin::ThreadState::kNative>(objc_retain, (id) self));
 }
 
 -(void)releaseAsAssociatedObject {
@@ -129,7 +129,7 @@ static inline KInt objCIndexToKotlinOrThrow(NSUInteger index) {
 
 @implementation NSDictionary (NSDictionaryToKotlin)
 -(KRef)toKotlin:(KRef*)OBJ_RESULT {
-  RETURN_RESULT_OF(invokeAndAssociate, Kotlin_NSDictionaryAsKMap_create, objc_retain(self));
+  RETURN_RESULT_OF(invokeAndAssociate, Kotlin_NSDictionaryAsKMap_create, kotlin::CallWithThreadState<kotlin::ThreadState::kNative>(objc_retain, (id) self));
 }
 
 -(void)releaseAsAssociatedObject {

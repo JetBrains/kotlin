@@ -352,6 +352,7 @@ id Kotlin_objc_allocWithZone(Class clazz) {
 }
 
 id Kotlin_objc_retain(id ptr) {
+  NativeOrUnregisteredThreadGuard guard(/*reentrant=*/ true);
   return objc_retain(ptr);
 }
 
