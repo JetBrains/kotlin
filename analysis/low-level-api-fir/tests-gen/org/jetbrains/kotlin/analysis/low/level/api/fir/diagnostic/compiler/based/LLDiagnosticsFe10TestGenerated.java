@@ -9167,6 +9167,12 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
         public void testSmartCastAfterDeadCode() {
           runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/deadCode/smartCastAfterDeadCode.kt");
         }
+
+        @Test
+        @TestMetadata("uninitializedMemberAfterUnreachableFunction.kt")
+        public void testUninitializedMemberAfterUnreachableFunction() {
+          runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/deadCode/uninitializedMemberAfterUnreachableFunction.kt");
+        }
       }
 
       @Nested
