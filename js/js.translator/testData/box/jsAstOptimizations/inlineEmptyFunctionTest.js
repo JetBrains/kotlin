@@ -50,7 +50,7 @@ function box() {
   }
   sep('Call in when');
   var tmp0_subject = OK;
-  if (typeof tmp0_subject === 'string') {
+  if (!(tmp0_subject == null) ? typeof tmp0_subject === 'string' : false) {
     // Inline function 'inlineFunction' call
   } else {
     if (isNumber(tmp0_subject)) {

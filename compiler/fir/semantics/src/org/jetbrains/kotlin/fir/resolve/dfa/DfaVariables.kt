@@ -14,12 +14,13 @@ import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.isFinal
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.isImplicitWhenSubjectVariable
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.types.SmartcastStability
 import java.util.*
@@ -103,6 +104,9 @@ class RealVariable(
             if (isUnstableSmartcastOnDelegatedProperties && (symbol.fir as? FirProperty)?.isDelegated == true) return SmartcastStability.DELEGATED_PROPERTY
 
             stability.inherentInstability?.let { return it }
+            if (symbol is FirPropertySymbol && symbol.fir.isImplicitWhenSubjectVariable) {
+                flow.unwrapVariable(this).takeIf { it != this }?.let { return it.getStability(flow, session) }
+            }
             if (stability.checkReceiver && dispatchReceiver?.hasFinalType(flow, session) == false)
                 return SmartcastStability.PROPERTY_WITH_GETTER
             if (stability.checkModule && !(symbol.fir as FirVariable).isInCurrentOrFriendModule(session))
