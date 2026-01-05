@@ -8,7 +8,7 @@ buildscript {
 }
 
 logger.info("buildSrcKotlinVersion: " + project.getKotlinPluginVersion())
-logger.info("reset build cache")
+logger.info("reset build cache again")
 
 configurations {
     fun NamedDomainObjectProvider<Configuration>.printResolvedDependencyVersion(formatString: String, group: String, name: String) {
