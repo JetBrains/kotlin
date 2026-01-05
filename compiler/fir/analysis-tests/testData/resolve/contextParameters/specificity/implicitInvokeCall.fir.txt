@@ -1,0 +1,92 @@
+FILE: implicitInvokeCall.kt
+    public final class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class ResolutionA : R|kotlin/Any| {
+        public constructor(): R|ResolutionA| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class ResolutionB : R|kotlin/Any| {
+        public constructor(): R|ResolutionB| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    context(a: R|A|)
+    public final fun foo0(): R|ResolutionA| {
+        ^foo0 R|/ResolutionA.ResolutionA|()
+    }
+    context(a: R|A|)
+    public final val foo0: R|() -> ResolutionB|
+        public get(): R|() -> ResolutionB| {
+            ^ fun <anonymous>(): R|ResolutionB| <inline=NoInline>  {
+                ^ R|/ResolutionB.ResolutionB|()
+            }
+
+        }
+    context(a: R|A|)
+    public final val foo1: R|() -> ResolutionA|
+        public get(): R|() -> ResolutionA| {
+            ^ fun <anonymous>(): R|ResolutionA| <inline=NoInline>  {
+                ^ R|/ResolutionA.ResolutionA|()
+            }
+
+        }
+    public final val foo1: R|@ContextFunctionTypeParams(1) context(A) () -> ResolutionB|
+        public get(): R|@ContextFunctionTypeParams(1) context(A) () -> ResolutionB| {
+            ^ context(<unused var>: R|A|) fun <anonymous>(): R|ResolutionB| <inline=NoInline>  {
+                ^ R|/ResolutionB.ResolutionB|()
+            }
+
+        }
+    public final fun foo2(): R|ResolutionA| {
+        ^foo2 R|/ResolutionA.ResolutionA|()
+    }
+    context(a: R|A|)
+    public final val foo2: R|() -> ResolutionB|
+        public get(): R|() -> ResolutionB| {
+            ^ fun <anonymous>(): R|ResolutionB| <inline=NoInline>  {
+                ^ R|/ResolutionB.ResolutionB|()
+            }
+
+        }
+    context(a: R|A|)
+    public final fun foo3(): R|ResolutionA| {
+        ^foo3 R|/ResolutionA.ResolutionA|()
+    }
+    public final val foo3: R|() -> ResolutionB|
+        public get(): R|() -> ResolutionB| {
+            ^ fun <anonymous>(): R|ResolutionB| <inline=NoInline>  {
+                ^ R|/ResolutionB.ResolutionB|()
+            }
+
+        }
+    context(a: R|A|)
+    public final fun usage(): R|kotlin/Unit| {
+        lval t0: R|ResolutionA| = context(R|<local>/a|) R|/foo0|()
+        lval t1: <ERROR TYPE REF: Ambiguity: foo1, [kotlin/Function0.invoke, kotlin/Function1.invoke]> = <Ambiguity: foo1, [kotlin/Function0.invoke, kotlin/Function1.invoke]>#()
+        lval t2: R|ResolutionA| = R|/foo2|()
+        lval t3: R|ResolutionA| = context(R|<local>/a|) R|/foo3|()
+    }
+    public final fun usage2(): R|kotlin/Unit| {
+        local final fun <A, R> context(context: R|A|, block: R|@ContextFunctionTypeParams(1) context(A) () -> R|): R|R| {
+            ^context R|<local>/block|.R|SubstitutionOverride<kotlin/Function1.invoke: R|R|>|(R|<local>/context|)
+        }
+
+        lval t0: R|ResolutionA| = R|/foo0<Inapplicable(INAPPLICABLE): /foo0>#|()
+        lval t1: R|ResolutionB| = R|/foo1|.R|SubstitutionOverride<kotlin/Function1.invoke: R|ResolutionB|><Inapplicable(INAPPLICABLE): kotlin/Function1.invoke>#|()
+        lval t1_: R|ResolutionB| = R|/foo1|.R|kotlin/let|<R|@ContextFunctionTypeParams(1) context(A) () -> ResolutionB|, R|ResolutionB|>(<L> = let@fun <anonymous>(it: R|@ContextFunctionTypeParams(1) context(A) () -> ResolutionB|): R|ResolutionB| <inline=Inline, kind=EXACTLY_ONCE>  {
+            ^ R|<local>/context|<R|A|, R|ResolutionB|>(R|/A.A|(), <L> = context(<unused var>: R|A|) context@fun <anonymous>(): R|ResolutionB| <inline=NoInline>  {
+                ^ R|<local>/it|.R|SubstitutionOverride<kotlin/Function1.invoke: R|ResolutionB|>|(R|<local>/<unused var>|)
+            }
+            )
+        }
+        )
+        lval t2: R|ResolutionA| = R|/foo2|()
+        lval t3: R|ResolutionB| = R|/foo3|.R|SubstitutionOverride<kotlin/Function0.invoke: R|ResolutionB|>|()
+    }

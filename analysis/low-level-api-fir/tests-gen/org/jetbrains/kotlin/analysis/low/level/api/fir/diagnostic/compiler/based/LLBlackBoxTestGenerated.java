@@ -11512,6 +11512,12 @@ public class LLBlackBoxTestGenerated extends AbstractLLBlackBoxTest {
     }
 
     @Test
+    @TestMetadata("specificity.kt")
+    public void testSpecificity() {
+      runTest("compiler/testData/codegen/box/contextParameters/specificity.kt");
+    }
+
+    @Test
     @TestMetadata("substitutedContextReceivers.kt")
     public void testSubstitutedContextReceivers() {
       runTest("compiler/testData/codegen/box/contextParameters/substitutedContextReceivers.kt");

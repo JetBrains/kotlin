@@ -1,0 +1,211 @@
+FILE: baseSpecificity.kt
+    public open class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class SubA : R|A| {
+        public constructor(): R|SubA| {
+            super<R|A|>()
+        }
+
+    }
+    public final class B : R|kotlin/Any| {
+        public constructor(): R|B| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final fun <A, R> context(context: R|A|, block: R|@ContextFunctionTypeParams(1) context(A) () -> R|): R|R| {
+        ^context R|<local>/block|.R|SubstitutionOverride<kotlin/Function1.invoke: R|R|>|(R|<local>/context|)
+    }
+    public final fun foo1a(): R|kotlin/Unit| {
+    }
+    context(a: R|A|)
+    public final fun foo1a(): R|kotlin/Unit| {
+    }
+    public final val prop1a: R|kotlin/Int|
+        public get(): R|kotlin/Int| {
+            ^ Int(42)
+        }
+    context(a: R|A|)
+    public final val prop1a: R|kotlin/Int|
+        public get(): R|kotlin/Int| {
+            ^ Int(42)
+        }
+    context(b: R|B|)
+    public final fun foo1b(): R|kotlin/Unit| {
+    }
+    context(b: R|B|, a: R|A|)
+    public final fun foo1b(): R|kotlin/Unit| {
+    }
+    context(b: R|B|)
+    public final val prop1b: R|kotlin/Int|
+        public get(): R|kotlin/Int| {
+            ^ Int(42)
+        }
+    context(b: R|B|, a: R|A|)
+    public final val prop1b: R|kotlin/Int|
+        public get(): R|kotlin/Int| {
+            ^ Int(42)
+        }
+    context(a: R|A|)
+    public final fun foo1c(): R|kotlin/Unit| {
+    }
+    context(b: R|B|)
+    public final fun foo1c(): R|kotlin/Unit| {
+    }
+    context(a: R|A|)
+    public final val prop1c: R|kotlin/Int|
+        public get(): R|kotlin/Int| {
+            ^ Int(42)
+        }
+    context(b: R|B|)
+    public final val prop1c: R|kotlin/Int|
+        public get(): R|kotlin/Int| {
+            ^ Int(42)
+        }
+    context(a: R|A|, b: R|B|)
+    public final fun foo1d(): R|kotlin/Unit| {
+    }
+    context(d: R|B|, c: R|A|)
+    public final fun foo1d(): R|kotlin/Unit| {
+    }
+    context(a: R|A|, b: R|B|)
+    public final val prop1d: R|kotlin/Int|
+        public get(): R|kotlin/Int| {
+            ^ Int(42)
+        }
+    context(d: R|B|, <unused var>: R|A|)
+    public final val prop1d: R|kotlin/Int|
+        public get(): R|kotlin/Int| {
+            ^ Int(42)
+        }
+    context(a: R|A|)
+    public final fun foo2(): R|kotlin/Unit| {
+    }
+    public final fun foo2(a: R|A|): R|kotlin/Unit| {
+    }
+    context(a: R|A|)
+    public final fun foo3a(): R|kotlin/Unit| {
+    }
+    public final fun foo3a(a: R|A| = R|/A.A|()): R|kotlin/Unit| {
+    }
+    context(b: R|B|, a: R|A|)
+    public final fun foo3b(): R|kotlin/Unit| {
+    }
+    context(b: R|B|)
+    public final fun foo3b(a: R|A| = R|/A.A|()): R|kotlin/Unit| {
+    }
+    context(a: R|A|)
+    public final fun foo3c(): R|kotlin/Unit| {
+    }
+    public final fun foo3c(b: R|A| = R|/A.A|()): R|kotlin/Unit| {
+    }
+    context(ctx: R|A|)
+    public final fun foo4a(): R|kotlin/Unit| {
+    }
+    public final fun foo4a(vararg a: R|kotlin/Array<out A>|): R|kotlin/Unit| {
+    }
+    public final fun foo4b(): R|kotlin/Unit| {
+    }
+    context(ctx: R|A|)
+    public final fun foo4b(vararg a: R|kotlin/Array<out A>|): R|kotlin/Unit| {
+    }
+    context(a: R|SubA|)
+    public final fun foo5(): R|kotlin/Int| {
+        ^foo5 Int(42)
+    }
+    public final fun R|A|.foo5(): R|kotlin/String| {
+        ^foo5 String()
+    }
+    context(a: R|SubA|)
+    public final val prop5: R|kotlin/Int|
+        public get(): R|kotlin/Int| {
+            ^ Int(42)
+        }
+    public final val R|A|.prop5: R|kotlin/String|
+        public get(): R|kotlin/String| {
+            ^ String()
+        }
+    public final fun test0(): R|kotlin/Unit| {
+        R|/foo1a|()
+        R|/prop1a|
+        context(R|/A.A|()) R|/foo1a|()
+        <Ambiguity: foo2, [/foo2, /foo2]>#(R|/A.A|())
+        <Ambiguity: foo3a, [/foo3a, /foo3a]>#(R|/A.A|())
+        R|/foo3c|()
+        context(R|/A.A|()) R|/foo3c|()
+        R|/foo3c|(R|/A.A|())
+        R|/foo4a|()
+        R|/foo4b|()
+    }
+    context(a: R|A|)
+    public final fun test1(): R|kotlin/Unit| {
+        <Ambiguity: foo1a, [/foo1a, /foo1a]>#()
+        <Ambiguity: prop1a, [/prop1a, /prop1a]>#
+        context(R|/A.A|()) R|/foo1a|()
+        context(R|<local>/a|) R|/foo1c|()
+        context(R|<local>/a|) R|/prop1c|
+        context(R|<local>/a|) R|/foo2|()
+        <Ambiguity: foo2, [/foo2, /foo2]>#(R|/A.A|())
+        context(R|<local>/a|) R|/foo3a|()
+        <Ambiguity: foo3a, [/foo3a, /foo3a]>#(R|/A.A|())
+        context(R|<local>/a|) R|/foo3c|()
+        context(R|/A.A|()) R|/foo3c|()
+        R|/foo3c|(R|/A.A|())
+        context(R|<local>/a|) R|/foo4a|()
+        R|/foo4a|(vararg(R|/A.A|()))
+        R|/foo4b|()
+        context(R|/A.A|()) R|/foo4b|()
+    }
+    context(b: R|B|)
+    public final fun test2(): R|kotlin/Unit| {
+        context(R|<local>/b|) R|/foo1c|()
+        context(R|<local>/b|) R|/prop1c|
+        <Ambiguity: foo3b, [/foo3b, /foo3b]>#(R|/A.A|())
+    }
+    context(a: R|A|, b: R|B|)
+    public final fun test3(): R|kotlin/Unit| {
+        <Ambiguity: foo1b, [/foo1b, /foo1b]>#()
+        <Ambiguity: prop1b, [/prop1b, /prop1b]>#
+        context(R|<local>/b|, R|/A.A|()) R|/foo1b|()
+        <Ambiguity: foo1c, [/foo1c, /foo1c]>#()
+        <Ambiguity: prop1c, [/prop1c, /prop1c]>#
+        context(R|<local>/b|, R|<local>/a|) R|/foo3b|()
+        <Ambiguity: foo3b, [/foo3b, /foo3b]>#(R|/A.A|())
+    }
+    public final fun test4(arg: R|kotlin/Any|): R|kotlin/Unit| {
+        R|/foo1a|()
+        R|/prop1a|
+        R|/context|<R|kotlin/Any|, R|kotlin/Int|>(R|<local>/arg|, <L> = context(<unused var>: R|kotlin/Any|) context@fun <anonymous>(): R|kotlin/Int| <inline=NoInline>  {
+            R|/foo1a|()
+            ^ R|/prop1a|
+        }
+        )
+        when () {
+            (R|<local>/arg| is R|A|) ->  {
+                R|/context<Inapplicable(INAPPLICABLE): /context>#|<R|A|, <ERROR TYPE REF: Cannot infer argument for type parameter R>>(R|<local>/arg|, <L> = context(<unused var>: R|A|) context@fun <anonymous>(): <ERROR TYPE REF: Ambiguity: prop1a, [/prop1a, /prop1a]> <inline=NoInline>  {
+                    <Ambiguity: foo1a, [/foo1a, /foo1a]>#()
+                    ^ <Ambiguity: prop1a, [/prop1a, /prop1a]>#
+                }
+                )
+            }
+        }
+
+    }
+    public final fun test5(): R|kotlin/Unit| {
+        R|/foo5<Inapplicable(INAPPLICABLE): /foo5>#|()
+        R|/prop5<Inapplicable(INAPPLICABLE): /prop5>#|
+        R|kotlin/with|<R|SubA|, R|kotlin/Unit|>(R|/SubA.SubA|(), <L> = with@fun R|SubA|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
+            lval t0: R|kotlin/String| = this@R|special/anonymous|.R|/foo5|()
+            lval t1: R|kotlin/String| = this@R|special/anonymous|.R|/prop5|
+        }
+        )
+        R|/context|<R|SubA|, R|kotlin/Unit|>(R|/SubA.SubA|(), <L> = context(<unused var>: R|SubA|) context@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            lval t0: R|kotlin/Int| = context(R|<local>/<unused var>|) R|/foo5|()
+            lval t1: R|kotlin/Int| = context(R|<local>/<unused var>|) R|/prop5|
+        }
+        )
+    }
