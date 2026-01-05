@@ -18061,6 +18061,22 @@ public class LLBlackBoxTestGenerated extends AbstractLLBlackBoxTest {
   }
 
   @Nested
+  @TestMetadata("compiler/testData/codegen/box/debugExperience")
+  @TestDataPath("$PROJECT_ROOT")
+  public class DebugExperience {
+    @Test
+    public void testAllFilesPresentInDebugExperience() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/debugExperience"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("internalLocalsAreRenamed.kt")
+    public void testInternalLocalsAreRenamed() {
+      runTest("compiler/testData/codegen/box/debugExperience/internalLocalsAreRenamed.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("compiler/testData/codegen/box/defaultArguments")
   @TestDataPath("$PROJECT_ROOT")
   public class DefaultArguments {
