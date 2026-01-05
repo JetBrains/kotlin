@@ -1,0 +1,5 @@
+@all:Property
+@all:PropertyAndField
+@all:ParameterPropertyAndField
+@all:Everything
+var prop: kotlin.Int
