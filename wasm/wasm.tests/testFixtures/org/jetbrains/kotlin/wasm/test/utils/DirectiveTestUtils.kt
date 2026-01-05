@@ -77,6 +77,35 @@ object DirectiveTestUtils {
         assertEquals("Count mismatch for instruction `$instruction` in function `$scopeFunctionName`", expectedCount, actualCount)
     }
 
+    private val LOCAL_IN_FUNCTION = createSimpleDirectiveHandler("WASM_CHECK_LOCAL_IN_FUNCTION") { module, arguments ->
+        checkLocalInScope(module, arguments, true)
+    }
+
+    private val LOCAL_NOT_IN_FUNCTION = createSimpleDirectiveHandler("WASM_CHECK_LOCAL_NOT_IN_FUNCTION") { module, arguments ->
+        checkLocalInScope(module, arguments, false)
+    }
+
+    private fun checkLocalInScope(module: WasmModule, arguments: ArgumentsHelper, expectExists: Boolean) {
+        val localName = arguments.getNamedArgument("name")
+        val scopeFunctionName = arguments.getNamedArgument("inFunction")
+
+        val scopeFunction = WasmIrCheckUtils.getDefinedFunction(module, scopeFunctionName)
+
+        var locals = scopeFunction.locals
+
+        // add locals of any (nested) lambdas
+        // there will be quite a bit of unnecessary ones in here, but we only need to get the real ones as well.
+        // TODO(review): would be nicer to have a more robust solution here than text search. Somehow getting from the name of the local that holds the lambda, to the lambda's invoke function, that has the actual locals we're searching for
+        module.definedFunctions.filter { it.name.contains(Regex("$scopeFunctionName(\\\$lambda)+\\.invoke")) }.forEach { lambda -> locals += lambda.locals }
+
+        val local = locals.find { it.name == localName }
+
+        if(expectExists)
+            assertNotNull("Local variable `$localName` *not* found in function `${scopeFunction.name}`", local)
+        else
+            assertNull("Local variable `$localName` found in function `${scopeFunction.name}`", local)
+    }
+
     private fun checkFunctionContainsNoCalls(module: WasmModule, functionName: String, exceptFunctionNames: Set<String>) {
         val function = WasmIrCheckUtils.getDefinedFunction(module, functionName)
         val counter = WasmIrCheckUtils.countCalls(module, function, exceptFunctionNames)
@@ -150,6 +179,8 @@ object DirectiveTestUtils {
         FUNCTION_NOT_CALLED_IN_FUNCTION,
         INSTRUCTION_NOT_IN_FUNCTION,
         COUNT_INSTRUCTION_IN_FUNCTION,
+        LOCAL_IN_FUNCTION,
+        LOCAL_NOT_IN_FUNCTION
     )
 
     @Throws(Exception::class)
