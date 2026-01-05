@@ -3,5 +3,7 @@
 @all:ParameterPropertyAndField
 @all:Everything
 var prop: kotlin.Int
+  @Get
+  @Everything
   get()
-  set(value: kotlin.Int)
+  set(@Param @ParameterPropertyAndField @Everything value: kotlin.Int)

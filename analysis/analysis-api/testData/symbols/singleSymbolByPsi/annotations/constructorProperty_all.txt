@@ -22,7 +22,16 @@ KaValueParameterSymbol:
         psi: KtAnnotationEntry
     ]
     backingFieldSymbol: KaBackingFieldSymbol:
-      annotations: []
+      annotations: [
+        Field()
+          psi: KtAnnotationEntry
+        PropertyAndField()
+          psi: KtAnnotationEntry
+        ParameterPropertyAndField()
+          psi: KtAnnotationEntry
+        Everything()
+          psi: KtAnnotationEntry
+      ]
       callableId: null
       compilerVisibility: Private
       contextReceivers: []
@@ -55,7 +64,12 @@ KaValueParameterSymbol:
     contextParameters: []
     contextReceivers: []
     getter: KaPropertyGetterSymbol:
-      annotations: []
+      annotations: [
+        Get()
+          psi: KtAnnotationEntry
+        Everything()
+          psi: KtAnnotationEntry
+      ]
       callableId: null
       compilerVisibility: Public
       contextReceivers: []
@@ -125,7 +139,14 @@ KaValueParameterSymbol:
       modality: FINAL
       origin: SOURCE
       parameter: KaValueParameterSymbol:
-        annotations: []
+        annotations: [
+          Param()
+            psi: KtAnnotationEntry
+          ParameterPropertyAndField()
+            psi: KtAnnotationEntry
+          Everything()
+            psi: KtAnnotationEntry
+        ]
         callableId: null
         compilerVisibility: Public
         contextReceivers: []
@@ -162,7 +183,14 @@ KaValueParameterSymbol:
         type: kotlin/Unit
       valueParameters: [
         KaValueParameterSymbol:
-          annotations: []
+          annotations: [
+            Param()
+              psi: KtAnnotationEntry
+            ParameterPropertyAndField()
+              psi: KtAnnotationEntry
+            Everything()
+              psi: KtAnnotationEntry
+          ]
           callableId: null
           compilerVisibility: Public
           contextReceivers: []

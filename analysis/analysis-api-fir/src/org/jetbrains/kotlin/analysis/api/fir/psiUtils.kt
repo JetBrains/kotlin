@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -187,7 +187,10 @@ internal val KtDeclaration.location: KaSymbolLocation
     }
 
 internal fun KtAnnotated.hasAnnotation(useSiteTarget: AnnotationUseSiteTarget): Boolean = annotationEntries.any {
-    it.useSiteTarget?.getAnnotationUseSiteTarget() == useSiteTarget
+    when (it.useSiteTarget?.getAnnotationUseSiteTarget()) {
+        useSiteTarget, AnnotationUseSiteTarget.ALL -> true
+        else -> false
+    }
 }
 
 /**

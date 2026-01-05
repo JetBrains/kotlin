@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,17 +9,21 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForDeclaration
 import org.jetbrains.kotlin.analysis.api.fir.findPsi
+import org.jetbrains.kotlin.analysis.api.fir.hasAnnotation
 import org.jetbrains.kotlin.analysis.api.fir.parameterName
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirValueParameterSymbolPointer
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.createOwnerPointer
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
+import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaBaseEmptyAnnotationList
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.utils.errors.requireIsInstance
 import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.correspondingProperty
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
@@ -29,6 +33,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.KtPrimaryConstructor
+import org.jetbrains.kotlin.psi.KtPropertyAccessor
 
 internal class KaFirValueParameterSymbol private constructor(
     override val backingPsi: KtParameter?,
@@ -105,7 +110,16 @@ internal class KaFirValueParameterSymbol private constructor(
         get() = withValidityAssertion { backingPsi?.hasDefaultValue() ?: firSymbol.hasDefaultValue }
 
     override val annotations: KaAnnotationList
-        get() = withValidityAssertion { psiOrSymbolAnnotationList() }
+        get() = withValidityAssertion {
+            if (backingPsi != null && backingPsi.annotationEntries.isEmpty()) {
+                val property = (backingPsi.ownerDeclaration as? KtPropertyAccessor)?.property
+                if (property?.hasAnnotation(AnnotationUseSiteTarget.SETTER_PARAMETER) != true) {
+                    return@withValidityAssertion KaBaseEmptyAnnotationList(token)
+                }
+            }
+
+            KaFirAnnotationListForDeclaration.create(firSymbol, builder)
+        }
 
     override val generatedPrimaryConstructorProperty: KaKotlinPropertySymbol?
         get() = withValidityAssertion {
