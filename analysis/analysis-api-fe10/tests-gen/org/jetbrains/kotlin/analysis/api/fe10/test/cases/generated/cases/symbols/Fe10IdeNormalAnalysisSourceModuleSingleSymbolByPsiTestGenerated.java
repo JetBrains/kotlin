@@ -530,6 +530,12 @@ public class Fe10IdeNormalAnalysisSourceModuleSingleSymbolByPsiTestGenerated ext
     }
 
     @Test
+    @TestMetadata("jvmName.kt")
+    public void testJvmName() {
+      runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/annotations/jvmName.kt");
+    }
+
+    @Test
     @TestMetadata("variable_all.kt")
     public void testVariable_all() {
       runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/annotations/variable_all.kt");
