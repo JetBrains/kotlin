@@ -48055,6 +48055,12 @@ public class LLReversedBlackBoxTestGenerated extends AbstractLLReversedBlackBoxT
       }
 
       @Test
+      @TestMetadata("explicitBackingFieldsIrConsistencyTest.kt")
+      public void testExplicitBackingFieldsIrConsistencyTest() {
+        runTest("compiler/testData/codegen/box/properties/backingField/explicitBackingFieldsIrConsistencyTest.kt");
+      }
+
+      @Test
       @TestMetadata("explicitFieldCallableReference.kt")
       public void testExplicitFieldCallableReference() {
         runTest("compiler/testData/codegen/box/properties/backingField/explicitFieldCallableReference.kt");
