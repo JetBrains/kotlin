@@ -26,6 +26,7 @@ class CleanDataTaskIT : KGPBaseTest() {
         }
     }
 
+    @Suppress("DEPRECATION")
     @DisplayName("Check web clean data tasks are deprecated")
     @GradleTest
     @MppGradlePluginTests

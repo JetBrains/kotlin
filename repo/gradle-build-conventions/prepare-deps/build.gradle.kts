@@ -1,7 +1,6 @@
 @file:Suppress("PropertyName", "HasPlatformType", "UnstableApiUsage")
 
 import org.gradle.internal.os.OperatingSystem
-import org.jetbrains.kotlin.gradle.tasks.internal.CleanableStore
 import java.io.Closeable
 import java.io.OutputStreamWriter
 import java.net.URI
@@ -138,6 +137,7 @@ dependencies {
     intellijVersionForIde?.let { intellijCoreForIde("com.jetbrains.intellij.idea:intellij-core:$it") }
 }
 
+@Suppress("DEPRECATION")
 fun prepareDeps(
     intellij: Configuration,
     intellijCore: Configuration,
@@ -150,10 +150,10 @@ fun prepareDeps(
     val makeIntellijAnnotations = tasks.register("makeIntellijAnnotations${intellij.name.replaceFirstChar(Char::uppercase)}", Copy::class) {
         dependsOn(makeIntellijCore)
 
-        val intellijCoreRepo = CleanableStore[repoDir.resolve("intellij-core").absolutePath][intellijVersion].use()
+        val intellijCoreRepo = org.jetbrains.kotlin.gradle.tasks.internal.CleanableStore[repoDir.resolve("intellij-core").absolutePath][intellijVersion].use()
         from(intellijCoreRepo.resolve("artifacts/annotations.jar"))
 
-        val annotationsStore = CleanableStore[repoDir.resolve(intellijRuntimeAnnotations).absolutePath]
+        val annotationsStore = org.jetbrains.kotlin.gradle.tasks.internal.CleanableStore[repoDir.resolve(intellijRuntimeAnnotations).absolutePath]
         val targetDir = annotationsStore[intellijVersion].use()
         into(targetDir)
 
@@ -248,8 +248,9 @@ fun buildIvyRepositoryTask(
     pathRemap: ((String) -> String)? = null,
     sources: Provider<File>? = null
 ): TaskProvider<Task> {
-    fun ResolvedArtifact.storeDirectory(): CleanableStore =
-        CleanableStore[repoDirectory.resolve("$organization/${moduleVersion.id.name}").absolutePath]
+    @Suppress("DEPRECATION")
+    fun ResolvedArtifact.storeDirectory(): org.jetbrains.kotlin.gradle.tasks.internal.CleanableStore =
+        org.jetbrains.kotlin.gradle.tasks.internal.CleanableStore[repoDirectory.resolve("$organization/${moduleVersion.id.name}").absolutePath]
 
     fun ResolvedArtifact.moduleDirectory(): File =
         storeDirectory()[moduleVersion.id.version].use()
@@ -337,7 +338,8 @@ fun buildIvyRepositoryTask(
     }
 }
 
-fun CleanableStore.cleanStore() = cleanDir(Instant.now().minus(Duration.ofDays(30)))
+@Suppress("DEPRECATION")
+fun org.jetbrains.kotlin.gradle.tasks.internal.CleanableStore.cleanStore() = cleanDir(Instant.now().minus(Duration.ofDays(30)))
 
 fun writeIvyXml(
     organization: String,
