@@ -474,7 +474,7 @@ private class JsIrAstDeserializer(private val source: ByteArray) {
     }
 
     private fun readParameter(): JsParameter {
-        return JsParameter(nameTable[readInt()]).apply {
+        return JsParameter(nameTable[readInt()], readBoolean()).apply {
             hasDefaultValue = readBoolean()
         }
     }

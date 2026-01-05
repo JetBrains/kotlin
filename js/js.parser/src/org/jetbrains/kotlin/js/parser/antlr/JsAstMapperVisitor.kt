@@ -402,13 +402,15 @@ internal class JsAstMapperVisitor(
         val paramList = ctx.formalParameterList()
         val restParam = paramList?.restParameterArg()
         val formalParams = paramList?.formalParameterArg() ?: emptyList()
-        check(restParam == null) { "Rest parameters are not supported yet" }
 
         return scopeContext.enterFunction().apply {
             this.name = scopeContext.localNameFor(id.text)
             if (isGenerator) modifiers.add(Modifier.GENERATOR)
             formalParams.mapTo(parameters) {
                 visitNode<JsParameter>(it).applyLocation(it)
+            }
+            restParam?.let {
+                parameters.add(visitNode<JsParameter>(it).applyLocation(it))
             }
             body = visitNode<JsBlock>(ctx.functionBody())
             scopeContext.exitFunction()
@@ -457,8 +459,14 @@ internal class JsAstMapperVisitor(
             .applyComments(ctx)
     }
 
-    override fun visitRestParameterArg(ctx: JavaScriptParser.RestParameterArgContext?): JsNode? {
-        raiseParserException("Rest parameters are not supported yet", ctx)
+    override fun visitRestParameterArg(ctx: JavaScriptParser.RestParameterArgContext): JsParameter {
+        val identifier = ctx.singleExpression().singleExpressionImpl() as? JavaScriptParser.IdentifierExpressionContext
+            ?: reportError("Only identifier rest parameters are supported yet", ctx)
+        val paramName = scopeContext.localNameFor(identifier.text)
+
+        return JsParameter(paramName, isRest = true)
+            .applyLocation(ctx)
+            .applyComments(ctx)
     }
 
     override fun visitFunctionBody(ctx: JavaScriptParser.FunctionBodyContext): JsBlock {
@@ -981,13 +989,15 @@ internal class JsAstMapperVisitor(
         val paramList = ctx.formalParameterList()
         val restParam = paramList?.restParameterArg()
         val formalParams = paramList?.formalParameterArg() ?: emptyList()
-        check(restParam == null) { "Rest parameters are not supported yet" }
 
         return scopeContext.enterFunction().apply {
             this.name = null
             if (isGenerator) modifiers.add(Modifier.GENERATOR)
             formalParams.mapTo(parameters) {
                 visitNode<JsParameter>(it).applyLocation(it)
+            }
+            restParam?.let {
+                parameters.add(visitNode<JsParameter>(it).applyLocation(it))
             }
             body = visitNode<JsBlock>(ctx.functionBody())
             scopeContext.exitFunction()
@@ -999,22 +1009,25 @@ internal class JsAstMapperVisitor(
             val params = ctx.arrowFunctionParameters()
             val parenthesizedParamList = params.formalParameterList()
             val restParam = parenthesizedParamList?.restParameterArg()
-            check(restParam == null) { "Rest parameters are not supported yet" }
 
-            params?.identifierName()?.let { singleIdentifier ->
-                return JsParameter(scopeContext.localNameFor(singleIdentifier.text))
-                    .applyLocation(singleIdentifier)
-                    .applyComments(singleIdentifier)
-                    .let(::listOf)
-            }
+            return buildList {
+                params?.identifierName()?.let { singleIdentifier ->
+                    JsParameter(scopeContext.localNameFor(singleIdentifier.text))
+                        .applyLocation(singleIdentifier)
+                        .applyComments(singleIdentifier)
+                        .let { add(it) }
+                }
 
-            parenthesizedParamList?.formalParameterArg()?.let { formalParams ->
-                return formalParams.map { param ->
-                    visitNode<JsParameter>(param).applyLocation(param)
+                parenthesizedParamList?.formalParameterArg()?.let { formalParams ->
+                    formalParams.forEach { param ->
+                        add(visitNode<JsParameter>(param).applyLocation(param))
+                    }
+                }
+
+                restParam?.let {
+                    add(visitNode<JsParameter>(it).applyLocation(it))
                 }
             }
-
-            return emptyList()
         }
 
         return scopeContext.enterFunction().apply {

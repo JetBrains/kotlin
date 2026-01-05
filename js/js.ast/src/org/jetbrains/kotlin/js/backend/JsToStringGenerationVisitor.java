@@ -1148,6 +1148,9 @@ public class JsToStringGenerationVisitor extends JsVisitor {
     @Override
     public void visitParameter(@NotNull JsParameter x) {
         pushSourceInfo(x.getSource());
+        if (x.isRest()) {
+            ellipsis();
+        }
         nameOf(x);
         popSourceInfo();
     }
