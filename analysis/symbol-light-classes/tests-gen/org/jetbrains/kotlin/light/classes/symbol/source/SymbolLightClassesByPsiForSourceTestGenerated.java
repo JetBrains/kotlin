@@ -1328,6 +1328,52 @@ public class SymbolLightClassesByPsiForSourceTestGenerated extends AbstractSymbo
         }
       }
     }
+
+    @Nested
+    @TestMetadata("compiler/testData/asJava/lightClasses/lightClassByPsi/k2/versionOverloads")
+    @TestDataPath("$PROJECT_ROOT")
+    public class VersionOverloads {
+      @Test
+      public void testAllFilesPresentInVersionOverloads() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/lightClassByPsi/k2/versionOverloads"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+      }
+
+      @Test
+      @TestMetadata("functions.kt")
+      public void testFunctions() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/k2/versionOverloads/functions.kt");
+      }
+
+      @Test
+      @TestMetadata("jvmName.kt")
+      public void testJvmName() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/k2/versionOverloads/jvmName.kt");
+      }
+
+      @Test
+      @TestMetadata("nonAscending.kt")
+      public void testNonAscending() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/k2/versionOverloads/nonAscending.kt");
+      }
+
+      @Test
+      @TestMetadata("withJvmOverloads.kt")
+      public void testWithJvmOverloads() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/k2/versionOverloads/withJvmOverloads.kt");
+      }
+
+      @Test
+      @TestMetadata("withJvmOverloadsAndNonAscending.kt")
+      public void testWithJvmOverloadsAndNonAscending() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/k2/versionOverloads/withJvmOverloadsAndNonAscending.kt");
+      }
+
+      @Test
+      @TestMetadata("withLambdaDefaults.kt")
+      public void testWithLambdaDefaults() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/k2/versionOverloads/withLambdaDefaults.kt");
+      }
+    }
   }
 
   @Nested

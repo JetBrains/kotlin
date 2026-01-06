@@ -104,6 +104,16 @@ public class ScriptSymbolLightClassesByPsiForSourceTestGenerated extends Abstrac
         }
       }
     }
+
+    @Nested
+    @TestMetadata("compiler/testData/asJava/lightClasses/lightClassByPsi/k2/versionOverloads")
+    @TestDataPath("$PROJECT_ROOT")
+    public class VersionOverloads {
+      @Test
+      public void testAllFilesPresentInVersionOverloads() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/lightClassByPsi/k2/versionOverloads"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
+      }
+    }
   }
 
   @Nested
