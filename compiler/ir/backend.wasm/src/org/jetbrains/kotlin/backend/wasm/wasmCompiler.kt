@@ -87,7 +87,6 @@ fun compileToLoweredIr(
     exportedDeclarations: Set<FqName> = emptySet(),
     generateTypeScriptFragment: Boolean,
     propertyLazyInitialization: Boolean,
-    disableCrossFileOptimisations: Boolean = false,
 ): LoweredIrWithExtraArtifacts {
     val (moduleFragment, moduleDependencies, irBuiltIns, symbolTable, irLinker) = irModuleInfo
 
@@ -135,7 +134,6 @@ fun compileToLoweredIr(
             allModules,
             context,
             context.irFactory.stageController as WholeWorldStageController,
-            disableCrossFileOptimisations = disableCrossFileOptimisations,
         )
     }
 
@@ -146,13 +144,12 @@ fun lowerPreservingTags(
     modules: Iterable<IrModuleFragment>,
     context: WasmBackendContext,
     controller: WholeWorldStageController,
-    disableCrossFileOptimisations: Boolean,
 ) {
     // Lower all the things
     controller.currentStage = 0
 
     val phaserState = PhaserState()
-    val wasmLowerings = getWasmLowerings(context.configuration, disableCrossFileOptimisations)
+    val wasmLowerings = getWasmLowerings(context.configuration)
 
     wasmLowerings.forEachIndexed { i, lowering ->
         controller.currentStage = i + 1

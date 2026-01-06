@@ -59,6 +59,9 @@ object WasmConfigurationKeys {
     @JvmField
     val WASM_COMMAND_MODULE = CompilerConfigurationKey.create<Boolean>("use command module initialization (_initialize export).")
 
+    @JvmField
+    val WASM_DISABLE_CROSS_FILE_OPTIMISATIONS = CompilerConfigurationKey.create<Boolean>("Disables cross file optimizations. Required to for IC.")
+
 }
 
 var CompilerConfiguration.wasmEnableArrayRangeChecks: Boolean
@@ -116,4 +119,8 @@ var CompilerConfiguration.wasmDependencyResolutionMap: String?
 var CompilerConfiguration.wasmCommandModule: Boolean
     get() = getBoolean(WasmConfigurationKeys.WASM_COMMAND_MODULE)
     set(value) { put(WasmConfigurationKeys.WASM_COMMAND_MODULE, value) }
+
+var CompilerConfiguration.wasmDisableCrossFileOptimisations: Boolean
+    get() = getBoolean(WasmConfigurationKeys.WASM_DISABLE_CROSS_FILE_OPTIMISATIONS)
+    set(value) { put(WasmConfigurationKeys.WASM_DISABLE_CROSS_FILE_OPTIMISATIONS, value) }
 

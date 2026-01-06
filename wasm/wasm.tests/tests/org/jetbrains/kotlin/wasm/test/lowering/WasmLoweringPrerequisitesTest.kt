@@ -34,8 +34,9 @@ class WasmLoweringPrerequisitesTest : LoweringPrerequisitesTest() {
         for (isDebugFriendlyCompilation in listOf(false, true)) {
             for (disableCrossFileOptimisations in listOf(false, true)) {
                 configuration.put(WasmConfigurationKeys.WASM_FORCE_DEBUG_FRIENDLY_COMPILATION, isDebugFriendlyCompilation)
+                configuration.put(WasmConfigurationKeys.WASM_DISABLE_CROSS_FILE_OPTIMISATIONS, disableCrossFileOptimisations)
                 checkPrerequisites(
-                    getWasmLowerings(configuration = configuration, disableCrossFileOptimisations)
+                    getWasmLowerings(configuration = configuration)
                 )
             }
         }

@@ -121,8 +121,8 @@ fun wasmLoweringsOfTheFirstPhase(
 
 fun getWasmLowerings(
     configuration: CompilerConfiguration,
-    disableCrossFileOptimisations: Boolean,
 ): List<NamedCompilerPhase<WasmBackendContext, IrModuleFragment, IrModuleFragment>> {
+    val disableCrossFileOptimisations = configuration.getBoolean(WasmConfigurationKeys.WASM_DISABLE_CROSS_FILE_OPTIMISATIONS)
     val isDebugFriendlyCompilation = configuration.getBoolean(WasmConfigurationKeys.WASM_FORCE_DEBUG_FRIENDLY_COMPILATION)
 
     val phases = listOfNotNull<(WasmBackendContext) -> ModuleLoweringPass>(

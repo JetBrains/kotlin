@@ -76,6 +76,7 @@ class WasmLoweringSingleModuleFacade(testServices: TestServices) :
         val generateDts = WasmEnvironmentConfigurationDirectives.CHECK_TYPESCRIPT_DECLARATIONS in testServices.moduleStructure.allDirectives
         val generateSourceMaps = WasmEnvironmentConfigurationDirectives.GENERATE_SOURCE_MAP in testServices.moduleStructure.allDirectives
 
+        configuration.put(WasmConfigurationKeys.WASM_DISABLE_CROSS_FILE_OPTIMISATIONS, true)
         val (allModules, backendContext, typeScriptFragment) = compileToLoweredIr(
             moduleInfo,
             mainModule,
@@ -84,7 +85,6 @@ class WasmLoweringSingleModuleFacade(testServices: TestServices) :
             exportedDeclarations = exportedDeclarations,
             propertyLazyInitialization = true,
             generateTypeScriptFragment = generateDts,
-            disableCrossFileOptimisations = true,
         )
 
         val useNewExceptionProposal = USE_NEW_EXCEPTION_HANDLING_PROPOSAL in testServices.moduleStructure.allDirectives

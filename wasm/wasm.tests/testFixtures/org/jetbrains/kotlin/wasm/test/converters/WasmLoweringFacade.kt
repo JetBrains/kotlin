@@ -85,6 +85,7 @@ class WasmLoweringFacade(
         val generateSourceMaps = WasmEnvironmentConfigurationDirectives.GENERATE_SOURCE_MAP in testServices.moduleStructure.allDirectives
         val generateDts = WasmEnvironmentConfigurationDirectives.CHECK_TYPESCRIPT_DECLARATIONS in testServices.moduleStructure.allDirectives
         val useDebuggerCustomFormatters = debugMode >= DebugMode.DEBUG || configuration.getBoolean(JSConfigurationKeys.USE_DEBUGGER_CUSTOM_FORMATTERS)
+        configuration.put(WasmConfigurationKeys.WASM_DISABLE_CROSS_FILE_OPTIMISATIONS, false)
         val (allModules, backendContext, typeScriptFragment) = compileToLoweredIr(
             moduleInfo,
             mainModule,

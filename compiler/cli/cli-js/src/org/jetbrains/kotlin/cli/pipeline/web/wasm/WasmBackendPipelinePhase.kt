@@ -204,6 +204,7 @@ object WasmBackendPipelinePhase : WebBackendPipelinePhase<WasmBackendPipelineArt
             loadFunctionInterfacesIntoStdlib = true,
         )
 
+        configuration.put(WasmConfigurationKeys.WASM_DISABLE_CROSS_FILE_OPTIMISATIONS, false)
         val (allModules, backendContext, typeScriptFragment) = compileToLoweredIr(
             irModuleInfo,
             module.mainModule,
@@ -287,6 +288,7 @@ object WasmBackendPipelinePhase : WebBackendPipelinePhase<WasmBackendPipelineArt
             irFactory = irFactory,
         )
 
+        configuration.put(WasmConfigurationKeys.WASM_DISABLE_CROSS_FILE_OPTIMISATIONS, true)
         val (allModules, backendContext, typeScriptFragment) = compileToLoweredIr(
             irModuleInfo,
             module.mainModule,
@@ -295,7 +297,6 @@ object WasmBackendPipelinePhase : WebBackendPipelinePhase<WasmBackendPipelineArt
             exportedDeclarations = setOf(FqName("main")),
             generateTypeScriptFragment = generateDts,
             propertyLazyInitialization = configuration.propertyLazyInitialization,
-            disableCrossFileOptimisations = true,
         )
 
         return performanceManager.tryMeasurePhaseTime(PhaseType.Backend) {
