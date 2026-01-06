@@ -74,7 +74,6 @@ class JKlibIrMangler : BaseJvmIrMangler() {
         override fun copy(newMode: MangleMode): IrMangleComputer =
             JKlibIrManglerComputer(builder, newMode, compatibleMode)
 
-        // TODO should we return false here ? if not we can directly ruse
         override fun addReturnTypeSpecialCase(function: IrFunction): Boolean = false
 
         override fun mangleTypePlatformSpecific(type: IrType, tBuilder: StringBuilder) {
@@ -113,7 +112,6 @@ class JKlibDescriptorMangler(private val mainDetector: MainFunctionDetector?) : 
         private val mainDetector: MainFunctionDetector?,
         mode: MangleMode,
     ) : JvmDescriptorManglerComputer(builder, mainDetector, mode) {
-        // TODO is it needed ?
         override fun addReturnTypeSpecialCase(function: FunctionDescriptor): Boolean = false
 
         override fun copy(newMode: MangleMode): DescriptorMangleComputer = JKlibDescriptorManglerComputer(builder, mainDetector, newMode)
@@ -212,7 +210,6 @@ internal object TypeMappingConfigurationImpl : TypeMappingConfiguration<JvmType>
 
     override fun preprocessType(kotlinType: KotlinType): KotlinType? {
         return null
-//        type.
     }
 
     override fun processErrorType(kotlinType: KotlinType, descriptor: ClassDescriptor) {
@@ -255,7 +252,6 @@ fun FunctionDescriptor.computeJvmDescriptor(withReturnType: Boolean = true, with
             append("V")
         } else {
             val returnType = returnType!!
-            // Workaround for b/447548985
             // Given a class annotated with `@NullMarked`, there will be such difference between K1 and K2 signatures for
             // functions containing primitive types in arguments/return value:
             // ```
