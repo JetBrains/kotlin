@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.ir.util.isElseBranch
 import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 
 private val OPTIMISED_WHEN_SUBJECT by IrDeclarationOriginImpl.Regular
 
@@ -49,6 +50,12 @@ class WasmStringSwitchOptimizerLowering(
 
     private class MatchedCase(val condition: IrCall, val branchIndex: Int)
     private class BucketSelector(val hashCode: Int, val selector: IrExpression)
+
+    override fun lower(irModule: IrModuleFragment) {
+        val isDebugFriendlyCompilation = context.configuration.getBoolean(WasmConfigurationKeys.WASM_FORCE_DEBUG_FRIENDLY_COMPILATION)
+        if (isDebugFriendlyCompilation) return
+        super.lower(irModule)
+    }
 
     override fun lower(irFile: IrFile) {
         irFile.transformChildrenVoid(this)
