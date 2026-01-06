@@ -27,7 +27,10 @@ open class ProjectExtensionDescriptor<T : Any>(name: String, extensionClass: Cla
     }
 
     fun registerExtension(project: Project, extension: T) {
-        project.extensionArea.getExtensionPoint(extensionPointName).registerExtension(extension, project)
+        val extensionPoint = project.extensionArea.getExtensionPoint(extensionPointName)
+        if (extension !in extensionPoint.extensions) {
+            extensionPoint.registerExtension(extension, project)
+        }
     }
 
     fun getInstances(project: Project): List<T> {
