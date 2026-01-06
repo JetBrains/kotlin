@@ -5,5 +5,6 @@ declare namespace JS_TESTS {
     namespace foo {
         /* ErrorDeclaration: Class declarations are not implemented yet */
         /* ErrorDeclaration: Class declarations are not implemented yet */
+        /* ErrorDeclaration: Class declarations are not implemented yet */
     }
 }

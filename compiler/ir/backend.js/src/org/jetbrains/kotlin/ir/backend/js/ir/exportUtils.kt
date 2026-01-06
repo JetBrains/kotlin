@@ -100,12 +100,16 @@ internal fun getExportCandidate(declaration: IrDeclaration): IrDeclarationWithNa
     if (declaration is IrSimpleFunction) {
         val property = declaration.correspondingPropertySymbol?.owner
         if (property != null) {
+            val customJsName = declaration.getJsNameForOverriddenDeclaration()
             // Return property for getter accessors only to prevent
             // returning it twice (for getter and setter) in the same scope
-            return if (property.getter == declaration)
-                property
-            else
-                null
+            return when {
+                // to respect defined @JsName on accessors, we need to export them as regular functions
+                // not as a property
+                customJsName != null -> declaration
+                property.getter == declaration -> property
+                else -> null
+            }
         }
     }
 
