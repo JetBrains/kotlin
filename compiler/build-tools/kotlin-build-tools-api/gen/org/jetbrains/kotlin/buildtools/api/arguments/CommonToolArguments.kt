@@ -22,6 +22,8 @@ public interface CommonToolArguments {
   /**
    * Takes a list of string arguments in the format recognized by the Kotlin CLI compiler and applies the options parsed from them into this instance.
    *
+   * @throws org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException when the `arguments` contain errors and cannot be parsed
+   *
    * @param arguments a list of arguments for the Kotlin CLI compiler
    */
   @Deprecated(message = "Compiler argument classes will become immutable in an upcoming release. Use a Builder instance to create and modify compiler arguments.")
@@ -91,6 +93,8 @@ public interface CommonToolArguments {
 
     /**
      * Takes a list of string arguments in the format recognized by the Kotlin CLI compiler and applies the options parsed from them into this instance.
+     *
+     * @throws org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException when the `arguments` contain errors and cannot be parsed
      *
      * @param arguments a list of arguments for the Kotlin CLI compiler
      */

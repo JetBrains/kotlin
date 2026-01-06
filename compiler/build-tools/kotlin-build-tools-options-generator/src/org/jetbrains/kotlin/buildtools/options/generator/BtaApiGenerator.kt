@@ -286,7 +286,13 @@ private fun FunSpec.Builder.addParameterIf(name: String, type: ClassName, condit
 private fun TypeSpec.Builder.maybeAddApplyArgumentStringsFun(deprecated: Boolean = false) {
     function("applyArgumentStrings") {
         maybeAddMutabilityDeprecationAnnotation(deprecated)
-        addKdoc("Takes a list of string arguments in the format recognized by the Kotlin CLI compiler and applies the options parsed from them into this instance.")
+        addKdoc(
+            """
+            Takes a list of string arguments in the format recognized by the Kotlin CLI compiler and applies the options parsed from them into this instance.
+            
+            @throws org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException when the `arguments` contain errors and cannot be parsed
+            """.trimIndent()
+        )
         addParameter(
             ParameterSpec.builder("arguments", listTypeNameOf<String>())
                 .addKdoc("a list of arguments for the Kotlin CLI compiler").build()
