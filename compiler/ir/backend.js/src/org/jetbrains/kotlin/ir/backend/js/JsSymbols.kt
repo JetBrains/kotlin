@@ -296,6 +296,9 @@ class JsSymbols(
 
     val longBoxedOne = CallableIds.longBoxedOne.propertySymbol()
 
+    val jsGenerateInterfaceSymbol = CallableIds.jsGenerateInterfaceSymbol.functionSymbol()
+    val generateInterfaceSymbolById = CallableIds.generateInterfaceSymbolById.functionSymbol()
+
     // Coroutines
 
     val jsYieldFunctionSymbol = CallableIds.jsYield.functionSymbol()
@@ -615,6 +618,8 @@ private object CallableIds {
     val jsNewAnonymousClass = "jsNewAnonymousClass".jsCallableId
     val jsYield = "jsYield".jsCallableId
     val jsYieldStar = "jsYieldStar".jsCallableId
+    val generateInterfaceSymbolById = "generateInterfaceSymbolById".jsCallableId
+    val jsGenerateInterfaceSymbol = "jsGenerateInterfaceSymbol".jsCallableId
     val numberRangeToNumber = "numberRangeToNumber".jsCallableId
     val numberRangeToLong = "numberRangeToLong".jsCallableId
     val longRangeToNumber = "longRangeToNumber".jsCallableId

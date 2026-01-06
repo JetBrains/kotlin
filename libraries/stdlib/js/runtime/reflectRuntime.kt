@@ -39,7 +39,7 @@ internal fun getPropertyCallableRef(
     return getPropertyRefClass(
         getter,
         getKPropMetadata(paramCount, setter),
-        getInterfaceMaskFor(getter, superType)
+        superType
     ).unsafeCast<KProperty<*>>()
 }
 
@@ -50,15 +50,17 @@ internal fun getLocalDelegateReference(name: String, superType: dynamic, mutable
     return getPropertyCallableRef(name, 0, superType, lambda, if (mutable) lambda else null, VOID)
 }
 
-private fun getPropertyRefClass(obj: Ctor, metadata: Metadata, imask: BitMask): dynamic {
+private fun getPropertyRefClass(obj: Ctor, metadata: Metadata, superType: Ctor): dynamic {
     obj.`$metadata$` = metadata
     obj.constructor = obj
-    obj.`$imask$` = imask
+
+    val symbol = superType.Symbol
+    if (symbol != null) {
+        obj.asDynamic()[symbol] = true
+    }
+    js("Object.assign(obj, superType.prototype)")
     return obj;
 }
-
-private fun getInterfaceMaskFor(obj: Ctor, superType: dynamic): BitMask =
-    obj.`$imask$` ?: implement(arrayOf(superType))
 
 @Suppress("UNUSED_PARAMETER")
 private fun getKPropMetadata(paramCount: Int, setter: Any?): dynamic {

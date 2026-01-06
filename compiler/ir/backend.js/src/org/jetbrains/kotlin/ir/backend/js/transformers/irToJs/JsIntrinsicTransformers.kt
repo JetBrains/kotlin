@@ -103,6 +103,14 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
                 JsYieldStar(translateCallArguments(call, context).single())
             }
 
+            add(symbols.jsGenerateInterfaceSymbol) { _, context ->
+                if (backendContext.es6mode) {
+                    JsInvocation(JsNameRef("Symbol"))
+                } else {
+                    JsInvocation(context.getNameForStaticFunction(symbols.generateInterfaceSymbolById.owner).makeRef())
+                }
+            }
+
             add(symbols.jsObjectCreateSymbol) { call, context ->
                 val classToCreate = call.typeArguments[0]!!.classifierOrFail.owner as IrClass
                 val className = classToCreate.getClassRef(context.staticContext)

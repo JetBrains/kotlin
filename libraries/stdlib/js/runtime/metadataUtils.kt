@@ -12,13 +12,21 @@ import kotlin.internal.UsedFromCompilerGeneratedCode
 @Suppress("MUST_BE_INITIALIZED")
 private var globalInterfaceId: dynamic
 
-private fun generateInterfaceId(): Int {
+// TODO: Merge the following two functions into one after the next boostrap
+@UsedFromCompilerGeneratedCode
+internal fun generateInterfaceId(): Int {
     if (globalInterfaceId === VOID) {
         globalInterfaceId = 0
     }
     globalInterfaceId = globalInterfaceId.unsafeCast<Int>() + 1
-    return globalInterfaceId.unsafeCast<Int>()
+    return globalInterfaceId
 }
+
+@UsedFromCompilerGeneratedCode
+internal fun generateInterfaceSymbolById(): String {
+    return "#__interface_${generateInterfaceId()}"
+}
+
 
 @Suppress("MUST_BE_INITIALIZED")
 private var globalAssociatedObjectId: dynamic
@@ -39,6 +47,7 @@ internal const val METADATA_KIND_INTERFACE = "interface"
 internal const val METADATA_KIND_OBJECT = "object"
 internal const val METADATA_KIND_CLASS = "class"
 
+@OptIn(JsIntrinsic::class)
 internal fun initMetadataFor(
     kind: String,
     ctor: Ctor,
@@ -60,9 +69,17 @@ internal fun initMetadataFor(
     val metadata = createMetadata(kind, name, defaultConstructor, associatedObjectKey, associatedObjects, suspendArity)
     ctor.`$metadata$` = metadata
 
+    val prototype = ctor.prototype
+
     if (interfaces != null) {
-        val receiver = if (metadata.iid != VOID) ctor else ctor.prototype
-        receiver.`$imask$` = implement(interfaces)
+        for (i in interfaces) {
+            js("Object.assign(prototype, i.prototype)")
+            prototype[i.Symbol] = true
+        }
+    }
+
+    if (kind === METADATA_KIND_INTERFACE) {
+        ctor.Symbol = jsGenerateInterfaceSymbol()
     }
 }
 
@@ -142,7 +159,6 @@ internal fun createMetadata(
     suspendArity: Array<Int>?,
 ): Metadata {
     val undef = VOID
-    val iid = if (kind == METADATA_KIND_INTERFACE) generateInterfaceId() else VOID
     return js("""({
     kind: kind,
     simpleName: name,
@@ -150,8 +166,7 @@ internal fun createMetadata(
     associatedObjects: associatedObjects,
     suspendArity: suspendArity,
     ${'$'}kClass$: undef,
-    defaultConstructor: defaultConstructor,
-    iid: iid
+    defaultConstructor: defaultConstructor
 })""")
 }
 
@@ -163,7 +178,6 @@ internal external interface Metadata {
     val associatedObjectKey: Number?
     val associatedObjects: dynamic
     val suspendArity: Array<Int>?
-    val iid: Int?
 
     var `$kClass$`: dynamic
     val defaultConstructor: dynamic

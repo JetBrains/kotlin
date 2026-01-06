@@ -235,6 +235,11 @@ internal fun <T> jsYield(value: T): T
 @JsIntrinsic
 internal fun <T> jsYieldStar(value: T): T
 
+// @JsIntrinsic
+// TODO: after the next bootstrap drop the body of this function, and uncomment the @JsIntrinsic annotation;
+internal fun jsGenerateInterfaceSymbol(): dynamic =
+    generateInterfaceSymbolById()
+
 /**
  * Depending on the target ES edition, calls transforms either
  * to [kotlin.js.internal.boxedLong.longCopyOfRange], or to `arr.slice(fromIndex, toIndex)`
