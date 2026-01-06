@@ -122,9 +122,6 @@ fun wasmLoweringsOfTheFirstPhase(
 fun getWasmLowerings(
     configuration: CompilerConfiguration,
 ): List<NamedCompilerPhase<WasmBackendContext, IrModuleFragment, IrModuleFragment>> {
-    val disableCrossFileOptimisations = configuration.getBoolean(WasmConfigurationKeys.WASM_DISABLE_CROSS_FILE_OPTIMISATIONS)
-    val isDebugFriendlyCompilation = configuration.getBoolean(WasmConfigurationKeys.WASM_FORCE_DEBUG_FRIENDLY_COMPILATION)
-
     val phases = listOfNotNull<(WasmBackendContext) -> ModuleLoweringPass>(
         // BEGIN: Common Native/JS/Wasm prefix.
         ::KlibIrValidationBeforeLoweringPhase,
@@ -187,7 +184,7 @@ fun getWasmLowerings(
         ::PrimaryConstructorLowering,
         ::DelegateToSyntheticPrimaryConstructor,
 
-        (::WasmStringSwitchOptimizerLowering).takeIf { !isDebugFriendlyCompilation },
+        ::WasmStringSwitchOptimizerLowering,
 
         ::AssociatedObjectsLowering,
 
@@ -224,7 +221,7 @@ fun getWasmLowerings(
         // This doesn't work with IC as of now for accessors within inline functions because
         //  there is no special case for Wasm in the computation of inline function transitive
         //  hashes the same way it's being done with the calculation of symbol hashes.
-        (::PropertyAccessorInlineLowering).takeIf { !disableCrossFileOptimisations && !isDebugFriendlyCompilation },
+        ::WasmPropertyAccessorInlineLowering,
 
         ::WasmStringConcatenationLowering,
 
@@ -255,7 +252,7 @@ fun getWasmLowerings(
         ::createAutoboxingTransformerPhase,
 
         ::ObjectUsageLowering,
-        (::PurifyObjectInstanceGettersLowering).takeIf { !disableCrossFileOptimisations && !isDebugFriendlyCompilation },
+        ::WasmPurifyObjectInstanceGettersLowering,
 
         ::FieldInitializersLowering,
 
@@ -270,7 +267,7 @@ fun getWasmLowerings(
         ::StaticMembersLowering,
 
         // This is applied for non-IC mode, which is a better optimization than inlineUnitInstanceGettersLowering
-        (::InlineObjectsWithPureInitializationLowering).takeIf { !disableCrossFileOptimisations && !isDebugFriendlyCompilation },
+        ::WasmInlineObjectsWithPureInitializationLowering,
 
         ::WhenBranchOptimiserLowering,
         ::IrValidationAfterLoweringPhase,
