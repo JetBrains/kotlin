@@ -208,7 +208,7 @@ val jsLowerings: List<NamedCompilerPhase<JsIrBackendContext, IrModuleFragment, I
     ::JsSuspendArityStoreLowering,
     ::AddContinuationToNonLocalSuspendFunctionsLowering,
     ::AddContinuationToLocalSuspendFunctionsLowering,
-    ::AddContinuationToFunctionCallsLowering,
+    ::JsAddContinuationToFunctionCallsLowering,
     ::JsReturnableBlockLowering,
     ::RangeContainsLowering,
     ::ForLoopsLowering,

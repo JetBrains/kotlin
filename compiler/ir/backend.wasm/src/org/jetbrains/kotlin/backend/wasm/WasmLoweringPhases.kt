@@ -204,7 +204,7 @@ fun getWasmLowerings(
         ::WasmInitializersCleanupLowering,
 
         ::AddContinuationToNonLocalSuspendFunctionsLowering,
-        ::AddContinuationToFunctionCallsLowering,
+        ::WasmAddContinuationToFunctionCallsLowering,
         ::GenerateMainFunctionWrappers,
 
         // We need to generate nothing value exceptions after suspend
