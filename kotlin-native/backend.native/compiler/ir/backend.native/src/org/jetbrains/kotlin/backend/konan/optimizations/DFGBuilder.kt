@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan.optimizations
 
+import org.jetbrains.kotlin.backend.common.linkage.partial.ClassifierPartialLinkageStatus
 import org.jetbrains.kotlin.backend.common.peek
 import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
@@ -797,6 +798,9 @@ internal class ModuleDFGBuilder(val generationState: NativeGenerationState, val 
         val functions = mutableMapOf<DataFlowIR.FunctionSymbol, DataFlowIR.Function>()
         irModule.accept(object : IrVisitorVoid() {
             override fun visitElement(element: IrElement) {
+                // Do not try to analyze unusable classes caused by Partial Linkage errors
+                if (element is IrClass && element.attributes.values.any { it is ClassifierPartialLinkageStatus.Unusable })
+                    return
                 element.acceptChildrenVoid(this)
             }
 

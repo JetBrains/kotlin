@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.konan.optimizations
 
 import org.jetbrains.kotlin.utils.copy
 import org.jetbrains.kotlin.backend.common.ir.isUnconditional
+import org.jetbrains.kotlin.backend.common.linkage.partial.ClassifierPartialLinkageStatus
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlock
 import org.jetbrains.kotlin.backend.konan.*
@@ -618,6 +619,11 @@ internal object StaticInitializersOptimization {
 
 
         for (declaration in changedDeclarations) {
+            // Do not touch members of unusable classes caused by Partial Linkage errors
+            val parent = declaration.parent
+            if (parent is IrClass && parent.attributes.values.any { it is ClassifierPartialLinkageStatus.Unusable })
+                continue
+
             val rebuiltFunction = FunctionDFGBuilder(generationState, moduleDFG.symbolTable).build(declaration)
             val functionSymbol = moduleDFG.symbolTable.mapFunction(declaration)
             moduleDFG.functions[functionSymbol] = rebuiltFunction

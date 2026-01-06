@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan.optimizations
 
+import org.jetbrains.kotlin.backend.common.linkage.partial.ClassifierPartialLinkageStatus
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.ir.annotations.Escapes
 import org.jetbrains.kotlin.backend.konan.ir.annotations.PointsTo
@@ -497,6 +498,9 @@ internal object DataFlowIR {
                 }
 
                 override fun visitClass(declaration: IrClass) {
+                    // Do not visit unusable classes caused by Partial Linkage errors
+                    if (declaration.attributes.values.any { it is ClassifierPartialLinkageStatus.Unusable })
+                        return
                     declaration.acceptChildrenVoid(this)
 
                     mapClassReferenceType(declaration)
