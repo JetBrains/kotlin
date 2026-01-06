@@ -44,6 +44,10 @@ internal fun KaAnnotatedSymbol.getJvmExposeBoxedNameFromAnnotation(): String? {
     return stringArgumentFromAnnotation(JvmStandardClassIds.JVM_EXPOSE_BOXED_ANNOTATION_CLASS_ID)
 }
 
+internal fun KaAnnotatedSymbol.getIntroducedAtVersionFromAnnotation(): String? {
+    return stringArgumentFromAnnotation(StandardClassIds.Annotations.IntroducedAt)
+}
+
 private fun KaAnnotatedSymbol.stringArgumentFromAnnotation(annotationClassId: ClassId): String? {
     val annotation = findAnnotation(annotationClassId)
     return annotation?.let {

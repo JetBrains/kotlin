@@ -14,9 +14,6 @@ public final class WithJvmOverloadsAndNonAscendingKt /* WithJvmOverloadsAndNonAs
   public static final void nonAscending();//  nonAscending()
 
   @kotlin.jvm.JvmOverloads()
-  public static final void nonAscending(int);//  nonAscending(int)
-
-  @kotlin.jvm.JvmOverloads()
   public static final void nonAscending(int, @kotlin.IntroducedAt(version = "3") @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  nonAscending(int, @org.jetbrains.annotations.NotNull() java.lang.String)
 
   @kotlin.jvm.JvmOverloads()
@@ -26,25 +23,13 @@ public final class WithJvmOverloadsAndNonAscendingKt /* WithJvmOverloadsAndNonAs
   public static final void nonAscendingSameType();//  nonAscendingSameType()
 
   @kotlin.jvm.JvmOverloads()
-  public static final void nonAscendingSameType(int);//  nonAscendingSameType(int)
-
-  @kotlin.jvm.JvmOverloads()
-  public static final void nonAscendingSameType(int, @kotlin.IntroducedAt(version = "3") int);//  nonAscendingSameType(int, int)
-
-  @kotlin.jvm.JvmOverloads()
   public static final void nonAscendingSameType(int, @kotlin.IntroducedAt(version = "3") int, @kotlin.IntroducedAt(version = "4") int);//  nonAscendingSameType(int, int, int)
 
   @kotlin.jvm.JvmOverloads()
   public static final void random();//  random()
 
   @kotlin.jvm.JvmOverloads()
-  public static final void random(int);//  random(int)
-
-  @kotlin.jvm.JvmOverloads()
   public static final void random(int, @kotlin.IntroducedAt(version = "3") boolean);//  random(int, boolean)
-
-  @kotlin.jvm.JvmOverloads()
-  public static final void random(int, @kotlin.IntroducedAt(version = "3") boolean, @kotlin.IntroducedAt(version = "2") @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  random(int, boolean, @org.jetbrains.annotations.NotNull() java.lang.String)
 
   @kotlin.jvm.JvmOverloads()
   public static final void random(int, @kotlin.IntroducedAt(version = "3") boolean, @kotlin.IntroducedAt(version = "2") @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String, @kotlin.IntroducedAt(version = "4") long);//  random(int, boolean, @org.jetbrains.annotations.NotNull() java.lang.String, long)
@@ -68,13 +53,7 @@ public final class WithJvmOverloadsAndNonAscendingKt /* WithJvmOverloadsAndNonAs
   public static final void randomSameType();//  randomSameType()
 
   @kotlin.jvm.JvmOverloads()
-  public static final void randomSameType(int);//  randomSameType(int)
-
-  @kotlin.jvm.JvmOverloads()
   public static final void randomSameType(int, @kotlin.IntroducedAt(version = "3") int);//  randomSameType(int, int)
-
-  @kotlin.jvm.JvmOverloads()
-  public static final void randomSameType(int, @kotlin.IntroducedAt(version = "3") int, @kotlin.IntroducedAt(version = "2") int);//  randomSameType(int, int, int)
 
   @kotlin.jvm.JvmOverloads()
   public static final void randomSameType(int, @kotlin.IntroducedAt(version = "3") int, @kotlin.IntroducedAt(version = "2") int, @kotlin.IntroducedAt(version = "4") int);//  randomSameType(int, int, int, int)
