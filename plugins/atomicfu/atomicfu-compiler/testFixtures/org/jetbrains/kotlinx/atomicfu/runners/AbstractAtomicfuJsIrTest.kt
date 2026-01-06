@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlinx.atomicfu.runners
 
-import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
+import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.js.test.runners.AbstractJsTest
@@ -54,8 +54,11 @@ open class AbstractAtomicfuJsWithInlinedFunInKlibTest : AbstractAtomicfuJsTest(
 }
 
 private class AtomicfuEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {
-    override fun legacyRegisterCompilerExtensions(project: Project, module: TestModule, configuration: CompilerConfiguration) {
-        IrGenerationExtension.registerExtension(project, AtomicfuLoweringExtension())
+    override fun CompilerPluginRegistrar.ExtensionStorage.registerCompilerExtensions(
+        module: TestModule,
+        configuration: CompilerConfiguration,
+    ) {
+        IrGenerationExtension.registerExtension(AtomicfuLoweringExtension())
     }
 }
 
