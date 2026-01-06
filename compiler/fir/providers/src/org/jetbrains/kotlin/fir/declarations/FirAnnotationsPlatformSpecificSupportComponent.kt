@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -21,6 +21,7 @@ abstract class FirAnnotationsPlatformSpecificSupportComponent : FirComposableSes
     abstract val requiredAnnotationsWithArguments: Set<ClassId>
     abstract val requiredAnnotations: Set<ClassId>
     abstract val volatileAnnotations: Set<ClassId>
+    protected abstract val repeatableAnnotations: Set<ClassId>
 
     val requiredAnnotationsShortClassNames: Set<Name> by lazy {
         requiredAnnotations.mapTo(mutableSetOf()) { it.shortClassName }
@@ -41,7 +42,9 @@ abstract class FirAnnotationsPlatformSpecificSupportComponent : FirComposableSes
         deprecationAnnotations.mapTo(mutableSetOf()) { it.shortClassName.asString() }
     }
 
-    abstract fun symbolContainsRepeatableAnnotation(symbol: FirClassLikeSymbol<*>, session: FirSession): Boolean
+    fun symbolContainsRepeatableAnnotation(symbol: FirClassLikeSymbol<*>, session: FirSession): Boolean {
+        return symbol.resolvedAnnotationsWithClassIds.getAnnotationByClassIds(repeatableAnnotations, session) != null
+    }
 
     abstract fun extractBackingFieldAnnotationsFromProperty(
         property: FirProperty,
@@ -57,17 +60,11 @@ abstract class FirAnnotationsPlatformSpecificSupportComponent : FirComposableSes
             components.flatMapTo(mutableSetOf()) { it.requiredAnnotationsWithArguments }
         override val requiredAnnotations: Set<ClassId> = components.flatMapTo(mutableSetOf()) { it.requiredAnnotations }
         override val volatileAnnotations: Set<ClassId> = components.flatMapTo(mutableSetOf()) { it.volatileAnnotations }
+        override val repeatableAnnotations: Set<ClassId> = components.flatMapTo(mutableSetOf()) { it.repeatableAnnotations }
         override val deprecationAnnotationsWithOverridesPropagation: Map<ClassId, Boolean> = buildMap {
             components.forEach { component ->
                 putAll(component.deprecationAnnotationsWithOverridesPropagation)
             }
-        }
-
-        override fun symbolContainsRepeatableAnnotation(
-            symbol: FirClassLikeSymbol<*>,
-            session: FirSession,
-        ): Boolean {
-            return components.any { it.symbolContainsRepeatableAnnotation(symbol, session) }
         }
 
         override fun extractBackingFieldAnnotationsFromProperty(
@@ -103,14 +100,14 @@ abstract class FirAnnotationsPlatformSpecificSupportComponent : FirComposableSes
             StandardClassIds.Annotations.Volatile,
         )
 
+        override val repeatableAnnotations: Set<ClassId> = setOf(
+            StandardClassIds.Annotations.Repeatable,
+        )
+
         override val deprecationAnnotationsWithOverridesPropagation: Map<ClassId, Boolean> = mapOf(
             StandardClassIds.Annotations.Deprecated to true,
             StandardClassIds.Annotations.SinceKotlin to true,
         )
-
-        override fun symbolContainsRepeatableAnnotation(symbol: FirClassLikeSymbol<*>, session: FirSession): Boolean {
-            return symbol.hasAnnotationWithClassId(StandardClassIds.Annotations.Repeatable, session)
-        }
 
         override fun extractBackingFieldAnnotationsFromProperty(
             property: FirProperty,
