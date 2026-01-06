@@ -762,6 +762,7 @@ tasks {
             ":native",
             ":libraries:tools:analysis-api-based-klib-reader:testProject",
             ":plugins:plugin-sandbox:plugin-annotations",
+            ":kotlin-power-assert-runtime",
         )
         allprojects
             .filter {
