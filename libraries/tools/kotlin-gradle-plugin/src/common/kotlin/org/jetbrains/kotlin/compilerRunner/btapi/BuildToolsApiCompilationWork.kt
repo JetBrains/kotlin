@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.compilerRunner.KotlinCompilerArgumentsLogLevel
 import org.jetbrains.kotlin.compilerRunner.asFinishLogMessage
 import org.jetbrains.kotlin.gradle.internal.ClassLoadersCachingBuildService
 import org.jetbrains.kotlin.gradle.internal.ParentClassLoaderProvider
+import org.jetbrains.kotlin.gradle.logging.CapturingDelegatingKotlinLogger
 import org.jetbrains.kotlin.gradle.logging.CompositeKotlinLogger
 import org.jetbrains.kotlin.gradle.logging.ExceptionReportingKotlinLogger
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
@@ -255,7 +256,11 @@ internal abstract class BuildToolsApiCompilationWork @Inject constructor(
         metrics.addTimeMetric(START_WORKER_EXECUTION)
         metrics.startMeasure(RUN_COMPILATION_IN_WORKER)
         val exceptionReportingKotlinLogger = ExceptionReportingKotlinLogger()
-        val printingLogger = getTaskLogger(taskPath, null, BuildToolsApiCompilationWork::class.java.simpleName, true)
+        val printingLogger =
+            CapturingDelegatingKotlinLogger(
+                getTaskLogger(taskPath, null, BuildToolsApiCompilationWork::class.java.simpleName, true),
+                workArguments.reportingSettings.buildReportMode,
+            )
         val log: KotlinLogger = CompositeKotlinLogger(
             setOf(
                 printingLogger,
@@ -317,7 +322,7 @@ internal abstract class BuildToolsApiCompilationWork @Inject constructor(
             }
             metrics.endMeasure(RUN_COMPILATION_IN_WORKER)
             val result =
-                TaskExecutionResult(buildMetrics = metrics.getMetrics(), taskInfo = taskInfo)
+                TaskExecutionResult(buildMetrics = metrics.getMetrics(), taskInfo = taskInfo, icLogLines = printingLogger.capturedLines)
             TaskExecutionResults[workArguments.taskPath] = result
             backup?.deleteSnapshot()
         }

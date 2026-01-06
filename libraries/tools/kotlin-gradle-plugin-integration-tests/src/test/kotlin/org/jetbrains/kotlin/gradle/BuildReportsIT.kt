@@ -26,12 +26,13 @@ import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.io.path.*
 import kotlin.streams.asSequence
-import kotlin.test.assertContains
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 import  org.jetbrains.kotlin.build.report.metrics.*
+import org.jetbrains.kotlin.gradle.internals.asFinishLogMessage
 import org.jetbrains.kotlin.gradle.report.data.BuildExecutionData
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 
 @DisplayName("Build reports")
 class BuildReportsIT : KGPBaseTest() {
@@ -338,8 +339,8 @@ class BuildReportsIT : KGPBaseTest() {
         "Size metrics:",
     ) + nativeBuildExpectedMetrics.map { "${it.readableString}:" }
 
-
-    private fun nonIncrementalBuildFileExpectedContents(kotlinLanguageVersion: String) = listOf(
+    private fun baseBuildFileExpectedContents(kotlinLanguageVersion: String) = listOf(
+        //region Metrics
         "Time metrics:",
         "Run compilation:",
         "Incremental compilation in daemon:",
@@ -347,16 +348,27 @@ class BuildReportsIT : KGPBaseTest() {
         "Total size of the cache directory:",
         "Total compiler iteration:",
         "ABI snapshot size:",
-        //for non-incremental builds
-        "Build attributes:",
-        "REBUILD_REASON:",
-        //gc metrics
+        //endregion
+        //region GC metrics
         "GC count:",
         "GC time:",
-        //task info
+        //endregion
+        //region Task info
         "Task info:",
         "Kotlin language version: $kotlinLanguageVersion",
+        //endregion
     )
+
+    private fun nonIncrementalBuildFileExpectedContents(kotlinLanguageVersion: String) =
+        baseBuildFileExpectedContents(kotlinLanguageVersion) + listOf(
+            //region for non-incremental builds
+            "Build attributes:",
+            "REBUILD_REASON:",
+            //endregion
+            //region Compilation log lines
+            "Source changes: Unknown",
+            //endregion
+        )
 
     private fun TestProject.validateBuildReportFile(
         expectedReportLines: List<String>,
@@ -1060,6 +1072,48 @@ class BuildReportsIT : KGPBaseTest() {
                     reportedCompilerMetrics.assertContainsValues(expected)
                 }
 
+            }
+        }
+    }
+
+    @DisplayName("Build metrics on incremental compilation after some change – daemon")
+    @GradleTest
+    @JvmGradlePluginTests
+    @GradleTestVersions(minVersion = TestVersions.Gradle.MAX_SUPPORTED) // this logic is Gradle-version independent, just verifies the integration is well
+    fun testMetricsAfterIncrementalChangeDaemon(gradleVersion: GradleVersion) {
+        doTestMetricsAfterIncrementalChange(gradleVersion, KotlinCompilerExecutionStrategy.DAEMON)
+    }
+
+    @DisplayName("Build metrics on incremental compilation after some change – in-process")
+    @GradleTest
+    @JvmGradlePluginTests
+    @GradleTestVersions(minVersion = TestVersions.Gradle.MAX_SUPPORTED) // this logic is Gradle-version independent, just verifies the integration is well
+    fun testMetricsAfterIncrementalChangeInProcess(gradleVersion: GradleVersion) {
+        doTestMetricsAfterIncrementalChange(gradleVersion, KotlinCompilerExecutionStrategy.IN_PROCESS)
+    }
+
+    private fun doTestMetricsAfterIncrementalChange(gradleVersion: GradleVersion, executionStrategy: KotlinCompilerExecutionStrategy) {
+        project("simpleProject", gradleVersion, buildOptions = defaultBuildOptions.copy(compilerExecutionStrategy = executionStrategy)) {
+            build("assemble") {
+                validateBuildReportFile(nonIncrementalBuildFileExpectedContents(KotlinVersion.DEFAULT.version), emptyList())
+            }
+            reportFile.deleteExisting()
+            val helloWorldSource = kotlinSourcesDir().resolve("helloWorld.kt")
+            helloWorldSource.modify { it.replace("\" and \"", "\", \"") }
+            build("assemble") {
+                val helloWorldSourcePath = helloWorldSource.toRealPath().absolutePathString()
+                val helloWorldBinaryPath = kotlinClassesDir().resolve("demo/KotlinGreetingJoiner.class").toRealPath().absolutePathString()
+                validateBuildReportFile(
+                    baseBuildFileExpectedContents(KotlinVersion.DEFAULT.version), listOf(
+                        "Compile iteration:",
+                        "${helloWorldSource.relativeTo(projectPath)} <- was modified since last time",
+                        "Source changes: Known(modified=[$helloWorldSourcePath], removed=[], forDependencies=false)",
+                        "Deleting $helloWorldBinaryPath on clearing cache for $helloWorldSourcePath",
+                        "Moving $helloWorldBinaryPath to the stash as",
+                        executionStrategy.asFinishLogMessage,
+                        "[ClasspathSnapshot] Shrunk current classpath snapshot after compilation (shrink mode = UnchangedLookupsUnchangedClasspath), no updates since previous run"
+                    )
+                )
             }
         }
     }

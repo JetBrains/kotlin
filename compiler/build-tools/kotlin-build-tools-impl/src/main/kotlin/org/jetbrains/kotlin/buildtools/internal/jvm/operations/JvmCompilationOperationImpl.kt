@@ -159,7 +159,7 @@ internal class JvmCompilationOperationImpl private constructor(
         }
     }
 
-    private fun toDaemonCompilationOptions(): CompilationOptions {
+    private fun toDaemonCompilationOptions(isDebugLoggingEnabled: Boolean): CompilationOptions {
         val ktsExtensionsAsArray = get(KOTLINSCRIPT_EXTENSIONS)
 
         // TODO: KT-79976 automagically compute the value, related to BasicCompilerServicesWithResultsFacadeServer
@@ -181,6 +181,8 @@ internal class JvmCompilationOperationImpl private constructor(
         val requestedCompilationResults = listOfNotNull(
             CompilationResultCategory.IC_COMPILE_ITERATION.code,
             CompilationResultCategory.BUILD_METRICS.code.takeIf { this[METRICS_COLLECTOR] != null || this[XX_KGP_METRICS_COLLECTOR] },
+            // Daemon would report log lines only if debug logging is enabled or metrics are requested
+            CompilationResultCategory.VERBOSE_BUILD_REPORT_LINES.code.takeIf { this[METRICS_COLLECTOR] != null || this[XX_KGP_METRICS_COLLECTOR] || isDebugLoggingEnabled },
         ).toTypedArray()
 
         return when (val aggregatedIcConfiguration: JvmIncrementalCompilationConfiguration? = get(INCREMENTAL_COMPILATION)) {
@@ -276,7 +278,7 @@ internal class JvmCompilationOperationImpl private constructor(
             }
         }
 
-        val daemonCompileOptions = toDaemonCompilationOptions()
+        val daemonCompileOptions = toDaemonCompilationOptions(loggerAdapter.kotlinLogger.isDebugEnabled)
         loggerAdapter.kotlinLogger.info("Options for KOTLIN DAEMON: $daemonCompileOptions")
         val isIncrementalCompilation = daemonCompileOptions is IncrementalCompilationOptions
         if (isIncrementalCompilation && daemonCompileOptions.useJvmFirRunner) {

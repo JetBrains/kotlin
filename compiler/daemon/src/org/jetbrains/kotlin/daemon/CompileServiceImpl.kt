@@ -423,7 +423,7 @@ abstract class CompileServiceImplBase(
                         compilationResults?.also {
                             (it as CompilationResults).add(
                                 CompilationResultCategory.BUILD_REPORT_LINES.code,
-                                arrayListOf(perfString)
+                                ArrayList(perfString.split("\n"))
                             )
                         }
                         icReporter.addMetric(COMPILE_ITERATION, 1) // in non-IC case there's always 1 iteration

@@ -20,7 +20,7 @@ internal class BuildToolsApiBuildICReporter(
     private val kotlinLogger: KotlinLogger,
     private val rootProjectDir: File?,
     private val buildMetricsReporter: BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric>?,
-) : ICReporterBase() {
+) : ICReporterBase(rootProjectDir) {
     override fun report(message: () -> String, severity: ICReporter.ReportSeverity) {
         when (severity) {
             ICReporter.ReportSeverity.DEBUG -> if (kotlinLogger.isDebugEnabled) {
@@ -31,8 +31,22 @@ internal class BuildToolsApiBuildICReporter(
         }
     }
 
+    private val recompilationReason = HashMap<File, String>()
+
     override fun reportCompileIteration(incremental: Boolean, sourceFiles: Collection<File>, exitCode: ExitCode) {
         kotlinLogger.debug(CompileIterationResult(sourceFiles, exitCode.toString()), rootProjectDir)
-        buildMetricsReporter?.addMetric(COMPILE_ITERATION, 1)
+        kotlinLogger.debug("Compile iteration:")
+        for (file in sourceFiles) {
+            val reason = recompilationReason[file]?.let { " <- $it" } ?: ""
+            kotlinLogger.debug("  ${file.relativeOrAbsolute()}$reason")
+        }
+        recompilationReason.clear()
+        if (sourceFiles.isNotEmpty()) {
+            buildMetricsReporter?.addMetric(COMPILE_ITERATION, 1)
+        }
+    }
+
+    override fun reportMarkDirty(affectedFiles: Iterable<File>, reason: String) {
+        affectedFiles.forEach { recompilationReason[it] = reason }
     }
 }
