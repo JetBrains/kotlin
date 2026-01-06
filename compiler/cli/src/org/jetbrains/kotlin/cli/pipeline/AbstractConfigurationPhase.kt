@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.cli.common.CLICompiler.Companion.SCRIPT_PLUGIN_K2_RE
 import org.jetbrains.kotlin.cli.common.CLICompiler.Companion.SCRIPT_PLUGIN_REGISTRAR_NAME
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.LOGGING
+import org.jetbrains.kotlin.cli.extensionsStorage
 import org.jetbrains.kotlin.cli.initializeDiagnosticFactoriesStorageForCli
 import org.jetbrains.kotlin.cli.jvm.plugins.PluginCliParser
 import org.jetbrains.kotlin.cli.plugins.extractPluginClasspathAndOptions
@@ -61,6 +62,7 @@ abstract class AbstractConfigurationPhase<A : CommonCompilerArguments>(
         val (arguments, _, _, messageCollector, performanceManager) = input
         this.messageCollector = messageCollector
         initializeDiagnosticFactoriesStorageForCli()
+        registerExtensionStorage()
         perfManager = performanceManager
         printVersion = arguments.version
         // TODO(KT-73711): move script-related configuration to JVM CLI
@@ -165,5 +167,5 @@ abstract class AbstractConfigurationPhase<A : CommonCompilerArguments>(
 }
 
 fun CompilerConfiguration.registerExtensionStorage() {
-    // TODO (KT-83341): implement proper component registration
+    extensionsStorage = CompilerPluginRegistrar.ExtensionStorage()
 }
