@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.cli.js
 
 import com.intellij.openapi.Disposable
 import org.jetbrains.kotlin.K1Deprecation
-import org.jetbrains.kotlin.backend.wasm.getWasmLowerings
+import org.jetbrains.kotlin.backend.wasm.wasmLowerings
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.ExitCode.OK
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
@@ -83,7 +83,7 @@ internal class K2WasmCompilerImpl(
         moduleKind: ModuleKind?,
     ): ExitCode {
         configuration.phaseConfig = createPhaseConfig(arguments).also {
-            if (arguments.listPhases) it.list(getWasmLowerings(configuration))
+            if (arguments.listPhases) it.list(wasmLowerings)
         }
 
 
