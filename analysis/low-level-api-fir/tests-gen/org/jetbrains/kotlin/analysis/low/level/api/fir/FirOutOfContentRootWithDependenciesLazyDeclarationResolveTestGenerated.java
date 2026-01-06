@@ -2190,6 +2190,12 @@ public class FirOutOfContentRootWithDependenciesLazyDeclarationResolveTestGenera
     }
 
     @Test
+    @TestMetadata("introducedAt.kt")
+    public void testIntroducedAt() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/specialAnnotations/introducedAt.kt");
+    }
+
+    @Test
     @TestMetadata("requiredAnnotationWithFakeOverrideAsImportedArgument.kt")
     public void testRequiredAnnotationWithFakeOverrideAsImportedArgument() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/specialAnnotations/requiredAnnotationWithFakeOverrideAsImportedArgument.kt");

@@ -1,0 +1,57 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] introducedAt.kt
+    @OptIn[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] a: Int = LAZY_EXPRESSION, [ResolvedTo(RAW_FIR)] @IntroducedAt[Unresolved](LAZY_EXPRESSION) b: Int = LAZY_EXPRESSION, [ResolvedTo(RAW_FIR)] @IntroducedAt[Unresolved](LAZY_EXPRESSION) c: Int = LAZY_EXPRESSION): R|kotlin/Unit| { LAZY_BLOCK }
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] introducedAt.kt
+    @OptIn[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] a: Int = LAZY_EXPRESSION, [ResolvedTo(RAW_FIR)] @IntroducedAt[Unresolved](LAZY_EXPRESSION) b: Int = LAZY_EXPRESSION, [ResolvedTo(RAW_FIR)] @IntroducedAt[Unresolved](LAZY_EXPRESSION) c: Int = LAZY_EXPRESSION): R|kotlin/Unit| { LAZY_BLOCK }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] introducedAt.kt
+    @OptIn[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun foo([ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] a: Int = LAZY_EXPRESSION, [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] @IntroducedAt[Unresolved](LAZY_EXPRESSION) b: Int = LAZY_EXPRESSION, [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] @IntroducedAt[Unresolved](LAZY_EXPRESSION) c: Int = LAZY_EXPRESSION): R|kotlin/Unit| { LAZY_BLOCK }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] introducedAt.kt
+    @OptIn[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(COMPANION_GENERATION)] fun foo([ResolvedTo(COMPANION_GENERATION)] a: Int = LAZY_EXPRESSION, [ResolvedTo(COMPANION_GENERATION)] @IntroducedAt[Unresolved](LAZY_EXPRESSION) b: Int = LAZY_EXPRESSION, [ResolvedTo(COMPANION_GENERATION)] @IntroducedAt[Unresolved](LAZY_EXPRESSION) c: Int = LAZY_EXPRESSION): R|kotlin/Unit| { LAZY_BLOCK }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] introducedAt.kt
+    @OptIn[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(SUPER_TYPES)] fun foo([ResolvedTo(SUPER_TYPES)] a: Int = LAZY_EXPRESSION, [ResolvedTo(SUPER_TYPES)] @IntroducedAt[Unresolved](LAZY_EXPRESSION) b: Int = LAZY_EXPRESSION, [ResolvedTo(SUPER_TYPES)] @IntroducedAt[Unresolved](LAZY_EXPRESSION) c: Int = LAZY_EXPRESSION): R|kotlin/Unit| { LAZY_BLOCK }
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] introducedAt.kt
+    @R|kotlin/OptIn|[Types](LAZY_EXPRESSION) public? final? [ResolvedTo(TYPES)] fun foo([ResolvedTo(TYPES)] a: R|kotlin/Int| = LAZY_EXPRESSION, [ResolvedTo(TYPES)] @<ERROR TYPE REF: Symbol not found for IntroducedAt>[Types](LAZY_EXPRESSION) b: R|kotlin/Int| = LAZY_EXPRESSION, [ResolvedTo(TYPES)] @<ERROR TYPE REF: Symbol not found for IntroducedAt>[Types](LAZY_EXPRESSION) c: R|kotlin/Int| = LAZY_EXPRESSION): R|kotlin/Unit| { LAZY_BLOCK }
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] introducedAt.kt
+    @R|kotlin/OptIn|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] a: R|kotlin/Int| = LAZY_EXPRESSION, [ResolvedTo(STATUS)] @<ERROR TYPE REF: Symbol not found for IntroducedAt>[Types](LAZY_EXPRESSION) b: R|kotlin/Int| = LAZY_EXPRESSION, [ResolvedTo(STATUS)] @<ERROR TYPE REF: Symbol not found for IntroducedAt>[Types](LAZY_EXPRESSION) c: R|kotlin/Int| = LAZY_EXPRESSION): R|kotlin/Unit| { LAZY_BLOCK }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] introducedAt.kt
+    @R|kotlin/OptIn|[Types](LAZY_EXPRESSION) public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun foo([ResolvedTo(EXPECT_ACTUAL_MATCHING)] a: R|kotlin/Int| = LAZY_EXPRESSION, [ResolvedTo(EXPECT_ACTUAL_MATCHING)] @<ERROR TYPE REF: Symbol not found for IntroducedAt>[Types](LAZY_EXPRESSION) b: R|kotlin/Int| = LAZY_EXPRESSION, [ResolvedTo(EXPECT_ACTUAL_MATCHING)] @<ERROR TYPE REF: Symbol not found for IntroducedAt>[Types](LAZY_EXPRESSION) c: R|kotlin/Int| = LAZY_EXPRESSION): R|kotlin/Unit| { LAZY_BLOCK }
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] introducedAt.kt
+    @R|kotlin/OptIn|[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONTRACTS)] fun foo([ResolvedTo(CONTRACTS)] a: R|kotlin/Int| = LAZY_EXPRESSION, [ResolvedTo(CONTRACTS)] @<ERROR TYPE REF: Symbol not found for IntroducedAt>[Types](LAZY_EXPRESSION) b: R|kotlin/Int| = LAZY_EXPRESSION, [ResolvedTo(CONTRACTS)] @<ERROR TYPE REF: Symbol not found for IntroducedAt>[Types](LAZY_EXPRESSION) c: R|kotlin/Int| = LAZY_EXPRESSION): R|kotlin/Unit| { LAZY_BLOCK }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] introducedAt.kt
+    @R|kotlin/OptIn|[Types](LAZY_EXPRESSION) public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun foo([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] a: R|kotlin/Int| = LAZY_EXPRESSION, [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] @<ERROR TYPE REF: Symbol not found for IntroducedAt>[Types](LAZY_EXPRESSION) b: R|kotlin/Int| = LAZY_EXPRESSION, [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] @<ERROR TYPE REF: Symbol not found for IntroducedAt>[Types](LAZY_EXPRESSION) c: R|kotlin/Int| = LAZY_EXPRESSION): R|kotlin/Unit| { LAZY_BLOCK }
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] introducedAt.kt
+    @R|kotlin/OptIn|[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONSTANT_EVALUATION)] fun foo([ResolvedTo(CONSTANT_EVALUATION)] a: R|kotlin/Int| = LAZY_EXPRESSION, [ResolvedTo(CONSTANT_EVALUATION)] @<ERROR TYPE REF: Symbol not found for IntroducedAt>[Types](LAZY_EXPRESSION) b: R|kotlin/Int| = LAZY_EXPRESSION, [ResolvedTo(CONSTANT_EVALUATION)] @<ERROR TYPE REF: Symbol not found for IntroducedAt>[Types](LAZY_EXPRESSION) c: R|kotlin/Int| = LAZY_EXPRESSION): R|kotlin/Unit| { LAZY_BLOCK }
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] introducedAt.kt
+    @R|kotlin/OptIn|[Types](markerClass = vararg(<getClass>(<Unresolved name: ExperimentalVersionOverloading>#))) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun foo([ResolvedTo(ANNOTATION_ARGUMENTS)] a: R|kotlin/Int| = LAZY_EXPRESSION, [ResolvedTo(ANNOTATION_ARGUMENTS)] @<ERROR TYPE REF: Symbol not found for IntroducedAt>[Types]() b: R|kotlin/Int| = LAZY_EXPRESSION, [ResolvedTo(ANNOTATION_ARGUMENTS)] @<ERROR TYPE REF: Symbol not found for IntroducedAt>[Types]() c: R|kotlin/Int| = LAZY_EXPRESSION): R|kotlin/Unit| { LAZY_BLOCK }
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] introducedAt.kt
+    @R|kotlin/OptIn|[Types](markerClass = vararg(<getClass>(<Unresolved name: ExperimentalVersionOverloading>#))) public final [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] a: R|kotlin/Int| = Int(1), [ResolvedTo(BODY_RESOLVE)] @<ERROR TYPE REF: Symbol not found for IntroducedAt>[Types]() b: R|kotlin/Int| = Int(2), [ResolvedTo(BODY_RESOLVE)] @<ERROR TYPE REF: Symbol not found for IntroducedAt>[Types]() c: R|kotlin/Int| = Int(3)): R|kotlin/Unit| {
+    }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] introducedAt.kt
+    @R|kotlin/OptIn|[Types](markerClass = vararg(<getClass>(<Unresolved name: ExperimentalVersionOverloading>#))) public final [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] a: R|kotlin/Int| = Int(1), [ResolvedTo(BODY_RESOLVE)] @<ERROR TYPE REF: Symbol not found for IntroducedAt>[Types]() b: R|kotlin/Int| = Int(2), [ResolvedTo(BODY_RESOLVE)] @<ERROR TYPE REF: Symbol not found for IntroducedAt>[Types]() c: R|kotlin/Int| = Int(3)): R|kotlin/Unit| {
+    }
