@@ -35,62 +35,72 @@ public class ScriptSymbolLightClassesByPsiForSourceTestGenerated extends Abstrac
   }
 
   @Nested
-  @TestMetadata("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed")
+  @TestMetadata("compiler/testData/asJava/lightClasses/lightClassByPsi/k2")
   @TestDataPath("$PROJECT_ROOT")
-  public class JvmExposeBoxed {
+  public class K2 {
     @Test
-    public void testAllFilesPresentInJvmExposeBoxed() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
-    }
-
-    @Test
-    @TestMetadata("script.kts")
-    public void testScript() {
-      runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/script.kts");
+    public void testAllFilesPresentInK2() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/lightClassByPsi/k2"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
     }
 
     @Nested
-    @TestMetadata("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/directive")
+    @TestMetadata("compiler/testData/asJava/lightClasses/lightClassByPsi/k2/jvmExposeBoxed")
     @TestDataPath("$PROJECT_ROOT")
-    public class Directive {
+    public class JvmExposeBoxed {
       @Test
-      public void testAllFilesPresentInDirective() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/directive"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
+      public void testAllFilesPresentInJvmExposeBoxed() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/lightClassByPsi/k2/jvmExposeBoxed"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
       }
 
       @Test
       @TestMetadata("script.kts")
       public void testScript() {
-        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/directive/script.kts");
-      }
-    }
-
-    @Nested
-    @TestMetadata("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/featureInteraction")
-    @TestDataPath("$PROJECT_ROOT")
-    public class FeatureInteraction {
-      @Test
-      public void testAllFilesPresentInFeatureInteraction() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/featureInteraction"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
-      }
-    }
-
-    @Nested
-    @TestMetadata("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/inherit")
-    @TestDataPath("$PROJECT_ROOT")
-    public class Inherit {
-      @Test
-      public void testAllFilesPresentInInherit() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/inherit"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/k2/jvmExposeBoxed/script.kts");
       }
 
       @Nested
-      @TestMetadata("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/inherit/child")
+      @TestMetadata("compiler/testData/asJava/lightClasses/lightClassByPsi/k2/jvmExposeBoxed/directive")
       @TestDataPath("$PROJECT_ROOT")
-      public class Child {
+      public class Directive {
         @Test
-        public void testAllFilesPresentInChild() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/inherit/child"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
+        public void testAllFilesPresentInDirective() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/lightClassByPsi/k2/jvmExposeBoxed/directive"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("script.kts")
+        public void testScript() {
+          runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/k2/jvmExposeBoxed/directive/script.kts");
+        }
+      }
+
+      @Nested
+      @TestMetadata("compiler/testData/asJava/lightClasses/lightClassByPsi/k2/jvmExposeBoxed/featureInteraction")
+      @TestDataPath("$PROJECT_ROOT")
+      public class FeatureInteraction {
+        @Test
+        public void testAllFilesPresentInFeatureInteraction() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/lightClassByPsi/k2/jvmExposeBoxed/featureInteraction"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
+        }
+      }
+
+      @Nested
+      @TestMetadata("compiler/testData/asJava/lightClasses/lightClassByPsi/k2/jvmExposeBoxed/inherit")
+      @TestDataPath("$PROJECT_ROOT")
+      public class Inherit {
+        @Test
+        public void testAllFilesPresentInInherit() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/lightClassByPsi/k2/jvmExposeBoxed/inherit"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
+        }
+
+        @Nested
+        @TestMetadata("compiler/testData/asJava/lightClasses/lightClassByPsi/k2/jvmExposeBoxed/inherit/child")
+        @TestDataPath("$PROJECT_ROOT")
+        public class Child {
+          @Test
+          public void testAllFilesPresentInChild() {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/lightClassByPsi/k2/jvmExposeBoxed/inherit/child"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
+          }
         }
       }
     }
