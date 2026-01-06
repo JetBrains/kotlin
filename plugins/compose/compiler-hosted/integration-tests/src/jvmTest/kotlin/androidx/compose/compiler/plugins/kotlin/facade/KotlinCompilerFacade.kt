@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.cli.pipeline.registerExtensionStorage
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.idea.KotlinLanguage
@@ -112,6 +113,7 @@ abstract class KotlinCompilerFacade(val environment: KotlinCoreEnvironment) {
                 put(CommonConfigurationKeys.ENABLE_IR_VISIBILITY_CHECKS, true)
                 this.targetPlatform = JvmPlatforms.unspecifiedJvmPlatform
                 put(JVMConfigurationKeys.JVM_TARGET, JvmTarget.JVM_11)
+                registerExtensionStorage()
                 messageCollector = TestMessageCollector
                 updateConfiguration()
                 put(CommonConfigurationKeys.USE_FIR, languageVersionSettings.languageVersion.usesK2)
