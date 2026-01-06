@@ -258,6 +258,9 @@ internal abstract class MergeMappingFileTask @Inject constructor(
         val outputFile = output.get().asFile
         val outputDir = outputDir.get()
 
+        outputDir.deleteRecursively()
+        outputDir.mkdirs()
+
         outputFile.bufferedWriter().use { writer ->
             writer.append(newHeader)
 
@@ -279,7 +282,7 @@ internal abstract class MergeMappingFileTask @Inject constructor(
 
         r8Outputs.forEach {
             if (it == originalFile) return@forEach
-            it.copyTo(File(outputDir, it.name), overwrite = true)
+            it.copyTo(File(outputDir, it.name))
         }
     }
 
