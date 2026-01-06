@@ -8,39 +8,39 @@ FILE: [ResolvedTo(IMPORTS)] introducedAt.kt
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] introducedAt.kt
-    @OptIn[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun foo([ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] a: Int = LAZY_EXPRESSION, [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] @IntroducedAt[Unresolved](LAZY_EXPRESSION) b: Int = LAZY_EXPRESSION, [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] @IntroducedAt[Unresolved](LAZY_EXPRESSION) c: Int = LAZY_EXPRESSION): R|kotlin/Unit| { LAZY_BLOCK }
+    @OptIn[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun foo([ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] a: Int = LAZY_EXPRESSION, [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] @R|kotlin/IntroducedAt|[CompilerRequiredAnnotations](String(1)) b: Int = LAZY_EXPRESSION, [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] @R|kotlin/IntroducedAt|[CompilerRequiredAnnotations](String(2)) c: Int = LAZY_EXPRESSION): R|kotlin/Unit| { LAZY_BLOCK }
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] introducedAt.kt
-    @OptIn[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(COMPANION_GENERATION)] fun foo([ResolvedTo(COMPANION_GENERATION)] a: Int = LAZY_EXPRESSION, [ResolvedTo(COMPANION_GENERATION)] @IntroducedAt[Unresolved](LAZY_EXPRESSION) b: Int = LAZY_EXPRESSION, [ResolvedTo(COMPANION_GENERATION)] @IntroducedAt[Unresolved](LAZY_EXPRESSION) c: Int = LAZY_EXPRESSION): R|kotlin/Unit| { LAZY_BLOCK }
+    @OptIn[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(COMPANION_GENERATION)] fun foo([ResolvedTo(COMPANION_GENERATION)] a: Int = LAZY_EXPRESSION, [ResolvedTo(COMPANION_GENERATION)] @R|kotlin/IntroducedAt|[CompilerRequiredAnnotations](String(1)) b: Int = LAZY_EXPRESSION, [ResolvedTo(COMPANION_GENERATION)] @R|kotlin/IntroducedAt|[CompilerRequiredAnnotations](String(2)) c: Int = LAZY_EXPRESSION): R|kotlin/Unit| { LAZY_BLOCK }
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] introducedAt.kt
-    @OptIn[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(SUPER_TYPES)] fun foo([ResolvedTo(SUPER_TYPES)] a: Int = LAZY_EXPRESSION, [ResolvedTo(SUPER_TYPES)] @IntroducedAt[Unresolved](LAZY_EXPRESSION) b: Int = LAZY_EXPRESSION, [ResolvedTo(SUPER_TYPES)] @IntroducedAt[Unresolved](LAZY_EXPRESSION) c: Int = LAZY_EXPRESSION): R|kotlin/Unit| { LAZY_BLOCK }
+    @OptIn[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(SUPER_TYPES)] fun foo([ResolvedTo(SUPER_TYPES)] a: Int = LAZY_EXPRESSION, [ResolvedTo(SUPER_TYPES)] @R|kotlin/IntroducedAt|[CompilerRequiredAnnotations](String(1)) b: Int = LAZY_EXPRESSION, [ResolvedTo(SUPER_TYPES)] @R|kotlin/IntroducedAt|[CompilerRequiredAnnotations](String(2)) c: Int = LAZY_EXPRESSION): R|kotlin/Unit| { LAZY_BLOCK }
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] introducedAt.kt
-    @R|kotlin/OptIn|[Types](LAZY_EXPRESSION) public? final? [ResolvedTo(TYPES)] fun foo([ResolvedTo(TYPES)] a: R|kotlin/Int| = LAZY_EXPRESSION, [ResolvedTo(TYPES)] @R|kotlin/IntroducedAt|[Types](LAZY_EXPRESSION) b: R|kotlin/Int| = LAZY_EXPRESSION, [ResolvedTo(TYPES)] @R|kotlin/IntroducedAt|[Types](LAZY_EXPRESSION) c: R|kotlin/Int| = LAZY_EXPRESSION): R|kotlin/Unit| { LAZY_BLOCK }
+    @R|kotlin/OptIn|[Types](LAZY_EXPRESSION) public? final? [ResolvedTo(TYPES)] fun foo([ResolvedTo(TYPES)] a: R|kotlin/Int| = LAZY_EXPRESSION, [ResolvedTo(TYPES)] @R|kotlin/IntroducedAt|[Types](String(1)) b: R|kotlin/Int| = LAZY_EXPRESSION, [ResolvedTo(TYPES)] @R|kotlin/IntroducedAt|[Types](String(2)) c: R|kotlin/Int| = LAZY_EXPRESSION): R|kotlin/Unit| { LAZY_BLOCK }
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] introducedAt.kt
-    @R|kotlin/OptIn|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] a: R|kotlin/Int| = LAZY_EXPRESSION, [ResolvedTo(STATUS)] @R|kotlin/IntroducedAt|[Types](LAZY_EXPRESSION) b: R|kotlin/Int| = LAZY_EXPRESSION, [ResolvedTo(STATUS)] @R|kotlin/IntroducedAt|[Types](LAZY_EXPRESSION) c: R|kotlin/Int| = LAZY_EXPRESSION): R|kotlin/Unit| { LAZY_BLOCK }
+    @R|kotlin/OptIn|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] a: R|kotlin/Int| = LAZY_EXPRESSION, [ResolvedTo(STATUS)] @R|kotlin/IntroducedAt|[Types](String(1)) b: R|kotlin/Int| = LAZY_EXPRESSION, [ResolvedTo(STATUS)] @R|kotlin/IntroducedAt|[Types](String(2)) c: R|kotlin/Int| = LAZY_EXPRESSION): R|kotlin/Unit| { LAZY_BLOCK }
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] introducedAt.kt
-    @R|kotlin/OptIn|[Types](LAZY_EXPRESSION) public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun foo([ResolvedTo(EXPECT_ACTUAL_MATCHING)] a: R|kotlin/Int| = LAZY_EXPRESSION, [ResolvedTo(EXPECT_ACTUAL_MATCHING)] @R|kotlin/IntroducedAt|[Types](LAZY_EXPRESSION) b: R|kotlin/Int| = LAZY_EXPRESSION, [ResolvedTo(EXPECT_ACTUAL_MATCHING)] @R|kotlin/IntroducedAt|[Types](LAZY_EXPRESSION) c: R|kotlin/Int| = LAZY_EXPRESSION): R|kotlin/Unit| { LAZY_BLOCK }
+    @R|kotlin/OptIn|[Types](LAZY_EXPRESSION) public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun foo([ResolvedTo(EXPECT_ACTUAL_MATCHING)] a: R|kotlin/Int| = LAZY_EXPRESSION, [ResolvedTo(EXPECT_ACTUAL_MATCHING)] @R|kotlin/IntroducedAt|[Types](String(1)) b: R|kotlin/Int| = LAZY_EXPRESSION, [ResolvedTo(EXPECT_ACTUAL_MATCHING)] @R|kotlin/IntroducedAt|[Types](String(2)) c: R|kotlin/Int| = LAZY_EXPRESSION): R|kotlin/Unit| { LAZY_BLOCK }
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] introducedAt.kt
-    @R|kotlin/OptIn|[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONTRACTS)] fun foo([ResolvedTo(CONTRACTS)] a: R|kotlin/Int| = LAZY_EXPRESSION, [ResolvedTo(CONTRACTS)] @R|kotlin/IntroducedAt|[Types](LAZY_EXPRESSION) b: R|kotlin/Int| = LAZY_EXPRESSION, [ResolvedTo(CONTRACTS)] @R|kotlin/IntroducedAt|[Types](LAZY_EXPRESSION) c: R|kotlin/Int| = LAZY_EXPRESSION): R|kotlin/Unit| { LAZY_BLOCK }
+    @R|kotlin/OptIn|[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONTRACTS)] fun foo([ResolvedTo(CONTRACTS)] a: R|kotlin/Int| = LAZY_EXPRESSION, [ResolvedTo(CONTRACTS)] @R|kotlin/IntroducedAt|[Types](String(1)) b: R|kotlin/Int| = LAZY_EXPRESSION, [ResolvedTo(CONTRACTS)] @R|kotlin/IntroducedAt|[Types](String(2)) c: R|kotlin/Int| = LAZY_EXPRESSION): R|kotlin/Unit| { LAZY_BLOCK }
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] introducedAt.kt
-    @R|kotlin/OptIn|[Types](LAZY_EXPRESSION) public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun foo([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] a: R|kotlin/Int| = LAZY_EXPRESSION, [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] @R|kotlin/IntroducedAt|[Types](LAZY_EXPRESSION) b: R|kotlin/Int| = LAZY_EXPRESSION, [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] @R|kotlin/IntroducedAt|[Types](LAZY_EXPRESSION) c: R|kotlin/Int| = LAZY_EXPRESSION): R|kotlin/Unit| { LAZY_BLOCK }
+    @R|kotlin/OptIn|[Types](LAZY_EXPRESSION) public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun foo([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] a: R|kotlin/Int| = LAZY_EXPRESSION, [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] @R|kotlin/IntroducedAt|[Types](String(1)) b: R|kotlin/Int| = LAZY_EXPRESSION, [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] @R|kotlin/IntroducedAt|[Types](String(2)) c: R|kotlin/Int| = LAZY_EXPRESSION): R|kotlin/Unit| { LAZY_BLOCK }
 
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] introducedAt.kt
-    @R|kotlin/OptIn|[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONSTANT_EVALUATION)] fun foo([ResolvedTo(CONSTANT_EVALUATION)] a: R|kotlin/Int| = LAZY_EXPRESSION, [ResolvedTo(CONSTANT_EVALUATION)] @R|kotlin/IntroducedAt|[Types](LAZY_EXPRESSION) b: R|kotlin/Int| = LAZY_EXPRESSION, [ResolvedTo(CONSTANT_EVALUATION)] @R|kotlin/IntroducedAt|[Types](LAZY_EXPRESSION) c: R|kotlin/Int| = LAZY_EXPRESSION): R|kotlin/Unit| { LAZY_BLOCK }
+    @R|kotlin/OptIn|[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONSTANT_EVALUATION)] fun foo([ResolvedTo(CONSTANT_EVALUATION)] a: R|kotlin/Int| = LAZY_EXPRESSION, [ResolvedTo(CONSTANT_EVALUATION)] @R|kotlin/IntroducedAt|[Types](String(1)) b: R|kotlin/Int| = LAZY_EXPRESSION, [ResolvedTo(CONSTANT_EVALUATION)] @R|kotlin/IntroducedAt|[Types](String(2)) c: R|kotlin/Int| = LAZY_EXPRESSION): R|kotlin/Unit| { LAZY_BLOCK }
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] introducedAt.kt

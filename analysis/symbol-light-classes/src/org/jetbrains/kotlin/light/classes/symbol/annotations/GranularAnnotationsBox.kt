@@ -107,6 +107,7 @@ internal class GranularAnnotationsBox(
             StandardClassIds.Annotations.DeprecatedSinceKotlin,
             StandardClassIds.Annotations.WasExperimental,
             StandardClassIds.Annotations.Target,
+            StandardClassIds.Annotations.IntroducedAt,
         ).associateBy { it.asFqNameString() } + specialAnnotationsListWithSafeArgumentsResolve
     }
 }
