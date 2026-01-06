@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -70,6 +70,8 @@ internal fun KaAnnotatedSymbol.hasJvmFieldAnnotation(): Boolean = JvmStandardCla
 internal fun KaAnnotatedSymbol.hasPublishedApiAnnotation(): Boolean = StandardClassIds.Annotations.PublishedApi in annotations
 
 internal fun KaAnnotatedSymbol.hasDeprecatedAnnotation(): Boolean = StandardClassIds.Annotations.Deprecated in annotations
+
+internal fun KaAnnotatedSymbol.hasIntroducedAtAnnotation(): Boolean = StandardClassIds.Annotations.IntroducedAt in annotations
 
 internal fun KaAnnotatedSymbol.hasJvmOverloadsAnnotation(): Boolean = JVM_OVERLOADS_CLASS_ID in annotations
 

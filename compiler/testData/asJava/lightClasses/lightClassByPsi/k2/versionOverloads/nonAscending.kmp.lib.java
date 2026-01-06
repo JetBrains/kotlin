@@ -16,8 +16,6 @@ public final class DataClass /* DataClass*/ {
   @org.jetbrains.annotations.NotNull()
   public final @org.jetbrains.annotations.NotNull() DataClass copy(@kotlin.IntroducedAt() int, @kotlin.IntroducedAt() int, @kotlin.IntroducedAt() int, @kotlin.IntroducedAt() int);//  copy(int, int, int, int)
 
-  public  DataClass();//  .ctor()
-
   public  DataClass(@kotlin.IntroducedAt() int, @kotlin.IntroducedAt() int, @kotlin.IntroducedAt() int, @kotlin.IntroducedAt() int);//  .ctor(int, int, int, int)
 
   public boolean equals(@org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() java.lang.Object);//  equals(@org.jetbrains.annotations.Nullable() java.lang.Object)
