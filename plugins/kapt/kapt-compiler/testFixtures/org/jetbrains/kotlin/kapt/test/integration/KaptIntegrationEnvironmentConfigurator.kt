@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.kapt.test.integration
 
-import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.kapt.test.kaptOptionsProvider
 import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisHandlerExtension
@@ -22,11 +22,14 @@ class KaptIntegrationEnvironmentConfigurator(
     private val supportedAnnotations: List<String>,
     private val process: (Set<TypeElement>, RoundEnvironment, ProcessingEnvironment, KaptExtensionForTests) -> Unit
 ) : EnvironmentConfigurator(testServices) {
-    override fun legacyRegisterCompilerExtensions(project: Project, module: TestModule, configuration: CompilerConfiguration) {
+    override fun CompilerPluginRegistrar.ExtensionStorage.registerCompilerExtensions(
+        module: TestModule,
+        configuration: CompilerConfiguration
+    ) {
         val kaptOptions = testServices.kaptOptionsProvider[module]
         val extension = testServices.kaptExtensionProvider.createExtension(
             module, kaptOptions, processorOptions, process, supportedAnnotations, configuration,
         )
-        AnalysisHandlerExtension.registerExtension(project, extension)
+        AnalysisHandlerExtension.registerExtension(extension)
     }
 }
