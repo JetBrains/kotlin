@@ -24,4 +24,5 @@ object WasmConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.wasm
     val WASM_INCLUDED_MODULE_ONLY by key<Boolean>("compile single module.")
     val WASM_DEPENDENCY_RESOLUTION_MAP by key<String>("provide alternative paths to imported dependency modules.")
     val WASM_COMMAND_MODULE by key<Boolean>("use command module initialization (_initialize export).")
+    val WASM_DISABLE_CROSS_FILE_OPTIMISATIONS by key<Boolean>("Disables cross file optimizations. Required to for IC.")
 }

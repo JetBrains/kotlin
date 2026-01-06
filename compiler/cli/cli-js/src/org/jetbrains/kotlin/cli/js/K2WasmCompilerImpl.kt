@@ -83,7 +83,7 @@ internal class K2WasmCompilerImpl(
         moduleKind: ModuleKind?,
     ): ExitCode {
         configuration.phaseConfig = createPhaseConfig(arguments).also {
-            if (arguments.listPhases) it.list(getWasmLowerings(configuration, disableCrossFileOptimisations = false))
+            if (arguments.listPhases) it.list(getWasmLowerings(configuration))
         }
 
 

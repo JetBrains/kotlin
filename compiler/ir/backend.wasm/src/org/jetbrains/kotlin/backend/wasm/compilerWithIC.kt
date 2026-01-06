@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi2ir.descriptors.IrBuiltInsOverDescriptors
+import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 open class WasmCompilerWithIC(
@@ -76,11 +77,11 @@ open class WasmCompilerWithIC(
     override fun compile(allModules: Collection<IrModuleFragment>, dirtyFiles: Collection<IrFile>): List<() -> IrICProgramFragments> {
         //TODO: Lower only needed files but not all loaded by IrLoader KT-71041
 
+        context.configuration.put(WasmConfigurationKeys.WASM_DISABLE_CROSS_FILE_OPTIMISATIONS, true)
         lowerPreservingTags(
             allModules,
             context,
             context.irFactory.stageController as WholeWorldStageController,
-            disableCrossFileOptimisations = true,
         )
 
         return dirtyFiles.map { { compileIrFile(it) } }
