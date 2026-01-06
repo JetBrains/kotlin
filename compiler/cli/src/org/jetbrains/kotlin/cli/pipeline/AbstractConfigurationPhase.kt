@@ -163,3 +163,7 @@ abstract class AbstractConfigurationPhase<A : CommonCompilerArguments>(
         }
     }
 }
+
+fun CompilerConfiguration.registerExtensionStorage() {
+    // TODO (KT-83341): implement proper component registration
+}
