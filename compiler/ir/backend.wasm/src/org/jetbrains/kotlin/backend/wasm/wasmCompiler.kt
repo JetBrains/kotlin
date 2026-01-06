@@ -149,7 +149,7 @@ fun lowerPreservingTags(
     controller.currentStage = 0
 
     val phaserState = PhaserState()
-    val wasmLowerings = getWasmLowerings(context.configuration)
+    val wasmLowerings = wasmLowerings
 
     wasmLowerings.forEachIndexed { i, lowering ->
         controller.currentStage = i + 1

@@ -14,10 +14,8 @@ import org.jetbrains.kotlin.backend.common.lower.coroutines.AddContinuationToNon
 import org.jetbrains.kotlin.backend.common.lower.inline.InlineCallCycleCheckerLowering
 import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesInInlineLambdasLowering
 import org.jetbrains.kotlin.backend.common.lower.loops.ForLoopsLowering
-import org.jetbrains.kotlin.backend.common.lower.optimizations.PropertyAccessorInlineLowering
 import org.jetbrains.kotlin.backend.common.phaser.*
 import org.jetbrains.kotlin.backend.wasm.lower.*
-import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.phaser.NamedCompilerPhase
@@ -30,7 +28,6 @@ import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.inline.*
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreterConfiguration
 import org.jetbrains.kotlin.platform.wasm.WasmPlatforms
-import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 
 private fun createValidateIrAfterInliningOnlyPrivateFunctionsPhase(context: LoweringContext): IrValidationAfterInliningOnlyPrivateFunctionsPhase<*> {
     return IrValidationAfterInliningOnlyPrivateFunctionsPhase(
@@ -119,159 +116,153 @@ fun wasmLoweringsOfTheFirstPhase(
     return createModulePhases(*phases.toTypedArray())
 }
 
-fun getWasmLowerings(
-    configuration: CompilerConfiguration,
-): List<NamedCompilerPhase<WasmBackendContext, IrModuleFragment, IrModuleFragment>> {
-    val phases = listOfNotNull<(WasmBackendContext) -> ModuleLoweringPass>(
-        // BEGIN: Common Native/JS/Wasm prefix.
-        ::KlibIrValidationBeforeLoweringPhase,
-        ::InlineCallCycleCheckerLowering,
-        ::createUpgradeCallableReferences,
-        ::LateinitLowering,
-        ::createSharedVariablesLoweringPhase,
-        ::LocalClassesInInlineLambdasLowering,
-        ::ArrayConstructorLowering,
-        ::WasmPrivateFunctionInlining,
-        ::OuterThisInInlineFunctionsSpecialAccessorLowering,
-        ::createSyntheticAccessorGenerationPhase,
-        // Note: The validation goes after both `inlineOnlyPrivateFunctionsPhase` and `syntheticAccessorGenerationPhase`
-        // just because it goes so in Native.
-        ::createValidateIrAfterInliningOnlyPrivateFunctionsPhase,
-        ::WasmAllFunctionInlining,
-        ::RedundantCastsRemoverLowering,
-        ::createValidateIrAfterInliningAllFunctionsPhase,
-        // END: Common Native/JS/Wasm prefix.
+val wasmLowerings: List<NamedCompilerPhase<WasmBackendContext, IrModuleFragment, IrModuleFragment>> = createModulePhases(
+    // BEGIN: Common Native/JS/Wasm prefix.
+    ::KlibIrValidationBeforeLoweringPhase,
+    ::InlineCallCycleCheckerLowering,
+    ::createUpgradeCallableReferences,
+    ::LateinitLowering,
+    ::createSharedVariablesLoweringPhase,
+    ::LocalClassesInInlineLambdasLowering,
+    ::ArrayConstructorLowering,
+    ::WasmPrivateFunctionInlining,
+    ::OuterThisInInlineFunctionsSpecialAccessorLowering,
+    ::createSyntheticAccessorGenerationPhase,
+    // Note: The validation goes after both `inlineOnlyPrivateFunctionsPhase` and `syntheticAccessorGenerationPhase`
+    // just because it goes so in Native.
+    ::createValidateIrAfterInliningOnlyPrivateFunctionsPhase,
+    ::WasmAllFunctionInlining,
+    ::RedundantCastsRemoverLowering,
+    ::createValidateIrAfterInliningAllFunctionsPhase,
+    // END: Common Native/JS/Wasm prefix.
 
-        ::createConstEvaluationPhase,
-        ::createSpecializeSharedVariableBoxesPhase,
-        ::RemoveInlineDeclarationsWithReifiedTypeParametersLowering,
+    ::createConstEvaluationPhase,
+    ::createSpecializeSharedVariableBoxesPhase,
+    ::RemoveInlineDeclarationsWithReifiedTypeParametersLowering,
 
-        ::JsCodeCallsLowering,
+    ::JsCodeCallsLowering,
 
-        ::GenerateWasmTests,
+    ::GenerateWasmTests,
 
-        ::JsCommonAnnotationImplementationTransformer,
+    ::JsCommonAnnotationImplementationTransformer,
 
-        ::ExcludeDeclarationsFromCodegen,
-        ::ExpectDeclarationsRemoveLowering,
-        ::RangeContainsLowering,
+    ::ExcludeDeclarationsFromCodegen,
+    ::ExpectDeclarationsRemoveLowering,
+    ::RangeContainsLowering,
 
-        ::TailrecLowering,
+    ::TailrecLowering,
 
-        ::EnumWhenLowering,
-        ::EnumClassConstructorLowering,
-        ::EnumClassConstructorBodyTransformer,
-        ::EnumEntryInstancesLowering,
-        ::EnumEntryInstancesBodyLowering,
-        ::EnumClassCreateInitializerLowering,
-        ::EnumEntryCreateGetInstancesFunsLowering,
-        ::EnumSyntheticFunctionsAndPropertiesLowering,
+    ::EnumWhenLowering,
+    ::EnumClassConstructorLowering,
+    ::EnumClassConstructorBodyTransformer,
+    ::EnumEntryInstancesLowering,
+    ::EnumEntryInstancesBodyLowering,
+    ::EnumClassCreateInitializerLowering,
+    ::EnumEntryCreateGetInstancesFunsLowering,
+    ::EnumSyntheticFunctionsAndPropertiesLowering,
 
-        ::DelegatedPropertyOptimizationLowering,
-        ::WasmPropertyReferenceLowering,
-        ::WasmCallableReferenceLowering,
+    ::DelegatedPropertyOptimizationLowering,
+    ::WasmPropertyReferenceLowering,
+    ::WasmCallableReferenceLowering,
 
-        ::JsSingleAbstractMethodLowering,
-        ::LocalDelegatedPropertiesLowering,
-        ::createInventNamesForLocalFunctionsPhase,
-        ::createLocalDeclarationsLoweringPhase,
-        ::LocalDeclarationPopupLowering,
-        ::WasmStaticCallableReferenceLowering,
-        ::InnerClassesLowering,
-        ::InnerClassesMemberBodyLowering,
-        ::InnerClassConstructorCallsLowering,
-        ::PropertiesLowering,
-        ::PrimaryConstructorLowering,
-        ::DelegateToSyntheticPrimaryConstructor,
+    ::JsSingleAbstractMethodLowering,
+    ::LocalDelegatedPropertiesLowering,
+    ::createInventNamesForLocalFunctionsPhase,
+    ::createLocalDeclarationsLoweringPhase,
+    ::LocalDeclarationPopupLowering,
+    ::WasmStaticCallableReferenceLowering,
+    ::InnerClassesLowering,
+    ::InnerClassesMemberBodyLowering,
+    ::InnerClassConstructorCallsLowering,
+    ::PropertiesLowering,
+    ::PrimaryConstructorLowering,
+    ::DelegateToSyntheticPrimaryConstructor,
 
-        ::WasmStringSwitchOptimizerLowering,
+    ::WasmStringSwitchOptimizerLowering,
 
-        ::AssociatedObjectsLowering,
+    ::AssociatedObjectsLowering,
 
-        ::ComplexExternalDeclarationsToTopLevelFunctionsLowering,
-        ::ComplexExternalDeclarationsUsageLowering,
+    ::ComplexExternalDeclarationsToTopLevelFunctionsLowering,
+    ::ComplexExternalDeclarationsUsageLowering,
 
-        ::JsInteropFunctionsLowering,
+    ::JsInteropFunctionsLowering,
 
-        ::EnumUsageLowering,
-        ::EnumClassRemoveEntriesLowering,
+    ::EnumUsageLowering,
+    ::EnumClassRemoveEntriesLowering,
 
-        ::JsSuspendFunctionsLowering,
-        ::WasmInitializersLowering,
-        ::WasmInitializersCleanupLowering,
+    ::JsSuspendFunctionsLowering,
+    ::WasmInitializersLowering,
+    ::WasmInitializersCleanupLowering,
 
-        ::AddContinuationToNonLocalSuspendFunctionsLowering,
-        ::WasmAddContinuationToFunctionCallsLowering,
-        ::GenerateMainFunctionWrappers,
+    ::AddContinuationToNonLocalSuspendFunctionsLowering,
+    ::WasmAddContinuationToFunctionCallsLowering,
+    ::GenerateMainFunctionWrappers,
 
-        // We need to generate nothing value exceptions after suspend
-        // functions have been lowered so that suspend functions
-        // declared to return nothing get a chance to get lowered
-        // without the exception being inserted.
-        ::createKotlinNothingValueExceptionPhase,
+    // We need to generate nothing value exceptions after suspend
+    // functions have been lowered so that suspend functions
+    // declared to return nothing get a chance to get lowered
+    // without the exception being inserted.
+    ::createKotlinNothingValueExceptionPhase,
 
-        ::InvokeOnExportedFunctionExitLowering,
+    ::InvokeOnExportedFunctionExitLowering,
 
-        ::TryCatchCanonicalization,
+    ::TryCatchCanonicalization,
 
-        ::ForLoopsLowering,
-        ::PropertyLazyInitLowering,
-        ::RemoveInitializersForLazyProperties,
+    ::ForLoopsLowering,
+    ::PropertyLazyInitLowering,
+    ::RemoveInitializersForLazyProperties,
 
-        // This doesn't work with IC as of now for accessors within inline functions because
-        //  there is no special case for Wasm in the computation of inline function transitive
-        //  hashes the same way it's being done with the calculation of symbol hashes.
-        ::WasmPropertyAccessorInlineLowering,
+    // This doesn't work with IC as of now for accessors within inline functions because
+    //  there is no special case for Wasm in the computation of inline function transitive
+    //  hashes the same way it's being done with the calculation of symbol hashes.
+    ::WasmPropertyAccessorInlineLowering,
 
-        ::WasmStringConcatenationLowering,
+    ::WasmStringConcatenationLowering,
 
-        ::WasmDefaultArgumentStubGenerator,
-        ::WasmDefaultParameterPatchOverridenSymbolsLowering,
-        ::WasmDefaultParameterInjector,
-        ::createDefaultParameterCleanerPhase,
+    ::WasmDefaultArgumentStubGenerator,
+    ::WasmDefaultParameterPatchOverridenSymbolsLowering,
+    ::WasmDefaultParameterInjector,
+    ::createDefaultParameterCleanerPhase,
 
 //            TODO:
 //            multipleCatchesLoweringPhase,
-        ::WasmClassReferenceLowering,
+    ::WasmClassReferenceLowering,
 
-        ::WasmVarargExpressionLowering,
-        ::InlineClassDeclarationLowering,
-        ::InlineClassUsageLowering,
+    ::WasmVarargExpressionLowering,
+    ::InlineClassDeclarationLowering,
+    ::InlineClassUsageLowering,
 
-        ::ExpressionBodyTransformer,
-        ::EraseVirtualDispatchReceiverParametersTypes,
-        ::WasmBridgesConstruction,
+    ::ExpressionBodyTransformer,
+    ::EraseVirtualDispatchReceiverParametersTypes,
+    ::WasmBridgesConstruction,
 
-        ::ObjectDeclarationLowering, // Also depends on `WasmStaticCallableReferenceLowering`, but it is hard to represent in the common phase
-        ::GenericReturnTypeLowering,
-        ::UnitToVoidLowering,
+    ::ObjectDeclarationLowering, // Also depends on `WasmStaticCallableReferenceLowering`, but it is hard to represent in the common phase
+    ::GenericReturnTypeLowering,
+    ::UnitToVoidLowering,
 
-        // Replace builtins before autoboxing
-        ::BuiltInsLowering,
+    // Replace builtins before autoboxing
+    ::BuiltInsLowering,
 
-        ::createAutoboxingTransformerPhase,
+    ::createAutoboxingTransformerPhase,
 
-        ::ObjectUsageLowering,
-        ::WasmPurifyObjectInstanceGettersLowering,
+    ::ObjectUsageLowering,
+    ::WasmPurifyObjectInstanceGettersLowering,
 
-        ::FieldInitializersLowering,
+    ::FieldInitializersLowering,
 
-        ::ExplicitlyCastExternalTypesLowering,
-        ::WasmTypeOperatorLowering,
+    ::ExplicitlyCastExternalTypesLowering,
+    ::WasmTypeOperatorLowering,
 
-        // Clean up built-ins after type operator lowering
-        ::BuiltInsLowering,
+    // Clean up built-ins after type operator lowering
+    ::BuiltInsLowering,
 
-        ::VirtualDispatchReceiverExtraction,
-        ::InvokeStaticInitializersLowering,
-        ::StaticMembersLowering,
+    ::VirtualDispatchReceiverExtraction,
+    ::InvokeStaticInitializersLowering,
+    ::StaticMembersLowering,
 
-        // This is applied for non-IC mode, which is a better optimization than inlineUnitInstanceGettersLowering
-        ::WasmInlineObjectsWithPureInitializationLowering,
+    // This is applied for non-IC mode, which is a better optimization than inlineUnitInstanceGettersLowering
+    ::WasmInlineObjectsWithPureInitializationLowering,
 
-        ::WhenBranchOptimiserLowering,
-        ::IrValidationAfterLoweringPhase,
-    )
-
-    return createModulePhases(*phases.toTypedArray())
-}
+    ::WhenBranchOptimiserLowering,
+    ::IrValidationAfterLoweringPhase,
+)
