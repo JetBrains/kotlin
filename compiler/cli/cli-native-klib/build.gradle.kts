@@ -3,7 +3,7 @@ plugins {
 }
 
 dependencies {
-    //compileOnly(intellijCore())
+    compileOnly(intellijCore())
     api(kotlinStdlib())
     api(project(":compiler:ir.backend.native"))
     api(project(":compiler:cli-base"))
