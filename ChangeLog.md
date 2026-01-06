@@ -243,6 +243,13 @@
 - [`KT-42824`](https://youtrack.jetbrains.com/issue/KT-42824) FIR: false INAPPLICABLE_CANDIDATE when using in variance on a Java class
 - [`KT-253`](https://youtrack.jetbrains.com/issue/KT-253) Forbid assignment to 'this'
 
+### Compose compiler
+
+- [`b/461766771`](https://issuetracker.google.com/issues/461766771) Fix `IrSimpleFunction.isLegacyOpenFunctionWithDefault`
+- [`b/458234821`](https://issuetracker.google.com/issues/458234821) Disable Compose K1 tests on CI
+- [`b/456948687`](https://issuetracker.google.com/issues/456948687) Force resolution of declarations when looking up SAM functions in FIR
+- [`b/445426829`](https://issuetracker.google.com/issues/445426829) Add a diagnostic for `key` call with no arguments
+
 ### IR. Actualizer
 
 - [`KT-82418`](https://youtrack.jetbrains.com/issue/KT-82418) KMP Separate Compilation: NPE caused by actualization of NsCalendar.getEra
