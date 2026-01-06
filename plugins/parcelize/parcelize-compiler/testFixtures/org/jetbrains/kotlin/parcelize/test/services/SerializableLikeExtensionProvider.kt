@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.parcelize.test.services
 
-import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -18,9 +18,12 @@ import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.TestServices
 
 class SerializableLikeExtensionProvider(testServices: TestServices) : EnvironmentConfigurator(testServices) {
-    override fun legacyRegisterCompilerExtensions(project: Project, module: TestModule, configuration: CompilerConfiguration) {
+    override fun CompilerPluginRegistrar.ExtensionStorage.registerCompilerExtensions(
+        module: TestModule,
+        configuration: CompilerConfiguration,
+    ) {
         if (ENABLE_PARCELIZE !in module.directives) return
-        SyntheticResolveExtension.registerExtension(project, SerializableLike())
+        SyntheticResolveExtension.registerExtension(SerializableLike())
     }
 
     private class SerializableLike : SyntheticResolveExtension {
