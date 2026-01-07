@@ -65,15 +65,9 @@ internal class PartialLinkageSupportForLinkerImpl(
         val entries = fakeOverrideBuilder.fakeOverrideCandidates
         if (entries.isEmpty()) return
 
-        val toExclude = buildSet {
-            for (clazz in entries.keys) {
-                if (classifierExplorer.exploreSymbol(clazz.symbol) != null) {
-                    this += clazz
-                }
-            }
+        for (clazz in entries.keys) {
+            classifierExplorer.exploreSymbol(clazz.symbol)
         }
-
-        entries -= toExclude
     }
 
     override fun exploreClassifiersInInlineLazyIrFunction(function: IrFunction) {
