@@ -59,7 +59,7 @@ open class AbstractCustomNativeCompilerFirstStageTest : AbstractKotlinCompilerWi
             ::CustomKlibCompilerTestSuppressor,
         )
         useDirectives(TestDirectives)
-        facadeStep(::NativeCompilerSecondStageFacade.bind(currentNativeCompilerSettings))
+        facadeStep(::NativeCompilerSecondStageFacade.bind(currentCustomNativeCompilerSettings))
         nativeArtifactsHandlersStep {
             useHandlers(::NativeRunner)
         }
