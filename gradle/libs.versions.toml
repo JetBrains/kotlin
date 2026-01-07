@@ -69,6 +69,7 @@ commons-lang = "3.18.0"
 commons-text = "1.10.0"
 dataframe-dev = "1.0.0-dev-8762"
 org-jetbrains-syntax-api = "0.3.340"
+org-jetbrains-java-syntax = "0.3.340"
 org-jetbrains-annotations = "26.0.2"
 schema-kenerator = "2.1.2"
 kotlinpoet = "2.2.0"
@@ -167,6 +168,7 @@ androidx-collections = { module = "androidx.collection:collection", version.ref 
 oshi-core = { module = "com.github.oshi:oshi-core", version.ref = "oshi" }
 
 org-jetbrains-syntax-api = { module = "org.jetbrains:syntax-api", version.ref = "org-jetbrains-syntax-api" }
+org-jetbrains-java-syntax-jvm = { module = "org.jetbrains:java-syntax-jvm", version.ref = "org-jetbrains-java-syntax" }
 org-jetbrains-annotations = { module = "org.jetbrains:annotations", version.ref = "org-jetbrains-annotations" }
 
 schema-kenerator-core = { module = "io.github.smiley4:schema-kenerator-core", version.ref="schema-kenerator" }
