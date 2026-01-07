@@ -1460,7 +1460,10 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
 
                 assertFileExists(moduleDir.resolve("kotlin-js-plugin-js-1.0-sources.jar"))
 
-                assertTestResults(projectPath.resolve("tests.xml"), "jsNodeTest")
+                assertTestResults(
+                    projectPath.resolve(if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_9_3)) "tests.xml" else "gradle93-tests.xml"),
+                    "jsNodeTest"
+                )
             }
         }
     }
@@ -1875,7 +1878,13 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
                 assertTasksFailed(":jsNodeTest")
 
                 assertTestResults(
-                    projectPath.resolve("TEST-all.xml"),
+                    projectPath.resolve(
+                        if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_9_3)) {
+                            "TEST-all.xml"
+                        } else {
+                            "Gradle93-TEST-all.xml"
+                        }
+                    ),
                     "jsNodeTest"
                 )
             }
@@ -2191,7 +2200,13 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
                 assertTasksFailed(":jsNodeTest")
 
                 assertTestResults(
-                    projectPath.resolve("TEST-all.xml"),
+                    projectPath.resolve(
+                        if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_9_3)) {
+                            "TEST-all.xml"
+                        } else {
+                            "Gradle93-TEST-all.xml"
+                        }
+                    ),
                     "jsNodeTest"
                 )
             }
@@ -2216,7 +2231,11 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
                 assertTasksFailed(":jsNodeTest")
 
                 assertTestResults(
-                    projectPath.resolve("TEST-all.xml"),
+                    if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_9_3)) {
+                        projectPath.resolve("TEST-all.xml")
+                    } else {
+                        projectPath.resolve("Gradle93-TEST-all.xml")
+                    },
                     "jsNodeTest"
                 )
             }
