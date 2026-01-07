@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.konan.test.klib
 
 import org.jetbrains.kotlin.config.LanguageVersion
-import org.jetbrains.kotlin.js.test.klib.CustomWebCompilerSettings
 import org.jetbrains.kotlin.test.frontend.fir.getTransitivesAndFriends
 import org.jetbrains.kotlin.test.klib.CustomCompiler
 import org.jetbrains.kotlin.test.klib.CustomCompilerArtifacts
@@ -33,7 +32,8 @@ val NativeCompilerSettings.defaultLanguageVersion: LanguageVersion
     get() = LanguageVersion.fromFullVersionString(version)
         ?: fail("Cannot deduce the default LV from the compiler version: $version")
 
-class NativeCompilerSettingsImpl(private val artifacts: CustomCompilerArtifacts): NativeCompilerSettings {
+class NativeCompilerSettingsImpl(lazyArtifacts: () -> CustomCompilerArtifacts): NativeCompilerSettings {
+    private val artifacts: CustomCompilerArtifacts by lazy(lazyArtifacts)
     override val version: String
         get() = artifacts.version
     override val compiler: CustomCompiler by lazy {
@@ -49,7 +49,7 @@ class NativeCompilerSettingsImpl(private val artifacts: CustomCompilerArtifacts)
  * which are used in KLIB backward/forward compatibility tests.
  */
 val customNativeCompilerSettings: NativeCompilerSettings by lazy {
-    val artifacts: CustomCompilerArtifacts by lazy {
+    NativeCompilerSettingsImpl {
         CustomCompilerArtifacts.create(
             compilerClassPathPropertyName = "kotlin.internal.native.test.compat.customCompilerClasspath",
             runtimeDependenciesPropertyName = null, // After OSIP-740, make it non-nullable to always provide stdlib
@@ -57,11 +57,10 @@ val customNativeCompilerSettings: NativeCompilerSettings by lazy {
             compilerDistPropertyName= "kotlin.internal.native.test.compat.customCompilerDist",
         )
     }
-    NativeCompilerSettingsImpl(artifacts)
 }
 
 val currentNativeCompilerSettings: NativeCompilerSettings by lazy {
-    val artifacts: CustomCompilerArtifacts by lazy {
+    NativeCompilerSettingsImpl {
         val propertyName = "kotlin.internal.native.test.compat.currentCompilerDist"
         readProperty(propertyName)?.let {
             val compilerDist = File(it)
@@ -74,13 +73,7 @@ val currentNativeCompilerSettings: NativeCompilerSettings by lazy {
             )
         } ?: propertyNotFound(propertyName)
     }
-    NativeCompilerSettingsImpl(artifacts)
 }
-
-/*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
- * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
- */
 
 /**
  * Note: To be used only internally in [CustomNativeCompilerFirstStageFacade] and [NativeCompilerSecondStageFacade].
