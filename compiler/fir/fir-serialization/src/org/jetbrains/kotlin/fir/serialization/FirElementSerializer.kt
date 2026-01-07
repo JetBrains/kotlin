@@ -29,6 +29,8 @@ import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.deserialization.projection
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationArgumentMapping
+import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirExpressionEvaluator
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotation
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationArgumentMapping
 import org.jetbrains.kotlin.fir.expressions.builder.buildLiteralExpression
@@ -944,7 +946,9 @@ class FirElementSerializer private constructor(
         if (shouldWriteAnnotationParameterDefaultValues(extension.metadataVersion) &&
             parameter.containingDeclarationSymbol.isAnnotationConstructor(session)
         ) {
-            parameter.defaultValue?.toConstantValue<ConstantValue<*>>(extension.constValueProvider)?.let { value ->
+            val evaluatorResult = FirExpressionEvaluator.evaluateParameterDefaultValue(parameter, session)
+            val defaultValue = (evaluatorResult as? FirEvaluatorResult.Evaluated)?.result as FirExpression?
+            defaultValue?.toConstantValue<ConstantValue<*>>(extension.constValueProvider)?.let { value ->
                 builder.setAnnotationParameterDefaultValue(extension.annotationSerializer.valueProto(value))
             }
         }
