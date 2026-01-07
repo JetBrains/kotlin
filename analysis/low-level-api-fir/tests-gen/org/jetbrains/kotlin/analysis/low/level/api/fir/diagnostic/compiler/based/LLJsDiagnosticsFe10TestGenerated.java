@@ -586,6 +586,12 @@ public class LLJsDiagnosticsFe10TestGenerated extends AbstractLLJsDiagnosticsTes
     }
 
     @Test
+    @TestMetadata("exposedNotExportedSuperInterface.kt")
+    public void testExposedNotExportedSuperInterface() {
+      runTest("compiler/testData/diagnostics/testsWithJsStdLib/export/exposedNotExportedSuperInterface.kt");
+    }
+
+    @Test
     @TestMetadata("extendingNonExportedType.kt")
     public void testExtendingNonExportedType() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/export/extendingNonExportedType.kt");

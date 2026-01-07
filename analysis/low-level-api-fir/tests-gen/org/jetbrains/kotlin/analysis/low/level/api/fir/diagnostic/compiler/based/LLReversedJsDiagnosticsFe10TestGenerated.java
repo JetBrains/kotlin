@@ -586,6 +586,12 @@ public class LLReversedJsDiagnosticsFe10TestGenerated extends AbstractLLReversed
     }
 
     @Test
+    @TestMetadata("exposedNotExportedSuperInterface.kt")
+    public void testExposedNotExportedSuperInterface() {
+      runTest("compiler/testData/diagnostics/testsWithJsStdLib/export/exposedNotExportedSuperInterface.kt");
+    }
+
+    @Test
     @TestMetadata("extendingNonExportedType.kt")
     public void testExtendingNonExportedType() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/export/extendingNonExportedType.kt");

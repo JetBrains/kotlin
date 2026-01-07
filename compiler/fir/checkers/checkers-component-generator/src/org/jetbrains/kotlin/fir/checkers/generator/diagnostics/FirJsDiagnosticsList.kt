@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.checkers.generator.diagnostics
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.DiagnosticList
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.PositioningStrategy
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -115,6 +116,12 @@ object JS_DIAGNOSTICS_LIST : DiagnosticList("FirJsErrors") {
         val NAMED_COMPANION_IN_EXPORTED_INTERFACE by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT)
 
         val NOT_EXPORTED_ACTUAL_DECLARATION_WHILE_EXPECT_IS_EXPORTED by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT)
+
+        val EXPOSED_NOT_EXPORTED_SUPER_INTERFACE by deprecationError<KtElement>(
+            LanguageFeature.JsExposedNotExportedSuperInterfaceApiByExportedOne
+        ) {
+            parameter<FirClassLikeSymbol<*>>("restrictingDeclaration")
+        }
     }
 
     val DYNAMICS by object : DiagnosticGroup("Dynamics") {
