@@ -21,14 +21,12 @@ STEP 4:
 STEP 5:
     dependencies: lib1, lib2
     rebuild klib: false
-    updated exports: klass.kt
     updated imports: test.kt, klass.kt
 STEP 6:
     dependencies: lib1, lib2
     modifications:
         U : klass.6.kt -> klass.kt
     modified ir: klass.kt
-    updated exports: klass.kt
     updated imports: test.kt
 STEP 7:
     dependencies: lib1, lib2

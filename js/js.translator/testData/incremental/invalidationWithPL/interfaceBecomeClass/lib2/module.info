@@ -21,7 +21,6 @@ STEP 4:
 STEP 5:
     dependencies: lib1
     rebuild klib: false
-    updated exports: l2.kt
     updated imports: l2.kt
 STEP 6:
     dependencies: lib1

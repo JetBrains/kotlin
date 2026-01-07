@@ -1,3 +1,6 @@
+IGNORE_BACKEND: JS_IR
+// ^^^KT-83545: Crash on step 5:
+//   Internal error: cannot find external signature '/Bar.getSomething|-8298897327970444263[0]' for name 'getSomething' in module main/klass
 MODULES: lib1, lib2, main
 
 STEP 0:
