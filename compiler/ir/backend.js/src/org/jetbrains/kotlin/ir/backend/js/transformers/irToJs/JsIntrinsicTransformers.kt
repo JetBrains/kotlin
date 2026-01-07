@@ -319,6 +319,23 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
                 JsClass(baseClass = baseClass)
             }
 
+            add(symbols.jsMethodReference) { call, context ->
+                val dispatchReceiver = call.arguments[0] ?: compilationException(
+                    "Call of the jsMethodReference doesn't contain first argument representing dispatchReceiver",
+                    call
+                )
+
+                val rawFunctionReference = call.arguments[1] as? IrRawFunctionReference ?: compilationException(
+                    "Second argument is empty or not an instance of IrRawFunctionReference",
+                    call
+                )
+
+                JsNameRef(
+                    context.getNameForMemberFunction(rawFunctionReference.symbol.owner as IrSimpleFunction),
+                    dispatchReceiver.accept(IrElementToJsExpressionTransformer(), context),
+                )
+            }
+
             add(symbols.void.owner.getter!!.symbol) { _, context ->
                 val backingField = context.getNameForField(symbols.void.owner.backingField!!)
                 JsNameRef(backingField)

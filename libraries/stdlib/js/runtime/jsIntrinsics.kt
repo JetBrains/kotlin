@@ -240,6 +240,9 @@ internal fun <T> jsYieldStar(value: T): T
 internal fun jsGenerateInterfaceSymbol(): dynamic =
     generateInterfaceSymbolById()
 
+@JsIntrinsic
+internal fun jsMethodReference(dispatchReceiver: Any, rawFunctionRef: dynamic): dynamic
+
 /**
  * Depending on the target ES edition, calls transforms either
  * to [kotlin.js.internal.boxedLong.longCopyOfRange], or to `arr.slice(fromIndex, toIndex)`

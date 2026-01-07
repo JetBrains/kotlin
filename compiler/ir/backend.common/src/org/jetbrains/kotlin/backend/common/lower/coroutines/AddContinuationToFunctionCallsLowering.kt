@@ -53,6 +53,16 @@ abstract class AbstractAddContinuationToFunctionCallsLowering : BodyLoweringPass
                 return body
             }
 
+            override fun visitRawFunctionReference(expression: IrRawFunctionReference): IrExpression {
+                val oldFun = expression.symbol.owner as? IrSimpleFunction
+
+                if (oldFun?.isSuspend == true) {
+                    expression.symbol = oldFun.getOrCreateFunctionWithContinuationStub(context).symbol
+                }
+
+                return super.visitRawFunctionReference(expression)
+            }
+
             override fun visitCall(expression: IrCall): IrExpression {
                 expression.transformChildrenVoid()
 

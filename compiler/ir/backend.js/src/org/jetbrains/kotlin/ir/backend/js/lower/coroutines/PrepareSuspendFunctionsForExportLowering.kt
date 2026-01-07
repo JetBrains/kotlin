@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlockBody
 import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -19,6 +20,7 @@ import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.ir.isExported
 import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.PrepareSuspendFunctionsForExportLowering.Companion.bridgeFunction
+import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.PrepareSuspendFunctionsForExportLowering.Companion.virtualBridgeFunction
 import org.jetbrains.kotlin.ir.backend.js.utils.JsAnnotations
 import org.jetbrains.kotlin.ir.backend.js.utils.getJsName
 import org.jetbrains.kotlin.ir.backend.js.utils.getJsNameOrKotlinName
@@ -29,6 +31,7 @@ import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.irAttribute
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.*
@@ -94,7 +97,7 @@ import org.jetbrains.kotlin.utils.memoryOptimizedPlus
  *
  *   @JsExport.Ignore
  *   // This function is used on the call side
- *   open suspend fun foo$suspendBridge(a: Int, b: String): String =
+ *   suspend fun foo$suspendBridge(a: Int, b: String): String =
  *     if (this.foo === SomeClass.prototype.foo) {
  *       this.foo(a, b)
  *     } else {
@@ -106,17 +109,60 @@ import org.jetbrains.kotlin.utils.memoryOptimizedPlus
  * Such a trick with the 3 functions helps us to call the original function instead of the promisified variant as long as the function
  * is not overridden from the JS side and also makes sure we don't recompile each child class if the body of the exported function
  * is changed.
+ *
+ * For interfaces, however, it requires one extra bridge, since we don't know on which side is the first implementor of an interface (on the TypeScript side, or on Kotlin),
+ * so for such a case:
+ * ```kotlin
+ * @JsExport
+ * interface SomeInterface {
+ *   suspend fun foo(a: Int, b: String): String
+ * }
+ * ```
+ *
+ * We generate the following bridge functions:
+ * ```kotlin
+ * @JsExport
+ * interface SomeInterface {
+ *   suspend fun foo(a: Int, b: String): String
+ *
+ *   @JsName("foo")
+ *   // This function to be implemented on the JS side
+ *   fun foo$promisified(a: Int, b: String): Promise<String>
+ *
+ *   @JsExport.Ignore
+ *   // This function is supposed to be implemented on the Kotlin side
+ *   suspend fun foo(a: Int, b: String): String
+ *
+ *   @JsExport.Ignore
+ *   // This function is used on the implementation call side, and should be added for each implementation on the Kotlin side
+ *   suspend fun foo$suspendBridge(a: Int, b: String): String
+ *
+ *   @JsExport.Ignore
+ *   // This function is used on the call side, if the dispatch receiver is an interface, and it has default implementation
+ *   suspend fun foo$virtualSuspendBridge(a: Int, b: String): String =
+ *     if (jsTypeOf(this.foo$suspendBridge) === "function") {
+ *          // If the implementor is a Kotlin class or its inheritor
+ *          this.foo$suspendBridge(a, b)
+ *     } else {
+ *          // If the implementor is a JavaScript class or its inheritor
+ *          kotlin.coroutines.await(this.foo$promisified(a, b))
+ *     }
+ * }
+ * ```
+ *
  */
 internal class PrepareSuspendFunctionsForExportLowering(private val context: JsIrBackendContext) : DeclarationTransformer {
     companion object {
         private const val PROMISIFIED_WRAPPER_SUFFIX = "\$promisified"
         private const val EXPORTED_SUSPEND_FUNCTION_BRIDGE_SUFFIX = "\$suspendBridge"
+        private const val EXPORTED_VIRTUAL_SUSPEND_FUNCTION_BRIDGE_SUFFIX = "\$virtualSuspendBridge"
 
         val PROMISIFIED_WRAPPER by IrDeclarationOriginImpl.Regular
         val EXPORTED_SUSPEND_FUNCTION_BRIDGE by IrDeclarationOriginImpl.Regular
         val EXPORTED_SUSPEND_FUNCTION_BRIDGE_PARAMETER by IrDeclarationOriginImpl.Regular
 
         var IrFunction.bridgeFunction: IrSimpleFunction? by irAttribute(copyByDefault = false)
+        var IrFunction.virtualBridgeFunction: IrSimpleFunction? by irAttribute(copyByDefault = false)
         var IrFunction.promisifiedWrapperFunction: IrSimpleFunction? by irAttribute(copyByDefault = true)
     }
 
@@ -130,41 +176,206 @@ internal class PrepareSuspendFunctionsForExportLowering(private val context: JsI
     private val promisifyFunctionSymbol = context.symbols.promisifyFunctionSymbol
     private val jsExportIgnoreAnnotation = context.symbols.jsExportIgnoreAnnotationSymbol.owner.constructors.single()
     private val jsPrototypeFunctionSymbol = context.symbols.jsPrototypeOfSymbol
+    private val jsIsFunction = context.symbols.jsIsFunction
+    private val jsMethodReference = context.symbols.jsMethodReference
     private val suspendFunctionClassSymbol = context.irBuiltIns.suspendFunctionN(0).symbol
 
     private val IrOverridableDeclaration<*>.isInterfaceMethod: Boolean
         get() = parentClassOrNull?.isInterface == true
 
-    override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
-        if (
-            declaration !is IrSimpleFunction ||
-            declaration.isFakeOverride ||
-            !declaration.isExportedSuspendFunction(context)
-        ) return null
-
-        val isTheFirstRealOverriddenMethod =
-            (declaration.overriddenSymbols.isEmpty() || declaration.overriddenSymbols.all { it.owner.isInterfaceMethod })
-                    && !declaration.isInterfaceMethod
-
-        val promisifiedWrapperFunction = generatePromisifiedWrapper(declaration, isTheFirstRealOverriddenMethod)
-
-        return when {
-            declaration.isTopLevel || !isTheFirstRealOverriddenMethod -> listOf(promisifiedWrapperFunction, declaration)
-            else -> {
-                val bridgeFunction = generateBridgeFunction(declaration, promisifiedWrapperFunction)
-
-                declaration.bridgeFunction = bridgeFunction
-                declaration.promisifiedWrapperFunction = promisifiedWrapperFunction
-
-                listOf(promisifiedWrapperFunction, bridgeFunction, declaration)
+    private val <T : IrOverridableDeclaration<*>> T.originallyExportedMember: T?
+        get() = when {
+            overriddenSymbols.isEmpty() -> runIf(isExported(context)) { this }
+            else -> overriddenSymbols.firstNotNullOfOrNull {
+                @Suppress("UNCHECKED_CAST")
+                (it.owner as T).originallyExportedMember
             }
         }
-    }
 
-    private fun generateBridgeFunction(originalFunc: IrSimpleFunction, promisifiedWrapperFunction: IrSimpleFunction): IrSimpleFunction {
-        return context.irFactory.buildFun {
+    override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? =
+        when {
+            declaration !is IrSimpleFunction || !declaration.isSuspend -> null
+            declaration.isTopLevel -> runIf(declaration.isExported(context)) {
+                listOf(generatePromisifiedWrapper(declaration), declaration)
+            }
+            else -> {
+                val originallyExportedSuspendMemberFunction = declaration.originallyExportedMember ?: return null
+                val originalMemberIsInterfaceMethod = originallyExportedSuspendMemberFunction.isInterfaceMethod
+
+                val promisifiedWrapperFunction = originallyExportedSuspendMemberFunction.promisifiedWrapperFunction
+                    ?: generatePromisifiedWrapper(originallyExportedSuspendMemberFunction)
+                        .also { originallyExportedSuspendMemberFunction.promisifiedWrapperFunction = it }
+
+                val implementationBridgeFunction = originallyExportedSuspendMemberFunction.bridgeFunction
+                    ?: generateImplementorBridgeFunction(
+                        originallyExportedSuspendMemberFunction,
+                        promisifiedWrapperFunction,
+                        originalMemberIsInterfaceMethod
+                    ).also { originallyExportedSuspendMemberFunction.bridgeFunction = it }
+
+                val virtualBridgeFunction = runIf(originalMemberIsInterfaceMethod) {
+                    originallyExportedSuspendMemberFunction.virtualBridgeFunction
+                        ?: generateVirtualBridgeFunction(
+                            originallyExportedSuspendMemberFunction,
+                            promisifiedWrapperFunction,
+                            implementationBridgeFunction
+                        ).also { originallyExportedSuspendMemberFunction.virtualBridgeFunction = it }
+                }
+
+                if (originallyExportedSuspendMemberFunction === declaration)
+                    return listOfNotNull(declaration, promisifiedWrapperFunction, implementationBridgeFunction, virtualBridgeFunction)
+
+                val currentDeclarationParent = declaration.parentAsClass
+                val currentDeclarationIsInterfaceMethod = currentDeclarationParent.isInterface
+
+                declaration.bridgeFunction = implementationBridgeFunction
+                declaration.promisifiedWrapperFunction = promisifiedWrapperFunction
+
+                if (currentDeclarationIsInterfaceMethod) {
+                    declaration.virtualBridgeFunction = virtualBridgeFunction
+                    return null
+                }
+
+                return when {
+                    // For the first class in the class hierarchy that overrides a suspend function defined in an exported interface,
+                    // we should generate an implementation bridge containing the logic specific to this class.
+                    // To minimize output, we could skip generating such bridge functions for non-interface suspend functions
+                    // and the rest classes from the same class hierarchy, since the bridge will be inherited through a prototype chain
+                    declaration.isMemberOfFirstClassOverridingTheOriginalDeclaration -> listOf(
+                        declaration,
+                        generatePromisifiedWrapper(declaration, overriddenSymbols = listOf(promisifiedWrapperFunction.symbol)),
+                        generateImplementorBridgeFunction(
+                            declaration,
+                            promisifiedWrapperFunction,
+                            false,
+                            overriddenSymbols = listOf(implementationBridgeFunction.symbol)
+                        ),
+                    )
+
+                    // For real overrides of exported suspend member functions, we should generate a fake override of promisified wrapper
+                    // since it could have different signature from the original suspend function. We need it only for TypeScript export,
+                    // so this could be removed after migrating to Analysis API based TypeScript generation
+                    currentDeclarationParent.isExported(context) && (declaration.isReal || declaration.doesOverrideImplementationFromNotExportedClass) ->
+                        listOf(
+                            declaration,
+                            generatePromisifiedWrapper(
+                                declaration,
+                                isFakeOverride = true,
+                                overriddenSymbols = listOf(promisifiedWrapperFunction.symbol)
+                            )
+                        )
+
+                    else -> null
+                }
+            }
+        }
+
+    private val IrOverridableDeclaration<IrSimpleFunctionSymbol>.isMemberOfFirstClassOverridingTheOriginalDeclaration: Boolean
+        get() = overriddenSymbols.all { it.owner.isInterfaceMethod }
+
+    private val IrOverridableDeclaration<IrSimpleFunctionSymbol>.doesOverrideImplementationFromNotExportedClass: Boolean
+        get() = overriddenSymbols.all {
+            val parentClass = it.owner.parentAsClass
+            parentClass.isInterface || (!parentClass.isExported(context) && it.owner.doesOverrideImplementationFromNotExportedClass)
+        }
+
+    private fun generateVirtualBridgeFunction(
+        originalFunc: IrSimpleFunction,
+        promisifiedWrapperFunction: IrSimpleFunction,
+        implementationBridge: IrSimpleFunction,
+    ): IrSimpleFunction =
+        buildBridgeFunction("${originalFunc.name}$EXPORTED_VIRTUAL_SUSPEND_FUNCTION_BRIDGE_SUFFIX", originalFunc) { bridgeFunction ->
+            bridgeFunction.modality = Modality.FINAL
+
+            val dispatchReceiverParameter =
+                bridgeFunction.dispatchReceiverParameter ?: compilationException(
+                    "This function should be applied only to a member function",
+                    bridgeFunction
+                )
+
+            dispatchReceiverParameter.kind = IrParameterKind.Regular
+
+            val isFunctionImplementedOnKotlinSide = irCall(jsIsFunction).apply {
+                arguments[0] = irCall(jsMethodReference).apply {
+                    arguments[0] = irGet(dispatchReceiverParameter)
+                    arguments[1] = JsIrBuilder.buildRawReference(implementationBridge.symbol, dynamicType)
+                }
+            }
+
+            +irReturn(
+                irIfThenElse(
+                    bridgeFunction.returnType,
+                    isFunctionImplementedOnKotlinSide,
+                    irCallWithParametersOf(implementationBridge, bridgeFunction),
+                    irCall(awaitFunctionSymbol).apply {
+                        arguments[0] = irCallWithParametersOf(promisifiedWrapperFunction, bridgeFunction)
+                    }
+                )
+            )
+        }
+
+    private fun generateImplementorBridgeFunction(
+        originalFunc: IrSimpleFunction,
+        promisifiedWrapperFunction: IrSimpleFunction,
+        isInterfaceMethod: Boolean,
+        overriddenSymbols: List<IrSimpleFunctionSymbol> = emptyList()
+    ): IrSimpleFunction =
+        buildBridgeFunction("${originalFunc.name}$EXPORTED_SUSPEND_FUNCTION_BRIDGE_SUFFIX", originalFunc) { bridgeFunction ->
+            bridgeFunction.overriddenSymbols = overriddenSymbols
+
+            if (isInterfaceMethod) {
+                bridgeFunction.modality = Modality.ABSTRACT
+                bridgeFunction.body = null
+                return@buildBridgeFunction
+            }
+
+            bridgeFunction.modality = Modality.FINAL
+
+            val originalName =
+                promisifiedWrapperFunction.getJsName() ?: compilationException(
+                    "Promisified wrapper function should contain at least one @JsName annotation",
+                    promisifiedWrapperFunction
+                )
+
+            val dispatchReceiverParameter =
+                bridgeFunction.dispatchReceiverParameter ?: compilationException(
+                    "This function should be applied only to a member function",
+                    bridgeFunction
+                )
+
+            val isExportedFunctionOverridden = irCall(jsEqeqeqFunctionSymbol).apply {
+                arguments[0] = JsIrBuilder.buildDynamicMemberExpression(irGet(dispatchReceiverParameter), originalName, dynamicType)
+                arguments[1] = JsIrBuilder.buildDynamicMemberExpression(
+                    irCall(jsPrototypeFunctionSymbol).apply {
+                        arguments[0] = irCall(jsClassFunctionSymbol).apply {
+                            typeArguments[0] = dispatchReceiverParameter.type
+                        }
+                    },
+                    originalName,
+                    dynamicType
+                )
+            }
+
+            +irReturn(
+                irIfThenElse(
+                    bridgeFunction.returnType,
+                    isExportedFunctionOverridden,
+                    irCallWithParametersOf(originalFunc, bridgeFunction),
+                    irCall(awaitFunctionSymbol).apply {
+                        arguments[0] = irCallWithParametersOf(promisifiedWrapperFunction, bridgeFunction)
+                    }
+                )
+            )
+        }
+
+    private fun buildBridgeFunction(
+        name: String,
+        originalFunc: IrSimpleFunction,
+        bodyFactory: IrBlockBodyBuilder.(IrSimpleFunction) -> Unit,
+    ): IrSimpleFunction =
+        context.irFactory.buildFun {
             updateFrom(originalFunc)
-            name = Name.identifier("${originalFunc.name}${EXPORTED_SUSPEND_FUNCTION_BRIDGE_SUFFIX}")
+            this.name = Name.identifier(name)
             origin = EXPORTED_SUSPEND_FUNCTION_BRIDGE
             startOffset = UNDEFINED_OFFSET
             endOffset = UNDEFINED_OFFSET
@@ -183,58 +394,24 @@ internal class PrepareSuspendFunctionsForExportLowering(private val context: JsI
                 it.origin = EXPORTED_SUSPEND_FUNCTION_BRIDGE_PARAMETER
             }
 
-            val originalName =
-                promisifiedWrapperFunction.getJsName() ?: compilationException(
-                    "Promisified wrapper function should contain at least one @JsName annotation",
-                    promisifiedWrapperFunction
-                )
-
-            val dispatchReceiverParameter =
-                bridgeFunc.dispatchReceiverParameter ?: compilationException(
-                    "This function should be applied only to a member function",
-                    bridgeFunc
-                )
-
-            bridgeFunc.body = context.createIrBuilder(bridgeFunc.symbol).irBlockBody(bridgeFunc) {
-                val isExportedFunctionOverridden = irCall(jsEqeqeqFunctionSymbol).apply {
-                    arguments[0] = JsIrBuilder.buildDynamicMemberExpression(irGet(dispatchReceiverParameter), originalName, dynamicType)
-                    arguments[1] = JsIrBuilder.buildDynamicMemberExpression(
-                        irCall(jsPrototypeFunctionSymbol).apply {
-                            arguments[0] = irCall(jsClassFunctionSymbol).apply {
-                                typeArguments[0] = dispatchReceiverParameter.type
-                            }
-                        },
-                        originalName,
-                        dynamicType
-                    )
-                }
-                +irReturn(
-                    irIfThenElse(
-                        bridgeFunc.returnType,
-                        isExportedFunctionOverridden,
-                        irCallWithParametersOf(originalFunc, bridgeFunc),
-                        irCall(awaitFunctionSymbol).apply {
-                            arguments[0] = irCallWithParametersOf(promisifiedWrapperFunction, bridgeFunc)
-                        }
-                    )
-                )
-            }
+            bridgeFunc.body = context.createIrBuilder(bridgeFunc.symbol)
+                .irBlockBody(bridgeFunc) { bodyFactory(bridgeFunc) }
         }
-    }
 
     private fun generatePromisifiedWrapper(
         originalFunc: IrSimpleFunction,
-        originalFunctionIsTheFirstRealMethod: Boolean,
-    ): IrSimpleFunction {
-        return context.irFactory.buildFun {
+        isFakeOverride: Boolean = false,
+        overriddenSymbols: List<IrSimpleFunctionSymbol> = emptyList(),
+    ): IrSimpleFunction =
+        context.irFactory.buildFun {
             updateFrom(originalFunc)
             name = Name.identifier("${originalFunc.name.asString()}${PROMISIFIED_WRAPPER_SUFFIX}")
             origin = PROMISIFIED_WRAPPER
             isSuspend = false
-            isFakeOverride = !originalFunc.isInterfaceMethod && !originalFunctionIsTheFirstRealMethod
             modality = Modality.OPEN
             startOffset = UNDEFINED_OFFSET
             endOffset = UNDEFINED_OFFSET
+            if (isFakeOverride) this.isFakeOverride = true
         }.apply {
             parent = originalFunc.parent
             copyFunctionSignatureFrom(originalFunc, returnType = promiseClass.typeWith(originalFunc.returnType))
@@ -244,6 +421,8 @@ internal class PrepareSuspendFunctionsForExportLowering(private val context: JsI
                     it.defaultValue = null
                 }
             }
+
+            this.overriddenSymbols = overriddenSymbols
 
             val (exportAnnotations, irrelevantAnnotations) = originalFunc.annotations.partition {
                 it.isAnnotation(JsAnnotations.jsExportFqn) || it.isAnnotation(JsAnnotations.jsExportDefaultFqn)
@@ -263,8 +442,10 @@ internal class PrepareSuspendFunctionsForExportLowering(private val context: JsI
 
             originalFunc.annotations = irrelevantAnnotations.compactIfPossible()
 
-            body = runIf(originalFunctionIsTheFirstRealMethod) {
-                context.createIrBuilder(symbol).irBlockBody(this) {
+            if (originalFunc.modality == Modality.ABSTRACT) {
+                modality = Modality.ABSTRACT
+            } else if (!isFakeOverride) {
+                body = context.createIrBuilder(symbol).irBlockBody(this) {
                     val call = irCallWithParametersOf(originalFunc, this@apply)
 
                     if (!this@PrepareSuspendFunctionsForExportLowering.context.configuration.compileLambdasAsEs6ArrowFunctions) {
@@ -292,10 +473,9 @@ internal class PrepareSuspendFunctionsForExportLowering(private val context: JsI
                 }
             }
         }
-    }
 
-    private fun IrBuilderWithScope.irCallWithParametersOf(functionToCall: IrSimpleFunction, parametersSource: IrSimpleFunction): IrCall {
-        return irCall(functionToCall.symbol).apply {
+    private fun IrBuilderWithScope.irCallWithParametersOf(functionToCall: IrSimpleFunction, parametersSource: IrSimpleFunction): IrCall =
+        irCall(functionToCall.symbol).apply {
             parametersSource.parameters.forEachIndexed { index, irValueParameter ->
                 arguments[index] = irGet(irValueParameter)
             }
@@ -303,7 +483,6 @@ internal class PrepareSuspendFunctionsForExportLowering(private val context: JsI
                 typeArguments[index] = irTypeParameter.defaultType
             }
         }
-    }
 
     private fun IrMutableAnnotationContainer.addJsName(name: String) {
         annotations = annotations memoryOptimizedPlus JsIrBuilder.buildAnnotation(jsNameAnnotation.symbol).apply {
@@ -325,9 +504,9 @@ class ReplaceExportedSuspendFunctionsCallsWithTheirBridgeCall(private val contex
                 // In the case of super.suspendCall, as an optimization, we can keep the call without bridging it
                 // since at compile time we know that it's always a Kotlin suspend function
                 if (expression.superQualifierSymbol == null && expression.symbol.owner.isExportedSuspendFunction(context)) {
-                    expression.symbol.owner.bridgeFunction?.let { bridge ->
-                        expression.symbol = bridge.symbol
-                    }
+                    expression.symbol.owner
+                        .let { it.virtualBridgeFunction ?: it.bridgeFunction }
+                        ?.let { bridge -> expression.symbol = bridge.symbol }
                 }
 
                 return super.visitCall(expression)

@@ -186,6 +186,9 @@ class JsSymbols(
     val jsTypeOf = CallableIds.jsTypeOf.functionSymbol()
     val isExternalObject = CallableIds.isExternalObject.functionSymbol()
 
+    val jsIsFunction = CallableIds.jsIsFunction.functionSymbol()
+    val jsMethodReference = CallableIds.jsMethodReference.functionSymbol()
+
     // Number conversions:
 
     val jsNumberToByte = CallableIds.numberToByte.functionSymbol()
@@ -569,6 +572,8 @@ private object CallableIds {
     val jsBitShiftL = "jsBitShiftL".jsCallableId
     val jsInstanceOfIntrinsic = "jsInstanceOfIntrinsic".jsCallableId
     val jsTypeOf = "jsTypeOf".jsCallableId
+    val jsMethodReference = "jsMethodReference".jsCallableId
+    val jsIsFunction = "jsIsFunction".jsCallableId
     val isExternalObject = "isExternalObject".jsCallableId
     val numberToByte = "numberToByte".jsCallableId
     val numberToDouble = "numberToDouble".jsCallableId
