@@ -278,7 +278,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] contextReceiverAsImplicitReturnTypePropagation.
         public [ResolvedTo(BODY_RESOLVE)] get(): <ERROR TYPE REF: Unresolved this@List> {
             ^ R|/foo<Inapplicable(INAPPLICABLE): /foo>#|
         }
-    context([ResolvedTo(BODY_RESOLVE)] R|kotlin/collections/List<@R|Anno|(position = <strcat>(String(context receiver type ), R|/prop|))  kotlin/Int>|)
+    context([ResolvedTo(BODY_RESOLVE)] R|kotlin/collections/List<@R|Anno|(position = String(context receiver type str))  kotlin/Int>|)
     public final [ResolvedTo(BODY_RESOLVE)] val foo: <ERROR TYPE REF: Unresolved this@List>
         public [ResolvedTo(BODY_RESOLVE)] get(): <ERROR TYPE REF: Unresolved this@List> {
             ^ this@List#

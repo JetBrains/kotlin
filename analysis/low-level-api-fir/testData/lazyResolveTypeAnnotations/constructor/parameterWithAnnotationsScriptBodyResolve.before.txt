@@ -1,28 +1,28 @@
-@R|Anno|(position = <strcat>(String(parameter type ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested parameter type ), R|/prop|))  kotlin/collections/Collection<@R|Anno|(position = <strcat>(String(nested nested parameter type ), R|/prop|))  kotlin/String>>
+@R|Anno|(position = String(parameter type str))  kotlin/collections/List<@R|Anno|(position = String(nested parameter type str))  kotlin/collections/Collection<@R|Anno|(position = String(nested nested parameter type str))  kotlin/String>>
   context -> FirValueParameterSymbol <local>/param from FirConstructorSymbol /A.A
   anchor -> [FirValueParameterSymbol <local>/param from FirConstructorSymbol /A.A]
 
-@R|Anno|(position = <strcat>(String(nested parameter type ), R|/prop|))  kotlin/collections/Collection<@R|Anno|(position = <strcat>(String(nested nested parameter type ), R|/prop|))  kotlin/String>
+@R|Anno|(position = String(nested parameter type str))  kotlin/collections/Collection<@R|Anno|(position = String(nested nested parameter type str))  kotlin/String>
   context -> FirValueParameterSymbol <local>/param from FirConstructorSymbol /A.A
   anchor -> [FirValueParameterSymbol <local>/param from FirConstructorSymbol /A.A]
 
-@R|Anno|(position = <strcat>(String(nested nested parameter type ), R|/prop|))  kotlin/String
+@R|Anno|(position = String(nested nested parameter type str))  kotlin/String
   context -> FirValueParameterSymbol <local>/param from FirConstructorSymbol /A.A
   anchor -> [FirValueParameterSymbol <local>/param from FirConstructorSymbol /A.A]
 
-@R|Anno|(position = <strcat>(String(anonymousFunction return type ), R|/prop|))  kotlin/Int
+@R|Anno|(position = String(anonymousFunction return type str))  kotlin/Int
   context -> FirAnonymousFunctionSymbol special/anonymous
   anchor -> [FirConstructorSymbol /A.A]
 
-@R|Anno|(position = <strcat>(String(anonymousFunction parameter type ), R|/prop|))  kotlin/Int
+@R|Anno|(position = String(anonymousFunction parameter type str))  kotlin/Int
   context -> FirValueParameterSymbol <local>/i from FirAnonymousFunctionSymbol special/anonymous
   anchor -> [FirConstructorSymbol /A.A]
 
-@R|Anno|(position = <strcat>(String(anonymousFunction return type ), R|/prop|))  kotlin/Int
+@R|Anno|(position = String(anonymousFunction return type str))  kotlin/Int
   context -> FirAnonymousFunctionSymbol special/anonymous
   anchor -> [FirConstructorSymbol /A.A]
 
-@R|Anno|(position = <strcat>(String(anonymousFunction parameter type ), R|/prop|))  kotlin/Int
+@R|Anno|(position = String(anonymousFunction parameter type str))  kotlin/Int
   context -> FirAnonymousFunctionSymbol special/anonymous
   anchor -> [FirConstructorSymbol /A.A]
 
@@ -45,7 +45,7 @@ FILE: [ResolvedTo(IMPORTS)] parameterWithAnnotationsScriptBodyResolve.kts
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
 
         public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol <script-parameterWithAnnotationsScriptBodyResolve.kts>, ScriptTopLevelDeclaration=true] class A : R|kotlin/Any| {
-            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] constructor([ResolvedTo(BODY_RESOLVE)] param: R|@R|Anno|(position = <strcat>(String(parameter type ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested parameter type ), R|/prop|))  kotlin/collections/Collection<@R|Anno|(position = <strcat>(String(nested nested parameter type ), R|/prop|))  kotlin/String>>| = @R|Anno|[Types](position = <strcat>(String(defaultValue ), R|/prop|)) [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=@R|Anno|(position = <strcat>(String(parameter type ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested parameter type ), R|/prop|))  kotlin/collections/Collection<@R|Anno|(position = <strcat>(String(nested nested parameter type ), R|/prop|))  kotlin/String>>] fun <anonymous>([ResolvedTo(BODY_RESOLVE)] i: R|@R|Anno|(position = <strcat>(String(anonymousFunction parameter type ), R|/prop|))  kotlin/Int|): R|@R|Anno|(position = <strcat>(String(anonymousFunction return type ), R|/prop|))  kotlin/Int| <inline=Unknown>  {
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] constructor([ResolvedTo(BODY_RESOLVE)] param: R|@R|Anno|(position = String(parameter type str))  kotlin/collections/List<@R|Anno|(position = String(nested parameter type str))  kotlin/collections/Collection<@R|Anno|(position = String(nested nested parameter type str))  kotlin/String>>| = @R|Anno|[Types](position = String(defaultValue str)) [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=@R|Anno|(position = String(parameter type str))  kotlin/collections/List<@R|Anno|(position = String(nested parameter type str))  kotlin/collections/Collection<@R|Anno|(position = String(nested nested parameter type str))  kotlin/String>>] fun <anonymous>([ResolvedTo(BODY_RESOLVE)] i: R|@R|Anno|(position = String(anonymousFunction parameter type str))  kotlin/Int|): R|@R|Anno|(position = String(anonymousFunction return type str))  kotlin/Int| <inline=Unknown>  {
             }
             ): R|A| {
                 super<R|kotlin/Any|>()

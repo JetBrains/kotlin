@@ -274,7 +274,7 @@ FILE: [ResolvedTo(IMPORTS)] generatedPropertyFromParameterWithImplicitAnnotation
 
     }
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class Sub : R|kotlin/Any| {
-        public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=Sub] constructor([ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=/Sub.prop] @R|ParameterAnnotation|[Types](i = R|/konstant|) prop: R|kotlin/Int|): R|Sub| {
+        public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=Sub] constructor([ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=/Sub.prop] @R|ParameterAnnotation|[Types](i = Int(0)) prop: R|kotlin/Int|): R|Sub| {
             LAZY_super<R|kotlin/Any|>
         }
 
@@ -298,7 +298,7 @@ FILE: [ResolvedTo(IMPORTS)] generatedPropertyFromParameterWithImplicitAnnotation
 
     }
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class Sub : R|kotlin/Any| {
-        public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=Sub] constructor([ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=/Sub.prop] @R|ParameterAnnotation|[Types](i = R|/konstant|) prop: R|kotlin/Int|): R|Sub| {
+        public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=Sub] constructor([ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=/Sub.prop] @R|ParameterAnnotation|[Types](i = Int(0)) prop: R|kotlin/Int|): R|Sub| {
             LAZY_super<R|kotlin/Any|>
         }
 
@@ -322,7 +322,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] generatedPropertyFromParameterWithImplicitAnnot
 
     }
     public final [ResolvedTo(BODY_RESOLVE)] class Sub : R|kotlin/Any| {
-        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Sub] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/Sub.prop] @R|ParameterAnnotation|[Types](i = R|/konstant|) prop: R|kotlin/Int|): R|Sub| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Sub] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/Sub.prop] @R|ParameterAnnotation|[Types](i = Int(0)) prop: R|kotlin/Int|): R|Sub| {
             super<R|kotlin/Any|>()
         }
 

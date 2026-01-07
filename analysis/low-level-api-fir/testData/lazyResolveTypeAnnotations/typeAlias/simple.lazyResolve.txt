@@ -176,7 +176,7 @@ FILE: [ResolvedTo(IMPORTS)] simple.kt
     }
     public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val constant: R|kotlin/Int| = Int(0)
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] typealias MyTypeAlias = R|@R|TypeAnnWithArg|(arg = <strcat>(String(type: ), R|/constant|))  kotlin/collections/List<@R|TypeAnnWithArg|(arg = <strcat>(String(nested type: ), R|/constant|))  kotlin/collections/List<@R|TypeAnnWithArg|(arg = <strcat>(String(nested nested type: ), R|/constant|))  kotlin/Int>>|
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] typealias MyTypeAlias = R|@R|TypeAnnWithArg|(arg = String(type: 0))  kotlin/collections/List<@R|TypeAnnWithArg|(arg = String(nested type: 0))  kotlin/collections/List<@R|TypeAnnWithArg|(arg = String(nested nested type: 0))  kotlin/Int>>|
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] simple.kt
@@ -191,7 +191,7 @@ FILE: [ResolvedTo(IMPORTS)] simple.kt
     }
     public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val constant: R|kotlin/Int| = Int(0)
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
-    public final [ResolvedTo(BODY_RESOLVE)] typealias MyTypeAlias = R|@R|TypeAnnWithArg|(arg = <strcat>(String(type: ), R|/constant|))  kotlin/collections/List<@R|TypeAnnWithArg|(arg = <strcat>(String(nested type: ), R|/constant|))  kotlin/collections/List<@R|TypeAnnWithArg|(arg = <strcat>(String(nested nested type: ), R|/constant|))  kotlin/Int>>|
+    public final [ResolvedTo(BODY_RESOLVE)] typealias MyTypeAlias = R|@R|TypeAnnWithArg|(arg = String(type: 0))  kotlin/collections/List<@R|TypeAnnWithArg|(arg = String(nested type: 0))  kotlin/collections/List<@R|TypeAnnWithArg|(arg = String(nested nested type: 0))  kotlin/Int>>|
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] simple.kt
@@ -206,4 +206,4 @@ FILE: [ResolvedTo(BODY_RESOLVE)] simple.kt
     }
     public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(0)] val constant: R|kotlin/Int| = Int(0)
         public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
-    public final [ResolvedTo(BODY_RESOLVE)] typealias MyTypeAlias = R|@R|TypeAnnWithArg|(arg = <strcat>(String(type: ), R|/constant|))  kotlin/collections/List<@R|TypeAnnWithArg|(arg = <strcat>(String(nested type: ), R|/constant|))  kotlin/collections/List<@R|TypeAnnWithArg|(arg = <strcat>(String(nested nested type: ), R|/constant|))  kotlin/Int>>|
+    public final [ResolvedTo(BODY_RESOLVE)] typealias MyTypeAlias = R|@R|TypeAnnWithArg|(arg = String(type: 0))  kotlin/collections/List<@R|TypeAnnWithArg|(arg = String(nested type: 0))  kotlin/collections/List<@R|TypeAnnWithArg|(arg = String(nested nested type: 0))  kotlin/Int>>|

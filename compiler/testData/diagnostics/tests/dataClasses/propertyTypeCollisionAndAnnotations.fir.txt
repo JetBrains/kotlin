@@ -28,12 +28,12 @@ FILE: propertyTypeCollisionAndAnnotations.kt
 
     }
     public final data class MyDataClass : R|kotlin/Any| {
-        public constructor(prop: R|@R|one/two/Anno|(i = Int(0).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(1).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(2).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|))  kotlin/Int>>|): R|one/two/MyDataClass| {
+        public constructor(prop: R|@R|one/two/Anno|(i = Int(0))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(1))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(2))  kotlin/Int>>|): R|one/two/MyDataClass| {
             super<R|kotlin/Any|>()
         }
 
-        public final val prop: R|@R|one/two/Anno|(i = Int(0).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(1).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(2).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|))  kotlin/Int>>| = R|<local>/prop|
-            public get(): R|@R|one/two/Anno|(i = Int(0).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(1).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(2).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|))  kotlin/Int>>|
+        public final val prop: R|@R|one/two/Anno|(i = Int(0))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(1))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(2))  kotlin/Int>>| = R|<local>/prop|
+            public get(): R|@R|one/two/Anno|(i = Int(0))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(1))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(2))  kotlin/Int>>|
 
         public final class MyClass<B> : R|kotlin/Any| {
             public constructor<B>(): R|one/two/MyDataClass.MyClass<B>| {
@@ -52,8 +52,8 @@ FILE: propertyTypeCollisionAndAnnotations.kt
 
         }
 
-        public final operator fun component1(): R|@R|one/two/Anno|(i = Int(0).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(1).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(2).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|))  kotlin/Int>>|
+        public final operator fun component1(): R|@R|one/two/Anno|(i = Int(0))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(1))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(2))  kotlin/Int>>|
 
-        public final fun copy(prop: R|@R|one/two/Anno|(i = Int(0).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(1).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(2).R|kotlin/Int.plus|(this@R|one/two/MyDataClass.Companion|.R|one/two/MyDataClass.Companion.constant|))  kotlin/Int>>| = this@R|one/two/MyDataClass|.R|one/two/MyDataClass.prop|): R|one/two/MyDataClass|
+        public final fun copy(prop: R|@R|one/two/Anno|(i = Int(0))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(1))  one/two/MyDataClass.MyClass<@R|one/two/Anno|(i = Int(2))  kotlin/Int>>| = this@R|one/two/MyDataClass|.R|one/two/MyDataClass.prop|): R|one/two/MyDataClass|
 
     }

@@ -197,15 +197,15 @@ FILE: [ResolvedTo(IMPORTS)] propagationBetweenLocalMemberFunctions.kt
                 super<R|kotlin/Any|>()
             }
 
-            public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|@R|util/Anno|(str = <strcat>(String(bar ), R|util/prop|))  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(nested bar ), R|util/prop|))  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|))  kotlin/Int>>?| {
+            public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|@R|util/Anno|(str = String(bar str))  kotlin/collections/List<@R|util/Anno|(str = String(nested bar str))  kotlin/collections/Collection<@R|util/Anno|(str = String(nested nested bar str))  kotlin/Int>>?| {
                 ^foo this@R|<local>/Local|.R|<local>/bar|()
             }
 
-            public final [ResolvedTo(BODY_RESOLVE)] fun bar(): R|@R|util/Anno|(str = <strcat>(String(bar ), R|util/prop|))  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(nested bar ), R|util/prop|))  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|))  kotlin/Int>>?| {
+            public final [ResolvedTo(BODY_RESOLVE)] fun bar(): R|@R|util/Anno|(str = String(bar str))  kotlin/collections/List<@R|util/Anno|(str = String(nested bar str))  kotlin/collections/Collection<@R|util/Anno|(str = String(nested nested bar str))  kotlin/Int>>?| {
                 ^bar Null(null)
             }
 
-            public final [ResolvedTo(BODY_RESOLVE)] fun foo2(): R|@R|util/Anno|(str = <strcat>(String(bar ), R|util/prop|))  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(nested bar ), R|util/prop|))  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|))  kotlin/Int>>?| {
+            public final [ResolvedTo(BODY_RESOLVE)] fun foo2(): R|@R|util/Anno|(str = String(bar str))  kotlin/collections/List<@R|util/Anno|(str = String(nested bar str))  kotlin/collections/Collection<@R|util/Anno|(str = String(nested nested bar str))  kotlin/Int>>?| {
                 ^foo2 this@R|<local>/Local|.R|<local>/bar|()
             }
 
@@ -232,15 +232,15 @@ FILE: [ResolvedTo(BODY_RESOLVE)] propagationBetweenLocalMemberFunctions.kt
                 super<R|kotlin/Any|>()
             }
 
-            public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|@R|util/Anno|(str = <strcat>(String(bar ), R|util/prop|))  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(nested bar ), R|util/prop|))  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|))  kotlin/Int>>?| {
+            public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|@R|util/Anno|(str = String(bar str))  kotlin/collections/List<@R|util/Anno|(str = String(nested bar str))  kotlin/collections/Collection<@R|util/Anno|(str = String(nested nested bar str))  kotlin/Int>>?| {
                 ^foo this@R|<local>/Local|.R|<local>/bar|()
             }
 
-            public final [ResolvedTo(BODY_RESOLVE)] fun bar(): R|@R|util/Anno|(str = <strcat>(String(bar ), R|util/prop|))  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(nested bar ), R|util/prop|))  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|))  kotlin/Int>>?| {
+            public final [ResolvedTo(BODY_RESOLVE)] fun bar(): R|@R|util/Anno|(str = String(bar str))  kotlin/collections/List<@R|util/Anno|(str = String(nested bar str))  kotlin/collections/Collection<@R|util/Anno|(str = String(nested nested bar str))  kotlin/Int>>?| {
                 ^bar Null(null)
             }
 
-            public final [ResolvedTo(BODY_RESOLVE)] fun foo2(): R|@R|util/Anno|(str = <strcat>(String(bar ), R|util/prop|))  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(nested bar ), R|util/prop|))  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|))  kotlin/Int>>?| {
+            public final [ResolvedTo(BODY_RESOLVE)] fun foo2(): R|@R|util/Anno|(str = String(bar str))  kotlin/collections/List<@R|util/Anno|(str = String(nested bar str))  kotlin/collections/Collection<@R|util/Anno|(str = String(nested nested bar str))  kotlin/Int>>?| {
                 ^foo2 this@R|<local>/Local|.R|<local>/bar|()
             }
 

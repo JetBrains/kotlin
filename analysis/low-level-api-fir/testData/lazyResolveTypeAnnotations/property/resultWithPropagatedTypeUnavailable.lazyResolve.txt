@@ -374,12 +374,12 @@ FILE: [ResolvedTo(IMPORTS)] resultWithPropagatedTypeUnavailable.kts
             private final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val constant: R|kotlin/Int| = Int(0)
                 private [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=Obj] get(): R|kotlin/Int|
 
-            public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun explicitType(): R|@R|foo/Anno|(position = <strcat>(String(return type: ), this@R|foo/Obj|.R|foo/Obj.constant|))  kotlin/collections/List<@R|foo/Anno|(position = <strcat>(String(nested return type: ), this@R|foo/Obj|.R|foo/Obj.constant|))  kotlin/collections/Collection<@R|foo/Anno|(position = <strcat>(String(nested nested return type: ), this@R|foo/Obj|.R|foo/Obj.constant|))  kotlin/String>>| { LAZY_BLOCK }
+            public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun explicitType(): R|@R|foo/Anno|(position = String(return type: 0))  kotlin/collections/List<@R|foo/Anno|(position = String(nested return type: 0))  kotlin/collections/Collection<@R|foo/Anno|(position = String(nested nested return type: 0))  kotlin/String>>| { LAZY_BLOCK }
 
         }
 
-        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val $$result: R|@R|foo/Anno|(position = <strcat>(String(return type: ), this@R|foo/Obj|.R|foo/Obj.constant|))  kotlin/collections/List<@R|foo/Anno|(position = <strcat>(String(nested return type: ), this@R|foo/Obj|.R|foo/Obj.constant|))  kotlin/collections/Collection<@R|foo/Anno|(position = <strcat>(String(nested nested return type: ), this@R|foo/Obj|.R|foo/Obj.constant|))  kotlin/String>>| = Q|foo/Obj|.R|foo/Obj.explicitType|()
-            public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|@R|foo/Anno|(position = <strcat>(String(return type: ), this@R|foo/Obj|.R|foo/Obj.constant|))  kotlin/collections/List<@R|foo/Anno|(position = <strcat>(String(nested return type: ), this@R|foo/Obj|.R|foo/Obj.constant|))  kotlin/collections/Collection<@R|foo/Anno|(position = <strcat>(String(nested nested return type: ), this@R|foo/Obj|.R|foo/Obj.constant|))  kotlin/String>>|
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val $$result: R|@R|foo/Anno|(position = String(return type: 0))  kotlin/collections/List<@R|foo/Anno|(position = String(nested return type: 0))  kotlin/collections/Collection<@R|foo/Anno|(position = String(nested nested return type: 0))  kotlin/String>>| = Q|foo/Obj|.R|foo/Obj.explicitType|()
+            public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|@R|foo/Anno|(position = String(return type: 0))  kotlin/collections/List<@R|foo/Anno|(position = String(nested return type: 0))  kotlin/collections/Collection<@R|foo/Anno|(position = String(nested nested return type: 0))  kotlin/String>>|
 
 
 BODY_RESOLVE:
@@ -406,12 +406,12 @@ FILE: [ResolvedTo(IMPORTS)] resultWithPropagatedTypeUnavailable.kts
             private final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val constant: R|kotlin/Int| = Int(0)
                 private [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=Obj] get(): R|kotlin/Int|
 
-            public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun explicitType(): R|@R|foo/Anno|(position = <strcat>(String(return type: ), this@R|foo/Obj|.R|foo/Obj.constant|))  kotlin/collections/List<@R|foo/Anno|(position = <strcat>(String(nested return type: ), this@R|foo/Obj|.R|foo/Obj.constant|))  kotlin/collections/Collection<@R|foo/Anno|(position = <strcat>(String(nested nested return type: ), this@R|foo/Obj|.R|foo/Obj.constant|))  kotlin/String>>| { LAZY_BLOCK }
+            public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun explicitType(): R|@R|foo/Anno|(position = String(return type: 0))  kotlin/collections/List<@R|foo/Anno|(position = String(nested return type: 0))  kotlin/collections/Collection<@R|foo/Anno|(position = String(nested nested return type: 0))  kotlin/String>>| { LAZY_BLOCK }
 
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] val $$result: R|@R|foo/Anno|(position = <strcat>(String(return type: ), this@R|foo/Obj|.R|foo/Obj.constant|))  kotlin/collections/List<@R|foo/Anno|(position = <strcat>(String(nested return type: ), this@R|foo/Obj|.R|foo/Obj.constant|))  kotlin/collections/Collection<@R|foo/Anno|(position = <strcat>(String(nested nested return type: ), this@R|foo/Obj|.R|foo/Obj.constant|))  kotlin/String>>| = Q|foo/Obj|.R|foo/Obj.explicitType|()
-            public [ResolvedTo(BODY_RESOLVE)] get(): R|@R|foo/Anno|(position = <strcat>(String(return type: ), this@R|foo/Obj|.R|foo/Obj.constant|))  kotlin/collections/List<@R|foo/Anno|(position = <strcat>(String(nested return type: ), this@R|foo/Obj|.R|foo/Obj.constant|))  kotlin/collections/Collection<@R|foo/Anno|(position = <strcat>(String(nested nested return type: ), this@R|foo/Obj|.R|foo/Obj.constant|))  kotlin/String>>|
+        public final [ResolvedTo(BODY_RESOLVE)] val $$result: R|@R|foo/Anno|(position = String(return type: 0))  kotlin/collections/List<@R|foo/Anno|(position = String(nested return type: 0))  kotlin/collections/Collection<@R|foo/Anno|(position = String(nested nested return type: 0))  kotlin/String>>| = Q|foo/Obj|.R|foo/Obj.explicitType|()
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|@R|foo/Anno|(position = String(return type: 0))  kotlin/collections/List<@R|foo/Anno|(position = String(nested return type: 0))  kotlin/collections/Collection<@R|foo/Anno|(position = String(nested nested return type: 0))  kotlin/String>>|
 
 
 FILE RAW TO BODY:
@@ -438,12 +438,12 @@ FILE: [ResolvedTo(BODY_RESOLVE)] resultWithPropagatedTypeUnavailable.kts
             private final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(0)] val constant: R|kotlin/Int| = Int(0)
                 private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Obj] get(): R|kotlin/Int|
 
-            public final [ResolvedTo(BODY_RESOLVE)] fun explicitType(): R|@R|foo/Anno|(position = <strcat>(String(return type: ), this@R|foo/Obj|.R|foo/Obj.constant|))  kotlin/collections/List<@R|foo/Anno|(position = <strcat>(String(nested return type: ), this@R|foo/Obj|.R|foo/Obj.constant|))  kotlin/collections/Collection<@R|foo/Anno|(position = <strcat>(String(nested nested return type: ), this@R|foo/Obj|.R|foo/Obj.constant|))  kotlin/String>>| {
+            public final [ResolvedTo(BODY_RESOLVE)] fun explicitType(): R|@R|foo/Anno|(position = String(return type: 0))  kotlin/collections/List<@R|foo/Anno|(position = String(nested return type: 0))  kotlin/collections/Collection<@R|foo/Anno|(position = String(nested nested return type: 0))  kotlin/String>>| {
                 ^explicitType Int(0)
             }
 
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] val $$result: R|@R|foo/Anno|(position = <strcat>(String(return type: ), this@R|foo/Obj|.R|foo/Obj.constant|))  kotlin/collections/List<@R|foo/Anno|(position = <strcat>(String(nested return type: ), this@R|foo/Obj|.R|foo/Obj.constant|))  kotlin/collections/Collection<@R|foo/Anno|(position = <strcat>(String(nested nested return type: ), this@R|foo/Obj|.R|foo/Obj.constant|))  kotlin/String>>| = Q|foo/Obj|.R|foo/Obj.explicitType|()
-            public [ResolvedTo(BODY_RESOLVE)] get(): R|@R|foo/Anno|(position = <strcat>(String(return type: ), this@R|foo/Obj|.R|foo/Obj.constant|))  kotlin/collections/List<@R|foo/Anno|(position = <strcat>(String(nested return type: ), this@R|foo/Obj|.R|foo/Obj.constant|))  kotlin/collections/Collection<@R|foo/Anno|(position = <strcat>(String(nested nested return type: ), this@R|foo/Obj|.R|foo/Obj.constant|))  kotlin/String>>|
+        public final [ResolvedTo(BODY_RESOLVE)] val $$result: R|@R|foo/Anno|(position = String(return type: 0))  kotlin/collections/List<@R|foo/Anno|(position = String(nested return type: 0))  kotlin/collections/Collection<@R|foo/Anno|(position = String(nested nested return type: 0))  kotlin/String>>| = Q|foo/Obj|.R|foo/Obj.explicitType|()
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|@R|foo/Anno|(position = String(return type: 0))  kotlin/collections/List<@R|foo/Anno|(position = String(nested return type: 0))  kotlin/collections/Collection<@R|foo/Anno|(position = String(nested nested return type: 0))  kotlin/String>>|
 

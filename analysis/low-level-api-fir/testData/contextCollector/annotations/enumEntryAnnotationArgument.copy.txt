@@ -55,7 +55,7 @@ FILE: [ResolvedTo(IMPORTS)] enumEntryAnnotationArgument.kt
         public? final? [ResolvedTo(RAW_FIR)] val i: Int = R|<local>/i|
             public? [ResolvedTo(RAW_FIR)] get(): Int
 
-        @R|pack/Anno|[Types](s = this@R|pack/MyEnumClass.Companion|.R|pack/MyEnumClass.Companion.CONSTANT|) public final static [ResolvedTo(BODY_RESOLVE)] enum entry ENTRY: R|pack/MyEnumClass| = object : R|pack/MyEnumClass| {
+        @R|pack/Anno|[Types](s = String(str)) public final static [ResolvedTo(BODY_RESOLVE)] enum entry ENTRY: R|pack/MyEnumClass| = object : R|pack/MyEnumClass| {
             private [ResolvedTo(BODY_RESOLVE)] constructor(): R|pack/<anonymous>| {
                 super<R|pack/MyEnumClass|>(Int(1))
             }

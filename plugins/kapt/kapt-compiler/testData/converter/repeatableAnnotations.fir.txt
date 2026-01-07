@@ -418,16 +418,16 @@ public final class Test {
 ////////////////////
 
 
-@AnnoChar(x = lib.R.id.textView, chr = 'c')
-@AnnoBoolean(x = lib.R.id.textView, bool = false)
-@AnnoInt(x = lib.R.id.textView, i = 5)
-@AnnoFloat(x = lib.R.id.textView, flt = 1.0F)
-@AnnoDouble(x = lib.R.id.textView, dbl = 4.0)
-@AnnoString(x = lib.R.id.textView, s = "AAA")
-@AnnoIntArray(x = lib.R.id.textView, b = {1, 2, 3})
-@AnnoLongArray(x = lib.R.id.textView, b = {1L, 3L})
-@AnnoArray(x = lib.R.id.textView, a = {"A", "B"})
-@AnnoClass(x = lib.R.id.textView, c = Color.class)
+@AnnoChar(x = 100, chr = 'c')
+@AnnoBoolean(x = 100, bool = false)
+@AnnoInt(x = 100, i = 5)
+@AnnoFloat(x = 100, flt = 1.0F)
+@AnnoDouble(x = 100, dbl = 4.0)
+@AnnoString(x = 100, s = "AAA")
+@AnnoIntArray(x = 100, b = {1, 2, 3})
+@AnnoLongArray(x = 100, b = {1L, 3L})
+@AnnoArray(x = 100, a = {"A", "B"})
+@AnnoClass(x = 100, c = Color.class)
 /**
  * @AnnoChar(x = 100, chr = 'c')
  * @AnnoBoolean(x = 100, bool = false)

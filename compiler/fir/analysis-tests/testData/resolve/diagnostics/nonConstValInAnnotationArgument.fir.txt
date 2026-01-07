@@ -30,5 +30,5 @@ FILE: nonConstValInAnnotationArgument.kt
             public get(): R|kotlin/String|
 
     }
-    @R|S|(s = R|/A|.R|kotlin/String.plus|(R|/B|)) public final fun foo(): R|kotlin/Unit| {
+    @R|S|(s = String(foo100)) public final fun foo(): R|kotlin/Unit| {
     }

@@ -169,9 +169,9 @@ FILE: [ResolvedTo(IMPORTS)] propertyDelegateWithImplicitType.kt
     }
 
 ANNOTATION_ARGUMENTS:
-TARGET: @PROPERTY:R|second/Anno|[Types](position = <strcat>(String(property ), R|second/constant|)) public open override [ResolvedTo(ANNOTATION_ARGUMENTS)] [DelegatedWrapperDataKey=[wrapped=FirRegularPropertySymbol second/Interface.resolveMe, containingClass=Aaa, delegateFieldSymbol=FirFieldSymbol second/Aaa.$$delegate_0] var resolveMe: R|kotlin/String?|
-    @PROPERTY_GETTER:R|second/Anno|[Types](position = <strcat>(String(get ), R|second/constant|)) public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=Aaa] get(): R|kotlin/String?|
-    @PROPERTY_SETTER:R|second/Anno|[Types](position = <strcat>(String(set ), R|second/constant|)) public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=Aaa] set([ResolvedTo(ANNOTATION_ARGUMENTS)] value: R|kotlin/String?|): R|kotlin/Unit|
+TARGET: @PROPERTY:R|second/Anno|[Types](position = String(property str)) public open override [ResolvedTo(ANNOTATION_ARGUMENTS)] [DelegatedWrapperDataKey=[wrapped=FirRegularPropertySymbol second/Interface.resolveMe, containingClass=Aaa, delegateFieldSymbol=FirFieldSymbol second/Aaa.$$delegate_0] var resolveMe: R|kotlin/String?|
+    @PROPERTY_GETTER:R|second/Anno|[Types](position = String(get str)) public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=Aaa] get(): R|kotlin/String?|
+    @PROPERTY_SETTER:R|second/Anno|[Types](position = String(set str)) public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=Aaa] set([ResolvedTo(ANNOTATION_ARGUMENTS)] value: R|kotlin/String?|): R|kotlin/Unit|
 
 FILE: [ResolvedTo(IMPORTS)] propertyDelegateWithImplicitType.kt
     @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
@@ -196,16 +196,16 @@ FILE: [ResolvedTo(IMPORTS)] propertyDelegateWithImplicitType.kt
     public abstract [ResolvedTo(STATUS)] interface Interface : R|kotlin/Any| {
         public open [ResolvedTo(CONTRACTS)] fun explicitType(): R|kotlin/String?| { LAZY_BLOCK }
 
-        @PROPERTY:R|second/Anno|[Types](position = <strcat>(String(property ), R|second/constant|)) field:@FIELD:R|second/Anno|[Types](position = <strcat>(String(field ), R|second/constant|)) public open [ResolvedTo(ANNOTATION_ARGUMENTS)] var resolveMe: R|kotlin/String?| = this@R|second/Interface|.R|second/Interface.explicitType|()
-            @PROPERTY_GETTER:R|second/Anno|[Types](position = <strcat>(String(get ), R|second/constant|)) public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=Interface] get(): R|kotlin/String?|
-            @PROPERTY_SETTER:R|second/Anno|[Types](position = <strcat>(String(set ), R|second/constant|)) public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=Interface] set([ResolvedTo(ANNOTATION_ARGUMENTS)] @SETTER_PARAMETER:R|second/Anno|[Types](position = <strcat>(String(set ), R|second/constant|)) value: R|kotlin/String?|): R|kotlin/Unit|
+        @PROPERTY:R|second/Anno|[Types](position = String(property str)) field:@FIELD:R|second/Anno|[Types](position = String(field str)) public open [ResolvedTo(ANNOTATION_ARGUMENTS)] var resolveMe: R|kotlin/String?| = this@R|second/Interface|.R|second/Interface.explicitType|()
+            @PROPERTY_GETTER:R|second/Anno|[Types](position = String(get str)) public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=Interface] get(): R|kotlin/String?|
+            @PROPERTY_SETTER:R|second/Anno|[Types](position = String(set str)) public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=Interface] set([ResolvedTo(ANNOTATION_ARGUMENTS)] @SETTER_PARAMETER:R|second/Anno|[Types](position = String(set str)) value: R|kotlin/String?|): R|kotlin/Unit|
 
     }
 
 BODY_RESOLVE:
-TARGET: @PROPERTY:R|second/Anno|[Types](position = <strcat>(String(property ), R|second/constant|)) public open override [ResolvedTo(BODY_RESOLVE)] [DelegatedWrapperDataKey=[wrapped=FirRegularPropertySymbol second/Interface.resolveMe, containingClass=Aaa, delegateFieldSymbol=FirFieldSymbol second/Aaa.$$delegate_0] var resolveMe: R|kotlin/String?|
-    @PROPERTY_GETTER:R|second/Anno|[Types](position = <strcat>(String(get ), R|second/constant|)) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Aaa] get(): R|kotlin/String?|
-    @PROPERTY_SETTER:R|second/Anno|[Types](position = <strcat>(String(set ), R|second/constant|)) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Aaa] set([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/String?|): R|kotlin/Unit|
+TARGET: @PROPERTY:R|second/Anno|[Types](position = String(property str)) public open override [ResolvedTo(BODY_RESOLVE)] [DelegatedWrapperDataKey=[wrapped=FirRegularPropertySymbol second/Interface.resolveMe, containingClass=Aaa, delegateFieldSymbol=FirFieldSymbol second/Aaa.$$delegate_0] var resolveMe: R|kotlin/String?|
+    @PROPERTY_GETTER:R|second/Anno|[Types](position = String(get str)) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Aaa] get(): R|kotlin/String?|
+    @PROPERTY_SETTER:R|second/Anno|[Types](position = String(set str)) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Aaa] set([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/String?|): R|kotlin/Unit|
 
 FILE: [ResolvedTo(IMPORTS)] propertyDelegateWithImplicitType.kt
     @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
@@ -230,9 +230,9 @@ FILE: [ResolvedTo(IMPORTS)] propertyDelegateWithImplicitType.kt
     public abstract [ResolvedTo(STATUS)] interface Interface : R|kotlin/Any| {
         public open [ResolvedTo(CONTRACTS)] fun explicitType(): R|kotlin/String?| { LAZY_BLOCK }
 
-        @PROPERTY:R|second/Anno|[Types](position = <strcat>(String(property ), R|second/constant|)) field:@FIELD:R|second/Anno|[Types](position = <strcat>(String(field ), R|second/constant|)) public open [ResolvedTo(ANNOTATION_ARGUMENTS)] var resolveMe: R|kotlin/String?| = this@R|second/Interface|.R|second/Interface.explicitType|()
-            @PROPERTY_GETTER:R|second/Anno|[Types](position = <strcat>(String(get ), R|second/constant|)) public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=Interface] get(): R|kotlin/String?|
-            @PROPERTY_SETTER:R|second/Anno|[Types](position = <strcat>(String(set ), R|second/constant|)) public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=Interface] set([ResolvedTo(ANNOTATION_ARGUMENTS)] @SETTER_PARAMETER:R|second/Anno|[Types](position = <strcat>(String(set ), R|second/constant|)) value: R|kotlin/String?|): R|kotlin/Unit|
+        @PROPERTY:R|second/Anno|[Types](position = String(property str)) field:@FIELD:R|second/Anno|[Types](position = String(field str)) public open [ResolvedTo(ANNOTATION_ARGUMENTS)] var resolveMe: R|kotlin/String?| = this@R|second/Interface|.R|second/Interface.explicitType|()
+            @PROPERTY_GETTER:R|second/Anno|[Types](position = String(get str)) public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=Interface] get(): R|kotlin/String?|
+            @PROPERTY_SETTER:R|second/Anno|[Types](position = String(set str)) public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=Interface] set([ResolvedTo(ANNOTATION_ARGUMENTS)] @SETTER_PARAMETER:R|second/Anno|[Types](position = String(set str)) value: R|kotlin/String?|): R|kotlin/Unit|
 
     }
 
@@ -262,8 +262,8 @@ FILE: [ResolvedTo(BODY_RESOLVE)] propertyDelegateWithImplicitType.kt
             ^explicitType Null(null)
         }
 
-        @PROPERTY:R|second/Anno|[Types](position = <strcat>(String(property ), R|second/constant|)) field:@FIELD:R|second/Anno|[Types](position = <strcat>(String(field ), R|second/constant|)) public open [ResolvedTo(BODY_RESOLVE)] var resolveMe: R|kotlin/String?| = this@R|second/Interface|.R|second/Interface.explicitType|()
-            @PROPERTY_GETTER:R|second/Anno|[Types](position = <strcat>(String(get ), R|second/constant|)) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Interface] get(): R|kotlin/String?|
-            @PROPERTY_SETTER:R|second/Anno|[Types](position = <strcat>(String(set ), R|second/constant|)) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Interface] set([ResolvedTo(BODY_RESOLVE)] @SETTER_PARAMETER:R|second/Anno|[Types](position = <strcat>(String(set ), R|second/constant|)) value: R|kotlin/String?|): R|kotlin/Unit|
+        @PROPERTY:R|second/Anno|[Types](position = String(property str)) field:@FIELD:R|second/Anno|[Types](position = String(field str)) public open [ResolvedTo(BODY_RESOLVE)] var resolveMe: R|kotlin/String?| = this@R|second/Interface|.R|second/Interface.explicitType|()
+            @PROPERTY_GETTER:R|second/Anno|[Types](position = String(get str)) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Interface] get(): R|kotlin/String?|
+            @PROPERTY_SETTER:R|second/Anno|[Types](position = String(set str)) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Interface] set([ResolvedTo(BODY_RESOLVE)] @SETTER_PARAMETER:R|second/Anno|[Types](position = String(set str)) value: R|kotlin/String?|): R|kotlin/Unit|
 
     }

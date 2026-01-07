@@ -16,4 +16,4 @@ FILE: [ResolvedTo(IMPORTS)] stringConcatenationInsideAnnotation_lhs2.kt
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
 
     }
-    @R|Anno|[Types](str = <strcat>(String(1), String(2), String(3))) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun check(): R|kotlin/Unit| { LAZY_BLOCK }
+    @R|Anno|[Types](str = String(123)) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun check(): R|kotlin/Unit| { LAZY_BLOCK }

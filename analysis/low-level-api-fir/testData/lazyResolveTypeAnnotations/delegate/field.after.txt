@@ -1,12 +1,12 @@
-@R|one/Anno|(position = <strcat>(String(super type ref ), R|one/prop|))  kotlin/collections/List<@R|one/Anno|(position = <strcat>(String(nested super type ref ), R|one/prop|))  kotlin/collections/List<@R|one/Anno|(position = <strcat>(String(nested nested super type ref ), R|one/prop|))  kotlin/Int>>
+@R|one/Anno|(position = String(super type ref str))  kotlin/collections/List<@R|one/Anno|(position = String(nested super type ref str))  kotlin/collections/List<@R|one/Anno|(position = String(nested nested super type ref str))  kotlin/Int>>
   context -> FirFieldSymbol one/Usage.$$delegate_0
   anchor -> [FirRegularClassSymbol one/Usage]
 
-@R|one/Anno|(position = <strcat>(String(nested super type ref ), R|one/prop|))  kotlin/collections/List<@R|one/Anno|(position = <strcat>(String(nested nested super type ref ), R|one/prop|))  kotlin/Int>
+@R|one/Anno|(position = String(nested super type ref str))  kotlin/collections/List<@R|one/Anno|(position = String(nested nested super type ref str))  kotlin/Int>
   context -> FirFieldSymbol one/Usage.$$delegate_0
   anchor -> [FirRegularClassSymbol one/Usage]
 
-@R|one/Anno|(position = <strcat>(String(nested nested super type ref ), R|one/prop|))  kotlin/Int
+@R|one/Anno|(position = String(nested nested super type ref str))  kotlin/Int
   context -> FirFieldSymbol one/Usage.$$delegate_0
   anchor -> [FirRegularClassSymbol one/Usage]
 
@@ -22,11 +22,11 @@ FILE: [ResolvedTo(IMPORTS)] field.kt
     }
     public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val prop: R|kotlin/String| = String(str)
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [DelegateFieldsMapKey={0=FirFieldSymbol one/Usage.$$delegate_0}] class Usage : R|@R|one/Anno|(position = <strcat>(String(super type ref ), R|one/prop|))  kotlin/collections/List<@R|one/Anno|(position = <strcat>(String(nested super type ref ), R|one/prop|))  kotlin/collections/List<@R|one/Anno|(position = <strcat>(String(nested nested super type ref ), R|one/prop|))  kotlin/Int>>| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [DelegateFieldsMapKey={0=FirFieldSymbol one/Usage.$$delegate_0}] class Usage : R|@R|one/Anno|(position = String(super type ref str))  kotlin/collections/List<@R|one/Anno|(position = String(nested super type ref str))  kotlin/collections/List<@R|one/Anno|(position = String(nested nested super type ref str))  kotlin/Int>>| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Usage] constructor([ResolvedTo(RAW_FIR)] prop: List<List<Int>>): R|one/Usage| {
             LAZY_super<<implicit>>
         }
 
-        private final [ResolvedTo(TYPES)] field $$delegate_0: R|@R|one/Anno|(position = <strcat>(String(super type ref ), R|one/prop|))  kotlin/collections/List<@R|one/Anno|(position = <strcat>(String(nested super type ref ), R|one/prop|))  kotlin/collections/List<@R|one/Anno|(position = <strcat>(String(nested nested super type ref ), R|one/prop|))  kotlin/Int>>| = LAZY_EXPRESSION
+        private final [ResolvedTo(TYPES)] field $$delegate_0: R|@R|one/Anno|(position = String(super type ref str))  kotlin/collections/List<@R|one/Anno|(position = String(nested super type ref str))  kotlin/collections/List<@R|one/Anno|(position = String(nested nested super type ref str))  kotlin/Int>>| = LAZY_EXPRESSION
 
     }

@@ -56,7 +56,7 @@ FILE: [ResolvedTo(IMPORTS)] enumEntryLevel.kt
                 super<R|foo/MyEnumClass|>()
             }
 
-            [ResolvedTo(BODY_RESOLVE)] @R|foo/Anno|[Types](i = R|foo/CONSTANT|) <DANGLING MODIFIER: Top level declaration expected>
+            [ResolvedTo(BODY_RESOLVE)] @R|foo/Anno|[Types](i = Int(0)) <DANGLING MODIFIER: Top level declaration expected>
         }
 
         public final static [ResolvedTo(RAW_FIR)] fun values(): R|kotlin/Array<foo/MyEnumClass>| {

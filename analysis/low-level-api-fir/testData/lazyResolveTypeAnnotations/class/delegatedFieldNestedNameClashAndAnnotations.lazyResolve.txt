@@ -534,12 +534,12 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashAndAnnotations.kt
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
     public? final? const [ResolvedTo(RAW_FIR)] val inner: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}] class MyClass : R|@R|second/Anno|(i = Int(1).R|kotlin/Int.plus|(R|second/outer|))  second/Base| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}] class MyClass : R|@R|second/Anno|(i = Int(1))  second/Base| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=second/MyClass.prop] prop: @Anno[Unresolved](LAZY_EXPRESSION) second.Base): R|second/MyClass| {
             LAZY_super<<implicit>>
         }
 
-        private final [ResolvedTo(RAW_FIR)] field $$delegate_0: @R|second/Anno|[Types](i = Int(1).R|kotlin/Int.plus|(R|second/outer|)) Base = LAZY_EXPRESSION
+        private final [ResolvedTo(RAW_FIR)] field $$delegate_0: @R|second/Anno|[Types](i = Int(1)) Base = LAZY_EXPRESSION
 
         public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val prop: @Anno[Unresolved](LAZY_EXPRESSION) second.Base = R|<local>/prop|
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] get(): @Anno[Unresolved](LAZY_EXPRESSION) second.Base
@@ -581,15 +581,15 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashAndAnnotations.kt
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
     public? final? const [ResolvedTo(RAW_FIR)] val inner: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public final [ResolvedTo(BODY_RESOLVE)] [DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}] class MyClass : R|@R|second/Anno|(i = Int(1).R|kotlin/Int.plus|(R|second/outer|))  second/Base| {
-        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=second/MyClass.prop] prop: R|@R|second/Anno|(i = Int(0).R|kotlin/Int.plus|(this@R|second/MyClass.Companion|.R|second/MyClass.Companion.inner|))  second/Base|): R|second/MyClass| {
+    public final [ResolvedTo(BODY_RESOLVE)] [DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}] class MyClass : R|@R|second/Anno|(i = Int(1))  second/Base| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=second/MyClass.prop] prop: R|@R|second/Anno|(i = Int(0))  second/Base|): R|second/MyClass| {
             super<R|kotlin/Any|>()
         }
 
-        private final [ResolvedTo(BODY_RESOLVE)] field $$delegate_0: R|@R|second/Anno|(i = Int(1).R|kotlin/Int.plus|(R|second/outer|))  second/Base| = R|<local>/prop|
+        private final [ResolvedTo(BODY_RESOLVE)] field $$delegate_0: R|@R|second/Anno|(i = Int(1))  second/Base| = R|<local>/prop|
 
-        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val prop: R|@R|second/Anno|(i = Int(0).R|kotlin/Int.plus|(this@R|second/MyClass.Companion|.R|second/MyClass.Companion.inner|))  second/Base| = R|<local>/prop|
-            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] get(): R|@R|second/Anno|(i = Int(0).R|kotlin/Int.plus|(this@R|second/MyClass.Companion|.R|second/MyClass.Companion.inner|))  second/Base|
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val prop: R|@R|second/Anno|(i = Int(0))  second/Base| = R|<local>/prop|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] get(): R|@R|second/Anno|(i = Int(0))  second/Base|
 
         public final? [ResolvedTo(RAW_FIR)] interface Base : R|kotlin/Any| {
         }
@@ -629,15 +629,15 @@ FILE: [ResolvedTo(BODY_RESOLVE)] delegatedFieldNestedNameClashAndAnnotations.kt
         public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
     public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=String()] val inner: R|kotlin/String| = String()
         public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String|
-    public final [ResolvedTo(BODY_RESOLVE)] [DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}] class MyClass : R|@R|second/Anno|(i = Int(1).R|kotlin/Int.plus|(R|second/outer|))  second/Base| {
-        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=second/MyClass.prop] prop: R|@R|second/Anno|(i = Int(0).R|kotlin/Int.plus|(this@R|second/MyClass.Companion|.R|second/MyClass.Companion.inner|))  second/Base|): R|second/MyClass| {
+    public final [ResolvedTo(BODY_RESOLVE)] [DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}] class MyClass : R|@R|second/Anno|(i = Int(1))  second/Base| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=second/MyClass.prop] prop: R|@R|second/Anno|(i = Int(0))  second/Base|): R|second/MyClass| {
             super<R|kotlin/Any|>()
         }
 
-        private final [ResolvedTo(BODY_RESOLVE)] field $$delegate_0: R|@R|second/Anno|(i = Int(1).R|kotlin/Int.plus|(R|second/outer|))  second/Base| = R|<local>/prop|
+        private final [ResolvedTo(BODY_RESOLVE)] field $$delegate_0: R|@R|second/Anno|(i = Int(1))  second/Base| = R|<local>/prop|
 
-        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val prop: R|@R|second/Anno|(i = Int(0).R|kotlin/Int.plus|(this@R|second/MyClass.Companion|.R|second/MyClass.Companion.inner|))  second/Base| = R|<local>/prop|
-            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] get(): R|@R|second/Anno|(i = Int(0).R|kotlin/Int.plus|(this@R|second/MyClass.Companion|.R|second/MyClass.Companion.inner|))  second/Base|
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val prop: R|@R|second/Anno|(i = Int(0))  second/Base| = R|<local>/prop|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] get(): R|@R|second/Anno|(i = Int(0))  second/Base|
 
         public abstract [ResolvedTo(BODY_RESOLVE)] interface Base : R|kotlin/Any| {
         }

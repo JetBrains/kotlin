@@ -156,7 +156,7 @@ object FirExpressionEvaluator {
         }
 
         override fun visitElement(element: FirElement, data: Nothing?): FirEvaluatorResult {
-            error("FIR element \"${element::class}\" is not supported in constant evaluation")
+            return NotEvaluated
         }
 
         override fun visitLiteralExpression(literalExpression: FirLiteralExpression, data: Nothing?): FirEvaluatorResult {
@@ -290,14 +290,15 @@ object FirExpressionEvaluator {
                                         }
                                         name.adjustTypeAndConvertToLiteral(propertyAccessExpression)
                                     }
-                                    else -> evaluateWithSourceCopy(propertySymbol.fir.initializer)
+                                    else -> evaluateWithSourceCopy(propertySymbol.resolvedInitializer)
                                 }
                             }
                         }
-                        else -> evaluateWithSourceCopy(propertySymbol.fir.initializer)
+                        !propertySymbol.isConst -> NotEvaluated
+                        else -> evaluateWithSourceCopy(propertySymbol.resolvedInitializer)
                     }
                 }
-                is FirFieldSymbol -> evaluateWithSourceCopy(propertySymbol.fir.initializer)
+                is FirFieldSymbol -> evaluateWithSourceCopy(propertySymbol.resolvedInitializer)
                 is FirEnumEntrySymbol -> propertyAccessExpression.wrap()
                 else -> error("FIR symbol \"${propertySymbol::class}\" is not supported in constant evaluation")
             }

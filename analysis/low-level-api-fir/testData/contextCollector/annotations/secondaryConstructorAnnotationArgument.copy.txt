@@ -66,7 +66,7 @@ FILE: [ResolvedTo(IMPORTS)] secondaryConstructorAnnotationArgument.kt
         public? final? [ResolvedTo(RAW_FIR)] val CONST: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        @R|pack/Anno|[Types](value = this@R|pack/SuperClass.Companion|.R|pack/SuperClass.Companion.CONST|) public [ResolvedTo(BODY_RESOLVE)] constructor([ResolvedTo(BODY_RESOLVE)] s: R|kotlin/String|): R|pack/TopLevelClass| {
+        @R|pack/Anno|[Types](value = Int(1)) public [ResolvedTo(BODY_RESOLVE)] constructor([ResolvedTo(BODY_RESOLVE)] s: R|kotlin/String|): R|pack/TopLevelClass| {
             this<R|pack/TopLevelClass|>(Int(1))
         }
 

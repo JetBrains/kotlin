@@ -308,7 +308,7 @@ FILE: [ResolvedTo(IMPORTS)] explicitBackingFieldWithAnnotatedImplicitType.kt
     }
     public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val prop: R|kotlin/String| = String(str)
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun explicitType(): R|@R|Anno|(position = <strcat>(String(return type ), R|/prop|))  MyList<@R|Anno|(position = <strcat>(String(nested return type ), R|/prop|))  MyList<@R|Anno|(position = <strcat>(String(nested nested return type ), R|/prop|))  kotlin/Int>>| { LAZY_BLOCK }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun explicitType(): R|@R|Anno|(position = String(return type str))  MyList<@R|Anno|(position = String(nested return type str))  MyList<@R|Anno|(position = String(nested nested return type str))  kotlin/Int>>| { LAZY_BLOCK }
     public final? [ResolvedTo(RAW_FIR)] interface MyList<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
     }
     public open [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
@@ -317,7 +317,7 @@ FILE: [ResolvedTo(IMPORTS)] explicitBackingFieldWithAnnotatedImplicitType.kt
         }
 
         public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val prop: R|kotlin/Any|
-            private final [ResolvedTo(ANNOTATION_ARGUMENTS)] backing field field: R|@R|Anno|(position = <strcat>(String(return type ), R|/prop|))  MyList<@R|Anno|(position = <strcat>(String(nested return type ), R|/prop|))  MyList<@R|Anno|(position = <strcat>(String(nested nested return type ), R|/prop|))  kotlin/Int>>| = R|/explicitType|()
+            private final [ResolvedTo(ANNOTATION_ARGUMENTS)] backing field field: R|@R|Anno|(position = String(return type str))  MyList<@R|Anno|(position = String(nested return type str))  MyList<@R|Anno|(position = String(nested nested return type str))  kotlin/Int>>| = R|/explicitType|()
             public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=A] get(): R|kotlin/Any|
 
     }
@@ -335,7 +335,7 @@ FILE: [ResolvedTo(IMPORTS)] explicitBackingFieldWithAnnotatedImplicitType.kt
     }
     public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val prop: R|kotlin/String| = String(str)
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun explicitType(): R|@R|Anno|(position = <strcat>(String(return type ), R|/prop|))  MyList<@R|Anno|(position = <strcat>(String(nested return type ), R|/prop|))  MyList<@R|Anno|(position = <strcat>(String(nested nested return type ), R|/prop|))  kotlin/Int>>| { LAZY_BLOCK }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun explicitType(): R|@R|Anno|(position = String(return type str))  MyList<@R|Anno|(position = String(nested return type str))  MyList<@R|Anno|(position = String(nested nested return type str))  kotlin/Int>>| { LAZY_BLOCK }
     public final? [ResolvedTo(RAW_FIR)] interface MyList<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
     }
     public open [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
@@ -344,7 +344,7 @@ FILE: [ResolvedTo(IMPORTS)] explicitBackingFieldWithAnnotatedImplicitType.kt
         }
 
         public final [ResolvedTo(BODY_RESOLVE)] val prop: R|kotlin/Any|
-            private final [ResolvedTo(BODY_RESOLVE)] backing field field: R|@R|Anno|(position = <strcat>(String(return type ), R|/prop|))  MyList<@R|Anno|(position = <strcat>(String(nested return type ), R|/prop|))  MyList<@R|Anno|(position = <strcat>(String(nested nested return type ), R|/prop|))  kotlin/Int>>| = R|/explicitType|()
+            private final [ResolvedTo(BODY_RESOLVE)] backing field field: R|@R|Anno|(position = String(return type str))  MyList<@R|Anno|(position = String(nested return type str))  MyList<@R|Anno|(position = String(nested nested return type str))  kotlin/Int>>| = R|/explicitType|()
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] get(): R|kotlin/Any|
 
     }
@@ -362,7 +362,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] explicitBackingFieldWithAnnotatedImplicitType.k
     }
     public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=String(str)] val prop: R|kotlin/String| = String(str)
         public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String|
-    public final [ResolvedTo(BODY_RESOLVE)] fun explicitType(): R|@R|Anno|(position = <strcat>(String(return type ), R|/prop|))  MyList<@R|Anno|(position = <strcat>(String(nested return type ), R|/prop|))  MyList<@R|Anno|(position = <strcat>(String(nested nested return type ), R|/prop|))  kotlin/Int>>| {
+    public final [ResolvedTo(BODY_RESOLVE)] fun explicitType(): R|@R|Anno|(position = String(return type str))  MyList<@R|Anno|(position = String(nested return type str))  MyList<@R|Anno|(position = String(nested nested return type str))  kotlin/Int>>| {
         ^explicitType Null(null)!!
     }
     public abstract [ResolvedTo(BODY_RESOLVE)] interface MyList<[ResolvedTo(BODY_RESOLVE)] T> : R|kotlin/Any| {
@@ -373,7 +373,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] explicitBackingFieldWithAnnotatedImplicitType.k
         }
 
         public final [ResolvedTo(BODY_RESOLVE)] val prop: R|kotlin/Any|
-            private final [ResolvedTo(BODY_RESOLVE)] backing field field: R|@R|Anno|(position = <strcat>(String(return type ), R|/prop|))  MyList<@R|Anno|(position = <strcat>(String(nested return type ), R|/prop|))  MyList<@R|Anno|(position = <strcat>(String(nested nested return type ), R|/prop|))  kotlin/Int>>| = R|/explicitType|()
+            private final [ResolvedTo(BODY_RESOLVE)] backing field field: R|@R|Anno|(position = String(return type str))  MyList<@R|Anno|(position = String(nested return type str))  MyList<@R|Anno|(position = String(nested nested return type str))  kotlin/Int>>| = R|/explicitType|()
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] get(): R|kotlin/Any|
 
     }
