@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.konan.test.klib
 
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.application.ReadAction
 import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
@@ -14,6 +15,7 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.generateBoxFunctionLauncher
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.psiUtil.getChildrenOfType
@@ -65,7 +67,9 @@ class NativeLauncherAdditionalSourceProvider(testServices: TestServices) : Addit
             val psiFactory = createPsiFactory(disposable)
             for (file in module.files) {
                 if (!file.name.endsWith(".kt")) continue
-                val ktFile = psiFactory.createFile(file.name, file.originalContent)
+                val ktFile = ReadAction.compute<KtFile, Throwable> {
+                    psiFactory.createFile(file.name, file.originalContent)
+                }
                 if (ktFile.getChildrenOfType<KtNamedFunction>().any { function ->
                         function.name == BOX_FUNCTION_NAME.asString() && function.valueParameters.isEmpty()
                     }) return ktFile.packageFqName.child(BOX_FUNCTION_NAME).asString()
