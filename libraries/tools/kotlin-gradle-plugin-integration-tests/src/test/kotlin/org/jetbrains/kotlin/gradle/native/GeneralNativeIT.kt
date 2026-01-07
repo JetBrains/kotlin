@@ -644,7 +644,11 @@ class GeneralNativeIT : KGPBaseTest() {
                 assertTrue(stacktrace.contains("""at org\.foo\.test#fail\(.*test\.kt:29\)""".toRegex()))
             }
 
-            val expectedHostTestResult = "TEST-TestKt.xml"
+            val expectedHostTestResult = if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_9_3)) {
+                "TEST-TestKt.xml"
+            } else {
+                "Gradle93-TEST-TestKt.xml"
+            }
             assertTestResults(projectPath.resolve(expectedHostTestResult), hostTestTask)
 
             // K/N doesn't report line numbers correctly on Linux (see KT-35408).

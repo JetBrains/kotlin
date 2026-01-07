@@ -49,7 +49,9 @@ class KmpIncrementalCompilationWithLocalClassesIT : KGPBaseTest() {
 
             build("app:jvmTest") {
                 assertTestResults(
-                    projectPath.resolve("TEST-jvm.xml"),
+                    projectPath.resolve(
+                        if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_9_3)) "TEST-js.xml" else "Gradle93-TEST-js.xml"
+                    ),
                     "jvmTest",
                     subprojectName = "app"
                 )
@@ -67,7 +69,9 @@ class KmpIncrementalCompilationWithLocalClassesIT : KGPBaseTest() {
         ) {
             build("app:jsNodeTest") {
                 assertTestResults(
-                    projectPath.resolve("TEST-js.xml"),
+                    projectPath.resolve(
+                        if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_9_3)) "TEST-js.xml" else "Gradle93-TEST-js.xml"
+                    ),
                     "jsNodeTest",
                     subprojectName = "app"
                 )
@@ -77,7 +81,9 @@ class KmpIncrementalCompilationWithLocalClassesIT : KGPBaseTest() {
 
             build("app:jsNodeTest") {
                 assertTestResults(
-                    projectPath.resolve("TEST-js.xml"),
+                    projectPath.resolve(
+                        if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_9_3)) "TEST-js.xml" else "Gradle93-TEST-js.xml"
+                    ),
                     "jsNodeTest",
                     subprojectName = "app"
                 )
@@ -125,7 +131,8 @@ class KmpIncrementalCompilationWithLocalClassesIT : KGPBaseTest() {
         ) {
             build("app:jsNodeTest") {
                 assertTestResults(
-                    projectPath.resolve("TEST-js.xml"),
+                    projectPath.resolve(
+                        if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_9_3)) "TEST-js.xml" else "Gradle93-TEST-js.xml"),
                     "jsNodeTest",
                     subprojectName = "app"
                 )
@@ -136,7 +143,9 @@ class KmpIncrementalCompilationWithLocalClassesIT : KGPBaseTest() {
 
             build("app:jsNodeTest") {
                 assertTestResults(
-                    projectPath.resolve("TEST-js.xml"),
+                    projectPath.resolve(
+                        if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_9_3)) "TEST-js.xml" else "Gradle93-TEST-js.xml"
+                    ),
                     "jsNodeTest",
                     subprojectName = "app"
                 )
