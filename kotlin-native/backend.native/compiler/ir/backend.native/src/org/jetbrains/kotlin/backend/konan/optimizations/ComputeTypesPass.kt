@@ -337,7 +337,8 @@ internal class ComputeTypesPass(val context: Context) : BodyLoweringPass {
                             controlFlowMergePoint(continuesCFMPInfo, dummyUnitExpression, vvAtBodyEnd)
                     val vvAtConditionEnd = loop.condition.accept(this, vvAtConditionStart)
                     vvAtLoopStart = vvAtConditionEnd
-                    vvAtLoopStart.or(prevVVAtLoopStart)
+                    if (iter > 1) // Merge starting with the second iteration since the first is always executed.
+                        vvAtLoopStart.or(prevVVAtLoopStart)
 
                     context.log { "LOOP ITER #$iter: ${vvAtLoopStart.format()}" }
 
