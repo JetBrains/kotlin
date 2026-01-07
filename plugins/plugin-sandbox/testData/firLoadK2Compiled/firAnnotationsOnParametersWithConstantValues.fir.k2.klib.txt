@@ -1,0 +1,6 @@
+@R|org/jetbrains/kotlin/plugin/sandbox/GenerateFunctionWithAnnotatedParameters|() public final class Some : R|kotlin/Any| {
+    public final fun foo(@R|org/jetbrains/kotlin/plugin/sandbox/AnnotationWithStringValue|(value = String(B)) x: R|kotlin/Int|, @R|org/jetbrains/kotlin/plugin/sandbox/AnnotationWithStringValue|(value = String(B)) y: R|kotlin/Int|): R|kotlin/Unit|
+
+    public constructor(): R|test/Some|
+
+}
