@@ -19,6 +19,8 @@ import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.ir.isExported
+import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.PrepareSuspendFunctionsForExportLowering.Companion.EXPORTED_SUSPEND_FUNCTION_BRIDGE
+import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.PrepareSuspendFunctionsForExportLowering.Companion.PROMISIFIED_WRAPPER
 import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.PrepareSuspendFunctionsForExportLowering.Companion.bridgeFunction
 import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.PrepareSuspendFunctionsForExportLowering.Companion.virtualBridgeFunction
 import org.jetbrains.kotlin.ir.backend.js.utils.JsAnnotations
@@ -498,7 +500,11 @@ internal class PrepareSuspendFunctionsForExportLowering(private val context: JsI
 @PhasePrerequisites(PrepareSuspendFunctionsForExportLowering::class)
 class ReplaceExportedSuspendFunctionsCallsWithTheirBridgeCall(private val context: JsIrBackendContext) : BodyLoweringPass {
     override fun lower(irBody: IrBody, container: IrDeclaration) {
-        if (container is IrSimpleFunction && container.origin == PrepareSuspendFunctionsForExportLowering.EXPORTED_SUSPEND_FUNCTION_BRIDGE) return
+        if (
+            container is IrSimpleFunction &&
+            (container.origin == EXPORTED_SUSPEND_FUNCTION_BRIDGE || container.origin == PROMISIFIED_WRAPPER)
+        ) return
+
         irBody.transformChildrenVoid(object : IrElementTransformerVoid() {
             override fun visitCall(expression: IrCall): IrExpression {
                 // In the case of super.suspendCall, as an optimization, we can keep the call without bridging it

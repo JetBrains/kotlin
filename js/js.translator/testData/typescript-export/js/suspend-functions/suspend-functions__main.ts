@@ -103,8 +103,7 @@ async function box(): Promise<string> {
 
         // override method that originally is defined inside Kotlin interface
         override async sum(x: number, y: number): Promise<number> {
-            // TODO: remove the comment from super call when such an issue is fixed
-            return /* await super.sum(x, y) */ x + y + 50
+            return await super.sum(x, y) + 50
         }
     }
 
