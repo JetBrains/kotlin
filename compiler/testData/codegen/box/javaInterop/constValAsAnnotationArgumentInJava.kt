@@ -1,6 +1,5 @@
 // WITH_STDLIB
 // TARGET_BACKEND: JVM
-// IGNORE_BACKEND_K2: JVM_IR
 // ISSUE: KT-83570
 
 // FILE: example/KotlinDtoMapping.kt

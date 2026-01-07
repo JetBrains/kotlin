@@ -10,7 +10,7 @@ public class Bar {
 
 class Foo {
     companion object {
-        const val FOO = Baz.BAZ + 1
+        const val FOO = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>Baz.BAZ + 1<!>
     }
 }
 

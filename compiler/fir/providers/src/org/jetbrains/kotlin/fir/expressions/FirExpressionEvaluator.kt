@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.FirEvaluatorResult.*
 import org.jetbrains.kotlin.fir.declarations.FirProperty
+import org.jetbrains.kotlin.fir.declarations.utils.evaluatedInitializer
 import org.jetbrains.kotlin.fir.declarations.utils.isConst
 import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
@@ -65,6 +66,7 @@ object FirExpressionEvaluator {
     private val visitedCallables: ThreadLocal<HashSet<FirCallableSymbol<*>>> = ThreadLocal.withInitial(::hashSetOf)
 
     fun evaluatePropertyInitializer(property: FirProperty, session: FirSession): FirEvaluatorResult? {
+        property.evaluatedInitializer?.let { return it }
         if (!property.isConst) {
             return null
         }
@@ -99,7 +101,7 @@ object FirExpressionEvaluator {
     }
 
     private fun FirExpression?.canBeEvaluated(session: FirSession): Boolean {
-        if (this == null  || this is FirLazyExpression || !hasResolvedType) return false
+        if (this == null || this is FirLazyExpression || !hasResolvedType) return false
         return canBeEvaluatedAtCompileTime(this, session, allowErrors = false, calledOnCheckerStage = false)
     }
 
@@ -237,6 +239,7 @@ object FirExpressionEvaluator {
 
             return when (propertySymbol) {
                 is FirPropertySymbol -> {
+                    propertySymbol.fir.evaluatedInitializer?.let { return it }
                     when {
                         propertySymbol.callableId?.isStringLength == true || propertySymbol.callableId?.isCharCode == true -> {
                             evaluate(propertyAccessExpression.explicitReceiver).let { receiver ->

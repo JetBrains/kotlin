@@ -8,14 +8,13 @@ package org.jetbrains.kotlin.fir.expressions
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
 import org.jetbrains.kotlin.fir.declarations.hasAnnotation
+import org.jetbrains.kotlin.fir.declarations.utils.evaluatedInitializer
 import org.jetbrains.kotlin.fir.declarations.utils.isConst
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.declarations.utils.modality
-import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedErrorReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
@@ -25,7 +24,6 @@ import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.unwrapFakeOverrides
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -302,8 +300,20 @@ private class FirConstCheckVisitor(
                     propertySymbol.isConst -> {
                         // even if called on CONSTANT_EVALUATION, it's safe to call resolvedInitializer, as intializers of const vals
                         // are resolved at previous IMPLICIT_TYPES_BODY_RESOLVE phase
-                        val initializer = propertySymbol.resolvedInitializer
-                        propertySymbol.visit { initializer?.accept(this, data) } ?: ConstantArgumentKind.RESOLUTION_ERROR
+                        when (val evaluationResult = propertySymbol.fir.evaluatedInitializer) {
+                            null -> {
+                                val initializer = propertySymbol.resolvedInitializer
+                                propertySymbol.visit { initializer?.accept(this, data) } ?: ConstantArgumentKind.RESOLUTION_ERROR
+                            }
+                            else -> {
+                                if (evaluationResult is FirEvaluatorResult.Evaluated) {
+                                    ConstantArgumentKind.VALID_CONST
+                                } else {
+                                    ConstantArgumentKind.NOT_CONST
+                                }
+                            }
+                        }
+
                     }
 
                     // if it called at checkers stage it's safe to call resolvedInitializer
