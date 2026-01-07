@@ -193,7 +193,7 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
         registerExtensions(extensionRegistrar.configure())
         registerExtensions(FirScriptingSamWithReceiverExtensionRegistrar().configure())
 
-        compilerConfiguration.getList(AssignmentConfigurationKeys.ANNOTATION).takeIf { it.isNotEmpty() }?.let {
+        compilerConfiguration.getList(AssignmentConfigurationKeys.ASSIGNMENT_ANNOTATION).takeIf { it.isNotEmpty() }?.let {
             registerExtensions(FirAssignmentPluginExtensionRegistrar(it).configure())
         }
     }

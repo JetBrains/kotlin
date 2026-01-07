@@ -10,5 +10,5 @@ import org.jetbrains.kotlin.load.java.JavaClassesTracker
 
 object ClassicFrontendSpecificJvmConfigurationKeys {
     @JvmField
-    val JAVA_CLASSES_TRACKER: CompilerConfigurationKey<JavaClassesTracker> = CompilerConfigurationKey.create("Java classes tracker")
+    val JAVA_CLASSES_TRACKER: CompilerConfigurationKey<JavaClassesTracker> = CompilerConfigurationKey.create("JAVA_CLASSES_TRACKER")
 }

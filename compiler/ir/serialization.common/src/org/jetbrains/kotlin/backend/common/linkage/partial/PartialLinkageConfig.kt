@@ -14,7 +14,7 @@ data class PartialLinkageConfig(val mode: PartialLinkageMode, val logLevel: Part
     companion object {
         val DEFAULT = PartialLinkageConfig(PartialLinkageMode.ENABLE, PartialLinkageLogLevel.ERROR)
 
-        val KEY = CompilerConfigurationKey.create<PartialLinkageConfig>("partial linkage configuration")
+        val PARTIAL_LINKAGE_CONFIGURATION = CompilerConfigurationKey.create<PartialLinkageConfig>("PARTIAL_LINKAGE_CONFIGURATION")
     }
 }
 
@@ -42,7 +42,7 @@ enum class PartialLinkageLogLevel {
 }
 
 val CompilerConfiguration.partialLinkageConfig: PartialLinkageConfig
-    get() = this[PartialLinkageConfig.KEY] ?: PartialLinkageConfig.DEFAULT
+    get() = this[PartialLinkageConfig.PARTIAL_LINKAGE_CONFIGURATION] ?: PartialLinkageConfig.DEFAULT
 
 fun CompilerConfiguration.setupPartialLinkageConfig(
     mode: String?,
@@ -73,5 +73,5 @@ fun CompilerConfiguration.setupPartialLinkageConfig(
 }
 
 fun CompilerConfiguration.setupPartialLinkageConfig(config: PartialLinkageConfig) {
-    this.put(PartialLinkageConfig.KEY, config)
+    this.put(PartialLinkageConfig.PARTIAL_LINKAGE_CONFIGURATION, config)
 }

@@ -20,8 +20,8 @@ import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
 import org.jetbrains.kotlin.fir.extensions.predicate.LookupPredicate
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlinx.dataframe.plugin.DataFrameConfigurationKeys.DISABLE_TOP_LEVEL_EXTENSION_PROPERTIES
-import org.jetbrains.kotlinx.dataframe.plugin.DataFrameConfigurationKeys.PATH
+import org.jetbrains.kotlinx.dataframe.plugin.DataFrameConfigurationKeys.DATAFRAME_DISABLE_TOP_LEVEL_EXTENSION_PROPERTIES
+import org.jetbrains.kotlinx.dataframe.plugin.DataFrameConfigurationKeys.DATAFRAME_PATH
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.*
 
 class FirDataFrameExtensionRegistrar(
@@ -67,12 +67,12 @@ class FirDataFrameExtensionRegistrar(
 class FirDataFrameComponentRegistrar : CompilerPluginRegistrar() {
     override fun ExtensionStorage.registerExtensions(configuration: CompilerConfiguration) {
 
-        val path = configuration.get(PATH)
+        val path = configuration.get(DATAFRAME_PATH)
         FirExtensionRegistrarAdapter.registerExtension(
             FirDataFrameExtensionRegistrar(
                 isTest = false,
                 dumpSchemas = true,
-                configuration.get(DISABLE_TOP_LEVEL_EXTENSION_PROPERTIES) == true,
+                configuration.get(DATAFRAME_DISABLE_TOP_LEVEL_EXTENSION_PROPERTIES) == true,
                 contextReader = ImportedSchemasData.getReader(path)
             )
         )
@@ -88,11 +88,13 @@ class FirDataFrameComponentRegistrar : CompilerPluginRegistrar() {
 
 
 object DataFrameConfigurationKeys {
-    val DISABLE_TOP_LEVEL_EXTENSION_PROPERTIES: CompilerConfigurationKey<Boolean> =
-        CompilerConfigurationKey.create("Disable generation of extension properties for @DataSchema annotated classes or interfaces")
+    // Disable generation of extension properties for @DataSchema annotated classes or interfaces.
+    val DATAFRAME_DISABLE_TOP_LEVEL_EXTENSION_PROPERTIES: CompilerConfigurationKey<Boolean> =
+        CompilerConfigurationKey.create("DATAFRAME_DISABLE_TOP_LEVEL_EXTENSION_PROPERTIES")
 
-    val PATH: CompilerConfigurationKey<String> =
-        CompilerConfigurationKey.create("Path to the directory with schemas JSON")
+    // Path to the directory with schemas JSON.
+    val DATAFRAME_PATH: CompilerConfigurationKey<String> =
+        CompilerConfigurationKey.create("DATAFRAME_PATH")
 }
 
 class DataFrameCommandLineProcessor : CommandLineProcessor {
@@ -119,8 +121,8 @@ class DataFrameCommandLineProcessor : CommandLineProcessor {
 
     override fun processOption(option: AbstractCliOption, value: String, configuration: CompilerConfiguration) {
         return when (option) {
-            DISABLE_TOP_LEVEL_EXTENSION_PROPERTIES_OPTION -> configuration.put(DISABLE_TOP_LEVEL_EXTENSION_PROPERTIES, value == "true")
-            SCHEMAS_OPTION -> configuration.put(PATH, value)
+            DISABLE_TOP_LEVEL_EXTENSION_PROPERTIES_OPTION -> configuration.put(DATAFRAME_DISABLE_TOP_LEVEL_EXTENSION_PROPERTIES, value == "true")
+            SCHEMAS_OPTION -> configuration.put(DATAFRAME_PATH, value)
             else -> throw CliOptionProcessingException("Unknown option: ${option.optionName}")
         }
     }

@@ -23,23 +23,23 @@ class JvmAbiComponentRegistrar(
     private val consumeOutput: ((OutputFileCollection) -> Unit)? = null,
 ) : CompilerPluginRegistrar() {
     override fun ExtensionStorage.registerExtensions(configuration: CompilerConfiguration) {
-        val removeDataClassCopy = configuration.getBoolean(JvmAbiConfigurationKeys.REMOVE_DATA_CLASS_COPY_IF_CONSTRUCTOR_IS_PRIVATE)
+        val removeDataClassCopy = configuration.getBoolean(JvmAbiConfigurationKeys.JVM_ABI_REMOVE_DATA_CLASS_COPY_IF_CONSTRUCTOR_IS_PRIVATE)
         val builderExtension = JvmAbiClassBuilderInterceptor(
             removeDataClassCopy,
-            configuration.getBoolean(JvmAbiConfigurationKeys.REMOVE_PRIVATE_CLASSES),
-            configuration.getBoolean(JvmAbiConfigurationKeys.TREAT_INTERNAL_AS_PRIVATE),
+            configuration.getBoolean(JvmAbiConfigurationKeys.JVM_ABI_REMOVE_PRIVATE_CLASSES),
+            configuration.getBoolean(JvmAbiConfigurationKeys.JVM_ABI_TREAT_INTERNAL_AS_PRIVATE),
         )
         val outputExtension = JvmAbiOutputExtension(
             builderExtension::buildAbiClassInfoAndReleaseResources,
-            configuration.getBoolean(JvmAbiConfigurationKeys.REMOVE_DEBUG_INFO),
+            configuration.getBoolean(JvmAbiConfigurationKeys.JVM_ABI_REMOVE_DEBUG_INFO),
             removeDataClassCopy,
-            configuration.getBoolean(JvmAbiConfigurationKeys.PRESERVE_DECLARATION_ORDER),
-            configuration.getBoolean(JvmAbiConfigurationKeys.TREAT_INTERNAL_AS_PRIVATE),
+            configuration.getBoolean(JvmAbiConfigurationKeys.JVM_ABI_PRESERVE_DECLARATION_ORDER),
+            configuration.getBoolean(JvmAbiConfigurationKeys.JVM_ABI_TREAT_INTERNAL_AS_PRIVATE),
         ) { outputFiles ->
             if (consumeOutput != null) {
                 consumeOutput(outputFiles)
             } else {
-                val outputPath = File(configuration.getNotNull(JvmAbiConfigurationKeys.OUTPUT_PATH))
+                val outputPath = File(configuration.getNotNull(JvmAbiConfigurationKeys.JVM_ABI_OUTPUT_PATH))
                 if (outputPath.extension == "jar") {
                     // We don't include the runtime or main class in interface jars and always reset time stamps.
                     CompileEnvironmentUtil.writeToJar(outputPath, false, true, true, null, outputFiles, configuration.messageCollector)
