@@ -939,6 +939,40 @@ fun <T: Any> test43(list: List<T>): String {
     return x.toString()
 }
 
+// CHECK-LABEL: define i32 @"kfun:#test44(kotlin.Any;kotlin.Int){}kotlin.Int
+fun test44(o_: Any, n: Int): Int {
+    var o = o_
+    var index = 0
+    do {
+        o = A("zzz", index, n)
+        ++index
+    } while (index < n)
+
+// CHECK-DEBUG-NOT: {{call|call zeroext}} i1 @IsSubtype
+// CHECK-OPT-NOT: {{call|call zeroext}} i1 @IsSubclassFast
+// CHECK-DEBUG: call i32 @"kfun:A#<get-x>(){}kotlin.Int
+// CHECK-OPT: getelementptr inbounds %"kclassbody:A#internal
+    return (o as? A)?.x ?: -1
+// CHECK-LABEL: epilogue:
+}
+
+// CHECK-LABEL: define i32 @"kfun:#test45(kotlin.Any;kotlin.Int){}kotlin.Int
+fun test45(o_: Any, n: Int): Int {
+    var o = o_
+    var index = 0
+    while (index < n) {
+        o = A("zzz", index, n)
+        ++index
+    }
+
+// CHECK-DEBUG: {{call|call zeroext}} i1 @IsSubtype
+// CHECK-OPT: {{call|call zeroext}} i1 @IsSubclassFast
+// CHECK-DEBUG: call i32 @"kfun:A#<get-x>(){}kotlin.Int
+// CHECK-OPT: getelementptr inbounds %"kclassbody:A#internal
+    return (o as? A)?.x ?: -1
+// CHECK-LABEL: epilogue:
+}
+
 // CHECK-LABEL: define ptr @"kfun:#box(){}kotlin.String"
 fun box(): String {
     val a = A("zzz", 42, 117)
@@ -988,5 +1022,7 @@ fun box(): String {
     println(test41(b, b))
     println(test42(c, b))
     println(test43(listOf("zzz")))
+    println(test44(Any(), 2))
+    println(test45(Any(), 2))
     return "OK"
 }
