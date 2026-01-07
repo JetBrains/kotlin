@@ -91,6 +91,11 @@ class IrFakeOverrideBuilder(
         supertypes: List<IrType>,
         isStaticJavaMembers: Boolean,
     ) {
+        // First, drop all overridenSymbols, and then re-calculate them from scratch
+        for (member in allFromCurrent) {
+            member.overriddenSymbols = emptyList()
+        }
+
         val allFromSuper = supertypes.flatMap { superType ->
             superType.classOrFail.owner.declarations
                 .filterIsInstanceAnd<IrOverridableMember> {
