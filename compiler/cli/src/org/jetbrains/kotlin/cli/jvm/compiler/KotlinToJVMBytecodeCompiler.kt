@@ -54,7 +54,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import java.io.File
 
 object KotlinToJVMBytecodeCompiler {
-    var customClassBuilderFactory = CompilerConfigurationKey.create<ClassBuilderFactory>("Custom ClassBuilderFactory")
+    val customClassBuilderFactory = CompilerConfigurationKey.create<ClassBuilderFactory>("customClassBuilderFactory")
 
     internal fun compileModules(
         environment: KotlinCoreEnvironment,

@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.extensions.ExtensionPointDescriptor
 abstract class CompilerPluginRegistrar {
     companion object {
         val COMPILER_PLUGIN_REGISTRARS: CompilerConfigurationKey<MutableList<CompilerPluginRegistrar>> =
-            CompilerConfigurationKey.create("Compiler plugin registrars")
+            CompilerConfigurationKey.create("COMPILER_PLUGIN_REGISTRARS")
     }
 
     /**
