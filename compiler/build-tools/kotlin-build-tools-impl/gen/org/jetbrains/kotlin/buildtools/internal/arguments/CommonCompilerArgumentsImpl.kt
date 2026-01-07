@@ -90,6 +90,7 @@ import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgume
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_PHASES_TO_VALIDATE_AFTER
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_PHASES_TO_VALIDATE_BEFORE
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_PLUGIN
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_PRINT_CONFIGURATION
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_PROFILE_PHASES
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_RENDER_INTERNAL_DIAGNOSTIC_NAMES
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_REPL
@@ -232,6 +233,7 @@ internal abstract class CommonCompilerArgumentsImpl : CommonToolArgumentsImpl(),
     if (X_PHASES_TO_VALIDATE_AFTER in this) { arguments.phasesToValidateAfter = get(X_PHASES_TO_VALIDATE_AFTER)}
     if (X_PHASES_TO_VALIDATE_BEFORE in this) { arguments.phasesToValidateBefore = get(X_PHASES_TO_VALIDATE_BEFORE)}
     if (X_PLUGIN in this) { arguments.pluginClasspaths = get(X_PLUGIN)}
+    if (X_PRINT_CONFIGURATION in this) { arguments.printConfiguration = get(X_PRINT_CONFIGURATION)}
     if (X_PROFILE_PHASES in this) { arguments.profilePhases = get(X_PROFILE_PHASES)}
     if (X_RENDER_INTERNAL_DIAGNOSTIC_NAMES in this) { arguments.renderInternalDiagnosticNames = get(X_RENDER_INTERNAL_DIAGNOSTIC_NAMES)}
     if (X_REPL in this) { arguments.repl = get(X_REPL)}
@@ -334,6 +336,7 @@ internal abstract class CommonCompilerArgumentsImpl : CommonToolArgumentsImpl(),
     try { this[X_PHASES_TO_VALIDATE_AFTER] = arguments.phasesToValidateAfter } catch (_: NoSuchMethodError) {  }
     try { this[X_PHASES_TO_VALIDATE_BEFORE] = arguments.phasesToValidateBefore } catch (_: NoSuchMethodError) {  }
     try { this[X_PLUGIN] = arguments.pluginClasspaths } catch (_: NoSuchMethodError) {  }
+    try { this[X_PRINT_CONFIGURATION] = arguments.printConfiguration } catch (_: NoSuchMethodError) {  }
     try { this[X_PROFILE_PHASES] = arguments.profilePhases } catch (_: NoSuchMethodError) {  }
     try { this[X_RENDER_INTERNAL_DIAGNOSTIC_NAMES] = arguments.renderInternalDiagnosticNames } catch (_: NoSuchMethodError) {  }
     try { this[X_REPL] = arguments.repl } catch (_: NoSuchMethodError) {  }
@@ -566,6 +569,9 @@ internal abstract class CommonCompilerArgumentsImpl : CommonToolArgumentsImpl(),
         CommonCompilerArgument("X_PHASES_TO_VALIDATE_BEFORE")
 
     public val X_PLUGIN: CommonCompilerArgument<Array<String>?> = CommonCompilerArgument("X_PLUGIN")
+
+    public val X_PRINT_CONFIGURATION: CommonCompilerArgument<Boolean> =
+        CommonCompilerArgument("X_PRINT_CONFIGURATION")
 
     public val X_PROFILE_PHASES: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("X_PROFILE_PHASES")

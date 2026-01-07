@@ -52,6 +52,10 @@ abstract class AbstractConfigurationPhase<A : CommonCompilerArguments>(
             filler.fillConfiguration(input, configuration)
         }
 
+        if (input.arguments.printConfiguration || input.arguments.verbose) {
+            println(configuration)
+        }
+
         return ConfigurationPipelineArtifact(configuration, input.diagnosticCollector, input.rootDisposable)
     }
 

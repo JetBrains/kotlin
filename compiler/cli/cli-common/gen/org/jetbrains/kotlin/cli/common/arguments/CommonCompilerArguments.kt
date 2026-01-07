@@ -759,6 +759,16 @@ with bodies.""",
         }
 
     @Argument(
+        value = "-Xprint-configuration",
+        description = "Print compiler configuration.",
+    )
+    var printConfiguration: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
         value = "-Xprofile-phases",
         description = "Profile backend phases.",
     )
