@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<results>
+  <testsuite name="hostTest.org.foo.test.TestKt" tests="4" skipped="0" failures="1" errors="0" timestamp="..." hostname="..." time="...">
+    <properties/>
+    <testcase name="fooTest[host]" classname="hostTest.org.foo.test.TestKt" time="..."/>
+    <testcase name="barTest[host]" classname="hostTest.org.foo.test.TestKt" time="..."/>
+    <testcase name="barfooTest[host]" classname="hostTest.org.foo.test.TestKt" time="..."/>
+    <testcase name="fail[host]" classname="hostTest.org.foo.test.TestKt" time="...">
+      <failure message="..." type="kotlin.IllegalStateException">...</failure>
+    </testcase>
+    <system-out><![CDATA[Foo call
+Bar call
+42]]></system-out>
+    <system-err/>
+  </testsuite>
+</results>

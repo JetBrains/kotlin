@@ -30,6 +30,7 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.DisabledOnOs
 import org.junit.jupiter.api.condition.OS
 import org.junit.jupiter.api.io.TempDir
+import java.io.File
 import java.nio.file.Path
 import java.util.zip.ZipFile
 import kotlin.io.path.*
@@ -616,13 +617,15 @@ class KotlinGradleIT : KGPBaseTest() {
                 }
 
                 val publishedPom = moduleDir.resolve("new-model-1.0.pom")
-                val kotlinVersion = buildOptions.kotlinVersion
                 val pomText = publishedPom.readText().replace(Regex("\\s+"), "")
                 assertTrue { "kotlin-gradle-plugin-api</artifactId><scope>compile</scope>" in pomText }
                 assertTrue { "kotlin-stdlib-jdk8</artifactId><scope>runtime</scope>" in pomText }
 
                 assertFileExists(moduleDir.resolve("new-model-1.0-sources.jar"))
             }
+
+            // Workaround for Junit 'Failed to delete temp directory' on Windows OS
+            build("clean")
         }
     }
 
