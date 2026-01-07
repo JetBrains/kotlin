@@ -575,17 +575,16 @@ internal class JsAstMapperVisitor(
     }
 
     override fun visitArgument(ctx: JavaScriptParser.ArgumentContext): JsExpression {
-        check(ctx.Ellipsis() == null) { "Spread operator is not supported yet" }
-
-        ctx.singleExpression()?.let {
-            return visitNode<JsExpression>(it)
+        val expression = when {
+            ctx.singleExpression() != null -> visitNode<JsExpression>(ctx.singleExpression())
+            ctx.identifier() != null -> visitNode<JsNameRef>(ctx.identifier())
+            else -> raiseParserException("Invalid argument: ${ctx.text}", ctx)
         }
 
-        ctx.identifier()?.let {
-            return visitNode<JsNameRef>(it)
+        return when {
+            ctx.Ellipsis() != null -> JsSpread(expression).applyLocation(ctx.Ellipsis())
+            else -> expression
         }
-
-        raiseParserException("Invalid argument: ${ctx.text}", ctx)
     }
 
     override fun visitExpressionSequence(ctx: JavaScriptParser.ExpressionSequenceContext): JsExpression {
