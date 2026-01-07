@@ -5,14 +5,15 @@
 
 package org.jetbrains.kotlin.js.test.klib
 
+import org.jetbrains.kotlin.js.test.handlers.JsBoxRunnerWithTimeout
 import org.jetbrains.kotlin.js.test.runners.AbstractJsBlackBoxCodegenTestBase.JsBackendFacades
 import org.jetbrains.kotlin.js.test.runners.commonConfigurationForJsBackendSecondStageTest
-import org.jetbrains.kotlin.js.test.runners.configureJsBoxHandlers
 import org.jetbrains.kotlin.js.test.runners.setUpDefaultDirectivesForJsBoxTest
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.builders.configureJsArtifactsHandlersStep
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.WITH_STDLIB
 import org.jetbrains.kotlin.test.klib.CustomKlibCompilerFirstStageTestSuppressor
 import org.jetbrains.kotlin.test.klib.CustomKlibCompilerTestSuppressor
@@ -78,6 +79,12 @@ open class AbstractCustomJsCompilerFirstStageTest(val testDataRoot: String = "co
 
         setUpDefaultDirectivesForJsBoxTest(parser = /* Does not matter */ FirParser.LightTree)
 
-        configureJsBoxHandlers()
+        /**
+         * Configures runner with a timeout 1 minute, to properly handle backward test for compiler/testData/codegen/box/inference/pcla/nestedNonExhaustiveIf.kt,
+         * which has an endless test execution under Kotlin 2.0.0 frontend.
+         */
+        configureJsArtifactsHandlersStep {
+            useHandlers(::JsBoxRunnerWithTimeout.bind(1 * 60 * 1000L))
+        }
     }
 }
