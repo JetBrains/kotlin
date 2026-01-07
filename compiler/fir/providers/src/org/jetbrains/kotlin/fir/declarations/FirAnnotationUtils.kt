@@ -166,22 +166,49 @@ fun FirAnnotation.findArgumentByName(name: Name, returnFirstWhenNotFound: Boolea
     return if (!resolved && returnFirstWhenNotFound) arguments.firstOrNull() else null
 }
 
-fun FirAnnotation.getBooleanArgument(name: Name, session: FirSession): Boolean? = getPrimitiveArgumentValue(name, session)
-fun FirAnnotation.getStringArgument(name: Name, session: FirSession): String? = getPrimitiveArgumentValue(name, session)
+@Deprecated(
+    message = "Use getBooleanArgument overload without session parameter",
+    replaceWith = ReplaceWith("getBooleanArgument(name)"),
+    level = DeprecationLevel.HIDDEN
+)
+fun FirAnnotation.getBooleanArgument(name: Name, session: FirSession): Boolean? = getBooleanArgument(name)
+fun FirAnnotation.getBooleanArgument(name: Name): Boolean? = getPrimitiveArgumentValue(name)
 
-private inline fun <reified T> FirAnnotation.getPrimitiveArgumentValue(name: Name, session: FirSession): T? {
+@Deprecated(
+    message = "Use getStringArgument overload without session parameter",
+    replaceWith = ReplaceWith("getStringArgument(name)"),
+    level = DeprecationLevel.HIDDEN
+)
+fun FirAnnotation.getStringArgument(name: Name, session: FirSession): String? = getStringArgument(name)
+fun FirAnnotation.getStringArgument(name: Name): String? = getPrimitiveArgumentValue(name)
+
+private inline fun <reified T> FirAnnotation.getPrimitiveArgumentValue(name: Name): T? {
     val argument = findArgumentByName(name) ?: return null
     val literal = argument as? FirLiteralExpression ?: return null
     return literal.value as? T
 }
 
-fun FirAnnotation.getStringArrayArgument(name: Name, session: FirSession): List<String>? {
+@Deprecated(
+    message = "Use getStringArrayArgument overload without session parameter",
+    replaceWith = ReplaceWith("getStringArrayArgument(name)"),
+    level = DeprecationLevel.HIDDEN
+)
+fun FirAnnotation.getStringArrayArgument(name: Name, session: FirSession): List<String>? = getStringArrayArgument(name)
+
+fun FirAnnotation.getStringArrayArgument(name: Name): List<String>? {
     val argument = findArgumentByName(name) ?: return null
     val arrayLiteral = argument as? FirCollectionLiteral ?: return null
     return arrayLiteral.arguments.mapNotNull { (it as? FirLiteralExpression)?.value as? String }
 }
 
-fun FirAnnotation.getKClassArgument(name: Name, session: FirSession): ConeKotlinType? {
+@Deprecated(
+    message = "Use getKClassArgument overload without session parameter",
+    replaceWith = ReplaceWith("getKClassArgument(name)"),
+    level = DeprecationLevel.HIDDEN
+)
+fun FirAnnotation.getKClassArgument(name: Name, session: FirSession): ConeKotlinType? = getKClassArgument(name)
+
+fun FirAnnotation.getKClassArgument(name: Name): ConeKotlinType? {
     val argument = findArgumentByName(name) ?: return null
     val getClassCall = argument as? FirGetClassCall ?: return null
     return getClassCall.getTargetType()

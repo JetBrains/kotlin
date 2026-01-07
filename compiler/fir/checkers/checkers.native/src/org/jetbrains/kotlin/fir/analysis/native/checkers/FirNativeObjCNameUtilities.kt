@@ -55,15 +55,15 @@ object FirNativeObjCNameUtilities {
     }
 
     private fun FirAnnotationContainer.getObjCName(session: FirSession): ObjCName? =
-        getAnnotationByClassId(objCNameClassId, session)?.let { ObjCName(it, session) }
+        getAnnotationByClassId(objCNameClassId, session)?.let { ObjCName(it) }
 
     private fun FirBasedSymbol<*>.getObjCName(session: FirSession): ObjCName? =
-        getAnnotationByClassId(objCNameClassId, session)?.let { ObjCName(it, session) }
+        getAnnotationByClassId(objCNameClassId, session)?.let { ObjCName(it) }
 
-    class ObjCName(val annotation: FirAnnotation, session: FirSession) {
-        val name: String? = annotation.getStringArgument(StandardNames.NAME, session)
-        val swiftName: String? = annotation.getStringArgument(swiftNameName, session)
-        val exact: Boolean = annotation.getBooleanArgument(exactName, session) ?: false
+    class ObjCName(val annotation: FirAnnotation) {
+        val name: String? = annotation.getStringArgument(StandardNames.NAME)
+        val swiftName: String? = annotation.getStringArgument(swiftNameName)
+        val exact: Boolean = annotation.getBooleanArgument(exactName) ?: false
 
         override fun equals(other: Any?): Boolean =
             other is ObjCName && name == other.name && swiftName == other.swiftName && exact == other.exact
