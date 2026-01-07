@@ -19,20 +19,20 @@ import kotlin.test.fail
 
 
 /**
- * A "custom" (alternative) Kotlin/Native compiler and the relevant artifacts (kotlin-test)
+ * A current or a "custom" (alternative) Kotlin/Native compiler and the relevant artifacts (kotlin-test)
  * which are used in KLIB backward/forward compatibility tests.
  */
-interface NativeCompilerSettings {
+interface CustomNativeCompilerSettings {
     val version: String
     val compiler: CustomCompiler
     val nativeHome: File
 }
 
-val NativeCompilerSettings.defaultLanguageVersion: LanguageVersion
+val CustomNativeCompilerSettings.defaultLanguageVersion: LanguageVersion
     get() = LanguageVersion.fromFullVersionString(version)
         ?: fail("Cannot deduce the default LV from the compiler version: $version")
 
-class NativeCompilerSettingsImpl(lazyArtifacts: () -> CustomCompilerArtifacts): NativeCompilerSettings {
+class CustomNativeCompilerSettingsImpl(lazyArtifacts: () -> CustomCompilerArtifacts): CustomNativeCompilerSettings {
     private val artifacts: CustomCompilerArtifacts by lazy(lazyArtifacts)
     override val version: String
         get() = artifacts.version
@@ -48,8 +48,8 @@ class NativeCompilerSettingsImpl(lazyArtifacts: () -> CustomCompilerArtifacts): 
  * An accessor to "custom" (alternative) Kotlin/Native compiler and the relevant artifacts (stdlib, kotlin-test)
  * which are used in KLIB backward/forward compatibility tests.
  */
-val customNativeCompilerSettings: NativeCompilerSettings by lazy {
-    NativeCompilerSettingsImpl {
+val customNativeCompilerSettings: CustomNativeCompilerSettings by lazy {
+    CustomNativeCompilerSettingsImpl {
         CustomCompilerArtifacts.create(
             compilerClassPathPropertyName = "kotlin.internal.native.test.compat.customCompilerClasspath",
             runtimeDependenciesPropertyName = null, // After OSIP-740, make it non-nullable to always provide stdlib
@@ -59,8 +59,8 @@ val customNativeCompilerSettings: NativeCompilerSettings by lazy {
     }
 }
 
-val currentNativeCompilerSettings: NativeCompilerSettings by lazy {
-    NativeCompilerSettingsImpl {
+val currentCustomNativeCompilerSettings: CustomNativeCompilerSettings by lazy {
+    CustomNativeCompilerSettingsImpl {
         val propertyName = "kotlin.internal.native.test.compat.currentCompilerDist"
         readProperty(propertyName)?.let {
             val compilerDist = File(it)

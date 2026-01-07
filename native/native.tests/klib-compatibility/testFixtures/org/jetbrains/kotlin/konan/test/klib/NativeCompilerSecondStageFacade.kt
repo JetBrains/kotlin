@@ -30,7 +30,7 @@ import java.io.PrintStream
  */
 class NativeCompilerSecondStageFacade(
     testServices: TestServices,
-    private val nativeCompilerSettings: NativeCompilerSettings,
+    private val customNativeCompilerSettings: CustomNativeCompilerSettings,
 ) : CustomKlibCompilerSecondStageFacade<BinaryArtifacts.Native>(testServices) {
 
     override val outputKind get() = ArtifactKinds.Native
@@ -55,10 +55,10 @@ class NativeCompilerSecondStageFacade(
 
         val exitCode = PrintStream(compilerXmlOutput).use { printStream ->
             val regularAndFriendDependencies = regularDependencies + friendDependencies
-            nativeCompilerSettings.compiler.callCompiler(
+            customNativeCompilerSettings.compiler.callCompiler(
                 output = printStream,
                 listOfNotNull(
-                    K2NativeCompilerArguments::kotlinHome.cliArgument, nativeCompilerSettings.nativeHome.absolutePath,
+                    K2NativeCompilerArguments::kotlinHome.cliArgument, customNativeCompilerSettings.nativeHome.absolutePath,
                     K2NativeCompilerArguments::debug.cliArgument,
                     K2NativeCompilerArguments::binaryOptions.cliArgument("runtimeAssertionsMode=panic"),
                     K2NativeCompilerArguments::verifyIr.cliArgument("none"),
@@ -71,7 +71,7 @@ class NativeCompilerSecondStageFacade(
                     K2NativeCompilerArguments::partialLinkageMode.cliArgument("enable"),
                     K2NativeCompilerArguments::partialLinkageLogLevel.cliArgument("error"),
                     K2NativeCompilerArguments::includes.cliArgument(mainLibrary),
-                    K2NativeCompilerArguments::autoCacheableFrom.cliArgument(nativeCompilerSettings.nativeHome.resolve("klib").absolutePath),
+                    K2NativeCompilerArguments::autoCacheableFrom.cliArgument(customNativeCompilerSettings.nativeHome.resolve("klib").absolutePath),
                     K2NativeCompilerArguments::backendThreads.cliArgument("1"),
                     K2NativeCompilerArguments::optIn.cliArgument("kotlin.native.internal.InternalForKotlinNative"),
                     K2NativeCompilerArguments::optIn.cliArgument("kotlin.native.internal.InternalForKotlinNativeTests"),
