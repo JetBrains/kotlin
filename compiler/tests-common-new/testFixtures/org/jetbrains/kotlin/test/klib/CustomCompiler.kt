@@ -63,6 +63,10 @@ sealed interface CustomCompilerArtifacts {
      * The classpath of the custom compiler.
      */
     val compilerClassPath: List<URL>
+
+    /**
+     * The placement of the custom compiler distribution.
+     */
     val compilerDist: File?
 
     /**
@@ -74,7 +78,7 @@ sealed interface CustomCompilerArtifacts {
         override val version: String,
         override val compilerClassPath: List<URL>,
         private val runtimeDependencies: List<File>,
-        override val compilerDist: File? = null,
+        override val compilerDist: File?,
     ) : CustomCompilerArtifacts {
         override fun runtimeDependency(baseName: String, vararg extensions: String): File {
             val candidates = runtimeDependencies.filter { file ->
@@ -89,7 +93,7 @@ sealed interface CustomCompilerArtifacts {
         }
     }
 
-    class Unresolvable(val reason: String) : CustomCompilerArtifacts {
+    private class Unresolvable(val reason: String) : CustomCompilerArtifacts {
         override val version get() = fail(reason)
         override val compilerClassPath get() = fail(reason)
         override val compilerDist get() = fail(reason)
@@ -135,7 +139,7 @@ sealed interface CustomCompilerArtifacts {
         fun readProperty(propertyName: String): String? =
             System.getProperty(propertyName)?.trim(Char::isWhitespace)?.takeIf(String::isNotEmpty)
 
-        fun propertyNotFound(propertyName: String): Unresolvable = Unresolvable(
+        fun propertyNotFound(propertyName: String): CustomCompilerArtifacts = Unresolvable(
             "The Gradle property \"$propertyName\" is not specified. " +
                     "Please check the README.md in the root of the `klib-compatibility` project."
         )
