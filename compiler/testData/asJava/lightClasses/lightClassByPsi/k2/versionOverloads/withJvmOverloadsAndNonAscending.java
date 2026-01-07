@@ -38,12 +38,6 @@ public final class WithJvmOverloadsAndNonAscendingKt /* WithJvmOverloadsAndNonAs
   public static final void randomAlmostSameType();//  randomAlmostSameType()
 
   @kotlin.jvm.JvmOverloads()
-  public static final void randomAlmostSameType(@kotlin.IntroducedAt(version = "1.0-beta.1") int);//  randomAlmostSameType(int)
-
-  @kotlin.jvm.JvmOverloads()
-  public static final void randomAlmostSameType(@kotlin.IntroducedAt(version = "1.0-beta.1") int, int);//  randomAlmostSameType(int, int)
-
-  @kotlin.jvm.JvmOverloads()
   public static final void randomAlmostSameType(@kotlin.IntroducedAt(version = "1.0-beta.1") int, int, @kotlin.IntroducedAt(version = "1.0") @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  randomAlmostSameType(int, int, @org.jetbrains.annotations.NotNull() java.lang.String)
 
   @kotlin.jvm.JvmOverloads()
@@ -51,9 +45,6 @@ public final class WithJvmOverloadsAndNonAscendingKt /* WithJvmOverloadsAndNonAs
 
   @kotlin.jvm.JvmOverloads()
   public static final void randomSameType();//  randomSameType()
-
-  @kotlin.jvm.JvmOverloads()
-  public static final void randomSameType(int, @kotlin.IntroducedAt(version = "3") int);//  randomSameType(int, int)
 
   @kotlin.jvm.JvmOverloads()
   public static final void randomSameType(int, @kotlin.IntroducedAt(version = "3") int, @kotlin.IntroducedAt(version = "2") int, @kotlin.IntroducedAt(version = "4") int);//  randomSameType(int, int, int, int)
