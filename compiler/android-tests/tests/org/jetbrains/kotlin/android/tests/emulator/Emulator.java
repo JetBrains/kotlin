@@ -123,7 +123,7 @@ public class Emulator {
         commandLine.addParameter(AVD_NAME);
         commandLine.addParameter("-no-audio");
         commandLine.addParameter("-no-window");
-        commandLine.addParameter("-no-accel");
+        //commandLine.addParameter("-no-accel");
         return commandLine;
     }
 
