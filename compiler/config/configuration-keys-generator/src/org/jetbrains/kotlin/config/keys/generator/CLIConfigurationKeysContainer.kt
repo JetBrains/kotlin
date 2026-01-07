@@ -9,13 +9,12 @@ import org.jetbrains.kotlin.cli.common.config.ContentRoot
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.modules.ModuleChunk
 import org.jetbrains.kotlin.config.keys.generator.model.KeysContainer
-import org.jetbrains.kotlin.util.PerformanceManager
 import org.jetbrains.kotlin.utils.KotlinPaths
 import java.io.File
 
 @Suppress("unused")
 object CLIConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.cli.common", "CLIConfigurationKeys") {
-    val CONTENT_ROOTS by key<List<ContentRoot>>("content roots", comment = "Roots, including dependencies and own sources")
+    val CONTENT_ROOTS by key<List<ContentRoot>>("Roots, including dependencies and own sources.")
 
     val MESSAGE_COLLECTOR_KEY by deprecatedKey<MessageCollector>(
         initializer = "CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY",
@@ -24,38 +23,34 @@ object CLIConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.cli.c
             ReplaceWith("CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY", "org.jetbrains.kotlin.config.CommonConfigurationKeys"),
             DeprecationLevel.ERROR,
         ),
-        comment = "Used by kotest, Realm, Dokka, KSP compiler plugins",
+        comment = "Used by kotest, Realm, Dokka, KSP compiler plugins.",
         importsToAdd = listOf("org.jetbrains.kotlin.config.CommonConfigurationKeys")
     )
 
     val ORIGINAL_MESSAGE_COLLECTOR_KEY by key<MessageCollector>(
-        "original message collector",
-        comment = "Used by compiler plugins to access delegated message collector in GroupingMessageCollector"
+        "Used by compiler plugins to access delegated message collector in GroupingMessageCollector."
     )
 
-    val RENDER_DIAGNOSTIC_INTERNAL_NAME by key<Boolean>("render diagnostic internal name")
+    val RENDER_DIAGNOSTIC_INTERNAL_NAME by key<Boolean>()
 
-    val ALLOW_KOTLIN_PACKAGE by key<Boolean>("allow kotlin package")
+    val ALLOW_KOTLIN_PACKAGE by key<Boolean>()
 
-    val INTELLIJ_PLUGIN_ROOT by key<String>(
-        "intellij plugin root",
-        comment = "Used in Eclipse plugin (see KotlinCLICompiler)"
-    )
+    val INTELLIJ_PLUGIN_ROOT by key<String>("Used in Eclipse plugin (see KotlinCLICompiler).")
 
-    val METADATA_DESTINATION_DIRECTORY by key<File>("metadata destination directory", comment = "See K2MetadataCompilerArguments")
+    val METADATA_DESTINATION_DIRECTORY by key<File>("See K2MetadataCompilerArguments.")
 
-    val PATH_TO_KOTLIN_COMPILER_JAR by key<File>("jar of Kotlin compiler in Kotlin plugin", comment = "used in FIR IDE uast tests")
+    val PATH_TO_KOTLIN_COMPILER_JAR by key<File>("Path to the Kotlin compiler jar in the Kotlin plugin. Used in FIR IDE uast tests.")
 
-    val PRINT_VERSION by key<Boolean>("Print compiler version")
-    val SCRIPT_MODE by key<Boolean>("Compile and evaluate Kotlin script")
-    val REPL_MODE by key<Boolean>("Run Kotlin REPL (deprecated)")
-    val KOTLIN_PATHS by key<KotlinPaths>("Kotlin paths")
+    val PRINT_VERSION by key<Boolean>()
+    val SCRIPT_MODE by key<Boolean>()
+    val REPL_MODE by key<Boolean>("Runs Kotlin REPL (deprecated).")
+    val KOTLIN_PATHS by key<KotlinPaths>()
 
-    val ALLOW_NO_SOURCE_FILES by key<Boolean>("allow no source files compilation")
-    val MODULE_CHUNK by key<ModuleChunk>("Module chunk")
-    val BUILD_FILE by key<File>("Build file")
-    val FREE_ARGS_FOR_SCRIPT by key<List<String>>("Free args from arguments. Used only for scripts execution")
-    val DEFAULT_EXTENSION_FOR_SCRIPTS by key<String>("Default extension for scripts", throwOnNull = false)
+    val ALLOW_NO_SOURCE_FILES by key<Boolean>()
+    val MODULE_CHUNK by key<ModuleChunk>()
+    val BUILD_FILE by key<File>()
+    val FREE_ARGS_FOR_SCRIPT by key<List<String>>()
+    val DEFAULT_EXTENSION_FOR_SCRIPTS by key<String>(throwOnNull = false)
 
-    val TEST_ENVIRONMENT by key<Boolean>("test environment", comment = "Defines what kind of application environment should be created. Should be set to `true` only in tests")
+    val TEST_ENVIRONMENT by key<Boolean>("Defines what kind of application environment should be created. Should be set to `true` only in tests")
 }

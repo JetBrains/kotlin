@@ -18,233 +18,269 @@ import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
 object KonanConfigKeys {
+    // Bundle ID to be set in Info.plist of a produced framework.
     @JvmField
-    val BUNDLE_ID = CompilerConfigurationKey.create<String>("bundle ID to be set in Info.plist of a produced framework")
+    val BUNDLE_ID = CompilerConfigurationKey.create<String>("BUNDLE_ID")
 
+    // Check dependencies and download the missing ones.
     @JvmField
-    val CHECK_DEPENDENCIES = CompilerConfigurationKey.create<Boolean>("check dependencies and download the missing ones")
+    val CHECK_DEPENDENCIES = CompilerConfigurationKey.create<Boolean>("CHECK_DEPENDENCIES")
 
     @JvmField
-    val DEBUG = CompilerConfigurationKey.create<Boolean>("add debug information")
+    val DEBUG = CompilerConfigurationKey.create<Boolean>("DEBUG")
 
     @JvmField
-    val FAKE_OVERRIDE_VALIDATOR = CompilerConfigurationKey.create<Boolean>("fake override validator")
+    val FAKE_OVERRIDE_VALIDATOR = CompilerConfigurationKey.create<Boolean>("FAKE_OVERRIDE_VALIDATOR")
 
     @JvmField
-    val EMIT_LAZY_OBJC_HEADER_FILE = CompilerConfigurationKey.create<String>("output file to emit lazy Obj-C header")
+    val EMIT_LAZY_OBJC_HEADER_FILE = CompilerConfigurationKey.create<String>("EMIT_LAZY_OBJC_HEADER_FILE")
 
     @JvmField
-    val ENABLE_ASSERTIONS = CompilerConfigurationKey.create<Boolean>("enable runtime assertions in generated code")
+    val ENABLE_ASSERTIONS = CompilerConfigurationKey.create<Boolean>("ENABLE_ASSERTIONS")
 
+    // Fully qualified main() name.
     @JvmField
-    val ENTRY = CompilerConfigurationKey.create<String>("fully qualified main() name")
+    val ENTRY = CompilerConfigurationKey.create<String>("ENTRY")
 
+    // Libraries included into produced framework API.
     @JvmField
-    val EXPORTED_LIBRARIES = CompilerConfigurationKey.create<List<String>>("libraries included into produced framework API")
+    val EXPORTED_LIBRARIES = CompilerConfigurationKey.create<List<String>>("EXPORTED_LIBRARIES")
 
+    // Prefix used when exporting Kotlin names to other languages.
     @JvmField
-    val FULL_EXPORTED_NAME_PREFIX = CompilerConfigurationKey.create<String>("prefix used when exporting Kotlin names to other languages")
+    val FULL_EXPORTED_NAME_PREFIX = CompilerConfigurationKey.create<String>("FULL_EXPORTED_NAME_PREFIX")
 
     @JvmField
-    val LIBRARY_TO_ADD_TO_CACHE = CompilerConfigurationKey.create<String>("path to library that to be added to cache")
+    val LIBRARY_TO_ADD_TO_CACHE = CompilerConfigurationKey.create<String>("LIBRARY_TO_ADD_TO_CACHE")
 
     @JvmField
-    val CACHE_DIRECTORIES = CompilerConfigurationKey.create<List<String>>("paths to directories containing caches")
+    val CACHE_DIRECTORIES = CompilerConfigurationKey.create<List<String>>("CACHE_DIRECTORIES")
 
+    // Paths to the root directories from which dependencies are to be cached automatically.
     @JvmField
-    val AUTO_CACHEABLE_FROM = CompilerConfigurationKey.create<List<String>>("paths to the root directories from which dependencies are to be cached automatically")
+    val AUTO_CACHEABLE_FROM = CompilerConfigurationKey.create<List<String>>("AUTO_CACHEABLE_FROM")
 
+    // Path to the directory where to put caches for auto-cacheable dependencies.
     @JvmField
-    val AUTO_CACHE_DIR = CompilerConfigurationKey.create<String>("path to the directory where to put caches for auto-cacheable dependencies")
+    val AUTO_CACHE_DIR = CompilerConfigurationKey.create<String>("AUTO_CACHE_DIR")
 
+    // Path to the directory where to put incremental build caches.
     @JvmField
-    val INCREMENTAL_CACHE_DIR = CompilerConfigurationKey.create<String>("path to the directory where to put incremental build caches")
+    val INCREMENTAL_CACHE_DIR = CompilerConfigurationKey.create<String>("INCREMENTAL_CACHE_DIR")
 
+    // Mapping from library paths to cache paths.
     @JvmField
-    val CACHED_LIBRARIES = CompilerConfigurationKey.create<Map<String, String>>("mapping from library paths to cache paths")
+    val CACHED_LIBRARIES = CompilerConfigurationKey.create<Map<String, String>>("CACHED_LIBRARIES")
 
+    // Which files should be compiled to cache.
     @JvmField
-    val FILES_TO_CACHE = CompilerConfigurationKey.create<List<String>>("which files should be compiled to cache")
+    val FILES_TO_CACHE = CompilerConfigurationKey.create<List<String>>("FILES_TO_CACHE")
 
     @JvmField
-    val MAKE_PER_FILE_CACHE = CompilerConfigurationKey.create<Boolean>("make per-file cache")
+    val MAKE_PER_FILE_CACHE = CompilerConfigurationKey.create<Boolean>("MAKE_PER_FILE_CACHE")
 
     @JvmField
-    val FRAMEWORK_IMPORT_HEADERS = CompilerConfigurationKey.create<List<String>>("headers imported to framework header")
+    val FRAMEWORK_IMPORT_HEADERS = CompilerConfigurationKey.create<List<String>>("FRAMEWORK_IMPORT_HEADERS")
 
     @JvmField
-    val FRIEND_MODULES = CompilerConfigurationKey.create<List<String>>("friend module paths")
+    val FRIEND_MODULES = CompilerConfigurationKey.create<List<String>>("FRIEND_MODULES")
 
     @JvmField
-    val REFINES_MODULES = CompilerConfigurationKey.create<List<String>>("refines module paths")
+    val REFINES_MODULES = CompilerConfigurationKey.create<List<String>>("REFINES_MODULES")
 
     @JvmField
-    val GENERATE_TEST_RUNNER = CompilerConfigurationKey.create<TestRunnerKind>("generate test runner")
+    val GENERATE_TEST_RUNNER = CompilerConfigurationKey.create<TestRunnerKind>("GENERATE_TEST_RUNNER")
 
     @JvmField
-    val INCLUDED_BINARY_FILES = CompilerConfigurationKey.create<List<String>>("included binary file paths")
+    val INCLUDED_BINARY_FILES = CompilerConfigurationKey.create<List<String>>("INCLUDED_BINARY_FILES")
 
     @JvmField
-    val KONAN_HOME = CompilerConfigurationKey.create<String>("overridden compiler distribution path")
+    val KONAN_HOME = CompilerConfigurationKey.create<String>("KONAN_HOME")
 
     @JvmField
-    val LIBRARY_FILES = CompilerConfigurationKey.create<List<String>>("library file paths")
+    val LIBRARY_FILES = CompilerConfigurationKey.create<List<String>>("LIBRARY_FILES")
 
     @JvmField
-    val LIGHT_DEBUG = CompilerConfigurationKey.create<Boolean>("add light debug information")
+    val LIGHT_DEBUG = CompilerConfigurationKey.create<Boolean>("LIGHT_DEBUG")
 
+    // Generates debug trampolines to make debugger breakpoint resolution more accurate.
     @JvmField
-    val GENERATE_DEBUG_TRAMPOLINE = CompilerConfigurationKey.create<Boolean>("generates debug trampolines to make debugger breakpoint resolution more accurate")
+    val GENERATE_DEBUG_TRAMPOLINE = CompilerConfigurationKey.create<Boolean>("GENERATE_DEBUG_TRAMPOLINE")
 
     @JvmField
-    val LINKER_ARGS = CompilerConfigurationKey.create<List<String>>("additional linker arguments")
+    val LINKER_ARGS = CompilerConfigurationKey.create<List<String>>("LINKER_ARGS")
 
     @JvmField
-    val LIST_TARGETS = CompilerConfigurationKey.create<Boolean>("list available targets")
+    val LIST_TARGETS = CompilerConfigurationKey.create<Boolean>("LIST_TARGETS")
 
     @JvmField
-    val MANIFEST_FILE = CompilerConfigurationKey.create<String>("provide manifest addend file")
+    val MANIFEST_FILE = CompilerConfigurationKey.create<String>("MANIFEST_FILE")
 
+    // Path to file where header klib should be produced.
     @JvmField
-    val HEADER_KLIB = CompilerConfigurationKey.create<String>("path to file where header klib should be produced")
+    val HEADER_KLIB = CompilerConfigurationKey.create<String>("HEADER_KLIB")
 
     @JvmField
-    val MODULE_NAME = CompilerConfigurationKey.create<String>("module name")
+    val MODULE_NAME = CompilerConfigurationKey.create<String>("MODULE_NAME")
 
     @JvmField
-    val NATIVE_LIBRARY_FILES = CompilerConfigurationKey.create<List<String>>("native library file paths")
+    val NATIVE_LIBRARY_FILES = CompilerConfigurationKey.create<List<String>>("NATIVE_LIBRARY_FILES")
 
+    // Don't link with the default libraries.
     @JvmField
-    val NODEFAULTLIBS = CompilerConfigurationKey.create<Boolean>("don't link with the default libraries")
+    val NODEFAULTLIBS = CompilerConfigurationKey.create<Boolean>("NODEFAULTLIBS")
 
+    // Don't link with the endorsed libraries.
     @JvmField
-    val NOENDORSEDLIBS = CompilerConfigurationKey.create<Boolean>("don't link with the endorsed libraries")
+    val NOENDORSEDLIBS = CompilerConfigurationKey.create<Boolean>("NOENDORSEDLIBS")
 
+    // Assume 'main' entry point to be provided by external libraries.
     @JvmField
-    val NOMAIN = CompilerConfigurationKey.create<Boolean>("assume 'main' entry point to be provided by external libraries")
+    val NOMAIN = CompilerConfigurationKey.create<Boolean>("NOMAIN")
 
+    // Don't link with stdlib.
     @JvmField
-    val NOSTDLIB = CompilerConfigurationKey.create<Boolean>("don't link with stdlib")
+    val NOSTDLIB = CompilerConfigurationKey.create<Boolean>("NOSTDLIB")
 
+    // Don't pack the library into a klib file.
     @JvmField
-    val NOPACK = CompilerConfigurationKey.create<Boolean>("don't the library into a klib file")
+    val NOPACK = CompilerConfigurationKey.create<Boolean>("NOPACK")
 
     @JvmField
-    val OPTIMIZATION = CompilerConfigurationKey.create<Boolean>("optimized compilation")
+    val OPTIMIZATION = CompilerConfigurationKey.create<Boolean>("OPTIMIZATION")
 
     @JvmField
-    val OUTPUT = CompilerConfigurationKey.create<String>("program or library name")
+    val OUTPUT = CompilerConfigurationKey.create<String>("OUTPUT")
 
     @JvmField
-    val OVERRIDE_CLANG_OPTIONS = CompilerConfigurationKey.create<List<String>>("arguments for clang")
+    val OVERRIDE_CLANG_OPTIONS = CompilerConfigurationKey.create<List<String>>("OVERRIDE_CLANG_OPTIONS")
 
     @JvmField
-    val ALLOCATION_MODE = CompilerConfigurationKey.create<AllocationMode>("allocation mode")
+    val ALLOCATION_MODE = CompilerConfigurationKey.create<AllocationMode>("ALLOCATION_MODE")
 
+    // Export KDoc into klib and framework.
     @JvmField
-    val EXPORT_KDOC = CompilerConfigurationKey.create<Boolean>("export KDoc into klib and framework")
+    val EXPORT_KDOC = CompilerConfigurationKey.create<Boolean>("EXPORT_KDOC")
 
     @JvmField
-    val PRINT_BITCODE = CompilerConfigurationKey.create<Boolean>("print bitcode")
+    val PRINT_BITCODE = CompilerConfigurationKey.create<Boolean>("PRINT_BITCODE")
 
     @JvmField
-    val PRINT_IR = CompilerConfigurationKey.create<Boolean>("print ir")
+    val PRINT_IR = CompilerConfigurationKey.create<Boolean>("PRINT_IR")
 
     @JvmField
-    val PRINT_FILES = CompilerConfigurationKey.create<Boolean>("print files")
+    val PRINT_FILES = CompilerConfigurationKey.create<Boolean>("PRINT_FILES")
 
     @JvmField
-    val PRODUCE = CompilerConfigurationKey.create<CompilerOutputKind>("compiler output kind")
+    val PRODUCE = CompilerConfigurationKey.create<CompilerOutputKind>("PRODUCE")
 
     @JvmField
-    val PURGE_USER_LIBS = CompilerConfigurationKey.create<Boolean>("purge user-specified libs too")
+    val PURGE_USER_LIBS = CompilerConfigurationKey.create<Boolean>("PURGE_USER_LIBS")
 
     @JvmField
-    val RUNTIME_FILE = CompilerConfigurationKey.create<String>("override default runtime file path")
+    val RUNTIME_FILE = CompilerConfigurationKey.create<String>("RUNTIME_FILE")
 
+    // Klibs processed in the same manner as source files.
     @JvmField
-    val INCLUDED_LIBRARIES = CompilerConfigurationKey.create<List<String>>("klibs processed in the same manner as source files")
+    val INCLUDED_LIBRARIES = CompilerConfigurationKey.create<List<String>>("INCLUDED_LIBRARIES")
 
+    // Short module name for IDE and export.
     @JvmField
-    val SHORT_MODULE_NAME = CompilerConfigurationKey.create<String>("short module name for IDE and export")
+    val SHORT_MODULE_NAME = CompilerConfigurationKey.create<String>("SHORT_MODULE_NAME")
 
+    // Produce a static library for a framework.
     @JvmField
-    val STATIC_FRAMEWORK = CompilerConfigurationKey.create<Boolean>("produce a static library for a framework")
+    val STATIC_FRAMEWORK = CompilerConfigurationKey.create<Boolean>("STATIC_FRAMEWORK")
 
     @JvmField
-    val TARGET = CompilerConfigurationKey.create<String>("target we compile for")
+    val TARGET = CompilerConfigurationKey.create<String>("TARGET")
 
     @JvmField
-    val TEMPORARY_FILES_DIR = CompilerConfigurationKey.create<String>("directory for temporary files")
+    val TEMPORARY_FILES_DIR = CompilerConfigurationKey.create<String>("TEMPORARY_FILES_DIR")
 
     @JvmField
-    val SAVE_LLVM_IR = CompilerConfigurationKey.create<List<String>>("save LLVM IR")
+    val SAVE_LLVM_IR = CompilerConfigurationKey.create<List<String>>("SAVE_LLVM_IR")
 
     @JvmField
-    val VERIFY_BITCODE = CompilerConfigurationKey.create<Boolean>("verify bitcode")
+    val VERIFY_BITCODE = CompilerConfigurationKey.create<Boolean>("VERIFY_BITCODE")
 
     @JvmField
-    val VERIFY_COMPILER = CompilerConfigurationKey.create<Boolean>("verify compiler")
+    val VERIFY_COMPILER = CompilerConfigurationKey.create<Boolean>("VERIFY_COMPILER")
 
     @JvmField
-    val WRITE_DEPENDENCIES_OF_PRODUCED_KLIB_TO = CompilerConfigurationKey.create<String>("write dependencies of the klib being produced to the given path")
+    val WRITE_DEPENDENCIES_OF_PRODUCED_KLIB_TO = CompilerConfigurationKey.create<String>("WRITE_DEPENDENCIES_OF_PRODUCED_KLIB_TO")
 
     @JvmField
-    val DEBUG_INFO_VERSION = CompilerConfigurationKey.create<Int>("debug info format version")
+    val DEBUG_INFO_VERSION = CompilerConfigurationKey.create<Int>("DEBUG_INFO_VERSION")
 
+    // Write objc header with generics support.
     @JvmField
-    val OBJC_GENERICS = CompilerConfigurationKey.create<Boolean>("write objc header with generics support")
+    val OBJC_GENERICS = CompilerConfigurationKey.create<Boolean>("OBJC_GENERICS")
 
+    // Remap file source paths in debug info.
     @JvmField
-    val DEBUG_PREFIX_MAP = CompilerConfigurationKey.create<Map<String, String>>("remap file source paths in debug info")
+    val DEBUG_PREFIX_MAP = CompilerConfigurationKey.create<Map<String, String>>("DEBUG_PREFIX_MAP")
 
+    // Perform compiler caches pre-link.
     @JvmField
-    val PRE_LINK_CACHES = CompilerConfigurationKey.create<Boolean>("perform compiler caches pre-link")
+    val PRE_LINK_CACHES = CompilerConfigurationKey.create<Boolean>("PRE_LINK_CACHES")
 
+    // Override konan.properties values.
     @JvmField
-    val OVERRIDE_KONAN_PROPERTIES = CompilerConfigurationKey.create<Map<String, String>>("override konan.properties values")
+    val OVERRIDE_KONAN_PROPERTIES = CompilerConfigurationKey.create<Map<String, String>>("OVERRIDE_KONAN_PROPERTIES")
 
     @JvmField
-    val PROPERTY_LAZY_INITIALIZATION = CompilerConfigurationKey.create<Boolean>("lazy top level properties initialization")
+    val PROPERTY_LAZY_INITIALIZATION = CompilerConfigurationKey.create<Boolean>("PROPERTY_LAZY_INITIALIZATION")
 
+    // Use external dependencies to enhance IR linker error messages.
     @JvmField
-    val EXTERNAL_DEPENDENCIES = CompilerConfigurationKey.create<String>("use external dependencies to enhance IR linker error messages")
+    val EXTERNAL_DEPENDENCIES = CompilerConfigurationKey.create<String>("EXTERNAL_DEPENDENCIES")
 
     @JvmField
-    val LLVM_VARIANT = CompilerConfigurationKey.create<LlvmVariant>("llvm variant")
+    val LLVM_VARIANT = CompilerConfigurationKey.create<LlvmVariant>("LLVM_VARIANT")
 
     @JvmField
-    val RUNTIME_LOGS = CompilerConfigurationKey.create<String>("enable runtime logging")
+    val RUNTIME_LOGS = CompilerConfigurationKey.create<String>("RUNTIME_LOGS")
 
+    // Path to a file to dump the list of all available tests.
     @JvmField
-    val TEST_DUMP_OUTPUT_PATH = CompilerConfigurationKey.create<String>("path to a file to dump the list of all available tests")
+    val TEST_DUMP_OUTPUT_PATH = CompilerConfigurationKey.create<String>("TEST_DUMP_OUTPUT_PATH")
 
+    // Do not generate binary in framework.
     @JvmField
-    val OMIT_FRAMEWORK_BINARY = CompilerConfigurationKey.create<Boolean>("do not generate binary in framework")
+    val OMIT_FRAMEWORK_BINARY = CompilerConfigurationKey.create<Boolean>("OMIT_FRAMEWORK_BINARY")
 
+    // Path to bitcode file to compile.
     @JvmField
-    val COMPILE_FROM_BITCODE = CompilerConfigurationKey.create<String>("path to bitcode file to compile")
+    val COMPILE_FROM_BITCODE = CompilerConfigurationKey.create<String>("COMPILE_FROM_BITCODE")
 
+    // Path to serialized dependencies for native linking.
     @JvmField
-    val SERIALIZED_DEPENDENCIES = CompilerConfigurationKey.create<String>("path to serialized dependencies for native linking")
+    val SERIALIZED_DEPENDENCIES = CompilerConfigurationKey.create<String>("SERIALIZED_DEPENDENCIES")
 
+    // Path to save serialized dependencies to.
     @JvmField
-    val SAVE_DEPENDENCIES_PATH = CompilerConfigurationKey.create<String>("path to save serialized dependencies to")
+    val SAVE_DEPENDENCIES_PATH = CompilerConfigurationKey.create<String>("SAVE_DEPENDENCIES_PATH")
 
+    // Directory to store LLVM IR from phases.
     @JvmField
-    val SAVE_LLVM_IR_DIRECTORY = CompilerConfigurationKey.create<String>("directory to store LLVM IR from phases")
+    val SAVE_LLVM_IR_DIRECTORY = CompilerConfigurationKey.create<String>("SAVE_LLVM_IR_DIRECTORY")
 
+    // Directory for storing konan dependencies, cache and prebuilds.
     @JvmField
-    val KONAN_DATA_DIR = CompilerConfigurationKey.create<String>("directory for storing konan dependencies, cache and prebuilds")
+    val KONAN_DATA_DIR = CompilerConfigurationKey.create<String>("KONAN_DATA_DIR")
 
+    // Value of native_targets property to write in manifest.
     @JvmField
-    val MANIFEST_NATIVE_TARGETS = CompilerConfigurationKey.create<List<KonanTarget>>("value of native_targets property to write in manifest")
+    val MANIFEST_NATIVE_TARGETS = CompilerConfigurationKey.create<List<KonanTarget>>("MANIFEST_NATIVE_TARGETS")
 
+    // LLVM passes to run instead of module optimization pipeline.
     @JvmField
-    val LLVM_MODULE_PASSES = CompilerConfigurationKey.create<String>("llvm passes to run instead of module optimization pipeline")
+    val LLVM_MODULE_PASSES = CompilerConfigurationKey.create<String>("LLVM_MODULE_PASSES")
 
+    // LLVM passes to run instead of LTO optimization pipeline.
     @JvmField
-    val LLVM_LTO_PASSES = CompilerConfigurationKey.create<String>("llvm passes to run instead of LTO optimization pipeline")
+    val LLVM_LTO_PASSES = CompilerConfigurationKey.create<String>("LLVM_LTO_PASSES")
 
 }
 

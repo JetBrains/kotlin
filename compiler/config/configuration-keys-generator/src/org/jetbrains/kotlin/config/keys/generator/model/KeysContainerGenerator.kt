@@ -65,7 +65,7 @@ object KeysContainerGenerator {
     private fun SmartPrinter.generateRegularKey(key: Key) {
         println("@JvmField")
         generateOptIns(key)
-        println("val ${key.name} = CompilerConfigurationKey.create<${key.typeString}>(\"${key.description}\")")
+        println("val ${key.name} = CompilerConfigurationKey.create<${key.typeString}>(\"${key.name}\")")
     }
 
     private fun SmartPrinter.generateDeprecatedKey(key: DeprecatedKey) {
