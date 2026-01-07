@@ -2,7 +2,7 @@
 // MODULE: main
 // FILE: main.kt
 
-fun <T> foo(param1: T, param2: T?) {}
+fun <T> foo(param1: T, param2: T?): T = TODO()
 
 // A producer interface (covariant)
 interface Producer<out T> {

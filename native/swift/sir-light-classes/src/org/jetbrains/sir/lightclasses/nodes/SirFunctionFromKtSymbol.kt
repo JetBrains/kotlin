@@ -7,8 +7,10 @@ package org.jetbrains.sir.lightclasses.nodes
 
 import org.jetbrains.kotlin.analysis.api.export.utilities.isSuspend
 import org.jetbrains.kotlin.analysis.api.symbols.*
+import org.jetbrains.kotlin.analysis.api.types.KaTypeParameterType
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.providers.SirSession
+import org.jetbrains.kotlin.sir.providers.SirTypeNamer.KotlinNameType
 import org.jetbrains.kotlin.sir.providers.generateFunctionBridge
 import org.jetbrains.kotlin.sir.providers.getSirParent
 import org.jetbrains.kotlin.sir.providers.impl.BridgeProvider.BridgeFunctionProxy
@@ -104,7 +106,15 @@ internal open class SirFunctionFromKtSymbol(
     override val bridges: List<SirBridge> by lazyWithSessions {
         bridgeProxy?.createSirBridges {
             val actualArgs = if (extensionReceiverParameter != null) argNames.drop(1) else argNames
-            buildCall("(${actualArgs.joinToString()})")
+            val argumentsString = actualArgs.joinToString()
+            val castSuffix = (ktSymbol.returnType is KaTypeParameterType && ktSymbol.isTopLevel)
+                .takeIf { it }
+                ?.let {
+                    val fqName = typeNamer.kotlinFqName(this@SirFunctionFromKtSymbol.returnType, KotlinNameType.FQN)
+                    " as? $fqName"
+                } ?: ""
+
+            buildCall("($argumentsString)$castSuffix")
         }.orEmpty()
     }
 
