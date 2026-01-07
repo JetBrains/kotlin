@@ -347,6 +347,6 @@ fun ConeKotlinType.valueParameterName(session: FirSession): Name? {
     if (attribute.name != null) return attribute.name
 
     val annotation = attribute.annotations.first() // Attribute precondition.
-    val name = annotation.getStringArgument(StandardNames.NAME, session) ?: return null
+    val name = annotation.getStringArgument(StandardNames.NAME) ?: return null
     return Name.identifier(name)
 }

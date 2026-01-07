@@ -17,18 +17,34 @@ import org.jetbrains.kotlin.lombok.utils.trimToNull
 import org.jetbrains.kotlin.name.Name
 
 @DirectDeclarationsAccess
-fun FirAnnotation.getAccessLevel(field: Name, session: FirSession): AccessLevel {
-    val value = getArgumentAsString(field, session) ?: return AccessLevel.PUBLIC
+@Deprecated(
+    message = "Use getAccessLevel overload without session parameter",
+    replaceWith = ReplaceWith("getAccessLevel(name)"),
+    level = DeprecationLevel.HIDDEN
+)
+fun FirAnnotation.getAccessLevel(field: Name, session: FirSession): AccessLevel = getAccessLevel(field)
+
+@DirectDeclarationsAccess
+fun FirAnnotation.getAccessLevel(field: Name): AccessLevel {
+    val value = getArgumentAsString(field) ?: return AccessLevel.PUBLIC
     return AccessLevel.valueOf(value)
 }
 
 @DirectDeclarationsAccess
-fun FirAnnotation.getAccessLevel(session: FirSession): AccessLevel {
-    return getAccessLevel(LombokConfigNames.VALUE, session)
+@Deprecated(
+    message = "Use getAccessLevel overload without session parameter",
+    replaceWith = ReplaceWith("getAccessLevel()"),
+    level = DeprecationLevel.HIDDEN
+)
+fun FirAnnotation.getAccessLevel(session: FirSession): AccessLevel = getAccessLevel()
+
+@DirectDeclarationsAccess
+fun FirAnnotation.getAccessLevel(): AccessLevel {
+    return getAccessLevel(LombokConfigNames.VALUE)
 }
 
 @DirectDeclarationsAccess
-private fun FirAnnotation.getArgumentAsString(field: Name, session: FirSession): String? {
+private fun FirAnnotation.getArgumentAsString(field: Name): String? {
     val argument = findArgumentByName(field) ?: return null
     return when (argument) {
         is FirLiteralExpression -> argument.value as? String
@@ -47,11 +63,26 @@ private fun FirAnnotation.getArgumentAsString(field: Name, session: FirSession):
 }
 
 @DirectDeclarationsAccess
-fun FirAnnotation.getVisibility(field: Name, session: FirSession): Visibility {
-    return getAccessLevel(field, session).toVisibility()
+@Deprecated(
+    message = "Use getVisibility overload without session parameter",
+    replaceWith = ReplaceWith("getVisibility(field)"),
+    level = DeprecationLevel.HIDDEN
+)
+fun FirAnnotation.getVisibility(field: Name, session: FirSession): Visibility = getVisibility(field)
+
+@DirectDeclarationsAccess
+fun FirAnnotation.getVisibility(field: Name): Visibility {
+    return getAccessLevel(field).toVisibility()
 }
 
-fun FirAnnotation.getNonBlankStringArgument(name: Name, session: FirSession): String? = getStringArgument(name, session)?.trimToNull()
+@Deprecated(
+    "Use getNonBlankStringArgument overload without session parameter",
+    ReplaceWith("getNonBlankStringArgument(name)"),
+    level = DeprecationLevel.HIDDEN
+)
+fun FirAnnotation.getNonBlankStringArgument(name: Name, session: FirSession): String? = getNonBlankStringArgument(name)
+
+fun FirAnnotation.getNonBlankStringArgument(name: Name): String? = getStringArgument(name)?.trimToNull()
 
 object LombokConfigNames {
     val VALUE = Name.identifier("value")

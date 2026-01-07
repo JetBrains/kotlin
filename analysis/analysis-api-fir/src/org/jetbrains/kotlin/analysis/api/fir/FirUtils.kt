@@ -135,7 +135,7 @@ internal val FirResolvedQualifier.isImplicitDispatchReceiver: Boolean
 internal fun FirAnnotationContainer.getJvmNameFromAnnotation(session: FirSession, target: AnnotationUseSiteTarget? = null): String? {
     val annotationCalls = getAnnotationsByClassId(JvmStandardClassIds.Annotations.JvmName, session)
     return annotationCalls.firstNotNullOfOrNull { call ->
-        call.getStringArgument(StandardNames.NAME, session)
+        call.getStringArgument(StandardNames.NAME)
             ?.takeIf { target == null || call.useSiteTarget == target }
     }
 }
