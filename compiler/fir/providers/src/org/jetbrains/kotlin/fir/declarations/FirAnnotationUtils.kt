@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.unwrapOr
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -236,14 +237,10 @@ fun FirExpression.extractEnumValueArgumentInfo(): EnumValueArgumentInfo? {
     }
 }
 
-@PrivateForInline
-val FirEvaluatorResult.result: FirElement?
-    get() = (this as? FirEvaluatorResult.Evaluated)?.result
-
 @OptIn(PrivateForInline::class, PrivateConstantEvaluatorAPI::class)
 @Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
 inline fun <reified T : FirElement> FirExpression.evaluateAs(session: FirSession): @kotlin.internal.NoInfer T? {
-    return FirExpressionEvaluator.evaluateExpression(this, session)?.result as? T
+    return FirExpressionEvaluator.evaluateExpression(this, session)?.unwrapOr<T> {}
 }
 
 // --------------------------- other utilities ---------------------------

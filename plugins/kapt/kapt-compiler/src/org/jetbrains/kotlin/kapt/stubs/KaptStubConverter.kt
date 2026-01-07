@@ -946,7 +946,7 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
         // KT-70839 K2 kapt: consider using IR evaluator instead of FIR for non-const property initializers
         @OptIn(PrivateConstantEvaluatorAPI::class, PrivateForInline::class)
         val result = try {
-            FirExpressionEvaluator.evaluateExpression(expression, session)?.result
+            expression.evaluateAs<FirElement>(session)
         } catch (_: Exception) {
             null
         } ?: return null
