@@ -730,6 +730,11 @@ extension ExportedKotlinPackages.namespace.deeper {
                 return namespace_deeper_Foo_my_variable_set__TypesOfArguments__Swift_Int64__(self.__externalRCRef(), newValue)
             }
         }
+        public var private_set: Swift.Int32 {
+            get {
+                return namespace_deeper_Foo_private_set_get(self.__externalRCRef())
+            }
+        }
         public init() {
             if Self.self != ExportedKotlinPackages.namespace.deeper.Foo.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.namespace.deeper.Foo ") }
             let __kt = namespace_deeper_Foo_init_allocate()

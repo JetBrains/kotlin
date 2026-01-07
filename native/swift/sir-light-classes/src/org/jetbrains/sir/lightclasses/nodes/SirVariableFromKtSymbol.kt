@@ -72,13 +72,13 @@ internal abstract class SirAbstractVariableFromKtSymbol(
         }
     }
     override val setter: SirSetter? by lazy {
-        ((ktSymbol as? KaPropertySymbol)?.let {
-            it.setter?.let {
-                SirSetterFromKtSymbol(it, sirSession)
+        (ktSymbol as? KaPropertySymbol)
+            ?.takeIf { it.setter?.visibility != KaSymbolVisibility.PRIVATE }
+            ?.let {
+                it.setter?.let { SirSetterFromKtSymbol(it, sirSession) }
+                    ?: if (!it.isVal) DefaultSetter(it, sirSession) else null
             }
-        } ?: ktSymbol.isVal.ifFalse { DefaultSetter(ktSymbol, sirSession) })?.also {
-            it.parent = this@SirAbstractVariableFromKtSymbol
-        }
+            ?.apply { parent = this@SirAbstractVariableFromKtSymbol }
     }
     override val documentation: String? by lazy {
         ktSymbol.documentation()

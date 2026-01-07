@@ -847,6 +847,13 @@ public fun namespace_deeper_Foo_my_variable_set__TypesOfArguments__Swift_Int64__
     __self.my_variable = __newValue
 }
 
+@ExportedBridge("namespace_deeper_Foo_private_set_get")
+public fun namespace_deeper_Foo_private_set_get(self: kotlin.native.internal.NativePtr): Int {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as namespace.deeper.Foo
+    val _result = __self.private_set
+    return _result
+}
+
 @ExportedBridge("namespace_deeper_NAMESPACED_CLASS_init_allocate")
 public fun namespace_deeper_NAMESPACED_CLASS_init_allocate(): kotlin.native.internal.NativePtr {
     val _result = kotlin.native.internal.createUninitializedInstance<namespace.deeper.NAMESPACED_CLASS>()

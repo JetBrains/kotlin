@@ -28,6 +28,8 @@ class Foo {
 
     var my_variable: Long = 5
 
+    var private_set: Int = 0
+        private set
 }
 
 

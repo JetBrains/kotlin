@@ -243,6 +243,8 @@ int64_t namespace_deeper_Foo_my_variable_get(void * self);
 
 void namespace_deeper_Foo_my_variable_set__TypesOfArguments__Swift_Int64__(void * self, int64_t newValue);
 
+int32_t namespace_deeper_Foo_private_set_get(void * self);
+
 void * namespace_deeper_NAMESPACED_CLASS_init_allocate();
 
 void namespace_deeper_NAMESPACED_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
