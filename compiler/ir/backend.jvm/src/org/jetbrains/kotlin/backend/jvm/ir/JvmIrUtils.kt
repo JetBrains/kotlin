@@ -271,6 +271,8 @@ private fun IrDeclaration.isFunctionWhichCanBeExposed(isPropagatedOrImplicit: Bo
     if (this !is IrFunction || origin == IrDeclarationOrigin.GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER) return false
     // No sense in exposing suspend functions - they cannot be called from Java in normal way anyway
     if (isSuspend) return false
+    // Ditto for suspend lambda methods
+    if (parentClassOrNull?.origin == JvmLoweredDeclarationOrigin.SUSPEND_LAMBDA) return false
     // Cannot expose open or abstract - @JvmName problem
     if (isOverridable) return false
     if (parameters.any { it.type.isInlineClassType() }) return true

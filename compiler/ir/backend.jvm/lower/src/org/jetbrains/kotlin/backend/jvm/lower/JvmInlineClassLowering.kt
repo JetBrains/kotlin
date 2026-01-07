@@ -54,6 +54,8 @@ import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
     CollectionStubMethodLowering::class,
     // SAM wrappers may require mangling for fun interfaces with value class parameters
     JvmSingleAbstractMethodLowering::class,
+    // When we check whether to expose a function, we expect already lowered suspend lambdas
+    SuspendLambdaLowering::class,
 )
 internal class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClassAbstractLowering(context) {
     override val replacements: MemoizedValueClassAbstractReplacements

@@ -34182,6 +34182,12 @@ public class LLBlackBoxTestGenerated extends AbstractLLBlackBoxTest {
         }
 
         @Test
+        @TestMetadata("suspendLambdaInConstructor.kt")
+        public void testSuspendLambdaInConstructor() {
+          runTest("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/directive/suspendLambdaInConstructor.kt");
+        }
+
+        @Test
         @TestMetadata("synthetic.kt")
         public void testSynthetic() {
           runTest("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/directive/synthetic.kt");
