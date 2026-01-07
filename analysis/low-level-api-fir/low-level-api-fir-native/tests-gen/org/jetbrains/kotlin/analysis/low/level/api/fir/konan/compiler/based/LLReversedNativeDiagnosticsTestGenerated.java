@@ -51,6 +51,12 @@ public class LLReversedNativeDiagnosticsTestGenerated extends AbstractLLReversed
   }
 
   @Test
+  @TestMetadata("errorProneAtomicArrayArguments.kt")
+  public void testErrorProneAtomicArrayArguments() {
+    runTest("compiler/testData/diagnostics/nativeTests/errorProneAtomicArrayArguments.kt");
+  }
+
+  @Test
   @TestMetadata("errorProneAtomicArrayNullable.kt")
   public void testErrorProneAtomicArrayNullable() {
     runTest("compiler/testData/diagnostics/nativeTests/errorProneAtomicArrayNullable.kt");
@@ -60,6 +66,12 @@ public class LLReversedNativeDiagnosticsTestGenerated extends AbstractLLReversed
   @TestMetadata("errorProneAtomicArrayPrimitives.kt")
   public void testErrorProneAtomicArrayPrimitives() {
     runTest("compiler/testData/diagnostics/nativeTests/errorProneAtomicArrayPrimitives.kt");
+  }
+
+  @Test
+  @TestMetadata("errorProneAtomicReferenceArguments.kt")
+  public void testErrorProneAtomicReferenceArguments() {
+    runTest("compiler/testData/diagnostics/nativeTests/errorProneAtomicReferenceArguments.kt");
   }
 
   @Test

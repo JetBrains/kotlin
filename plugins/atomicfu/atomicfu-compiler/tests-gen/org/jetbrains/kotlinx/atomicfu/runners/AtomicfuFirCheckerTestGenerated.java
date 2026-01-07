@@ -31,8 +31,20 @@ public class AtomicfuFirCheckerTestGenerated extends AbstractAtomicfuFirCheckerT
   }
 
   @Test
+  @TestMetadata("errorProneAtomicArrayArguments.kt")
+  public void testErrorProneAtomicArrayArguments() {
+    runTest("plugins/atomicfu/atomicfu-compiler/testData/diagnostics/errorProneAtomicArrayArguments.kt");
+  }
+
+  @Test
   @TestMetadata("ErrorProneAtomicRefPrimitives.kt")
   public void testErrorProneAtomicRefPrimitives() {
     runTest("plugins/atomicfu/atomicfu-compiler/testData/diagnostics/ErrorProneAtomicRefPrimitives.kt");
+  }
+
+  @Test
+  @TestMetadata("errorProneAtomicReferenceArguments.kt")
+  public void testErrorProneAtomicReferenceArguments() {
+    runTest("plugins/atomicfu/atomicfu-compiler/testData/diagnostics/errorProneAtomicReferenceArguments.kt");
   }
 }

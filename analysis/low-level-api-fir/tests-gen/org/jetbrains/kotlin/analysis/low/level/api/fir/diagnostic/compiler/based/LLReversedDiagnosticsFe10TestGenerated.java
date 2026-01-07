@@ -597,6 +597,12 @@ public class LLReversedDiagnosticsFe10TestGenerated extends AbstractLLReversedDi
     }
 
     @Test
+    @TestMetadata("errorProneAtomicArrayArguments.kt")
+    public void testErrorProneAtomicArrayArguments() {
+      runTest("compiler/testData/diagnostics/tests/errorProneAtomicArrayArguments.kt");
+    }
+
+    @Test
     @TestMetadata("errorProneAtomicArrayPrimitives.kt")
     public void testErrorProneAtomicArrayPrimitives() {
       runTest("compiler/testData/diagnostics/tests/errorProneAtomicArrayPrimitives.kt");
@@ -612,6 +618,12 @@ public class LLReversedDiagnosticsFe10TestGenerated extends AbstractLLReversedDi
     @TestMetadata("errorProneAtomicArraySuggestions.kt")
     public void testErrorProneAtomicArraySuggestions() {
       runTest("compiler/testData/diagnostics/tests/errorProneAtomicArraySuggestions.kt");
+    }
+
+    @Test
+    @TestMetadata("errorProneAtomicReferenceArguments.kt")
+    public void testErrorProneAtomicReferenceArguments() {
+      runTest("compiler/testData/diagnostics/tests/errorProneAtomicReferenceArguments.kt");
     }
 
     @Test
@@ -30289,6 +30301,18 @@ public class LLReversedDiagnosticsFe10TestGenerated extends AbstractLLReversedDi
       @TestMetadata("duplicateSupertype.kt")
       public void testDuplicateSupertype() {
         runTest("compiler/testData/diagnostics/tests/multiplatform/duplicateSupertype.kt");
+      }
+
+      @Test
+      @TestMetadata("errorProneAtomicArrayArgumentsInKMP.kt")
+      public void testErrorProneAtomicArrayArgumentsInKMP() {
+        runTest("compiler/testData/diagnostics/tests/multiplatform/errorProneAtomicArrayArgumentsInKMP.kt");
+      }
+
+      @Test
+      @TestMetadata("errorProneAtomicReferenceArgumentsInKMP.kt")
+      public void testErrorProneAtomicReferenceArgumentsInKMP() {
+        runTest("compiler/testData/diagnostics/tests/multiplatform/errorProneAtomicReferenceArgumentsInKMP.kt");
       }
 
       @Test
