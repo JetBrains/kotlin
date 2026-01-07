@@ -391,6 +391,18 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         popSourceInfo();
     }
 
+    @Override
+    public void visitSpread(@NotNull JsSpread x) {
+        pushSourceInfo(x.getSource());
+        printCommentsBeforeNode(x);
+
+        ellipsis();
+        printPair(x, x.getExpression());
+
+        printCommentsAfterNode(x);
+        popSourceInfo();
+    }
+
     private void continueOrBreakLabel(JsContinue x) {
         JsNameRef label = x.getLabel();
         if (label != null) {

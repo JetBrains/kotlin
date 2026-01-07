@@ -500,12 +500,14 @@ internal class JsAstMapperVisitor(
     }
 
     override fun visitArrayElement(ctx: JavaScriptParser.ArrayElementContext): JsExpression {
-        check(ctx.Ellipsis() == null) { "Spread operator is not supported yet" }
-
         if (ctx.singleExpression() == null)
             return makeRefNode("undefined").applyLocation(ctx)
 
-        return visitNode<JsExpression>(ctx.singleExpression())
+        val expression = visitNode<JsExpression>(ctx.singleExpression())
+        ctx.Ellipsis()?.let {
+            return JsSpread(expression).applyLocation(it)
+        }
+        return expression
     }
 
     override fun visitPropertyExpressionAssignment(ctx: JavaScriptParser.PropertyExpressionAssignmentContext): JsPropertyInitializer {

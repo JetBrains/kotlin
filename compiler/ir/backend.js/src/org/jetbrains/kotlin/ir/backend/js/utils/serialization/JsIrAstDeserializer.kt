@@ -443,6 +443,9 @@ private class JsIrAstDeserializer(private val source: ByteArray) {
                         YIELD_STAR -> {
                             JsYieldStar(ifTrue { readExpression() })
                         }
+                        SPREAD -> {
+                            JsSpread(readExpression())
+                        }
                         else -> error("Unknown expression id: $id")
                     }
                 }

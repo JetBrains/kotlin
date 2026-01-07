@@ -78,6 +78,7 @@ object ExpressionIds {
     const val TEMPLATE_STRING_LITERAL = 27
     const val TEMPLATE_ELEMENT_STRING = 28
     const val TEMPLATE_ELEMENT_INTERPOLATION = 29
+    const val SPREAD = 30
 }
 
 object PropertyInitializerKinds {

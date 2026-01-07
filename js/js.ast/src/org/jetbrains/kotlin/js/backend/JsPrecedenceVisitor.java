@@ -180,6 +180,11 @@ class JsPrecedenceVisitor extends JsVisitor {
     }
 
     @Override
+    public void visitSpread(@NotNull JsSpread x) {
+        answer = 17; // primary
+    }
+
+    @Override
     protected void visitElement(@NotNull JsNode node) {
         throw new RuntimeException("Only expressions have precedence.");
     }

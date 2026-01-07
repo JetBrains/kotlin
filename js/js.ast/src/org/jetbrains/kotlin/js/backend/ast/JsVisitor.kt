@@ -207,6 +207,9 @@ abstract class JsVisitor {
     open fun visitImport(import: JsImport): Unit =
         visitElement(import)
 
+    open fun visitSpread(spread: JsSpread): Unit =
+        visitElement(spread)
+
     protected open fun visitElement(node: JsNode) {
     }
 }

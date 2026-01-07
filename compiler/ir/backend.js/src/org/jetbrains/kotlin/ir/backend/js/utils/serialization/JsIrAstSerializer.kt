@@ -583,6 +583,11 @@ private class JsIrAstSerializer {
                 writeByte(ExpressionIds.YIELD_STAR)
                 ifNotNull(x.expression) { writeExpression(it) }
             }
+
+            override fun visitSpread(spread: JsSpread) {
+                writeByte(ExpressionIds.SPREAD)
+                writeExpression(spread.expression)
+            }
         }
 
         withComments(expression) {
