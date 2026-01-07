@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -92,7 +92,7 @@ abstract class AbstractSymbolLightClassesTestBase(
         val actual = computeActual().cleanup()
         compareResults(testServices, actual)
         removeIgnoreDirectives(module)
-        removeDuplicatedFirJava(testServices)
+        removeDuplicatedSuffixedOutput(testServices)
     }
 
     private fun String.cleanup(): String {
@@ -179,28 +179,31 @@ abstract class AbstractSymbolLightClassesTestBase(
         }?.toLightClass()
     }
 
-    private fun removeDuplicatedFirJava(testServices: TestServices) {
-        val java = javaPath()
-        val firJava = currentResultPath()
-        if (!firJava.exists()) return
-        val identicalCheckerHelper = IdenticalCheckerHelper(testServices)
-        if (identicalCheckerHelper.contentsAreEquals(java.toFile(), firJava.toFile(), trimLines = true)) {
-            identicalCheckerHelper.deleteFirFileToCompareAndAssertIfExists(java.toFile())
+    private fun removeDuplicatedSuffixedOutput(testServices: TestServices) {
+        if (currentExtension == EXTENSIONS.JAVA) return
+
+        val currentFilePath = currentResultPath().toFile()
+        if (!currentFilePath.exists()) return
+
+        val goldenOutputFile = javaPath().toFile()
+        val identicalCheckerHelper = IdenticalCheckerHelper(
+            testServices = testServices,
+            goldenOutputFile = goldenOutputFile,
+            customOutputFile = currentFilePath,
+        )
+
+        if (identicalCheckerHelper.contentsAreEquals(goldenOutputFile, currentFilePath, trimLines = true)) {
+            identicalCheckerHelper.deleteFirFileToCompareAndAssertIfExists(goldenOutputFile)
         }
     }
 
-    private inner class IdenticalCheckerHelper(testServices: TestServices) : FirIdenticalCheckerHelper(testServices) {
-        override fun getClassicFileToCompare(testDataFile: File): File {
-            return if (testDataFile.name.endsWith(EXTENSIONS.FIR_JAVA))
-                testDataFile.resolveSibling(testDataFile.name.removeSuffix(currentExtension) + EXTENSIONS.JAVA)
-            else testDataFile
-        }
-
-        override fun getFirFileToCompare(testDataFile: File): File {
-            return if (testDataFile.name.endsWith(EXTENSIONS.FIR_JAVA))
-                testDataFile
-            else testDataFile.resolveSibling(testDataFile.name.removeSuffix(EXTENSIONS.JAVA) + currentExtension)
-        }
+    private class IdenticalCheckerHelper(
+        testServices: TestServices,
+        val goldenOutputFile: File,
+        val customOutputFile: File,
+    ) : FirIdenticalCheckerHelper(testServices) {
+        override fun getClassicFileToCompare(testDataFile: File): File = goldenOutputFile
+        override fun getFirFileToCompare(testDataFile: File): File = customOutputFile
     }
 
     private fun javaPath() = getTestOutputFile(EXTENSIONS.JAVA)
@@ -211,7 +214,6 @@ abstract class AbstractSymbolLightClassesTestBase(
 
     object EXTENSIONS {
         const val JAVA = ".java"
-        const val FIR_JAVA = ".fir.java"
         const val KMP_JAVA = ".kmp.java"
         const val LIB_JAVA = ".lib.java"
         const val KMP_LIB_JAVA = ".kmp.lib.java"

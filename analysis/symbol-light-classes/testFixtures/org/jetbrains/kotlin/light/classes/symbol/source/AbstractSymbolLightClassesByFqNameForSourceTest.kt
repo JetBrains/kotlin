@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -12,19 +12,19 @@ import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 
 abstract class AbstractSymbolLightClassesByFqNameForSourceTest : AbstractSymbolLightClassesByFqNameTest(
-    SymbolLightClassSourceTestConfigurator(defaultTargetPlatform = JvmPlatforms.defaultJvmPlatform),
-    EXTENSIONS.FIR_JAVA,
+    configurator = SymbolLightClassSourceTestConfigurator(defaultTargetPlatform = JvmPlatforms.defaultJvmPlatform),
+    currentExtension = EXTENSIONS.JAVA,
     isTestAgainstCompiledCode = false,
 )
 
 abstract class AbstractScriptSymbolLightClassesByFqNameForSourceTest : AbstractSymbolLightClassesByFqNameTest(
-    SymbolLightClassScriptTestConfigurator,
-    EXTENSIONS.FIR_JAVA,
+    configurator = SymbolLightClassScriptTestConfigurator,
+    currentExtension = EXTENSIONS.JAVA,
     isTestAgainstCompiledCode = false,
 )
 
 abstract class AbstractJsSymbolLightClassesByFqNameForSourceTest : AbstractSymbolLightClassesByFqNameTest(
-    SymbolLightClassSourceTestConfigurator(defaultTargetPlatform = JsPlatforms.defaultJsPlatform),
-    EXTENSIONS.KMP_JAVA,
+    configurator = SymbolLightClassSourceTestConfigurator(defaultTargetPlatform = JsPlatforms.defaultJsPlatform),
+    currentExtension = EXTENSIONS.KMP_JAVA,
     isTestAgainstCompiledCode = false,
 )
