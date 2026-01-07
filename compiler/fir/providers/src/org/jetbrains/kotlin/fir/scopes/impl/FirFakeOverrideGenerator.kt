@@ -377,11 +377,15 @@ object FirFakeOverrideGenerator {
         newTypeParameters: List<FirTypeParameter>? = null,
         isExpect: Boolean = baseProperty.isExpect,
         callableCopySubstitutionForTypeUpdater: DeferredCallableCopyReturnType? = null,
+        explicitBackingFieldNewReturnType: ConeKotlinType? = null,
+        explicitBackingFieldCopySubstitutionForTypeUpdater: DeferredCallableCopyReturnType? = null,
     ): FirPropertySymbol {
         createCopyForFirProperty(
             symbolForSubstitutionOverride, baseProperty, derivedClassLookupTag, session, origin,
             isExpect, newDispatchReceiverType, newTypeParameters, newReceiverType, newContextParameterTypes, newReturnType,
-            deferredReturnTypeCalculation = callableCopySubstitutionForTypeUpdater
+            deferredReturnTypeCalculation = callableCopySubstitutionForTypeUpdater,
+            explicitBackingFieldNewReturnType = explicitBackingFieldNewReturnType,
+            explicitBackingFieldCopySubstitutionForTypeUpdater = explicitBackingFieldCopySubstitutionForTypeUpdater,
         ).apply {
             originalForSubstitutionOverrideAttr = baseProperty
         }
@@ -413,6 +417,8 @@ object FirFakeOverrideGenerator {
         newSetterVisibility: Visibility? = null,
         deferredReturnTypeCalculation: DeferredCallableCopyReturnType? = null,
         newSource: KtSourceElement? = derivedClassLookupTag?.toSymbol(session)?.source,
+        explicitBackingFieldNewReturnType: ConeKotlinType? = null,
+        explicitBackingFieldCopySubstitutionForTypeUpdater: DeferredCallableCopyReturnType? = null,
     ): FirProperty = buildProperty {
         source = newSource ?: baseProperty.source
         moduleData = session.nullableModuleData ?: baseProperty.moduleData
@@ -460,6 +466,28 @@ object FirFakeOverrideGenerator {
                 newSource = newSource ?: baseProperty.setter?.source,
                 newSetterVisibility ?: setter.visibility,
             )
+        }
+
+        backingField = baseProperty.getExplicitBackingField()?.let { baseField ->
+            buildBackingField {
+                source = baseField.source
+                propertySymbol = newSymbol
+                symbol = FirBackingFieldSymbol()
+                moduleData = baseField.moduleData
+                this.origin = origin
+                status = baseField.status.copy()
+                resolvePhase = origin.resolvePhaseForCopy
+                name = baseField.name
+                annotations += baseField.annotations
+                attributes = baseProperty.attributes.copy()
+                isVar = baseField.isVar
+                isVal = baseField.isVal
+
+                configureAnnotationsAndSignature(
+                    baseField, newReceiverType, newContextParameterTypes, explicitBackingFieldNewReturnType,
+                    explicitBackingFieldCopySubstitutionForTypeUpdater, updateReceiver = false,
+                )
+            }
         }
     }.apply {
         containingClassForStaticMemberAttr = derivedClassLookupTag.takeIf { shouldOverrideSetContainingClass(baseProperty) }
