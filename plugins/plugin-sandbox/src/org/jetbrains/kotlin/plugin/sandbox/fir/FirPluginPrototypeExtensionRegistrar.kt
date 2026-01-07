@@ -41,6 +41,7 @@ class FirPluginPrototypeExtensionRegistrar : FirExtensionRegistrar() {
         +::TopLevelPrivateSuspendFunctionGenerator
         +::ExternalClassGenerator
         +::AdditionalMembersGenerator
+        +::MemberFunctionWithAnnotatedParametersGenerator
         +::CompanionGenerator
         +::MembersOfSerializerGenerator
         +::DataFrameLikeTypeMembersGenerator
