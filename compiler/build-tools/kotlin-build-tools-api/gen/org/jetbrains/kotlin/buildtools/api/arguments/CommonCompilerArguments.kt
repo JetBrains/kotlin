@@ -558,6 +558,16 @@ public interface CommonCompilerArguments : CommonToolArguments {
         CommonCompilerArgument("X_PHASES_TO_VALIDATE_BEFORE", KotlinReleaseVersion(1, 3, 40))
 
     /**
+     * Print compiler configuration.
+     *
+     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     */
+    @JvmField
+    @ExperimentalCompilerArgument
+    public val X_PRINT_CONFIGURATION: CommonCompilerArgument<Boolean> =
+        CommonCompilerArgument("X_PRINT_CONFIGURATION", KotlinReleaseVersion(2, 4, 0))
+
+    /**
      * Profile backend phases.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.

@@ -253,6 +253,7 @@ public abstract interface class org/jetbrains/kotlin/buildtools/api/arguments/Co
 	public static final field X_PHASES_TO_VALIDATE Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonCompilerArguments$CommonCompilerArgument;
 	public static final field X_PHASES_TO_VALIDATE_AFTER Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonCompilerArguments$CommonCompilerArgument;
 	public static final field X_PHASES_TO_VALIDATE_BEFORE Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonCompilerArguments$CommonCompilerArgument;
+	public static final field X_PRINT_CONFIGURATION Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonCompilerArguments$CommonCompilerArgument;
 	public static final field X_PROFILE_PHASES Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonCompilerArguments$CommonCompilerArgument;
 	public static final field X_RENDER_INTERNAL_DIAGNOSTIC_NAMES Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonCompilerArguments$CommonCompilerArgument;
 	public static final field X_REPORT_ALL_WARNINGS Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonCompilerArguments$CommonCompilerArgument;
