@@ -165,7 +165,6 @@ internal class JvmCompilationOperationImpl private constructor(
         // TODO: KT-79976 automagically compute the value, related to BasicCompilerServicesWithResultsFacadeServer
         val reportCategories = buildList {
             add(ReportCategory.COMPILER_MESSAGE.code)
-            add(ReportCategory.IC_MESSAGE.code)
             if (get(LOOKUP_TRACKER) != null) {
                 add(ReportCategory.COMPILER_LOOKUP.code)
             }
