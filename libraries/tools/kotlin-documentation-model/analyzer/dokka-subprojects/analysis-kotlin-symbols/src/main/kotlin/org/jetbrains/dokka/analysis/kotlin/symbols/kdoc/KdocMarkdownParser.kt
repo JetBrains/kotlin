@@ -63,7 +63,8 @@ internal fun parseFromKDocTag(
                     }
                     KDocKnownTag.PARAM -> Param(
                         parseStringToDocNode(tag.getContent(), externalDRIProvider),
-                        tag.getSubjectName().orEmpty()
+                        tag.getSubjectName().orEmpty(),
+                        pointedLink(tag),
                     )
                     KDocKnownTag.RECEIVER -> Receiver(parseStringToDocNode(tag.getContent(), externalDRIProvider))
                     KDocKnownTag.RETURN -> Return(parseStringToDocNode(tag.getContent(), externalDRIProvider))
