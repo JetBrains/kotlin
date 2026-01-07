@@ -483,7 +483,15 @@ internal class JsAstMapperVisitor(
 
     override fun visitArrayLiteral(ctx: JavaScriptParser.ArrayLiteralContext): JsArrayLiteral {
         return JsArrayLiteral().apply {
-            expressions.addAll(visitAll<JsExpression>(ctx.elementList().arrayElement()))
+            var elements = ctx.elementList()?.arrayElement() ?: emptyList()
+            // If an array contains a trailing comma (like [1,]) it doesn't introduce an array hole,
+            // but parser treats it as a hole anyway.
+            // Since it's quite tricky to tweak the grammar and keep it not too complex,
+            // such a trailing hole removal post-processing is needed here.
+            if (elements.size > 1 && elements.lastOrNull()?.text == "")
+                elements = elements.dropLast(1)
+
+            expressions.addAll(visitAll<JsExpression>(elements))
         }.applyLocation(ctx)
     }
 
@@ -493,6 +501,9 @@ internal class JsAstMapperVisitor(
 
     override fun visitArrayElement(ctx: JavaScriptParser.ArrayElementContext): JsExpression {
         check(ctx.Ellipsis() == null) { "Spread operator is not supported yet" }
+
+        if (ctx.singleExpression() == null)
+            return makeRefNode("undefined").applyLocation(ctx)
 
         return visitNode<JsExpression>(ctx.singleExpression())
     }

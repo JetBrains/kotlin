@@ -339,16 +339,17 @@ sourceElements
     ;
 
 arrayLiteral
-    : ('[' elementList ']')
+    : '[' ']'
+    | '[' elementList ']'
     ;
 
-// JavaScript supports arrays like [,,1,2,,].
 elementList
-    : ','* arrayElement? (','+ arrayElement) * ','* // Yes, everything is optional
+    : arrayElement (',' arrayElement)*
     ;
 
 arrayElement
-    : Ellipsis? singleExpression
+    : Ellipsis singleExpression
+    | singleExpression? // Nullable because of the array holes we need to preserve during parsing
     ;
 
 propertyAssignment
