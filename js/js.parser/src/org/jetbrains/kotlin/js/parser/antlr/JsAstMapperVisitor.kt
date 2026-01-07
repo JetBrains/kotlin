@@ -524,8 +524,29 @@ internal class JsAstMapperVisitor(
         ).applyLocation(ctx)
     }
 
-    override fun visitFunctionProperty(ctx: JavaScriptParser.FunctionPropertyContext): JsNode? {
-        reportError("Function properties are not supported yet", ctx)
+    override fun visitFunctionProperty(ctx: JavaScriptParser.FunctionPropertyContext): JsPropertyInitializer {
+        check(ctx.Async() == null) { "Async concise methods are not supported yet" }
+
+        val isGenerator = ctx.Multiply() != null
+        val paramList = ctx.formalParameterList()
+        val restParam = paramList?.restParameterArg()
+        val formalParams = paramList?.formalParameterArg() ?: emptyList()
+
+        return JsPropertyInitializer.KeyValue(
+            visitNode<JsExpression>(ctx.propertyName()),
+            scopeContext.enterFunction().apply {
+                name = null
+                if (isGenerator) modifiers.add(Modifier.GENERATOR)
+                formalParams.mapTo(parameters) {
+                    visitNode<JsParameter>(it).applyLocation(it)
+                }
+                restParam?.let {
+                    parameters.add(visitNode<JsParameter>(it).applyLocation(it))
+                }
+                body = visitNode<JsBlock>(ctx.functionBody())
+                scopeContext.exitFunction()
+            }.applyLocation(ctx.OpenParen())
+        ).applyLocation(ctx)
     }
 
     override fun visitPropertyGetter(ctx: JavaScriptParser.PropertyGetterContext): JsNode? {

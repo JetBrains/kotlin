@@ -57,5 +57,20 @@ fun box(): String {
     if (g.b != b) return "fail: g.b == ${g.b}"
     if (g.c != c) return "fail: g.c == ${g.c}"
 
+    val h = js("{ sayHi(name) { return 'Hello, ' + name } }")
+    if (!isOrdinaryObject(h)) return "fail: h is not an object"
+    if (Object.keys(h).size != 1) return "fail: h should have one property"
+    val greeting = h.sayHi("World")
+    if (greeting != "Hello, World") return "fail: h.sayHi('World') == '$greeting'"
+
+    val i = js("{ *oneTwo() { yield 1; yield 2; } }")
+    if (!isOrdinaryObject(i)) return "fail: i is not an object"
+    if (Object.keys(i).size != 1) return "fail: i siould iave one property"
+    val generator = i.oneTwo()
+    val one = generator.next().value
+    val two = generator.next().value
+    if (one != 1) return "fail: i.oneTwo().first == '$one'"
+    if (two != 2) return "fail: i.oneTwo().second == '$two'"
+
     return "OK"
 }
