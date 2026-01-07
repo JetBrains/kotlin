@@ -6,6 +6,7 @@ package org.jetbrains.dokka.model.doc
 
 import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.model.WithChildren
+import kotlin.Deprecated
 
 public sealed class TagWrapper : WithChildren<DocTag> {
     public abstract val root: DocTag
@@ -23,7 +24,13 @@ public data class Author(override val root: DocTag) : TagWrapper()
 public data class Version(override val root: DocTag) : TagWrapper()
 public data class Since(override val root: DocTag) : TagWrapper()
 public data class See(override val root: DocTag, override val name: String, val address: DRI?) : NamedTagWrapper()
-public data class Param(override val root: DocTag, override val name: String) : NamedTagWrapper()
+public data class Param(override val root: DocTag, override val name: String, val address: DRI? = null) : NamedTagWrapper() {
+    @Deprecated("Binary compatibility", level = DeprecationLevel.HIDDEN)
+    public constructor(root: DocTag, name: String) : this(root, name, null)
+
+    @Deprecated("Binary compatibility", level = DeprecationLevel.HIDDEN)
+    public fun copy(root: DocTag, name: String = this.name): Param = Param(root, name, address = null)
+}
 public data class Return(override val root: DocTag) : TagWrapper()
 public data class Receiver(override val root: DocTag) : TagWrapper()
 public data class Constructor(override val root: DocTag) : TagWrapper()

@@ -5,6 +5,8 @@
 package model
 
 import org.jetbrains.dokka.analysis.kotlin.markdown.MARKDOWN_ELEMENT_FILE_NAME
+import org.jetbrains.dokka.links.DRI
+import org.jetbrains.dokka.links.PointingToGenericParameters
 import org.jetbrains.dokka.model.*
 import org.jetbrains.dokka.model.doc.*
 import org.jetbrains.dokka.model.doc.P
@@ -36,7 +38,8 @@ class ConstructorsTest : AbstractModelTest("/src/main/kotlin/constructors/Test.k
                 params = emptyMap(),
                 name = MARKDOWN_ELEMENT_FILE_NAME
             ),
-            name = "T"
+            name = "T",
+            address = DRI("constructors", "Foo",  target = PointingToGenericParameters(0))
         )
         inlineModelTest(
             """
