@@ -18,7 +18,6 @@ import kotlin.reflect.typeOf
 
 sealed class Key {
     abstract val name: String
-    abstract val description: String
     abstract val importsToAdd: List<String>
     abstract val accessorName: String
     abstract val comment: String?
@@ -34,7 +33,6 @@ sealed class Key {
 
 class SimpleKey(
     override val name: String,
-    override val description: String,
     val type: KType,
     val defaultValue: String?,
     override val importsToAdd: List<String>,
@@ -50,14 +48,10 @@ class SimpleKey(
         get() = listOf(type)
 }
 
-sealed class CollectionKey : Key() {
-    val mutableTypeString: String
-        get() = "Mutable$typeString"
-}
+sealed class CollectionKey : Key()
 
 class ListKey(
     override val name: String,
-    override val description: String,
     val elementType: KType,
     override val importsToAdd: List<String>,
     override val accessorName: String,
@@ -73,7 +67,6 @@ class ListKey(
 
 class MapKey(
     override val name: String,
-    override val description: String,
     val keyType: KType,
     val valueType: KType,
     override val importsToAdd: List<String>,
@@ -97,8 +90,6 @@ class DeprecatedKey(
     val initializer: String,
     override val optIns: List<Annotation>,
 ) : Key() {
-    override val description: String
-        get() = shouldNotBeCalled()
     override val accessorName: String
         get() = shouldNotBeCalled()
     override val typeString: String
@@ -118,11 +109,10 @@ abstract class KeysContainer(val packageName: String, val className: String) {
 
     @OptIn(PrivateForInline::class)
     inline fun <reified T : Any> key(
-        description: String,
+        comment: String? = null,
         defaultValue: String? = null,
         importsToAdd: List<String> = emptyList(),
         accessorName: String? = null,
-        comment: String? = null,
         throwOnNull: Boolean = true,
         optIns: List<Annotation> = emptyList(),
     ): PropertyDelegateProvider<Any?, ReadOnlyProperty<Any?, Key>> {
@@ -132,7 +122,6 @@ abstract class KeysContainer(val packageName: String, val className: String) {
             val key = when (T::class.qualifiedName) {
                 "kotlin.collections.List" -> ListKey(
                     name,
-                    description,
                     elementType = type.arguments[0].type!!,
                     importsToAdd,
                     accessorName ?: name.toCamelCase(),
@@ -142,7 +131,6 @@ abstract class KeysContainer(val packageName: String, val className: String) {
                 "kotlin.collections.Map" -> {
                     MapKey(
                         name,
-                        description,
                         keyType = type.arguments[0].type!!,
                         valueType = type.arguments[1].type!!,
                         importsToAdd,
@@ -153,7 +141,6 @@ abstract class KeysContainer(val packageName: String, val className: String) {
                 }
                 else -> SimpleKey(
                     name,
-                    description,
                     type,
                     defaultValue,
                     importsToAdd,

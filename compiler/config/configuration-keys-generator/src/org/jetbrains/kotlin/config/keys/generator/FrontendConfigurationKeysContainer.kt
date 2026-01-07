@@ -12,13 +12,11 @@ import org.jetbrains.kotlin.diagnostics.KtRegisteredDiagnosticFactoriesStorage
 
 @Suppress("unused")
 object FrontendConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.cli", "FrontendConfigurationKeys") {
-    val DIAGNOSTIC_FACTORIES_STORAGE by key<KtRegisteredDiagnosticFactoriesStorage>(
-        description = "Container of all registered diagnostic factories"
-    )
+    val DIAGNOSTIC_FACTORIES_STORAGE by key<KtRegisteredDiagnosticFactoriesStorage>("Container of all registered diagnostic factories.")
 
     @OptIn(ExperimentalCompilerApi::class)
     val EXTENSIONS_STORAGE by key<CompilerPluginRegistrar.ExtensionStorage>(
-        description = "Storage of registered compiler plugins",
+        "Storage of registered compiler plugins.",
         optIns = listOf(ExperimentalCompilerApi())
     )
 }
