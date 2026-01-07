@@ -219,9 +219,9 @@ FILE: [ResolvedTo(IMPORTS)] implicitSubstitutionOverridePropertyScript.kts
 
 
 ANNOTATION_ARGUMENTS:
-TARGET: @PROPERTY:R|second/Anno|[Types](position = <strcat>(String(property ), R|second/constant|)) public final override [ResolvedTo(ANNOTATION_ARGUMENTS)] [SubstitutedOverrideOriginalKey=second/AbstractClass.resolveMe] var resolveMe: R|kotlin/String?|
-    @PROPERTY_GETTER:R|second/Anno|[Types](position = <strcat>(String(get ), R|second/constant|)) public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=SubClass] get(): R|kotlin/String?|
-    @PROPERTY_SETTER:R|second/Anno|[Types](position = <strcat>(String(set ), R|second/constant|)) public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=SubClass] set([ResolvedTo(ANNOTATION_ARGUMENTS)] value: R|kotlin/String?|): R|kotlin/Unit|
+TARGET: @PROPERTY:R|second/Anno|[Types](position = String(property str)) public final override [ResolvedTo(ANNOTATION_ARGUMENTS)] [SubstitutedOverrideOriginalKey=second/AbstractClass.resolveMe] var resolveMe: R|kotlin/String?|
+    @PROPERTY_GETTER:R|second/Anno|[Types](position = String(get str)) public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=SubClass] get(): R|kotlin/String?|
+    @PROPERTY_SETTER:R|second/Anno|[Types](position = String(set str)) public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=SubClass] set([ResolvedTo(ANNOTATION_ARGUMENTS)] value: R|kotlin/String?|): R|kotlin/Unit|
 
 FILE: [ResolvedTo(IMPORTS)] implicitSubstitutionOverridePropertyScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-implicitSubstitutionOverridePropertyScript.kts>
@@ -255,17 +255,17 @@ FILE: [ResolvedTo(IMPORTS)] implicitSubstitutionOverridePropertyScript.kts
 
             public final [ResolvedTo(CONTRACTS)] fun explicitType(): R|T?| { LAZY_BLOCK }
 
-            @PROPERTY:R|second/Anno|[Types](position = <strcat>(String(property ), R|second/constant|)) field:@FIELD:R|second/Anno|[Types](position = <strcat>(String(field ), R|second/constant|)) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] var resolveMe: R|T?| = this@R|second/AbstractClass|.R|second/AbstractClass.explicitType|()
-                @PROPERTY_GETTER:R|second/Anno|[Types](position = <strcat>(String(get ), R|second/constant|)) public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=AbstractClass] get(): R|T?|
-                @PROPERTY_SETTER:R|second/Anno|[Types](position = <strcat>(String(set ), R|second/constant|)) public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=AbstractClass] set([ResolvedTo(ANNOTATION_ARGUMENTS)] @SETTER_PARAMETER:R|second/Anno|[Types](position = <strcat>(String(set ), R|second/constant|)) value: R|T?|): R|kotlin/Unit|
+            @PROPERTY:R|second/Anno|[Types](position = String(property str)) field:@FIELD:R|second/Anno|[Types](position = String(field str)) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] var resolveMe: R|T?| = this@R|second/AbstractClass|.R|second/AbstractClass.explicitType|()
+                @PROPERTY_GETTER:R|second/Anno|[Types](position = String(get str)) public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=AbstractClass] get(): R|T?|
+                @PROPERTY_SETTER:R|second/Anno|[Types](position = String(set str)) public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=AbstractClass] set([ResolvedTo(ANNOTATION_ARGUMENTS)] @SETTER_PARAMETER:R|second/Anno|[Types](position = String(set str)) value: R|T?|): R|kotlin/Unit|
 
         }
 
 
 BODY_RESOLVE:
-TARGET: @PROPERTY:R|second/Anno|[Types](position = <strcat>(String(property ), R|second/constant|)) public final override [ResolvedTo(BODY_RESOLVE)] [SubstitutedOverrideOriginalKey=second/AbstractClass.resolveMe] var resolveMe: R|kotlin/String?|
-    @PROPERTY_GETTER:R|second/Anno|[Types](position = <strcat>(String(get ), R|second/constant|)) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=SubClass] get(): R|kotlin/String?|
-    @PROPERTY_SETTER:R|second/Anno|[Types](position = <strcat>(String(set ), R|second/constant|)) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=SubClass] set([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/String?|): R|kotlin/Unit|
+TARGET: @PROPERTY:R|second/Anno|[Types](position = String(property str)) public final override [ResolvedTo(BODY_RESOLVE)] [SubstitutedOverrideOriginalKey=second/AbstractClass.resolveMe] var resolveMe: R|kotlin/String?|
+    @PROPERTY_GETTER:R|second/Anno|[Types](position = String(get str)) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=SubClass] get(): R|kotlin/String?|
+    @PROPERTY_SETTER:R|second/Anno|[Types](position = String(set str)) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=SubClass] set([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/String?|): R|kotlin/Unit|
 
 FILE: [ResolvedTo(IMPORTS)] implicitSubstitutionOverridePropertyScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-implicitSubstitutionOverridePropertyScript.kts>
@@ -299,9 +299,9 @@ FILE: [ResolvedTo(IMPORTS)] implicitSubstitutionOverridePropertyScript.kts
 
             public final [ResolvedTo(CONTRACTS)] fun explicitType(): R|T?| { LAZY_BLOCK }
 
-            @PROPERTY:R|second/Anno|[Types](position = <strcat>(String(property ), R|second/constant|)) field:@FIELD:R|second/Anno|[Types](position = <strcat>(String(field ), R|second/constant|)) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] var resolveMe: R|T?| = this@R|second/AbstractClass|.R|second/AbstractClass.explicitType|()
-                @PROPERTY_GETTER:R|second/Anno|[Types](position = <strcat>(String(get ), R|second/constant|)) public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=AbstractClass] get(): R|T?|
-                @PROPERTY_SETTER:R|second/Anno|[Types](position = <strcat>(String(set ), R|second/constant|)) public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=AbstractClass] set([ResolvedTo(ANNOTATION_ARGUMENTS)] @SETTER_PARAMETER:R|second/Anno|[Types](position = <strcat>(String(set ), R|second/constant|)) value: R|T?|): R|kotlin/Unit|
+            @PROPERTY:R|second/Anno|[Types](position = String(property str)) field:@FIELD:R|second/Anno|[Types](position = String(field str)) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] var resolveMe: R|T?| = this@R|second/AbstractClass|.R|second/AbstractClass.explicitType|()
+                @PROPERTY_GETTER:R|second/Anno|[Types](position = String(get str)) public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=AbstractClass] get(): R|T?|
+                @PROPERTY_SETTER:R|second/Anno|[Types](position = String(set str)) public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=AbstractClass] set([ResolvedTo(ANNOTATION_ARGUMENTS)] @SETTER_PARAMETER:R|second/Anno|[Types](position = String(set str)) value: R|T?|): R|kotlin/Unit|
 
         }
 
@@ -341,9 +341,9 @@ FILE: [ResolvedTo(BODY_RESOLVE)] implicitSubstitutionOverridePropertyScript.kts
                 ^explicitType Null(null)
             }
 
-            @PROPERTY:R|second/Anno|[Types](position = <strcat>(String(property ), R|second/constant|)) field:@FIELD:R|second/Anno|[Types](position = <strcat>(String(field ), R|second/constant|)) public final [ResolvedTo(BODY_RESOLVE)] var resolveMe: R|T?| = this@R|second/AbstractClass|.R|second/AbstractClass.explicitType|()
-                @PROPERTY_GETTER:R|second/Anno|[Types](position = <strcat>(String(get ), R|second/constant|)) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=AbstractClass] get(): R|T?|
-                @PROPERTY_SETTER:R|second/Anno|[Types](position = <strcat>(String(set ), R|second/constant|)) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=AbstractClass] set([ResolvedTo(BODY_RESOLVE)] @SETTER_PARAMETER:R|second/Anno|[Types](position = <strcat>(String(set ), R|second/constant|)) value: R|T?|): R|kotlin/Unit|
+            @PROPERTY:R|second/Anno|[Types](position = String(property str)) field:@FIELD:R|second/Anno|[Types](position = String(field str)) public final [ResolvedTo(BODY_RESOLVE)] var resolveMe: R|T?| = this@R|second/AbstractClass|.R|second/AbstractClass.explicitType|()
+                @PROPERTY_GETTER:R|second/Anno|[Types](position = String(get str)) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=AbstractClass] get(): R|T?|
+                @PROPERTY_SETTER:R|second/Anno|[Types](position = String(set str)) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=AbstractClass] set([ResolvedTo(BODY_RESOLVE)] @SETTER_PARAMETER:R|second/Anno|[Types](position = String(set str)) value: R|T?|): R|kotlin/Unit|
 
         }
 

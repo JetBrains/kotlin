@@ -3,7 +3,7 @@ FIR element: FirPropertyImpl
 FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
-@R|foo/Anno|[Types](position = <strcat>(String(property ), R|foo/secondConstant|)) [ResolvedTo(BODY_RESOLVE)] lval localProperty: R|@R|foo/Anno|(position = <strcat>(String(return type: ), R|foo/constant|))  kotlin/collections/List<@R|foo/Anno|(position = <strcat>(String(nested return type: ), R|foo/constant|))  kotlin/collections/Collection<@R|foo/Anno|(position = <strcat>(String(nested nested return type: ), R|foo/constant|))  kotlin/String>>| = R|foo/explicitType|()
+@R|foo/Anno|[Types](position = String(property str)) [ResolvedTo(BODY_RESOLVE)] lval localProperty: R|@R|foo/Anno|(position = String(return type: 0))  kotlin/collections/List<@R|foo/Anno|(position = String(nested return type: 0))  kotlin/collections/Collection<@R|foo/Anno|(position = String(nested nested return type: 0))  kotlin/String>>| = R|foo/explicitType|()
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] localPropertyWithPropagatedType.kt
@@ -20,9 +20,9 @@ FILE: [ResolvedTo(IMPORTS)] localPropertyWithPropagatedType.kt
     }
     public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val constant: R|kotlin/Int| = Int(0)
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun explicitType(): R|@R|foo/Anno|(position = <strcat>(String(return type: ), R|foo/constant|))  kotlin/collections/List<@R|foo/Anno|(position = <strcat>(String(nested return type: ), R|foo/constant|))  kotlin/collections/Collection<@R|foo/Anno|(position = <strcat>(String(nested nested return type: ), R|foo/constant|))  kotlin/String>>| { LAZY_BLOCK }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun explicitType(): R|@R|foo/Anno|(position = String(return type: 0))  kotlin/collections/List<@R|foo/Anno|(position = String(nested return type: 0))  kotlin/collections/Collection<@R|foo/Anno|(position = String(nested nested return type: 0))  kotlin/String>>| { LAZY_BLOCK }
     public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
-        @R|foo/Anno|[Types](position = <strcat>(String(property ), R|foo/secondConstant|)) [ResolvedTo(BODY_RESOLVE)] lval localProperty: R|@R|foo/Anno|(position = <strcat>(String(return type: ), R|foo/constant|))  kotlin/collections/List<@R|foo/Anno|(position = <strcat>(String(nested return type: ), R|foo/constant|))  kotlin/collections/Collection<@R|foo/Anno|(position = <strcat>(String(nested nested return type: ), R|foo/constant|))  kotlin/String>>| = R|foo/explicitType|()
+        @R|foo/Anno|[Types](position = String(property str)) [ResolvedTo(BODY_RESOLVE)] lval localProperty: R|@R|foo/Anno|(position = String(return type: 0))  kotlin/collections/List<@R|foo/Anno|(position = String(nested return type: 0))  kotlin/collections/Collection<@R|foo/Anno|(position = String(nested nested return type: 0))  kotlin/String>>| = R|foo/explicitType|()
     }
     public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val secondConstant: R|kotlin/String| = String(str)
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|

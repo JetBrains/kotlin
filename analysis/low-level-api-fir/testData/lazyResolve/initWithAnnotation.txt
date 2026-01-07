@@ -280,7 +280,7 @@ FILE: [ResolvedTo(IMPORTS)] initWithAnnotation.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        [ResolvedTo(ANNOTATION_ARGUMENTS)] @R|low/Anno|[Types](position = <strcat>(String(init annotation: ), R|low/constant|)) init { LAZY_BLOCK }
+        [ResolvedTo(ANNOTATION_ARGUMENTS)] @R|low/Anno|[Types](position = String(init annotation: 0)) init { LAZY_BLOCK }
 
     }
     public? final? [ResolvedTo(RAW_FIR)] fun anotherFun(): String { LAZY_BLOCK }
@@ -304,7 +304,7 @@ FILE: [ResolvedTo(IMPORTS)] initWithAnnotation.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        [ResolvedTo(BODY_RESOLVE)] @R|low/Anno|[Types](position = <strcat>(String(init annotation: ), R|low/constant|)) init {
+        [ResolvedTo(BODY_RESOLVE)] @R|low/Anno|[Types](position = String(init annotation: 0)) init {
             @R|low/Anno|[Types](position = String(annotation inside)) R|low/funInsideInit|()
         }
 
@@ -332,7 +332,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] initWithAnnotation.kt
             super<R|kotlin/Any|>()
         }
 
-        [ResolvedTo(BODY_RESOLVE)] @R|low/Anno|[Types](position = <strcat>(String(init annotation: ), R|low/constant|)) init {
+        [ResolvedTo(BODY_RESOLVE)] @R|low/Anno|[Types](position = String(init annotation: 0)) init {
             @R|low/Anno|[Types](position = String(annotation inside)) R|low/funInsideInit|()
         }
 

@@ -1,8 +1,8 @@
-@R|second/Anno|(i = Int(1).R|kotlin/Int.plus|(R|second/outer|))  second/Base
+@R|second/Anno|(i = Int(1))  second/Base
   context -> FirConstructorSymbol second/MyClass.MyClass
   anchor -> [FirRegularClassSymbol second/MyClass]
 
-@R|second/Anno|(i = Int(1).R|kotlin/Int.plus|(R|second/outer|))  second/Base
+@R|second/Anno|(i = Int(1))  second/Base
   context -> FirConstructorSymbol second/MyClass.MyClass
   anchor -> [FirRegularClassSymbol second/MyClass]
 
@@ -34,9 +34,9 @@ FILE: [ResolvedTo(IMPORTS)] superTypeCallNameClashWithAnnotationImplicitConstruc
         public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val inner: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol second.<script-superTypeCallNameClashWithAnnotationImplicitConstructorScript.kts>, ScriptTopLevelDeclaration=true] class MyClass : R|@R|second/Anno|(i = Int(1).R|kotlin/Int.plus|(R|second/outer|))  second/Base| {
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol second.<script-superTypeCallNameClashWithAnnotationImplicitConstructorScript.kts>, ScriptTopLevelDeclaration=true] class MyClass : R|@R|second/Anno|(i = Int(1))  second/Base| {
             public? [ResolvedTo(TYPES)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
-                LAZY_super<R|@R|second/Anno|(i = Int(1).R|kotlin/Int.plus|(R|second/outer|))  second/Base|>
+                LAZY_super<R|@R|second/Anno|(i = Int(1))  second/Base|>
             }
 
             public open [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol second.<script-superTypeCallNameClashWithAnnotationImplicitConstructorScript.kts>] class Base : R|kotlin/Any| {

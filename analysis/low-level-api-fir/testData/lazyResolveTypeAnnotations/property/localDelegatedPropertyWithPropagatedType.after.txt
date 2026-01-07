@@ -1,84 +1,84 @@
-@R|foo/Anno|(position = <strcat>(String(return type: ), R|foo/constant|))  kotlin/collections/List<@R|foo/Anno|(position = <strcat>(String(nested return type: ), R|foo/constant|))  kotlin/collections/Collection<@R|foo/Anno|(position = <strcat>(String(nested nested return type: ), R|foo/constant|))  kotlin/String>>
+@R|foo/Anno|(position = String(return type: 0))  kotlin/collections/List<@R|foo/Anno|(position = String(nested return type: 0))  kotlin/collections/Collection<@R|foo/Anno|(position = String(nested nested return type: 0))  kotlin/String>>
   context -> FirLocalPropertySymbol <local>/localProperty
   anchor -> [FirNamedFunctionSymbol foo/explicitType]
 
-@R|foo/Anno|(position = <strcat>(String(nested return type: ), R|foo/constant|))  kotlin/collections/Collection<@R|foo/Anno|(position = <strcat>(String(nested nested return type: ), R|foo/constant|))  kotlin/String>
+@R|foo/Anno|(position = String(nested return type: 0))  kotlin/collections/Collection<@R|foo/Anno|(position = String(nested nested return type: 0))  kotlin/String>
   context -> FirLocalPropertySymbol <local>/localProperty
   anchor -> [FirNamedFunctionSymbol foo/explicitType]
 
-@R|foo/Anno|(position = <strcat>(String(nested nested return type: ), R|foo/constant|))  kotlin/String
+@R|foo/Anno|(position = String(nested nested return type: 0))  kotlin/String
   context -> FirLocalPropertySymbol <local>/localProperty
   anchor -> [FirNamedFunctionSymbol foo/explicitType]
 
-@R|foo/Anno|(position = <strcat>(String(return type: ), R|foo/constant|))  kotlin/collections/List<@R|foo/Anno|(position = <strcat>(String(nested return type: ), R|foo/constant|))  kotlin/collections/Collection<@R|foo/Anno|(position = <strcat>(String(nested nested return type: ), R|foo/constant|))  kotlin/String>>
+@R|foo/Anno|(position = String(return type: 0))  kotlin/collections/List<@R|foo/Anno|(position = String(nested return type: 0))  kotlin/collections/Collection<@R|foo/Anno|(position = String(nested nested return type: 0))  kotlin/String>>
   context -> FirLocalPropertySymbol <local>/localProperty
   anchor -> [FirNamedFunctionSymbol foo/explicitType]
 
-@R|foo/Anno|(position = <strcat>(String(nested return type: ), R|foo/constant|))  kotlin/collections/Collection<@R|foo/Anno|(position = <strcat>(String(nested nested return type: ), R|foo/constant|))  kotlin/String>
+@R|foo/Anno|(position = String(nested return type: 0))  kotlin/collections/Collection<@R|foo/Anno|(position = String(nested nested return type: 0))  kotlin/String>
   context -> FirLocalPropertySymbol <local>/localProperty
   anchor -> [FirNamedFunctionSymbol foo/explicitType]
 
-@R|foo/Anno|(position = <strcat>(String(nested nested return type: ), R|foo/constant|))  kotlin/String
+@R|foo/Anno|(position = String(nested nested return type: 0))  kotlin/String
   context -> FirLocalPropertySymbol <local>/localProperty
   anchor -> [FirNamedFunctionSymbol foo/explicitType]
 
-@R|foo/Anno|(position = <strcat>(String(return type: ), R|foo/constant|))  kotlin/collections/List<@R|foo/Anno|(position = <strcat>(String(nested return type: ), R|foo/constant|))  kotlin/collections/Collection<@R|foo/Anno|(position = <strcat>(String(nested nested return type: ), R|foo/constant|))  kotlin/String>>
+@R|foo/Anno|(position = String(return type: 0))  kotlin/collections/List<@R|foo/Anno|(position = String(nested return type: 0))  kotlin/collections/Collection<@R|foo/Anno|(position = String(nested nested return type: 0))  kotlin/String>>
   context -> FirAnonymousFunctionSymbol special/anonymous
   anchor -> [FirNamedFunctionSymbol foo/explicitType]
 
-@R|foo/Anno|(position = <strcat>(String(nested return type: ), R|foo/constant|))  kotlin/collections/Collection<@R|foo/Anno|(position = <strcat>(String(nested nested return type: ), R|foo/constant|))  kotlin/String>
+@R|foo/Anno|(position = String(nested return type: 0))  kotlin/collections/Collection<@R|foo/Anno|(position = String(nested nested return type: 0))  kotlin/String>
   context -> FirAnonymousFunctionSymbol special/anonymous
   anchor -> [FirNamedFunctionSymbol foo/explicitType]
 
-@R|foo/Anno|(position = <strcat>(String(nested nested return type: ), R|foo/constant|))  kotlin/String
+@R|foo/Anno|(position = String(nested nested return type: 0))  kotlin/String
   context -> FirAnonymousFunctionSymbol special/anonymous
   anchor -> [FirNamedFunctionSymbol foo/explicitType]
 
-@R|foo/Anno|(position = <strcat>(String(return type: ), R|foo/constant|))  kotlin/collections/List<@R|foo/Anno|(position = <strcat>(String(nested return type: ), R|foo/constant|))  kotlin/collections/Collection<@R|foo/Anno|(position = <strcat>(String(nested nested return type: ), R|foo/constant|))  kotlin/String>>
+@R|foo/Anno|(position = String(return type: 0))  kotlin/collections/List<@R|foo/Anno|(position = String(nested return type: 0))  kotlin/collections/Collection<@R|foo/Anno|(position = String(nested nested return type: 0))  kotlin/String>>
   context -> FirAnonymousFunctionSymbol special/anonymous
   anchor -> [FirNamedFunctionSymbol foo/explicitType]
 
-@R|foo/Anno|(position = <strcat>(String(nested return type: ), R|foo/constant|))  kotlin/collections/Collection<@R|foo/Anno|(position = <strcat>(String(nested nested return type: ), R|foo/constant|))  kotlin/String>
+@R|foo/Anno|(position = String(nested return type: 0))  kotlin/collections/Collection<@R|foo/Anno|(position = String(nested nested return type: 0))  kotlin/String>
   context -> FirAnonymousFunctionSymbol special/anonymous
   anchor -> [FirNamedFunctionSymbol foo/explicitType]
 
-@R|foo/Anno|(position = <strcat>(String(nested nested return type: ), R|foo/constant|))  kotlin/String
+@R|foo/Anno|(position = String(nested nested return type: 0))  kotlin/String
   context -> FirAnonymousFunctionSymbol special/anonymous
   anchor -> [FirNamedFunctionSymbol foo/explicitType]
 
-@R|foo/Anno|(position = <strcat>(String(return type: ), R|foo/constant|))  kotlin/collections/List<@R|foo/Anno|(position = <strcat>(String(nested return type: ), R|foo/constant|))  kotlin/collections/Collection<@R|foo/Anno|(position = <strcat>(String(nested nested return type: ), R|foo/constant|))  kotlin/String>>
+@R|foo/Anno|(position = String(return type: 0))  kotlin/collections/List<@R|foo/Anno|(position = String(nested return type: 0))  kotlin/collections/Collection<@R|foo/Anno|(position = String(nested nested return type: 0))  kotlin/String>>
   context -> FirPropertyAccessorSymbol special/accessor from FirLocalPropertySymbol <local>/localProperty
   anchor -> [FirNamedFunctionSymbol foo/explicitType]
 
-@R|foo/Anno|(position = <strcat>(String(nested return type: ), R|foo/constant|))  kotlin/collections/Collection<@R|foo/Anno|(position = <strcat>(String(nested nested return type: ), R|foo/constant|))  kotlin/String>
+@R|foo/Anno|(position = String(nested return type: 0))  kotlin/collections/Collection<@R|foo/Anno|(position = String(nested nested return type: 0))  kotlin/String>
   context -> FirPropertyAccessorSymbol special/accessor from FirLocalPropertySymbol <local>/localProperty
   anchor -> [FirNamedFunctionSymbol foo/explicitType]
 
-@R|foo/Anno|(position = <strcat>(String(nested nested return type: ), R|foo/constant|))  kotlin/String
+@R|foo/Anno|(position = String(nested nested return type: 0))  kotlin/String
   context -> FirPropertyAccessorSymbol special/accessor from FirLocalPropertySymbol <local>/localProperty
   anchor -> [FirNamedFunctionSymbol foo/explicitType]
 
-@R|foo/Anno|(position = <strcat>(String(return type: ), R|foo/constant|))  kotlin/collections/List<@R|foo/Anno|(position = <strcat>(String(nested return type: ), R|foo/constant|))  kotlin/collections/Collection<@R|foo/Anno|(position = <strcat>(String(nested nested return type: ), R|foo/constant|))  kotlin/String>>
+@R|foo/Anno|(position = String(return type: 0))  kotlin/collections/List<@R|foo/Anno|(position = String(nested return type: 0))  kotlin/collections/Collection<@R|foo/Anno|(position = String(nested nested return type: 0))  kotlin/String>>
   context -> FirPropertyAccessorSymbol special/accessor from FirLocalPropertySymbol <local>/localProperty
   anchor -> [FirNamedFunctionSymbol foo/explicitType]
 
-@R|foo/Anno|(position = <strcat>(String(nested return type: ), R|foo/constant|))  kotlin/collections/Collection<@R|foo/Anno|(position = <strcat>(String(nested nested return type: ), R|foo/constant|))  kotlin/String>
+@R|foo/Anno|(position = String(nested return type: 0))  kotlin/collections/Collection<@R|foo/Anno|(position = String(nested nested return type: 0))  kotlin/String>
   context -> FirPropertyAccessorSymbol special/accessor from FirLocalPropertySymbol <local>/localProperty
   anchor -> [FirNamedFunctionSymbol foo/explicitType]
 
-@R|foo/Anno|(position = <strcat>(String(nested nested return type: ), R|foo/constant|))  kotlin/String
+@R|foo/Anno|(position = String(nested nested return type: 0))  kotlin/String
   context -> FirPropertyAccessorSymbol special/accessor from FirLocalPropertySymbol <local>/localProperty
   anchor -> [FirNamedFunctionSymbol foo/explicitType]
 
-@R|foo/Anno|(position = <strcat>(String(return type: ), R|foo/constant|))  kotlin/collections/List<@R|foo/Anno|(position = <strcat>(String(nested return type: ), R|foo/constant|))  kotlin/collections/Collection<@R|foo/Anno|(position = <strcat>(String(nested nested return type: ), R|foo/constant|))  kotlin/String>>
+@R|foo/Anno|(position = String(return type: 0))  kotlin/collections/List<@R|foo/Anno|(position = String(nested return type: 0))  kotlin/collections/Collection<@R|foo/Anno|(position = String(nested nested return type: 0))  kotlin/String>>
   context -> FirBackingFieldSymbol <local>/field from FirLocalPropertySymbol <local>/localProperty
   anchor -> [FirNamedFunctionSymbol foo/explicitType]
 
-@R|foo/Anno|(position = <strcat>(String(nested return type: ), R|foo/constant|))  kotlin/collections/Collection<@R|foo/Anno|(position = <strcat>(String(nested nested return type: ), R|foo/constant|))  kotlin/String>
+@R|foo/Anno|(position = String(nested return type: 0))  kotlin/collections/Collection<@R|foo/Anno|(position = String(nested nested return type: 0))  kotlin/String>
   context -> FirBackingFieldSymbol <local>/field from FirLocalPropertySymbol <local>/localProperty
   anchor -> [FirNamedFunctionSymbol foo/explicitType]
 
-@R|foo/Anno|(position = <strcat>(String(nested nested return type: ), R|foo/constant|))  kotlin/String
+@R|foo/Anno|(position = String(nested nested return type: 0))  kotlin/String
   context -> FirBackingFieldSymbol <local>/field from FirLocalPropertySymbol <local>/localProperty
   anchor -> [FirNamedFunctionSymbol foo/explicitType]
 
@@ -94,9 +94,9 @@ FILE: [ResolvedTo(IMPORTS)] localDelegatedPropertyWithPropagatedType.kt
     }
     public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val constant: R|kotlin/Int| = Int(0)
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun explicitType(): R|@R|foo/Anno|(position = <strcat>(String(return type: ), R|foo/constant|))  kotlin/collections/List<@R|foo/Anno|(position = <strcat>(String(nested return type: ), R|foo/constant|))  kotlin/collections/Collection<@R|foo/Anno|(position = <strcat>(String(nested nested return type: ), R|foo/constant|))  kotlin/String>>| { LAZY_BLOCK }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun explicitType(): R|@R|foo/Anno|(position = String(return type: 0))  kotlin/collections/List<@R|foo/Anno|(position = String(nested return type: 0))  kotlin/collections/Collection<@R|foo/Anno|(position = String(nested nested return type: 0))  kotlin/String>>| { LAZY_BLOCK }
     public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
-        [ResolvedTo(BODY_RESOLVE)] lval localProperty: R|@R|foo/Anno|(position = <strcat>(String(return type: ), R|foo/constant|))  kotlin/collections/List<@R|foo/Anno|(position = <strcat>(String(nested return type: ), R|foo/constant|))  kotlin/collections/Collection<@R|foo/Anno|(position = <strcat>(String(nested nested return type: ), R|foo/constant|))  kotlin/String>>|by R|kotlin/lazy|<R|@R|foo/Anno|(position = <strcat>(String(return type: ), R|foo/constant|))  kotlin/collections/List<@R|foo/Anno|(position = <strcat>(String(nested return type: ), R|foo/constant|))  kotlin/collections/Collection<@R|foo/Anno|(position = <strcat>(String(nested nested return type: ), R|foo/constant|))  kotlin/String>>|>(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=() -> TypeVariable(T)] lazy@fun <anonymous>(): R|@R|foo/Anno|(position = <strcat>(String(return type: ), R|foo/constant|))  kotlin/collections/List<@R|foo/Anno|(position = <strcat>(String(nested return type: ), R|foo/constant|))  kotlin/collections/Collection<@R|foo/Anno|(position = <strcat>(String(nested nested return type: ), R|foo/constant|))  kotlin/String>>| <inline=NoInline>  {
+        [ResolvedTo(BODY_RESOLVE)] lval localProperty: R|@R|foo/Anno|(position = String(return type: 0))  kotlin/collections/List<@R|foo/Anno|(position = String(nested return type: 0))  kotlin/collections/Collection<@R|foo/Anno|(position = String(nested nested return type: 0))  kotlin/String>>|by R|kotlin/lazy|<R|@R|foo/Anno|(position = String(return type: 0))  kotlin/collections/List<@R|foo/Anno|(position = String(nested return type: 0))  kotlin/collections/Collection<@R|foo/Anno|(position = String(nested nested return type: 0))  kotlin/String>>|>(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=() -> TypeVariable(T)] lazy@fun <anonymous>(): R|@R|foo/Anno|(position = String(return type: 0))  kotlin/collections/List<@R|foo/Anno|(position = String(nested return type: 0))  kotlin/collections/Collection<@R|foo/Anno|(position = String(nested nested return type: 0))  kotlin/String>>| <inline=NoInline>  {
             ^ R|foo/explicitType|()
         }
         )

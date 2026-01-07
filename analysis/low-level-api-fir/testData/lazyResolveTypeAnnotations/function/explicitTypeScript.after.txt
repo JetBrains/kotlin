@@ -1,52 +1,52 @@
-@R|lowlevel/Anno|(position = <strcat>(String(return type ), R|lowlevel/prop|))  kotlin/collections/List<@R|lowlevel/Anno|(position = <strcat>(String(nested return type ), R|lowlevel/prop|))  kotlin/collections/List<@R|lowlevel/Anno|(position = <strcat>(String(nested nested return type ), R|lowlevel/prop|))  kotlin/Int>>
+@R|lowlevel/Anno|(position = String(return type str))  kotlin/collections/List<@R|lowlevel/Anno|(position = String(nested return type str))  kotlin/collections/List<@R|lowlevel/Anno|(position = String(nested nested return type str))  kotlin/Int>>
   context -> FirNamedFunctionSymbol lowlevel/function
   anchor -> [FirNamedFunctionSymbol lowlevel/function]
 
-@R|lowlevel/Anno|(position = <strcat>(String(nested return type ), R|lowlevel/prop|))  kotlin/collections/List<@R|lowlevel/Anno|(position = <strcat>(String(nested nested return type ), R|lowlevel/prop|))  kotlin/Int>
+@R|lowlevel/Anno|(position = String(nested return type str))  kotlin/collections/List<@R|lowlevel/Anno|(position = String(nested nested return type str))  kotlin/Int>
   context -> FirNamedFunctionSymbol lowlevel/function
   anchor -> [FirNamedFunctionSymbol lowlevel/function]
 
-@R|lowlevel/Anno|(position = <strcat>(String(nested nested return type ), R|lowlevel/prop|))  kotlin/Int
+@R|lowlevel/Anno|(position = String(nested nested return type str))  kotlin/Int
   context -> FirNamedFunctionSymbol lowlevel/function
   anchor -> [FirNamedFunctionSymbol lowlevel/function]
 
-@R|lowlevel/Anno|(position = <strcat>(String(receiver type ), R|lowlevel/prop|))  kotlin/collections/List<@R|lowlevel/Anno|(position = <strcat>(String(nested receiver type ), R|lowlevel/prop|))  kotlin/collections/List<@R|lowlevel/Anno|(position = <strcat>(String(nested nested receiver type ), R|lowlevel/prop|))  kotlin/Int>>
+@R|lowlevel/Anno|(position = String(receiver type str))  kotlin/collections/List<@R|lowlevel/Anno|(position = String(nested receiver type str))  kotlin/collections/List<@R|lowlevel/Anno|(position = String(nested nested receiver type str))  kotlin/Int>>
   context -> FirReceiverParameterSymbol from FirNamedFunctionSymbol lowlevel/function
   anchor -> [FirReceiverParameterSymbol from FirNamedFunctionSymbol lowlevel/function]
 
-@R|lowlevel/Anno|(position = <strcat>(String(nested receiver type ), R|lowlevel/prop|))  kotlin/collections/List<@R|lowlevel/Anno|(position = <strcat>(String(nested nested receiver type ), R|lowlevel/prop|))  kotlin/Int>
+@R|lowlevel/Anno|(position = String(nested receiver type str))  kotlin/collections/List<@R|lowlevel/Anno|(position = String(nested nested receiver type str))  kotlin/Int>
   context -> FirReceiverParameterSymbol from FirNamedFunctionSymbol lowlevel/function
   anchor -> [FirReceiverParameterSymbol from FirNamedFunctionSymbol lowlevel/function]
 
-@R|lowlevel/Anno|(position = <strcat>(String(nested nested receiver type ), R|lowlevel/prop|))  kotlin/Int
+@R|lowlevel/Anno|(position = String(nested nested receiver type str))  kotlin/Int
   context -> FirReceiverParameterSymbol from FirNamedFunctionSymbol lowlevel/function
   anchor -> [FirReceiverParameterSymbol from FirNamedFunctionSymbol lowlevel/function]
 
-@R|lowlevel/Anno|(position = <strcat>(String(parameter type ), R|lowlevel/prop|))  kotlin/collections/Collection<@R|lowlevel/Anno|(position = <strcat>(String(nested parameter type ), R|lowlevel/prop|))  kotlin/collections/List<@R|lowlevel/Anno|(position = <strcat>(String(nested nested parameter type ), R|lowlevel/prop|))  kotlin/String>>
+@R|lowlevel/Anno|(position = String(parameter type str))  kotlin/collections/Collection<@R|lowlevel/Anno|(position = String(nested parameter type str))  kotlin/collections/List<@R|lowlevel/Anno|(position = String(nested nested parameter type str))  kotlin/String>>
   context -> FirValueParameterSymbol <local>/param from FirNamedFunctionSymbol lowlevel/function
   anchor -> [FirValueParameterSymbol <local>/param from FirNamedFunctionSymbol lowlevel/function]
 
-@R|lowlevel/Anno|(position = <strcat>(String(nested parameter type ), R|lowlevel/prop|))  kotlin/collections/List<@R|lowlevel/Anno|(position = <strcat>(String(nested nested parameter type ), R|lowlevel/prop|))  kotlin/String>
+@R|lowlevel/Anno|(position = String(nested parameter type str))  kotlin/collections/List<@R|lowlevel/Anno|(position = String(nested nested parameter type str))  kotlin/String>
   context -> FirValueParameterSymbol <local>/param from FirNamedFunctionSymbol lowlevel/function
   anchor -> [FirValueParameterSymbol <local>/param from FirNamedFunctionSymbol lowlevel/function]
 
-@R|lowlevel/Anno|(position = <strcat>(String(nested nested parameter type ), R|lowlevel/prop|))  kotlin/String
+@R|lowlevel/Anno|(position = String(nested nested parameter type str))  kotlin/String
   context -> FirValueParameterSymbol <local>/param from FirNamedFunctionSymbol lowlevel/function
   anchor -> [FirValueParameterSymbol <local>/param from FirNamedFunctionSymbol lowlevel/function]
 
-@R|lowlevel/Anno|(position = <strcat>(String(bound type ), R|lowlevel/prop|))  kotlin/collections/List<@R|lowlevel/Anno|(position = <strcat>(String(nested bound type ), R|lowlevel/prop|))  kotlin/String>
+@R|lowlevel/Anno|(position = String(bound type str))  kotlin/collections/List<@R|lowlevel/Anno|(position = String(nested bound type str))  kotlin/String>
   context -> FirTypeParameterSymbol T from FirNamedFunctionSymbol lowlevel/function
   anchor -> [FirNamedFunctionSymbol lowlevel/function]
 
-@R|lowlevel/Anno|(position = <strcat>(String(nested bound type ), R|lowlevel/prop|))  kotlin/String
+@R|lowlevel/Anno|(position = String(nested bound type str))  kotlin/String
   context -> FirTypeParameterSymbol T from FirNamedFunctionSymbol lowlevel/function
   anchor -> [FirNamedFunctionSymbol lowlevel/function]
 
-@R|lowlevel/Anno|(position = <strcat>(String(constraint type ), R|lowlevel/prop|))  kotlin/collections/Collection<@R|lowlevel/Anno|(position = <strcat>(String(nested constraint type ), R|lowlevel/prop|))  kotlin/Int>
+@R|lowlevel/Anno|(position = String(constraint type str))  kotlin/collections/Collection<@R|lowlevel/Anno|(position = String(nested constraint type str))  kotlin/Int>
   context -> FirTypeParameterSymbol T from FirNamedFunctionSymbol lowlevel/function
   anchor -> [FirNamedFunctionSymbol lowlevel/function]
 
-@R|lowlevel/Anno|(position = <strcat>(String(nested constraint type ), R|lowlevel/prop|))  kotlin/Int
+@R|lowlevel/Anno|(position = String(nested constraint type str))  kotlin/Int
   context -> FirTypeParameterSymbol T from FirNamedFunctionSymbol lowlevel/function
   anchor -> [FirNamedFunctionSymbol lowlevel/function]
 
@@ -71,5 +71,5 @@ FILE: [ResolvedTo(IMPORTS)] explicitTypeScript.kts
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol lowlevel.<script-explicitTypeScript.kts>, ScriptTopLevelDeclaration=true] interface A : R|kotlin/Any| {
         }
 
-        @R|lowlevel/Anno|[Types](position = <strcat>(String(function ), R|lowlevel/prop|)) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ScriptTopLevelDeclaration=true] fun <@R|lowlevel/Anno|[Types](position = <strcat>(String(type parameter ), R|lowlevel/prop|)) [ResolvedTo(ANNOTATION_ARGUMENTS)] T : R|@R|lowlevel/Anno|(position = <strcat>(String(bound type ), R|lowlevel/prop|))  kotlin/collections/List<@R|lowlevel/Anno|(position = <strcat>(String(nested bound type ), R|lowlevel/prop|))  kotlin/String>|, R|@R|lowlevel/Anno|(position = <strcat>(String(constraint type ), R|lowlevel/prop|))  kotlin/collections/Collection<@R|lowlevel/Anno|(position = <strcat>(String(nested constraint type ), R|lowlevel/prop|))  kotlin/Int>|> [ResolvedTo(ANNOTATION_ARGUMENTS)] @RECEIVER:R|lowlevel/Anno|[Types](position = <strcat>(String(receiver ), R|lowlevel/prop|)) R|@R|lowlevel/Anno|(position = <strcat>(String(receiver type ), R|lowlevel/prop|))  kotlin/collections/List<@R|lowlevel/Anno|(position = <strcat>(String(nested receiver type ), R|lowlevel/prop|))  kotlin/collections/List<@R|lowlevel/Anno|(position = <strcat>(String(nested nested receiver type ), R|lowlevel/prop|))  kotlin/Int>>|.function([ResolvedTo(ANNOTATION_ARGUMENTS)] @R|lowlevel/Anno|[Types](position = <strcat>(String(parameter ), R|lowlevel/prop|)) param: R|@R|lowlevel/Anno|(position = <strcat>(String(parameter type ), R|lowlevel/prop|))  kotlin/collections/Collection<@R|lowlevel/Anno|(position = <strcat>(String(nested parameter type ), R|lowlevel/prop|))  kotlin/collections/List<@R|lowlevel/Anno|(position = <strcat>(String(nested nested parameter type ), R|lowlevel/prop|))  kotlin/String>>| = LAZY_EXPRESSION): R|@R|lowlevel/Anno|(position = <strcat>(String(return type ), R|lowlevel/prop|))  kotlin/collections/List<@R|lowlevel/Anno|(position = <strcat>(String(nested return type ), R|lowlevel/prop|))  kotlin/collections/List<@R|lowlevel/Anno|(position = <strcat>(String(nested nested return type ), R|lowlevel/prop|))  kotlin/Int>>| { LAZY_BLOCK }
+        @R|lowlevel/Anno|[Types](position = String(function str)) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ScriptTopLevelDeclaration=true] fun <@R|lowlevel/Anno|[Types](position = String(type parameter str)) [ResolvedTo(ANNOTATION_ARGUMENTS)] T : R|@R|lowlevel/Anno|(position = String(bound type str))  kotlin/collections/List<@R|lowlevel/Anno|(position = String(nested bound type str))  kotlin/String>|, R|@R|lowlevel/Anno|(position = String(constraint type str))  kotlin/collections/Collection<@R|lowlevel/Anno|(position = String(nested constraint type str))  kotlin/Int>|> [ResolvedTo(ANNOTATION_ARGUMENTS)] @RECEIVER:R|lowlevel/Anno|[Types](position = String(receiver str)) R|@R|lowlevel/Anno|(position = String(receiver type str))  kotlin/collections/List<@R|lowlevel/Anno|(position = String(nested receiver type str))  kotlin/collections/List<@R|lowlevel/Anno|(position = String(nested nested receiver type str))  kotlin/Int>>|.function([ResolvedTo(ANNOTATION_ARGUMENTS)] @R|lowlevel/Anno|[Types](position = String(parameter str)) param: R|@R|lowlevel/Anno|(position = String(parameter type str))  kotlin/collections/Collection<@R|lowlevel/Anno|(position = String(nested parameter type str))  kotlin/collections/List<@R|lowlevel/Anno|(position = String(nested nested parameter type str))  kotlin/String>>| = LAZY_EXPRESSION): R|@R|lowlevel/Anno|(position = String(return type str))  kotlin/collections/List<@R|lowlevel/Anno|(position = String(nested return type str))  kotlin/collections/List<@R|lowlevel/Anno|(position = String(nested nested return type str))  kotlin/Int>>| { LAZY_BLOCK }
 

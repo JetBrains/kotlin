@@ -1175,20 +1175,20 @@ KtCallExpression(446,462): 'Pair(null, null)'
       signature = KaFunctionSignature:
         receiverType = null
         returnType = util.Pair
-        symbol = <constructor>(a: @R|util.Anno|(str = <strcat>(String(a type ), R|util.constant|))  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(a nested type ), R|util.constant|))  kotlin.collections.Collection<@R|util.Anno|(str = <strcat>(String(a nested nested type ), R|util.constant|))  kotlin.String>>?, b: @R|util.Anno|(str = <strcat>(String(b type ), R|util.constant|))  kotlin.Array<@R|util.Anno|(str = <strcat>(String(b nested type ), R|util.constant|))  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(b nested nested type ), R|util.constant|))  kotlin.Int>>?): util.Pair
+        symbol = <constructor>(a: @R|util.Anno|(str = String(a type s))  kotlin.collections.List<@R|util.Anno|(str = String(a nested type s))  kotlin.collections.Collection<@R|util.Anno|(str = String(a nested nested type s))  kotlin.String>>?, b: @R|util.Anno|(str = String(b type s))  kotlin.Array<@R|util.Anno|(str = String(b nested type s))  kotlin.collections.List<@R|util.Anno|(str = String(b nested nested type s))  kotlin.Int>>?): util.Pair
         valueParameters = [
           KaVariableSignature:
             name = a
             receiverType = null
-            returnType = @R|util.Anno|(str = <strcat>(String(a type ), R|util.constant|))  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(a nested type ), R|util.constant|))  kotlin.collections.Collection<@R|util.Anno|(str = <strcat>(String(a nested nested type ), R|util.constant|))  kotlin.String>>?
-            symbol = a: @R|util.Anno|(str = <strcat>(String(a type ), R|util.constant|))  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(a nested type ), R|util.constant|))  kotlin.collections.Collection<@R|util.Anno|(str = <strcat>(String(a nested nested type ), R|util.constant|))  kotlin.String>>?
+            returnType = @R|util.Anno|(str = String(a type s))  kotlin.collections.List<@R|util.Anno|(str = String(a nested type s))  kotlin.collections.Collection<@R|util.Anno|(str = String(a nested nested type s))  kotlin.String>>?
+            symbol = a: @R|util.Anno|(str = String(a type s))  kotlin.collections.List<@R|util.Anno|(str = String(a nested type s))  kotlin.collections.Collection<@R|util.Anno|(str = String(a nested nested type s))  kotlin.String>>?
             contextParameters = []
             callableId = null,
           KaVariableSignature:
             name = b
             receiverType = null
-            returnType = @R|util.Anno|(str = <strcat>(String(b type ), R|util.constant|))  kotlin.Array<@R|util.Anno|(str = <strcat>(String(b nested type ), R|util.constant|))  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(b nested nested type ), R|util.constant|))  kotlin.Int>>?
-            symbol = b: @R|util.Anno|(str = <strcat>(String(b type ), R|util.constant|))  kotlin.Array<@R|util.Anno|(str = <strcat>(String(b nested type ), R|util.constant|))  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(b nested nested type ), R|util.constant|))  kotlin.Int>>?
+            returnType = @R|util.Anno|(str = String(b type s))  kotlin.Array<@R|util.Anno|(str = String(b nested type s))  kotlin.collections.List<@R|util.Anno|(str = String(b nested nested type s))  kotlin.Int>>?
+            symbol = b: @R|util.Anno|(str = String(b type s))  kotlin.Array<@R|util.Anno|(str = String(b nested type s))  kotlin.collections.List<@R|util.Anno|(str = String(b nested nested type s))  kotlin.Int>>?
             contextParameters = []
             callableId = null
         ]
@@ -1199,15 +1199,15 @@ KtCallExpression(446,462): 'Pair(null, null)'
         null -> (KaVariableSignature:
           name = a
           receiverType = null
-          returnType = @R|util.Anno|(str = <strcat>(String(a type ), R|util.constant|))  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(a nested type ), R|util.constant|))  kotlin.collections.Collection<@R|util.Anno|(str = <strcat>(String(a nested nested type ), R|util.constant|))  kotlin.String>>?
-          symbol = a: @R|util.Anno|(str = <strcat>(String(a type ), R|util.constant|))  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(a nested type ), R|util.constant|))  kotlin.collections.Collection<@R|util.Anno|(str = <strcat>(String(a nested nested type ), R|util.constant|))  kotlin.String>>?
+          returnType = @R|util.Anno|(str = String(a type s))  kotlin.collections.List<@R|util.Anno|(str = String(a nested type s))  kotlin.collections.Collection<@R|util.Anno|(str = String(a nested nested type s))  kotlin.String>>?
+          symbol = a: @R|util.Anno|(str = String(a type s))  kotlin.collections.List<@R|util.Anno|(str = String(a nested type s))  kotlin.collections.Collection<@R|util.Anno|(str = String(a nested nested type s))  kotlin.String>>?
           contextParameters = []
           callableId = null),
         null -> (KaVariableSignature:
           name = b
           receiverType = null
-          returnType = @R|util.Anno|(str = <strcat>(String(b type ), R|util.constant|))  kotlin.Array<@R|util.Anno|(str = <strcat>(String(b nested type ), R|util.constant|))  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(b nested nested type ), R|util.constant|))  kotlin.Int>>?
-          symbol = b: @R|util.Anno|(str = <strcat>(String(b type ), R|util.constant|))  kotlin.Array<@R|util.Anno|(str = <strcat>(String(b nested type ), R|util.constant|))  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(b nested nested type ), R|util.constant|))  kotlin.Int>>?
+          returnType = @R|util.Anno|(str = String(b type s))  kotlin.Array<@R|util.Anno|(str = String(b nested type s))  kotlin.collections.List<@R|util.Anno|(str = String(b nested nested type s))  kotlin.Int>>?
+          symbol = b: @R|util.Anno|(str = String(b type s))  kotlin.Array<@R|util.Anno|(str = String(b nested type s))  kotlin.collections.List<@R|util.Anno|(str = String(b nested nested type s))  kotlin.Int>>?
           contextParameters = []
           callableId = null)
       }
@@ -1222,20 +1222,20 @@ KtNameReferenceExpression(446,450): 'Pair'
       signature = KaFunctionSignature:
         receiverType = null
         returnType = util.Pair
-        symbol = <constructor>(a: @R|util.Anno|(str = <strcat>(String(a type ), R|util.constant|))  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(a nested type ), R|util.constant|))  kotlin.collections.Collection<@R|util.Anno|(str = <strcat>(String(a nested nested type ), R|util.constant|))  kotlin.String>>?, b: @R|util.Anno|(str = <strcat>(String(b type ), R|util.constant|))  kotlin.Array<@R|util.Anno|(str = <strcat>(String(b nested type ), R|util.constant|))  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(b nested nested type ), R|util.constant|))  kotlin.Int>>?): util.Pair
+        symbol = <constructor>(a: @R|util.Anno|(str = String(a type s))  kotlin.collections.List<@R|util.Anno|(str = String(a nested type s))  kotlin.collections.Collection<@R|util.Anno|(str = String(a nested nested type s))  kotlin.String>>?, b: @R|util.Anno|(str = String(b type s))  kotlin.Array<@R|util.Anno|(str = String(b nested type s))  kotlin.collections.List<@R|util.Anno|(str = String(b nested nested type s))  kotlin.Int>>?): util.Pair
         valueParameters = [
           KaVariableSignature:
             name = a
             receiverType = null
-            returnType = @R|util.Anno|(str = <strcat>(String(a type ), R|util.constant|))  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(a nested type ), R|util.constant|))  kotlin.collections.Collection<@R|util.Anno|(str = <strcat>(String(a nested nested type ), R|util.constant|))  kotlin.String>>?
-            symbol = a: @R|util.Anno|(str = <strcat>(String(a type ), R|util.constant|))  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(a nested type ), R|util.constant|))  kotlin.collections.Collection<@R|util.Anno|(str = <strcat>(String(a nested nested type ), R|util.constant|))  kotlin.String>>?
+            returnType = @R|util.Anno|(str = String(a type s))  kotlin.collections.List<@R|util.Anno|(str = String(a nested type s))  kotlin.collections.Collection<@R|util.Anno|(str = String(a nested nested type s))  kotlin.String>>?
+            symbol = a: @R|util.Anno|(str = String(a type s))  kotlin.collections.List<@R|util.Anno|(str = String(a nested type s))  kotlin.collections.Collection<@R|util.Anno|(str = String(a nested nested type s))  kotlin.String>>?
             contextParameters = []
             callableId = null,
           KaVariableSignature:
             name = b
             receiverType = null
-            returnType = @R|util.Anno|(str = <strcat>(String(b type ), R|util.constant|))  kotlin.Array<@R|util.Anno|(str = <strcat>(String(b nested type ), R|util.constant|))  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(b nested nested type ), R|util.constant|))  kotlin.Int>>?
-            symbol = b: @R|util.Anno|(str = <strcat>(String(b type ), R|util.constant|))  kotlin.Array<@R|util.Anno|(str = <strcat>(String(b nested type ), R|util.constant|))  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(b nested nested type ), R|util.constant|))  kotlin.Int>>?
+            returnType = @R|util.Anno|(str = String(b type s))  kotlin.Array<@R|util.Anno|(str = String(b nested type s))  kotlin.collections.List<@R|util.Anno|(str = String(b nested nested type s))  kotlin.Int>>?
+            symbol = b: @R|util.Anno|(str = String(b type s))  kotlin.Array<@R|util.Anno|(str = String(b nested type s))  kotlin.collections.List<@R|util.Anno|(str = String(b nested nested type s))  kotlin.Int>>?
             contextParameters = []
             callableId = null
         ]
@@ -1246,15 +1246,15 @@ KtNameReferenceExpression(446,450): 'Pair'
         null -> (KaVariableSignature:
           name = a
           receiverType = null
-          returnType = @R|util.Anno|(str = <strcat>(String(a type ), R|util.constant|))  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(a nested type ), R|util.constant|))  kotlin.collections.Collection<@R|util.Anno|(str = <strcat>(String(a nested nested type ), R|util.constant|))  kotlin.String>>?
-          symbol = a: @R|util.Anno|(str = <strcat>(String(a type ), R|util.constant|))  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(a nested type ), R|util.constant|))  kotlin.collections.Collection<@R|util.Anno|(str = <strcat>(String(a nested nested type ), R|util.constant|))  kotlin.String>>?
+          returnType = @R|util.Anno|(str = String(a type s))  kotlin.collections.List<@R|util.Anno|(str = String(a nested type s))  kotlin.collections.Collection<@R|util.Anno|(str = String(a nested nested type s))  kotlin.String>>?
+          symbol = a: @R|util.Anno|(str = String(a type s))  kotlin.collections.List<@R|util.Anno|(str = String(a nested type s))  kotlin.collections.Collection<@R|util.Anno|(str = String(a nested nested type s))  kotlin.String>>?
           contextParameters = []
           callableId = null),
         null -> (KaVariableSignature:
           name = b
           receiverType = null
-          returnType = @R|util.Anno|(str = <strcat>(String(b type ), R|util.constant|))  kotlin.Array<@R|util.Anno|(str = <strcat>(String(b nested type ), R|util.constant|))  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(b nested nested type ), R|util.constant|))  kotlin.Int>>?
-          symbol = b: @R|util.Anno|(str = <strcat>(String(b type ), R|util.constant|))  kotlin.Array<@R|util.Anno|(str = <strcat>(String(b nested type ), R|util.constant|))  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(b nested nested type ), R|util.constant|))  kotlin.Int>>?
+          returnType = @R|util.Anno|(str = String(b type s))  kotlin.Array<@R|util.Anno|(str = String(b nested type s))  kotlin.collections.List<@R|util.Anno|(str = String(b nested nested type s))  kotlin.Int>>?
+          symbol = b: @R|util.Anno|(str = String(b type s))  kotlin.Array<@R|util.Anno|(str = String(b nested type s))  kotlin.collections.List<@R|util.Anno|(str = String(b nested nested type s))  kotlin.Int>>?
           contextParameters = []
           callableId = null)
       }
@@ -1623,20 +1623,20 @@ KtCallExpression(534,550): 'Pair(null, null)'
       signature = KaFunctionSignature:
         receiverType = null
         returnType = util.Pair
-        symbol = <constructor>(a: @R|util.Anno|(str = <strcat>(String(a type ), R|util.constant|))  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(a nested type ), R|util.constant|))  kotlin.collections.Collection<@R|util.Anno|(str = <strcat>(String(a nested nested type ), R|util.constant|))  kotlin.String>>?, b: @R|util.Anno|(str = <strcat>(String(b type ), R|util.constant|))  kotlin.Array<@R|util.Anno|(str = <strcat>(String(b nested type ), R|util.constant|))  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(b nested nested type ), R|util.constant|))  kotlin.Int>>?): util.Pair
+        symbol = <constructor>(a: @R|util.Anno|(str = String(a type s))  kotlin.collections.List<@R|util.Anno|(str = String(a nested type s))  kotlin.collections.Collection<@R|util.Anno|(str = String(a nested nested type s))  kotlin.String>>?, b: @R|util.Anno|(str = String(b type s))  kotlin.Array<@R|util.Anno|(str = String(b nested type s))  kotlin.collections.List<@R|util.Anno|(str = String(b nested nested type s))  kotlin.Int>>?): util.Pair
         valueParameters = [
           KaVariableSignature:
             name = a
             receiverType = null
-            returnType = @R|util.Anno|(str = <strcat>(String(a type ), R|util.constant|))  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(a nested type ), R|util.constant|))  kotlin.collections.Collection<@R|util.Anno|(str = <strcat>(String(a nested nested type ), R|util.constant|))  kotlin.String>>?
-            symbol = a: @R|util.Anno|(str = <strcat>(String(a type ), R|util.constant|))  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(a nested type ), R|util.constant|))  kotlin.collections.Collection<@R|util.Anno|(str = <strcat>(String(a nested nested type ), R|util.constant|))  kotlin.String>>?
+            returnType = @R|util.Anno|(str = String(a type s))  kotlin.collections.List<@R|util.Anno|(str = String(a nested type s))  kotlin.collections.Collection<@R|util.Anno|(str = String(a nested nested type s))  kotlin.String>>?
+            symbol = a: @R|util.Anno|(str = String(a type s))  kotlin.collections.List<@R|util.Anno|(str = String(a nested type s))  kotlin.collections.Collection<@R|util.Anno|(str = String(a nested nested type s))  kotlin.String>>?
             contextParameters = []
             callableId = null,
           KaVariableSignature:
             name = b
             receiverType = null
-            returnType = @R|util.Anno|(str = <strcat>(String(b type ), R|util.constant|))  kotlin.Array<@R|util.Anno|(str = <strcat>(String(b nested type ), R|util.constant|))  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(b nested nested type ), R|util.constant|))  kotlin.Int>>?
-            symbol = b: @R|util.Anno|(str = <strcat>(String(b type ), R|util.constant|))  kotlin.Array<@R|util.Anno|(str = <strcat>(String(b nested type ), R|util.constant|))  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(b nested nested type ), R|util.constant|))  kotlin.Int>>?
+            returnType = @R|util.Anno|(str = String(b type s))  kotlin.Array<@R|util.Anno|(str = String(b nested type s))  kotlin.collections.List<@R|util.Anno|(str = String(b nested nested type s))  kotlin.Int>>?
+            symbol = b: @R|util.Anno|(str = String(b type s))  kotlin.Array<@R|util.Anno|(str = String(b nested type s))  kotlin.collections.List<@R|util.Anno|(str = String(b nested nested type s))  kotlin.Int>>?
             contextParameters = []
             callableId = null
         ]
@@ -1647,15 +1647,15 @@ KtCallExpression(534,550): 'Pair(null, null)'
         null -> (KaVariableSignature:
           name = a
           receiverType = null
-          returnType = @R|util.Anno|(str = <strcat>(String(a type ), R|util.constant|))  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(a nested type ), R|util.constant|))  kotlin.collections.Collection<@R|util.Anno|(str = <strcat>(String(a nested nested type ), R|util.constant|))  kotlin.String>>?
-          symbol = a: @R|util.Anno|(str = <strcat>(String(a type ), R|util.constant|))  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(a nested type ), R|util.constant|))  kotlin.collections.Collection<@R|util.Anno|(str = <strcat>(String(a nested nested type ), R|util.constant|))  kotlin.String>>?
+          returnType = @R|util.Anno|(str = String(a type s))  kotlin.collections.List<@R|util.Anno|(str = String(a nested type s))  kotlin.collections.Collection<@R|util.Anno|(str = String(a nested nested type s))  kotlin.String>>?
+          symbol = a: @R|util.Anno|(str = String(a type s))  kotlin.collections.List<@R|util.Anno|(str = String(a nested type s))  kotlin.collections.Collection<@R|util.Anno|(str = String(a nested nested type s))  kotlin.String>>?
           contextParameters = []
           callableId = null),
         null -> (KaVariableSignature:
           name = b
           receiverType = null
-          returnType = @R|util.Anno|(str = <strcat>(String(b type ), R|util.constant|))  kotlin.Array<@R|util.Anno|(str = <strcat>(String(b nested type ), R|util.constant|))  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(b nested nested type ), R|util.constant|))  kotlin.Int>>?
-          symbol = b: @R|util.Anno|(str = <strcat>(String(b type ), R|util.constant|))  kotlin.Array<@R|util.Anno|(str = <strcat>(String(b nested type ), R|util.constant|))  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(b nested nested type ), R|util.constant|))  kotlin.Int>>?
+          returnType = @R|util.Anno|(str = String(b type s))  kotlin.Array<@R|util.Anno|(str = String(b nested type s))  kotlin.collections.List<@R|util.Anno|(str = String(b nested nested type s))  kotlin.Int>>?
+          symbol = b: @R|util.Anno|(str = String(b type s))  kotlin.Array<@R|util.Anno|(str = String(b nested type s))  kotlin.collections.List<@R|util.Anno|(str = String(b nested nested type s))  kotlin.Int>>?
           contextParameters = []
           callableId = null)
       }
@@ -1670,20 +1670,20 @@ KtNameReferenceExpression(534,538): 'Pair'
       signature = KaFunctionSignature:
         receiverType = null
         returnType = util.Pair
-        symbol = <constructor>(a: @R|util.Anno|(str = <strcat>(String(a type ), R|util.constant|))  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(a nested type ), R|util.constant|))  kotlin.collections.Collection<@R|util.Anno|(str = <strcat>(String(a nested nested type ), R|util.constant|))  kotlin.String>>?, b: @R|util.Anno|(str = <strcat>(String(b type ), R|util.constant|))  kotlin.Array<@R|util.Anno|(str = <strcat>(String(b nested type ), R|util.constant|))  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(b nested nested type ), R|util.constant|))  kotlin.Int>>?): util.Pair
+        symbol = <constructor>(a: @R|util.Anno|(str = String(a type s))  kotlin.collections.List<@R|util.Anno|(str = String(a nested type s))  kotlin.collections.Collection<@R|util.Anno|(str = String(a nested nested type s))  kotlin.String>>?, b: @R|util.Anno|(str = String(b type s))  kotlin.Array<@R|util.Anno|(str = String(b nested type s))  kotlin.collections.List<@R|util.Anno|(str = String(b nested nested type s))  kotlin.Int>>?): util.Pair
         valueParameters = [
           KaVariableSignature:
             name = a
             receiverType = null
-            returnType = @R|util.Anno|(str = <strcat>(String(a type ), R|util.constant|))  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(a nested type ), R|util.constant|))  kotlin.collections.Collection<@R|util.Anno|(str = <strcat>(String(a nested nested type ), R|util.constant|))  kotlin.String>>?
-            symbol = a: @R|util.Anno|(str = <strcat>(String(a type ), R|util.constant|))  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(a nested type ), R|util.constant|))  kotlin.collections.Collection<@R|util.Anno|(str = <strcat>(String(a nested nested type ), R|util.constant|))  kotlin.String>>?
+            returnType = @R|util.Anno|(str = String(a type s))  kotlin.collections.List<@R|util.Anno|(str = String(a nested type s))  kotlin.collections.Collection<@R|util.Anno|(str = String(a nested nested type s))  kotlin.String>>?
+            symbol = a: @R|util.Anno|(str = String(a type s))  kotlin.collections.List<@R|util.Anno|(str = String(a nested type s))  kotlin.collections.Collection<@R|util.Anno|(str = String(a nested nested type s))  kotlin.String>>?
             contextParameters = []
             callableId = null,
           KaVariableSignature:
             name = b
             receiverType = null
-            returnType = @R|util.Anno|(str = <strcat>(String(b type ), R|util.constant|))  kotlin.Array<@R|util.Anno|(str = <strcat>(String(b nested type ), R|util.constant|))  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(b nested nested type ), R|util.constant|))  kotlin.Int>>?
-            symbol = b: @R|util.Anno|(str = <strcat>(String(b type ), R|util.constant|))  kotlin.Array<@R|util.Anno|(str = <strcat>(String(b nested type ), R|util.constant|))  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(b nested nested type ), R|util.constant|))  kotlin.Int>>?
+            returnType = @R|util.Anno|(str = String(b type s))  kotlin.Array<@R|util.Anno|(str = String(b nested type s))  kotlin.collections.List<@R|util.Anno|(str = String(b nested nested type s))  kotlin.Int>>?
+            symbol = b: @R|util.Anno|(str = String(b type s))  kotlin.Array<@R|util.Anno|(str = String(b nested type s))  kotlin.collections.List<@R|util.Anno|(str = String(b nested nested type s))  kotlin.Int>>?
             contextParameters = []
             callableId = null
         ]
@@ -1694,15 +1694,15 @@ KtNameReferenceExpression(534,538): 'Pair'
         null -> (KaVariableSignature:
           name = a
           receiverType = null
-          returnType = @R|util.Anno|(str = <strcat>(String(a type ), R|util.constant|))  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(a nested type ), R|util.constant|))  kotlin.collections.Collection<@R|util.Anno|(str = <strcat>(String(a nested nested type ), R|util.constant|))  kotlin.String>>?
-          symbol = a: @R|util.Anno|(str = <strcat>(String(a type ), R|util.constant|))  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(a nested type ), R|util.constant|))  kotlin.collections.Collection<@R|util.Anno|(str = <strcat>(String(a nested nested type ), R|util.constant|))  kotlin.String>>?
+          returnType = @R|util.Anno|(str = String(a type s))  kotlin.collections.List<@R|util.Anno|(str = String(a nested type s))  kotlin.collections.Collection<@R|util.Anno|(str = String(a nested nested type s))  kotlin.String>>?
+          symbol = a: @R|util.Anno|(str = String(a type s))  kotlin.collections.List<@R|util.Anno|(str = String(a nested type s))  kotlin.collections.Collection<@R|util.Anno|(str = String(a nested nested type s))  kotlin.String>>?
           contextParameters = []
           callableId = null),
         null -> (KaVariableSignature:
           name = b
           receiverType = null
-          returnType = @R|util.Anno|(str = <strcat>(String(b type ), R|util.constant|))  kotlin.Array<@R|util.Anno|(str = <strcat>(String(b nested type ), R|util.constant|))  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(b nested nested type ), R|util.constant|))  kotlin.Int>>?
-          symbol = b: @R|util.Anno|(str = <strcat>(String(b type ), R|util.constant|))  kotlin.Array<@R|util.Anno|(str = <strcat>(String(b nested type ), R|util.constant|))  kotlin.collections.List<@R|util.Anno|(str = <strcat>(String(b nested nested type ), R|util.constant|))  kotlin.Int>>?
+          returnType = @R|util.Anno|(str = String(b type s))  kotlin.Array<@R|util.Anno|(str = String(b nested type s))  kotlin.collections.List<@R|util.Anno|(str = String(b nested nested type s))  kotlin.Int>>?
+          symbol = b: @R|util.Anno|(str = String(b type s))  kotlin.Array<@R|util.Anno|(str = String(b nested type s))  kotlin.collections.List<@R|util.Anno|(str = String(b nested nested type s))  kotlin.Int>>?
           contextParameters = []
           callableId = null)
       }

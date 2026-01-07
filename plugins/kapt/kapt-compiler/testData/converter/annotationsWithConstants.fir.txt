@@ -421,17 +421,17 @@ package app;
 public final class MyActivity {
     private final int param1 = 0;
     private int param2;
-    @BindField(id = lib.R.id.textView)
+    @BindField(id = 100)
     private final int a = 0;
-    @BindField(id = lib.R.id.textView)
+    @BindField(id = 100)
     private final int b = 0;
-    @BindField(id = app.R.layout.mainActivity)
+    @BindField(id = 100)
     private final int c = 0;
-    @BindField(id = app.R.layout.mainActivity)
+    @BindField(id = 100)
     private final int d = 0;
-    @BindField(id = app.R2.layout.mainActivity)
+    @BindField(id = 100)
     private final int e = 0;
-    @BindField(id = app.B.id.textView)
+    @BindField(id = 200)
     private final int f = 0;
     public final int propA = app.B.id.textView;
     private final int propB = app.B.id.textView;
@@ -461,7 +461,7 @@ public final class MyActivity {
         return 0;
     }
 
-    @Bind(id = lib.R.id.textView)
+    @Bind(id = 100)
     @java.lang.Deprecated()
     public static void getA$annotations() {
     }
@@ -470,7 +470,7 @@ public final class MyActivity {
         return 0;
     }
 
-    @Bind(id = lib.R.id.textView)
+    @Bind(id = 100)
     @java.lang.Deprecated()
     public static void getB$annotations() {
     }
@@ -479,7 +479,7 @@ public final class MyActivity {
         return 0;
     }
 
-    @Bind(id = app.R.layout.mainActivity)
+    @Bind(id = 100)
     @java.lang.Deprecated()
     public static void getC$annotations() {
     }
@@ -488,7 +488,7 @@ public final class MyActivity {
         return 0;
     }
 
-    @Bind(id = app.R.layout.mainActivity)
+    @Bind(id = 100)
     @java.lang.Deprecated()
     public static void getD$annotations() {
     }
@@ -497,8 +497,8 @@ public final class MyActivity {
         return 0;
     }
 
-    @Bind(id = app.R2.layout.mainActivity)
-    @Anno(a1 = app.B.a1, a2 = app.B.a2, a3 = app.B.a3, a4 = app.B.a4, a5 = app.B.a5, a6 = app.B.a6, a7 = app.B.a7, a8 = app.B.a8, a9 = "A")
+    @Bind(id = 100)
+    @Anno(a1 = false, a2 = (byte)1, a3 = 2, a4 = (short)3, a5 = 4L, a6 = '5', a7 = 6.0F, a8 = 7.0, a9 = "A")
     @java.lang.Deprecated()
     public static void getE$annotations() {
     }
@@ -507,33 +507,33 @@ public final class MyActivity {
         return 0;
     }
 
-    @Bind(id = app.B.id.textView)
+    @Bind(id = 200)
     @java.lang.Deprecated()
     public static void getF$annotations() {
     }
 
-    @Bind(id = lib.R.id.textView)
+    @Bind(id = 100)
     public final void foo() {
     }
 
-    @Bind(id = lib.R.id.textView)
+    @Bind(id = 100)
     public final void foo2() {
     }
 
-    @Bind(id = app.R.layout.mainActivity)
+    @Bind(id = 100)
     public final void foo3() {
     }
 
-    @Bind(id = app.R.layout.mainActivity)
+    @Bind(id = 100)
     public final void foo4() {
     }
 
-    @Bind(id = app.R2.layout.mainActivity)
-    @Anno(a1 = app.B.a1, a2 = app.B.a2, a3 = app.B.a3, a4 = app.B.a4, a5 = app.B.a5, a6 = app.B.a6, a7 = app.B.a7, a8 = app.B.a8, a9 = "A")
+    @Bind(id = 100)
+    @Anno(a1 = false, a2 = (byte)1, a3 = 2, a4 = (short)3, a5 = 4L, a6 = '5', a7 = 6.0F, a8 = 7.0, a9 = "A")
     public final void foo5() {
     }
 
-    @Bind(id = app.B.id.textView)
+    @Bind(id = 200)
     public final void plainIntConstant() {
     }
 
@@ -541,15 +541,15 @@ public final class MyActivity {
     public final void multi0() {
     }
 
-    @MultiValue(ids = {app.B.id.textView})
+    @MultiValue(ids = {200})
     public final void multi1() {
     }
 
-    @MultiValue(ids = {app.B.id.textView, app.B.a3})
+    @MultiValue(ids = {200, 2})
     public final void multi2() {
     }
 
-    @MultiValue(ids = {app.B.id.textView, app.B.a3})
+    @MultiValue(ids = {200, 2})
     public final void multi3() {
     }
 
@@ -557,15 +557,15 @@ public final class MyActivity {
     public final void multi4() {
     }
 
-    @MultiValueByte(ids = {app.B.a2})
+    @MultiValueByte(ids = {(byte)1})
     public final void multi5() {
     }
 
-    @lib.OnClick(value = {app.B.id.textView})
+    @lib.OnClick(value = {200})
     public final void multiJava1() {
     }
 
-    @lib.OnClick(value = {app.B.id.textView, app.R.layout.mainActivity})
+    @lib.OnClick(value = {200, 100})
     public final void multiJava2() {
     }
 

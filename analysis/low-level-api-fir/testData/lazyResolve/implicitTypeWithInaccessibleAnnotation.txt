@@ -310,7 +310,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeWithInaccessibleAnnotation.kt
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
 
     }
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun implicitType1(): R|@R|usage/Anno|(s = this@R|usage/TopLevelObject|.R|usage/TopLevelObject.privateConstVal|)  kotlin/Int| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun implicitType1(): R|@R|usage/Anno|(s = String(privateConstVal))  kotlin/Int| {
         ^implicitType1 Q|usage/TopLevelObject|.R|usage/TopLevelObject.expectedType|()
     }
     public final [ResolvedTo(STATUS)] object TopLevelObject : R|kotlin/Any| {
@@ -323,7 +323,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeWithInaccessibleAnnotation.kt
         private final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val privateConstVal: R|kotlin/String| = String(privateConstVal)
             private [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=TopLevelObject] get(): R|kotlin/String|
 
-        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun expectedType(): R|@R|usage/Anno|(s = this@R|usage/TopLevelObject|.R|usage/TopLevelObject.privateConstVal|)  kotlin/Int| { LAZY_BLOCK }
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun expectedType(): R|@R|usage/Anno|(s = String(privateConstVal))  kotlin/Int| { LAZY_BLOCK }
 
     }
     public? final? [ResolvedTo(RAW_FIR)] fun implicitType2(): <implicit> { LAZY_BLOCK }
@@ -339,7 +339,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeWithInaccessibleAnnotation.kt
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
 
     }
-    public final [ResolvedTo(BODY_RESOLVE)] fun implicitType1(): R|@R|usage/Anno|(s = this@R|usage/TopLevelObject|.R|usage/TopLevelObject.privateConstVal|)  kotlin/Int| {
+    public final [ResolvedTo(BODY_RESOLVE)] fun implicitType1(): R|@R|usage/Anno|(s = String(privateConstVal))  kotlin/Int| {
         ^implicitType1 Q|usage/TopLevelObject|.R|usage/TopLevelObject.expectedType|()
     }
     public final [ResolvedTo(STATUS)] object TopLevelObject : R|kotlin/Any| {
@@ -352,7 +352,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeWithInaccessibleAnnotation.kt
         private final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val privateConstVal: R|kotlin/String| = String(privateConstVal)
             private [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=TopLevelObject] get(): R|kotlin/String|
 
-        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun expectedType(): R|@R|usage/Anno|(s = this@R|usage/TopLevelObject|.R|usage/TopLevelObject.privateConstVal|)  kotlin/Int| { LAZY_BLOCK }
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun expectedType(): R|@R|usage/Anno|(s = String(privateConstVal))  kotlin/Int| { LAZY_BLOCK }
 
     }
     public? final? [ResolvedTo(RAW_FIR)] fun implicitType2(): <implicit> { LAZY_BLOCK }
@@ -368,7 +368,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] implicitTypeWithInaccessibleAnnotation.kt
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] get(): R|kotlin/String|
 
     }
-    public final [ResolvedTo(BODY_RESOLVE)] fun implicitType1(): R|@R|usage/Anno|(s = this@R|usage/TopLevelObject|.R|usage/TopLevelObject.privateConstVal|)  kotlin/Int| {
+    public final [ResolvedTo(BODY_RESOLVE)] fun implicitType1(): R|@R|usage/Anno|(s = String(privateConstVal))  kotlin/Int| {
         ^implicitType1 Q|usage/TopLevelObject|.R|usage/TopLevelObject.expectedType|()
     }
     public final [ResolvedTo(BODY_RESOLVE)] object TopLevelObject : R|kotlin/Any| {
@@ -376,18 +376,18 @@ FILE: [ResolvedTo(BODY_RESOLVE)] implicitTypeWithInaccessibleAnnotation.kt
             super<R|kotlin/Any|>()
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] fun expectedType2(): R|@R|usage/Anno|(s = this@R|usage/TopLevelObject|.R|usage/TopLevelObject.privateConstVal|)  kotlin/Int| {
+        public final [ResolvedTo(BODY_RESOLVE)] fun expectedType2(): R|@R|usage/Anno|(s = String(privateConstVal))  kotlin/Int| {
             ^expectedType2 Int(4)
         }
 
         private final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=String(privateConstVal)] val privateConstVal: R|kotlin/String| = String(privateConstVal)
             private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelObject] get(): R|kotlin/String|
 
-        public final [ResolvedTo(BODY_RESOLVE)] fun expectedType(): R|@R|usage/Anno|(s = this@R|usage/TopLevelObject|.R|usage/TopLevelObject.privateConstVal|)  kotlin/Int| {
+        public final [ResolvedTo(BODY_RESOLVE)] fun expectedType(): R|@R|usage/Anno|(s = String(privateConstVal))  kotlin/Int| {
             ^expectedType Int(4)
         }
 
     }
-    public final [ResolvedTo(BODY_RESOLVE)] fun implicitType2(): R|@R|usage/Anno|(s = this@R|usage/TopLevelObject|.R|usage/TopLevelObject.privateConstVal|)  kotlin/Int| {
+    public final [ResolvedTo(BODY_RESOLVE)] fun implicitType2(): R|@R|usage/Anno|(s = String(privateConstVal))  kotlin/Int| {
         ^implicitType2 Q|usage/TopLevelObject|.R|usage/TopLevelObject.expectedType2|()
     }

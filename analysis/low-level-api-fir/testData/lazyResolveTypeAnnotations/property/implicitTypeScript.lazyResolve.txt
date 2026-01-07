@@ -309,13 +309,13 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeScript.kts
         public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] val prop: R|kotlin/String| = String(str)
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
 
-        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ScriptTopLevelDeclaration=true] fun explicitType(): R|@R|lowlevel/Anno|(position = <strcat>(String(return type ), R|lowlevel/prop|))  kotlin/collections/List<@R|lowlevel/Anno|(position = <strcat>(String(nested return type ), R|lowlevel/prop|))  kotlin/collections/List<@R|lowlevel/Anno|(position = <strcat>(String(nested nested return type ), R|lowlevel/prop|))  kotlin/Int>>| { LAZY_BLOCK }
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ScriptTopLevelDeclaration=true] fun explicitType(): R|@R|lowlevel/Anno|(position = String(return type str))  kotlin/collections/List<@R|lowlevel/Anno|(position = String(nested return type str))  kotlin/collections/List<@R|lowlevel/Anno|(position = String(nested nested return type str))  kotlin/Int>>| { LAZY_BLOCK }
 
-        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ScriptTopLevelDeclaration=true] var implicitType: R|@R|lowlevel/Anno|(position = <strcat>(String(return type ), R|lowlevel/prop|))  kotlin/collections/List<@R|lowlevel/Anno|(position = <strcat>(String(nested return type ), R|lowlevel/prop|))  kotlin/collections/List<@R|lowlevel/Anno|(position = <strcat>(String(nested nested return type ), R|lowlevel/prop|))  kotlin/Int>>|
-            public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|@R|lowlevel/Anno|(position = <strcat>(String(return type ), R|lowlevel/prop|))  kotlin/collections/List<@R|lowlevel/Anno|(position = <strcat>(String(nested return type ), R|lowlevel/prop|))  kotlin/collections/List<@R|lowlevel/Anno|(position = <strcat>(String(nested nested return type ), R|lowlevel/prop|))  kotlin/Int>>| {
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ScriptTopLevelDeclaration=true] var implicitType: R|@R|lowlevel/Anno|(position = String(return type str))  kotlin/collections/List<@R|lowlevel/Anno|(position = String(nested return type str))  kotlin/collections/List<@R|lowlevel/Anno|(position = String(nested nested return type str))  kotlin/Int>>|
+            public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|@R|lowlevel/Anno|(position = String(return type str))  kotlin/collections/List<@R|lowlevel/Anno|(position = String(nested return type str))  kotlin/collections/List<@R|lowlevel/Anno|(position = String(nested nested return type str))  kotlin/Int>>| {
                 ^ R|lowlevel/explicitType|()
             }
-            public [ResolvedTo(ANNOTATION_ARGUMENTS)] set([ResolvedTo(ANNOTATION_ARGUMENTS)] value: R|@R|lowlevel/Anno|(position = <strcat>(String(return type ), R|lowlevel/prop|))  kotlin/collections/List<@R|lowlevel/Anno|(position = <strcat>(String(nested return type ), R|lowlevel/prop|))  kotlin/collections/List<@R|lowlevel/Anno|(position = <strcat>(String(nested nested return type ), R|lowlevel/prop|))  kotlin/Int>>|): R|kotlin/Unit| {
+            public [ResolvedTo(ANNOTATION_ARGUMENTS)] set([ResolvedTo(ANNOTATION_ARGUMENTS)] value: R|@R|lowlevel/Anno|(position = String(return type str))  kotlin/collections/List<@R|lowlevel/Anno|(position = String(nested return type str))  kotlin/collections/List<@R|lowlevel/Anno|(position = String(nested nested return type str))  kotlin/Int>>|): R|kotlin/Unit| {
             }
 
 
@@ -338,13 +338,13 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeScript.kts
         public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] val prop: R|kotlin/String| = String(str)
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
 
-        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ScriptTopLevelDeclaration=true] fun explicitType(): R|@R|lowlevel/Anno|(position = <strcat>(String(return type ), R|lowlevel/prop|))  kotlin/collections/List<@R|lowlevel/Anno|(position = <strcat>(String(nested return type ), R|lowlevel/prop|))  kotlin/collections/List<@R|lowlevel/Anno|(position = <strcat>(String(nested nested return type ), R|lowlevel/prop|))  kotlin/Int>>| { LAZY_BLOCK }
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ScriptTopLevelDeclaration=true] fun explicitType(): R|@R|lowlevel/Anno|(position = String(return type str))  kotlin/collections/List<@R|lowlevel/Anno|(position = String(nested return type str))  kotlin/collections/List<@R|lowlevel/Anno|(position = String(nested nested return type str))  kotlin/Int>>| { LAZY_BLOCK }
 
-        public final [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] var implicitType: R|@R|lowlevel/Anno|(position = <strcat>(String(return type ), R|lowlevel/prop|))  kotlin/collections/List<@R|lowlevel/Anno|(position = <strcat>(String(nested return type ), R|lowlevel/prop|))  kotlin/collections/List<@R|lowlevel/Anno|(position = <strcat>(String(nested nested return type ), R|lowlevel/prop|))  kotlin/Int>>|
-            public [ResolvedTo(BODY_RESOLVE)] get(): R|@R|lowlevel/Anno|(position = <strcat>(String(return type ), R|lowlevel/prop|))  kotlin/collections/List<@R|lowlevel/Anno|(position = <strcat>(String(nested return type ), R|lowlevel/prop|))  kotlin/collections/List<@R|lowlevel/Anno|(position = <strcat>(String(nested nested return type ), R|lowlevel/prop|))  kotlin/Int>>| {
+        public final [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] var implicitType: R|@R|lowlevel/Anno|(position = String(return type str))  kotlin/collections/List<@R|lowlevel/Anno|(position = String(nested return type str))  kotlin/collections/List<@R|lowlevel/Anno|(position = String(nested nested return type str))  kotlin/Int>>|
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|@R|lowlevel/Anno|(position = String(return type str))  kotlin/collections/List<@R|lowlevel/Anno|(position = String(nested return type str))  kotlin/collections/List<@R|lowlevel/Anno|(position = String(nested nested return type str))  kotlin/Int>>| {
                 ^ R|lowlevel/explicitType|()
             }
-            public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] value: R|@R|lowlevel/Anno|(position = <strcat>(String(return type ), R|lowlevel/prop|))  kotlin/collections/List<@R|lowlevel/Anno|(position = <strcat>(String(nested return type ), R|lowlevel/prop|))  kotlin/collections/List<@R|lowlevel/Anno|(position = <strcat>(String(nested nested return type ), R|lowlevel/prop|))  kotlin/Int>>|): R|kotlin/Unit| {
+            public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] value: R|@R|lowlevel/Anno|(position = String(return type str))  kotlin/collections/List<@R|lowlevel/Anno|(position = String(nested return type str))  kotlin/collections/List<@R|lowlevel/Anno|(position = String(nested nested return type str))  kotlin/Int>>|): R|kotlin/Unit| {
             }
 
 
@@ -367,14 +367,14 @@ FILE: [ResolvedTo(BODY_RESOLVE)] implicitTypeScript.kts
         public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=String(str), ScriptTopLevelDeclaration=true] val prop: R|kotlin/String| = String(str)
             public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String|
 
-        public final [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] fun explicitType(): R|@R|lowlevel/Anno|(position = <strcat>(String(return type ), R|lowlevel/prop|))  kotlin/collections/List<@R|lowlevel/Anno|(position = <strcat>(String(nested return type ), R|lowlevel/prop|))  kotlin/collections/List<@R|lowlevel/Anno|(position = <strcat>(String(nested nested return type ), R|lowlevel/prop|))  kotlin/Int>>| {
+        public final [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] fun explicitType(): R|@R|lowlevel/Anno|(position = String(return type str))  kotlin/collections/List<@R|lowlevel/Anno|(position = String(nested return type str))  kotlin/collections/List<@R|lowlevel/Anno|(position = String(nested nested return type str))  kotlin/Int>>| {
             ^explicitType Int(0)
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] var implicitType: R|@R|lowlevel/Anno|(position = <strcat>(String(return type ), R|lowlevel/prop|))  kotlin/collections/List<@R|lowlevel/Anno|(position = <strcat>(String(nested return type ), R|lowlevel/prop|))  kotlin/collections/List<@R|lowlevel/Anno|(position = <strcat>(String(nested nested return type ), R|lowlevel/prop|))  kotlin/Int>>|
-            public [ResolvedTo(BODY_RESOLVE)] get(): R|@R|lowlevel/Anno|(position = <strcat>(String(return type ), R|lowlevel/prop|))  kotlin/collections/List<@R|lowlevel/Anno|(position = <strcat>(String(nested return type ), R|lowlevel/prop|))  kotlin/collections/List<@R|lowlevel/Anno|(position = <strcat>(String(nested nested return type ), R|lowlevel/prop|))  kotlin/Int>>| {
+        public final [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] var implicitType: R|@R|lowlevel/Anno|(position = String(return type str))  kotlin/collections/List<@R|lowlevel/Anno|(position = String(nested return type str))  kotlin/collections/List<@R|lowlevel/Anno|(position = String(nested nested return type str))  kotlin/Int>>|
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|@R|lowlevel/Anno|(position = String(return type str))  kotlin/collections/List<@R|lowlevel/Anno|(position = String(nested return type str))  kotlin/collections/List<@R|lowlevel/Anno|(position = String(nested nested return type str))  kotlin/Int>>| {
                 ^ R|lowlevel/explicitType|()
             }
-            public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] value: R|@R|lowlevel/Anno|(position = <strcat>(String(return type ), R|lowlevel/prop|))  kotlin/collections/List<@R|lowlevel/Anno|(position = <strcat>(String(nested return type ), R|lowlevel/prop|))  kotlin/collections/List<@R|lowlevel/Anno|(position = <strcat>(String(nested nested return type ), R|lowlevel/prop|))  kotlin/Int>>|): R|kotlin/Unit| {
+            public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] value: R|@R|lowlevel/Anno|(position = String(return type str))  kotlin/collections/List<@R|lowlevel/Anno|(position = String(nested return type str))  kotlin/collections/List<@R|lowlevel/Anno|(position = String(nested nested return type str))  kotlin/Int>>|): R|kotlin/Unit| {
             }
 

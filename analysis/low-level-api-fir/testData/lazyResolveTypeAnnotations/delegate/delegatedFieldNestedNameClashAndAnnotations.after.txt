@@ -1,4 +1,4 @@
-@R|second/Anno|(i = Int(1).R|kotlin/Int.plus|(R|second/outer|))  second/Base
+@R|second/Anno|(i = Int(1))  second/Base
   context -> FirFieldSymbol second/MyClass.$$delegate_0
   anchor -> [FirRegularClassSymbol second/MyClass]
 
@@ -20,12 +20,12 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedNameClashAndAnnotations.kt
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
     public? final? const [ResolvedTo(RAW_FIR)] val inner: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}] class MyClass : R|@R|second/Anno|(i = Int(1).R|kotlin/Int.plus|(R|second/outer|))  second/Base| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0}] class MyClass : R|@R|second/Anno|(i = Int(1))  second/Base| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=second/MyClass.prop] prop: @Anno[Unresolved](LAZY_EXPRESSION) second.Base): R|second/MyClass| {
             LAZY_super<<implicit>>
         }
 
-        private final [ResolvedTo(TYPES)] field $$delegate_0: R|@R|second/Anno|(i = Int(1).R|kotlin/Int.plus|(R|second/outer|))  second/Base| = LAZY_EXPRESSION
+        private final [ResolvedTo(TYPES)] field $$delegate_0: R|@R|second/Anno|(i = Int(1))  second/Base| = LAZY_EXPRESSION
 
         public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val prop: @Anno[Unresolved](LAZY_EXPRESSION) second.Base = R|<local>/prop|
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] get(): @Anno[Unresolved](LAZY_EXPRESSION) second.Base

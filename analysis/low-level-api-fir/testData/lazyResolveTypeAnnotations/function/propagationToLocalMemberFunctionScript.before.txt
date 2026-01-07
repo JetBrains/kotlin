@@ -1,12 +1,12 @@
-@R|util/Anno|(str = <strcat>(String(bar ), R|util/prop|))  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(nested bar ), R|util/prop|))  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|))  kotlin/Int>>?
+@R|util/Anno|(str = String(bar str))  kotlin/collections/List<@R|util/Anno|(str = String(nested bar str))  kotlin/collections/Collection<@R|util/Anno|(str = String(nested nested bar str))  kotlin/Int>>?
   context -> FirNamedFunctionSymbol <local>/foo
   anchor -> [FirNamedFunctionSymbol util/bar]
 
-@R|util/Anno|(str = <strcat>(String(nested bar ), R|util/prop|))  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|))  kotlin/Int>
+@R|util/Anno|(str = String(nested bar str))  kotlin/collections/Collection<@R|util/Anno|(str = String(nested nested bar str))  kotlin/Int>
   context -> FirNamedFunctionSymbol <local>/foo
   anchor -> [FirNamedFunctionSymbol util/bar]
 
-@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|))  kotlin/Int
+@R|util/Anno|(str = String(nested nested bar str))  kotlin/Int
   context -> FirNamedFunctionSymbol <local>/foo
   anchor -> [FirNamedFunctionSymbol util/bar]
 
@@ -28,7 +28,7 @@ FILE: [ResolvedTo(IMPORTS)] propagationToLocalMemberFunctionScript.kts
         public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] val prop: R|kotlin/String| = String(str)
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
 
-        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ScriptTopLevelDeclaration=true] fun bar(): R|@R|util/Anno|(str = <strcat>(String(bar ), R|util/prop|))  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(nested bar ), R|util/prop|))  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|))  kotlin/Int>>?| { LAZY_BLOCK }
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ScriptTopLevelDeclaration=true] fun bar(): R|@R|util/Anno|(str = String(bar str))  kotlin/collections/List<@R|util/Anno|(str = String(nested bar str))  kotlin/collections/Collection<@R|util/Anno|(str = String(nested nested bar str))  kotlin/Int>>?| { LAZY_BLOCK }
 
         public final [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] fun foo(): R|kotlin/Unit| {
             local final [ResolvedTo(BODY_RESOLVE)] class Local : R|kotlin/Any| {
@@ -40,7 +40,7 @@ FILE: [ResolvedTo(IMPORTS)] propagationToLocalMemberFunctionScript.kts
                     ^doo R|util/foo|()
                 }
 
-                public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|@R|util/Anno|(str = <strcat>(String(bar ), R|util/prop|))  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(nested bar ), R|util/prop|))  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|))  kotlin/Int>>?| {
+                public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|@R|util/Anno|(str = String(bar str))  kotlin/collections/List<@R|util/Anno|(str = String(nested bar str))  kotlin/collections/Collection<@R|util/Anno|(str = String(nested nested bar str))  kotlin/Int>>?| {
                     ^foo R|util/bar|()
                 }
 

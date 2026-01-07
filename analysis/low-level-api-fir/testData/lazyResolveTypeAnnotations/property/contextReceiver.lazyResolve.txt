@@ -198,7 +198,7 @@ FILE: [ResolvedTo(IMPORTS)] contextReceiver.kt
     }
     public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val prop: R|kotlin/String| = String(str)
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
-    context([ResolvedTo(ANNOTATION_ARGUMENTS)] R|kotlin/collections/List<@R|Anno|(position = <strcat>(String(context receiver type ), R|/prop|))  kotlin/Int>|)
+    context([ResolvedTo(ANNOTATION_ARGUMENTS)] R|kotlin/collections/List<@R|Anno|(position = String(context receiver type str))  kotlin/Int>|)
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val foo: R|kotlin/Int|
         public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/Int| { LAZY_BLOCK }
 
@@ -215,7 +215,7 @@ FILE: [ResolvedTo(IMPORTS)] contextReceiver.kt
     }
     public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val prop: R|kotlin/String| = String(str)
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
-    context([ResolvedTo(BODY_RESOLVE)] R|kotlin/collections/List<@R|Anno|(position = <strcat>(String(context receiver type ), R|/prop|))  kotlin/Int>|)
+    context([ResolvedTo(BODY_RESOLVE)] R|kotlin/collections/List<@R|Anno|(position = String(context receiver type str))  kotlin/Int>|)
     public final [ResolvedTo(BODY_RESOLVE)] val foo: R|kotlin/Int|
         public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int| {
             ^ Int(0)
@@ -234,7 +234,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] contextReceiver.kt
     }
     public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=String(str)] val prop: R|kotlin/String| = String(str)
         public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String|
-    context([ResolvedTo(BODY_RESOLVE)] R|kotlin/collections/List<@R|Anno|(position = <strcat>(String(context receiver type ), R|/prop|))  kotlin/Int>|)
+    context([ResolvedTo(BODY_RESOLVE)] R|kotlin/collections/List<@R|Anno|(position = String(context receiver type str))  kotlin/Int>|)
     public final [ResolvedTo(BODY_RESOLVE)] val foo: R|kotlin/Int|
         public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int| {
             ^ Int(0)

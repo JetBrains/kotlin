@@ -1,31 +1,31 @@
-@R|Anno|(position = <strcat>(String(getter return type ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(getter nested return type ), R|/prop|))  kotlin/Int>
+@R|Anno|(position = String(getter return type str))  kotlin/collections/List<@R|Anno|(position = String(getter nested return type str))  kotlin/Int>
   context -> FirNamedFunctionSymbol /Derived.getSomething
   anchor -> [FirNamedFunctionSymbol /Derived.getSomething]
 
-@R|Anno|(position = <strcat>(String(getter nested return type ), R|/prop|))  kotlin/Int
+@R|Anno|(position = String(getter nested return type str))  kotlin/Int
   context -> FirNamedFunctionSymbol /Derived.getSomething
   anchor -> [FirNamedFunctionSymbol /Derived.getSomething]
 
-@R|Anno|(position = <strcat>(String(setter type ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(setter nested type ), R|/prop|))  kotlin/Int>
+@R|Anno|(position = String(setter type str))  kotlin/collections/List<@R|Anno|(position = String(setter nested type str))  kotlin/Int>
   context -> FirValueParameterSymbol <local>/l from FirNamedFunctionSymbol /Derived.setSomething
   anchor -> [FirValueParameterSymbol <local>/l from FirNamedFunctionSymbol /Derived.setSomething]
 
-@R|Anno|(position = <strcat>(String(setter nested type ), R|/prop|))  kotlin/Int
+@R|Anno|(position = String(setter nested type str))  kotlin/Int
   context -> FirValueParameterSymbol <local>/l from FirNamedFunctionSymbol /Derived.setSomething
   anchor -> [FirValueParameterSymbol <local>/l from FirNamedFunctionSymbol /Derived.setSomething]
 
-@R|Anno|(position = <strcat>(String(getter return type ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(getter nested return type ), R|/prop|))  kotlin/Int>
+@R|Anno|(position = String(getter return type str))  kotlin/collections/List<@R|Anno|(position = String(getter nested return type str))  kotlin/Int>
   context -> FirSimpleSyntheticPropertySymbol /Derived.something
   anchor -> [FirNamedFunctionSymbol /Derived.getSomething]
 
-@R|Anno|(position = <strcat>(String(getter nested return type ), R|/prop|))  kotlin/Int
+@R|Anno|(position = String(getter nested return type str))  kotlin/Int
   context -> FirSimpleSyntheticPropertySymbol /Derived.something
   anchor -> [FirNamedFunctionSymbol /Derived.getSomething]
 
 
-TARGET: public open override [<synthetic> ANNOTATION_ARGUMENTS] var something: R|@R|Anno|(position = <strcat>(String(getter return type ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(getter nested return type ), R|/prop|))  kotlin/Int>|
-    @R|Anno|[Types](position = <strcat>(String(getSomething: ), R|/prop|)) public [<synthetic> ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|@R|Anno|(position = <strcat>(String(getter return type ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(getter nested return type ), R|/prop|))  kotlin/Int>| { LAZY_BLOCK }
-    @R|Anno|[Types](position = <strcat>(String(getSomething: ), R|/prop|)) public [<synthetic> ResolvedTo(ANNOTATION_ARGUMENTS)] set([ResolvedTo(ANNOTATION_ARGUMENTS)] l: R|@R|Anno|(position = <strcat>(String(setter type ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(setter nested type ), R|/prop|))  kotlin/Int>|): R|kotlin/Unit| { LAZY_BLOCK }
+TARGET: public open override [<synthetic> ANNOTATION_ARGUMENTS] var something: R|@R|Anno|(position = String(getter return type str))  kotlin/collections/List<@R|Anno|(position = String(getter nested return type str))  kotlin/Int>|
+    @R|Anno|[Types](position = String(getSomething: str)) public [<synthetic> ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|@R|Anno|(position = String(getter return type str))  kotlin/collections/List<@R|Anno|(position = String(getter nested return type str))  kotlin/Int>| { LAZY_BLOCK }
+    @R|Anno|[Types](position = String(getSomething: str)) public [<synthetic> ResolvedTo(ANNOTATION_ARGUMENTS)] set([ResolvedTo(ANNOTATION_ARGUMENTS)] l: R|@R|Anno|(position = String(setter type str))  kotlin/collections/List<@R|Anno|(position = String(setter nested type str))  kotlin/Int>|): R|kotlin/Unit| { LAZY_BLOCK }
 FILE: [ResolvedTo(IMPORTS)] Derived.kt
     @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.position] position: R|kotlin/String|): R|Anno| {
@@ -43,8 +43,8 @@ FILE: [ResolvedTo(IMPORTS)] Derived.kt
             LAZY_super<R|Base|>
         }
 
-        @R|Anno|[Types](position = <strcat>(String(getSomething: ), R|/prop|)) public open override [ResolvedTo(ANNOTATION_ARGUMENTS)] fun getSomething(): R|@R|Anno|(position = <strcat>(String(getter return type ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(getter nested return type ), R|/prop|))  kotlin/Int>| { LAZY_BLOCK }
+        @R|Anno|[Types](position = String(getSomething: str)) public open override [ResolvedTo(ANNOTATION_ARGUMENTS)] fun getSomething(): R|@R|Anno|(position = String(getter return type str))  kotlin/collections/List<@R|Anno|(position = String(getter nested return type str))  kotlin/Int>| { LAZY_BLOCK }
 
-        @R|Anno|[Types](position = <strcat>(String(getSomething: ), R|/prop|)) public open override [ResolvedTo(ANNOTATION_ARGUMENTS)] fun setSomething([ResolvedTo(ANNOTATION_ARGUMENTS)] l: R|@R|Anno|(position = <strcat>(String(setter type ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(setter nested type ), R|/prop|))  kotlin/Int>|): R|kotlin/Unit| { LAZY_BLOCK }
+        @R|Anno|[Types](position = String(getSomething: str)) public open override [ResolvedTo(ANNOTATION_ARGUMENTS)] fun setSomething([ResolvedTo(ANNOTATION_ARGUMENTS)] l: R|@R|Anno|(position = String(setter type str))  kotlin/collections/List<@R|Anno|(position = String(setter nested type str))  kotlin/Int>|): R|kotlin/Unit| { LAZY_BLOCK }
 
     }

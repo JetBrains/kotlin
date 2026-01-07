@@ -210,7 +210,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectSetter.kt
         public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): <ERROR TYPE REF: Unresolved name: field> {
             ^ <Unresolved name: field>#
         }
-        public [ResolvedTo(ANNOTATION_ARGUMENTS)] set([ResolvedTo(ANNOTATION_ARGUMENTS)] value: R|@R|low/Anno|(position = <strcat>(String(setter parameter type ), R|low/prop|))  kotlin/collections/List<@R|low/Anno|(position = <strcat>(String(setter nested parameter type ), R|low/prop|))  kotlin/collections/Collection<@R|low/Anno|(position = <strcat>(String(setter nested nested parameter type ), R|low/prop|))  kotlin/String>>|): R|kotlin/Unit| {
+        public [ResolvedTo(ANNOTATION_ARGUMENTS)] set([ResolvedTo(ANNOTATION_ARGUMENTS)] value: R|@R|low/Anno|(position = String(setter parameter type str))  kotlin/collections/List<@R|low/Anno|(position = String(setter nested parameter type str))  kotlin/collections/Collection<@R|low/Anno|(position = String(setter nested nested parameter type str))  kotlin/String>>|): R|kotlin/Unit| {
             ^ value#
         }
 
@@ -231,7 +231,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectSetter.kt
         public [ResolvedTo(BODY_RESOLVE)] get(): <ERROR TYPE REF: Unresolved name: field> {
             ^ <Unresolved name: field>#
         }
-        public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] value: R|@R|low/Anno|(position = <strcat>(String(setter parameter type ), R|low/prop|))  kotlin/collections/List<@R|low/Anno|(position = <strcat>(String(setter nested parameter type ), R|low/prop|))  kotlin/collections/Collection<@R|low/Anno|(position = <strcat>(String(setter nested nested parameter type ), R|low/prop|))  kotlin/String>>|): R|kotlin/Unit| {
+        public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] value: R|@R|low/Anno|(position = String(setter parameter type str))  kotlin/collections/List<@R|low/Anno|(position = String(setter nested parameter type str))  kotlin/collections/Collection<@R|low/Anno|(position = String(setter nested nested parameter type str))  kotlin/String>>|): R|kotlin/Unit| {
             ^ R|<local>/value|
         }
 
@@ -252,6 +252,6 @@ FILE: [ResolvedTo(BODY_RESOLVE)] implicitTypeFromIncorrectSetter.kt
         public [ResolvedTo(BODY_RESOLVE)] get(): <ERROR TYPE REF: Unresolved name: field> {
             ^ <Unresolved name: field>#
         }
-        public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] value: R|@R|low/Anno|(position = <strcat>(String(setter parameter type ), R|low/prop|))  kotlin/collections/List<@R|low/Anno|(position = <strcat>(String(setter nested parameter type ), R|low/prop|))  kotlin/collections/Collection<@R|low/Anno|(position = <strcat>(String(setter nested nested parameter type ), R|low/prop|))  kotlin/String>>|): R|kotlin/Unit| {
+        public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] value: R|@R|low/Anno|(position = String(setter parameter type str))  kotlin/collections/List<@R|low/Anno|(position = String(setter nested parameter type str))  kotlin/collections/Collection<@R|low/Anno|(position = String(setter nested nested parameter type str))  kotlin/String>>|): R|kotlin/Unit| {
             ^ R|<local>/value|
         }

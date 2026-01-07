@@ -1,8 +1,8 @@
-@R|foo/Anno|(position = <strcat>(String(local type ), R|foo/constant|))  kotlin/Int
+@R|foo/Anno|(position = String(local type 0))  kotlin/Int
   context -> FirLocalPropertySymbol <local>/i
   anchor -> [FirRegularPropertySymbol foo/$$result]
 
-@R|foo/Anno|(position = <strcat>(String(local type ), R|foo/constant|))  kotlin/Int
+@R|foo/Anno|(position = String(local type 0))  kotlin/Int
   context -> FirBackingFieldSymbol <local>/field from FirLocalPropertySymbol <local>/i
   anchor -> [FirRegularPropertySymbol foo/$$result]
 
@@ -26,8 +26,8 @@ FILE: [ResolvedTo(IMPORTS)] resultBodyAnnotation.kts
 
         public final [ResolvedTo(CONTRACTS)] [ScriptTopLevelDeclaration=true] fun foo([ResolvedTo(CONTRACTS)] action: R|() -> kotlin/Unit|): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public final [ResolvedTo(BODY_RESOLVE)] val $$result: R|kotlin/Unit| = @R|foo/Anno|[Types](position = <strcat>(String(call ), R|foo/constant|)) R|foo/foo|(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=() -> kotlin/Unit] foo@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
-            @R|foo/Anno|[Types](position = <strcat>(String(property ), R|foo/constant|)) [ResolvedTo(BODY_RESOLVE)] lval i: R|@R|foo/Anno|(position = <strcat>(String(local type ), R|foo/constant|))  kotlin/Int|
+        public final [ResolvedTo(BODY_RESOLVE)] val $$result: R|kotlin/Unit| = @R|foo/Anno|[Types](position = String(call 0)) R|foo/foo|(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=() -> kotlin/Unit] foo@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            @R|foo/Anno|[Types](position = String(property 0)) [ResolvedTo(BODY_RESOLVE)] lval i: R|@R|foo/Anno|(position = String(local type 0))  kotlin/Int|
         }
         )
             public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Unit|
