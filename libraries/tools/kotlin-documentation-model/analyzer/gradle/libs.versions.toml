@@ -7,7 +7,7 @@
 bta-kotlin-compiler = "2.0.21"
 bta-kotlin-language = "1.4"
 
-gradlePlugin-kotlin = "2.2.0"
+gradlePlugin-kotlin = "2.3.0"
 # See: https://kotlinlang.org/docs/gradle-configure-project.html#apply-the-plugin
 gradlePlugin-android = "7.3.1"
 
