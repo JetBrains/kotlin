@@ -135,6 +135,12 @@ public class AtomicfuJsTestGenerated extends AbstractAtomicfuJsTest {
     }
 
     @Test
+    @TestMetadata("KT83367.kt")
+    public void testKT83367() {
+      runTest("plugins/atomicfu/atomicfu-compiler/testData/box/atomics_basic/KT83367.kt");
+    }
+
+    @Test
     @TestMetadata("LateinitPropertiesTest.kt")
     public void testLateinitPropertiesTest() {
       runTest("plugins/atomicfu/atomicfu-compiler/testData/box/atomics_basic/LateinitPropertiesTest.kt");
