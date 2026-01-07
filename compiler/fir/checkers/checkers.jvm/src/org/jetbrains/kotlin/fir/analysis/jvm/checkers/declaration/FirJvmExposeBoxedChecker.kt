@@ -52,7 +52,7 @@ object FirJvmExposeBoxedChecker : FirBasicDeclarationChecker(MppCheckerKind.Comm
                 reporter.reportOn(name.source, FirJvmErrors.INAPPLICABLE_JVM_EXPOSE_BOXED_WITH_NAME)
             }
 
-            val value = name.evaluateAs<FirLiteralExpression>(context.session)?.value as? String
+            val value = (name as? FirLiteralExpression)?.value as? String
             if (value != null && !Name.isValidIdentifier(value)) {
                 reporter.reportOn(name.source, FirJvmErrors.ILLEGAL_JVM_NAME)
             }
@@ -103,7 +103,7 @@ object FirJvmExposeBoxedChecker : FirBasicDeclarationChecker(MppCheckerKind.Comm
         declaration: FirDeclaration,
     ) {
         if (name == null) return
-        val value = name.evaluateAs<FirLiteralExpression>(context.session)?.value as? String ?: return
+        val value = (name as? FirLiteralExpression)?.value as? String ?: return
 
         if (value == declaration.findJvmNameValue()) {
             reporter.reportOn(
