@@ -18,8 +18,8 @@ import org.jetbrains.kotlin.codegen.state.isMethodWithDeclarationSiteWildcardsFq
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyFunctionBase
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyClassBase
+import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyFunctionBase
 import org.jetbrains.kotlin.ir.descriptors.IrBasedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.ir.descriptors.toIrBasedDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrCall
@@ -30,7 +30,10 @@ import org.jetbrains.kotlin.load.java.BuiltinSpecialProperties
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.SpecialGenericSignatures
 import org.jetbrains.kotlin.load.java.getOverriddenBuiltinReflectingJvmDescriptor
-import org.jetbrains.kotlin.load.kotlin.*
+import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
+import org.jetbrains.kotlin.load.kotlin.getOptimalModeForReturnType
+import org.jetbrains.kotlin.load.kotlin.getOptimalModeForValueParameter
+import org.jetbrains.kotlin.load.kotlin.signatures
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_SUPPRESS_WILDCARDS_ANNOTATION_FQ_NAME
@@ -109,7 +112,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
             if (function.isInvisibleInMultifilePart()) function.parentAsClass.name.asString() else null
         } else {
             function.getInternalFunctionForManglingIfNeeded()?.let {
-                NameUtils.sanitizeAsJavaIdentifier(getModuleName(it))
+                NameUtils.sanitizeAsJavaIdentifier(getModuleNameForClassMember(it))
             }
         } ?: return newName
 
@@ -149,10 +152,12 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
             defaultArgumentsOriginalFunction as IrSimpleFunction
         } else null
 
-    private fun getModuleName(function: IrSimpleFunction): String =
-        (if (function is IrLazyFunctionBase)
-            getJvmModuleNameForDeserialized(function)
-        else null) ?: context.state.moduleName
+    private fun getModuleNameForClassMember(function: IrSimpleFunction): String {
+        val parent = function.parent
+        return if (parent is IrLazyClassBase) {
+            (if (parent.isK2) parent.moduleName else parent.irLazyClassModuleName) ?: JvmProtoBufUtil.DEFAULT_MODULE_NAME
+        } else context.state.moduleName
+    }
 
     fun mapReturnType(declaration: IrDeclaration, sw: JvmSignatureWriter? = null, materialized: Boolean = true): Type {
         if (declaration !is IrFunction) {
@@ -466,25 +471,6 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
         val classPart = typeMapper.mapType(parentAsClass.defaultType).internalName
         val signature = mapSignature(this@computeJvmSignature, skipGenericSignature = false, skipSpecial = true).toString()
         return signature(classPart, signature)
-    }
-
-    // From org.jetbrains.kotlin.load.kotlin.getJvmModuleNameForDeserializedDescriptor
-    private fun getJvmModuleNameForDeserialized(function: IrLazyFunctionBase): String? {
-        var current: IrDeclarationParent? = function.parent
-        while (current != null) {
-            when (current) {
-                is IrLazyClassBase -> {
-                    val moduleName = if (current.isK2) current.moduleName else current.irLazyClassModuleName
-                    return moduleName ?: JvmProtoBufUtil.DEFAULT_MODULE_NAME
-                }
-                is IrExternalPackageFragment -> {
-                    val source = current.containerSource ?: return null
-                    return (source as? JvmPackagePartSource)?.moduleName
-                }
-                else -> current = (current as? IrDeclaration)?.parent ?: return null
-            }
-        }
-        return null
     }
 
     fun mapToMethodHandle(irFun: IrFunction): Handle {
