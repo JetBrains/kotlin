@@ -7389,6 +7389,18 @@ public class LLReversedDiagnosticsFirTestGenerated extends AbstractLLReversedDia
         }
 
         @Test
+        @TestMetadata("misplacedArgumentsInChain.kt")
+        public void testMisplacedArgumentsInChain() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/innerClasses/inCallableReferenceLHS/misplacedArgumentsInChain.kt");
+        }
+
+        @Test
+        @TestMetadata("misplacedArgumentsInChainWithNested.kt")
+        public void testMisplacedArgumentsInChainWithNested() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/innerClasses/inCallableReferenceLHS/misplacedArgumentsInChainWithNested.kt");
+        }
+
+        @Test
         @TestMetadata("nullable.kt")
         public void testNullable() {
           runTest("compiler/fir/analysis-tests/testData/resolve/innerClasses/inCallableReferenceLHS/nullable.kt");
