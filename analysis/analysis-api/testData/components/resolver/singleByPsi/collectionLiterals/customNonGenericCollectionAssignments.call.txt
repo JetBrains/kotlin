@@ -1,0 +1,2 @@
+KtCollectionLiteralExpression(136,138): '[]'
+  null

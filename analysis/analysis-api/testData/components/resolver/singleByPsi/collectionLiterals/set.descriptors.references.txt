@@ -1,0 +1,13 @@
+KtCollectionLiteralExpression(55,58): '[1]'
+  KtCollectionLiteralReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      (in kotlin) inline fun <reified T> arrayOf(vararg elements: T): kotlin.Array<T>
+
+KtCallExpression(48,59): 'accept([1])'
+  KtInvokeFunctionReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      Nothing (Unresolved reference)

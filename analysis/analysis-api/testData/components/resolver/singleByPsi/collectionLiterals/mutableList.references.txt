@@ -1,0 +1,6 @@
+KtCollectionLiteralExpression(46,48): '[]'
+  KtCollectionLiteralReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      Nothing (Unresolved reference)
