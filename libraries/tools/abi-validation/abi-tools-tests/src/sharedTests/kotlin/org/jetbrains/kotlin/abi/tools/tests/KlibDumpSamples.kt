@@ -3,11 +3,10 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.abi.tools.impl
+package org.jetbrains.kotlin.abi.tools.tests
 
 import org.jetbrains.kotlin.abi.tools.KlibDump
 import org.jetbrains.kotlin.abi.tools.KlibTarget
-import org.jetbrains.kotlin.abi.tools.impl.klib.inferAbi
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
@@ -375,11 +374,7 @@ class KlibDumpSamples {
         """.trimIndent())
 
         // Let's use these dumps to infer a public ABI on iosArm64
-        val inferredIosArm64Dump = inferAbi(
-            unsupportedTarget = unsupportedTarget,
-            supportedTargetDumps = listOf(AbiToolsImpl.loadKlibDump(linuxDump)),
-            oldMergedDump = AbiToolsImpl.loadKlibDump(oldMergedDump)
-        )
+        val inferredIosArm64Dump = AbiToolsImpl.loadKlibDump(linuxDump).inferAbiForUnsupportedTarget(AbiToolsImpl.loadKlibDump(oldMergedDump), unsupportedTarget)
 
         assertEquals(unsupportedTarget, inferredIosArm64Dump.targets.single())
 

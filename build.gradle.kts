@@ -1019,6 +1019,8 @@ tasks {
         dependsOn(":tools:stats-analyser:test")
         dependsOn(":libraries:tools:abi-validation:abi-tools:check")
         dependsOn(":libraries:tools:abi-validation:abi-tools-api:check")
+        dependsOn(":libraries:tools:abi-validation:abi-tools-embeddable:check")
+        dependsOn(":libraries:tools:abi-validation:abi-tools-tests:check")
     }
 
     register("examplesTest") {

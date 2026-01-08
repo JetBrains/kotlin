@@ -379,6 +379,7 @@ fun Project.configureTests() {
             ":kotlinx-serialization-compiler-plugin",
             ":libraries:tools:abi-validation:abi-tools",
             ":libraries:tools:abi-validation:abi-tools-api",
+            ":libraries:tools:abi-validation:abi-tools-tests",
             ":libraries:tools:abi-validation:kgp-integration-tests",
             ":libraries:tools:analysis-api-based-klib-reader",
             ":native:kotlin-klib-commonizer",
