@@ -18,7 +18,7 @@ import java.util.concurrent.atomic.AtomicReferenceArray
 fun testJavaArray() {
     val foo = AtomicReferenceArray<Any>(1)
     val bar = foo.get(0) as Foo
-    foo.compareAndSet(0, bar, Foo(2u))
+    foo.compareAndSet(0, <!ATOMIC_REF_CALL_ARGUMENT_WITHOUT_CONSISTENT_IDENTITY, ATOMIC_REF_CALL_ARGUMENT_WITHOUT_CONSISTENT_IDENTITY{METADATA}!>bar<!>, <!ATOMIC_REF_CALL_ARGUMENT_WITHOUT_CONSISTENT_IDENTITY, ATOMIC_REF_CALL_ARGUMENT_WITHOUT_CONSISTENT_IDENTITY{METADATA}!>Foo(2u)<!>)
 }
 
 // FILE: K.kt
@@ -30,7 +30,7 @@ import kotlin.concurrent.atomics.AtomicArray
 fun testKotlinArray() {
     val foo = AtomicArray(arrayOf<Any>(Foo(1u)))
     val bar = foo.loadAt(0) as Foo
-    foo.compareAndSetAt(0, bar, Foo(2u))
+    foo.compareAndSetAt(0, <!ATOMIC_REF_CALL_ARGUMENT_WITHOUT_CONSISTENT_IDENTITY, ATOMIC_REF_CALL_ARGUMENT_WITHOUT_CONSISTENT_IDENTITY{METADATA}!>bar<!>, <!ATOMIC_REF_CALL_ARGUMENT_WITHOUT_CONSISTENT_IDENTITY, ATOMIC_REF_CALL_ARGUMENT_WITHOUT_CONSISTENT_IDENTITY{METADATA}!>Foo(2u)<!>)
 }
 
 /* GENERATED_FIR_TAGS: annotationUseSiteTargetFile, assignment, classReference, flexibleType, functionDeclaration,

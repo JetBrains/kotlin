@@ -16,7 +16,7 @@ import kotlinx.atomicfu.*
 
 fun testTypealiasedKotlin(bar: Foo) {
     val foo = atomic<Any>(Foo(1u))
-    foo.compareAndSet(bar, Foo(2u))
+    foo.compareAndSet(<!ATOMIC_REF_CALL_ARGUMENT_WITHOUT_CONSISTENT_IDENTITY!>bar<!>, <!ATOMIC_REF_CALL_ARGUMENT_WITHOUT_CONSISTENT_IDENTITY!>Foo(2u)<!>)
 }
 
 /* GENERATED_FIR_TAGS: annotationUseSiteTargetFile, asExpression, classDeclaration, classReference, flexibleType,

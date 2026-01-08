@@ -20,7 +20,7 @@ typealias KotlinAtomicReference<T> = AtomicReference<T>
 fun testTypealiasedKotlin() {
     val foo = KotlinAtomicReference<Any>(Foo(1u))
     val bar = foo.value as Foo
-    foo.compareAndSet(bar, Foo(2u))
+    foo.compareAndSet(<!ATOMIC_REF_CALL_ARGUMENT_WITHOUT_CONSISTENT_IDENTITY!>bar<!>, <!ATOMIC_REF_CALL_ARGUMENT_WITHOUT_CONSISTENT_IDENTITY!>Foo(2u)<!>)
 }
 
 /* GENERATED_FIR_TAGS: annotationUseSiteTargetFile, asExpression, classDeclaration, classReference, flexibleType,

@@ -1,3 +1,4 @@
+// LATEST_LV_DIFFERENCE
 // RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-82375
 // FULL_JDK
@@ -18,7 +19,7 @@ typealias JavaAtomicReference<T> = AtomicReference<T>
 fun testTypealiasedJava() {
     val foo = JavaAtomicReference<Any>(Foo(1u))
     val bar = foo.get() as Foo
-    foo.compareAndSet(bar, Foo(2u))
+    foo.compareAndSet(<!ATOMIC_REF_CALL_ARGUMENT_WITHOUT_CONSISTENT_IDENTITY!>bar<!>, <!ATOMIC_REF_CALL_ARGUMENT_WITHOUT_CONSISTENT_IDENTITY!>Foo(2u)<!>)
 }
 
 // FILE: K.kt
@@ -32,7 +33,7 @@ typealias KotlinAtomicReference<T> = AtomicReference<T>
 fun testTypealiasedKotlin() {
     val foo = KotlinAtomicReference<Any>(Foo(1u))
     val bar = foo.load() as Foo
-    foo.compareAndSet(bar, Foo(2u))
+    foo.compareAndSet(<!ATOMIC_REF_CALL_ARGUMENT_WITHOUT_CONSISTENT_IDENTITY!>bar<!>, <!ATOMIC_REF_CALL_ARGUMENT_WITHOUT_CONSISTENT_IDENTITY!>Foo(2u)<!>)
 }
 
 /* GENERATED_FIR_TAGS: annotationUseSiteTargetFile, asExpression, classDeclaration, classReference, flexibleType,

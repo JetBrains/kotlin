@@ -1,0 +1,3 @@
+/K.kt:(234,237): warning: This call may have inconsistent results because the type of this argument, 'Foo', does not have a consistent identity.
+
+/K.kt:(239,246): warning: This call may have inconsistent results because the type of this argument, 'Foo', does not have a consistent identity.

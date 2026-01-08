@@ -1,7 +1,23 @@
 /ErrorProneAtomicRefPrimitives.kt:(184,209): warning: This call may have inconsistent results because 'AtomicRef' uses identity equality and 'Int' does not have a consistent identity. Consider using 'AtomicInt' instead.
 
+/ErrorProneAtomicRefPrimitives.kt:(200,203): warning: This call may have inconsistent results because the type of this argument, 'Int', does not have a consistent identity.
+
+/ErrorProneAtomicRefPrimitives.kt:(205,208): warning: This call may have inconsistent results because the type of this argument, 'Int', does not have a consistent identity.
+
 /ErrorProneAtomicRefPrimitives.kt:(222,248): warning: This call may have inconsistent results because 'AtomicRef' uses identity equality and 'Int' does not have a consistent identity. Consider using 'AtomicInt' instead.
+
+/ErrorProneAtomicRefPrimitives.kt:(238,241): warning: This call may have inconsistent results because the type of this argument, 'Int', does not have a consistent identity.
+
+/ErrorProneAtomicRefPrimitives.kt:(243,247): warning: This call may have inconsistent results because the type of this argument, 'Int', does not have a consistent identity.
 
 /ErrorProneAtomicRefPrimitives.kt:(448,474): warning: This call may have inconsistent results because 'AtomicRef' uses identity equality and 'Int' does not have a consistent identity. Consider using 'AtomicInt' instead.
 
+/ErrorProneAtomicRefPrimitives.kt:(465,468): warning: This call may have inconsistent results because the type of this argument, 'Int', does not have a consistent identity.
+
+/ErrorProneAtomicRefPrimitives.kt:(470,473): warning: This call may have inconsistent results because the type of this argument, 'Int', does not have a consistent identity.
+
 /ErrorProneAtomicRefPrimitives.kt:(519,543): warning: This call may have inconsistent results because 'AtomicRef' uses identity equality and 'Int?' does not have a consistent identity. Consider using 'AtomicInt' instead.
+
+/ErrorProneAtomicRefPrimitives.kt:(538,539): warning: This call may have inconsistent results because the type of this argument, 'Int', does not have a consistent identity.
+
+/ErrorProneAtomicRefPrimitives.kt:(541,542): warning: This call may have inconsistent results because the type of this argument, 'Int', does not have a consistent identity.

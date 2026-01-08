@@ -15,7 +15,7 @@ value class Foo(val value: UInt)
 import kotlinx.atomicfu.*
 
 fun testKotlinArray(foo: AtomicArray<Any>, bar: Foo) {
-    foo[0].compareAndSet(bar, Foo(2u))
+    foo[0].compareAndSet(<!ATOMIC_REF_CALL_ARGUMENT_WITHOUT_CONSISTENT_IDENTITY!>bar<!>, <!ATOMIC_REF_CALL_ARGUMENT_WITHOUT_CONSISTENT_IDENTITY!>Foo(2u)<!>)
 }
 
 /* GENERATED_FIR_TAGS: annotationUseSiteTargetFile, assignment, classReference, flexibleType, functionDeclaration,
