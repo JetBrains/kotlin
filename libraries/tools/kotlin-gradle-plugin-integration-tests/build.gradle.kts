@@ -158,7 +158,7 @@ val cleanUserHomeKonanDir by tasks.registering(Delete::class) {
             "Deletes ~/.konan dir before tests, to ensure that no test inadvertently creates this directory during execution."
 
     val isTeamCityBuild = project.kotlinBuildProperties.isTeamcityBuild
-    onlyIf("Build is running on TeamCity") { isTeamCityBuild }
+    onlyIf("Build is running on TeamCity") { isTeamCityBuild.get() }
 
     val userHomeKonanDir = Paths.get("${System.getProperty("user.home")}/.konan")
     delete(userHomeKonanDir)
@@ -178,13 +178,13 @@ fun Test.applyKotlinNativeConfiguration() {
     )
 
     // Install K/N into Maven Local for local test runs with enabled K/N
-    if (project.kotlinBuildProperties.isKotlinNativeEnabled && !project.kotlinBuildProperties.isTeamcityBuild) {
+    if (project.kotlinBuildProperties.isKotlinNativeEnabled.get() && !project.kotlinBuildProperties.isTeamcityBuild.get()) {
         dependsOn(":kotlin-native:install")
         // This is the version that K/N bundle is assumed to be published with
-        systemProperties["kotlinNativeVersion"] = project.kotlinBuildProperties.defaultSnapshotVersion
+        systemProperties["kotlinNativeVersion"] = project.kotlinBuildProperties.defaultSnapshotVersion.orNull
     }
 
-    val kotlinNativeVersionForTestRuns = project.kotlinBuildProperties.getOrNull("kotlinNativeVersionForGradleIT") as? String
+    val kotlinNativeVersionForTestRuns = project.kotlinBuildProperties.stringProperty("kotlinNativeVersionForGradleIT").orNull
         // FIXME: Remove reading system property once the TC build script starts passing the gradle property
         ?: System.getProperty("kotlinNativeVersionForGradleIT")
     // This version is passed by TC build for runs with snapshot KN
@@ -243,7 +243,7 @@ enum class JunitTag {
     SwiftExportKGP,
 }
 
-if (project.kotlinBuildProperties.isTeamcityBuild) {
+if (project.kotlinBuildProperties.isTeamcityBuild.get()) {
     val junitTags = JunitTag.values().filter { it != JunitTag.SwiftExportKGP }.map { it.name }
     val gradleVersionTaskGroup = "Kotlin Gradle Plugin Verification grouped by Gradle version"
 
@@ -433,19 +433,19 @@ tasks.withType<Test>().configureEach {
     }
 
     // Add kotlin.gradle.autoDebugIT=false to local.properties to opt out of implicit withDebug when debugging the tests in IDE
-    val autoDebugIT = kotlinBuildProperties.getBoolean("kotlin.gradle.autoDebugIT", true)
+    val autoDebugIT = kotlinBuildProperties.booleanProperty("kotlin.gradle.autoDebugIT", true).get()
     if (autoDebugIT) {
         systemProperty("kotlin.gradle.autoDebugIT", autoDebugIT)
     }
 
-    val runAllIntegrationTestsOnMacos = kotlinBuildProperties.getBoolean("runAllIntegrationTestsOnMacos", false)
+    val runAllIntegrationTestsOnMacos = kotlinBuildProperties.booleanProperty("runAllIntegrationTestsOnMacos", false).get()
     if (runAllIntegrationTestsOnMacos) {
         systemProperty("runAllIntegrationTestsOnMacos", runAllIntegrationTestsOnMacos)
     }
     /**
      * We run all tests on macOS once a week and this property makes sure that tests that are correctly marked @BrokenOnMacosTest are skipped in this run
      */
-    val skipIntegrationTestsMarkedBroken = kotlinBuildProperties.getBoolean("skipIntegrationTestsMarkedBroken", false)
+    val skipIntegrationTestsMarkedBroken = kotlinBuildProperties.booleanProperty("skipIntegrationTestsMarkedBroken", false).get()
     if (skipIntegrationTestsMarkedBroken) {
         systemProperty("skipIntegrationTestsMarkedBroken", skipIntegrationTestsMarkedBroken)
     }

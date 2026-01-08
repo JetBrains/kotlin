@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.konan.target.*
 
 fun Project.kotlinInit(cacheRedirectorEnabled: Boolean) {
-    extensions.extraProperties["defaultSnapshotVersion"] = kotlinBuildProperties.defaultSnapshotVersion
+    extensions.extraProperties["defaultSnapshotVersion"] = kotlinBuildProperties.defaultSnapshotVersion.orNull
     extensions.extraProperties["kotlinVersion"] = findProperty("kotlinVersion")
 }
 

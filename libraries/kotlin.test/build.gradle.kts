@@ -112,7 +112,7 @@ kotlin {
         }
     }
     js {
-        if (!kotlinBuildProperties.isTeamcityBuild) {
+        if (!kotlinBuildProperties.isTeamcityBuild.get()) {
             browser {}
         }
         nodejs {}

@@ -19,7 +19,7 @@ tasks.register("analysisAllTests") {
         ":compiler:psi:psi-api:test",
     )
 
-    if (kotlinBuildProperties.isKotlinNativeEnabled) {
+    if (kotlinBuildProperties.isKotlinNativeEnabled.get()) {
         dependsOn(
             ":analysis:analysis-api-standalone:analysis-api-standalone-native:test",
             ":analysis:low-level-api-fir:low-level-api-fir-native:llFirNativeTests",

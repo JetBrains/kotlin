@@ -36,7 +36,7 @@ fun Project.addImplicitDependenciesConfiguration() {
         isCanBeResolved = false
     }
 
-    if (kotlinBuildProperties.isInIdeaSync) {
+    if (kotlinBuildProperties.isInIdeaSync.get()) {
         afterEvaluate {
             // IDEA manages to download dependencies from `implicitDependencies`, even if it is created with `isCanBeResolved = false`
             // Clear `implicitDependencies` to avoid downloading unnecessary dependencies during import
@@ -114,7 +114,7 @@ fun Project.configureKotlinCompilationOptions() {
         )
 
         val kotlinLanguageVersion: String by rootProject.extra
-        val renderDiagnosticNames by extra(project.kotlinBuildProperties.renderDiagnosticNames)
+        val renderDiagnosticNames by extra(project.kotlinBuildProperties.renderDiagnosticNames.get())
 
         tasks.withType<KotlinCompilationTask<*>>().configureEach {
             compilerOptions {
@@ -133,7 +133,7 @@ fun Project.configureKotlinCompilationOptions() {
 
             val layout = project.layout
             val rootDir = rootDir
-            val useAbsolutePathsInKlib = kotlinBuildProperties.getBoolean("kotlin.build.use.absolute.paths.in.klib")
+            val useAbsolutePathsInKlib = kotlinBuildProperties.booleanProperty("kotlin.build.use.absolute.paths.in.klib").get()
 
             // Workaround to avoid remote build cache misses due to absolute paths in relativePathBaseArg
             // This is a workaround for KT-50876, but with no clear explanation why doFirst is used.

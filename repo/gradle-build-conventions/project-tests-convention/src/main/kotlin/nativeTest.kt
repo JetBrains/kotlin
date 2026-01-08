@@ -148,7 +148,7 @@ private open class NativeArgsProvider @Inject constructor(
     protected val dependOnPlatformLibs = xcTestEnabled.orElse(requirePlatformLibs)
 
     @get:Input
-    protected val teamcity: Boolean = project.kotlinBuildProperties.isTeamcityBuild
+    protected val teamcity: Boolean = project.kotlinBuildProperties.isTeamcityBuild.get()
 
     @get:Internal
     protected val customNativeHome: Provider<String> = providers.testProperty(KOTLIN_NATIVE_HOME)
@@ -322,7 +322,7 @@ fun ProjectTestsExtension.nativeTestTask(
 
     group = "verification"
 
-    if (kotlinBuildProperties.isKotlinNativeEnabled) {
+    if (kotlinBuildProperties.isKotlinNativeEnabled.get()) {
         workingDir = project.rootDir
 
         // Use ARM64 JDK on ARM64 Mac as required by the K/N compiler.
@@ -361,7 +361,7 @@ fun ProjectTestsExtension.nativeTestTask(
         })
 
         val availableCpuCores: Int = if (allowParallelExecution) Runtime.getRuntime().availableProcessors() else 1
-        if (!kotlinBuildProperties.isTeamcityBuild
+        if (!kotlinBuildProperties.isTeamcityBuild.get()
             && minOf(kotlinBuildProperties.junit5NumberOfThreadsForParallelExecution ?: 16, availableCpuCores) > 4
         ) {
             logger.info("$path JIT C2 compiler has been disabled")

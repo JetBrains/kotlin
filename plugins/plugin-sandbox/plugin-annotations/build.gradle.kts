@@ -7,7 +7,7 @@ kotlin {
     js {
         binaries.executable()
     }
-    if (kotlinBuildProperties.isInIdeaSync) {
+    if (kotlinBuildProperties.isInIdeaSync.get()) {
         // this magic is needed because of explicit dependency of common
         // source set on the stdlib
         val hostOs = System.getProperty("os.name")

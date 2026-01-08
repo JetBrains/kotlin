@@ -96,7 +96,7 @@ dependencies {
     testImplementation(kotlinTest())
 
     // Dependencies for Kotlin/Native test infra:
-    if (!kotlinBuildProperties.isInIdeaSync) {
+    if (!kotlinBuildProperties.isInIdeaSync.get()) {
         testImplementation(testFixtures(project(":native:native.tests")))
     }
     testImplementation(project(":compiler:ir.backend.native"))
@@ -240,7 +240,7 @@ standardPublicJars()
 tasks.named("check") {
     // Depend on the test task that launches Native tests so that it will also run together with tests
     // for all other targets if K/N is enabled
-    if (kotlinBuildProperties.isKotlinNativeEnabled) {
+    if (kotlinBuildProperties.isKotlinNativeEnabled.get()) {
         dependsOn(tasks.named("nativeTest"))
     }
 }

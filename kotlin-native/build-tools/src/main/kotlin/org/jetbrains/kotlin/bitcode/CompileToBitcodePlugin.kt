@@ -535,8 +535,8 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
 
         private val compileTestsSemaphore = project.gradle.sharedServices.registerIfAbsent("compileTestsSemaphore", CompileTestsSemaphore::class.java) {
             // TODO: Make the default always null when tests compilation stops consuming so much memory.
-            val defaultParallelism = if (project.kotlinBuildProperties.isTeamcityBuild) 2 else null
-            val parallelism = project.kotlinBuildProperties.getOrNull("kotlin.native.runtimeTestsCompilationParallelism")?.toString()?.toInt() ?: defaultParallelism
+            val defaultParallelism = if (project.kotlinBuildProperties.isTeamcityBuild.get()) 2 else null
+            val parallelism = project.kotlinBuildProperties.intProperty("kotlin.native.runtimeTestsCompilationParallelism").orNull ?: defaultParallelism
             parallelism?.let {
                 maxParallelUsages.set(it)
             }
@@ -659,7 +659,7 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
                         } ?: Duration.ofMinutes(5))
                 this.executorsClasspath.from(project.executorsClasspathConfiguration())
                 this.distPath.set(project.nativeProtoDistribution.root.asFile.absolutePath)
-                this.dataDirPath.set(project.kotlinBuildProperties.getOrNull("konan.data.dir") as String?)
+                this.dataDirPath.set(project.kotlinBuildProperties.stringProperty("konan.data.dir").orNull)
 
                 usesService(runGTestSemaphore)
             }
