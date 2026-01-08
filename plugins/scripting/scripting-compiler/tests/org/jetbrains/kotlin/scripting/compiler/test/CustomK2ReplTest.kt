@@ -393,6 +393,49 @@ class CustomK2ReplTest {
 
         checkEvaluatedSnippetsResultVals(sequenceOf(null), results)
     }
+
+    @Test
+    fun testSnippetMemoryConsumption() {
+        if (!isK2) return
+
+        val results = withMessageCollectorAndDisposable { messageCollector, disposable ->
+            val compiler = K2ReplCompiler(K2ReplCompiler.createCompilationState(messageCollector, disposable, baseCompilationConfiguration))
+            val evaluator = K2ReplEvaluator()
+
+            val snippetCompilationConfiguration = baseCompilationConfiguration.with {
+                updateClasspath(
+                    runBlocking {
+                        dependenciesResolver.resolve("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.1")
+                    }.valueOrThrow()
+                )
+            }
+
+            @Suppress("DEPRECATION_ERROR")
+            internalScriptingRunSuspend {
+                val snippets = buildList {
+                    add(
+                        """
+                        import kotlinx.serialization.*
+                        import kotlinx.serialization.json.*
+                        """
+                    )
+                    repeat(50) { add("@Serializable class Test(val x: Int)") }
+                }
+
+                var i = 1
+                snippets.mapSuccess { snippet ->
+                    compiler.compile(snippet.toScriptSource("s${i++}.repl.kts"), snippetCompilationConfiguration)
+                        .onSuccess { evaluator.eval(it, baseEvaluationConfiguration) }
+                }
+            }
+        }
+
+        // Checking snippets results is bounded be the shortest sequence between expected and actual.
+        // So generate an infinite sequence of `null`s, so we always have enough expected values.
+        val expected = sequence { while (true) yield(null) }
+
+        checkEvaluatedSnippetsResultVals(expected, results)
+    }
 }
 
 private val baseCompilationConfiguration: ScriptCompilationConfiguration =
