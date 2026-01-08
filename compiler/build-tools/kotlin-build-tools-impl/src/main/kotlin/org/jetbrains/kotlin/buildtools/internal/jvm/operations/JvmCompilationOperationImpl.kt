@@ -53,12 +53,14 @@ import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.daemon.client.BasicCompilerServicesWithResultsFacadeServer
 import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.incremental.*
+import org.jetbrains.kotlin.incremental.components.LookupInfo
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.storage.FileLocations
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.ObjectOutputStream
+import java.io.Serializable
 import java.net.URLClassLoader
 import java.nio.file.Path
 import java.rmi.RemoteException
@@ -159,9 +161,16 @@ internal class JvmCompilationOperationImpl private constructor(
 
     private fun toDaemonCompilationOptions(): CompilationOptions {
         val ktsExtensionsAsArray = get(KOTLINSCRIPT_EXTENSIONS)
-        val reportCategories = arrayOf(
-            ReportCategory.COMPILER_MESSAGE.code, ReportCategory.IC_MESSAGE.code
-        ) // TODO: KT-79976 automagically compute the value, related to BasicCompilerServicesWithResultsFacadeServer
+
+        // TODO: KT-79976 automagically compute the value, related to BasicCompilerServicesWithResultsFacadeServer
+        val reportCategories = buildList {
+            add(ReportCategory.COMPILER_MESSAGE.code)
+            add(ReportCategory.IC_MESSAGE.code)
+            if (get(LOOKUP_TRACKER) != null) {
+                add(ReportCategory.COMPILER_LOOKUP.code)
+            }
+        }.toTypedArray()
+
         val reportSeverity = if (VERBOSE in compilerArguments && compilerArguments[VERBOSE]) {
             ReportSeverity.DEBUG.code
         } else {
@@ -285,7 +294,7 @@ internal class JvmCompilationOperationImpl private constructor(
             sessionId,
             arguments.toArgumentStrings().toTypedArray(),
             daemonCompileOptions,
-            BasicCompilerServicesWithResultsFacadeServer(loggerAdapter),
+            BtaCompilerServicesWithResultsFacade(loggerAdapter, get(LOOKUP_TRACKER)),
             DaemonCompilationResults(
                 loggerAdapter.kotlinLogger, rootProjectDir?.toFile(), metricsReporter
             ),
@@ -502,6 +511,31 @@ internal class JvmCompilationOperationImpl private constructor(
             Option("COMPILER_ARGUMENTS_LOG_LEVEL", default = CompilerArgumentsLogLevel.DEBUG)
 
         val GENERATE_COMPILER_REF_INDEX: Option<Boolean> = Option("GENERATE_COMPILER_REF_INDEX", false)
+    }
+}
+
+private class BtaCompilerServicesWithResultsFacade(
+    loggerAdapter: KotlinLoggerMessageCollectorAdapter,
+    val lookupTracker: CompilerLookupTracker? = null
+) :
+    BasicCompilerServicesWithResultsFacadeServer(loggerAdapter) {
+    override fun report(category: Int, severity: Int, message: String?, attachment: Serializable?) {
+        when (category) {
+            ReportCategory.COMPILER_LOOKUP.code -> {
+                attachment as LookupInfo?
+                if (attachment == null) {
+                    lookupTracker?.clear()
+                } else {
+                    lookupTracker?.recordLookup(
+                        attachment.filePath,
+                        attachment.scopeFqName,
+                        CompilerLookupTracker.ScopeKind.valueOf(attachment.scopeKind.name),
+                        attachment.name
+                    )
+                }
+            }
+            else -> super.report(category, severity, message, attachment)
+        }
     }
 }
 
