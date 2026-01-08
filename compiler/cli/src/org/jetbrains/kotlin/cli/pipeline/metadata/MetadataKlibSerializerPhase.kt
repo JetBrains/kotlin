@@ -46,7 +46,7 @@ object MetadataKlibInMemorySerializerPhase : PipelinePhase<MetadataFrontendPipel
                     scopeSession,
                     actualizedExpectDeclarations = null,
                     FirKLibSerializerExtension(
-                        session, scopeSession, session.firProvider, metadataVersion, constValueProvider = null,
+                        session, scopeSession, session.firProvider, metadataVersion,
                         exportKDoc = false,
                         additionalMetadataProvider = null
                     ),
