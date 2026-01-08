@@ -24,8 +24,14 @@ class BtaV2StrategyAgnosticCompilationTestArgumentProvider : ArgumentsProvider {
             val kotlinToolchains = KotlinToolchains.loadImplementation(BaseCompilationTest::class.java.classLoader)
             val v2Args: List<Named<Pair<KotlinToolchains, ExecutionPolicy>>> =
                 listOf(
-                    Named.named("[v2] in-process", kotlinToolchains to kotlinToolchains.createInProcessExecutionPolicy()),
-                    Named.named("[v2] within daemon", kotlinToolchains to kotlinToolchains.daemonExecutionPolicyBuilder().build())
+                    Named.named(
+                        "[v2][${kotlinToolchains.getCompilerVersion()}] in-process",
+                        kotlinToolchains to kotlinToolchains.createInProcessExecutionPolicy()
+                    ),
+                    Named.named(
+                        "[v2][${kotlinToolchains.getCompilerVersion()}] within daemon",
+                        kotlinToolchains to kotlinToolchains.daemonExecutionPolicyBuilder().build()
+                    )
                 )
 
             return v2Args
