@@ -555,6 +555,34 @@ public class FirIdeNormalAnalysisSourceModuleSingleSymbolByPsiTestGenerated exte
   }
 
   @Nested
+  @TestMetadata("analysis/analysis-api/testData/symbols/singleSymbolByPsi/collectionLiterals")
+  @TestDataPath("$PROJECT_ROOT")
+  public class CollectionLiterals {
+    @Test
+    public void testAllFilesPresentInCollectionLiterals() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/symbols/singleSymbolByPsi/collectionLiterals"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("ofOperator.kt")
+    public void testOfOperator() {
+      runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/collectionLiterals/ofOperator.kt");
+    }
+
+    @Test
+    @TestMetadata("ofOperatorWithContext.kt")
+    public void testOfOperatorWithContext() {
+      runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/collectionLiterals/ofOperatorWithContext.kt");
+    }
+
+    @Test
+    @TestMetadata("ofOperatorWithoutOperator.kt")
+    public void testOfOperatorWithoutOperator() {
+      runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/collectionLiterals/ofOperatorWithoutOperator.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contextParameters")
   @TestDataPath("$PROJECT_ROOT")
   public class ContextParameters {
