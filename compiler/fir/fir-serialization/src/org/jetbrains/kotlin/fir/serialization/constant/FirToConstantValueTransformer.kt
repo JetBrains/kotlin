@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.FirEnumEntry
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.getSingleMatchedExpectForActualOrNull
 import org.jetbrains.kotlin.fir.declarations.utils.isConst
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirExpressionStub
@@ -161,12 +162,13 @@ fun Map<Name, ConstantValue<*>>.fillEmptyArray(
     session: FirSession
 ): Map<Name, ConstantValue<*>> {
     if (annotationConstructorSymbol == null) return this
+    val expectConstructor = annotationConstructorSymbol.getSingleMatchedExpectForActualOrNull()
     val additionalEmptyArrays = annotationConstructorSymbol.valueParameterSymbols.mapNotNull { parameterSymbol ->
-        if (this[parameterSymbol.name] == null && parameterSymbol.resolvedReturnTypeRef.coneType.fullyExpandedType(session).isArrayType) {
-            parameterSymbol.name to ArrayValue(emptyList())
-        } else {
-            null
-        }
+        if (this[parameterSymbol.name] != null) return@mapNotNull null
+        if (!parameterSymbol.resolvedReturnTypeRef.coneType.fullyExpandedType(session).isArrayType) return@mapNotNull null
+        val parameterWithPotentialDefault = expectConstructor?.valueParameterSymbols?.firstOrNull { it.name == parameterSymbol.name } ?: parameterSymbol
+        if (parameterWithPotentialDefault.hasDefaultValue) return@mapNotNull null
+        parameterSymbol.name to ArrayValue(emptyList())
     }
     return this + additionalEmptyArrays
 }
