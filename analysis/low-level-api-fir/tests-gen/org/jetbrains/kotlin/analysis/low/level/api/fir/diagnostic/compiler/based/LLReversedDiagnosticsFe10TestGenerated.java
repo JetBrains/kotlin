@@ -48446,40 +48446,6 @@ public class LLReversedDiagnosticsFe10TestGenerated extends AbstractLLReversedDi
       public void testVisibleDeclarationThroughInvisibleTypeAlias() {
         runTest("compiler/testData/diagnostics/tests/visibility/visibleDeclarationThroughInvisibleTypeAlias.kt");
       }
-
-      @Nested
-      @TestMetadata("compiler/testData/diagnostics/tests/visibility/exposedPrivate")
-      @TestDataPath("$PROJECT_ROOT")
-      public class ExposedPrivate {
-        @Test
-        public void testAllFilesPresentInExposedPrivate() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/visibility/exposedPrivate"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|partialBody|fir|ll|latestLV)\\.kts?$"), true);
-        }
-
-        @Test
-        @TestMetadata("anonymousObjects.kt")
-        public void testAnonymousObjects() {
-          runTest("compiler/testData/diagnostics/tests/visibility/exposedPrivate/anonymousObjects.kt");
-        }
-
-        @Test
-        @TestMetadata("differentInstructions.kt")
-        public void testDifferentInstructions() {
-          runTest("compiler/testData/diagnostics/tests/visibility/exposedPrivate/differentInstructions.kt");
-        }
-
-        @Test
-        @TestMetadata("protectedInInternalClass.kt")
-        public void testProtectedInInternalClass() {
-          runTest("compiler/testData/diagnostics/tests/visibility/exposedPrivate/protectedInInternalClass.kt");
-        }
-
-        @Test
-        @TestMetadata("publicInInternalClass.kt")
-        public void testPublicInInternalClass() {
-          runTest("compiler/testData/diagnostics/tests/visibility/exposedPrivate/publicInInternalClass.kt");
-        }
-      }
     }
 
     @Nested

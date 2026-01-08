@@ -1,4 +1,3 @@
-// RUN_PIPELINE_TILL: FRONTEND
 // DIAGNOSTICS: -NOTHING_TO_INLINE -UNUSED_PARAMETER
 
 interface SomeInterface
@@ -21,5 +20,3 @@ internal inline fun bar() {
     foo3()
     foo4()
 }
-
-/* GENERATED_FIR_TAGS: anonymousObjectExpression, functionDeclaration, inline, interfaceDeclaration */

@@ -1,4 +1,3 @@
-// RUN_PIPELINE_TILL: FRONTEND
 // DIAGNOSTICS: -NOTHING_TO_INLINE -UNUSED_EXPRESSION
 // WITH_STDLIB
 
@@ -25,16 +24,12 @@ private inline fun tryCatch() {
 }
 
 internal inline fun test() {
-    ldc()
-    ldcReified<<!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_ERROR!>C<!>>()
-    newarray()
-    checkcast(null)
-    instanceof(null)
-    getstatic()
-    putstatic()
-    tryCatch()
+    <!PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION_WARNING!>ldc()<!>
+    <!PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION_WARNING!>ldcReified<C>()<!>
+    <!PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION_WARNING!>newarray()<!>
+    <!PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION_WARNING!>checkcast(null)<!>
+    <!PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION_WARNING!>instanceof(null)<!>
+    <!PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION_WARNING!>getstatic()<!>
+    <!PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION_WARNING!>putstatic()<!>
+    <!PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION_WARNING!>tryCatch()<!>
 }
-
-/* GENERATED_FIR_TAGS: asExpression, assignment, classDeclaration, classReference, companionObject, functionDeclaration,
-inline, isExpression, localProperty, nullableType, objectDeclaration, propertyDeclaration, reified, tryExpression,
-typeParameter */
