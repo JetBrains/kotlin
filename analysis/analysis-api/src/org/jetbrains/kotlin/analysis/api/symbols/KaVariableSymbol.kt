@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -534,6 +534,26 @@ public abstract class KaValueParameterSymbol : KaParameterSymbol() {
      * The names of the value parameters for `invoke()` are "item" and "p2" (its default parameter name).
      */
     abstract override val name: Name
+
+    /**
+     * Whether the compiler synthesized the value parameter name.
+     *
+     * This flag is meaningful only for value parameters of binary Java methods since they
+     * might not have names in the bytecode.
+     *
+     * ### Example
+     *
+     * ```java
+     * public JavaClass {
+     *   public void foo(int meaningfulName1, String meaningfulName2) { ... }
+     * }
+     * ```
+     *
+     * The bytecode don't have to have `meaningfulName1` and `meaningfulName2` information, so the compiler
+     * will generate `p0` and `p1` names for the parameters instead.
+     */
+    @KaExperimentalApi
+    public abstract val hasSynthesizedName: Boolean
 
     /**
      * Whether the value parameter is marked as [`noinline`](https://kotlinlang.org/docs/inline-functions.html#noinline).

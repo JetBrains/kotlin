@@ -93,6 +93,7 @@ scopes:
             generatedPrimaryConstructorProperty: null
             hasDeclaredDefaultValue: false
             hasDefaultValue: false
+            hasSynthesizedName: false
             isActual: false
             isCrossinline: false
             isExpect: false
@@ -156,6 +157,7 @@ scopes:
             generatedPrimaryConstructorProperty: null
             hasDeclaredDefaultValue: false
             hasDefaultValue: false
+            hasSynthesizedName: false
             isActual: false
             isCrossinline: false
             isExpect: false
@@ -219,6 +221,7 @@ scopes:
             generatedPrimaryConstructorProperty: null
             hasDeclaredDefaultValue: false
             hasDefaultValue: false
+            hasSynthesizedName: false
             isActual: false
             isCrossinline: false
             isExpect: false
@@ -282,6 +285,7 @@ scopes:
             generatedPrimaryConstructorProperty: null
             hasDeclaredDefaultValue: false
             hasDefaultValue: false
+            hasSynthesizedName: false
             isActual: false
             isCrossinline: false
             isExpect: false
@@ -342,6 +346,7 @@ scopes:
             generatedPrimaryConstructorProperty: null
             hasDeclaredDefaultValue: false
             hasDefaultValue: false
+            hasSynthesizedName: false
             isActual: false
             isCrossinline: false
             isExpect: false
@@ -369,6 +374,7 @@ scopes:
             generatedPrimaryConstructorProperty: null
             hasDeclaredDefaultValue: false
             hasDefaultValue: false
+            hasSynthesizedName: false
             isActual: false
             isCrossinline: false
             isExpect: false
@@ -779,6 +785,7 @@ scopes:
             generatedPrimaryConstructorProperty: null
             hasDeclaredDefaultValue: false
             hasDefaultValue: false
+            hasSynthesizedName: false
             isActual: false
             isCrossinline: false
             isExpect: false

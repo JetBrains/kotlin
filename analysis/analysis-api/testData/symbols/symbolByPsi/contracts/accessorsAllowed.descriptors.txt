@@ -260,6 +260,7 @@ KaKotlinPropertySymbol:
       generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
+      hasSynthesizedName: false
       isActual: false
       isCrossinline: false
       isExpect: false
@@ -323,6 +324,7 @@ KaKotlinPropertySymbol:
         generatedPrimaryConstructorProperty: null
         hasDeclaredDefaultValue: false
         hasDefaultValue: false
+        hasSynthesizedName: false
         isActual: false
         isCrossinline: false
         isExpect: false
@@ -529,6 +531,7 @@ KaConstructorSymbol:
         importableFqName: null
       hasDeclaredDefaultValue: false
       hasDefaultValue: false
+      hasSynthesizedName: false
       isActual: false
       isCrossinline: false
       isExpect: false
