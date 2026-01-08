@@ -65,9 +65,19 @@ internal class PartialLinkageSupportForLinkerImpl(
         val entries = fakeOverrideBuilder.fakeOverrideCandidates
         if (entries.isEmpty()) return
 
-        for (clazz in entries.keys) {
-            classifierExplorer.exploreSymbol(clazz.symbol)
+        val toExclude = buildSet {
+            for (clazz in entries.keys) {
+                classifierExplorer.exploreSymbol(clazz.symbol)?.let {
+                    // KT-82765: classes marked as Unusable.DueToOtherClassifier should not be excluded from fakeOverrideCandidates,
+                    //           otherwise project and reproducer from KT-82765 would fail.
+                    // KT-83545: classes marked as Unusable.InvalidInheritance should not be excluded,
+                    //           otherwise test js/js.translator/testData/incremental/invalidationWithPL/interfaceBecomeClass/ would fail
+                    if (it !is ClassifierPartialLinkageStatus.Unusable.DueToOtherClassifier)
+                        this += clazz
+                }
+            }
         }
+        entries -= toExclude
     }
 
     override fun exploreClassifiersInInlineLazyIrFunction(function: IrFunction) {
