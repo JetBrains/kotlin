@@ -22,7 +22,14 @@ enum class ReportCategory(val code: Int) {
     EXCEPTION(1),
     DAEMON_MESSAGE(2),
     IC_MESSAGE(3),
-    OUTPUT_MESSAGE(4);
+    OUTPUT_MESSAGE(4),
+
+    /**
+     * Messages with this category will contain an attachment of type [org.jetbrains.kotlin.incremental.components.LookupInfo] or `null`.
+     * A `null` attachment is equivalent to calling the [org.jetbrains.kotlin.incremental.components.LookupTracker.clear] method.
+     */
+    COMPILER_LOOKUP(5),
+    ;
 
     companion object {
         fun fromCode(code: Int): ReportCategory? = entries.firstOrNull { it.code == code }
