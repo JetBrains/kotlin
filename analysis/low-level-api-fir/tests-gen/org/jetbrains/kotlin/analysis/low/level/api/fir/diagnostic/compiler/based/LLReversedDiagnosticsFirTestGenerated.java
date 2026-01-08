@@ -5256,6 +5256,12 @@ public class LLReversedDiagnosticsFirTestGenerated extends AbstractLLReversedDia
       }
 
       @Test
+      @TestMetadata("operatorRenamedOnImportProvideDelegateWithFlag.kt")
+      public void testOperatorRenamedOnImportProvideDelegateWithFlag() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/operatorRenamedOnImportProvideDelegateWithFlag.kt");
+      }
+
+      @Test
       @TestMetadata("outerClassArgumentsRequiredFromSuper.kt")
       public void testOuterClassArgumentsRequiredFromSuper() {
         runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/outerClassArgumentsRequiredFromSuper.kt");

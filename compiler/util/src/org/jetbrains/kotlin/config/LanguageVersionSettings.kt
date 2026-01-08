@@ -602,6 +602,7 @@ enum class LanguageFeature(
     ForbidInferOfInvisibleTypeAsReifiedVarargOrReturnType(sinceVersion = null, enabledInProgressiveMode = true, issue = "KTLC-14"),
     ForbidExposingPackagePrivateInInternal(sinceVersion = null, enabledInProgressiveMode = true, "KTLC-271"),
     JvmLoadAnnotationsOnAnnotationProperties(sinceVersion = null, "KT-22463"),
+    TreatProvideDelegateAsConventionName(sinceVersion = null, "KT-83538"),
     ;
 
     constructor(

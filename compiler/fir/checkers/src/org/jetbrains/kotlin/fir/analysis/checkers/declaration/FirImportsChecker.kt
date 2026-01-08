@@ -246,6 +246,10 @@ object FirImportsChecker : FirFileChecker(MppCheckerKind.Common) {
                 return
             }
 
+            OperatorNameConventions.PROVIDE_DELEGATE if !context.languageVersionSettings.supportsFeature(LanguageFeature.TreatProvideDelegateAsConventionName) -> {
+                return
+            }
+
             else -> {}
         }
 
