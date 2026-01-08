@@ -257,6 +257,15 @@ KBoolean Konan_Platform_isDebugBinary() {
   return kotlin::compiler::shouldContainDebugInfo();
 }
 
+KInt Konan_Platform_getAllocator() {
+    if (!compiler::pagedAllocator()) {
+        // Allocator.PER_OBJECT
+        return 1;
+    }
+    // Allocator.PAGED
+    return 0;
+}
+
 OBJ_GETTER0(Konan_Platform_getProgramName) {
     if (kotlin::programName == nullptr) {
         // null in case Platform.getProgramName is called from within a library and the main function of the binary is not built with Kotlin
