@@ -1,5 +1,6 @@
 plugins {
     kotlin("jvm")
+    id("generated-sources")
 }
 
 dependencies {
@@ -20,3 +21,4 @@ sourceSets {
     "test" { projectDefault() }
 }
 
+generatedConfigurationKeys("KonanConfigKeys")

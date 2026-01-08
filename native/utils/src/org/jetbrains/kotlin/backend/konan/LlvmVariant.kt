@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -11,18 +11,18 @@ import org.jetbrains.kotlin.konan.target.HostManager
 sealed class LlvmVariant {
     object User : LlvmVariant() {
         override fun getKonanPropertiesEntry(): Pair<String, String> =
-                konanPropertiesKey to "\$llvm.${HostManager.hostName}.user"
+                konanPropertiesKey to "\$llvm.${HostManager.Companion.hostName}.user"
     }
 
     object Dev : LlvmVariant() {
         override fun getKonanPropertiesEntry(): Pair<String, String> =
-                konanPropertiesKey to "\$llvm.${HostManager.hostName}.dev"
+                konanPropertiesKey to "\$llvm.${HostManager.Companion.hostName}.dev"
 
     }
 
     object DevWithAsserts : LlvmVariant() {
         override fun getKonanPropertiesEntry(): Pair<String, String> =
-            konanPropertiesKey to "\$llvm.${HostManager.hostName}.dev-with-asserts"
+            konanPropertiesKey to "\$llvm.${HostManager.Companion.hostName}.dev-with-asserts"
     }
 
     class Custom(val path: File) : LlvmVariant() {
@@ -35,7 +35,7 @@ sealed class LlvmVariant {
 
     companion object {
         private val konanPropertiesKey: String by lazy {
-            "llvmHome.${HostManager.hostName}"
+            "llvmHome.${HostManager.Companion.hostName}"
         }
     }
 }

@@ -454,7 +454,8 @@ class CacheBuilder(
             put(KonanConfigKeys.NOENDORSEDLIBS, true)
             put(KonanConfigKeys.NOSTDLIB, true)
             put(KonanConfigKeys.LIBRARY_FILES, libraries)
-            if (generateTestRunner != TestRunnerKind.NONE && libraryPath in includedLibraries) {
+            val generateTestRunner = this@CacheBuilder.generateTestRunner
+            if (generateTestRunner != TestRunnerKind.NONE && libraryPath in this@CacheBuilder.includedLibraries) {
                 put(KonanConfigKeys.FRIEND_MODULES, konanConfig.friendModuleFiles.map { it.absolutePath })
                 put(KonanConfigKeys.GENERATE_TEST_RUNNER, generateTestRunner)
                 put(KonanConfigKeys.INCLUDED_LIBRARIES, listOf(libraryPath))

@@ -41,7 +41,7 @@ private fun PhaseContext.firSerializerBase(
     val configuration = config.configuration
     val usedResolvedLibraries = fir2IrOutput?.let {
         config.resolvedLibraries.getFullResolvedList(TopologicalLibraryOrder).filter {
-            (!it.isDefault && !configuration.getBoolean(KonanConfigKeys.Companion.PURGE_USER_LIBS)) || it in fir2IrOutput.usedLibraries
+            (!it.isDefault && !configuration.getBoolean(KonanConfigKeys.PURGE_USER_LIBS)) || it in fir2IrOutput.usedLibraries
         }
     }
 
@@ -57,7 +57,7 @@ private fun PhaseContext.firSerializerBase(
                 configuration,
                 firResult.outputs,
                 fir2IrOutput?.fir2irActualizedResult,
-                exportKDoc = config.configuration.getBoolean(KonanConfigKeys.Companion.EXPORT_KDOC),
+                exportKDoc = config.configuration.getBoolean(KonanConfigKeys.EXPORT_KDOC),
                 produceHeaderKlib = produceHeaderKlib,
             ),
             cleanFiles = emptyList(),
