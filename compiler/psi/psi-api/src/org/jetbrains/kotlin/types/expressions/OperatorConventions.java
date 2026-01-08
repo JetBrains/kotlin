@@ -96,7 +96,21 @@ public class OperatorConventions {
              .build();
 
     public static final ImmutableSet<Name> CONVENTION_NAMES = ImmutableSet.<Name>builder()
-            .add(GET, SET, INVOKE, CONTAINS, ITERATOR, NEXT, HAS_NEXT, EQUALS, COMPARE_TO, GET_VALUE, SET_VALUE, OF, PROVIDE_DELEGATE)
+            .add(
+                    GET_VALUE,
+                    SET_VALUE,
+                    PROVIDE_DELEGATE,
+                    EQUALS,
+                    COMPARE_TO,
+                    CONTAINS,
+                    INVOKE,
+                    ITERATOR,
+                    GET,
+                    SET,
+                    NEXT,
+                    HAS_NEXT,
+                    OF
+            )
             .addAll(UNARY_OPERATION_NAMES.values())
             .addAll(BINARY_OPERATION_NAMES.values())
             .addAll(ASSIGNMENT_OPERATIONS.values())
