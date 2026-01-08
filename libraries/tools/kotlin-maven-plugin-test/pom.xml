@@ -190,7 +190,7 @@
                                         <kotlin.maven.local.repo.for.tests>${project.basedir}/local-repo</kotlin.maven.local.repo.for.tests>
                                         <kotlin.it.testDirs>${project.basedir}/src/it</kotlin.it.testDirs>
                                         <!-- ./libraries/tools/kotlin-maven-plugin-test/pom.xml -->
-                                        <kotlin.build.repo>${maven.repo.local}</kotlin.build.repo>
+                                        <kotlin.build.repo>${settings.localRepository}</kotlin.build.repo>
                                         <kotlin.it.verify-common.bsh>${project.basedir}/verify-common.bsh</kotlin.it.verify-common.bsh>
                                     </systemPropertyVariables>
                                 </configuration>
