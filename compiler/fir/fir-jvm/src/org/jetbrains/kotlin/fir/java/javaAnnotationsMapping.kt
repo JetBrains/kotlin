@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -159,7 +159,7 @@ internal fun JavaValueParameter.toFirValueParameter(
     isFromSource = this@toFirValueParameter.isFromSource
     this.moduleData = moduleData
     containingDeclarationSymbol = functionSymbol
-    name = this@toFirValueParameter.name ?: Name.identifier("p$index")
+    name = this@toFirValueParameter.nameOrGeneratedName ?: Name.identifier("p$index")
     returnTypeRef = type.toFirJavaTypeRef(session, source)
     isVararg = this@toFirValueParameter.isVararg
     annotationList = FirLazyJavaAnnotationList(this@toFirValueParameter, moduleData)
