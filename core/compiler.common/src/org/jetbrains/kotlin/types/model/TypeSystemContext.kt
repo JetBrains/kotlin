@@ -324,15 +324,15 @@ interface TypeSystemInferenceExtensionContext : TypeSystemContext, TypeSystemBui
         }
 
     /**
-     * This flag allows usage of [org.jetbrains.kotlin.resolve.calls.inference.model.Constraint.isFromFlexibleConstraint]
+     * This flag allows usage of [org.jetbrains.kotlin.resolve.calls.inference.model.Constraint.isFromFlexiblePosition]
      *
-     * A constraint has this flag (isFromFlexibleConstraint) in case its initial lower constraint has a flexible type variable.
-     * This flag changes the incorporation rules: with A? <: T <: B and A? <: T having 'isFromFlexibleConstraint' we infer
+     * A constraint has this flag (isFromFlexiblePosition) in case its initial lower constraint has a flexible type variable.
+     * This flag changes the incorporation rules: with A? <: T <: B and A? <: T having 'isFromFlexiblePosition' we infer
      * A? <: B!. Without the flag, we infer A? <: B.
      *
      * This flag is always false in K1 and in early versions of K2.
      */
-    fun useIsFromFlexibleConstraint(): Boolean
+    fun useIsFromFlexiblePosition(): Boolean
 
     fun simplifyFlexibleUpperConstraintWithDnnBoundToNullable(): Boolean
 

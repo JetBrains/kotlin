@@ -415,21 +415,21 @@ class ConstraintInjector(
         override fun addUpperConstraint(typeVariable: TypeConstructorMarker, superType: KotlinTypeMarker, isNoInfer: Boolean) =
             addConstraint(
                 typeVariable, superType, UPPER,
-                isFromNullabilityConstraint = false, isFromFlexibleConstraint = false, isNoInfer = isNoInfer
+                isFromNullabilityConstraint = false, isFromFlexiblePosition = false, isNoInfer = isNoInfer
             )
 
         override fun addLowerConstraint(
             typeVariable: TypeConstructorMarker,
             subType: KotlinTypeMarker,
             isFromNullabilityConstraint: Boolean,
-            isFromFlexibleConstraint: Boolean,
+            isFromFlexiblePosition: Boolean,
             isNoInfer: Boolean,
-        ) = addConstraint(typeVariable, subType, LOWER, isFromNullabilityConstraint, isFromFlexibleConstraint, isNoInfer)
+        ) = addConstraint(typeVariable, subType, LOWER, isFromNullabilityConstraint, isFromFlexiblePosition, isNoInfer)
 
         override fun addEqualityConstraint(typeVariable: TypeConstructorMarker, type: KotlinTypeMarker) =
             addConstraint(
                 typeVariable, type, EQUALITY,
-                isFromNullabilityConstraint = false, isFromFlexibleConstraint = false, isNoInfer = false
+                isFromNullabilityConstraint = false, isFromFlexiblePosition = false, isNoInfer = false
             )
 
         private fun isCapturedTypeFromSubtyping(type: KotlinTypeMarker): Boolean {
@@ -450,7 +450,7 @@ class ConstraintInjector(
             type: KotlinTypeMarker,
             kind: ConstraintKind,
             isFromNullabilityConstraint: Boolean,
-            isFromFlexibleConstraint: Boolean,
+            isFromFlexiblePosition: Boolean,
             isNoInfer: Boolean,
         ) {
             val typeVariable = c.allTypeVariables[typeVariableConstructor.unwrapStubTypeVariableConstructor()]
@@ -463,7 +463,7 @@ class ConstraintInjector(
                     kind = kind,
                     derivedFrom = currentDerivedFromSet,
                     isNullabilityConstraint = isFromNullabilityConstraint,
-                    isFromFlexibleConstraint = isFromFlexibleConstraint,
+                    isFromFlexiblePosition = isFromFlexiblePosition,
                     isNoInfer = isNoInfer
                 )
             )
@@ -523,7 +523,7 @@ class ConstraintInjector(
             type: KotlinTypeMarker,
             constraintContext: ConstraintContext
         ) {
-            val (kind, derivedFrom, inputTypePosition, isNullabilityConstraint, isFromFlexibleConstraint, isNoInfer) = constraintContext
+            val (kind, derivedFrom, inputTypePosition, isNullabilityConstraint, isFromFlexiblePosition, isNoInfer) = constraintContext
 
             var targetType = type
             if (targetType.isUninferredParameter()) {
@@ -566,7 +566,7 @@ class ConstraintInjector(
                 kind, targetType, position,
                 derivedFrom = derivedFrom,
                 isNullabilityConstraint = isNullabilityConstraint,
-                isFromFlexibleConstraint = isFromFlexibleConstraint,
+                isFromFlexiblePosition = isFromFlexiblePosition,
                 isNoInfer = isNoInfer || isIncorporatingConstraintFromNoInfer,
                 inputTypePositionBeforeIncorporation = inputTypePosition,
             )
@@ -615,7 +615,7 @@ data class ConstraintContext(
     val derivedFrom: Set<TypeVariableMarker>,
     val inputTypePositionBeforeIncorporation: OnlyInputTypeConstraintPosition? = null,
     val isNullabilityConstraint: Boolean,
-    val isFromFlexibleConstraint: Boolean,
+    val isFromFlexiblePosition: Boolean,
     val isNoInfer: Boolean,
 )
 

@@ -693,7 +693,7 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         return (this as? ConeIntersectionType)?.upperBoundForApproximation
     }
 
-    override fun useIsFromFlexibleConstraint(): Boolean = session.languageVersionSettings.supportsFeature(
+    override fun useIsFromFlexiblePosition(): Boolean = session.languageVersionSettings.supportsFeature(
         LanguageFeature.PreciseSimplificationToFlexibleLowerConstraint
     )
 

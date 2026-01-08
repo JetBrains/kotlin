@@ -35,7 +35,7 @@ abstract class TypeCheckerStateForConstraintSystem(
         typeVariable: TypeConstructorMarker,
         subType: KotlinTypeMarker,
         isFromNullabilityConstraint: Boolean = false,
-        isFromFlexibleConstraint: Boolean = false,
+        isFromFlexiblePosition: Boolean = false,
         isNoInfer: Boolean,
     )
 
@@ -333,11 +333,11 @@ abstract class TypeCheckerStateForConstraintSystem(
             else -> error("sealed")
         }
 
-        val isFromFlexibleConstraint = useIsFromFlexibleConstraint() &&
+        val isFromFlexiblePosition = useIsFromFlexiblePosition() &&
                 typeVariable is FlexibleTypeMarker && subType is RigidTypeMarker
         addLowerConstraint(
             typeVariable.typeConstructor(), lowerConstraint,
-            isFromNullabilityConstraint, isFromFlexibleConstraint, isNoInfer
+            isFromNullabilityConstraint, isFromFlexiblePosition, isNoInfer
         )
 
         return true
