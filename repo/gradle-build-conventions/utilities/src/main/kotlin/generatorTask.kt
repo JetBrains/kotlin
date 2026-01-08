@@ -41,7 +41,7 @@ fun Project.generator(
     workingDir = rootDir
     systemProperty("line.separator", "\n")
     systemProperty("idea.ignore.disabled.plugins", "true")
-    if (kotlinBuildProperties.isTeamcityBuild) {
+    if (kotlinBuildProperties.isTeamcityBuild.get()) {
         systemProperty("teamcity", "true")
     }
     configure()

@@ -64,7 +64,7 @@ open class InvalidateStaleCaches @Inject constructor(
      */
     @get:Input
     @get:Optional
-    val dataDirPath = objectFactory.property(String::class).convention(project.kotlinBuildProperties.getOrNull("konan.data.dir") as String?)
+    val dataDirPath = objectFactory.property(String::class).convention(project.kotlinBuildProperties.stringProperty("konan.data.dir").orNull)
 
     @get:InputFile
     @get:PathSensitive(PathSensitivity.NONE)

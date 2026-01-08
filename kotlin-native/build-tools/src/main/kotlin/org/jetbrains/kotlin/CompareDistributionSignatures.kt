@@ -52,7 +52,7 @@ open class CompareDistributionSignatures @Inject constructor(
 
         private fun register(project: Project, name: String, configure: CompareDistributionSignatures.() -> Unit) {
             project.tasks.register(name, CompareDistributionSignatures::class.java) {
-                val property = project.kotlinBuildProperties.getOrNull("anotherDistro") as String?
+                val property = project.kotlinBuildProperties.stringProperty("anotherDistro").orNull
                 oldDistributionRoot.set(project.layout.dir(project.provider {
                     // `property` can only be checked for existence during task execution: during IDE import all tasks are
                     // created eagerly, so checking it during configuration stage will cause errors.

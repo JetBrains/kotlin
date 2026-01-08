@@ -54,7 +54,7 @@ tasks.withType<KotlinJvmCompile>().configureEach {
 
 
 dependencies {
-    implementation("org.jetbrains.kotlin:kotlin-build-gradle-plugin:${kotlinBuildProperties.buildGradlePluginVersion}")
+    implementation("org.jetbrains.kotlin:kotlin-build-gradle-plugin:${kotlinBuildProperties.buildGradlePluginVersion.get()}")
     compileOnly(gradleApi())
     val kotlinVersion = project.bootstrapKotlinVersion
     val slackApiVersion = "1.2.0"

@@ -4,68 +4,68 @@
  */
 
 val KotlinBuildProperties.includeJava9: Boolean
-    get() = getBoolean("kotlin.build.java9", true)
+    get() = booleanProperty("kotlin.build.java9", true).get()
 
 val KotlinBuildProperties.useBootstrapStdlib: Boolean
-    get() = getBoolean("kotlin.build.useBootstrapStdlib", false)
+    get() = booleanProperty("kotlin.build.useBootstrapStdlib", false).get()
 
-val KotlinBuildProperties.postProcessing: Boolean get() = isTeamcityBuild || getBoolean("kotlin.build.postprocessing", true)
+val KotlinBuildProperties.postProcessing: Boolean get() = isTeamcityBuild.get() || booleanProperty("kotlin.build.postprocessing", true).get()
 
 val KotlinBuildProperties.relocation: Boolean get() = postProcessing
 
-val KotlinBuildProperties.proguard: Boolean get() = postProcessing && getBoolean("kotlin.build.proguard", isTeamcityBuild)
+val KotlinBuildProperties.proguard: Boolean get() = postProcessing && booleanProperty("kotlin.build.proguard", isTeamcityBuild).get()
 
-val KotlinBuildProperties.jarCompression: Boolean get() = getBoolean("kotlin.build.jar.compression", isTeamcityBuild)
+val KotlinBuildProperties.jarCompression: Boolean get() = booleanProperty("kotlin.build.jar.compression", isTeamcityBuild).get()
 
-val KotlinBuildProperties.ignoreTestFailures: Boolean get() = getBoolean("ignoreTestFailures", isTeamcityBuild)
+val KotlinBuildProperties.ignoreTestFailures: Boolean get() = booleanProperty("ignoreTestFailures", isTeamcityBuild).get()
 
 val KotlinBuildProperties.disableWerror: Boolean
-    get() = getBoolean("kotlin.build.disable.werror") || useFir || getBoolean("test.progressive.mode")
+    get() = booleanProperty("kotlin.build.disable.werror").get() || useFir.get() || booleanProperty("test.progressive.mode").get()
 
 val KotlinBuildProperties.generateModularizedConfigurations: Boolean
-    get() = getBoolean("kotlin.fir.modularized.mt.configurations", false)
+    get() = booleanProperty("kotlin.fir.modularized.mt.configurations", false).get()
 
 val KotlinBuildProperties.generateFullPipelineConfigurations: Boolean
-    get() = getBoolean("kotlin.fir.modularized.fp.configurations", false)
+    get() = booleanProperty("kotlin.fir.modularized.fp.configurations", false).get()
 
 val KotlinBuildProperties.pathToKotlinModularizedTestData: String?
-    get() = getOrNull("kotlin.fir.modularized.testdata.kotlin") as? String
+    get() = stringProperty("kotlin.fir.modularized.testdata.kotlin").orNull
 
 val KotlinBuildProperties.pathToIntellijModularizedTestData: String?
-    get() = getOrNull("kotlin.fir.modularized.testdata.intellij") as? String
+    get() = stringProperty("kotlin.fir.modularized.testdata.intellij").orNull
 
 val KotlinBuildProperties.pathToYoutrackModularizedTestData: String?
-    get() = getOrNull("kotlin.fir.modularized.testdata.youtrack") as? String
+    get() = stringProperty("kotlin.fir.modularized.testdata.youtrack").orNull
 
 val KotlinBuildProperties.pathToSpaceModularizedTestData: String?
-    get() = getOrNull("kotlin.fir.modularized.testdata.space") as? String
+    get() = stringProperty("kotlin.fir.modularized.testdata.space").orNull
 
 val KotlinBuildProperties.isNativeRuntimeDebugInfoEnabled: Boolean
-    get() = getBoolean("kotlin.native.isNativeRuntimeDebugInfoEnabled", false)
+    get() = booleanProperty("kotlin.native.isNativeRuntimeDebugInfoEnabled", false).get()
 
 val KotlinBuildProperties.junit5NumberOfThreadsForParallelExecution: Int?
-    get() = (getOrNull("kotlin.test.junit5.maxParallelForks") as? String)?.toInt()
+    get() = intProperty("kotlin.test.junit5.maxParallelForks").orNull
 
 val KotlinBuildProperties.useFirWithLightTree: Boolean
-    get() = getBoolean("kotlin.build.useFirLT")
+    get() = booleanProperty("kotlin.build.useFirLT").get()
 
 val KotlinBuildProperties.useFirTightIC: Boolean
-    get() = getBoolean("kotlin.build.useFirIC")
+    get() = booleanProperty("kotlin.build.useFirIC").get()
 
 val KotlinBuildProperties.isApplePrivacyManifestsPluginEnabled: Boolean
-    get() = getBoolean("kotlin.apple.applePrivacyManifestsPlugin", false)
+    get() = booleanProperty("kotlin.apple.applePrivacyManifestsPlugin", false).get()
 
 val KotlinBuildProperties.limitTestTasksConcurrency: Boolean
-    get() = getBoolean("kotlin.build.limitTestTasksConcurrency", true)
+    get() = booleanProperty("kotlin.build.limitTestTasksConcurrency", true).get()
 
 val KotlinBuildProperties.konanDataDir: String?
-    get() = getOrNull("konan.data.dir") as String?
+    get() = stringProperty("konan.data.dir").orNull
 
 /**
  * If `true`, `:kotlin-native:platformLibs` will compile platform libraries klibs without parallelism.
  */
 val KotlinBuildProperties.limitPlatformLibsCompilationConcurrency: Boolean
-    get() = !getBoolean("kotlin.native.platformLibs.parallel", true)
+    get() = !booleanProperty("kotlin.native.platformLibs.parallel", true).get()
 
 
 /**
@@ -74,7 +74,7 @@ val KotlinBuildProperties.limitPlatformLibsCompilationConcurrency: Boolean
 val KotlinBuildProperties.limitPlatformLibsCacheBuildingConcurrency: Boolean
     get() {
         // if platform libs compilation parallelism is disabled, also disable parallel cache building by default.
-        return !getBoolean("kotlin.native.platformLibs.parallelCaches", !limitPlatformLibsCompilationConcurrency)
+        return !booleanProperty("kotlin.native.platformLibs.parallelCaches", !limitPlatformLibsCompilationConcurrency).get()
     }
 
 /**
@@ -83,4 +83,4 @@ val KotlinBuildProperties.limitPlatformLibsCacheBuildingConcurrency: Boolean
  * Default: `false`.
  */
 val KotlinBuildProperties.buildPlatformLibsByBootstrapCompiler: Boolean
-    get() = getBoolean("kotlin.native.platformLibs.bootstrap", false)
+    get() = booleanProperty("kotlin.native.platformLibs.bootstrap", false).get()

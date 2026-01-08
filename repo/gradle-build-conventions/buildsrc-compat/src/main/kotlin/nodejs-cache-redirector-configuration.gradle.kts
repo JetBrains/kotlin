@@ -4,7 +4,7 @@ import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin
 
 plugins.withType(NodeJsPlugin::class) {
     extensions.configure(NodeJsEnvSpec::class.java) {
-        if (kotlinBuildProperties.isCacheRedirectorEnabled) {
+        if (kotlinBuildProperties.isCacheRedirectorEnabled.get()) {
             downloadBaseUrl = "https://cache-redirector.jetbrains.com/nodejs.org/dist"
         }
     }

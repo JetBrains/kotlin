@@ -18,10 +18,6 @@ buildscript {
     ext["bootstrapKotlinVersion"] = BootstrapKt.getBootstrapKotlinVersion(project)
 
     apply from: "$rootBuildDirectory/gradle/loadRootProperties.gradle"
-
-    dependencies {
-        classpath("org.jetbrains.kotlin:kotlin-build-gradle-plugin:${kotlinBuildProperties.buildGradlePluginVersion}")
-    }
 }
 
 plugins {

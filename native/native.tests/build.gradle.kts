@@ -83,7 +83,7 @@ projectTests {
             // See also kotlin-native/build-tools/src/main/kotlin/org/jetbrains/kotlin/nativeFullCrossDist.kt
             systemProperty(
                 "kotlin.native.internal.fullCrossDistEnabled",
-                kotlinBuildProperties.getOrNull("kotlin.native.pathToDarwinDist") != null
+                kotlinBuildProperties.stringProperty("kotlin.native.pathToDarwinDist").orNull != null
             )
         }
 

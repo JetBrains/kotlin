@@ -131,7 +131,7 @@ open class KonanInteropTask @Inject constructor(
     protected val isolatedClassLoadersService = project.gradle.sharedServices.registerIsolatedClassLoadersServiceIfAbsent()
 
     // This does not affect the result, only the way the result is built.
-    private val allowRunningCInteropInProcess = project.kotlinBuildProperties.getBoolean("kotlin.native.allowRunningCinteropInProcess")
+    private val allowRunningCInteropInProcess = project.kotlinBuildProperties.booleanProperty("kotlin.native.allowRunningCinteropInProcess")
 
     @TaskAction
     fun run() {
@@ -158,7 +158,7 @@ open class KonanInteropTask @Inject constructor(
         }
         val workQueue = workerExecutor.noIsolation()
 
-        if (allowRunningCInteropInProcess) {
+        if (allowRunningCInteropInProcess.get()) {
             workQueue.submit(KonanInteropInProcessAction::class.java) {
                 this.isolatedClassLoadersService.set(this@KonanInteropTask.isolatedClassLoadersService)
                 this.compilerDistributionRoot.set(this@KonanInteropTask.compilerDistributionRoot)

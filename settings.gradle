@@ -413,10 +413,8 @@ include ":plugins:js-plain-objects:compiler-plugin",
         ":plugins:js-plain-objects:compiler-plugin:js-plain-objects.backend",
         ":plugins:js-plain-objects:compiler-plugin:js-plain-objects.cli"
 
-if (!buildProperties.inJpsBuildIdeaSync) {
-    include ":plugins:js-plain-objects:runtime",
-            ":libraries:tools:js-plain-objects"
-}
+include ":plugins:js-plain-objects:runtime",
+        ":libraries:tools:js-plain-objects"
 
 include ":compiler:fir",
         ":compiler:fir:cones",
@@ -494,49 +492,47 @@ include ":kotlin-dataframe-compiler-plugin",
         ":kotlin-dataframe-compiler-plugin.cli",
         ":kotlin-dataframe"
 
-if (!buildProperties.inJpsBuildIdeaSync) {
-    include ":prepare:ide-plugin-dependencies:allopen-compiler-plugin-for-ide",
-            ":prepare:ide-plugin-dependencies:scripting-compiler-plugin-for-ide",
-            ":prepare:ide-plugin-dependencies:allopen-compiler-plugin-tests-for-ide",
-            ":prepare:ide-plugin-dependencies:compose-compiler-plugin-for-ide",
-            ":prepare:ide-plugin-dependencies:js-plain-objects-compiler-plugin-for-ide",
-            ":prepare:ide-plugin-dependencies:incremental-compilation-impl-tests-for-ide",
-            ":prepare:ide-plugin-dependencies:js-ir-runtime-for-ide",
-            ":prepare:ide-plugin-dependencies:kotlin-build-common-tests-for-ide",
-            ":prepare:ide-plugin-dependencies:kotlin-compiler-cli-for-ide",
-            ":prepare:ide-plugin-dependencies:kotlin-dist-for-ide",
-            ":prepare:ide-plugin-dependencies:kotlin-gradle-statistics-for-ide",
-            ":prepare:ide-plugin-dependencies:kotlin-jps-common-for-ide",
-            ":prepare:ide-plugin-dependencies:kotlin-jps-plugin-classpath",
-            ":prepare:ide-plugin-dependencies:kotlin-jps-plugin-tests-for-ide",
-            ":prepare:ide-plugin-dependencies:kotlin-jps-plugin-testdata-for-ide",
-            ":prepare:ide-plugin-dependencies:kotlinx-serialization-compiler-plugin-for-ide",
-            ":prepare:ide-plugin-dependencies:kotlin-dataframe-compiler-plugin-for-ide",
-            ":prepare:ide-plugin-dependencies:noarg-compiler-plugin-for-ide",
-            ":prepare:ide-plugin-dependencies:sam-with-receiver-compiler-plugin-for-ide",
-            ":prepare:ide-plugin-dependencies:assignment-compiler-plugin-for-ide",
-            ":prepare:ide-plugin-dependencies:parcelize-compiler-plugin-for-ide",
-            ":prepare:ide-plugin-dependencies:lombok-compiler-plugin-for-ide",
-            ":prepare:ide-plugin-dependencies:kotlin-objcexport-header-generator-for-ide",
-            ":prepare:ide-plugin-dependencies:kotlin-swift-export-for-ide",
-            ":prepare:ide-plugin-dependencies:kotlin-compiler-testdata-for-ide",
-            ":prepare:ide-plugin-dependencies:kotlin-compiler-tests-for-ide",
-            ":prepare:ide-plugin-dependencies:low-level-api-fir-for-ide",
-            ":prepare:ide-plugin-dependencies:analysis-api-for-ide",
-            ":prepare:ide-plugin-dependencies:analysis-api-impl-base-for-ide",
-            ":prepare:ide-plugin-dependencies:analysis-api-impl-base-tests-for-ide",
-            ":prepare:ide-plugin-dependencies:analysis-api-k2-for-ide",
-            ":prepare:ide-plugin-dependencies:analysis-api-k2-tests-for-ide",
-            ":prepare:ide-plugin-dependencies:analysis-api-fe10-for-ide",
-            ":prepare:ide-plugin-dependencies:analysis-api-fe10-tests-for-ide",
-            ":prepare:ide-plugin-dependencies:analysis-api-platform-interface-for-ide",
-            ":prepare:ide-plugin-dependencies:symbol-light-classes-for-ide",
-            ":prepare:ide-plugin-dependencies:analysis-api-standalone-for-ide",
-            ":prepare:ide-plugin-dependencies:kotlin-compiler-ir-for-ide",
-            ":prepare:ide-plugin-dependencies:kotlin-compiler-common-for-ide",
-            ":prepare:ide-plugin-dependencies:kotlin-compiler-fe10-for-ide",
-            ":prepare:ide-plugin-dependencies:kotlin-compiler-fir-for-ide"
-}
+include ":prepare:ide-plugin-dependencies:allopen-compiler-plugin-for-ide",
+        ":prepare:ide-plugin-dependencies:scripting-compiler-plugin-for-ide",
+        ":prepare:ide-plugin-dependencies:allopen-compiler-plugin-tests-for-ide",
+        ":prepare:ide-plugin-dependencies:compose-compiler-plugin-for-ide",
+        ":prepare:ide-plugin-dependencies:js-plain-objects-compiler-plugin-for-ide",
+        ":prepare:ide-plugin-dependencies:incremental-compilation-impl-tests-for-ide",
+        ":prepare:ide-plugin-dependencies:js-ir-runtime-for-ide",
+        ":prepare:ide-plugin-dependencies:kotlin-build-common-tests-for-ide",
+        ":prepare:ide-plugin-dependencies:kotlin-compiler-cli-for-ide",
+        ":prepare:ide-plugin-dependencies:kotlin-dist-for-ide",
+        ":prepare:ide-plugin-dependencies:kotlin-gradle-statistics-for-ide",
+        ":prepare:ide-plugin-dependencies:kotlin-jps-common-for-ide",
+        ":prepare:ide-plugin-dependencies:kotlin-jps-plugin-classpath",
+        ":prepare:ide-plugin-dependencies:kotlin-jps-plugin-tests-for-ide",
+        ":prepare:ide-plugin-dependencies:kotlin-jps-plugin-testdata-for-ide",
+        ":prepare:ide-plugin-dependencies:kotlinx-serialization-compiler-plugin-for-ide",
+        ":prepare:ide-plugin-dependencies:kotlin-dataframe-compiler-plugin-for-ide",
+        ":prepare:ide-plugin-dependencies:noarg-compiler-plugin-for-ide",
+        ":prepare:ide-plugin-dependencies:sam-with-receiver-compiler-plugin-for-ide",
+        ":prepare:ide-plugin-dependencies:assignment-compiler-plugin-for-ide",
+        ":prepare:ide-plugin-dependencies:parcelize-compiler-plugin-for-ide",
+        ":prepare:ide-plugin-dependencies:lombok-compiler-plugin-for-ide",
+        ":prepare:ide-plugin-dependencies:kotlin-objcexport-header-generator-for-ide",
+        ":prepare:ide-plugin-dependencies:kotlin-swift-export-for-ide",
+        ":prepare:ide-plugin-dependencies:kotlin-compiler-testdata-for-ide",
+        ":prepare:ide-plugin-dependencies:kotlin-compiler-tests-for-ide",
+        ":prepare:ide-plugin-dependencies:low-level-api-fir-for-ide",
+        ":prepare:ide-plugin-dependencies:analysis-api-for-ide",
+        ":prepare:ide-plugin-dependencies:analysis-api-impl-base-for-ide",
+        ":prepare:ide-plugin-dependencies:analysis-api-impl-base-tests-for-ide",
+        ":prepare:ide-plugin-dependencies:analysis-api-k2-for-ide",
+        ":prepare:ide-plugin-dependencies:analysis-api-k2-tests-for-ide",
+        ":prepare:ide-plugin-dependencies:analysis-api-fe10-for-ide",
+        ":prepare:ide-plugin-dependencies:analysis-api-fe10-tests-for-ide",
+        ":prepare:ide-plugin-dependencies:analysis-api-platform-interface-for-ide",
+        ":prepare:ide-plugin-dependencies:symbol-light-classes-for-ide",
+        ":prepare:ide-plugin-dependencies:analysis-api-standalone-for-ide",
+        ":prepare:ide-plugin-dependencies:kotlin-compiler-ir-for-ide",
+        ":prepare:ide-plugin-dependencies:kotlin-compiler-common-for-ide",
+        ":prepare:ide-plugin-dependencies:kotlin-compiler-fe10-for-ide",
+        ":prepare:ide-plugin-dependencies:kotlin-compiler-fir-for-ide"
 
 include ":compiler:build-tools:kotlin-build-tools-api",
         ":compiler:build-tools:kotlin-build-tools-impl",
@@ -547,17 +543,15 @@ include ":compiler:build-tools:kotlin-build-tools-api",
         ":compiler:build-tools:util-kotlinpoet",
         ":compiler:build-tools:kotlin-build-tools-cri-impl"
 
-if (!buildProperties.inJpsBuildIdeaSync) {
-    include ":plugins:compose-compiler-plugin",
-            ":plugins:compose-compiler-plugin:compiler",
-            ":plugins:compose-compiler-plugin:compiler-hosted",
-            ":plugins:compose-compiler-plugin:compiler-hosted:integration-tests",
-            ":plugins:compose-compiler-plugin:compiler-hosted:integration-tests:protobuf-test-classes",
-            ":plugins:compose-compiler-plugin:group-mapping"
+include ":plugins:compose-compiler-plugin",
+        ":plugins:compose-compiler-plugin:compiler",
+        ":plugins:compose-compiler-plugin:compiler-hosted",
+        ":plugins:compose-compiler-plugin:compiler-hosted:integration-tests",
+        ":plugins:compose-compiler-plugin:compiler-hosted:integration-tests:protobuf-test-classes",
+        ":plugins:compose-compiler-plugin:group-mapping"
 
-    if (buildProperties.inIdeaSync) {
-        include ":plugins:compose-compiler-plugin:compiler-hosted:runtime-tests"
-    }
+if (buildProperties.isInIdeaSync.get()) {
+    include ":plugins:compose-compiler-plugin:compiler-hosted:runtime-tests"
 }
 
 // Swift Export modules
@@ -574,9 +568,7 @@ include ":native:swift:sir",
         ":native:swift:swift-export-standalone-integration-tests:coroutines",
         ":generators:sir-tests-generator"
 
-if (!buildProperties.inJpsBuildIdeaSync) {
-    include ":native:swift:swift-export-embeddable"
-}
+include ":native:swift:swift-export-embeddable"
 
 // TypeScript Export modules
 include ":js:typescript-export-model",
@@ -600,7 +592,7 @@ void intellij(String imlPath) {
     project(projectName).projectDir = imlFile.parentFile
 }
 
-String attachedIntellijVersion = buildProperties.getOrNull("attachedIntellijVersion")
+String attachedIntellijVersion = null//buildProperties.getOrNull("attachedIntellijVersion")
 if (attachedIntellijVersion == "212") { // Latest available platform in scope of KT release cycle
     logger.info("Including kotlin-ide modules in settings.gradle")
     intellij "java/compiler/intellij.java.compiler.tests.iml"
@@ -765,55 +757,53 @@ include ":generators:analysis-api-generator",
         ":prepare:analysis-api-test-framework",
         ":tools:ide-plugin-dependencies-validator"
 
-if (buildProperties.isKotlinNativeEnabled) {
+if (buildProperties.isKotlinNativeEnabled.get()) {
     include ":analysis:analysis-api-standalone:analysis-api-standalone-native"
 }
 
 
-if (!buildProperties.inJpsBuildIdeaSync) {
-    // modules that we are currently cannot compile with jps
-    include ":kotlin-stdlib-common",
-            ":kotlin-stdlib",
-            ":kotlin-dom-api-compat",
-            ":kotlin-stdlib-js-ir-minimal-for-test",
-            ":kotlin-stdlib-jdk7",
-            ":kotlin-stdlib-jdk8",
-            ":kotlin-stdlib:samples",
-            ":kotlin-stdlib-jvm-minimal-for-test",
-            ":tools:binary-compatibility-validator",
-            ":tools:jdk-api-validator",
-            ":tools:kotlin-stdlib-gen",
+// modules that we are currently cannot compile with jps
+include ":kotlin-stdlib-common",
+        ":kotlin-stdlib",
+        ":kotlin-dom-api-compat",
+        ":kotlin-stdlib-js-ir-minimal-for-test",
+        ":kotlin-stdlib-jdk7",
+        ":kotlin-stdlib-jdk8",
+        ":kotlin-stdlib:samples",
+        ":kotlin-stdlib-jvm-minimal-for-test",
+        ":tools:binary-compatibility-validator",
+        ":tools:jdk-api-validator",
+        ":tools:kotlin-stdlib-gen",
 
-            ":kotlin-test",
-            ":kotlin-test:kotlin-test-js-it",
-            ":native:native.tests",
-            ':native:native.tests:codegen-box',
-            ":native:native.tests:driver",
-            ":native:native.tests:gc-fuzzing-tests",
-            ":native:native.tests:gc-fuzzing-tests:engine",
-            ":native:native.tests:stress",
-            ":native:native.tests:klib-ir-inliner",
-            ":native:native.tests:klib-compatibility",
-            ":native:native.tests:litmus-tests"
+        ":kotlin-test",
+        ":kotlin-test:kotlin-test-js-it",
+        ":native:native.tests",
+        ':native:native.tests:codegen-box',
+        ":native:native.tests:driver",
+        ":native:native.tests:gc-fuzzing-tests",
+        ":native:native.tests:gc-fuzzing-tests:engine",
+        ":native:native.tests:stress",
+        ":native:native.tests:klib-ir-inliner",
+        ":native:native.tests:klib-compatibility",
+        ":native:native.tests:litmus-tests"
 
-    project(':kotlin-stdlib-common').projectDir = "$rootDir/libraries/stdlib/common" as File
-    project(':kotlin-stdlib').projectDir = "$rootDir/libraries/stdlib" as File
-    project(':kotlin-dom-api-compat').projectDir = "$rootDir/libraries/kotlin-dom-api-compat" as File
-    project(':kotlin-stdlib-js-ir-minimal-for-test').projectDir = "$rootDir/libraries/stdlib/js-ir-minimal-for-test" as File
-    project(':kotlin-stdlib-jdk7').projectDir = "$rootDir/libraries/stdlib/jdk7" as File
-    project(':kotlin-stdlib-jdk8').projectDir = "$rootDir/libraries/stdlib/jdk8" as File
-    project(':kotlin-stdlib:samples').projectDir = "$rootDir/libraries/stdlib/samples" as File
-    project(":kotlin-stdlib-jvm-minimal-for-test").projectDir = "$rootDir/libraries/stdlib/jvm-minimal-for-test" as File
+project(':kotlin-stdlib-common').projectDir = "$rootDir/libraries/stdlib/common" as File
+project(':kotlin-stdlib').projectDir = "$rootDir/libraries/stdlib" as File
+project(':kotlin-dom-api-compat').projectDir = "$rootDir/libraries/kotlin-dom-api-compat" as File
+project(':kotlin-stdlib-js-ir-minimal-for-test').projectDir = "$rootDir/libraries/stdlib/js-ir-minimal-for-test" as File
+project(':kotlin-stdlib-jdk7').projectDir = "$rootDir/libraries/stdlib/jdk7" as File
+project(':kotlin-stdlib-jdk8').projectDir = "$rootDir/libraries/stdlib/jdk8" as File
+project(':kotlin-stdlib:samples').projectDir = "$rootDir/libraries/stdlib/samples" as File
+project(":kotlin-stdlib-jvm-minimal-for-test").projectDir = "$rootDir/libraries/stdlib/jvm-minimal-for-test" as File
 
-    project(':tools').projectDir = "$rootDir/libraries/tools" as File
-    project(':tools:binary-compatibility-validator').projectDir = "$rootDir/libraries/tools/binary-compatibility-validator" as File
-    project(':tools:jdk-api-validator').projectDir = "$rootDir/libraries/tools/jdk-api-validator" as File
-    project(':tools:kotlin-stdlib-gen').projectDir = "$rootDir/libraries/tools/kotlin-stdlib-gen" as File
-    project(':tools:ide-plugin-dependencies-validator').projectDir = "$rootDir/libraries/tools/ide-plugin-dependencies-validator" as File
+project(':tools').projectDir = "$rootDir/libraries/tools" as File
+project(':tools:binary-compatibility-validator').projectDir = "$rootDir/libraries/tools/binary-compatibility-validator" as File
+project(':tools:jdk-api-validator').projectDir = "$rootDir/libraries/tools/jdk-api-validator" as File
+project(':tools:kotlin-stdlib-gen').projectDir = "$rootDir/libraries/tools/kotlin-stdlib-gen" as File
+project(':tools:ide-plugin-dependencies-validator').projectDir = "$rootDir/libraries/tools/ide-plugin-dependencies-validator" as File
 
-    project(':kotlin-test').projectDir = "$rootDir/libraries/kotlin.test" as File
-    project(':kotlin-test:kotlin-test-js-it').projectDir = "$rootDir/libraries/kotlin.test/js/it" as File
-}
+project(':kotlin-test').projectDir = "$rootDir/libraries/kotlin.test" as File
+project(':kotlin-test:kotlin-test-js-it').projectDir = "$rootDir/libraries/kotlin.test/js/it" as File
 include ":compiler:android-tests"
 
 rootProject.name = "kotlin"
@@ -1018,18 +1008,16 @@ project(':kotlin-dataframe-compiler-plugin.k2').projectDir = "$rootDir/plugins/k
 project(':kotlin-dataframe-compiler-plugin.common').projectDir = "$rootDir/plugins/kotlin-dataframe/kotlin-dataframe.common" as File
 project(':kotlin-dataframe').projectDir = file("$rootDir/libraries/tools/kotlin-dataframe")
 
-if (!buildProperties.inJpsBuildIdeaSync) {
-    project(':plugins:compose-compiler-plugin').projectDir = file("$rootDir/plugins/compose")
-    project(':plugins:compose-compiler-plugin:compiler').projectDir = file("$rootDir/plugins/compose/compiler")
-    project(':plugins:compose-compiler-plugin:compiler-hosted').projectDir = file("$rootDir/plugins/compose/compiler-hosted")
-    project(':plugins:compose-compiler-plugin:compiler-hosted:integration-tests').projectDir = file("$rootDir/plugins/compose/compiler-hosted/integration-tests")
-    project(':plugins:compose-compiler-plugin:compiler-hosted:integration-tests:protobuf-test-classes').projectDir =
-            file("$rootDir/plugins/compose/compiler-hosted/integration-tests/protobuf-test-classes")
-    project(":plugins:compose-compiler-plugin:group-mapping").projectDir = file("$rootDir/plugins/compose/group-mapping")
+project(':plugins:compose-compiler-plugin').projectDir = file("$rootDir/plugins/compose")
+project(':plugins:compose-compiler-plugin:compiler').projectDir = file("$rootDir/plugins/compose/compiler")
+project(':plugins:compose-compiler-plugin:compiler-hosted').projectDir = file("$rootDir/plugins/compose/compiler-hosted")
+project(':plugins:compose-compiler-plugin:compiler-hosted:integration-tests').projectDir = file("$rootDir/plugins/compose/compiler-hosted/integration-tests")
+project(':plugins:compose-compiler-plugin:compiler-hosted:integration-tests:protobuf-test-classes').projectDir =
+        file("$rootDir/plugins/compose/compiler-hosted/integration-tests/protobuf-test-classes")
+project(":plugins:compose-compiler-plugin:group-mapping").projectDir = file("$rootDir/plugins/compose/group-mapping")
 
-    if (buildProperties.inIdeaSync) {
-        project(':plugins:compose-compiler-plugin:compiler-hosted:runtime-tests').projectDir = file("$rootDir/plugins/compose/compiler-hosted/runtime-tests")
-    }
+if (buildProperties.isInIdeaSync.get()) {
+    project(':plugins:compose-compiler-plugin:compiler-hosted:runtime-tests').projectDir = file("$rootDir/plugins/compose/compiler-hosted/runtime-tests")
 }
 
 project(':kotlin-scripting-ide-services-unshaded').projectDir = "$rootDir/plugins/scripting/scripting-ide-services" as File
@@ -1041,7 +1029,7 @@ project(':kotlin-scripting-compiler-impl').projectDir = "$rootDir/plugins/script
 
 // Uncomment to use locally built protobuf-relocated
 // includeBuild("dependencies/protobuf")
-if (buildProperties.isKotlinNativeEnabled) {
+if (buildProperties.isKotlinNativeEnabled.get()) {
     includeBuild("kotlin-native/build-tools") {
         name = "native-build-tools"
     }

@@ -3,40 +3,33 @@ plugins {
     id("com.gradle.common-custom-user-data-gradle-plugin") apply false
 }
 
-val buildProperties = getKotlinBuildPropertiesForSettings(settings)
-
-val buildScanServer = buildProperties.buildScanServer
+val buildProperties = settings.kotlinBuildProperties
+val buildScanServer = buildProperties.buildScanServer.orNull
 
 if (!buildScanServer.isNullOrEmpty()) {
     plugins.apply("com.gradle.common-custom-user-data-gradle-plugin")
 }
 
 develocity {
-    val isTeamCity = buildProperties.isTeamcityBuild
-    val hasBuildScanServer = !buildScanServer.isNullOrEmpty()
-    if (hasBuildScanServer) {
-        server.set(buildScanServer)
-    }
+    server.set(buildProperties.buildScanServer)
     buildScan {
-        capture {
-            uploadInBackground = !isTeamCity
-        }
-        publishing.onlyIf { hasBuildScanServer }
+        val isTeamcityBuild = buildProperties.isTeamcityBuild
+        val overriddenUsername = buildProperties.stringProperty("kotlin.build.scan.username").map { it.trim() }
+        val overriddenHostname = buildProperties.stringProperty("kotlin.build.scan.hostname").map { it.trim() }
 
-        val overriddenUsername = (buildProperties.getOrNull("kotlin.build.scan.username") as? String)?.trim()
-        val overriddenHostname = (buildProperties.getOrNull("kotlin.build.scan.hostname") as? String)?.trim()
-        if (buildProperties.isJpsBuildEnabled) {
-            tag("JPS")
+        capture {
+            uploadInBackground.set(isTeamcityBuild.map { !it })
         }
+
         obfuscation {
             ipAddresses { _ -> listOf("0.0.0.0") }
-            hostname { _ -> overriddenHostname ?: "concealed" }
+            hostname { _ -> overriddenHostname.orNull ?: "concealed" }
             username { originalUsername ->
                 when {
-                    isTeamCity -> "TeamCity"
-                    overriddenUsername.isNullOrEmpty() -> "concealed"
-                    overriddenUsername == "<default>" -> originalUsername
-                    else -> overriddenUsername
+                    isTeamcityBuild.get() -> "TeamCity"
+                    overriddenUsername.orNull.isNullOrEmpty() -> "concealed"
+                    overriddenUsername.orNull == "<default>" -> originalUsername
+                    else -> overriddenUsername.orNull
                 }
             }
         }
@@ -45,21 +38,21 @@ develocity {
 
 buildCache {
     local {
-        isEnabled = buildProperties.localBuildCacheEnabled
-        if (buildProperties.localBuildCacheDirectory != null) {
-            directory = buildProperties.localBuildCacheDirectory
+        isEnabled = buildProperties.localBuildCacheEnabled.get()
+        if (buildProperties.localBuildCacheDirectory.orNull != null) {
+            directory = buildProperties.localBuildCacheDirectory.get()
         }
     }
     if (develocity.server.isPresent) {
         if (System.getenv("TC_K8S_CLOUD_PROFILE_ID") == "kotlindev-kotlin-k8s") {
             remote(develocity.buildCache) {
-                isPush = buildProperties.pushToBuildCache
+                isPush = buildProperties.pushToBuildCache.get()
                 server = "https://kotlin-cache.eqx.k8s.intellij.net"
             }
         } else {
             remote(develocity.buildCache) {
-                isPush = buildProperties.pushToBuildCache
-                val remoteBuildCacheUrl = buildProperties.buildCacheUrl?.trim()
+                isPush = buildProperties.pushToBuildCache.get()
+                val remoteBuildCacheUrl = buildProperties.buildCacheUrl.orNull?.trim()
                 isEnabled = remoteBuildCacheUrl != "" // explicit "" disables it
                 if (!remoteBuildCacheUrl.isNullOrEmpty()) {
                     server = remoteBuildCacheUrl.removeSuffix("/cache/")

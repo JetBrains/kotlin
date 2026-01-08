@@ -80,7 +80,7 @@ val commonTestOptIns = listOf(
 )
 
 kotlin {
-    val renderDiagnosticNames by extra(project.kotlinBuildProperties.renderDiagnosticNames)
+    val renderDiagnosticNames by extra(project.kotlinBuildProperties.renderDiagnosticNames.get())
     val diagnosticNamesArg = if (renderDiagnosticNames) "-Xrender-internal-diagnostic-names" else null
 
     explicitApi()
@@ -239,7 +239,7 @@ kotlin {
         }
     }
     js(IR) {
-        if (!kotlinBuildProperties.isTeamcityBuild) {
+        if (!kotlinBuildProperties.isTeamcityBuild.get()) {
             browser {}
         }
         nodejs {
@@ -310,7 +310,7 @@ kotlin {
         commonWasmTargetConfiguration()
     }
 
-    if (kotlinBuildProperties.isInIdeaSync) {
+    if (kotlinBuildProperties.isInIdeaSync.get()) {
         val hostOs = System.getProperty("os.name")
         val isMingwX64 = hostOs.startsWith("Windows")
         val nativeTarget = when {
@@ -556,7 +556,7 @@ kotlin {
             }
         }
 
-        if (kotlinBuildProperties.isInIdeaSync) {
+        if (kotlinBuildProperties.isInIdeaSync.get()) {
             val nativeKotlinTestCommon by creating {
                 dependsOn(commonMain.get())
                 val prepareKotlinTestCommonNativeSources by tasks.registering(Sync::class) {
@@ -819,7 +819,7 @@ tasks {
         }
     }
     val wasmWasiNodeTest by existing {
-        if (!kotlinBuildProperties.getBoolean("kotlin.stdlib.wasi.tests")) {
+        if (!kotlinBuildProperties.booleanProperty("kotlin.stdlib.wasi.tests").get()) {
             enabled = false
         }
     }
@@ -838,7 +838,7 @@ tasks {
         // overwrite kotlin-project-structure-metadata when building the artifact,
         // but use automatically generated one when importing the project
         // because of the different source set structure
-        if (!kotlinBuildProperties.isInIdeaSync) {
+        if (!kotlinBuildProperties.isInIdeaSync.get()) {
             doLast {
                 /*
                     Check that the generated 'outputFile' by default matches our expectations stored in the .beforePatch file
