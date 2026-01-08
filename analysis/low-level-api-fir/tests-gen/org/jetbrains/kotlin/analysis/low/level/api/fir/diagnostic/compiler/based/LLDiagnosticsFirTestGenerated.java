@@ -2033,6 +2033,12 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
         runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/kt82964.kt");
       }
 
+      @Test
+      @TestMetadata("operatorRenamedOnImport.kt")
+      public void testOperatorRenamedOnImport() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/operatorRenamedOnImport.kt");
+      }
+
       @Nested
       @TestMetadata("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/collectionLiteralsDisabled")
       @TestDataPath("$PROJECT_ROOT")
@@ -2094,6 +2100,12 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
         @TestMetadata("inWhenConditions.kt")
         public void testInWhenConditions() {
           runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/collectionLiteralsDisabled/inWhenConditions.kt");
+        }
+
+        @Test
+        @TestMetadata("operatorRenamedOnImport.kt")
+        public void testOperatorRenamedOnImport() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/collectionLiteralsDisabled/operatorRenamedOnImport.kt");
         }
 
         @Test
