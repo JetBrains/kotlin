@@ -743,12 +743,10 @@ public final class org/jetbrains/kotlin/gradle/dsl/abi/AbiValidationExtension$De
 	public static fun filters (Lorg/jetbrains/kotlin/gradle/dsl/abi/AbiValidationExtension;Lorg/gradle/api/Action;)V
 	public static fun getKlib (Lorg/jetbrains/kotlin/gradle/dsl/abi/AbiValidationExtension;)Lorg/jetbrains/kotlin/gradle/dsl/abi/AbiValidationKlibKindExtension;
 	public static fun getLegacyCheckTaskProvider (Lorg/jetbrains/kotlin/gradle/dsl/abi/AbiValidationExtension;)Lorg/gradle/api/tasks/TaskProvider;
-	public static fun getLegacyDump (Lorg/jetbrains/kotlin/gradle/dsl/abi/AbiValidationExtension;)Lorg/jetbrains/kotlin/gradle/dsl/abi/AbiValidationLegacyDumpExtension;
 	public static fun getLegacyDumpTaskProvider (Lorg/jetbrains/kotlin/gradle/dsl/abi/AbiValidationExtension;)Lorg/gradle/api/tasks/TaskProvider;
 	public static fun getLegacyUpdateTaskProvider (Lorg/jetbrains/kotlin/gradle/dsl/abi/AbiValidationExtension;)Lorg/gradle/api/tasks/TaskProvider;
 	public static fun getVariants (Lorg/jetbrains/kotlin/gradle/dsl/abi/AbiValidationExtension;)Lorg/gradle/api/NamedDomainObjectContainer;
 	public static fun klib (Lorg/jetbrains/kotlin/gradle/dsl/abi/AbiValidationExtension;Lorg/gradle/api/Action;)V
-	public static fun legacyDump (Lorg/jetbrains/kotlin/gradle/dsl/abi/AbiValidationExtension;Lorg/gradle/api/Action;)V
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/dsl/abi/AbiValidationKlibKindExtension {
@@ -767,7 +765,6 @@ public final class org/jetbrains/kotlin/gradle/dsl/abi/AbiValidationLegacyDumpEx
 	public static fun getLegacyCheckTaskProvider (Lorg/jetbrains/kotlin/gradle/dsl/abi/AbiValidationLegacyDumpExtension;)Lorg/gradle/api/tasks/TaskProvider;
 	public static fun getLegacyDumpTaskProvider (Lorg/jetbrains/kotlin/gradle/dsl/abi/AbiValidationLegacyDumpExtension;)Lorg/gradle/api/tasks/TaskProvider;
 	public static fun getLegacyUpdateTaskProvider (Lorg/jetbrains/kotlin/gradle/dsl/abi/AbiValidationLegacyDumpExtension;)Lorg/gradle/api/tasks/TaskProvider;
-	public static fun getReferenceDumpDir (Lorg/jetbrains/kotlin/gradle/dsl/abi/AbiValidationLegacyDumpExtension;)Lorg/gradle/api/file/DirectoryProperty;
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/dsl/abi/AbiValidationMultiplatformExtension : org/jetbrains/kotlin/gradle/dsl/abi/AbiValidationMultiplatformVariantSpec {
