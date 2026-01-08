@@ -128,11 +128,9 @@ using RegularRef = kotlin::mm::ObjCBackRef;
   if (!permanent) { // TODO: permanent objects should probably be supported as custom types.
     auto& candidateRegularRef = candidate->refHolder.emplace<RegularRef>(obj);
     if (id old = AtomicCompareAndSwapAssociatedObject(obj, nullptr, candidate)) {
-      {
-        kotlin::ThreadStateGuard guard(kotlin::ThreadState::kNative);
-        candidateRegularRef.release();
-        [candidate releaseAsAssociatedObject];
-      }
+      kotlin::ThreadStateGuard guard(kotlin::ThreadState::kNative);
+      candidateRegularRef.release();
+      [candidate releaseAsAssociatedObject];
       return objc_retain(old);
     }
   } else {

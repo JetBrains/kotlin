@@ -203,7 +203,7 @@ internal external fun createObjCObjectHolder(ptr: NativePtr): Any?
 
 // Objective-C runtime:
 
-@GCUnsafeCall("objc_retainAutoreleaseReturnValue")
+@GCUnsafeCall("Kotlin_objc_retainAutoreleaseReturnValue")
 @ExperimentalForeignApi
 public external fun objc_retainAutoreleaseReturnValue(ptr: NativePtr): NativePtr
 

@@ -42,7 +42,7 @@ extern "C" OBJ_GETTER(Kotlin_ObjCExport_createContinuationArgument, id completio
   }
   ObjHolder slot;
   KRef completionHolder = AllocInstanceWithAssociatedObject(theForeignObjCObjectTypeInfo,
-      objc_retainBlock(completion), slot.slot());
+      kotlin::CallWithThreadState<kotlin::ThreadState::kNative>(objc_retainBlock, completion), slot.slot());
 
   RETURN_RESULT_OF(Kotlin_ObjCExport_createContinuationArgumentImpl, completionHolder, exceptionTypes);
 }

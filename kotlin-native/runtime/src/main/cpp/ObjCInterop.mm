@@ -336,6 +336,7 @@ void objc_autoreleasePoolPop(void* ptr);
 id objc_allocWithZone(Class clazz);
 id objc_retain(id ptr);
 void objc_release(id ptr);
+id objc_retainAutoreleaseReturnValue(id ptr);
 
 void* Kotlin_objc_autoreleasePoolPush() {
   return objc_autoreleasePoolPush();
@@ -352,8 +353,21 @@ id Kotlin_objc_allocWithZone(Class clazz) {
 }
 
 id Kotlin_objc_retain(id ptr) {
-  NativeOrUnregisteredThreadGuard guard(/*reentrant=*/ true);
+  //NativeOrUnregisteredThreadGuard guard(/*reentrant=*/ true);
+  kotlin::ThreadStateGuard guard(kotlin::ThreadState::kNative);
   return objc_retain(ptr);
+}
+
+id Kotlin_objc_retainBlock(id ptr) {
+  //NativeOrUnregisteredThreadGuard guard(/*reentrant=*/ true);
+  kotlin::ThreadStateGuard guard(kotlin::ThreadState::kNative);
+  return objc_retainBlock(ptr);
+}
+
+id Kotlin_objc_retainAutoreleaseReturnValue(id ptr) {
+  //NativeOrUnregisteredThreadGuard guard(/*reentrant=*/ true);
+  kotlin::ThreadStateGuard guard(kotlin::ThreadState::kNative);
+  return objc_retainAutoreleaseReturnValue(ptr);
 }
 
 void Kotlin_objc_release(id ptr) {
@@ -401,6 +415,16 @@ void* Kotlin_objc_allocWithZone(void* clazz) {
 }
 
 void* Kotlin_objc_retain(void* ptr) {
+  RuntimeAssert(false, "Objective-C interop is disabled");
+  return nullptr;
+}
+
+void* Kotlin_objc_retainBlock(void* ptr) {
+  RuntimeAssert(false, "Objective-C interop is disabled");
+  return nullptr;
+}
+
+void* Kotlin_objc_retainAutoreleaseReturnValue(void* ptr) {
   RuntimeAssert(false, "Objective-C interop is disabled");
   return nullptr;
 }
