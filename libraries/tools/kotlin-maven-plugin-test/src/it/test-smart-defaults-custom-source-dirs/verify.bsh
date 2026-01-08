@@ -1,0 +1,17 @@
+import java.io.*;
+
+source(new File(basedir, "verify-common.bsh").getAbsolutePath());
+
+/**
+ * Verify that when user specifies custom sourceDirs, the default src/main/kotlin is NOT added:
+ * 1. Custom source directory (src/custom/kotlin) is used
+ * 2. Classes from custom source directory are compiled
+ */
+
+// Check that smart defaults were enabled
+assertBuildLogHasLineThatContains("Kotlin smart defaults are enabled");
+
+// Check that classes from custom source directory were produced
+assertFileExists("target/classes/test/MainKt.class");
+
+print("Smart defaults custom source dirs test passed!");

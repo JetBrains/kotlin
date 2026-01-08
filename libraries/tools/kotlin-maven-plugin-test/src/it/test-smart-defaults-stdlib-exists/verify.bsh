@@ -1,0 +1,21 @@
+import java.io.*;
+
+source(new File(basedir, "verify-common.bsh").getAbsolutePath());
+
+/**
+ * Verify that kotlin-stdlib is NOT added when it already exists in dependencies:
+ * 1. Smart defaults should be enabled
+ * 2. "Added kotlin-stdlib dependency" message should NOT appear
+ * 3. Project should compile successfully
+ */
+
+// Check that smart defaults were enabled
+assertBuildLogHasLineThatContains("Kotlin smart defaults are enabled");
+
+// Check that kotlin-stdlib was NOT added (because it already exists)
+assertBuildLogHasNoLineThatContains("Added kotlin-stdlib dependency");
+
+// Check that classes were produced
+assertFileExists("target/classes/test/MainKt.class");
+
+print("Smart defaults stdlib-exists test passed!");

@@ -1,0 +1,20 @@
+import java.io.*;
+
+source(new File(basedir, "verify-common.bsh").getAbsolutePath());
+
+/**
+ * Verify that smart defaults are NOT applied when extensions is not set to true:
+ * 1. "Kotlin smart defaults are enabled" message should NOT appear
+ * 2. Project should still compile (with explicit configuration)
+ */
+
+// Check that smart defaults were NOT enabled
+assertBuildLogHasNoLineThatContains("Kotlin smart defaults are enabled");
+
+// Check that kotlin-stdlib was NOT automatically added
+assertBuildLogHasNoLineThatContains("Added kotlin-stdlib dependency");
+
+// Check that classes were still produced (with explicit configuration)
+assertFileExists("target/classes/test/MainKt.class");
+
+print("Smart defaults disabled test passed!");

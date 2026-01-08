@@ -172,4 +172,25 @@ class LegacyIT : KotlinMavenTestBase() {
     @Test
     fun `test-suppressWarnings`() = verifyWithLegacyBsh("test-suppressWarnings",)
 
+    @Test
+    fun `test-smart-defaults-custom-source-dirs`() = verifyWithLegacyBsh("test-smart-defaults-custom-source-dirs")
+
+    @Test
+    fun `test-smart-defaults-disabled`() = verifyWithLegacyBsh("test-smart-defaults-disabled")
+
+    @Test
+    fun `test-smart-defaults-disabled-via-property`() = verifyWithLegacyBsh("test-smart-defaults-disabled-via-property")
+
+    @Test
+    fun `test-smart-defaults-enabled`() = verifyWithLegacyBsh("test-smart-defaults-enabled")
+
+    @Test
+    fun `test-smart-defaults-source-roots`() = verifyWithLegacyBsh("test-smart-defaults-source-roots")
+
+    @Test
+    fun `test-smart-defaults-stdlib`() = verifyWithLegacyBsh("test-smart-defaults-stdlib")
+
+    @Test
+    fun `test-smart-defaults-stdlib-exists`() = verifyWithLegacyBsh("test-smart-defaults-stdlib-exists")
+
 }
