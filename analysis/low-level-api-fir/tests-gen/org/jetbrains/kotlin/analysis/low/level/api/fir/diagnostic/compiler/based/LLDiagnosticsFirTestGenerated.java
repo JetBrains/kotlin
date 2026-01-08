@@ -7516,6 +7516,70 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
       public void testSimple() {
         runTest("compiler/fir/analysis-tests/testData/resolve/innerClasses/simple.kt");
       }
+
+      @Nested
+      @TestMetadata("compiler/fir/analysis-tests/testData/resolve/innerClasses/inCallableReferenceLHS")
+      @TestDataPath("$PROJECT_ROOT")
+      public class InCallableReferenceLHS {
+        @Test
+        public void testAllFilesPresentInInCallableReferenceLHS() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/innerClasses/inCallableReferenceLHS"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("fromSuperclass.kt")
+        public void testFromSuperclass() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/innerClasses/inCallableReferenceLHS/fromSuperclass.kt");
+        }
+
+        @Test
+        @TestMetadata("innerLocalClasses.kt")
+        public void testInnerLocalClasses() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/innerClasses/inCallableReferenceLHS/innerLocalClasses.kt");
+        }
+
+        @Test
+        @TestMetadata("misplacedArgumentsInChain.kt")
+        public void testMisplacedArgumentsInChain() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/innerClasses/inCallableReferenceLHS/misplacedArgumentsInChain.kt");
+        }
+
+        @Test
+        @TestMetadata("misplacedArgumentsInChainWithNested.kt")
+        public void testMisplacedArgumentsInChainWithNested() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/innerClasses/inCallableReferenceLHS/misplacedArgumentsInChainWithNested.kt");
+        }
+
+        @Test
+        @TestMetadata("misplacedArgumentsInInnerOnly.kt")
+        public void testMisplacedArgumentsInInnerOnly() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/innerClasses/inCallableReferenceLHS/misplacedArgumentsInInnerOnly.kt");
+        }
+
+        @Test
+        @TestMetadata("nullable.kt")
+        public void testNullable() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/innerClasses/inCallableReferenceLHS/nullable.kt");
+        }
+
+        @Test
+        @TestMetadata("simple.kt")
+        public void testSimple() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/innerClasses/inCallableReferenceLHS/simple.kt");
+        }
+
+        @Test
+        @TestMetadata("upperBoundViolated.kt")
+        public void testUpperBoundViolated() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/innerClasses/inCallableReferenceLHS/upperBoundViolated.kt");
+        }
+
+        @Test
+        @TestMetadata("withProjections.kt")
+        public void testWithProjections() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/innerClasses/inCallableReferenceLHS/withProjections.kt");
+        }
+      }
     }
 
     @Nested
