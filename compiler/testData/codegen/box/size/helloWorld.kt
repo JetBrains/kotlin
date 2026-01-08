@@ -5,8 +5,6 @@
 // WASM_DCE_EXPECTED_OUTPUT_SIZE: mjs    6_355
 // WASM_OPT_EXPECTED_OUTPUT_SIZE:          220
 
-// IGNORE_BACKEND: WASM_WASI
-
 fun box(): String {
     println("Hello, World!")
     return "OK"

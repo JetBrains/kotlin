@@ -5,8 +5,6 @@
 // WASM_DCE_EXPECTED_OUTPUT_SIZE:  mjs  6_290
 // WASM_OPT_EXPECTED_OUTPUT_SIZE:         801
 
-// IGNORE_BACKEND: WASM_WASI
-
 object Simple
 
 object SimpleWithConstVal {
