@@ -5,11 +5,13 @@
 
 package org.jetbrains.kotlin.maven.plugin.test
 
+import org.jetbrains.kotlin.maven.test.JdkProvider
+import org.jetbrains.kotlin.maven.test.TestVersions
 import java.nio.file.Path
 import kotlin.io.path.Path
 
 class MavenTestExecutionContext(
-    val javaHomeProvider: (version: String) -> Path,
+    val javaHomeProvider: (version: TestVersions.Java) -> Path,
     val mavenDistributionProvider: (version: String) -> MavenDistribution,
     val testProjectsDir: Path,
     val testWorkDir: Path,
@@ -22,12 +24,9 @@ class MavenTestExecutionContext(
 fun createMavenTestExecutionContextFromEnvironment(
     tmpDir: Path,
 ): MavenTestExecutionContext {
-    // FIXME: KT-83111 Add JavaVersion argument resolver for kotlin-maven-plugin-test
-    val javaHomeProvider = { _: String ->
-        // prefer JDK 17, fallback to java home
-        val jdk17 = System.getProperty("jdk17Home")
-        val javaHome = jdk17 ?: System.getProperty("java.home")
-        Path(javaHome)
+    val jdkProvider = JdkProvider()
+    val javaHomeProvider = { version: TestVersions.Java ->
+        jdkProvider.jdkHome(version) ?: Path(System.getProperty("java.home"))
     }
 
     // FIXME: KT-83112 Add MavenVersion argument resolver for kotlin-maven-plugin-test
