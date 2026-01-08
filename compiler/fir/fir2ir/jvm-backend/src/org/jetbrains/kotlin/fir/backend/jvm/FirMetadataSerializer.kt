@@ -102,7 +102,6 @@ fun makeLocalFirMetadataSerializerForMetadataSource(
         configuration.jvmMetadataVersion(session.languageVersionSettings.languageVersion),
         session.languageVersionSettings.jvmDefaultMode,
         stringTable,
-        constValueProvider = null,
         additionalMetadataProvider = null
     )
     return FirMetadataSerializer(

@@ -27,14 +27,10 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.deserialization.projection
-import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationArgumentMapping
-import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.FirExpressionEvaluator
+import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotation
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationArgumentMapping
 import org.jetbrains.kotlin.fir.expressions.builder.buildLiteralExpression
-import org.jetbrains.kotlin.fir.expressions.canBeUsedForConstVal
 import org.jetbrains.kotlin.fir.expressions.impl.FirEmptyAnnotationArgumentMapping
 import org.jetbrains.kotlin.fir.extensions.FirExtensionApiInternals
 import org.jetbrains.kotlin.fir.extensions.extensionService
@@ -98,10 +94,8 @@ class FirElementSerializer private constructor(
     fun packagePartProto(file: FirFile, actualizedExpectDeclarations: Set<FirDeclaration>?): ProtoBuf.Package.Builder {
         val builder = ProtoBuf.Package.newBuilder()
 
-        extension.processFile(file) {
-            for (declaration in file.declarations) {
-                builder.addDeclarationProto(declaration, actualizedExpectDeclarations) {}
-            }
+        for (declaration in file.declarations) {
+            builder.addDeclarationProto(declaration, actualizedExpectDeclarations) {}
         }
 
         return finalizePackagePartProto(file.packageFqName, builder, actualizedExpectDeclarations)
@@ -120,9 +114,6 @@ class FirElementSerializer private constructor(
         declarations: List<FirDeclaration>,
         actualizedExpectDeclarations: Set<FirDeclaration>?
     ): ProtoBuf.Package.Builder {
-        require(extension.constValueProvider == null) {
-            "constValueProvider cannot work without file. Please use the `packagePartProto` overload which accepts FirFile"
-        }
         val builder = ProtoBuf.Package.newBuilder()
         for (declaration in declarations) {
             builder.addDeclarationProto(declaration, actualizedExpectDeclarations) {}
@@ -175,9 +166,7 @@ class FirElementSerializer private constructor(
             // Not using `processFile` means that we will not be able to use IR-based constant expression evaluator when serializing
             // annotations in such classes, and will fall back to the FIR-based evaluator.
             classProtoImpl(klass)
-        } else extension.processFile(containingFile) {
-            classProtoImpl(klass)
-        }
+        } else classProtoImpl(klass)
     }
 
     private fun classProtoImpl(klass: FirClass): ProtoBuf.Class.Builder = whileAnalysing(session, klass) {
@@ -948,7 +937,7 @@ class FirElementSerializer private constructor(
         ) {
             val evaluatorResult = FirExpressionEvaluator.evaluateParameterDefaultValue(parameter, session)
             val defaultValue = (evaluatorResult as? FirEvaluatorResult.Evaluated)?.result as FirExpression?
-            defaultValue?.toConstantValue<ConstantValue<*>>(extension.constValueProvider)?.let { value ->
+            defaultValue?.toConstantValue<ConstantValue<*>>()?.let { value ->
                 builder.setAnnotationParameterDefaultValue(extension.annotationSerializer.valueProto(value))
             }
         }
@@ -1339,7 +1328,7 @@ class FirElementSerializer private constructor(
     }
 
     private fun serializeVersionRequirementFromRequireKotlin(annotation: FirAnnotation): ProtoBuf.VersionRequirement.Builder? {
-        val convertedAnnotation = annotation.toConstantValue<AnnotationValue>(extension.constValueProvider) ?: return null
+        val convertedAnnotation = annotation.toConstantValue<AnnotationValue>() ?: return null
         val argumentMapping = convertedAnnotation.value.argumentsMapping
 
         val versionString = argumentMapping[RequireKotlinConstants.VERSION]?.value as String? ?: return null

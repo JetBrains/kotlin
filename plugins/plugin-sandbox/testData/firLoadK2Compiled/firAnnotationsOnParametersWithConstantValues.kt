@@ -1,4 +1,3 @@
-// PLATFORM_DEPENDANT_METADATA
 // DUMP_KT_IR
 package test
 
