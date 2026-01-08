@@ -1,2 +1,5 @@
 KtCollectionLiteralExpression(45,47): '[]'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/collections/mutableSetOf(): kotlin.collections.MutableSet<T>
+    ]

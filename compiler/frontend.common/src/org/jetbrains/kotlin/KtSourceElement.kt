@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -594,9 +594,9 @@ sealed class KtFakeSourceElementKind(final override val shouldSkipErrorTypeRepor
     object QualifierForContextSensitiveResolution : KtFakeSourceElementKind()
 
     /**
-     * When resolving a collection literal, for the explicit companion object receiver added to the call.
+     * When resolving a collection literal, a collection package qualifier or the explicit companion object added to the call as the explicit receiver.
      */
-    object CompanionObjectForOperatorOfCall : KtFakeSourceElementKind()
+    object DesugaredReceiverForOperatorOfCall : KtFakeSourceElementKind()
 
     /**
      * For the function call to operator `of` generated instead of a collection literal.
