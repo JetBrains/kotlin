@@ -3491,10 +3491,6 @@ private object TestIrBuiltins : IrBuiltIns() {
         missingBuiltIn()
     }
 
-    override fun getKPropertyClass(mutable: Boolean, n: Int): IrClassSymbol {
-        missingBuiltIn()
-    }
-
     override val operatorsPackageFragment: IrExternalPackageFragment
         get() = missingBuiltIn()
     override val kotlinInternalPackageFragment: IrExternalPackageFragment

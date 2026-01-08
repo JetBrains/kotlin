@@ -43,8 +43,7 @@ class IrBuiltInsOverDescriptors(
     val builtIns: KotlinBuiltIns,
     private val typeTranslator: TypeTranslator,
     val symbolTable: SymbolTable
-) : IrBuiltIns() {
-    override val symbolFinder: SymbolFinderOverDescriptors = SymbolFinderOverDescriptors(builtIns, symbolTable)
+) : IrBuiltIns(SymbolFinderOverDescriptors(builtIns, symbolTable)) {
     override val languageVersionSettings = typeTranslator.languageVersionSettings
 
     private var _functionFactory: IrAbstractDescriptorBasedFunctionFactory? = null
@@ -96,18 +95,16 @@ class IrBuiltInsOverDescriptors(
         return symbolTable.descriptorExtension.referenceProperty(this)
     }
 
-    private fun KotlinType.toIrType() = typeTranslator.translateType(this)
-
     private fun defineOperator(
         name: String, returnType: IrType, valueParameterTypes: List<IrType>, isIntrinsicConst: Boolean = false
     ): IrSimpleFunctionSymbol {
         val operatorDescriptor =
-            IrSimpleBuiltinOperatorDescriptorImpl(packageFragmentDescriptor, Name.identifier(name), returnType.originalKotlinType!!)
+            IrSimpleBuiltinOperatorDescriptorImpl(packageFragmentDescriptor, Name.identifier(name), returnType.toIrBasedKotlinType())
 
         for ((i, valueParameterType) in valueParameterTypes.withIndex()) {
             operatorDescriptor.addValueParameter(
                 IrBuiltinValueParameterDescriptorImpl(
-                    operatorDescriptor, Name.identifier("arg$i"), i, valueParameterType.originalKotlinType!!
+                    operatorDescriptor, Name.identifier("arg$i"), i, valueParameterType.toIrBasedKotlinType()
                 )
             )
         }
@@ -282,190 +279,22 @@ class IrBuiltInsOverDescriptors(
         associate { it.classifierOrFail to defineComparisonOperator(name, it) }
 
     val any = builtIns.anyType
-    override val anyType = any.toIrType()
-    override val anyClass = builtIns.any.toIrSymbol()
-    override val anyNType = anyType.makeNullable()
+    val char = builtIns.charType
+    val number = builtIns.number.defaultType
+    val byte = builtIns.byteType
+    val short = builtIns.shortType
+    val int = builtIns.intType
+    val long = builtIns.longType
+    val float = builtIns.floatType
+    val double = builtIns.doubleType
+    val nothing = builtIns.nothingType
+    val unit = builtIns.unitType
+    val string = builtIns.stringType
 
     private val intrinsicConstClass = createIntrinsicConstEvaluationClass()
     private val intrinsicConstType = intrinsicConstClass.defaultType
     private val intrinsicConstConstructor = intrinsicConstClass.primaryConstructor as IrConstructor
 
-    val bool = builtIns.booleanType
-    override val booleanType = bool.toIrType()
-    override val booleanClass = builtIns.boolean.toIrSymbol()
-
-    val char = builtIns.charType
-    override val charType = char.toIrType()
-    override val charClass = builtIns.char.toIrSymbol()
-
-    val number = builtIns.number.defaultType
-    override val numberType = number.toIrType()
-    override val numberClass = builtIns.number.toIrSymbol()
-
-    val byte = builtIns.byteType
-    override val byteType = byte.toIrType()
-    override val byteClass = builtIns.byte.toIrSymbol()
-
-    val short = builtIns.shortType
-    override val shortType = short.toIrType()
-    override val shortClass = builtIns.short.toIrSymbol()
-
-    val int = builtIns.intType
-    override val intType = int.toIrType()
-    override val intClass = builtIns.int.toIrSymbol()
-
-    val long = builtIns.longType
-    override val longType = long.toIrType()
-    override val longClass = builtIns.long.toIrSymbol()
-
-    override val ubyteClass = symbolFinder.findClass(StandardClassIds.UByte)
-    override val ubyteType by lazy { ubyteClass!!.typeWith() }
-    override val ushortClass = symbolFinder.findClass(StandardClassIds.UShort)
-    override val ushortType by lazy { ushortClass!!.typeWith() }
-    override val uintClass = symbolFinder.findClass(StandardClassIds.UInt)
-    override val uintType by lazy { uintClass!!.typeWith() }
-    override val ulongClass = symbolFinder.findClass(StandardClassIds.ULong)
-    override val ulongType by lazy { ulongClass!!.typeWith() }
-
-    val float = builtIns.floatType
-    override val floatType = float.toIrType()
-    override val floatClass = builtIns.float.toIrSymbol()
-
-    val double = builtIns.doubleType
-    override val doubleType = double.toIrType()
-    override val doubleClass = builtIns.double.toIrSymbol()
-
-    val nothing = builtIns.nothingType
-    override val nothingType = nothing.toIrType()
-    override val nothingClass = builtIns.nothing.toIrSymbol()
-    override val nothingNType = nothingType.makeNullable()
-
-    val unit = builtIns.unitType
-    override val unitType = unit.toIrType()
-    override val unitClass = builtIns.unit.toIrSymbol()
-
-    val string = builtIns.stringType
-    override val stringType = string.toIrType()
-    override val stringClass = builtIns.string.toIrSymbol()
-
-    // TODO: check if correct
-    override val charSequenceClass = symbolFinder.findClass(StandardClassIds.CharSequence)!!
-
-    override val collectionClass = builtIns.collection.toIrSymbol()
-    override val setClass = builtIns.set.toIrSymbol()
-    override val listClass = builtIns.list.toIrSymbol()
-    override val mapClass = builtIns.map.toIrSymbol()
-    override val mapEntryClass = builtIns.mapEntry.toIrSymbol()
-    override val iterableClass = builtIns.iterable.toIrSymbol()
-    override val iteratorClass = builtIns.iterator.toIrSymbol()
-    override val listIteratorClass = builtIns.listIterator.toIrSymbol()
-    override val mutableCollectionClass = builtIns.mutableCollection.toIrSymbol()
-    override val mutableSetClass = builtIns.mutableSet.toIrSymbol()
-    override val mutableListClass = builtIns.mutableList.toIrSymbol()
-    override val mutableMapClass = builtIns.mutableMap.toIrSymbol()
-    override val mutableMapEntryClass = builtIns.mutableMapEntry.toIrSymbol()
-    override val mutableIterableClass = builtIns.mutableIterable.toIrSymbol()
-    override val mutableIteratorClass = builtIns.mutableIterator.toIrSymbol()
-    override val mutableListIteratorClass = builtIns.mutableListIterator.toIrSymbol()
-    override val comparableClass = builtIns.comparable.toIrSymbol()
-
-    override val arrayClass = builtIns.array.toIrSymbol()
-
-    override val throwableType = builtIns.throwable.defaultType.toIrType()
-    override val throwableClass = builtIns.throwable.toIrSymbol()
-
-    override val kCallableClass = builtIns.kCallable.toIrSymbol()
-    override val kPropertyClass = builtIns.kProperty.toIrSymbol()
-    override val kClassClass = builtIns.kClass.toIrSymbol()
-    override val kTypeClass = builtIns.kType.toIrSymbol()
-
-    override val kProperty0Class = builtIns.kProperty0.toIrSymbol()
-    override val kProperty1Class = builtIns.kProperty1.toIrSymbol()
-    override val kProperty2Class = builtIns.kProperty2.toIrSymbol()
-    override val kMutableProperty0Class = builtIns.kMutableProperty0.toIrSymbol()
-    override val kMutableProperty1Class = builtIns.kMutableProperty1.toIrSymbol()
-    override val kMutableProperty2Class = builtIns.kMutableProperty2.toIrSymbol()
-
-    override val functionClass = builtIns.getBuiltInClassByFqName(FqName("kotlin.Function")).toIrSymbol()
-    override val kFunctionClass = builtIns.getBuiltInClassByFqName(FqName("kotlin.reflect.KFunction")).toIrSymbol()
-
-    override val annotationClass: IrClassSymbol = builtIns.annotation.toIrSymbol()
-    override val annotationType: IrType = builtIns.annotationType.toIrType()
-
-    override fun getKPropertyClass(mutable: Boolean, n: Int): IrClassSymbol = when (n) {
-        0 -> if (mutable) kMutableProperty0Class else kProperty0Class
-        1 -> if (mutable) kMutableProperty1Class else kProperty1Class
-        2 -> if (mutable) kMutableProperty2Class else kProperty2Class
-        else -> error("No KProperty for n=$n mutable=$mutable")
-    }
-
-    override val primitiveTypeToIrType = mapOf(
-        PrimitiveType.BOOLEAN to booleanType,
-        PrimitiveType.CHAR to charType,
-        PrimitiveType.BYTE to byteType,
-        PrimitiveType.SHORT to shortType,
-        PrimitiveType.INT to intType,
-        PrimitiveType.FLOAT to floatType,
-        PrimitiveType.LONG to longType,
-        PrimitiveType.DOUBLE to doubleType
-    )
-
-    // TODO switch to IrType
-    val primitiveTypes = listOf(bool, char, byte, short, int, float, long, double)
-    override val primitiveIrTypes = listOf(booleanType, charType, byteType, shortType, intType, floatType, longType, doubleType)
-    override val primitiveIrTypesWithComparisons = listOf(charType, byteType, shortType, intType, floatType, longType, doubleType)
-    override val primitiveFloatingPointIrTypes = listOf(floatType, doubleType)
-
-    override val byteIterator = getPrimitiveIterator(PrimitiveType.BYTE)
-    override val charIterator = getPrimitiveIterator(PrimitiveType.CHAR)
-    override val shortIterator = getPrimitiveIterator(PrimitiveType.SHORT)
-    override val intIterator = getPrimitiveIterator(PrimitiveType.INT)
-    override val longIterator = getPrimitiveIterator(PrimitiveType.LONG)
-    override val floatIterator = getPrimitiveIterator(PrimitiveType.FLOAT)
-    override val doubleIterator = getPrimitiveIterator(PrimitiveType.DOUBLE)
-    override val booleanIterator = getPrimitiveIterator(PrimitiveType.BOOLEAN)
-
-    private fun getPrimitiveIterator(kind: PrimitiveType): IrClassSymbol {
-        val iteratorName = FqName("kotlin.collections.${kind.typeName}Iterator")
-        return builtIns.getBuiltInClassByFqName(iteratorName).let {
-            val iteratorIrSymbol = it.toIrSymbol()
-            it.unsubstitutedMemberScope
-                .getContributedFunctions(Name.identifier("next"), NoLookupLocation.FROM_BACKEND)
-                .single()
-                .toIrSymbol()
-            iteratorIrSymbol
-        }
-    }
-
-    override val byteArray = builtIns.getPrimitiveArrayClassDescriptor(PrimitiveType.BYTE).toIrSymbol()
-    override val charArray = builtIns.getPrimitiveArrayClassDescriptor(PrimitiveType.CHAR).toIrSymbol()
-    override val shortArray = builtIns.getPrimitiveArrayClassDescriptor(PrimitiveType.SHORT).toIrSymbol()
-    override val intArray = builtIns.getPrimitiveArrayClassDescriptor(PrimitiveType.INT).toIrSymbol()
-    override val longArray = builtIns.getPrimitiveArrayClassDescriptor(PrimitiveType.LONG).toIrSymbol()
-    override val floatArray = builtIns.getPrimitiveArrayClassDescriptor(PrimitiveType.FLOAT).toIrSymbol()
-    override val doubleArray = builtIns.getPrimitiveArrayClassDescriptor(PrimitiveType.DOUBLE).toIrSymbol()
-    override val booleanArray = builtIns.getPrimitiveArrayClassDescriptor(PrimitiveType.BOOLEAN).toIrSymbol()
-    override val ubyteArray = symbolFinder.findClass(StandardClassIds.unsignedArrayTypeByElementType[StandardClassIds.UByte]!!)
-    override val ushortArray = symbolFinder.findClass(StandardClassIds.unsignedArrayTypeByElementType[StandardClassIds.UShort]!!)
-    override val uintArray = symbolFinder.findClass(StandardClassIds.unsignedArrayTypeByElementType[StandardClassIds.UInt]!!)
-    override val ulongArray = symbolFinder.findClass(StandardClassIds.unsignedArrayTypeByElementType[StandardClassIds.ULong]!!)
-    override val primitiveArraysToPrimitiveTypes =
-        PrimitiveType.entries.associate { builtIns.getPrimitiveArrayClassDescriptor(it).toIrSymbol() to it }
-    override val primitiveTypesToPrimitiveArrays = primitiveArraysToPrimitiveTypes.map { (k, v) -> v to k }.toMap()
-    override val primitiveArrayElementTypes = primitiveArraysToPrimitiveTypes.mapValues { primitiveTypeToIrType[it.value] }
-    override val primitiveArrayForType = primitiveArrayElementTypes.asSequence().associate { it.value to it.key }
-
-    override val unsignedTypesToUnsignedArrays: Map<UnsignedType, IrClassSymbol> =
-        UnsignedType.entries.mapNotNull { unsignedType ->
-            val array = builtIns.builtInsModule.findClassAcrossModuleDependencies(unsignedType.arrayClassId)?.toIrSymbol()
-            if (array == null) null else unsignedType to array
-        }.toMap()
-
-    override val unsignedArraysElementTypes: Map<IrClassSymbol, IrType?> by lazy {
-        unsignedTypesToUnsignedArrays.map { (k, v) ->
-            v to builtIns.builtInsModule.findClassAcrossModuleDependencies(k.classId)?.defaultType?.toIrType()
-        }.toMap()
-    }
 
     override val lessFunByOperandType = primitiveIrTypesWithComparisons.defineComparisonOperatorForEachIrType(BuiltInOperatorNames.LESS)
     override val lessOrEqualFunByOperandType =
@@ -509,61 +338,16 @@ class IrBuiltInsOverDescriptors(
 
     override val dataClassArrayMemberToStringSymbol = defineOperator("dataClassArrayMemberToString", stringType, listOf(anyNType))
 
-    override val intTimesSymbol: IrSimpleFunctionSymbol =
-        builtIns.int.unsubstitutedMemberScope.findFirstFunction("times") {
-            KotlinTypeChecker.DEFAULT.equalTypes(it.valueParameters[0].type, int)
-        }.toIrSymbol()
-
-    override val intXorSymbol: IrSimpleFunctionSymbol =
-        builtIns.int.unsubstitutedMemberScope.findFirstFunction("xor") {
-            KotlinTypeChecker.DEFAULT.equalTypes(it.valueParameters[0].type, int)
-        }.toIrSymbol()
-
-    override val intPlusSymbol: IrSimpleFunctionSymbol =
-        builtIns.int.unsubstitutedMemberScope.findFirstFunction("plus") {
-            KotlinTypeChecker.DEFAULT.equalTypes(it.valueParameters[0].type, int)
-        }.toIrSymbol()
-
-    override val intAndSymbol: IrSimpleFunctionSymbol =
-        builtIns.int.unsubstitutedMemberScope.findFirstFunction("and") {
-            KotlinTypeChecker.DEFAULT.equalTypes(it.valueParameters[0].type, int)
-        }.toIrSymbol()
-
-    override val arrayOf = symbolFinder
-        .findFunctions(CallableId(StandardClassIds.BASE_KOTLIN_PACKAGE, Name.identifier("arrayOf")))
-        .first {
-            it.descriptor.extensionReceiverParameter == null && it.descriptor.dispatchReceiverParameter == null &&
-                    it.descriptor.valueParameters.size == 1 && it.descriptor.valueParameters[0].varargElementType != null
-        }
-
-    override val arrayOfNulls = symbolFinder
-        .findFunctions(CallableId(StandardClassIds.BASE_KOTLIN_PACKAGE, Name.identifier("arrayOfNulls")))
-        .first {
-            it.descriptor.extensionReceiverParameter == null && it.descriptor.dispatchReceiverParameter == null &&
-                    it.descriptor.valueParameters.size == 1 && KotlinBuiltIns.isInt(it.descriptor.valueParameters[0].type)
-        }
-
     override val linkageErrorSymbol: IrSimpleFunctionSymbol = defineOperator("linkageError", nothingType, listOf(stringType))
-
-    override val enumClass = builtIns.enum.toIrSymbol()
 
     override fun functionN(arity: Int): IrClass = functionFactory.functionN(arity)
     override fun kFunctionN(arity: Int): IrClass = functionFactory.kFunctionN(arity)
     override fun suspendFunctionN(arity: Int): IrClass = functionFactory.suspendFunctionN(arity)
     override fun kSuspendFunctionN(arity: Int): IrClass = functionFactory.kSuspendFunctionN(arity)
-
-    override val deprecatedSymbol: IrClassSymbol = symbolFinder.findClass(StandardClassIds.Annotations.Deprecated)!!
-    override val deprecationLevelSymbol: IrClassSymbol = symbolFinder.findClass(StandardClassIds.DeprecationLevel)!!
 }
-
-private inline fun MemberScope.findFirstFunction(name: String, predicate: (CallableMemberDescriptor) -> Boolean) =
-    getContributedFunctions(Name.identifier(name), NoLookupLocation.FROM_BACKEND).first(predicate)
 
 @InternalSymbolFinderAPI
 class SymbolFinderOverDescriptors(private val builtIns: KotlinBuiltIns, private val symbolTable: SymbolTable) : SymbolFinder() {
-    internal fun builtInsPackage(vararg packageNameSegments: String) =
-        builtIns.builtInsModule.getPackage(FqName.fromSegments(listOf(*packageNameSegments))).memberScope
-
     private fun getClassDescriptor(classId: ClassId) : ClassDescriptor? {
         val parentClassId = classId.parentClassId
         return if (parentClassId == null) {

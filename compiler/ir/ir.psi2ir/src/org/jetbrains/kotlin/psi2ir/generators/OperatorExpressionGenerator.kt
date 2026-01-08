@@ -446,7 +446,18 @@ internal class OperatorExpressionGenerator(statementGenerator: StatementGenerato
     }
 
     private val primitiveTypeMapping: Map<SimpleType, IrType> =
-        (context.irBuiltIns as IrBuiltInsOverDescriptors).run { primitiveTypes.zip(primitiveIrTypes).toMap() }
+        (context.irBuiltIns as IrBuiltInsOverDescriptors).run {
+            mapOf(
+                builtIns.booleanType to booleanType,
+                builtIns.charType to charType,
+                builtIns.byteType to byteType,
+                builtIns.shortType to shortType,
+                builtIns.intType to intType,
+                builtIns.longType to longType,
+                builtIns.floatType to floatType,
+                builtIns.doubleType to doubleType
+            )
+        }
 
     private fun kotlinTypeToIrType(kotlinType: KotlinType?) = kotlinType?.let { primitiveTypeMapping[it] }
 
