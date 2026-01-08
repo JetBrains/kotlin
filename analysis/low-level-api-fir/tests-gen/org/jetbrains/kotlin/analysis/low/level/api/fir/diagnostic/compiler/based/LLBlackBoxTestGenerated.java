@@ -17026,6 +17026,12 @@ public class LLBlackBoxTestGenerated extends AbstractLLBlackBoxTest {
         }
 
         @Test
+        @TestMetadata("multilineSuspendingCallWithDefaultParameterValue.kt")
+        public void testMultilineSuspendingCallWithDefaultParameterValue() {
+          runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/wrapContinuation/multilineSuspendingCallWithDefaultParameterValue.kt");
+        }
+
+        @Test
         @TestMetadata("samDefault.kt")
         public void testSamDefault() {
           runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/wrapContinuation/samDefault.kt");
