@@ -160,12 +160,6 @@ val wasmEdgeSuffix = when (currentOsType) {
     OsType(OsName.WINDOWS, OsArch.X86_64) -> "windows@zip"
     else -> error("unsupported os type $currentOsType")
 }
-val wasmEdgeInnerSuffix = when (currentOsType.name) {
-    OsName.LINUX -> "Linux"
-    OsName.MAC -> "Darwin"
-    OsName.WINDOWS -> "Windows"
-    else -> error("unsupported os type $currentOsType")
-}
 
 val wasmEdge by configurations.creating {
     isCanBeResolved = true
@@ -350,8 +344,6 @@ val unzipWasmEdge by task<UnzipWasmEdge> {
 
     into.fileProvider(toolsDirectory.map { it.dir("WasmEdge").asFile })
 
-    directoryName.set(wasmEdgeVersion.map { version -> "WasmEdge-$version-$wasmEdgeInnerSuffix" })
-
     getIsWindows.set(currentOsTypeForConfigurationCache !in setOf(OsName.MAC, OsName.LINUX))
     getIsMac.set(currentOsTypeForConfigurationCache == OsName.MAC)
 }
@@ -432,11 +424,8 @@ fun Test.setupSpiderMonkey() {
 fun Test.setupWasmEdge() {
     val wasmEdgeExecutablePath = unzipWasmEdge
         .flatMap { task ->
-            task.into.zip(task.directoryName) { into, dirName ->
-                into.dir(dirName)
-            }
+            task.into.file("bin/wasmedge")
         }
-        .map { it.file("bin/wasmedge") }
 
     jvmArgumentProviders += objects.newInstance<SystemPropertyClasspathProvider>().apply {
         classpath.from(wasmEdgeExecutablePath)

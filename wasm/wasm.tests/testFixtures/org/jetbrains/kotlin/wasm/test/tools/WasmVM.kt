@@ -89,8 +89,6 @@ internal sealed class WasmVM(
         ) =
             tool.run(
                 *toolArgs.toTypedArray(),
-                "--enable-gc",
-                "--enable-exception-handling",
                 entryFile,
                 "startTest",
                 workingDirectory = workingDirectory,

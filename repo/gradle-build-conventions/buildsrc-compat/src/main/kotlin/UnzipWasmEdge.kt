@@ -35,9 +35,6 @@ abstract class UnzipWasmEdge : DefaultTask() {
     @get:Input
     abstract val getIsMac: Property<Boolean>
 
-    @get:Input
-    abstract val directoryName: Property<String>
-
     @TaskAction
     fun extract() {
         fs.delete {
@@ -59,7 +56,7 @@ abstract class UnzipWasmEdge : DefaultTask() {
 
         if (isWindows) return
 
-        val wasmEdgeUnpackedDirectory = into.get().asFile.resolve(directoryName.get())
+        val wasmEdgeUnpackedDirectory = into.get().asFile
 
         val unpackedWasmEdgeDirectory = wasmEdgeUnpackedDirectory.toPath()
 
