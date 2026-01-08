@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -141,10 +141,23 @@ interface JavaConstructor : JavaMember, JavaTypeParameterListOwner {
 }
 
 interface JavaValueParameter : JavaAnnotationOwner {
+    /**
+     * The name of the parameter if present and not auto-generated
+     *
+     * @see nameOrGeneratedName
+     */
     val name: Name?
     val type: JavaType
     val isVararg: Boolean
     val isFromSource: Boolean
+
+    /**
+     * The name of the parameter if present or the generated name (like 'p0')
+     * if the parameter is the binary one and its name is auto-generated.
+     *
+     * Should be preferred over [name] where possible since it is expected to be more performant
+     */
+    val nameOrGeneratedName: Name? get() = name
 }
 
 interface JavaRecordComponent : JavaMember {
