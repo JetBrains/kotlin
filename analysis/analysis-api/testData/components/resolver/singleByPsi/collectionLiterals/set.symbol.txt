@@ -1,2 +1,5 @@
 KtCollectionLiteralExpression(55,58): '[1]'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/collections/setOf(element: T): kotlin.collections.Set<T>
+    ]
