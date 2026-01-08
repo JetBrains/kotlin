@@ -17,13 +17,13 @@ class K2NativeCompilerArgumentsConfigurator : CommonKlibBasedCompilerArgumentsCo
         languageVersion: LanguageVersion,
     ): MutableMap<AnalysisFlag<*>, Any> = with(arguments) {
         require(this is K2NativeCompilerArguments)
-        super.configureAnalysisFlags(arguments, collector, languageVersion).also {
-            val optInList = it[AnalysisFlags.optIn] as List<*>
-            it[AnalysisFlags.optIn] = optInList + listOf("kotlin.ExperimentalUnsignedTypes")
+        super.configureAnalysisFlags(arguments, collector, languageVersion).apply {
+            val optInList = (get(AnalysisFlags.optIn) as List<*>?).orEmpty()
+            putAnalysisFlag(AnalysisFlags.optIn, optInList + listOf("kotlin.ExperimentalUnsignedTypes"))
             if (printIr)
                 phasesToDumpAfter = arrayOf("ALL")
             if (metadataKlib) {
-                it[AnalysisFlags.metadataCompilation] = true
+                putAnalysisFlag(AnalysisFlags.metadataCompilation, true)
             }
         }
     }
