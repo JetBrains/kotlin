@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.isObject
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
@@ -35,6 +36,7 @@ import org.jetbrains.kotlin.fir.visibilityChecker
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
+import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.filterIsInstanceWithChecker
 
 object FirImportsChecker : FirFileChecker(MppCheckerKind.Common) {
@@ -239,6 +241,14 @@ object FirImportsChecker : FirFileChecker(MppCheckerKind.Common) {
         val alias = import.aliasName ?: return
         val importedName = import.importedName ?: return
         if (!OperatorConventions.isConventionName(alias)) return
+        when (alias) {
+            OperatorNameConventions.OF if !context.languageVersionSettings.supportsFeature(LanguageFeature.CollectionLiterals) -> {
+                return
+            }
+
+            else -> {}
+        }
+
         val classId = import.resolvedParentClassId
         val illegalRename = if (classId != null) {
             val classFir = classId.resolveToClass() ?: return
