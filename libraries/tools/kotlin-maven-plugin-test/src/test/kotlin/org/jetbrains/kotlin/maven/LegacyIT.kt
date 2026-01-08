@@ -5,12 +5,16 @@
 
 package org.jetbrains.kotlin.maven.plugin.test
 
+import org.jetbrains.kotlin.maven.test.JdkVersions
+import org.jetbrains.kotlin.maven.test.MavenTest
+import org.jetbrains.kotlin.maven.test.TestVersions
+import org.jetbrains.kotlin.maven.test.assertBuildLogContains
 import org.jetbrains.kotlin.maven.test.isWindowsHost
 import org.jetbrains.kotlin.maven.test.loadMavenInvokerPropertiesOrNull
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
+import kotlin.io.path.absolutePathString
 
 @Execution(ExecutionMode.CONCURRENT)
 // TODO: KT-83109 Remove beanshell and groovy verification in kotlin-maven-plugin-test
@@ -65,9 +69,31 @@ class LegacyIT : KotlinMavenTestBase() {
     @Test
     fun `test-bom`() = verifyWithLegacyBsh("test-bom",)
 
-    @Test
-    @Disabled // FIXME: KT-83111 Add JavaVersion argument resolver for kotlin-maven-plugin-test
-    fun `test-customJdk`() = verifyWithLegacyBsh("test-customJdk",)
+    @JdkVersions(versions = [TestVersions.Java.JDK_1_8, TestVersions.Java.JDK_17])
+    @MavenTest
+    fun `test-customJdk`(jdkVersion: TestVersions.Java) {
+        val failureExpected = jdkVersion == TestVersions.Java.JDK_1_8
+        testProject("test-customJdk", "default") {
+            build(
+                "package",
+                expectedToFail = failureExpected,
+                buildOptions = buildOptions.copy(
+                    javaVersion = jdkVersion,
+                    extraMavenProperties = mapOf("kotlinCompilerJdk" to context.javaHomeProvider(jdkVersion).absolutePathString())
+                )
+            ) {
+                if (!failureExpected) {
+                    assertBuildLogContains("[INFO] BUILD SUCCESS")
+                } else {
+                    assertBuildLogContains(
+                        "[INFO] BUILD FAILURE",
+                        "[INFO] Overriding JDK home path with",
+                        "Unresolved reference 'StackWalker'"
+                    )
+                }
+            }
+        }
+    }
 
     @Test
     fun `test-empty-argument`() = verifyWithLegacyBsh("test-empty-argument",)
@@ -123,9 +149,10 @@ class LegacyIT : KotlinMavenTestBase() {
     @Test
     fun `test-languageVersion`() = verifyWithLegacyBsh("test-languageVersion",)
 
-    @Disabled // requires JDK 17
-    @Test
-    fun `test-lombok-simple`() = verifyWithLegacyBsh("test-lombok-simple",)
+    @JdkVersions(versions = [TestVersions.Java.JDK_17])
+    @MavenTest
+    fun `test-lombok-simple`(javaVersion: TestVersions.Java) =
+        verifyWithLegacyBsh("test-lombok-simple", buildOptions = buildOptions.copy(javaVersion = javaVersion))
 
     @Test
     fun `test-lombok-with-kapt`() = verifyWithLegacyBsh("test-lombok-with-kapt",)
