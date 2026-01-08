@@ -1,0 +1,36 @@
+KT element: KtValueArgument
+FIR element: FirResolvedNamedReferenceImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+R|/MyList.Companion.of|
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] customGenericCollection.kt
+    public final [ResolvedTo(STATUS)] class MyList<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=MyList] constructor<[ResolvedTo(STATUS)] T>(): R|MyList<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final companion [ResolvedTo(STATUS)] object Companion : R|kotlin/Any| {
+            private [ResolvedTo(STATUS)] [ContainingClassKey=Companion] constructor(): R|MyList.Companion| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public final operator [ResolvedTo(CONTRACTS)] fun <[ResolvedTo(CONTRACTS)] T1> of([ResolvedTo(CONTRACTS)] vararg vals: R|kotlin/Array<out T1>|): R|MyList<T1>| { LAZY_BLOCK }
+
+        }
+
+    }
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun <[ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] T2> acceptList([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] l: R|MyList<T2>|): R|kotlin/Unit| {
+        ^acceptList Q|kotlin/Unit|
+    }
+    public final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] fun test(): R|kotlin/Unit| {
+        R|/acceptList|<R|kotlin/String|>(Q|MyList.Companion|.R|/MyList.Companion.of|<R|kotlin/String|>(vararg(String(1), String(2), String(3))))
+    }
