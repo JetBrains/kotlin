@@ -21,9 +21,9 @@ public class GetterSetterExample {
 fun box(): String {
     val obj = GetterSetterExample()
     obj.name = "John"
-    obj.<!INVISIBLE_REFERENCE!>setName<!>("John")
+    obj.setName("John")
     
-    obj.<!INVISIBLE_REFERENCE!>age<!>
-    obj.<!INVISIBLE_REFERENCE!>getAge<!>()
+    obj.age
+    obj.getAge()
     return "OK"
 }

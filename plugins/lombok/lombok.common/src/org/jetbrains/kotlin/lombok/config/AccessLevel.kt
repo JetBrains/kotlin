@@ -21,7 +21,7 @@ enum class AccessLevel {
         private fun toVisibility(v: AccessLevel): Visibility {
             return when (v) {
                 PUBLIC -> Visibilities.Public
-                PROTECTED -> Visibilities.Protected
+                PROTECTED -> JavaVisibilities.ProtectedAndPackage
                 PACKAGE, MODULE -> JavaVisibilities.PackageVisibility
                 PRIVATE -> Visibilities.Private
                 NONE -> Visibilities.Private

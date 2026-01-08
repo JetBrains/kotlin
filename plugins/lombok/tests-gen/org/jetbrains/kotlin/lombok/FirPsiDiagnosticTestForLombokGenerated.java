@@ -154,12 +154,6 @@ public class FirPsiDiagnosticTestForLombokGenerated extends AbstractFirPsiDiagno
     }
 
     @Test
-    @TestMetadata("gettersClassLevel.fir.kt")
-    public void testGettersClassLevel_fir() {
-      runTest("plugins/lombok/testData/diagnostics/k1+k2/gettersClassLevel.fir.kt");
-    }
-
-    @Test
     @TestMetadata("getters.fir.kt")
     public void testGetters_fir() {
       runTest("plugins/lombok/testData/diagnostics/k1+k2/getters.fir.kt");

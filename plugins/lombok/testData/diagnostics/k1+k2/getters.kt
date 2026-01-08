@@ -37,8 +37,7 @@ fun test() {
     obj.boxedBoolean
     obj.getBoxedBoolean()
 
-    //shouldn't be accesible from here
-    obj.<!INVISIBLE_MEMBER!>getName<!>()
+    obj.getName()
 
     obj.<!UNRESOLVED_REFERENCE!>getInvisible<!>()
 
