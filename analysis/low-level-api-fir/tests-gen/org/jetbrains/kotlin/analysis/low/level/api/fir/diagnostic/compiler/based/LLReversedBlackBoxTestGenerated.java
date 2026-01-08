@@ -38024,6 +38024,12 @@ public class LLReversedBlackBoxTestGenerated extends AbstractLLReversedBlackBoxT
     }
 
     @Test
+    @TestMetadata("kt83570.kt")
+    public void testKt83570() {
+      runTest("compiler/testData/codegen/box/javaInterop/kt83570.kt");
+    }
+
+    @Test
     @TestMetadata("lambdaInstanceOf.kt")
     public void testLambdaInstanceOf() {
       runTest("compiler/testData/codegen/box/javaInterop/lambdaInstanceOf.kt");
