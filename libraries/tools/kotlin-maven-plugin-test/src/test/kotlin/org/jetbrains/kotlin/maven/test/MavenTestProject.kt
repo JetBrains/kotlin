@@ -9,7 +9,10 @@ import bsh.Interpreter
 import groovy.lang.Binding
 import groovy.util.GroovyScriptEngine
 import org.apache.maven.shared.verifier.Verifier
+import org.jetbrains.kotlin.maven.test.TestVersions
 import org.jetbrains.kotlin.maven.test.checkOrWriteKotlinMavenTestSettingsXml
+import org.jetbrains.kotlin.maven.test.isTeamCityRun
+import org.jetbrains.kotlin.maven.test.printLog
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
@@ -22,7 +25,7 @@ import java.io.File
 import java.io.PrintStream
 import java.io.StringReader
 import java.nio.file.Path
-import java.util.*
+import kotlin.io.bufferedReader
 import kotlin.io.path.*
 
 class MavenDistribution(val mavenHome: Path)
@@ -35,7 +38,13 @@ class MavenTestProject(
     val settingsFile: Path,
     val buildOptions: MavenBuildOptions,
 ) {
-    fun build(vararg args: String, expectedToFail: Boolean = false, buildOptions: MavenBuildOptions = this.buildOptions): Verifier {
+    fun build(
+        vararg args: String,
+        environmentVariables: Map<String, String> = emptyMap(),
+        expectedToFail: Boolean = false,
+        buildOptions: MavenBuildOptions = this.buildOptions,
+        code: (Verifier.() -> Unit)? = null,
+    ): Verifier {
         val verifier = Verifier(
             workDir.absolutePathString(),
             null, // settingsFile is used only to extract local repo from there, but we pass it explicitly below
@@ -45,6 +54,10 @@ class MavenTestProject(
 
         val javaHome = context.javaHomeProvider(buildOptions.javaVersion).absolutePathString()
         verifier.setEnvironmentVariable("JAVA_HOME", javaHome)
+
+        for ((key, value) in environmentVariables) {
+            verifier.setEnvironmentVariable(key, value)
+        }
 
         verifier.setLocalRepo(context.sharedMavenLocal.absolutePathString())
 
@@ -61,31 +74,26 @@ class MavenTestProject(
             verifier.execute()
         }
 
-        fun printLog() {
-            println("====LOG BEGIN====")
-            val logFile = verifier.basedir.let(::File).resolve(verifier.logFileName)
-            logFile.bufferedReader().use { reader ->
-                reader.lineSequence().forEach { line ->
-                    println(line)
-                }
-            }
-            println("====LOG END====")
-        }
-
         if (expectedToFail) {
             if (res.isSuccess) {
                 println("Maven build succeeded unexpectedly")
-                printLog()
+                verifier.printLog()
                 throw AssertionError("Maven build succeeded unexpectedly")
             }
         } else {
             if (res.isFailure) {
                 println("Maven build failed with error: ${res.exceptionOrNull()?.message}")
-                printLog()
+                verifier.printLog()
                 throw res.exceptionOrNull()!!
             }
         }
 
+        try {
+            code?.invoke(verifier)
+        } catch (e: AssertionError) {
+            verifier.printLog()
+            throw e
+        }
         return verifier
     }
 
@@ -123,14 +131,26 @@ class MavenTestProject(
             assertTrue(res) { "verify.groovy returned false" }
         }
     }
+
+    @Suppress("unused")
+    fun makeSnapshotTo(base: String) {
+        check(!isTeamCityRun) { "Please remove `makeSnapshotTo()` call from test. It is utility for local debugging only!" }
+        val newWorkDir = Path(base).resolve(name)
+        newWorkDir.createDirectories()
+
+        @OptIn(ExperimentalPathApi::class)
+        workDir.copyToRecursively(newWorkDir, overwrite = true, followLinks = true)
+    }
 }
 
 data class MavenBuildOptions(
-    val javaVersion: String = "17",
-    val useKotlinDaemon: Boolean? = null
+    val javaVersion: TestVersions.Java = TestVersions.Java.JDK_17,
+    val useKotlinDaemon: Boolean? = null,
+    val extraMavenProperties: Map<String, String> = emptyMap(),
 ) {
     fun asCliArgs(): List<String> = buildList {
         useKotlinDaemon?.let { add("-Dkotlin.compiler.daemon=$it") }
+        extraMavenProperties.forEach { (key, value) -> add("-D$key=$value") }
     }
 }
 
