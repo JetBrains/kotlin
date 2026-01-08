@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// OPT_IN: kotlin.js.ExperimentalJsExport
+// OPT_IN: kotlin.js.ExperimentalJsExport, kotlin.js.ExperimentalJsStatic
 // FILE: f0.kt
 class C {
     class <!JS_BUILTIN_NAME_CLASH!>prototype<!>
@@ -85,6 +85,34 @@ external interface ExternalInterface {
 
 class NonExternalChild : ExternalInterface {
     <!JS_BUILTIN_NAME_CLASH!>override fun constructor()<!> {}
+}
+
+// JsStatic: previously prohibited static names as companion members
+class StaticByJsStatic {
+    companion object {
+        <!JS_BUILTIN_NAME_CLASH!>@JsStatic
+        fun prototype()<!> {}
+
+        <!JS_BUILTIN_NAME_CLASH!>@JsStatic
+        fun length()<!> {}
+
+        <!JS_BUILTIN_NAME_CLASH!>@JsStatic
+        fun `$metadata$`()<!> {}
+    }
+}
+
+// JsStatic combined with prohibited @JsName
+class StaticByJsStaticWithJsName {
+    companion object {
+        <!JS_BUILTIN_NAME_CLASH!>@JsStatic
+        @JsName("prototype") fun f1()<!> {}
+
+        <!JS_BUILTIN_NAME_CLASH!>@JsStatic
+        @JsName("length") fun f2()<!> {}
+
+        <!JS_BUILTIN_NAME_CLASH!>@JsStatic
+        @JsName("\$metadata$") fun f3()<!> {}
+    }
 }
 
 // FILE: f1.kt
