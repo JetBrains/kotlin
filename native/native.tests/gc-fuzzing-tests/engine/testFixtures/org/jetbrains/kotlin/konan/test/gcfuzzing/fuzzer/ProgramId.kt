@@ -37,7 +37,7 @@ sealed class ProgramId {
 
             val tokens = tokenize(str).iterator()
             fun nextToken() = if (tokens.hasNext()) tokens.next() else null
-            fun nextTag() = nextToken()?.single()
+            fun nextTag() = nextToken()?.singleOrNull()
             fun nextUInt() = nextToken()?.toUIntOrNull()
             fun nextProgramId(): ProgramId? = when (nextTag()) {
                 Initial::class.tag -> {
