@@ -10,6 +10,7 @@ repositories {
 
 dependencies {
     api(project(":compiler:frontend.java"))
+    compileOnly(intellijCore())
 
     implementation(libs.org.jetbrains.syntax.api)
     implementation(libs.org.jetbrains.java.syntax.jvm)
@@ -22,4 +23,8 @@ dependencies {
 sourceSets {
     "main" { projectDefault() }
     "test" { projectDefault() }
+}
+
+kotlin {
+    jvmToolchain(17)
 }
