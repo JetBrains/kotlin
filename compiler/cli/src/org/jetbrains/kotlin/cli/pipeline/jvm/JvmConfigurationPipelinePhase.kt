@@ -104,8 +104,10 @@ object JvmConfigurationUpdater : ConfigurationUpdater<K2JVMCompilerArguments>() 
     }
 
     private fun CompilerConfiguration.setupIncrementalCompilationServices(arguments: K2JVMCompilerArguments, services: Services) {
-        if (!incrementalCompilationIsEnabled(arguments)) return
+        // used by Build Tools API in non-incremental compilations:
         lookupTracker = services[LookupTracker::class.java]
+
+        if (!incrementalCompilationIsEnabled(arguments)) return
         expectActualTracker = services[ExpectActualTracker::class.java]
         inlineConstTracker = services[InlineConstTracker::class.java]
         enumWhenTracker = services[EnumWhenTracker::class.java]
