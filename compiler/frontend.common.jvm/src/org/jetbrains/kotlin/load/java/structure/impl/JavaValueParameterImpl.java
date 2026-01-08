@@ -61,7 +61,7 @@ public class JavaValueParameterImpl extends JavaElementImpl<PsiParameter>
 
     @Override
     public boolean isFromSource() {
-        return true;
+        return !JavaPsiUtilsKt.isCompiledElement(getPsi());
     }
 
     @NotNull
