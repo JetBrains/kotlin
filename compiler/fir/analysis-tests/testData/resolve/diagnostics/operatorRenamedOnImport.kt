@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-83538
 // FILE: a.kt
 package a
@@ -10,6 +10,6 @@ operator fun A.plus(other: A): A = this
 // FILE: b.kt
 package b
 
-import a.plus as provideDelegate
+import a.<!OPERATOR_RENAMED_ON_IMPORT!>plus<!> as provideDelegate
 
 /* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, interfaceDeclaration, operator, thisExpression */
