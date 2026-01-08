@@ -793,6 +793,34 @@ public class SourceGetOrBuildFirTestGenerated extends AbstractSourceGetOrBuildFi
   }
 
   @Nested
+  @TestMetadata("analysis/low-level-api-fir/testData/getOrBuildFir/collectionLiterals")
+  @TestDataPath("$PROJECT_ROOT")
+  public class CollectionLiterals {
+    @Test
+    public void testAllFilesPresentInCollectionLiterals() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/getOrBuildFir/collectionLiterals"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("customGenericCollection.kt")
+    public void testCustomGenericCollection() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/collectionLiterals/customGenericCollection.kt");
+    }
+
+    @Test
+    @TestMetadata("stdlibSet.kt")
+    public void testStdlibSet() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/collectionLiterals/stdlibSet.kt");
+    }
+
+    @Test
+    @TestMetadata("stdlibSetWithoutStdlib.kt")
+    public void testStdlibSetWithoutStdlib() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFir/collectionLiterals/stdlibSetWithoutStdlib.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("analysis/low-level-api-fir/testData/getOrBuildFir/declarations")
   @TestDataPath("$PROJECT_ROOT")
   public class Declarations {
