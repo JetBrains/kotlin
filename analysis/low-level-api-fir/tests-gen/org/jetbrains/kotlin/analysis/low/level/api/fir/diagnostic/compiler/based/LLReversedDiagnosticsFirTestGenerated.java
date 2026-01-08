@@ -2033,6 +2033,12 @@ public class LLReversedDiagnosticsFirTestGenerated extends AbstractLLReversedDia
         runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/kt82964.kt");
       }
 
+      @Test
+      @TestMetadata("operatorRenamedOnImport.kt")
+      public void testOperatorRenamedOnImport() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/operatorRenamedOnImport.kt");
+      }
+
       @Nested
       @TestMetadata("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/collectionLiteralsDisabled")
       @TestDataPath("$PROJECT_ROOT")
