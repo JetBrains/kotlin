@@ -168,6 +168,12 @@ public class IrBlackBoxCodegenTestForLombokGenerated extends AbstractIrBlackBoxC
   }
 
   @Test
+  @TestMetadata("getterAndSetterOnJavaStaticFields.kt")
+  public void testGetterAndSetterOnJavaStaticFields() {
+    runTest("plugins/lombok/testData/box/getterAndSetterOnJavaStaticFields.kt");
+  }
+
+  @Test
   @TestMetadata("getterSetterVisibility.kt")
   public void testGetterSetterVisibility() {
     runTest("plugins/lombok/testData/box/getterSetterVisibility.kt");
