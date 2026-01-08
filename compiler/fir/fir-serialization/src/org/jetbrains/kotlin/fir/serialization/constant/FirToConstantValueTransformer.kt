@@ -38,17 +38,12 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 context(c: SessionAndScopeSessionHolder)
-internal inline fun <reified T : ConstantValue<*>> FirExpression.toConstantValue(
-    constValueProvider: ConstValueProvider?
-): T? {
-    val valueFromIr = constValueProvider?.findConstantValueFor(this)
-    if (valueFromIr != null) return valueFromIr as? T
-
+internal inline fun <reified T : ConstantValue<*>> FirExpression.toConstantValue(): T? {
     val valueFromFir = when (this) {
         is FirAnnotation -> this.evaluateToAnnotationValue()
-        else -> this.toConstantValue()
+        else -> this.toConstantValueImpl()
     }
-    return valueFromFir as? T
+    return (valueFromFir) as? T
 }
 
 fun FirExpression?.hasConstantValue(session: FirSession): Boolean {
@@ -58,7 +53,7 @@ fun FirExpression?.hasConstantValue(session: FirSession): Boolean {
 // --------------------------------------------- private implementation part ---------------------------------------------
 
 context(c: SessionAndScopeSessionHolder)
-private fun FirElement.toConstantValue(): ConstantValue<*>? {
+private fun FirElement.toConstantValueImpl(): ConstantValue<*>? {
     return when (this) {
         is FirLiteralExpression -> {
             val value = this.value
@@ -93,7 +88,7 @@ private fun FirElement.toConstantValue(): ConstantValue<*>? {
                     val constructorCall = this as FirFunctionCall
                     val mappingToFirExpression = (constructorCall.argumentList as FirResolvedArgumentList).toAnnotationArgumentMapping().mapping
                     val mappingToConstantValues = mappingToFirExpression
-                        .mapValues { it.value.toConstantValue() ?: return null }
+                        .mapValues { it.value.toConstantValueImpl() ?: return null }
                         .fillEmptyArray(symbol, c.session)
                     AnnotationValue.create(constructedClassSymbol.classId, mappingToConstantValues)
                 }
@@ -102,12 +97,12 @@ private fun FirElement.toConstantValue(): ConstantValue<*>? {
         }
         is FirAnnotation -> {
             val mappingToFirExpression = this.argumentMapping.mapping
-            val mappingToConstantValues = mappingToFirExpression.mapValues { it.value.toConstantValue() ?: return null }
+            val mappingToConstantValues = mappingToFirExpression.mapValues { it.value.toConstantValueImpl() ?: return null }
             this.toAnnotationValue(mappingToConstantValues)
         }
         is FirGetClassCall -> create(this.argument.resolvedType, c.session)
         is FirEnumEntryDeserializedAccessExpression -> EnumValue(this.enumClassId, this.enumEntryName)
-        is FirCollectionLiteral -> ArrayValue(this.argumentList.arguments.mapNotNull { it.toConstantValue() })
+        is FirCollectionLiteral -> ArrayValue(this.argumentList.arguments.mapNotNull { it.toConstantValueImpl() })
         is FirVarargArgumentsExpression -> {
             val arguments = this.arguments.let {
                 // Named, spread or array literal arguments for vararg parameters have the form Vararg(Named/Spread?(ArrayLiteral(..))).
@@ -115,7 +110,7 @@ private fun FirElement.toConstantValue(): ConstantValue<*>? {
                 (it.singleOrNull()?.unwrapArgument() as? FirCollectionLiteral)?.arguments ?: it
             }
 
-            ArrayValue(arguments.mapNotNull { it.toConstantValue() })
+            ArrayValue(arguments.mapNotNull { it.toConstantValueImpl() })
         }
         else -> null
     }
@@ -130,7 +125,7 @@ private fun FirAnnotation.evaluateToAnnotationValue(): AnnotationValue {
     val result = argumentMapping.mapping.mapValuesTo(mutableMapOf()) { (name, _) ->
         mappingFromFrontend[name]?.let {
             val evaluatedValue = (it as? FirEvaluatorResult.Evaluated)?.result
-            evaluatedValue?.toConstantValue()
+            evaluatedValue?.toConstantValueImpl()
         } ?: errorWithAttachment("Cannot convert value for parameter \"$name\" to constant") {
             withFirEntry("argument", argumentMapping.mapping[name]!!)
             withFirEntry("annotation", this@evaluateToAnnotationValue)
