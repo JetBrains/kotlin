@@ -1939,14 +1939,14 @@ public class CliTestGenerated extends AbstractCliTest {
       runTest("compiler/testData/cli/js/compilationErrorExposureOfPrivateTypes.args");
     }
 
+    @TestMetadata("compilationErrorExposureOfReferencesToInvisibleEntities.args")
+    public void testCompilationErrorExposureOfReferencesToInvisibleEntities() {
+      runTest("compiler/testData/cli/js/compilationErrorExposureOfReferencesToInvisibleEntities.args");
+    }
+
     @TestMetadata("compilationErrorK2.args")
     public void testCompilationErrorK2() {
       runTest("compiler/testData/cli/js/compilationErrorK2.args");
-    }
-
-    @TestMetadata("compilationWarningExposureOfReferencesToInvisibleEntities.args")
-    public void testCompilationWarningExposureOfReferencesToInvisibleEntities() {
-      runTest("compiler/testData/cli/js/compilationWarningExposureOfReferencesToInvisibleEntities.args");
     }
 
     @TestMetadata("compilationWarningPublicAccessorExplicitAPIMode.args")
