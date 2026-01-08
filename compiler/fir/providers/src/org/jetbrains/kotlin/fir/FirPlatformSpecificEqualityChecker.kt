@@ -6,19 +6,20 @@
 package org.jetbrains.kotlin.fir
 
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.TypeOperationApplicabilityChecker
 
 abstract class FirPlatformSpecificEqualityChecker : FirSessionComponent {
     abstract fun shouldSuppressInapplicableEquality(
         leftType: ConeKotlinType,
         rightType: ConeKotlinType,
-        generalApplicabilityChecker: (fromType: ConeKotlinType, toType: ConeKotlinType) -> Boolean,
+        generalApplicabilityChecker: TypeOperationApplicabilityChecker,
     ): Boolean
 
     object Default : FirPlatformSpecificEqualityChecker() {
         override fun shouldSuppressInapplicableEquality(
             leftType: ConeKotlinType,
             rightType: ConeKotlinType,
-            generalApplicabilityChecker: (fromType: ConeKotlinType, toType: ConeKotlinType) -> Boolean
+            generalApplicabilityChecker: TypeOperationApplicabilityChecker
         ): Boolean {
             return false
         }

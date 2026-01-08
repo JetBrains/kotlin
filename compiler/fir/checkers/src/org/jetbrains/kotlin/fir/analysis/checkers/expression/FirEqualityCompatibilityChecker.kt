@@ -140,14 +140,19 @@ object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker(MppCheck
         lType: ConeKotlinType,
         rType: ConeKotlinType,
     ): KtDiagnosticFactory3<String, ConeKotlinType, ConeKotlinType>? {
-        fun isGenerallyApplicable(l: ConeKotlinType, r: ConeKotlinType): Boolean =
-            checkApplicability(operation, l.toTypeInfo(context.session), r.toTypeInfo(context.session)) == Applicability.APPLICABLE
+        val generalApplicabilityChecker = object : TypeOperationApplicabilityChecker() {
+            override fun isApplicable(leftType: ConeKotlinType, rightType: ConeKotlinType) = checkApplicability(
+                operation,
+                leftType.toTypeInfo(context.session),
+                rightType.toTypeInfo(context.session)
+            ) == Applicability.APPLICABLE
+        }
 
         return when {
             context.session.firPlatformSpecificEqualityChecker.shouldSuppressInapplicableEquality(
                 lType,
                 rType,
-                ::isGenerallyApplicable
+                generalApplicabilityChecker
             ) -> null
             forceWarning -> FirErrors.EQUALITY_NOT_APPLICABLE_WARNING
             else -> FirErrors.EQUALITY_NOT_APPLICABLE

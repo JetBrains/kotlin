@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeKotlinTypeProjectionOut
 import org.jetbrains.kotlin.fir.types.ConeTypeProjection
+import org.jetbrains.kotlin.fir.types.TypeOperationApplicabilityChecker
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.name.JsStandardClassIds
 
@@ -18,28 +19,28 @@ object FirWasmJsCastChecker : FirPlatformSpecificCastChecker() {
         session: FirSession,
         fromType: ConeKotlinType,
         toType: ConeKotlinType,
-        generalApplicabilityChecker: (fromType: ConeKotlinType, toType: ConeKotlinType) -> Boolean
+        generalApplicabilityChecker: TypeOperationApplicabilityChecker
     ): Boolean = shouldSuppressImpossibleCastOrIsCheck(fromType, toType, generalApplicabilityChecker)
 
     override fun shouldSuppressImpossibleIsCheck(
         session: FirSession,
         fromType: ConeKotlinType,
         toType: ConeKotlinType,
-        generalApplicabilityChecker: (fromType: ConeKotlinType, toType: ConeKotlinType) -> Boolean
+        generalApplicabilityChecker: TypeOperationApplicabilityChecker
     ): Boolean = shouldSuppressImpossibleCastOrIsCheck(fromType, toType, generalApplicabilityChecker)
 
     private fun shouldSuppressImpossibleCastOrIsCheck(
         fromType: ConeKotlinType,
         toType: ConeKotlinType,
-        generalApplicabilityChecker: (fromType: ConeKotlinType, toType: ConeKotlinType) -> Boolean
+        generalApplicabilityChecker: TypeOperationApplicabilityChecker
     ): Boolean {
         // checks from JsReference<C> to Kotlin types (compatible with `C`) are allowed as its implicit cast to Any gives
         // the "wrapped" object back
         if (fromType.classId == JsStandardClassIds.JsReference && fromType.typeArguments.size == 1) {
             val typeArg: ConeTypeProjection = fromType.typeArguments[0]
             return when (typeArg) {
-                is ConeKotlinTypeProjectionOut -> generalApplicabilityChecker.invoke(typeArg.type, toType)
-                is ConeKotlinType -> generalApplicabilityChecker.invoke(typeArg, toType)
+                is ConeKotlinTypeProjectionOut -> generalApplicabilityChecker.isApplicable(typeArg.type, toType)
+                is ConeKotlinType -> generalApplicabilityChecker.isApplicable(typeArg, toType)
                 else -> true // e.g. star projection
             }
         }

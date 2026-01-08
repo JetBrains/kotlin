@@ -9,13 +9,14 @@ import org.jetbrains.kotlin.fir.FirPlatformSpecificCastChecker
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
+import org.jetbrains.kotlin.fir.types.TypeOperationApplicabilityChecker
 
 object FirNativeCastChecker : FirPlatformSpecificCastChecker() {
     override fun shouldSuppressImpossibleCast(
         session: FirSession,
         fromType: ConeKotlinType,
         toType: ConeKotlinType,
-        generalApplicabilityChecker: (fromType: ConeKotlinType, toType: ConeKotlinType) -> Boolean
+        generalApplicabilityChecker: TypeOperationApplicabilityChecker
     ): Boolean {
         return isCastToAForwardDeclaration(session, toType)
     }
@@ -24,7 +25,7 @@ object FirNativeCastChecker : FirPlatformSpecificCastChecker() {
         session: FirSession,
         fromType: ConeKotlinType,
         toType: ConeKotlinType,
-        generalApplicabilityChecker: (fromType: ConeKotlinType, toType: ConeKotlinType) -> Boolean
+        generalApplicabilityChecker: TypeOperationApplicabilityChecker
     ): Boolean {
         return false
     }
