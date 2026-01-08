@@ -5196,6 +5196,12 @@ public class LLPartialDiagnosticsFirTestGenerated extends AbstractLLPartialDiagn
       }
 
       @Test
+      @TestMetadata("operatorRenamedOnImport.kt")
+      public void testOperatorRenamedOnImport() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/operatorRenamedOnImport.kt");
+      }
+
+      @Test
       @TestMetadata("outerClassArgumentsRequiredFromSuper.kt")
       public void testOuterClassArgumentsRequiredFromSuper() {
         runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/outerClassArgumentsRequiredFromSuper.kt");
