@@ -1,0 +1,2 @@
+KtCollectionLiteralExpression(163,165): '[]'
+  NO_CANDIDATES

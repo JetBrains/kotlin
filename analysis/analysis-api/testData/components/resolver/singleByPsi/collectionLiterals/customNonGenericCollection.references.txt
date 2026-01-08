@@ -1,0 +1,13 @@
+KtCollectionLiteralExpression(173,188): '["1", "2", "3"]'
+  KtCollectionLiteralReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      Nothing (Unresolved reference)
+
+KtCallExpression(162,189): 'acceptList(["1", "2", "3"])'
+  KtInvokeFunctionReference:
+    isImplicitReferenceToCompanion: false
+    usesContextSensitiveResolution: false
+    symbols:
+      Nothing (Unresolved reference)

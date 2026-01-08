@@ -2067,6 +2067,88 @@ public class FirIdeNormalAnalysisLibrarySourceModuleResolveReferenceTestGenerate
   }
 
   @Nested
+  @TestMetadata("analysis/analysis-api/testData/components/resolver/singleByPsi/collectionLiterals")
+  @TestDataPath("$PROJECT_ROOT")
+  public class CollectionLiterals {
+    @Test
+    public void testAllFilesPresentInCollectionLiterals() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/collectionLiterals"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency", "cloneable");
+    }
+
+    @Test
+    @TestMetadata("array.kt")
+    public void testArray() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/collectionLiterals/array.kt");
+    }
+
+    @Test
+    @TestMetadata("customGenericCollection.kt")
+    public void testCustomGenericCollection() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/collectionLiterals/customGenericCollection.kt");
+    }
+
+    @Test
+    @TestMetadata("customGenericCollectionAssignments.kt")
+    public void testCustomGenericCollectionAssignments() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/collectionLiterals/customGenericCollectionAssignments.kt");
+    }
+
+    @Test
+    @TestMetadata("customNonGenericCollection.kt")
+    public void testCustomNonGenericCollection() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/collectionLiterals/customNonGenericCollection.kt");
+    }
+
+    @Test
+    @TestMetadata("customNonGenericCollectionAssignments.kt")
+    public void testCustomNonGenericCollectionAssignments() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/collectionLiterals/customNonGenericCollectionAssignments.kt");
+    }
+
+    @Test
+    @TestMetadata("intArray.kt")
+    public void testIntArray() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/collectionLiterals/intArray.kt");
+    }
+
+    @Test
+    @TestMetadata("list.kt")
+    public void testList() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/collectionLiterals/list.kt");
+    }
+
+    @Test
+    @TestMetadata("mutableList.kt")
+    public void testMutableList() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/collectionLiterals/mutableList.kt");
+    }
+
+    @Test
+    @TestMetadata("mutableSet.kt")
+    public void testMutableSet() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/collectionLiterals/mutableSet.kt");
+    }
+
+    @Test
+    @TestMetadata("noOf.kt")
+    public void testNoOf() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/collectionLiterals/noOf.kt");
+    }
+
+    @Test
+    @TestMetadata("sequence.kt")
+    public void testSequence() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/collectionLiterals/sequence.kt");
+    }
+
+    @Test
+    @TestMetadata("set.kt")
+    public void testSet() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/collectionLiterals/set.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("analysis/analysis-api/testData/components/resolver/singleByPsi/constructorDelegatingReference")
   @TestDataPath("$PROJECT_ROOT")
   public class ConstructorDelegatingReference {

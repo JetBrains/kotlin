@@ -1,0 +1,5 @@
+KtCollectionLiteralExpression(163,165): '[]'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyList.Companion.of(<dispatch receiver>: MyList.Companion, vararg vals: T): MyList<T>
+    ]
