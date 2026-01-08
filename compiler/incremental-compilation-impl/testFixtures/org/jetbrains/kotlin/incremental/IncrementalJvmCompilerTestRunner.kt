@@ -20,7 +20,7 @@ class IncrementalJvmCompilerTestRunner(
     modulesApiHistory: ModulesApiHistory,
     kotlinSourceFilesExtensions: Set<String>,
     icFeatures: IncrementalCompilationFeatures,
-    val testLookupTracker: TestLookupTracker
+    override val lookupTrackerDelegate: TestLookupTracker,
 ) : BuildHistoryJvmICRunner(
     workingDir,
     testReporter,
@@ -35,9 +35,7 @@ class IncrementalJvmCompilerTestRunner(
             icContext,
             args,
             cacheDirectory,
-            testLookupTracker,
+            lookupTrackerDelegate,
             testReporter,
         )
-
-    override fun getLookupTrackerDelegate() = testLookupTracker
 }

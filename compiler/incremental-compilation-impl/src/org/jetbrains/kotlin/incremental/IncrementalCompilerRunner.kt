@@ -77,6 +77,7 @@ abstract class IncrementalCompilerRunner<
     private val compilationCanceledStatus: CompilationCanceledStatus? = null,
 ) {
 
+    protected open val lookupTrackerDelegate: LookupTracker = LookupTracker.DO_NOTHING
     protected val cacheDirectory = File(workingDir, cacheDirName)
     protected val lastBuildInfoFile = File(workingDir, LAST_BUILD_INFO_FILE_NAME)
     private val abiSnapshotFile = File(workingDir, ABI_SNAPSHOT_FILE_NAME)
@@ -480,7 +481,7 @@ abstract class IncrementalCompilerRunner<
             caches.inputsCache.removeOutputForSourceFiles(dirtySources)
             caches.compilerPluginFilesCache.removeOutputsGeneratedByPlugins()
 
-            val lookupTracker = LookupTrackerImpl(getLookupTrackerDelegate())
+            val lookupTracker = LookupTrackerImpl(lookupTrackerDelegate)
             val expectActualTracker = ExpectActualTrackerImpl()
 
             val outputItemsCollector = OutputItemsCollectorImpl()
@@ -639,8 +640,6 @@ abstract class IncrementalCompilerRunner<
         sourceFilesPathConverter: FileToPathConverter,
         compilationMode: CompilationMode,
     ): Unit = Unit
-
-    open fun getLookupTrackerDelegate(): LookupTracker = LookupTracker.DO_NOTHING
 
     open fun runWithNoDirtyKotlinSources(caches: CacheManager): Boolean = false
 

@@ -86,7 +86,7 @@ abstract class AbstractIncrementalJvmCompilerRunnerTest : AbstractIncrementalCom
                         outputDirs = null,
                         makeEmptyClasspathChangesForSingleModuleTests(snapshotsDir),
                         kotlinExtensions,
-                        testLookupTracker = testLookupTracker
+                        lookupTrackerDelegate = testLookupTracker
                     )
                 } else {
                     val verifiedPreciseJavaTracking = args.disablePreciseJavaTrackingIfK2(usePreciseJavaTrackingByDefault = true)
@@ -101,7 +101,7 @@ abstract class AbstractIncrementalJvmCompilerRunnerTest : AbstractIncrementalCom
                             withAbiSnapshot = false,
                             usePreciseJavaTracking = verifiedPreciseJavaTracking
                         ),
-                        testLookupTracker = testLookupTracker
+                        lookupTrackerDelegate = testLookupTracker
                     )
                 }
             //TODO by @Ilya.Chernikov: set properly

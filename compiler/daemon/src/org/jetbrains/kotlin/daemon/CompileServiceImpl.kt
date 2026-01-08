@@ -732,7 +732,7 @@ abstract class CompileServiceImplBase(
         )
 
         val compiler = if (incrementalCompilationOptions.useJvmFirRunner) {
-            object : IncrementalFirJvmCompilerRunner(
+            IncrementalFirJvmCompilerRunner(
                 workingDir,
                 reporter,
                 kotlinSourceFilesExtensions = allKotlinJvmExtensions,
@@ -743,13 +743,10 @@ abstract class CompileServiceImplBase(
                 ),
                 compilationCanceledStatus = compilationCanceledStatus,
                 generateCompilerRefIndex = incrementalCompilationOptions.generateCompilerRefIndex,
-            ) {
-                override fun getLookupTrackerDelegate(): LookupTracker {
-                    return lookupTracker ?: super.getLookupTrackerDelegate()
-                }
-            }
+                lookupTrackerDelegate = lookupTracker ?: LookupTracker.DO_NOTHING,
+            )
         } else {
-            object : IncrementalJvmCompilerRunner(
+            IncrementalJvmCompilerRunner(
                 workingDir,
                 reporter,
                 outputDirs = incrementalCompilationOptions.outputFiles,
@@ -760,11 +757,8 @@ abstract class CompileServiceImplBase(
                 ),
                 compilationCanceledStatus = compilationCanceledStatus,
                 generateCompilerRefIndex = incrementalCompilationOptions.generateCompilerRefIndex,
-            ) {
-                override fun getLookupTrackerDelegate(): LookupTracker {
-                    return lookupTracker ?: super.getLookupTrackerDelegate()
-                }
-            }
+                lookupTrackerDelegate = lookupTracker ?: LookupTracker.DO_NOTHING,
+            )
         }
         return try {
             compiler.compile(

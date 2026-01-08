@@ -442,7 +442,7 @@ internal class JvmCompilationOperationImpl private constructor(
         kotlinFilenameExtensions: Set<String>,
         icFeatures: IncrementalCompilationFeatures,
     ): IncrementalJvmCompilerRunner =
-        object : IncrementalJvmCompilerRunner(
+        IncrementalJvmCompilerRunner(
             workingDirectory.toFile(),
             buildReporter,
             outputDirs = aggregatedIcConfigurationOptions[OUTPUT_DIRS]?.map { it.toFile() },
@@ -451,13 +451,8 @@ internal class JvmCompilationOperationImpl private constructor(
             icFeatures = icFeatures,
             compilationCanceledStatus = cancellationHandle,
             generateCompilerRefIndex = get(GENERATE_COMPILER_REF_INDEX),
-        ) {
-            override fun getLookupTrackerDelegate(): LookupTracker {
-                return this@JvmCompilationOperationImpl[LOOKUP_TRACKER]?.let { tracker ->
-                    LookupTrackerAdapter(tracker)
-                } ?: super.getLookupTrackerDelegate()
-            }
-        }
+            lookupTrackerDelegate = getLookupTrackerAdapter(),
+        )
 
     private fun JvmCompilationOperationImpl.getFirRunner(
         workingDirectory: Path,
@@ -467,7 +462,7 @@ internal class JvmCompilationOperationImpl private constructor(
         kotlinFilenameExtensions: Set<String>,
         icFeatures: IncrementalCompilationFeatures,
     ): IncrementalFirJvmCompilerRunner =
-        object : IncrementalFirJvmCompilerRunner(
+        IncrementalFirJvmCompilerRunner(
             workingDirectory.toFile(),
             buildReporter,
             outputDirs = aggregatedIcConfigurationOptions[OUTPUT_DIRS]?.map { it.toFile() },
@@ -476,13 +471,12 @@ internal class JvmCompilationOperationImpl private constructor(
             icFeatures = icFeatures,
             compilationCanceledStatus = cancellationHandle,
             generateCompilerRefIndex = get(GENERATE_COMPILER_REF_INDEX),
-        ) {
-            override fun getLookupTrackerDelegate(): LookupTracker {
-                return this@JvmCompilationOperationImpl[LOOKUP_TRACKER]?.let { tracker ->
-                    LookupTrackerAdapter(tracker)
-                } ?: super.getLookupTrackerDelegate()
-            }
-        }
+            lookupTrackerDelegate = getLookupTrackerAdapter(),
+        )
+
+    private fun getLookupTrackerAdapter(): LookupTracker = this@JvmCompilationOperationImpl[LOOKUP_TRACKER]?.let { tracker ->
+        LookupTrackerAdapter(tracker)
+    } ?: LookupTracker.DO_NOTHING
 
     private fun logCompilerArguments(
         loggerAdapter: KotlinLoggerMessageCollectorAdapter,
