@@ -524,6 +524,7 @@ class FusStatisticsIT : KGPBaseTest() {
         project(
             "simpleProject", gradleVersion,
         ) {
+            // lines about atomicfu should be uncommented after fix of https://github.com/Kotlin/kotlinx-atomicfu/issues/556
             buildGradle.replaceText(
                 "plugins {",
                 """
