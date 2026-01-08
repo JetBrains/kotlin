@@ -33,9 +33,7 @@ fun parseJavaToSyntaxTreeBuilder(
 }
 
 fun parse(languageLevel: LanguageLevel, builder: SyntaxTreeBuilder) {
-    val root = builder.mark()
     val parser = JavaParser(languageLevel)
     parser.fileParser.parse(builder)
-    root.done(JavaSyntaxElementType.JAVA_FILE)
 }
 
