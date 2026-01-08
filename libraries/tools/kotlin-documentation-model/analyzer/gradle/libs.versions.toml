@@ -21,8 +21,8 @@ ktor = "2.3.11"
 javaDiffUtils = "4.12"
 
 ## Analysis
-kotlin-compiler = "2.3.20-dev-6080"
-kotlin-compiler-k2 = "2.3.20-dev-6080"
+kotlin-compiler = "2.3.20-dev-7064"
+kotlin-compiler-k2 = "2.3.20-dev-7064"
 
 # MUST match the version of the intellij platform used in the kotlin compiler,
 # otherwise this will lead to different versions of psi API and implementations
@@ -122,6 +122,7 @@ kotlin-symbol-light-classes = { module = "org.jetbrains.kotlin:symbol-light-clas
 intellij-java-psi-api = { module = "com.jetbrains.intellij.java:java-psi", version.ref = "intellij-platform" }
 intellij-java-psi-impl = { module = "com.jetbrains.intellij.java:java-psi-impl", version.ref = "intellij-platform" }
 intellij-util= { module = "com.jetbrains.intellij.platform:util", version.ref = "intellij-platform" }
+intellij-util-base= { module = "com.jetbrains.intellij.platform:util-base", version.ref = "intellij-platform" }
 
 #### HTML ####
 jsoup = { module = "org.jsoup:jsoup", version.ref = "jsoup" }
