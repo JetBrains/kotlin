@@ -108,7 +108,7 @@ kotlin::alloc::AllocationSize kotlin::alloc::ExtraDataSweepTraits::elementSize(u
 
 void* kotlin::alloc::SafeAlloc(uint64_t size) noexcept {
     if (size > std::numeric_limits<size_t>::max()) {
-        konan::consoleErrorf("Out of memory trying to allocate %" PRIu64 "bytes. Aborting.\n", size);
+        konan::consoleErrorf("Out of memory trying to allocate %" PRIu64 " bytes. Aborting.\n", size);
         std::abort();
     }
     void* memory;
@@ -132,7 +132,7 @@ void* kotlin::alloc::SafeAlloc(uint64_t size) noexcept {
 #endif
     }
     if (error) {
-        konan::consoleErrorf("Out of memory trying to allocate %" PRIu64 "bytes: %s. Aborting.\n", size, strerror(errno));
+        konan::consoleErrorf("Out of memory trying to allocate %" PRIu64 " bytes: %s. Aborting.\n", size, strerror(errno));
         std::abort();
     }
     allocatedBytesCounter.fetch_add(static_cast<size_t>(size), std::memory_order_relaxed);
