@@ -215,9 +215,13 @@ class CoroutineTransformerMethodVisitor(
                 var cursor: AbstractInsnNode? = suspensionPoint.suspensionCallBegin.previous
                 for (argType in methodType.argumentTypes.reversed()) {
                     if (argType == CONTINUATION_ASM_TYPE) break
-                    cursor = cursor?.previous
+                    cursor = cursor?.findPreviousOrNull { it.isMeaningful }
                 }
                 if (cursor != null) {
+                    require(cursor.opcode == Opcodes.ALOAD) {
+                        "Expected ALOAD opcode for continuation load before ${suspendCall.insnText} in method " +
+                                "$containingClassInternalName.$name, found ${cursor.insnText}"
+                    }
                     val continuationLoad = cursor
                     cursor = cursor.previous
                     instructions.remove(continuationLoad)
