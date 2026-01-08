@@ -12,6 +12,13 @@
 
     <artifactId>kotlin-maven-plugin-test</artifactId>
 
+    <properties>
+        <jdk8Home>${env.JDK_1_8}</jdk8Home>
+        <jdk11Home>${env.JDK_11}</jdk11Home>
+        <jdk17Home>${env.JDK_17}</jdk17Home>
+        <jdk21Home>${env.JDK_21}</jdk21Home>
+    </properties>
+
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -28,7 +35,9 @@
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-stdlib</artifactId>
-<!--            <version>2.3.0-RC2</version>-->
+            <!-- FIXME: KTIJ-36857/kotlin-stdlib-is-not-visible -->
+            <!-- Uncomment line to work locally -->
+<!--            <version>2.3.0</version>-->
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
@@ -36,7 +45,9 @@
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-maven-plugin</artifactId>
-<!--            <version>2.3.0-RC2</version>-->
+            <!-- FIXME: KTIJ-36857/kotlin-stdlib-is-not-visible -->
+            <!-- Uncomment line to work locally -->
+<!--            <version>2.3.0</version>-->
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
@@ -119,6 +130,7 @@
                         <id>default-compile</id>
                         <phase>compile</phase>
                         <configuration>
+                            <jdkHome>${jdk17Home}</jdkHome>
                             <sourceDirs>
                                 <sourceDir>src/main/kotlin</sourceDir>
                                 <sourceDir>src/main/java</sourceDir>
@@ -129,6 +141,7 @@
                         <id>default-test-compile</id>
                         <phase>test-compile</phase>
                         <configuration>
+                            <jdkHome>${jdk17Home}</jdkHome>
                             <sourceDirs>
                                 <sourceDir>src/test/kotlin</sourceDir>
                                 <sourceDir>src/test/java</sourceDir>
@@ -183,7 +196,7 @@
                                     <goal>verify</goal>
                                 </goals>
                                 <configuration>
-                                    <jvm>${env.JDK_17_0}/bin/java</jvm>
+                                    <jvm>${jdk17Home}/bin/java</jvm>
                                     <systemPropertyVariables>
                                         <maven.home>${maven.home}</maven.home>
                                         <kotlin.version>${project.version}</kotlin.version>
@@ -192,6 +205,12 @@
                                         <!-- ./libraries/tools/kotlin-maven-plugin-test/pom.xml -->
                                         <kotlin.build.repo>${settings.localRepository}</kotlin.build.repo>
                                         <kotlin.it.verify-common.bsh>${project.basedir}/verify-common.bsh</kotlin.it.verify-common.bsh>
+
+                                        <!-- JDK configuration must follow this rule jdk\d+Home -->
+                                        <jdk8Home>${jdk8Home}</jdk8Home>
+                                        <jdk11Home>${jdk11Home}</jdk11Home>
+                                        <jdk17Home>${jdk17Home}</jdk17Home>
+                                        <jdk21Home>${jdk21Home}</jdk21Home>
                                     </systemPropertyVariables>
                                 </configuration>
                             </execution>
