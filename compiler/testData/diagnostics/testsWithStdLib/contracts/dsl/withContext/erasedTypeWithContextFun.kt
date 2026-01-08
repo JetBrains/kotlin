@@ -33,6 +33,21 @@ fun test() {
     }
 }
 
+context(value: T)
+fun <T> checkTFromContext(b: Any): Boolean {
+    contract {
+        returns() implies (b is T)
+    }
+    return true
+}
+
+fun test2(s: String, x: Any) {
+    with(s) {
+        checkTFromContext(x)
+        x.length
+    }
+}
+
 /* GENERATED_FIR_TAGS: classReference, contractConditionalEffect, contracts, functionDeclaration,
 functionDeclarationWithContext, ifExpression, inline, isExpression, lambdaLiteral, nullableType, reified, smartcast,
 typeConstraint, typeParameter */

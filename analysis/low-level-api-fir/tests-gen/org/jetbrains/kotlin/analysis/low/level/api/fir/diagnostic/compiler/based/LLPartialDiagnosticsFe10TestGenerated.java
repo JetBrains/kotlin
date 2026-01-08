@@ -51220,12 +51220,6 @@ public class LLPartialDiagnosticsFe10TestGenerated extends AbstractLLPartialDiag
           }
 
           @Test
-          @TestMetadata("withContextParameters.kt")
-          public void testWithContextParameters() {
-            runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/holdsIn/withContextParameters.kt");
-          }
-
-          @Test
           @TestMetadata("withErasedType.kt")
           public void testWithErasedType() {
             runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/holdsIn/withErasedType.kt");
@@ -51353,6 +51347,94 @@ public class LLPartialDiagnosticsFe10TestGenerated extends AbstractLLPartialDiag
           @TestMetadata("withOperatorFunction.kt")
           public void testWithOperatorFunction() {
             runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/impliesReturn/withOperatorFunction.kt");
+          }
+        }
+
+        @Nested
+        @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/withContext")
+        @TestDataPath("$PROJECT_ROOT")
+        public class WithContext {
+          @Test
+          public void testAllFilesPresentInWithContext() {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/withContext"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|partialBody|fir|ll|latestLV)\\.kts?$"), true);
+          }
+
+          @Test
+          @TestMetadata("callInPlaceContractWithContextFun.kt")
+          public void testCallInPlaceContractWithContextFun() {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/withContext/callInPlaceContractWithContextFun.kt");
+          }
+
+          @Test
+          @TestMetadata("callInPlaceContractWithContextProperty.kt")
+          public void testCallInPlaceContractWithContextProperty() {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/withContext/callInPlaceContractWithContextProperty.kt");
+          }
+
+          @Test
+          @TestMetadata("contractUsingContextFromOuterFun.kt")
+          public void testContractUsingContextFromOuterFun() {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/withContext/contractUsingContextFromOuterFun.kt");
+          }
+
+          @Test
+          @TestMetadata("erasedTypeWithContextFun.kt")
+          public void testErasedTypeWithContextFun() {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/withContext/erasedTypeWithContextFun.kt");
+          }
+
+          @Test
+          @TestMetadata("erasedTypeWithContextProperty.kt")
+          public void testErasedTypeWithContextProperty() {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/withContext/erasedTypeWithContextProperty.kt");
+          }
+
+          @Test
+          @TestMetadata("holdsInContractOnContextProperty.kt")
+          public void testHoldsInContractOnContextProperty() {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/withContext/holdsInContractOnContextProperty.kt");
+          }
+
+          @Test
+          @TestMetadata("holdsInContractWithContextFun.kt")
+          public void testHoldsInContractWithContextFun() {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/withContext/holdsInContractWithContextFun.kt");
+          }
+
+          @Test
+          @TestMetadata("impliesContractWithContextFun.kt")
+          public void testImpliesContractWithContextFun() {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/withContext/impliesContractWithContextFun.kt");
+          }
+
+          @Test
+          @TestMetadata("impliesContractWithContextProperty.kt")
+          public void testImpliesContractWithContextProperty() {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/withContext/impliesContractWithContextProperty.kt");
+          }
+
+          @Test
+          @TestMetadata("impliesReturnContractExhaustiveness.kt")
+          public void testImpliesReturnContractExhaustiveness() {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/withContext/impliesReturnContractExhaustiveness.kt");
+          }
+
+          @Test
+          @TestMetadata("impliesReturnContractOnContextProperty.kt")
+          public void testImpliesReturnContractOnContextProperty() {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/withContext/impliesReturnContractOnContextProperty.kt");
+          }
+
+          @Test
+          @TestMetadata("impliesReturnContractOnOperatorWithContext.kt")
+          public void testImpliesReturnContractOnOperatorWithContext() {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/withContext/impliesReturnContractOnOperatorWithContext.kt");
+          }
+
+          @Test
+          @TestMetadata("impliesReturnContractWithContextFun.kt")
+          public void testImpliesReturnContractWithContextFun() {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/withContext/impliesReturnContractWithContextFun.kt");
           }
         }
       }
@@ -51488,12 +51570,6 @@ public class LLPartialDiagnosticsFe10TestGenerated extends AbstractLLPartialDiag
         @TestMetadata("variance.kt")
         public void testVariance() {
           runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/genericsInContractTypeAssertions/variance.kt");
-        }
-
-        @Test
-        @TestMetadata("withContextParameters.kt")
-        public void testWithContextParameters() {
-          runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/genericsInContractTypeAssertions/withContextParameters.kt");
         }
 
         @Test
@@ -51694,18 +51770,6 @@ public class LLPartialDiagnosticsFe10TestGenerated extends AbstractLLPartialDiag
         @TestMetadata("simple.kt")
         public void testSimple() {
           runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/propertyAccessors/simple.kt");
-        }
-
-        @Test
-        @TestMetadata("withContextParameters.kt")
-        public void testWithContextParameters() {
-          runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/propertyAccessors/withContextParameters.kt");
-        }
-
-        @Test
-        @TestMetadata("withContextParametersMember.kt")
-        public void testWithContextParametersMember() {
-          runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/propertyAccessors/withContextParametersMember.kt");
         }
       }
 
