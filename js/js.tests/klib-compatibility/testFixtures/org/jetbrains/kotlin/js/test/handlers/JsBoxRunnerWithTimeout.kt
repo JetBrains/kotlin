@@ -7,12 +7,9 @@ package org.jetbrains.kotlin.js.test.handlers
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
+import java.util.concurrent.*
 import java.security.AccessController
 import java.security.PrivilegedAction
-import java.util.concurrent.ExecutionException
-import java.util.concurrent.FutureTask
-import java.util.concurrent.TimeUnit
-import java.util.concurrent.TimeoutException
 
 /*
  * A wrapper over JsBoxRunner with a timeout
@@ -31,7 +28,7 @@ class JsBoxRunnerWithTimeout(testServices: TestServices, private val timeoutMill
                 jsBoxRunner.processAfterAllModules(someAssertionWasFailed)
             }, context)
         }
-        Thread(task).start()
+        ForkJoinPool.commonPool().execute(task)
         try {
             task.get(timeoutMillis, TimeUnit.MILLISECONDS)
         } catch (_: TimeoutException) {
