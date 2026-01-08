@@ -3,7 +3,7 @@
 // DISABLE_NATIVE: gcScheduler=AGGRESSIVE
 // DISABLE_NATIVE: gcScheduler=MANUAL
 // The test checks GC, we need to allocate everything on the heap.
-// FREE_COMPILER_ARGS: -opt-in=kotlin.native.internal.InternalForKotlinNative -Xdisable-phases=EscapeAnalysis
+// FREE_COMPILER_ARGS: -opt-in=kotlin.native.internal.InternalForKotlinNative -Xdisable-phases=EscapeAnalysis -friend-modules=$KOTLIN_NATIVE_DISTRIBUTION$/klib/common/stdlib
 @file:OptIn(kotlin.experimental.ExperimentalNativeApi::class, kotlin.native.runtime.NativeRuntimeApi::class, kotlin.native.concurrent.ObsoleteWorkersApi::class)
 
 import kotlin.concurrent.AtomicInt
@@ -13,6 +13,8 @@ import kotlin.native.identityHashCode
 import kotlin.native.internal.MemoryUsageInfo
 import kotlin.native.ref.createCleaner
 import kotlin.random.Random
+import kotlin.native.Allocator
+import kotlin.native.Platform
 
 // Copying what's done in kotlinx.benchmark
 // TODO: Could we benefit, if this was in stdlib, and the compiler just new about it?
@@ -92,9 +94,19 @@ fun main() {
     // dynamically with no upper limit.
     kotlin.native.runtime.GC.targetHeapBytes = 50_000_000
     kotlin.native.runtime.GC.minHeapBytes = 50_000_000
-    // Limit memory usage at ~200MiB. 4 times the initial boundary yet still
-    // way less than total expected allocated amount.
-    val peakRSSChecker = PeakRSSChecker(200_000_000L)
+    val memoryLimit = when (Platform.allocator) {
+        Allocator.PAGED -> {
+            // Limit memory usage at ~200MiB. 4 times the initial boundary yet still
+            // way less than total expected allocated amount.
+            200_000_000L
+        }
+        Allocator.PER_OBJECT -> {
+            // KT-83002. pagedAllocator=false seems to use more memory.
+            400_000_000L
+        }
+    }
+
+    val peakRSSChecker = PeakRSSChecker(memoryLimit)
 
     val workers = Array(threadCount) { Worker.start() }
     val globalCount = AtomicInt(0)
