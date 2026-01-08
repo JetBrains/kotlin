@@ -43,7 +43,11 @@ class LanguageVersionSettingsBuilder {
     }
 
     fun <T> withFlag(flag: AnalysisFlag<T>, value: T) {
-        analysisFlags[flag] = value
+        if (value == flag.defaultValue) {
+            analysisFlags.remove(flag)
+        } else {
+            analysisFlags[flag] = value
+        }
     }
 
     fun configureUsingDirectives(

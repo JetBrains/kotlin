@@ -16,27 +16,30 @@ class K2JVMCompilerArgumentsConfigurator : CommonCompilerArgumentsConfigurator()
         languageVersion: LanguageVersion,
     ): MutableMap<AnalysisFlag<*>, Any> = with(arguments) {
         require(this is K2JVMCompilerArguments)
-        val result = super.configureAnalysisFlags(arguments, collector, languageVersion)
-        result[JvmAnalysisFlags.strictMetadataVersionSemantics] = strictMetadataVersionSemantics
-        result[JvmAnalysisFlags.javaTypeEnhancementState] = JavaTypeEnhancementStateParser(collector, languageVersion.toKotlinVersion())
-            .parse(jsr305, supportCompatqualCheckerFrameworkAnnotations, jspecifyAnnotations, nullabilityAnnotations)
-        result[AnalysisFlags.ignoreDataFlowInAssert] = JVMAssertionsMode.fromString(assertionsMode) != JVMAssertionsMode.LEGACY
+        return super.configureAnalysisFlags(arguments, collector, languageVersion).apply {
+            putAnalysisFlag(JvmAnalysisFlags.strictMetadataVersionSemantics, strictMetadataVersionSemantics)
+            putAnalysisFlag(
+                JvmAnalysisFlags.javaTypeEnhancementState,
+                JavaTypeEnhancementStateParser(collector, languageVersion.toKotlinVersion())
+                    .parse(jsr305, supportCompatqualCheckerFrameworkAnnotations, jspecifyAnnotations, nullabilityAnnotations)
+            )
+            putAnalysisFlag(AnalysisFlags.ignoreDataFlowInAssert, JVMAssertionsMode.fromString(assertionsMode) != JVMAssertionsMode.LEGACY)
 
-        configureJvmDefaultMode(collector)?.let {
-            result[JvmAnalysisFlags.jvmDefaultMode] = it
-            @Suppress("DEPRECATION")
-            if (jvmDefault != null) {
-                collector.report(CompilerMessageSeverity.STRONG_WARNING, "-Xjvm-default is deprecated. Use -jvm-default instead.")
+            configureJvmDefaultMode(collector)?.let {
+                putAnalysisFlag(JvmAnalysisFlags.jvmDefaultMode, it)
+                @Suppress("DEPRECATION")
+                if (jvmDefault != null) {
+                    collector.report(CompilerMessageSeverity.STRONG_WARNING, "-Xjvm-default is deprecated. Use -jvm-default instead.")
+                }
             }
-        }
 
-        result[JvmAnalysisFlags.inheritMultifileParts] = inheritMultifileParts
-        result[JvmAnalysisFlags.sanitizeParentheses] = sanitizeParentheses
-        result[JvmAnalysisFlags.suppressMissingBuiltinsError] = suppressMissingBuiltinsError
-        result[JvmAnalysisFlags.enableJvmPreview] = enableJvmPreview
-        result[AnalysisFlags.allowUnstableDependencies] = allowUnstableDependencies
-        result[JvmAnalysisFlags.outputBuiltinsMetadata] = outputBuiltinsMetadata
-        return result
+            putAnalysisFlag(JvmAnalysisFlags.inheritMultifileParts, inheritMultifileParts)
+            putAnalysisFlag(JvmAnalysisFlags.sanitizeParentheses, sanitizeParentheses)
+            putAnalysisFlag(JvmAnalysisFlags.suppressMissingBuiltinsError, suppressMissingBuiltinsError)
+            putAnalysisFlag(JvmAnalysisFlags.enableJvmPreview, enableJvmPreview)
+            putAnalysisFlag(AnalysisFlags.allowUnstableDependencies, allowUnstableDependencies)
+            putAnalysisFlag(JvmAnalysisFlags.outputBuiltinsMetadata, outputBuiltinsMetadata)
+        }
     }
 
     @Suppress("DEPRECATION")
