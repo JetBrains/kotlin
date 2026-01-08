@@ -11,5 +11,10 @@ class JavaParsingTest {
 
     @Test
     fun testBasicJavaParsing() {
+        val source = "class A {}"
+        val builder = parseJavaToSyntaxTreeBuilder(source, 0)
+        val root = buildDirectSyntaxTree(builder, source)
+        val javaClass = root.children.first { it.type.toString() == "CLASS" }.let { JavaClassDirectImpl(it, source) }
+        assert(javaClass.name.asString() == "A")
     }
 }
